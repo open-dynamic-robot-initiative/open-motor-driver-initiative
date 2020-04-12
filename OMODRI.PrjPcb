@@ -96,7 +96,7 @@ AnnotateStartValue=1
 AnnotationIndexControlEnabled=0
 AnnotateSuffix=
 AnnotateScope=All
-AnnotateOrder=-1
+AnnotateOrder=5
 DoLibraryUpdate=1
 DoDatabaseUpdate=1
 ClassGenCCAutoEnabled=1
@@ -113,7 +113,7 @@ AnnotateStartValue=1
 AnnotationIndexControlEnabled=0
 AnnotateSuffix=
 AnnotateScope=All
-AnnotateOrder=-1
+AnnotateOrder=6
 DoLibraryUpdate=1
 DoDatabaseUpdate=1
 ClassGenCCAutoEnabled=1
@@ -130,7 +130,7 @@ AnnotateStartValue=1
 AnnotationIndexControlEnabled=0
 AnnotateSuffix=
 AnnotateScope=All
-AnnotateOrder=-1
+AnnotateOrder=7
 DoLibraryUpdate=1
 DoDatabaseUpdate=1
 ClassGenCCAutoEnabled=1
@@ -141,6 +141,40 @@ GenerateClassCluster=0
 DocumentUniqueId=GDUJBULT
 
 [Document7]
+DocumentPath=OMODRI_ADC.SchDoc
+AnnotationEnabled=1
+AnnotateStartValue=1
+AnnotationIndexControlEnabled=0
+AnnotateSuffix=
+AnnotateScope=All
+AnnotateOrder=8
+DoLibraryUpdate=1
+DoDatabaseUpdate=1
+ClassGenCCAutoEnabled=1
+ClassGenCCAutoRoomEnabled=1
+ClassGenNCAutoScope=None
+DItemRevisionGUID=
+GenerateClassCluster=0
+DocumentUniqueId=RUAFPGVA
+
+[Document8]
+DocumentPath=OMODRI_GPIO.SchDoc
+AnnotationEnabled=1
+AnnotateStartValue=1
+AnnotationIndexControlEnabled=0
+AnnotateSuffix=
+AnnotateScope=All
+AnnotateOrder=9
+DoLibraryUpdate=1
+DoDatabaseUpdate=1
+ClassGenCCAutoEnabled=1
+ClassGenCCAutoRoomEnabled=1
+ClassGenNCAutoScope=None
+DItemRevisionGUID=
+GenerateClassCluster=0
+DocumentUniqueId=OPLTMGFQ
+
+[Document9]
 DocumentPath=OMODRI_Hardware.SchDoc
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -157,7 +191,7 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=AJIYFDMW
 
-[Document8]
+[Document10]
 DocumentPath=OMODRI.PcbDoc
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -174,7 +208,7 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=OEKYGETK
 
-[Document9]
+[Document11]
 DocumentPath=..\..\Downloads\slvc742a\MD016A Design Files\AssemblyRelease.OutJob
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -191,7 +225,7 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=
 
-[Document10]
+[Document12]
 DocumentPath=..\..\Downloads\slvc742a\MD016A Design Files\Common Documentation.OutJob
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -208,7 +242,7 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=
 
-[Document11]
+[Document13]
 DocumentPath=..\..\Downloads\slvc742a\MD016A Design Files\FabricationRelease.OutJob
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -225,7 +259,7 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=
 
-[Document12]
+[Document14]
 DocumentPath=..\..\Downloads\slvc742a\MD016A Design Files\Other BOM Reports.OutJob
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -242,7 +276,7 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=
 
-[Document13]
+[Document15]
 DocumentPath=..\..\Downloads\slvc742a\MD016A Design Files\Validation.OutJob
 AnnotationEnabled=1
 AnnotateStartValue=1
