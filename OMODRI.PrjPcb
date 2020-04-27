@@ -73,7 +73,7 @@ GenerateClassCluster=0
 DocumentUniqueId=NSDNRMXR
 
 [Document3]
-DocumentPath=OMODRI_AbsEnc.SchDoc
+DocumentPath=OMODRI_Encoders.SchDoc
 AnnotationEnabled=1
 AnnotateStartValue=1
 AnnotationIndexControlEnabled=0
