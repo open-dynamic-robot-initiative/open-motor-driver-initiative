@@ -1,0 +1,1 @@
+Due to unclear licencing of the firmware including libraries from TI MotorWare, the source code is tempotary hosted in this private repository: https://gitlab.laas.fr/open-dynamic-robot-initiative/omodri
