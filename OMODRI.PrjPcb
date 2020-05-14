@@ -534,11 +534,11 @@ Configuration1_Item3=OpenExported=False|AddToProject=False|ReportBOMViolationsIn
 Configuration1_Name4=GroupOrder
 Configuration1_Item4=Comment=True|Footprint=True
 Configuration1_Name5=SortOrder
-Configuration1_Item5=Quantity=Down
+Configuration1_Item5=Designator=Up
 Configuration1_Name6=VisibleOrder
-Configuration1_Item6=Comment=162|Description=304|Designator=445|Footprint=192|LibRef=120|Quantity=120
+Configuration1_Item6=Comment=162|Description=476|Designator=445|Footprint=192|LibRef=120|Quantity=120
 Configuration1_Name7=VisibleOrder_Flat
-Configuration1_Item7=Comment=162|Description=304|Designator=445|Footprint=192|LibRef=120|Quantity=120
+Configuration1_Item7=Comment=162|Description=476|Designator=445|Footprint=192|LibRef=120|Quantity=120
 OutputType2=ComponentCrossReference
 OutputName2=Component Cross Reference Report
 OutputDocumentPath2=
