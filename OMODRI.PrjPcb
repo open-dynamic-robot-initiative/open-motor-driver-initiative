@@ -209,23 +209,6 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=OPLTMGFQ
 
-[Document11]
-DocumentPath=OMODRI_Hardware.SchDoc
-AnnotationEnabled=1
-AnnotateStartValue=1
-AnnotationIndexControlEnabled=0
-AnnotateSuffix=
-AnnotateScope=All
-AnnotateOrder=8
-DoLibraryUpdate=1
-DoDatabaseUpdate=1
-ClassGenCCAutoEnabled=1
-ClassGenCCAutoRoomEnabled=1
-ClassGenNCAutoScope=None
-DItemRevisionGUID=
-GenerateClassCluster=0
-DocumentUniqueId=AJIYFDMW
-
 [Configuration1]
 Name=Sources
 ParameterCount=0
