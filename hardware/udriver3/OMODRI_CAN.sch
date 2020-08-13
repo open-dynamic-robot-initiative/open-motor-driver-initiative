@@ -1,0 +1,150 @@
+EESchema Schematic File Version 4
+EELAYER 30 0
+EELAYER END
+$Descr A4 11693 8268
+encoding utf-8
+Sheet 6 7
+Title "Open MOtor DRiver Initiative (OMODRI)"
+Date ""
+Rev "1.0"
+Comp "LAAS/CNRS"
+Comment1 ""
+Comment2 ""
+Comment3 ""
+Comment4 ""
+$EndDescr
+$Comp
+L Interface_CAN_LIN:TCAN332G U?
+U 1 1 60EC8ED3
+P 5300 3650
+F 0 "U?" H 5400 4100 50  0000 C CNN
+F 1 "TCAN332G" H 5550 4000 50  0000 C CNN
+F 2 "" H 5300 3150 50  0001 C CIN
+F 3 "https://www.ti.com/lit/ds/symlink/tcan330g.pdf" H 5300 3650 50  0001 C CNN
+	1    5300 3650
+	1    0    0    -1  
+$EndComp
+Text GLabel 4850 2750 0    50   Input ~ 0
+3V3
+$Comp
+L Device:C C?
+U 1 1 60ECB2D3
+P 4950 2900
+AR Path="/5F310311/60ECB2D3" Ref="C?"  Part="1" 
+AR Path="/5F3255E8/60ECB2D3" Ref="C?"  Part="1" 
+AR Path="/5F387075/60ECB2D3" Ref="C?"  Part="1" 
+AR Path="/60E4937F/60ECB2D3" Ref="C?"  Part="1" 
+AR Path="/60EC8491/60ECB2D3" Ref="C?"  Part="1" 
+F 0 "C?" H 5050 3000 50  0000 L CNN
+F 1 "100nF" H 5050 2900 50  0000 L CNN
+F 2 "" H 4988 2750 50  0001 C CNN
+F 3 "~" H 4950 2900 50  0001 C CNN
+F 4 "10V" H 4950 2900 50  0001 C CNN "Rated voltage"
+	1    4950 2900
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR?
+U 1 1 60ECB2D9
+P 4950 3100
+AR Path="/5F310311/60ECB2D9" Ref="#PWR?"  Part="1" 
+AR Path="/5F3255E8/60ECB2D9" Ref="#PWR?"  Part="1" 
+AR Path="/5F387075/60ECB2D9" Ref="#PWR?"  Part="1" 
+AR Path="/60E4937F/60ECB2D9" Ref="#PWR?"  Part="1" 
+AR Path="/60EC8491/60ECB2D9" Ref="#PWR0129"  Part="1" 
+F 0 "#PWR0129" H 4950 2850 50  0001 C CNN
+F 1 "GND" H 4955 2927 50  0000 C CNN
+F 2 "" H 4950 3100 50  0001 C CNN
+F 3 "" H 4950 3100 50  0001 C CNN
+	1    4950 3100
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	4950 3100 4950 3050
+$Comp
+L power:GND #PWR?
+U 1 1 60ECB715
+P 5300 4100
+AR Path="/5F310311/60ECB715" Ref="#PWR?"  Part="1" 
+AR Path="/5F3255E8/60ECB715" Ref="#PWR?"  Part="1" 
+AR Path="/5F387075/60ECB715" Ref="#PWR?"  Part="1" 
+AR Path="/60E4937F/60ECB715" Ref="#PWR?"  Part="1" 
+AR Path="/60EC8491/60ECB715" Ref="#PWR0130"  Part="1" 
+F 0 "#PWR0130" H 5300 3850 50  0001 C CNN
+F 1 "GND" H 5305 3927 50  0000 C CNN
+F 2 "" H 5300 4100 50  0001 C CNN
+F 3 "" H 5300 4100 50  0001 C CNN
+	1    5300 4100
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	5300 4100 5300 4050
+Wire Wire Line
+	4650 3450 4800 3450
+Wire Wire Line
+	4650 3550 4800 3550
+Text Label 5850 3500 0    50   ~ 0
+CAN_H
+Text Label 5850 3800 0    50   ~ 0
+CAN_L
+Text HLabel 4650 3450 0    50   Input ~ 0
+TXD_CAN
+Text HLabel 4650 3550 0    50   Output ~ 0
+RXD_CAN
+Wire Wire Line
+	5800 3750 5850 3750
+Wire Wire Line
+	5800 3550 5850 3550
+Wire Wire Line
+	4950 2750 5300 2750
+Wire Wire Line
+	5300 2750 5300 3250
+Wire Wire Line
+	4850 2750 4950 2750
+Connection ~ 4950 2750
+$Comp
+L Device:R R?
+U 1 1 60ED7D95
+P 6200 3650
+AR Path="/5F310311/60ED7D95" Ref="R?"  Part="1" 
+AR Path="/5F3255E8/60ED7D95" Ref="R?"  Part="1" 
+AR Path="/5F387075/60ED7D95" Ref="R?"  Part="1" 
+AR Path="/60E4937F/60ED7D95" Ref="R?"  Part="1" 
+AR Path="/60EC8491/60ED7D95" Ref="R?"  Part="1" 
+F 0 "R?" H 6270 3696 50  0000 L CNN
+F 1 "120" H 6270 3605 50  0000 L CNN
+F 2 "" V 6130 3650 50  0001 C CNN
+F 3 "~" H 6200 3650 50  0001 C CNN
+	1    6200 3650
+	1    0    0    -1  
+$EndComp
+Connection ~ 6200 3500
+Connection ~ 6200 3800
+Wire Wire Line
+	5850 3800 5850 3750
+Wire Wire Line
+	5850 3800 6200 3800
+Wire Wire Line
+	5850 3550 5850 3500
+Wire Wire Line
+	5850 3500 6200 3500
+$Comp
+L Connector_Generic:Conn_01x02 J?
+U 1 1 60EDAE2F
+P 6800 3600
+F 0 "J?" H 6880 3592 50  0000 L CNN
+F 1 "Conn_01x02" H 6880 3501 50  0000 L CNN
+F 2 "" H 6800 3600 50  0001 C CNN
+F 3 "~" H 6800 3600 50  0001 C CNN
+	1    6800 3600
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	6600 3600 6600 3500
+Wire Wire Line
+	6200 3500 6600 3500
+Wire Wire Line
+	6600 3700 6600 3800
+Wire Wire Line
+	6200 3800 6600 3800
+$EndSCHEMATC
