@@ -6,14 +6,18 @@ F https://www.ti.com/lit/ds/symlink/drv8353.pdf
 $ENDCMP
 #
 $CMP ECS-TXO-2016
-D SMD HCMOS TCXO in  2.0x 1.6x 0.8mm ceramic package
-K TCXO
+D TCXO Oscillators 20MHz, 3.3V, 2.5ppm, in 2.0 x 1.6 x 0.8mm ceramic package
 F https://ecsxtal.com/store/pdf/ECS-TXO-2016.pdf
 $ENDCMP
 #
 $CMP LMR36015
 D 4.2-V to 60-V, 1.5-A ultra-small synchronous step-down converter
 F https://www.ti.com/lit/ds/symlink/lmr36015.pdf
+$ENDCMP
+#
+$CMP REF6230
+D REF62xxHigh-PrecisionVoltageReferenceWith IntegratedADC Drive Buffer
+F https://www.ti.com/lit/ds/symlink/ref6230.pdf
 $ENDCMP
 #
 $CMP SG-210STF
@@ -28,15 +32,14 @@ K Crystal Clock Oscillator
 F https://support.epson.biz/td/api/doc_check.php?mode=dl&lang=en&Parts=SG-211SEE
 $ENDCMP
 #
-$CMP SG-211_copy
-D CMOS Crystal Oscillator SPXO
-K Crystal Clock Oscillator
-F https://support.epson.biz/td/api/doc_check.php?mode=dl&lang=en&Parts=SG-211SEE
-$ENDCMP
-#
 $CMP TMS320F28388D
 D C2000™ 32-bit MCU with connectivity manager, 2x C28x+CLA CPU, 1.5-MB flash, FPU64, CLB, ENET, EtherCAT
 F https://www.ti.com/lit/ds/symlink/tms320f28388d.pdf
+$ENDCMP
+#
+$CMP TPD4E001
+D 4-Channel ESD-Protection for High-Speed Data Interfaces /w Low-Capacitance
+F https://www.ti.com/lit/ds/symlink/tpd4e001.pdf
 $ENDCMP
 #
 $CMP TPS6208812
