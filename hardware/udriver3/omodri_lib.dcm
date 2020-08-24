@@ -11,12 +11,17 @@ F https://ecsxtal.com/store/pdf/ECS-TXO-2016.pdf
 $ENDCMP
 #
 $CMP LMR36015
-D 4.2-V to 60-V, 1.5-A ultra-small synchronous step-down converter
+D 4.2V to 60V, 1.5A ultra-small synchronous step-down converter
 F https://www.ti.com/lit/ds/symlink/lmr36015.pdf
 $ENDCMP
 #
+$CMP LMZ36002
+D 4.5V to 60V, 2A Step-Down Power Module in QFN Package
+F https://www.ti.com/lit/ds/symlink/lmz36002.pdf
+$ENDCMP
+#
 $CMP REF6230
-D REF62xxHigh-PrecisionVoltageReferenceWith IntegratedADC Drive Buffer
+D High-Precision Voltage Reference With Integrated ADC Drive Buffer
 F https://www.ti.com/lit/ds/symlink/ref6230.pdf
 $ENDCMP
 #
@@ -43,13 +48,18 @@ F https://www.ti.com/lit/ds/symlink/tpd4e001.pdf
 $ENDCMP
 #
 $CMP TPS6208812
-D 2.4-V to 5.5-V, 1.2V / 3-A tiny 6-pin synchronous step-down converter
+D 2.4V to 5.5V, 1.2V / 3A tiny 6-pin synchronous step-down converter
 F https://www.ti.com/lit/ds/symlink/tps62088.pdf
 $ENDCMP
 #
 $CMP TPS6208833
-D 2.4-V to 5.5-V, 3.3V / 3-A tiny 6-pin synchronous step-down converter
+D 2.4V to 5.5V, 3.3V / 3A tiny 6-pin synchronous step-down converter
 F https://www.ti.com/lit/ds/symlink/tps62088.pdf
+$ENDCMP
+#
+$CMP TPSM82821
+D 1A High Efficiency Step-Down Converter /w Integrated Inductor in MicroSiP package
+F https://www.ti.com/lit/ds/symlink/tpsm82821.pdf
 $ENDCMP
 #
 $CMP TXB0106RGYR
