@@ -1,4 +1,4 @@
-[Design]
+﻿[Design]
 Version=1.0
 HierarchyMode=3
 ChannelRoomNamingStyle=0
@@ -275,8 +275,50 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=HMRJDFUQ
 
+[Document15]
+DocumentPath=..\..\PAL Libraries\2020 Libraries\SCH\PAL_Memory_2020.SchLib
+AnnotationEnabled=1
+AnnotateStartValue=1
+AnnotationIndexControlEnabled=0
+AnnotateSuffix=
+AnnotateScope=All
+AnnotateOrder=-1
+DoLibraryUpdate=1
+DoDatabaseUpdate=1
+ClassGenCCAutoEnabled=1
+ClassGenCCAutoRoomEnabled=1
+ClassGenNCAutoScope=None
+DItemRevisionGUID=
+GenerateClassCluster=0
+DocumentUniqueId=LLSPEWPD
+
+[Document16]
+DocumentPath=..\..\PAL Libraries\2020 Libraries\PCB\PAL_Switches_2020.PcbLib
+AnnotationEnabled=1
+AnnotateStartValue=1
+AnnotationIndexControlEnabled=0
+AnnotateSuffix=
+AnnotateScope=All
+AnnotateOrder=-1
+DoLibraryUpdate=1
+DoDatabaseUpdate=1
+ClassGenCCAutoEnabled=1
+ClassGenCCAutoRoomEnabled=1
+ClassGenNCAutoScope=None
+DItemRevisionGUID=
+GenerateClassCluster=0
+DocumentUniqueId=DYEGYHMG
+
 [GeneratedDocument1]
-DocumentPath=Project Outputs for MC21R01\BGA Escape Route - MC21R01.html
+DocumentPath=Project Outputs for MC21R01\Design Rule Check - MC21R01.html
+DItemRevisionGUID=
+
+[GeneratedDocument2]
+DocumentPath=..\..\PAL Libraries\2020 Libraries\SCH\PAL_Memory_2020.csv
+DItemRevisionGUID=
+
+[GeneratedDocument3]
+DocumentPath=..\..\PAL Libraries\2020 Libraries\SCH\PAL_Memory_2020.rep
 DItemRevisionGUID=
 
 [SearchPath1]
@@ -523,7 +565,7 @@ OutputDefault20=0
 [OutputGroup2]
 Name=Simulator Outputs
 Description=
-TargetPrinter=HP6CF3C6 (HP Color LaserJet Pro M453-4)
+TargetPrinter=Brother HL-L2360D series
 PrinterOptions=Record=PrinterOptions|Copies=1|Duplex=1|TrueTypeOptions=3|Collate=1|PrintJobKind=1|PrintWhat=1
 
 [OutputGroup3]
