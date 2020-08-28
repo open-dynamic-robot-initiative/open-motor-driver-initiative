@@ -3,7 +3,7 @@ EELAYER 30 0
 EELAYER END
 $Descr A4 11693 8268
 encoding utf-8
-Sheet 6 8
+Sheet 6 10
 Title "Open MOtor DRiver Initiative (OMODRI)"
 Date ""
 Rev "1.0"
@@ -14,10 +14,10 @@ Comment3 ""
 Comment4 ""
 $EndDescr
 $Comp
-L Interface_CAN_LIN:TCAN332G U9
+L Interface_CAN_LIN:TCAN332G U10
 U 1 1 60EC8ED3
 P 5300 3650
-F 0 "U9" H 5400 4100 50  0000 C CNN
+F 0 "U10" H 5400 4100 50  0000 C CNN
 F 1 "TCAN332G" H 5550 4000 50  0000 C CNN
 F 2 "" H 5300 3150 50  0001 C CIN
 F 3 "https://www.ti.com/lit/ds/symlink/tcan330g.pdf" H 5300 3650 50  0001 C CNN
@@ -34,8 +34,8 @@ AR Path="/5F310311/60ECB2D3" Ref="C?"  Part="1"
 AR Path="/5F3255E8/60ECB2D3" Ref="C?"  Part="1" 
 AR Path="/5F387075/60ECB2D3" Ref="C?"  Part="1" 
 AR Path="/60E4937F/60ECB2D3" Ref="C?"  Part="1" 
-AR Path="/60EC8491/60ECB2D3" Ref="C107"  Part="1" 
-F 0 "C107" H 5050 3000 50  0000 L CNN
+AR Path="/60EC8491/60ECB2D3" Ref="C131"  Part="1" 
+F 0 "C131" H 5050 3000 50  0000 L CNN
 F 1 "100nF" H 5050 2900 50  0000 L CNN
 F 2 "Capacitor_SMD:C_0201_0603Metric" H 4988 2750 50  0001 C CNN
 F 3 "https://www.murata.com/en-eu/products/productdetail?partno=GRM033C71A104KE14%23" H 4950 2900 50  0001 C CNN
@@ -57,8 +57,8 @@ AR Path="/5F310311/60ECB2D9" Ref="#PWR?"  Part="1"
 AR Path="/5F3255E8/60ECB2D9" Ref="#PWR?"  Part="1" 
 AR Path="/5F387075/60ECB2D9" Ref="#PWR?"  Part="1" 
 AR Path="/60E4937F/60ECB2D9" Ref="#PWR?"  Part="1" 
-AR Path="/60EC8491/60ECB2D9" Ref="#PWR084"  Part="1" 
-F 0 "#PWR084" H 4950 2850 50  0001 C CNN
+AR Path="/60EC8491/60ECB2D9" Ref="#PWR0110"  Part="1" 
+F 0 "#PWR0110" H 4950 2850 50  0001 C CNN
 F 1 "GND" H 4955 2927 50  0000 C CNN
 F 2 "" H 4950 3100 50  0001 C CNN
 F 3 "" H 4950 3100 50  0001 C CNN
@@ -75,8 +75,8 @@ AR Path="/5F310311/60ECB715" Ref="#PWR?"  Part="1"
 AR Path="/5F3255E8/60ECB715" Ref="#PWR?"  Part="1" 
 AR Path="/5F387075/60ECB715" Ref="#PWR?"  Part="1" 
 AR Path="/60E4937F/60ECB715" Ref="#PWR?"  Part="1" 
-AR Path="/60EC8491/60ECB715" Ref="#PWR085"  Part="1" 
-F 0 "#PWR085" H 5300 3850 50  0001 C CNN
+AR Path="/60EC8491/60ECB715" Ref="#PWR0111"  Part="1" 
+F 0 "#PWR0111" H 5300 3850 50  0001 C CNN
 F 1 "GND" H 5305 3927 50  0000 C CNN
 F 2 "" H 5300 4100 50  0001 C CNN
 F 3 "" H 5300 4100 50  0001 C CNN
@@ -116,8 +116,8 @@ AR Path="/5F310311/60ED7D95" Ref="R?"  Part="1"
 AR Path="/5F3255E8/60ED7D95" Ref="R?"  Part="1" 
 AR Path="/5F387075/60ED7D95" Ref="R?"  Part="1" 
 AR Path="/60E4937F/60ED7D95" Ref="R?"  Part="1" 
-AR Path="/60EC8491/60ED7D95" Ref="R45"  Part="1" 
-F 0 "R45" H 6270 3696 50  0000 L CNN
+AR Path="/60EC8491/60ED7D95" Ref="R69"  Part="1" 
+F 0 "R69" H 6270 3696 50  0000 L CNN
 F 1 "120" H 6270 3605 50  0000 L CNN
 F 2 "Resistor_SMD:R_0201_0603Metric" V 6130 3650 50  0001 C CNN
 F 3 "https://industrial.panasonic.com/cdbs/www-data/pdf/RDA0000/AOA0000C304.pdf" H 6200 3650 50  0001 C CNN
