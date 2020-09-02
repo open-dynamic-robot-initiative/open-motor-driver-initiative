@@ -40,6 +40,11 @@ D 2.9V to 5.5V, 1A High Efficiency Step-Down Converter /w Integrated Inductor in
 F https://datasheets.maximintegrated.com/en/ds/MAXM17623-MAXM17624.pdf
 $ENDCMP
 #
+$CMP MPM3804GG
+D 2.3V to 5.5V, 0.6A, Step-Down Converter /w Integrated Inductor in Ultra-Small 2x2x0.9mm QFN Package
+F https://www.monolithicpower.com/en/documentview/productdocument/index/version/2/document_type/Datasheet/lang/en/sku/MPM3804GG/document_id/2122/
+$ENDCMP
+#
 $CMP NX7002BKM
 D 60 V, N-channel MOSFET in DFN1006-3 SMD package.
 F https://assets.nexperia.com/documents/data-sheet/NX7002BKM.pdf
@@ -65,6 +70,11 @@ D C2000™ 32-bit MCU with connectivity manager, 2x C28x+CLA CPU, 1.5-MB flash, 
 F https://www.ti.com/lit/ds/symlink/tms320f28388d.pdf
 $ENDCMP
 #
+$CMP TPD2E001
+D 2-Channel ESD-Protection for High-Speed Data Interfaces /w Low-Capacitance
+F https://www.ti.com/lit/ds/symlink/tpd2e001.pdf
+$ENDCMP
+#
 $CMP TPD4E001
 D 4-Channel ESD-Protection for High-Speed Data Interfaces /w Low-Capacitance
 F https://www.ti.com/lit/ds/symlink/tpd4e001.pdf
@@ -73,6 +83,11 @@ $ENDCMP
 $CMP TPD6E05U06
 D 6-channel Ultra-low-capacitance IEC ESD protection diodes for Super-Speed (Up to 6 Gbps) Interface
 F https://www.ti.com/lit/ds/symlink/tpd6e05u06.pdf
+$ENDCMP
+#
+$CMP TPS3703
+D High Accuracy Overvoltage and Undervoltage Reset IC With Time Delay and Manual Reset
+F https://www.ti.com/lit/ds/symlink/tps3703.pdf
 $ENDCMP
 #
 $CMP TPS6208812
