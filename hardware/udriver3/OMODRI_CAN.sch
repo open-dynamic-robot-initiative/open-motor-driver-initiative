@@ -3,7 +3,7 @@ EELAYER 30 0
 EELAYER END
 $Descr A4 11693 8268
 encoding utf-8
-Sheet 5 10
+Sheet 5 17
 Title "Open MOtor DRiver Initiative (OMODRI)"
 Date ""
 Rev "1.0"
@@ -18,8 +18,8 @@ L Interface_CAN_LIN:TCAN332G U?
 U 1 1 60EC8ED3
 P 5300 3650
 AR Path="/60EC8491/60EC8ED3" Ref="U?"  Part="1" 
-AR Path="/5F5B575B/60EC8ED3" Ref="U9"  Part="1" 
-F 0 "U9" H 5400 4100 50  0000 C CNN
+AR Path="/5F5B575B/60EC8ED3" Ref="U8"  Part="1" 
+F 0 "U8" H 5400 4100 50  0000 C CNN
 F 1 "TCAN332G" H 5550 4000 50  0000 C CNN
 F 2 "Package_TO_SOT_SMD:TSOT-23-8" H 5300 3150 50  0001 C CIN
 F 3 "https://www.ti.com/lit/ds/symlink/tcan330g.pdf" H 5300 3650 50  0001 C CNN
@@ -41,8 +41,8 @@ AR Path="/5F3255E8/60ECB2D3" Ref="C?"  Part="1"
 AR Path="/5F387075/60ECB2D3" Ref="C?"  Part="1" 
 AR Path="/60E4937F/60ECB2D3" Ref="C?"  Part="1" 
 AR Path="/60EC8491/60ECB2D3" Ref="C?"  Part="1" 
-AR Path="/5F5B575B/60ECB2D3" Ref="C91"  Part="1" 
-F 0 "C91" H 5050 3000 50  0000 L CNN
+AR Path="/5F5B575B/60ECB2D3" Ref="C67"  Part="1" 
+F 0 "C67" H 5050 3000 50  0000 L CNN
 F 1 "100nF" H 5050 2900 50  0000 L CNN
 F 2 "Capacitor_SMD:C_0201_0603Metric" H 4988 2750 50  0001 C CNN
 F 3 "https://www.murata.com/en-eu/products/productdetail?partno=GRM033C71A104KE14%23" H 4950 2900 50  0001 C CNN
@@ -65,8 +65,8 @@ AR Path="/5F3255E8/60ECB2D9" Ref="#PWR?"  Part="1"
 AR Path="/5F387075/60ECB2D9" Ref="#PWR?"  Part="1" 
 AR Path="/60E4937F/60ECB2D9" Ref="#PWR?"  Part="1" 
 AR Path="/60EC8491/60ECB2D9" Ref="#PWR?"  Part="1" 
-AR Path="/5F5B575B/60ECB2D9" Ref="#PWR092"  Part="1" 
-F 0 "#PWR092" H 4950 2850 50  0001 C CNN
+AR Path="/5F5B575B/60ECB2D9" Ref="#PWR067"  Part="1" 
+F 0 "#PWR067" H 4950 2850 50  0001 C CNN
 F 1 "GND" H 4955 2927 50  0000 C CNN
 F 2 "" H 4950 3100 50  0001 C CNN
 F 3 "" H 4950 3100 50  0001 C CNN
@@ -84,8 +84,8 @@ AR Path="/5F3255E8/60ECB715" Ref="#PWR?"  Part="1"
 AR Path="/5F387075/60ECB715" Ref="#PWR?"  Part="1" 
 AR Path="/60E4937F/60ECB715" Ref="#PWR?"  Part="1" 
 AR Path="/60EC8491/60ECB715" Ref="#PWR?"  Part="1" 
-AR Path="/5F5B575B/60ECB715" Ref="#PWR093"  Part="1" 
-F 0 "#PWR093" H 5300 3850 50  0001 C CNN
+AR Path="/5F5B575B/60ECB715" Ref="#PWR068"  Part="1" 
+F 0 "#PWR068" H 5300 3850 50  0001 C CNN
 F 1 "GND" H 5305 3927 50  0000 C CNN
 F 2 "" H 5300 4100 50  0001 C CNN
 F 3 "" H 5300 4100 50  0001 C CNN
@@ -126,8 +126,8 @@ AR Path="/5F3255E8/60ED7D95" Ref="R?"  Part="1"
 AR Path="/5F387075/60ED7D95" Ref="R?"  Part="1" 
 AR Path="/60E4937F/60ED7D95" Ref="R?"  Part="1" 
 AR Path="/60EC8491/60ED7D95" Ref="R?"  Part="1" 
-AR Path="/5F5B575B/60ED7D95" Ref="R37"  Part="1" 
-F 0 "R37" H 6270 3696 50  0000 L CNN
+AR Path="/5F5B575B/60ED7D95" Ref="R21"  Part="1" 
+F 0 "R21" H 6270 3696 50  0000 L CNN
 F 1 "120" H 6270 3605 50  0000 L CNN
 F 2 "Resistor_SMD:R_0201_0603Metric" V 6130 3650 50  0001 C CNN
 F 3 "https://industrial.panasonic.com/cdbs/www-data/pdf/RDA0000/AOA0000C304.pdf" H 6200 3650 50  0001 C CNN
@@ -153,11 +153,16 @@ L Connector_Generic:Conn_01x02 J?
 U 1 1 60EDAE2F
 P 6800 3600
 AR Path="/60EC8491/60EDAE2F" Ref="J?"  Part="1" 
-AR Path="/5F5B575B/60EDAE2F" Ref="J9"  Part="1" 
-F 0 "J9" H 6880 3592 50  0000 L CNN
+AR Path="/5F5B575B/60EDAE2F" Ref="J7"  Part="1" 
+F 0 "J7" H 6880 3592 50  0000 L CNN
 F 1 "Conn_01x02" H 6880 3501 50  0000 L CNN
 F 2 "Connector_Hirose:Hirose_DF13-02P-1.25DSA_1x02_P1.25mm_Vertical" H 6800 3600 50  0001 C CNN
-F 3 "~" H 6800 3600 50  0001 C CNN
+F 3 "https://www.hirose.com/product/document?clcode=&productname=&series=DF13&documenttype=Catalog&lang=en&documentid=D31687_en" H 6800 3600 50  0001 C CNN
+F 4 "DF13-2P-1.25DSA(75)-ND" H 6800 3600 50  0001 C CNN "DigiKey"
+F 5 "2427585" H 6800 3600 50  0001 C CNN "Farnell"
+F 6 "798-DF13-2P-125DSA75" H 6800 3600 50  0001 C CNN "Mouser"
+F 7 "DF13-2P-1.25DSA(75)" H 6800 3600 50  0001 C CNN "Part No"
+F 8 "188-6248" H 6800 3600 50  0001 C CNN "RS"
 	1    6800 3600
 	1    0    0    -1  
 $EndComp
