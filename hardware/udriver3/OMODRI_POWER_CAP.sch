@@ -3,11 +3,11 @@ EELAYER 30 0
 EELAYER END
 $Descr A4 11693 8268
 encoding utf-8
-Sheet 16 17
-Title ""
+Sheet 14 17
+Title "Open MOtor DRiver Initiative (OMODRI)"
 Date ""
-Rev ""
-Comp ""
+Rev "1.0"
+Comp "LAAS/CNRS"
 Comment1 ""
 Comment2 ""
 Comment3 ""
@@ -45,22 +45,6 @@ F 1 "GND" H 4830 4377 50  0000 C CNN
 F 2 "" H 4825 4550 50  0001 C CNN
 F 3 "" H 4825 4550 50  0001 C CNN
 	1    4825 4550
-	1    0    0    -1  
-$EndComp
-$Comp
-L Connector:TestPoint TP?
-U 1 1 5F9F53FF
-P 6575 4050
-AR Path="/5F310311/5F9F53FF" Ref="TP?"  Part="1" 
-AR Path="/5F3255E8/5F9F53FF" Ref="TP?"  Part="1" 
-AR Path="/5F387075/5F9F53FF" Ref="TP?"  Part="1" 
-AR Path="/5F9F53FF" Ref="TP?"  Part="1" 
-AR Path="/5F9E8B4A/5F9F53FF" Ref="TP31"  Part="1" 
-F 0 "TP31" H 6525 4350 50  0000 L CNN
-F 1 "TestPoint" H 6525 4250 50  0000 L CNN
-F 2 "TestPoint:TestPoint_Pad_D1.0mm" H 6775 4050 50  0001 C CNN
-F 3 "~" H 6775 4050 50  0001 C CNN
-	1    6575 4050
 	1    0    0    -1  
 $EndComp
 $Comp
@@ -131,19 +115,6 @@ F 9 "732-5255" H 6225 3900 50  0001 C CNN "RS"
 	1    0    0    -1  
 $EndComp
 $Comp
-L Connector_Generic:Conn_01x02 J?
-U 1 1 5F9F542A
-P 4625 4050
-AR Path="/5F9F542A" Ref="J?"  Part="1" 
-AR Path="/5F9E8B4A/5F9F542A" Ref="J13"  Part="1" 
-F 0 "J13" H 4625 4150 50  0000 C CNN
-F 1 "Conn_01x02" H 4675 3850 50  0000 C CNN
-F 2 "Connector_AMASS:AMASS_XT30PW-M_1x02_P2.50mm_Horizontal" H 4625 4050 50  0001 C CNN
-F 3 "https://www.tme.eu/en/Document/ce4077e36b79046da520ca73227e15de/XT30PW%20SPEC.pdf" H 4625 4050 50  0001 C CNN
-	1    4625 4050
-	-1   0    0    -1  
-$EndComp
-$Comp
 L power:GND #PWR?
 U 1 1 5F9F5430
 P 6225 4550
@@ -158,22 +129,6 @@ F 2 "" H 6225 4550 50  0001 C CNN
 F 3 "" H 6225 4550 50  0001 C CNN
 	1    6225 4550
 	1    0    0    -1  
-$EndComp
-$Comp
-L Connector:TestPoint TP?
-U 1 1 5F9F5436
-P 4825 3650
-AR Path="/5F310311/5F9F5436" Ref="TP?"  Part="1" 
-AR Path="/5F3255E8/5F9F5436" Ref="TP?"  Part="1" 
-AR Path="/5F387075/5F9F5436" Ref="TP?"  Part="1" 
-AR Path="/5F9F5436" Ref="TP?"  Part="1" 
-AR Path="/5F9E8B4A/5F9F5436" Ref="TP30"  Part="1" 
-F 0 "TP30" V 4725 3750 50  0000 L CNN
-F 1 "TestPoint" V 4925 3550 50  0000 L CNN
-F 2 "TestPoint:TestPoint_Pad_D1.0mm" H 5025 3650 50  0001 C CNN
-F 3 "~" H 5025 3650 50  0001 C CNN
-	1    4825 3650
-	0    -1   -1   0   
 $EndComp
 $Comp
 L power:GND #PWR?
@@ -192,22 +147,6 @@ F 3 "" H 5875 4550 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L Device:CP C?
-U 1 1 5F9F5445
-P 5175 3900
-AR Path="/5F9F5445" Ref="C?"  Part="1" 
-AR Path="/5F9E8B4A/5F9F5445" Ref="C106"  Part="1" 
-F 0 "C106" H 5250 4025 50  0000 L CNN
-F 1 "100uF" H 5200 3775 50  0000 L CNN
-F 2 "Capacitor_Tantalum_SMD:CP_EIA-7360-38_Kemet-E" H 5213 3750 50  0001 C CNN
-F 3 "https://www.vishay.com/docs/40216/t52.pdf" H 5175 3900 50  0001 C CNN
-F 4 "35V" H 5175 3900 50  0001 C CNN "Rated Voltage"
-F 5 "74-T52M1107M035C0055" H 5175 3900 50  0001 C CNN "Mouser"
-F 6 "T52M1107M035C0055" H 5175 3900 50  0001 C CNN "Part No"
-	1    5175 3900
-	1    0    0    -1  
-$EndComp
-$Comp
 L power:GND #PWR?
 U 1 1 5F9F544B
 P 5525 4550
@@ -221,86 +160,6 @@ F 1 "GND" H 5530 4377 50  0000 C CNN
 F 2 "" H 5525 4550 50  0001 C CNN
 F 3 "" H 5525 4550 50  0001 C CNN
 	1    5525 4550
-	1    0    0    -1  
-$EndComp
-$Comp
-L Device:CP C?
-U 1 1 5F9F5454
-P 5175 4300
-AR Path="/5F9F5454" Ref="C?"  Part="1" 
-AR Path="/5F9E8B4A/5F9F5454" Ref="C109"  Part="1" 
-F 0 "C109" H 5250 4425 50  0000 L CNN
-F 1 "100uF" H 5200 4175 50  0000 L CNN
-F 2 "Capacitor_Tantalum_SMD:CP_EIA-7360-38_Kemet-E" H 5213 4150 50  0001 C CNN
-F 3 "https://www.vishay.com/docs/40216/t52.pdf" H 5175 4300 50  0001 C CNN
-F 4 "35V" H 5175 4300 50  0001 C CNN "Rated Voltage"
-F 5 "74-T52M1107M035C0055" H 5175 4300 50  0001 C CNN "Mouser"
-F 6 "T52M1107M035C0055" H 5175 4300 50  0001 C CNN "Part No"
-	1    5175 4300
-	1    0    0    -1  
-$EndComp
-$Comp
-L Device:CP C?
-U 1 1 5F9F545D
-P 5525 3900
-AR Path="/5F9F545D" Ref="C?"  Part="1" 
-AR Path="/5F9E8B4A/5F9F545D" Ref="C107"  Part="1" 
-F 0 "C107" H 5600 4025 50  0000 L CNN
-F 1 "100uF" H 5550 3775 50  0000 L CNN
-F 2 "Capacitor_Tantalum_SMD:CP_EIA-7360-38_Kemet-E" H 5563 3750 50  0001 C CNN
-F 3 "https://www.vishay.com/docs/40216/t52.pdf" H 5525 3900 50  0001 C CNN
-F 4 "35V" H 5525 3900 50  0001 C CNN "Rated Voltage"
-F 5 "74-T52M1107M035C0055" H 5525 3900 50  0001 C CNN "Mouser"
-F 6 "T52M1107M035C0055" H 5525 3900 50  0001 C CNN "Part No"
-	1    5525 3900
-	1    0    0    -1  
-$EndComp
-$Comp
-L Device:CP C?
-U 1 1 5F9F5466
-P 5875 3900
-AR Path="/5F9F5466" Ref="C?"  Part="1" 
-AR Path="/5F9E8B4A/5F9F5466" Ref="C108"  Part="1" 
-F 0 "C108" H 5950 4025 50  0000 L CNN
-F 1 "100uF" H 5900 3775 50  0000 L CNN
-F 2 "Capacitor_Tantalum_SMD:CP_EIA-7360-38_Kemet-E" H 5913 3750 50  0001 C CNN
-F 3 "https://www.vishay.com/docs/40216/t52.pdf" H 5875 3900 50  0001 C CNN
-F 4 "35V" H 5875 3900 50  0001 C CNN "Rated Voltage"
-F 5 "74-T52M1107M035C0055" H 5875 3900 50  0001 C CNN "Mouser"
-F 6 "T52M1107M035C0055" H 5875 3900 50  0001 C CNN "Part No"
-	1    5875 3900
-	1    0    0    -1  
-$EndComp
-$Comp
-L Device:CP C?
-U 1 1 5F9F546F
-P 5525 4300
-AR Path="/5F9F546F" Ref="C?"  Part="1" 
-AR Path="/5F9E8B4A/5F9F546F" Ref="C110"  Part="1" 
-F 0 "C110" H 5600 4425 50  0000 L CNN
-F 1 "100uF" H 5550 4175 50  0000 L CNN
-F 2 "Capacitor_Tantalum_SMD:CP_EIA-7360-38_Kemet-E" H 5563 4150 50  0001 C CNN
-F 3 "https://www.vishay.com/docs/40216/t52.pdf" H 5525 4300 50  0001 C CNN
-F 4 "35V" H 5525 4300 50  0001 C CNN "Rated Voltage"
-F 5 "74-T52M1107M035C0055" H 5525 4300 50  0001 C CNN "Mouser"
-F 6 "T52M1107M035C0055" H 5525 4300 50  0001 C CNN "Part No"
-	1    5525 4300
-	1    0    0    -1  
-$EndComp
-$Comp
-L Device:CP C?
-U 1 1 5F9F5478
-P 5875 4300
-AR Path="/5F9F5478" Ref="C?"  Part="1" 
-AR Path="/5F9E8B4A/5F9F5478" Ref="C111"  Part="1" 
-F 0 "C111" H 5950 4425 50  0000 L CNN
-F 1 "100uF" H 5900 4175 50  0000 L CNN
-F 2 "Capacitor_Tantalum_SMD:CP_EIA-7360-38_Kemet-E" H 5913 4150 50  0001 C CNN
-F 3 "https://www.vishay.com/docs/40216/t52.pdf" H 5875 4300 50  0001 C CNN
-F 4 "35V" H 5875 4300 50  0001 C CNN "Rated Voltage"
-F 5 "74-T52M1107M035C0055" H 5875 4300 50  0001 C CNN "Mouser"
-F 6 "T52M1107M035C0055" H 5875 4300 50  0001 C CNN "Part No"
-	1    5875 4300
 	1    0    0    -1  
 $EndComp
 $Comp
@@ -322,18 +181,6 @@ $EndComp
 Wire Wire Line
 	4825 4150 4825 4550
 Wire Wire Line
-	5175 4550 5175 4450
-Wire Wire Line
-	5175 4150 5175 4050
-Wire Wire Line
-	5525 4550 5525 4450
-Wire Wire Line
-	5525 4150 5525 4050
-Wire Wire Line
-	5875 4550 5875 4450
-Wire Wire Line
-	5875 4150 5875 4050
-Wire Wire Line
 	6225 4550 6225 4450
 Wire Wire Line
 	6225 4100 6575 4100
@@ -346,31 +193,17 @@ Wire Wire Line
 Wire Wire Line
 	6225 4100 6225 4050
 Connection ~ 6225 4100
-Wire Wire Line
-	6575 4050 6575 4100
 Connection ~ 6575 4100
 Wire Wire Line
 	6225 3750 6225 3650
 Wire Wire Line
-	6225 3650 5875 3650
-Wire Wire Line
-	5875 3650 5875 3750
-Wire Wire Line
 	5875 3650 5525 3650
 Wire Wire Line
-	5525 3650 5525 3750
-Connection ~ 5875 3650
-Wire Wire Line
 	5525 3650 5175 3650
-Wire Wire Line
-	5175 3650 5175 3750
 Connection ~ 5525 3650
 Wire Wire Line
 	5175 3650 4825 3650
-Wire Wire Line
-	4825 3650 4825 4050
 Connection ~ 5175 3650
-Connection ~ 4825 3650
 Wire Wire Line
 	6325 3650 6225 3650
 Connection ~ 6225 3650
@@ -378,4 +211,82 @@ Wire Wire Line
 	6925 4100 6575 4100
 Text HLabel 6925 4100 2    50   Output ~ 0
 V_Bus
+$Comp
+L Device:C C114
+U 1 1 5F5A9A1E
+P 5175 4100
+F 0 "C114" H 5225 4200 50  0000 L CNN
+F 1 "22uF" H 5225 4000 50  0000 L CNN
+F 2 "Capacitor_SMD:C_2220_5650Metric" H 5213 3950 50  0001 C CNN
+F 3 "https://product.tdk.com/info/en/catalog/datasheets/mlcc_commercial_midvoltage_en.pdf" H 5175 4100 50  0001 C CNN
+F 4 "445-C5750X7S2A226M280KBCT-ND" H 5175 4100 50  0001 C CNN "DigiKey"
+F 5 "3416277" H 5175 4100 50  0001 C CNN "Farnell"
+F 6 "810-C5750X7S2A226280" H 5175 4100 50  0001 C CNN "Mouser"
+F 7 "C5750X7S2A226M280KB" H 5175 4100 50  0001 C CNN "Part No"
+F 8 "100V" H 5175 4100 50  0001 C CNN "Rated Voltage"
+	1    5175 4100
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:C C115
+U 1 1 5F5AE0E5
+P 5525 4100
+F 0 "C115" H 5575 4200 50  0000 L CNN
+F 1 "22uF" H 5575 4000 50  0000 L CNN
+F 2 "Capacitor_SMD:C_2220_5650Metric" H 5563 3950 50  0001 C CNN
+F 3 "https://product.tdk.com/info/en/catalog/datasheets/mlcc_commercial_midvoltage_en.pdf" H 5525 4100 50  0001 C CNN
+F 4 "445-C5750X7S2A226M280KBCT-ND" H 5525 4100 50  0001 C CNN "DigiKey"
+F 5 "3416277" H 5525 4100 50  0001 C CNN "Farnell"
+F 6 "810-C5750X7S2A226280" H 5525 4100 50  0001 C CNN "Mouser"
+F 7 "C5750X7S2A226M280KB" H 5525 4100 50  0001 C CNN "Part No"
+F 8 "100V" H 5525 4100 50  0001 C CNN "Rated Voltage"
+	1    5525 4100
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:C C116
+U 1 1 5F5AF33B
+P 5875 4100
+F 0 "C116" H 5925 4200 50  0000 L CNN
+F 1 "22uF" H 5925 4000 50  0000 L CNN
+F 2 "Capacitor_SMD:C_2220_5650Metric" H 5913 3950 50  0001 C CNN
+F 3 "https://product.tdk.com/info/en/catalog/datasheets/mlcc_commercial_midvoltage_en.pdf" H 5875 4100 50  0001 C CNN
+F 4 "445-C5750X7S2A226M280KBCT-ND" H 5875 4100 50  0001 C CNN "DigiKey"
+F 5 "3416277" H 5875 4100 50  0001 C CNN "Farnell"
+F 6 "810-C5750X7S2A226280" H 5875 4100 50  0001 C CNN "Mouser"
+F 7 "C5750X7S2A226M280KB" H 5875 4100 50  0001 C CNN "Part No"
+F 8 "100V" H 5875 4100 50  0001 C CNN "Rated Voltage"
+	1    5875 4100
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	4825 3650 4825 4050
+$Comp
+L Connector_Generic:Conn_01x02 J?
+U 1 1 5F9F542A
+P 4625 4150
+AR Path="/5F9F542A" Ref="J?"  Part="1" 
+AR Path="/5F9E8B4A/5F9F542A" Ref="J13"  Part="1" 
+F 0 "J13" H 4625 4250 50  0000 C CNN
+F 1 "Conn_01x02" H 4675 3950 50  0000 C CNN
+F 2 "udriver3:AMASS_XT30PW-M_1x02_P2.50mm_Horizontal" H 4625 4150 50  0001 C CNN
+F 3 "https://www.tme.eu/en/Document/ce4077e36b79046da520ca73227e15de/XT30PW%20SPEC.pdf" H 4625 4150 50  0001 C CNN
+	1    4625 4150
+	-1   0    0    1   
+$EndComp
+Wire Wire Line
+	5175 3650 5175 3950
+Wire Wire Line
+	5175 4250 5175 4550
+Wire Wire Line
+	5525 3650 5525 3950
+Wire Wire Line
+	5525 4250 5525 4550
+Wire Wire Line
+	5875 3650 5875 3950
+Wire Wire Line
+	5875 4250 5875 4550
+Connection ~ 5875 3650
+Wire Wire Line
+	5875 3650 6225 3650
 $EndSCHEMATC

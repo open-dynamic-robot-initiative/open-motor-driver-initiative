@@ -35,6 +35,60 @@ D 4.5V to 60V, 2A Step-Down Power Module in QFN Package
 F https://www.ti.com/lit/ds/symlink/lmz36002.pdf
 $ENDCMP
 #
+$CMP LT6654AIS6-3
+D Precision voltage reference, 10mA output, 3.5V to 36V input, 10ppm/C drift, 3.0V output, SOT23-6
+K voltage reference vref
+F https://www.analog.com/media/en/technical-documentation/data-sheets/lt6654.pdf
+$ENDCMP
+#
+$CMP LT6657AHMS8-2.5
+D Precision voltage reference, 40V input, 10mA output, 1.5ppm/C drift, 2.5V output, MSOP-8
+K voltage reference vref
+F https://www.analog.com/media/en/technical-documentation/data-sheets/6657fd.pdf
+$ENDCMP
+#
+$CMP LT6657AHMS8-3
+D Precision voltage reference, 40V input, 10mA output, 1.5ppm/C drift, 3.0V output, MSOP-8
+K voltage reference vref
+F https://www.analog.com/media/en/technical-documentation/data-sheets/6657fd.pdf
+$ENDCMP
+#
+$CMP LT6657AHMS8-4.096
+D Precision voltage reference, 40V input, 10mA output, 1.5ppm/C drift, 4.096V output, MSOP-8
+K voltage reference vref
+F https://www.analog.com/media/en/technical-documentation/data-sheets/6657fd.pdf
+$ENDCMP
+#
+$CMP LT6657AHMS8-5
+D Precision voltage reference, 40V input, 10mA output, 1.5ppm/C drift, 5.0V output, MSOP-8
+K voltage reference vref
+F https://www.analog.com/media/en/technical-documentation/data-sheets/6657fd.pdf
+$ENDCMP
+#
+$CMP LT6657BHMS8-2.5
+D Precision voltage reference, 40V input, 10mA output, 3.0ppm/C drift, 2.5V output, MSOP-8
+K voltage reference vref
+F https://www.analog.com/media/en/technical-documentation/data-sheets/6657fd.pdf
+$ENDCMP
+#
+$CMP LT6657BHMS8-3
+D Precision voltage reference, 40V input, 10mA output, 3.0ppm/C drift, 3.0V output, MSOP-8
+K voltage reference vref
+F https://www.analog.com/media/en/technical-documentation/data-sheets/6657fd.pdf
+$ENDCMP
+#
+$CMP LT6657BHMS8-4.096
+D Precision voltage reference, 40V input, 10mA output, 3ppm/C drift, 4.096V output, MSOP-8
+K voltage reference vref
+F https://www.analog.com/media/en/technical-documentation/data-sheets/6657fd.pdf
+$ENDCMP
+#
+$CMP LT6657BHMS8-5
+D Precision voltage reference, 40V input, 10mA output, 3.0ppm/C drift, 5.0V output, MSOP-8
+K voltage reference vref
+F https://www.analog.com/media/en/technical-documentation/data-sheets/6657fd.pdf
+$ENDCMP
+#
 $CMP MAXM17623
 D 2.9V to 5.5V, 1A High Efficiency Step-Down Converter /w Integrated Inductor in MicroSiP package - MAXIM
 F https://datasheets.maximintegrated.com/en/ds/MAXM17623-MAXM17624.pdf
@@ -73,6 +127,11 @@ $ENDCMP
 $CMP TPD2E001
 D 2-Channel ESD-Protection for High-Speed Data Interfaces /w Low-Capacitance
 F https://www.ti.com/lit/ds/symlink/tpd2e001.pdf
+$ENDCMP
+#
+$CMP TPD3E001
+D 3-Channel ESD-Protection for High-Speed Data Interfaces /w Low-Capacitance
+F https://www.ti.com/lit/ds/symlink/tpd3e001.pdf
 $ENDCMP
 #
 $CMP TPD4E001

@@ -4,10 +4,10 @@ EELAYER END
 $Descr A4 11693 8268
 encoding utf-8
 Sheet 3 17
-Title ""
+Title "Open MOtor DRiver Initiative (OMODRI)"
 Date ""
-Rev ""
-Comp ""
+Rev "1.0"
+Comp "LAAS/CNRS"
 Comment1 ""
 Comment2 ""
 Comment3 ""
@@ -143,31 +143,8 @@ F 3 "" H 7750 3775 50  0001 C CNN
 	1    7750 3775
 	1    0    0    -1  
 $EndComp
-Connection ~ 7750 2950
-Text GLabel 8250 2950 2    50   Input ~ 0
+Text GLabel 7875 2950 2    50   Input ~ 0
 5V0
-$Comp
-L power:GND #PWR?
-U 1 1 5F665AFA
-P 8150 3775
-AR Path="/5F3A3F16/5F665AFA" Ref="#PWR?"  Part="1" 
-AR Path="/5F3A3F16/5F5BD908/5F665AFA" Ref="#PWR022"  Part="1" 
-F 0 "#PWR022" H 8150 3525 50  0001 C CNN
-F 1 "GND" H 8155 3602 50  0000 C CNN
-F 2 "" H 8150 3775 50  0001 C CNN
-F 3 "" H 8150 3775 50  0001 C CNN
-	1    8150 3775
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
-	8150 3775 8150 3725
-Wire Wire Line
-	8150 3425 8150 3375
-Wire Wire Line
-	8150 3075 8150 2950
-Wire Wire Line
-	8150 2950 8250 2950
-Connection ~ 8150 2950
 Text Label 6475 3150 0    50   ~ 0
 FB_5V0
 Wire Wire Line
@@ -184,34 +161,7 @@ Connection ~ 6800 2950
 Wire Wire Line
 	6375 3250 7100 3250
 Wire Wire Line
-	8150 2950 8150 2900
-Wire Wire Line
-	7750 2950 8150 2950
-Wire Wire Line
 	6800 2950 7100 2950
-$Comp
-L Device:R R?
-U 1 1 5F665B17
-P 8150 3575
-AR Path="/5F310311/5F665B17" Ref="R?"  Part="1" 
-AR Path="/5F3255E8/5F665B17" Ref="R?"  Part="1" 
-AR Path="/5F387075/5F665B17" Ref="R?"  Part="1" 
-AR Path="/60E4937F/5F665B17" Ref="R?"  Part="1" 
-AR Path="/5F5A1016/5F665B17" Ref="R?"  Part="1" 
-AR Path="/5F3A3F16/5F665B17" Ref="R?"  Part="1" 
-AR Path="/5F3A3F16/5F5BD908/5F665B17" Ref="R4"  Part="1" 
-F 0 "R4" H 8220 3621 50  0000 L CNN
-F 1 "1k" H 8220 3530 50  0000 L CNN
-F 2 "Resistor_SMD:R_0201_0603Metric" V 8080 3575 50  0001 C CNN
-F 3 "https://industrial.panasonic.com/cdbs/www-data/pdf/RDA0000/AOA0000C304.pdf" H 8150 3575 50  0001 C CNN
-F 4 "P122413CT-ND" H 8150 3575 50  0001 C CNN "DigiKey"
-F 5 "2302336" H 8150 3575 50  0001 C CNN "Farnell"
-F 6 "667-ERJ-1GNF1001C" H 8150 3575 50  0001 C CNN "Mouser"
-F 7 "ERJ-1GNF1001C" H 8150 3575 50  0001 C CNN "Part No"
-F 8 "179-7127" H 8150 3575 50  0001 C CNN "RS"
-	1    8150 3575
-	1    0    0    -1  
-$EndComp
 $Comp
 L Device:R R?
 U 1 1 5F665B22
@@ -229,44 +179,6 @@ F 7 "ERJ-1GNF1003C" H 7100 3100 50  0001 C CNN "Part No"
 F 8 "179-7130" H 7100 3100 50  0001 C CNN "RS"
 	1    7100 3100
 	1    0    0    -1  
-$EndComp
-$Comp
-L Connector:TestPoint TP?
-U 1 1 5F665B28
-P 8150 2900
-AR Path="/5F310311/5F665B28" Ref="TP?"  Part="1" 
-AR Path="/5F3255E8/5F665B28" Ref="TP?"  Part="1" 
-AR Path="/5F387075/5F665B28" Ref="TP?"  Part="1" 
-AR Path="/5F665B28" Ref="TP?"  Part="1" 
-AR Path="/5F3A3F16/5F665B28" Ref="TP?"  Part="1" 
-AR Path="/5F3A3F16/5F5BD908/5F665B28" Ref="TP5"  Part="1" 
-F 0 "TP5" H 8050 3200 50  0000 L CNN
-F 1 "TestPoint" H 8000 3100 50  0000 L CNN
-F 2 "TestPoint:TestPoint_Pad_D1.0mm" H 8350 2900 50  0001 C CNN
-F 3 "~" H 8350 2900 50  0001 C CNN
-	1    8150 2900
-	1    0    0    -1  
-$EndComp
-$Comp
-L Device:LED D?
-U 1 1 5F665B33
-P 8150 3225
-AR Path="/5F310311/5F665B33" Ref="D?"  Part="1" 
-AR Path="/5F3255E8/5F665B33" Ref="D?"  Part="1" 
-AR Path="/5F387075/5F665B33" Ref="D?"  Part="1" 
-AR Path="/5F3A3F16/5F665B33" Ref="D?"  Part="1" 
-AR Path="/5F3A3F16/5F5BD908/5F665B33" Ref="D1"  Part="1" 
-F 0 "D1" V 8150 3075 50  0000 L CNN
-F 1 "LED GREEN" V 8250 2775 50  0000 L CNN
-F 2 "LED_SMD:LED_0402_1005Metric" H 8150 3225 50  0001 C CNN
-F 3 "https://docs.broadcom.com/doc/AV02-0602EN" H 8150 3225 50  0001 C CNN
-F 4 "516-3066-1-ND" H 8150 3225 50  0001 C CNN "DigiKey"
-F 5 "630-HSMG-C280" H 8150 3225 50  0001 C CNN "Mouser"
-F 6 "2494322" H 8150 3225 50  0001 C CNN "Farnell"
-F 7 "HSMG-C280" H 8150 3225 50  0001 C CNN "Part No"
-F 8 "867-6560" H 8150 3225 50  0001 C CNN "RS"
-	1    8150 3225
-	0    -1   -1   0   
 $EndComp
 $Comp
 L Device:C C?
@@ -406,7 +318,10 @@ PG_5V0
 Wire Wire Line
 	7250 3250 7100 3250
 Connection ~ 7100 3250
+Connection ~ 7100 2950
 Wire Wire Line
 	7100 2950 7750 2950
-Connection ~ 7100 2950
+Connection ~ 7750 2950
+Wire Wire Line
+	7750 2950 7875 2950
 $EndSCHEMATC

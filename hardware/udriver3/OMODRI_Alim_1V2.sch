@@ -4,10 +4,10 @@ EELAYER END
 $Descr A4 11693 8268
 encoding utf-8
 Sheet 5 17
-Title ""
+Title "Open MOtor DRiver Initiative (OMODRI)"
 Date ""
-Rev ""
-Comp ""
+Rev "1.0"
+Comp "LAAS/CNRS"
 Comment1 ""
 Comment2 ""
 Comment3 ""
@@ -15,8 +15,6 @@ Comment4 ""
 $EndDescr
 Wire Wire Line
 	6300 3500 6700 3500
-Wire Wire Line
-	4300 3500 4800 3500
 Text Label 5950 3950 0    50   ~ 0
 FB_1V2
 Wire Wire Line
@@ -27,11 +25,6 @@ Text Label 6450 3500 0    50   ~ 0
 1V2
 Wire Wire Line
 	6700 4050 6700 3500
-Connection ~ 4300 3500
-Wire Wire Line
-	4300 3500 4200 3500
-Wire Wire Line
-	4300 4050 4300 3500
 Wire Wire Line
 	6700 4400 6700 4350
 $Comp
@@ -64,23 +57,8 @@ F 3 "" H 6300 4400 50  0001 C CNN
 $EndComp
 Wire Wire Line
 	6300 3500 6300 3550
-Text GLabel 4200 3500 0    50   Input ~ 0
+Text GLabel 4725 3500 0    50   Input ~ 0
 5V0
-Wire Wire Line
-	4300 4350 4300 4400
-$Comp
-L power:GND #PWR?
-U 1 1 5F75EA43
-P 4300 4400
-AR Path="/5F3A3F16/5F75EA43" Ref="#PWR?"  Part="1" 
-AR Path="/5F3A3F16/5F5BF412/5F75EA43" Ref="#PWR032"  Part="1" 
-F 0 "#PWR032" H 4300 4150 50  0001 C CNN
-F 1 "GND" H 4305 4227 50  0000 C CNN
-F 2 "" H 4300 4400 50  0001 C CNN
-F 3 "" H 4300 4400 50  0001 C CNN
-	1    4300 4400
-	1    0    0    -1  
-$EndComp
 $Comp
 L power:GND #PWR?
 U 1 1 5F75EA49
@@ -117,23 +95,6 @@ Wire Wire Line
 Text GLabel 7700 3500 2    50   Output ~ 0
 VDD_1V2
 Connection ~ 7150 3500
-$Comp
-L Connector:TestPoint TP?
-U 1 1 5F75EA5F
-P 7700 3775
-AR Path="/5F310311/5F75EA5F" Ref="TP?"  Part="1" 
-AR Path="/5F3255E8/5F75EA5F" Ref="TP?"  Part="1" 
-AR Path="/5F387075/5F75EA5F" Ref="TP?"  Part="1" 
-AR Path="/5F75EA5F" Ref="TP?"  Part="1" 
-AR Path="/5F3A3F16/5F75EA5F" Ref="TP?"  Part="1" 
-AR Path="/5F3A3F16/5F5BF412/5F75EA5F" Ref="TP8"  Part="1" 
-F 0 "TP8" V 7525 3850 50  0000 L CNN
-F 1 "TestPoint" V 7625 3850 50  0000 L CNN
-F 2 "TestPoint:TestPoint_Pad_D1.0mm" H 7900 3775 50  0001 C CNN
-F 3 "~" H 7900 3775 50  0001 C CNN
-	1    7700 3775
-	0    1    1    0   
-$EndComp
 $Comp
 L Device:R R?
 U 1 1 5F75EA6A
@@ -188,25 +149,6 @@ F 7 "MPM3804GG" H 5350 3750 50  0001 C CNN "Part No"
 	1    0    0    -1  
 $EndComp
 $Comp
-L Device:C C?
-U 1 1 5F75EA8B
-P 4300 4200
-AR Path="/5F3A3F16/5F75EA8B" Ref="C?"  Part="1" 
-AR Path="/5F3A3F16/5F5BF412/5F75EA8B" Ref="C20"  Part="1" 
-F 0 "C20" H 4415 4246 50  0000 L CNN
-F 1 "10uF" H 4415 4155 50  0000 L CNN
-F 2 "Capacitor_SMD:C_0603_1608Metric" H 4338 4050 50  0001 C CNN
-F 3 "https://www.murata.com/en-eu/products/productdetail?partno=GRM188R61A106ME69%23" H 4300 4200 50  0001 C CNN
-F 4 "490-10475-1-ND" H 4300 4200 50  0001 C CNN "DigiKey"
-F 5 "2456110" H 4300 4200 50  0001 C CNN "Farnell"
-F 6 "81-GRM188R61A106ME9D" H 4300 4200 50  0001 C CNN "Mouser"
-F 7 "GRM188R61A106ME69D" H 4300 4200 50  0001 C CNN "Part No"
-F 8 "113-8702" H 4300 4200 50  0001 C CNN "RS"
-F 9 "10V" H 4300 4200 50  0001 C CNN "Rated Voltage"
-	1    4300 4200
-	1    0    0    -1  
-$EndComp
-$Comp
 L Device:Ferrite_Bead_Small FB?
 U 1 1 5F75EA96
 P 6925 3500
@@ -231,14 +173,14 @@ P 6700 4200
 AR Path="/5F3A3F16/5F75EAA2" Ref="C?"  Part="1" 
 AR Path="/5F3A3F16/5F5BF412/5F75EAA2" Ref="C21"  Part="1" 
 F 0 "C21" H 6815 4246 50  0000 L CNN
-F 1 "22uF" H 6815 4155 50  0000 L CNN
+F 1 "10uF" H 6815 4155 50  0000 L CNN
 F 2 "Capacitor_SMD:C_0603_1608Metric" H 6738 4050 50  0001 C CNN
 F 3 "https://www.murata.com/en-eu/products/productdetail?partno=GRM188R61A106ME69%23" H 6700 4200 50  0001 C CNN
-F 4 "490-10476-1-ND" H 6700 4200 50  0001 C CNN "DigiKey"
-F 5 "2426957" H 6700 4200 50  0001 C CNN "Farnell"
-F 6 "81-GRM188R61A226ME5D" H 6700 4200 50  0001 C CNN "Mouser"
-F 7 "GRM188R61A226ME15D" H 6700 4200 50  0001 C CNN "Part No"
-F 8 "884-7258" H 6700 4200 50  0001 C CNN "RS"
+F 4 "490-10475-1-ND" H 6700 4200 50  0001 C CNN "DigiKey"
+F 5 "2456110" H 6700 4200 50  0001 C CNN "Farnell"
+F 6 "81-GRM188R61A106ME9D" H 6700 4200 50  0001 C CNN "Mouser"
+F 7 "GRM188R61A106ME69D" H 6700 4200 50  0001 C CNN "Part No"
+F 8 "113-8702" H 6700 4200 50  0001 C CNN "RS"
 F 9 "10V" H 6700 4200 50  0001 C CNN "Rated Voltage"
 	1    6700 4200
 	1    0    0    -1  
@@ -323,15 +265,12 @@ Wire Wire Line
 	7025 3500 7150 3500
 Wire Wire Line
 	6700 3500 6825 3500
-Wire Wire Line
-	7625 3500 7625 3775
-Wire Wire Line
-	7700 3775 7625 3775
-Connection ~ 7625 3775
-Wire Wire Line
-	7625 3775 7625 4050
 Text HLabel 4725 3950 0    50   Input ~ 0
 PG_5V0
 Wire Wire Line
 	4725 3950 4800 3950
+Wire Wire Line
+	4725 3500 4800 3500
+Wire Wire Line
+	7625 3500 7625 4050
 $EndSCHEMATC

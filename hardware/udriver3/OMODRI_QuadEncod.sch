@@ -3,7 +3,7 @@ EELAYER 30 0
 EELAYER END
 $Descr A4 11693 8268
 encoding utf-8
-Sheet 3 17
+Sheet 17 17
 Title "Open MOtor DRiver Initiative (OMODRI)"
 Date ""
 Rev "1.0"
@@ -178,23 +178,23 @@ Wire Wire Line
 	4550 3150 4700 3150
 Wire Wire Line
 	4550 3350 4700 3350
-Text Label 6000 2350 0    50   ~ 0
+Text Label 6075 2350 0    50   ~ 0
 ENC1_A
-Text Label 6000 2550 0    50   ~ 0
+Text Label 6075 2550 0    50   ~ 0
 ENC1_B
-Text Label 6000 2750 0    50   ~ 0
+Text Label 6075 2750 0    50   ~ 0
 ENC1_I
 Wire Wire Line
-	6000 2950 6350 2950
+	6000 3350 6350 3350
 Wire Wire Line
 	6000 3150 6350 3150
 Wire Wire Line
-	6000 3350 6350 3350
-Text Label 6000 2950 0    50   ~ 0
+	6000 2950 6350 2950
+Text Label 6050 3350 0    50   ~ 0
 ENC2_A
-Text Label 6000 3150 0    50   ~ 0
+Text Label 6050 3150 0    50   ~ 0
 ENC2_B
-Text Label 6000 3350 0    50   ~ 0
+Text Label 6075 2950 0    50   ~ 0
 ENC2_I
 Text Label 8300 2550 0    50   ~ 0
 ENC1_I
@@ -274,11 +274,11 @@ Text HLabel 4550 2550 0    50   BiDi ~ 0
 EQEP1_B
 Text HLabel 4550 2750 0    50   BiDi ~ 0
 EQEP1_I
-Text HLabel 4550 2950 0    50   BiDi ~ 0
+Text HLabel 4550 3350 0    50   BiDi ~ 0
 EQEP2_A
 Text HLabel 4550 3150 0    50   BiDi ~ 0
 EQEP2_B
-Text HLabel 4550 3350 0    50   BiDi ~ 0
+Text HLabel 4550 2950 0    50   BiDi ~ 0
 EQEP2_I
 Wire Wire Line
 	8600 4250 8600 4600

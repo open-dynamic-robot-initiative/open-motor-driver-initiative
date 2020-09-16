@@ -4,10 +4,10 @@ EELAYER END
 $Descr A4 11693 8268
 encoding utf-8
 Sheet 7 17
-Title ""
+Title "Open MOtor DRiver Initiative (OMODRI)"
 Date ""
-Rev ""
-Comp ""
+Rev "1.0"
+Comp "LAAS/CNRS"
 Comment1 ""
 Comment2 ""
 Comment3 ""

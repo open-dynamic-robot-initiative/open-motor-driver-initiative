@@ -3,7 +3,7 @@ EELAYER 30 0
 EELAYER END
 $Descr A4 11693 8268
 encoding utf-8
-Sheet 9 17
+Sheet 12 17
 Title "Open MOtor DRiver Initiative (OMODRI)"
 Date ""
 Rev "1.0"
@@ -108,11 +108,11 @@ Wire Wire Line
 Wire Wire Line
 	4275 3450 4575 3450
 Wire Wire Line
-	4275 3750 4575 3750
+	4275 3950 4575 3950
 Wire Wire Line
 	4275 3850 4575 3850
 Wire Wire Line
-	4275 3950 4575 3950
+	4275 3750 4575 3750
 Text Label 4375 2100 0    50   ~ 0
 SHA
 Text Label 4375 2250 0    50   ~ 0
@@ -136,17 +136,15 @@ SPB
 Text Label 4375 3950 0    50   ~ 0
 SPA
 Wire Wire Line
-	4275 4200 4575 4200
+	4275 4400 4575 4400
 Wire Wire Line
 	4275 4300 4575 4300
 Wire Wire Line
-	4275 4400 4575 4400
+	4275 4200 4575 4200
 Text Label 4375 4200 0    50   ~ 0
 SNC
 Text Label 4375 4300 0    50   ~ 0
 SNB
-Text Label 4375 4400 0    50   ~ 0
-SNA
 Wire Wire Line
 	2775 4050 3375 4050
 Wire Wire Line
@@ -310,7 +308,6 @@ Text GLabel 2875 5750 0    50   Input ~ 0
 VDD_3V3
 Wire Wire Line
 	4275 1950 4575 1950
-Connection ~ 3325 1250
 Wire Wire Line
 	3375 3100 2925 3100
 Wire Wire Line
@@ -415,23 +412,6 @@ F 4 "296-DRV8353SRTATCT-ND" H 3825 3250 50  0001 C CNN "DigiKey"
 F 5 "595-DRV8353SRTAT" H 3825 3250 50  0001 C CNN "Mouser"
 F 6 "DRV8353SRTAT" H 3825 3250 50  0001 C CNN "Part No"
 	1    3825 3250
-	1    0    0    -1  
-$EndComp
-$Comp
-L Connector:TestPoint TP?
-U 1 1 5F864E20
-P 3325 1250
-AR Path="/5F310311/5F864E20" Ref="TP?"  Part="1" 
-AR Path="/5F3255E8/5F864E20" Ref="TP?"  Part="1" 
-AR Path="/5F387075/5F864E20" Ref="TP?"  Part="1" 
-AR Path="/5F5FCCBB/5F864E20" Ref="TP?"  Part="1" 
-AR Path="/5F71C92E/5F864E20" Ref="TP?"  Part="1" 
-AR Path="/5F71C5AF/5F864E20" Ref="TP11"  Part="1" 
-F 0 "TP11" H 3375 1450 50  0000 L CNN
-F 1 "TestPoint" H 3375 1350 50  0000 L CNN
-F 2 "TestPoint:TestPoint_Pad_D1.0mm" H 3525 1250 50  0001 C CNN
-F 3 "~" H 3525 1250 50  0001 C CNN
-	1    3325 1250
 	1    0    0    -1  
 $EndComp
 $Comp
@@ -697,57 +677,6 @@ MOTOR_CH2
 Text Label 9375 3700 0    50   ~ 0
 MOTOR_CH3
 $Comp
-L Connector:TestPoint TP?
-U 1 1 5F864EA3
-P 7225 2150
-AR Path="/5F310311/5F864EA3" Ref="TP?"  Part="1" 
-AR Path="/5F3255E8/5F864EA3" Ref="TP?"  Part="1" 
-AR Path="/5F387075/5F864EA3" Ref="TP?"  Part="1" 
-AR Path="/5F5FCCBB/5F864EA3" Ref="TP?"  Part="1" 
-AR Path="/5F71C92E/5F864EA3" Ref="TP?"  Part="1" 
-AR Path="/5F71C5AF/5F864EA3" Ref="TP13"  Part="1" 
-F 0 "TP13" H 7175 2450 50  0000 L CNN
-F 1 "TestPoint" H 7175 2350 50  0000 L CNN
-F 2 "TestPoint:TestPoint_Pad_D1.0mm" H 7425 2150 50  0001 C CNN
-F 3 "~" H 7425 2150 50  0001 C CNN
-	1    7225 2150
-	1    0    0    -1  
-$EndComp
-$Comp
-L Connector:TestPoint TP?
-U 1 1 5F864EA9
-P 4975 1800
-AR Path="/5F310311/5F864EA9" Ref="TP?"  Part="1" 
-AR Path="/5F3255E8/5F864EA9" Ref="TP?"  Part="1" 
-AR Path="/5F387075/5F864EA9" Ref="TP?"  Part="1" 
-AR Path="/5F5FCCBB/5F864EA9" Ref="TP?"  Part="1" 
-AR Path="/5F71C92E/5F864EA9" Ref="TP?"  Part="1" 
-AR Path="/5F71C5AF/5F864EA9" Ref="TP12"  Part="1" 
-F 0 "TP12" H 5025 2050 50  0000 L CNN
-F 1 "TestPoint" H 5025 1950 50  0000 L CNN
-F 2 "TestPoint:TestPoint_Pad_D1.0mm" H 5175 1800 50  0001 C CNN
-F 3 "~" H 5175 1800 50  0001 C CNN
-	1    4975 1800
-	1    0    0    -1  
-$EndComp
-$Comp
-L Connector:TestPoint TP?
-U 1 1 5F864EAF
-P 4975 1200
-AR Path="/5F310311/5F864EAF" Ref="TP?"  Part="1" 
-AR Path="/5F3255E8/5F864EAF" Ref="TP?"  Part="1" 
-AR Path="/5F387075/5F864EAF" Ref="TP?"  Part="1" 
-AR Path="/5F5FCCBB/5F864EAF" Ref="TP?"  Part="1" 
-AR Path="/5F71C92E/5F864EAF" Ref="TP?"  Part="1" 
-AR Path="/5F71C5AF/5F864EAF" Ref="TP10"  Part="1" 
-F 0 "TP10" H 5025 1450 50  0000 L CNN
-F 1 "TestPoint" H 5025 1350 50  0000 L CNN
-F 2 "TestPoint:TestPoint_Pad_D1.0mm" H 5175 1200 50  0001 C CNN
-F 3 "~" H 5175 1200 50  0001 C CNN
-	1    4975 1200
-	1    0    0    -1  
-$EndComp
-$Comp
 L Device:C C?
 U 1 1 5F864EBC
 P 7225 2500
@@ -837,7 +766,7 @@ F 6 "588-FC4L64R005FER" H 6475 2450 50  0001 C CNN "Mouser"
 F 7 "FC4L64R005FER" H 6475 2450 50  0001 C CNN "Part No"
 F 8 "126-0365" H 6475 2450 50  0001 C CNN "RS"
 	1    6475 2450
-	-1   0    0    1   
+	-1   0    0    -1  
 $EndComp
 $Comp
 L Device:C C?
@@ -949,57 +878,6 @@ Wire Wire Line
 	7225 4350 7225 4550
 Wire Wire Line
 	6475 3700 6825 3700
-$Comp
-L Connector:TestPoint TP?
-U 1 1 5F864F16
-P 7225 4350
-AR Path="/5F310311/5F864F16" Ref="TP?"  Part="1" 
-AR Path="/5F3255E8/5F864F16" Ref="TP?"  Part="1" 
-AR Path="/5F387075/5F864F16" Ref="TP?"  Part="1" 
-AR Path="/5F5FCCBB/5F864F16" Ref="TP?"  Part="1" 
-AR Path="/5F71C92E/5F864F16" Ref="TP?"  Part="1" 
-AR Path="/5F71C5AF/5F864F16" Ref="TP18"  Part="1" 
-F 0 "TP18" H 7175 4650 50  0000 L CNN
-F 1 "TestPoint" H 7175 4550 50  0000 L CNN
-F 2 "TestPoint:TestPoint_Pad_D1.0mm" H 7425 4350 50  0001 C CNN
-F 3 "~" H 7425 4350 50  0001 C CNN
-	1    7225 4350
-	1    0    0    -1  
-$EndComp
-$Comp
-L Connector:TestPoint TP?
-U 1 1 5F864F1C
-P 4975 4000
-AR Path="/5F310311/5F864F1C" Ref="TP?"  Part="1" 
-AR Path="/5F3255E8/5F864F1C" Ref="TP?"  Part="1" 
-AR Path="/5F387075/5F864F1C" Ref="TP?"  Part="1" 
-AR Path="/5F5FCCBB/5F864F1C" Ref="TP?"  Part="1" 
-AR Path="/5F71C92E/5F864F1C" Ref="TP?"  Part="1" 
-AR Path="/5F71C5AF/5F864F1C" Ref="TP16"  Part="1" 
-F 0 "TP16" H 5025 4250 50  0000 L CNN
-F 1 "TestPoint" H 5025 4150 50  0000 L CNN
-F 2 "TestPoint:TestPoint_Pad_D1.0mm" H 5175 4000 50  0001 C CNN
-F 3 "~" H 5175 4000 50  0001 C CNN
-	1    4975 4000
-	1    0    0    -1  
-$EndComp
-$Comp
-L Connector:TestPoint TP?
-U 1 1 5F864F22
-P 4975 3400
-AR Path="/5F310311/5F864F22" Ref="TP?"  Part="1" 
-AR Path="/5F3255E8/5F864F22" Ref="TP?"  Part="1" 
-AR Path="/5F387075/5F864F22" Ref="TP?"  Part="1" 
-AR Path="/5F5FCCBB/5F864F22" Ref="TP?"  Part="1" 
-AR Path="/5F71C92E/5F864F22" Ref="TP?"  Part="1" 
-AR Path="/5F71C5AF/5F864F22" Ref="TP14"  Part="1" 
-F 0 "TP14" H 5025 3650 50  0000 L CNN
-F 1 "TestPoint" H 5025 3550 50  0000 L CNN
-F 2 "TestPoint:TestPoint_Pad_D1.0mm" H 5175 3400 50  0001 C CNN
-F 3 "~" H 5175 3400 50  0001 C CNN
-	1    4975 3400
-	1    0    0    -1  
-$EndComp
 $Comp
 L Device:C C?
 U 1 1 5F864F2F
@@ -1147,64 +1025,10 @@ Wire Wire Line
 	9725 4350 9725 4500
 Wire Wire Line
 	9725 4350 10125 4350
-Connection ~ 10125 4350
-Wire Wire Line
-	10125 4350 10225 4350
 Wire Wire Line
 	10125 4350 10125 4550
 Wire Wire Line
 	9375 3700 9725 3700
-$Comp
-L Connector:TestPoint TP?
-U 1 1 5F864F70
-P 10125 4350
-AR Path="/5F310311/5F864F70" Ref="TP?"  Part="1" 
-AR Path="/5F3255E8/5F864F70" Ref="TP?"  Part="1" 
-AR Path="/5F387075/5F864F70" Ref="TP?"  Part="1" 
-AR Path="/5F5FCCBB/5F864F70" Ref="TP?"  Part="1" 
-AR Path="/5F71C92E/5F864F70" Ref="TP?"  Part="1" 
-AR Path="/5F71C5AF/5F864F70" Ref="TP19"  Part="1" 
-F 0 "TP19" H 10075 4650 50  0000 L CNN
-F 1 "TestPoint" H 10075 4550 50  0000 L CNN
-F 2 "TestPoint:TestPoint_Pad_D1.0mm" H 10325 4350 50  0001 C CNN
-F 3 "~" H 10325 4350 50  0001 C CNN
-	1    10125 4350
-	1    0    0    -1  
-$EndComp
-$Comp
-L Connector:TestPoint TP?
-U 1 1 5F864F76
-P 7875 4000
-AR Path="/5F310311/5F864F76" Ref="TP?"  Part="1" 
-AR Path="/5F3255E8/5F864F76" Ref="TP?"  Part="1" 
-AR Path="/5F387075/5F864F76" Ref="TP?"  Part="1" 
-AR Path="/5F5FCCBB/5F864F76" Ref="TP?"  Part="1" 
-AR Path="/5F71C92E/5F864F76" Ref="TP?"  Part="1" 
-AR Path="/5F71C5AF/5F864F76" Ref="TP17"  Part="1" 
-F 0 "TP17" H 7925 4250 50  0000 L CNN
-F 1 "TestPoint" H 7925 4150 50  0000 L CNN
-F 2 "TestPoint:TestPoint_Pad_D1.0mm" H 8075 4000 50  0001 C CNN
-F 3 "~" H 8075 4000 50  0001 C CNN
-	1    7875 4000
-	1    0    0    -1  
-$EndComp
-$Comp
-L Connector:TestPoint TP?
-U 1 1 5F864F7C
-P 7875 3400
-AR Path="/5F310311/5F864F7C" Ref="TP?"  Part="1" 
-AR Path="/5F3255E8/5F864F7C" Ref="TP?"  Part="1" 
-AR Path="/5F387075/5F864F7C" Ref="TP?"  Part="1" 
-AR Path="/5F5FCCBB/5F864F7C" Ref="TP?"  Part="1" 
-AR Path="/5F71C92E/5F864F7C" Ref="TP?"  Part="1" 
-AR Path="/5F71C5AF/5F864F7C" Ref="TP15"  Part="1" 
-F 0 "TP15" H 7925 3650 50  0000 L CNN
-F 1 "TestPoint" H 7925 3550 50  0000 L CNN
-F 2 "TestPoint:TestPoint_Pad_D1.0mm" H 8075 3400 50  0001 C CNN
-F 3 "~" H 8075 3400 50  0001 C CNN
-	1    7875 3400
-	1    0    0    -1  
-$EndComp
 $Comp
 L Device:C C?
 U 1 1 5F864F89
@@ -1582,7 +1406,7 @@ AR Path="/5F71C92E/5F86503F" Ref="J?"  Part="1"
 AR Path="/5F71C5AF/5F86503F" Ref="J11"  Part="1" 
 F 0 "J11" H 3380 6717 50  0000 L CNN
 F 1 "Conn_01x03" H 3380 6626 50  0000 L CNN
-F 2 "Connector_AMASS:AMASS_MR30PW-FB_1x03_P3.50mm_Horizontal" H 3300 6675 50  0001 C CNN
+F 2 "udriver3:AMASS_MR30PW-FB_1x03_P3.50mm_Horizontal" H 3300 6675 50  0001 C CNN
 F 3 "https://www.tme.eu/en/Document/5e47640ba39fa492dbd4c0f4c8ae7b93/MR30PW%20SPEC.pdf" H 3300 6675 50  0001 C CNN
 	1    3300 6675
 	1    0    0    -1  
@@ -1744,4 +1568,9 @@ Wire Notes Line width 20
 	4875 5200 10600 5200
 Wire Notes Line width 20
 	4875 3000 10600 3000
+Text Label 4375 4400 0    50   ~ 0
+SNA
+Wire Wire Line
+	10125 4350 10225 4350
+Connection ~ 10125 4350
 $EndSCHEMATC
