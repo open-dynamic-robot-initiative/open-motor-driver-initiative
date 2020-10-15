@@ -35,6 +35,11 @@ D 4.5V to 60V, 2A Step-Down Power Module in QFN Package
 F https://www.ti.com/lit/ds/symlink/lmz36002.pdf
 $ENDCMP
 #
+$CMP LSF0204RUT
+D 4-Bit Bidirectional Voltage-Level Translatorwith Auto Direction Sensing
+F https://www.ti.com/lit/ds/symlink/lsf0204.pdf
+$ENDCMP
+#
 $CMP LT6654AIS6-3
 D Precision voltage reference, 10mA output, 3.5V to 36V input, 10ppm/C drift, 3.0V output, SOT23-6
 K voltage reference vref
@@ -122,6 +127,11 @@ $ENDCMP
 $CMP TMS320F28388D
 D C2000™ 32-bit MCU with connectivity manager, 2x C28x+CLA CPU, 1.5-MB flash, FPU64, CLB, ENET, EtherCAT
 F https://www.ti.com/lit/ds/symlink/tms320f28388d.pdf
+$ENDCMP
+#
+$CMP TPD1E04U04
+D 1-Channel ESD-Protection for High-Speed Data Interfaces /w Low-Capacitance
+F https://www.ti.com/lit/ds/symlink/tpd1e04u04.pdf
 $ENDCMP
 #
 $CMP TPD2E001

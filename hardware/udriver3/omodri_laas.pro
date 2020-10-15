@@ -1,4 +1,4 @@
-update=16/09/2020 13:48:06
+update=14/10/2020 09:37:58
 version=1
 last_client=kicad
 [general]
@@ -26,7 +26,7 @@ ERC_TestSimilarLabels=1
 version=1
 PageLayoutDescrFile=
 LastNetListRead=omodri_laas.net
-CopperLayerCount=6
+CopperLayerCount=8
 BoardThickness=1.6
 AllowMicroVias=0
 AllowBlindVias=0
@@ -76,7 +76,7 @@ Name=F.Cu
 Type=2
 Enabled=1
 [pcbnew/Layer.In1.Cu]
-Name=In1.Cu
+Name=GND.Cu
 Type=1
 Enabled=1
 [pcbnew/Layer.In2.Cu]
@@ -89,16 +89,16 @@ Type=2
 Enabled=1
 [pcbnew/Layer.In4.Cu]
 Name=In4.Cu
-Type=1
+Type=2
 Enabled=1
 [pcbnew/Layer.In5.Cu]
 Name=In5.Cu
-Type=0
-Enabled=0
+Type=2
+Enabled=1
 [pcbnew/Layer.In6.Cu]
-Name=In6.Cu
-Type=0
-Enabled=0
+Name=PWR.Cu
+Type=1
+Enabled=1
 [pcbnew/Layer.In7.Cu]
 Name=In7.Cu
 Type=0
@@ -200,9 +200,9 @@ Name=B.Cu
 Type=2
 Enabled=1
 [pcbnew/Layer.B.Adhes]
-Enabled=1
+Enabled=0
 [pcbnew/Layer.F.Adhes]
-Enabled=1
+Enabled=0
 [pcbnew/Layer.B.Paste]
 Enabled=1
 [pcbnew/Layer.F.Paste]

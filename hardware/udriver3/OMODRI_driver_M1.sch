@@ -1212,28 +1212,6 @@ F 8 "126-0365" H 6475 4650 50  0001 C CNN "RS"
 	1    6475 4650
 	-1   0    0    1   
 $EndComp
-$Comp
-L Device:R_Shunt R?
-U 1 1 5F864FE6
-P 9375 4650
-AR Path="/5F310311/5F864FE6" Ref="R?"  Part="1" 
-AR Path="/5F3255E8/5F864FE6" Ref="R?"  Part="1" 
-AR Path="/5F387075/5F864FE6" Ref="R?"  Part="1" 
-AR Path="/5F5FCCBB/5F864FE6" Ref="R?"  Part="1" 
-AR Path="/5F71C92E/5F864FE6" Ref="R?"  Part="1" 
-AR Path="/5F71C5AF/5F864FE6" Ref="R44"  Part="1" 
-F 0 "R44" H 9287 4604 50  0000 R CNN
-F 1 "0.005" H 9287 4695 50  0000 R CNN
-F 2 "udriver3:FC4L64" V 9305 4650 50  0001 C CNN
-F 3 "https://www.ohmite.com/assets/docs/res_fc4l.pdf?r=false" H 9375 4650 50  0001 C CNN
-F 4 "FC4L64R005FERCT-ND" H 9375 4650 50  0001 C CNN "DigiKey"
-F 5 "2363991" H 9375 4650 50  0001 C CNN "Farnell"
-F 6 "588-FC4L64R005FER" H 9375 4650 50  0001 C CNN "Mouser"
-F 7 "FC4L64R005FER" H 9375 4650 50  0001 C CNN "Part No"
-F 8 "126-0365" H 9375 4650 50  0001 C CNN "RS"
-	1    9375 4650
-	-1   0    0    1   
-$EndComp
 Wire Wire Line
 	6575 1050 6475 1050
 Text GLabel 6575 3250 2    50   Input ~ 0
@@ -1573,4 +1551,26 @@ SNA
 Wire Wire Line
 	10125 4350 10225 4350
 Connection ~ 10125 4350
+$Comp
+L Device:R_Shunt R?
+U 1 1 5F864FE6
+P 9375 4650
+AR Path="/5F310311/5F864FE6" Ref="R?"  Part="1" 
+AR Path="/5F3255E8/5F864FE6" Ref="R?"  Part="1" 
+AR Path="/5F387075/5F864FE6" Ref="R?"  Part="1" 
+AR Path="/5F5FCCBB/5F864FE6" Ref="R?"  Part="1" 
+AR Path="/5F71C92E/5F864FE6" Ref="R?"  Part="1" 
+AR Path="/5F71C5AF/5F864FE6" Ref="R44"  Part="1" 
+F 0 "R44" H 9287 4604 50  0000 R CNN
+F 1 "0.005" H 9287 4695 50  0000 R CNN
+F 2 "udriver3:FC4L64" V 9305 4650 50  0001 C CNN
+F 3 "https://www.ohmite.com/assets/docs/res_fc4l.pdf?r=false" H 9375 4650 50  0001 C CNN
+F 4 "FC4L64R005FERCT-ND" H 9375 4650 50  0001 C CNN "DigiKey"
+F 5 "2363991" H 9375 4650 50  0001 C CNN "Farnell"
+F 6 "588-FC4L64R005FER" H 9375 4650 50  0001 C CNN "Mouser"
+F 7 "FC4L64R005FER" H 9375 4650 50  0001 C CNN "Part No"
+F 8 "126-0365" H 9375 4650 50  0001 C CNN "RS"
+	1    9375 4650
+	-1   0    0    1   
+$EndComp
 $EndSCHEMATC
