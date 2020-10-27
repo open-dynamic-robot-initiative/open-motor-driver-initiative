@@ -3,7 +3,7 @@ EELAYER 30 0
 EELAYER END
 $Descr A4 11693 8268
 encoding utf-8
-Sheet 11 17
+Sheet 9 19
 Title "Open MOtor DRiver Initiative (OMODRI)"
 Date ""
 Rev "1.0"
@@ -31,17 +31,17 @@ F 6 "595-DSLVDS1047PWR" H 4350 3500 50  0001 C CNN "Mouser"
 	1    4350 3500
 	1    0    0    -1  
 $EndComp
-Text Label 6000 3600 0    50   ~ 0
+Text Label 6025 2800 0    50   ~ 0
 TX_CLK_LVDS_N
-Text Label 6000 3500 0    50   ~ 0
+Text Label 6025 2900 0    50   ~ 0
 TX_CLK_LVDS_P
-Text Label 6000 3250 0    50   ~ 0
+Text Label 6025 3150 0    50   ~ 0
 TX_D0_LVDS_P
-Text Label 6000 3150 0    50   ~ 0
+Text Label 6025 3250 0    50   ~ 0
 TX_D0_LVDS_N
-Text Label 6000 2900 0    50   ~ 0
+Text Label 6025 3500 0    50   ~ 0
 TX_D1_LVDS_P
-Text Label 6000 2800 0    50   ~ 0
+Text Label 6025 3600 0    50   ~ 0
 TX_D1_LVDS_N
 Text GLabel 5300 4350 2    50   Input ~ 0
 VDD_3V3
@@ -107,11 +107,11 @@ F 3 "" H 3250 4750 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 Text HLabel 2150 3900 0    50   Input ~ 0
-TX_CLK_FSI
+TX_FSI_CLK
 Text HLabel 2150 2850 0    50   Input ~ 0
-TX_D0_FSI
+TX_FSI_D0
 Text HLabel 2150 3200 0    50   Input ~ 0
-TX_D1_FSI
+TX_FSI_D1
 $Comp
 L Device:R R?
 U 1 1 5F577EDA
@@ -286,7 +286,7 @@ AR Path="/5F4C38EC/5F6FBF4B" Ref="J?"  Part="1"
 AR Path="/5F5DA2EB/5F6FBF4B" Ref="J10"  Part="1" 
 F 0 "J10" H 9475 3575 50  0000 L CNN
 F 1 "Conn_01x07" H 9475 2775 50  0000 L CNN
-F 2 "Connector_Hirose:Hirose_DF13-07P-1.25DSA_1x07_P1.25mm_Vertical" H 9525 3175 50  0001 C CNN
+F 2 "udriver3:Hirose_DF13-07P-1.25DSA_1x07_P1.25mm_Vertical" H 9525 3175 50  0001 C CNN
 F 3 "https://www.hirose.com/product/document?clcode=&productname=&series=DF13&documenttype=Catalog&lang=en&documentid=D31687_en" H 9525 3175 50  0001 C CNN
 F 4 "DF13-7P-1.25DSA(75)-ND" H 9525 3175 50  0001 C CNN "DigiKey"
 F 5 "798-DF13-7P-125DSA75" H 9525 3175 50  0001 C CNN "Mouser"
@@ -327,15 +327,15 @@ Wire Wire Line
 	6000 2800 6600 2800
 Wire Wire Line
 	6000 2900 6600 2900
-Text Label 7800 3600 0    50   ~ 0
-TX_CLK_LVDS_N
-Text Label 7800 3250 0    50   ~ 0
-TX_D0_LVDS_P
-Text Label 7800 3150 0    50   ~ 0
-TX_D0_LVDS_N
-Text Label 7800 2900 0    50   ~ 0
-TX_D1_LVDS_P
 Text Label 7800 2800 0    50   ~ 0
+TX_CLK_LVDS_N
+Text Label 7825 3150 0    50   ~ 0
+TX_D0_LVDS_P
+Text Label 7825 3250 0    50   ~ 0
+TX_D0_LVDS_N
+Text Label 7800 3500 0    50   ~ 0
+TX_D1_LVDS_P
+Text Label 7800 3600 0    50   ~ 0
 TX_D1_LVDS_N
 Wire Wire Line
 	8400 3600 7800 3600
@@ -424,7 +424,7 @@ Wire Wire Line
 Connection ~ 2950 3900
 Wire Wire Line
 	2950 3900 3550 3900
-Text Label 7800 3500 0    50   ~ 0
+Text Label 7800 2900 0    50   ~ 0
 TX_CLK_LVDS_P
 NoConn ~ 3550 3550
 NoConn ~ 5150 3500

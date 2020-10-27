@@ -3,7 +3,7 @@ EELAYER 30 0
 EELAYER END
 $Descr A4 11693 8268
 encoding utf-8
-Sheet 9 17
+Sheet 19 19
 Title "Open MOtor DRiver Initiative (OMODRI)"
 Date ""
 Rev "1.0"
@@ -13,66 +13,6 @@ Comment2 ""
 Comment3 ""
 Comment4 ""
 $EndDescr
-$Comp
-L Device:R R?
-U 1 1 5F4A7322
-P 5350 2900
-AR Path="/5F497A69/5F4A7322" Ref="R?"  Part="1" 
-AR Path="/5F5B5760/5F4A7322" Ref="R22"  Part="1" 
-F 0 "R22" V 5143 2900 50  0000 C CNN
-F 1 "100" V 5234 2900 50  0000 C CNN
-F 2 "Resistor_SMD:R_0201_0603Metric" V 5280 2900 50  0001 C CNN
-F 3 "https://industrial.panasonic.com/cdbs/www-data/pdf/RDA0000/AOA0000C304.pdf" H 5350 2900 50  0001 C CNN
-F 4 "P122654CT-ND" H 5350 2900 50  0001 C CNN "DigiKey"
-F 5 "2302309" H 5350 2900 50  0001 C CNN "Farnell"
-F 6 "667-ERJ-1GNF1000C" H 5350 2900 50  0001 C CNN "Mouser"
-F 7 "ERJ-1GNF1000C" H 5350 2900 50  0001 C CNN "Part No"
-F 8 "179-7123" H 5350 2900 50  0001 C CNN "RS"
-	1    5350 2900
-	0    1    1    0   
-$EndComp
-Wire Wire Line
-	5050 2850 5100 2850
-Wire Wire Line
-	5050 2950 5600 2950
-Wire Wire Line
-	5500 2900 5600 2900
-Wire Wire Line
-	5600 2900 5600 2950
-Wire Wire Line
-	5200 2900 5100 2900
-Wire Wire Line
-	5100 2900 5100 2850
-$Comp
-L Device:R R?
-U 1 1 5F4A7330
-P 5350 3250
-AR Path="/5F497A69/5F4A7330" Ref="R?"  Part="1" 
-AR Path="/5F5B5760/5F4A7330" Ref="R23"  Part="1" 
-F 0 "R23" V 5143 3250 50  0000 C CNN
-F 1 "100" V 5234 3250 50  0000 C CNN
-F 2 "Resistor_SMD:R_0201_0603Metric" V 5280 3250 50  0001 C CNN
-F 3 "https://industrial.panasonic.com/cdbs/www-data/pdf/RDA0000/AOA0000C304.pdf" H 5350 3250 50  0001 C CNN
-F 4 "P122654CT-ND" H 5350 3250 50  0001 C CNN "DigiKey"
-F 5 "2302309" H 5350 3250 50  0001 C CNN "Farnell"
-F 6 "667-ERJ-1GNF1000C" H 5350 3250 50  0001 C CNN "Mouser"
-F 7 "ERJ-1GNF1000C" H 5350 3250 50  0001 C CNN "Part No"
-F 8 "179-7123" H 5350 3250 50  0001 C CNN "RS"
-	1    5350 3250
-	0    1    1    0   
-$EndComp
-Wire Wire Line
-	5050 3200 5100 3200
-Wire Wire Line
-	5050 3300 5600 3300
-Wire Wire Line
-	5500 3250 5600 3250
-Wire Wire Line
-	5600 3250 5600 3300
-Wire Wire Line
-	5200 3250 5100 3250
-Wire Wire Line
-	5100 3250 5100 3200
 Wire Wire Line
 	5050 3900 5100 3900
 Wire Wire Line
@@ -134,26 +74,22 @@ Wire Wire Line
 	6575 3200 7225 3200
 Wire Wire Line
 	6575 3550 7225 3550
-Text Label 6625 2950 0    50   ~ 0
-RX_CLK_LVDS_P
-Text Label 6625 2850 0    50   ~ 0
-RX_CLK_LVDS_N
-Text Label 6625 3200 0    50   ~ 0
-RX_D0_LVDS_P
-Text Label 6625 3300 0    50   ~ 0
-RX_D0_LVDS_N
 Text Label 6625 3550 0    50   ~ 0
-RX_D1_LVDS_P
+RX_CLK_LVDS_P
 Text Label 6625 3650 0    50   ~ 0
+RX_CLK_LVDS_N
+Text Label 6625 3300 0    50   ~ 0
+RX_D0_LVDS_P
+Text Label 6625 3200 0    50   ~ 0
+RX_D0_LVDS_N
+Text Label 6625 2950 0    50   ~ 0
+RX_D1_LVDS_P
+Text Label 6625 2850 0    50   ~ 0
 RX_D1_LVDS_N
 Wire Wire Line
 	5100 4800 5100 4750
-Text HLabel 2050 3250 0    50   Output ~ 0
-RX_D0_FSI
-Text HLabel 2050 2900 0    50   Output ~ 0
-RX_D1_FSI
 Text HLabel 2050 3950 0    50   Output ~ 0
-RX_CLK_FSI
+RX_FSI_CLK
 $Comp
 L power:GND #PWR?
 U 1 1 5F4A73FF
@@ -279,26 +215,6 @@ Wire Wire Line
 Connection ~ 3250 4400
 Wire Wire Line
 	3250 4400 3250 4800
-Wire Wire Line
-	2650 4450 2650 3250
-Wire Wire Line
-	2350 2900 2350 4450
-$Comp
-L omodri_lib:TPD6E05U06 U?
-U 1 1 5F4A7484
-P 7825 3250
-AR Path="/5F497A69/5F4A7484" Ref="U?"  Part="1" 
-AR Path="/5F5B5760/5F4A7484" Ref="U9"  Part="1" 
-F 0 "U9" H 7825 3965 50  0000 C CNN
-F 1 "TPD6E05U06" H 7825 3874 50  0000 C CNN
-F 2 "udriver3:USON_14" V 7825 3250 50  0001 C CNN
-F 3 "https://www.ti.com/lit/ds/symlink/tpd6e05u06.pdf" V 7825 3250 50  0001 C CNN
-F 4 "296-39349-1-ND" H 7825 3250 50  0001 C CNN "DigiKey"
-F 5 "595-TPD6E05U06RVZR" H 7825 3250 50  0001 C CNN "Mouser"
-F 6 "TPD6E05U06RVZR" H 7825 3250 50  0001 C CNN "Part No"
-	1    7825 3250
-	1    0    0    -1  
-$EndComp
 $Comp
 L power:GND #PWR?
 U 1 1 5F4A748A
@@ -360,16 +276,6 @@ Wire Wire Line
 	3250 4400 3450 4400
 Wire Wire Line
 	3250 4250 3450 4250
-Connection ~ 2350 2900
-Wire Wire Line
-	2350 2900 3450 2900
-Connection ~ 2650 3250
-Wire Wire Line
-	2650 3250 3450 3250
-Wire Wire Line
-	2050 3250 2650 3250
-Wire Wire Line
-	2050 2900 2350 2900
 $Comp
 L Connector_Generic:Conn_01x07 J?
 U 1 1 5F6E30FC
@@ -378,7 +284,7 @@ AR Path="/5F497A69/5F6E30FC" Ref="J?"  Part="1"
 AR Path="/5F5B5760/5F6E30FC" Ref="J8"  Part="1" 
 F 0 "J8" H 10575 3575 50  0000 L CNN
 F 1 "Conn_01x07" H 10575 2775 50  0000 L CNN
-F 2 "Connector_Hirose:Hirose_DF13-07P-1.25DSA_1x07_P1.25mm_Vertical" H 10625 3175 50  0001 C CNN
+F 2 "udriver3:Hirose_DF13-07P-1.25DSA_1x07_P1.25mm_Vertical" H 10625 3175 50  0001 C CNN
 F 3 "https://www.hirose.com/product/document?clcode=&productname=&series=DF13&documenttype=Catalog&lang=en&documentid=D31687_en" H 10625 3175 50  0001 C CNN
 F 4 "DF13-7P-1.25DSA(75)-ND" H 10625 3175 50  0001 C CNN "DigiKey"
 F 5 "798-DF13-7P-125DSA75" H 10625 3175 50  0001 C CNN "Mouser"
@@ -411,37 +317,17 @@ Wire Wire Line
 	5100 3900 6250 3900
 Connection ~ 5100 3900
 Connection ~ 5600 4000
-Wire Wire Line
-	5600 3300 6250 3300
-Text Label 5650 3300 0    50   ~ 0
-RX_D0_LVDS_P
-Connection ~ 5600 3300
-Text Label 5650 3200 0    50   ~ 0
-RX_D0_LVDS_N
-Wire Wire Line
-	5100 3200 6250 3200
-Connection ~ 5100 3200
-Wire Wire Line
-	5600 2950 6250 2950
-Text Label 5650 2950 0    50   ~ 0
-RX_D1_LVDS_P
-Connection ~ 5600 2950
-Text Label 5650 2850 0    50   ~ 0
-RX_D1_LVDS_N
-Wire Wire Line
-	5100 2850 6250 2850
-Connection ~ 5100 2850
-Text Label 8500 2950 0    50   ~ 0
+Text Label 8475 3550 0    50   ~ 0
 RX_CLK_LVDS_P
-Text Label 8500 2850 0    50   ~ 0
+Text Label 8475 3650 0    50   ~ 0
 RX_CLK_LVDS_N
-Text Label 8500 3200 0    50   ~ 0
+Text Label 8475 3300 0    50   ~ 0
 RX_D0_LVDS_P
-Text Label 8500 3300 0    50   ~ 0
+Text Label 8475 3200 0    50   ~ 0
 RX_D0_LVDS_N
-Text Label 8500 3550 0    50   ~ 0
+Text Label 8475 2950 0    50   ~ 0
 RX_D1_LVDS_P
-Text Label 8500 3650 0    50   ~ 0
+Text Label 8475 2850 0    50   ~ 0
 RX_D1_LVDS_N
 Wire Wire Line
 	9575 2975 10425 2975
@@ -481,6 +367,13 @@ F 8 "179-7123" H 5350 3950 50  0001 C CNN "RS"
 	1    5350 3950
 	0    1    1    0   
 $EndComp
+Wire Wire Line
+	2050 3950 2950 3950
+Connection ~ 2950 3950
+Wire Wire Line
+	2950 3950 2950 4450
+Wire Wire Line
+	2950 3950 3450 3950
 $Comp
 L omodri_lib:DSLVDS1048PWR U?
 U 1 1 5F4A731C
@@ -498,13 +391,120 @@ F 6 "595-DSLVDS1048PWR" H 4250 3650 50  0001 C CNN "Mouser"
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	2050 3950 2950 3950
-Connection ~ 2950 3950
+	2650 3250 3450 3250
 Wire Wire Line
-	2950 3950 2950 4450
+	2350 2900 3450 2900
+Connection ~ 2650 3250
+Connection ~ 2350 2900
 Wire Wire Line
-	2950 3950 3450 3950
+	2650 4450 2650 3250
+Wire Wire Line
+	2350 2900 2350 4450
+Wire Wire Line
+	2050 2900 2350 2900
+Wire Wire Line
+	2050 3250 2650 3250
+Text HLabel 2050 2900 0    50   Output ~ 0
+RX_FSI_D1
+Connection ~ 5100 2850
+Wire Wire Line
+	5100 2850 6250 2850
+Text Label 5650 2850 0    50   ~ 0
+RX_D1_LVDS_N
+Connection ~ 5600 2950
+Text Label 5650 2950 0    50   ~ 0
+RX_D1_LVDS_P
+Wire Wire Line
+	5600 2950 6250 2950
+Wire Wire Line
+	5100 2900 5100 2850
+Wire Wire Line
+	5200 2900 5100 2900
+Wire Wire Line
+	5600 2900 5600 2950
+Wire Wire Line
+	5500 2900 5600 2900
+Wire Wire Line
+	5050 2950 5600 2950
+Wire Wire Line
+	5050 2850 5100 2850
+$Comp
+L Device:R R?
+U 1 1 5F4A7322
+P 5350 2900
+AR Path="/5F497A69/5F4A7322" Ref="R?"  Part="1" 
+AR Path="/5F5B5760/5F4A7322" Ref="R22"  Part="1" 
+F 0 "R22" V 5143 2900 50  0000 C CNN
+F 1 "100" V 5234 2900 50  0000 C CNN
+F 2 "Resistor_SMD:R_0201_0603Metric" V 5280 2900 50  0001 C CNN
+F 3 "https://industrial.panasonic.com/cdbs/www-data/pdf/RDA0000/AOA0000C304.pdf" H 5350 2900 50  0001 C CNN
+F 4 "P122654CT-ND" H 5350 2900 50  0001 C CNN "DigiKey"
+F 5 "2302309" H 5350 2900 50  0001 C CNN "Farnell"
+F 6 "667-ERJ-1GNF1000C" H 5350 2900 50  0001 C CNN "Mouser"
+F 7 "ERJ-1GNF1000C" H 5350 2900 50  0001 C CNN "Part No"
+F 8 "179-7123" H 5350 2900 50  0001 C CNN "RS"
+	1    5350 2900
+	0    1    1    0   
+$EndComp
+Connection ~ 5100 3200
+Wire Wire Line
+	5100 3200 6250 3200
+Text Label 5650 3200 0    50   ~ 0
+RX_D0_LVDS_N
+Connection ~ 5600 3300
+Text Label 5650 3300 0    50   ~ 0
+RX_D0_LVDS_P
+Wire Wire Line
+	5600 3300 6250 3300
+Wire Wire Line
+	5100 3250 5100 3200
+Wire Wire Line
+	5200 3250 5100 3250
+Wire Wire Line
+	5600 3250 5600 3300
+Wire Wire Line
+	5500 3250 5600 3250
+Wire Wire Line
+	5050 3300 5600 3300
+Wire Wire Line
+	5050 3200 5100 3200
+$Comp
+L Device:R R?
+U 1 1 5F4A7330
+P 5350 3250
+AR Path="/5F497A69/5F4A7330" Ref="R?"  Part="1" 
+AR Path="/5F5B5760/5F4A7330" Ref="R23"  Part="1" 
+F 0 "R23" V 5143 3250 50  0000 C CNN
+F 1 "100" V 5234 3250 50  0000 C CNN
+F 2 "Resistor_SMD:R_0201_0603Metric" V 5280 3250 50  0001 C CNN
+F 3 "https://industrial.panasonic.com/cdbs/www-data/pdf/RDA0000/AOA0000C304.pdf" H 5350 3250 50  0001 C CNN
+F 4 "P122654CT-ND" H 5350 3250 50  0001 C CNN "DigiKey"
+F 5 "2302309" H 5350 3250 50  0001 C CNN "Farnell"
+F 6 "667-ERJ-1GNF1000C" H 5350 3250 50  0001 C CNN "Mouser"
+F 7 "ERJ-1GNF1000C" H 5350 3250 50  0001 C CNN "Part No"
+F 8 "179-7123" H 5350 3250 50  0001 C CNN "RS"
+	1    5350 3250
+	0    1    1    0   
+$EndComp
 NoConn ~ 3450 3600
-NoConn ~ 5050 3650
 NoConn ~ 5050 3550
+NoConn ~ 5050 3650
+$Comp
+L omodri_lib:TPD6E05U06 U?
+U 1 1 5F4A7484
+P 7825 3250
+AR Path="/5F497A69/5F4A7484" Ref="U?"  Part="1" 
+AR Path="/5F5B5760/5F4A7484" Ref="U9"  Part="1" 
+F 0 "U9" H 7825 3965 50  0000 C CNN
+F 1 "TPD6E05U06" H 7825 3874 50  0000 C CNN
+F 2 "udriver3:USON_14" V 7825 3250 50  0001 C CNN
+F 3 "https://www.ti.com/lit/ds/symlink/tpd6e05u06.pdf" V 7825 3250 50  0001 C CNN
+F 4 "296-39349-1-ND" H 7825 3250 50  0001 C CNN "DigiKey"
+F 5 "595-TPD6E05U06RVZR" H 7825 3250 50  0001 C CNN "Mouser"
+F 6 "TPD6E05U06RVZR" H 7825 3250 50  0001 C CNN "Part No"
+	1    7825 3250
+	1    0    0    -1  
+$EndComp
+Text HLabel 2050 3250 3    50   Output ~ 0
+RX_FSI_D0
 $EndSCHEMATC

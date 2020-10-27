@@ -3,7 +3,7 @@ EELAYER 30 0
 EELAYER END
 $Descr A4 11693 8268
 encoding utf-8
-Sheet 3 17
+Sheet 3 19
 Title "Open MOtor DRiver Initiative (OMODRI)"
 Date ""
 Rev "1.0"
@@ -287,7 +287,7 @@ AR Path="/5F3A3F16/5F665B7B" Ref="U?"  Part="1"
 AR Path="/5F3A3F16/5F5BD908/5F665B7B" Ref="U2"  Part="1" 
 F 0 "U2" H 6200 2775 50  0000 C CNN
 F 1 "MAX17502FxTB" H 5750 3500 50  0000 C CNN
-F 2 "Package_DFN_QFN:TDFN-10-1EP_2x3mm_P0.5mm_EP0.9x2mm" H 5875 2550 50  0001 C CNN
+F 2 "udriver3:TDFN-10-1EP_2x3mm_P0.5mm_EP0.9x2mm_ThermalVias" H 5875 2550 50  0001 C CNN
 F 3 "https://datasheets.maximintegrated.com/en/ds/MAX17501.pdf" H 4525 4200 50  0001 C CNN
 F 4 "MAX17502FATB+TCT-ND" H 5875 3150 50  0001 C CNN "DigiKey"
 F 5 "2514327" H 5875 3150 50  0001 C CNN "Farnell"

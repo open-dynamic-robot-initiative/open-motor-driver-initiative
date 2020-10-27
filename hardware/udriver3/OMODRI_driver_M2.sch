@@ -3,7 +3,7 @@ EELAYER 30 0
 EELAYER END
 $Descr A4 11693 8268
 encoding utf-8
-Sheet 13 17
+Sheet 11 19
 Title "Open MOtor DRiver Initiative (OMODRI)"
 Date ""
 Rev "1.0"
@@ -1519,4 +1519,16 @@ F 8 "126-0365" H 6025 2350 50  0001 C CNN "RS"
 	1    6025 2350
 	-1   0    0    -1  
 $EndComp
+Text Label 2925 1150 0    50   ~ 0
+VCP_DRV
+Text Label 2750 2150 0    50   ~ 0
+CPH
+Text Label 2750 2450 0    50   ~ 0
+CPL
+Text Label 6025 2150 1    50   ~ 0
+OUT_M2_CH1
+Text Label 6025 4325 1    50   ~ 0
+OUT_M2_CH2
+Text Label 8925 4325 1    50   ~ 0
+OUT_M2_CH3
 $EndSCHEMATC

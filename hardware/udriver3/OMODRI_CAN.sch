@@ -3,7 +3,7 @@ EELAYER 30 0
 EELAYER END
 $Descr A4 11693 8268
 encoding utf-8
-Sheet 8 17
+Sheet 8 19
 Title "Open MOtor DRiver Initiative (OMODRI)"
 Date ""
 Rev "1.0"
@@ -156,7 +156,7 @@ AR Path="/60EC8491/60EDAE2F" Ref="J?"  Part="1"
 AR Path="/5F5B575B/60EDAE2F" Ref="J7"  Part="1" 
 F 0 "J7" H 6880 3592 50  0000 L CNN
 F 1 "Conn_01x02" H 6880 3501 50  0000 L CNN
-F 2 "Connector_Hirose:Hirose_DF13-02P-1.25DSA_1x02_P1.25mm_Vertical" H 6800 3600 50  0001 C CNN
+F 2 "udriver3:Hirose_DF13-02P-1.25DSA_1x02_P1.25mm_Vertical" H 6800 3600 50  0001 C CNN
 F 3 "https://www.hirose.com/product/document?clcode=&productname=&series=DF13&documenttype=Catalog&lang=en&documentid=D31687_en" H 6800 3600 50  0001 C CNN
 F 4 "DF13-2P-1.25DSA(75)-ND" H 6800 3600 50  0001 C CNN "DigiKey"
 F 5 "2427585" H 6800 3600 50  0001 C CNN "Farnell"

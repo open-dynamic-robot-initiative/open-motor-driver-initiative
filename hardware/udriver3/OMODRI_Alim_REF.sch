@@ -3,7 +3,7 @@ EELAYER 30 0
 EELAYER END
 $Descr A4 11693 8268
 encoding utf-8
-Sheet 6 17
+Sheet 6 19
 Title "Open MOtor DRiver Initiative (OMODRI)"
 Date ""
 Rev "1.0"
@@ -179,23 +179,6 @@ F 3 "" H 7050 3950 50  0001 C CNN
 	1    7050 3950
 	1    0    0    -1  
 $EndComp
-$Comp
-L Connector:TestPoint TP?
-U 1 1 5F7B8A07
-P 7125 3050
-AR Path="/5F310311/5F7B8A07" Ref="TP?"  Part="1" 
-AR Path="/5F3255E8/5F7B8A07" Ref="TP?"  Part="1" 
-AR Path="/5F387075/5F7B8A07" Ref="TP?"  Part="1" 
-AR Path="/5F7B8A07" Ref="TP?"  Part="1" 
-AR Path="/5F3A3F16/5F7B8A07" Ref="TP?"  Part="1" 
-AR Path="/5F3A3F16/5F5C0183/5F7B8A07" Ref="TP9"  Part="1" 
-F 0 "TP9" V 6950 3125 50  0000 L CNN
-F 1 "TestPoint" V 7050 3125 50  0000 L CNN
-F 2 "TestPoint:TestPoint_Pad_D1.0mm" H 7325 3050 50  0001 C CNN
-F 3 "~" H 7325 3050 50  0001 C CNN
-	1    7125 3050
-	0    1    1    0   
-$EndComp
 Wire Wire Line
 	6550 3175 6600 3175
 Wire Wire Line
@@ -231,10 +214,6 @@ Wire Wire Line
 Connection ~ 7050 3175
 Wire Wire Line
 	7050 3175 7125 3175
-Wire Wire Line
-	7125 3050 7050 3050
-Wire Wire Line
-	7050 3050 7050 3175
 Wire Wire Line
 	5025 3175 5200 3175
 Wire Wire Line

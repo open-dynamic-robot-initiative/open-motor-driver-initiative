@@ -3,7 +3,7 @@ EELAYER 30 0
 EELAYER END
 $Descr A4 11693 8268
 encoding utf-8
-Sheet 17 17
+Sheet 17 19
 Title "Open MOtor DRiver Initiative (OMODRI)"
 Date ""
 Rev "1.0"
@@ -763,7 +763,7 @@ AR Path="/60E4937F/5F7035F5" Ref="J?"  Part="1"
 AR Path="/5F5A1016/5F7035F5" Ref="J5"  Part="1" 
 F 0 "J5" H 8930 2592 50  0000 L CNN
 F 1 "Conn_01x05" H 8930 2501 50  0000 L CNN
-F 2 "Connector_Hirose:Hirose_DF13-05P-1.25DSA_1x05_P1.25mm_Vertical" H 8850 2550 50  0001 C CNN
+F 2 "udriver3:Hirose_DF13-05P-1.25DSA_1x05_P1.25mm_Vertical" H 8850 2550 50  0001 C CNN
 F 3 "https://www.hirose.com/product/document?clcode=&productname=&series=DF13&documenttype=Catalog&lang=en&documentid=D31687_en" H 8850 2550 50  0001 C CNN
 F 4 "DF13-5P-1.25DSA(75)-ND" H 8850 2550 50  0001 C CNN "DigiKey"
 F 5 "2427589" H 8850 2550 50  0001 C CNN "Farnell"
@@ -781,7 +781,7 @@ AR Path="/60E4937F/5F704B6B" Ref="J?"  Part="1"
 AR Path="/5F5A1016/5F704B6B" Ref="J6"  Part="1" 
 F 0 "J6" H 8930 4092 50  0000 L CNN
 F 1 "Conn_01x05" H 8930 4001 50  0000 L CNN
-F 2 "Connector_Hirose:Hirose_DF13-05P-1.25DSA_1x05_P1.25mm_Vertical" H 8850 4050 50  0001 C CNN
+F 2 "udriver3:Hirose_DF13-05P-1.25DSA_1x05_P1.25mm_Vertical" H 8850 4050 50  0001 C CNN
 F 3 "https://www.hirose.com/product/document?clcode=&productname=&series=DF13&documenttype=Catalog&lang=en&documentid=D31687_en" H 8850 4050 50  0001 C CNN
 F 4 "DF13-5P-1.25DSA(75)-ND" H 8850 4050 50  0001 C CNN "DigiKey"
 F 5 "2427589" H 8850 4050 50  0001 C CNN "Farnell"

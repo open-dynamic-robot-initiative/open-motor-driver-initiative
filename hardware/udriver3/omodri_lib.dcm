@@ -1,5 +1,10 @@
 EESchema-DOCLIB  Version 2.0
 #
+$CMP ADM6_ADF6
+D 0.635 mm pitch, High-Density, 4-Row Terminal, low profile, ultra-slim surface mount header & socket.
+K https://www.samtec.com/products/adm6#technicalSeries
+$ENDCMP
+#
 $CMP CSD88599Q5DC
 D 60V, 40A Half-Bridge FET Power Block
 F https://www.ti.com/lit/ds/symlink/csd88599q5dc.pdf

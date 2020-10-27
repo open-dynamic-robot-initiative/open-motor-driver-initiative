@@ -3,7 +3,7 @@ EELAYER 30 0
 EELAYER END
 $Descr A4 11693 8268
 encoding utf-8
-Sheet 16 17
+Sheet 14 19
 Title "Open MOtor DRiver Initiative (OMODRI)"
 Date ""
 Rev "1.0"
@@ -16,1120 +16,871 @@ $EndDescr
 $Comp
 L omodri_lib:TMS320F28388D U?
 U 4 1 5F3A5B71
-P 1050 3050
+P 1500 2625
 AR Path="/5F3A5338/5F3A5B71" Ref="U?"  Part="4" 
 AR Path="/5F5975A7/5F3A5B71" Ref="U1"  Part="4" 
-F 0 "U1" H 750 5150 60  0000 C CNN
-F 1 "TMS320F28388D" H 1050 5050 60  0000 C CNN
-F 2 "udriver3:NFBGA_337" H 1050 5050 60  0001 C CNN
-F 3 "https://www.ti.com/lit/ds/symlink/tms320f28388d.pdf" H 1208 5101 60  0001 C CNN
-F 4 " 	296-F28388DZWTS-ND" H 1050 3050 50  0001 C CNN "DigiKey"
-F 5 "595-F28388DZWTS" H 1050 3050 50  0001 C CNN "Mouser"
-F 6 "F28388DZWTS" H 1050 3050 50  0001 C CNN "Part No"
-	4    1050 3050
+F 0 "U1" H 1200 4725 60  0000 C CNN
+F 1 "TMS320F28388D" H 1500 4625 60  0000 C CNN
+F 2 "udriver3:NFBGA_337" H 1500 4625 60  0001 C CNN
+F 3 "https://www.ti.com/lit/ds/symlink/tms320f28388d.pdf" H 1658 4676 60  0001 C CNN
+F 4 " 	296-F28388DZWTS-ND" H 1500 2625 50  0001 C CNN "DigiKey"
+F 5 "595-F28388DZWTS" H 1500 2625 50  0001 C CNN "Mouser"
+F 6 "F28388DZWTS" H 1500 2625 50  0001 C CNN "Part No"
+	4    1500 2625
 	1    0    0    -1  
 $EndComp
 $Comp
 L omodri_lib:TMS320F28388D U?
 U 5 1 5F3AD210
-P 2800 3050
+P 1500 6075
 AR Path="/5F3A5338/5F3AD210" Ref="U?"  Part="5" 
 AR Path="/5F5975A7/5F3AD210" Ref="U1"  Part="5" 
-F 0 "U1" H 2500 5150 60  0000 C CNN
-F 1 "TMS320F28388D" H 2800 5050 60  0000 C CNN
-F 2 "udriver3:NFBGA_337" H 2800 5050 60  0001 C CNN
-F 3 "https://www.ti.com/lit/ds/symlink/tms320f28388d.pdf" H 2958 5101 60  0001 C CNN
-F 4 " 	296-F28388DZWTS-ND" H 2800 3050 50  0001 C CNN "DigiKey"
-F 5 "595-F28388DZWTS" H 2800 3050 50  0001 C CNN "Mouser"
-F 6 "F28388DZWTS" H 2800 3050 50  0001 C CNN "Part No"
-	5    2800 3050
-	1    0    0    -1  
-$EndComp
-$Comp
-L omodri_lib:TMS320F28388D U?
-U 6 1 5F3C0127
-P 4650 3000
-AR Path="/5F3A5338/5F3C0127" Ref="U?"  Part="6" 
-AR Path="/5F5975A7/5F3C0127" Ref="U1"  Part="6" 
-F 0 "U1" H 4350 5100 60  0000 C CNN
-F 1 "TMS320F28388D" H 4650 5000 60  0000 C CNN
-F 2 "udriver3:NFBGA_337" H 4650 5000 60  0001 C CNN
-F 3 "https://www.ti.com/lit/ds/symlink/tms320f28388d.pdf" H 4808 5051 60  0001 C CNN
-F 4 " 	296-F28388DZWTS-ND" H 4650 3000 50  0001 C CNN "DigiKey"
-F 5 "595-F28388DZWTS" H 4650 3000 50  0001 C CNN "Mouser"
-F 6 "F28388DZWTS" H 4650 3000 50  0001 C CNN "Part No"
-	6    4650 3000
+F 0 "U1" H 1200 8175 60  0000 C CNN
+F 1 "TMS320F28388D" H 1500 8075 60  0000 C CNN
+F 2 "udriver3:NFBGA_337" H 1500 8075 60  0001 C CNN
+F 3 "https://www.ti.com/lit/ds/symlink/tms320f28388d.pdf" H 1658 8126 60  0001 C CNN
+F 4 " 	296-F28388DZWTS-ND" H 1500 6075 50  0001 C CNN "DigiKey"
+F 5 "595-F28388DZWTS" H 1500 6075 50  0001 C CNN "Mouser"
+F 6 "F28388DZWTS" H 1500 6075 50  0001 C CNN "Part No"
+	5    1500 6075
 	1    0    0    -1  
 $EndComp
 $Comp
 L omodri_lib:TMS320F28388D U?
 U 7 1 5F3CEA6B
-P 6500 3000
+P 3500 6075
 AR Path="/5F3A5338/5F3CEA6B" Ref="U?"  Part="7" 
 AR Path="/5F5975A7/5F3CEA6B" Ref="U1"  Part="7" 
-F 0 "U1" H 6200 5100 60  0000 C CNN
-F 1 "TMS320F28388D" H 6500 5000 60  0000 C CNN
-F 2 "udriver3:NFBGA_337" H 6500 5000 60  0001 C CNN
-F 3 "https://www.ti.com/lit/ds/symlink/tms320f28388d.pdf" H 6658 5051 60  0001 C CNN
-F 4 " 	296-F28388DZWTS-ND" H 6500 3000 50  0001 C CNN "DigiKey"
-F 5 "595-F28388DZWTS" H 6500 3000 50  0001 C CNN "Mouser"
-F 6 "F28388DZWTS" H 6500 3000 50  0001 C CNN "Part No"
-	7    6500 3000
+F 0 "U1" H 3200 8175 60  0000 C CNN
+F 1 "TMS320F28388D" H 3500 8075 60  0000 C CNN
+F 2 "udriver3:NFBGA_337" H 3500 8075 60  0001 C CNN
+F 3 "https://www.ti.com/lit/ds/symlink/tms320f28388d.pdf" H 3658 8126 60  0001 C CNN
+F 4 " 	296-F28388DZWTS-ND" H 3500 6075 50  0001 C CNN "DigiKey"
+F 5 "595-F28388DZWTS" H 3500 6075 50  0001 C CNN "Mouser"
+F 6 "F28388DZWTS" H 3500 6075 50  0001 C CNN "Part No"
+	7    3500 6075
 	1    0    0    -1  
 $EndComp
 $Comp
 L omodri_lib:TMS320F28388D U?
 U 8 1 5F3D4214
-P 8500 3000
+P 6175 2625
 AR Path="/5F3A5338/5F3D4214" Ref="U?"  Part="8" 
 AR Path="/5F5975A7/5F3D4214" Ref="U1"  Part="8" 
-F 0 "U1" H 8200 5100 60  0000 C CNN
-F 1 "TMS320F28388D" H 8500 5000 60  0000 C CNN
-F 2 "udriver3:NFBGA_337" H 8500 5000 60  0001 C CNN
-F 3 "https://www.ti.com/lit/ds/symlink/tms320f28388d.pdf" H 8658 5051 60  0001 C CNN
-F 4 " 	296-F28388DZWTS-ND" H 8500 3000 50  0001 C CNN "DigiKey"
-F 5 "595-F28388DZWTS" H 8500 3000 50  0001 C CNN "Mouser"
-F 6 "F28388DZWTS" H 8500 3000 50  0001 C CNN "Part No"
-	8    8500 3000
+F 0 "U1" H 5575 4725 60  0000 C CNN
+F 1 "TMS320F28388D" H 5875 4625 60  0000 C CNN
+F 2 "udriver3:NFBGA_337" H 6175 4625 60  0001 C CNN
+F 3 "https://www.ti.com/lit/ds/symlink/tms320f28388d.pdf" H 6333 4676 60  0001 C CNN
+F 4 " 	296-F28388DZWTS-ND" H 6175 2625 50  0001 C CNN "DigiKey"
+F 5 "595-F28388DZWTS" H 6175 2625 50  0001 C CNN "Mouser"
+F 6 "F28388DZWTS" H 6175 2625 50  0001 C CNN "Part No"
+	8    6175 2625
 	1    0    0    -1  
 $EndComp
-Text HLabel 1750 2750 2    50   Output ~ 0
+Text HLabel 2200 2325 2    50   Output ~ 0
 DRV_SPI_SIMO
-Text HLabel 1750 2850 2    50   Input ~ 0
+Text HLabel 2200 2425 2    50   Input ~ 0
 DRV_SPI_SOMI
-Text HLabel 1750 2950 2    50   Output ~ 0
+Text HLabel 2200 2525 2    50   Output ~ 0
 DRV_SPI_CLK
-Text HLabel 5350 3600 2    50   Output ~ 0
+Text HLabel 4550 3225 2    50   Output ~ 0
 DRV1_GPIO_EN
-Text HLabel 1750 3050 2    50   Output ~ 0
+Text HLabel 2200 2625 2    50   Output ~ 0
 ~DRV1_GPIO_CSn~
-Text HLabel 5350 3700 2    50   Input ~ 0
+Text HLabel 4550 3325 2    50   Input ~ 0
 ~DRV1_GPIO_FAULTn~
 Wire Wire Line
-	1750 2750 1700 2750
-Text HLabel 3500 1650 2    50   Output ~ 0
+	2200 2325 2150 2325
+Text HLabel 2200 4675 2    50   Output ~ 0
 DRV2_GPIO_EN
-Text HLabel 3500 1450 2    50   Output ~ 0
+Text HLabel 2200 4475 2    50   Output ~ 0
 ~DRV2_GPIO_CSn~
-Text HLabel 3500 1550 2    50   Input ~ 0
+Text HLabel 2200 4575 2    50   Input ~ 0
 ~DRV2_GPIO_FAULTn~
-Text HLabel 5350 1600 2    50   Output ~ 0
+Text HLabel 4550 1225 2    50   Output ~ 0
 SPI_SIMO
-Text HLabel 5350 1700 2    50   Input ~ 0
+Text HLabel 4550 1325 2    50   Input ~ 0
 SPI_SOMI
-Text HLabel 5350 1800 2    50   Output ~ 0
+Text HLabel 4550 1425 2    50   Output ~ 0
 SPI_CLK
-Text HLabel 5350 1900 2    50   Output ~ 0
+Text HLabel 4550 1525 2    50   Output ~ 0
 ~SPI_CSn~
-Text HLabel 1750 1150 2    50   Output ~ 0
+Text HLabel 2200 725  2    50   Output ~ 0
 M1_PWM1_CHA
-Text HLabel 1750 1250 2    50   Output ~ 0
+Text HLabel 2200 825  2    50   Output ~ 0
 M1_PWM1_CHB
-Text HLabel 1750 1350 2    50   Output ~ 0
+Text HLabel 2200 925  2    50   Output ~ 0
 M1_PWM2_CHA
-Text HLabel 1750 1450 2    50   Output ~ 0
+Text HLabel 2200 1025 2    50   Output ~ 0
 M1_PWM2_CHB
-Text HLabel 1750 1550 2    50   Output ~ 0
+Text HLabel 2200 1125 2    50   Output ~ 0
 M1_PWM3_CHA
-Text HLabel 1750 1650 2    50   Output ~ 0
+Text HLabel 2200 1225 2    50   Output ~ 0
 M1_PWM3_CHB
-Text HLabel 1750 1750 2    50   Output ~ 0
+Text HLabel 2200 1325 2    50   Output ~ 0
 M2_PWM1_CHA
-Text HLabel 1750 1850 2    50   Output ~ 0
+Text HLabel 2200 1425 2    50   Output ~ 0
 M2_PWM1_CHB
-Text HLabel 1750 1950 2    50   Output ~ 0
+Text HLabel 2200 1525 2    50   Output ~ 0
 M2_PWM2_CHA
-Text HLabel 1750 2050 2    50   Output ~ 0
+Text HLabel 2200 1625 2    50   Output ~ 0
 M2_PWM2_CHB
-Text HLabel 1750 2150 2    50   Output ~ 0
+Text HLabel 2200 1725 2    50   Output ~ 0
 M2_PWM3_CHA
-Text HLabel 1750 2250 2    50   Output ~ 0
+Text HLabel 2200 1825 2    50   Output ~ 0
 M2_PWM3_CHB
 Wire Wire Line
-	1700 1150 1750 1150
+	2150 725  2200 725 
 Wire Wire Line
-	1700 1250 1750 1250
+	2150 825  2200 825 
 Wire Wire Line
-	1700 1350 1750 1350
+	2150 925  2200 925 
 Wire Wire Line
-	1700 1450 1750 1450
+	2150 1025 2200 1025
 Wire Wire Line
-	1700 1550 1750 1550
+	2150 1125 2200 1125
 Wire Wire Line
-	1700 1650 1750 1650
-$Comp
-L omodri_lib:TMS320F28388D U?
-U 3 1 5F3B32A9
-P 2425 6675
-AR Path="/5F3A5338/5F3B32A9" Ref="U?"  Part="3" 
-AR Path="/5F5975A7/5F3B32A9" Ref="U1"  Part="3" 
-F 0 "U1" H 2025 8775 60  0000 C CNN
-F 1 "TMS320F28388D" H 2325 8675 60  0000 C CNN
-F 2 "udriver3:NFBGA_337" H 2425 8675 60  0001 C CNN
-F 3 "https://www.ti.com/lit/ds/symlink/tms320f28388d.pdf" H 2425 8726 60  0001 C CNN
-F 4 " 	296-F28388DZWTS-ND" H 2425 6675 50  0001 C CNN "DigiKey"
-F 5 "595-F28388DZWTS" H 2425 6675 50  0001 C CNN "Mouser"
-F 6 "F28388DZWTS" H 2425 6675 50  0001 C CNN "Part No"
-	3    2425 6675
-	1    0    0    -1  
-$EndComp
-Text HLabel 3225 4775 2    50   Input ~ 0
-M1_Ia
-Text HLabel 3225 5475 2    50   Input ~ 0
-M1_Ib
-Text HLabel 3225 6675 2    50   Input ~ 0
-M1_Ic
-Text HLabel 3225 4875 2    50   Input ~ 0
-M2_Ia
-Text HLabel 3225 5575 2    50   Input ~ 0
-M2_Ib
-Text HLabel 3225 6775 2    50   Input ~ 0
-M2_Ic
-Text HLabel 3225 4975 2    50   Input ~ 0
-M1_Va
-Text HLabel 3225 5675 2    50   Input ~ 0
-M1_Vb
-Text HLabel 3225 6875 2    50   Input ~ 0
-M1_Vc
-Text HLabel 3225 5075 2    50   Input ~ 0
-M2_Va
-Text HLabel 3225 5775 2    50   Input ~ 0
-M2_Vb
-Text HLabel 3225 6975 2    50   Input ~ 0
-M2_Vc
-Wire Wire Line
-	3175 4775 3225 4775
-Wire Wire Line
-	3225 4875 3175 4875
-Wire Wire Line
-	3175 4975 3225 4975
-Wire Wire Line
-	3175 5075 3225 5075
-Wire Wire Line
-	3175 5475 3225 5475
-Wire Wire Line
-	3175 5575 3225 5575
-Wire Wire Line
-	3175 5675 3225 5675
-Wire Wire Line
-	3175 5775 3225 5775
-Text GLabel 1300 4775 0    50   Input ~ 0
-REF_3V0_BUF
-Wire Wire Line
-	1425 5075 1425 4975
-Wire Wire Line
-	1675 4975 1425 4975
-Connection ~ 1425 4975
-Wire Wire Line
-	1425 4975 1425 4875
-Wire Wire Line
-	1675 4875 1425 4875
-Connection ~ 1425 4875
-$Comp
-L power:GND #PWR?
-U 1 1 60145C31
-P 1425 6575
-AR Path="/5F3A3F16/60145C31" Ref="#PWR?"  Part="1" 
-AR Path="/5F3A5338/60145C31" Ref="#PWR?"  Part="1" 
-AR Path="/5F5975A7/60145C31" Ref="#PWR098"  Part="1" 
-F 0 "#PWR098" H 1425 6325 50  0001 C CNN
-F 1 "GND" H 1430 6402 50  0000 C CNN
-F 2 "" H 1425 6575 50  0001 C CNN
-F 3 "" H 1425 6575 50  0001 C CNN
-	1    1425 6575
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
-	1425 6475 1425 6575
-Wire Wire Line
-	1675 6375 1425 6375
-Wire Wire Line
-	1425 6375 1425 6475
-Connection ~ 1425 6475
-Wire Wire Line
-	1675 6275 1425 6275
-Wire Wire Line
-	1425 6275 1425 6375
-Connection ~ 1425 6375
-Wire Wire Line
-	1675 6175 1425 6175
-Wire Wire Line
-	1425 6175 1425 6275
-Connection ~ 1425 6275
-Wire Wire Line
-	1425 6475 1675 6475
-Wire Wire Line
-	3225 6175 3175 6175
-Wire Wire Line
-	3175 6675 3225 6675
-Wire Wire Line
-	3175 6775 3225 6775
-Wire Wire Line
-	3175 6875 3225 6875
-Wire Wire Line
-	3175 6975 3225 6975
-Text HLabel 1750 2350 2    50   Output ~ 0
+	2150 1225 2200 1225
+Text HLabel 2200 1925 2    50   Output ~ 0
 CAN_TX
-Text HLabel 1750 2450 2    50   Input ~ 0
+Text HLabel 2200 2025 2    50   Input ~ 0
 CAN_RX
 Wire Wire Line
-	1750 2450 1700 2450
+	2200 2025 2150 2025
 Wire Wire Line
-	1750 2350 1700 2350
+	2200 1925 2150 1925
 Wire Wire Line
-	1750 1750 1700 1750
+	2200 1325 2150 1325
 Wire Wire Line
-	1700 1850 1750 1850
+	2150 1425 2200 1425
 Wire Wire Line
-	1700 1950 1750 1950
+	2150 1525 2200 1525
 Wire Wire Line
-	1700 2050 1750 2050
+	2150 1625 2200 1625
 Wire Wire Line
-	1700 2150 1750 2150
+	2150 1725 2200 1725
 Wire Wire Line
-	1700 2250 1750 2250
+	2150 1825 2200 1825
 Wire Wire Line
-	1750 2850 1700 2850
+	2200 2425 2150 2425
 Wire Wire Line
-	1750 2950 1700 2950
-Text HLabel 1750 3550 2    50   Input ~ 0
+	2200 2525 2150 2525
+Text HLabel 2200 3125 2    50   Input ~ 0
 ENC2_CHA
-Text HLabel 1750 3650 2    50   Input ~ 0
+Text HLabel 2200 3225 2    50   Input ~ 0
 ENC2_CHB
-Text HLabel 1750 3750 2    50   Input ~ 0
+Text HLabel 2200 3325 2    50   Input ~ 0
 ENC2_CHI
 Wire Wire Line
-	1750 3750 1700 3750
+	2200 3325 2150 3325
 Wire Wire Line
-	1750 3650 1700 3650
+	2200 3225 2150 3225
 Wire Wire Line
-	1750 3550 1700 3550
-Text HLabel 1750 3150 2    50   Input ~ 0
+	2200 3125 2150 3125
+Text HLabel 2200 2725 2    50   Input ~ 0
 ENC1_CHA
-Text HLabel 1750 3250 2    50   Input ~ 0
+Text HLabel 2200 2825 2    50   Input ~ 0
 ENC1_CHB
-Text HLabel 1750 3450 2    50   Input ~ 0
+Text HLabel 2200 3025 2    50   Input ~ 0
 ENC1_CHI
 Wire Wire Line
-	1750 3150 1700 3150
+	2200 2725 2150 2725
 Wire Wire Line
-	1750 3250 1700 3250
+	2200 2825 2150 2825
 Wire Wire Line
-	1750 3450 1700 3450
+	2200 3025 2150 3025
 Wire Wire Line
-	1750 3050 1700 3050
+	2200 2625 2150 2625
 Wire Wire Line
-	5350 3700 5300 3700
+	4550 3325 4500 3325
 Wire Wire Line
-	3500 1450 3450 1450
+	2200 4475 2150 4475
 Wire Wire Line
-	3500 1650 3450 1650
+	2200 4675 2150 4675
 Wire Wire Line
-	3500 1550 3450 1550
-Text HLabel 3500 3050 2    50   Output ~ 0
+	2200 4575 2150 4575
+Text HLabel 2200 6075 2    50   Output ~ 0
 FSI_TXA_CLK
-Text HLabel 3500 2850 2    50   Output ~ 0
+Text HLabel 2200 5875 2    50   Output ~ 0
 FSI_TXA_D0
-Text HLabel 3500 2950 2    50   Output ~ 0
+Text HLabel 2200 5975 2    50   Output ~ 0
 FSI_TXA_D1
 Wire Wire Line
-	3500 3050 3450 3050
+	2200 6075 2150 6075
 Wire Wire Line
-	3450 2950 3500 2950
+	2150 5975 2200 5975
 Wire Wire Line
-	3450 2850 3500 2850
+	2150 5875 2200 5875
 Wire Wire Line
-	5350 1800 5300 1800
+	4550 1425 4500 1425
 Wire Wire Line
-	5300 1600 5350 1600
+	4500 1225 4550 1225
 Wire Wire Line
-	5300 1700 5350 1700
+	4500 1325 4550 1325
 Wire Wire Line
-	5300 1900 5350 1900
+	4500 1525 4550 1525
 Wire Wire Line
-	5350 3600 5300 3600
+	4550 3225 4500 3225
 $Comp
 L omodri_lib:TMS320F28388D U?
 U 9 1 5F3DE432
-P 8475 6425
+P 5850 6050
 AR Path="/5F3A5338/5F3DE432" Ref="U?"  Part="9" 
 AR Path="/5F5975A7/5F3DE432" Ref="U1"  Part="9" 
-F 0 "U1" H 8175 8525 60  0000 C CNN
-F 1 "TMS320F28388D" H 8475 8425 60  0000 C CNN
-F 2 "udriver3:NFBGA_337" H 8475 8425 60  0001 C CNN
-F 3 "https://www.ti.com/lit/ds/symlink/tms320f28388d.pdf" H 8633 8476 60  0001 C CNN
-F 4 " 	296-F28388DZWTS-ND" H 8475 6425 50  0001 C CNN "DigiKey"
-F 5 "595-F28388DZWTS" H 8475 6425 50  0001 C CNN "Mouser"
-F 6 "F28388DZWTS" H 8475 6425 50  0001 C CNN "Part No"
-	9    8475 6425
+F 0 "U1" H 5550 8150 60  0000 C CNN
+F 1 "TMS320F28388D" H 5850 8050 60  0000 C CNN
+F 2 "udriver3:NFBGA_337" H 5850 8050 60  0001 C CNN
+F 3 "https://www.ti.com/lit/ds/symlink/tms320f28388d.pdf" H 6008 8101 60  0001 C CNN
+F 4 " 	296-F28388DZWTS-ND" H 5850 6050 50  0001 C CNN "DigiKey"
+F 5 "595-F28388DZWTS" H 5850 6050 50  0001 C CNN "Mouser"
+F 6 "F28388DZWTS" H 5850 6050 50  0001 C CNN "Part No"
+	9    5850 6050
 	1    0    0    -1  
 $EndComp
-NoConn ~ 9150 1600
-NoConn ~ 9150 3000
-NoConn ~ 7150 4200
-NoConn ~ 7150 4100
-NoConn ~ 7150 4000
-NoConn ~ 7150 3900
-NoConn ~ 7150 3800
-NoConn ~ 7150 3700
-NoConn ~ 7150 3600
-NoConn ~ 7150 3500
-NoConn ~ 7150 3400
-NoConn ~ 7150 3300
-NoConn ~ 7150 2900
-NoConn ~ 7150 2800
-NoConn ~ 7150 2700
-NoConn ~ 7150 2600
-NoConn ~ 7150 2500
-NoConn ~ 7150 2400
-NoConn ~ 7150 2300
-NoConn ~ 7150 2200
-NoConn ~ 7150 2100
-NoConn ~ 7150 2000
-NoConn ~ 7150 1900
-NoConn ~ 7150 1800
-NoConn ~ 7150 1700
-NoConn ~ 7150 1600
-NoConn ~ 7150 1500
-NoConn ~ 7150 1400
-NoConn ~ 7150 1300
-NoConn ~ 7150 1200
-NoConn ~ 7150 1100
-NoConn ~ 5300 4200
-NoConn ~ 5300 4100
-NoConn ~ 5300 4000
-NoConn ~ 5300 3900
-NoConn ~ 5300 3800
-NoConn ~ 5300 3500
-NoConn ~ 5300 3400
-NoConn ~ 5300 3300
-NoConn ~ 5300 3200
-NoConn ~ 5300 3000
-NoConn ~ 5300 2700
-NoConn ~ 5300 2600
-NoConn ~ 5300 2300
-NoConn ~ 5300 2200
-NoConn ~ 3450 2750
-NoConn ~ 3450 2650
-NoConn ~ 3450 2550
-NoConn ~ 3450 2450
-NoConn ~ 3450 2350
-NoConn ~ 3450 2250
-NoConn ~ 3450 2150
-NoConn ~ 3450 2050
-NoConn ~ 3450 1950
-NoConn ~ 5300 1500
-NoConn ~ 5300 1400
-NoConn ~ 5300 1300
-NoConn ~ 5300 1100
-NoConn ~ 3450 1350
-NoConn ~ 3450 1250
-NoConn ~ 3450 1150
-NoConn ~ 3450 3750
-NoConn ~ 3450 3650
-NoConn ~ 3450 3550
-NoConn ~ 3450 1850
-NoConn ~ 3450 1750
-NoConn ~ 1700 3350
-NoConn ~ 1700 2650
-NoConn ~ 1700 2550
-NoConn ~ 1700 4050
-NoConn ~ 1700 3950
-NoConn ~ 1700 3850
-NoConn ~ 3175 7175
-NoConn ~ 3175 7075
-NoConn ~ 3175 6275
-NoConn ~ 3175 5975
-NoConn ~ 3175 5875
-NoConn ~ 3175 5275
-NoConn ~ 3175 5175
-Wire Wire Line
-	1425 4775 1675 4775
-Wire Wire Line
-	1675 5075 1425 5075
-NoConn ~ 1700 4250
-Text HLabel 3225 7375 2    50   Input ~ 0
-ANALOG_IN1
-Text HLabel 3225 7475 2    50   Input ~ 0
-ANALOG_IN2
-Wire Wire Line
-	3225 7375 3175 7375
-Wire Wire Line
-	3225 7475 3175 7475
-Text HLabel 1750 4150 2    50   Output ~ 0
+NoConn ~ 6825 1225
+NoConn ~ 6825 2625
+NoConn ~ 4150 7275
+NoConn ~ 4150 7175
+NoConn ~ 4150 7075
+NoConn ~ 4150 6975
+NoConn ~ 4150 6875
+NoConn ~ 4150 6775
+NoConn ~ 4150 6675
+NoConn ~ 4150 6575
+NoConn ~ 4150 6475
+NoConn ~ 4150 6375
+NoConn ~ 4150 5975
+NoConn ~ 4150 5875
+NoConn ~ 4150 5775
+NoConn ~ 4150 5675
+NoConn ~ 4150 5575
+NoConn ~ 4150 5475
+NoConn ~ 4150 5375
+NoConn ~ 4150 5275
+NoConn ~ 4150 5175
+NoConn ~ 4150 5075
+NoConn ~ 4150 4975
+NoConn ~ 4150 4875
+NoConn ~ 4150 4775
+NoConn ~ 4150 4675
+NoConn ~ 4150 4575
+NoConn ~ 4150 4475
+NoConn ~ 4150 4375
+NoConn ~ 4150 4275
+NoConn ~ 4150 4175
+NoConn ~ 4500 3825
+NoConn ~ 4500 3725
+NoConn ~ 4500 3625
+NoConn ~ 4500 3525
+NoConn ~ 4500 3125
+NoConn ~ 4500 3025
+NoConn ~ 4500 2925
+NoConn ~ 4500 2825
+NoConn ~ 4500 2625
+NoConn ~ 4500 2325
+NoConn ~ 4500 2225
+NoConn ~ 4500 1925
+NoConn ~ 4500 1825
+NoConn ~ 2150 5675
+NoConn ~ 2150 5575
+NoConn ~ 2150 5475
+NoConn ~ 2150 5375
+NoConn ~ 2150 5275
+NoConn ~ 2150 5175
+NoConn ~ 2150 5075
+NoConn ~ 2150 4975
+NoConn ~ 4500 1025
+NoConn ~ 4500 925 
+NoConn ~ 4500 725 
+NoConn ~ 2150 4375
+NoConn ~ 2150 4275
+NoConn ~ 2150 4175
+NoConn ~ 2150 6775
+NoConn ~ 2150 6675
+NoConn ~ 2150 6575
+NoConn ~ 2150 4875
+NoConn ~ 2150 4775
+NoConn ~ 2150 2925
+NoConn ~ 2150 2225
+NoConn ~ 2150 2125
+NoConn ~ 2150 3625
+NoConn ~ 2150 3525
+NoConn ~ 2150 3425
+NoConn ~ 2150 3825
+Text HLabel 4550 3425 2    50   Output ~ 0
 WS2812B_CMD
-Wire Wire Line
-	1750 4150 1700 4150
-Text HLabel 5350 2000 2    50   BiDi ~ 0
+Text HLabel 4550 1625 2    50   BiDi ~ 0
 GPIO0
 Wire Wire Line
-	5350 2000 5300 2000
-Text HLabel 5350 2500 2    50   BiDi ~ 0
+	4550 1625 4500 1625
+Text HLabel 4550 2025 2    50   BiDi ~ 0
 GPIO1
-Text HLabel 5350 2400 2    50   BiDi ~ 0
+Text HLabel 4550 2425 2    50   BiDi ~ 0
 GPIO2
 Wire Wire Line
-	5350 2800 5300 2800
-Text HLabel 5350 2900 2    50   BiDi ~ 0
+	4550 2425 4500 2425
+Text HLabel 6875 2825 2    50   BiDi ~ 0
 GPIO3
-Text HLabel 5350 2800 2    50   BiDi ~ 0
+Text HLabel 4550 2125 2    50   BiDi ~ 0
 GPIO4
-Text HLabel 3500 3950 2    50   Output ~ 0
+Text HLabel 2200 6975 2    50   Output ~ 0
 COM_SPI_SIMO
 Wire Wire Line
-	3500 3950 3450 3950
-Text HLabel 3500 4050 2    50   Input ~ 0
+	2200 6975 2150 6975
+Text HLabel 2200 7075 2    50   Input ~ 0
 COM_SPI_SOMI
 Wire Wire Line
-	3500 4050 3450 4050
-Text HLabel 3500 3850 2    50   Output ~ 0
+	2200 7075 2150 7075
+Text HLabel 2200 6875 2    50   Output ~ 0
 ~COM_SPI_CSn~
 Wire Wire Line
-	3500 3850 3450 3850
-Text HLabel 5350 1200 2    50   Output ~ 0
+	2200 6875 2150 6875
+Text HLabel 4550 825  2    50   Output ~ 0
 COM_SPI_CLK
 Wire Wire Line
-	5350 1200 5300 1200
-NoConn ~ 3175 6375
-NoConn ~ 3175 6475
+	4550 825  4500 825 
+NoConn ~ 4500 1725
 Wire Wire Line
-	4400 7100 4450 7100
-$Comp
-L power:GND #PWR?
-U 1 1 62D88EE2
-P 4850 7400
-AR Path="/5F3A3F16/62D88EE2" Ref="#PWR?"  Part="1" 
-AR Path="/5F3A5338/62D88EE2" Ref="#PWR?"  Part="1" 
-AR Path="/5F5975A7/62D88EE2" Ref="#PWR094"  Part="1" 
-F 0 "#PWR094" H 4850 7150 50  0001 C CNN
-F 1 "GND" H 4855 7227 50  0000 C CNN
-F 2 "" H 4850 7400 50  0001 C CNN
-F 3 "" H 4850 7400 50  0001 C CNN
-	1    4850 7400
-	1    0    0    -1  
-$EndComp
-Text HLabel 4400 7100 0    50   Input ~ 0
-ANALOG_IN1
-Text HLabel 5600 7100 0    50   Input ~ 0
-ANALOG_IN2
-NoConn ~ 5300 2100
+	4500 2125 4550 2125
 Wire Wire Line
-	5300 2900 5350 2900
-Wire Wire Line
-	5300 2500 5350 2500
-Wire Wire Line
-	5300 2400 5350 2400
-NoConn ~ 5300 3100
-Wire Wire Line
-	1300 4775 1425 4775
-Connection ~ 1425 4775
-Wire Wire Line
-	1425 4775 1425 4875
-Text HLabel 7200 3200 2    50   Input ~ 0
+	4500 2025 4550 2025
+NoConn ~ 4500 2725
+Text HLabel 4200 6275 2    50   Input ~ 0
 FSI_RXC_CLK
-Text HLabel 7200 3000 2    50   Input ~ 0
+Text HLabel 4200 6075 2    50   Input ~ 0
 FSI_RXC_D0
-Text HLabel 7200 3100 2    50   Input ~ 0
+Text HLabel 4200 6175 2    50   Input ~ 0
 FSI_RXC_D1
 Wire Wire Line
-	7200 3000 7150 3000
+	4200 6075 4150 6075
 Wire Wire Line
-	7150 3100 7200 3100
+	4150 6175 4200 6175
 Wire Wire Line
-	7150 3200 7200 3200
-NoConn ~ 3450 3150
-NoConn ~ 3450 3250
-NoConn ~ 3450 3350
-NoConn ~ 3450 3450
-NoConn ~ 3450 4150
-NoConn ~ 3450 4250
-Text Label 9175 1100 0    50   ~ 0
+	4150 6275 4200 6275
+NoConn ~ 2150 6175
+NoConn ~ 2150 6275
+NoConn ~ 2150 6375
+NoConn ~ 2150 6475
+NoConn ~ 2150 7175
+NoConn ~ 2150 7275
+Text Label 6850 725  0    50   ~ 0
 ECAT1_INT
-Text Label 9175 1200 0    50   ~ 0
+Text Label 6850 825  0    50   ~ 0
 ESC_TX1_ENA
-Text Label 9175 1300 0    50   ~ 0
+Text Label 6850 925  0    50   ~ 0
 ESC_TX1_CLK
-Text Label 9175 1400 0    50   ~ 0
+Text Label 6850 1025 0    50   ~ 0
 ESC_TX1_D0
-Text Label 9175 1700 0    50   ~ 0
+Text Label 6850 1325 0    50   ~ 0
 ESC_TX1_D2
-Text Label 9175 1800 0    50   ~ 0
+Text Label 6850 1425 0    50   ~ 0
 ESC_TX1_D3
-Text Label 9175 1900 0    50   ~ 0
+Text Label 6850 1525 0    50   ~ 0
 ESC_RX1_DV
-Text Label 9175 2000 0    50   ~ 0
+Text Label 6850 1625 0    50   ~ 0
 ESC_RX1_CLK
-Text Label 9175 2100 0    50   ~ 0
+Text Label 6850 1725 0    50   ~ 0
 ESC_RX1_ERR
-Text Label 9175 2200 0    50   ~ 0
+Text Label 6850 1825 0    50   ~ 0
 ESC_RX1_D0
-Text Label 9175 2300 0    50   ~ 0
+Text Label 6850 1925 0    50   ~ 0
 ESC_RX1_D1
-Text Label 9175 2400 0    50   ~ 0
+Text Label 6850 2025 0    50   ~ 0
 ESC_RX1_D2
-Text Label 9175 2500 0    50   ~ 0
+Text Label 6850 2125 0    50   ~ 0
 ESC_RX1_D3
-Text Label 9175 2800 0    50   ~ 0
+Text Label 6850 2425 0    50   ~ 0
 ESC_LED_ERR
-Text Label 9175 3300 0    50   ~ 0
+Text Label 6850 2925 0    50   ~ 0
 ESC_I2C_SDA
-Text Label 9175 3400 0    50   ~ 0
+Text Label 6850 3025 0    50   ~ 0
 ESC_I2C_SCL
-Text Label 9175 3500 0    50   ~ 0
+Text Label 6850 3125 0    50   ~ 0
 ESC_MDIO_CLK
-Text Label 9175 3600 0    50   ~ 0
+Text Label 6850 3225 0    50   ~ 0
 ESC_MDIO_DATA
-Text Label 9175 3700 0    50   ~ 0
+Text Label 6850 3325 0    50   ~ 0
 ECAT0_INT
 Wire Wire Line
-	9150 3700 9600 3700
-Text Label 9175 3800 0    50   ~ 0
+	6825 3325 7275 3325
+Text Label 6850 3425 0    50   ~ 0
 ~ESC_PHY_RESETn~
-Text Label 9175 3900 0    50   ~ 0
+Text Label 6850 3525 0    50   ~ 0
 ESC_TX0_ENA
-Text Label 9175 4000 0    50   ~ 0
+Text Label 6850 3625 0    50   ~ 0
 ESC_TX0_CLK
-Text Label 9175 4100 0    50   ~ 0
+Text Label 6850 3725 0    50   ~ 0
 ESC_TX0_D0
-Text Label 9175 4200 0    50   ~ 0
+Text Label 6850 3825 0    50   ~ 0
 ESC_TX0_D1
-Text Label 9175 2900 0    50   ~ 0
+Text Label 6850 2525 0    50   ~ 0
 ESC_LED_RUN
-Text Label 9175 1500 0    50   ~ 0
+Text Label 6850 1125 0    50   ~ 0
 ESC_TX1_D1
-Text Label 9150 4525 0    50   ~ 0
+Text Label 6525 4150 0    50   ~ 0
 ESC_TX0_D2
-Text Label 9150 4625 0    50   ~ 0
+Text Label 6525 4250 0    50   ~ 0
 ESC_TX0_D3
-Text Label 9150 4725 0    50   ~ 0
+Text Label 6525 4350 0    50   ~ 0
 ESC_RX0_DV
-Text Label 9150 4825 0    50   ~ 0
+Text Label 6525 4450 0    50   ~ 0
 ESC_RX0_CLK
-Text Label 9150 4925 0    50   ~ 0
+Text Label 6525 4550 0    50   ~ 0
 ESC_RX0_ERR
-Text Label 9150 5025 0    50   ~ 0
+Text Label 6525 4650 0    50   ~ 0
 ESC_RX0_D0
-Text Label 9150 5125 0    50   ~ 0
+Text Label 6525 4750 0    50   ~ 0
 ESC_RX0_D1
-Text Label 9150 5225 0    50   ~ 0
+Text Label 6525 4850 0    50   ~ 0
 ESC_RX0_D2
-Text Label 9150 5325 0    50   ~ 0
+Text Label 6525 4950 0    50   ~ 0
 ESC_RX0_D3
 Wire Wire Line
-	9150 1200 9700 1200
+	6825 825  7375 825 
 Wire Wire Line
-	9150 1300 9700 1300
+	6825 925  7375 925 
 Wire Wire Line
-	9150 1100 9700 1100
+	6825 725  7375 725 
 Wire Wire Line
-	9150 1400 9700 1400
+	6825 1025 7375 1025
 Wire Wire Line
-	9150 1500 9700 1500
+	6825 1125 7375 1125
 Wire Wire Line
-	9150 2000 9700 2000
+	6825 1625 7375 1625
 Wire Wire Line
-	9150 1900 9700 1900
+	6825 1525 7375 1525
 Wire Wire Line
-	9150 1800 9700 1800
+	6825 1425 7375 1425
 Wire Wire Line
-	9150 1700 9700 1700
+	6825 1325 7375 1325
 Wire Wire Line
-	9150 2200 9700 2200
+	6825 1825 7375 1825
 Wire Wire Line
-	9150 2300 9700 2300
+	6825 1925 7375 1925
 Wire Wire Line
-	9150 2400 9700 2400
+	6825 2025 7375 2025
 Wire Wire Line
-	9150 2500 9700 2500
+	6825 2125 7375 2125
 Wire Wire Line
-	9150 2800 9700 2800
+	6825 2425 7375 2425
 Wire Wire Line
-	9150 2900 9700 2900
+	6825 2525 7375 2525
 Wire Wire Line
-	9150 3300 9675 3300
+	6825 2925 7350 2925
 Wire Wire Line
-	9150 3400 9675 3400
+	6825 3025 7350 3025
 Wire Wire Line
-	9150 3500 9750 3500
+	6825 3125 7425 3125
 Wire Wire Line
-	9150 3600 9750 3600
+	6825 3225 7425 3225
 Wire Wire Line
-	9150 3800 9825 3800
+	6825 3425 7500 3425
 Wire Wire Line
-	9150 3900 9700 3900
+	6825 3525 7375 3525
 Wire Wire Line
-	9150 4000 9700 4000
+	6825 3625 7375 3625
 Wire Wire Line
-	9150 4200 9650 4200
+	6825 3825 7325 3825
 Wire Wire Line
-	9150 4100 9650 4100
+	6825 3725 7325 3725
 Wire Wire Line
-	9125 4525 9625 4525
+	6500 4150 7000 4150
 Wire Wire Line
-	9125 4625 9625 4625
+	6500 4250 7000 4250
 Wire Wire Line
-	9125 4725 9625 4725
+	6500 4350 7000 4350
 Wire Wire Line
-	9125 4825 9675 4825
+	6500 4450 7050 4450
 Wire Wire Line
-	9125 4925 9675 4925
+	6500 4550 7050 4550
 Wire Wire Line
-	9125 5025 9675 5025
+	6500 4650 7050 4650
 Wire Wire Line
-	9125 5125 9675 5125
+	6500 4750 7050 4750
 Wire Wire Line
-	9125 5225 9675 5225
+	6500 4850 7050 4850
 Wire Wire Line
-	9125 5325 9675 5325
+	6500 4950 7050 4950
 Wire Wire Line
-	9150 2100 9700 2100
-Text Label 9875 3575 0    50   ~ 0
-ESC_LED_LINK0_ACTIVE
-Text Label 9875 3675 0    50   ~ 0
-ESC_LED_LINK1_ACTIVE
-Text Label 10225 3775 0    50   ~ 0
-ESC_LED_ERR
-Text Label 9875 5575 0    50   ~ 0
-ESC_PHY0_LINKSTATUS
-Text Label 9875 5675 0    50   ~ 0
+	6825 1725 7375 1725
+Wire Wire Line
+	4500 1125 5400 1125
+Wire Wire Line
+	6825 2725 7725 2725
+Wire Wire Line
+	6825 2325 7725 2325
+Wire Wire Line
+	6825 2225 7725 2225
+Text Label 4525 1125 0    50   ~ 0
 ESC_PHY1_LINKSTATUS
-Text Label 9875 5775 0    50   ~ 0
-ESC_I2C_SDA
-Text Label 9875 5875 0    50   ~ 0
-ESC_I2C_SCL
-Text Label 9875 5975 0    50   ~ 0
-ESC_MDIO_CLK
-Text Label 9875 6075 0    50   ~ 0
-ESC_MDIO_DATA
-Text Label 9875 5475 0    50   ~ 0
-~ESC_PHY_RESETn~
-Text Label 10225 3875 0    50   ~ 0
-ESC_LED_RUN
-Wire Wire Line
-	9850 3575 10750 3575
-Wire Wire Line
-	9850 3675 10750 3675
-Wire Wire Line
-	10200 3775 10750 3775
-Wire Wire Line
-	10200 3875 10750 3875
-Wire Wire Line
-	9850 5575 10750 5575
-Wire Wire Line
-	9850 5675 10750 5675
-$Comp
-L Connector_Generic:Conn_01x40 J14
-U 1 1 5F99EC26
-P 10950 4075
-F 0 "J14" H 10875 6175 50  0000 L CNN
-F 1 "Conn_01x40" H 10725 6075 50  0000 L CNN
-F 2 "Connector_FFC-FPC:JAE_FF0841SA1_2Rows-41Pins_P0.40mm_Horizontal" H 10950 4075 50  0001 C CNN
-F 3 "~" H 10950 4075 50  0001 C CNN
-	1    10950 4075
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
-	10200 4075 10750 4075
-Wire Wire Line
-	10200 4375 10750 4375
-Wire Wire Line
-	10200 4475 10750 4475
-Wire Wire Line
-	10200 4575 10750 4575
-Wire Wire Line
-	10200 4675 10750 4675
-Wire Wire Line
-	10200 4775 10750 4775
-Wire Wire Line
-	10200 3075 10750 3075
-Wire Wire Line
-	10200 5375 10750 5375
-Wire Wire Line
-	10200 5275 10750 5275
-Wire Wire Line
-	10200 5175 10750 5175
-Wire Wire Line
-	10200 5075 10750 5075
-Wire Wire Line
-	10200 4975 10750 4975
-Wire Wire Line
-	10200 4875 10750 4875
-Wire Wire Line
-	10200 4275 10750 4275
-Wire Wire Line
-	10200 4175 10750 4175
-Wire Wire Line
-	10200 3475 10750 3475
-Wire Wire Line
-	10200 3375 10750 3375
-Wire Wire Line
-	10200 3275 10750 3275
-Wire Wire Line
-	10200 3175 10750 3175
-Wire Wire Line
-	10200 2675 10750 2675
-Wire Wire Line
-	10200 2775 10750 2775
-Wire Wire Line
-	10200 2875 10750 2875
-Wire Wire Line
-	10200 2975 10750 2975
-Wire Wire Line
-	10200 2575 10750 2575
-Wire Wire Line
-	10200 2475 10750 2475
-Wire Wire Line
-	10200 2175 10750 2175
-Wire Wire Line
-	10200 2375 10750 2375
-Wire Wire Line
-	10200 2275 10750 2275
-Text Label 10225 5375 0    50   ~ 0
-ESC_RX0_D3
-Text Label 10225 5275 0    50   ~ 0
-ESC_RX0_D2
-Text Label 10225 5175 0    50   ~ 0
-ESC_RX0_D1
-Text Label 10225 5075 0    50   ~ 0
-ESC_RX0_D0
-Text Label 10225 4975 0    50   ~ 0
-ESC_RX0_ERR
-Text Label 10225 4875 0    50   ~ 0
-ESC_RX0_CLK
-Text Label 10225 4775 0    50   ~ 0
-ESC_RX0_DV
-Text Label 10225 4675 0    50   ~ 0
-ESC_TX0_D3
-Text Label 10225 4575 0    50   ~ 0
-ESC_TX0_D2
-Text Label 10225 2575 0    50   ~ 0
-ESC_TX1_D1
-Text Label 10225 4475 0    50   ~ 0
-ESC_TX0_D1
-Text Label 10225 4375 0    50   ~ 0
-ESC_TX0_D0
-Text Label 10225 4275 0    50   ~ 0
-ESC_TX0_CLK
-Text Label 10225 4175 0    50   ~ 0
-ESC_TX0_ENA
-Text Label 10225 4075 0    50   ~ 0
-ECAT0_INT
-Text Label 10225 3475 0    50   ~ 0
-ESC_RX1_D3
-Text Label 10225 3375 0    50   ~ 0
-ESC_RX1_D2
-Text Label 10225 3275 0    50   ~ 0
-ESC_RX1_D1
-Text Label 10225 3175 0    50   ~ 0
-ESC_RX1_D0
-Text Label 10225 3075 0    50   ~ 0
-ESC_RX1_ERR
-Text Label 10225 2975 0    50   ~ 0
-ESC_RX1_CLK
-Text Label 10225 2875 0    50   ~ 0
-ESC_RX1_DV
-Text Label 10225 2775 0    50   ~ 0
-ESC_TX1_D3
-Text Label 10225 2675 0    50   ~ 0
-ESC_TX1_D2
-Text Label 10225 2475 0    50   ~ 0
-ESC_TX1_D0
-Text Label 10225 2375 0    50   ~ 0
-ESC_TX1_CLK
-Text Label 10225 2275 0    50   ~ 0
-ESC_TX1_ENA
-Text Label 10225 2175 0    50   ~ 0
-ECAT1_INT
-Wire Wire Line
-	9150 3200 10050 3200
-Wire Wire Line
-	9150 3100 10050 3100
-Wire Wire Line
-	9150 2700 10050 2700
-Wire Wire Line
-	9150 2600 10050 2600
-Text Label 9175 3200 0    50   ~ 0
-ESC_PHY1_LINKSTATUS
-Text Label 9175 3100 0    50   ~ 0
+Text Label 6850 2725 0    50   ~ 0
 ESC_PHY0_LINKSTATUS
-Text Label 9175 2700 0    50   ~ 0
+Text Label 6850 2325 0    50   ~ 0
 ESC_LED_LINK1_ACTIVE
-Text Label 9175 2600 0    50   ~ 0
+Text Label 6850 2225 0    50   ~ 0
 ESC_LED_LINK0_ACTIVE
-Wire Wire Line
-	9850 5475 10750 5475
-Wire Wire Line
-	9850 5775 10750 5775
-Wire Wire Line
-	9850 5875 10750 5875
-Wire Wire Line
-	9850 5975 10750 5975
-Wire Wire Line
-	9850 6075 10750 6075
-$Comp
-L power:GND #PWR?
-U 1 1 5FA6FB87
-P 10150 3975
-AR Path="/5F3A3F16/5FA6FB87" Ref="#PWR?"  Part="1" 
-AR Path="/5F3A5338/5FA6FB87" Ref="#PWR?"  Part="1" 
-AR Path="/5F5975A7/5FA6FB87" Ref="#PWR0150"  Part="1" 
-F 0 "#PWR0150" H 10150 3725 50  0001 C CNN
-F 1 "GND" V 10150 3775 50  0000 C CNN
-F 2 "" H 10150 3975 50  0001 C CNN
-F 3 "" H 10150 3975 50  0001 C CNN
-	1    10150 3975
-	0    1    1    0   
-$EndComp
-Wire Wire Line
-	10150 3975 10750 3975
-Text HLabel 3225 6175 2    50   Input ~ 0
-M1_Vbus
-Text HLabel 3900 5800 0    50   Input ~ 0
+$Sheet
+S 5500 5175 700  1850
+U 5F91076F
+F0 "OMODRI_ANALOG" 50
+F1 "OMODRI_ANALOG.sch" 50
+F2 "M1_Ia" I R 6200 5275 50 
+F3 "M1_Ib" I R 6200 5375 50 
+F4 "M1_Ic" I R 6200 5475 50 
+F5 "M2_Ia" I R 6200 5975 50 
+F6 "M2_Ib" I R 6200 6075 50 
+F7 "M2_Ic" I R 6200 6175 50 
+F8 "M1_Va" I R 6200 5625 50 
+F9 "M1_Vb" I R 6200 5725 50 
+F10 "M1_Vc" I R 6200 5825 50 
+F11 "M2_Va" I R 6200 6325 50 
+F12 "M2_Vb" I R 6200 6425 50 
+F13 "M2_Vc" I R 6200 6525 50 
+F14 "ANALOG_IN1" I R 6200 6675 50 
+F15 "ANALOG_IN2" I R 6200 6775 50 
+F16 "M1_Vbus" I R 6200 6925 50 
+$EndSheet
+Text HLabel 6300 5275 2    50   Input ~ 0
+M1_Ia
+Text HLabel 6300 5375 2    50   Input ~ 0
+M1_Ib
+Text HLabel 6300 5475 2    50   Input ~ 0
+M1_Ic
+Text HLabel 6300 5975 2    50   Input ~ 0
+M2_Ia
+Text HLabel 6300 6075 2    50   Input ~ 0
+M2_Ib
+Text HLabel 6300 6175 2    50   Input ~ 0
+M2_Ic
+Text HLabel 6300 5625 2    50   Input ~ 0
 M1_Va
-Wire Wire Line
-	3900 5800 3950 5800
-$Comp
-L power:GND #PWR?
-U 1 1 5F8F4216
-P 4350 6175
-AR Path="/5F3A3F16/5F8F4216" Ref="#PWR?"  Part="1" 
-AR Path="/5F3A5338/5F8F4216" Ref="#PWR?"  Part="1" 
-AR Path="/5F5975A7/5F8F4216" Ref="#PWR0146"  Part="1" 
-F 0 "#PWR0146" H 4350 5925 50  0001 C CNN
-F 1 "GND" H 4355 6002 50  0000 C CNN
-F 2 "" H 4350 6175 50  0001 C CNN
-F 3 "" H 4350 6175 50  0001 C CNN
-	1    4350 6175
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
-	4350 6175 4350 6100
-Text HLabel 4875 5800 0    50   Input ~ 0
+Text HLabel 6300 5725 2    50   Input ~ 0
 M1_Vb
-Wire Wire Line
-	4875 5800 4925 5800
-$Comp
-L power:GND #PWR?
-U 1 1 5F8F4225
-P 5325 6175
-AR Path="/5F3A3F16/5F8F4225" Ref="#PWR?"  Part="1" 
-AR Path="/5F3A5338/5F8F4225" Ref="#PWR?"  Part="1" 
-AR Path="/5F5975A7/5F8F4225" Ref="#PWR0147"  Part="1" 
-F 0 "#PWR0147" H 5325 5925 50  0001 C CNN
-F 1 "GND" H 5330 6002 50  0000 C CNN
-F 2 "" H 5325 6175 50  0001 C CNN
-F 3 "" H 5325 6175 50  0001 C CNN
-	1    5325 6175
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
-	5325 6175 5325 6100
-Text HLabel 5850 5775 0    50   Input ~ 0
+Text HLabel 6300 5825 2    50   Input ~ 0
 M1_Vc
-Wire Wire Line
-	5850 5775 5900 5775
-$Comp
-L power:GND #PWR?
-U 1 1 5F8F4234
-P 6300 6150
-AR Path="/5F3A3F16/5F8F4234" Ref="#PWR?"  Part="1" 
-AR Path="/5F3A5338/5F8F4234" Ref="#PWR?"  Part="1" 
-AR Path="/5F5975A7/5F8F4234" Ref="#PWR0148"  Part="1" 
-F 0 "#PWR0148" H 6300 5900 50  0001 C CNN
-F 1 "GND" H 6305 5977 50  0000 C CNN
-F 2 "" H 6300 6150 50  0001 C CNN
-F 3 "" H 6300 6150 50  0001 C CNN
-	1    6300 6150
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
-	6300 6150 6300 6075
-$Comp
-L omodri_lib:TPD1E04U04 D9
-U 1 1 5F91F9D9
-P 4350 5800
-F 0 "D9" H 4050 6125 50  0000 L CNN
-F 1 "TPD1E04U04" H 4050 6050 50  0000 L CNN
-F 2 "Diode_SMD:D_0201_0603Metric" H 4450 5800 50  0001 C CNN
-F 3 "https://www.ti.com/lit/ds/symlink/tpd1e04u04.pdf" H 4450 5800 50  0001 C CNN
-F 4 "296-47224-1-ND" H 4350 5800 50  0001 C CNN "DigiKey"
-F 5 "595-TPD1E04U04DPYR" H 4350 5800 50  0001 C CNN "Mouser"
-F 6 "TPD1E04U04DPYT" H 4350 5800 50  0001 C CNN "Part No"
-	1    4350 5800
-	1    0    0    -1  
-$EndComp
-$Comp
-L omodri_lib:TPD1E04U04 D10
-U 1 1 5F92B70D
-P 5325 5800
-F 0 "D10" H 5025 6125 50  0000 L CNN
-F 1 "TPD1E04U04" H 5025 6050 50  0000 L CNN
-F 2 "Diode_SMD:D_0201_0603Metric" H 5425 5800 50  0001 C CNN
-F 3 "https://www.ti.com/lit/ds/symlink/tpd1e04u04.pdf" H 5425 5800 50  0001 C CNN
-F 4 "296-47224-1-ND" H 5325 5800 50  0001 C CNN "DigiKey"
-F 5 "595-TPD1E04U04DPYR" H 5325 5800 50  0001 C CNN "Mouser"
-F 6 "TPD1E04U04DPYT" H 5325 5800 50  0001 C CNN "Part No"
-	1    5325 5800
-	1    0    0    -1  
-$EndComp
-$Comp
-L omodri_lib:TPD1E04U04 D8
-U 1 1 5F93722E
-P 6300 5775
-F 0 "D8" H 6000 6100 50  0000 L CNN
-F 1 "TPD1E04U04" H 6000 6025 50  0000 L CNN
-F 2 "Diode_SMD:D_0201_0603Metric" H 6400 5775 50  0001 C CNN
-F 3 "https://www.ti.com/lit/ds/symlink/tpd1e04u04.pdf" H 6400 5775 50  0001 C CNN
-F 4 "296-47224-1-ND" H 6300 5775 50  0001 C CNN "DigiKey"
-F 5 "595-TPD1E04U04DPYR" H 6300 5775 50  0001 C CNN "Mouser"
-F 6 "TPD1E04U04DPYT" H 6300 5775 50  0001 C CNN "Part No"
-	1    6300 5775
-	1    0    0    -1  
-$EndComp
-$Comp
-L omodri_lib:TPD1E04U04 D2
-U 1 1 5F91396A
-P 6325 4800
-F 0 "D2" H 6025 5125 50  0000 L CNN
-F 1 "TPD1E04U04" H 6025 5050 50  0000 L CNN
-F 2 "Diode_SMD:D_0201_0603Metric" H 6425 4800 50  0001 C CNN
-F 3 "https://www.ti.com/lit/ds/symlink/tpd1e04u04.pdf" H 6425 4800 50  0001 C CNN
-F 4 "296-47224-1-ND" H 6325 4800 50  0001 C CNN "DigiKey"
-F 5 "595-TPD1E04U04DPYR" H 6325 4800 50  0001 C CNN "Mouser"
-F 6 "TPD1E04U04DPYT" H 6325 4800 50  0001 C CNN "Part No"
-	1    6325 4800
-	1    0    0    -1  
-$EndComp
-$Comp
-L omodri_lib:TPD1E04U04 D7
-U 1 1 5F910B7D
-P 5350 4825
-F 0 "D7" H 5050 5150 50  0000 L CNN
-F 1 "TPD1E04U04" H 5050 5075 50  0000 L CNN
-F 2 "Diode_SMD:D_0201_0603Metric" H 5450 4825 50  0001 C CNN
-F 3 "https://www.ti.com/lit/ds/symlink/tpd1e04u04.pdf" H 5450 4825 50  0001 C CNN
-F 4 "296-47224-1-ND" H 5350 4825 50  0001 C CNN "DigiKey"
-F 5 "595-TPD1E04U04DPYR" H 5350 4825 50  0001 C CNN "Mouser"
-F 6 "TPD1E04U04DPYT" H 5350 4825 50  0001 C CNN "Part No"
-	1    5350 4825
-	1    0    0    -1  
-$EndComp
-$Comp
-L omodri_lib:TPD1E04U04 D6
-U 1 1 5F90DC8F
-P 4375 4825
-F 0 "D6" H 4075 5150 50  0000 L CNN
-F 1 "TPD1E04U04" H 4075 5075 50  0000 L CNN
-F 2 "Diode_SMD:D_0201_0603Metric" H 4475 4825 50  0001 C CNN
-F 3 "https://www.ti.com/lit/ds/symlink/tpd1e04u04.pdf" H 4475 4825 50  0001 C CNN
-F 4 "296-47224-1-ND" H 4375 4825 50  0001 C CNN "DigiKey"
-F 5 "595-TPD1E04U04DPYR" H 4375 4825 50  0001 C CNN "Mouser"
-F 6 "TPD1E04U04DPYT" H 4375 4825 50  0001 C CNN "Part No"
-	1    4375 4825
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
-	6325 5175 6325 5100
-$Comp
-L power:GND #PWR?
-U 1 1 5F87FEE1
-P 6325 5175
-AR Path="/5F3A3F16/5F87FEE1" Ref="#PWR?"  Part="1" 
-AR Path="/5F3A5338/5F87FEE1" Ref="#PWR?"  Part="1" 
-AR Path="/5F5975A7/5F87FEE1" Ref="#PWR0145"  Part="1" 
-F 0 "#PWR0145" H 6325 4925 50  0001 C CNN
-F 1 "GND" H 6330 5002 50  0000 C CNN
-F 2 "" H 6325 5175 50  0001 C CNN
-F 3 "" H 6325 5175 50  0001 C CNN
-	1    6325 5175
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
-	5875 4800 5925 4800
-Text HLabel 5875 4800 0    50   Input ~ 0
-M2_Vc
-Wire Wire Line
-	5350 5200 5350 5125
-$Comp
-L power:GND #PWR?
-U 1 1 5F873C3F
-P 5350 5200
-AR Path="/5F3A3F16/5F873C3F" Ref="#PWR?"  Part="1" 
-AR Path="/5F3A5338/5F873C3F" Ref="#PWR?"  Part="1" 
-AR Path="/5F5975A7/5F873C3F" Ref="#PWR0144"  Part="1" 
-F 0 "#PWR0144" H 5350 4950 50  0001 C CNN
-F 1 "GND" H 5355 5027 50  0000 C CNN
-F 2 "" H 5350 5200 50  0001 C CNN
-F 3 "" H 5350 5200 50  0001 C CNN
-	1    5350 5200
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
-	4900 4825 4950 4825
-Text HLabel 4900 4825 0    50   Input ~ 0
-M2_Vb
-Wire Wire Line
-	4375 5200 4375 5125
-$Comp
-L power:GND #PWR?
-U 1 1 5F943B67
-P 4375 5200
-AR Path="/5F3A3F16/5F943B67" Ref="#PWR?"  Part="1" 
-AR Path="/5F3A5338/5F943B67" Ref="#PWR?"  Part="1" 
-AR Path="/5F5975A7/5F943B67" Ref="#PWR022"  Part="1" 
-F 0 "#PWR022" H 4375 4950 50  0001 C CNN
-F 1 "GND" H 4380 5027 50  0000 C CNN
-F 2 "" H 4375 5200 50  0001 C CNN
-F 3 "" H 4375 5200 50  0001 C CNN
-	1    4375 5200
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
-	3925 4825 3975 4825
-Text HLabel 3925 4825 0    50   Input ~ 0
+Text HLabel 6300 6325 2    50   Input ~ 0
 M2_Va
+Text HLabel 6300 6425 2    50   Input ~ 0
+M2_Vb
+Text HLabel 6300 6525 2    50   Input ~ 0
+M2_Vc
+Text HLabel 6300 6675 2    50   Input ~ 0
+ANALOG_IN1
+Text HLabel 6300 6775 2    50   Input ~ 0
+ANALOG_IN2
+Text HLabel 6300 6925 2    50   Input ~ 0
+M1_Vbus
+Wire Wire Line
+	6300 6925 6200 6925
+Wire Wire Line
+	6300 6675 6200 6675
+Wire Wire Line
+	6300 6775 6200 6775
+Wire Wire Line
+	6300 6325 6200 6325
+Wire Wire Line
+	6300 6425 6200 6425
+Wire Wire Line
+	6300 6525 6200 6525
+Wire Wire Line
+	6300 5625 6200 5625
+Wire Wire Line
+	6300 5725 6200 5725
+Wire Wire Line
+	6300 5825 6200 5825
+Wire Wire Line
+	6300 5975 6200 5975
+Wire Wire Line
+	6300 6075 6200 6075
+Wire Wire Line
+	6300 6175 6200 6175
+Wire Wire Line
+	6300 5275 6200 5275
+Wire Wire Line
+	6300 5375 6200 5375
+Wire Wire Line
+	6300 5475 6200 5475
+Text Label 8875 725  0    50   ~ 0
+ESC_TX1_CLK
+Text Label 8875 975  0    50   ~ 0
+ESC_TX1_D0
+Text Label 8875 1175 0    50   ~ 0
+ESC_TX1_D2
+Text Label 8875 1275 0    50   ~ 0
+ESC_TX1_D3
+Text Label 8875 1075 0    50   ~ 0
+ESC_TX1_D1
+Wire Wire Line
+	8850 725  9400 725 
+Wire Wire Line
+	8850 975  9400 975 
+Wire Wire Line
+	8850 1075 9400 1075
+Wire Wire Line
+	8850 1275 9400 1275
+Wire Wire Line
+	8850 1175 9400 1175
+Text Label 8875 825  0    50   ~ 0
+ESC_TX1_ENA
+Wire Wire Line
+	8850 825  9400 825 
+Text Label 8875 1625 0    50   ~ 0
+ESC_RX1_DV
+Text Label 8875 1425 0    50   ~ 0
+ESC_RX1_CLK
+Text Label 8875 1525 0    50   ~ 0
+ESC_RX1_ERR
+Text Label 8875 1775 0    50   ~ 0
+ESC_RX1_D0
+Text Label 8875 1875 0    50   ~ 0
+ESC_RX1_D1
+Text Label 8875 1975 0    50   ~ 0
+ESC_RX1_D2
+Text Label 8875 2075 0    50   ~ 0
+ESC_RX1_D3
+Wire Wire Line
+	8850 1425 9400 1425
+Wire Wire Line
+	8850 1625 9400 1625
+Wire Wire Line
+	8850 1775 9400 1775
+Wire Wire Line
+	8850 1875 9400 1875
+Wire Wire Line
+	8850 1975 9400 1975
+Wire Wire Line
+	8850 2075 9400 2075
+Wire Wire Line
+	8850 1525 9400 1525
+Text Label 8875 2425 0    50   ~ 0
+ESC_TX0_ENA
+Text Label 8875 2325 0    50   ~ 0
+ESC_TX0_CLK
+Text Label 8875 2575 0    50   ~ 0
+ESC_TX0_D0
+Text Label 8875 2675 0    50   ~ 0
+ESC_TX0_D1
+Text Label 8875 2775 0    50   ~ 0
+ESC_TX0_D2
+Text Label 8875 2875 0    50   ~ 0
+ESC_TX0_D3
+Wire Wire Line
+	8850 2425 9400 2425
+Wire Wire Line
+	8850 2325 9400 2325
+Wire Wire Line
+	8850 2575 9400 2575
+Wire Wire Line
+	8850 2675 9400 2675
+Wire Wire Line
+	8850 2875 9400 2875
+Wire Wire Line
+	8850 2775 9400 2775
+Text Label 8875 3225 0    50   ~ 0
+ESC_RX0_DV
+Text Label 8875 3025 0    50   ~ 0
+ESC_RX0_CLK
+Text Label 8875 3125 0    50   ~ 0
+ESC_RX0_ERR
+Text Label 8875 3375 0    50   ~ 0
+ESC_RX0_D0
+Text Label 8875 3475 0    50   ~ 0
+ESC_RX0_D1
+Text Label 8875 3575 0    50   ~ 0
+ESC_RX0_D2
+Text Label 8875 3675 0    50   ~ 0
+ESC_RX0_D3
+Wire Wire Line
+	8850 3025 9400 3025
+Wire Wire Line
+	8850 3125 9400 3125
+Wire Wire Line
+	8850 3375 9400 3375
+Wire Wire Line
+	8850 3475 9400 3475
+Wire Wire Line
+	8850 3575 9400 3575
+Wire Wire Line
+	8850 3675 9400 3675
+Wire Wire Line
+	8850 3225 9400 3225
+Text Label 8900 5875 0    50   ~ 0
+ECAT1_INT
+Text Label 8875 5425 0    50   ~ 0
+ESC_LED_ERR
+Text Label 8875 4825 0    50   ~ 0
+ESC_I2C_SDA
+Text Label 8875 4925 0    50   ~ 0
+ESC_I2C_SCL
+Text Label 8875 3925 0    50   ~ 0
+ESC_MDIO_CLK
+Text Label 8875 4025 0    50   ~ 0
+ESC_MDIO_DATA
+Text Label 8900 5775 0    50   ~ 0
+ECAT0_INT
+Text Label 8875 4125 0    50   ~ 0
+~ESC_PHY_RESETn~
+Text Label 8875 5525 0    50   ~ 0
+ESC_LED_RUN
+Wire Wire Line
+	8850 5875 9400 5875
+Wire Wire Line
+	8850 5425 9400 5425
+Wire Wire Line
+	8850 5525 9400 5525
+Wire Wire Line
+	8850 4825 9375 4825
+Wire Wire Line
+	8850 4925 9375 4925
+Wire Wire Line
+	8850 3925 9450 3925
+Wire Wire Line
+	8850 4025 9450 4025
+Wire Wire Line
+	8850 4125 9525 4125
+Wire Wire Line
+	8850 4525 9750 4525
+Wire Wire Line
+	8850 4425 9750 4425
+Wire Wire Line
+	8850 5325 9750 5325
+Wire Wire Line
+	8850 5225 9750 5225
+Text Label 8875 4525 0    50   ~ 0
+ESC_PHY1_LINKSTATUS
+Text Label 8875 4425 0    50   ~ 0
+ESC_PHY0_LINKSTATUS
+Text Label 8875 5325 0    50   ~ 0
+ESC_LED_LINK1_ACTIVE
+Text Label 8875 5225 0    50   ~ 0
+ESC_LED_LINK0_ACTIVE
+Wire Wire Line
+	9400 5775 8850 5775
+Text HLabel 10200 4225 2    50   Input ~ 0
+F2838x_CLK_25MHz
+Text Label 8875 4325 0    50   ~ 0
+ESC_PHY_CLK
+Wire Wire Line
+	8850 4325 9400 4325
+Text Label 2175 5775 0    50   ~ 0
+ESC_PHY_CLK
+Wire Wire Line
+	2150 5775 2700 5775
 $Comp
-L omodri_lib:TPD1E04U04 D12
-U 1 1 5F959A4B
-P 4850 7100
-F 0 "D12" H 4550 7425 50  0000 L CNN
-F 1 "TPD1E04U04" H 4550 7350 50  0000 L CNN
-F 2 "Diode_SMD:D_0201_0603Metric" H 4950 7100 50  0001 C CNN
-F 3 "https://www.ti.com/lit/ds/symlink/tpd1e04u04.pdf" H 4950 7100 50  0001 C CNN
-F 4 "296-47224-1-ND" H 4850 7100 50  0001 C CNN "DigiKey"
-F 5 "595-TPD1E04U04DPYR" H 4850 7100 50  0001 C CNN "Mouser"
-F 6 "TPD1E04U04DPYT" H 4850 7100 50  0001 C CNN "Part No"
-	1    4850 7100
-	1    0    0    -1  
-$EndComp
-$Comp
-L power:GND #PWR?
-U 1 1 5F9895FA
-P 6050 7400
-AR Path="/5F3A3F16/5F9895FA" Ref="#PWR?"  Part="1" 
-AR Path="/5F3A5338/5F9895FA" Ref="#PWR?"  Part="1" 
-AR Path="/5F5975A7/5F9895FA" Ref="#PWR047"  Part="1" 
-F 0 "#PWR047" H 6050 7150 50  0001 C CNN
-F 1 "GND" H 6055 7227 50  0000 C CNN
-F 2 "" H 6050 7400 50  0001 C CNN
-F 3 "" H 6050 7400 50  0001 C CNN
-	1    6050 7400
-	1    0    0    -1  
-$EndComp
-$Comp
-L omodri_lib:TPD1E04U04 D13
-U 1 1 5F989607
-P 6050 7100
-F 0 "D13" H 5750 7425 50  0000 L CNN
-F 1 "TPD1E04U04" H 5750 7350 50  0000 L CNN
-F 2 "Diode_SMD:D_0201_0603Metric" H 6150 7100 50  0001 C CNN
-F 3 "https://www.ti.com/lit/ds/symlink/tpd1e04u04.pdf" H 6150 7100 50  0001 C CNN
-F 4 "296-47224-1-ND" H 6050 7100 50  0001 C CNN "DigiKey"
-F 5 "595-TPD1E04U04DPYR" H 6050 7100 50  0001 C CNN "Mouser"
-F 6 "TPD1E04U04DPYT" H 6050 7100 50  0001 C CNN "Part No"
-	1    6050 7100
+L omodri_lib:TMS320F28388D U?
+U 6 1 5F3C0127
+P 3850 2625
+AR Path="/5F3A5338/5F3C0127" Ref="U?"  Part="6" 
+AR Path="/5F5975A7/5F3C0127" Ref="U1"  Part="6" 
+F 0 "U1" H 3200 4725 60  0000 C CNN
+F 1 "TMS320F28388D" H 3500 4625 60  0000 C CNN
+F 2 "udriver3:NFBGA_337" H 3850 4625 60  0001 C CNN
+F 3 "https://www.ti.com/lit/ds/symlink/tms320f28388d.pdf" H 4008 4676 60  0001 C CNN
+F 4 " 	296-F28388DZWTS-ND" H 3850 2625 50  0001 C CNN "DigiKey"
+F 5 "595-F28388DZWTS" H 3850 2625 50  0001 C CNN "Mouser"
+F 6 "F28388DZWTS" H 3850 2625 50  0001 C CNN "Part No"
+	6    3850 2625
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	5600 7100 5650 7100
+	4550 3425 4500 3425
+NoConn ~ 2150 3725
+Wire Wire Line
+	6825 2825 6875 2825
+NoConn ~ 4500 2525
+Text HLabel 8900 6050 2    50   Output ~ 0
+COM_SPI_CLK
+Wire Wire Line
+	8900 6050 8850 6050
+Text HLabel 8900 6250 2    50   Output ~ 0
+COM_SPI_SIMO
+Wire Wire Line
+	8900 6250 8850 6250
+Text HLabel 8900 6350 2    50   Input ~ 0
+COM_SPI_SOMI
+Wire Wire Line
+	8900 6350 8850 6350
+Text HLabel 8900 6150 2    50   Output ~ 0
+~COM_SPI_CSn~
+Wire Wire Line
+	8900 6150 8850 6150
+$Sheet
+S 7875 675  975  5775
+U 5FA2AE4C
+F0 "OMODRI_ETHERCAT_CONNECT" 50
+F1 "OMODRI_ETHERCAT_CONNECT.sch" 50
+F2 "ESC_TX1_D0" I R 8850 975 50 
+F3 "ESC_TX1_D1" I R 8850 1075 50 
+F4 "ESC_TX1_D2" I R 8850 1175 50 
+F5 "ESC_TX1_D3" I R 8850 1275 50 
+F6 "ESC_TX0_D3" I R 8850 2875 50 
+F7 "ESC_TX0_D2" I R 8850 2775 50 
+F8 "ESC_TX0_D1" I R 8850 2675 50 
+F9 "ESC_TX0_D0" I R 8850 2575 50 
+F10 "ESC_RX1_D0" O R 8850 1775 50 
+F11 "ESC_RX1_D1" O R 8850 1875 50 
+F12 "ESC_RX1_D2" O R 8850 1975 50 
+F13 "ESC_RX1_D3" O R 8850 2075 50 
+F14 "ESC_RX0_D0" O R 8850 3375 50 
+F15 "ESC_RX0_D1" O R 8850 3475 50 
+F16 "ESC_RX0_D2" O R 8850 3575 50 
+F17 "ESC_RX0_D3" O R 8850 3675 50 
+F18 "ESC_RX1_DV" O R 8850 1625 50 
+F19 "ESC_RX1_ERR" O R 8850 1525 50 
+F20 "ESC_RX1_CLK" O R 8850 1425 50 
+F21 "ESC_RX0_DV" O R 8850 3225 50 
+F22 "ESC_RX0_ERR" O R 8850 3125 50 
+F23 "ESC_RX0_CLK" O R 8850 3025 50 
+F24 "ESC_TX1_ENA" I R 8850 825 50 
+F25 "ESC_TX1_CLK" O R 8850 725 50 
+F26 "ESC_TX0_ENA" I R 8850 2425 50 
+F27 "ESC_TX0_CLK" O R 8850 2325 50 
+F28 "ESC_PHY_MDIO_CLK" I R 8850 3925 50 
+F29 "ESC_PHY_MDIO_DATA" B R 8850 4025 50 
+F30 "~ESC_PHY_RESETn~" I R 8850 4125 50 
+F31 "ESC_PHY_CLK_OSC" I R 8850 4225 50 
+F32 "ESC_PHY_CLK_INT" I R 8850 4325 50 
+F33 "ESC_I2C_SDA" B R 8850 4825 50 
+F34 "ESC_I2C_SCL" I R 8850 4925 50 
+F35 "ESC_LED_LINK0_ACT" I R 8850 5225 50 
+F36 "ESC_LED_LINK1_ACT" I R 8850 5325 50 
+F37 "ESC_LED_ERR" O R 8850 5425 50 
+F38 "ESC_LED_RUN" O R 8850 5525 50 
+F39 "ESC_PHY0_LINKSTATUS" O R 8850 4425 50 
+F40 "ESC_PHY1_LINKSTATUS" O R 8850 4525 50 
+F41 "ECAT0_INT" O R 8850 5775 50 
+F42 "ECAT1_INT" O R 8850 5875 50 
+F43 "COM_SPI_CLK" O R 8850 6050 50 
+F44 "COM_SPI_SIMO" O R 8850 6250 50 
+F45 "COM_SPI_SOMI" I R 8850 6350 50 
+F46 "~COM_SPI_CSn~" O R 8850 6150 50 
+$EndSheet
+$Comp
+L Device:R R?
+U 1 1 5F96EBA7
+P 9825 4225
+AR Path="/5F310311/5F96EBA7" Ref="R?"  Part="1" 
+AR Path="/5F3255E8/5F96EBA7" Ref="R?"  Part="1" 
+AR Path="/5F387075/5F96EBA7" Ref="R?"  Part="1" 
+AR Path="/60E4937F/5F96EBA7" Ref="R?"  Part="1" 
+AR Path="/5F96EBA7" Ref="R?"  Part="1" 
+AR Path="/5F5975A7/5F96EBA7" Ref="R7"  Part="1" 
+F 0 "R7" V 9875 4375 50  0000 L CNN
+F 1 "33" V 9875 3925 50  0000 L CNN
+F 2 "Resistor_SMD:R_0201_0603Metric" V 9755 4225 50  0001 C CNN
+F 3 "https://industrial.panasonic.com/cdbs/www-data/pdf/RDA0000/AOA0000C304.pdf" H 9825 4225 50  0001 C CNN
+F 4 "P122944CT-ND" H 9825 4225 50  0001 C CNN "DigiKey"
+F 5 "2302295" H 9825 4225 50  0001 C CNN "Farnell"
+F 6 "667-ERJ-1GNF33R0C" H 9825 4225 50  0001 C CNN "Mouser"
+F 7 "ERJ-1GNF33R0C" H 9825 4225 50  0001 C CNN "Part No"
+F 8 "" H 9825 4225 50  0001 C CNN "RS"
+	1    9825 4225
+	0    -1   -1   0   
+$EndComp
+Wire Wire Line
+	8850 4225 9675 4225
+Wire Wire Line
+	10200 4225 9975 4225
+Text Label 8875 4225 0    50   ~ 0
+ESC_PHY_CLK_OSC
 $EndSCHEMATC
