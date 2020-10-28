@@ -1,4 +1,4 @@
-update=26/10/2020 16:55:41
+update=27/10/2020 21:05:01
 version=1
 last_client=kicad
 [general]
@@ -26,13 +26,13 @@ ERC_TestSimilarLabels=1
 version=1
 PageLayoutDescrFile=
 LastNetListRead=omodri_laas.net
-CopperLayerCount=8
+CopperLayerCount=6
 BoardThickness=1.6
 AllowMicroVias=0
 AllowBlindVias=0
 RequireCourtyardDefinitions=0
 ProhibitOverlappingCourtyards=1
-MinTrackWidth=0
+MinTrackWidth=0.1016
 MinViaDiameter=0.3048
 MinViaDrill=0.09999999999999999
 MinMicroViaDiameter=0.2
@@ -88,17 +88,17 @@ Name=In3.Cu
 Type=2
 Enabled=1
 [pcbnew/Layer.In4.Cu]
-Name=In4.Cu
-Type=2
-Enabled=1
-[pcbnew/Layer.In5.Cu]
-Name=In5.Cu
-Type=2
-Enabled=1
-[pcbnew/Layer.In6.Cu]
 Name=PWR.Cu
 Type=1
 Enabled=1
+[pcbnew/Layer.In5.Cu]
+Name=In5.Cu
+Type=0
+Enabled=0
+[pcbnew/Layer.In6.Cu]
+Name=In6.Cu
+Type=0
+Enabled=0
 [pcbnew/Layer.In7.Cu]
 Name=In7.Cu
 Type=0
