@@ -15,24 +15,6 @@ Comment4 ""
 $EndDescr
 $Comp
 L omodri_lib:ADM6_ADF6 J?
-U 1 1 5FA3E1D7
-P 3400 3250
-AR Path="/5FA3E1D7" Ref="J?"  Part="1" 
-AR Path="/5F5975A7/5FA2AE4C/5FA3E1D7" Ref="J16"  Part="1" 
-F 0 "J16" H 3400 3800 50  0000 L CNN
-F 1 "ADM6_ADF6" H 3400 2700 50  0000 L CNN
-F 2 "udriver3:ADF6-10-XX.X-XXX-4-X-A-XR" H 3400 3250 50  0001 C CNN
-F 3 "http://suddendocs.samtec.com/prints/adf6-xxx-xx.x-xxx-4-x-x-xr-mkt.pdf" H 3400 3250 50  0001 C CNN
-F 4 "612-ADF6-10-03.5-L-4-2-A-TR-ND" H 3400 3250 50  0001 C CNN "DigiKey"
-F 5 "3462763" H 3400 3250 50  0001 C CNN "Farnell"
-F 6 "200-ADF6-10-3.5-L42A" H 3400 3250 50  0001 C CNN "Mouser"
-F 7 "ADF6-10-03.5-L-4-2-A" H 3400 3250 50  0001 C CNN "Part No"
-F 8 "202-7885" H 3400 3250 50  0001 C CNN "RS"
-	1    3400 3250
-	1    0    0    -1  
-$EndComp
-$Comp
-L omodri_lib:ADM6_ADF6 J?
 U 3 1 5FA3E1E3
 P 6225 3250
 AR Path="/5FA3E1E3" Ref="J?"  Part="3" 
@@ -119,8 +101,6 @@ Text HLabel 3025 5200 0    50   Output ~ 0
 ESC_RX0_D3
 Text HLabel 7350 3000 0    50   Output ~ 0
 ESC_RX1_DV
-Text HLabel 3025 2800 0    50   Output ~ 0
-ESC_RX1_ERR
 Text HLabel 4325 2900 0    50   Output ~ 0
 ESC_RX1_CLK
 Text HLabel 7350 4900 0    50   Output ~ 0
@@ -131,14 +111,10 @@ Text HLabel 5850 5100 0    50   Output ~ 0
 ESC_RX0_CLK
 Text HLabel 7350 3200 0    50   Input ~ 0
 ESC_TX1_ENA
-Text HLabel 3025 3100 0    50   Output ~ 0
-ESC_TX1_CLK
 Text HLabel 7325 4700 0    50   Output ~ 0
 ESC_TX0_CLK
 Text HLabel 3025 4600 0    50   Input ~ 0
 ~ESC_PHY_RESETn~
-Text HLabel 3025 3500 0    50   Input ~ 0
-ESC_PHY_CLK_OSC
 Text HLabel 5850 3000 0    50   Input ~ 0
 ESC_PHY_CLK_INT
 Text HLabel 7350 4300 0    50   BiDi ~ 0
@@ -155,12 +131,8 @@ Text HLabel 3025 4300 0    50   Output ~ 0
 ESC_LED_RUN
 Text HLabel 5850 4500 0    50   Output ~ 0
 ESC_PHY0_LINKSTATUS
-Text HLabel 3025 2900 0    50   Output ~ 0
-ESC_PHY1_LINKSTATUS
 Text HLabel 3025 4800 0    50   Output ~ 0
 ECAT0_INT
-Text HLabel 3025 3300 0    50   Output ~ 0
-ECAT1_INT
 $Comp
 L omodri_lib:ADM6_ADF6 J?
 U 2 1 5FA3E1DD
@@ -243,38 +215,6 @@ Wire Wire Line
 	4500 4500 4400 4500
 Wire Wire Line
 	4400 4500 4400 4700
-$Comp
-L power:GND #PWR?
-U 1 1 5FAA5B09
-P 5925 5250
-AR Path="/5F3A3F16/5FAA5B09" Ref="#PWR?"  Part="1" 
-AR Path="/5F7A5BAE/5FAA5B09" Ref="#PWR?"  Part="1" 
-AR Path="/5F497A69/5FAA5B09" Ref="#PWR?"  Part="1" 
-AR Path="/5F5B5760/5FAA5B09" Ref="#PWR?"  Part="1" 
-AR Path="/5F5975A7/5FA2AE4C/5FAA5B09" Ref="#PWR0162"  Part="1" 
-F 0 "#PWR0162" H 5925 5000 50  0001 C CNN
-F 1 "GND" H 5930 5077 50  0000 C CNN
-F 2 "" H 5925 5250 50  0001 C CNN
-F 3 "" H 5925 5250 50  0001 C CNN
-	1    5925 5250
-	1    0    0    -1  
-$EndComp
-$Comp
-L power:GND #PWR?
-U 1 1 5FAAA259
-P 7425 5250
-AR Path="/5F3A3F16/5FAAA259" Ref="#PWR?"  Part="1" 
-AR Path="/5F7A5BAE/5FAAA259" Ref="#PWR?"  Part="1" 
-AR Path="/5F497A69/5FAAA259" Ref="#PWR?"  Part="1" 
-AR Path="/5F5B5760/5FAAA259" Ref="#PWR?"  Part="1" 
-AR Path="/5F5975A7/5FA2AE4C/5FAAA259" Ref="#PWR0163"  Part="1" 
-F 0 "#PWR0163" H 7425 5000 50  0001 C CNN
-F 1 "GND" H 7430 5077 50  0000 C CNN
-F 2 "" H 7425 5250 50  0001 C CNN
-F 3 "" H 7425 5250 50  0001 C CNN
-	1    7425 5250
-	1    0    0    -1  
-$EndComp
 Wire Wire Line
 	3200 4500 3100 4500
 Wire Wire Line
@@ -340,42 +280,10 @@ Wire Wire Line
 	5850 5100 6025 5100
 Wire Wire Line
 	7350 5100 7525 5100
-$Comp
-L power:GND #PWR?
-U 1 1 5F9E52B0
-P 3100 3750
-AR Path="/5F3A3F16/5F9E52B0" Ref="#PWR?"  Part="1" 
-AR Path="/5F7A5BAE/5F9E52B0" Ref="#PWR?"  Part="1" 
-AR Path="/5F497A69/5F9E52B0" Ref="#PWR?"  Part="1" 
-AR Path="/5F5B5760/5F9E52B0" Ref="#PWR?"  Part="1" 
-AR Path="/5F5975A7/5FA2AE4C/5F9E52B0" Ref="#PWR0150"  Part="1" 
-F 0 "#PWR0150" H 3100 3500 50  0001 C CNN
-F 1 "GND" H 3105 3577 50  0000 C CNN
-F 2 "" H 3100 3750 50  0001 C CNN
-F 3 "" H 3100 3750 50  0001 C CNN
-	1    3100 3750
-	1    0    0    -1  
-$EndComp
 Wire Wire Line
 	3100 3750 3100 3600
 Wire Wire Line
 	3100 3600 3200 3600
-$Comp
-L power:GND #PWR?
-U 1 1 5FA1341F
-P 4400 3750
-AR Path="/5F3A3F16/5FA1341F" Ref="#PWR?"  Part="1" 
-AR Path="/5F7A5BAE/5FA1341F" Ref="#PWR?"  Part="1" 
-AR Path="/5F497A69/5FA1341F" Ref="#PWR?"  Part="1" 
-AR Path="/5F5B5760/5FA1341F" Ref="#PWR?"  Part="1" 
-AR Path="/5F5975A7/5FA2AE4C/5FA1341F" Ref="#PWR0154"  Part="1" 
-F 0 "#PWR0154" H 4400 3500 50  0001 C CNN
-F 1 "GND" H 4405 3577 50  0000 C CNN
-F 2 "" H 4400 3750 50  0001 C CNN
-F 3 "" H 4400 3750 50  0001 C CNN
-	1    4400 3750
-	1    0    0    -1  
-$EndComp
 $Comp
 L power:GND #PWR?
 U 1 1 5FA14E90
@@ -410,8 +318,6 @@ F 3 "" H 7425 3750 50  0001 C CNN
 $EndComp
 Wire Wire Line
 	4400 3750 4400 3600
-Wire Wire Line
-	3025 3500 3200 3500
 Wire Wire Line
 	7350 4300 7525 4300
 Wire Wire Line
@@ -510,8 +416,6 @@ Wire Wire Line
 Wire Wire Line
 	6025 3500 5925 3500
 Wire Wire Line
-	3025 2800 3200 2800
-Wire Wire Line
 	4325 2800 4500 2800
 Wire Wire Line
 	6025 2800 5850 2800
@@ -519,8 +423,6 @@ Wire Wire Line
 	7525 2800 7350 2800
 Wire Wire Line
 	4325 2900 4500 2900
-Wire Wire Line
-	3200 2900 3025 2900
 Wire Wire Line
 	7425 3500 7425 3300
 Connection ~ 7425 3500
@@ -533,8 +435,6 @@ Wire Wire Line
 Connection ~ 5925 3500
 Wire Wire Line
 	3100 3600 3100 3400
-Wire Wire Line
-	3100 3000 3200 3000
 Connection ~ 3100 3600
 Wire Wire Line
 	4400 3600 4400 3500
@@ -555,10 +455,6 @@ Wire Wire Line
 	7425 3100 7425 2900
 Wire Wire Line
 	4500 3100 4325 3100
-Wire Wire Line
-	3200 3100 3025 3100
-Text HLabel 3025 3700 0    50   Output ~ 0
-COM_SPI_SIMO
 Text HLabel 5850 3600 0    50   Input ~ 0
 COM_SPI_SOMI
 Text HLabel 4325 3700 0    50   Output ~ 0
@@ -570,14 +466,9 @@ Wire Wire Line
 Wire Wire Line
 	6025 3700 5925 3700
 Wire Wire Line
-	3200 3700 3025 3700
-Wire Wire Line
 	4500 3700 4325 3700
 Wire Wire Line
 	3100 3200 3200 3200
-Connection ~ 3100 3200
-Wire Wire Line
-	3100 3200 3100 3000
 Wire Wire Line
 	4500 3200 4400 3200
 Connection ~ 4400 3200
@@ -587,8 +478,6 @@ Wire Wire Line
 	7525 3200 7350 3200
 Wire Wire Line
 	6025 3200 5850 3200
-Wire Wire Line
-	3200 3300 3025 3300
 Wire Wire Line
 	7525 3300 7425 3300
 Connection ~ 7425 3300
@@ -632,4 +521,59 @@ Wire Wire Line
 Connection ~ 5925 3700
 Wire Wire Line
 	5925 3700 5925 3750
+$Comp
+L omodri_lib:ADM6_ADF6 J?
+U 1 1 5FA3E1D7
+P 3400 3250
+AR Path="/5FA3E1D7" Ref="J?"  Part="1" 
+AR Path="/5F5975A7/5FA2AE4C/5FA3E1D7" Ref="J16"  Part="1" 
+F 0 "J16" H 3400 3800 50  0000 L CNN
+F 1 "ADM6_ADF6" H 3400 2700 50  0000 L CNN
+F 2 "udriver3:ADF6-10-XX.X-XXX-4-X-A-XR" H 3400 3250 50  0001 C CNN
+F 3 "http://suddendocs.samtec.com/prints/adf6-xxx-xx.x-xxx-4-x-x-xr-mkt.pdf" H 3400 3250 50  0001 C CNN
+F 4 "612-ADF6-10-03.5-L-4-2-A-TR-ND" H 3400 3250 50  0001 C CNN "DigiKey"
+F 5 "3462763" H 3400 3250 50  0001 C CNN "Farnell"
+F 6 "200-ADF6-10-3.5-L42A" H 3400 3250 50  0001 C CNN "Mouser"
+F 7 "ADF6-10-03.5-L-4-2-A" H 3400 3250 50  0001 C CNN "Part No"
+F 8 "202-7885" H 3400 3250 50  0001 C CNN "RS"
+	1    3400 3250
+	1    0    0    -1  
+$EndComp
+Connection ~ 3100 3200
+Wire Wire Line
+	3100 3200 3100 3000
+Wire Wire Line
+	3100 3000 3200 3000
+Text GLabel 3100 3750 3    50   Input ~ 0
+VDD_3V3
+Wire Wire Line
+	3200 3300 3025 3300
+Wire Wire Line
+	3200 3700 3025 3700
+Text HLabel 3025 3700 0    50   Output ~ 0
+COM_SPI_SIMO
+Wire Wire Line
+	3200 3100 3025 3100
+Wire Wire Line
+	3200 2900 3025 2900
+Wire Wire Line
+	3025 2800 3200 2800
+Wire Wire Line
+	3025 3500 3200 3500
+Text HLabel 3025 3300 0    50   Output ~ 0
+ECAT1_INT
+Text HLabel 3025 2900 0    50   Output ~ 0
+ESC_PHY1_LINKSTATUS
+Text HLabel 3025 3500 0    50   Input ~ 0
+ESC_PHY_CLK_OSC
+Text HLabel 3025 3100 0    50   Output ~ 0
+ESC_TX1_CLK
+Text HLabel 3025 2800 0    50   Output ~ 0
+ESC_RX1_ERR
+Text GLabel 4400 3750 3    50   Input ~ 0
+VDD_3V3
+Text GLabel 5925 5250 3    50   Input ~ 0
+VDD_3V3
+Text GLabel 7425 5250 3    50   Input ~ 0
+VDD_3V3
 $EndSCHEMATC
