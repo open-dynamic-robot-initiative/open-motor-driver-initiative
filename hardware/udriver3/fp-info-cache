@@ -1,4 +1,4 @@
-18668544241799935
+18668545817361373
 Battery
 BatteryHolder_Bulgin_BX0036_1xC
 Bulgin Battery Holder, BX0036, Battery Type C (https://www.bulgin.com/products/pub/media/bulgin/data/Battery_holders.pdf)
@@ -83300,13 +83300,6 @@ QFN-10_2x2mm_P0.5mm
 10
 10
 udriver3
-QFN-40-1EP_6x6mm_P0.5mm_EP4.6x4.6mm_ThermalVias
-QFN, 40 Pin (http://ww1.microchip.com/downloads/en/PackagingSpec/00000049BQ.pdf#page=295), generated with kicad-footprint-generator ipc_noLead_generator.py
-QFN NoLead
-0
-83
-41
-udriver3
 TDFN-10-1EP_2x3mm_P0.5mm_EP0.9x2mm_ThermalVias
 TDFN, 10 Pin (https://pdfserv.maximintegrated.com/package_dwgs/21-0429.PDF), generated with kicad-footprint-generator ipc_noLead_generator.py
 TDFN NoLead
@@ -83334,6 +83327,13 @@ VSON_CLIP_22
 0
 27
 27
+udriver3
+logo_OpenHardware
+
+
+0
+0
+0
 udriver3
 logo_laas
 
