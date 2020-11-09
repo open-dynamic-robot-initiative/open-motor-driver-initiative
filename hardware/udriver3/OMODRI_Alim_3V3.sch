@@ -135,23 +135,6 @@ F 8 "" H 5400 4125 50  0001 C CNN "RS"
 	1    0    0    -1  
 $EndComp
 $Comp
-L omodri_lib:MPM3804GG U?
-U 1 1 5F6EC32C
-P 4450 3675
-AR Path="/5F3A3F16/5F6EC32C" Ref="U?"  Part="1" 
-AR Path="/5F3A3F16/5F5BE68B/5F6EC32C" Ref="U3"  Part="1" 
-F 0 "U3" H 4150 3375 50  0000 C CNN
-F 1 "MPM3804GG" H 4350 4025 50  0000 C CNN
-F 2 "udriver3:QFN-10_2x2mm_P0.5mm" H 4450 3675 50  0001 C CNN
-F 3 "https://www.monolithicpower.com/en/documentview/productdocument/index/version/2/document_type/Datasheet/lang/en/sku/MPM3804GG/document_id/2122/" H 4450 3675 50  0001 C CNN
-F 4 "1589-1982-1-ND" H 4450 3675 50  0001 C CNN "DigiKey"
-F 5 "3358188" H 4450 3675 50  0001 C CNN "Farnell"
-F 6 "946-MPM3804GG-Z" H 4450 3675 50  0001 C CNN "Mouser"
-F 7 "MPM3804GG" H 4450 3675 50  0001 C CNN "Part No"
-	1    4450 3675
-	1    0    0    -1  
-$EndComp
-$Comp
 L Device:Ferrite_Bead_Small FB?
 U 1 1 5F6EC343
 P 6450 2925
@@ -384,4 +367,34 @@ Wire Wire Line
 	5400 3425 5800 3425
 Wire Wire Line
 	3900 3425 3800 3425
+$Comp
+L omodri_lib:MPM3804GG U?
+U 1 1 5F6EC32C
+P 4450 3675
+AR Path="/5F3A3F16/5F6EC32C" Ref="U?"  Part="1" 
+AR Path="/5F3A3F16/5F5BE68B/5F6EC32C" Ref="U3"  Part="1" 
+F 0 "U3" H 4150 3375 50  0000 C CNN
+F 1 "MPM3804GG" H 4350 4025 50  0000 C CNN
+F 2 "udriver3:QFN-10_2x2mm_P0.5mm" H 4450 3675 50  0001 C CNN
+F 3 "https://www.monolithicpower.com/en/documentview/productdocument/index/version/2/document_type/Datasheet/lang/en/sku/MPM3804GG/document_id/2122/" H 4450 3675 50  0001 C CNN
+F 4 "1589-1982-1-ND" H 4450 3675 50  0001 C CNN "DigiKey"
+F 5 "3358188" H 4450 3675 50  0001 C CNN "Farnell"
+F 6 "946-MPM3804GG-Z" H 4450 3675 50  0001 C CNN "Mouser"
+F 7 "MPM3804GG" H 4450 3675 50  0001 C CNN "Part No"
+	1    4450 3675
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	4000 3525 3925 3525
+Wire Wire Line
+	3925 3525 3925 3625
+Wire Wire Line
+	3925 3625 4000 3625
+Wire Wire Line
+	4000 3725 3925 3725
+Wire Wire Line
+	3925 3725 3925 3625
+Connection ~ 3925 3625
+Text Label 3925 3725 1    50   ~ 0
+SW
 $EndSCHEMATC

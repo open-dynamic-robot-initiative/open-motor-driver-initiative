@@ -273,4 +273,17 @@ Wire Wire Line
 	4725 3500 4800 3500
 Wire Wire Line
 	7625 3500 7625 4050
+Wire Wire Line
+	4900 3600 4825 3600
+Wire Wire Line
+	4825 3600 4825 3700
+Wire Wire Line
+	4825 3700 4900 3700
+Wire Wire Line
+	4900 3800 4825 3800
+Wire Wire Line
+	4825 3800 4825 3700
+Connection ~ 4825 3700
+Text Label 4825 3800 1    50   ~ 0
+SW
 $EndSCHEMATC
