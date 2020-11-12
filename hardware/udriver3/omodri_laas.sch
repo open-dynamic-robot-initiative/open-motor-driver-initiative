@@ -29,11 +29,11 @@ F 0 "J3" H 6500 5700 50  0000 L CNN
 F 1 "Conn_01x03" H 6500 5300 50  0000 L CNN
 F 2 "udriver3:Hirose_DF13-03P-1.25DSA_1x03_P1.25mm_Vertical" H 6550 5500 50  0001 C CNN
 F 3 "https://www.hirose.com/product/document?clcode=&productname=&series=DF13&documenttype=Catalog&lang=en&documentid=D31687_en" H 6550 5500 50  0001 C CNN
-F 4 "DF13-3P-1.25DSA(75)-ND" H 6550 5500 50  0001 C CNN "DigiKey"
+F 4 "H2192-ND" H 6550 5500 50  0001 C CNN "DigiKey"
 F 5 "2916340" H 6550 5500 50  0001 C CNN "Farnell"
-F 6 "798-DF13-3P-125DSA75" H 6550 5500 50  0001 C CNN "Mouser"
-F 7 "DF13-3P-1.25DSA(75)" H 6550 5500 50  0001 C CNN "Part No"
-F 8 "188-6281" H 6550 5500 50  0001 C CNN "RS"
+F 6 "798-DF13-3P-1.25DSA" H 6550 5500 50  0001 C CNN "Mouser"
+F 7 "DF13-3P-1.25DSA" H 6550 5500 50  0001 C CNN "Part No"
+F 8 "175-0666" H 6550 5500 50  0001 C CNN "RS"
 	1    6550 5500
 	1    0    0    -1  
 $EndComp
@@ -142,10 +142,10 @@ F 0 "J1" H 2650 4250 50  0000 C CNN
 F 1 "Conn_01x11" H 2475 3050 50  0000 C CNN
 F 2 "udriver3:Hirose_DF13-11P-1.25DSA_1x11_P1.25mm_Vertical" H 2650 3650 50  0001 C CNN
 F 3 "https://www.hirose.com/product/document?clcode=&productname=&series=DF13&documenttype=Catalog&lang=en&documentid=D31687_en" H 2650 3650 50  0001 C CNN
-F 4 "H126373-ND" H 2650 3650 50  0001 C CNN "DigiKey"
-F 5 "798-DF13-11P125DSA75" H 2650 3650 50  0001 C CNN "Mouser"
-F 6 "DF13-11P-1.25DSA(75)" H 2650 3650 50  0001 C CNN "Part No"
-F 7 "188-6390" H 2650 3650 50  0001 C CNN "RS"
+F 4 "DF13-11P-1.25DSA-ND" H 2650 3650 50  0001 C CNN "DigiKey"
+F 5 "798-DF13-11P-1.25DSA" H 2650 3650 50  0001 C CNN "Mouser"
+F 6 "DF13-11P-1.25DSA" H 2650 3650 50  0001 C CNN "Part No"
+F 7 "" H 2650 3650 50  0001 C CNN "RS"
 	1    2650 3650
 	-1   0    0    -1  
 $EndComp
@@ -157,11 +157,11 @@ F 0 "J2" H 2650 4950 50  0000 C CNN
 F 1 "Conn_01x05" H 2500 4350 50  0000 C CNN
 F 2 "udriver3:Hirose_DF13-05P-1.25DSA_1x05_P1.25mm_Vertical" H 2650 4650 50  0001 C CNN
 F 3 "https://www.hirose.com/product/document?clcode=&productname=&series=DF13&documenttype=Catalog&lang=en&documentid=D31687_en" H 2650 4650 50  0001 C CNN
-F 4 "DF13-5P-1.25DSA(75)-ND" H 2650 4650 50  0001 C CNN "DigiKey"
+F 4 "H2194-ND" H 2650 4650 50  0001 C CNN "DigiKey"
 F 5 "2427589" H 2650 4650 50  0001 C CNN "Farnell"
-F 6 "798-DF13-5P-125DSA75" H 2650 4650 50  0001 C CNN "Mouser"
-F 7 "DF13-5P-1.25DSA(75)" H 2650 4650 50  0001 C CNN "Part No"
-F 8 "188-6358" H 2650 4650 50  0001 C CNN "RS"
+F 6 "798-DF13-5P-1.25DSA" H 2650 4650 50  0001 C CNN "Mouser"
+F 7 "DF13-5P-1.25DSA" H 2650 4650 50  0001 C CNN "Part No"
+F 8 "503-7912" H 2650 4650 50  0001 C CNN "RS"
 	1    2650 4650
 	-1   0    0    -1  
 $EndComp
@@ -384,11 +384,11 @@ F 0 "J4" H 6500 6400 50  0000 L CNN
 F 1 "Conn_01x03" H 6500 6000 50  0000 L CNN
 F 2 "udriver3:Hirose_DF13-03P-1.25DSA_1x03_P1.25mm_Vertical" H 6550 6200 50  0001 C CNN
 F 3 "https://www.hirose.com/product/document?clcode=&productname=&series=DF13&documenttype=Catalog&lang=en&documentid=D31687_en" H 6550 6200 50  0001 C CNN
-F 4 "DF13-3P-1.25DSA(75)-ND" H 6550 6200 50  0001 C CNN "DigiKey"
+F 4 "H2192-ND" H 6550 6200 50  0001 C CNN "DigiKey"
 F 5 "2916340" H 6550 6200 50  0001 C CNN "Farnell"
-F 6 "798-DF13-3P-125DSA75" H 6550 6200 50  0001 C CNN "Mouser"
-F 7 "DF13-3P-1.25DSA(75)" H 6550 6200 50  0001 C CNN "Part No"
-F 8 "188-6281" H 6550 6200 50  0001 C CNN "RS"
+F 6 "798-DF13-3P-1.25DSA" H 6550 6200 50  0001 C CNN "Mouser"
+F 7 "DF13-3P-1.25DSA" H 6550 6200 50  0001 C CNN "Part No"
+F 8 "175-0666" H 6550 6200 50  0001 C CNN "RS"
 	1    6550 6200
 	1    0    0    -1  
 $EndComp
@@ -797,4 +797,26 @@ F2 "RX_FSI_D0" O R 2850 2300 50
 F3 "RX_FSI_D1" O R 2850 2400 50 
 F4 "RX_FSI_CLK" O R 2850 2200 50 
 $EndSheet
+$Comp
+L omodri_lib:SYM_LAAS G1
+U 1 1 5FB102A1
+P 8275 4975
+F 0 "G1" H 8275 5190 50  0000 C CNN
+F 1 "SYM_LAAS" H 8275 5099 50  0000 C CNN
+F 2 "udriver3:logo_laas" H 8275 4975 50  0001 C CNN
+F 3 "" H 8275 4975 50  0001 C CNN
+	1    8275 4975
+	1    0    0    -1  
+$EndComp
+$Comp
+L omodri_lib:SYM_PROJECT G2
+U 1 1 5FB10CDC
+P 8275 5300
+F 0 "G2" H 8275 5515 50  0000 C CNN
+F 1 "SYM_PROJECT" H 8275 5424 50  0000 C CNN
+F 2 "udriver3:logo_OpenHardware" H 8275 5300 50  0001 C CNN
+F 3 "" H 8275 5300 50  0001 C CNN
+	1    8275 5300
+	1    0    0    -1  
+$EndComp
 $EndSCHEMATC

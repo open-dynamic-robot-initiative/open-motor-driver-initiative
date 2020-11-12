@@ -5,6 +5,11 @@ D 0.635 mm pitch, High-Density, 4-Row Terminal, low profile, ultra-slim surface 
 K https://www.samtec.com/products/adm6#technicalSeries
 $ENDCMP
 #
+$CMP ASTX-H12
+D TCXO Oscillators 25MHz, 3.3V, HCMOS, 2.5ppm, in 2.5 x 2.0 x 0.9mm ceramic package
+F https://abracon.com/Oscillators/ASTX-H12.pdf
+$ENDCMP
+#
 $CMP CSD88599Q5DC
 D 60V, 40A Half-Bridge FET Power Block
 F https://www.ti.com/lit/ds/symlink/csd88599q5dc.pdf

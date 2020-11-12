@@ -288,10 +288,10 @@ F 0 "J10" H 9475 3575 50  0000 L CNN
 F 1 "Conn_01x07" H 9475 2775 50  0000 L CNN
 F 2 "udriver3:Hirose_DF13-07P-1.25DSA_1x07_P1.25mm_Vertical" H 9525 3175 50  0001 C CNN
 F 3 "https://www.hirose.com/product/document?clcode=&productname=&series=DF13&documenttype=Catalog&lang=en&documentid=D31687_en" H 9525 3175 50  0001 C CNN
-F 4 "DF13-7P-1.25DSA(75)-ND" H 9525 3175 50  0001 C CNN "DigiKey"
-F 5 "798-DF13-7P-125DSA75" H 9525 3175 50  0001 C CNN "Mouser"
-F 6 "DF13-7P-1.25DSA(75)" H 9525 3175 50  0001 C CNN "Part No"
-F 7 "188-6250" H 9525 3175 50  0001 C CNN "RS"
+F 4 "H2196-ND" H 9525 3175 50  0001 C CNN "DigiKey"
+F 5 "798-DF13-7P-1.25DSA" H 9525 3175 50  0001 C CNN "Mouser"
+F 6 "DF13-7P-1.25DSA" H 9525 3175 50  0001 C CNN "Part No"
+F 7 "" H 9525 3175 50  0001 C CNN "RS"
 	1    9525 3175
 	1    0    0    -1  
 $EndComp

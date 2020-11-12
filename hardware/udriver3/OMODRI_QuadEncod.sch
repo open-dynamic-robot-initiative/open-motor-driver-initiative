@@ -765,11 +765,11 @@ F 0 "J5" H 8930 2592 50  0000 L CNN
 F 1 "Conn_01x05" H 8930 2501 50  0000 L CNN
 F 2 "udriver3:Hirose_DF13-05P-1.25DSA_1x05_P1.25mm_Vertical" H 8850 2550 50  0001 C CNN
 F 3 "https://www.hirose.com/product/document?clcode=&productname=&series=DF13&documenttype=Catalog&lang=en&documentid=D31687_en" H 8850 2550 50  0001 C CNN
-F 4 "DF13-5P-1.25DSA(75)-ND" H 8850 2550 50  0001 C CNN "DigiKey"
+F 4 "H2194-ND" H 8850 2550 50  0001 C CNN "DigiKey"
 F 5 "2427589" H 8850 2550 50  0001 C CNN "Farnell"
-F 6 "798-DF13-5P-125DSA75" H 8850 2550 50  0001 C CNN "Mouser"
-F 7 "DF13-5P-1.25DSA(75)" H 8850 2550 50  0001 C CNN "Part No"
-F 8 "188-6358" H 8850 2550 50  0001 C CNN "RS"
+F 6 "798-DF13-5P-1.25DSA" H 8850 2550 50  0001 C CNN "Mouser"
+F 7 "DF13-5P-1.25DSA" H 8850 2550 50  0001 C CNN "Part No"
+F 8 "503-7912" H 8850 2550 50  0001 C CNN "RS"
 	1    8850 2550
 	1    0    0    -1  
 $EndComp
@@ -783,11 +783,11 @@ F 0 "J6" H 8930 4092 50  0000 L CNN
 F 1 "Conn_01x05" H 8930 4001 50  0000 L CNN
 F 2 "udriver3:Hirose_DF13-05P-1.25DSA_1x05_P1.25mm_Vertical" H 8850 4050 50  0001 C CNN
 F 3 "https://www.hirose.com/product/document?clcode=&productname=&series=DF13&documenttype=Catalog&lang=en&documentid=D31687_en" H 8850 4050 50  0001 C CNN
-F 4 "DF13-5P-1.25DSA(75)-ND" H 8850 4050 50  0001 C CNN "DigiKey"
+F 4 "H2194-ND" H 8850 4050 50  0001 C CNN "DigiKey"
 F 5 "2427589" H 8850 4050 50  0001 C CNN "Farnell"
-F 6 "798-DF13-5P-125DSA75" H 8850 4050 50  0001 C CNN "Mouser"
-F 7 "DF13-5P-1.25DSA(75)" H 8850 4050 50  0001 C CNN "Part No"
-F 8 "188-6358" H 8850 4050 50  0001 C CNN "RS"
+F 6 "798-DF13-5P-1.25DSA" H 8850 4050 50  0001 C CNN "Mouser"
+F 7 "DF13-5P-1.25DSA" H 8850 4050 50  0001 C CNN "Part No"
+F 8 "503-7912" H 8850 4050 50  0001 C CNN "RS"
 	1    8850 4050
 	1    0    0    -1  
 $EndComp

@@ -1,4 +1,4 @@
-18668546357152107
+18670151796155375
 Battery
 BatteryHolder_Bulgin_BX0036_1xC
 Bulgin Battery Holder, BX0036, Battery Type C (https://www.bulgin.com/products/pub/media/bulgin/data/Battery_holders.pdf)
@@ -83299,6 +83299,13 @@ QFN-10_2x2mm_P0.5mm
 0
 10
 10
+udriver3
+TCXO_SMD_Abracon_ASTX-H12-4Pin_2.5x2.0mm
+
+
+0
+4
+4
 udriver3
 TDFN-10-1EP_2x3mm_P0.5mm_EP0.9x2mm_ThermalVias
 TDFN, 10 Pin (https://pdfserv.maximintegrated.com/package_dwgs/21-0429.PDF), generated with kicad-footprint-generator ipc_noLead_generator.py
