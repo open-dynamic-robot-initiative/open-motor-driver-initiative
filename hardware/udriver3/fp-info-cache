@@ -1,4 +1,4 @@
-18670151796155375
+18678202921292182
 Battery
 BatteryHolder_Bulgin_BX0036_1xC
 Bulgin Battery Holder, BX0036, Battery Type C (https://www.bulgin.com/products/pub/media/bulgin/data/Battery_holders.pdf)
@@ -83209,13 +83209,6 @@ B3QFN_43
 69
 44
 udriver3
-CSD88599Q5DC
-
-
-0
-38
-28
-udriver3
 Crystal_SMD_2016-4Pin_2.0x1.6mm
 SMD Crystal SERIES SMD2016/4 http://www.q-crystal.com/upload/5/2015552223166229.pdf, 2.0x1.6mm^2 package
 SMD SMT crystal
@@ -83229,6 +83222,20 @@ DSBGA_6
 0
 6
 6
+udriver3
+D_0201_0603Metric
+Diode SMD 0201 (0603 Metric), square (rectangular) end terminal, IPC_7351 nominal, (Body size source: https://www.vishay.com/docs/20052/crcw0201e3.pdf), generated with kicad-footprint-generator
+diode
+0
+4
+2
+udriver3
+D_0402_1005Metric
+Diode SMD 0402 (1005 Metric), square (rectangular) end terminal, IPC_7351 nominal, (Body size source: http://www.tortai-tech.com/upload/download/2011102023233369053.pdf), generated with kicad-footprint-generator
+diode
+0
+2
+2
 udriver3
 FC4L64
 
@@ -83293,12 +83300,26 @@ PVQFN_17
 22
 18
 udriver3
+PinSocket_2x04_P1.27mm_Vertical
+Through hole straight socket strip, 2x04, 1.27mm pitch, double cols (from Kicad 4.0.7), script generated
+Through hole socket strip THT 2x04 1.27mm double row
+0
+8
+8
+udriver3
 QFN-10_2x2mm_P0.5mm
 
 
 0
 10
 10
+udriver3
+SAMTEC_ADF6-10-03.5-L-4-2-TR
+
+
+0
+40
+40
 udriver3
 TCXO_SMD_Abracon_ASTX-H12-4Pin_2.5x2.0mm
 
@@ -83307,12 +83328,26 @@ TCXO_SMD_Abracon_ASTX-H12-4Pin_2.5x2.0mm
 4
 4
 udriver3
+TDFN-10-1EP_2x3mm_P0.5mm_EP0.9x2mm
+TDFN, 10 Pin (https://pdfserv.maximintegrated.com/package_dwgs/21-0429.PDF), generated with kicad-footprint-generator ipc_noLead_generator.py
+TDFN NoLead
+0
+13
+11
+udriver3
 TDFN-10-1EP_2x3mm_P0.5mm_EP0.9x2mm_ThermalVias
 TDFN, 10 Pin (https://pdfserv.maximintegrated.com/package_dwgs/21-0429.PDF), generated with kicad-footprint-generator ipc_noLead_generator.py
 TDFN NoLead
 0
 16
 11
+udriver3
+USB_Micro-B_Molex_47346-0001
+Micro USB B receptable with flange, bottom-mount, SMD, right-angle (http://www.molex.com/pdm_docs/sd/473460001_sd.pdf)
+Micro B USB SMD
+0
+11
+6
 udriver3
 USON_6
 

@@ -35,6 +35,12 @@ D TCXO Oscillators 20MHz, 3.3V, 2.5ppm, in 2.0 x 1.6 x 0.8mm ceramic package
 F https://ecsxtal.com/store/pdf/ECS-TXO-2016.pdf
 $ENDCMP
 #
+$CMP ESD321
+D 1-Channel, 30 kV ESD Protection Diode with Low Capacitance (< 1pF), 4.5V DC Breakdown Voltage, 0402 package
+K ESD protection suppression transient
+F https://www.ti.com/lit/ds/symlink/esd321.pdf
+$ENDCMP
+#
 $CMP LMR36015
 D 4.2V to 60V, 1.5A ultra-small synchronous step-down converter
 F https://www.ti.com/lit/ds/symlink/lmr36015.pdf

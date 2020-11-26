@@ -384,7 +384,7 @@ AR Path="/5F71C92E/5F864E11" Ref="C?"  Part="1"
 AR Path="/5F71C5AF/5F864E11" Ref="C76"  Part="1" 
 F 0 "C76" H 2140 2446 50  0000 L CNN
 F 1 "100nF" H 2140 2355 50  0000 L CNN
-F 2 "Capacitor_SMD:C_0805_2012Metric" H 2063 2250 50  0001 C CNN
+F 2 "Capacitor_SMD:C_0603_1608Metric" H 2063 2250 50  0001 C CNN
 F 3 "https://www.murata.com/en-eu/products/productdetail?partno=GRM188R72A104KA35%23" H 2025 2400 50  0001 C CNN
 F 4 "" H 2025 2400 50  0001 C CNN "RS"
 F 5 "1828921" H 2025 2400 50  0001 C CNN "Farnell"
