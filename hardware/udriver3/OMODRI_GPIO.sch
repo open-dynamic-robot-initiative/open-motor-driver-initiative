@@ -104,7 +104,7 @@ SPI_SOMI
 Text HLabel 4550 1425 2    50   Output ~ 0
 SPI_CLK
 Text HLabel 4550 1525 2    50   Output ~ 0
-~SPI_CSn~
+~SPI_CSn~_BOOT_MODE1
 Text HLabel 2200 725  2    50   Output ~ 0
 M1_PWM1_CHA
 Text HLabel 2200 825  2    50   Output ~ 0
@@ -341,7 +341,6 @@ Wire Wire Line
 	4500 2125 4550 2125
 Wire Wire Line
 	4500 2025 4550 2025
-NoConn ~ 4500 2725
 Text HLabel 4200 6275 2    50   Input ~ 0
 FSI_RXC_CLK
 Text HLabel 4200 6075 2    50   Input ~ 0
@@ -897,4 +896,8 @@ Text HLabel 2200 5275 2    50   BiDi ~ 0
 USB0_P
 Wire Wire Line
 	2200 5275 2150 5275
+Text HLabel 4550 2725 2    50   UnSpc ~ 0
+BOOT_MODE0
+Wire Wire Line
+	4550 2725 4500 2725
 $EndSCHEMATC
