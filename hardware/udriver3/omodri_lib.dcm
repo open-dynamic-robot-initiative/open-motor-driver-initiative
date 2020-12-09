@@ -195,4 +195,16 @@ D 6-Bit Bidirectional Voltage-Level Translator with Auto Direction Sensing and +
 F https://www.ti.com/lit/ds/symlink/txb0106.pdf
 $ENDCMP
 #
+$CMP USB_B_Micro
+D USB Micro Type B connector
+K connector USB micro
+F ~
+$ENDCMP
+#
+$CMP USB_B_Mini
+D USB Mini Type B connector
+K connector USB mini
+F ~
+$ENDCMP
+#
 #End Doc Library
