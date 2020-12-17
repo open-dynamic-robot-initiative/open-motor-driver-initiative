@@ -4,10 +4,10 @@ EELAYER END
 $Descr A4 11693 8268
 encoding utf-8
 Sheet 14 19
-Title ""
-Date ""
-Rev ""
-Comp ""
+Title "Open MOtor DRiver Initiative (OMODRI)"
+Date "2020-12-16"
+Rev "1.0"
+Comp "LAAS/CNRS"
 Comment1 ""
 Comment2 ""
 Comment3 ""
@@ -116,7 +116,7 @@ ESC_TX0_CLK
 Text HLabel 2775 4600 0    50   Input ~ 0
 ~ESC_PHY_RESETn~
 Text HLabel 5850 3000 0    50   Input ~ 0
-ESC_PHY_CLK
+25MHz_OSC_CLK
 Text HLabel 7350 4300 0    50   BiDi ~ 0
 ESC_I2C_SDA
 Text HLabel 5850 4300 0    50   Input ~ 0

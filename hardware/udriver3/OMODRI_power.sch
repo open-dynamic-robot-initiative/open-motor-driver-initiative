@@ -5,7 +5,7 @@ $Descr A4 11693 8268
 encoding utf-8
 Sheet 2 19
 Title "Open MOtor DRiver Initiative (OMODRI)"
-Date ""
+Date "2020-12-16"
 Rev "1.0"
 Comp "LAAS/CNRS"
 Comment1 ""
