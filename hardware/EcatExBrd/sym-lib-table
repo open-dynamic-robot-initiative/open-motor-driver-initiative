@@ -1,0 +1,4 @@
+(sym_lib_table
+  (lib (name ecatextbrd_lib)(type Legacy)(uri ${KIPRJMOD}/ecatextbrd_lib.lib)(options "")(descr ""))
+  (lib (name omodri_lib)(type Legacy)(uri C:/Users/jmanhes/LAAS/Actionneur/OMODRI/hardware/udriver3/omodri_lib.lib)(options "")(descr ""))
+)

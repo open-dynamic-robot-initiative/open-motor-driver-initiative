@@ -1,0 +1,4 @@
+(fp_lib_table
+  (lib (name EcatExBrd)(type KiCad)(uri ${KIPRJMOD}/EcatExBrd.pretty)(options "")(descr ""))
+  (lib (name udriver3)(type KiCad)(uri C:/Users/jmanhes/LAAS/Actionneur/OMODRI/hardware/udriver3/udriver3.pretty)(options "")(descr ""))
+)
