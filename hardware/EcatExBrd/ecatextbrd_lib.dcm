@@ -209,6 +209,11 @@ D Precision, Low-Offset-Voltage, Low-Noise, Low-Input-Bias-Current, Rail-to-Rail
 F https://www.ti.com/lit/ds/symlink/opa392.pdf
 $ENDCMP
 #
+$CMP PESD12VA-SF
+D 1-Channel bidirectional ESD-Protection /w Low-Capacitance
+F https://assets.nexperia.com/documents/data-sheet/PESD12VA-SF.pdf
+$ENDCMP
+#
 $CMP PESD5V0S1ULD
 D 1-Channel unidirectional ESD-Protection
 F https://assets.nexperia.com/documents/data-sheet/PESD5V0S1ULD.pdf
