@@ -8,6 +8,7 @@
 #include "drv8353.h"
 
 #include "uomodri_user_defines.h"
+#include "uomodri_config_handlers.h"
 
 
 static void Mcu_init();

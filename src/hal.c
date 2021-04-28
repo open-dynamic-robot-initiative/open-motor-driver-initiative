@@ -7,181 +7,161 @@
 
 #include "uomodri_config_handlers.h"
 
-// ADC interrupt service routine
-extern __interrupt void adc1ISR(void);
-extern __interrupt void adc2ISR(void);
-extern __interrupt void adc3ISR(void);
-extern __interrupt void adc4ISR(void);
-
 /* Static function signatures */
 // Device HAL
-static void HAL_Bases_init(HAL*);
-static void HAL_GPIO_init(HAL*);
-static void HAL_ADC_init(HAL*);
-static void HAL_ePWM_init(HAL*);
-static void HAL_eQEP_init(HAL*);
-static void HAL_SPI_init(HAL*);
-static void HAL_DMA_init(HAL*);
+static void HAL_GPIO_init(const GPIO_TypeDef*);
+static void HAL_ADC_init(const ADC_TypeDef*);
+static void HAL_ePWM_init(const ePWM_TypeDef*);
+static void HAL_eQEP_init(const eQEP_TypeDef*);
+static void HAL_SPI_init(const SPI_TypeDef*);
+static void HAL_DMA_init(const DMA_TypeDef*);
 //static void HAL_CLA_init(HAL*);
-
 
 // Function definitions
 /**
  * @brief       Initialize all peripherals necessaries.
- * @param[in]   *hal    Pointer on the general HAL structure definition
+ * @param[in]   *p_hal  Pointer on the general HAL structure definition
  */
-void HAL_init(HAL* hal)
+void HAL_init(HAL* p_hal)
 {
-    // Initialize Hardware Abstraction Layer structure
-    HAL_Bases_init(hal);
-    // Initialize GPIO pins
-    HAL_GPIO_init(hal);
-    // Initialize CLA
-//    HAL_CLA_init(hal);
-    // Initialize ADC
-    HAL_ADC_init(hal);
-    // Initialize ePWM
-    HAL_ePWM_init(hal);
-    // Initialize eQEP
-    HAL_eQEP_init(hal);
-    // Initialize DMA
-    HAL_DMA_init(hal);
-    // Initialize SPIA device
-    HAL_SPI_init(hal);
-}
+    if(p_hal != NULL)
+    {
+        // Initialize GPIO pins
+        HAL_GPIO_init(p_hal->gpioHandler);
+        // Initialize CLA
+        //    HAL_CLA_init(p_hal);
+        // Initialize ADC
+        HAL_ADC_init(p_hal->adcHandler);
+        // Initialize ePWM
+        HAL_ePWM_init(p_hal->epwmHandler);
+        // Initialize eQEP
+        HAL_eQEP_init(p_hal->eqepHandler);
+        // Initialize DMA
+        HAL_DMA_init(p_hal->dmaHandler);
+        // Initialize SPIA device
+        HAL_SPI_init(p_hal->spiHandler);
+    }
 
-/**
- * @brief       Link HAL structure definition and initialization parameters.
- * @param[in]   *hal    Pointer on the general HAL structure definition
- */
-static void HAL_Bases_init(HAL* hal)
-{
-    // GPIO initialization
-    hal->gpioHandler = GpioPinsCfgList;
-    // ADC initialization
-    hal->adcHandler = AdcCfgList;
-    // PWM initialization
-    hal->epwmHandler = PwmCfgList;
-    // QEP initialization
-    hal->eqepHandler = QepCfgList;
-    // DMA initialization
-    hal->dmaHandler = NULL;
-    // SPI bus initialization
-    hal->spiHandler = spiCfgList;
+    return;
 }
 
 /**
  * @brief       GPIO initialization function.
- * @param[in]   *hal    Pointer on the general HAL structure
+ * @param[in]   *p_gpio     Pointer on the GPIO structure definition
  */
-static void HAL_GPIO_init(HAL* hal)
+static void HAL_GPIO_init(const GPIO_TypeDef* p_gpio)
 {
-    const GPIO_TypeDef* p_gpio = hal->gpioHandler;
-    uint32_t            pinNum = p_gpio->pinNumber;
-
-    while(pinNum != 0xFFFFFFFF)
+    if(p_gpio != NULL)
     {
-        GPIO_setMasterCore(pinNum, p_gpio->coreSelect);
-        GPIO_setPinConfig(p_gpio->fctMux);
-        GPIO_setDirectionMode(pinNum, p_gpio->direction);
-        GPIO_setPadConfig(pinNum, p_gpio->pinType);
-        if(p_gpio->direction == GPIO_DIR_MODE_IN)
-            GPIO_setQualificationMode(pinNum, p_gpio->samplingInMode);
-        else
-            GPIO_writePin(pinNum, (uint32_t) p_gpio->setValue);
-        pinNum = (++p_gpio)->pinNumber;
+        uint32_t pinNum = p_gpio->pinNumber;
+
+        while(pinNum != 0xFFFFFFFF)
+        {
+            GPIO_setMasterCore(pinNum, p_gpio->coreSelect);
+            GPIO_setPinConfig(p_gpio->fctMux);
+            GPIO_setDirectionMode(pinNum, p_gpio->direction);
+            GPIO_setPadConfig(pinNum, p_gpio->pinType);
+            if(p_gpio->direction == GPIO_DIR_MODE_IN)
+                GPIO_setQualificationMode(pinNum, p_gpio->samplingInMode);
+            else
+                GPIO_writePin(pinNum, (uint32_t) p_gpio->setValue);
+            pinNum = (++p_gpio)->pinNumber;
+        }
     }
+
+    return;
 }
 
 /**
  * @brief       ADC initialization function.
- * @param[in]   *hal    Pointer on the general HAL structure
+ * @param[in]   *p_adcCfg   Pointer on the ADC configuration structure
  */
-static void HAL_ADC_init(HAL* hal)
+static void HAL_ADC_init(const ADC_TypeDef* p_adcCfg)
 {
-    const ADC_TypeDef*     p_adcCfg = hal->adcHandler;
-    const ADC_SOC_TypeDef* p_adcSOC = p_adcCfg->adcSoc;
-#ifdef ADC_PPB_ENABLE
-    const ADC_PPB_TypeDef* p_adcPPB = p_adcCfg->adcPpb;
-#endif
-    const ADC_IT_TypeDef*  p_adcIT  = p_adcCfg->adcIt;
-    uint32_t               adcBase  = p_adcCfg->adcBase;
-
-    while(adcBase != 0xFFFFFFFF)
+    if(p_adcCfg != NULL)
     {
-        /* Sets ADC clock to 50MHz (ADCCLK (derived from PERx.SYSCLK))
-         * Set converting input mode : "ADC_MODE_SINGLE_ENDED" or "ADC_MODE_DIFFERENTIAL"
-         * Set converting resolution : "ADC_RESOLUTION_12BIT" or "ADC_RESOLUTION_16BIT"
-         * Set IT raising  : "ADC_PULSE_END_OF_ACQ_WIN" or "ADC_PULSE_END_OF_CONV"
-         * Enables ADC converter
-         */
-        ADC_setPrescaler(adcBase, PERxSYSCLK_TO_ADCCLK_DIV);
-        ADC_setMode(adcBase, ADC_RESOLUTION, ADC_SIGNAL_MODE);
-        ADC_setInterruptPulseMode(adcBase, ADC_PULSE_END_MODE);
-        ADC_enableConverter(adcBase);
+        const ADC_SOC_TypeDef* p_adcSOC = p_adcCfg->adcSoc;
+#ifdef ADC_PPB_ENABLE
+        const ADC_PPB_TypeDef* p_adcPPB = p_adcCfg->adcPpb;
+#endif
+        const ADC_IT_TypeDef*  p_adcIT  = p_adcCfg->adcIt;
+        uint32_t               adcBase  = p_adcCfg->adcBase;
 
-        // Let some time to power up ADCs
-        DEVICE_DELAY_US(1500U);
-
-        while(p_adcSOC->adcBase == adcBase)
+        while(adcBase != 0xFFFFFFFF)
         {
-            /* Set priorities according round-robin
-             * Set the input channel, SOC number, trigger source & S/H window
-             * SOC source will be PWM, no IT.
+            /* Sets ADC clock to 50MHz (ADCCLK (derived from PERx.SYSCLK))
+             * Set converting input mode : "ADC_MODE_SINGLE_ENDED" or "ADC_MODE_DIFFERENTIAL"
+             * Set converting resolution : "ADC_RESOLUTION_12BIT" or "ADC_RESOLUTION_16BIT"
+             * Set IT raising  : "ADC_PULSE_END_OF_ACQ_WIN" or "ADC_PULSE_END_OF_CONV"
+             * Enables ADC converter
              */
-            ADC_setSOCPriority(adcBase, ADC_SOC_PRIORITY);
-            ADC_setupSOC(adcBase, p_adcSOC->adcSOCNumber, p_adcSOC->adcTriggerSrc, p_adcSOC->adcChannel, ADC_SAMPLING_WINDOW);
-            ADC_setInterruptSOCTrigger(adcBase, p_adcSOC->adcSOCNumber, ADC_INT_SOC_TRIGGER_NONE);
-            p_adcSOC++;
-        }
+            ADC_setPrescaler(adcBase, PERxSYSCLK_TO_ADCCLK_DIV);
+            ADC_setMode(adcBase, ADC_RESOLUTION, ADC_SIGNAL_MODE);
+            ADC_setInterruptPulseMode(adcBase, ADC_PULSE_END_MODE);
+            ADC_enableConverter(adcBase);
+
+            // Let some time to power up ADCs
+            DEVICE_DELAY_US(1500U);
+
+            while(p_adcSOC->adcBase == adcBase)
+            {
+                /* Set priorities according round-robin
+                 * Set the input channel, SOC number, trigger source & S/H window
+                 * SOC source will be PWM, no IT.
+                 */
+                ADC_setSOCPriority(adcBase, ADC_SOC_PRIORITY);
+                ADC_setupSOC(adcBase, p_adcSOC->adcSOCNumber, p_adcSOC->adcTriggerSrc, p_adcSOC->adcChannel, ADC_SAMPLING_WINDOW);
+                ADC_setInterruptSOCTrigger(adcBase, p_adcSOC->adcSOCNumber, ADC_INT_SOC_TRIGGER_NONE);
+                p_adcSOC++;
+            }
 
 #ifdef ADC_PPB_ENABLE
-        while(p_adcPPB->adcBase == adcBase)
-        {
-            /* Post processing block initialization, associate with ADC_SOC_NUMBER0
-             * Initialize PPB offset to zero
-             */
-            ADC_setupPPB(adcBase, p_adcPPB->adcPPBNumber, p_adcPPB->adcSOCNumber);
-            ADC_setPPBCalibrationOffset(adcBase, p_adcPPB->adcPPBNumber, p_adcPPB->adcCalib);
-            ADC_setPPBReferenceOffset(adcBase, p_adcPPB->adcPPBNumber, p_adcPPB->adcOffset);
-            p_adcPPB++;
-        }
+            while(p_adcPPB->adcBase == adcBase)
+            {
+                /* Post processing block initialization, associate with ADC_SOC_NUMBER0
+                 * Initialize PPB offset to zero
+                 */
+                ADC_setupPPB(adcBase, p_adcPPB->adcPPBNumber, p_adcPPB->adcSOCNumber);
+                ADC_setPPBCalibrationOffset(adcBase, p_adcPPB->adcPPBNumber, p_adcPPB->adcCalib);
+                ADC_setPPBReferenceOffset(adcBase, p_adcPPB->adcPPBNumber, p_adcPPB->adcOffset);
+                p_adcPPB++;
+            }
 #endif
 
-        while(p_adcIT->adcBase == adcBase)
-        {
-            ADC_setInterruptSource(adcBase, p_adcIT->adcIntNumber, p_adcIT->adcEOCNumber);
-            ADC_clearInterruptStatus(adcBase, p_adcIT->adcIntNumber);
-            ADC_enableInterrupt(adcBase, p_adcIT->adcIntNumber);
-            p_adcIT++;
+            while(p_adcIT->adcBase == adcBase)
+            {
+                ADC_setInterruptSource(adcBase, p_adcIT->adcIntNumber, p_adcIT->adcEOCNumber);
+                ADC_clearInterruptStatus(adcBase, p_adcIT->adcIntNumber);
+                ADC_enableInterrupt(adcBase, p_adcIT->adcIntNumber);
+                p_adcIT++;
+            }
+            adcBase = (++p_adcCfg)->adcBase;
         }
-        adcBase = (++p_adcCfg)->adcBase;
     }
+
+    return;
 }
 
 /**
  * @brief       ePWM global peripheral initialization function.
- * @param[in]   *hal    Pointer on the general HAL structure
+ * @param[in]   *p_pwmCfg   Pointer on the PWM configuration structure
  */
-static void HAL_ePWM_init(HAL* hal)
+static void HAL_ePWM_init(const ePWM_TypeDef* p_pwmCfg)
 {
-    const ePWM_TypeDef*    p_pwmCfg             = hal->epwmHandler;
-    const ePWM_TB_TypeDef* p_pwmTimeBase        = p_pwmCfg->epwmTimeBase;
-    const ePWM_CC_TypeDef* p_pwmCounterCompare  = p_pwmCfg->epwmCaptureCompare;
-    const ePWM_AQ_TypeDef* p_pwmActionQualifier = p_pwmCfg->epwmActionQualifier;
-    const ePWM_DB_TypeDef* p_pwmDeadBand        = p_pwmCfg->epwmDeadband;
-    const ePWM_PC_TypeDef* p_pwmProgChopper     = p_pwmCfg->epwmProgChopper;
-    const ePWM_ET_TypeDef* p_pwmEventTrigger    = p_pwmCfg->epwmEventTrigger;
-    uint32_t               pwmBase              = p_pwmCfg->epwmBase;
-
-    // Disable global PWM clock during initialization
-    SysCtl_disablePeripheral(SYSCTL_PERIPH_CLK_GTBCLKSYNC);
-    // Set correct frequency for EPWMCLK (max = PLLSYSCLK / 2)
-    SysCtl_setEPWMClockDivider(SYSCTL_EPWMCLK_DIV_2);
-
-    // Check that main pointers are valid.
-    if((p_pwmTimeBase != NULL) && (p_pwmCounterCompare != NULL) && (p_pwmActionQualifier != NULL) && (p_pwmDeadBand != NULL))
+    if((p_pwmCfg != NULL) && ( p_pwmCfg->epwmTimeBase != NULL) && (p_pwmCfg->epwmCaptureCompare) &&
+            (p_pwmCfg->epwmActionQualifier != NULL) && (p_pwmCfg->epwmDeadband != NULL))
     {
+        const ePWM_TB_TypeDef* p_pwmTimeBase        = p_pwmCfg->epwmTimeBase;
+        const ePWM_CC_TypeDef* p_pwmCounterCompare  = p_pwmCfg->epwmCaptureCompare;
+        const ePWM_AQ_TypeDef* p_pwmActionQualifier = p_pwmCfg->epwmActionQualifier;
+        const ePWM_DB_TypeDef* p_pwmDeadBand        = p_pwmCfg->epwmDeadband;
+        uint32_t               pwmBase              = p_pwmCfg->epwmBase;
+
+        // Disable global PWM clock during initialization
+        SysCtl_disablePeripheral(SYSCTL_PERIPH_CLK_GTBCLKSYNC);
+        // Set correct frequency for EPWMCLK (max = PLLSYSCLK / 2)
+        SysCtl_setEPWMClockDivider(SYSCTL_EPWMCLK_DIV_2);
+
         while(pwmBase != 0xFFFFFFFF)
         {
             /* Time-Base (TB) Submodule Registers
@@ -302,67 +282,78 @@ static void HAL_ePWM_init(HAL* hal)
              * Programmable pulse width of first pulse
              * Programmable duty cycle of second and subsequent pulses
              */
-            while((p_pwmProgChopper != NULL) && (p_pwmProgChopper->epwmBase == pwmBase))
+            if(p_pwmCfg->epwmProgChopper != NULL)
             {
-                EPWM_enableChopper(pwmBase);
-                EPWM_setChopperDutyCycle(pwmBase, p_pwmProgChopper->dutyCycleCount);
-                EPWM_setChopperFreq(pwmBase, p_pwmProgChopper->freqDiv);
-                EPWM_setChopperFirstPulseWidth(pwmBase, p_pwmProgChopper->firstPulseWidth);
-                p_pwmProgChopper++;
+                const ePWM_PC_TypeDef* p_pwmProgChopper = p_pwmCfg->epwmProgChopper;
+
+                while(p_pwmProgChopper->epwmBase == pwmBase)
+                {
+                    EPWM_enableChopper(pwmBase);
+                    EPWM_setChopperDutyCycle(pwmBase, p_pwmProgChopper->dutyCycleCount);
+                    EPWM_setChopperFreq(pwmBase, p_pwmProgChopper->freqDiv);
+                    EPWM_setChopperFirstPulseWidth(pwmBase, p_pwmProgChopper->firstPulseWidth);
+                    p_pwmProgChopper++;
+                }
             }
 
             /* Event-Trigger (ET) Submodule Registers
              * Disable ADC trigger & IT generation while initialization is in progress.
              */
-            while((p_pwmEventTrigger != NULL) && (p_pwmEventTrigger->epwmBase == pwmBase))
+            if(p_pwmCfg->epwmEventTrigger != NULL)
             {
-                // Disable ADC SOC events generation while init is in progress.
-                EPWM_disableADCTriggerEventCountInit(pwmBase, p_pwmEventTrigger->adcSOCType);
-                EPWM_disableADCTrigger(pwmBase, p_pwmEventTrigger->adcSOCType);
-                // If adcSOCEvtCount == 0 -> no ADC SOC events are generated
-                if(p_pwmEventTrigger->adcSOCEvtCount)
+                const ePWM_ET_TypeDef* p_pwmEventTrigger = p_pwmCfg->epwmEventTrigger;
+
+                while(p_pwmEventTrigger->epwmBase == pwmBase)
                 {
-                    EPWM_setADCTriggerSource(pwmBase, p_pwmEventTrigger->adcSOCType, p_pwmEventTrigger->adcSOCSource);
-                    EPWM_setADCTriggerEventPrescale(pwmBase, p_pwmEventTrigger->adcSOCType, p_pwmEventTrigger->adcSOCEvtCount);
-                    EPWM_clearADCTriggerFlag(pwmBase, p_pwmEventTrigger->adcSOCType);
-                    EPWM_enableADCTrigger(pwmBase, p_pwmEventTrigger->adcSOCType);
+                    // Disable ADC SOC events generation while init is in progress.
+                    EPWM_disableADCTriggerEventCountInit(pwmBase, p_pwmEventTrigger->adcSOCType);
+                    EPWM_disableADCTrigger(pwmBase, p_pwmEventTrigger->adcSOCType);
+                    // If adcSOCEvtCount == 0 -> no ADC SOC events are generated
+                    if(p_pwmEventTrigger->adcSOCEvtCount)
+                    {
+                        EPWM_setADCTriggerSource(pwmBase, p_pwmEventTrigger->adcSOCType, p_pwmEventTrigger->adcSOCSource);
+                        EPWM_setADCTriggerEventPrescale(pwmBase, p_pwmEventTrigger->adcSOCType, p_pwmEventTrigger->adcSOCEvtCount);
+                        EPWM_clearADCTriggerFlag(pwmBase, p_pwmEventTrigger->adcSOCType);
+                        EPWM_enableADCTrigger(pwmBase, p_pwmEventTrigger->adcSOCType);
+                    }
+                    // Disable IT generation while init is in progress.
+                    EPWM_disableInterruptEventCountInit(pwmBase);
+                    EPWM_disableInterrupt(pwmBase);
+                    // If IntEvtCount == 0 -> no Interrupts are generated
+                    if(p_pwmEventTrigger->intEvtCount)
+                    {
+                        EPWM_setInterruptSource(pwmBase, p_pwmEventTrigger->intSource);
+                        EPWM_setInterruptEventCount(pwmBase, p_pwmEventTrigger->intEvtCount);
+                        EPWM_clearEventTriggerInterruptFlag(pwmBase);
+                        EPWM_enableInterrupt(pwmBase);
+                    }
+                    p_pwmEventTrigger++;
                 }
-                // Disable IT generation while init is in progress.
-                EPWM_disableInterruptEventCountInit(pwmBase);
-                EPWM_disableInterrupt(pwmBase);
-                // If IntEvtCount == 0 -> no Interrupts are generated
-                if(p_pwmEventTrigger->intEvtCount)
-                {
-                    EPWM_setInterruptSource(pwmBase, p_pwmEventTrigger->intSource);
-                    EPWM_setInterruptEventCount(pwmBase, p_pwmEventTrigger->intEvtCount);
-                    EPWM_clearEventTriggerInterruptFlag(pwmBase);
-                    EPWM_enableInterrupt(pwmBase);
-                }
-                p_pwmEventTrigger++;
             }
-// Configure synchronization
-//        EPWM_setCountModeAfterSync(pwmbase, EPWM_COUNT_MODE_UP_AFTER_SYNC);
-//        EPWM_setSyncOutPulseMode(pwmbase, EPWM_SYNC_OUT_PULSE_ON_EPWMxSYNCIN);
+
+            // Configure synchronization
+            //        EPWM_setCountModeAfterSync(pwmbase, EPWM_COUNT_MODE_UP_AFTER_SYNC);
+            //        EPWM_setSyncOutPulseMode(pwmbase, EPWM_SYNC_OUT_PULSE_ON_EPWMxSYNCIN);
             pwmBase = (++p_pwmCfg)->epwmBase;
         }
         // End of PWM initialization. Enable global PWM clock.
         SysCtl_enablePeripheral(SYSCTL_PERIPH_CLK_GTBCLKSYNC);
         EPWM_forceSyncPulse(MOTOR1_PWM1_BASE);
     }
+
     return;
 }
 
 /**
  * @brief       Quadrature encoder initialization function.
- * @param[in]   *hal    Pointer on the general HAL structure
+ * @param[in]   *p_qepCfg   Pointer on the QEP configuration structure
  */
-static void HAL_eQEP_init(HAL* hal)
+static void HAL_eQEP_init(const eQEP_TypeDef* p_qepCfg)
 {
-    const eQEP_TypeDef* p_qepCfg = hal->eqepHandler;
-    uint32_t            qepBase  = p_qepCfg->eqepBase;
-
     if(p_qepCfg != NULL)
     {
+        uint32_t qepBase = p_qepCfg->eqepBase;
+
         while(qepBase != 0xFFFFFFFF)
         {
             /* Configure the decoder for up-count mode, counting both on rising & falling edges (quadrature encoders)
@@ -394,15 +385,14 @@ static void HAL_eQEP_init(HAL* hal)
 
 /**
  * @brief       SPI bus initialization function.
- * @param[in]   *hal    Pointer on the general HAL structure
+ * @param[in]   *p_spiCfg   Pointer on the SPI configuration structure
  */
-static void HAL_SPI_init(HAL* hal)
+static void HAL_SPI_init(const SPI_TypeDef* p_spiCfg)
 {
-    const SPI_TypeDef* p_spiCfg = hal->spiHandler;
-    uint32_t           spiBase  = p_spiCfg->spiBase;
-
     if(p_spiCfg != NULL)
     {
+        uint32_t spiBase = p_spiCfg->spiBase;
+
         while(spiBase != 0xFFFFFFFF)
         {
             /* Disable SPI before configuration
@@ -432,15 +422,14 @@ static void HAL_SPI_init(HAL* hal)
 
 /**
  * @brief       DMA initialization function.
- * @param[in]   *hal    Pointer on the general HAL structure
+ * @param[in]   *p_dmaCfg   Pointer on the DMA configuration structure
  */
-static void HAL_DMA_init(HAL* hal)
+static void HAL_DMA_init(const DMA_TypeDef* p_dmaCfg)
 {
-    const DMA_TypeDef* p_dmaCfg = hal->dmaHandler;
-    uint32_t           dmaBase  = p_dmaCfg->dmaBase;
-
     if(p_dmaCfg != NULL)
     {
+        uint32_t dmaBase = p_dmaCfg->dmaBase;
+
         /* Global hardware reset of the DMA controller. */
         DMA_initController();
         DMA_setEmulationMode(DMA_EMULATION_FREE_RUN);
@@ -502,10 +491,10 @@ void HAL_enableInterrupts(void)
     EINT;
 }
 
-void ADC_offsetCalibration(MOTOR_ACQ* motor)
+void ADC_offsetCalibration(MOTOR_ACQ* p_motor)
 {
-    MOTOR_ACQ* p_motor1 = &motor[MOTOR_1];
-    MOTOR_ACQ* p_motor2 = &motor[MOTOR_2];
+    MOTOR_ACQ* p_motor1 = &p_motor[MOTOR_1];
+    MOTOR_ACQ* p_motor2 = &p_motor[MOTOR_2];
     uint16_t calibCnt;
 
     // force no switching with low side transistors closed

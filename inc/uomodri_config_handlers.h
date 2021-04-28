@@ -290,6 +290,41 @@ static DRV8353_Reg DrvRegList[] =
    // Gate Drive HS register initialization (Address: 0x3)
    .Ctrl_Reg_03.ctrl03.LOCK         = DRV8353_REG_UNLOCK,
    .Ctrl_Reg_03.ctrl03.IDRIVEN_HS   = DRV8353_ISINK_HS_0P300_A,
+   .Ctrl_Reg_03.ctrl03.IDRIVEP_HS   = DRV8353_ISOUR_HS_0P300_A,
+   // Gate Drive LS register initialization (Address: 0x4)
+   .Ctrl_Reg_04.ctrl04.IDRIVEN_LS   = DRV8353_ISINK_LS_0P300_A,
+   .Ctrl_Reg_04.ctrl04.IDRIVEP_LS   = DRV8353_ISOUR_LS_0P300_A,
+   .Ctrl_Reg_04.ctrl04.TDRIVE       = DRV8353_TSOUR_4000_NS,
+   // Over Current Protection register initialization (Address: 0x5)
+   .Ctrl_Reg_05.ctrl05.VDS_LVL      = DRV8353_VDS_LVL_0P700_V,
+   .Ctrl_Reg_05.ctrl05.OCP_DEG      = DRV8353_OCPDEG_8_US,
+   .Ctrl_Reg_05.ctrl05.OCP_MODE     = DRV8353_AUTOMATIC_RETRY,
+   .Ctrl_Reg_05.ctrl05.DEAD_TIME    = DRV8353_DEADTIME_400_NS,
+   .Ctrl_Reg_05.ctrl05.TRETRY       = false,
+   // Current Sense Amplifier register initialization (Address: 0x6)
+   .Ctrl_Reg_06.ctrl06.SEN_LVL      = DRV8353_SENLVL_1P00_V,
+   .Ctrl_Reg_06.ctrl06.CSA_CAL_C    = false,
+   .Ctrl_Reg_06.ctrl06.CSA_CAL_B    = false,
+   .Ctrl_Reg_06.ctrl06.CSA_CAL_A    = false,
+   .Ctrl_Reg_06.ctrl06.DIS_SEN      = false,
+   .Ctrl_Reg_06.ctrl06.CSA_GAIN     = DRV8353_CSA_GAIN_40_V_V,
+   .Ctrl_Reg_06.ctrl06.LS_REF       = false,
+   .Ctrl_Reg_06.ctrl06.VREF_DIV     = true,
+   .Ctrl_Reg_06.ctrl06.CSA_FET      = false,
+   // Amplifier calibration calibration routine (Address: 0x7)
+   .Ctrl_Reg_07.ctrl07.CAL_MODE     = true},
+ { .Ctrl_Reg_02.ctrl02.CLR_FLT      = false,
+   .Ctrl_Reg_02.ctrl02.BRAKE        = false,
+   .Ctrl_Reg_02.ctrl02.COAST        = false,
+   .Ctrl_Reg_02.ctrl02.PWM1_DIR     = false,
+   .Ctrl_Reg_02.ctrl02.PWM1_COM     = false,
+   .Ctrl_Reg_02.ctrl02.PWM_MODE     = DRV8353_PWMMODE_6,
+   .Ctrl_Reg_02.ctrl02.OTW_REP      = true,                 // Over Temperature Warning will raise nFault
+   .Ctrl_Reg_02.ctrl02.DIS_GDF      = false,
+   .Ctrl_Reg_02.ctrl02.DIS_GDUV     = false,
+   // Gate Drive HS register initialization (Address: 0x3)
+   .Ctrl_Reg_03.ctrl03.LOCK         = DRV8353_REG_UNLOCK,
+   .Ctrl_Reg_03.ctrl03.IDRIVEN_HS   = DRV8353_ISINK_HS_0P300_A,
    .Ctrl_Reg_03.ctrl03.IDRIVEP_HS   = DRV8353_ISOUR_HS_0P150_A,
    // Gate Drive LS register initialization (Address: 0x4)
    .Ctrl_Reg_04.ctrl04.IDRIVEN_LS   = DRV8353_ISINK_LS_0P300_A,
@@ -312,8 +347,7 @@ static DRV8353_Reg DrvRegList[] =
    .Ctrl_Reg_06.ctrl06.VREF_DIV     = true,
    .Ctrl_Reg_06.ctrl06.CSA_FET      = false,
    // Amplifier calibration calibration routine (Address: 0x7)
-   .Ctrl_Reg_07.ctrl07.CAL_MODE     = true,
- },
+   .Ctrl_Reg_07.ctrl07.CAL_MODE     = true},
 };
 
 //static const ePWM_TypeDef PwmCfgList[] =

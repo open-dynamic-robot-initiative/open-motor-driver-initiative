@@ -595,9 +595,9 @@ typedef union _DRV8353_msg_u_ {
 // **************************************************************************
 // Functions prototypes
 void DRV8353_init(DRV8353*);
-void DRV8353_readStatus(DRV8353*);
-void DRV8353_readAll(DRV8353*);
-void DRV8353_writeAll(DRV8353*);
+void DRV8353_readStatus(DRV8353_Cfg*, DRV8353_Reg*);
+void DRV8353_readAll(DRV8353_Cfg*, DRV8353_Reg*);
+void DRV8353_writeAll(DRV8353_Cfg*, DRV8353_Reg*);
 uint16_t DRV8353_readOne(DRV8353_Cfg*, DRV8353_Address_e);
 void DRV8353_writeOne(DRV8353_Cfg*, DRV8353_Address_e, uint16_t);
 

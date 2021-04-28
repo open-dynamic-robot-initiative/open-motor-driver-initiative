@@ -1,9 +1,15 @@
 #include "main.h"
 
 // Hardware Abstraction Layer struct instance
-HAL hal;
+HAL hal = {.gpioHandler = GpioPinsCfgList,
+           .adcHandler  = AdcCfgList,
+           .epwmHandler = PwmCfgList,
+           .eqepHandler = QepCfgList,
+           .dmaHandler  = NULL,
+           .spiHandler  = spiCfgList};
 // DRV8323 Hardware Abstraction Layers
-DRV8353 drv;
+DRV8353 drv = {.drvCfgHandler = DrvCfgList,
+               .drvRegHandler = DrvRegList};
 // Motor Hardware Abstraction Layers
 MOTOR_ACQ motors_acq[2] =
 {

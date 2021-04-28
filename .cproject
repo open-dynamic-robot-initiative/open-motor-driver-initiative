@@ -60,8 +60,6 @@
 									<listOptionValue builtIn="false" value="USE_20MHZ_XTAL"/>
 									<listOptionValue builtIn="false" value="DUAL_HEADERS"/>
 									<listOptionValue builtIn="false" value="DEBUG"/>
-									<listOptionValue builtIn="false" value="__TMS320C28XX_CLA1__"/>
-									<listOptionValue builtIn="false" value="__TMS320C28XX_CLA2__"/>
 									<listOptionValue builtIn="false" value="__TI_EABI__"/>
 								</option>
 								<option id="com.ti.ccstudio.buildDefinitions.C2000_20.2.compilerID.DEBUGGING_MODEL.2034563967" name="Debugging model" superClass="com.ti.ccstudio.buildDefinitions.C2000_20.2.compilerID.DEBUGGING_MODEL" value="com.ti.ccstudio.buildDefinitions.C2000_20.2.compilerID.DEBUGGING_MODEL.SYMDEBUG__DWARF" valueType="enumerated"/>

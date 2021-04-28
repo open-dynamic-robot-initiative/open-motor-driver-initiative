@@ -326,6 +326,12 @@ extern void HAL_Interrupts_init();
 extern void HAL_setupInterrupts();
 extern void HAL_enableInterrupts();
 
+// ADC interrupt service routine
+extern __interrupt void adc1ISR(void);
+extern __interrupt void adc2ISR(void);
+extern __interrupt void adc3ISR(void);
+extern __interrupt void adc4ISR(void);
+
 void ADC_offsetCalibration(MOTOR_ACQ*);
 
 #endif
