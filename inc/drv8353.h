@@ -86,103 +86,69 @@
 //!
 typedef enum
 {
-    DRV8353_CTRLMODE_READ     = (1 << 15), //!< Read Mode
-    DRV8353_CTRLMODE_WRITE    = (0 << 15)  //!< Write Mode
+    DRV8353_CTRLMODE_READ   = 1,        //!< Read Mode
+    DRV8353_CTRLMODE_WRITE  = 0         //!< Write Mode
 } DRV8353_CtrlMode_e;
-
-//! \brief Enumeration for the Status 0 register, faults
-//!
-typedef enum
-{
-    DRV8353_VDS_LC      = (1 << 0),    //!< VDS overcurrent fault on C low-side MOSFET
-    DRV8353_VDS_HC      = (1 << 1),    //!< VDS overcurrent fault on C high-side MOSFET
-    DRV8353_VDS_LB      = (1 << 2),    //!< VDS overcurrent fault on B low-side MOSFET
-    DRV8353_VDS_HB      = (1 << 3),    //!< VDS overcurrent fault on B high-side MOSFET
-    DRV8353_VDS_LA      = (1 << 4),    //!< VDS overcurrent fault on A low-side MOSFET
-    DRV8353_VDS_HA      = (1 << 5),    //!< VDS overcurrent fault on A high-side MOSFET
-    DRV8353_OTSD        = (1 << 6),    //!< Overtemperature shutdown
-    DRV8353_UVLO        = (1 << 7),    //!< Undervoltage lockout fault condition
-    DRV8353_GDF         = (1 << 8),    //!< Gate driver fault condition
-    DRV8353_VDS_OCP     = (1 << 9),    //!< VDS monitor overcurrent fault condition
-    DRV8353_FAULT       = (1 << 10)    //!< logic OR of FAULT status register
-} DRV8353_STATUS00_WarningWatchdog_e;
-
-//! \brief Enumeration for the Status 1 register, OV/VDS faults
-//!
-typedef enum
-{
-    DRV8353_VGS_LC      = (1 << 0),    //!< VGS gate drive fault on C low-side MOSFET
-    DRV8353_VGS_HC      = (1 << 1),    //!< VGS gate drive fault on C high-side MOSFET
-    DRV8353_VGS_LB      = (1 << 2),    //!< VGS gate drive fault on B low-side MOSFET
-    DRV8353_VGS_HB      = (1 << 3),    //!< VGS gate drive fault on B high-side MOSFET
-    DRV8353_VGS_LA      = (1 << 4),    //!< VGS gate drive fault on A low-side MOSFET
-    DRV8353_VGS_HA      = (1 << 5),    //!< VGS gate drive fault on A high-side MOSFET
-    DRV8353_CPUV        = (1 << 6),    //!< charge pump undervoltage fault
-    DRV8353_OTW         = (1 << 7),    //!< overtemperature warning
-    DRV8353_SC_OC       = (1 << 8),    //!< overcurrent on phase C
-    DRV8353_SB_OC       = (1 << 9),    //!< overcurrent on phase B
-    DRV8353_SA_OC       = (1 << 10)    //!< overcurrent on phase A
-} DRV8353_STATUS01_OvVdsFaults_e;
 
 //! \brief Enumeration for the driver PWM mode
 //!
 typedef enum
 {
-    DRV8353_PWMMODE_6 = (0 << 5),     //!< PWM_MODE = 6 inputs
-    DRV8353_PWMMODE_3 = (1 << 5),     //!< PWM_MODE = 3 inputs
-    DRV8353_PWMMODE_1 = (2 << 5)      //!< PWM_MODE = 1 input
+    DRV8353_PWMMODE_6 = 0,              //!< PWM_MODE = 6 inputs
+    DRV8353_PWMMODE_3 = 1,              //!< PWM_MODE = 3 inputs
+    DRV8353_PWMMODE_1 = 2               //!< PWM_MODE = 1 input
 } DRV8353_CTRL02_PWMMode_e;
 
 //! \brief Enumeration for the high side gate drive peak source current;
 //!
 typedef enum
 {
-    DRV8353_ISOUR_HS_0P050_A = (0 << 4),  //!< IDRIVEP_HS = 0.050A
-    DRV8353_ISOUR_HS_0P051_A = (1 << 4),  //!< IDRIVEP_HS = 0.050A
-    DRV8353_ISOUR_HS_0P100_A = (2 << 4),  //!< IDRIVEP_HS = 0.100A
-    DRV8353_ISOUR_HS_0P150_A = (3 << 4),  //!< IDRIVEP_HS = 0.150A
-    DRV8353_ISOUR_HS_0P300_A = (4 << 4),  //!< IDRIVEP_HS = 0.300A
-    DRV8353_ISOUR_HS_0P350_A = (5 << 4),  //!< IDRIVEP_HS = 0.350A
-    DRV8353_ISOUR_HS_0P400_A = (6 << 4),  //!< IDRIVEP_HS = 0.400A
-    DRV8353_ISOUR_HS_0P450_A = (7 << 4),  //!< IDRIVEP_HS = 0.450A
-    DRV8353_ISOUR_HS_0P550_A = (8 << 4),  //!< IDRIVEP_HS = 0.550A
-    DRV8353_ISOUR_HS_0P600_A = (9 << 4),  //!< IDRIVEP_HS = 0.600A
-    DRV8353_ISOUR_HS_0P650_A = (10 << 4), //!< IDRIVEP_HS = 0.650A
-    DRV8353_ISOUR_HS_0P700_A = (11 << 4), //!< IDRIVEP_HS = 0.700A
-    DRV8353_ISOUR_HS_0P850_A = (12 << 4), //!< IDRIVEP_HS = 0.850A
-    DRV8353_ISOUR_HS_0P900_A = (13 << 4), //!< IDRIVEP_HS = 0.900A
-    DRV8353_ISOUR_HS_0P950_A = (14 << 4), //!< IDRIVEP_HS = 0.950A
-    DRV8353_ISOUR_HS_1P000_A = (15 << 4)  //!< IDRIVEP_HS = 1.000A
+    DRV8353_ISOUR_HS_0P050_A = 0,       //!< IDRIVEP_HS = 0.050A
+    DRV8353_ISOUR_HS_0P051_A = 1,       //!< IDRIVEP_HS = 0.050A
+    DRV8353_ISOUR_HS_0P100_A = 2,       //!< IDRIVEP_HS = 0.100A
+    DRV8353_ISOUR_HS_0P150_A = 3,       //!< IDRIVEP_HS = 0.150A
+    DRV8353_ISOUR_HS_0P300_A = 4,       //!< IDRIVEP_HS = 0.300A
+    DRV8353_ISOUR_HS_0P350_A = 5,       //!< IDRIVEP_HS = 0.350A
+    DRV8353_ISOUR_HS_0P400_A = 6,       //!< IDRIVEP_HS = 0.400A
+    DRV8353_ISOUR_HS_0P450_A = 7,       //!< IDRIVEP_HS = 0.450A
+    DRV8353_ISOUR_HS_0P550_A = 8,       //!< IDRIVEP_HS = 0.550A
+    DRV8353_ISOUR_HS_0P600_A = 9,       //!< IDRIVEP_HS = 0.600A
+    DRV8353_ISOUR_HS_0P650_A = 10,      //!< IDRIVEP_HS = 0.650A
+    DRV8353_ISOUR_HS_0P700_A = 11,      //!< IDRIVEP_HS = 0.700A
+    DRV8353_ISOUR_HS_0P850_A = 12,      //!< IDRIVEP_HS = 0.850A
+    DRV8353_ISOUR_HS_0P900_A = 13,      //!< IDRIVEP_HS = 0.900A
+    DRV8353_ISOUR_HS_0P950_A = 14,      //!< IDRIVEP_HS = 0.950A
+    DRV8353_ISOUR_HS_1P000_A = 15       //!< IDRIVEP_HS = 1.000A
 } DRV8353_CTRL03_PeakSourCurHS_e;
 
 //! \brief Enumeration for the high side gate drive peak sink current;
 //!
 typedef enum
 {
-    DRV8353_ISINK_HS_0P100_A = (0 << 0),  //!< IDRIVEN_HS = 0.100A
-    DRV8353_ISINK_HS_0P101_A = (1 << 0),  //!< IDRIVEN_HS = 0.100A
-    DRV8353_ISINK_HS_0P200_A = (2 << 0),  //!< IDRIVEN_HS = 0.200A
-    DRV8353_ISINK_HS_0P300_A = (3 << 0),  //!< IDRIVEN_HS = 0.300A
-    DRV8353_ISINK_HS_0P600_A = (4 << 0),  //!< IDRIVEN_HS = 0.600A
-    DRV8353_ISINK_HS_0P700_A = (5 << 0),  //!< IDRIVEN_HS = 0.700A
-    DRV8353_ISINK_HS_0P800_A = (6 << 0),  //!< IDRIVEN_HS = 0.800A
-    DRV8353_ISINK_HS_0P900_A = (7 << 0),  //!< IDRIVEN_HS = 0.900A
-    DRV8353_ISINK_HS_1P100_A = (8 << 0),  //!< IDRIVEN_HS = 1.100A
-    DRV8353_ISINK_HS_1P200_A = (9 << 0),  //!< IDRIVEN_HS = 1.200A
-    DRV8353_ISINK_HS_1P300_A = (10 << 0), //!< IDRIVEN_HS = 1.300A
-    DRV8353_ISINK_HS_1P400_A = (11 << 0), //!< IDRIVEN_HS = 1.400A
-    DRV8353_ISINK_HS_1P700_A = (12 << 0), //!< IDRIVEN_HS = 1.700A
-    DRV8353_ISINK_HS_1P800_A = (13 << 0), //!< IDRIVEN_HS = 1.800A
-    DRV8353_ISINK_HS_1P900_A = (14 << 0), //!< IDRIVEN_HS = 1.900A
-    DRV8353_ISINK_HS_2P000_A = (15 << 0)  //!< IDRIVEN_HS = 2.000A
+    DRV8353_ISINK_HS_0P100_A = 0,       //!< IDRIVEN_HS = 0.100A
+    DRV8353_ISINK_HS_0P101_A = 1,       //!< IDRIVEN_HS = 0.100A
+    DRV8353_ISINK_HS_0P200_A = 2,       //!< IDRIVEN_HS = 0.200A
+    DRV8353_ISINK_HS_0P300_A = 3,       //!< IDRIVEN_HS = 0.300A
+    DRV8353_ISINK_HS_0P600_A = 4,       //!< IDRIVEN_HS = 0.600A
+    DRV8353_ISINK_HS_0P700_A = 5,       //!< IDRIVEN_HS = 0.700A
+    DRV8353_ISINK_HS_0P800_A = 6,       //!< IDRIVEN_HS = 0.800A
+    DRV8353_ISINK_HS_0P900_A = 7,       //!< IDRIVEN_HS = 0.900A
+    DRV8353_ISINK_HS_1P100_A = 8,       //!< IDRIVEN_HS = 1.100A
+    DRV8353_ISINK_HS_1P200_A = 9,       //!< IDRIVEN_HS = 1.200A
+    DRV8353_ISINK_HS_1P300_A = 10,      //!< IDRIVEN_HS = 1.300A
+    DRV8353_ISINK_HS_1P400_A = 11,      //!< IDRIVEN_HS = 1.400A
+    DRV8353_ISINK_HS_1P700_A = 12,      //!< IDRIVEN_HS = 1.700A
+    DRV8353_ISINK_HS_1P800_A = 13,      //!< IDRIVEN_HS = 1.800A
+    DRV8353_ISINK_HS_1P900_A = 14,      //!< IDRIVEN_HS = 1.900A
+    DRV8353_ISINK_HS_2P000_A = 15,      //!< IDRIVEN_HS = 2.000A
 } DRV8353_CTRL03_PeakSinkCurHS_e;
 
 //! \brief Enumeration for LOCK and UNLOCK write access sequence commands
 //!
 typedef enum
 {
-    DRV8353_REG_LOCK    = (6 << 8),     //!< Lock settings
-    DRV8353_REG_UNLOCK  = (3 << 8)      //!< Unlock settings
+    DRV8353_REG_LOCK    = 6,            //!< Lock settings
+    DRV8353_REG_UNLOCK  = 3             //!< Unlock settings
 } DRV8353_CTRL03_Lock_e;
 
 //! \brief Enumeration for the high side and low side gate drive peak source
@@ -190,10 +156,10 @@ typedef enum
 //!
 typedef enum
 {
-    DRV8353_TSOUR_500_NS  = (0 << 8),     //!< TDRIVE = 500ns
-    DRV8353_TSOUR_1000_NS = (1 << 8),     //!< TDRIVE = 1000ns
-    DRV8353_TSOUR_2000_NS = (2 << 8),     //!< TDRIVE = 2000ns
-    DRV8353_TSOUR_4000_NS = (3 << 8)      //!< TDRIVE = 4000ns
+    DRV8353_TSOUR_500_NS  = 0,          //!< TDRIVE = 500ns
+    DRV8353_TSOUR_1000_NS = 1,          //!< TDRIVE = 1000ns
+    DRV8353_TSOUR_2000_NS = 2,          //!< TDRIVE = 2000ns
+    DRV8353_TSOUR_4000_NS = 3           //!< TDRIVE = 4000ns
 } DRV8353_CTRL04_PeakTime_e;
 
 //! \brief Enumeration for the low side gate drive peak source current;
@@ -201,22 +167,22 @@ typedef enum
 //!
 typedef enum
 {
-    DRV8353_ISOUR_LS_0P050_A = (0 << 4),  //!< IDRIVEP_LS = 0.050A
-    DRV8353_ISOUR_LS_0P051_A = (1 << 4),  //!< IDRIVEP_LS = 0.050A
-    DRV8353_ISOUR_LS_0P100_A = (2 << 4),  //!< IDRIVEP_LS = 0.100A
-    DRV8353_ISOUR_LS_0P150_A = (3 << 4),  //!< IDRIVEP_LS = 0.150A
-    DRV8353_ISOUR_LS_0P300_A = (4 << 4),  //!< IDRIVEP_LS = 0.300A
-    DRV8353_ISOUR_LS_0P350_A = (5 << 4),  //!< IDRIVEP_LS = 0.350A
-    DRV8353_ISOUR_LS_0P400_A = (6 << 4),  //!< IDRIVEP_LS = 0.400A
-    DRV8353_ISOUR_LS_0P450_A = (7 << 4),  //!< IDRIVEP_LS = 0.450A
-    DRV8353_ISOUR_LS_0P550_A = (8 << 4),  //!< IDRIVEP_LS = 0.550A
-    DRV8353_ISOUR_LS_0P600_A = (9 << 4),  //!< IDRIVEP_LS = 0.600A
-    DRV8353_ISOUR_LS_0P650_A = (10 << 4), //!< IDRIVEP_LS = 0.650A
-    DRV8353_ISOUR_LS_0P700_A = (11 << 4), //!< IDRIVEP_LS = 0.700A
-    DRV8353_ISOUR_LS_0P850_A = (12 << 4), //!< IDRIVEP_LS = 0.850A
-    DRV8353_ISOUR_LS_0P900_A = (13 << 4), //!< IDRIVEP_LS = 0.900A
-    DRV8353_ISOUR_LS_0P950_A = (14 << 4), //!< IDRIVEP_LS = 0.950A
-    DRV8353_ISOUR_LS_1P000_A = (15 << 4)  //!< IDRIVEP_LS = 1.000A
+    DRV8353_ISOUR_LS_0P050_A = 0,       //!< IDRIVEP_LS = 0.050A
+    DRV8353_ISOUR_LS_0P051_A = 1,       //!< IDRIVEP_LS = 0.050A
+    DRV8353_ISOUR_LS_0P100_A = 2,       //!< IDRIVEP_LS = 0.100A
+    DRV8353_ISOUR_LS_0P150_A = 3,       //!< IDRIVEP_LS = 0.150A
+    DRV8353_ISOUR_LS_0P300_A = 4,       //!< IDRIVEP_LS = 0.300A
+    DRV8353_ISOUR_LS_0P350_A = 5,       //!< IDRIVEP_LS = 0.350A
+    DRV8353_ISOUR_LS_0P400_A = 6,       //!< IDRIVEP_LS = 0.400A
+    DRV8353_ISOUR_LS_0P450_A = 7,       //!< IDRIVEP_LS = 0.450A
+    DRV8353_ISOUR_LS_0P550_A = 8,       //!< IDRIVEP_LS = 0.550A
+    DRV8353_ISOUR_LS_0P600_A = 9,       //!< IDRIVEP_LS = 0.600A
+    DRV8353_ISOUR_LS_0P650_A = 10,      //!< IDRIVEP_LS = 0.650A
+    DRV8353_ISOUR_LS_0P700_A = 11,      //!< IDRIVEP_LS = 0.700A
+    DRV8353_ISOUR_LS_0P850_A = 12,      //!< IDRIVEP_LS = 0.850A
+    DRV8353_ISOUR_LS_0P900_A = 13,      //!< IDRIVEP_LS = 0.900A
+    DRV8353_ISOUR_LS_0P950_A = 14,      //!< IDRIVEP_LS = 0.950A
+    DRV8353_ISOUR_LS_1P000_A = 15       //!< IDRIVEP_LS = 1.000A
 } DRV8353_CTRL04_PeakSourCurLS_e;
 
 //! \brief Enumeration for the low side gate drive peak sink current;
@@ -224,44 +190,44 @@ typedef enum
 //!
 typedef enum
 {
-    DRV8353_ISINK_LS_0P100_A = (0 << 0),  //!< IDRIVEN_LS = 0.100A
-    DRV8353_ISINK_LS_0P101_A = (1 << 0),  //!< IDRIVEN_LS = 0.100A
-    DRV8353_ISINK_LS_0P200_A = (2 << 0),  //!< IDRIVEN_LS = 0.200A
-    DRV8353_ISINK_LS_0P300_A = (3 << 0),  //!< IDRIVEN_LS = 0.300A
-    DRV8353_ISINK_LS_0P600_A = (4 << 0),  //!< IDRIVEN_LS = 0.600A
-    DRV8353_ISINK_LS_0P700_A = (5 << 0),  //!< IDRIVEN_LS = 0.700A
-    DRV8353_ISINK_LS_0P800_A = (6 << 0),  //!< IDRIVEN_LS = 0.800A
-    DRV8353_ISINK_LS_0P900_A = (7 << 0),  //!< IDRIVEN_LS = 0.900A
-    DRV8353_ISINK_LS_1P100_A = (8 << 0),  //!< IDRIVEN_LS = 1.100A
-    DRV8353_ISINK_LS_1P200_A = (9 << 0),  //!< IDRIVEN_LS = 1.200A
-    DRV8353_ISINK_LS_1P300_A = (10 << 0), //!< IDRIVEN_LS = 1.300A
-    DRV8353_ISINK_LS_1P400_A = (11 << 0), //!< IDRIVEN_LS = 1.400A
-    DRV8353_ISINK_LS_1P700_A = (12 << 0), //!< IDRIVEN_LS = 1.700A
-    DRV8353_ISINK_LS_1P800_A = (13 << 0), //!< IDRIVEN_LS = 1.800A
-    DRV8353_ISINK_LS_1P900_A = (14 << 0), //!< IDRIVEN_LS = 1.900A
-    DRV8353_ISINK_LS_2P000_A = (15 << 0)  //!< IDRIVEN_LS = 2.000A
+    DRV8353_ISINK_LS_0P100_A = 0,       //!< IDRIVEN_LS = 0.100A
+    DRV8353_ISINK_LS_0P101_A = 1,       //!< IDRIVEN_LS = 0.100A
+    DRV8353_ISINK_LS_0P200_A = 2,       //!< IDRIVEN_LS = 0.200A
+    DRV8353_ISINK_LS_0P300_A = 3,       //!< IDRIVEN_LS = 0.300A
+    DRV8353_ISINK_LS_0P600_A = 4,       //!< IDRIVEN_LS = 0.600A
+    DRV8353_ISINK_LS_0P700_A = 5,       //!< IDRIVEN_LS = 0.700A
+    DRV8353_ISINK_LS_0P800_A = 6,       //!< IDRIVEN_LS = 0.800A
+    DRV8353_ISINK_LS_0P900_A = 7,       //!< IDRIVEN_LS = 0.900A
+    DRV8353_ISINK_LS_1P100_A = 8,       //!< IDRIVEN_LS = 1.100A
+    DRV8353_ISINK_LS_1P200_A = 9,       //!< IDRIVEN_LS = 1.200A
+    DRV8353_ISINK_LS_1P300_A = 10,      //!< IDRIVEN_LS = 1.300A
+    DRV8353_ISINK_LS_1P400_A = 11,      //!< IDRIVEN_LS = 1.400A
+    DRV8353_ISINK_LS_1P700_A = 12,      //!< IDRIVEN_LS = 1.700A
+    DRV8353_ISINK_LS_1P800_A = 13,      //!< IDRIVEN_LS = 1.800A
+    DRV8353_ISINK_LS_1P900_A = 14,      //!< IDRIVEN_LS = 1.900A
+    DRV8353_ISINK_LS_2P000_A = 15       //!< IDRIVEN_LS = 2.000A
 } DRV8353_CTRL04_PeakSinkCurLS_e;
 
 //! \brief Enumeration for the VDS comparator threshold
 //!
 typedef enum
 {
-    DRV8353_VDS_LVL_0P060_V = (0 << 0),    //!< VDS_LEVEL = 0.060V
-    DRV8353_VDS_LVL_0P070_V = (1 << 0),    //!< VDS_LEVEL = 0.070V
-    DRV8353_VDS_LVL_0P080_V = (2 << 0),    //!< VDS_LEVEL = 0.080V
-    DRV8353_VDS_LVL_0P090_V = (3 << 0),    //!< VDS_LEVEL = 0.090V
-    DRV8353_VDS_LVL_0P100_V = (4 << 0),    //!< VDS_LEVEL = 0.100V
-    DRV8353_VDS_LVL_0P200_V = (5 << 0),    //!< VDS_LEVEL = 0.200V
-    DRV8353_VDS_LVL_0P300_V = (6 << 0),    //!< VDS_LEVEL = 0.300V
-    DRV8353_VDS_LVL_0P400_V = (7 << 0),    //!< VDS_LEVEL = 0.400V
-    DRV8353_VDS_LVL_0P500_V = (8 << 0),    //!< VDS_LEVEL = 0.500V
-    DRV8353_VDS_LVL_0P600_V = (9 << 0),    //!< VDS_LEVEL = 0.600V
-    DRV8353_VDS_LVL_0P700_V = (10 << 0),   //!< VDS_LEVEL = 0.700V
-    DRV8353_VDS_LVL_0P800_V = (11 << 0),   //!< VDS_LEVEL = 0.800V
-    DRV8353_VDS_LVL_0P900_V = (12 << 0),   //!< VDS_LEVEL = 0.900V
-    DRV8353_VDS_LVL_1P000_V = (13 << 0),   //!< VDS_LEVEL = 1.000V
-    DRV8353_VDS_LVL_1P500_V = (14 << 0),   //!< VDS_LEVEL = 1.500V
-    DRV8353_VDS_LVL_2P000_V = (15 << 0)    //!< VDS_LEVEL = 2.000V
+    DRV8353_VDS_LVL_0P060_V = 0,        //!< VDS_LEVEL = 0.060V
+    DRV8353_VDS_LVL_0P070_V = 1,        //!< VDS_LEVEL = 0.070V
+    DRV8353_VDS_LVL_0P080_V = 2,        //!< VDS_LEVEL = 0.080V
+    DRV8353_VDS_LVL_0P090_V = 3,        //!< VDS_LEVEL = 0.090V
+    DRV8353_VDS_LVL_0P100_V = 4,        //!< VDS_LEVEL = 0.100V
+    DRV8353_VDS_LVL_0P200_V = 5,        //!< VDS_LEVEL = 0.200V
+    DRV8353_VDS_LVL_0P300_V = 6,        //!< VDS_LEVEL = 0.300V
+    DRV8353_VDS_LVL_0P400_V = 7,        //!< VDS_LEVEL = 0.400V
+    DRV8353_VDS_LVL_0P500_V = 8,        //!< VDS_LEVEL = 0.500V
+    DRV8353_VDS_LVL_0P600_V = 9,        //!< VDS_LEVEL = 0.600V
+    DRV8353_VDS_LVL_0P700_V = 10,       //!< VDS_LEVEL = 0.700V
+    DRV8353_VDS_LVL_0P800_V = 11,       //!< VDS_LEVEL = 0.800V
+    DRV8353_VDS_LVL_0P900_V = 12,       //!< VDS_LEVEL = 0.900V
+    DRV8353_VDS_LVL_1P000_V = 13,       //!< VDS_LEVEL = 1.000V
+    DRV8353_VDS_LVL_1P500_V = 14,       //!< VDS_LEVEL = 1.500V
+    DRV8353_VDS_LVL_2P000_V = 15        //!< VDS_LEVEL = 2.000V
 } DRV8353_CTRL05_VDSLVL_e;
 
 //! \brief Enumeration for the OCP/VDS sense deglitch time;
@@ -269,30 +235,30 @@ typedef enum
 //!
 typedef enum
 {
-    DRV8353_OCPDEG_1_US = (0 << 4),       //!< OCP_DEG = 1us
-    DRV8353_OCPDEG_2_US = (1 << 4),       //!< OCP_DEG = 2us
-    DRV8353_OCPDEG_4_US = (2 << 4),       //!< OCP_DEG = 4us
-    DRV8353_OCPDEG_8_US = (3 << 4)        //!< OCP_DEG = 8us
+    DRV8353_OCPDEG_1_US = 0,            //!< OCP_DEG = 1us
+    DRV8353_OCPDEG_2_US = 1,            //!< OCP_DEG = 2us
+    DRV8353_OCPDEG_4_US = 2,            //!< OCP_DEG = 4us
+    DRV8353_OCPDEG_8_US = 3             //!< OCP_DEG = 8us
 } DRV8353_CTRL05_OcpDeg_e;
 
 //! \brief Enumeration for the OCP report mode
 //!
 typedef enum
 {
-    DRV8353_LATCHED_SHUTDOWN = (0 << 6),  //!< OCP_MODE = Latched fault
-    DRV8353_AUTOMATIC_RETRY  = (1 << 6),  //!< OCP_MODE = Automatic Retry
-    DRV8353_REPORT_ONLY      = (2 << 6),  //!< OCP_MODE = Report only
-    DRV8353_DISABLE_OCP      = (3 << 6)   //!< OCP_MODE = Disabled
+    DRV8353_LATCHED_SHUTDOWN = 0,       //!< OCP_MODE = Latched fault
+    DRV8353_AUTOMATIC_RETRY  = 1,       //!< OCP_MODE = Automatic Retry
+    DRV8353_REPORT_ONLY      = 2,       //!< OCP_MODE = Report only
+    DRV8353_DISABLE_OCP      = 3        //!< OCP_MODE = Disabled
 } DRV8353_CTRL05_OcpMode_e;
 
 //! \brief Enumeration for the driver dead time
 //!
 typedef enum
 {
-    DRV8353_DEADTIME_50_NS  = (0 << 8),   //!< DEAD_TIME = 50ns
-    DRV8353_DEADTIME_100_NS = (1 << 8),   //!< DEAD_TIME = 100ns
-    DRV8353_DEADTIME_200_NS = (2 << 8),   //!< DEAD_TIME = 200ns
-    DRV8353_DEADTIME_400_NS = (3 << 8)    //!< DEAD_TIME = 400ns
+    DRV8353_DEADTIME_50_NS  = 0,        //!< DEAD_TIME = 50ns
+    DRV8353_DEADTIME_100_NS = 1,        //!< DEAD_TIME = 100ns
+    DRV8353_DEADTIME_200_NS = 2,        //!< DEAD_TIME = 200ns
+    DRV8353_DEADTIME_400_NS = 3         //!< DEAD_TIME = 400ns
 } DRV8353_CTRL05_DeadTime_e;
 
 
@@ -300,34 +266,34 @@ typedef enum
 //!
 typedef enum
 {
-    DRV8353_SENLVL_0P25_V = (0 << 0),   //!< Sense OCP = 0.25V
-    DRV8353_SENLVL_0P50_V = (1 << 0),   //!< Sense OCP = 0.50V
-    DRV8353_SENLVL_0P75_V = (2 << 0),   //!< Sense OCP = 0.75V
-    DRV8353_SENLVL_1P00_V = (3 << 0)    //!< Sense OCP = 1.00V
+    DRV8353_SENLVL_0P25_V = 0,          //!< Sense OCP = 0.25V
+    DRV8353_SENLVL_0P50_V = 1,          //!< Sense OCP = 0.50V
+    DRV8353_SENLVL_0P75_V = 2,          //!< Sense OCP = 0.75V
+    DRV8353_SENLVL_1P00_V = 3           //!< Sense OCP = 1.00V
 } DRV8353_CTRL06_SensingLevel_e;
 
 //! \brief Enumeration for the CSA gain
 //!
 typedef enum
 {
-    DRV8353_CSA_GAIN_05_V_V = (0 << 6),   //!< Sense OCP = 0.25V
-    DRV8353_CSA_GAIN_10_V_V = (1 << 6),   //!< Sense OCP = 0.50V
-    DRV8353_CSA_GAIN_20_V_V = (2 << 6),   //!< Sense OCP = 0.75V
-    DRV8353_CSA_GAIN_40_V_V = (3 << 6)    //!< Sense OCP = 1.00V
+    DRV8353_CSA_GAIN_05_V_V = 0,        //!< Sense OCP = 0.25V
+    DRV8353_CSA_GAIN_10_V_V = 1,        //!< Sense OCP = 0.50V
+    DRV8353_CSA_GAIN_20_V_V = 2,        //!< Sense OCP = 0.75V
+    DRV8353_CSA_GAIN_40_V_V = 3         //!< Sense OCP = 1.00V
 } DRV8353_CTRL06_CSAGain_e;
 
 //! \brief Enumeration for the register addresses
 //!
 typedef enum
 {
-    DRV8353_ADDRESS_STATUS_0  = (0 << 11),  //!< Status Register 0
-    DRV8353_ADDRESS_STATUS_1  = (1 << 11),  //!< Status Register 1
-    DRV8353_ADDRESS_CONTROL_2 = (2 << 11),  //!< Control Register 2
-    DRV8353_ADDRESS_CONTROL_3 = (3 << 11),  //!< Control Register 3
-    DRV8353_ADDRESS_CONTROL_4 = (4 << 11),  //!< Control Register 4
-    DRV8353_ADDRESS_CONTROL_5 = (5 << 11),  //!< Control Register 5
-    DRV8353_ADDRESS_CONTROL_6 = (6 << 11),  //!< Control Register 6
-    DRV8353_ADDRESS_CONTROL_7 = (7 << 11)   //!< Control Register 7
+    DRV8353_ADDRESS_STATUS_0  = 0,      //!< Status Register 0
+    DRV8353_ADDRESS_STATUS_1  = 1,      //!< Status Register 1
+    DRV8353_ADDRESS_CONTROL_2 = 2,      //!< Control Register 2
+    DRV8353_ADDRESS_CONTROL_3 = 3,      //!< Control Register 3
+    DRV8353_ADDRESS_CONTROL_4 = 4,      //!< Control Register 4
+    DRV8353_ADDRESS_CONTROL_5 = 5,      //!< Control Register 5
+    DRV8353_ADDRESS_CONTROL_6 = 6,      //!< Control Register 6
+    DRV8353_ADDRESS_CONTROL_7 = 7       //!< Control Register 7
 } DRV8353_Address_e;
 
 /**

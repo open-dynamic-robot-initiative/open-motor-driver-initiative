@@ -287,10 +287,13 @@ static DRV8353_Reg DrvRegList[] =
    .Ctrl_Reg_02.ctrl02.OTW_REP      = true,                 // Over Temperature Warning will raise nFault
    .Ctrl_Reg_02.ctrl02.DIS_GDF      = false,
    .Ctrl_Reg_02.ctrl02.DIS_GDUV     = false,
+#ifdef UOMODRI
+   .Ctrl_Reg_02.Ctrl02.OCP_ACT      = true,
+#endif
    // Gate Drive HS register initialization (Address: 0x3)
-   .Ctrl_Reg_03.ctrl03.LOCK         = DRV8353_REG_UNLOCK,
    .Ctrl_Reg_03.ctrl03.IDRIVEN_HS   = DRV8353_ISINK_HS_0P300_A,
    .Ctrl_Reg_03.ctrl03.IDRIVEP_HS   = DRV8353_ISOUR_HS_0P300_A,
+   .Ctrl_Reg_03.ctrl03.LOCK         = DRV8353_REG_UNLOCK,
    // Gate Drive LS register initialization (Address: 0x4)
    .Ctrl_Reg_04.ctrl04.IDRIVEN_LS   = DRV8353_ISINK_LS_0P300_A,
    .Ctrl_Reg_04.ctrl04.IDRIVEP_LS   = DRV8353_ISOUR_LS_0P300_A,
@@ -322,14 +325,17 @@ static DRV8353_Reg DrvRegList[] =
    .Ctrl_Reg_02.ctrl02.OTW_REP      = true,                 // Over Temperature Warning will raise nFault
    .Ctrl_Reg_02.ctrl02.DIS_GDF      = false,
    .Ctrl_Reg_02.ctrl02.DIS_GDUV     = false,
+#ifdef UOMODRI
+   .Ctrl_Reg_02.Ctrl02.OCP_ACT      = true,
+#endif
    // Gate Drive HS register initialization (Address: 0x3)
-   .Ctrl_Reg_03.ctrl03.LOCK         = DRV8353_REG_UNLOCK,
    .Ctrl_Reg_03.ctrl03.IDRIVEN_HS   = DRV8353_ISINK_HS_0P300_A,
-   .Ctrl_Reg_03.ctrl03.IDRIVEP_HS   = DRV8353_ISOUR_HS_0P150_A,
+   .Ctrl_Reg_03.ctrl03.IDRIVEP_HS   = DRV8353_ISOUR_HS_0P300_A,
+   .Ctrl_Reg_03.ctrl03.LOCK         = DRV8353_REG_UNLOCK,
    // Gate Drive LS register initialization (Address: 0x4)
    .Ctrl_Reg_04.ctrl04.IDRIVEN_LS   = DRV8353_ISINK_LS_0P300_A,
-   .Ctrl_Reg_04.ctrl04.IDRIVEP_LS   = DRV8353_ISOUR_LS_0P150_A,
-   .Ctrl_Reg_04.ctrl04.TDRIVE       = DRV8353_TSOUR_500_NS,
+   .Ctrl_Reg_04.ctrl04.IDRIVEP_LS   = DRV8353_ISOUR_LS_0P300_A,
+   .Ctrl_Reg_04.ctrl04.TDRIVE       = DRV8353_TSOUR_4000_NS,
    // Over Current Protection register initialization (Address: 0x5)
    .Ctrl_Reg_05.ctrl05.VDS_LVL      = DRV8353_VDS_LVL_0P600_V,
    .Ctrl_Reg_05.ctrl05.OCP_DEG      = DRV8353_OCPDEG_8_US,

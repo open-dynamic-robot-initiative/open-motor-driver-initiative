@@ -16,7 +16,7 @@
 // the function prototypes
 static void DRV8353_Enable(DRV8353_Cfg*);
 static bool DRV8353_SetConfig(DRV8353_Cfg*, DRV8353_Reg*);
-static void DRV8353_Calibration(DRV8353_Cfg*);
+static void DRV8353_Calibration(DRV8353_Cfg*, DRV8353_Reg*);
 
 // Function definitions
 /**
@@ -34,7 +34,7 @@ void DRV8353_init(DRV8353* p_drv)
         while(p_cfgHandle->spiHandle != 0xFFFFFFFF) {
             DRV8353_Enable(p_cfgHandle);
             DRV8353_SetConfig(p_cfgHandle, p_regHandle);
-            DRV8353_Calibration(p_cfgHandle);
+            DRV8353_Calibration(p_cfgHandle, p_regHandle);
             p_cfgHandle++;
             p_regHandle++;
         }
@@ -99,17 +99,23 @@ static bool DRV8353_SetConfig(DRV8353_Cfg* p_cfgHandle, DRV8353_Reg* p_regHandle
  * @brief       Force amplifiers calibration (short circuit inputs) of the DRV channels.
  *              - Calibration ON  : Amp inputs shorted, load disconnected, amplifier gain (GCSA) set to the 40 V/V.
  *              - Calibration OFF : Amp inputs opened, load reconnected, gain set to the original gain setting.
- * @param[in]   *p_cfgHandle    Pointer on the DRV IOs configuration structure.
+ * @param[in]   *p_cfgHandle    Pointer on the DRV IOs configuration structure
+ * @param[in]   *p_regHandle    Pointer on the DRV registers definition structure
  */
-static void DRV8353_Calibration(DRV8353_Cfg* p_cfgHandle)
+static void DRV8353_Calibration(DRV8353_Cfg* p_cfgHandle, DRV8353_Reg* p_regHandle)
 {
-    if(p_cfgHandle !=  NULL)
+    if((p_cfgHandle != NULL) && (p_regHandle != NULL))
     {
+#ifdef UOMODRI
         // Set auto calibration
         DRV8353_Ctrl07_u auto_calib = {.ctrl07.CAL_MODE = true};
         DRV8353_writeOne(p_cfgHandle, DRV8353_ADDRESS_CONTROL_7, auto_calib.raw);
+#endif
         // Enable calibration
-        DRV8353_Ctrl06_u calib = {.ctrl06.CSA_CAL_A = true, .ctrl06.CSA_CAL_B = true, .ctrl06.CSA_CAL_C = true};
+        DRV8353_Ctrl06_u calib = p_regHandle->Ctrl_Reg_06;
+        calib.ctrl06.CSA_CAL_A = true;
+        calib.ctrl06.CSA_CAL_B = true;
+        calib.ctrl06.CSA_CAL_C = true;
         DRV8353_writeOne(p_cfgHandle, DRV8353_ADDRESS_CONTROL_6, calib.raw);
         // Wait for 1ms
         DEVICE_DELAY_US(1000U);
@@ -158,7 +164,9 @@ void DRV8353_readAll(DRV8353_Cfg* p_cfgHandle, DRV8353_Reg* p_regHandle)
         p_regHandle->Ctrl_Reg_04.raw = DRV8353_readOne(p_cfgHandle, DRV8353_ADDRESS_CONTROL_4); // Read Control Register 4
         p_regHandle->Ctrl_Reg_05.raw = DRV8353_readOne(p_cfgHandle, DRV8353_ADDRESS_CONTROL_5); // Read Control Register 5
         p_regHandle->Ctrl_Reg_06.raw = DRV8353_readOne(p_cfgHandle, DRV8353_ADDRESS_CONTROL_6); // Read Control Register 6
+#ifdef UOMODRI
         p_regHandle->Ctrl_Reg_07.raw = DRV8353_readOne(p_cfgHandle, DRV8353_ADDRESS_CONTROL_7); // Read Control Register 7
+#endif
     }
 
     return;
@@ -177,11 +185,12 @@ void DRV8353_writeAll(DRV8353_Cfg* p_cfgHandle, DRV8353_Reg* p_regHandle)
         DRV8353_writeOne(p_cfgHandle, DRV8353_ADDRESS_CONTROL_3, p_regHandle->Ctrl_Reg_03.raw); // Write Control Register 3
         //Write all internal DRV control registers
         DRV8353_writeOne(p_cfgHandle, DRV8353_ADDRESS_CONTROL_2, p_regHandle->Ctrl_Reg_02.raw); // Write Control Register 2
-        DRV8353_writeOne(p_cfgHandle, DRV8353_ADDRESS_CONTROL_3, p_regHandle->Ctrl_Reg_03.raw); // Write Control Register 3
         DRV8353_writeOne(p_cfgHandle, DRV8353_ADDRESS_CONTROL_4, p_regHandle->Ctrl_Reg_04.raw); // Write Control Register 4
         DRV8353_writeOne(p_cfgHandle, DRV8353_ADDRESS_CONTROL_5, p_regHandle->Ctrl_Reg_05.raw); // Write Control Register 5
         DRV8353_writeOne(p_cfgHandle, DRV8353_ADDRESS_CONTROL_6, p_regHandle->Ctrl_Reg_06.raw); // Write Control Register 6
+#ifdef UOMODRI
         DRV8353_writeOne(p_cfgHandle, DRV8353_ADDRESS_CONTROL_7, p_regHandle->Ctrl_Reg_07.raw); // Write Control Register 7
+#endif
     }
 
     return;
@@ -197,7 +206,7 @@ uint16_t DRV8353_readOne(DRV8353_Cfg* p_cfgHandle, DRV8353_Address_e addr)
 {
     if(p_cfgHandle != NULL)
     {
-        DRV8353_msg_u msg = {.fields.rw_cmd = (uint16_t)DRV8353_CTRLMODE_READ, .fields.addr = addr, .fields.data = 0};
+        DRV8353_msg_u msg = {.fields.rw_cmd = DRV8353_CTRLMODE_READ, .fields.addr = addr, .fields.data = 0};
 
         // Select chip
         GPIO_writePin(p_cfgHandle->gpioNumber_CS, 0);
@@ -228,7 +237,7 @@ void DRV8353_writeOne(DRV8353_Cfg* p_cfgHandle, DRV8353_Address_e addr, uint16_t
 {
     if(p_cfgHandle != NULL)
     {
-        DRV8353_msg_u msg = {.fields.rw_cmd = (uint16_t)DRV8353_CTRLMODE_WRITE, .fields.addr = addr, .fields.data = data};
+        DRV8353_msg_u msg = {.fields.rw_cmd = DRV8353_CTRLMODE_WRITE, .fields.addr = addr, .fields.data = data};
 
         // Select chip
         GPIO_writePin(p_cfgHandle->gpioNumber_CS, 0);

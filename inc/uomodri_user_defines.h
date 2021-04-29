@@ -385,13 +385,14 @@
 /******************************************************************************************************
 *                                               SPI Defines
 *******************************************************************************************************/
-
 #define DRV_SPI_SIMO                    16
 #define DRV_SPI_SIMO_CFG                GPIO_16_SPISIMOA
 #define DRV_SPI_SOMI                    17
 #define DRV_SPI_SOMI_CFG                GPIO_17_SPISOMIA
 #define DRV_SPI_CLK                     18
 #define DRV_SPI_CLK_CFG                 GPIO_18_SPICLKA
+
+#ifdef UOMODRI
 // DRV1 SPI defines
 #define DRV1_GPIO_EN                    89
 #define DRV1_GPIO_EN_CFG                GPIO_89_GPIO89
@@ -406,7 +407,22 @@
 #define DRV2_GPIO_CS_CFG                GPIO_35_GPIO35
 #define DRV2_GPIO_NFAULT                36
 #define DRV2_GPIO_NFAULT_CFG            GPIO_36_GPIO36
-
+#else
+// DRV1 SPI defines
+#define DRV1_GPIO_EN                    89
+#define DRV1_GPIO_EN_CFG                GPIO_89_GPIO89
+#define DRV1_GPIO_CS                    19
+#define DRV1_GPIO_CS_CFG                GPIO_19_GPIO19
+#define DRV1_GPIO_NFAULT                91
+#define DRV1_GPIO_NFAULT_CFG            GPIO_91_GPIO91
+// DRV2 SPI defines
+#define DRV2_GPIO_EN                    133
+#define DRV2_GPIO_EN_CFG                GPIO_133_GPIO133
+#define DRV2_GPIO_CS                    61
+#define DRV2_GPIO_CS_CFG                GPIO_61_GPIO61
+#define DRV2_GPIO_NFAULT                67
+#define DRV2_GPIO_NFAULT_CFG            GPIO_67_GPIO67
+#endif
 
 /** @defgroup eQEP_general configuration.
  *  @brief    Configure the general registers associated to teh eQEP.
