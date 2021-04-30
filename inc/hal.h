@@ -91,17 +91,26 @@ typedef struct _ePWM_Chopper_TypeDef_
 
 /**
  * @struct  ePWM_ET_TypeDef
- * @brief   ePWM - Event trigger \& interrupts submodule structure definition.
+ * @brief   ePWM - ADC SOC events trigger submodule structure definition.
  */
-typedef struct _ePWM_Event_Trigger_TypeDef_
+typedef struct _ePWM_ADC_SOC_Event_Trigger_TypeDef_
 {
     uint32_t epwmBase;                              /*!< ePWM peripheral address. */
-    uint16_t intEvtCount;                           /*!< Delays by N events before generating an IT. */
-    uint16_t intSource;                             /*!< PWM events source IT. <em> EPWM_INT_TBCTR_ZERO, _PERIOD, _ZERO_OR_PERIOD, _U_CMPx, _D_CMPx,...</em>  */
     uint16_t adcSOCEvtCount;                        /*!< Delays by N events before generating an ADC SOC event. */
     EPWM_ADCStartOfConversionType adcSOCType;       /*!< ADC Start of Conversion (SOC) target \em EPWM_SOC_A or \em EPWM_SOC_B */
     EPWM_ADCStartOfConversionSource adcSOCSource;   /*!< PWM events source for a ADC SOC. \see EPWM_ADCStartOfConversionSource */
 } ePWM_ET_TypeDef;
+
+/**
+ * @struct  ePWM_IT_TypeDef
+ * @brief   ePWM - Interrupts Events submodule structure definition.
+ */
+typedef struct _ePWM_Interrupts_Event_TypeDef_
+{
+    uint32_t epwmBase;                              /*!< ePWM peripheral address. */
+    uint16_t intEvtCount;                           /*!< Delays by N events before generating an IT. */
+    uint16_t intSource;                             /*!< PWM events source IT. <em> EPWM_INT_TBCTR_ZERO, _PERIOD, _ZERO_OR_PERIOD, _U_CMPx, _D_CMPx,...</em>  */
+} ePWM_IT_TypeDef;
 
 /**
  * @struct  ePWM_TypeDef
@@ -115,7 +124,8 @@ typedef struct _ePWM_Cfg_TypeDef_
     const ePWM_AQ_TypeDef* epwmActionQualifier;
     const ePWM_DB_TypeDef* epwmDeadband;
     const ePWM_PC_TypeDef* epwmProgChopper;
-    const ePWM_ET_TypeDef* epwmEventTrigger;
+    const ePWM_ET_TypeDef* epwmAdcSocEventTrigger;
+    const ePWM_IT_TypeDef* epwmInterruptsEvent;
 } ePWM_TypeDef;
 
 /**
@@ -331,6 +341,7 @@ extern __interrupt void adc1ISR(void);
 extern __interrupt void adc2ISR(void);
 extern __interrupt void adc3ISR(void);
 extern __interrupt void adc4ISR(void);
+extern __interrupt void pwm1ISR(void);
 
 void ADC_offsetCalibration(MOTOR_ACQ*);
 

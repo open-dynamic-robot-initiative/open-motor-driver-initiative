@@ -296,38 +296,51 @@ static void HAL_ePWM_init(const ePWM_TypeDef* p_pwmCfg)
                 }
             }
 
-            /* Event-Trigger (ET) Submodule Registers
+            /* ADC SOC Event-Trigger (ET) Submodule Registers
              * Disable ADC trigger & IT generation while initialization is in progress.
              */
-            if(p_pwmCfg->epwmEventTrigger != NULL)
+            if(p_pwmCfg->epwmAdcSocEventTrigger != NULL)
             {
-                const ePWM_ET_TypeDef* p_pwmEventTrigger = p_pwmCfg->epwmEventTrigger;
+                const ePWM_ET_TypeDef* p_pwmAdcSocEvtTrigger = p_pwmCfg->epwmAdcSocEventTrigger;
 
-                while(p_pwmEventTrigger->epwmBase == pwmBase)
+                while(p_pwmAdcSocEvtTrigger->epwmBase == pwmBase)
                 {
                     // Disable ADC SOC events generation while init is in progress.
-                    EPWM_disableADCTriggerEventCountInit(pwmBase, p_pwmEventTrigger->adcSOCType);
-                    EPWM_disableADCTrigger(pwmBase, p_pwmEventTrigger->adcSOCType);
+                    EPWM_disableADCTriggerEventCountInit(pwmBase, p_pwmAdcSocEvtTrigger->adcSOCType);
+                    EPWM_disableADCTrigger(pwmBase, p_pwmAdcSocEvtTrigger->adcSOCType);
                     // If adcSOCEvtCount == 0 -> no ADC SOC events are generated
-                    if(p_pwmEventTrigger->adcSOCEvtCount)
+                    if(p_pwmAdcSocEvtTrigger->adcSOCEvtCount)
                     {
-                        EPWM_setADCTriggerSource(pwmBase, p_pwmEventTrigger->adcSOCType, p_pwmEventTrigger->adcSOCSource);
-                        EPWM_setADCTriggerEventPrescale(pwmBase, p_pwmEventTrigger->adcSOCType, p_pwmEventTrigger->adcSOCEvtCount);
-                        EPWM_clearADCTriggerFlag(pwmBase, p_pwmEventTrigger->adcSOCType);
-                        EPWM_enableADCTrigger(pwmBase, p_pwmEventTrigger->adcSOCType);
+                        EPWM_setADCTriggerSource(pwmBase, p_pwmAdcSocEvtTrigger->adcSOCType, p_pwmAdcSocEvtTrigger->adcSOCSource);
+                        EPWM_setADCTriggerEventPrescale(pwmBase, p_pwmAdcSocEvtTrigger->adcSOCType, p_pwmAdcSocEvtTrigger->adcSOCEvtCount);
+                        EPWM_clearADCTriggerFlag(pwmBase, p_pwmAdcSocEvtTrigger->adcSOCType);
+                        EPWM_enableADCTrigger(pwmBase, p_pwmAdcSocEvtTrigger->adcSOCType);
                     }
+                    p_pwmAdcSocEvtTrigger++;
+                }
+            }
+
+            /* Interrupt event (IT) Submodule Registers
+             * Disable IT generation while initialization is in progress.
+             */
+            if(p_pwmCfg->epwmInterruptsEvent != NULL)
+            {
+                const ePWM_IT_TypeDef* p_pwmInterruptsEvent = p_pwmCfg->epwmInterruptsEvent;
+
+                while(p_pwmInterruptsEvent->epwmBase == pwmBase)
+                {
                     // Disable IT generation while init is in progress.
                     EPWM_disableInterruptEventCountInit(pwmBase);
                     EPWM_disableInterrupt(pwmBase);
                     // If IntEvtCount == 0 -> no Interrupts are generated
-                    if(p_pwmEventTrigger->intEvtCount)
+                    if(p_pwmInterruptsEvent->intEvtCount)
                     {
-                        EPWM_setInterruptSource(pwmBase, p_pwmEventTrigger->intSource);
-                        EPWM_setInterruptEventCount(pwmBase, p_pwmEventTrigger->intEvtCount);
+                        EPWM_setInterruptSource(pwmBase, p_pwmInterruptsEvent->intSource);
+                        EPWM_setInterruptEventCount(pwmBase, p_pwmInterruptsEvent->intEvtCount);
                         EPWM_clearEventTriggerInterruptFlag(pwmBase);
                         EPWM_enableInterrupt(pwmBase);
                     }
-                    p_pwmEventTrigger++;
+                    p_pwmInterruptsEvent++;
                 }
             }
 
@@ -475,6 +488,7 @@ void HAL_setupInterrupts(void)
     Interrupt_register(INT_ADCA2, &adc2ISR);
     Interrupt_register(INT_ADCA3, &adc3ISR);
     Interrupt_register(INT_ADCA4, &adc4ISR);
+    Interrupt_register(INT_EPWM1, &pwm1ISR);
 }
 
 void HAL_enableInterrupts(void)
@@ -484,6 +498,7 @@ void HAL_enableInterrupts(void)
     Interrupt_enable(INT_ADCA2);
     Interrupt_enable(INT_ADCA3);
     Interrupt_enable(INT_ADCA4);
+    Interrupt_enable(INT_EPWM1);
     // Enable interrupt group 1 (ePWM 1 and 4 interrupts are here)
     Interrupt_enableInCPU(INTERRUPT_CPU_INT1);
     Interrupt_enableInCPU(INTERRUPT_CPU_INT10);

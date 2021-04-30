@@ -238,17 +238,28 @@ static const ePWM_DB_TypeDef PwmDeadBandCfgList[] =
  {.epwmBase = 0xFFFFFFFF},
 };
 
-/** @var    ePWM_ET_TypeDef PwmEventTriggerCfgList[]
- *  @brief  List all the configurations necessaries for ePWM Event Trigger \& IT submodule.
+/** @var    ePWM_ET_TypeDef PwmAdcSocEventTriggerCfgList[]
+ *  @brief  List all the configurations necessaries for ePWM Event Trigger submodule.
  */
-static const ePWM_ET_TypeDef PwmEventTriggerCfgList[] =
+static const ePWM_ET_TypeDef PwmAdcSocEventTriggerCfgList[] =
 {
- //{epwmBase, intEvtCount, intSource, adcSOCEvtCount, adcSOCType, adcSOCSource}
- {.epwmBase = MOTOR1_PWM1_BASE, .intEvtCount = 0, .intSource = EPWM_INT_TBCTR_ZERO, .adcSOCEvtCount = 1, .adcSOCType = EPWM_SOC_A, .adcSOCSource = EPWM_SOC_TBCTR_PERIOD},
- {.epwmBase = MOTOR1_PWM1_BASE, .intEvtCount = 0, .intSource = EPWM_INT_TBCTR_ZERO, .adcSOCEvtCount = 1, .adcSOCType = EPWM_SOC_B, .adcSOCSource = EPWM_SOC_TBCTR_ZERO},
- {.epwmBase = MOTOR2_PWM1_BASE, .intEvtCount = 0, .intSource = EPWM_INT_TBCTR_ZERO, .adcSOCEvtCount = 1, .adcSOCType = EPWM_SOC_A, .adcSOCSource = EPWM_SOC_TBCTR_PERIOD},
- {.epwmBase = MOTOR2_PWM1_BASE, .intEvtCount = 0, .intSource = EPWM_INT_TBCTR_ZERO, .adcSOCEvtCount = 1, .adcSOCType = EPWM_SOC_B, .adcSOCSource = EPWM_SOC_TBCTR_ZERO},
- //{.epwmBase = MOTOR1_PWM1_BASE, .adcSOCEvtCount = 1, .adcSOCType = EPWM_SOC_A, .socSource = EPWM_SOC_TBCTR_PERIOD},
+ //{epwmBase, adcSOCEvtCount, adcSOCType, adcSOCSource}
+ {.epwmBase = MOTOR1_PWM1_BASE, .adcSOCEvtCount = 1, .adcSOCType = EPWM_SOC_A, .adcSOCSource = EPWM_SOC_TBCTR_PERIOD},
+ {.epwmBase = MOTOR1_PWM1_BASE, .adcSOCEvtCount = 1, .adcSOCType = EPWM_SOC_B, .adcSOCSource = EPWM_SOC_TBCTR_ZERO},
+ {.epwmBase = MOTOR2_PWM1_BASE, .adcSOCEvtCount = 1, .adcSOCType = EPWM_SOC_A, .adcSOCSource = EPWM_SOC_TBCTR_PERIOD},
+ {.epwmBase = MOTOR2_PWM1_BASE, .adcSOCEvtCount = 1, .adcSOCType = EPWM_SOC_B, .adcSOCSource = EPWM_SOC_TBCTR_ZERO},
+ // END OF ARRAY
+ {.epwmBase = 0xFFFFFFFF},
+};
+
+/** @var    ePWM_IT_TypeDef PwmInterruptsEventCfgList[]
+ *  @brief  List all the configurations necessaries for ePWM IT Event submodule.
+ */
+static const ePWM_IT_TypeDef PwmInterruptsEventCfgList[] =
+{
+ //{epwmBase, intEvtCount, intSource}
+ {.epwmBase = MOTOR1_PWM1_BASE, .intEvtCount = 1, .intSource = EPWM_INT_TBCTR_PERIOD},
+// {.epwmBase = MOTOR2_PWM1_BASE, .intEvtCount = 0, .intSource = EPWM_INT_TBCTR_ZERO},
  // END OF ARRAY
  {.epwmBase = 0xFFFFFFFF},
 };
@@ -258,12 +269,12 @@ static const ePWM_ET_TypeDef PwmEventTriggerCfgList[] =
  */
 static const ePWM_TypeDef PwmCfgList[] =
 {
- {MOTOR1_PWM1_BASE, &PwmTimeBaseCfgList[0], &PwmCounterCompareCfgList[0], &PwmActionQualifierCfgList[0], &PwmDeadBandCfgList[0], NULL, &PwmEventTriggerCfgList[0]},
- {MOTOR1_PWM2_BASE, &PwmTimeBaseCfgList[1], &PwmCounterCompareCfgList[1], &PwmActionQualifierCfgList[1], &PwmDeadBandCfgList[1], NULL, NULL},
- {MOTOR1_PWM3_BASE, &PwmTimeBaseCfgList[2], &PwmCounterCompareCfgList[2], &PwmActionQualifierCfgList[2], &PwmDeadBandCfgList[2], NULL, NULL},
- {MOTOR2_PWM1_BASE, &PwmTimeBaseCfgList[3], &PwmCounterCompareCfgList[3], &PwmActionQualifierCfgList[3], &PwmDeadBandCfgList[3], NULL, &PwmEventTriggerCfgList[2]},
- {MOTOR2_PWM2_BASE, &PwmTimeBaseCfgList[4], &PwmCounterCompareCfgList[4], &PwmActionQualifierCfgList[4], &PwmDeadBandCfgList[4], NULL, NULL},
- {MOTOR2_PWM3_BASE, &PwmTimeBaseCfgList[5], &PwmCounterCompareCfgList[5], &PwmActionQualifierCfgList[5], &PwmDeadBandCfgList[5], NULL, NULL},
+ {MOTOR1_PWM1_BASE, &PwmTimeBaseCfgList[0], &PwmCounterCompareCfgList[0], &PwmActionQualifierCfgList[0], &PwmDeadBandCfgList[0], NULL, &PwmAdcSocEventTriggerCfgList[0], &PwmInterruptsEventCfgList[0]},
+ {MOTOR1_PWM2_BASE, &PwmTimeBaseCfgList[1], &PwmCounterCompareCfgList[1], &PwmActionQualifierCfgList[1], &PwmDeadBandCfgList[1], NULL, NULL, NULL},
+ {MOTOR1_PWM3_BASE, &PwmTimeBaseCfgList[2], &PwmCounterCompareCfgList[2], &PwmActionQualifierCfgList[2], &PwmDeadBandCfgList[2], NULL, NULL, NULL},
+ {MOTOR2_PWM1_BASE, &PwmTimeBaseCfgList[3], &PwmCounterCompareCfgList[3], &PwmActionQualifierCfgList[3], &PwmDeadBandCfgList[3], NULL, &PwmAdcSocEventTriggerCfgList[2], NULL},
+ {MOTOR2_PWM2_BASE, &PwmTimeBaseCfgList[4], &PwmCounterCompareCfgList[4], &PwmActionQualifierCfgList[4], &PwmDeadBandCfgList[4], NULL, NULL, NULL},
+ {MOTOR2_PWM3_BASE, &PwmTimeBaseCfgList[5], &PwmCounterCompareCfgList[5], &PwmActionQualifierCfgList[5], &PwmDeadBandCfgList[5], NULL, NULL, NULL},
  // END OF ARRAY
  {.epwmBase = 0xFFFFFFFF},
 };
@@ -298,6 +309,7 @@ static DRV8353_Reg DrvRegList[] =
    .Ctrl_Reg_04.ctrl04.IDRIVEN_LS   = DRV8353_ISINK_LS_0P300_A,
    .Ctrl_Reg_04.ctrl04.IDRIVEP_LS   = DRV8353_ISOUR_LS_0P300_A,
    .Ctrl_Reg_04.ctrl04.TDRIVE       = DRV8353_TSOUR_4000_NS,
+   .Ctrl_Reg_04.ctrl04.CBC          = false,
    // Over Current Protection register initialization (Address: 0x5)
    .Ctrl_Reg_05.ctrl05.VDS_LVL      = DRV8353_VDS_LVL_0P700_V,
    .Ctrl_Reg_05.ctrl05.OCP_DEG      = DRV8353_OCPDEG_8_US,

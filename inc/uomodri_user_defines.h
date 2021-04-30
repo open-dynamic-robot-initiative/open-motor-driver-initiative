@@ -115,22 +115,19 @@
 #define MOTOR2_ADC_INT_NUM              ADC_INT_NUMBER1
 #define MOTOR2_ADC_INT_SOC_TRIGGER      ADC_INT_SOC_TRIGGER_NONE
 
-
-
 /** @defgroup Debug pins config.
  *  @brief    Configure 2 pins (pin number and mux function) for debug.
  * @{
  */
+#ifndef UOMODRI
 #define DEBUG_INT_PIN1                  35
 #define DEBUG_INT_PIN1_CFG              GPIO_35_GPIO35
 #define DEBUG_INT_PIN2                  37
 #define DEBUG_INT_PIN2_CFG              GPIO_37_GPIO37
+#endif
 /**
  * @}
  */
-
-
-
 
 
 // Global ADC defines

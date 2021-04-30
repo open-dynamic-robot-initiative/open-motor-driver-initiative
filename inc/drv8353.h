@@ -261,7 +261,6 @@ typedef enum
     DRV8353_DEADTIME_400_NS = 3         //!< DEAD_TIME = 400ns
 } DRV8353_CTRL05_DeadTime_e;
 
-
 //! \brief Enumeration for the OCP sense levels threshold
 //!
 typedef enum
@@ -532,6 +531,10 @@ typedef struct _DRV8353_Reg_t_
     DRV8353_Ctrl07_u    Ctrl_Reg_07;
 } DRV8353_Reg;
 
+/**
+ * @typedef DRV8353_t_
+ * @brief   Aggregator structure integrating the IO config \& registers structures associated to the DRV8353
+ */
 typedef struct _DRV8353_t_
 {
     DRV8353_Cfg*    drvCfgHandler;
@@ -553,7 +556,8 @@ typedef struct _DRV8353_msg_
  * @typedef DRV8353_msg_u
  * @brief   General structure of a DRV8353 message included in a union typedef.
  */
-typedef union _DRV8353_msg_u_ {
+typedef union _DRV8353_msg_u_
+{
   uint16_t      raw;    /*!< Short (16bits) type access */
   DRV8353_msg   fields; /*!< @see DRV8353_msg_t         */
 } DRV8353_msg_u;

@@ -31,7 +31,7 @@ int main(void)
     // Interrupts initialization
     HAL_Interrupts_init();
     // ADC offset calib for debug
-    ADC_offsetCalibration(motors_acq);
+    // ADC_offsetCalibration(motors_acq);
 
     // PWM test section, replace 0 by an integer between 0x0000 and 0xFFFF
     EPWM_setCounterCompareValue(MOTOR1_PWM1_BASE, EPWM_COUNTER_COMPARE_A, 3 * PWM_TBPRD / 4);
@@ -73,7 +73,7 @@ __interrupt void adc1ISR(void)
 {
     if(ADC_getInterruptStatus(ADCA_BASE, ADC_INT_NUMBER1))
     {
-        GPIO_writePin(DEBUG_INT_PIN1, 1);
+        GPIO_writePin(DEBUG_INT_PIN2, 1);
 
         // Get the latest position of the Quadrature Encoder
         motors_acq[MOTOR_1].encoderPos = HWREG(EQEP1_BASE + EQEP_O_QPOSCNT);
@@ -98,7 +98,7 @@ __interrupt void adc1ISR(void)
         // Acknowledge the interrupt (Acknowledge PIE Interrupt Group 1)
         HWREGH(PIECTRL_BASE + PIE_O_ACK) = INTERRUPT_ACK_GROUP1; // Interrupt_clearACKGroup(INTERRUPT_ACK_GROUP1);
 
-        GPIO_writePin(DEBUG_INT_PIN1, 0);
+        GPIO_writePin(DEBUG_INT_PIN2, 0);
     }
 }
 
@@ -106,7 +106,7 @@ __interrupt void adc2ISR(void)
 {
     if(ADC_getInterruptStatus(ADCA_BASE, ADC_INT_NUMBER2))
     {
-        GPIO_writePin(DEBUG_INT_PIN2, 1);
+//        GPIO_writePin(DEBUG_INT_PIN2, 1);
         // Get the latest position of the Quadrature Encoder
         motors_acq[MOTOR_2].encoderPos = HWREG(EQEP2_BASE + EQEP_O_QPOSCNT);
         // Get the latest ADC results to the buffer
@@ -130,7 +130,7 @@ __interrupt void adc2ISR(void)
         // Acknowledge the interrupt (Acknowledge PIE Interrupt Group 10)
         HWREGH(PIECTRL_BASE + PIE_O_ACK) = INTERRUPT_ACK_GROUP10; // Interrupt_clearACKGroup(INTERRUPT_ACK_GROUP10);
 
-        GPIO_writePin(DEBUG_INT_PIN2, 0);
+//        GPIO_writePin(DEBUG_INT_PIN2, 0);
     }
 }
 
@@ -138,7 +138,7 @@ __interrupt void adc3ISR(void)
 {
     if(ADC_getInterruptStatus(ADCA_BASE, ADC_INT_NUMBER3))
     {
-        GPIO_writePin(DEBUG_INT_PIN1, 1);
+//        GPIO_writePin(DEBUG_INT_PIN1, 1);
         // Get the latest results to the buffer
         motors_acq[MOTOR_1].raw.va  = HWREGH(ADCARESULT_BASE + ADC_SOC_NUMBER2);
         motors_acq[MOTOR_1].raw.vb  = HWREGH(ADCBRESULT_BASE + ADC_SOC_NUMBER2);
@@ -158,7 +158,7 @@ __interrupt void adc3ISR(void)
         // Acknowledge the interrupt (Acknowledge PIE Interrupt Group 10)
         HWREGH(PIECTRL_BASE + PIE_O_ACK) = INTERRUPT_ACK_GROUP10; // Interrupt_clearACKGroup(INTERRUPT_ACK_GROUP10);
 
-        GPIO_writePin(DEBUG_INT_PIN1, 0);
+//        GPIO_writePin(DEBUG_INT_PIN1, 0);
     }
 }
 
@@ -166,7 +166,7 @@ __interrupt void adc4ISR(void)
 {
     if(ADC_getInterruptStatus(ADCA_BASE, ADC_INT_NUMBER4))
     {
-        GPIO_writePin(DEBUG_INT_PIN2, 1);        // Get the latest results to the buffer
+//        GPIO_writePin(DEBUG_INT_PIN2, 1);        // Get the latest results to the buffer
         motors_acq[MOTOR_2].raw.va  = HWREGH(ADCARESULT_BASE + ADC_SOC_NUMBER3);
         motors_acq[MOTOR_2].raw.vb  = HWREGH(ADCBRESULT_BASE + ADC_SOC_NUMBER3);
         motors_acq[MOTOR_2].raw.vc  = HWREGH(ADCDRESULT_BASE + ADC_SOC_NUMBER3);
@@ -185,7 +185,21 @@ __interrupt void adc4ISR(void)
         // Acknowledge the interrupt (Acknowledge PIE Interrupt Group 10)
         HWREGH(PIECTRL_BASE + PIE_O_ACK) = INTERRUPT_ACK_GROUP10; // Interrupt_clearACKGroup(INTERRUPT_ACK_GROUP10);
 
-        GPIO_writePin(DEBUG_INT_PIN2, 0);
+//        GPIO_writePin(DEBUG_INT_PIN2, 0);
     }
 }
 
+__interrupt void pwm1ISR(void)
+{
+//    if(EPWM_getEventTriggerInterruptStatus(MOTOR1_PWM1_BASE))
+//    EPWM_clearEventTriggerInterruptFlag(MOTOR1_PWM1_BASE);
+        // Clear the interrupt flag
+    HWREGH(EPWM1_BASE + EPWM_O_ETCLR) = 1U; // ADC_clearInterruptOverflowStatus(ADCA_BASE, ADC_INT_NUMBER2);
+    // Acknowledge the interrupt (Acknowledge PIE Interrupt Group 10)
+    HWREGH(PIECTRL_BASE + PIE_O_ACK) = INTERRUPT_ACK_GROUP3; // Interrupt_clearACKGroup(INTERRUPT_ACK_GROUP10);
+
+
+//    GPIO_togglePin(DEBUG_INT_PIN1);
+    GPIO_writePin(DEBUG_INT_PIN1, 1);
+    GPIO_writePin(DEBUG_INT_PIN1, 0);
+}
