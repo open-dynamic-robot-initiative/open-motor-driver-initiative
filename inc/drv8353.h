@@ -300,7 +300,7 @@ typedef enum
  * @typedef _DRV8353_Stat00_t_
  * @brief   Bit fields for the DRV8353 STATUS00 register
  */
-typedef struct DRV8353_Stat00_t
+typedef struct _DRV8353_Stat00_t_
 {
     uint16_t    VDS_LC      : 1;    /*!< Bits 0 : R/0b - Indicates VDS overcurrent fault on the C low-side MOSFET   */
     uint16_t    VDS_HC      : 1;    /*!< Bits 1 : R/0b - Indicates VDS overcurrent fault on the C high-side MOSFET  */
@@ -417,7 +417,7 @@ typedef struct _DRV8353_Ctrl06_t_
  * @typedef DRV8353_Ctrl07_t
  * @brief   Bit fields for the DRV8353 CTRL07 register
  */
-typedef struct _DRV83533_Ctrl07_t_
+typedef struct _DRV8353_Ctrl07_t_
 {
     uint16_t    CAL_MODE    : 1;    /*!< Bits 0     */
     uint16_t    CTRL07_RSV1 : 15;   /*!< Bits 15-1  */
@@ -532,7 +532,7 @@ typedef struct _DRV8353_Reg_t_
     DRV8353_Ctrl07_u    Ctrl_Reg_07;
 } DRV8353_Reg;
 
-typedef struct _DRV8353_
+typedef struct _DRV8353_t_
 {
     DRV8353_Cfg*    drvCfgHandler;
     DRV8353_Reg*    drvRegHandler;
