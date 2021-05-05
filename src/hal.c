@@ -78,13 +78,12 @@ static void HAL_GPIO_init(const GPIO_TypeDef* p_gpio)
  */
 static void HAL_ADC_init(const ADC_TypeDef* p_adcCfg)
 {
-    if(p_adcCfg != NULL)
+    if((p_adcCfg != NULL) && (ADC_isBaseValid(p_adcCfg->adcBase)) && (p_adcCfg->adcSoc != NULL) &&
+            (p_adcCfg->adcPpb != NULL) && (p_adcCfg->adcIt != NULL))
     {
         const ADC_SOC_TypeDef* p_adcSOC = p_adcCfg->adcSoc;
-#ifdef ADC_PPB_ENABLE
-        const ADC_PPB_TypeDef* p_adcPPB = p_adcCfg->adcPpb;
-#endif
-        const ADC_IT_TypeDef*  p_adcIT  = p_adcCfg->adcIt;
+        const ADC_PPB_TypeDef* p_adcPPB = p_adcCfg->adcPpb;//p_adcCfg->adcPpb != NULL) ? () : (NULL);
+        const ADC_IT_TypeDef*  p_adcIT  = p_adcCfg->adcIt;//p_adcCfg->adcIt != NULL) ? () : (NULL);
         uint32_t               adcBase  = p_adcCfg->adcBase;
 
         while(adcBase != 0xFFFFFFFF)
@@ -111,22 +110,18 @@ static void HAL_ADC_init(const ADC_TypeDef* p_adcCfg)
                  */
                 ADC_setSOCPriority(adcBase, ADC_SOC_PRIORITY);
                 ADC_setupSOC(adcBase, p_adcSOC->adcSOCNumber, p_adcSOC->adcTriggerSrc, p_adcSOC->adcChannel, ADC_SAMPLING_WINDOW);
-                ADC_setInterruptSOCTrigger(adcBase, p_adcSOC->adcSOCNumber, ADC_INT_SOC_TRIGGER_NONE);
+                ADC_setInterruptSOCTrigger(adcBase, p_adcSOC->adcSOCNumber, ADC_INT_SOC_TRIGGER);
                 p_adcSOC++;
             }
 
-#ifdef ADC_PPB_ENABLE
             while(p_adcPPB->adcBase == adcBase)
             {
                 /* Post processing block initialization, associate with ADC_SOC_NUMBER0
                  * Initialize PPB offset to zero
                  */
                 ADC_setupPPB(adcBase, p_adcPPB->adcPPBNumber, p_adcPPB->adcSOCNumber);
-                ADC_setPPBCalibrationOffset(adcBase, p_adcPPB->adcPPBNumber, p_adcPPB->adcCalib);
-                ADC_setPPBReferenceOffset(adcBase, p_adcPPB->adcPPBNumber, p_adcPPB->adcOffset);
                 p_adcPPB++;
             }
-#endif
 
             while(p_adcIT->adcBase == adcBase)
             {
@@ -473,26 +468,17 @@ static void HAL_DMA_init(const DMA_TypeDef* p_dmaCfg)
 /**
  * @brief       Interrupts initialization function.
  */
-void HAL_Interrupts_init(void)
+void HAL_IT_init(void)
 {
     // Setup Interrupts
-    HAL_setupInterrupts();
-    // Enable Interrupts
-    HAL_enableInterrupts();
-}
-
-void HAL_setupInterrupts(void)
-{
     // Attach ISR to interrupt
     Interrupt_register(INT_ADCA1, &adc1ISR);
     Interrupt_register(INT_ADCA2, &adc2ISR);
     Interrupt_register(INT_ADCA3, &adc3ISR);
     Interrupt_register(INT_ADCA4, &adc4ISR);
     Interrupt_register(INT_EPWM1, &pwm1ISR);
-}
 
-void HAL_enableInterrupts(void)
-{
+    // Enable Interrupts
     // Enable EPWM interrupts
     Interrupt_enable(INT_ADCA1);
     Interrupt_enable(INT_ADCA2);
@@ -502,107 +488,91 @@ void HAL_enableInterrupts(void)
     // Enable interrupt group 1 (ePWM 1 and 4 interrupts are here)
     Interrupt_enableInCPU(INTERRUPT_CPU_INT1);
     Interrupt_enableInCPU(INTERRUPT_CPU_INT10);
+
     // enable global interrupt
     EINT;
+
+    return;
 }
 
-void ADC_offsetCalibration(MOTOR_ACQ* p_motor)
+/**
+ * @brief       ADC calibration function for the PPB (Post Processing Block)
+ * @param[in]   *p_motor    Pointer on the motor configuration structure
+ */
+void HAL_ADC_offsetCalib(MOTOR_ACQ* p_motor)
 {
-    MOTOR_ACQ* p_motor1 = &p_motor[MOTOR_1];
-    MOTOR_ACQ* p_motor2 = &p_motor[MOTOR_2];
-    uint16_t calibCnt;
-
-    // force no switching with low side transistors closed
-    EPWM_setCounterCompareValue(MOTOR1_PWM1_BASE, EPWM_COUNTER_COMPARE_A, PWM_TBPRD);
-    EPWM_setCounterCompareValue(MOTOR1_PWM2_BASE, EPWM_COUNTER_COMPARE_A, PWM_TBPRD);
-    EPWM_setCounterCompareValue(MOTOR1_PWM3_BASE, EPWM_COUNTER_COMPARE_A, PWM_TBPRD);
-    EPWM_setCounterCompareValue(MOTOR2_PWM1_BASE, EPWM_COUNTER_COMPARE_A, PWM_TBPRD);
-    EPWM_setCounterCompareValue(MOTOR2_PWM2_BASE, EPWM_COUNTER_COMPARE_A, PWM_TBPRD);
-    EPWM_setCounterCompareValue(MOTOR2_PWM3_BASE, EPWM_COUNTER_COMPARE_A, PWM_TBPRD);
-
-    p_motor1->offsetCal = true;
-    p_motor2->offsetCal = true;
-
-    //    motorDebug->calibMode = true;
-
-    for (calibCnt = 0; calibCnt < 10000; calibCnt++)
+    if(p_motor != NULL)
     {
-        if (calibCnt > 1000)
+
+        const ePWM_CC_TypeDef* p_pwmCC  = NULL;
+        const ADC_PPB_TypeDef* p_iConv  = NULL;
+        const ADC_PPB_TypeDef* p_vConv  = NULL;
+
+        while(p_motor->motorID != NO_MOT)
         {
-            // Wait data acquisition of Ia, Ib, Ic & Vbus of Motor1. Blocking.
-            while(p_motor1->dataValid[0] == false);
-            p_motor1->dataValid[0]  = false;
-            p_motor1->offset.ia     = 0.998f * p_motor1->offset.ia   + 0.002f * p_motor1->raw.ia;
-            p_motor1->offset.ib     = 0.998f * p_motor1->offset.ib   + 0.002f * p_motor1->raw.ib;
-            p_motor1->offset.ic     = 0.998f * p_motor1->offset.ic   + 0.002f * p_motor1->raw.ic;
-            p_motor1->offset.vbus   = 0.998f * p_motor1->offset.vbus + 0.002f * p_motor1->raw.vbus;
+            float32_t i[3] = {0.0f, 0.0f, 0.0f};
+            float32_t v[3] = {0.0f, 0.0f, 0.0f};
+            uint16_t calibCnt = 0;
+            uint8_t loop = 0;
 
-            // Wait data acquisition of Ia, Ib, Ic & Vbus of Motor2. Blocking.
-            while(p_motor2->dataValid[0] == false);
-            p_motor2->dataValid[0]  = false;
-            p_motor2->offset.ia     = 0.998f * p_motor2->offset.ia   + 0.002f * p_motor2->raw.ia;
-            p_motor2->offset.ib     = 0.998f * p_motor2->offset.ib   + 0.002f * p_motor2->raw.ib;
-            p_motor2->offset.ic     = 0.998f * p_motor2->offset.ic   + 0.002f * p_motor2->raw.ic;
-            p_motor2->offset.vbus   = 0.998f * p_motor2->offset.vbus + 0.002f * p_motor2->raw.vbus;
+            // force no switching with low side transistors closed
+            for(loop = 0; loop < 3; loop++)
+            {
+                p_pwmCC = p_motor->p_pwmCntCmp[loop];
+                EPWM_setCounterCompareValue(p_pwmCC->epwmBase, p_pwmCC->compModule, p_pwmCC->compCount);
+            }
 
-            // Wait data acquisition of Va, Vb, Vc & Vpot of Motor1. Blocking.
-            while(p_motor1->dataValid[1] == false);
-            p_motor1->dataValid[1]  = false;
-            p_motor1->offset.va     = 0.998f * p_motor1->offset.va   + 0.002f * p_motor1->raw.va;
-            p_motor1->offset.vb     = 0.998f * p_motor1->offset.vb   + 0.002f * p_motor1->raw.vb;
-            p_motor1->offset.vc     = 0.998f * p_motor1->offset.vc   + 0.002f * p_motor1->raw.vc;
+            for (calibCnt = 0; calibCnt < 10000; calibCnt++)
+            {
+                // Wait data acquisition for Ia, Ib, Ic & Vbus. Blocking.
+                while(!p_motor->dataValid[0]);
+                p_motor->dataValid[0] = false;
 
-            // Wait data acquisition of Va, Vb, Vc & Vpot of Motor2. Blocking.
-            while(p_motor2->dataValid[1] == false);
-            p_motor2->dataValid[1]  = false;
-            p_motor2->offset.va     = 0.998f * p_motor2->offset.va   + 0.002f * p_motor2->raw.va;
-            p_motor2->offset.vb     = 0.998f * p_motor2->offset.vb   + 0.002f * p_motor2->raw.vb;
-            p_motor2->offset.vc     = 0.998f * p_motor2->offset.vc   + 0.002f * p_motor2->raw.vc;
+                if (calibCnt > 1000)
+                {
+                    for(loop = 0; loop < 3; loop++)
+                    {
+                        p_iConv = p_motor->p_iConv[loop];
+                        i[loop] = 0.998f * i[loop] + 0.002f * ADC_readResult(p_iConv->adcResultBase, p_iConv->adcSOCNumber);
+                    }
+                }
+
+                // Wait data acquisition for Va, Vb, Vc. Blocking.
+                while(!p_motor->dataValid[1]);
+                p_motor->dataValid[1] = false;
+
+                if (calibCnt > 1000)
+                {
+                    for(loop = 0; loop < 3; loop++)
+                    {
+                        p_vConv = p_motor->p_vConv[loop];
+                        v[loop] = 0.998f * v[loop] + 0.002f * ADC_readResult(p_vConv->adcResultBase, p_vConv->adcSOCNumber);
+                    }
+                }
+            }
+
+            // Set offsets in PPBs
+            for(loop = 0; loop < 3; loop++)
+            {
+                p_iConv = p_motor->p_iConv[loop];
+                // Sets the post processing block reference offset for currents
+                ADC_setPPBReferenceOffset(p_iConv->adcBase, p_iConv->adcPPBNumber, (uint16_t)i[loop]);
+                // Enables two's complement capability
+                ADC_enablePPBTwosComplement(p_iConv->adcBase, p_iConv->adcPPBNumber);
+                p_vConv = p_motor->p_vConv[loop];
+                // Sets the post processing block reference offset for tensions
+                ADC_setPPBReferenceOffset(p_vConv->adcBase, p_vConv->adcPPBNumber, (uint16_t)v[loop]);
+            }
+            // Calibrate next motor
+            p_motor++;
         }
-        else if (calibCnt == 1000)
-        {
-            while(p_motor1->dataValid[0] == false);
-            p_motor1->dataValid[0]  = false;
-            p_motor1->offset.ia     = p_motor1->raw.ia;
-            p_motor1->offset.ib     = p_motor1->raw.ib;
-            p_motor1->offset.ic     = p_motor1->raw.ic;
-            p_motor1->offset.vbus   = p_motor1->raw.vbus;
-
-            while(p_motor2->dataValid[0] == false);
-            p_motor2->dataValid[0]  = false;
-            p_motor2->offset.ia     = p_motor2->raw.ia;
-            p_motor2->offset.ib     = p_motor2->raw.ib;
-            p_motor2->offset.ic     = p_motor2->raw.ic;
-            p_motor2->offset.vbus   = p_motor2->raw.vbus;
-
-            while(p_motor1->dataValid[1] == false);
-            p_motor1->dataValid[1]  = false;
-            p_motor1->offset.va     = p_motor1->raw.va;
-            p_motor1->offset.vb     = p_motor1->raw.vb;
-            p_motor1->offset.vc     = p_motor1->raw.vc;
-
-            while(p_motor2->dataValid[1] == false);
-            p_motor2->dataValid[1]  = false;
-            p_motor2->offset.va     = p_motor2->raw.va;
-            p_motor2->offset.vb     = p_motor2->raw.vb;
-            p_motor2->offset.vc     = p_motor2->raw.vc;
-        }
-        else
-        {
-            while(p_motor1->dataValid[0] == false);
-            p_motor1->dataValid[0] = false;
-
-            while(p_motor2->dataValid[0] == false);
-            p_motor2->dataValid[0] = false;
-
-            while(p_motor1->dataValid[1] == false);
-            p_motor1->dataValid[1] = false;
-
-            while(p_motor2->dataValid[1] == false);
-            p_motor2->dataValid[1] = false;
-        }
+//        for(loop = 0; loop < 3; loop++)
+//        {
+//            p_iConv = p_motor->p_iConv[loop];
+//            // Enables two's complement capability
+//            ADC_enablePPBTwosComplement(p_iConv->adcBase, p_iConv->adcPPBNumber);
+//        }
     }
 
-    p_motor1->offsetCal = false;
-    p_motor2->offsetCal = false;
+    return;
 }

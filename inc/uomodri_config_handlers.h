@@ -90,20 +90,24 @@ static const ADC_SOC_TypeDef AdcSOCsList[] =
  */
 static const ADC_PPB_TypeDef AdcPPBsList[] =
 {
- {.adcBase = M12_IVA_ADC_BASE,  .adcCalib = 0, .adcOffset = 0, .adcSOCNumber = M1_IA_SOC_NUM,   .adcPPBNumber = ADC_PPB_NUMBER1},
- {.adcBase = M12_IVA_ADC_BASE,  .adcCalib = 0, .adcOffset = 0, .adcSOCNumber = M2_IA_SOC_NUM,   .adcPPBNumber = ADC_PPB_NUMBER2},
- {.adcBase = M12_IVA_ADC_BASE,  .adcCalib = 0, .adcOffset = 0, .adcSOCNumber = M1_VA_SOC_NUM,   .adcPPBNumber = ADC_PPB_NUMBER3},
- {.adcBase = M12_IVA_ADC_BASE,  .adcCalib = 0, .adcOffset = 0, .adcSOCNumber = M2_VA_SOC_NUM,   .adcPPBNumber = ADC_PPB_NUMBER4},
- {.adcBase = M12_IVB_ADC_BASE,  .adcCalib = 0, .adcOffset = 0, .adcSOCNumber = M1_IB_SOC_NUM,   .adcPPBNumber = ADC_PPB_NUMBER1},
- {.adcBase = M12_IVB_ADC_BASE,  .adcCalib = 0, .adcOffset = 0, .adcSOCNumber = M2_IB_SOC_NUM,   .adcPPBNumber = ADC_PPB_NUMBER2},
- {.adcBase = M12_IVB_ADC_BASE,  .adcCalib = 0, .adcOffset = 0, .adcSOCNumber = M1_VB_SOC_NUM,   .adcPPBNumber = ADC_PPB_NUMBER3},
- {.adcBase = M12_IVB_ADC_BASE,  .adcCalib = 0, .adcOffset = 0, .adcSOCNumber = M2_VB_SOC_NUM,   .adcPPBNumber = ADC_PPB_NUMBER4},
- {.adcBase = M12_VBUS_ADC_BASE, .adcCalib = 0, .adcOffset = 0, .adcSOCNumber = M1_VBUS_SOC_NUM, .adcPPBNumber = ADC_PPB_NUMBER1},
- {.adcBase = M12_VBUS_ADC_BASE, .adcCalib = 0, .adcOffset = 0, .adcSOCNumber = M2_VBUS_SOC_NUM, .adcPPBNumber = ADC_PPB_NUMBER2},
- {.adcBase = M12_IVC_ADC_BASE,  .adcCalib = 0, .adcOffset = 0, .adcSOCNumber = M1_IC_SOC_NUM,   .adcPPBNumber = ADC_PPB_NUMBER1},
- {.adcBase = M12_IVC_ADC_BASE,  .adcCalib = 0, .adcOffset = 0, .adcSOCNumber = M2_IC_SOC_NUM,   .adcPPBNumber = ADC_PPB_NUMBER2},
- {.adcBase = M12_IVC_ADC_BASE,  .adcCalib = 0, .adcOffset = 0, .adcSOCNumber = M1_VC_SOC_NUM,   .adcPPBNumber = ADC_PPB_NUMBER3},
- {.adcBase = M12_IVC_ADC_BASE,  .adcCalib = 0, .adcOffset = 0, .adcSOCNumber = M2_VC_SOC_NUM,   .adcPPBNumber = ADC_PPB_NUMBER3},
+ /* ADCA : Ia_M1, Ia_M2, Va_M1, Va_M2; SOC0 - 3; PPB1 - 4 */
+ {.adcBase = M1_IA_ADC_BASE,    .adcResultBase = M1_IA_ADC_RESULT_BASE,     .adcSOCNumber = M1_IA_SOC_NUM,   .adcPPBNumber = M1_IA_PPB_NUM},
+ {.adcBase = M2_IA_ADC_BASE,    .adcResultBase = M2_IA_ADC_RESULT_BASE,     .adcSOCNumber = M2_IA_SOC_NUM,   .adcPPBNumber = M2_IA_PPB_NUM},
+ {.adcBase = M1_VA_ADC_BASE,    .adcResultBase = M1_VA_ADC_RESULT_BASE,     .adcSOCNumber = M1_VA_SOC_NUM,   .adcPPBNumber = M1_VA_PPB_NUM},
+ {.adcBase = M2_VA_ADC_BASE,    .adcResultBase = M2_VA_ADC_RESULT_BASE,     .adcSOCNumber = M2_VA_SOC_NUM,   .adcPPBNumber = M2_VA_PPB_NUM},
+ /* ADCB : Ib_M1, Ib_M2, Vb_M1, Vb_M2; SOC0 - 3; PPB1 - 4 */
+ {.adcBase = M1_IB_ADC_BASE,    .adcResultBase = M1_IB_ADC_RESULT_BASE,     .adcSOCNumber = M1_IB_SOC_NUM,   .adcPPBNumber = M1_IB_PPB_NUM},
+ {.adcBase = M2_IB_ADC_BASE,    .adcResultBase = M2_IB_ADC_RESULT_BASE,     .adcSOCNumber = M2_IB_SOC_NUM,   .adcPPBNumber = M2_IB_PPB_NUM},
+ {.adcBase = M1_VB_ADC_BASE,    .adcResultBase = M1_VB_ADC_RESULT_BASE,     .adcSOCNumber = M1_VB_SOC_NUM,   .adcPPBNumber = M1_VB_PPB_NUM},
+ {.adcBase = M2_VB_ADC_BASE,    .adcResultBase = M2_VB_ADC_RESULT_BASE,     .adcSOCNumber = M2_VB_SOC_NUM,   .adcPPBNumber = M2_VB_PPB_NUM},
+ /* ADCC : Vbus_M1, Vbus_M2; SOC0 - 1; PPB1 - 2 */
+ {.adcBase = M1_VBUS_ADC_BASE,  .adcResultBase = M1_VBUS_ADC_RESULT_BASE,   .adcSOCNumber = M1_VBUS_SOC_NUM, .adcPPBNumber = M1_VBUS_PPB_NUM},
+ {.adcBase = M2_VBUS_ADC_BASE,  .adcResultBase = M2_VBUS_ADC_RESULT_BASE,   .adcSOCNumber = M2_VBUS_SOC_NUM, .adcPPBNumber = M2_VBUS_PPB_NUM},
+ /* ADCD : Ic_M1, Ic_M2, Vc_M1, Vc_M2; SOC0 - 3; PPB1 - 4 */
+ {.adcBase = M1_IC_ADC_BASE,    .adcResultBase = M1_IC_ADC_RESULT_BASE,     .adcSOCNumber = M1_IC_SOC_NUM,   .adcPPBNumber = M1_IC_PPB_NUM},
+ {.adcBase = M2_IC_ADC_BASE,    .adcResultBase = M2_IC_ADC_RESULT_BASE,     .adcSOCNumber = M2_IC_SOC_NUM,   .adcPPBNumber = M2_IC_PPB_NUM},
+ {.adcBase = M1_VC_ADC_BASE,    .adcResultBase = M1_VC_ADC_RESULT_BASE,     .adcSOCNumber = M1_VC_SOC_NUM,   .adcPPBNumber = M1_VC_PPB_NUM},
+ {.adcBase = M2_VC_ADC_BASE,    .adcResultBase = M2_VC_ADC_RESULT_BASE,     .adcSOCNumber = M2_VC_SOC_NUM,   .adcPPBNumber = M2_VC_PPB_NUM},
  // END OF ARRAY
  {.adcBase = 0xFFFFFFFF}
 };
@@ -126,10 +130,10 @@ static const ADC_IT_TypeDef AdcIntList[] =
  */
 static const ADC_TypeDef AdcCfgList[] =
 {
- {.adcBase = M12_IVA_ADC_BASE,  .adcSoc = &AdcSOCsList[0],  .adcPpb = NULL, .adcIt = &AdcIntList[0]},
- {.adcBase = M12_IVB_ADC_BASE,  .adcSoc = &AdcSOCsList[4],  .adcPpb = NULL, .adcIt = &AdcIntList[1]},
- {.adcBase = M12_VBUS_ADC_BASE, .adcSoc = &AdcSOCsList[8],  .adcPpb = NULL, .adcIt = &AdcIntList[2]},
- {.adcBase = M12_IVC_ADC_BASE,  .adcSoc = &AdcSOCsList[12], .adcPpb = NULL, .adcIt = &AdcIntList[3]},
+ {.adcBase = M12_IVA_ADC_BASE,  .adcSoc = &AdcSOCsList[0],  .adcPpb = &AdcPPBsList[0],  .adcIt = &AdcIntList[0]},
+ {.adcBase = M12_IVB_ADC_BASE,  .adcSoc = &AdcSOCsList[4],  .adcPpb = &AdcPPBsList[4],  .adcIt = &AdcIntList[1]},
+ {.adcBase = M12_VBUS_ADC_BASE, .adcSoc = &AdcSOCsList[8],  .adcPpb = &AdcPPBsList[8],  .adcIt = &AdcIntList[2]},
+ {.adcBase = M12_IVC_ADC_BASE,  .adcSoc = &AdcSOCsList[12], .adcPpb = &AdcPPBsList[10], .adcIt = &AdcIntList[3]},
  // END OF ARRAY
  {.adcBase = 0xFFFFFFFF},
 };
@@ -279,7 +283,7 @@ static const ePWM_TypeDef PwmCfgList[] =
  {.epwmBase = 0xFFFFFFFF},
 };
 
-static DRV8353_Cfg DrvCfgList[] =
+static DRV_Cfg DrvCfgList[] =
 {
  {.spiHandle = DRV_SPI_BASE, .gpioNumber_CS = DRV1_GPIO_CS, .gpioNumber_EN = DRV1_GPIO_EN},
  {.spiHandle = DRV_SPI_BASE, .gpioNumber_CS = DRV2_GPIO_CS, .gpioNumber_EN = DRV2_GPIO_EN},
@@ -287,14 +291,14 @@ static DRV8353_Cfg DrvCfgList[] =
  {.spiHandle = 0xFFFFFFFF},
 };
 
-static DRV8353_Reg DrvRegList[] =
+static DRV_Reg DrvRegList[] =
 {
  { .Ctrl_Reg_02.ctrl02.CLR_FLT      = false,
    .Ctrl_Reg_02.ctrl02.BRAKE        = false,
    .Ctrl_Reg_02.ctrl02.COAST        = false,
    .Ctrl_Reg_02.ctrl02.PWM1_DIR     = false,
    .Ctrl_Reg_02.ctrl02.PWM1_COM     = false,
-   .Ctrl_Reg_02.ctrl02.PWM_MODE     = DRV8353_PWMMODE_6,
+   .Ctrl_Reg_02.ctrl02.PWM_MODE     = DRV_PWMMODE_6,
    .Ctrl_Reg_02.ctrl02.OTW_REP      = true,                 // Over Temperature Warning will raise nFault
    .Ctrl_Reg_02.ctrl02.DIS_GDF      = false,
    .Ctrl_Reg_02.ctrl02.DIS_GDUV     = false,
@@ -302,27 +306,27 @@ static DRV8353_Reg DrvRegList[] =
    .Ctrl_Reg_02.Ctrl02.OCP_ACT      = true,
 #endif
    // Gate Drive HS register initialization (Address: 0x3)
-   .Ctrl_Reg_03.ctrl03.IDRIVEN_HS   = DRV8353_ISINK_HS_0P300_A,
-   .Ctrl_Reg_03.ctrl03.IDRIVEP_HS   = DRV8353_ISOUR_HS_0P300_A,
-   .Ctrl_Reg_03.ctrl03.LOCK         = DRV8353_REG_UNLOCK,
+   .Ctrl_Reg_03.ctrl03.IDRIVEN_HS   = DRV_ISINK_HS_0P300_A,
+   .Ctrl_Reg_03.ctrl03.IDRIVEP_HS   = DRV_ISOUR_HS_0P300_A,
+   .Ctrl_Reg_03.ctrl03.LOCK         = DRV_REG_UNLOCK,
    // Gate Drive LS register initialization (Address: 0x4)
-   .Ctrl_Reg_04.ctrl04.IDRIVEN_LS   = DRV8353_ISINK_LS_0P300_A,
-   .Ctrl_Reg_04.ctrl04.IDRIVEP_LS   = DRV8353_ISOUR_LS_0P300_A,
-   .Ctrl_Reg_04.ctrl04.TDRIVE       = DRV8353_TSOUR_4000_NS,
+   .Ctrl_Reg_04.ctrl04.IDRIVEN_LS   = DRV_ISINK_LS_0P300_A,
+   .Ctrl_Reg_04.ctrl04.IDRIVEP_LS   = DRV_ISOUR_LS_0P300_A,
+   .Ctrl_Reg_04.ctrl04.TDRIVE       = DRV_TSOUR_4000_NS,
    .Ctrl_Reg_04.ctrl04.CBC          = false,
    // Over Current Protection register initialization (Address: 0x5)
-   .Ctrl_Reg_05.ctrl05.VDS_LVL      = DRV8353_VDS_LVL_0P700_V,
-   .Ctrl_Reg_05.ctrl05.OCP_DEG      = DRV8353_OCPDEG_8_US,
-   .Ctrl_Reg_05.ctrl05.OCP_MODE     = DRV8353_AUTOMATIC_RETRY,
-   .Ctrl_Reg_05.ctrl05.DEAD_TIME    = DRV8353_DEADTIME_400_NS,
+   .Ctrl_Reg_05.ctrl05.VDS_LVL      = DRV_VDS_LVL_0P700_V,
+   .Ctrl_Reg_05.ctrl05.OCP_DEG      = DRV_OCPDEG_8_US,
+   .Ctrl_Reg_05.ctrl05.OCP_MODE     = DRV_AUTOMATIC_RETRY,
+   .Ctrl_Reg_05.ctrl05.DEAD_TIME    = DRV_DEADTIME_400_NS,
    .Ctrl_Reg_05.ctrl05.TRETRY       = false,
    // Current Sense Amplifier register initialization (Address: 0x6)
-   .Ctrl_Reg_06.ctrl06.SEN_LVL      = DRV8353_SENLVL_1P00_V,
+   .Ctrl_Reg_06.ctrl06.SEN_LVL      = DRV_SENLVL_1P00_V,
    .Ctrl_Reg_06.ctrl06.CSA_CAL_C    = false,
    .Ctrl_Reg_06.ctrl06.CSA_CAL_B    = false,
    .Ctrl_Reg_06.ctrl06.CSA_CAL_A    = false,
    .Ctrl_Reg_06.ctrl06.DIS_SEN      = false,
-   .Ctrl_Reg_06.ctrl06.CSA_GAIN     = DRV8353_CSA_GAIN_40_V_V,
+   .Ctrl_Reg_06.ctrl06.CSA_GAIN     = DRV_CSA_GAIN,
    .Ctrl_Reg_06.ctrl06.LS_REF       = false,
    .Ctrl_Reg_06.ctrl06.VREF_DIV     = true,
    .Ctrl_Reg_06.ctrl06.CSA_FET      = false,
@@ -333,7 +337,7 @@ static DRV8353_Reg DrvRegList[] =
    .Ctrl_Reg_02.ctrl02.COAST        = false,
    .Ctrl_Reg_02.ctrl02.PWM1_DIR     = false,
    .Ctrl_Reg_02.ctrl02.PWM1_COM     = false,
-   .Ctrl_Reg_02.ctrl02.PWM_MODE     = DRV8353_PWMMODE_6,
+   .Ctrl_Reg_02.ctrl02.PWM_MODE     = DRV_PWMMODE_6,
    .Ctrl_Reg_02.ctrl02.OTW_REP      = true,                 // Over Temperature Warning will raise nFault
    .Ctrl_Reg_02.ctrl02.DIS_GDF      = false,
    .Ctrl_Reg_02.ctrl02.DIS_GDUV     = false,
@@ -341,32 +345,62 @@ static DRV8353_Reg DrvRegList[] =
    .Ctrl_Reg_02.Ctrl02.OCP_ACT      = true,
 #endif
    // Gate Drive HS register initialization (Address: 0x3)
-   .Ctrl_Reg_03.ctrl03.IDRIVEN_HS   = DRV8353_ISINK_HS_0P300_A,
-   .Ctrl_Reg_03.ctrl03.IDRIVEP_HS   = DRV8353_ISOUR_HS_0P300_A,
-   .Ctrl_Reg_03.ctrl03.LOCK         = DRV8353_REG_UNLOCK,
+   .Ctrl_Reg_03.ctrl03.IDRIVEN_HS   = DRV_ISINK_HS_0P300_A,
+   .Ctrl_Reg_03.ctrl03.IDRIVEP_HS   = DRV_ISOUR_HS_0P300_A,
+   .Ctrl_Reg_03.ctrl03.LOCK         = DRV_REG_UNLOCK,
    // Gate Drive LS register initialization (Address: 0x4)
-   .Ctrl_Reg_04.ctrl04.IDRIVEN_LS   = DRV8353_ISINK_LS_0P300_A,
-   .Ctrl_Reg_04.ctrl04.IDRIVEP_LS   = DRV8353_ISOUR_LS_0P300_A,
-   .Ctrl_Reg_04.ctrl04.TDRIVE       = DRV8353_TSOUR_4000_NS,
+   .Ctrl_Reg_04.ctrl04.IDRIVEN_LS   = DRV_ISINK_LS_0P300_A,
+   .Ctrl_Reg_04.ctrl04.IDRIVEP_LS   = DRV_ISOUR_LS_0P300_A,
+   .Ctrl_Reg_04.ctrl04.TDRIVE       = DRV_TSOUR_4000_NS,
    // Over Current Protection register initialization (Address: 0x5)
-   .Ctrl_Reg_05.ctrl05.VDS_LVL      = DRV8353_VDS_LVL_0P600_V,
-   .Ctrl_Reg_05.ctrl05.OCP_DEG      = DRV8353_OCPDEG_8_US,
-   .Ctrl_Reg_05.ctrl05.OCP_MODE     = DRV8353_AUTOMATIC_RETRY,
-   .Ctrl_Reg_05.ctrl05.DEAD_TIME    = DRV8353_DEADTIME_400_NS,
+   .Ctrl_Reg_05.ctrl05.VDS_LVL      = DRV_VDS_LVL_0P600_V,
+   .Ctrl_Reg_05.ctrl05.OCP_DEG      = DRV_OCPDEG_8_US,
+   .Ctrl_Reg_05.ctrl05.OCP_MODE     = DRV_AUTOMATIC_RETRY,
+   .Ctrl_Reg_05.ctrl05.DEAD_TIME    = DRV_DEADTIME_400_NS,
    .Ctrl_Reg_05.ctrl05.TRETRY       = false,
    // Current Sense Amplifier register initialization (Address: 0x6)
-   .Ctrl_Reg_06.ctrl06.SEN_LVL      = DRV8353_SENLVL_1P00_V,
+   .Ctrl_Reg_06.ctrl06.SEN_LVL      = DRV_SENLVL_1P00_V,
    .Ctrl_Reg_06.ctrl06.CSA_CAL_C    = false,
    .Ctrl_Reg_06.ctrl06.CSA_CAL_B    = false,
    .Ctrl_Reg_06.ctrl06.CSA_CAL_A    = false,
    .Ctrl_Reg_06.ctrl06.DIS_SEN      = false,
-   .Ctrl_Reg_06.ctrl06.CSA_GAIN     = DRV8353_CSA_GAIN_40_V_V,
+   .Ctrl_Reg_06.ctrl06.CSA_GAIN     = DRV_CSA_GAIN,
    .Ctrl_Reg_06.ctrl06.LS_REF       = false,
    .Ctrl_Reg_06.ctrl06.VREF_DIV     = true,
    .Ctrl_Reg_06.ctrl06.CSA_FET      = false,
    // Amplifier calibration calibration routine (Address: 0x7)
    .Ctrl_Reg_07.ctrl07.CAL_MODE     = true},
 };
+
+//  .p_adcCfg = &AdcCfgList[0],
+//  .p_pwmCfg = &PwmCfgList[0],
+//  .p_qepCfg = &QepCfgList[0],
+//MOTOR_ACQ motors_acq[2] =
+//{
+// {
+//  .ia_socNum    = M1_IA_SOC_NUM,
+//  .ib_socNum    = M1_IB_SOC_NUM,
+//  .ic_socNum    = M1_IC_SOC_NUM,
+//  .va_socNum    = M1_VA_SOC_NUM,
+//  .vb_socNum    = M1_VB_SOC_NUM,
+//  .vc_socNum    = M1_VC_SOC_NUM,
+//  .vbus_socNum  = M1_VBUS_SOC_NUM,
+//  .dataValid    = {false, false},
+//  .offsetCal    = true
+// },
+// {
+//  .ia_socNum    = M2_IA_SOC_NUM,
+//  .ib_socNum    = M2_IB_SOC_NUM,
+//  .ic_socNum    = M2_IC_SOC_NUM,
+//  .va_socNum    = M2_VA_SOC_NUM,
+//  .vb_socNum    = M2_VB_SOC_NUM,
+//  .vc_socNum    = M2_VC_SOC_NUM,
+//  .vbus_socNum  = M2_VBUS_SOC_NUM,
+//  .dataValid    = {false, false},
+//  .offsetCal    = true
+// },
+//};
+
 
 //static const ePWM_TypeDef PwmCfgList[] =
 //{

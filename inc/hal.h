@@ -18,7 +18,8 @@
 typedef enum
 {
     MOTOR_1 = 0,    /*!< Select Motor_1 */
-    MOTOR_2  = 1    /*!< Select Motor_2 */
+    MOTOR_2 = 1,    /*!< Select Motor_2 */
+    NO_MOT  = -1    /*!< No motor selected */
 } Motor_Sel;
 
 /**
@@ -223,8 +224,9 @@ typedef struct ADC_SOC_TypeDef
 typedef struct _ADC_PPB_TypeDef_
 {
     uint32_t adcBase;                               /*!< ADC peripheral address. */
-    uint16_t adcCalib;
-    uint16_t adcOffset;
+    uint32_t adcResultBase;
+//    uint16_t adcCalib;
+//    uint16_t adcOffset;
     ADC_SOCNumber adcSOCNumber;
     ADC_PPBNumber adcPPBNumber;
 } ADC_PPB_TypeDef;
@@ -317,12 +319,43 @@ typedef struct _ACQ_
 // Motor Hardware Abstraction Layer structure
 typedef struct _MOTOR_ACQ_
 {
-    ACQ_OFFSET offset;
-    ACQ raw;
+    ADC_SOC_TypeDef* p_adcSoc[3];
+    const ePWM_CC_TypeDef* p_pwmCntCmp[3];
+    const ADC_PPB_TypeDef* p_iConv[3];
+    const ADC_PPB_TypeDef* p_vConv[3];
+    const ADC_PPB_TypeDef* p_vbusConv;
+    uint32_t pwmHandle;
+    uint32_t qepHandle;
+    uint32_t iSenResHandle[3];
+    uint32_t ppbNumHandle[3];
+
+//    const ADC_TypeDef*    p_adcCfg;
+//    const ePWM_TypeDef*   p_pwmCfg;
+//    const eQEP_TypeDef*   p_qepCfg;
+
+    uint32_t    pwmBaseAddress[3];
+
+//    ADC_SOCNumber i_socNum[3];
+//    ADC_SOCNumber v_socNum[3];
+//
+//    ADC_SOCNumber ia_socNum;
+//    ADC_SOCNumber ib_socNum;
+//    ADC_SOCNumber ic_socNum;
+//    ADC_SOCNumber va_socNum;
+//    ADC_SOCNumber vb_socNum;
+//    ADC_SOCNumber vc_socNum;
+//    ADC_SOCNumber vbus_socNum;
+//
+//    ACQ_OFFSET offset;
+//    ACQ raw;
     uint32_t encoderPos;
 
+    Motor_Sel motorID;
+
     bool dataValid[2];
-    bool offsetCal;
+//    bool offsetCal;
+
+
 
 } MOTOR_ACQ;
 
@@ -331,10 +364,7 @@ typedef struct _MOTOR_ACQ_
  */
 
 void HAL_init(HAL*);
-extern void HAL_Interrupts_init();
-
-extern void HAL_setupInterrupts();
-extern void HAL_enableInterrupts();
+extern void HAL_IT_init();
 
 // ADC interrupt service routine
 extern __interrupt void adc1ISR(void);
@@ -343,6 +373,6 @@ extern __interrupt void adc3ISR(void);
 extern __interrupt void adc4ISR(void);
 extern __interrupt void pwm1ISR(void);
 
-void ADC_offsetCalibration(MOTOR_ACQ*);
+void HAL_ADC_offsetCalib(MOTOR_ACQ*);
 
 #endif
