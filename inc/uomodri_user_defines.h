@@ -43,17 +43,23 @@
  *  @brief    Configure the Analog to Digital Core \& 2 Analog to Digital Wrapper Logic blocks
  * @{
  */
-// Base Address
-#define M1_IA_ADC_BASE                  ADCA_BASE
-#define M2_IA_ADC_BASE                  ADCA_BASE
-#define M1_VA_ADC_BASE                  ADCA_BASE
-#define M2_VA_ADC_BASE                  ADCA_BASE
-#define M12_IVA_ADC_BASE                ADCA_BASE
-// Results
-#define M1_IA_ADC_RESULT_BASE           ADCARESULT_BASE
-#define M2_IA_ADC_RESULT_BASE           ADCARESULT_BASE
-#define M1_VA_ADC_RESULT_BASE           ADCARESULT_BASE
-#define M2_VA_ADC_RESULT_BASE           ADCARESULT_BASE
+// ADC Base Address
+#define M1_IA_ADC_ADDR                  ADCA_BASE
+#define M2_IA_ADC_ADDR                  ADCA_BASE
+#define M1_VA_ADC_ADDR                  ADCA_BASE
+#define M2_VA_ADC_ADDR                  ADCA_BASE
+#define M12_IVA_ADC_ADDR                ADCA_BASE
+// ADC Results Base Address
+#define M1_IA_ADC_RESULT_ADDR           ADCARESULT_BASE
+#define M2_IA_ADC_RESULT_ADDR           ADCARESULT_BASE
+#define M1_VA_ADC_RESULT_ADDR           ADCARESULT_BASE
+#define M2_VA_ADC_RESULT_ADDR           ADCARESULT_BASE
+#define M12_IVA_ADC_RESULT_ADDR         ADCARESULT_BASE
+// ADC PPB Results Address
+#define M1_IA_ADC_PPB_RESULT_ADDR       (M1_IA_ADC_RESULT_ADDR + ADC_PPBxRESULT_OFFSET_BASE + (2U * M1_IA_PPB_NUM))
+#define M2_IA_ADC_PPB_RESULT_ADDR       (M2_IA_ADC_RESULT_ADDR + ADC_PPBxRESULT_OFFSET_BASE + (2U * M2_IA_PPB_NUM))
+#define M1_VA_ADC_PPB_RESULT_ADDR       (M1_VA_ADC_RESULT_ADDR + ADC_PPBxRESULT_OFFSET_BASE + (2U * M1_VA_PPB_NUM))
+#define M2_VA_ADC_PPB_RESULT_ADDR       (M2_VA_ADC_RESULT_ADDR + ADC_PPBxRESULT_OFFSET_BASE + (2U * M2_VA_PPB_NUM))
 // Channels
 #define M1_IA_CH                        ADC_CH_ADCIN0
 #define M2_IA_CH                        ADC_CH_ADCIN1
@@ -77,17 +83,23 @@
  *  @brief    Configure the Analog to Digital Core \& 2 Analog to Digital Wrapper Logic blocks
  * @{
  */
-// Base Address
-#define M1_IB_ADC_BASE                  ADCB_BASE
-#define M2_IB_ADC_BASE                  ADCB_BASE
-#define M1_VB_ADC_BASE                  ADCB_BASE
-#define M2_VB_ADC_BASE                  ADCB_BASE
-#define M12_IVB_ADC_BASE                ADCB_BASE
-// Results
-#define M1_IB_ADC_RESULT_BASE           ADCBRESULT_BASE
-#define M2_IB_ADC_RESULT_BASE           ADCBRESULT_BASE
-#define M1_VB_ADC_RESULT_BASE           ADCBRESULT_BASE
-#define M2_VB_ADC_RESULT_BASE           ADCBRESULT_BASE
+// ADC Base Address
+#define M1_IB_ADC_ADDR                  ADCB_BASE
+#define M2_IB_ADC_ADDR                  ADCB_BASE
+#define M1_VB_ADC_ADDR                  ADCB_BASE
+#define M2_VB_ADC_ADDR                  ADCB_BASE
+#define M12_IVB_ADC_ADDR                ADCB_BASE
+// ADC Results Base Address
+#define M1_IB_ADC_RESULT_ADDR           ADCBRESULT_BASE
+#define M2_IB_ADC_RESULT_ADDR           ADCBRESULT_BASE
+#define M1_VB_ADC_RESULT_ADDR           ADCBRESULT_BASE
+#define M2_VB_ADC_RESULT_ADDR           ADCBRESULT_BASE
+#define M12_IVB_ADC_RESULT_ADDR         ADCBRESULT_BASE
+// ADC PPB Results Address
+#define M1_IB_ADC_PPB_RESULT_ADDR       (M1_IB_ADC_RESULT_ADDR + ADC_PPBxRESULT_OFFSET_BASE + (2U * M1_IB_PPB_NUM))
+#define M2_IB_ADC_PPB_RESULT_ADDR       (M2_IB_ADC_RESULT_ADDR + ADC_PPBxRESULT_OFFSET_BASE + (2U * M2_IB_PPB_NUM))
+#define M1_VB_ADC_PPB_RESULT_ADDR       (M1_VB_ADC_RESULT_ADDR + ADC_PPBxRESULT_OFFSET_BASE + (2U * M1_VB_PPB_NUM))
+#define M2_VB_ADC_PPB_RESULT_ADDR       (M2_VB_ADC_RESULT_ADDR + ADC_PPBxRESULT_OFFSET_BASE + (2U * M2_VB_PPB_NUM))
 // Channels
 #define M1_IB_CH                        ADC_CH_ADCIN0
 #define M2_IB_CH                        ADC_CH_ADCIN1
@@ -111,13 +123,17 @@
  *  @brief    Configure the Analog to Digital Core \& 2 Analog to Digital Wrapper Logic blocks
  * @{
  */
-// Base Address
-#define M1_VBUS_ADC_BASE                ADCC_BASE
-#define M2_VBUS_ADC_BASE                ADCC_BASE
-#define M12_VBUS_ADC_BASE               ADCC_BASE
-// Results
-#define M1_VBUS_ADC_RESULT_BASE         ADCCRESULT_BASE
-#define M2_VBUS_ADC_RESULT_BASE         ADCCRESULT_BASE
+// ADC Base Address
+#define M1_VBUS_ADC_ADDR                ADCC_BASE
+#define M2_VBUS_ADC_ADDR                ADCC_BASE
+#define M12_VBUS_ADC_ADDR               ADCC_BASE
+// ADC Results Base Address
+#define M1_VBUS_ADC_RESULT_ADDR         ADCCRESULT_BASE
+#define M2_VBUS_ADC_RESULT_ADDR         ADCCRESULT_BASE
+#define M12_VBUS_ADC_RESULT_ADDR        ADCCRESULT_BASE
+// ADC PPB Results Address
+#define M1_VBUS_ADC_PPB_RESULT_ADDR     (M1_VBUS_ADC_RESULT_ADDR + ADC_PPBxRESULT_OFFSET_BASE + (2U * M1_VBUS_PPB_NUM))
+#define M2_VBUS_ADC_PPB_RESULT_ADDR     (M2_VBUS_ADC_RESULT_ADDR + ADC_PPBxRESULT_OFFSET_BASE + (2U * M2_VBUS_PPB_NUM))
 // Channels
 #define M1_VBUS_CH                      ADC_CH_ADCIN4
 #define M2_VBUS_CH                      ADC_CH_ADCIN5
@@ -135,17 +151,23 @@
  *  @brief    Configure the Analog to Digital Core \& 2 Analog to Digital Wrapper Logic blocks
  * @{
  */
-// Base Address
-#define M1_IC_ADC_BASE                  ADCD_BASE
-#define M2_IC_ADC_BASE                  ADCD_BASE
-#define M1_VC_ADC_BASE                  ADCD_BASE
-#define M2_VC_ADC_BASE                  ADCD_BASE
-#define M12_IVC_ADC_BASE                ADCD_BASE
-// Results
-#define M1_IC_ADC_RESULT_BASE           ADCDRESULT_BASE
-#define M2_IC_ADC_RESULT_BASE           ADCDRESULT_BASE
-#define M1_VC_ADC_RESULT_BASE           ADCDRESULT_BASE
-#define M2_VC_ADC_RESULT_BASE           ADCDRESULT_BASE
+// ADC Base Address
+#define M1_IC_ADC_ADDR                  ADCD_BASE
+#define M2_IC_ADC_ADDR                  ADCD_BASE
+#define M1_VC_ADC_ADDR                  ADCD_BASE
+#define M2_VC_ADC_ADDR                  ADCD_BASE
+#define M12_IVC_ADC_ADDR                ADCD_BASE
+// ADC Results Base Address
+#define M1_IC_ADC_RESULT_ADDR           ADCDRESULT_BASE
+#define M2_IC_ADC_RESULT_ADDR           ADCDRESULT_BASE
+#define M1_VC_ADC_RESULT_ADDR           ADCDRESULT_BASE
+#define M2_VC_ADC_RESULT_ADDR           ADCDRESULT_BASE
+#define M12_IVC_ADC_RESULT_ADDR         ADCDRESULT_BASE
+// ADC PPB Results Address
+#define M1_IC_ADC_PPB_RESULT_ADDR       (M1_IC_ADC_RESULT_ADDR + ADC_PPBxRESULT_OFFSET_BASE + (2U * M1_IC_PPB_NUM))
+#define M2_IC_ADC_PPB_RESULT_ADDR       (M2_IC_ADC_RESULT_ADDR + ADC_PPBxRESULT_OFFSET_BASE + (2U * M2_IC_PPB_NUM))
+#define M1_VC_ADC_PPB_RESULT_ADDR       (M1_VC_ADC_RESULT_ADDR + ADC_PPBxRESULT_OFFSET_BASE + (2U * M1_VC_PPB_NUM))
+#define M2_VC_ADC_PPB_RESULT_ADDR       (M2_VC_ADC_RESULT_ADDR + ADC_PPBxRESULT_OFFSET_BASE + (2U * M2_VC_PPB_NUM))
 // Channels
 #define M1_IC_CH                        ADC_CH_ADCIN0
 #define M2_IC_CH                        ADC_CH_ADCIN1
@@ -398,14 +420,16 @@
 
 //
 #define ADC_VREF                    3.0f   // [V]
-#define DRV_CSA_GAIN                DRV_CSA_GAIN_10_V_V  // [V/V] Possible values: 5, 10, 20, 40
+#define DRV_CSA_GAIN_REG            DRV_CSA_GAIN_10_V_V  // [V/V] Possible values: 5, 10, 20, 40
+#define DRV_CSA_GAIN_VAL            (5 << DRV_CSA_GAIN_REG) // base gain
 #define DRV_R_SHUNT                 0.01f // [Ohm]
 // Conversion defines
-#define ADC_VBUS_SCALE              ((ADC_VREF / 4096.0f) * (4.99f + 82.0f) / 4.99f) // Voltage divider R1:4.99kO R2:82kO
+//#define ADC_VBUS_SCALE              ((ADC_VREF / 4096.0f) * (4.99f + 82.0f) / 4.99f) // Voltage divider R1:4.99kO R2:82kO
 //#define ADC_ISEN_SCALE              ((ADC_VREF / 4096.0f) / ((5 << DRV_CSA_GAIN) * DRV_R_SHUNT)) //0.5 * ADC_VREF / (DRV_CSA_GAIN * DRV_R_SHUNT)
 //#define ADC_VSEN_SCALE              ((ADC_VREF / 4096.0f) / (5 << DRV_CSA_GAIN)) //ADC_VREF * (4.99 + 82.0) / 4.99 // Voltage divider R1:4.99kO R2:82kO
-#define ADC_ISEN_SCALE              0.5 * ADC_VREF / (DRV_CSA_GAIN * DRV_R_SHUNT)
-#define ADC_VOLTAGE_SCALE           ADC_VREF * (4.99 + 82.0) / 4.99 // Voltage divider R1:4.99kO R2:82kO
+
+#define ADC_CURRENT_SCALE           (ADC_VREF * (-0.5f) / DRV_CSA_GAIN_VAL / DRV_R_SHUNT / ((ADC_RESOLUTION) ? (32768.0f) : (2048.0f)))
+#define ADC_VOLTAGE_SCALE           (ADC_VREF * (4.99f + 82.0f) / 4.99f / ((ADC_RESOLUTION) ? (65536.0f) : (4096.0f)))// Voltage divider R1:4.99kO R2:82kO
 
 
 
@@ -452,5 +476,7 @@
 #define M2_LQ                   140e-6    // Stator q-axis inductance (H)
 #define M2_POLES_PAIRS          12        // Number of poles
 #define M2_CUR_LOOP_BANDWIDTH   500.0     // Current loop bandwidth (Hz)
+
+#define HWSREGH(x)              (*((volatile int16_t *)((uintptr_t)(x))))
 
 #endif

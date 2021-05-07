@@ -9,12 +9,12 @@
 
 /* Static function signatures */
 // Device HAL
-static void HAL_GPIO_init(const GPIO_TypeDef*);
-static void HAL_ADC_init(const ADC_TypeDef*);
-static void HAL_ePWM_init(const ePWM_TypeDef*);
-static void HAL_eQEP_init(const eQEP_TypeDef*);
-static void HAL_SPI_init(const SPI_TypeDef*);
-static void HAL_DMA_init(const DMA_TypeDef*);
+void HAL_GPIO_init(const GPIO_TypeDef*);
+void HAL_ADC_init(const ADC_TypeDef*);
+void HAL_ePWM_init(const ePWM_TypeDef*);
+void HAL_eQEP_init(const eQEP_TypeDef*);
+void HAL_SPI_init(const SPI_TypeDef*);
+void HAL_DMA_init(const DMA_TypeDef*);
 //static void HAL_CLA_init(HAL*);
 
 // Function definitions
@@ -49,7 +49,7 @@ void HAL_init(HAL* p_hal)
  * @brief       GPIO initialization function.
  * @param[in]   *p_gpio     Pointer on the GPIO structure definition
  */
-static void HAL_GPIO_init(const GPIO_TypeDef* p_gpio)
+void HAL_GPIO_init(const GPIO_TypeDef* p_gpio)
 {
     if(p_gpio != NULL)
     {
@@ -76,7 +76,7 @@ static void HAL_GPIO_init(const GPIO_TypeDef* p_gpio)
  * @brief       ADC initialization function.
  * @param[in]   *p_adcCfg   Pointer on the ADC configuration structure
  */
-static void HAL_ADC_init(const ADC_TypeDef* p_adcCfg)
+void HAL_ADC_init(const ADC_TypeDef* p_adcCfg)
 {
     if((p_adcCfg != NULL) && (ADC_isBaseValid(p_adcCfg->adcBase)) && (p_adcCfg->adcSoc != NULL) &&
             (p_adcCfg->adcPpb != NULL) && (p_adcCfg->adcIt != NULL))
@@ -141,7 +141,7 @@ static void HAL_ADC_init(const ADC_TypeDef* p_adcCfg)
  * @brief       ePWM global peripheral initialization function.
  * @param[in]   *p_pwmCfg   Pointer on the PWM configuration structure
  */
-static void HAL_ePWM_init(const ePWM_TypeDef* p_pwmCfg)
+void HAL_ePWM_init(const ePWM_TypeDef* p_pwmCfg)
 {
     if((p_pwmCfg != NULL) && ( p_pwmCfg->epwmTimeBase != NULL) && (p_pwmCfg->epwmCaptureCompare) &&
             (p_pwmCfg->epwmActionQualifier != NULL) && (p_pwmCfg->epwmDeadband != NULL))
@@ -356,7 +356,7 @@ static void HAL_ePWM_init(const ePWM_TypeDef* p_pwmCfg)
  * @brief       Quadrature encoder initialization function.
  * @param[in]   *p_qepCfg   Pointer on the QEP configuration structure
  */
-static void HAL_eQEP_init(const eQEP_TypeDef* p_qepCfg)
+void HAL_eQEP_init(const eQEP_TypeDef* p_qepCfg)
 {
     if(p_qepCfg != NULL)
     {
@@ -395,7 +395,7 @@ static void HAL_eQEP_init(const eQEP_TypeDef* p_qepCfg)
  * @brief       SPI bus initialization function.
  * @param[in]   *p_spiCfg   Pointer on the SPI configuration structure
  */
-static void HAL_SPI_init(const SPI_TypeDef* p_spiCfg)
+void HAL_SPI_init(const SPI_TypeDef* p_spiCfg)
 {
     if(p_spiCfg != NULL)
     {
@@ -432,7 +432,7 @@ static void HAL_SPI_init(const SPI_TypeDef* p_spiCfg)
  * @brief       DMA initialization function.
  * @param[in]   *p_dmaCfg   Pointer on the DMA configuration structure
  */
-static void HAL_DMA_init(const DMA_TypeDef* p_dmaCfg)
+void HAL_DMA_init(const DMA_TypeDef* p_dmaCfg)
 {
     if(p_dmaCfg != NULL)
     {
@@ -561,7 +561,7 @@ void HAL_ADC_offsetCalib(MOTOR_ACQ* p_motor)
                 ADC_enablePPBTwosComplement(p_iConv->adcBase, p_iConv->adcPPBNumber);
                 p_vConv = p_motor->p_vConv[loop];
                 // Sets the post processing block reference offset for tensions
-                ADC_setPPBReferenceOffset(p_vConv->adcBase, p_vConv->adcPPBNumber, (uint16_t)v[loop]);
+                //ADC_setPPBReferenceOffset(p_vConv->adcBase, p_vConv->adcPPBNumber, (uint16_t)v[loop]);
             }
             // Calibrate next motor
             p_motor++;

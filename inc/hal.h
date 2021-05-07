@@ -225,6 +225,7 @@ typedef struct _ADC_PPB_TypeDef_
 {
     uint32_t adcBase;                               /*!< ADC peripheral address. */
     uint32_t adcResultBase;
+    uint32_t adcPPBResultBase;
 //    uint16_t adcCalib;
 //    uint16_t adcOffset;
     ADC_SOCNumber adcSOCNumber;
@@ -249,6 +250,7 @@ typedef struct _ADC_IT_TypeDef_
 typedef struct _ADC_TypeDef_
 {
     const uint32_t adcBase;                         /*!< ADC peripheral address. */
+    const uint32_t adcResultBase;
     const ADC_SOC_TypeDef* adcSoc;
     const ADC_PPB_TypeDef* adcPpb;
     const ADC_IT_TypeDef*  adcIt;
@@ -319,15 +321,19 @@ typedef struct _ACQ_
 // Motor Hardware Abstraction Layer structure
 typedef struct _MOTOR_ACQ_
 {
-    ADC_SOC_TypeDef* p_adcSoc[3];
-    const ePWM_CC_TypeDef* p_pwmCntCmp[3];
-    const ADC_PPB_TypeDef* p_iConv[3];
-    const ADC_PPB_TypeDef* p_vConv[3];
-    const ADC_PPB_TypeDef* p_vbusConv;
-    uint32_t pwmHandle;
-    uint32_t qepHandle;
-    uint32_t iSenResHandle[3];
-    uint32_t ppbNumHandle[3];
+//    ADC_SOC_TypeDef* p_adcSoc[3];
+    const ePWM_CC_TypeDef*  p_pwmCntCmp[3];
+    const ADC_PPB_TypeDef*  p_iConv[3];
+    const ADC_PPB_TypeDef*  p_vConv[3];
+    const ADC_PPB_TypeDef*  p_vbusConv;
+    const eQEP_TypeDef*     p_qep;
+    // ADC results scaled (expressed in (A))
+    float32_t               i[3];
+    float32_t               v[3];
+    float32_t               vbus;
+
+    // PWM command registers (CMPx regs)
+    volatile uint16_t*      p_pwmCmd[3];
 
 //    const ADC_TypeDef*    p_adcCfg;
 //    const ePWM_TypeDef*   p_pwmCfg;
@@ -364,7 +370,7 @@ typedef struct _MOTOR_ACQ_
  */
 
 void HAL_init(HAL*);
-extern void HAL_IT_init();
+void HAL_IT_init();
 
 // ADC interrupt service routine
 extern __interrupt void adc1ISR(void);

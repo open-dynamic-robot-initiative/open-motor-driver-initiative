@@ -64,23 +64,23 @@ static const GPIO_TypeDef GpioPinsCfgList[] =
 static const ADC_SOC_TypeDef AdcSOCsList[] =
 {
  /* ADCA - ADCINA0 : Ia Motor1, ADCINA1 : Ia Motor2, ADCINA2 : Va Motor1, ADCINA3 : Va Motor2 */
- {.adcBase = M1_IA_ADC_BASE,    .adcChannel = M1_IA_CH,     .adcSOCNumber = M1_IA_SOC_NUM,      .adcTriggerSrc = ADC_TRIGGER_EVT1},
- {.adcBase = M2_IA_ADC_BASE,    .adcChannel = M2_IA_CH,     .adcSOCNumber = M2_IA_SOC_NUM,      .adcTriggerSrc = ADC_TRIGGER_EVT2},
- {.adcBase = M1_VA_ADC_BASE,    .adcChannel = M1_VA_CH,     .adcSOCNumber = M1_VA_SOC_NUM,      .adcTriggerSrc = ADC_TRIGGER_EVT3},
- {.adcBase = M2_VA_ADC_BASE,    .adcChannel = M2_VA_CH,     .adcSOCNumber = M2_VA_SOC_NUM,      .adcTriggerSrc = ADC_TRIGGER_EVT4},
+ {.adcBase = M1_IA_ADC_ADDR,    .adcChannel = M1_IA_CH,     .adcSOCNumber = M1_IA_SOC_NUM,      .adcTriggerSrc = ADC_TRIGGER_EVT1},
+ {.adcBase = M2_IA_ADC_ADDR,    .adcChannel = M2_IA_CH,     .adcSOCNumber = M2_IA_SOC_NUM,      .adcTriggerSrc = ADC_TRIGGER_EVT2},
+ {.adcBase = M1_VA_ADC_ADDR,    .adcChannel = M1_VA_CH,     .adcSOCNumber = M1_VA_SOC_NUM,      .adcTriggerSrc = ADC_TRIGGER_EVT3},
+ {.adcBase = M2_VA_ADC_ADDR,    .adcChannel = M2_VA_CH,     .adcSOCNumber = M2_VA_SOC_NUM,      .adcTriggerSrc = ADC_TRIGGER_EVT4},
  /* ADCB - ADCINB0 : Ib Motor1, ADCINB1 : Ib Motor2, ADCINB2 : Vb Motor1, ADCINB3 : Vb Motor2 */
- {.adcBase = M1_IB_ADC_BASE,    .adcChannel = M1_IB_CH,     .adcSOCNumber = M1_IB_SOC_NUM,      .adcTriggerSrc = ADC_TRIGGER_EVT1},
- {.adcBase = M2_IB_ADC_BASE,    .adcChannel = M2_IB_CH,     .adcSOCNumber = M2_IB_SOC_NUM,      .adcTriggerSrc = ADC_TRIGGER_EVT2},
- {.adcBase = M1_VB_ADC_BASE,    .adcChannel = M1_VB_CH,     .adcSOCNumber = M1_VB_SOC_NUM,      .adcTriggerSrc = ADC_TRIGGER_EVT3},
- {.adcBase = M2_VB_ADC_BASE,    .adcChannel = M2_VB_CH,     .adcSOCNumber = M2_VB_SOC_NUM,      .adcTriggerSrc = ADC_TRIGGER_EVT4},
+ {.adcBase = M1_IB_ADC_ADDR,    .adcChannel = M1_IB_CH,     .adcSOCNumber = M1_IB_SOC_NUM,      .adcTriggerSrc = ADC_TRIGGER_EVT1},
+ {.adcBase = M2_IB_ADC_ADDR,    .adcChannel = M2_IB_CH,     .adcSOCNumber = M2_IB_SOC_NUM,      .adcTriggerSrc = ADC_TRIGGER_EVT2},
+ {.adcBase = M1_VB_ADC_ADDR,    .adcChannel = M1_VB_CH,     .adcSOCNumber = M1_VB_SOC_NUM,      .adcTriggerSrc = ADC_TRIGGER_EVT3},
+ {.adcBase = M2_VB_ADC_ADDR,    .adcChannel = M2_VB_CH,     .adcSOCNumber = M2_VB_SOC_NUM,      .adcTriggerSrc = ADC_TRIGGER_EVT4},
  /* ADCC - ADCINC2 : Vbus Motor1, ADCINC3 : Vbus Motor2, ADCINC4 : Vpot Motor1, ADCINC5 : Vpot Motor2 */
- {.adcBase = M1_VBUS_ADC_BASE,  .adcChannel = M1_VBUS_CH,   .adcSOCNumber = M1_VBUS_SOC_NUM,    .adcTriggerSrc = ADC_TRIGGER_EVT1},
- {.adcBase = M2_VBUS_ADC_BASE,  .adcChannel = M2_VBUS_CH,   .adcSOCNumber = M2_VBUS_SOC_NUM,    .adcTriggerSrc = ADC_TRIGGER_EVT2},
+ {.adcBase = M1_VBUS_ADC_ADDR,  .adcChannel = M1_VBUS_CH,   .adcSOCNumber = M1_VBUS_SOC_NUM,    .adcTriggerSrc = ADC_TRIGGER_EVT1},
+ {.adcBase = M2_VBUS_ADC_ADDR,  .adcChannel = M2_VBUS_CH,   .adcSOCNumber = M2_VBUS_SOC_NUM,    .adcTriggerSrc = ADC_TRIGGER_EVT2},
  /* ADCD - ADCIND0 : Ic Motor1, ADCIND1 : Ic Motor2, ADCIND2 : Vc Motor1, ADCIND3 : Vc Motor2 */
- {.adcBase = M1_IC_ADC_BASE,    .adcChannel = M1_IC_CH,     .adcSOCNumber = M1_IC_SOC_NUM,      .adcTriggerSrc = ADC_TRIGGER_EVT1},
- {.adcBase = M2_IC_ADC_BASE,    .adcChannel = M2_IC_CH,     .adcSOCNumber = M2_IC_SOC_NUM,      .adcTriggerSrc = ADC_TRIGGER_EVT2},
- {.adcBase = M1_VC_ADC_BASE,    .adcChannel = M1_VC_CH,     .adcSOCNumber = M1_VC_SOC_NUM,      .adcTriggerSrc = ADC_TRIGGER_EVT3},
- {.adcBase = M2_VC_ADC_BASE,    .adcChannel = M2_VC_CH,     .adcSOCNumber = M2_VC_SOC_NUM,      .adcTriggerSrc = ADC_TRIGGER_EVT4},
+ {.adcBase = M1_IC_ADC_ADDR,    .adcChannel = M1_IC_CH,     .adcSOCNumber = M1_IC_SOC_NUM,      .adcTriggerSrc = ADC_TRIGGER_EVT1},
+ {.adcBase = M2_IC_ADC_ADDR,    .adcChannel = M2_IC_CH,     .adcSOCNumber = M2_IC_SOC_NUM,      .adcTriggerSrc = ADC_TRIGGER_EVT2},
+ {.adcBase = M1_VC_ADC_ADDR,    .adcChannel = M1_VC_CH,     .adcSOCNumber = M1_VC_SOC_NUM,      .adcTriggerSrc = ADC_TRIGGER_EVT3},
+ {.adcBase = M2_VC_ADC_ADDR,    .adcChannel = M2_VC_CH,     .adcSOCNumber = M2_VC_SOC_NUM,      .adcTriggerSrc = ADC_TRIGGER_EVT4},
  // END OF ARRAY
  {.adcBase = 0xFFFFFFFF},
 };
@@ -91,23 +91,23 @@ static const ADC_SOC_TypeDef AdcSOCsList[] =
 static const ADC_PPB_TypeDef AdcPPBsList[] =
 {
  /* ADCA : Ia_M1, Ia_M2, Va_M1, Va_M2; SOC0 - 3; PPB1 - 4 */
- {.adcBase = M1_IA_ADC_BASE,    .adcResultBase = M1_IA_ADC_RESULT_BASE,     .adcSOCNumber = M1_IA_SOC_NUM,   .adcPPBNumber = M1_IA_PPB_NUM},
- {.adcBase = M2_IA_ADC_BASE,    .adcResultBase = M2_IA_ADC_RESULT_BASE,     .adcSOCNumber = M2_IA_SOC_NUM,   .adcPPBNumber = M2_IA_PPB_NUM},
- {.adcBase = M1_VA_ADC_BASE,    .adcResultBase = M1_VA_ADC_RESULT_BASE,     .adcSOCNumber = M1_VA_SOC_NUM,   .adcPPBNumber = M1_VA_PPB_NUM},
- {.adcBase = M2_VA_ADC_BASE,    .adcResultBase = M2_VA_ADC_RESULT_BASE,     .adcSOCNumber = M2_VA_SOC_NUM,   .adcPPBNumber = M2_VA_PPB_NUM},
+ {.adcBase = M1_IA_ADC_ADDR,    .adcResultBase = M1_IA_ADC_RESULT_ADDR,     .adcPPBResultBase = M1_IA_ADC_PPB_RESULT_ADDR,  .adcSOCNumber = M1_IA_SOC_NUM,   .adcPPBNumber = M1_IA_PPB_NUM},
+ {.adcBase = M2_IA_ADC_ADDR,    .adcResultBase = M2_IA_ADC_RESULT_ADDR,     .adcPPBResultBase = M2_IA_ADC_PPB_RESULT_ADDR,  .adcSOCNumber = M2_IA_SOC_NUM,   .adcPPBNumber = M2_IA_PPB_NUM},
+ {.adcBase = M1_VA_ADC_ADDR,    .adcResultBase = M1_VA_ADC_RESULT_ADDR,     .adcPPBResultBase = M1_VA_ADC_PPB_RESULT_ADDR,  .adcSOCNumber = M1_VA_SOC_NUM,   .adcPPBNumber = M1_VA_PPB_NUM},
+ {.adcBase = M2_VA_ADC_ADDR,    .adcResultBase = M2_VA_ADC_RESULT_ADDR,     .adcPPBResultBase = M2_VA_ADC_PPB_RESULT_ADDR,  .adcSOCNumber = M2_VA_SOC_NUM,   .adcPPBNumber = M2_VA_PPB_NUM},
  /* ADCB : Ib_M1, Ib_M2, Vb_M1, Vb_M2; SOC0 - 3; PPB1 - 4 */
- {.adcBase = M1_IB_ADC_BASE,    .adcResultBase = M1_IB_ADC_RESULT_BASE,     .adcSOCNumber = M1_IB_SOC_NUM,   .adcPPBNumber = M1_IB_PPB_NUM},
- {.adcBase = M2_IB_ADC_BASE,    .adcResultBase = M2_IB_ADC_RESULT_BASE,     .adcSOCNumber = M2_IB_SOC_NUM,   .adcPPBNumber = M2_IB_PPB_NUM},
- {.adcBase = M1_VB_ADC_BASE,    .adcResultBase = M1_VB_ADC_RESULT_BASE,     .adcSOCNumber = M1_VB_SOC_NUM,   .adcPPBNumber = M1_VB_PPB_NUM},
- {.adcBase = M2_VB_ADC_BASE,    .adcResultBase = M2_VB_ADC_RESULT_BASE,     .adcSOCNumber = M2_VB_SOC_NUM,   .adcPPBNumber = M2_VB_PPB_NUM},
+ {.adcBase = M1_IB_ADC_ADDR,    .adcResultBase = M1_IB_ADC_RESULT_ADDR,     .adcPPBResultBase = M1_IB_ADC_PPB_RESULT_ADDR,  .adcSOCNumber = M1_IB_SOC_NUM,   .adcPPBNumber = M1_IB_PPB_NUM},
+ {.adcBase = M2_IB_ADC_ADDR,    .adcResultBase = M2_IB_ADC_RESULT_ADDR,     .adcPPBResultBase = M2_IB_ADC_PPB_RESULT_ADDR,  .adcSOCNumber = M2_IB_SOC_NUM,   .adcPPBNumber = M2_IB_PPB_NUM},
+ {.adcBase = M1_VB_ADC_ADDR,    .adcResultBase = M1_VB_ADC_RESULT_ADDR,     .adcPPBResultBase = M1_VB_ADC_PPB_RESULT_ADDR,  .adcSOCNumber = M1_VB_SOC_NUM,   .adcPPBNumber = M1_VB_PPB_NUM},
+ {.adcBase = M2_VB_ADC_ADDR,    .adcResultBase = M2_VB_ADC_RESULT_ADDR,     .adcPPBResultBase = M2_VB_ADC_PPB_RESULT_ADDR,  .adcSOCNumber = M2_VB_SOC_NUM,   .adcPPBNumber = M2_VB_PPB_NUM},
  /* ADCC : Vbus_M1, Vbus_M2; SOC0 - 1; PPB1 - 2 */
- {.adcBase = M1_VBUS_ADC_BASE,  .adcResultBase = M1_VBUS_ADC_RESULT_BASE,   .adcSOCNumber = M1_VBUS_SOC_NUM, .adcPPBNumber = M1_VBUS_PPB_NUM},
- {.adcBase = M2_VBUS_ADC_BASE,  .adcResultBase = M2_VBUS_ADC_RESULT_BASE,   .adcSOCNumber = M2_VBUS_SOC_NUM, .adcPPBNumber = M2_VBUS_PPB_NUM},
+ {.adcBase = M1_VBUS_ADC_ADDR,  .adcResultBase = M1_VBUS_ADC_RESULT_ADDR,   .adcPPBResultBase = M1_VBUS_ADC_PPB_RESULT_ADDR,.adcSOCNumber = M1_VBUS_SOC_NUM, .adcPPBNumber = M1_VBUS_PPB_NUM},
+ {.adcBase = M2_VBUS_ADC_ADDR,  .adcResultBase = M2_VBUS_ADC_RESULT_ADDR,   .adcPPBResultBase = M2_VBUS_ADC_PPB_RESULT_ADDR,.adcSOCNumber = M2_VBUS_SOC_NUM, .adcPPBNumber = M2_VBUS_PPB_NUM},
  /* ADCD : Ic_M1, Ic_M2, Vc_M1, Vc_M2; SOC0 - 3; PPB1 - 4 */
- {.adcBase = M1_IC_ADC_BASE,    .adcResultBase = M1_IC_ADC_RESULT_BASE,     .adcSOCNumber = M1_IC_SOC_NUM,   .adcPPBNumber = M1_IC_PPB_NUM},
- {.adcBase = M2_IC_ADC_BASE,    .adcResultBase = M2_IC_ADC_RESULT_BASE,     .adcSOCNumber = M2_IC_SOC_NUM,   .adcPPBNumber = M2_IC_PPB_NUM},
- {.adcBase = M1_VC_ADC_BASE,    .adcResultBase = M1_VC_ADC_RESULT_BASE,     .adcSOCNumber = M1_VC_SOC_NUM,   .adcPPBNumber = M1_VC_PPB_NUM},
- {.adcBase = M2_VC_ADC_BASE,    .adcResultBase = M2_VC_ADC_RESULT_BASE,     .adcSOCNumber = M2_VC_SOC_NUM,   .adcPPBNumber = M2_VC_PPB_NUM},
+ {.adcBase = M1_IC_ADC_ADDR,    .adcResultBase = M1_IC_ADC_RESULT_ADDR,     .adcPPBResultBase = M1_IC_ADC_PPB_RESULT_ADDR,  .adcSOCNumber = M1_IC_SOC_NUM,   .adcPPBNumber = M1_IC_PPB_NUM},
+ {.adcBase = M2_IC_ADC_ADDR,    .adcResultBase = M2_IC_ADC_RESULT_ADDR,     .adcPPBResultBase = M2_IC_ADC_PPB_RESULT_ADDR,  .adcSOCNumber = M2_IC_SOC_NUM,   .adcPPBNumber = M2_IC_PPB_NUM},
+ {.adcBase = M1_VC_ADC_ADDR,    .adcResultBase = M1_VC_ADC_RESULT_ADDR,     .adcPPBResultBase = M1_VC_ADC_PPB_RESULT_ADDR,  .adcSOCNumber = M1_VC_SOC_NUM,   .adcPPBNumber = M1_VC_PPB_NUM},
+ {.adcBase = M2_VC_ADC_ADDR,    .adcResultBase = M2_VC_ADC_RESULT_ADDR,     .adcPPBResultBase = M2_VC_ADC_PPB_RESULT_ADDR,  .adcSOCNumber = M2_VC_SOC_NUM,   .adcPPBNumber = M2_VC_PPB_NUM},
  // END OF ARRAY
  {.adcBase = 0xFFFFFFFF}
 };
@@ -117,10 +117,10 @@ static const ADC_PPB_TypeDef AdcPPBsList[] =
  */
 static const ADC_IT_TypeDef AdcIntList[] =
 {
- {.adcBase = M12_IVA_ADC_BASE, .adcEOCNumber = M1_IA_SOC_NUM,   .adcIntNumber = ADC_INT_NUMBER1},
- {.adcBase = M12_IVA_ADC_BASE, .adcEOCNumber = M2_IA_SOC_NUM,   .adcIntNumber = ADC_INT_NUMBER2},
- {.adcBase = M12_IVA_ADC_BASE, .adcEOCNumber = M1_VA_SOC_NUM,   .adcIntNumber = ADC_INT_NUMBER3},
- {.adcBase = M12_IVA_ADC_BASE, .adcEOCNumber = M2_VA_SOC_NUM,   .adcIntNumber = ADC_INT_NUMBER4},
+ {.adcBase = M12_IVA_ADC_ADDR, .adcEOCNumber = M1_IA_SOC_NUM,   .adcIntNumber = ADC_INT_NUMBER1},
+ {.adcBase = M12_IVA_ADC_ADDR, .adcEOCNumber = M2_IA_SOC_NUM,   .adcIntNumber = ADC_INT_NUMBER2},
+ {.adcBase = M12_IVA_ADC_ADDR, .adcEOCNumber = M1_VA_SOC_NUM,   .adcIntNumber = ADC_INT_NUMBER3},
+ {.adcBase = M12_IVA_ADC_ADDR, .adcEOCNumber = M2_VA_SOC_NUM,   .adcIntNumber = ADC_INT_NUMBER4},
  // END OF ARRAY
  {.adcBase = 0xFFFFFFFF}
 };
@@ -130,10 +130,10 @@ static const ADC_IT_TypeDef AdcIntList[] =
  */
 static const ADC_TypeDef AdcCfgList[] =
 {
- {.adcBase = M12_IVA_ADC_BASE,  .adcSoc = &AdcSOCsList[0],  .adcPpb = &AdcPPBsList[0],  .adcIt = &AdcIntList[0]},
- {.adcBase = M12_IVB_ADC_BASE,  .adcSoc = &AdcSOCsList[4],  .adcPpb = &AdcPPBsList[4],  .adcIt = &AdcIntList[1]},
- {.adcBase = M12_VBUS_ADC_BASE, .adcSoc = &AdcSOCsList[8],  .adcPpb = &AdcPPBsList[8],  .adcIt = &AdcIntList[2]},
- {.adcBase = M12_IVC_ADC_BASE,  .adcSoc = &AdcSOCsList[12], .adcPpb = &AdcPPBsList[10], .adcIt = &AdcIntList[3]},
+ {.adcBase = M12_IVA_ADC_ADDR,  .adcResultBase = M12_IVA_ADC_RESULT_ADDR,   .adcSoc = &AdcSOCsList[0],  .adcPpb = &AdcPPBsList[0],  .adcIt = &AdcIntList[0]},
+ {.adcBase = M12_IVB_ADC_ADDR,  .adcResultBase = M12_IVB_ADC_RESULT_ADDR,   .adcSoc = &AdcSOCsList[4],  .adcPpb = &AdcPPBsList[4],  .adcIt = &AdcIntList[1]},
+ {.adcBase = M12_VBUS_ADC_ADDR, .adcResultBase = M12_VBUS_ADC_RESULT_ADDR,  .adcSoc = &AdcSOCsList[8],  .adcPpb = &AdcPPBsList[8],  .adcIt = &AdcIntList[2]},
+ {.adcBase = M12_IVC_ADC_ADDR,  .adcResultBase = M12_IVC_ADC_RESULT_ADDR,   .adcSoc = &AdcSOCsList[12], .adcPpb = &AdcPPBsList[10], .adcIt = &AdcIntList[3]},
  // END OF ARRAY
  {.adcBase = 0xFFFFFFFF},
 };
@@ -326,7 +326,7 @@ static DRV_Reg DrvRegList[] =
    .Ctrl_Reg_06.ctrl06.CSA_CAL_B    = false,
    .Ctrl_Reg_06.ctrl06.CSA_CAL_A    = false,
    .Ctrl_Reg_06.ctrl06.DIS_SEN      = false,
-   .Ctrl_Reg_06.ctrl06.CSA_GAIN     = DRV_CSA_GAIN,
+   .Ctrl_Reg_06.ctrl06.CSA_GAIN     = DRV_CSA_GAIN_REG,
    .Ctrl_Reg_06.ctrl06.LS_REF       = false,
    .Ctrl_Reg_06.ctrl06.VREF_DIV     = true,
    .Ctrl_Reg_06.ctrl06.CSA_FET      = false,
@@ -364,7 +364,7 @@ static DRV_Reg DrvRegList[] =
    .Ctrl_Reg_06.ctrl06.CSA_CAL_B    = false,
    .Ctrl_Reg_06.ctrl06.CSA_CAL_A    = false,
    .Ctrl_Reg_06.ctrl06.DIS_SEN      = false,
-   .Ctrl_Reg_06.ctrl06.CSA_GAIN     = DRV_CSA_GAIN,
+   .Ctrl_Reg_06.ctrl06.CSA_GAIN     = DRV_CSA_GAIN_REG,
    .Ctrl_Reg_06.ctrl06.LS_REF       = false,
    .Ctrl_Reg_06.ctrl06.VREF_DIV     = true,
    .Ctrl_Reg_06.ctrl06.CSA_FET      = false,
@@ -372,35 +372,78 @@ static DRV_Reg DrvRegList[] =
    .Ctrl_Reg_07.ctrl07.CAL_MODE     = true},
 };
 
-//  .p_adcCfg = &AdcCfgList[0],
-//  .p_pwmCfg = &PwmCfgList[0],
-//  .p_qepCfg = &QepCfgList[0],
-//MOTOR_ACQ motors_acq[2] =
-//{
-// {
-//  .ia_socNum    = M1_IA_SOC_NUM,
-//  .ib_socNum    = M1_IB_SOC_NUM,
-//  .ic_socNum    = M1_IC_SOC_NUM,
-//  .va_socNum    = M1_VA_SOC_NUM,
-//  .vb_socNum    = M1_VB_SOC_NUM,
-//  .vc_socNum    = M1_VC_SOC_NUM,
-//  .vbus_socNum  = M1_VBUS_SOC_NUM,
-//  .dataValid    = {false, false},
-//  .offsetCal    = true
-// },
-// {
-//  .ia_socNum    = M2_IA_SOC_NUM,
-//  .ib_socNum    = M2_IB_SOC_NUM,
-//  .ic_socNum    = M2_IC_SOC_NUM,
-//  .va_socNum    = M2_VA_SOC_NUM,
-//  .vb_socNum    = M2_VB_SOC_NUM,
-//  .vc_socNum    = M2_VC_SOC_NUM,
-//  .vbus_socNum  = M2_VBUS_SOC_NUM,
-//  .dataValid    = {false, false},
-//  .offsetCal    = true
-// },
-//};
+static HAL hal =
+{
+ .gpioHandler = GpioPinsCfgList,
+ .adcHandler  = AdcCfgList,
+ .epwmHandler = PwmCfgList,
+ .eqepHandler = QepCfgList,
+ .dmaHandler  = NULL,
+ .spiHandler  = spiCfgList
+};
+// DRV8323 Hardware Abstraction Layers
+static DRV8353 drv =
+{
+ .drvCfgHandler = DrvCfgList,
+ .drvRegHandler = DrvRegList
+};
 
+static MOTOR_ACQ motors_acq[] =
+{
+ {
+  .motorID      = MOTOR_1,
+  .p_pwmCntCmp  = {&PwmCounterCompareCfgList[0], &PwmCounterCompareCfgList[1], &PwmCounterCompareCfgList[2]},
+  .p_iConv      = {&AdcPPBsList[0], &AdcPPBsList[4], &AdcPPBsList[10]},
+  .p_vConv      = {&AdcPPBsList[2], &AdcPPBsList[6], &AdcPPBsList[12]},
+  .p_vbusConv   = &AdcPPBsList[8],
+//  .p_ia         = ((volatile int16_t *)(.p_iConv[0]->adcPPBResultBase)),
+//  .p_ib         = (volatile int16_t *)(.p_iConv[1]->adcPPBResultBase),
+//  .p_ic         = (volatile int16_t *)(.p_iConv[2]->adcPPBResultBase),
+  //.p_iMesured   = {(*((volatile uint16_t *)(.p_iConv[0]->adcResultBase + ADC_O_PPB1RESULT))), (&((.p_iConv[0]->adcResultBase + ADC_O_PPB1RESULT))), (&((.p_iConv[0]->adcResultBase + ADC_O_PPB1RESULT)))},
+//  .p_iMesured   = {(*((volatile uint16_t *)(AdcPPBsList[0].adcResultBase)))},
+//  .p_iMesured   = {&(.p_iConv[0]->adcResultBase), (AdcPPBsList[4].adcResultBase), (AdcPPBsList[10].adcResultBase)},
+//  .p_iMesured   = {((volatile int16_t *)(AdcPPBsList[0].adcResultBase)),
+//                   ((volatile int16_t *)(AdcPPBsList[4].adcResultBase)),
+//                   ((volatile int16_t *)(AdcPPBsList[10].adcResultBase))},
+//  .p_vMesured   = {((volatile int16_t *)(AdcPPBsList[2].adcResultBase)),
+//                   ((volatile int16_t *)(AdcPPBsList[6].adcResultBase)),
+//                   ((volatile int16_t *)(AdcPPBsList[12].adcResultBase))},
+//  .p_vBusMesured= (volatile int16_t *)(AdcPPBsList[8].adcResultBase),
+  .dataValid    = {false, false},
+//  .offsetCal      = true
+ },
+ {
+  .motorID      = MOTOR_2,
+  .p_pwmCntCmp  = {&PwmCounterCompareCfgList[3], &PwmCounterCompareCfgList[4], &PwmCounterCompareCfgList[5]},
+  .p_iConv      = {&AdcPPBsList[1], &AdcPPBsList[5], &AdcPPBsList[11]},
+  .p_vConv      = {&AdcPPBsList[3], &AdcPPBsList[7], &AdcPPBsList[13]},
+  .p_vbusConv   = &AdcPPBsList[9],
+//  .p_ia         = (((volatile int16_t *)((uintptr_t)(M2_IA_ADC_PPB_RESULT_ADDR)))),
+
+//  .p_ia         = (&((volatile int16_t *)((AdcPPBsList[1].adcPPBResultBase)))),
+
+//  .p_ia         = (((volatile int16_t *)((uintptr_t)&(AdcPPBsList[1]->adcPPBResultBase)))),
+
+//  .p_ia         = (&((volatile uint16_t *)((uintptr_t)(motors_acq[MOTOR_2].p_iConv[0]->adcPPBResultBase)))),
+
+//  .p_ia         = ((int32_t *)(AdcPPBsList[1].adcPPBResultBase)),
+//  .p_iMesured   = {((volatile int32_t *)(AdcPPBsList[1].adcPPBResultBase)), ((volatile int32_t *)(AdcPPBsList[5].adcPPBResultBase)), ((volatile int32_t *)(AdcPPBsList[11].adcPPBResultBase))},
+//  .p_iMesured   = {(*((volatile uint16_t *)(AdcPPBsList[1].adcResultBase)))},
+//
+//  {((volatile int16_t *)(AdcPPBsList[1].adcResultBase)),
+//                   ((volatile int16_t *)(AdcPPBsList[5].adcResultBase)),
+//                   ((volatile int16_t *)(AdcPPBsList[11].adcResultBase))},
+//  .p_vMesured   = {((volatile int16_t *)(AdcPPBsList[3].adcResultBase)),
+//                   ((volatile int16_t *)(AdcPPBsList[7].adcResultBase)),
+//                   ((volatile int16_t *)(AdcPPBsList[13].adcResultBase))},
+//  .p_vBusMesured= (volatile int16_t *)(AdcPPBsList[9].adcResultBase),
+  .dataValid    = {false, false},
+//  .offsetCal      = true
+ },
+ {
+  .motorID      = NO_MOT,
+ }
+};
 
 //static const ePWM_TypeDef PwmCfgList[] =
 //{
