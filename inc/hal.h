@@ -8,8 +8,7 @@
 
 #include "driverlib.h"
 #include "device.h"
-
-//#include "drv8353.h"
+#include "f2838x_device.h"
 
 /**
  * @enum    Motor_Sel
@@ -155,9 +154,13 @@ typedef struct _SPI_Cfg_TypeDef_
     bool spiFifoEnable;
 } SPI_TypeDef;
 
+/**
+ * @struct  DMA_TypeDef
+ * @brief   DMA global Hardware Abstraction Layer structure
+ */
 typedef struct _DMA_Cfg_TypeDef_
 {
-    uint32_t dmaBase;
+    uint32_t dmaChBase;
     uint32_t transferSize;//    uint32_t dmaRxBase;
     uint32_t srcWrapSize;
     uint32_t destWrapSize;
@@ -170,10 +173,15 @@ typedef struct _DMA_Cfg_TypeDef_
     DMA_Trigger trigger;
 } DMA_TypeDef;
 
-//typedef struct _CLA_Cfg_TypeDef_
-//{
-//
-//} CLA_TypeDef;
+/**
+ * @struct  CLA_TypeDef
+ * @brief   CLA global Hardware Abstraction Layer structure - To be updated
+ */
+typedef struct _CLA_Cfg_TypeDef_
+{
+    uint32_t claBase;
+    //TODO
+} CLA_TypeDef;
 
 /**
  * @struct  GPIO_TypeDef
@@ -250,40 +258,16 @@ typedef struct _ADC_IT_TypeDef_
 typedef struct _ADC_TypeDef_
 {
     const uint32_t adcBase;                         /*!< ADC peripheral address. */
-    const uint32_t adcResultBase;
-    const ADC_SOC_TypeDef* adcSoc;
-    const ADC_PPB_TypeDef* adcPpb;
-    const ADC_IT_TypeDef*  adcIt;
+    const uint32_t adcResultBase;                   /*!< ADC results address. */
+    const ADC_SOC_TypeDef* adcSoc;                  /*!< Pointer on ADC start-of-conversion configuration handler */
+    const ADC_PPB_TypeDef* adcPpb;                  /*!< Pointer on ADC Post-Processing Block configuration handler */
+    const ADC_IT_TypeDef*  adcIt;                   /*!< Pointer on ADC Interrupt source configuration handler */
 } ADC_TypeDef;
 
-// Debug-only structure used to store motor data
-typedef struct _MotorDebug_
-{
-    // ADC measurements
-//    float32_t vBus;
-//    float32_t vShunt[3];
-//    float32_t vShuntOffset[3];
-
-    float32_t iaOffset[4];
-    float32_t ibOffset[4];
-    float32_t icOffset[4];
-    float32_t vbusOffset[4];
-    float32_t vaOffset[4];
-    float32_t vbOffset[4];
-    float32_t vcOffset[4];
-//    float32_t vpotOffset[4];
-
-    // QEP measurements
-    uint32_t position;
-    uint16_t period;
-    uint16_t statusErrorCounter;
-
-    uint32_t interruptNb;
-
-    bool    calibMode;
-} MotorDebug;
-
-// Hardware Abstraction Layer structure
+/**
+ * @struct  HAL_
+ * @brief   General HAL structure handler for the project
+ */
 typedef struct _HAL_
 {
     const GPIO_TypeDef* gpioHandler;
@@ -295,31 +279,8 @@ typedef struct _HAL_
 //    const CLA_TypeDef*  claHandler;
 } HAL;
 
-typedef struct _ACQ_OFFSET_
-{
-    float32_t ia;
-    float32_t ib;
-    float32_t ic;
-    float32_t vbus;
-    float32_t va;
-    float32_t vb;
-    float32_t vc;
-} ACQ_OFFSET;
-
-typedef struct _ACQ_
-{
-    int16_t ia;
-    int16_t ib;
-    int16_t ic;
-    int16_t vbus;
-    int16_t va;
-    int16_t vb;
-    int16_t vc;
-    int16_t vpot;
-} ACQ;
-
 // Motor Hardware Abstraction Layer structure
-typedef struct _MOTOR_ACQ_
+typedef struct _MOTOR_HAL_CFG_
 {
 //    ADC_SOC_TypeDef* p_adcSoc[3];
     const ePWM_CC_TypeDef*  p_pwmCntCmp[3];
@@ -363,7 +324,7 @@ typedef struct _MOTOR_ACQ_
 
 
 
-} MOTOR_ACQ;
+} MOTOR_HAL_CFG;
 
 /*
  * Function prototypes
@@ -379,6 +340,6 @@ extern __interrupt void adc3ISR(void);
 extern __interrupt void adc4ISR(void);
 extern __interrupt void pwm1ISR(void);
 
-void HAL_ADC_offsetCalib(MOTOR_ACQ*);
+void HAL_ADC_offsetCalib(MOTOR_HAL_CFG*);
 
 #endif

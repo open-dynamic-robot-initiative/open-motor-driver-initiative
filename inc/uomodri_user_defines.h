@@ -3,8 +3,8 @@
  * Description: Header file containing user definitions
  */
 
-#ifndef __OMODRI_USER_DEFINES_H__
-#define __OMODRI_USER_DEFINES_H__
+#ifndef __UOMODRI_USER_DEFINES_H__
+#define __UOMODRI_USER_DEFINES_H__
 
 #include "driverlib.h"
 
@@ -15,8 +15,10 @@
  *  @brief    Special configurations definitions.
  * @{
  */
-#define OMODRI_PAL_SETUP            0    // Set this to 1 to use the PAL pin affectation
+#define OMODRI_PAL_SETUP            0   // Set this to 1 to use the PAL pin affectation
 #define SPI_DEBUG_CONFIGURATION     0   // Set this to 1 to use debug configuration
+// Word number in a full communication
+//#define SPI_COM_LENGTH              17
 /**
  * @}
  */
@@ -372,16 +374,24 @@
 #define QEP2_SWAP                       EQEP_CONFIG_NO_SWAP
 //#define QEP_CONFIG                      (EQEP_CONFIG_2X_RESOLUTION | EQEP_CONFIG_UP_COUNT | EQEP_CONFIG_NO_SWAP)
 #define QEP_EMUL_MODE                   EQEP_EMULATIONMODE_RUNFREE
-#define QEP_LATCH_MODE                  (EQEP_LATCH_RISING_INDEX)// | EQEP_LATCH_UNIT_TIME_OUT)
+#define QEP_LATCH_MODE                  (EQEP_LATCH_RISING_INDEX | EQEP_LATCH_UNIT_TIME_OUT)
 #define QEP_ENCODER_STEPS               5000
-#define QEP_RESET_POSITION_MAX          ((4 * QEP_ENCODER_STEPS) - 1)
+#define QEP_ENCODER_POSITION_MAX        ((4 * QEP_ENCODER_STEPS) - 1)
 #define QEP_RESET_POSITION_MODE         EQEP_POSITION_RESET_MAX_POS
 #define QEP_CAPTURE_CLOCK_DIV           EQEP_CAPTURE_CLK_DIV_8
 #define QEP_UNIT_POS_EVENT_DIV          EQEP_UNIT_POS_EVNT_DIV_16
 #define PERxSYSCLK_TO_EQEPCLK_DIV       1
 #define EQEPCLK_FREQ                    (DEVICE_SYSCLK_FREQ / pow(2.0, ((QEP_CAPTURE_CLOCK_DIV >> 4) & 0x07)))
 
-#define QEP_UNIT_TIMER_TICKS            PWM_TBPRD               // Sync QEP with PWM
+//#define QEP_UNIT_TIMER_TICKS            PWM_TBPRD               // Sync QEP with PWM
+
+#define QEP_MOTOR1_SWAP                 EQEP_CONFIG_NO_SWAP         // Set to EQEP_CONFIG_SWAP if increments in the wrong direction
+#define QEP_MOTOR2_SWAP                 EQEP_CONFIG_NO_SWAP
+#define QEP_MOTOR1_ENCODER_LINES_NB     5000
+#define QEP_MOTOR2_ENCODER_LINES_NB     5000
+// Velocity computation
+#define QEP_UNIT_TIMER_FREQ             1000 // [Hz] Velocity computation frequency
+#define QEP_UNIT_TIMER_TICKS            ((DEVICE_SYSCLK_FREQ / QEP_UNIT_TIMER_FREQ) - 1)
 /**
  * @}
  */
@@ -446,11 +456,7 @@
 *                                             QEP defines
 *******************************************************************************************************/
 
-#define QEP_MOTOR1_SWAP                 EQEP_CONFIG_NO_SWAP         // Set to EQEP_CONFIG_SWAP if increments in the wrong direction
-#define QEP_MOTOR2_SWAP                 EQEP_CONFIG_NO_SWAP
-#define QEP_MOTOR1_ENCODER_LINES_NB     5000
-#define QEP_MOTOR2_ENCODER_LINES_NB     5000
-#define QEP_UNIT_TIMER_FREQ             1000 // [Hz] Velocity calculation frequency
+
 
 // Initialization define
 //#define QEP_UNIT_TIMER_TICKS            DEVICE_SYSCLK_FREQ / QEP_UNIT_TIMER_FREQ

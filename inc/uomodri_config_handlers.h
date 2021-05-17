@@ -6,10 +6,15 @@
 #include "driverlib.h"
 
 #include "hal.h"
-//#include "drv8320.h"
 #include "drv8353.h"
+#include "foc.h"
+#include "spi_communication.h"
 
 #include "uomodri_user_defines.h"
+
+// Communication dual buffers for initialization
+extern DualBufferW dualBufferW;
+extern DualBufferR dualBufferR;
 
 /******************************************************************************************************
 *                                               GPIO pins list definition
@@ -156,27 +161,41 @@ static const SPI_TypeDef spiCfgList[] =
 {
  {.spiBase = DRV_SPI_BASE, .bitRate = 400000U, .dataWidth = 16U, .mode = SPI_MODE_MASTER,
   .protocol = SPI_PROT_POL0PHA0, .txLevel = SPI_FIFO_TXEMPTY, .rxLevel= SPI_FIFO_RXEMPTY, .spiFifoEnable = false},
- {.spiBase = COM_SPI_BASE, .bitRate = 8000000U, .dataWidth = 16U, .mode = SPI_MODE_SLAVE,
-  .protocol = SPI_PROT_POL0PHA0, .txLevel = SPI_FIFO_TX8, .rxLevel= SPI_FIFO_RX8, .spiFifoEnable = true},
+ {.spiBase = COM_SPI_BASE, .bitRate = 6000000U, .dataWidth = 16U, .mode = SPI_MODE_SLAVE,
+  .protocol = SPI_PROT_POL0PHA1, .txLevel = SPI_FIFO_TX14, .rxLevel= SPI_FIFO_RX1, .spiFifoEnable = true},
  // END OF ARRAY
  {.spiBase = 0xFFFFFFFF},
 };
 
 static const DMA_TypeDef dmaCfgList[] =
 {
- //{.dmaBase = DMA_CH6_BASE},
- {.dmaBase = DMA_CH5_BASE,
-  .transferSize = 1,
-  .srcWrapSize = 1,
-  .destWrapSize = 1,
+ // DMA base register initialization
+ // DMA for SPI communication Tx
+{.dmaChBase = DMA_CH5_BASE,
+ .transferSize = SPI_COM_LENGTH,
+ .srcWrapSize = SPI_COM_LENGTH,
+ .destWrapSize = 0,
+ .config = ( DMA_CFG_ONESHOT_DISABLE | DMA_CFG_CONTINUOUS_ENABLE | DMA_CFG_SIZE_16BIT),
+ .burstSize = 1,
+ .destStep = 0,
+ .srcStep = 1,
+ .destAddr = (uint16_t*)(COM_SPI_BASE + SPI_O_TXBUF),
+ .srcAddr = dualBufferW.comPackets,
+ .trigger = DMA_TRIGGER_SPIBTX},
+ // DMA for SPI communication Rx
+ {.dmaChBase = DMA_CH6_BASE,
+  .transferSize = SPI_COM_LENGTH,
+  .srcWrapSize = 0,
+  .destWrapSize = SPI_COM_LENGTH,
   .config = (DMA_CFG_ONESHOT_DISABLE | DMA_CFG_CONTINUOUS_ENABLE | DMA_CFG_SIZE_16BIT),
-  .burstSize = 8,
-  .destStep = 0,
-  .srcStep = -(8 - 1),
-  .destAddr = (uint16_t*)(COM_SPI_BASE + SPI_O_TXBUF),
-  .trigger = DMA_TRIGGER_SPIBTX},
+  .burstSize = 1,
+  .destStep = 1,
+  .srcStep = 0,
+  .destAddr = dualBufferR.comPackets,
+  .srcAddr = (uint16_t*)(COM_SPI_BASE + SPI_O_RXBUF),
+  .trigger = DMA_TRIGGER_SPIBRX},
   // END OF ARRAY
- {.dmaBase = 0xFFFFFFFF},
+ {.dmaChBase = 0xFFFFFFFF},
 };//.srcAddr = Add()
 
 /** @var    ePWM_TB_TypeDef PwmTimeBaseCfgList[]
@@ -185,12 +204,12 @@ static const DMA_TypeDef dmaCfgList[] =
 static const ePWM_TB_TypeDef PwmTimeBaseCfgList[] =
 {
  //{epwmBase, phaseCount, syncOutputMode}
- {MOTOR1_PWM1_BASE, PWM_TBPHS,      EPWM_SYNC_OUT_PULSE_ON_CNTR_ZERO},
- {MOTOR1_PWM2_BASE, PWM_TBPHS,      EPWM_SYNC_OUT_PULSE_ON_SOFTWARE},
- {MOTOR1_PWM3_BASE, PWM_TBPHS,      EPWM_SYNC_OUT_PULSE_ON_SOFTWARE},
- {MOTOR2_PWM1_BASE, PWM_HALF_TBPRD, EPWM_SYNC_OUT_PULSE_ON_SOFTWARE},
- {MOTOR2_PWM2_BASE, PWM_HALF_TBPRD, EPWM_SYNC_OUT_PULSE_ON_SOFTWARE},
- {MOTOR2_PWM3_BASE, PWM_HALF_TBPRD, EPWM_SYNC_OUT_PULSE_ON_SOFTWARE},
+ {.epwmBase = MOTOR1_PWM1_BASE, .phaseCount = PWM_TBPHS,        .syncOutputMode = EPWM_SYNC_OUT_PULSE_ON_CNTR_ZERO},
+ {.epwmBase = MOTOR1_PWM2_BASE, .phaseCount = PWM_TBPHS,        .syncOutputMode = EPWM_SYNC_OUT_PULSE_ON_SOFTWARE},
+ {.epwmBase = MOTOR1_PWM3_BASE, .phaseCount = PWM_TBPHS,        .syncOutputMode = EPWM_SYNC_OUT_PULSE_ON_SOFTWARE},
+ {.epwmBase = MOTOR2_PWM1_BASE, .phaseCount = PWM_HALF_TBPRD,   .syncOutputMode = EPWM_SYNC_OUT_PULSE_ON_SOFTWARE},
+ {.epwmBase = MOTOR2_PWM2_BASE, .phaseCount = PWM_HALF_TBPRD,   .syncOutputMode = EPWM_SYNC_OUT_PULSE_ON_SOFTWARE},
+ {.epwmBase = MOTOR2_PWM3_BASE, .phaseCount = PWM_HALF_TBPRD,   .syncOutputMode = EPWM_SYNC_OUT_PULSE_ON_SOFTWARE},
  // END OF ARRAY
  {.epwmBase = 0xFFFFFFFF},
 };
@@ -283,6 +302,9 @@ static const ePWM_TypeDef PwmCfgList[] =
  {.epwmBase = 0xFFFFFFFF},
 };
 
+/** @var    DRV_Cfg     DrvCfgList[]
+ *  @brief  List all IOs \& SPI peripherals used for DRV communication.
+ */
 static DRV_Cfg DrvCfgList[] =
 {
  {.spiHandle = DRV_SPI_BASE, .gpioNumber_CS = DRV1_GPIO_CS, .gpioNumber_EN = DRV1_GPIO_EN},
@@ -291,6 +313,9 @@ static DRV_Cfg DrvCfgList[] =
  {.spiHandle = 0xFFFFFFFF},
 };
 
+/** @var    DRV_Reg     DrvRegList[]
+ *  @brief  List all configuration registers for each DRVs.
+ */
 static DRV_Reg DrvRegList[] =
 {
  { .Ctrl_Reg_02.ctrl02.CLR_FLT      = false,
@@ -332,6 +357,7 @@ static DRV_Reg DrvRegList[] =
    .Ctrl_Reg_06.ctrl06.CSA_FET      = false,
    // Amplifier calibration calibration routine (Address: 0x7)
    .Ctrl_Reg_07.ctrl07.CAL_MODE     = true},
+
  { .Ctrl_Reg_02.ctrl02.CLR_FLT      = false,
    .Ctrl_Reg_02.ctrl02.BRAKE        = false,
    .Ctrl_Reg_02.ctrl02.COAST        = false,
@@ -372,6 +398,9 @@ static DRV_Reg DrvRegList[] =
    .Ctrl_Reg_07.ctrl07.CAL_MODE     = true},
 };
 
+/** @var    HAL     hal
+ *  @brief  General configuration structure for the Hardware Abstraction Layer.
+ */
 static HAL hal =
 {
  .gpioHandler = GpioPinsCfgList,
@@ -381,14 +410,18 @@ static HAL hal =
  .dmaHandler  = NULL,
  .spiHandler  = spiCfgList
 };
-// DRV8323 Hardware Abstraction Layers
+
+
+/** @var    DRV8353     drv
+ *  @brief  General DRV8353 configuration structure.
+ */
 static DRV8353 drv =
 {
  .drvCfgHandler = DrvCfgList,
  .drvRegHandler = DrvRegList
 };
 
-static MOTOR_ACQ motors_acq[] =
+static MOTOR_HAL_CFG motor[] =
 {
  {
   .motorID      = MOTOR_1,
@@ -399,7 +432,7 @@ static MOTOR_ACQ motors_acq[] =
 //  .p_ia         = ((volatile int16_t *)(.p_iConv[0]->adcPPBResultBase)),
 //  .p_ib         = (volatile int16_t *)(.p_iConv[1]->adcPPBResultBase),
 //  .p_ic         = (volatile int16_t *)(.p_iConv[2]->adcPPBResultBase),
-  //.p_iMesured   = {(*((volatile uint16_t *)(.p_iConv[0]->adcResultBase + ADC_O_PPB1RESULT))), (&((.p_iConv[0]->adcResultBase + ADC_O_PPB1RESULT))), (&((.p_iConv[0]->adcResultBase + ADC_O_PPB1RESULT)))},
+//  .p_iMesured   = {(*((volatile uint16_t *)(.p_iConv[0]->adcResultBase + ADC_O_PPB1RESULT))), (&((.p_iConv[0]->adcResultBase + ADC_O_PPB1RESULT))), (&((.p_iConv[0]->adcResultBase + ADC_O_PPB1RESULT)))},
 //  .p_iMesured   = {(*((volatile uint16_t *)(AdcPPBsList[0].adcResultBase)))},
 //  .p_iMesured   = {&(.p_iConv[0]->adcResultBase), (AdcPPBsList[4].adcResultBase), (AdcPPBsList[10].adcResultBase)},
 //  .p_iMesured   = {((volatile int16_t *)(AdcPPBsList[0].adcResultBase)),
@@ -419,13 +452,9 @@ static MOTOR_ACQ motors_acq[] =
   .p_vConv      = {&AdcPPBsList[3], &AdcPPBsList[7], &AdcPPBsList[13]},
   .p_vbusConv   = &AdcPPBsList[9],
 //  .p_ia         = (((volatile int16_t *)((uintptr_t)(M2_IA_ADC_PPB_RESULT_ADDR)))),
-
 //  .p_ia         = (&((volatile int16_t *)((AdcPPBsList[1].adcPPBResultBase)))),
-
 //  .p_ia         = (((volatile int16_t *)((uintptr_t)&(AdcPPBsList[1]->adcPPBResultBase)))),
-
 //  .p_ia         = (&((volatile uint16_t *)((uintptr_t)(motors_acq[MOTOR_2].p_iConv[0]->adcPPBResultBase)))),
-
 //  .p_ia         = ((int32_t *)(AdcPPBsList[1].adcPPBResultBase)),
 //  .p_iMesured   = {((volatile int32_t *)(AdcPPBsList[1].adcPPBResultBase)), ((volatile int32_t *)(AdcPPBsList[5].adcPPBResultBase)), ((volatile int32_t *)(AdcPPBsList[11].adcPPBResultBase))},
 //  .p_iMesured   = {(*((volatile uint16_t *)(AdcPPBsList[1].adcResultBase)))},
@@ -444,6 +473,11 @@ static MOTOR_ACQ motors_acq[] =
   .motorID      = NO_MOT,
  }
 };
+
+//FOC foc[] =
+//{
+//
+//};
 
 //static const ePWM_TypeDef PwmCfgList[] =
 //{

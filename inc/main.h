@@ -4,13 +4,16 @@
 // Project includes
 #include "device.h"
 #include "driverlib.h"
+#include "f2838x_device.h"
+
 #include "hal.h"
 #include "drv8353.h"
-
+//#include "encoder.h"
+//#include "foc.h"
+//#include "spi_communication.h"
 #include "uomodri_user_defines.h"
 #include "uomodri_config_handlers.h"
 
-//
 static void Mcu_init();
 
 // ADC interrupt service routine

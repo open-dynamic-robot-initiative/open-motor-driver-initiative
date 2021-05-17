@@ -364,18 +364,17 @@ void HAL_eQEP_init(const eQEP_TypeDef* p_qepCfg)
 
         while(qepBase != 0xFFFFFFFF)
         {
-            /* Configure the decoder for up-count mode, counting both on rising & falling edges (quadrature encoders)
-             * Position & watchdog counter, unit & capture timer are all unaffected by an emulation suspend.
-             * Position counter latched on a unit time out and on rising edge of index pulse.
-             * Position counter is reset when reaching max position (1 turn). on an index event.
-             * Set unit timer frequency to PWM frequency for speed measurement.
-             * Compare unit is useless.
-             */
+            // Configure the decoder for up-count mode, counting both on rising & falling edges (quadrature encoders)
             EQEP_setDecoderConfig(qepBase, p_qepCfg->config);
+            // Position & watchdog counter, unit & capture timer are all unaffected by an emulation suspend.
             EQEP_setEmulationMode(qepBase, QEP_EMUL_MODE);
+            // Position counter latched on a unit time out and on rising edge of index pulse.
             EQEP_setLatchMode(qepBase, QEP_LATCH_MODE);
-            EQEP_setPositionCounterConfig(qepBase, QEP_RESET_POSITION_MODE, QEP_RESET_POSITION_MAX);
-            EQEP_disableUnitTimer(qepBase);
+            // Position counter is reset when reaching max position (1 turn). on an index event.
+            EQEP_setPositionCounterConfig(qepBase, QEP_RESET_POSITION_MODE, QEP_ENCODER_POSITION_MAX);
+            // Set unit timer frequency to PWM frequency for speed measurement and enable it.
+            EQEP_enableUnitTimer(qepBase, QEP_UNIT_TIMER_TICKS);
+            // Disable Compare, watchdog and IT units.
             EQEP_disableCompare(qepBase);
             EQEP_disableWatchdog(qepBase);
             EQEP_disableInterrupt(qepBase, EQEP_INT_GLOBAL);
@@ -399,7 +398,7 @@ void HAL_SPI_init(const SPI_TypeDef* p_spiCfg)
 {
     if(p_spiCfg != NULL)
     {
-        uint32_t spiBase = p_spiCfg->spiBase;
+        uint32_t spiBase    = p_spiCfg->spiBase;
 
         while(spiBase != 0xFFFFFFFF)
         {
@@ -412,14 +411,20 @@ void HAL_SPI_init(const SPI_TypeDef* p_spiCfg)
             SPI_disableLoopback(spiBase);
             SPI_setConfig(spiBase, DEVICE_LSPCLK_FREQ, p_spiCfg->protocol, p_spiCfg->mode, p_spiCfg->bitRate, p_spiCfg->dataWidth);
             SPI_setEmulationMode(spiBase, SPI_EMULATION_FREE_RUN);
-            /* Configure FIFO. */
-            (p_spiCfg->spiFifoEnable) ? (SPI_enableFIFO(spiBase)) : (SPI_disableFIFO(spiBase));
-            SPI_resetTxFIFO(spiBase);
-            SPI_resetRxFIFO(spiBase);
-            SPI_setFIFOInterruptLevel(spiBase, p_spiCfg->txLevel, p_spiCfg->rxLevel);
             /* Clear flags & disable interrupts */
-            SPI_clearInterruptStatus(spiBase, SPI_INT_RXFF | SPI_INT_TXFF | SPI_INT_RXFF_OVERFLOW);
-            SPI_disableInterrupt(spiBase, SPI_INT_RX_DATA_TX_EMPTY | SPI_INT_RX_OVERRUN | SPI_INT_TXFF | SPI_INT_RXFF | SPI_INT_RXFF_OVERFLOW);
+            SPI_clearInterruptStatus(spiBase,
+                                     SPI_INT_RX_DATA_TX_EMPTY | SPI_INT_RX_OVERRUN |SPI_INT_TXFF | SPI_INT_RXFF | SPI_INT_RXFF_OVERFLOW);
+            SPI_disableInterrupt(spiBase,
+                                 SPI_INT_RX_DATA_TX_EMPTY | SPI_INT_RX_OVERRUN | SPI_INT_TXFF | SPI_INT_RXFF | SPI_INT_RXFF_OVERFLOW);
+            /* Configure FIFO if required. */
+            SPI_disableFIFO(spiBase);
+            if(p_spiCfg->spiFifoEnable)
+            {
+                SPI_enableFIFO(spiBase);
+                SPI_resetTxFIFO(spiBase);
+                SPI_resetRxFIFO(spiBase);
+                SPI_setFIFOInterruptLevel(spiBase, p_spiCfg->txLevel, p_spiCfg->rxLevel);
+            }
             /* Enable SPI module */
             SPI_enableModule(spiBase);
             spiBase = (++p_spiCfg)->spiBase;
@@ -436,30 +441,30 @@ void HAL_DMA_init(const DMA_TypeDef* p_dmaCfg)
 {
     if(p_dmaCfg != NULL)
     {
-        uint32_t dmaBase = p_dmaCfg->dmaBase;
+        uint32_t dmaChBase = p_dmaCfg->dmaChBase;
 
         /* Global hardware reset of the DMA controller. */
         DMA_initController();
         DMA_setEmulationMode(DMA_EMULATION_FREE_RUN);
 
-        while(dmaBase != 0xFFFFFFFF)
+        while(dmaChBase != 0xFFFFFFFF)
         {
             /* DMA channel initialization
              * Configure direction, words per burst
              */
-            DMA_configAddresses(dmaBase, p_dmaCfg->destAddr, p_dmaCfg->srcAddr);
-            DMA_configBurst(dmaBase, p_dmaCfg->burstSize, p_dmaCfg->srcStep, p_dmaCfg->destStep);
-            DMA_configTransfer(dmaBase, p_dmaCfg->transferSize, p_dmaCfg->srcStep, p_dmaCfg->destStep);
-            DMA_configWrap(dmaBase, p_dmaCfg->srcWrapSize, p_dmaCfg->srcStep, p_dmaCfg->destWrapSize, p_dmaCfg->destStep);
-            DMA_configMode(dmaBase, p_dmaCfg->trigger, p_dmaCfg->config);
+            DMA_configAddresses(dmaChBase, p_dmaCfg->destAddr, p_dmaCfg->srcAddr);
+            DMA_configBurst(dmaChBase, p_dmaCfg->burstSize, p_dmaCfg->srcStep, p_dmaCfg->destStep);
+            DMA_configTransfer(dmaChBase, p_dmaCfg->transferSize, p_dmaCfg->srcStep, p_dmaCfg->destStep);
+            DMA_configWrap(dmaChBase, p_dmaCfg->srcWrapSize, p_dmaCfg->srcStep, p_dmaCfg->destWrapSize, p_dmaCfg->destStep);
+            DMA_configMode(dmaChBase, p_dmaCfg->trigger, p_dmaCfg->config);
             /* Clear flags & disable interrupts */
-            DMA_disableOverrunInterrupt(dmaBase);
-            DMA_disableInterrupt(dmaBase);
+            DMA_disableOverrunInterrupt(dmaChBase);
+            DMA_disableInterrupt(dmaChBase);
             /* Enable Trigger source & DMA channel */
-            DMA_clearTriggerFlag(dmaBase);
-            DMA_enableTrigger(dmaBase);
-            DMA_startChannel(dmaBase);
-            dmaBase = (++p_dmaCfg)->dmaBase;
+            DMA_clearTriggerFlag(dmaChBase);
+            DMA_enableTrigger(dmaChBase);
+            DMA_startChannel(dmaChBase);
+            dmaChBase = (++p_dmaCfg)->dmaChBase;
         }
     }
     return;
@@ -499,7 +504,7 @@ void HAL_IT_init(void)
  * @brief       ADC calibration function for the PPB (Post Processing Block)
  * @param[in]   *p_motor    Pointer on the motor configuration structure
  */
-void HAL_ADC_offsetCalib(MOTOR_ACQ* p_motor)
+void HAL_ADC_offsetCalib(MOTOR_HAL_CFG* p_motor)
 {
     if(p_motor != NULL)
     {
@@ -566,12 +571,6 @@ void HAL_ADC_offsetCalib(MOTOR_ACQ* p_motor)
             // Calibrate next motor
             p_motor++;
         }
-//        for(loop = 0; loop < 3; loop++)
-//        {
-//            p_iConv = p_motor->p_iConv[loop];
-//            // Enables two's complement capability
-//            ADC_enablePPBTwosComplement(p_iConv->adcBase, p_iConv->adcPPBNumber);
-//        }
     }
 
     return;

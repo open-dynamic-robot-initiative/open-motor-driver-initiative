@@ -46,8 +46,6 @@
 									<listOptionValue builtIn="false" value="${PROJECT_ROOT}"/>
 									<listOptionValue builtIn="false" value="${SOFTWARE_ROOT}/driverlib/f2838x/driverlib"/>
 									<listOptionValue builtIn="false" value="${SOFTWARE_ROOT}/driverlib/f2838x/driverlib/inc"/>
-									<listOptionValue builtIn="false" value="${MOTORWARE_ROOT}/c2000ware/driverlib/f2838x/driverlib"/>
-									<listOptionValue builtIn="false" value="${MOTORWARE_ROOT}/c2000ware/driverlib/f2838x/driverlib/inc"/>
 									<listOptionValue builtIn="false" value="${MOTORWARE_ROOT}/c2000ware/device_support/f2838x/headers/include"/>
 									<listOptionValue builtIn="false" value="${MOTORWARE_ROOT}/c2000ware/device_support/f2838x/common/include"/>
 									<listOptionValue builtIn="false" value="${PROJECT_ROOT}/inc"/>
@@ -95,7 +93,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="src/PID.c|src/foc.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="src/PID.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
