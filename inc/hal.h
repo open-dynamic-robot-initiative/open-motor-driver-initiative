@@ -151,7 +151,6 @@ typedef struct _SPI_Cfg_TypeDef_
     SPI_TransferProtocol protocol;
     SPI_TxFIFOLevel txLevel;
     SPI_RxFIFOLevel rxLevel;
-    bool spiFifoEnable;
 } SPI_TypeDef;
 
 /**

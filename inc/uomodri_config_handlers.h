@@ -148,8 +148,8 @@ static const ADC_TypeDef AdcCfgList[] =
  */
 static const eQEP_TypeDef QepCfgList[] =
 {
- {EQEP1_BASE, .config = (EQEP_CONFIG_2X_RESOLUTION | EQEP_CONFIG_QUADRATURE | EQEP_CONFIG_SWAP)},
- {EQEP2_BASE, .config = (EQEP_CONFIG_2X_RESOLUTION | EQEP_CONFIG_QUADRATURE | EQEP_CONFIG_SWAP)},
+ {.eqepBase = EQEP1_BASE, .config = (EQEP_CONFIG_2X_RESOLUTION | EQEP_CONFIG_QUADRATURE | EQEP_CONFIG_SWAP)},
+ {.eqepBase = EQEP2_BASE, .config = (EQEP_CONFIG_2X_RESOLUTION | EQEP_CONFIG_QUADRATURE | EQEP_CONFIG_SWAP)},
  // END OF ARRAY
  {.eqepBase = 0xFFFFFFFF},
 };
@@ -159,10 +159,8 @@ static const eQEP_TypeDef QepCfgList[] =
  */
 static const SPI_TypeDef spiCfgList[] =
 {
- {.spiBase = DRV_SPI_BASE, .bitRate = 400000U, .dataWidth = 16U, .mode = SPI_MODE_MASTER,
-  .protocol = SPI_PROT_POL0PHA0, .txLevel = SPI_FIFO_TXEMPTY, .rxLevel= SPI_FIFO_RXEMPTY, .spiFifoEnable = false},
- {.spiBase = COM_SPI_BASE, .bitRate = 6000000U, .dataWidth = 16U, .mode = SPI_MODE_SLAVE,
-  .protocol = SPI_PROT_POL0PHA1, .txLevel = SPI_FIFO_TX14, .rxLevel= SPI_FIFO_RX1, .spiFifoEnable = true},
+ {.spiBase = DRV_SPI_BASE, .bitRate = 400000U,  .dataWidth = 16U, .mode = SPI_MODE_MASTER,  .protocol = SPI_PROT_POL0PHA0, .txLevel = SPI_FIFO_TXEMPTY, .rxLevel= SPI_FIFO_RXEMPTY},
+ {.spiBase = COM_SPI_BASE, .bitRate = 6000000U, .dataWidth = 16U, .mode = SPI_MODE_SLAVE,   .protocol = SPI_PROT_POL0PHA1, .txLevel = SPI_FIFO_TX14,    .rxLevel= SPI_FIFO_RX1},
  // END OF ARRAY
  {.spiBase = 0xFFFFFFFF},
 };
@@ -171,32 +169,20 @@ static const DMA_TypeDef dmaCfgList[] =
 {
  // DMA base register initialization
  // DMA for SPI communication Tx
-{.dmaChBase = DMA_CH5_BASE,
- .transferSize = SPI_COM_LENGTH,
- .srcWrapSize = SPI_COM_LENGTH,
- .destWrapSize = 0,
- .config = ( DMA_CFG_ONESHOT_DISABLE | DMA_CFG_CONTINUOUS_ENABLE | DMA_CFG_SIZE_16BIT),
- .burstSize = 1,
- .destStep = 0,
- .srcStep = 1,
- .destAddr = (uint16_t*)(COM_SPI_BASE + SPI_O_TXBUF),
- .srcAddr = dualBufferW.comPackets,
- .trigger = DMA_TRIGGER_SPIBTX},
+ {.dmaChBase = DMA_CH5_BASE, .transferSize = SPI_COM_LENGTH, .srcWrapSize = SPI_COM_LENGTH, .destWrapSize = 0,
+  .config = ( DMA_CFG_ONESHOT_DISABLE | DMA_CFG_CONTINUOUS_ENABLE | DMA_CFG_SIZE_16BIT),
+  .burstSize = 1, .destStep = 0, .srcStep = 1,
+  .destAddr = (uint16_t*)(COM_SPI_BASE + SPI_O_TXBUF), .srcAddr = dualBufferW.comPackets, .trigger = DMA_TRIGGER_SPIBTX
+ },
  // DMA for SPI communication Rx
- {.dmaChBase = DMA_CH6_BASE,
-  .transferSize = SPI_COM_LENGTH,
-  .srcWrapSize = 0,
-  .destWrapSize = SPI_COM_LENGTH,
+ {.dmaChBase = DMA_CH6_BASE, .transferSize = SPI_COM_LENGTH, .srcWrapSize = 0, .destWrapSize = SPI_COM_LENGTH,
   .config = (DMA_CFG_ONESHOT_DISABLE | DMA_CFG_CONTINUOUS_ENABLE | DMA_CFG_SIZE_16BIT),
-  .burstSize = 1,
-  .destStep = 1,
-  .srcStep = 0,
-  .destAddr = dualBufferR.comPackets,
-  .srcAddr = (uint16_t*)(COM_SPI_BASE + SPI_O_RXBUF),
-  .trigger = DMA_TRIGGER_SPIBRX},
-  // END OF ARRAY
+  .burstSize = 1, .destStep = 1, .srcStep = 0,
+  .destAddr = dualBufferR.comPackets, .srcAddr = (uint16_t*)(COM_SPI_BASE + SPI_O_RXBUF), .trigger = DMA_TRIGGER_SPIBRX
+ },
+ // END OF ARRAY
  {.dmaChBase = 0xFFFFFFFF},
-};//.srcAddr = Add()
+};
 
 /** @var    ePWM_TB_TypeDef PwmTimeBaseCfgList[]
  *  @brief  List all the configurations necessaries for ePWM Time Base submodule.
@@ -292,12 +278,30 @@ static const ePWM_IT_TypeDef PwmInterruptsEventCfgList[] =
  */
 static const ePWM_TypeDef PwmCfgList[] =
 {
- {MOTOR1_PWM1_BASE, &PwmTimeBaseCfgList[0], &PwmCounterCompareCfgList[0], &PwmActionQualifierCfgList[0], &PwmDeadBandCfgList[0], NULL, &PwmAdcSocEventTriggerCfgList[0], &PwmInterruptsEventCfgList[0]},
- {MOTOR1_PWM2_BASE, &PwmTimeBaseCfgList[1], &PwmCounterCompareCfgList[1], &PwmActionQualifierCfgList[1], &PwmDeadBandCfgList[1], NULL, NULL, NULL},
- {MOTOR1_PWM3_BASE, &PwmTimeBaseCfgList[2], &PwmCounterCompareCfgList[2], &PwmActionQualifierCfgList[2], &PwmDeadBandCfgList[2], NULL, NULL, NULL},
- {MOTOR2_PWM1_BASE, &PwmTimeBaseCfgList[3], &PwmCounterCompareCfgList[3], &PwmActionQualifierCfgList[3], &PwmDeadBandCfgList[3], NULL, &PwmAdcSocEventTriggerCfgList[2], NULL},
- {MOTOR2_PWM2_BASE, &PwmTimeBaseCfgList[4], &PwmCounterCompareCfgList[4], &PwmActionQualifierCfgList[4], &PwmDeadBandCfgList[4], NULL, NULL, NULL},
- {MOTOR2_PWM3_BASE, &PwmTimeBaseCfgList[5], &PwmCounterCompareCfgList[5], &PwmActionQualifierCfgList[5], &PwmDeadBandCfgList[5], NULL, NULL, NULL},
+ {.epwmBase = MOTOR1_PWM1_BASE, .epwmTimeBase = &PwmTimeBaseCfgList[0], .epwmCaptureCompare = &PwmCounterCompareCfgList[0],
+  .epwmActionQualifier = &PwmActionQualifierCfgList[0], .epwmDeadband = &PwmDeadBandCfgList[0], .epwmProgChopper = NULL,
+  .epwmAdcSocEventTrigger = &PwmAdcSocEventTriggerCfgList[0], .epwmInterruptsEvent = &PwmInterruptsEventCfgList[0]
+ },
+ {.epwmBase = MOTOR1_PWM2_BASE, .epwmTimeBase = &PwmTimeBaseCfgList[1], .epwmCaptureCompare = &PwmCounterCompareCfgList[1],
+  .epwmActionQualifier = &PwmActionQualifierCfgList[1], .epwmDeadband = &PwmDeadBandCfgList[1], .epwmProgChopper = NULL,
+  .epwmAdcSocEventTrigger = NULL, .epwmInterruptsEvent = NULL
+ },
+ {.epwmBase = MOTOR1_PWM3_BASE, .epwmTimeBase = &PwmTimeBaseCfgList[2], .epwmCaptureCompare = &PwmCounterCompareCfgList[2],
+  .epwmActionQualifier = &PwmActionQualifierCfgList[2], .epwmDeadband = &PwmDeadBandCfgList[2], .epwmProgChopper = NULL,
+  .epwmAdcSocEventTrigger = NULL, .epwmInterruptsEvent = NULL
+ },
+ {.epwmBase = MOTOR2_PWM1_BASE, .epwmTimeBase = &PwmTimeBaseCfgList[3], .epwmCaptureCompare = &PwmCounterCompareCfgList[3],
+  .epwmActionQualifier = &PwmActionQualifierCfgList[3], .epwmDeadband = &PwmDeadBandCfgList[3], .epwmProgChopper = NULL,
+  .epwmAdcSocEventTrigger = &PwmAdcSocEventTriggerCfgList[2], .epwmInterruptsEvent = NULL
+ },
+ {.epwmBase = MOTOR2_PWM2_BASE, .epwmTimeBase = &PwmTimeBaseCfgList[4], .epwmCaptureCompare = &PwmCounterCompareCfgList[4],
+  .epwmActionQualifier = &PwmActionQualifierCfgList[4], .epwmDeadband = &PwmDeadBandCfgList[4], .epwmProgChopper = NULL,
+  .epwmAdcSocEventTrigger = NULL, .epwmInterruptsEvent = NULL
+ },
+ {.epwmBase = MOTOR2_PWM3_BASE, .epwmTimeBase = &PwmTimeBaseCfgList[5], .epwmCaptureCompare = &PwmCounterCompareCfgList[5],
+  .epwmActionQualifier = &PwmActionQualifierCfgList[5], .epwmDeadband = &PwmDeadBandCfgList[5], .epwmProgChopper = NULL,
+  .epwmAdcSocEventTrigger = NULL, .epwmInterruptsEvent = NULL
+ },
  // END OF ARRAY
  {.epwmBase = 0xFFFFFFFF},
 };
@@ -357,7 +361,6 @@ static DRV_Reg DrvRegList[] =
    .Ctrl_Reg_06.ctrl06.CSA_FET      = false,
    // Amplifier calibration calibration routine (Address: 0x7)
    .Ctrl_Reg_07.ctrl07.CAL_MODE     = true},
-
  { .Ctrl_Reg_02.ctrl02.CLR_FLT      = false,
    .Ctrl_Reg_02.ctrl02.BRAKE        = false,
    .Ctrl_Reg_02.ctrl02.COAST        = false,
@@ -402,8 +405,7 @@ static DRV_Reg DrvRegList[] =
  *  @brief  General configuration structure for the Hardware Abstraction Layer.
  */
 static HAL hal =
-{
- .gpioHandler = GpioPinsCfgList,
+{.gpioHandler = GpioPinsCfgList,
  .adcHandler  = AdcCfgList,
  .epwmHandler = PwmCfgList,
  .eqepHandler = QepCfgList,
@@ -416,15 +418,13 @@ static HAL hal =
  *  @brief  General DRV8353 configuration structure.
  */
 static DRV8353 drv =
-{
- .drvCfgHandler = DrvCfgList,
+{.drvCfgHandler = DrvCfgList,
  .drvRegHandler = DrvRegList
 };
 
 static MOTOR_HAL_CFG motor[] =
 {
- {
-  .motorID      = MOTOR_1,
+ {.motorID      = MOTOR_1,
   .p_pwmCntCmp  = {&PwmCounterCompareCfgList[0], &PwmCounterCompareCfgList[1], &PwmCounterCompareCfgList[2]},
   .p_iConv      = {&AdcPPBsList[0], &AdcPPBsList[4], &AdcPPBsList[10]},
   .p_vConv      = {&AdcPPBsList[2], &AdcPPBsList[6], &AdcPPBsList[12]},
@@ -443,10 +443,9 @@ static MOTOR_HAL_CFG motor[] =
 //                   ((volatile int16_t *)(AdcPPBsList[12].adcResultBase))},
 //  .p_vBusMesured= (volatile int16_t *)(AdcPPBsList[8].adcResultBase),
   .dataValid    = {false, false},
-//  .offsetCal      = true
+  //  .offsetCal      = true
  },
- {
-  .motorID      = MOTOR_2,
+ {.motorID      = MOTOR_2,
   .p_pwmCntCmp  = {&PwmCounterCompareCfgList[3], &PwmCounterCompareCfgList[4], &PwmCounterCompareCfgList[5]},
   .p_iConv      = {&AdcPPBsList[1], &AdcPPBsList[5], &AdcPPBsList[11]},
   .p_vConv      = {&AdcPPBsList[3], &AdcPPBsList[7], &AdcPPBsList[13]},
@@ -467,17 +466,16 @@ static MOTOR_HAL_CFG motor[] =
 //                   ((volatile int16_t *)(AdcPPBsList[13].adcResultBase))},
 //  .p_vBusMesured= (volatile int16_t *)(AdcPPBsList[9].adcResultBase),
   .dataValid    = {false, false},
-//  .offsetCal      = true
+  //  .offsetCal      = true
  },
- {
-  .motorID      = NO_MOT,
+ {.motorID      = NO_MOT,
  }
 };
 
-//FOC foc[] =
-//{
-//
-//};
+static FOC foc[] =
+{
+
+};
 
 //static const ePWM_TypeDef PwmCfgList[] =
 //{

@@ -398,7 +398,7 @@ void HAL_SPI_init(const SPI_TypeDef* p_spiCfg)
 {
     if(p_spiCfg != NULL)
     {
-        uint32_t spiBase    = p_spiCfg->spiBase;
+        uint32_t spiBase = p_spiCfg->spiBase;
 
         while(spiBase != 0xFFFFFFFF)
         {
@@ -412,18 +412,17 @@ void HAL_SPI_init(const SPI_TypeDef* p_spiCfg)
             SPI_setConfig(spiBase, DEVICE_LSPCLK_FREQ, p_spiCfg->protocol, p_spiCfg->mode, p_spiCfg->bitRate, p_spiCfg->dataWidth);
             SPI_setEmulationMode(spiBase, SPI_EMULATION_FREE_RUN);
             /* Clear flags & disable interrupts */
-            SPI_clearInterruptStatus(spiBase,
-                                     SPI_INT_RX_DATA_TX_EMPTY | SPI_INT_RX_OVERRUN |SPI_INT_TXFF | SPI_INT_RXFF | SPI_INT_RXFF_OVERFLOW);
-            SPI_disableInterrupt(spiBase,
-                                 SPI_INT_RX_DATA_TX_EMPTY | SPI_INT_RX_OVERRUN | SPI_INT_TXFF | SPI_INT_RXFF | SPI_INT_RXFF_OVERFLOW);
+            SPI_clearInterruptStatus(spiBase, SPI_INT_RX_DATA_TX_EMPTY | SPI_INT_RX_OVERRUN | SPI_INT_TXFF | SPI_INT_RXFF | SPI_INT_RXFF_OVERFLOW);
+            SPI_disableInterrupt(spiBase, SPI_INT_RX_DATA_TX_EMPTY | SPI_INT_RX_OVERRUN | SPI_INT_TXFF | SPI_INT_RXFF | SPI_INT_RXFF_OVERFLOW);
             /* Configure FIFO if required. */
             SPI_disableFIFO(spiBase);
-            if(p_spiCfg->spiFifoEnable)
+            if((p_spiCfg->rxLevel != SPI_FIFO_RXEMPTY) || (p_spiCfg->txLevel != SPI_FIFO_TXEMPTY))
             {
                 SPI_enableFIFO(spiBase);
                 SPI_resetTxFIFO(spiBase);
                 SPI_resetRxFIFO(spiBase);
                 SPI_setFIFOInterruptLevel(spiBase, p_spiCfg->txLevel, p_spiCfg->rxLevel);
+                SPI_enableInterrupt(spiBase, SPI_INT_TXFF | SPI_INT_RXFF | SPI_INT_RXFF_OVERFLOW);
             }
             /* Enable SPI module */
             SPI_enableModule(spiBase);
@@ -566,7 +565,7 @@ void HAL_ADC_offsetCalib(MOTOR_HAL_CFG* p_motor)
                 ADC_enablePPBTwosComplement(p_iConv->adcBase, p_iConv->adcPPBNumber);
                 p_vConv = p_motor->p_vConv[loop];
                 // Sets the post processing block reference offset for tensions
-                //ADC_setPPBReferenceOffset(p_vConv->adcBase, p_vConv->adcPPBNumber, (uint16_t)v[loop]);
+                ADC_setPPBReferenceOffset(p_vConv->adcBase, p_vConv->adcPPBNumber, (uint16_t)v[loop]);
             }
             // Calibrate next motor
             p_motor++;

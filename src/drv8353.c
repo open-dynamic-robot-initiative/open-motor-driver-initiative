@@ -25,7 +25,7 @@ static void DRV_Calibration(DRV_Cfg*, DRV_Reg*);
  */
 void DRV_init(DRV8353* p_drv)
 {
-    if((p_drv != NULL) && (p_drv->drvCfgHandler != NULL) && (p_drv->drvRegHandler))
+    if((p_drv != NULL) && (p_drv->drvCfgHandler != NULL) && (p_drv->drvRegHandler != NULL))
     {
         DRV_Cfg* p_cfgHandle = p_drv->drvCfgHandler;
         DRV_Reg* p_regHandle = p_drv->drvRegHandler;

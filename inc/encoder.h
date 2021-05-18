@@ -45,8 +45,8 @@ typedef struct __Encoder__
     struct EQEP_REGS *qepHandle;
 
     // Scalers
-    const float32_t mechScaler; // [pu/register]
-    const float32_t polePairs;  // Number of pole pairs of the motor
+    float32_t mechScaler; // [pu/register]
+    float32_t polePairs;  // Number of pole pairs of the motor
 
     // Angles
     float32_t elecAngle; // [pu]

@@ -1,82 +1,8 @@
 #include "main.h"
 
-// Hardware Abstraction Layer struct instance
-//HAL hal =
-//{
-// .gpioHandler = GpioPinsCfgList,
-// .adcHandler  = AdcCfgList,
-// .epwmHandler = PwmCfgList,
-// .eqepHandler = QepCfgList,
-// .dmaHandler  = NULL,
-// .spiHandler  = spiCfgList
-//};
-//// DRV8323 Hardware Abstraction Layers
-//DRV8353 drv =
-//{
-// .drvCfgHandler = DrvCfgList,
-// .drvRegHandler = DrvRegList
-//};
-// Motor Hardware Abstraction Layers
-//MOTOR_ACQ motor[2];
-//=
-//{
-// {.dataValid = {false, false}, .offsetCal = true},
-// {.dataValid = {false, false}, .offsetCal = true},
-//};
-//MOTOR_ACQ motor[3] =
-//{
-// {
-//  .motorID      = MOTOR_1,
-//  .p_pwmCntCmp  = {&PwmCounterCompareCfgList[0], &PwmCounterCompareCfgList[1], &PwmCounterCompareCfgList[2]},
-//  .p_iConv      = {&AdcPPBsList[0], &AdcPPBsList[4], &AdcPPBsList[10]},
-//  .p_vConv      = {&AdcPPBsList[2], &AdcPPBsList[6], &AdcPPBsList[12]},
-//  .p_vbusConv   = &AdcPPBsList[8],
-//  //.p_iMesured   = {(*((volatile uint16_t *)(.p_iConv[0]->adcResultBase + ADC_O_PPB1RESULT))), (&((.p_iConv[0]->adcResultBase + ADC_O_PPB1RESULT))), (&((.p_iConv[0]->adcResultBase + ADC_O_PPB1RESULT)))},
-////  .p_iMesured   = {(*((volatile uint16_t *)(AdcPPBsList[0].adcResultBase)))},
-////  .p_iMesured   = {&(.p_iConv[0]->adcResultBase), (AdcPPBsList[4].adcResultBase), (AdcPPBsList[10].adcResultBase)},
-////  .p_iMesured   = {((volatile int16_t *)(AdcPPBsList[0].adcResultBase)),
-////                   ((volatile int16_t *)(AdcPPBsList[4].adcResultBase)),
-////                   ((volatile int16_t *)(AdcPPBsList[10].adcResultBase))},
-////  .p_vMesured   = {((volatile int16_t *)(AdcPPBsList[2].adcResultBase)),
-////                   ((volatile int16_t *)(AdcPPBsList[6].adcResultBase)),
-////                   ((volatile int16_t *)(AdcPPBsList[12].adcResultBase))},
-////  .p_vBusMesured= (volatile int16_t *)(AdcPPBsList[8].adcResultBase),
-//  .dataValid    = {false, false},
-////  .offsetCal      = true
-// },
-// {
-//  .motorID      = MOTOR_2,
-//  .p_pwmCntCmp  = {&PwmCounterCompareCfgList[3], &PwmCounterCompareCfgList[4], &PwmCounterCompareCfgList[5]},
-//  .p_iConv      = {&AdcPPBsList[1], &AdcPPBsList[5], &AdcPPBsList[11]},
-//  .p_vConv      = {&AdcPPBsList[3], &AdcPPBsList[7], &AdcPPBsList[13]},
-//  .p_vbusConv   = &AdcPPBsList[9],
-////  .p_ia         = (((volatile int16_t *)((uintptr_t)(M2_IA_ADC_PPB_RESULT_ADDR)))),
-//
-////  .p_ia         = (&((volatile int16_t *)((AdcPPBsList[1].adcPPBResultBase)))),
-//
-////  .p_ia         = (((volatile int16_t *)((uintptr_t)&(AdcPPBsList[1]->adcPPBResultBase)))),
-//
-////  .p_ia         = (&((volatile uint16_t *)((uintptr_t)(motor[MOTOR_2].p_iConv[0]->adcPPBResultBase)))),
-//
-////  .p_ia         = ((int32_t *)(AdcPPBsList[1].adcPPBResultBase)),
-////  .p_iMesured   = {((volatile int32_t *)(AdcPPBsList[1].adcPPBResultBase)), ((volatile int32_t *)(AdcPPBsList[5].adcPPBResultBase)), ((volatile int32_t *)(AdcPPBsList[11].adcPPBResultBase))},
-////  .p_iMesured   = {(*((volatile uint16_t *)(AdcPPBsList[1].adcResultBase)))},
-////
-////  {((volatile int16_t *)(AdcPPBsList[1].adcResultBase)),
-////                   ((volatile int16_t *)(AdcPPBsList[5].adcResultBase)),
-////                   ((volatile int16_t *)(AdcPPBsList[11].adcResultBase))},
-////  .p_vMesured   = {((volatile int16_t *)(AdcPPBsList[3].adcResultBase)),
-////                   ((volatile int16_t *)(AdcPPBsList[7].adcResultBase)),
-////                   ((volatile int16_t *)(AdcPPBsList[13].adcResultBase))},
-////  .p_vBusMesured= (volatile int16_t *)(AdcPPBsList[9].adcResultBase),
-//  .dataValid    = {false, false},
-////  .offsetCal      = true
-// },
-// {
-//  .motorID      = NO_MOT,
-// }
-//};
 
+// FOC structure declarations
+extern FOC foc[];
 
 /**
  * main.c
@@ -93,6 +19,16 @@ int main(void)
     HAL_IT_init();
     // ADC offset calib for debug
     HAL_ADC_offsetCalib(motor);
+
+    // Reset controllers
+    CL_resetFoc(&foc[0]);
+    CL_resetFoc(&foc[1]);
+
+    // Initialize FOC structures
+    CL_initFoc(&foc[0], 0);
+    CL_initFoc(&foc[1], 1);
+
+
     // PWM test section, replace 0 by an integer between 0x0000 and 0xFFFF
     EPWM_setCounterCompareValue(MOTOR1_PWM1_BASE, EPWM_COUNTER_COMPARE_A, 0);
     EPWM_setCounterCompareValue(MOTOR1_PWM2_BASE, EPWM_COUNTER_COMPARE_A, 0);

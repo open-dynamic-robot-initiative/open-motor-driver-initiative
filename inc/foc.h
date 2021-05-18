@@ -9,6 +9,9 @@
 #include "lowpass_filter.h"
 #include "hal.h"
 
+#include "pd.h"
+#include "pi.h"
+
 #include "align_routine.h"
 #include "encoder.h"
 #include "math_defines.h"
@@ -109,11 +112,11 @@ typedef struct __FOC__
     float32_t idRef;    // [A]
     float32_t iqRef;    // [A]
 
-//    PI_controller piId;
-//    PI_controller piIq;
+    PI_controller piId;
+    PI_controller piIq;
 
     // Position PD controller
-//    PD_controller posPd;
+    PD_controller posPd;
 
     // Phase measured voltages
     float32_t phaseAVolt;   // [V]
@@ -126,7 +129,7 @@ typedef struct __FOC__
     LowpassFilter resEstLpf;
 
     // Anti-coagging structure
-    //Anticoagging acog;
+    Anticoagging acog;
 
     // Auxiliary ADC voltage
     float32_t auxAdc;   // [V]
