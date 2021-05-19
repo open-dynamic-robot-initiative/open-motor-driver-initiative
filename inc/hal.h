@@ -329,7 +329,7 @@ typedef struct _MOTOR_HAL_CFG_
  * Function prototypes
  */
 
-void HAL_init(HAL*);
+void HAL_init(const HAL*);
 void HAL_IT_init();
 
 // ADC interrupt service routine

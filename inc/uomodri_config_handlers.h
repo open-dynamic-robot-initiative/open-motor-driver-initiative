@@ -309,7 +309,7 @@ static const ePWM_TypeDef PwmCfgList[] =
 /** @var    DRV_Cfg     DrvCfgList[]
  *  @brief  List all IOs \& SPI peripherals used for DRV communication.
  */
-static DRV_Cfg DrvCfgList[] =
+static const DRV_Cfg DrvCfgList[] =
 {
  {.spiHandle = DRV_SPI_BASE, .gpioNumber_CS = DRV1_GPIO_CS, .gpioNumber_EN = DRV1_GPIO_EN},
  {.spiHandle = DRV_SPI_BASE, .gpioNumber_CS = DRV2_GPIO_CS, .gpioNumber_EN = DRV2_GPIO_EN},
@@ -404,7 +404,7 @@ static DRV_Reg DrvRegList[] =
 /** @var    HAL     hal
  *  @brief  General configuration structure for the Hardware Abstraction Layer.
  */
-static HAL hal =
+static const HAL hal =
 {.gpioHandler = GpioPinsCfgList,
  .adcHandler  = AdcCfgList,
  .epwmHandler = PwmCfgList,
@@ -419,7 +419,9 @@ static HAL hal =
  */
 static DRV8353 drv =
 {.drvCfgHandler = DrvCfgList,
- .drvRegHandler = DrvRegList
+ .drvRegHandler = DrvRegList,
+ .enableTimeOut = true,
+ .rxTimeOut     = true
 };
 
 static MOTOR_HAL_CFG motor[] =
@@ -474,6 +476,7 @@ static MOTOR_HAL_CFG motor[] =
 
 static FOC foc[] =
 {
+ {.enabled = true}
 
 };
 

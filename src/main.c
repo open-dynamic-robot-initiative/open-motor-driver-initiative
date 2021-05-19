@@ -2,7 +2,8 @@
 
 
 // FOC structure declarations
-extern FOC foc[];
+//extern HAL hal;
+//extern FOC foc[];
 
 /**
  * main.c

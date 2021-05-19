@@ -14,9 +14,9 @@
 
 // **************************************************************************
 // the function prototypes
-static void DRV_Enable(DRV_Cfg*);
-static bool DRV_SetConfig(DRV_Cfg*, DRV_Reg*);
-static void DRV_Calibration(DRV_Cfg*, DRV_Reg*);
+static void DRV_Enable(const DRV_Cfg*, bool*);
+static bool DRV_SetConfig(const DRV_Cfg*, DRV_Reg*);
+static void DRV_Calibration(const DRV_Cfg*, DRV_Reg*);
 
 // Function definitions
 /**
@@ -27,12 +27,13 @@ void DRV_init(DRV8353* p_drv)
 {
     if((p_drv != NULL) && (p_drv->drvCfgHandler != NULL) && (p_drv->drvRegHandler != NULL))
     {
-        DRV_Cfg* p_cfgHandle = p_drv->drvCfgHandler;
-        DRV_Reg* p_regHandle = p_drv->drvRegHandler;
+        const DRV_Cfg* p_cfgHandle  = p_drv->drvCfgHandler;
+        DRV_Reg* p_regHandle        = p_drv->drvRegHandler;
+        bool* p_enableTimeOut       = &p_drv->enableTimeOut;
 
         // Configures the DRVs
         while(p_cfgHandle->spiHandle != 0xFFFFFFFF) {
-            DRV_Enable(p_cfgHandle);
+            DRV_Enable(p_cfgHandle, p_enableTimeOut);
             DRV_SetConfig(p_cfgHandle, p_regHandle);
             DRV_Calibration(p_cfgHandle, p_regHandle);
             p_cfgHandle++;
@@ -47,19 +48,18 @@ void DRV_init(DRV8353* p_drv)
  * @brief       Enable the DRV IC pin.
  * @param[in]   *p_cfgHandle    Pointer on the DRV IOs configuration structure
  */
-static void DRV_Enable(DRV_Cfg* p_cfgHandle)
+static void DRV_Enable(const DRV_Cfg* p_cfgHandle, bool* p_enTimeOut)
 {
-    if(p_cfgHandle !=  NULL)
+    if((p_cfgHandle !=  NULL) && (p_enTimeOut != NULL))
     {
-        uint16_t enableWaitTimeOut = 0;
-
+        uint16_t enableWaitTimeOut  = 0;
         // Enable the DRV8353
         GPIO_writePin(p_cfgHandle->gpioNumber_EN, 1);
         // Wait 1ms
         DEVICE_DELAY_US(1000U);
         // Make sure the FAULT bit is not set during startup
         while((DRV_readOne(p_cfgHandle, DRV_ADDRESS_STATUS_0) & FLT_STATUS_FAULT_Msk) && (enableWaitTimeOut < 1000))
-            p_cfgHandle->enableTimeOut = (++enableWaitTimeOut > 999) ? (true) : (false);
+            *p_enTimeOut = (++enableWaitTimeOut > 999) ? (true) : (false);
         // Wait for the DRV8353 to go through start up sequence
         DEVICE_DELAY_US(1000U);
     }
@@ -73,7 +73,7 @@ static void DRV_Enable(DRV_Cfg* p_cfgHandle)
  * @param[in]   *p_regHandle    Pointer on the DRV registers definition structure
  * @return      SUCCESS config structure \& read registers match else ERROR.
  */
-static bool DRV_SetConfig(DRV_Cfg* p_cfgHandle, DRV_Reg* p_regHandle)
+static bool DRV_SetConfig(const DRV_Cfg* p_cfgHandle, DRV_Reg* p_regHandle)
 {
     if((p_cfgHandle != NULL) && (p_regHandle != NULL))
     {
@@ -102,7 +102,7 @@ static bool DRV_SetConfig(DRV_Cfg* p_cfgHandle, DRV_Reg* p_regHandle)
  * @param[in]   *p_cfgHandle    Pointer on the DRV IOs configuration structure
  * @param[in]   *p_regHandle    Pointer on the DRV registers definition structure
  */
-static void DRV_Calibration(DRV_Cfg* p_cfgHandle, DRV_Reg* p_regHandle)
+static void DRV_Calibration(const DRV_Cfg* p_cfgHandle, DRV_Reg* p_regHandle)
 {
     if((p_cfgHandle != NULL) && (p_regHandle != NULL))
     {
@@ -134,7 +134,7 @@ static void DRV_Calibration(DRV_Cfg* p_cfgHandle, DRV_Reg* p_regHandle)
  * @param[in]   *p_cfgHandle    Pointer on the DRV IOs configuration structure
  * @param[in]   *p_regHandle    Pointer on the DRV registers definition structure
  */
-void DRV_readStatus(DRV_Cfg* p_cfgHandle, DRV_Reg* p_regHandle)
+void DRV_readStatus(const DRV_Cfg* p_cfgHandle, DRV_Reg* p_regHandle)
 {
     if((p_cfgHandle != NULL) && (p_regHandle != NULL))
     {
@@ -152,7 +152,7 @@ void DRV_readStatus(DRV_Cfg* p_cfgHandle, DRV_Reg* p_regHandle)
  * @param[in]   *p_cfgHandle    Pointer on the DRV IOs configuration structure
  * @param[in]   *p_regHandle    Pointer on the DRV registers definition structure
  */
-void DRV_readAll(DRV_Cfg* p_cfgHandle, DRV_Reg* p_regHandle)
+void DRV_readAll(const DRV_Cfg* p_cfgHandle, DRV_Reg* p_regHandle)
 {
     if((p_cfgHandle != NULL) && (p_regHandle != NULL))
     {
@@ -177,7 +177,7 @@ void DRV_readAll(DRV_Cfg* p_cfgHandle, DRV_Reg* p_regHandle)
  * @param[in]   *p_cfgHandle    Pointer on the DRV IOs configuration structure
  * @param[in]   *p_regHandle    Pointer on the DRV registers definition structure
  */
-void DRV_writeAll(DRV_Cfg* p_cfgHandle, DRV_Reg* p_regHandle)
+void DRV_writeAll(const DRV_Cfg* p_cfgHandle, DRV_Reg* p_regHandle)
 {
     if((p_cfgHandle != NULL) && (p_regHandle != NULL))
     {
@@ -202,7 +202,7 @@ void DRV_writeAll(DRV_Cfg* p_cfgHandle, DRV_Reg* p_regHandle)
  * @param[in]   addr            Address of the register to read
  * @return      The value contained in the specified register
  */
-uint16_t DRV_readOne(DRV_Cfg* p_cfgHandle, DRV_Address_e addr)
+uint16_t DRV_readOne(const DRV_Cfg* p_cfgHandle, DRV_Address_e addr)
 {
     if(p_cfgHandle != NULL)
     {
@@ -233,7 +233,7 @@ uint16_t DRV_readOne(DRV_Cfg* p_cfgHandle, DRV_Address_e addr)
  * @param[in]   addr            Address of the register to write
  * @param[in]   data            Data to be written to the specified register
  */
-void DRV_writeOne(DRV_Cfg* p_cfgHandle, DRV_Address_e addr, uint16_t data)
+void DRV_writeOne(const DRV_Cfg* p_cfgHandle, DRV_Address_e addr, uint16_t data)
 {
     if(p_cfgHandle != NULL)
     {

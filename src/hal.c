@@ -22,7 +22,7 @@ void HAL_DMA_init(const DMA_TypeDef*);
  * @brief       Initialize all peripherals necessaries.
  * @param[in]   *p_hal  Pointer on the general HAL structure definition
  */
-void HAL_init(HAL* p_hal)
+void HAL_init(const HAL* p_hal)
 {
     if(p_hal != NULL)
     {

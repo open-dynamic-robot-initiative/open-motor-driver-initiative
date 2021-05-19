@@ -511,8 +511,6 @@ typedef struct _DRV_Cfg_t_
     uint32_t  spiHandle;            /*!< handle for the serial peripheral interface */
     uint32_t  gpioNumber_CS;        /*!< GPIO connected to the DRV8353 CS pin       */
     uint32_t  gpioNumber_EN;        /*!< GPIO connected to the DRV8353 enable pin   */
-    bool      rxTimeOut;            /*!< timeout flag for the RX FIFO               */
-    bool      enableTimeOut;        /*!< timeout flag for DRV8353 enable            */
 } DRV_Cfg;
 
 /**
@@ -537,8 +535,10 @@ typedef struct _DRV_Reg_t_
  */
 typedef struct _DRV_t_
 {
-    DRV_Cfg*    drvCfgHandler;
-    DRV_Reg*    drvRegHandler;
+    const DRV_Cfg*  drvCfgHandler;
+    DRV_Reg*        drvRegHandler;
+    bool            rxTimeOut;      /*!< timeout flag for the RX FIFO               */
+    bool            enableTimeOut;  /*!< timeout flag for DRV8353 enable            */
 } DRV8353;
 
 /**
@@ -565,11 +565,11 @@ typedef union _DRV_msg_u_
 // **************************************************************************
 // Functions prototypes
 void DRV_init(DRV8353*);
-void DRV_readStatus(DRV_Cfg*, DRV_Reg*);
-void DRV_readAll(DRV_Cfg*, DRV_Reg*);
-void DRV_writeAll(DRV_Cfg*, DRV_Reg*);
-uint16_t DRV_readOne(DRV_Cfg*, DRV_Address_e);
-void DRV_writeOne(DRV_Cfg*, DRV_Address_e, uint16_t);
+void DRV_readStatus(const DRV_Cfg*, DRV_Reg*);
+void DRV_readAll(const DRV_Cfg*, DRV_Reg*);
+void DRV_writeAll(const DRV_Cfg*, DRV_Reg*);
+uint16_t DRV_readOne(const DRV_Cfg*, DRV_Address_e);
+void DRV_writeOne(const DRV_Cfg*, DRV_Address_e, uint16_t);
 
 #ifdef __cplusplus
 }
