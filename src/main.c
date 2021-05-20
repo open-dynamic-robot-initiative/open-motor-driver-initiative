@@ -15,20 +15,18 @@ int main(void)
     // Hardware Abstraction Layer initialization
     HAL_init(&hal);
     // DRV8323 initialization
-    DRV_init(&drv);
+    DRV_init(drv);
     // Interrupts initialization
     HAL_IT_init();
     // ADC offset calib for debug
-    HAL_ADC_offsetCalib(motor);
+    HAL_ADC_offsetCalib(motor_hal_cfg);
 
     // Reset controllers
-    CL_resetFoc(&foc[0]);
-    CL_resetFoc(&foc[1]);
-
+    CL_resetFoc(&foc[MOTOR_1]);
+    CL_resetFoc(&foc[MOTOR_2]);
     // Initialize FOC structures
-    CL_initFoc(&foc[0], 0);
-    CL_initFoc(&foc[1], 1);
-
+    CL_initFoc(&foc[MOTOR_1], MOTOR_1);
+    CL_initFoc(&foc[MOTOR_2], MOTOR_2);
 
     // PWM test section, replace 0 by an integer between 0x0000 and 0xFFFF
     EPWM_setCounterCompareValue(MOTOR1_PWM1_BASE, EPWM_COUNTER_COMPARE_A, 0);
@@ -80,13 +78,13 @@ __interrupt void adc1ISR(void)
         uint8_t loop = 0;
 
         GPIO_writePin(DEBUG_INT_PIN2, 1);
-        motor[MOTOR_1].dataValid[0] = true;
+        motor_hal_cfg[MOTOR_1].dataValid[0] = true;
 
-//        FOC_getPhaseCurrent(&foc[MOTOR_1], &motor[MOTOR_1]);
-//        FOC_getBusVoltage(&foc[MOTOR_1], &motor[MOTOR_1]);
+//        FOC_getPhaseCurrent(&foc[MOTOR_1], &motor_hal_cfg[MOTOR_1]);
+//        FOC_getBusVoltage(&foc[MOTOR_1], &motor_hal_cfg[MOTOR_1]);
         for(loop = 0; loop < 3; loop++)
-            motor[MOTOR_1].i[loop] = (float32_t)HWSREGH(motor[MOTOR_1].p_iConv[loop]->adcPPBResultBase) * ADC_CURRENT_SCALE;
-        motor[MOTOR_1].vbus = (float32_t)HWSREGH(motor[MOTOR_1].p_vbusConv->adcPPBResultBase) * ADC_VOLTAGE_SCALE;
+            motor_hal_cfg[MOTOR_1].i[loop] = (float32_t)HWSREGH(motor_hal_cfg[MOTOR_1].p_iConv[loop]->adcPPBResultBase) * ADC_CURRENT_SCALE;
+        motor_hal_cfg[MOTOR_1].vbus = (float32_t)HWSREGH(motor_hal_cfg[MOTOR_1].p_vbusConv->adcPPBResultBase) * ADC_VOLTAGE_SCALE;
 
         HWREGH(ADCA_BASE + ADC_O_INTOVFCLR) = 1U; // ADC_clearInterruptOverflowStatus(ADCA_BASE, ADC_INT_NUMBER1);
         // Clear the interrupt flag
@@ -103,13 +101,13 @@ __interrupt void adc2ISR(void)
     if(ADC_getInterruptStatus(ADCA_BASE, ADC_INT_NUMBER2))
     {
         uint8_t loop = 0;
-        motor[MOTOR_2].dataValid[0] = true;
+        motor_hal_cfg[MOTOR_2].dataValid[0] = true;
 
-//        FOC_getPhaseCurrent(&foc[MOTOR_2], &motor[MOTOR_2]);
-//        FOC_getBusVoltage(&foc[MOTOR_2], &motor[MOTOR_2]);
+//        FOC_getPhaseCurrent(&foc[MOTOR_2], &motor_hal_cfg[MOTOR_2]);
+//        FOC_getBusVoltage(&foc[MOTOR_2], &motor_hal_cfg[MOTOR_2]);
         for(loop = 0; loop < 3; loop++)
-            motor[MOTOR_2].i[loop] = (float32_t)HWSREGH(motor[MOTOR_2].p_iConv[loop]->adcPPBResultBase) * ADC_CURRENT_SCALE;
-        motor[MOTOR_2].vbus = (float32_t)HWSREGH(motor[MOTOR_2].p_vbusConv->adcPPBResultBase) * ADC_VOLTAGE_SCALE;
+            motor_hal_cfg[MOTOR_2].i[loop] = (float32_t)HWSREGH(motor_hal_cfg[MOTOR_2].p_iConv[loop]->adcPPBResultBase) * ADC_CURRENT_SCALE;
+        motor_hal_cfg[MOTOR_2].vbus = (float32_t)HWSREGH(motor_hal_cfg[MOTOR_2].p_vbusConv->adcPPBResultBase) * ADC_VOLTAGE_SCALE;
 
         // Clear the interrupt overflow flag
         HWREGH(ADCA_BASE + ADC_O_INTOVFCLR) = 2U; // ADC_clearInterruptOverflowStatus(ADCA_BASE, ADC_INT_NUMBER2);
@@ -128,11 +126,11 @@ __interrupt void adc3ISR(void)
     {
         uint8_t loop = 0;
 
-        motor[MOTOR_1].dataValid[1] = true;
+        motor_hal_cfg[MOTOR_1].dataValid[1] = true;
 
-//        FOC_getPhaseVoltage(&foc[MOTOR_1], &motor[MOTOR_1]);
+//        FOC_getPhaseVoltage(&foc[MOTOR_1], &motor_hal_cfg[MOTOR_1]);
         for(loop = 0; loop < 3; loop++)
-            motor[MOTOR_1].v[loop] = (float32_t)HWSREGH(motor[MOTOR_1].p_vConv[loop]->adcPPBResultBase) * ADC_VOLTAGE_SCALE;
+            motor_hal_cfg[MOTOR_1].v[loop] = (float32_t)HWSREGH(motor_hal_cfg[MOTOR_1].p_vConv[loop]->adcPPBResultBase) * ADC_VOLTAGE_SCALE;
 
         // Clear the interrupt overflow flag
         HWREGH(ADCA_BASE + ADC_O_INTOVFCLR) = 4U; // ADC_clearInterruptOverflowStatus(ADCA_BASE, ADC_INT_NUMBER3);
@@ -151,11 +149,11 @@ __interrupt void adc4ISR(void)
     {
         uint8_t loop = 0;
 
-//        FOC_getPhaseVoltage(&foc[MOTOR_2], &motor[MOTOR_2]);
+//        FOC_getPhaseVoltage(&foc[MOTOR_2], &motor_hal_cfg[MOTOR_2]);
         for(loop = 0; loop < 3; loop++)
-            motor[MOTOR_2].v[loop] = (float32_t)HWSREGH(motor[MOTOR_2].p_vConv[loop]->adcPPBResultBase) * ADC_VOLTAGE_SCALE;
+            motor_hal_cfg[MOTOR_2].v[loop] = (float32_t)HWSREGH(motor_hal_cfg[MOTOR_2].p_vConv[loop]->adcPPBResultBase) * ADC_VOLTAGE_SCALE;
 
-        motor[MOTOR_2].dataValid[1] = true;
+        motor_hal_cfg[MOTOR_2].dataValid[1] = true;
         // Clear the interrupt overflow flag
         HWREGH(ADCA_BASE + ADC_O_INTOVFCLR) = 8U; // ADC_clearInterruptOverflowStatus(ADCA_BASE, ADC_INT_NUMBER4);
         // Clear the interrupt flag

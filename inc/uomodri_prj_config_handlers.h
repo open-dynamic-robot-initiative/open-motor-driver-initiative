@@ -71,7 +71,8 @@ static DRV_Reg DrvRegList[] =
    .Ctrl_Reg_06.ctrl06.VREF_DIV     = true,
    .Ctrl_Reg_06.ctrl06.CSA_FET      = false,
    // Amplifier calibration calibration routine (Address: 0x7)
-   .Ctrl_Reg_07.ctrl07.CAL_MODE     = true},
+   .Ctrl_Reg_07.ctrl07.CAL_MODE     = true
+ },
  { .Ctrl_Reg_02.ctrl02.CLR_FLT      = false,
    .Ctrl_Reg_02.ctrl02.BRAKE        = false,
    .Ctrl_Reg_02.ctrl02.COAST        = false,
@@ -109,20 +110,21 @@ static DRV_Reg DrvRegList[] =
    .Ctrl_Reg_06.ctrl06.VREF_DIV     = true,
    .Ctrl_Reg_06.ctrl06.CSA_FET      = false,
    // Amplifier calibration calibration routine (Address: 0x7)
-   .Ctrl_Reg_07.ctrl07.CAL_MODE     = true},
+   .Ctrl_Reg_07.ctrl07.CAL_MODE     = true
+ },
 };
 
 /** @var    DRV8353     drv
  *  @brief  General DRV8353 configuration structure.
  */
-static DRV8353 drv =
-{.drvCfgHandler = DrvCfgList,
- .drvRegHandler = DrvRegList,
- .enableTimeOut = true,
- .rxTimeOut     = true
+static DRV8353 drv[] =
+{
+ {.drvCfgHandler = &DrvCfgList[MOTOR_1], .drvRegHandler = &DrvRegList[MOTOR_1], .enableTimeOut = true, .rxTimeOut = true},
+ {.drvCfgHandler = &DrvCfgList[MOTOR_2], .drvRegHandler = &DrvRegList[MOTOR_2], .enableTimeOut = true, .rxTimeOut = true},
+ {.drvCfgHandler = NULL},
 };
 
-static MOTOR_HAL_CFG motor[] =
+static MOTOR_HAL_CFG motor_hal_cfg[] =
 {
  {.motorID      = MOTOR_1,
   .p_pwmCntCmp  = {&PwmCounterCompareCfgList[0], &PwmCounterCompareCfgList[1], &PwmCounterCompareCfgList[2]},
@@ -168,14 +170,48 @@ static MOTOR_HAL_CFG motor[] =
   .dataValid    = {false, false},
   //  .offsetCal      = true
  },
- {.motorID      = NO_MOT,
- }
+ {.motorID      = NO_MOT},
 };
 
 static FOC foc[] =
 {
- {.enabled = true}
+ {.enabled = true,
+  .piId.integral = 0.0f, .piId.err = 0.0f, .piId.ff = 0.0f, .piId.out = 0.0f,
+  .piIq.integral = 0.0f, .piIq.err = 0.0f, .piIq.ff = 0.0f, .piIq.out = 0.0f,
+  .posPd.err = 0.0f, .posPd.vErr = 0.0f, .posPd.out = 0.0f,
+  .alignRoutine.state = ALIGN_COUNT_UP, .alignRoutine.counter = 0, .alignRoutine.idAlign = 0.0f,
 
+  .encoder.mechAngle = 0.0f, .encoder.elecAngle = 0.0f,
+  .encoder.isIndexCompensated = false, .encoder.indexAngle = 0.0f, .encoder.indexedMechAngle = 0.0f,
+  .encoder.lastMechAngle = 0.0f, .encoder.absoluteAngle = 0.0f,
+  .encoder.speedEst.alpha = 0.0f,
+  .encoder.speedEst.speedRef = 0.0f,
+  .encoder.speedEst.angle = 0.0f,
+  .encoder.speedEst.lastAngle = 0.0f,
+  .encoder.speedEst.lowMechSpeedEst = 0.0f,
+  .encoder.speedEst.highMechSpeedEst = 0.0f,
+  .encoder.speedEst.mechSpeed = 0.0f,
+  .encoder.speedEst.elecSpeed = 0.0f,
+  .encoder.turnNb = 0,
+  .encoder.indexDetected = false,
+  .encoder.indexToggle = false,
+  .encoder.rollOverFlag = false,
+
+  .ia = 0.0f, .ib = 0.0f, .ic = 0.0f, .ialpha = 0.0f, .ibeta = 0.0f, .id = 0.0f, .iq = 0.0f,
+  .va = 0.0f, .vb = 0.0f, .vc = 0.0f, .valpha = 0.0f, .vbeta = 0.0f, .vd = 0.0f, .vq = 0.0f,
+  .auxAdc = 0.0f, .phaseAVolt = 0.0f, .phaseBVolt = 0.0f, .phaseCVolt = 0.0f, .resistanceEst = 0.0f,
+  .Rs = M1_RS, .Ld = M1_LD, .Lq = M1_LQ, .ke = M1_KE
+ },
+ {.enabled = true,
+  .piId.integral = 0.0f, .piId.err = 0.0f, .piId.ff = 0.0f, .piId.out = 0.0f,
+  .piIq.integral = 0.0f, .piIq.err = 0.0f, .piIq.ff = 0.0f, .piIq.out = 0.0f,
+  .posPd.err = 0.0f, .posPd.vErr = 0.0f, .posPd.out = 0.0f,
+  .alignRoutine.state = ALIGN_COUNT_UP, .alignRoutine.counter = 0, .alignRoutine.idAlign = 0.0f,
+  .ia = 0.0f, .ib = 0.0f, .ic = 0.0f, .ialpha = 0.0f, .ibeta = 0.0f, .id = 0.0f, .iq = 0.0f,
+  .va = 0.0f, .vb = 0.0f, .vc = 0.0f, .valpha = 0.0f, .vbeta = 0.0f, .vd = 0.0f, .vq = 0.0f,
+  .auxAdc = 0.0f, .phaseAVolt = 0.0f, .phaseBVolt = 0.0f, .phaseCVolt = 0.0f, .resistanceEst = 0.0f,
+  .Rs = M2_RS, .Ld = M2_LD, .Lq = M2_LQ, .ke = M2_KE
+ },
 };
 
 //static const ePWM_TypeDef PwmCfgList[] =

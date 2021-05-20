@@ -2,7 +2,7 @@
 
 // Reset encoder structure
 // This function is defined here because of compilation problems
-inline void ENC_reset(EncoderStruct *encoder)
+inline void ENC_reset(ENCODER *encoder)
 {
     encoder->mechAngle = 0.0f;
     encoder->elecAngle = 0.0f;
@@ -31,7 +31,7 @@ inline void ENC_reset(EncoderStruct *encoder)
 
 // Reset encoder and EQEP position counter to zero
 // This is used to set the rotor angle to zero during alignment routine
-inline void ENC_resetQepPos(EncoderStruct* p_encoder)
+inline void ENC_resetQepPos(ENCODER* p_encoder)
 {
     // Reset encoder position
     EQEP_setPosition(p_encoder->p_qepHandle->eqepBase, 0);
@@ -40,7 +40,7 @@ inline void ENC_resetQepPos(EncoderStruct* p_encoder)
 }
 
 // Read rotor position
-inline void ENC_read(EncoderStruct *p_encoder)
+inline void ENC_read(ENCODER *p_encoder)
 {
     // Compute mechanical angle (between 0 and 1)
     p_encoder->mechAngle = EQEP_getPosition(p_encoder->p_qepHandle->eqepBase) / 4.0f / QEP_ENCODER_STEPS;
@@ -54,7 +54,7 @@ inline void ENC_read(EncoderStruct *p_encoder)
 // Reference manual par 27.6 contains all the information
 // necessary to understand this routine
 // TODO Maybe do this on CLA
-inline void ENC_update(EncoderStruct* p_encoder)
+inline void ENC_update(ENCODER* p_encoder)
 {
     float32_t dAngle;
 

@@ -68,12 +68,12 @@ typedef struct __Encoder__
     bool indexDetected; // Has index been detected
     bool indexToggle;   // Flag that toggles every time index is seen
     bool rollOverFlag;  // Roll-over error flag
-} EncoderStruct;
+} ENCODER;
 
-inline void ENC_reset(EncoderStruct *encoder);
-inline void ENC_resetQepPos(EncoderStruct *encoder);
-inline void ENC_read(EncoderStruct *encoder);
-inline void ENC_update(EncoderStruct *encoder);
+inline void ENC_reset(ENCODER *encoder);
+inline void ENC_resetQepPos(ENCODER *encoder);
+inline void ENC_read(ENCODER *encoder);
+inline void ENC_update(ENCODER *encoder);
 
 
 

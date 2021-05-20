@@ -77,7 +77,7 @@ typedef struct __FOC__
     LowpassFilter controlLoopLpf;
 
     // Encoder
-    EncoderStruct encoder;
+    ENCODER encoder;
 
     // Current transforms
     float32_t ia;       // [A]

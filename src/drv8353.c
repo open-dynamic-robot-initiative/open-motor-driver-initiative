@@ -29,15 +29,15 @@ void DRV_init(DRV8353* p_drv)
     {
         const DRV_Cfg* p_cfgHandle  = p_drv->drvCfgHandler;
         DRV_Reg* p_regHandle        = p_drv->drvRegHandler;
-        bool* p_enableTimeOut       = &p_drv->enableTimeOut;
 
         // Configures the DRVs
-        while(p_cfgHandle->spiHandle != 0xFFFFFFFF) {
-            DRV_Enable(p_cfgHandle, p_enableTimeOut);
+        while(p_cfgHandle != NULL)
+        {
+            DRV_Enable(p_cfgHandle, &p_drv->enableTimeOut);
             DRV_SetConfig(p_cfgHandle, p_regHandle);
             DRV_Calibration(p_cfgHandle, p_regHandle);
-            p_cfgHandle++;
-            p_regHandle++;
+            p_cfgHandle = (++p_drv)->drvCfgHandler;
+            p_regHandle = p_drv->drvRegHandler;
         }
     }
 
