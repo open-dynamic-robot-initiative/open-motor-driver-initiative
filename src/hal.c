@@ -4,8 +4,7 @@
  */
 
 #include "hal.h"
-
-#include "uomodri_config_handlers.h"
+#include "uomodri_hal_config_handlers.h"
 
 /* Static function signatures */
 // Device HAL

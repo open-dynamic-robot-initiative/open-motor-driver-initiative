@@ -13,7 +13,8 @@
 #include "control_loop.h"
 //#include "spi_communication.h"
 #include "uomodri_user_defines.h"
-#include "uomodri_config_handlers.h"
+#include "uomodri_hal_config_handlers.h"
+#include "uomodri_prj_config_handlers.h"
 
 static void Mcu_init();
 

@@ -9,8 +9,8 @@
 
 // **************************************************************************
 // drivers
+#include <uomodri_prj_config_handlers.h>
 #include "drv8353.h"
-#include "uomodri_config_handlers.h"
 
 // **************************************************************************
 // the function prototypes
