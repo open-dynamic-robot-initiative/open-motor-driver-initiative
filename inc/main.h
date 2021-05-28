@@ -19,10 +19,10 @@
 static void Mcu_init();
 
 // ADC interrupt service routine
-__interrupt void adc1ISR(void);
-__interrupt void adc2ISR(void);
-__interrupt void adc3ISR(void);
-__interrupt void adc4ISR(void);
-__interrupt void pwm1ISR(void);
+//__interrupt void adc1ISR(void);
+//__interrupt void adc2ISR(void);
+//__interrupt void adc3ISR(void);
+//__interrupt void adc4ISR(void);
+//__interrupt void isrMotor1(void);
 
 #endif // end of MAIN_H definition

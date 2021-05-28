@@ -16,7 +16,7 @@ typedef struct _MotorDebug_
 void MTR1_offsetComputation(MotorDebug* motorDebug);
 void MTR2_offsetComputation(MotorDebug* motorDebug);
 
-void CL_initFoc(FOC *foc, const uint16_t motorIndex);
-void CL_resetFoc(FOC* foc);
+void CL_initFoc(MOTOR_FOC *foc, const uint16_t motorIndex);
+void CL_resetFoc(MOTOR_FOC* foc);
 
 #endif

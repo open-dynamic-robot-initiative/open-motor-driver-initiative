@@ -41,7 +41,7 @@
 //                                 FOC STRUCTURE                                 //
 //-------------------------------------------------------------------------------//
 
-typedef struct __FOC__
+typedef struct __MOTOR_FOC__
 {
     // Enable flag
     bool enabled;
@@ -152,7 +152,7 @@ typedef struct __FOC__
 
     // ADC interrupt flag register
     volatile union ADCINTFLG_REG *adcIntFlag;
-} FOC;
+} MOTOR_FOC;
 
 //-------------------------------------------------------------------------------//
 //                                    DEFINES                                    //
@@ -166,20 +166,20 @@ typedef struct __FOC__
 //-------------------------------------------------------------------------------//
 //                             FUNCTIONS DECLARATION                             //
 //-------------------------------------------------------------------------------//
-inline void FOC_getPosition(FOC*, MOTOR_HAL_CFG*);
-inline void FOC_getPhaseCurrent(FOC*, MOTOR_HAL_CFG*);
-inline void FOC_getPhaseVoltage(FOC*, MOTOR_HAL_CFG*);
-inline void FOC_getBusVoltage(FOC*, MOTOR_HAL_CFG*);
+inline void FOC_getPosition(MOTOR_FOC*, MOTOR_HAL_CFG*);
+inline void FOC_getPhaseCurrent(MOTOR_FOC*, MOTOR_HAL_CFG*);
+inline void FOC_getPhaseVoltage(MOTOR_FOC*, MOTOR_HAL_CFG*);
+inline void FOC_getBusVoltage(MOTOR_FOC*, MOTOR_HAL_CFG*);
 
-inline void FOC_getMeasures(FOC*, MOTOR_HAL_CFG*);
-inline void FOC_sineCosine(FOC *foc);
-inline void FOC_parkClarke(FOC *foc);
+inline void FOC_getMeasures(MOTOR_FOC*, MOTOR_HAL_CFG*);
+inline void FOC_sineCosine(MOTOR_FOC *foc);
+inline void FOC_parkClarke(MOTOR_FOC *foc);
 
-inline void FOC_runPi(FOC *foc);
+inline void FOC_runPi(MOTOR_FOC *foc);
 
-inline void FOC_invParkClarke(FOC *foc);
-inline void FOC_svm(FOC *foc);
+inline void FOC_invParkClarke(MOTOR_FOC *foc);
+inline void FOC_svm(MOTOR_FOC *foc);
 
-inline void FOC_resistanceEstimation(FOC *foc);
+inline void FOC_resistanceEstimation(MOTOR_FOC *foc);
 
 #endif

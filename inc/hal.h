@@ -263,6 +263,13 @@ typedef struct _ADC_TypeDef_
     const ADC_IT_TypeDef*  adcIt;                   /*!< Pointer on ADC Interrupt source configuration handler */
 } ADC_TypeDef;
 
+typedef struct _IT_TypeDef_
+{
+    uint32_t intNum;
+    void (*handler)(void);
+} IT_TypeDef;
+
+
 /**
  * @struct  HAL_
  * @brief   General HAL structure handler for the project
@@ -328,14 +335,14 @@ typedef struct _MOTOR_HAL_CFG_
  */
 
 void HAL_init(const HAL*);
-void HAL_IT_init();
+void HAL_IT_init(const IT_TypeDef*);
 
 // ADC interrupt service routine
-extern __interrupt void adc1ISR(void);
-extern __interrupt void adc2ISR(void);
-extern __interrupt void adc3ISR(void);
-extern __interrupt void adc4ISR(void);
-extern __interrupt void pwm1ISR(void);
+//extern __interrupt void adc1ISR(void);
+//extern __interrupt void adc2ISR(void);
+//extern __interrupt void adc3ISR(void);
+//extern __interrupt void adc4ISR(void);
+//extern __interrupt void isrMotor1(void);
 
 void HAL_ADC_offsetCalib(MOTOR_HAL_CFG*);
 

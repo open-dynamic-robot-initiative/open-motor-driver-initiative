@@ -2,13 +2,13 @@
 //#include "f28x_project.h"
 
 // Read current measures
-inline void FOC_getPosition(FOC* p_foc, MOTOR_HAL_CFG* p_motor)
+inline void FOC_getPosition(MOTOR_FOC* p_foc, MOTOR_HAL_CFG* p_motor)
 {
     // Get latest position of the Quadrature Encoder
     p_motor[p_motor->motorID].encoderPos = HWREG(p_motor->p_qep->eqepBase + EQEP_O_QPOSCNT);
 }
 
-inline void FOC_getPhaseCurrent(FOC* p_foc, MOTOR_HAL_CFG* p_motor)
+inline void FOC_getPhaseCurrent(MOTOR_FOC* p_foc, MOTOR_HAL_CFG* p_motor)
 {
     // Get the latest current values in Amps
     p_foc->ia = (float32_t)HWSREGH(p_motor->p_iConv[0]->adcPPBResultBase) * ADC_CURRENT_SCALE;
@@ -16,7 +16,7 @@ inline void FOC_getPhaseCurrent(FOC* p_foc, MOTOR_HAL_CFG* p_motor)
     p_foc->ic = (float32_t)HWSREGH(p_motor->p_iConv[2]->adcPPBResultBase) * ADC_CURRENT_SCALE;
 }
 
-inline void FOC_getPhaseVoltage(FOC* p_foc, MOTOR_HAL_CFG* p_motor)
+inline void FOC_getPhaseVoltage(MOTOR_FOC* p_foc, MOTOR_HAL_CFG* p_motor)
 {
     // Get the latest phase voltage values in Volt
     p_foc->va = (float32_t)HWREGH(p_motor->p_vConv[0]->adcPPBResultBase) * ADC_VOLTAGE_SCALE;
@@ -24,7 +24,7 @@ inline void FOC_getPhaseVoltage(FOC* p_foc, MOTOR_HAL_CFG* p_motor)
     p_foc->vc = (float32_t)HWREGH(p_motor->p_vConv[2]->adcPPBResultBase) * ADC_VOLTAGE_SCALE;
 }
 
-inline void FOC_getBusVoltage(FOC* p_foc, MOTOR_HAL_CFG* p_motor)
+inline void FOC_getBusVoltage(MOTOR_FOC* p_foc, MOTOR_HAL_CFG* p_motor)
 {
     // Get the latest Voltage supply value in Volt
     p_foc->vbus = (float32_t)HWREGH(p_motor->p_vbusConv->adcPPBResultBase) * ADC_VOLTAGE_SCALE;
@@ -32,7 +32,7 @@ inline void FOC_getBusVoltage(FOC* p_foc, MOTOR_HAL_CFG* p_motor)
 
 
 // Read current measures
-inline void FOC_getMeasures(FOC *foc, MOTOR_HAL_CFG* p_motor)
+inline void FOC_getMeasures(MOTOR_FOC *foc, MOTOR_HAL_CFG* p_motor)
 {
     // Get the latest position of the Quadrature Encoder
 //    p_motor[p_motor->motorID].encoderPos = HWREG(p_motor->p_qep->eqepBase + EQEP_O_QPOSCNT);
@@ -56,7 +56,7 @@ inline void FOC_getMeasures(FOC *foc, MOTOR_HAL_CFG* p_motor)
 }
 
 // Compute electrical angle sine and cosine
-inline void FOC_sineCosine(FOC *foc)
+inline void FOC_sineCosine(MOTOR_FOC *foc)
 {
     // Sine Cosine computation
     foc->sinTheta = __sinpuf32(foc->encoder.elecAngle);
@@ -65,7 +65,7 @@ inline void FOC_sineCosine(FOC *foc)
 
 // Clarke Park transform wikipedia link:
 // https://en.wikipedia.org/wiki/Direct-quadrature-zero_transformation
-inline void FOC_parkClarke(FOC *foc)
+inline void FOC_parkClarke(MOTOR_FOC *foc)
 {
     // Clarke transform
     foc->ialpha =  (2.0f * foc->ia - foc->ib - foc->ic) * 0.333333333f;
@@ -97,7 +97,7 @@ inline void FOC_parkClarke(FOC *foc)
 //}
 
 // Compute phase voltages from controller outputs
-inline void FOC_invParkClarke(FOC *foc)
+inline void FOC_invParkClarke(MOTOR_FOC *foc)
 {
     // Inverse Park transform
     foc->valpha = foc->cosTheta * foc->vd - foc->sinTheta * foc->vq;
@@ -110,7 +110,7 @@ inline void FOC_invParkClarke(FOC *foc)
 }
 
 // State vector modulation, compute PWM compare register values from phase voltages
-inline void FOC_svm(FOC *foc)
+inline void FOC_svm(MOTOR_FOC *foc)
 {
     // Compute middle voltage to center PWM duty cycles around it
     float32_t uMid = 0.5f * (__fmin(__fmin(foc->va, foc->vb), foc->vc) + __fmax(__fmax(foc->va, foc->vb), foc->vc));
@@ -128,7 +128,7 @@ inline void FOC_svm(FOC *foc)
 
 // Q-axis resistance estimation
 // TODO Use VSEN results instead of Iq controller output
-inline void FOC_resistanceEstimation(FOC *foc)
+inline void FOC_resistanceEstimation(MOTOR_FOC *foc)
 {
     // Read measures
     foc->phaseAVolt = (*foc->vsenaResult) * foc->voltageScalerReg;

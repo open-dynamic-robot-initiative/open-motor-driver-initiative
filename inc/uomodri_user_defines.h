@@ -466,6 +466,7 @@
 *******************************************************************************************************/
 #define M1_KV                   300.0     // Motor constant (rpm/V)
 #define M1_KE                   0.0017    //1.0 / (M1_KV * FM_RPM2RADPS * M1_POLES_PAIRS) // Motor back EMF constant (V/rad/s)
+#define M1_KI                   0.1       // Motor torque constant (N.m/A)
 #define M1_RS                   0.7       // Stator resistance (ohm)
 #define M1_LD                   134e-6    // Stator d-axis inductance (H)
 #define M1_LQ                   140e-6    // Stator q-axis inductance (H)
@@ -477,6 +478,7 @@
 *******************************************************************************************************/
 #define M2_KV                   300.0     // Motor constant (rpm/V)
 #define M2_KE                   0.0017    // Motor back EMF constant (V/rad/s)
+#define M2_KI                   0.1       // Motor torque constant (N.m/A)
 #define M2_RS                   0.7       // Stator resistance (ohm)
 #define M2_LD                   134e-6    // Stator d-axis inductance (H)
 #define M2_LQ                   140e-6    // Stator q-axis inductance (H)

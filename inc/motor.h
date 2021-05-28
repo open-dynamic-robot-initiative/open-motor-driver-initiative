@@ -53,11 +53,7 @@ typedef struct __MOTOR_STRUCT__
     const MOTOR_HAL_CFG*    motorHalCfg;
     const MOTOR_PARAMS*     motorParams;
     ENCODER*                motorEncoder;
-    FOC*                    motorFOC;
-
-
-
-
+    MOTOR_FOC*              motorFOC;
 
     bool enabled;
     // Alignment routine structure
@@ -167,7 +163,7 @@ typedef struct __MOTOR_STRUCT__
 
     // ADC interrupt flag register
     volatile union ADCINTFLG_REG *adcIntFlag;
-} FOC_MOTOR;
+} MOTOR_STRUCT;
 
 
 

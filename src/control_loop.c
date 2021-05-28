@@ -114,7 +114,7 @@ void MTR2_offsetComputation(MotorDebug* motorDebug)
 }
 
 // Control loop initialization function
-void CL_initFoc(FOC *foc, const uint16_t motorIndex)
+void CL_initFoc(MOTOR_FOC *foc, const uint16_t motorIndex)
 {
     // Initialize scalers
     foc->currentScaler = ADC_CURRENT_SCALE;
@@ -251,7 +251,7 @@ void CL_initFoc(FOC *foc, const uint16_t motorIndex)
 }
 
 // Control loop reset
-void CL_resetFoc(FOC* foc)
+void CL_resetFoc(MOTOR_FOC* foc)
 {
     // Reset controllers
     PI_reset(&foc->piId);

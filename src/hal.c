@@ -546,23 +546,17 @@ void HAL_DMA_init(const DMA_TypeDef* p_dmaCfg)
 /**
  * @brief       Interrupts initialization function.
  */
-void HAL_IT_init(void)
+void HAL_IT_init(const IT_TypeDef* p_ITCfg)
 {
-    // Setup Interrupts
-    // Attach ISR to interrupt
-    Interrupt_register(INT_ADCA1, &adc1ISR);
-    Interrupt_register(INT_ADCA2, &adc2ISR);
-    Interrupt_register(INT_ADCA3, &adc3ISR);
-    Interrupt_register(INT_ADCA4, &adc4ISR);
-    Interrupt_register(INT_EPWM1, &pwm1ISR);
-
-    // Enable Interrupts
-    // Enable EPWM interrupts
-    Interrupt_enable(INT_ADCA1);
-    Interrupt_enable(INT_ADCA2);
-    Interrupt_enable(INT_ADCA3);
-    Interrupt_enable(INT_ADCA4);
-    Interrupt_enable(INT_EPWM1);
+    while(p_ITCfg->intNum != 0xFFFFFFFF)
+    {
+        // Setup Interrupts
+        // Attach ISR to interrupt
+        Interrupt_register(p_ITCfg->intNum, p_ITCfg->handler);
+        // Enable Interrupts
+        Interrupt_enable(p_ITCfg->intNum);
+        ++p_ITCfg;
+    }
     // Enable interrupt group 1 (ePWM 1 and 4 interrupts are here)
     Interrupt_enableInCPU(INTERRUPT_CPU_INT1);
     Interrupt_enableInCPU(INTERRUPT_CPU_INT10);

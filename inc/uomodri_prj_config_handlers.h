@@ -18,6 +18,23 @@
 extern DualBufferW dualBufferW;
 extern DualBufferR dualBufferR;
 
+extern __interrupt void adc1ISR(void);
+extern __interrupt void adc2ISR(void);
+extern __interrupt void adc3ISR(void);
+extern __interrupt void adc4ISR(void);
+extern __interrupt void isrMotor1(void);
+
+static const IT_TypeDef InterruptList[] =
+{
+ {.intNum = INT_ADCA1, .handler = &adc1ISR},
+ {.intNum = INT_ADCA2, .handler = &adc2ISR},
+ {.intNum = INT_ADCA3, .handler = &adc3ISR},
+ {.intNum = INT_ADCA4, .handler = &adc4ISR},
+ {.intNum = INT_EPWM1, .handler = &isrMotor1},
+ // END OF ARRAY
+ {.intNum = 0xFFFFFFFF},
+};
+
 /** @var    DRV_Cfg     DrvCfgList[]
  *  @brief  List all IOs \& SPI peripherals used for DRV communication.
  */
@@ -176,7 +193,13 @@ static MOTOR_HAL_CFG motor_hal_cfg[] =
  {.motorID      = NO_MOT},
 };
 
-static FOC foc[] =
+static MOTOR_PARAMS motor_params[] =
+{
+ {.Rs = M1_RS, .Ld = M1_LD, .Lq = M1_LQ, .kv = M1_KV, .ke = M1_KE, .ki = M1_KI, .polePairs = M1_POLES_PAIRS},
+ {.Rs = M2_RS, .Ld = M2_LD, .Lq = M2_LQ, .kv = M2_KV, .ke = M2_KE, .ki = M2_KI, .polePairs = M2_POLES_PAIRS},
+};
+
+static MOTOR_FOC motor_foc[] =
 {
  {.enabled = true,
   .piId.integral = 0.0f, .piId.err = 0.0f, .piId.ff = 0.0f, .piId.out = 0.0f,
@@ -217,22 +240,30 @@ static FOC foc[] =
  },
 };
 
-static FOC_MOTOR motor[] =
+static MOTOR_STRUCT motor[] =
 {
  {
   .motorID = MOTOR_1,
-  .motorHalCfg = &motor_hal_cfg[0],
-  .motorParams = NULL,
+  .motorHalCfg = &motor_hal_cfg[MOTOR_1],
+  .motorParams = &motor_params[MOTOR_1],
   .encoder = NULL,
-  .motorFOC = &foc[0],
+  .motorFOC = &motor_foc[MOTOR_1],
+  .currentScaler = ADC_CURRENT_SCALE,
+  .currentScalerReg = ADC_CURRENT_SCALE / 0x8000L,
+  .voltageScaler = ADC_VOLTAGE_SCALE,
+  .voltageScalerReg = ADC_VOLTAGE_SCALE / 0x10000L,
  },
  {
   .motorID = MOTOR_2,
-  .motorHalCfg = &motor_hal_cfg[1],
-  .motorParams = NULL,
+  .motorHalCfg = &motor_hal_cfg[MOTOR_2],
+  .motorParams = &motor_params[MOTOR_2],
   .encoder = NULL,
-  .motorFOC = &foc[1],
- }
+  .motorFOC = &motor_foc[MOTOR_2],
+  .currentScaler = ADC_CURRENT_SCALE,
+  .currentScalerReg = ADC_CURRENT_SCALE / 0x8000L,
+  .voltageScaler = ADC_VOLTAGE_SCALE,
+  .voltageScalerReg = ADC_VOLTAGE_SCALE / 0x10000L,
+ },
 };
 
 //static const ePWM_TypeDef PwmCfgList[] =
