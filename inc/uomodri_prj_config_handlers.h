@@ -8,6 +8,7 @@
 #include "hal.h"
 #include "drv8353.h"
 #include "foc.h"
+#include "motor.h"
 #include "spi_communication.h"
 
 #include "uomodri_user_defines.h"
@@ -128,9 +129,10 @@ static MOTOR_HAL_CFG motor_hal_cfg[] =
 {
  {.motorID      = MOTOR_1,
   .p_pwmCntCmp  = {&PwmCounterCompareCfgList[0], &PwmCounterCompareCfgList[1], &PwmCounterCompareCfgList[2]},
-  .p_iConv      = {&AdcPPBsList[0], &AdcPPBsList[4], &AdcPPBsList[10]},
-  .p_vConv      = {&AdcPPBsList[2], &AdcPPBsList[6], &AdcPPBsList[12]},
-  .p_vbusConv   = &AdcPPBsList[8],
+  .p_iConv      = {&AdcAcqList[0], &AdcAcqList[4], &AdcAcqList[10]},
+  .p_vConv      = {&AdcAcqList[2], &AdcAcqList[6], &AdcAcqList[12]},
+  .p_vbusConv   = &AdcAcqList[8],
+  .p_ITConv     = {&AdcIntList[0], &AdcIntList[2]},
 //  .p_ia         = ((volatile int16_t *)(.p_iConv[0]->adcPPBResultBase)),
 //  .p_ib         = (volatile int16_t *)(.p_iConv[1]->adcPPBResultBase),
 //  .p_ic         = (volatile int16_t *)(.p_iConv[2]->adcPPBResultBase),
@@ -149,9 +151,10 @@ static MOTOR_HAL_CFG motor_hal_cfg[] =
  },
  {.motorID      = MOTOR_2,
   .p_pwmCntCmp  = {&PwmCounterCompareCfgList[3], &PwmCounterCompareCfgList[4], &PwmCounterCompareCfgList[5]},
-  .p_iConv      = {&AdcPPBsList[1], &AdcPPBsList[5], &AdcPPBsList[11]},
-  .p_vConv      = {&AdcPPBsList[3], &AdcPPBsList[7], &AdcPPBsList[13]},
-  .p_vbusConv   = &AdcPPBsList[9],
+  .p_iConv      = {&AdcAcqList[1], &AdcAcqList[5], &AdcAcqList[11]},
+  .p_vConv      = {&AdcAcqList[3], &AdcAcqList[7], &AdcAcqList[13]},
+  .p_vbusConv   = &AdcAcqList[9],
+  .p_ITConv     = {&AdcIntList[1], &AdcIntList[3]},
 //  .p_ia         = (((volatile int16_t *)((uintptr_t)(M2_IA_ADC_PPB_RESULT_ADDR)))),
 //  .p_ia         = (&((volatile int16_t *)((AdcPPBsList[1].adcPPBResultBase)))),
 //  .p_ia         = (((volatile int16_t *)((uintptr_t)&(AdcPPBsList[1]->adcPPBResultBase)))),
@@ -212,6 +215,24 @@ static FOC foc[] =
   .auxAdc = 0.0f, .phaseAVolt = 0.0f, .phaseBVolt = 0.0f, .phaseCVolt = 0.0f, .resistanceEst = 0.0f,
   .Rs = M2_RS, .Ld = M2_LD, .Lq = M2_LQ, .ke = M2_KE
  },
+};
+
+static FOC_MOTOR motor[] =
+{
+ {
+  .motorID = MOTOR_1,
+  .motorHalCfg = &motor_hal_cfg[0],
+  .motorParams = NULL,
+  .encoder = NULL,
+  .motorFOC = &foc[0],
+ },
+ {
+  .motorID = MOTOR_2,
+  .motorHalCfg = &motor_hal_cfg[1],
+  .motorParams = NULL,
+  .encoder = NULL,
+  .motorFOC = &foc[1],
+ }
 };
 
 //static const ePWM_TypeDef PwmCfgList[] =

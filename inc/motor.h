@@ -49,7 +49,7 @@ typedef struct __FILTER_PARAMS__
 
 typedef struct __MOTOR_STRUCT__
 {
-    const Motor_Sel         motorID;
+    const MotorID           motorID;
     const MOTOR_HAL_CFG*    motorHalCfg;
     const MOTOR_PARAMS*     motorParams;
     ENCODER*                motorEncoder;

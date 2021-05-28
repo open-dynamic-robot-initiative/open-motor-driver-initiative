@@ -16,10 +16,10 @@ int main(void)
     HAL_init(&hal);
     // DRV8323 initialization
     DRV_init(drv);
-    // Interrupts initialization
-    HAL_IT_init();
     // ADC offset calib for debug
     HAL_ADC_offsetCalib(motor_hal_cfg);
+    // Interrupts initialization
+    HAL_IT_init();
 
     // Reset controllers
     CL_resetFoc(&foc[MOTOR_1]);

@@ -31,6 +31,11 @@
 			<locationURI>SOFTWARE_ROOT/device_support/f2838x/common/source/device.c</locationURI>
 		</link>
 		<link>
+			<name>device/f2838x_globalvariabledefs.c</name>
+			<type>1</type>
+			<locationURI>MOTORWARE_ROOT/c2000ware/device_support/f2838x/headers/source/f2838x_globalvariabledefs.c</locationURI>
+		</link>
+		<link>
 			<name>device/driverlib/adc.c</name>
 			<type>1</type>
 			<locationURI>SOFTWARE_ROOT/driverlib/f2838x/driverlib/adc.c</locationURI>

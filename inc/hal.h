@@ -11,7 +11,7 @@
 #include "f2838x_device.h"
 
 /**
- * @enum    Motor_Sel
+ * @enum    MotorID
  * @brief   Easier motor identification
  */
 typedef enum
@@ -19,7 +19,7 @@ typedef enum
     MOTOR_1 = 0,    /*!< Select Motor_1 */
     MOTOR_2 = 1,    /*!< Select Motor_2 */
     NO_MOT  = -1    /*!< No motor selected */
-} Motor_Sel;
+} MotorID;
 
 /**
  * @enum    EPWM_DelayModeEnable
@@ -213,22 +213,22 @@ typedef struct _GPIO_Cfg_TypeDef_
 } GPIO_TypeDef;
 
 /**
- * @struct  ADC_SOC_TypeDef
- * @brief   ADC start-of-conversion configuration handler
+ * @struct  ADC_Init_TypeDef
+ * @brief   ADC initial configuration (start-of-conversion) handler
  */
-typedef struct ADC_SOC_TypeDef
+typedef struct _ADC_INIT_TypeDef_
 {
     uint32_t adcBase;                               /*!< ADC peripheral address. */
     ADC_Channel adcChannel;                         /*!< ADC sampling channel. */
     ADC_SOCNumber adcSOCNumber;                     /*!< ADC Start-Of-Conversion (SOC) number (0-15). */
     ADC_Trigger adcTriggerSrc;                      /*!< ADC SOC trigger source. */
-} ADC_SOC_TypeDef;
+} ADC_INIT_TypeDef;
 
 /**
- * @struct  ADC_PPB_TypeDef
- * @brief   ADC Post-Processing Block configuration handler
+ * @struct  ADC_ACQ_TypeDef
+ * @brief   ADC acquisition results (base and Post-Processing Block) configuration handler
  */
-typedef struct _ADC_PPB_TypeDef_
+typedef struct _ADC_ACQ_TypeDef_
 {
     uint32_t adcBase;                               /*!< ADC peripheral address. */
     uint32_t adcResultBase;
@@ -237,7 +237,7 @@ typedef struct _ADC_PPB_TypeDef_
 //    uint16_t adcOffset;
     ADC_SOCNumber adcSOCNumber;
     ADC_PPBNumber adcPPBNumber;
-} ADC_PPB_TypeDef;
+} ADC_ACQ_TypeDef;
 
 /**
  * @struct  ADC_IT_TypeDef
@@ -258,8 +258,8 @@ typedef struct _ADC_TypeDef_
 {
     const uint32_t adcBase;                         /*!< ADC peripheral address. */
     const uint32_t adcResultBase;                   /*!< ADC results address. */
-    const ADC_SOC_TypeDef* adcSoc;                  /*!< Pointer on ADC start-of-conversion configuration handler */
-    const ADC_PPB_TypeDef* adcPpb;                  /*!< Pointer on ADC Post-Processing Block configuration handler */
+    const ADC_INIT_TypeDef* adcInit;                /*!< Pointer on ADC start-of-conversion configuration handler */
+    const ADC_ACQ_TypeDef* adcAcq;                  /*!< Pointer on ADC result configuration handler */
     const ADC_IT_TypeDef*  adcIt;                   /*!< Pointer on ADC Interrupt source configuration handler */
 } ADC_TypeDef;
 
@@ -283,9 +283,10 @@ typedef struct _MOTOR_HAL_CFG_
 {
 //    ADC_SOC_TypeDef* p_adcSoc[3];
     const ePWM_CC_TypeDef*  p_pwmCntCmp[3];
-    const ADC_PPB_TypeDef*  p_iConv[3];
-    const ADC_PPB_TypeDef*  p_vConv[3];
-    const ADC_PPB_TypeDef*  p_vbusConv;
+    const ADC_ACQ_TypeDef*  p_iConv[3];
+    const ADC_ACQ_TypeDef*  p_vConv[3];
+    const ADC_ACQ_TypeDef*  p_vbusConv;
+    const ADC_IT_TypeDef*   p_ITConv[2];
     const eQEP_TypeDef*     p_qep;
     // ADC results scaled (expressed in (A))
     float32_t               i[3];
@@ -316,13 +317,10 @@ typedef struct _MOTOR_HAL_CFG_
 //    ACQ raw;
     uint32_t encoderPos;
 
-    Motor_Sel motorID;
+    MotorID motorID;
 
     bool dataValid[2];
 //    bool offsetCal;
-
-
-
 } MOTOR_HAL_CFG;
 
 /*

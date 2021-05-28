@@ -57,10 +57,10 @@ static const GPIO_TypeDef GpioPinsCfgList[] =
  {.pinNumber = 0xFFFFFFFF},
 };
 
- /** @var    ADC_SOC_TypeDef AdcSOCsList[]
+ /** @var    ADC_Init_TypeDef AdcInitList[]
   *  @brief  List all the configurations defined for ADC Start-Of-Conversion (SOC) submodule.
   */
-static const ADC_SOC_TypeDef AdcSOCsList[] =
+static const ADC_INIT_TypeDef AdcInitList[] =
 {
  /* ADCA - ADCINA0 : Ia Motor1, ADCINA1 : Ia Motor2, ADCINA2 : Va Motor1, ADCINA3 : Va Motor2 */
  {.adcBase = M1_IA_ADC_ADDR,    .adcChannel = M1_IA_CH,     .adcSOCNumber = M1_IA_SOC_NUM,      .adcTriggerSrc = ADC_TRIGGER_EVT1},
@@ -84,10 +84,10 @@ static const ADC_SOC_TypeDef AdcSOCsList[] =
  {.adcBase = 0xFFFFFFFF},
 };
 
-/** @var    ADC_PPB_TypeDef AdcPPBsList[]
+/** @var    ADC_PPB_TypeDef AdcAcqList[]
  *  @brief  List all the configurations defined for ADC Post-Processing Block (PPB) submodule.
  */
-static const ADC_PPB_TypeDef AdcPPBsList[] =
+static const ADC_ACQ_TypeDef AdcAcqList[] =
 {
  /* ADCA : Ia_M1, Ia_M2, Va_M1, Va_M2; SOC0 - 3; PPB1 - 4 */
  {.adcBase = M1_IA_ADC_ADDR,    .adcResultBase = M1_IA_ADC_RESULT_ADDR,     .adcPPBResultBase = M1_IA_ADC_PPB_RESULT_ADDR,  .adcSOCNumber = M1_IA_SOC_NUM,   .adcPPBNumber = M1_IA_PPB_NUM},
@@ -129,10 +129,10 @@ static const ADC_IT_TypeDef AdcIntList[] =
  */
 static const ADC_TypeDef AdcCfgList[] =
 {
- {.adcBase = M12_IVA_ADC_ADDR,  .adcResultBase = M12_IVA_ADC_RESULT_ADDR,   .adcSoc = &AdcSOCsList[0],  .adcPpb = &AdcPPBsList[0],  .adcIt = &AdcIntList[0]},
- {.adcBase = M12_IVB_ADC_ADDR,  .adcResultBase = M12_IVB_ADC_RESULT_ADDR,   .adcSoc = &AdcSOCsList[4],  .adcPpb = &AdcPPBsList[4],  .adcIt = &AdcIntList[1]},
- {.adcBase = M12_VBUS_ADC_ADDR, .adcResultBase = M12_VBUS_ADC_RESULT_ADDR,  .adcSoc = &AdcSOCsList[8],  .adcPpb = &AdcPPBsList[8],  .adcIt = &AdcIntList[2]},
- {.adcBase = M12_IVC_ADC_ADDR,  .adcResultBase = M12_IVC_ADC_RESULT_ADDR,   .adcSoc = &AdcSOCsList[12], .adcPpb = &AdcPPBsList[10], .adcIt = &AdcIntList[3]},
+ {.adcBase = M12_IVA_ADC_ADDR,  .adcResultBase = M12_IVA_ADC_RESULT_ADDR,   .adcInit = &AdcInitList[0],     .adcAcq = &AdcAcqList[0],  .adcIt = &AdcIntList[0]},
+ {.adcBase = M12_IVB_ADC_ADDR,  .adcResultBase = M12_IVB_ADC_RESULT_ADDR,   .adcInit = &AdcInitList[4],     .adcAcq = &AdcAcqList[4],  .adcIt = &AdcIntList[1]},
+ {.adcBase = M12_VBUS_ADC_ADDR, .adcResultBase = M12_VBUS_ADC_RESULT_ADDR,  .adcInit = &AdcInitList[8],     .adcAcq = &AdcAcqList[8],  .adcIt = &AdcIntList[2]},
+ {.adcBase = M12_IVC_ADC_ADDR,  .adcResultBase = M12_IVC_ADC_RESULT_ADDR,   .adcInit = &AdcInitList[12],    .adcAcq = &AdcAcqList[10], .adcIt = &AdcIntList[3]},
  // END OF ARRAY
  {.adcBase = 0xFFFFFFFF},
 };
