@@ -41,8 +41,8 @@ typedef struct __SpeedEst__
 
 typedef struct __Encoder__
 {
-    const eQEP_TypeDef*  p_qepHandle;
-    struct EQEP_REGS *qepHandle;
+    const eQEP_TypeDef* p_qepHandle;
+    struct EQEP_REGS*   p_qepRegs;
 
     // Scalers
     float32_t mechScaler; // [pu/register]
@@ -72,7 +72,7 @@ typedef struct __Encoder__
 
 inline void ENC_reset(ENCODER *encoder);
 inline void ENC_resetQepPos(ENCODER *encoder);
-inline void ENC_read(ENCODER *encoder);
+inline void encoderGetPosition(ENCODER *encoder);
 inline void ENC_update(ENCODER *encoder);
 
 

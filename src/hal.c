@@ -125,8 +125,8 @@ void HAL_ADC_init(const ADC_TypeDef* p_adcCfg)
             while(p_adcIT->adcBase == adcBase)
             {
                 ADC_setInterruptSource(adcBase, p_adcIT->adcIntNumber, p_adcIT->adcEOCNumber);
-                ADC_clearInterruptStatus(adcBase, p_adcIT->adcIntNumber);
                 ADC_enableInterrupt(adcBase, p_adcIT->adcIntNumber);
+                ADC_clearInterruptStatus(adcBase, p_adcIT->adcIntNumber);
                 p_adcIT++;
             }
             adcBase = (++p_adcCfg)->adcBase;
@@ -171,12 +171,12 @@ void HAL_ADC_offsetCalib(MOTOR_HAL_CFG* p_motor)
 
                 if (calibCnt > 1000)
                     for(loop = 0; loop < 3; loop++)
-                        i[loop] = 0.998f * i[loop] + 0.002f * HWREGH(p_motor->p_iConv[loop]->adcResultBase);
-                 // Clear the interrupt overflow flag
-//                AdcaRegs.ADCINTOVF.all = (1U << ((uint16_t)p_ITConv->adcIntNumber));
+                        v[loop] = 0.998f * v[loop] + 0.002f * HWREGH(p_motor->p_vConv[loop]->adcResultBase);
+                // Clear the interrupt overflow flag
+                //                AdcaRegs.ADCINTOVF.all = (1U << ((uint16_t)p_ITConv->adcIntNumber));
                 HWREGH(p_ITConv->adcBase + ADC_O_INTOVFCLR) = (1U << ((uint16_t)p_ITConv->adcIntNumber)); // ADC_clearInterruptOverflowStatus(ADCA_BASE, ADC_INT_NUMBER1);
-                 // Clear the interrupt flag
-                 HWREGH(p_ITConv->adcBase + ADC_O_INTFLGCLR) = (1U << ((uint16_t)p_ITConv->adcIntNumber)); // ADC_clearInterruptStatus(ADCA_BASE, ADC_INT_NUMBER1);
+                // Clear the interrupt flag
+                HWREGH(p_ITConv->adcBase + ADC_O_INTFLGCLR) = (1U << ((uint16_t)p_ITConv->adcIntNumber)); // ADC_clearInterruptStatus(ADCA_BASE, ADC_INT_NUMBER1);
 
                 // Wait data acquisition for Va, Vb, Vc. Blocking.
                 // Init pointer on second IT source
@@ -186,7 +186,7 @@ void HAL_ADC_offsetCalib(MOTOR_HAL_CFG* p_motor)
 
                 if (calibCnt > 1000)
                     for(loop = 0; loop < 3; loop++)
-                        v[loop] = 0.998f * v[loop] + 0.002f * HWREGH(p_motor->p_vConv[loop]->adcResultBase);
+                        i[loop] = 0.998f * i[loop] + 0.002f * HWREGH(p_motor->p_iConv[loop]->adcResultBase);
                 // Clear the interrupt overflow flag
                 HWREGH(p_ITConv->adcBase + ADC_O_INTOVFCLR) = (1U << ((uint16_t)p_ITConv->adcIntNumber)); // ADC_clearInterruptOverflowStatus(ADCA_BASE, ADC_INT_NUMBER1);
                 // Clear the interrupt flag
@@ -196,12 +196,12 @@ void HAL_ADC_offsetCalib(MOTOR_HAL_CFG* p_motor)
             // Set offsets in PPBs
             for(loop = 0; loop < 3; loop++)
             {
-                // Sets the post processing block reference offset for currents
+                // Sets the post processing block reference offset for tensions
+                ADC_setPPBReferenceOffset(p_motor->p_vConv[loop]->adcBase, p_motor->p_vConv[loop]->adcPPBNumber, (uint16_t)v[loop]);
+                // Sets the post processing block reference offset for tensions
                 ADC_setPPBReferenceOffset(p_motor->p_iConv[loop]->adcBase, p_motor->p_iConv[loop]->adcPPBNumber, (uint16_t)i[loop]);
                 // Enables two's complement capability
                 ADC_enablePPBTwosComplement(p_motor->p_iConv[loop]->adcBase, p_motor->p_iConv[loop]->adcPPBNumber);
-                // Sets the post processing block reference offset for tensions
-                ADC_setPPBReferenceOffset(p_motor->p_vConv[loop]->adcBase, p_motor->p_vConv[loop]->adcPPBNumber, (uint16_t)v[loop]);
             }
             // Calibrate next motor
             p_motor++;
@@ -548,21 +548,26 @@ void HAL_DMA_init(const DMA_TypeDef* p_dmaCfg)
  */
 void HAL_IT_init(const IT_TypeDef* p_ITCfg)
 {
-    while(p_ITCfg->intNum != 0xFFFFFFFF)
+    if(p_ITCfg != NULL)
     {
+        Interrupt_enablePIE();
         // Setup Interrupts
-        // Attach ISR to interrupt
-        Interrupt_register(p_ITCfg->intNum, p_ITCfg->handler);
-        // Enable Interrupts
-        Interrupt_enable(p_ITCfg->intNum);
-        ++p_ITCfg;
-    }
-    // Enable interrupt group 1 (ePWM 1 and 4 interrupts are here)
-    Interrupt_enableInCPU(INTERRUPT_CPU_INT1);
-    Interrupt_enableInCPU(INTERRUPT_CPU_INT10);
+        while(p_ITCfg->intNum != 0xFFFFFFFF)
+        {
+            // Attach ISR to interrupt
+            Interrupt_register(p_ITCfg->intNum, p_ITCfg->handler);
+            // Enable Interrupts
+            Interrupt_enable(p_ITCfg->intNum);
+            ++p_ITCfg;
+        }
+        // Enable interrupt group 1 (ePWM 1 and 4 interrupts are here)
+        Interrupt_enableInCPU(INTERRUPT_CPU_INT1);
+        Interrupt_enableInCPU(INTERRUPT_CPU_INT3);
+        Interrupt_enableInCPU(INTERRUPT_CPU_INT10);
 
-    // enable global interrupt
-    EINT;
+        // enable global interrupt
+        EINT;
+    }
 
     return;
 }

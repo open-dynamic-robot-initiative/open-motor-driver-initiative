@@ -160,11 +160,11 @@ void CL_initFoc(MOTOR_FOC *foc, const uint16_t motorIndex)
 
     if (motorIndex == 0)
     {
-        foc->encoder.qepHandle = (struct EQEP_REGS *)MOTOR1_QEP_BASE;
+        foc->encoder.p_qepRegs = (struct EQEP_REGS *)MOTOR1_QEP_BASE;
         foc->encoder.mechScaler = 0.25 / QEP_MOTOR1_ENCODER_LINES_NB;
         foc->encoder.polePairs = M1_POLES_PAIRS;
     } else {
-        foc->encoder.qepHandle = (struct EQEP_REGS *)MOTOR2_QEP_BASE;
+        foc->encoder.p_qepRegs = (struct EQEP_REGS *)MOTOR2_QEP_BASE;
         foc->encoder.mechScaler = 0.25 / QEP_MOTOR2_ENCODER_LINES_NB;
         foc->encoder.polePairs = M2_POLES_PAIRS;
     }
@@ -192,9 +192,9 @@ void CL_initFoc(MOTOR_FOC *foc, const uint16_t motorIndex)
     // DRVs must be initialized before CL_initFoc is called so vBus isn't zero
     if (motorIndex == 0)
     {
-        foc->vBus = ADC_readResult(M1_VBUS_ADC_ADDR, M1_VBUS_SOC_NUM) * foc->voltageScalerReg;
+        foc->vBus = ADC_readResult(M12_VBUS_ADC_ADDR, M12_VBUS_SOC_NUM) * foc->voltageScalerReg;
     } else {
-        foc->vBus = ADC_readResult(M2_VBUS_ADC_ADDR, M2_VBUS_SOC_NUM) * foc->voltageScalerReg;
+        foc->vBus = ADC_readResult(M12_VBUS_ADC_ADDR, M12_VBUS_SOC_NUM) * foc->voltageScalerReg;
     }
 
     foc->piId.sat = 0.4 * foc->vBus;
@@ -219,7 +219,7 @@ void CL_initFoc(MOTOR_FOC *foc, const uint16_t motorIndex)
         foc->isenAResult   = (volatile int32_t *)(M1_IA_ADC_PPB_RESULT_ADDR);
         foc->isenBResult   = (volatile int32_t *)(M1_IB_ADC_PPB_RESULT_ADDR);
         foc->isenCResult   = (volatile int32_t *)(M1_IC_ADC_PPB_RESULT_ADDR);
-        foc->vBusSenResult = (volatile int32_t *)(M1_VBUS_ADC_PPB_RESULT_ADDR);
+        foc->vBusSenResult = (volatile int32_t *)(M12_VBUS_ADC_PPB_RESULT_ADDR);
 
         foc->vsenaResult = (volatile int32_t *)(M1_VA_ADC_PPB_RESULT_ADDR);
         foc->vsenbResult = (volatile int32_t *)(M1_VB_ADC_PPB_RESULT_ADDR);
@@ -240,7 +240,7 @@ void CL_initFoc(MOTOR_FOC *foc, const uint16_t motorIndex)
 #if OMODRI_PAL_SETUP    // Second VSENVM measure is replaced by ISENVM, so use the same one than motor 1
         foc->vBusSenResult = (volatile int32_t *)(MOTOR1_VBUS_RESULT  + ADC_PPBxRESULT_OFFSET_BASE + 2 * MOTOR1_ADC_PPB_NUM1);
 #else
-        foc->vBusSenResult = (volatile int32_t *)(M2_VBUS_ADC_PPB_RESULT_ADDR);
+        foc->vBusSenResult = (volatile int32_t *)(M12_VBUS_ADC_PPB_RESULT_ADDR);
 #endif
         foc->vsenaResult = (volatile int32_t *)(M2_VA_ADC_PPB_RESULT_ADDR);
         foc->vsenbResult = (volatile int32_t *)(M2_VB_ADC_PPB_RESULT_ADDR);

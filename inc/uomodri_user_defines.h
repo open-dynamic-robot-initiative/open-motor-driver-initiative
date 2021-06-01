@@ -45,38 +45,38 @@
  *  @brief    Configure the Analog to Digital Core \& 2 Analog to Digital Wrapper Logic blocks
  * @{
  */
-// ADC Base Address
-#define M1_IA_ADC_ADDR                  ADCA_BASE
-#define M2_IA_ADC_ADDR                  ADCA_BASE
-#define M1_VA_ADC_ADDR                  ADCA_BASE
-#define M2_VA_ADC_ADDR                  ADCA_BASE
-#define M12_IVA_ADC_ADDR                ADCA_BASE
-// ADC Results Base Address
-#define M1_IA_ADC_RESULT_ADDR           (ADCARESULT_BASE + ADC_RESULTx_OFFSET_BASE + M1_IA_SOC_NUM)
-#define M2_IA_ADC_RESULT_ADDR           (ADCARESULT_BASE + ADC_RESULTx_OFFSET_BASE + M2_IA_SOC_NUM)
-#define M1_VA_ADC_RESULT_ADDR           (ADCARESULT_BASE + ADC_RESULTx_OFFSET_BASE + M1_VA_SOC_NUM)
-#define M2_VA_ADC_RESULT_ADDR           (ADCARESULT_BASE + ADC_RESULTx_OFFSET_BASE + M2_VA_SOC_NUM)
-#define M12_IVA_ADC_RESULT_ADDR         ADCARESULT_BASE
-// ADC PPB Results Address
-#define M1_IA_ADC_PPB_RESULT_ADDR       (ADCARESULT_BASE + ADC_PPBxRESULT_OFFSET_BASE + (2U * M1_IA_PPB_NUM))
-#define M2_IA_ADC_PPB_RESULT_ADDR       (ADCARESULT_BASE + ADC_PPBxRESULT_OFFSET_BASE + (2U * M2_IA_PPB_NUM))
-#define M1_VA_ADC_PPB_RESULT_ADDR       (ADCARESULT_BASE + ADC_PPBxRESULT_OFFSET_BASE + (2U * M1_VA_PPB_NUM))
-#define M2_VA_ADC_PPB_RESULT_ADDR       (ADCARESULT_BASE + ADC_PPBxRESULT_OFFSET_BASE + (2U * M2_VA_PPB_NUM))
 // Channels
-#define M1_IA_CH                        ADC_CH_ADCIN0
-#define M2_IA_CH                        ADC_CH_ADCIN1
 #define M1_VA_CH                        ADC_CH_ADCIN2
 #define M2_VA_CH                        ADC_CH_ADCIN3
+#define M1_IA_CH                        ADC_CH_ADCIN0
+#define M2_IA_CH                        ADC_CH_ADCIN1
 // SOC Number
-#define M1_IA_SOC_NUM                   ADC_SOC_NUMBER0
-#define M2_IA_SOC_NUM                   ADC_SOC_NUMBER1
-#define M1_VA_SOC_NUM                   ADC_SOC_NUMBER2
-#define M2_VA_SOC_NUM                   ADC_SOC_NUMBER3
+#define M1_VA_SOC_NUM                   ADC_SOC_NUMBER0
+#define M2_VA_SOC_NUM                   ADC_SOC_NUMBER1
+#define M1_IA_SOC_NUM                   ADC_SOC_NUMBER2
+#define M2_IA_SOC_NUM                   ADC_SOC_NUMBER3
 // PPB Number
-#define M1_IA_PPB_NUM                   ADC_PPB_NUMBER1
-#define M2_IA_PPB_NUM                   ADC_PPB_NUMBER2
-#define M1_VA_PPB_NUM                   ADC_PPB_NUMBER3
-#define M2_VA_PPB_NUM                   ADC_PPB_NUMBER4
+#define M1_VA_PPB_NUM                   ADC_PPB_NUMBER1
+#define M2_VA_PPB_NUM                   ADC_PPB_NUMBER2
+#define M1_IA_PPB_NUM                   ADC_PPB_NUMBER3
+#define M2_IA_PPB_NUM                   ADC_PPB_NUMBER4
+// ADC Base Address
+#define M1_VA_ADC_ADDR                  ADCA_BASE
+#define M2_VA_ADC_ADDR                  ADCA_BASE
+#define M1_IA_ADC_ADDR                  ADCA_BASE
+#define M2_IA_ADC_ADDR                  ADCA_BASE
+#define M12_IVA_ADC_ADDR                ADCA_BASE
+// ADC Results Base Address
+#define M1_VA_ADC_RESULT_ADDR           (ADCARESULT_BASE + ADC_RESULTx_OFFSET_BASE + (1U * M1_VA_SOC_NUM))
+#define M2_VA_ADC_RESULT_ADDR           (ADCARESULT_BASE + ADC_RESULTx_OFFSET_BASE + (1U * M2_VA_SOC_NUM))
+#define M1_IA_ADC_RESULT_ADDR           (ADCARESULT_BASE + ADC_RESULTx_OFFSET_BASE + (1U * M1_IA_SOC_NUM))
+#define M2_IA_ADC_RESULT_ADDR           (ADCARESULT_BASE + ADC_RESULTx_OFFSET_BASE + (1U * M2_IA_SOC_NUM))
+#define M12_IVA_ADC_RESULT_ADDR         ADCARESULT_BASE
+// ADC PPB Results Address
+#define M1_VA_ADC_PPB_RESULT_ADDR       (ADCARESULT_BASE + ADC_PPBxRESULT_OFFSET_BASE + (2U * M1_VA_PPB_NUM))
+#define M2_VA_ADC_PPB_RESULT_ADDR       (ADCARESULT_BASE + ADC_PPBxRESULT_OFFSET_BASE + (2U * M2_VA_PPB_NUM))
+#define M1_IA_ADC_PPB_RESULT_ADDR       (ADCARESULT_BASE + ADC_PPBxRESULT_OFFSET_BASE + (2U * M1_IA_PPB_NUM))
+#define M2_IA_ADC_PPB_RESULT_ADDR       (ADCARESULT_BASE + ADC_PPBxRESULT_OFFSET_BASE + (2U * M2_IA_PPB_NUM))
 /**
  * @}
  */
@@ -85,38 +85,38 @@
  *  @brief    Configure the Analog to Digital Core \& 2 Analog to Digital Wrapper Logic blocks
  * @{
  */
-// ADC Base Address
-#define M1_IB_ADC_ADDR                  ADCB_BASE
-#define M2_IB_ADC_ADDR                  ADCB_BASE
-#define M1_VB_ADC_ADDR                  ADCB_BASE
-#define M2_VB_ADC_ADDR                  ADCB_BASE
-#define M12_IVB_ADC_ADDR                ADCB_BASE
-// ADC Results Base Address
-#define M1_IB_ADC_RESULT_ADDR           (ADCBRESULT_BASE + ADC_RESULTx_OFFSET_BASE + M1_IB_SOC_NUM)
-#define M2_IB_ADC_RESULT_ADDR           (ADCBRESULT_BASE + ADC_RESULTx_OFFSET_BASE + M2_IB_SOC_NUM)
-#define M1_VB_ADC_RESULT_ADDR           (ADCBRESULT_BASE + ADC_RESULTx_OFFSET_BASE + M1_VB_SOC_NUM)
-#define M2_VB_ADC_RESULT_ADDR           (ADCBRESULT_BASE + ADC_RESULTx_OFFSET_BASE + M2_VB_SOC_NUM)
-#define M12_IVB_ADC_RESULT_ADDR         ADCBRESULT_BASE
-// ADC PPB Results Address
-#define M1_IB_ADC_PPB_RESULT_ADDR       (M1_IB_ADC_RESULT_ADDR + ADC_PPBxRESULT_OFFSET_BASE + (2U * M1_IB_PPB_NUM))
-#define M2_IB_ADC_PPB_RESULT_ADDR       (M2_IB_ADC_RESULT_ADDR + ADC_PPBxRESULT_OFFSET_BASE + (2U * M2_IB_PPB_NUM))
-#define M1_VB_ADC_PPB_RESULT_ADDR       (M1_VB_ADC_RESULT_ADDR + ADC_PPBxRESULT_OFFSET_BASE + (2U * M1_VB_PPB_NUM))
-#define M2_VB_ADC_PPB_RESULT_ADDR       (M2_VB_ADC_RESULT_ADDR + ADC_PPBxRESULT_OFFSET_BASE + (2U * M2_VB_PPB_NUM))
 // Channels
-#define M1_IB_CH                        ADC_CH_ADCIN0
-#define M2_IB_CH                        ADC_CH_ADCIN1
 #define M1_VB_CH                        ADC_CH_ADCIN2
 #define M2_VB_CH                        ADC_CH_ADCIN3
+#define M1_IB_CH                        ADC_CH_ADCIN0
+#define M2_IB_CH                        ADC_CH_ADCIN1
 // SOC Number
-#define M1_IB_SOC_NUM                   ADC_SOC_NUMBER0
-#define M2_IB_SOC_NUM                   ADC_SOC_NUMBER1
-#define M1_VB_SOC_NUM                   ADC_SOC_NUMBER2
-#define M2_VB_SOC_NUM                   ADC_SOC_NUMBER3
+#define M1_VB_SOC_NUM                   ADC_SOC_NUMBER0
+#define M2_VB_SOC_NUM                   ADC_SOC_NUMBER1
+#define M1_IB_SOC_NUM                   ADC_SOC_NUMBER2
+#define M2_IB_SOC_NUM                   ADC_SOC_NUMBER3
 // PPB Number
-#define M1_IB_PPB_NUM                   ADC_PPB_NUMBER1
-#define M2_IB_PPB_NUM                   ADC_PPB_NUMBER2
-#define M1_VB_PPB_NUM                   ADC_PPB_NUMBER3
-#define M2_VB_PPB_NUM                   ADC_PPB_NUMBER4
+#define M1_VB_PPB_NUM                   ADC_PPB_NUMBER1
+#define M2_VB_PPB_NUM                   ADC_PPB_NUMBER2
+#define M1_IB_PPB_NUM                   ADC_PPB_NUMBER3
+#define M2_IB_PPB_NUM                   ADC_PPB_NUMBER4
+// ADC Base Address
+#define M1_VB_ADC_ADDR                  ADCB_BASE
+#define M2_VB_ADC_ADDR                  ADCB_BASE
+#define M1_IB_ADC_ADDR                  ADCB_BASE
+#define M2_IB_ADC_ADDR                  ADCB_BASE
+#define M12_IVB_ADC_ADDR                ADCB_BASE
+// ADC Results Base Address
+#define M1_VB_ADC_RESULT_ADDR           (ADCBRESULT_BASE + ADC_RESULTx_OFFSET_BASE + (1U * M1_VB_SOC_NUM))
+#define M2_VB_ADC_RESULT_ADDR           (ADCBRESULT_BASE + ADC_RESULTx_OFFSET_BASE + (1U * M2_VB_SOC_NUM))
+#define M1_IB_ADC_RESULT_ADDR           (ADCBRESULT_BASE + ADC_RESULTx_OFFSET_BASE + (1U * M1_IB_SOC_NUM))
+#define M2_IB_ADC_RESULT_ADDR           (ADCBRESULT_BASE + ADC_RESULTx_OFFSET_BASE + (1U * M2_IB_SOC_NUM))
+#define M12_IVB_ADC_RESULT_ADDR         ADCBRESULT_BASE
+// ADC PPB Results Address
+#define M1_VB_ADC_PPB_RESULT_ADDR       (ADCBRESULT_BASE + ADC_PPBxRESULT_OFFSET_BASE + (2U * M1_VB_PPB_NUM))
+#define M2_VB_ADC_PPB_RESULT_ADDR       (ADCBRESULT_BASE + ADC_PPBxRESULT_OFFSET_BASE + (2U * M2_VB_PPB_NUM))
+#define M1_IB_ADC_PPB_RESULT_ADDR       (ADCBRESULT_BASE + ADC_PPBxRESULT_OFFSET_BASE + (2U * M1_IB_PPB_NUM))
+#define M2_IB_ADC_PPB_RESULT_ADDR       (ADCBRESULT_BASE + ADC_PPBxRESULT_OFFSET_BASE + (2U * M2_IB_PPB_NUM))
 /**
  * @}
  */
@@ -125,26 +125,18 @@
  *  @brief    Configure the Analog to Digital Core \& 2 Analog to Digital Wrapper Logic blocks
  * @{
  */
+// Channels
+#define M12_VBUS_CH                     ADC_CH_ADCIN2
+// SOC Number
+#define M12_VBUS_SOC_NUM                ADC_SOC_NUMBER0
+// PPB Number
+#define M12_VBUS_PPB_NUM                ADC_PPB_NUMBER1
 // ADC Base Address
-#define M1_VBUS_ADC_ADDR                ADCC_BASE
-#define M2_VBUS_ADC_ADDR                ADCC_BASE
 #define M12_VBUS_ADC_ADDR               ADCC_BASE
 // ADC Results Base Address
-#define M1_VBUS_ADC_RESULT_ADDR         (ADCCRESULT_BASE + ADC_RESULTx_OFFSET_BASE + M1_VBUS_SOC_NUM)
-#define M2_VBUS_ADC_RESULT_ADDR         (ADCCRESULT_BASE + ADC_RESULTx_OFFSET_BASE + M2_VBUS_SOC_NUM)
-#define M12_VBUS_ADC_RESULT_ADDR        ADCCRESULT_BASE
+#define M12_VBUS_ADC_RESULT_ADDR        (ADCCRESULT_BASE + ADC_RESULTx_OFFSET_BASE + (1U * M12_VBUS_SOC_NUM))
 // ADC PPB Results Address
-#define M1_VBUS_ADC_PPB_RESULT_ADDR     (M1_VBUS_ADC_RESULT_ADDR + ADC_PPBxRESULT_OFFSET_BASE + (2U * M1_VBUS_PPB_NUM))
-#define M2_VBUS_ADC_PPB_RESULT_ADDR     (M2_VBUS_ADC_RESULT_ADDR + ADC_PPBxRESULT_OFFSET_BASE + (2U * M2_VBUS_PPB_NUM))
-// Channels
-#define M1_VBUS_CH                      ADC_CH_ADCIN4
-#define M2_VBUS_CH                      ADC_CH_ADCIN5
-// SOC Number
-#define M1_VBUS_SOC_NUM                 ADC_SOC_NUMBER0
-#define M2_VBUS_SOC_NUM                 ADC_SOC_NUMBER1
-// PPB Number
-#define M1_VBUS_PPB_NUM                 ADC_PPB_NUMBER1
-#define M2_VBUS_PPB_NUM                 ADC_PPB_NUMBER2
+#define M12_VBUS_ADC_PPB_RESULT_ADDR    (M12_VBUS_ADC_RESULT_ADDR + ADC_PPBxRESULT_OFFSET_BASE + (2U * M12_VBUS_PPB_NUM))
 /**
  * @}
  */
@@ -153,6 +145,21 @@
  *  @brief    Configure the Analog to Digital Core \& 2 Analog to Digital Wrapper Logic blocks
  * @{
  */
+// Channels
+#define M1_VC_CH                        ADC_CH_ADCIN2
+#define M2_VC_CH                        ADC_CH_ADCIN3
+#define M1_IC_CH                        ADC_CH_ADCIN0
+#define M2_IC_CH                        ADC_CH_ADCIN1
+// SOC Number
+#define M1_VC_SOC_NUM                   ADC_SOC_NUMBER0
+#define M2_VC_SOC_NUM                   ADC_SOC_NUMBER1
+#define M1_IC_SOC_NUM                   ADC_SOC_NUMBER2
+#define M2_IC_SOC_NUM                   ADC_SOC_NUMBER3
+// PPB Number
+#define M1_VC_PPB_NUM                   ADC_PPB_NUMBER1
+#define M2_VC_PPB_NUM                   ADC_PPB_NUMBER2
+#define M1_IC_PPB_NUM                   ADC_PPB_NUMBER3
+#define M2_IC_PPB_NUM                   ADC_PPB_NUMBER4
 // ADC Base Address
 #define M1_IC_ADC_ADDR                  ADCD_BASE
 #define M2_IC_ADC_ADDR                  ADCD_BASE
@@ -160,31 +167,16 @@
 #define M2_VC_ADC_ADDR                  ADCD_BASE
 #define M12_IVC_ADC_ADDR                ADCD_BASE
 // ADC Results Base Address
-#define M1_IC_ADC_RESULT_ADDR           (ADCDRESULT_BASE + ADC_RESULTx_OFFSET_BASE + M1_IC_SOC_NUM)
-#define M2_IC_ADC_RESULT_ADDR           (ADCDRESULT_BASE + ADC_RESULTx_OFFSET_BASE + M2_IC_SOC_NUM)
-#define M1_VC_ADC_RESULT_ADDR           (ADCDRESULT_BASE + ADC_RESULTx_OFFSET_BASE + M1_VC_SOC_NUM)
-#define M2_VC_ADC_RESULT_ADDR           (ADCDRESULT_BASE + ADC_RESULTx_OFFSET_BASE + M2_VC_SOC_NUM)
+#define M1_VC_ADC_RESULT_ADDR           (ADCDRESULT_BASE + ADC_RESULTx_OFFSET_BASE + (1U * M1_VC_SOC_NUM))
+#define M2_VC_ADC_RESULT_ADDR           (ADCDRESULT_BASE + ADC_RESULTx_OFFSET_BASE + (1U * M2_VC_SOC_NUM))
+#define M1_IC_ADC_RESULT_ADDR           (ADCDRESULT_BASE + ADC_RESULTx_OFFSET_BASE + (1U * M1_IC_SOC_NUM))
+#define M2_IC_ADC_RESULT_ADDR           (ADCDRESULT_BASE + ADC_RESULTx_OFFSET_BASE + (1U * M2_IC_SOC_NUM))
 #define M12_IVC_ADC_RESULT_ADDR         ADCDRESULT_BASE
 // ADC PPB Results Address
-#define M1_IC_ADC_PPB_RESULT_ADDR       (M1_IC_ADC_RESULT_ADDR + ADC_PPBxRESULT_OFFSET_BASE + (2U * M1_IC_PPB_NUM))
-#define M2_IC_ADC_PPB_RESULT_ADDR       (M2_IC_ADC_RESULT_ADDR + ADC_PPBxRESULT_OFFSET_BASE + (2U * M2_IC_PPB_NUM))
-#define M1_VC_ADC_PPB_RESULT_ADDR       (M1_VC_ADC_RESULT_ADDR + ADC_PPBxRESULT_OFFSET_BASE + (2U * M1_VC_PPB_NUM))
-#define M2_VC_ADC_PPB_RESULT_ADDR       (M2_VC_ADC_RESULT_ADDR + ADC_PPBxRESULT_OFFSET_BASE + (2U * M2_VC_PPB_NUM))
-// Channels
-#define M1_IC_CH                        ADC_CH_ADCIN0
-#define M2_IC_CH                        ADC_CH_ADCIN1
-#define M1_VC_CH                        ADC_CH_ADCIN2
-#define M2_VC_CH                        ADC_CH_ADCIN3
-// SOC Number
-#define M1_IC_SOC_NUM                   ADC_SOC_NUMBER0
-#define M2_IC_SOC_NUM                   ADC_SOC_NUMBER1
-#define M1_VC_SOC_NUM                   ADC_SOC_NUMBER2
-#define M2_VC_SOC_NUM                   ADC_SOC_NUMBER3
-// PPB Number
-#define M1_IC_PPB_NUM                   ADC_PPB_NUMBER1
-#define M2_IC_PPB_NUM                   ADC_PPB_NUMBER2
-#define M1_VC_PPB_NUM                   ADC_PPB_NUMBER3
-#define M2_VC_PPB_NUM                   ADC_PPB_NUMBER4
+#define M1_VC_ADC_PPB_RESULT_ADDR       (ADCDRESULT_BASE + ADC_PPBxRESULT_OFFSET_BASE + (2U * M1_VC_PPB_NUM))
+#define M2_VC_ADC_PPB_RESULT_ADDR       (ADCDRESULT_BASE + ADC_PPBxRESULT_OFFSET_BASE + (2U * M2_VC_PPB_NUM))
+#define M1_IC_ADC_PPB_RESULT_ADDR       (ADCDRESULT_BASE + ADC_PPBxRESULT_OFFSET_BASE + (2U * M1_IC_PPB_NUM))
+#define M2_IC_ADC_PPB_RESULT_ADDR       (ADCDRESULT_BASE + ADC_PPBxRESULT_OFFSET_BASE + (2U * M2_IC_PPB_NUM))
 /**
  * @}
  */
