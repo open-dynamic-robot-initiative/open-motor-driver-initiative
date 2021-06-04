@@ -81,8 +81,8 @@ void HAL_ADC_init(const ADC_TypeDef* p_adcCfg)
             (p_adcCfg->adcAcq != NULL) && (p_adcCfg->adcIt != NULL))
     {
         const ADC_INIT_TypeDef* p_adcInit   = p_adcCfg->adcInit;
-        const ADC_ACQ_TypeDef*  p_adcAcq    = p_adcCfg->adcAcq;//p_adcCfg->adcPpb != NULL) ? () : (NULL);
-        const ADC_IT_TypeDef*   p_adcIT     = p_adcCfg->adcIt;//p_adcCfg->adcIt != NULL) ? () : (NULL);
+        const ADC_ACQ_TypeDef*  p_adcAcq    = p_adcCfg->adcAcq;
+        const ADC_IT_TypeDef*   p_adcIT     = p_adcCfg->adcIt;
         uint32_t                adcBase     = p_adcCfg->adcBase;
 
         while(adcBase != 0xFFFFFFFF)
@@ -550,15 +550,16 @@ void HAL_IT_init(const IT_TypeDef* p_ITCfg)
 {
     if(p_ITCfg != NULL)
     {
+        uint32_t intNum = p_ITCfg->intNum;
         Interrupt_enablePIE();
         // Setup Interrupts
-        while(p_ITCfg->intNum != 0xFFFFFFFF)
+        while(intNum != 0xFFFFFFFF)
         {
             // Attach ISR to interrupt
-            Interrupt_register(p_ITCfg->intNum, p_ITCfg->handler);
+            Interrupt_register(intNum, p_ITCfg->handler);
             // Enable Interrupts
-            Interrupt_enable(p_ITCfg->intNum);
-            ++p_ITCfg;
+            Interrupt_enable(intNum);
+            intNum = (++p_ITCfg)->intNum;
         }
         // Enable interrupt group 1 (ePWM 1 and 4 interrupts are here)
         Interrupt_enableInCPU(INTERRUPT_CPU_INT1);

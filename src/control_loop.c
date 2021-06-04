@@ -114,187 +114,187 @@ void MTR2_offsetComputation(MotorDebug* motorDebug)
 }
 
 // Control loop initialization function
-void CL_initFoc(MOTOR_FOC *foc, const uint16_t motorIndex)
+void CL_initFoc(FOC* p_foc, const uint16_t motorIndex)
 {
     // Initialize scalers
-    foc->currentScaler = ADC_CURRENT_SCALE;
-    foc->currentScalerReg = -foc->currentScaler / 0x8000L; // from register value to amps
+    p_foc->currentScaler = ADC_CURRENT_SCALE;
+    p_foc->currentScalerReg = -p_foc->currentScaler / 0x8000L; // from register value to amps
                                                            // signed 15 bits resolution
-    foc->voltageScaler = ADC_VOLTAGE_SCALE;
-    foc->voltageScalerReg = foc->voltageScaler / 0x10000L; // unsigned 16 bits resolution
+    p_foc->voltageScaler = ADC_VOLTAGE_SCALE;
+    p_foc->voltageScalerReg = p_foc->voltageScaler / 0x10000L; // unsigned 16 bits resolution
 
-//    foc->adcScaler = ADC_POT_VOLTAGE_SCALE;
-//    foc->adcScalerReg = foc->adcScaler / 0x10000L; // unsigned 16 bits resolution
+//    p_foc->adcScaler = ADC_POT_VOLTAGE_SCALE;
+//    p_foc->adcScalerReg = p_foc->adcScaler / 0x10000L; // unsigned 16 bits resolution
 
     // Initialize duty cycle saturation
-    foc->dutyCycleSat = 0.4;
+    p_foc->dutyCycleSat = 0.4;
 
     // Initialize control loop low-pass filter
-    LPF_setBandwidth(&foc->controlLoopLpf, PWM_FREQUENCY, M1_CUR_LOOP_BANDWIDTH);
+    LPF_setBandwidth(&p_foc->controlLoopLpf, PWM_FREQUENCY, M1_CUR_LOOP_BANDWIDTH);
 
 
     // Initialize motor constants
     if (motorIndex == 0)
     {
-        foc->Rs = M1_RS;
-        foc->Ld = M1_LD;
-        foc->Lq = M1_LQ;
-        foc->ke = M1_KE;
+        p_foc->Rs = M1_RS;
+        p_foc->Ld = M1_LD;
+        p_foc->Lq = M1_LQ;
+        p_foc->ke = M1_KE;
     } else {
-        foc->Rs = M2_RS;
-        foc->Ld = M2_LD;
-        foc->Lq = M2_LQ;
-        foc->ke = M2_KE;
+        p_foc->Rs = M2_RS;
+        p_foc->Ld = M2_LD;
+        p_foc->Lq = M2_LQ;
+        p_foc->ke = M2_KE;
     }
 
     // Initialize PWM compare register scaler
-    foc->pwmCompScaler = PWM_HALF_PERIOD * 0x10000L; // 32 bits registers in HRPWM device function compare register
+    p_foc->pwmCompScaler = PWM_HALF_PERIOD * 0x10000L; // 32 bits registers in HRPWM device function compare register
 
     // Initialize align routine
-    ALIGN_reset(&foc->alignRoutine);
-    foc->alignRoutine.max = PWM_FREQUENCY; // Stay at max Id for a second
-    foc->alignRoutine.idAlignRef = 0.4;    // 400mA alignment current
+    ALIGN_reset(&p_foc->alignRoutine);
+    p_foc->alignRoutine.max = PWM_FREQUENCY; // Stay at max Id for a second
+    p_foc->alignRoutine.idAlignRef = 0.4;    // 400mA alignment current
 
     // Initialize encoder
-    ENC_reset(&foc->encoder);
+    ENC_reset(&p_foc->encoder);
 
     if (motorIndex == 0)
     {
-        foc->encoder.p_qepRegs = (struct EQEP_REGS *)MOTOR1_QEP_BASE;
-        foc->encoder.mechScaler = 0.25 / QEP_MOTOR1_ENCODER_LINES_NB;
-        foc->encoder.polePairs = M1_POLES_PAIRS;
+        p_foc->encoder.p_qepRegs = (struct EQEP_REGS *)MOTOR1_QEP_BASE;
+        p_foc->encoder.mechScaler = 0.25 / QEP_MOTOR1_ENCODER_LINES_NB;
+        p_foc->encoder.polePairs = M1_POLES_PAIRS;
     } else {
-        foc->encoder.p_qepRegs = (struct EQEP_REGS *)MOTOR2_QEP_BASE;
-        foc->encoder.mechScaler = 0.25 / QEP_MOTOR2_ENCODER_LINES_NB;
-        foc->encoder.polePairs = M2_POLES_PAIRS;
+        p_foc->encoder.p_qepRegs = (struct EQEP_REGS *)MOTOR2_QEP_BASE;
+        p_foc->encoder.mechScaler = 0.25 / QEP_MOTOR2_ENCODER_LINES_NB;
+        p_foc->encoder.polePairs = M2_POLES_PAIRS;
     }
 
     // Speed estimation initialization
-    foc->encoder.speedEst.highSpeedScaler = 2.0 * FM_PI * QEP_UNIT_TIMER_FREQ; // 2pi / dt
-    foc->encoder.speedEst.lowSpeedScaler = 2.0 * FM_PI * foc->encoder.mechScaler * DEVICE_SYSCLK_FREQ * 4.0 / 128.0; // 4 is pos divider and 128 is clock divider
-    LPF_setBandwidth(&foc->encoder.speedEst.lpf, PWM_FREQUENCY, 200); // 200Hz low-pass filter for velocity estimation
+    p_foc->encoder.speedEst.highSpeedScaler = 2.0 * FM_PI * QEP_UNIT_TIMER_FREQ; // 2pi / dt
+    p_foc->encoder.speedEst.lowSpeedScaler = 2.0 * FM_PI * p_foc->encoder.mechScaler * DEVICE_SYSCLK_FREQ * 4.0 / 128.0; // 4 is pos divider and 128 is clock divider
+    LPF_setBandwidth(&p_foc->encoder.speedEst.lpf, PWM_FREQUENCY, 200); // 200Hz low-pass filter for velocity estimation
 
     // Initialize PI controllers
     if (motorIndex == 0)
     {
-        foc->piId.kp = M1_LD * 2.0*FM_PI*M1_CUR_LOOP_BANDWIDTH;
-        foc->piId.ki = M1_RS * 2.0*FM_PI*M1_CUR_LOOP_BANDWIDTH / PWM_FREQUENCY;
-        foc->piIq.kp = M1_LQ * 2.0*FM_PI*M1_CUR_LOOP_BANDWIDTH;
-        foc->piIq.ki = M1_RS * 2.0*FM_PI*M1_CUR_LOOP_BANDWIDTH / PWM_FREQUENCY;
+        p_foc->piId.kp = M1_LD * 2.0*FM_PI*M1_CUR_LOOP_BANDWIDTH;
+        p_foc->piId.ki = M1_RS * 2.0*FM_PI*M1_CUR_LOOP_BANDWIDTH / PWM_FREQUENCY;
+        p_foc->piIq.kp = M1_LQ * 2.0*FM_PI*M1_CUR_LOOP_BANDWIDTH;
+        p_foc->piIq.ki = M1_RS * 2.0*FM_PI*M1_CUR_LOOP_BANDWIDTH / PWM_FREQUENCY;
     } else {
-        foc->piId.kp = M2_LD * 2.0*FM_PI*M2_CUR_LOOP_BANDWIDTH;
-        foc->piId.ki = M2_RS * 2.0*FM_PI*M2_CUR_LOOP_BANDWIDTH / PWM_FREQUENCY;
-        foc->piIq.kp = M2_LQ * 2.0*FM_PI*M2_CUR_LOOP_BANDWIDTH;
-        foc->piIq.ki = M2_RS * 2.0*FM_PI*M2_CUR_LOOP_BANDWIDTH / PWM_FREQUENCY;
+        p_foc->piId.kp = M2_LD * 2.0*FM_PI*M2_CUR_LOOP_BANDWIDTH;
+        p_foc->piId.ki = M2_RS * 2.0*FM_PI*M2_CUR_LOOP_BANDWIDTH / PWM_FREQUENCY;
+        p_foc->piIq.kp = M2_LQ * 2.0*FM_PI*M2_CUR_LOOP_BANDWIDTH;
+        p_foc->piIq.ki = M2_RS * 2.0*FM_PI*M2_CUR_LOOP_BANDWIDTH / PWM_FREQUENCY;
     }
 
     // Controller saturations is 40% of bus voltage (10% margin). This is completely arbitrary.
     // DRVs must be initialized before CL_initFoc is called so vBus isn't zero
     if (motorIndex == 0)
     {
-        foc->vBus = ADC_readResult(M12_VBUS_ADC_ADDR, M12_VBUS_SOC_NUM) * foc->voltageScalerReg;
+        p_foc->vBus = ADC_readResult(M12_VBUS_ADC_ADDR, M12_VBUS_SOC_NUM) * p_foc->voltageScalerReg;
     } else {
-        foc->vBus = ADC_readResult(M12_VBUS_ADC_ADDR, M12_VBUS_SOC_NUM) * foc->voltageScalerReg;
+        p_foc->vBus = ADC_readResult(M12_VBUS_ADC_ADDR, M12_VBUS_SOC_NUM) * p_foc->voltageScalerReg;
     }
 
-    foc->piId.sat = 0.4 * foc->vBus;
-    foc->piIq.sat = 0.4 * foc->vBus;
+    p_foc->piId.sat = 0.4 * p_foc->vBus;
+    p_foc->piIq.sat = 0.4 * p_foc->vBus;
 
     // Initialize position PD controller
-    PD_reset(&foc->posPd);
-    foc->posPd.kp = 1.0f;
-    foc->posPd.kd = 0.02f;
-    foc->posPd.sat = 4.0f; // 4 amps saturation
+    PD_reset(&p_foc->posPd);
+    p_foc->posPd.kp = 1.0f;
+    p_foc->posPd.kd = 0.02f;
+    p_foc->posPd.sat = 4.0f; // 4 amps saturation
 
     // Initialize resistance estimation
-    LPF_setBandwidth(&foc->resEstLpf, PWM_FREQUENCY, 0.2); // Very slow low-pass filter for resistance estimation
+    LPF_setBandwidth(&p_foc->resEstLpf, PWM_FREQUENCY, 0.2); // Very slow low-pass filter for resistance estimation
 
     // Initialize measures PWM and interrupt registers
     if (motorIndex == 0)
     {
-        foc->pwmCompA = (volatile uint32_t *)(MOTOR1_PWM1_BASE + EPWM_O_CMPA);
-        foc->pwmCompB = (volatile uint32_t *)(MOTOR1_PWM2_BASE + EPWM_O_CMPA);
-        foc->pwmCompC = (volatile uint32_t *)(MOTOR1_PWM3_BASE + EPWM_O_CMPA);
+        p_foc->pwmCompA = (volatile uint32_t *)(MOTOR1_PWM1_BASE + EPWM_O_CMPA);
+        p_foc->pwmCompB = (volatile uint32_t *)(MOTOR1_PWM2_BASE + EPWM_O_CMPA);
+        p_foc->pwmCompC = (volatile uint32_t *)(MOTOR1_PWM3_BASE + EPWM_O_CMPA);
 
-        foc->isenAResult   = (volatile int32_t *)(M1_IA_ADC_PPB_RESULT_ADDR);
-        foc->isenBResult   = (volatile int32_t *)(M1_IB_ADC_PPB_RESULT_ADDR);
-        foc->isenCResult   = (volatile int32_t *)(M1_IC_ADC_PPB_RESULT_ADDR);
-        foc->vBusSenResult = (volatile int32_t *)(M12_VBUS_ADC_PPB_RESULT_ADDR);
+        p_foc->isenAResult   = (volatile int32_t *)(M1_IA_ADC_PPB_RESULT_ADDR);
+        p_foc->isenBResult   = (volatile int32_t *)(M1_IB_ADC_PPB_RESULT_ADDR);
+        p_foc->isenCResult   = (volatile int32_t *)(M1_IC_ADC_PPB_RESULT_ADDR);
+        p_foc->vBusSenResult = (volatile int32_t *)(M12_VBUS_ADC_PPB_RESULT_ADDR);
 
-        foc->vsenaResult = (volatile int32_t *)(M1_VA_ADC_PPB_RESULT_ADDR);
-        foc->vsenbResult = (volatile int32_t *)(M1_VB_ADC_PPB_RESULT_ADDR);
-        foc->vsencResult = (volatile int32_t *)(M1_VC_ADC_PPB_RESULT_ADDR);
+        p_foc->vsenaResult = (volatile int32_t *)(M1_VA_ADC_PPB_RESULT_ADDR);
+        p_foc->vsenbResult = (volatile int32_t *)(M1_VB_ADC_PPB_RESULT_ADDR);
+        p_foc->vsencResult = (volatile int32_t *)(M1_VC_ADC_PPB_RESULT_ADDR);
 
-        foc->adcIntFlag = (union ADCINTFLG_REG *)(M1_IC_ADC_ADDR + ADC_O_INTFLG);
+        p_foc->adcIntFlag = (union ADCINTFLG_REG *)(M1_IC_ADC_ADDR + ADC_O_INTFLG);
     }
     else
     {
-        foc->pwmCompA = (volatile uint32_t *)(MOTOR2_PWM1_BASE + EPWM_O_CMPA);
-        foc->pwmCompB = (volatile uint32_t *)(MOTOR2_PWM2_BASE + EPWM_O_CMPA);
-        foc->pwmCompC = (volatile uint32_t *)(MOTOR2_PWM3_BASE + EPWM_O_CMPA);
+        p_foc->pwmCompA = (volatile uint32_t *)(MOTOR2_PWM1_BASE + EPWM_O_CMPA);
+        p_foc->pwmCompB = (volatile uint32_t *)(MOTOR2_PWM2_BASE + EPWM_O_CMPA);
+        p_foc->pwmCompC = (volatile uint32_t *)(MOTOR2_PWM3_BASE + EPWM_O_CMPA);
 
-        foc->isenAResult   = (volatile int32_t *)(M2_IA_ADC_PPB_RESULT_ADDR);
-        foc->isenBResult   = (volatile int32_t *)(M2_IB_ADC_PPB_RESULT_ADDR);
-        foc->isenCResult   = (volatile int32_t *)(M2_IC_ADC_PPB_RESULT_ADDR);
+        p_foc->isenAResult   = (volatile int32_t *)(M2_IA_ADC_PPB_RESULT_ADDR);
+        p_foc->isenBResult   = (volatile int32_t *)(M2_IB_ADC_PPB_RESULT_ADDR);
+        p_foc->isenCResult   = (volatile int32_t *)(M2_IC_ADC_PPB_RESULT_ADDR);
 
 #if OMODRI_PAL_SETUP    // Second VSENVM measure is replaced by ISENVM, so use the same one than motor 1
-        foc->vBusSenResult = (volatile int32_t *)(MOTOR1_VBUS_RESULT  + ADC_PPBxRESULT_OFFSET_BASE + 2 * MOTOR1_ADC_PPB_NUM1);
+        p_foc->vBusSenResult = (volatile int32_t *)(MOTOR1_VBUS_RESULT  + ADC_PPBxRESULT_OFFSET_BASE + 2 * MOTOR1_ADC_PPB_NUM1);
 #else
-        foc->vBusSenResult = (volatile int32_t *)(M12_VBUS_ADC_PPB_RESULT_ADDR);
+        p_foc->vBusSenResult = (volatile int32_t *)(M12_VBUS_ADC_PPB_RESULT_ADDR);
 #endif
-        foc->vsenaResult = (volatile int32_t *)(M2_VA_ADC_PPB_RESULT_ADDR);
-        foc->vsenbResult = (volatile int32_t *)(M2_VB_ADC_PPB_RESULT_ADDR);
-        foc->vsencResult = (volatile int32_t *)(M2_VC_ADC_PPB_RESULT_ADDR);
+        p_foc->vsenaResult = (volatile int32_t *)(M2_VA_ADC_PPB_RESULT_ADDR);
+        p_foc->vsenbResult = (volatile int32_t *)(M2_VB_ADC_PPB_RESULT_ADDR);
+        p_foc->vsencResult = (volatile int32_t *)(M2_VC_ADC_PPB_RESULT_ADDR);
 
-        foc->adcIntFlag = (union ADCINTFLG_REG *)(M2_IC_ADC_ADDR + ADC_O_INTFLG);
+        p_foc->adcIntFlag = (union ADCINTFLG_REG *)(M2_IC_ADC_ADDR + ADC_O_INTFLG);
     }
 }
 
 // Control loop reset
-void CL_resetFoc(MOTOR_FOC* foc)
+void CL_resetFoc(FOC* p_foc)
 {
     // Reset controllers
-    PI_reset(&foc->piId);
-    PI_reset(&foc->piIq);
+    PI_reset(&p_foc->piId);
+    PI_reset(&p_foc->piIq);
 
     // Reset alignment routine
-    ALIGN_reset(&foc->alignRoutine);
+    ALIGN_reset(&p_foc->alignRoutine);
 
     // Reset position PD controller
-    PD_reset(&foc->posPd);
+    PD_reset(&p_foc->posPd);
 
     // Reset encoder
-    ENC_reset(&foc->encoder);
+    ENC_reset(&p_foc->encoder);
 
     // Reset currents and voltages
-    foc->ia = 0.0f;
-    foc->ib = 0.0f;
-    foc->ic = 0.0f;
+    p_foc->ia = 0.0f;
+    p_foc->ib = 0.0f;
+    p_foc->ic = 0.0f;
 
-    foc->ialpha = 0.0f;
-    foc->ibeta = 0.0f;
+    p_foc->ialpha = 0.0f;
+    p_foc->ibeta = 0.0f;
 
-    foc->id = 0.0f;
-    foc->iq = 0.0f;
+    p_foc->id = 0.0f;
+    p_foc->iq = 0.0f;
 
-    foc->vd = 0.0f;
-    foc->vq = 0.0f;
+    p_foc->vd = 0.0f;
+    p_foc->vq = 0.0f;
 
-    foc->valpha = 0.0f;
-    foc->vbeta = 0.0f;
+    p_foc->valpha = 0.0f;
+    p_foc->vbeta = 0.0f;
 
-    foc->va = 0.0f;
-    foc->vb = 0.0f;
-    foc->vc = 0.0f;
+    p_foc->va = 0.0f;
+    p_foc->vb = 0.0f;
+    p_foc->vc = 0.0f;
 
     // Reset potentiometer voltage
-    foc->auxAdc = 0.0f;
+    p_foc->auxAdc = 0.0f;
 
     // Reset resistance estimation
-    foc->phaseAVolt = 0.0f;
-    foc->phaseBVolt = 0.0f;
-    foc->phaseCVolt = 0.0f;
+    p_foc->phaseAVolt = 0.0f;
+    p_foc->phaseBVolt = 0.0f;
+    p_foc->phaseCVolt = 0.0f;
 
-    foc->resistanceEst = 0.0f;
+    p_foc->resistanceEst = 0.0f;
 }
 

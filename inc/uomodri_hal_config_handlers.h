@@ -255,7 +255,7 @@ static const ePWM_ET_TypeDef PwmAdcSocEventTriggerCfgList[] =
 static const ePWM_IT_TypeDef PwmInterruptsEventCfgList[] =
 {
  {.epwmBase = MOTOR1_PWM1_BASE, .intEvtCount = 1, .intSource = EPWM_INT_TBCTR_ZERO},
-// {.epwmBase = MOTOR2_PWM1_BASE, .intEvtCount = 0, .intSource = EPWM_INT_TBCTR_ZERO},
+ {.epwmBase = MOTOR2_PWM1_BASE, .intEvtCount = 1, .intSource = EPWM_INT_TBCTR_ZERO},
  // END OF ARRAY
  {.epwmBase = 0xFFFFFFFF},
 };
@@ -279,7 +279,7 @@ static const ePWM_TypeDef PwmCfgList[] =
  },
  {.epwmBase = MOTOR2_PWM1_BASE, .epwmTimeBase = &PwmTimeBaseCfgList[3], .epwmCaptureCompare = &PwmCounterCompareCfgList[3],
   .epwmActionQualifier = &PwmActionQualifierCfgList[3], .epwmDeadband = &PwmDeadBandCfgList[3], .epwmProgChopper = NULL,
-  .epwmAdcSocEventTrigger = &PwmAdcSocEventTriggerCfgList[2], .epwmInterruptsEvent = NULL
+  .epwmAdcSocEventTrigger = &PwmAdcSocEventTriggerCfgList[2], .epwmInterruptsEvent = &PwmInterruptsEventCfgList[1]
  },
  {.epwmBase = MOTOR2_PWM2_BASE, .epwmTimeBase = &PwmTimeBaseCfgList[4], .epwmCaptureCompare = &PwmCounterCompareCfgList[4],
   .epwmActionQualifier = &PwmActionQualifierCfgList[4], .epwmDeadband = &PwmDeadBandCfgList[4], .epwmProgChopper = NULL,

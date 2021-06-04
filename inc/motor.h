@@ -17,12 +17,12 @@
 //#include "lowpass_filter.h"
 #include <math.h>
 #include "hal.h"
-#include "foc.h"
 
 #include "pd.h"
 #include "pi.h"
 
 #include "align_routine.h"
+#include "foc.h"
 #include "encoder.h"
 #include "math_defines.h"
 #include "lowpass_filter.h"
@@ -53,7 +53,7 @@ typedef struct __MOTOR_STRUCT__
     const MOTOR_HAL_CFG*    motorHalCfg;
     const MOTOR_PARAMS*     motorParams;
     ENCODER*                motorEncoder;
-    MOTOR_FOC*              motorFOC;
+    FOC*                    motorFOC;
 
     bool enabled;
     // Alignment routine structure
@@ -88,7 +88,7 @@ typedef struct __MOTOR_STRUCT__
     LowpassFilter controlLoopLpf;
 
     // Encoder
-    ENCODER encoder;
+//    ENCODER encoder;
 
     // Current transforms
     float32_t ia;       // [A]

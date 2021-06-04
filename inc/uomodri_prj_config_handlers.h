@@ -2,14 +2,17 @@
 #define __UOMODRI_CONFIG_HANDLERS_H__
 
 // drivers
-#include "device.h"
 #include "driverlib.h"
+#include "device.h"
+#include "f2838x_device.h"
 
 #include "hal.h"
 #include "drv8353.h"
+#include "encoder.h"
 #include "foc.h"
 #include "motor.h"
 #include "spi_communication.h"
+#include "align_routine.h"
 
 #include "uomodri_user_defines.h"
 #include "uomodri_hal_config_handlers.h"
@@ -23,6 +26,7 @@ extern __interrupt void adc2ISR(void);
 extern __interrupt void adc3ISR(void);
 extern __interrupt void adc4ISR(void);
 extern __interrupt void isrMotor1(void);
+extern __interrupt void isrMotor2(void);
 
 static const IT_TypeDef InterruptList[] =
 {
@@ -31,6 +35,7 @@ static const IT_TypeDef InterruptList[] =
  {.intNum = INT_ADCA3, .handler = &adc3ISR},
  {.intNum = INT_ADCA4, .handler = &adc4ISR},
  {.intNum = INT_EPWM1, .handler = &isrMotor1},
+ {.intNum = INT_EPWM4, .handler = &isrMotor2},
  // END OF ARRAY
  {.intNum = 0xFFFFFFFF},
 };
@@ -199,7 +204,7 @@ static MOTOR_PARAMS motor_params[] =
  {.Rs = M2_RS, .Ld = M2_LD, .Lq = M2_LQ, .kv = M2_KV, .ke = M2_KE, .ki = M2_KI, .polePairs = M2_POLES_PAIRS},
 };
 
-static MOTOR_FOC motor_foc[] =
+static FOC motor_foc[] =
 {
  {.enabled = true,
   .piId.integral = 0.0f, .piId.err = 0.0f, .piId.ff = 0.0f, .piId.out = 0.0f,
@@ -240,13 +245,25 @@ static MOTOR_FOC motor_foc[] =
  },
 };
 
+static ENCODER motor_encoder[] =
+{
+ {
+  .p_qepHandle = &QepCfgList[0],
+  .p_qepRegs = (struct EQEP_REGS *)MOTOR1_QEP_BASE,
+ },
+ {
+  .p_qepHandle = &QepCfgList[1],
+  .p_qepRegs = (struct EQEP_REGS *)MOTOR2_QEP_BASE,
+ },
+};
+
 static MOTOR_STRUCT motor[] =
 {
  {
   .motorID = MOTOR_1,
   .motorHalCfg = &motor_hal_cfg[MOTOR_1],
   .motorParams = &motor_params[MOTOR_1],
-  .encoder = NULL,
+  .motorEncoder = &motor_encoder[MOTOR_1],
   .motorFOC = &motor_foc[MOTOR_1],
   .currentScaler = ADC_CURRENT_SCALE,
   .currentScalerReg = ADC_CURRENT_SCALE / 0x8000L,
@@ -257,7 +274,7 @@ static MOTOR_STRUCT motor[] =
   .motorID = MOTOR_2,
   .motorHalCfg = &motor_hal_cfg[MOTOR_2],
   .motorParams = &motor_params[MOTOR_2],
-  .encoder = NULL,
+  .motorEncoder = &motor_encoder[MOTOR_2],
   .motorFOC = &motor_foc[MOTOR_2],
   .currentScaler = ADC_CURRENT_SCALE,
   .currentScalerReg = ADC_CURRENT_SCALE / 0x8000L,

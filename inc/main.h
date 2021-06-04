@@ -8,9 +8,11 @@
 
 #include "hal.h"
 #include "drv8353.h"
-//#include "encoder.h"
+
+#include "encoder.h"
 #include "foc.h"
 #include "control_loop.h"
+#include "motor.h"
 //#include "spi_communication.h"
 #include "uomodri_user_defines.h"
 #include "uomodri_hal_config_handlers.h"
