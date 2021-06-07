@@ -2,11 +2,11 @@
 //#include "f28x_project.h"
 
 // Read current measures
-inline void FOC_getPosition(FOC* p_foc, MOTOR_HAL_CFG* p_motor)
-{
-    // Get latest position of the Quadrature Encoder
-    p_motor[p_motor->motorID].encoderPos = HWREG(p_motor->p_qep->eqepBase + EQEP_O_QPOSCNT);
-}
+//inline void FOC_getPosition(FOC* p_foc, MOTOR_HAL_CFG* p_motor)
+//{
+//    // Get latest position of the Quadrature Encoder
+//    p_motor[p_motor->motorID].encoderPos = HWREG(p_motor->p_qep->eqepBase + EQEP_O_QPOSCNT);
+//}
 
 inline void FOC_getPhaseCurrent(FOC* p_foc, MOTOR_HAL_CFG* p_motor)
 {

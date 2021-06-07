@@ -295,38 +295,38 @@ typedef struct _MOTOR_HAL_CFG_
     const ADC_ACQ_TypeDef*  p_vbusConv;
     const ADC_IT_TypeDef*   p_ITConv[2];
     const eQEP_TypeDef*     p_qep;
-    // ADC results scaled (expressed in (A))
-    float32_t               i[3];
-    float32_t               v[3];
-    float32_t               vbus;
-
-    // PWM command registers (CMPx regs)
-    volatile uint16_t*      p_pwmCmd[3];
-
-//    const ADC_TypeDef*    p_adcCfg;
-//    const ePWM_TypeDef*   p_pwmCfg;
-//    const eQEP_TypeDef*   p_qepCfg;
-
-    uint32_t    pwmBaseAddress[3];
-
-//    ADC_SOCNumber i_socNum[3];
-//    ADC_SOCNumber v_socNum[3];
+//    // ADC results scaled (expressed in (A))
+//    float32_t               i[3];
+//    float32_t               v[3];
+//    float32_t               vbus;
 //
-//    ADC_SOCNumber ia_socNum;
-//    ADC_SOCNumber ib_socNum;
-//    ADC_SOCNumber ic_socNum;
-//    ADC_SOCNumber va_socNum;
-//    ADC_SOCNumber vb_socNum;
-//    ADC_SOCNumber vc_socNum;
-//    ADC_SOCNumber vbus_socNum;
+//    // PWM command registers (CMPx regs)
+//    volatile uint16_t*      p_pwmCmd[3];
 //
-//    ACQ_OFFSET offset;
-//    ACQ raw;
-    uint32_t encoderPos;
-
-    MotorID motorID;
-
-    bool dataValid[2];
+////    const ADC_TypeDef*    p_adcCfg;
+////    const ePWM_TypeDef*   p_pwmCfg;
+////    const eQEP_TypeDef*   p_qepCfg;
+//
+//    uint32_t    pwmBaseAddress[3];
+//
+////    ADC_SOCNumber i_socNum[3];
+////    ADC_SOCNumber v_socNum[3];
+////
+////    ADC_SOCNumber ia_socNum;
+////    ADC_SOCNumber ib_socNum;
+////    ADC_SOCNumber ic_socNum;
+////    ADC_SOCNumber va_socNum;
+////    ADC_SOCNumber vb_socNum;
+////    ADC_SOCNumber vc_socNum;
+////    ADC_SOCNumber vbus_socNum;
+////
+////    ACQ_OFFSET offset;
+////    ACQ raw;
+//    uint32_t encoderPos;
+//
+    const MotorID           motorID;
+//
+//    bool dataValid[2];
 //    bool offsetCal;
 } MOTOR_HAL_CFG;
 
@@ -344,6 +344,6 @@ void HAL_IT_init(const IT_TypeDef*);
 //extern __interrupt void adc4ISR(void);
 //extern __interrupt void isrMotor1(void);
 
-void HAL_ADC_offsetCalib(MOTOR_HAL_CFG*);
+void HAL_ADC_offsetCalib(const MOTOR_HAL_CFG*);
 
 #endif

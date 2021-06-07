@@ -15,9 +15,11 @@ int main(void)
     // Hardware Abstraction Layer initialization
     HAL_init(&hal);
     // DRV8323 initialization
-    DRV_init(drv);
+    DRV_init(motor[MOTOR_1].motorDRV);
+    DRV_init(motor[MOTOR_2].motorDRV);
     // ADC offset calib for debug
-    HAL_ADC_offsetCalib(motor_hal_cfg);
+    HAL_ADC_offsetCalib(motor[MOTOR_1].motorHalCfg);
+    HAL_ADC_offsetCalib(motor[MOTOR_2].motorHalCfg);
     // Interrupts initialization
     HAL_IT_init(InterruptList);
 
@@ -73,116 +75,127 @@ static void Mcu_init(void)
  */
 __interrupt void adc1ISR(void)
 {
-//    if(ADC_getInterruptStatus(ADCA_BASE, ADC_INT_NUMBER1))
-//    {
-        uint8_t loop = 0;
+    if(ADC_getInterruptStatus(ADCA_BASE, ADC_INT_NUMBER1))
+    {
+        //    {
+//        uint8_t loop = 0;
 
         GPIO_writePin(DEBUG_INT_PIN1, 1);
         //motor[MOTOR_1].motorHalCfg->dataValid[0] = true;
-        motor_hal_cfg[MOTOR_1].dataValid[0] = true;
+        //motor[MOTOR_1].motorHalCfg->dataValid[0] = true;
 
-//        FOC_getPhaseCurrent(&foc[MOTOR_1], &motor_hal_cfg[MOTOR_1]);
-//        FOC_getBusVoltage(&foc[MOTOR_1], &motor_hal_cfg[MOTOR_1]);
-        for(loop = 0; loop < 3; loop++)
-            motor_hal_cfg[MOTOR_1].v[loop] = (float32_t)HWSREGH(motor_hal_cfg[MOTOR_1].p_vConv[loop]->adcPPBResultBase) * ADC_VOLTAGE_SCALE;
-        motor_hal_cfg[MOTOR_1].vbus = (float32_t)HWSREGH(motor_hal_cfg[MOTOR_1].p_vbusConv->adcPPBResultBase) * ADC_VOLTAGE_SCALE;
+        //        FOC_getPhaseCurrent(&foc[MOTOR_1], &motor_hal_cfg[MOTOR_1]);
+        //        FOC_getBusVoltage(&foc[MOTOR_1], &motor_hal_cfg[MOTOR_1]);
+//        for(loop = 0; loop < 3; loop++)
+//            motor_hal_cfg[MOTOR_1].v[loop] = (float32_t)HWSREGH(motor_hal_cfg[MOTOR_1].p_vConv[loop]->adcPPBResultBase) * ADC_VOLTAGE_SCALE;
+
+        motor[MOTOR_1].va = (float32_t)HWSREGH(motor[MOTOR_1].motorHalCfg->p_vConv[0]->adcPPBResultBase) * ADC_VOLTAGE_SCALE;
+        motor[MOTOR_1].vb = (float32_t)HWSREGH(motor[MOTOR_1].motorHalCfg->p_vConv[1]->adcPPBResultBase) * ADC_VOLTAGE_SCALE;
+        motor[MOTOR_1].vc = (float32_t)HWSREGH(motor[MOTOR_1].motorHalCfg->p_vConv[2]->adcPPBResultBase) * ADC_VOLTAGE_SCALE;
+        motor[MOTOR_1].vBus = (float32_t)HWSREGH(motor[MOTOR_1].motorHalCfg->p_vbusConv->adcPPBResultBase) * ADC_VOLTAGE_SCALE;
 
         HWREGH(ADCA_BASE + ADC_O_INTOVFCLR) = (1U << ADC_INT_NUMBER1);
-//        ADC_clearInterruptOverflowStatus(ADCA_BASE, ADC_INT_NUMBER1);
+        //        ADC_clearInterruptOverflowStatus(ADCA_BASE, ADC_INT_NUMBER1);
         // Clear the interrupt flag
         HWREGH(ADCA_BASE + ADC_O_INTFLGCLR) = (1U << ADC_INT_NUMBER1);
-//        ADC_clearInterruptStatus(ADCA_BASE, ADC_INT_NUMBER1);
-//        HWREG(PIECTRL_BASE + PIE_O_IFR1) = (1U << ADC_INT_NUMBER1);
+        //        ADC_clearInterruptStatus(ADCA_BASE, ADC_INT_NUMBER1);
+        //        HWREG(PIECTRL_BASE + PIE_O_IFR1) = (1U << ADC_INT_NUMBER1);
         // Acknowledge the interrupt (Acknowledge PIE Interrupt Group 1)
         HWREGH(PIECTRL_BASE + PIE_O_ACK) = INTERRUPT_ACK_GROUP1;
-//        Interrupt_clearACKGroup(INTERRUPT_ACK_GROUP1);
+        //        Interrupt_clearACKGroup(INTERRUPT_ACK_GROUP1);
         GPIO_writePin(DEBUG_INT_PIN1, 0);
-//    }
+    }
 }
 
 __interrupt void adc2ISR(void)
 {
-//    if(ADC_getInterruptStatus(ADCA_BASE, ADC_INT_NUMBER2))
-//    {
-        uint8_t loop = 0;
+    if(ADC_getInterruptStatus(ADCA_BASE, ADC_INT_NUMBER2))
+    {
+//        uint8_t loop = 0;
 
         GPIO_writePin(DEBUG_INT_PIN2, 1);
-        motor_hal_cfg[MOTOR_2].dataValid[0] = true;
+//        motor_hal_cfg[MOTOR_2].dataValid[0] = true;
 
-//        FOC_getPhaseCurrent(&foc[MOTOR_2], &motor_hal_cfg[MOTOR_2]);
-//        FOC_getBusVoltage(&foc[MOTOR_2], &motor_hal_cfg[MOTOR_2]);
-        for(loop = 0; loop < 3; loop++)
-            motor_hal_cfg[MOTOR_2].v[loop] = (float32_t)HWSREGH(motor_hal_cfg[MOTOR_2].p_vConv[loop]->adcPPBResultBase) * ADC_VOLTAGE_SCALE;
+        //        FOC_getPhaseCurrent(&foc[MOTOR_2], &motor_hal_cfg[MOTOR_2]);
+        //        FOC_getBusVoltage(&foc[MOTOR_2], &motor_hal_cfg[MOTOR_2]);
+//        for(loop = 0; loop < 3; loop++)
+//            motor_hal_cfg[MOTOR_2].v[loop] = (float32_t)HWSREGH(motor_hal_cfg[MOTOR_2].p_vConv[loop]->adcPPBResultBase) * ADC_VOLTAGE_SCALE;
+        motor[MOTOR_2].va = (float32_t)HWSREGH(motor[MOTOR_2].motorHalCfg->p_vConv[0]->adcPPBResultBase) * ADC_VOLTAGE_SCALE;
+        motor[MOTOR_2].vb = (float32_t)HWSREGH(motor[MOTOR_2].motorHalCfg->p_vConv[1]->adcPPBResultBase) * ADC_VOLTAGE_SCALE;
+        motor[MOTOR_2].vc = (float32_t)HWSREGH(motor[MOTOR_2].motorHalCfg->p_vConv[2]->adcPPBResultBase) * ADC_VOLTAGE_SCALE;
         //motor_hal_cfg[MOTOR_2].vbus = (float32_t)HWSREGH(motor_hal_cfg[MOTOR_2].p_vbusConv->adcPPBResultBase) * ADC_VOLTAGE_SCALE;
 
         // Clear the interrupt overflow flag
         HWREGH(ADCA_BASE + ADC_O_INTOVFCLR) = (1U << ADC_INT_NUMBER2);
-//        ADC_clearInterruptOverflowStatus(ADCA_BASE, ADC_INT_NUMBER2);
+        //        ADC_clearInterruptOverflowStatus(ADCA_BASE, ADC_INT_NUMBER2);
         // Clear the interrupt flag
         HWREGH(ADCA_BASE + ADC_O_INTFLGCLR) = (1U << ADC_INT_NUMBER2);
-//        ADC_clearInterruptStatus(ADCA_BASE, ADC_INT_NUMBER2);
-//        HWREG(PIECTRL_BASE + PIE_O_IFR10) = (1U << ADC_INT_NUMBER2);
+        //        ADC_clearInterruptStatus(ADCA_BASE, ADC_INT_NUMBER2);
+        //        HWREG(PIECTRL_BASE + PIE_O_IFR10) = (1U << ADC_INT_NUMBER2);
         // Acknowledge the interrupt (Acknowledge PIE Interrupt Group 10)
         HWREGH(PIECTRL_BASE + PIE_O_ACK) = INTERRUPT_ACK_GROUP10;
-//        Interrupt_clearACKGroup(INTERRUPT_ACK_GROUP10);
+        //        Interrupt_clearACKGroup(INTERRUPT_ACK_GROUP10);
         GPIO_writePin(DEBUG_INT_PIN2, 0);
-//    }
+    }
 }
 
 __interrupt void adc3ISR(void)
 {
-//    if(ADC_getInterruptStatus(ADCA_BASE, ADC_INT_NUMBER3))
-//    {
-        uint8_t loop = 0;
+    if(ADC_getInterruptStatus(ADCA_BASE, ADC_INT_NUMBER3))
+    {
+//        uint8_t loop = 0;
 
         GPIO_writePin(DEBUG_INT_PIN1, 1);
-        motor_hal_cfg[MOTOR_1].dataValid[1] = true;
+//        motor_hal_cfg[MOTOR_1].dataValid[1] = true;
 
-//        FOC_getPhaseVoltage(&foc[MOTOR_1], &motor_hal_cfg[MOTOR_1]);
-        for(loop = 0; loop < 3; loop++)
-            motor_hal_cfg[MOTOR_1].i[loop] = (float32_t)HWSREGH(motor_hal_cfg[MOTOR_1].p_iConv[loop]->adcPPBResultBase) * ADC_CURRENT_SCALE;
-
+        //        FOC_getPhaseVoltage(&foc[MOTOR_1], &motor_hal_cfg[MOTOR_1]);
+//        for(loop = 0; loop < 3; loop++)
+//            motor_hal_cfg[MOTOR_1].i[loop] = (float32_t)HWSREGH(motor_hal_cfg[MOTOR_1].p_iConv[loop]->adcPPBResultBase) * ADC_CURRENT_SCALE;
+        motor[MOTOR_1].ia = (float32_t)HWSREGH(motor[MOTOR_1].motorHalCfg->p_iConv[0]->adcPPBResultBase) * ADC_CURRENT_SCALE;
+        motor[MOTOR_1].ib = (float32_t)HWSREGH(motor[MOTOR_1].motorHalCfg->p_iConv[1]->adcPPBResultBase) * ADC_CURRENT_SCALE;
+        motor[MOTOR_1].ic = (float32_t)HWSREGH(motor[MOTOR_1].motorHalCfg->p_iConv[2]->adcPPBResultBase) * ADC_CURRENT_SCALE;
         // Clear the interrupt overflow flag
         HWREGH(ADCA_BASE + ADC_O_INTOVFCLR) = (1U << ADC_INT_NUMBER3);
-//        ADC_clearInterruptOverflowStatus(ADCA_BASE, ADC_INT_NUMBER3);
+        //        ADC_clearInterruptOverflowStatus(ADCA_BASE, ADC_INT_NUMBER3);
         // Clear the interrupt flag
         HWREGH(ADCA_BASE + ADC_O_INTFLGCLR) = (1U << ADC_INT_NUMBER3);
-//        ADC_clearInterruptStatus(ADCA_BASE, ADC_INT_NUMBER3);
+        //        ADC_clearInterruptStatus(ADCA_BASE, ADC_INT_NUMBER3);
         //HWREG(PIECTRL_BASE + PIE_O_IFR10) = (1U << ADC_INT_NUMBER3);
         // Acknowledge the interrupt (Acknowledge PIE Interrupt Group 10)
         HWREGH(PIECTRL_BASE + PIE_O_ACK) = INTERRUPT_ACK_GROUP10;
-//        Interrupt_clearACKGroup(INTERRUPT_ACK_GROUP10);
+        //        Interrupt_clearACKGroup(INTERRUPT_ACK_GROUP10);
         GPIO_writePin(DEBUG_INT_PIN1, 0);
-//    }
+    }
 }
 
 __interrupt void adc4ISR(void)
 {
 //    if(ADC_getInterruptStatus(ADCA_BASE, ADC_INT_NUMBER4))
 //    {
-        uint8_t loop = 0;
+//        uint8_t loop = 0;
 
         GPIO_writePin(DEBUG_INT_PIN2, 1);
-        motor_hal_cfg[MOTOR_2].dataValid[1] = true;
+//        motor_hal_cfg[MOTOR_2].dataValid[1] = true;
 
-//        FOC_getPhaseVoltage(&foc[MOTOR_2], &motor_hal_cfg[MOTOR_2]);
-        for(loop = 0; loop < 3; loop++)
-            motor_hal_cfg[MOTOR_2].i[loop] = (float32_t)HWSREGH(motor_hal_cfg[MOTOR_2].p_iConv[loop]->adcPPBResultBase) * ADC_CURRENT_SCALE;
-
-        motor_hal_cfg[MOTOR_2].dataValid[1] = true;
+        //        FOC_getPhaseVoltage(&foc[MOTOR_2], &motor_hal_cfg[MOTOR_2]);
+//        for(loop = 0; loop < 3; loop++)
+//            motor_hal_cfg[MOTOR_2].i[loop] = (float32_t)HWSREGH(motor_hal_cfg[MOTOR_2].p_iConv[loop]->adcPPBResultBase) * ADC_CURRENT_SCALE;
+        motor[MOTOR_2].ia = (float32_t)HWSREGH(motor[MOTOR_2].motorHalCfg->p_iConv[0]->adcPPBResultBase) * ADC_CURRENT_SCALE;
+        motor[MOTOR_2].ib = (float32_t)HWSREGH(motor[MOTOR_2].motorHalCfg->p_iConv[1]->adcPPBResultBase) * ADC_CURRENT_SCALE;
+        motor[MOTOR_2].ic = (float32_t)HWSREGH(motor[MOTOR_2].motorHalCfg->p_iConv[2]->adcPPBResultBase) * ADC_CURRENT_SCALE;
         // Clear the interrupt overflow flag
         HWREGH(ADCA_BASE + ADC_O_INTOVFCLR) = (1U << ADC_INT_NUMBER4);
-//        ADC_clearInterruptOverflowStatus(ADCA_BASE, ADC_INT_NUMBER4);
+        //        ADC_clearInterruptOverflowStatus(ADCA_BASE, ADC_INT_NUMBER4);
         // Clear the interrupt flag
         HWREGH(ADCA_BASE + ADC_O_INTFLGCLR) = (1U << ADC_INT_NUMBER4);
-//        ADC_clearInterruptStatus(ADCA_BASE, ADC_INT_NUMBER4);
+        //        ADC_clearInterruptStatus(ADCA_BASE, ADC_INT_NUMBER4);
         //HWREG(PIECTRL_BASE + PIE_O_IFR10) = (1U << ADC_INT_NUMBER4);
         // Acknowledge the interrupt (Acknowledge PIE Interrupt Group 10)
         HWREGH(PIECTRL_BASE + PIE_O_ACK) = INTERRUPT_ACK_GROUP10;
-//        Interrupt_clearACKGroup(INTERRUPT_ACK_GROUP10);
+        //        Interrupt_clearACKGroup(INTERRUPT_ACK_GROUP10);
 
         GPIO_writePin(DEBUG_INT_PIN2, 0);
-//    }
+//}
 }
 
 __interrupt void isrMotor1(void)
@@ -194,17 +207,17 @@ __interrupt void isrMotor1(void)
         //                          FOC update                               //
         //-------------------------------------------------------------------//
         // Read encoder position
-        encoderGetPosition(motor[MOTOR_1].motorEncoder);
+        encoder_GetPosition(motor[MOTOR_1].motorEncoder);
         // Compute sine cosine
         FOC_sineCosine(motor[MOTOR_1].motorFOC, motor[MOTOR_1].motorEncoder);
     }
     else
     {
         // Don't send current to motors
-//        FOC_noVoltage(0);
-//
-//        // Reset controllers
-//        CL_resetFoc(&foc[0]);
+        //        FOC_noVoltage(0);
+        //
+        //        // Reset controllers
+        //        CL_resetFoc(&foc[0]);
     }
 
     //-------------------------------------------------------------------//
@@ -212,16 +225,16 @@ __interrupt void isrMotor1(void)
     //-------------------------------------------------------------------//
     // Read encoder position
 
-//    foc->encoder.qepHandle = (struct EQEP_REGS *)MOTOR1_QEP_BASE;
-//    foc->encoder.mechScaler = 0.25 / QEP_MOTOR1_ENCODER_LINES_NB;
-//    foc->encoder.polePairs = M1_POLES_PAIRS;
-//
-//
-//    ENC_read(&foc[motorIndex].encoder);
+    //    foc->encoder.qepHandle = (struct EQEP_REGS *)MOTOR1_QEP_BASE;
+    //    foc->encoder.mechScaler = 0.25 / QEP_MOTOR1_ENCODER_LINES_NB;
+    //    foc->encoder.polePairs = M1_POLES_PAIRS;
+    //
+    //
+    //    ENC_read(&foc[motorIndex].encoder);
 
 
-//    if(EPWM_getEventTriggerInterruptStatus(MOTOR1_PWM1_BASE))
-//    EPWM_clearEventTriggerInterruptFlag(MOTOR1_PWM1_BASE);
+    //    if(EPWM_getEventTriggerInterruptStatus(MOTOR1_PWM1_BASE))
+    //    EPWM_clearEventTriggerInterruptFlag(MOTOR1_PWM1_BASE);
 
     // Clear the interrupt flag
     HWREGH(EPWM1_BASE + EPWM_O_ETCLR) |= EPWM_ETCLR_INT; // EPWM_clearEventTriggerInterruptFlag(EPWM1_BASE);
@@ -237,16 +250,16 @@ __interrupt void isrMotor2(void)
     //-------------------------------------------------------------------//
     // Read encoder position
 
-//    foc->encoder.qepHandle = (struct EQEP_REGS *)MOTOR1_QEP_BASE;
-//    foc->encoder.mechScaler = 0.25 / QEP_MOTOR1_ENCODER_LINES_NB;
-//    foc->encoder.polePairs = M1_POLES_PAIRS;
-//
-//
-//    ENC_read(&foc[motorIndex].encoder);
+    //    foc->encoder.qepHandle = (struct EQEP_REGS *)MOTOR1_QEP_BASE;
+    //    foc->encoder.mechScaler = 0.25 / QEP_MOTOR1_ENCODER_LINES_NB;
+    //    foc->encoder.polePairs = M1_POLES_PAIRS;
+    //
+    //
+    //    ENC_read(&foc[motorIndex].encoder);
 
 
-//    if(EPWM_getEventTriggerInterruptStatus(MOTOR1_PWM1_BASE))
-//    EPWM_clearEventTriggerInterruptFlag(MOTOR1_PWM1_BASE);
+    //    if(EPWM_getEventTriggerInterruptStatus(MOTOR1_PWM1_BASE))
+    //    EPWM_clearEventTriggerInterruptFlag(MOTOR1_PWM1_BASE);
 
     // Clear the interrupt flag
     HWREGH(EPWM4_BASE + EPWM_O_ETCLR) |= EPWM_ETCLR_INT; // EPWM_clearEventTriggerInterruptFlag(EPWM4_BASE);

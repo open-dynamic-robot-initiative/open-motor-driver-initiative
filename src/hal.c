@@ -140,71 +140,70 @@ void HAL_ADC_init(const ADC_TypeDef* p_adcCfg)
  * @brief       ADC calibration function for the PPB (Post Processing Block)
  * @param[in]   *p_motor    Pointer on the motor configuration structure
  */
-void HAL_ADC_offsetCalib(MOTOR_HAL_CFG* p_motor)
+void HAL_ADC_offsetCalib(const MOTOR_HAL_CFG* p_motorHalCfg)
 {
-    if(p_motor != NULL)
+    if(p_motorHalCfg != NULL)
     {
         const ePWM_CC_TypeDef*  p_pwmCC     = NULL;
         const ADC_IT_TypeDef*   p_ITConv    = NULL;
+        float32_t               i[3]        = {0.0f, 0.0f, 0.0f};
+        float32_t               v[3]        = {0.0f, 0.0f, 0.0f};
+        uint16_t                calibCnt    = 0;
+        uint8_t                 loop        = 0;
 
-        while(p_motor->motorID != NO_MOT)
+        // force no switching with low side transistors closed
+        for(loop = 0; loop < 3; loop++)
         {
-            float32_t i[3]      = {0.0f, 0.0f, 0.0f};
-            float32_t v[3]      = {0.0f, 0.0f, 0.0f};
-            uint16_t calibCnt   = 0;
-            uint8_t loop        = 0;
+            p_pwmCC = p_motorHalCfg->p_pwmCntCmp[loop];
+            EPWM_setCounterCompareValue(p_pwmCC->epwmBase, p_pwmCC->compModule, p_pwmCC->compCount);
+        }
 
-            // force no switching with low side transistors closed
-            for(loop = 0; loop < 3; loop++)
-            {
-                p_pwmCC = p_motor->p_pwmCntCmp[loop];
-                EPWM_setCounterCompareValue(p_pwmCC->epwmBase, p_pwmCC->compModule, p_pwmCC->compCount);
-            }
+        for (calibCnt = 0; calibCnt < 10000; calibCnt++)
+        {
+            // Wait data acquisition for Ia, Ib, Ic & Vbus. Blocking.
+            // Init pointer on first IT source
+            p_ITConv = p_motorHalCfg->p_ITConv[0];
+            // Wait IT flag event
+            while(!ADC_getInterruptStatus(p_ITConv->adcBase, p_ITConv->adcIntNumber));
+//                while(!(HWREGH(p_ITConv->adcBase + ADC_O_INTFLG) & (1U << ((uint16_t)p_ITConv->adcIntNumber))));
 
-            for (calibCnt = 0; calibCnt < 10000; calibCnt++)
-            {
-                // Wait data acquisition for Ia, Ib, Ic & Vbus. Blocking.
-                // Init pointer on first IT source
-                p_ITConv = p_motor->p_ITConv[0];
-                // Wait IT flag event
-                while(!(HWREGH(p_ITConv->adcBase + ADC_O_INTFLG) & (1U << ((uint16_t)p_ITConv->adcIntNumber))));
+            if (calibCnt > 1000)
+                for(loop = 0; loop < 3; loop++)
+                {
+                    v[loop] = 0.998f * v[loop] + 0.002f * HWREGH(p_motorHalCfg->p_vConv[loop]->adcResultBase);
+                    // Clear the interrupt overflow flag
+                    HWREGH(p_motorHalCfg->p_vConv[loop]->adcBase + ADC_O_INTOVFCLR) = (1U << ((uint16_t)p_ITConv->adcIntNumber));
+                    // Clear the interrupt flag
+                    HWREGH(p_motorHalCfg->p_vConv[loop]->adcBase + ADC_O_INTFLGCLR) = (1U << ((uint16_t)p_ITConv->adcIntNumber));
+                }
 
-                if (calibCnt > 1000)
-                    for(loop = 0; loop < 3; loop++)
-                        v[loop] = 0.998f * v[loop] + 0.002f * HWREGH(p_motor->p_vConv[loop]->adcResultBase);
-                // Clear the interrupt overflow flag
-                //                AdcaRegs.ADCINTOVF.all = (1U << ((uint16_t)p_ITConv->adcIntNumber));
-                HWREGH(p_ITConv->adcBase + ADC_O_INTOVFCLR) = (1U << ((uint16_t)p_ITConv->adcIntNumber)); // ADC_clearInterruptOverflowStatus(ADCA_BASE, ADC_INT_NUMBER1);
-                // Clear the interrupt flag
-                HWREGH(p_ITConv->adcBase + ADC_O_INTFLGCLR) = (1U << ((uint16_t)p_ITConv->adcIntNumber)); // ADC_clearInterruptStatus(ADCA_BASE, ADC_INT_NUMBER1);
+            // Wait data acquisition for Va, Vb, Vc. Blocking.
+            // Init pointer on second IT source
+            p_ITConv = p_motorHalCfg->p_ITConv[1];
+            // Wait IT flag event
+            while(!ADC_getInterruptStatus(p_ITConv->adcBase, p_ITConv->adcIntNumber));
+//            while(!(HWREGH(p_ITConv->adcBase + ADC_O_INTFLG) & (1U << ((uint16_t)p_ITConv->adcIntNumber))));
 
-                // Wait data acquisition for Va, Vb, Vc. Blocking.
-                // Init pointer on second IT source
-                p_ITConv = p_motor->p_ITConv[1];
-                // Wait IT flag event
-                while(!(HWREGH(p_ITConv->adcBase + ADC_O_INTFLG) & (1U << ((uint16_t)p_ITConv->adcIntNumber))));
+            if (calibCnt > 1000)
+                for(loop = 0; loop < 3; loop++)
+                {
+                    i[loop] = 0.998f * i[loop] + 0.002f * HWREGH(p_motorHalCfg->p_iConv[loop]->adcResultBase);
+                    // Clear the interrupt overflow flag
+                    HWREGH(p_motorHalCfg->p_iConv[loop]->adcBase + ADC_O_INTOVFCLR) = (1U << ((uint16_t)p_ITConv->adcIntNumber));
+                    // Clear the interrupt flag
+                    HWREGH(p_motorHalCfg->p_iConv[loop]->adcBase + ADC_O_INTFLGCLR) = (1U << ((uint16_t)p_ITConv->adcIntNumber));
+                }
+        }
 
-                if (calibCnt > 1000)
-                    for(loop = 0; loop < 3; loop++)
-                        i[loop] = 0.998f * i[loop] + 0.002f * HWREGH(p_motor->p_iConv[loop]->adcResultBase);
-                // Clear the interrupt overflow flag
-                HWREGH(p_ITConv->adcBase + ADC_O_INTOVFCLR) = (1U << ((uint16_t)p_ITConv->adcIntNumber)); // ADC_clearInterruptOverflowStatus(ADCA_BASE, ADC_INT_NUMBER1);
-                // Clear the interrupt flag
-                HWREGH(p_ITConv->adcBase + ADC_O_INTFLGCLR) = (1U << ((uint16_t)p_ITConv->adcIntNumber));
-            }
-
-            // Set offsets in PPBs
-            for(loop = 0; loop < 3; loop++)
-            {
-                // Sets the post processing block reference offset for tensions
-                ADC_setPPBReferenceOffset(p_motor->p_vConv[loop]->adcBase, p_motor->p_vConv[loop]->adcPPBNumber, (uint16_t)v[loop]);
-                // Sets the post processing block reference offset for tensions
-                ADC_setPPBReferenceOffset(p_motor->p_iConv[loop]->adcBase, p_motor->p_iConv[loop]->adcPPBNumber, (uint16_t)i[loop]);
-                // Enables two's complement capability
-                ADC_enablePPBTwosComplement(p_motor->p_iConv[loop]->adcBase, p_motor->p_iConv[loop]->adcPPBNumber);
-            }
-            // Calibrate next motor
-            p_motor++;
+        // Set offsets in PPBs
+        for(loop = 0; loop < 3; loop++)
+        {
+            // Sets the post processing block reference offset for tensions
+            ADC_setPPBReferenceOffset(p_motorHalCfg->p_vConv[loop]->adcBase, p_motorHalCfg->p_vConv[loop]->adcPPBNumber, (uint16_t)v[loop]);
+            // Sets the post processing block reference offset for tensions
+            ADC_setPPBReferenceOffset(p_motorHalCfg->p_iConv[loop]->adcBase, p_motorHalCfg->p_iConv[loop]->adcPPBNumber, (uint16_t)i[loop]);
+            // Enables two's complement capability
+            ADC_enablePPBTwosComplement(p_motorHalCfg->p_iConv[loop]->adcBase, p_motorHalCfg->p_iConv[loop]->adcPPBNumber);
         }
     }
 

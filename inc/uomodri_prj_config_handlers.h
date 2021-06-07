@@ -147,7 +147,7 @@ static DRV8353 drv[] =
  {.drvCfgHandler = NULL},
 };
 
-static MOTOR_HAL_CFG motor_hal_cfg[] =
+static const MOTOR_HAL_CFG motor_hal_cfg[] =
 {
  {.motorID      = MOTOR_1,
   .p_pwmCntCmp  = {&PwmCounterCompareCfgList[0], &PwmCounterCompareCfgList[1], &PwmCounterCompareCfgList[2]},
@@ -168,7 +168,7 @@ static MOTOR_HAL_CFG motor_hal_cfg[] =
 //                   ((volatile int16_t *)(AdcPPBsList[6].adcResultBase)),
 //                   ((volatile int16_t *)(AdcPPBsList[12].adcResultBase))},
 //  .p_vBusMesured= (volatile int16_t *)(AdcPPBsList[8].adcResultBase),
-  .dataValid    = {false, false},
+//  .dataValid    = {false, false},
   //  .offsetCal      = true
  },
  {.motorID      = MOTOR_2,
@@ -192,16 +192,16 @@ static MOTOR_HAL_CFG motor_hal_cfg[] =
 //                   ((volatile int16_t *)(AdcPPBsList[7].adcResultBase)),
 //                   ((volatile int16_t *)(AdcPPBsList[13].adcResultBase))},
 //  .p_vBusMesured= (volatile int16_t *)(AdcPPBsList[9].adcResultBase),
-  .dataValid    = {false, false},
+//  .dataValid    = {false, false},
   //  .offsetCal      = true
  },
- {.motorID      = NO_MOT},
+// {.motorID      = NO_MOT},
 };
 
 static MOTOR_PARAMS motor_params[] =
 {
- {.Rs = M1_RS, .Ld = M1_LD, .Lq = M1_LQ, .kv = M1_KV, .ke = M1_KE, .ki = M1_KI, .polePairs = M1_POLES_PAIRS},
- {.Rs = M2_RS, .Ld = M2_LD, .Lq = M2_LQ, .kv = M2_KV, .ke = M2_KE, .ki = M2_KI, .polePairs = M2_POLES_PAIRS},
+ {.Rs = MOTOR1_RS, .Ld = MOTOR1_LD, .Lq = MOTOR1_LQ, .kv = MOTOR1_KV, .ke = MOTOR1_KE, .ki = MOTOR1_KI, .polePairs = MOTOR1_POLES_PAIRS},
+ {.Rs = MOTOR2_RS, .Ld = MOTOR2_LD, .Lq = MOTOR2_LQ, .kv = MOTOR2_KV, .ke = MOTOR2_KE, .ki = MOTOR2_KI, .polePairs = MOTOR2_POLES_PAIRS},
 };
 
 static FOC motor_foc[] =
@@ -231,7 +231,7 @@ static FOC motor_foc[] =
   .ia = 0.0f, .ib = 0.0f, .ic = 0.0f, .ialpha = 0.0f, .ibeta = 0.0f, .id = 0.0f, .iq = 0.0f,
   .va = 0.0f, .vb = 0.0f, .vc = 0.0f, .valpha = 0.0f, .vbeta = 0.0f, .vd = 0.0f, .vq = 0.0f,
   .auxAdc = 0.0f, .phaseAVolt = 0.0f, .phaseBVolt = 0.0f, .phaseCVolt = 0.0f, .resistanceEst = 0.0f,
-  .Rs = M1_RS, .Ld = M1_LD, .Lq = M1_LQ, .ke = M1_KE
+  .Rs = MOTOR1_RS, .Ld = MOTOR1_LD, .Lq = MOTOR1_LQ, .ke = MOTOR1_KE
  },
  {.enabled = true,
   .piId.integral = 0.0f, .piId.err = 0.0f, .piId.ff = 0.0f, .piId.out = 0.0f,
@@ -241,7 +241,7 @@ static FOC motor_foc[] =
   .ia = 0.0f, .ib = 0.0f, .ic = 0.0f, .ialpha = 0.0f, .ibeta = 0.0f, .id = 0.0f, .iq = 0.0f,
   .va = 0.0f, .vb = 0.0f, .vc = 0.0f, .valpha = 0.0f, .vbeta = 0.0f, .vd = 0.0f, .vq = 0.0f,
   .auxAdc = 0.0f, .phaseAVolt = 0.0f, .phaseBVolt = 0.0f, .phaseCVolt = 0.0f, .resistanceEst = 0.0f,
-  .Rs = M2_RS, .Ld = M2_LD, .Lq = M2_LQ, .ke = M2_KE
+  .Rs = MOTOR2_RS, .Ld = MOTOR2_LD, .Lq = MOTOR2_LQ, .ke = MOTOR2_KE
  },
 };
 
@@ -264,6 +264,7 @@ static MOTOR_STRUCT motor[] =
   .motorHalCfg = &motor_hal_cfg[MOTOR_1],
   .motorParams = &motor_params[MOTOR_1],
   .motorEncoder = &motor_encoder[MOTOR_1],
+  .motorDRV = &drv[MOTOR_1],
   .motorFOC = &motor_foc[MOTOR_1],
   .currentScaler = ADC_CURRENT_SCALE,
   .currentScalerReg = ADC_CURRENT_SCALE / 0x8000L,
@@ -275,6 +276,7 @@ static MOTOR_STRUCT motor[] =
   .motorHalCfg = &motor_hal_cfg[MOTOR_2],
   .motorParams = &motor_params[MOTOR_2],
   .motorEncoder = &motor_encoder[MOTOR_2],
+  .motorDRV = &drv[MOTOR_2],
   .motorFOC = &motor_foc[MOTOR_2],
   .currentScaler = ADC_CURRENT_SCALE,
   .currentScalerReg = ADC_CURRENT_SCALE / 0x8000L,

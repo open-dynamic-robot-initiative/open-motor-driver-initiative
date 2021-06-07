@@ -53,6 +53,7 @@ typedef struct __MOTOR_STRUCT__
     const MOTOR_HAL_CFG*    motorHalCfg;
     const MOTOR_PARAMS*     motorParams;
     ENCODER*                motorEncoder;
+    DRV8353*                motorDRV;
     FOC*                    motorFOC;
 
     bool enabled;

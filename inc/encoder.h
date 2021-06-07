@@ -72,7 +72,7 @@ typedef struct __Encoder__
 
 inline void ENC_reset(ENCODER *encoder);
 inline void ENC_resetQepPos(ENCODER *encoder);
-inline void encoderGetPosition(ENCODER *encoder);
+inline void encoder_GetPosition(ENCODER *encoder);
 inline void ENC_update(ENCODER *encoder);
 
 

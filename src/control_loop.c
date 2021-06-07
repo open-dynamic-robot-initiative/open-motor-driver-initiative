@@ -16,12 +16,12 @@ void MTR1_offsetComputation(MotorDebug* motorDebug)
     // Wait for interrupt to be sure low side transistor is closed
     while(EPWM_getEventTriggerInterruptStatus(MOTOR1_PWM1_BASE) == false);
 
-    isenOffset[0] = ADC_readResult(M1_IA_ADC_RESULT_ADDR, M1_IA_SOC_NUM);
-    isenOffset[1] = ADC_readResult(M1_IB_ADC_RESULT_ADDR, M1_IB_SOC_NUM);
-    isenOffset[2] = ADC_readResult(M1_IC_ADC_RESULT_ADDR, M1_IC_SOC_NUM);
-    vsenOffset[0] = ADC_readResult(M1_VA_ADC_RESULT_ADDR, M1_VA_SOC_NUM);
-    vsenOffset[1] = ADC_readResult(M1_VB_ADC_RESULT_ADDR, M1_VB_SOC_NUM);
-    vsenOffset[2] = ADC_readResult(M1_VC_ADC_RESULT_ADDR, M1_VC_SOC_NUM);
+    isenOffset[0] = ADC_readResult(MOTOR1_IA_ADC_RESULT_ADDR, MOTOR1_IA_SOC_NUM);
+    isenOffset[1] = ADC_readResult(MOTOR1_IB_ADC_RESULT_ADDR, MOTOR1_IB_SOC_NUM);
+    isenOffset[2] = ADC_readResult(MOTOR1_IC_ADC_RESULT_ADDR, MOTOR1_IC_SOC_NUM);
+    vsenOffset[0] = ADC_readResult(MOTOR1_VA_ADC_RESULT_ADDR, MOTOR1_VA_SOC_NUM);
+    vsenOffset[1] = ADC_readResult(MOTOR1_VB_ADC_RESULT_ADDR, MOTOR1_VB_SOC_NUM);
+    vsenOffset[2] = ADC_readResult(MOTOR1_VC_ADC_RESULT_ADDR, MOTOR1_VC_SOC_NUM);
 
     // Motor 1
     for (calibCounter = 0; calibCounter < 10000; calibCounter++)
@@ -35,27 +35,27 @@ void MTR1_offsetComputation(MotorDebug* motorDebug)
         {
             // Update offset
             isenOffset[0] = 0.998f * isenOffset[0] +
-                    0.002f * ADC_readResult(M1_IA_ADC_RESULT_ADDR, M1_IA_SOC_NUM);
+                    0.002f * ADC_readResult(MOTOR1_IA_ADC_RESULT_ADDR, MOTOR1_IA_SOC_NUM);
             isenOffset[1] = 0.998f * isenOffset[1] +
-                    0.002f * ADC_readResult(M1_IB_ADC_RESULT_ADDR, M1_IB_SOC_NUM);
+                    0.002f * ADC_readResult(MOTOR1_IB_ADC_RESULT_ADDR, MOTOR1_IB_SOC_NUM);
             isenOffset[2] = 0.998f * isenOffset[2] +
-                    0.002f * ADC_readResult(M1_IC_ADC_RESULT_ADDR, M1_IC_SOC_NUM);
+                    0.002f * ADC_readResult(MOTOR1_IC_ADC_RESULT_ADDR, MOTOR1_IC_SOC_NUM);
             vsenOffset[0] = 0.998f * vsenOffset[0] +
-                    0.002f * ADC_readResult(M1_VA_ADC_RESULT_ADDR, M1_VA_SOC_NUM);
+                    0.002f * ADC_readResult(MOTOR1_VA_ADC_RESULT_ADDR, MOTOR1_VA_SOC_NUM);
             vsenOffset[1] = 0.998f * vsenOffset[1] +
-                    0.002f * ADC_readResult(M1_VB_ADC_RESULT_ADDR, M1_VB_SOC_NUM);
+                    0.002f * ADC_readResult(MOTOR1_VB_ADC_RESULT_ADDR, MOTOR1_VB_SOC_NUM);
             vsenOffset[2] = 0.998f * vsenOffset[2] +
-                    0.002f * ADC_readResult(M1_VC_ADC_RESULT_ADDR, M1_VC_SOC_NUM);
+                    0.002f * ADC_readResult(MOTOR1_VC_ADC_RESULT_ADDR, MOTOR1_VC_SOC_NUM);
         }
     }
 
     // Set offsets in PPBs
-    ADC_setPPBReferenceOffset(M1_IA_ADC_RESULT_ADDR, M1_IA_PPB_NUM, (uint16_t)isenOffset[0]);
-    ADC_setPPBReferenceOffset(M1_IB_ADC_RESULT_ADDR, M1_IB_PPB_NUM, (uint16_t)isenOffset[1]);
-    ADC_setPPBReferenceOffset(M1_IC_ADC_RESULT_ADDR, M1_IC_PPB_NUM, (uint16_t)isenOffset[2]);
-    ADC_setPPBReferenceOffset(M1_VA_ADC_RESULT_ADDR, M1_VA_PPB_NUM, (uint16_t)vsenOffset[0]);
-    ADC_setPPBReferenceOffset(M1_VB_ADC_RESULT_ADDR, M1_VB_PPB_NUM, (uint16_t)vsenOffset[1]);
-    ADC_setPPBReferenceOffset(M1_VC_ADC_RESULT_ADDR, M1_VC_PPB_NUM, (uint16_t)vsenOffset[2]);
+    ADC_setPPBReferenceOffset(MOTOR1_IA_ADC_RESULT_ADDR, MOTOR1_IA_PPB_NUM, (uint16_t)isenOffset[0]);
+    ADC_setPPBReferenceOffset(MOTOR1_IB_ADC_RESULT_ADDR, MOTOR1_IB_PPB_NUM, (uint16_t)isenOffset[1]);
+    ADC_setPPBReferenceOffset(MOTOR1_IC_ADC_RESULT_ADDR, MOTOR1_IC_PPB_NUM, (uint16_t)isenOffset[2]);
+    ADC_setPPBReferenceOffset(MOTOR1_VA_ADC_RESULT_ADDR, MOTOR1_VA_PPB_NUM, (uint16_t)vsenOffset[0]);
+    ADC_setPPBReferenceOffset(MOTOR1_VB_ADC_RESULT_ADDR, MOTOR1_VB_PPB_NUM, (uint16_t)vsenOffset[1]);
+    ADC_setPPBReferenceOffset(MOTOR1_VC_ADC_RESULT_ADDR, MOTOR1_VC_PPB_NUM, (uint16_t)vsenOffset[2]);
 }
 
 // Compute ADC voltage offset for motor 2 and save them in Post Processing Block offset register
@@ -71,12 +71,12 @@ void MTR2_offsetComputation(MotorDebug* motorDebug)
     // Wait for interrupt to be sure low side transistor is closed
     while(EPWM_getEventTriggerInterruptStatus(MOTOR2_PWM1_BASE) == false);
 
-    isenOffset[0] = ADC_readResult(M2_IA_ADC_RESULT_ADDR, M2_IA_SOC_NUM);
-    isenOffset[1] = ADC_readResult(M2_IB_ADC_RESULT_ADDR, M2_IB_SOC_NUM);
-    isenOffset[2] = ADC_readResult(M2_IC_ADC_RESULT_ADDR, M2_IC_SOC_NUM);
-    vsenOffset[0] = ADC_readResult(M2_VA_ADC_RESULT_ADDR, M2_VA_SOC_NUM);
-    vsenOffset[1] = ADC_readResult(M2_VB_ADC_RESULT_ADDR, M2_VB_SOC_NUM);
-    vsenOffset[2] = ADC_readResult(M2_VC_ADC_RESULT_ADDR, M2_VC_SOC_NUM);
+    isenOffset[0] = ADC_readResult(MOTOR2_IA_ADC_RESULT_ADDR, MOTOR2_IA_SOC_NUM);
+    isenOffset[1] = ADC_readResult(MOTOR2_IB_ADC_RESULT_ADDR, MOTOR2_IB_SOC_NUM);
+    isenOffset[2] = ADC_readResult(MOTOR2_IC_ADC_RESULT_ADDR, MOTOR2_IC_SOC_NUM);
+    vsenOffset[0] = ADC_readResult(MOTOR2_VA_ADC_RESULT_ADDR, MOTOR2_VA_SOC_NUM);
+    vsenOffset[1] = ADC_readResult(MOTOR2_VB_ADC_RESULT_ADDR, MOTOR2_VB_SOC_NUM);
+    vsenOffset[2] = ADC_readResult(MOTOR2_VC_ADC_RESULT_ADDR, MOTOR2_VC_SOC_NUM);
 
     // Motor 1
     for (calibCounter = 0; calibCounter < 10000; calibCounter++)
@@ -90,27 +90,27 @@ void MTR2_offsetComputation(MotorDebug* motorDebug)
         {
             // Update offset
             isenOffset[0] = 0.998f * isenOffset[0] +
-                    0.002f * ADC_readResult(M2_IA_ADC_RESULT_ADDR, M2_IA_SOC_NUM);
+                    0.002f * ADC_readResult(MOTOR2_IA_ADC_RESULT_ADDR, MOTOR2_IA_SOC_NUM);
             isenOffset[1] = 0.998f * isenOffset[1] +
-                    0.002f * ADC_readResult(M2_IB_ADC_RESULT_ADDR, M2_IB_SOC_NUM);
+                    0.002f * ADC_readResult(MOTOR2_IB_ADC_RESULT_ADDR, MOTOR2_IB_SOC_NUM);
             isenOffset[2] = 0.998f * isenOffset[2] +
-                    0.002f * ADC_readResult(M2_IC_ADC_RESULT_ADDR, M2_IC_SOC_NUM);
+                    0.002f * ADC_readResult(MOTOR2_IC_ADC_RESULT_ADDR, MOTOR2_IC_SOC_NUM);
             vsenOffset[0] = 0.998f * vsenOffset[0] +
-                    0.002f * ADC_readResult(M2_VA_ADC_RESULT_ADDR, M2_VA_SOC_NUM);
+                    0.002f * ADC_readResult(MOTOR2_VA_ADC_RESULT_ADDR, MOTOR2_VA_SOC_NUM);
             vsenOffset[1] = 0.998f * vsenOffset[1] +
-                    0.002f * ADC_readResult(M2_VB_ADC_RESULT_ADDR, M2_VB_SOC_NUM);
+                    0.002f * ADC_readResult(MOTOR2_VB_ADC_RESULT_ADDR, MOTOR2_VB_SOC_NUM);
             vsenOffset[2] = 0.998f * vsenOffset[2] +
-                    0.002f * ADC_readResult(M2_VC_ADC_RESULT_ADDR, M2_VC_SOC_NUM);
+                    0.002f * ADC_readResult(MOTOR2_VC_ADC_RESULT_ADDR, MOTOR2_VC_SOC_NUM);
         }
     }
 
     // Set offsets in PPBs
-    ADC_setPPBReferenceOffset(M2_IA_ADC_RESULT_ADDR, M2_IA_PPB_NUM, (uint16_t)isenOffset[0]);
-    ADC_setPPBReferenceOffset(M2_IB_ADC_RESULT_ADDR, M2_IB_PPB_NUM, (uint16_t)isenOffset[1]);
-    ADC_setPPBReferenceOffset(M2_IC_ADC_RESULT_ADDR, M2_IC_PPB_NUM, (uint16_t)isenOffset[2]);
-    ADC_setPPBReferenceOffset(M2_VA_ADC_RESULT_ADDR, M2_VA_PPB_NUM, (uint16_t)vsenOffset[0]);
-    ADC_setPPBReferenceOffset(M2_VB_ADC_RESULT_ADDR, M2_VB_PPB_NUM, (uint16_t)vsenOffset[1]);
-    ADC_setPPBReferenceOffset(M2_VC_ADC_RESULT_ADDR, M2_VC_PPB_NUM, (uint16_t)vsenOffset[2]);
+    ADC_setPPBReferenceOffset(MOTOR2_IA_ADC_RESULT_ADDR, MOTOR2_IA_PPB_NUM, (uint16_t)isenOffset[0]);
+    ADC_setPPBReferenceOffset(MOTOR2_IB_ADC_RESULT_ADDR, MOTOR2_IB_PPB_NUM, (uint16_t)isenOffset[1]);
+    ADC_setPPBReferenceOffset(MOTOR2_IC_ADC_RESULT_ADDR, MOTOR2_IC_PPB_NUM, (uint16_t)isenOffset[2]);
+    ADC_setPPBReferenceOffset(MOTOR2_VA_ADC_RESULT_ADDR, MOTOR2_VA_PPB_NUM, (uint16_t)vsenOffset[0]);
+    ADC_setPPBReferenceOffset(MOTOR2_VB_ADC_RESULT_ADDR, MOTOR2_VB_PPB_NUM, (uint16_t)vsenOffset[1]);
+    ADC_setPPBReferenceOffset(MOTOR2_VC_ADC_RESULT_ADDR, MOTOR2_VC_PPB_NUM, (uint16_t)vsenOffset[2]);
 }
 
 // Control loop initialization function
@@ -130,21 +130,21 @@ void CL_initFoc(FOC* p_foc, const uint16_t motorIndex)
     p_foc->dutyCycleSat = 0.4;
 
     // Initialize control loop low-pass filter
-    LPF_setBandwidth(&p_foc->controlLoopLpf, PWM_FREQUENCY, M1_CUR_LOOP_BANDWIDTH);
+    LPF_setBandwidth(&p_foc->controlLoopLpf, PWM_FREQUENCY, MOTOR1_CUR_LOOP_BANDWIDTH);
 
 
     // Initialize motor constants
     if (motorIndex == 0)
     {
-        p_foc->Rs = M1_RS;
-        p_foc->Ld = M1_LD;
-        p_foc->Lq = M1_LQ;
-        p_foc->ke = M1_KE;
+        p_foc->Rs = MOTOR1_RS;
+        p_foc->Ld = MOTOR1_LD;
+        p_foc->Lq = MOTOR1_LQ;
+        p_foc->ke = MOTOR1_KE;
     } else {
-        p_foc->Rs = M2_RS;
-        p_foc->Ld = M2_LD;
-        p_foc->Lq = M2_LQ;
-        p_foc->ke = M2_KE;
+        p_foc->Rs = MOTOR2_RS;
+        p_foc->Ld = MOTOR2_LD;
+        p_foc->Lq = MOTOR2_LQ;
+        p_foc->ke = MOTOR2_KE;
     }
 
     // Initialize PWM compare register scaler
@@ -162,11 +162,11 @@ void CL_initFoc(FOC* p_foc, const uint16_t motorIndex)
     {
         p_foc->encoder.p_qepRegs = (struct EQEP_REGS *)MOTOR1_QEP_BASE;
         p_foc->encoder.mechScaler = 0.25 / QEP_MOTOR1_ENCODER_LINES_NB;
-        p_foc->encoder.polePairs = M1_POLES_PAIRS;
+        p_foc->encoder.polePairs = MOTOR1_POLES_PAIRS;
     } else {
         p_foc->encoder.p_qepRegs = (struct EQEP_REGS *)MOTOR2_QEP_BASE;
         p_foc->encoder.mechScaler = 0.25 / QEP_MOTOR2_ENCODER_LINES_NB;
-        p_foc->encoder.polePairs = M2_POLES_PAIRS;
+        p_foc->encoder.polePairs = MOTOR2_POLES_PAIRS;
     }
 
     // Speed estimation initialization
@@ -177,24 +177,24 @@ void CL_initFoc(FOC* p_foc, const uint16_t motorIndex)
     // Initialize PI controllers
     if (motorIndex == 0)
     {
-        p_foc->piId.kp = M1_LD * 2.0*FM_PI*M1_CUR_LOOP_BANDWIDTH;
-        p_foc->piId.ki = M1_RS * 2.0*FM_PI*M1_CUR_LOOP_BANDWIDTH / PWM_FREQUENCY;
-        p_foc->piIq.kp = M1_LQ * 2.0*FM_PI*M1_CUR_LOOP_BANDWIDTH;
-        p_foc->piIq.ki = M1_RS * 2.0*FM_PI*M1_CUR_LOOP_BANDWIDTH / PWM_FREQUENCY;
+        p_foc->piId.kp = MOTOR1_LD * 2.0*FM_PI*MOTOR1_CUR_LOOP_BANDWIDTH;
+        p_foc->piId.ki = MOTOR1_RS * 2.0*FM_PI*MOTOR1_CUR_LOOP_BANDWIDTH / PWM_FREQUENCY;
+        p_foc->piIq.kp = MOTOR1_LQ * 2.0*FM_PI*MOTOR1_CUR_LOOP_BANDWIDTH;
+        p_foc->piIq.ki = MOTOR1_RS * 2.0*FM_PI*MOTOR1_CUR_LOOP_BANDWIDTH / PWM_FREQUENCY;
     } else {
-        p_foc->piId.kp = M2_LD * 2.0*FM_PI*M2_CUR_LOOP_BANDWIDTH;
-        p_foc->piId.ki = M2_RS * 2.0*FM_PI*M2_CUR_LOOP_BANDWIDTH / PWM_FREQUENCY;
-        p_foc->piIq.kp = M2_LQ * 2.0*FM_PI*M2_CUR_LOOP_BANDWIDTH;
-        p_foc->piIq.ki = M2_RS * 2.0*FM_PI*M2_CUR_LOOP_BANDWIDTH / PWM_FREQUENCY;
+        p_foc->piId.kp = MOTOR2_LD * 2.0*FM_PI*MOTOR2_CUR_LOOP_BANDWIDTH;
+        p_foc->piId.ki = MOTOR2_RS * 2.0*FM_PI*MOTOR2_CUR_LOOP_BANDWIDTH / PWM_FREQUENCY;
+        p_foc->piIq.kp = MOTOR2_LQ * 2.0*FM_PI*MOTOR2_CUR_LOOP_BANDWIDTH;
+        p_foc->piIq.ki = MOTOR2_RS * 2.0*FM_PI*MOTOR2_CUR_LOOP_BANDWIDTH / PWM_FREQUENCY;
     }
 
     // Controller saturations is 40% of bus voltage (10% margin). This is completely arbitrary.
     // DRVs must be initialized before CL_initFoc is called so vBus isn't zero
     if (motorIndex == 0)
     {
-        p_foc->vBus = ADC_readResult(M12_VBUS_ADC_ADDR, M12_VBUS_SOC_NUM) * p_foc->voltageScalerReg;
+        p_foc->vBus = ADC_readResult(MOTOR12_VBUS_ADC_ADDR, MOTOR12_VBUS_SOC_NUM) * p_foc->voltageScalerReg;
     } else {
-        p_foc->vBus = ADC_readResult(M12_VBUS_ADC_ADDR, M12_VBUS_SOC_NUM) * p_foc->voltageScalerReg;
+        p_foc->vBus = ADC_readResult(MOTOR12_VBUS_ADC_ADDR, MOTOR12_VBUS_SOC_NUM) * p_foc->voltageScalerReg;
     }
 
     p_foc->piId.sat = 0.4 * p_foc->vBus;
@@ -216,16 +216,16 @@ void CL_initFoc(FOC* p_foc, const uint16_t motorIndex)
         p_foc->pwmCompB = (volatile uint32_t *)(MOTOR1_PWM2_BASE + EPWM_O_CMPA);
         p_foc->pwmCompC = (volatile uint32_t *)(MOTOR1_PWM3_BASE + EPWM_O_CMPA);
 
-        p_foc->isenAResult   = (volatile int32_t *)(M1_IA_ADC_PPB_RESULT_ADDR);
-        p_foc->isenBResult   = (volatile int32_t *)(M1_IB_ADC_PPB_RESULT_ADDR);
-        p_foc->isenCResult   = (volatile int32_t *)(M1_IC_ADC_PPB_RESULT_ADDR);
-        p_foc->vBusSenResult = (volatile int32_t *)(M12_VBUS_ADC_PPB_RESULT_ADDR);
+        p_foc->isenAResult   = (volatile int32_t *)(MOTOR1_IA_ADC_PPB_RESULT_ADDR);
+        p_foc->isenBResult   = (volatile int32_t *)(MOTOR1_IB_ADC_PPB_RESULT_ADDR);
+        p_foc->isenCResult   = (volatile int32_t *)(MOTOR1_IC_ADC_PPB_RESULT_ADDR);
+        p_foc->vBusSenResult = (volatile int32_t *)(MOTOR12_VBUS_ADC_PPB_RESULT_ADDR);
 
-        p_foc->vsenaResult = (volatile int32_t *)(M1_VA_ADC_PPB_RESULT_ADDR);
-        p_foc->vsenbResult = (volatile int32_t *)(M1_VB_ADC_PPB_RESULT_ADDR);
-        p_foc->vsencResult = (volatile int32_t *)(M1_VC_ADC_PPB_RESULT_ADDR);
+        p_foc->vsenaResult = (volatile int32_t *)(MOTOR1_VA_ADC_PPB_RESULT_ADDR);
+        p_foc->vsenbResult = (volatile int32_t *)(MOTOR1_VB_ADC_PPB_RESULT_ADDR);
+        p_foc->vsencResult = (volatile int32_t *)(MOTOR1_VC_ADC_PPB_RESULT_ADDR);
 
-        p_foc->adcIntFlag = (union ADCINTFLG_REG *)(M1_IC_ADC_ADDR + ADC_O_INTFLG);
+        p_foc->adcIntFlag = (union ADCINTFLG_REG *)(MOTOR1_IC_ADC_ADDR + ADC_O_INTFLG);
     }
     else
     {
@@ -233,20 +233,20 @@ void CL_initFoc(FOC* p_foc, const uint16_t motorIndex)
         p_foc->pwmCompB = (volatile uint32_t *)(MOTOR2_PWM2_BASE + EPWM_O_CMPA);
         p_foc->pwmCompC = (volatile uint32_t *)(MOTOR2_PWM3_BASE + EPWM_O_CMPA);
 
-        p_foc->isenAResult   = (volatile int32_t *)(M2_IA_ADC_PPB_RESULT_ADDR);
-        p_foc->isenBResult   = (volatile int32_t *)(M2_IB_ADC_PPB_RESULT_ADDR);
-        p_foc->isenCResult   = (volatile int32_t *)(M2_IC_ADC_PPB_RESULT_ADDR);
+        p_foc->isenAResult   = (volatile int32_t *)(MOTOR2_IA_ADC_PPB_RESULT_ADDR);
+        p_foc->isenBResult   = (volatile int32_t *)(MOTOR2_IB_ADC_PPB_RESULT_ADDR);
+        p_foc->isenCResult   = (volatile int32_t *)(MOTOR2_IC_ADC_PPB_RESULT_ADDR);
 
 #if OMODRI_PAL_SETUP    // Second VSENVM measure is replaced by ISENVM, so use the same one than motor 1
         p_foc->vBusSenResult = (volatile int32_t *)(MOTOR1_VBUS_RESULT  + ADC_PPBxRESULT_OFFSET_BASE + 2 * MOTOR1_ADC_PPB_NUM1);
 #else
-        p_foc->vBusSenResult = (volatile int32_t *)(M12_VBUS_ADC_PPB_RESULT_ADDR);
+        p_foc->vBusSenResult = (volatile int32_t *)(MOTOR12_VBUS_ADC_PPB_RESULT_ADDR);
 #endif
-        p_foc->vsenaResult = (volatile int32_t *)(M2_VA_ADC_PPB_RESULT_ADDR);
-        p_foc->vsenbResult = (volatile int32_t *)(M2_VB_ADC_PPB_RESULT_ADDR);
-        p_foc->vsencResult = (volatile int32_t *)(M2_VC_ADC_PPB_RESULT_ADDR);
+        p_foc->vsenaResult = (volatile int32_t *)(MOTOR2_VA_ADC_PPB_RESULT_ADDR);
+        p_foc->vsenbResult = (volatile int32_t *)(MOTOR2_VB_ADC_PPB_RESULT_ADDR);
+        p_foc->vsencResult = (volatile int32_t *)(MOTOR2_VC_ADC_PPB_RESULT_ADDR);
 
-        p_foc->adcIntFlag = (union ADCINTFLG_REG *)(M2_IC_ADC_ADDR + ADC_O_INTFLG);
+        p_foc->adcIntFlag = (union ADCINTFLG_REG *)(MOTOR2_IC_ADC_ADDR + ADC_O_INTFLG);
     }
 }
 

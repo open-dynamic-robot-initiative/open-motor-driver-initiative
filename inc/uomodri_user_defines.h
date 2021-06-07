@@ -35,7 +35,8 @@
 #define ADC_RESOLUTION                  ADC_RESOLUTION_16BIT
 #define ADC_SIGNAL_MODE                 ADC_MODE_SINGLE_ENDED
 #define ADC_PULSE_END_MODE              ADC_PULSE_END_OF_CONV
-#define ADC_SOC_PRIORITY                ADC_PRI_ALL_ROUND_ROBIN
+#define ADC_SOC_PRIORITY                ADC_PRI_THRU_SOC3_HIPRI
+//ADC_PRI_ALL_ROUND_ROBIN
 #define ADC_INT_SOC_TRIGGER             ADC_INT_SOC_TRIGGER_NONE
 /**
  * @}
@@ -46,37 +47,37 @@
  * @{
  */
 // Channels
-#define M1_VA_CH                        ADC_CH_ADCIN2
-#define M2_VA_CH                        ADC_CH_ADCIN3
-#define M1_IA_CH                        ADC_CH_ADCIN0
-#define M2_IA_CH                        ADC_CH_ADCIN1
+#define MOTOR1_VA_CH                        ADC_CH_ADCIN2
+#define MOTOR2_VA_CH                        ADC_CH_ADCIN3
+#define MOTOR1_IA_CH                        ADC_CH_ADCIN0
+#define MOTOR2_IA_CH                        ADC_CH_ADCIN1
 // SOC Number
-#define M1_VA_SOC_NUM                   ADC_SOC_NUMBER0
-#define M2_VA_SOC_NUM                   ADC_SOC_NUMBER1
-#define M1_IA_SOC_NUM                   ADC_SOC_NUMBER2
-#define M2_IA_SOC_NUM                   ADC_SOC_NUMBER3
+#define MOTOR1_VA_SOC_NUM                   ADC_SOC_NUMBER0
+#define MOTOR2_VA_SOC_NUM                   ADC_SOC_NUMBER1
+#define MOTOR1_IA_SOC_NUM                   ADC_SOC_NUMBER2
+#define MOTOR2_IA_SOC_NUM                   ADC_SOC_NUMBER3
 // PPB Number
-#define M1_VA_PPB_NUM                   ADC_PPB_NUMBER1
-#define M2_VA_PPB_NUM                   ADC_PPB_NUMBER2
-#define M1_IA_PPB_NUM                   ADC_PPB_NUMBER3
-#define M2_IA_PPB_NUM                   ADC_PPB_NUMBER4
+#define MOTOR1_VA_PPB_NUM                   ADC_PPB_NUMBER1
+#define MOTOR2_VA_PPB_NUM                   ADC_PPB_NUMBER2
+#define MOTOR1_IA_PPB_NUM                   ADC_PPB_NUMBER3
+#define MOTOR2_IA_PPB_NUM                   ADC_PPB_NUMBER4
 // ADC Base Address
-#define M1_VA_ADC_ADDR                  ADCA_BASE
-#define M2_VA_ADC_ADDR                  ADCA_BASE
-#define M1_IA_ADC_ADDR                  ADCA_BASE
-#define M2_IA_ADC_ADDR                  ADCA_BASE
-#define M12_IVA_ADC_ADDR                ADCA_BASE
+#define MOTOR1_VA_ADC_ADDR                  ADCA_BASE
+#define MOTOR2_VA_ADC_ADDR                  ADCA_BASE
+#define MOTOR1_IA_ADC_ADDR                  ADCA_BASE
+#define MOTOR2_IA_ADC_ADDR                  ADCA_BASE
+#define MOTOR12_IVA_ADC_ADDR                ADCA_BASE
 // ADC Results Base Address
-#define M1_VA_ADC_RESULT_ADDR           (ADCARESULT_BASE + ADC_RESULTx_OFFSET_BASE + (1U * M1_VA_SOC_NUM))
-#define M2_VA_ADC_RESULT_ADDR           (ADCARESULT_BASE + ADC_RESULTx_OFFSET_BASE + (1U * M2_VA_SOC_NUM))
-#define M1_IA_ADC_RESULT_ADDR           (ADCARESULT_BASE + ADC_RESULTx_OFFSET_BASE + (1U * M1_IA_SOC_NUM))
-#define M2_IA_ADC_RESULT_ADDR           (ADCARESULT_BASE + ADC_RESULTx_OFFSET_BASE + (1U * M2_IA_SOC_NUM))
-#define M12_IVA_ADC_RESULT_ADDR         ADCARESULT_BASE
+#define MOTOR1_VA_ADC_RESULT_ADDR           (ADCARESULT_BASE + ADC_RESULTx_OFFSET_BASE + (1U * MOTOR1_VA_SOC_NUM))
+#define MOTOR2_VA_ADC_RESULT_ADDR           (ADCARESULT_BASE + ADC_RESULTx_OFFSET_BASE + (1U * MOTOR2_VA_SOC_NUM))
+#define MOTOR1_IA_ADC_RESULT_ADDR           (ADCARESULT_BASE + ADC_RESULTx_OFFSET_BASE + (1U * MOTOR1_IA_SOC_NUM))
+#define MOTOR2_IA_ADC_RESULT_ADDR           (ADCARESULT_BASE + ADC_RESULTx_OFFSET_BASE + (1U * MOTOR2_IA_SOC_NUM))
+#define MOTOR12_IVA_ADC_RESULT_ADDR         ADCARESULT_BASE
 // ADC PPB Results Address
-#define M1_VA_ADC_PPB_RESULT_ADDR       (ADCARESULT_BASE + ADC_PPBxRESULT_OFFSET_BASE + (2U * M1_VA_PPB_NUM))
-#define M2_VA_ADC_PPB_RESULT_ADDR       (ADCARESULT_BASE + ADC_PPBxRESULT_OFFSET_BASE + (2U * M2_VA_PPB_NUM))
-#define M1_IA_ADC_PPB_RESULT_ADDR       (ADCARESULT_BASE + ADC_PPBxRESULT_OFFSET_BASE + (2U * M1_IA_PPB_NUM))
-#define M2_IA_ADC_PPB_RESULT_ADDR       (ADCARESULT_BASE + ADC_PPBxRESULT_OFFSET_BASE + (2U * M2_IA_PPB_NUM))
+#define MOTOR1_VA_ADC_PPB_RESULT_ADDR       (ADCARESULT_BASE + ADC_PPBxRESULT_OFFSET_BASE + (2U * MOTOR1_VA_PPB_NUM))
+#define MOTOR2_VA_ADC_PPB_RESULT_ADDR       (ADCARESULT_BASE + ADC_PPBxRESULT_OFFSET_BASE + (2U * MOTOR2_VA_PPB_NUM))
+#define MOTOR1_IA_ADC_PPB_RESULT_ADDR       (ADCARESULT_BASE + ADC_PPBxRESULT_OFFSET_BASE + (2U * MOTOR1_IA_PPB_NUM))
+#define MOTOR2_IA_ADC_PPB_RESULT_ADDR       (ADCARESULT_BASE + ADC_PPBxRESULT_OFFSET_BASE + (2U * MOTOR2_IA_PPB_NUM))
 /**
  * @}
  */
@@ -86,37 +87,37 @@
  * @{
  */
 // Channels
-#define M1_VB_CH                        ADC_CH_ADCIN2
-#define M2_VB_CH                        ADC_CH_ADCIN3
-#define M1_IB_CH                        ADC_CH_ADCIN0
-#define M2_IB_CH                        ADC_CH_ADCIN1
+#define MOTOR1_VB_CH                        ADC_CH_ADCIN2
+#define MOTOR2_VB_CH                        ADC_CH_ADCIN3
+#define MOTOR1_IB_CH                        ADC_CH_ADCIN0
+#define MOTOR2_IB_CH                        ADC_CH_ADCIN1
 // SOC Number
-#define M1_VB_SOC_NUM                   ADC_SOC_NUMBER0
-#define M2_VB_SOC_NUM                   ADC_SOC_NUMBER1
-#define M1_IB_SOC_NUM                   ADC_SOC_NUMBER2
-#define M2_IB_SOC_NUM                   ADC_SOC_NUMBER3
+#define MOTOR1_VB_SOC_NUM                   ADC_SOC_NUMBER0
+#define MOTOR2_VB_SOC_NUM                   ADC_SOC_NUMBER1
+#define MOTOR1_IB_SOC_NUM                   ADC_SOC_NUMBER2
+#define MOTOR2_IB_SOC_NUM                   ADC_SOC_NUMBER3
 // PPB Number
-#define M1_VB_PPB_NUM                   ADC_PPB_NUMBER1
-#define M2_VB_PPB_NUM                   ADC_PPB_NUMBER2
-#define M1_IB_PPB_NUM                   ADC_PPB_NUMBER3
-#define M2_IB_PPB_NUM                   ADC_PPB_NUMBER4
+#define MOTOR1_VB_PPB_NUM                   ADC_PPB_NUMBER1
+#define MOTOR2_VB_PPB_NUM                   ADC_PPB_NUMBER2
+#define MOTOR1_IB_PPB_NUM                   ADC_PPB_NUMBER3
+#define MOTOR2_IB_PPB_NUM                   ADC_PPB_NUMBER4
 // ADC Base Address
-#define M1_VB_ADC_ADDR                  ADCB_BASE
-#define M2_VB_ADC_ADDR                  ADCB_BASE
-#define M1_IB_ADC_ADDR                  ADCB_BASE
-#define M2_IB_ADC_ADDR                  ADCB_BASE
-#define M12_IVB_ADC_ADDR                ADCB_BASE
+#define MOTOR1_VB_ADC_ADDR                  ADCB_BASE
+#define MOTOR2_VB_ADC_ADDR                  ADCB_BASE
+#define MOTOR1_IB_ADC_ADDR                  ADCB_BASE
+#define MOTOR2_IB_ADC_ADDR                  ADCB_BASE
+#define MOTOR12_IVB_ADC_ADDR                ADCB_BASE
 // ADC Results Base Address
-#define M1_VB_ADC_RESULT_ADDR           (ADCBRESULT_BASE + ADC_RESULTx_OFFSET_BASE + (1U * M1_VB_SOC_NUM))
-#define M2_VB_ADC_RESULT_ADDR           (ADCBRESULT_BASE + ADC_RESULTx_OFFSET_BASE + (1U * M2_VB_SOC_NUM))
-#define M1_IB_ADC_RESULT_ADDR           (ADCBRESULT_BASE + ADC_RESULTx_OFFSET_BASE + (1U * M1_IB_SOC_NUM))
-#define M2_IB_ADC_RESULT_ADDR           (ADCBRESULT_BASE + ADC_RESULTx_OFFSET_BASE + (1U * M2_IB_SOC_NUM))
-#define M12_IVB_ADC_RESULT_ADDR         ADCBRESULT_BASE
+#define MOTOR1_VB_ADC_RESULT_ADDR           (ADCBRESULT_BASE + ADC_RESULTx_OFFSET_BASE + (1U * MOTOR1_VB_SOC_NUM))
+#define MOTOR2_VB_ADC_RESULT_ADDR           (ADCBRESULT_BASE + ADC_RESULTx_OFFSET_BASE + (1U * MOTOR2_VB_SOC_NUM))
+#define MOTOR1_IB_ADC_RESULT_ADDR           (ADCBRESULT_BASE + ADC_RESULTx_OFFSET_BASE + (1U * MOTOR1_IB_SOC_NUM))
+#define MOTOR2_IB_ADC_RESULT_ADDR           (ADCBRESULT_BASE + ADC_RESULTx_OFFSET_BASE + (1U * MOTOR2_IB_SOC_NUM))
+#define MOTOR12_IVB_ADC_RESULT_ADDR         ADCBRESULT_BASE
 // ADC PPB Results Address
-#define M1_VB_ADC_PPB_RESULT_ADDR       (ADCBRESULT_BASE + ADC_PPBxRESULT_OFFSET_BASE + (2U * M1_VB_PPB_NUM))
-#define M2_VB_ADC_PPB_RESULT_ADDR       (ADCBRESULT_BASE + ADC_PPBxRESULT_OFFSET_BASE + (2U * M2_VB_PPB_NUM))
-#define M1_IB_ADC_PPB_RESULT_ADDR       (ADCBRESULT_BASE + ADC_PPBxRESULT_OFFSET_BASE + (2U * M1_IB_PPB_NUM))
-#define M2_IB_ADC_PPB_RESULT_ADDR       (ADCBRESULT_BASE + ADC_PPBxRESULT_OFFSET_BASE + (2U * M2_IB_PPB_NUM))
+#define MOTOR1_VB_ADC_PPB_RESULT_ADDR       (ADCBRESULT_BASE + ADC_PPBxRESULT_OFFSET_BASE + (2U * MOTOR1_VB_PPB_NUM))
+#define MOTOR2_VB_ADC_PPB_RESULT_ADDR       (ADCBRESULT_BASE + ADC_PPBxRESULT_OFFSET_BASE + (2U * MOTOR2_VB_PPB_NUM))
+#define MOTOR1_IB_ADC_PPB_RESULT_ADDR       (ADCBRESULT_BASE + ADC_PPBxRESULT_OFFSET_BASE + (2U * MOTOR1_IB_PPB_NUM))
+#define MOTOR2_IB_ADC_PPB_RESULT_ADDR       (ADCBRESULT_BASE + ADC_PPBxRESULT_OFFSET_BASE + (2U * MOTOR2_IB_PPB_NUM))
 /**
  * @}
  */
@@ -126,17 +127,17 @@
  * @{
  */
 // Channels
-#define M12_VBUS_CH                     ADC_CH_ADCIN2
+#define MOTOR12_VBUS_CH                     ADC_CH_ADCIN2
 // SOC Number
-#define M12_VBUS_SOC_NUM                ADC_SOC_NUMBER0
+#define MOTOR12_VBUS_SOC_NUM                ADC_SOC_NUMBER0
 // PPB Number
-#define M12_VBUS_PPB_NUM                ADC_PPB_NUMBER1
+#define MOTOR12_VBUS_PPB_NUM                ADC_PPB_NUMBER1
 // ADC Base Address
-#define M12_VBUS_ADC_ADDR               ADCC_BASE
+#define MOTOR12_VBUS_ADC_ADDR               ADCC_BASE
 // ADC Results Base Address
-#define M12_VBUS_ADC_RESULT_ADDR        (ADCCRESULT_BASE + ADC_RESULTx_OFFSET_BASE + (1U * M12_VBUS_SOC_NUM))
+#define MOTOR12_VBUS_ADC_RESULT_ADDR        (ADCCRESULT_BASE + ADC_RESULTx_OFFSET_BASE + (1U * MOTOR12_VBUS_SOC_NUM))
 // ADC PPB Results Address
-#define M12_VBUS_ADC_PPB_RESULT_ADDR    (M12_VBUS_ADC_RESULT_ADDR + ADC_PPBxRESULT_OFFSET_BASE + (2U * M12_VBUS_PPB_NUM))
+#define MOTOR12_VBUS_ADC_PPB_RESULT_ADDR    (MOTOR12_VBUS_ADC_RESULT_ADDR + ADC_PPBxRESULT_OFFSET_BASE + (2U * MOTOR12_VBUS_PPB_NUM))
 /**
  * @}
  */
@@ -146,37 +147,37 @@
  * @{
  */
 // Channels
-#define M1_VC_CH                        ADC_CH_ADCIN2
-#define M2_VC_CH                        ADC_CH_ADCIN3
-#define M1_IC_CH                        ADC_CH_ADCIN0
-#define M2_IC_CH                        ADC_CH_ADCIN1
+#define MOTOR1_VC_CH                        ADC_CH_ADCIN2
+#define MOTOR2_VC_CH                        ADC_CH_ADCIN3
+#define MOTOR1_IC_CH                        ADC_CH_ADCIN0
+#define MOTOR2_IC_CH                        ADC_CH_ADCIN1
 // SOC Number
-#define M1_VC_SOC_NUM                   ADC_SOC_NUMBER0
-#define M2_VC_SOC_NUM                   ADC_SOC_NUMBER1
-#define M1_IC_SOC_NUM                   ADC_SOC_NUMBER2
-#define M2_IC_SOC_NUM                   ADC_SOC_NUMBER3
+#define MOTOR1_VC_SOC_NUM                   ADC_SOC_NUMBER0
+#define MOTOR2_VC_SOC_NUM                   ADC_SOC_NUMBER1
+#define MOTOR1_IC_SOC_NUM                   ADC_SOC_NUMBER2
+#define MOTOR2_IC_SOC_NUM                   ADC_SOC_NUMBER3
 // PPB Number
-#define M1_VC_PPB_NUM                   ADC_PPB_NUMBER1
-#define M2_VC_PPB_NUM                   ADC_PPB_NUMBER2
-#define M1_IC_PPB_NUM                   ADC_PPB_NUMBER3
-#define M2_IC_PPB_NUM                   ADC_PPB_NUMBER4
+#define MOTOR1_VC_PPB_NUM                   ADC_PPB_NUMBER1
+#define MOTOR2_VC_PPB_NUM                   ADC_PPB_NUMBER2
+#define MOTOR1_IC_PPB_NUM                   ADC_PPB_NUMBER3
+#define MOTOR2_IC_PPB_NUM                   ADC_PPB_NUMBER4
 // ADC Base Address
-#define M1_IC_ADC_ADDR                  ADCD_BASE
-#define M2_IC_ADC_ADDR                  ADCD_BASE
-#define M1_VC_ADC_ADDR                  ADCD_BASE
-#define M2_VC_ADC_ADDR                  ADCD_BASE
-#define M12_IVC_ADC_ADDR                ADCD_BASE
+#define MOTOR1_IC_ADC_ADDR                  ADCD_BASE
+#define MOTOR2_IC_ADC_ADDR                  ADCD_BASE
+#define MOTOR1_VC_ADC_ADDR                  ADCD_BASE
+#define MOTOR2_VC_ADC_ADDR                  ADCD_BASE
+#define MOTOR12_IVC_ADC_ADDR                ADCD_BASE
 // ADC Results Base Address
-#define M1_VC_ADC_RESULT_ADDR           (ADCDRESULT_BASE + ADC_RESULTx_OFFSET_BASE + (1U * M1_VC_SOC_NUM))
-#define M2_VC_ADC_RESULT_ADDR           (ADCDRESULT_BASE + ADC_RESULTx_OFFSET_BASE + (1U * M2_VC_SOC_NUM))
-#define M1_IC_ADC_RESULT_ADDR           (ADCDRESULT_BASE + ADC_RESULTx_OFFSET_BASE + (1U * M1_IC_SOC_NUM))
-#define M2_IC_ADC_RESULT_ADDR           (ADCDRESULT_BASE + ADC_RESULTx_OFFSET_BASE + (1U * M2_IC_SOC_NUM))
-#define M12_IVC_ADC_RESULT_ADDR         ADCDRESULT_BASE
+#define MOTOR1_VC_ADC_RESULT_ADDR           (ADCDRESULT_BASE + ADC_RESULTx_OFFSET_BASE + (1U * MOTOR1_VC_SOC_NUM))
+#define MOTOR2_VC_ADC_RESULT_ADDR           (ADCDRESULT_BASE + ADC_RESULTx_OFFSET_BASE + (1U * MOTOR2_VC_SOC_NUM))
+#define MOTOR1_IC_ADC_RESULT_ADDR           (ADCDRESULT_BASE + ADC_RESULTx_OFFSET_BASE + (1U * MOTOR1_IC_SOC_NUM))
+#define MOTOR2_IC_ADC_RESULT_ADDR           (ADCDRESULT_BASE + ADC_RESULTx_OFFSET_BASE + (1U * MOTOR2_IC_SOC_NUM))
+#define MOTOR12_IVC_ADC_RESULT_ADDR         ADCDRESULT_BASE
 // ADC PPB Results Address
-#define M1_VC_ADC_PPB_RESULT_ADDR       (ADCDRESULT_BASE + ADC_PPBxRESULT_OFFSET_BASE + (2U * M1_VC_PPB_NUM))
-#define M2_VC_ADC_PPB_RESULT_ADDR       (ADCDRESULT_BASE + ADC_PPBxRESULT_OFFSET_BASE + (2U * M2_VC_PPB_NUM))
-#define M1_IC_ADC_PPB_RESULT_ADDR       (ADCDRESULT_BASE + ADC_PPBxRESULT_OFFSET_BASE + (2U * M1_IC_PPB_NUM))
-#define M2_IC_ADC_PPB_RESULT_ADDR       (ADCDRESULT_BASE + ADC_PPBxRESULT_OFFSET_BASE + (2U * M2_IC_PPB_NUM))
+#define MOTOR1_VC_ADC_PPB_RESULT_ADDR       (ADCDRESULT_BASE + ADC_PPBxRESULT_OFFSET_BASE + (2U * MOTOR1_VC_PPB_NUM))
+#define MOTOR2_VC_ADC_PPB_RESULT_ADDR       (ADCDRESULT_BASE + ADC_PPBxRESULT_OFFSET_BASE + (2U * MOTOR2_VC_PPB_NUM))
+#define MOTOR1_IC_ADC_PPB_RESULT_ADDR       (ADCDRESULT_BASE + ADC_PPBxRESULT_OFFSET_BASE + (2U * MOTOR1_IC_PPB_NUM))
+#define MOTOR2_IC_ADC_PPB_RESULT_ADDR       (ADCDRESULT_BASE + ADC_PPBxRESULT_OFFSET_BASE + (2U * MOTOR2_IC_PPB_NUM))
 /**
  * @}
  */
@@ -199,15 +200,7 @@
  */
 
 
-/** @defgroup eQEP_Module configuration.
- *  @brief    Define the address of all the eQEP used (2 quadrature encoders).
- * @{
- */
-#define MOTOR1_QEP_BASE                 EQEP1_BASE
-#define MOTOR2_QEP_BASE                 EQEP2_BASE
-/**
- * @}
- */
+
 
 /** @defgroup ePWM_Module configuration.
  *  @brief    Define the address of all the ePWM used (2 motors).
@@ -358,6 +351,16 @@
 #define DRV2_GPIO_NFAULT_CFG            GPIO_67_GPIO67
 #endif
 
+/** @defgroup eQEP_Module configuration.
+ *  @brief    Define the address of all the eQEP used (2 quadrature encoders).
+ * @{
+ */
+#define MOTOR1_QEP_BASE                 EQEP1_BASE
+#define MOTOR2_QEP_BASE                 EQEP2_BASE
+/**
+ * @}
+ */
+
 /** @defgroup eQEP_general configuration.
  *  @brief    Configure the general registers associated to teh eQEP.
  * @{
@@ -376,9 +379,8 @@
 #define EQEPCLK_FREQ                    (DEVICE_SYSCLK_FREQ / pow(2.0, ((QEP_CAPTURE_CLOCK_DIV >> 4) & 0x07)))
 
 //#define QEP_UNIT_TIMER_TICKS            PWM_TBPRD               // Sync QEP with PWM
-
-#define QEP_MOTOR1_SWAP                 EQEP_CONFIG_NO_SWAP         // Set to EQEP_CONFIG_SWAP if increments in the wrong direction
-#define QEP_MOTOR2_SWAP                 EQEP_CONFIG_NO_SWAP
+#define MOTOR1_QEP_SWAP                 EQEP_CONFIG_NO_SWAP         // Set to EQEP_CONFIG_SWAP if increments in the wrong direction
+#define MOTOR2_QEP_SWAP                 EQEP_CONFIG_NO_SWAP
 #define QEP_MOTOR1_ENCODER_LINES_NB     5000
 #define QEP_MOTOR2_ENCODER_LINES_NB     5000
 // Velocity computation
@@ -456,26 +458,26 @@
 /******************************************************************************************************
 *                                           Motor 1 constants
 *******************************************************************************************************/
-#define M1_KV                   300.0     // Motor constant (rpm/V)
-#define M1_KE                   0.0017    //1.0 / (M1_KV * FM_RPM2RADPS * M1_POLES_PAIRS) // Motor back EMF constant (V/rad/s)
-#define M1_KI                   0.1       // Motor torque constant (N.m/A)
-#define M1_RS                   0.7       // Stator resistance (ohm)
-#define M1_LD                   134e-6    // Stator d-axis inductance (H)
-#define M1_LQ                   140e-6    // Stator q-axis inductance (H)
-#define M1_POLES_PAIRS          12        // Number of poles
-#define M1_CUR_LOOP_BANDWIDTH   500.0     // Current loop bandwidth (Hz)
+#define MOTOR1_KV                           300.0     // Motor constant (rpm/V)
+#define MOTOR1_KE                           0.0017    //1.0 / (MOTOR1_KV * FM_RPM2RADPS * MOTOR1_POLES_PAIRS) // Motor back EMF constant (V/rad/s)
+#define MOTOR1_KI                           0.1       // Motor torque constant (N.m/A)
+#define MOTOR1_RS                           0.7       // Stator resistance (ohm)
+#define MOTOR1_LD                           134e-6    // Stator d-axis inductance (H)
+#define MOTOR1_LQ                           140e-6    // Stator q-axis inductance (H)
+#define MOTOR1_POLES_PAIRS                  12        // Number of poles
+#define MOTOR1_CUR_LOOP_BANDWIDTH           500.0     // Current loop bandwidth (Hz)
 
 /******************************************************************************************************
 *                                           Motor 2 constants
 *******************************************************************************************************/
-#define M2_KV                   300.0     // Motor constant (rpm/V)
-#define M2_KE                   0.0017    // Motor back EMF constant (V/rad/s)
-#define M2_KI                   0.1       // Motor torque constant (N.m/A)
-#define M2_RS                   0.7       // Stator resistance (ohm)
-#define M2_LD                   134e-6    // Stator d-axis inductance (H)
-#define M2_LQ                   140e-6    // Stator q-axis inductance (H)
-#define M2_POLES_PAIRS          12        // Number of poles
-#define M2_CUR_LOOP_BANDWIDTH   500.0     // Current loop bandwidth (Hz)
+#define MOTOR2_KV                           300.0     // Motor constant (rpm/V)
+#define MOTOR2_KE                           0.0017    // Motor back EMF constant (V/rad/s)
+#define MOTOR2_KI                           0.1       // Motor torque constant (N.m/A)
+#define MOTOR2_RS                           0.7       // Stator resistance (ohm)
+#define MOTOR2_LD                           134e-6    // Stator d-axis inductance (H)
+#define MOTOR2_LQ                           140e-6    // Stator q-axis inductance (H)
+#define MOTOR2_POLES_PAIRS                  12        // Number of poles
+#define MOTOR2_CUR_LOOP_BANDWIDTH           500.0     // Current loop bandwidth (Hz)
 
 #define HWSREGH(x)              (*((volatile int16_t *)((uintptr_t)(x))))
 

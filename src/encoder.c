@@ -40,7 +40,7 @@ inline void ENC_resetQepPos(ENCODER* p_encoder)
 }
 
 // Read rotor position
-inline void encoderGetPosition(ENCODER *p_encoder)
+inline void encoder_GetPosition(ENCODER *p_encoder)
 {
     // Compute mechanical angle (between 0 and 1)
     p_encoder->mechAngle = EQEP_getPosition(p_encoder->p_qepHandle->eqepBase) / 4.0f / QEP_ENCODER_STEPS;
