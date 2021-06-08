@@ -160,39 +160,45 @@ void HAL_ADC_offsetCalib(const MOTOR_HAL_CFG* p_motorHalCfg)
 
         for (calibCnt = 0; calibCnt < 10000; calibCnt++)
         {
-            // Wait data acquisition for Ia, Ib, Ic & Vbus. Blocking.
+            // Wait data acquisition for Va, Vb, Vc. Blocking.
             // Init pointer on first IT source
             p_ITConv = p_motorHalCfg->p_ITConv[0];
             // Wait IT flag event
-            while(!ADC_getInterruptStatus(p_ITConv->adcBase, p_ITConv->adcIntNumber));
-//                while(!(HWREGH(p_ITConv->adcBase + ADC_O_INTFLG) & (1U << ((uint16_t)p_ITConv->adcIntNumber))));
-
+            while(ADC_getInterruptStatus(p_ITConv->adcBase, p_ITConv->adcIntNumber) == false);
             if (calibCnt > 1000)
                 for(loop = 0; loop < 3; loop++)
-                {
                     v[loop] = 0.998f * v[loop] + 0.002f * HWREGH(p_motorHalCfg->p_vConv[loop]->adcResultBase);
-                    // Clear the interrupt overflow flag
-                    HWREGH(p_motorHalCfg->p_vConv[loop]->adcBase + ADC_O_INTOVFCLR) = (1U << ((uint16_t)p_ITConv->adcIntNumber));
-                    // Clear the interrupt flag
-                    HWREGH(p_motorHalCfg->p_vConv[loop]->adcBase + ADC_O_INTFLGCLR) = (1U << ((uint16_t)p_ITConv->adcIntNumber));
-                }
+            else
+                for(loop = 0; loop < 3; loop++)
+                    v[loop] = HWREGH(p_motorHalCfg->p_vConv[loop]->adcResultBase);
 
-            // Wait data acquisition for Va, Vb, Vc. Blocking.
+            for(loop = 0; loop < 3; loop++)
+            {
+                // Clear the interrupt overflow flag
+                HWREGH(p_motorHalCfg->p_vConv[loop]->adcBase + ADC_O_INTOVFCLR) = (1U << ((uint16_t)p_ITConv->adcIntNumber));
+                // Clear the interrupt flag
+                HWREGH(p_motorHalCfg->p_vConv[loop]->adcBase + ADC_O_INTFLGCLR) = (1U << ((uint16_t)p_ITConv->adcIntNumber));
+            }
+
+            // Wait data acquisition for Ia, Ib, Ic & Vbus. Blocking.
             // Init pointer on second IT source
             p_ITConv = p_motorHalCfg->p_ITConv[1];
             // Wait IT flag event
-            while(!ADC_getInterruptStatus(p_ITConv->adcBase, p_ITConv->adcIntNumber));
-//            while(!(HWREGH(p_ITConv->adcBase + ADC_O_INTFLG) & (1U << ((uint16_t)p_ITConv->adcIntNumber))));
-
+            while(ADC_getInterruptStatus(p_ITConv->adcBase, p_ITConv->adcIntNumber) == false);
             if (calibCnt > 1000)
                 for(loop = 0; loop < 3; loop++)
-                {
                     i[loop] = 0.998f * i[loop] + 0.002f * HWREGH(p_motorHalCfg->p_iConv[loop]->adcResultBase);
-                    // Clear the interrupt overflow flag
-                    HWREGH(p_motorHalCfg->p_iConv[loop]->adcBase + ADC_O_INTOVFCLR) = (1U << ((uint16_t)p_ITConv->adcIntNumber));
-                    // Clear the interrupt flag
-                    HWREGH(p_motorHalCfg->p_iConv[loop]->adcBase + ADC_O_INTFLGCLR) = (1U << ((uint16_t)p_ITConv->adcIntNumber));
-                }
+            else
+                for(loop = 0; loop < 3; loop++)
+                    i[loop] = HWREGH(p_motorHalCfg->p_iConv[loop]->adcResultBase);
+
+            for(loop = 0; loop < 3; loop++)
+            {
+                // Clear the interrupt overflow flag
+                HWREGH(p_motorHalCfg->p_iConv[loop]->adcBase + ADC_O_INTOVFCLR) = (1U << ((uint16_t)p_ITConv->adcIntNumber));
+                // Clear the interrupt flag
+                HWREGH(p_motorHalCfg->p_iConv[loop]->adcBase + ADC_O_INTFLGCLR) = (1U << ((uint16_t)p_ITConv->adcIntNumber));
+            }
         }
 
         // Set offsets in PPBs

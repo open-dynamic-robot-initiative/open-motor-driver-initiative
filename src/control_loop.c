@@ -215,15 +215,15 @@ void CL_initFoc(FOC* p_foc, const uint16_t motorIndex)
         p_foc->pwmCompA = (volatile uint32_t *)(MOTOR1_PWM1_BASE + EPWM_O_CMPA);
         p_foc->pwmCompB = (volatile uint32_t *)(MOTOR1_PWM2_BASE + EPWM_O_CMPA);
         p_foc->pwmCompC = (volatile uint32_t *)(MOTOR1_PWM3_BASE + EPWM_O_CMPA);
-
-        p_foc->isenAResult   = (volatile int32_t *)(MOTOR1_IA_ADC_PPB_RESULT_ADDR);
-        p_foc->isenBResult   = (volatile int32_t *)(MOTOR1_IB_ADC_PPB_RESULT_ADDR);
-        p_foc->isenCResult   = (volatile int32_t *)(MOTOR1_IC_ADC_PPB_RESULT_ADDR);
-        p_foc->vBusSenResult = (volatile int32_t *)(MOTOR12_VBUS_ADC_PPB_RESULT_ADDR);
-
-        p_foc->vsenaResult = (volatile int32_t *)(MOTOR1_VA_ADC_PPB_RESULT_ADDR);
-        p_foc->vsenbResult = (volatile int32_t *)(MOTOR1_VB_ADC_PPB_RESULT_ADDR);
-        p_foc->vsencResult = (volatile int32_t *)(MOTOR1_VC_ADC_PPB_RESULT_ADDR);
+//
+//        p_foc->isenAResult   = (volatile int32_t *)(MOTOR1_IA_ADC_PPB_RESULT_ADDR);
+//        p_foc->isenBResult   = (volatile int32_t *)(MOTOR1_IB_ADC_PPB_RESULT_ADDR);
+//        p_foc->isenCResult   = (volatile int32_t *)(MOTOR1_IC_ADC_PPB_RESULT_ADDR);
+//        p_foc->vBusSenResult = (volatile int32_t *)(MOTOR12_VBUS_ADC_PPB_RESULT_ADDR);
+//
+//        p_foc->vsenaResult = (volatile int32_t *)(MOTOR1_VA_ADC_PPB_RESULT_ADDR);
+//        p_foc->vsenbResult = (volatile int32_t *)(MOTOR1_VB_ADC_PPB_RESULT_ADDR);
+//        p_foc->vsencResult = (volatile int32_t *)(MOTOR1_VC_ADC_PPB_RESULT_ADDR);
 
         p_foc->adcIntFlag = (union ADCINTFLG_REG *)(MOTOR1_IC_ADC_ADDR + ADC_O_INTFLG);
     }
@@ -233,18 +233,18 @@ void CL_initFoc(FOC* p_foc, const uint16_t motorIndex)
         p_foc->pwmCompB = (volatile uint32_t *)(MOTOR2_PWM2_BASE + EPWM_O_CMPA);
         p_foc->pwmCompC = (volatile uint32_t *)(MOTOR2_PWM3_BASE + EPWM_O_CMPA);
 
-        p_foc->isenAResult   = (volatile int32_t *)(MOTOR2_IA_ADC_PPB_RESULT_ADDR);
-        p_foc->isenBResult   = (volatile int32_t *)(MOTOR2_IB_ADC_PPB_RESULT_ADDR);
-        p_foc->isenCResult   = (volatile int32_t *)(MOTOR2_IC_ADC_PPB_RESULT_ADDR);
+//        p_foc->isenAResult   = (volatile int32_t *)(MOTOR2_IA_ADC_PPB_RESULT_ADDR);
+//        p_foc->isenBResult   = (volatile int32_t *)(MOTOR2_IB_ADC_PPB_RESULT_ADDR);
+//        p_foc->isenCResult   = (volatile int32_t *)(MOTOR2_IC_ADC_PPB_RESULT_ADDR);
 
 #if OMODRI_PAL_SETUP    // Second VSENVM measure is replaced by ISENVM, so use the same one than motor 1
         p_foc->vBusSenResult = (volatile int32_t *)(MOTOR1_VBUS_RESULT  + ADC_PPBxRESULT_OFFSET_BASE + 2 * MOTOR1_ADC_PPB_NUM1);
 #else
-        p_foc->vBusSenResult = (volatile int32_t *)(MOTOR12_VBUS_ADC_PPB_RESULT_ADDR);
+//        p_foc->vBusSenResult = (volatile int32_t *)(MOTOR12_VBUS_ADC_PPB_RESULT_ADDR);
 #endif
-        p_foc->vsenaResult = (volatile int32_t *)(MOTOR2_VA_ADC_PPB_RESULT_ADDR);
-        p_foc->vsenbResult = (volatile int32_t *)(MOTOR2_VB_ADC_PPB_RESULT_ADDR);
-        p_foc->vsencResult = (volatile int32_t *)(MOTOR2_VC_ADC_PPB_RESULT_ADDR);
+//        p_foc->vsenaResult = (volatile int32_t *)(MOTOR2_VA_ADC_PPB_RESULT_ADDR);
+//        p_foc->vsenbResult = (volatile int32_t *)(MOTOR2_VB_ADC_PPB_RESULT_ADDR);
+//        p_foc->vsencResult = (volatile int32_t *)(MOTOR2_VC_ADC_PPB_RESULT_ADDR);
 
         p_foc->adcIntFlag = (union ADCINTFLG_REG *)(MOTOR2_IC_ADC_ADDR + ADC_O_INTFLG);
     }

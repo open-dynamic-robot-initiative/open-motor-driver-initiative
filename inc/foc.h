@@ -140,17 +140,6 @@ typedef struct __FOC__
     volatile uint32_t *pwmCompB;
     volatile uint32_t *pwmCompC;
 
-    // ADC result registers
-    volatile int32_t *isenAResult;
-    volatile int32_t *isenBResult;
-    volatile int32_t *isenCResult;
-    volatile int32_t *vBusSenResult;
-
-    volatile int32_t *vsenaResult;
-    volatile int32_t *vsenbResult;
-    volatile int32_t *vsencResult;
-    volatile int32_t *potResult;
-
     // ADC interrupt flag register
     volatile union ADCINTFLG_REG *adcIntFlag;
 } FOC;

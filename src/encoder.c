@@ -43,10 +43,10 @@ inline void ENC_resetQepPos(ENCODER* p_encoder)
 inline void encoder_GetPosition(ENCODER *p_encoder)
 {
     // Compute mechanical angle (between 0 and 1)
-    p_encoder->mechAngle = EQEP_getPosition(p_encoder->p_qepHandle->eqepBase) / 4.0f / QEP_ENCODER_STEPS;
+    p_encoder->mechAngle = (float32_t)(*p_encoder->encoderPosReg) / 4.0f / QEP_ENCODER_STEPS;
     // Compute electrical angle
-    p_encoder->elecAngle = p_encoder->polePairs * p_encoder->mechAngle;
-    p_encoder->elecAngle -= (float32_t)((int32_t)p_encoder->elecAngle);
+//    p_encoder->elecAngle = p_encoder->polePairs * p_encoder->mechAngle;
+//    p_encoder->elecAngle -= (float32_t)((int32_t)p_encoder->elecAngle);
 }
 
 // Encoder update routine, this is not critical for the control loop to be executed

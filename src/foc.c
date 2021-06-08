@@ -35,6 +35,7 @@ inline void FOC_getBusVoltage(FOC* p_foc, MOTOR_HAL_CFG* p_motor)
 inline void FOC_getMeasures(FOC* p_foc, MOTOR_HAL_CFG* p_motor)
 {
     // Get the latest position of the Quadrature Encoder
+
 //    p_motor[p_motor->motorID].encoderPos = HWREG(p_motor->p_qep->eqepBase + EQEP_O_QPOSCNT);
 //    // Get the latest ADC results to the buffer
 //    p_motor[p_motor->motorID].ia      = HWREGH(p_motor->p_iConv->adcResultBase + ADC_SOC_NUMBER0);
@@ -42,17 +43,22 @@ inline void FOC_getMeasures(FOC* p_foc, MOTOR_HAL_CFG* p_motor)
 //    p_motor[p_motor->motorID].ic      = HWREGH(ADCDRESULT_BASE + ADC_SOC_NUMBER0);
 //    p_motor[p_motor->motorID].vbus    = HWREGH(ADCCRESULT_BASE + ADC_SOC_NUMBER0);
 
+//    motor[MOTOR_1].ia = (float32_t)HWSREGH(motor[MOTOR_1].motorHalCfg->p_iConv[0]->adcPPBResultBase) * ADC_CURRENT_SCALE;
+//    motor[MOTOR_1].ib = (float32_t)HWSREGH(motor[MOTOR_1].motorHalCfg->p_iConv[1]->adcPPBResultBase) * ADC_CURRENT_SCALE;
+//    motor[MOTOR_1].ic = (float32_t)HWSREGH(motor[MOTOR_1].motorHalCfg->p_iConv[2]->adcPPBResultBase) * ADC_CURRENT_SCALE;
+
+
 
     // Convert currents from registers
-    p_foc->ia = (*p_foc->isenAResult) * p_foc->currentScalerReg;
-    p_foc->ib = (*p_foc->isenBResult) * p_foc->currentScalerReg;
-    p_foc->ic = (*p_foc->isenCResult) * p_foc->currentScalerReg;
+    //p_foc->ia = (*p_foc->isenAResult) * p_foc->currentScalerReg;
+    //p_foc->ib = (*p_foc->isenBResult) * p_foc->currentScalerReg;
+    //p_foc->ic = (*p_foc->isenCResult) * p_foc->currentScalerReg;
 
     // Get bus voltage (minimum is one to avoid dividing by zero later)
-    p_foc->vBus = __fmax(*(p_foc->vBusSenResult) * p_foc->voltageScalerReg, 1.0f);
+    //p_foc->vBus = __fmax(*(p_foc->vBusSenResult) * p_foc->voltageScalerReg, 1.0f);
 
     // Get potentiometer voltage
-    p_foc->auxAdc = (*p_foc->potResult) * p_foc->adcScalerReg;
+    //p_foc->auxAdc = (*p_foc->potResult) * p_foc->adcScalerReg;
 }
 
 // Compute electrical angle sine and cosine
@@ -133,9 +139,9 @@ inline void FOC_svm(FOC* p_foc)
 inline void FOC_resistanceEstimation(FOC* p_foc)
 {
     // Read measures
-    p_foc->phaseAVolt = (*p_foc->vsenaResult) * p_foc->voltageScalerReg;
-    p_foc->phaseBVolt = (*p_foc->vsenbResult) * p_foc->voltageScalerReg;
-    p_foc->phaseCVolt = (*p_foc->vsencResult) * p_foc->voltageScalerReg;
+    //p_foc->phaseAVolt = (*p_foc->vsenaResult) * p_foc->voltageScalerReg;
+    //p_foc->phaseBVolt = (*p_foc->vsenbResult) * p_foc->voltageScalerReg;
+    //p_foc->phaseCVolt = (*p_foc->vsencResult) * p_foc->voltageScalerReg;
 
     // Compute resistance
     // Only compute if measured current is over a threshold

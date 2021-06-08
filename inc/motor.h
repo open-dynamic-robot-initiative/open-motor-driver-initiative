@@ -47,11 +47,39 @@ typedef struct __FILTER_PARAMS__
     float32_t a;
 } FILTER_PARAMS;
 
+typedef struct __MOTOR_MEASURES__
+{
+    const MotorID motorID;
+    float32_t va;       // [V]
+    float32_t vb;       // [V]
+    float32_t vc;       // [V]
+    float32_t vbus;     // [V]
+
+    float32_t ia;       // [A]
+    float32_t ib;       // [A]
+    float32_t ic;       // [A]
+
+    float32_t* mechanicalAngle; // between 0 and 1
+
+    // ADC result registers
+    volatile int32_t* vaMeasReg;
+    volatile int32_t* vbMeasReg;
+    volatile int32_t* vcMeasReg;
+    volatile int32_t* vBusMeasReg;
+
+    volatile int32_t* iaMeasReg;
+    volatile int32_t* ibMeasReg;
+    volatile int32_t* icMeasReg;
+
+    volatile int32_t* encoderPosReg;
+} MOTOR_MEASURES;
+
 typedef struct __MOTOR_STRUCT__
 {
     const MotorID           motorID;
     const MOTOR_HAL_CFG*    motorHalCfg;
     const MOTOR_PARAMS*     motorParams;
+    MOTOR_MEASURES*         motorMeas;
     ENCODER*                motorEncoder;
     DRV8353*                motorDRV;
     FOC*                    motorFOC;
@@ -78,10 +106,7 @@ typedef struct __MOTOR_STRUCT__
     float32_t Lq; // Quadratic axis inductance [H]
     float32_t ke; // Motor back EMF constant [V/rad/s] (electrical radians)
 
-    // Bus voltage
-    float32_t vBus; // [V]
-
-    // Rotor electrical angle sine cosine
+     // Rotor electrical angle sine cosine
     float32_t sinTheta;
     float32_t cosTheta;
 
@@ -91,30 +116,7 @@ typedef struct __MOTOR_STRUCT__
     // Encoder
 //    ENCODER encoder;
 
-    // Current transforms
-    float32_t ia;       // [A]
-    float32_t ib;       // [A]
-    float32_t ic;       // [A]
-
-    float32_t ialpha;   // [A]
-    float32_t ibeta;    // [A]
-
-    float32_t id;       // [A]
-    float32_t iq;       // [A]
-
-    // Voltage transforms
-    float32_t vd;       // [V]
-    float32_t vq;       // [V]
-
-    float32_t valpha;   // [V]
-    float32_t vbeta;    // [V]
-
-    float32_t va;       // [V]
-    float32_t vb;       // [V]
-    float32_t vc;       // [V]
-    float32_t vbus;     // [V]
-
-    // Duty cycles
+      // Duty cycles
     float32_t ducya;    // [pu] between -0.5 and 0.5
     float32_t ducyb;    // [pu] between -0.5 and 0.5
     float32_t ducyc;    // [pu] between -0.5 and 0.5
@@ -151,21 +153,8 @@ typedef struct __MOTOR_STRUCT__
     volatile uint32_t *pwmCompB;
     volatile uint32_t *pwmCompC;
 
-    // ADC result registers
-    volatile int32_t *isenAResult;
-    volatile int32_t *isenBResult;
-    volatile int32_t *isenCResult;
-    volatile int32_t *vBusSenResult;
-
-    volatile int32_t *vsenaResult;
-    volatile int32_t *vsenbResult;
-    volatile int32_t *vsencResult;
-    volatile int32_t *potResult;
-
     // ADC interrupt flag register
     volatile union ADCINTFLG_REG *adcIntFlag;
 } MOTOR_STRUCT;
-
-
 
 #endif /* INC_MOTOR_H_ */

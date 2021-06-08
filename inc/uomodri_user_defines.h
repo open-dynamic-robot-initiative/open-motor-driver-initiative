@@ -357,6 +357,8 @@
  */
 #define MOTOR1_QEP_BASE                 EQEP1_BASE
 #define MOTOR2_QEP_BASE                 EQEP2_BASE
+#define MOTOR1_QEP_COUNTER_ADDR         (MOTOR1_QEP_BASE + EQEP_O_QPOSCNT)
+#define MOTOR2_QEP_COUNTER_ADDR         (MOTOR2_QEP_BASE + EQEP_O_QPOSCNT)
 /**
  * @}
  */

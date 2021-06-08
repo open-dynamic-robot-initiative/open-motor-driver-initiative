@@ -198,7 +198,7 @@ static const MOTOR_HAL_CFG motor_hal_cfg[] =
 // {.motorID      = NO_MOT},
 };
 
-static MOTOR_PARAMS motor_params[] =
+static const MOTOR_PARAMS motor_params[] =
 {
  {.Rs = MOTOR1_RS, .Ld = MOTOR1_LD, .Lq = MOTOR1_LQ, .kv = MOTOR1_KV, .ke = MOTOR1_KE, .ki = MOTOR1_KI, .polePairs = MOTOR1_POLES_PAIRS},
  {.Rs = MOTOR2_RS, .Ld = MOTOR2_LD, .Lq = MOTOR2_LQ, .kv = MOTOR2_KV, .ke = MOTOR2_KE, .ki = MOTOR2_KI, .polePairs = MOTOR2_POLES_PAIRS},
@@ -245,17 +245,52 @@ static FOC motor_foc[] =
  },
 };
 
-static ENCODER motor_encoder[] =
+static ENCODER encoder[] =
 {
  {
-  .p_qepHandle = &QepCfgList[0],
-  .p_qepRegs = (struct EQEP_REGS *)MOTOR1_QEP_BASE,
+  .p_qepHandle      = &QepCfgList[0],
+  .p_qepRegs        = (struct EQEP_REGS *)(MOTOR1_QEP_BASE),
+  .encoderPosReg    = (volatile int32_t *)(MOTOR1_QEP_COUNTER_ADDR),
+  .mechAngle        = 0.0f,
  },
  {
-  .p_qepHandle = &QepCfgList[1],
-  .p_qepRegs = (struct EQEP_REGS *)MOTOR2_QEP_BASE,
+  .p_qepHandle      = &QepCfgList[1],
+  .p_qepRegs        = (struct EQEP_REGS *)(MOTOR2_QEP_BASE),
+  .encoderPosReg    = (volatile int32_t *)(MOTOR2_QEP_COUNTER_ADDR),
+  .mechAngle        = 0.0f,
  },
 };
+
+static MOTOR_MEASURES motor_meas[] =
+{
+ {.motorID          = MOTOR_1,
+  .ia = 0.0f, .ib = 0.0f, .ic = 0.0f,
+  .va = 0.0f, .vb = 0.0f, .vc = 0.0f,
+  .mechanicalAngle  = &encoder[MOTOR_1].mechAngle,
+  .vaMeasReg        = (volatile int32_t *)(MOTOR1_VA_ADC_PPB_RESULT_ADDR),
+  .vbMeasReg        = (volatile int32_t *)(MOTOR1_VB_ADC_PPB_RESULT_ADDR),
+  .vcMeasReg        = (volatile int32_t *)(MOTOR1_VC_ADC_PPB_RESULT_ADDR),
+  .vBusMeasReg      = (volatile int32_t *)(MOTOR12_VBUS_ADC_PPB_RESULT_ADDR),
+  .iaMeasReg        = (volatile int32_t *)(MOTOR1_IA_ADC_PPB_RESULT_ADDR),
+  .ibMeasReg        = (volatile int32_t *)(MOTOR1_IB_ADC_PPB_RESULT_ADDR),
+  .icMeasReg        = (volatile int32_t *)(MOTOR1_IC_ADC_PPB_RESULT_ADDR),
+  .encoderPosReg    = (volatile int32_t *)(&(encoder[MOTOR_1].encoderPosReg)),
+ },
+ {.motorID          = MOTOR_2,
+  .ia = 0.0f, .ib = 0.0f, .ic = 0.0f,
+  .va = 0.0f, .vb = 0.0f, .vc = 0.0f,
+  .mechanicalAngle  = &encoder[MOTOR_2].mechAngle,
+  .vaMeasReg        = (volatile int32_t *)(MOTOR2_VA_ADC_PPB_RESULT_ADDR),
+  .vbMeasReg        = (volatile int32_t *)(MOTOR2_VB_ADC_PPB_RESULT_ADDR),
+  .vcMeasReg        = (volatile int32_t *)(MOTOR2_VC_ADC_PPB_RESULT_ADDR),
+  .vBusMeasReg      = (volatile int32_t *)(MOTOR12_VBUS_ADC_PPB_RESULT_ADDR),
+  .iaMeasReg        = (volatile int32_t *)(MOTOR2_IA_ADC_PPB_RESULT_ADDR),
+  .ibMeasReg        = (volatile int32_t *)(MOTOR2_IB_ADC_PPB_RESULT_ADDR),
+  .icMeasReg        = (volatile int32_t *)(MOTOR2_IC_ADC_PPB_RESULT_ADDR),
+  .encoderPosReg    = (volatile int32_t *)(&(encoder[MOTOR_2].encoderPosReg)),
+ },
+};
+
 
 static MOTOR_STRUCT motor[] =
 {
@@ -263,7 +298,8 @@ static MOTOR_STRUCT motor[] =
   .motorID = MOTOR_1,
   .motorHalCfg = &motor_hal_cfg[MOTOR_1],
   .motorParams = &motor_params[MOTOR_1],
-  .motorEncoder = &motor_encoder[MOTOR_1],
+  .motorMeas = &motor_meas[MOTOR_1],
+  .motorEncoder = &encoder[MOTOR_1],
   .motorDRV = &drv[MOTOR_1],
   .motorFOC = &motor_foc[MOTOR_1],
   .currentScaler = ADC_CURRENT_SCALE,
@@ -275,7 +311,8 @@ static MOTOR_STRUCT motor[] =
   .motorID = MOTOR_2,
   .motorHalCfg = &motor_hal_cfg[MOTOR_2],
   .motorParams = &motor_params[MOTOR_2],
-  .motorEncoder = &motor_encoder[MOTOR_2],
+  .motorMeas = &motor_meas[MOTOR_1],
+  .motorEncoder = &encoder[MOTOR_2],
   .motorDRV = &drv[MOTOR_2],
   .motorFOC = &motor_foc[MOTOR_2],
   .currentScaler = ADC_CURRENT_SCALE,

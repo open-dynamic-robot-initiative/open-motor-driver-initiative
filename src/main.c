@@ -89,10 +89,15 @@ __interrupt void adc1ISR(void)
 //        for(loop = 0; loop < 3; loop++)
 //            motor_hal_cfg[MOTOR_1].v[loop] = (float32_t)HWSREGH(motor_hal_cfg[MOTOR_1].p_vConv[loop]->adcPPBResultBase) * ADC_VOLTAGE_SCALE;
 
-        motor[MOTOR_1].va = (float32_t)HWSREGH(motor[MOTOR_1].motorHalCfg->p_vConv[0]->adcPPBResultBase) * ADC_VOLTAGE_SCALE;
-        motor[MOTOR_1].vb = (float32_t)HWSREGH(motor[MOTOR_1].motorHalCfg->p_vConv[1]->adcPPBResultBase) * ADC_VOLTAGE_SCALE;
-        motor[MOTOR_1].vc = (float32_t)HWSREGH(motor[MOTOR_1].motorHalCfg->p_vConv[2]->adcPPBResultBase) * ADC_VOLTAGE_SCALE;
-        motor[MOTOR_1].vBus = (float32_t)HWSREGH(motor[MOTOR_1].motorHalCfg->p_vbusConv->adcPPBResultBase) * ADC_VOLTAGE_SCALE;
+//        motor[MOTOR_1].va = (float32_t)HWSREGH(motor[MOTOR_1].motorHalCfg->p_vConv[0]->adcPPBResultBase) * ADC_VOLTAGE_SCALE;
+//        motor[MOTOR_1].vb = (float32_t)HWSREGH(motor[MOTOR_1].motorHalCfg->p_vConv[1]->adcPPBResultBase) * ADC_VOLTAGE_SCALE;
+//        motor[MOTOR_1].vc = (float32_t)HWSREGH(motor[MOTOR_1].motorHalCfg->p_vConv[2]->adcPPBResultBase) * ADC_VOLTAGE_SCALE;
+//        motor[MOTOR_1].vBus = (float32_t)HWSREGH(motor[MOTOR_1].motorHalCfg->p_vbusConv->adcPPBResultBase) * ADC_VOLTAGE_SCALE;
+
+        motor[MOTOR_1].motorMeas->va    = (float32_t)(*motor[MOTOR_1].motorMeas->vaMeasReg) * ADC_VOLTAGE_SCALE;
+        motor[MOTOR_1].motorMeas->vb    = (float32_t)(*motor[MOTOR_1].motorMeas->vbMeasReg) * ADC_VOLTAGE_SCALE;
+        motor[MOTOR_1].motorMeas->vc    = (float32_t)(*motor[MOTOR_1].motorMeas->vcMeasReg) * ADC_VOLTAGE_SCALE;
+        motor[MOTOR_1].motorMeas->vbus  = __fmax((float32_t)(*motor[MOTOR_1].motorMeas->vBusMeasReg) * ADC_VOLTAGE_SCALE, 1.0f);
 
         HWREGH(ADCA_BASE + ADC_O_INTOVFCLR) = (1U << ADC_INT_NUMBER1);
         //        ADC_clearInterruptOverflowStatus(ADCA_BASE, ADC_INT_NUMBER1);
@@ -120,10 +125,14 @@ __interrupt void adc2ISR(void)
         //        FOC_getBusVoltage(&foc[MOTOR_2], &motor_hal_cfg[MOTOR_2]);
 //        for(loop = 0; loop < 3; loop++)
 //            motor_hal_cfg[MOTOR_2].v[loop] = (float32_t)HWSREGH(motor_hal_cfg[MOTOR_2].p_vConv[loop]->adcPPBResultBase) * ADC_VOLTAGE_SCALE;
-        motor[MOTOR_2].va = (float32_t)HWSREGH(motor[MOTOR_2].motorHalCfg->p_vConv[0]->adcPPBResultBase) * ADC_VOLTAGE_SCALE;
-        motor[MOTOR_2].vb = (float32_t)HWSREGH(motor[MOTOR_2].motorHalCfg->p_vConv[1]->adcPPBResultBase) * ADC_VOLTAGE_SCALE;
-        motor[MOTOR_2].vc = (float32_t)HWSREGH(motor[MOTOR_2].motorHalCfg->p_vConv[2]->adcPPBResultBase) * ADC_VOLTAGE_SCALE;
+//        motor[MOTOR_2].va = (float32_t)HWSREGH(motor[MOTOR_2].motorHalCfg->p_vConv[0]->adcPPBResultBase) * ADC_VOLTAGE_SCALE;
+//        motor[MOTOR_2].vb = (float32_t)HWSREGH(motor[MOTOR_2].motorHalCfg->p_vConv[1]->adcPPBResultBase) * ADC_VOLTAGE_SCALE;
+//        motor[MOTOR_2].vc = (float32_t)HWSREGH(motor[MOTOR_2].motorHalCfg->p_vConv[2]->adcPPBResultBase) * ADC_VOLTAGE_SCALE;
         //motor_hal_cfg[MOTOR_2].vbus = (float32_t)HWSREGH(motor_hal_cfg[MOTOR_2].p_vbusConv->adcPPBResultBase) * ADC_VOLTAGE_SCALE;
+
+        motor[MOTOR_2].motorMeas->va    = (float32_t)(*motor[MOTOR_2].motorMeas->vaMeasReg) * ADC_VOLTAGE_SCALE;
+        motor[MOTOR_2].motorMeas->vb    = (float32_t)(*motor[MOTOR_2].motorMeas->vbMeasReg) * ADC_VOLTAGE_SCALE;
+        motor[MOTOR_2].motorMeas->vc    = (float32_t)(*motor[MOTOR_2].motorMeas->vcMeasReg) * ADC_VOLTAGE_SCALE;
 
         // Clear the interrupt overflow flag
         HWREGH(ADCA_BASE + ADC_O_INTOVFCLR) = (1U << ADC_INT_NUMBER2);
@@ -151,9 +160,13 @@ __interrupt void adc3ISR(void)
         //        FOC_getPhaseVoltage(&foc[MOTOR_1], &motor_hal_cfg[MOTOR_1]);
 //        for(loop = 0; loop < 3; loop++)
 //            motor_hal_cfg[MOTOR_1].i[loop] = (float32_t)HWSREGH(motor_hal_cfg[MOTOR_1].p_iConv[loop]->adcPPBResultBase) * ADC_CURRENT_SCALE;
-        motor[MOTOR_1].ia = (float32_t)HWSREGH(motor[MOTOR_1].motorHalCfg->p_iConv[0]->adcPPBResultBase) * ADC_CURRENT_SCALE;
-        motor[MOTOR_1].ib = (float32_t)HWSREGH(motor[MOTOR_1].motorHalCfg->p_iConv[1]->adcPPBResultBase) * ADC_CURRENT_SCALE;
-        motor[MOTOR_1].ic = (float32_t)HWSREGH(motor[MOTOR_1].motorHalCfg->p_iConv[2]->adcPPBResultBase) * ADC_CURRENT_SCALE;
+//        motor[MOTOR_1].ia = (float32_t)HWSREGH(motor[MOTOR_1].motorHalCfg->p_iConv[0]->adcPPBResultBase) * ADC_CURRENT_SCALE;
+//        motor[MOTOR_1].ib = (float32_t)HWSREGH(motor[MOTOR_1].motorHalCfg->p_iConv[1]->adcPPBResultBase) * ADC_CURRENT_SCALE;
+//        motor[MOTOR_1].ic = (float32_t)HWSREGH(motor[MOTOR_1].motorHalCfg->p_iConv[2]->adcPPBResultBase) * ADC_CURRENT_SCALE;
+
+        motor[MOTOR_1].motorMeas->ia    = (float32_t)(*motor[MOTOR_1].motorMeas->iaMeasReg) * ADC_CURRENT_SCALE;
+        motor[MOTOR_1].motorMeas->ib    = (float32_t)(*motor[MOTOR_1].motorMeas->ibMeasReg) * ADC_CURRENT_SCALE;
+        motor[MOTOR_1].motorMeas->ic    = (float32_t)(*motor[MOTOR_1].motorMeas->icMeasReg) * ADC_CURRENT_SCALE;
         // Clear the interrupt overflow flag
         HWREGH(ADCA_BASE + ADC_O_INTOVFCLR) = (1U << ADC_INT_NUMBER3);
         //        ADC_clearInterruptOverflowStatus(ADCA_BASE, ADC_INT_NUMBER3);
@@ -180,9 +193,13 @@ __interrupt void adc4ISR(void)
         //        FOC_getPhaseVoltage(&foc[MOTOR_2], &motor_hal_cfg[MOTOR_2]);
 //        for(loop = 0; loop < 3; loop++)
 //            motor_hal_cfg[MOTOR_2].i[loop] = (float32_t)HWSREGH(motor_hal_cfg[MOTOR_2].p_iConv[loop]->adcPPBResultBase) * ADC_CURRENT_SCALE;
-        motor[MOTOR_2].ia = (float32_t)HWSREGH(motor[MOTOR_2].motorHalCfg->p_iConv[0]->adcPPBResultBase) * ADC_CURRENT_SCALE;
-        motor[MOTOR_2].ib = (float32_t)HWSREGH(motor[MOTOR_2].motorHalCfg->p_iConv[1]->adcPPBResultBase) * ADC_CURRENT_SCALE;
-        motor[MOTOR_2].ic = (float32_t)HWSREGH(motor[MOTOR_2].motorHalCfg->p_iConv[2]->adcPPBResultBase) * ADC_CURRENT_SCALE;
+//        motor[MOTOR_2].ia = (float32_t)HWSREGH(motor[MOTOR_2].motorHalCfg->p_iConv[0]->adcPPBResultBase) * ADC_CURRENT_SCALE;
+//        motor[MOTOR_2].ib = (float32_t)HWSREGH(motor[MOTOR_2].motorHalCfg->p_iConv[1]->adcPPBResultBase) * ADC_CURRENT_SCALE;
+//        motor[MOTOR_2].ic = (float32_t)HWSREGH(motor[MOTOR_2].motorHalCfg->p_iConv[2]->adcPPBResultBase) * ADC_CURRENT_SCALE;
+
+        motor[MOTOR_2].motorMeas->ia    = (float32_t)(*motor[MOTOR_2].motorMeas->iaMeasReg) * ADC_CURRENT_SCALE;
+        motor[MOTOR_2].motorMeas->ib    = (float32_t)(*motor[MOTOR_2].motorMeas->ibMeasReg) * ADC_CURRENT_SCALE;
+        motor[MOTOR_2].motorMeas->ic    = (float32_t)(*motor[MOTOR_2].motorMeas->icMeasReg) * ADC_CURRENT_SCALE;
         // Clear the interrupt overflow flag
         HWREGH(ADCA_BASE + ADC_O_INTOVFCLR) = (1U << ADC_INT_NUMBER4);
         //        ADC_clearInterruptOverflowStatus(ADCA_BASE, ADC_INT_NUMBER4);
@@ -200,7 +217,7 @@ __interrupt void adc4ISR(void)
 
 __interrupt void isrMotor1(void)
 {
-
+    GPIO_writePin(DEBUG_INT_PIN1, 1);
     if (motor[MOTOR_1].motorFOC->enabled)
     {
         //-------------------------------------------------------------------//
@@ -208,8 +225,13 @@ __interrupt void isrMotor1(void)
         //-------------------------------------------------------------------//
         // Read encoder position
         encoder_GetPosition(motor[MOTOR_1].motorEncoder);
+        // Compute electrical angle
+        motor[MOTOR_1].motorEncoder->elecAngle = motor[MOTOR_1].motorParams->polePairs * motor[MOTOR_1].motorEncoder->mechAngle;
+        motor[MOTOR_1].motorEncoder->elecAngle -= (float32_t)((int32_t)motor[MOTOR_1].motorEncoder->elecAngle);
         // Compute sine cosine
         FOC_sineCosine(motor[MOTOR_1].motorFOC, motor[MOTOR_1].motorEncoder);
+
+        //bwhile((motor[MOTOR_1].motorFOC->adcIntFlag->all & (1<<MOTOR_1)) == 0);
     }
     else
     {
@@ -241,10 +263,12 @@ __interrupt void isrMotor1(void)
     //HWREG(PIECTRL_BASE + PIE_O_IFR3) = (1U << ADC_INT_NUMBER4);
     // Acknowledge the interrupt (Acknowledge PIE Interrupt Group 10)
     HWREGH(PIECTRL_BASE + PIE_O_ACK) = INTERRUPT_ACK_GROUP3; // Interrupt_clearACKGroup(INTERRUPT_ACK_GROUP10);
+    GPIO_writePin(DEBUG_INT_PIN1, 0);
 }
 
 __interrupt void isrMotor2(void)
 {
+    GPIO_writePin(DEBUG_INT_PIN2, 1);
     //-------------------------------------------------------------------//
     //                          FOC update                               //
     //-------------------------------------------------------------------//
@@ -265,4 +289,5 @@ __interrupt void isrMotor2(void)
     HWREGH(EPWM4_BASE + EPWM_O_ETCLR) |= EPWM_ETCLR_INT; // EPWM_clearEventTriggerInterruptFlag(EPWM4_BASE);
     // Acknowledge the interrupt (Acknowledge PIE Interrupt Group 10)
     HWREGH(PIECTRL_BASE + PIE_O_ACK) = INTERRUPT_ACK_GROUP3; // Interrupt_clearACKGroup(INTERRUPT_ACK_GROUP3);
+    GPIO_writePin(DEBUG_INT_PIN2, 0);
 }

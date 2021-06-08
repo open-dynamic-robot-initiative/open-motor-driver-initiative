@@ -43,6 +43,7 @@ typedef struct __Encoder__
 {
     const eQEP_TypeDef* p_qepHandle;
     struct EQEP_REGS*   p_qepRegs;
+    volatile int32_t* encoderPosReg;
 
     // Scalers
     float32_t mechScaler; // [pu/register]
