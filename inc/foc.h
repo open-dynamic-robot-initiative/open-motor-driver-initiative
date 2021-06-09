@@ -62,17 +62,21 @@ typedef struct __FOC__
     float32_t dutyCycleSat;
 
     // Motor constants
-    float32_t Rs; // Stator resistance [Ohm]
-    float32_t Ld; // Direct axis inductance [H]
-    float32_t Lq; // Quadratic axis inductance [H]
-    float32_t ke; // Motor back EMF constant [V/rad/s] (electrical radians)
+    float32_t* Rs; // Stator resistance [Ohm]
+    float32_t* Ld; // Direct axis inductance [H]
+    float32_t* Lq; // Quadratic axis inductance [H]
+    float32_t* ke; // Motor back EMF constant [V/rad/s] (electrical radians)
 
     // Bus voltage
     float32_t vBus; // [V]
 
+    // Angles
+    float32_t* mechAngle; // [pu]
+    float32_t* elecAngle; // [pu]
     // Rotor electrical angle sine cosine
     float32_t sinTheta;
     float32_t cosTheta;
+
 
     // Low-pass control loop filter
     LowpassFilter controlLoopLpf;
@@ -162,7 +166,7 @@ inline void FOC_getPhaseVoltage(FOC*, MOTOR_HAL_CFG*);
 inline void FOC_getBusVoltage(FOC*, MOTOR_HAL_CFG*);
 
 inline void FOC_getMeasures(FOC*, MOTOR_HAL_CFG*);
-inline void FOC_sineCosine(FOC*, ENCODER*);
+inline void FOC_sineCosine(FOC*);
 inline void FOC_parkClarke(FOC*);
 
 inline void FOC_runPi(FOC*);

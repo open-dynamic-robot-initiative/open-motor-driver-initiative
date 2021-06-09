@@ -134,18 +134,18 @@ void CL_initFoc(FOC* p_foc, const uint16_t motorIndex)
 
 
     // Initialize motor constants
-    if (motorIndex == 0)
-    {
-        p_foc->Rs = MOTOR1_RS;
-        p_foc->Ld = MOTOR1_LD;
-        p_foc->Lq = MOTOR1_LQ;
-        p_foc->ke = MOTOR1_KE;
-    } else {
-        p_foc->Rs = MOTOR2_RS;
-        p_foc->Ld = MOTOR2_LD;
-        p_foc->Lq = MOTOR2_LQ;
-        p_foc->ke = MOTOR2_KE;
-    }
+//    if (motorIndex == 0)
+//    {
+//        p_foc->Rs = MOTOR1_RS;
+//        p_foc->Ld = MOTOR1_LD;
+//        p_foc->Lq = MOTOR1_LQ;
+//        p_foc->ke = MOTOR1_KE;
+//    } else {
+//        p_foc->Rs = MOTOR2_RS;
+//        p_foc->Ld = MOTOR2_LD;
+//        p_foc->Lq = MOTOR2_LQ;
+//        p_foc->ke = MOTOR2_KE;
+//    }
 
     // Initialize PWM compare register scaler
     p_foc->pwmCompScaler = PWM_HALF_PERIOD * 0x10000L; // 32 bits registers in HRPWM device function compare register
@@ -161,17 +161,17 @@ void CL_initFoc(FOC* p_foc, const uint16_t motorIndex)
     if (motorIndex == 0)
     {
         p_foc->encoder.p_qepRegs = (struct EQEP_REGS *)MOTOR1_QEP_BASE;
-        p_foc->encoder.mechScaler = 0.25 / QEP_MOTOR1_ENCODER_LINES_NB;
-        p_foc->encoder.polePairs = MOTOR1_POLES_PAIRS;
+        //p_foc->encoder.mechAngleNorm = 0.25 / MOTOR1_ENCODER_LINES_NB;
+        //p_foc->encoder.polePairs = MOTOR1_POLES_PAIRS;
     } else {
         p_foc->encoder.p_qepRegs = (struct EQEP_REGS *)MOTOR2_QEP_BASE;
-        p_foc->encoder.mechScaler = 0.25 / QEP_MOTOR2_ENCODER_LINES_NB;
-        p_foc->encoder.polePairs = MOTOR2_POLES_PAIRS;
+       //p_foc->encoder.mechAngleNorm = 0.25 / MOTOR2_ENCODER_LINES_NB;
+        //p_foc->encoder.polePairs = MOTOR2_POLES_PAIRS;
     }
 
     // Speed estimation initialization
     p_foc->encoder.speedEst.highSpeedScaler = 2.0 * FM_PI * QEP_UNIT_TIMER_FREQ; // 2pi / dt
-    p_foc->encoder.speedEst.lowSpeedScaler = 2.0 * FM_PI * p_foc->encoder.mechScaler * DEVICE_SYSCLK_FREQ * 4.0 / 128.0; // 4 is pos divider and 128 is clock divider
+    p_foc->encoder.speedEst.lowSpeedScaler = 2.0 * FM_PI * p_foc->encoder.mechAngleNorm * DEVICE_SYSCLK_FREQ * 4.0 / 128.0; // 4 is pos divider and 128 is clock divider
     LPF_setBandwidth(&p_foc->encoder.speedEst.lpf, PWM_FREQUENCY, 200); // 200Hz low-pass filter for velocity estimation
 
     // Initialize PI controllers

@@ -62,13 +62,11 @@ inline void FOC_getMeasures(FOC* p_foc, MOTOR_HAL_CFG* p_motor)
 }
 
 // Compute electrical angle sine and cosine
-inline void FOC_sineCosine(FOC* p_foc, ENCODER* p_encoder)
+inline void FOC_sineCosine(FOC* p_foc)
 {
-//    FOC_struct*  p_foc       = p_motor->motorFOC;
-//    ENCODER*    p_encoder   = p_motor->motorEncoder;
     // Sine Cosine computation
-    p_foc->sinTheta = __sinpuf32(p_encoder->elecAngle);
-    p_foc->cosTheta = __cospuf32(p_encoder->elecAngle);
+    p_foc->sinTheta = __sinpuf32(*p_foc->elecAngle);
+    p_foc->cosTheta = __cospuf32(*p_foc->elecAngle);
 }
 
 // Clarke Park transform wikipedia link:
@@ -147,7 +145,7 @@ inline void FOC_resistanceEstimation(FOC* p_foc)
     // Only compute if measured current is over a threshold
     if (FM_ABS(p_foc->iq) > FOC_RE_CURRENT_THRESHOLD)
     {
-        LPF_FILTER(p_foc->resEstLpf, p_foc->resistanceEst, (p_foc->vq - p_foc->encoder.speedEst.elecSpeed * p_foc->ke) / p_foc->iq);
+        LPF_FILTER(p_foc->resEstLpf, p_foc->resistanceEst, (p_foc->vq - p_foc->encoder.speedEst.elecSpeed * (*p_foc->ke)) / p_foc->iq);
     }
 }
 

@@ -135,6 +135,7 @@ typedef struct _ePWM_Cfg_TypeDef_
 typedef struct _eQEP_Cfg_TypeDef_
 {
     uint32_t eqepBase;                              /*!< eQEP peripheral address. */
+    uint32_t eqepMaxResolution;
     uint16_t config;
 } eQEP_TypeDef;
 

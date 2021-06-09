@@ -450,9 +450,9 @@ void HAL_eQEP_init(const eQEP_TypeDef* p_qepCfg)
             // Position counter latched on a unit time out and on rising edge of index pulse.
             EQEP_setLatchMode(qepBase, QEP_LATCH_MODE);
             // Position counter is reset when reaching max position (1 turn). on an index event.
-            EQEP_setPositionCounterConfig(qepBase, QEP_RESET_POSITION_MODE, QEP_ENCODER_POSITION_MAX);
-            // Set unit timer frequency to PWM frequency for speed measurement and enable it.
-            EQEP_enableUnitTimer(qepBase, QEP_UNIT_TIMER_TICKS);
+            EQEP_setPositionCounterConfig(qepBase, QEP_RESET_POSITION_MODE, p_qepCfg->eqepMaxResolution);
+            // Set unit timer for speed measurement and enable it.
+            EQEP_enableUnitTimer(qepBase, QEP_UNIT_TIMER_TICKS - 1);
             // Disable Compare, watchdog and IT units.
             EQEP_disableCompare(qepBase);
             EQEP_disableWatchdog(qepBase);

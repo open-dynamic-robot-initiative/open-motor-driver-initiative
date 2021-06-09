@@ -35,19 +35,19 @@ typedef struct __SpeedEst__
     float32_t elecSpeed; // [rad/s]
 
     // Utility variables
-    float32_t angle;     // [pu]
-    float32_t lastAngle; // [pu]
+    float32_t angle[2];     // [pu]
 } SpeedEst;
 
 typedef struct __Encoder__
 {
+    const MotorID       motorID;
+    // pointers on HAL structure, QEP registers and direct access to QEP counter register
     const eQEP_TypeDef* p_qepHandle;
     struct EQEP_REGS*   p_qepRegs;
-    volatile int32_t* encoderPosReg;
-
+    volatile int32_t*   p_encoderPosReg;
     // Scalers
-    float32_t mechScaler; // [pu/register]
-    float32_t polePairs;  // Number of pole pairs of the motor
+    const float32_t     mechAngleNorm; // [pu/register]
+    const uint8_t*      p_polePairs;  // Number of pole pairs of the motor
 
     // Angles
     float32_t elecAngle; // [pu]

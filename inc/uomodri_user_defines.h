@@ -199,9 +199,6 @@
  * @}
  */
 
-
-
-
 /** @defgroup ePWM_Module configuration.
  *  @brief    Define the address of all the ePWM used (2 motors).
  * @{
@@ -372,8 +369,8 @@
 //#define QEP_CONFIG                      (EQEP_CONFIG_2X_RESOLUTION | EQEP_CONFIG_UP_COUNT | EQEP_CONFIG_NO_SWAP)
 #define QEP_EMUL_MODE                   EQEP_EMULATIONMODE_RUNFREE
 #define QEP_LATCH_MODE                  (EQEP_LATCH_RISING_INDEX | EQEP_LATCH_UNIT_TIME_OUT)
-#define QEP_ENCODER_STEPS               5000
-#define QEP_ENCODER_POSITION_MAX        ((4 * QEP_ENCODER_STEPS) - 1)
+//#define QEP_ENCODER_STEPS               5000
+//#define QEP_ENCODER_POSITION_MAX        ((4 * QEP_ENCODER_STEPS) - 1)
 #define QEP_RESET_POSITION_MODE         EQEP_POSITION_RESET_MAX_POS
 #define QEP_CAPTURE_CLOCK_DIV           EQEP_CAPTURE_CLK_DIV_8
 #define QEP_UNIT_POS_EVENT_DIV          EQEP_UNIT_POS_EVNT_DIV_16
@@ -383,11 +380,11 @@
 //#define QEP_UNIT_TIMER_TICKS            PWM_TBPRD               // Sync QEP with PWM
 #define MOTOR1_QEP_SWAP                 EQEP_CONFIG_NO_SWAP         // Set to EQEP_CONFIG_SWAP if increments in the wrong direction
 #define MOTOR2_QEP_SWAP                 EQEP_CONFIG_NO_SWAP
-#define QEP_MOTOR1_ENCODER_LINES_NB     5000
-#define QEP_MOTOR2_ENCODER_LINES_NB     5000
+#define MOTOR1_ENCODER_LINES_NB         5000
+#define MOTOR2_ENCODER_LINES_NB         5000
 // Velocity computation
 #define QEP_UNIT_TIMER_FREQ             1000 // [Hz] Velocity computation frequency
-#define QEP_UNIT_TIMER_TICKS            ((DEVICE_SYSCLK_FREQ / QEP_UNIT_TIMER_FREQ) - 1)
+#define QEP_UNIT_TIMER_TICKS            (DEVICE_SYSCLK_FREQ / QEP_UNIT_TIMER_FREQ)
 /**
  * @}
  */
@@ -448,18 +445,21 @@
 // Initialization define
 #define PWM_HALF_PERIOD                 (DEVICE_SYSCLK_FREQ / (2.0 * PWM_FREQUENCY)) / 2.0
 
-/******************************************************************************************************
-*                                             QEP defines
-*******************************************************************************************************/
+/*** Encoder defines ***/
+#define MOTOR1_ENC_RESOLUTION_SCALE     (4.0 * MOTOR1_ENCODER_LINES_NB)
+#define MOTOR2_ENC_RESOLUTION_SCALE     (4.0 * MOTOR2_ENCODER_LINES_NB)
+#define MOTOR1_ENC_HIGH_SPEED_SCALE     (2.0 * M_PI * QEP_UNIT_TIMER_FREQ) // 2pi / dt
+#define MOTOR2_ENC_HIGH_SPEED_SCALE     (2.0 * M_PI * QEP_UNIT_TIMER_FREQ) // 2pi / dt
+#define MOTOR1_ENC_LOW_SPEED_SCALE      (2.0 * M_PI * MOTOR1_ENC_RESOLUTION_SCALE * DEVICE_SYSCLK_FREQ * QEP_CAPTURE_CLOCK_DIV / QEP_UNIT_POS_EVENT_DIV) // 4 is pos divider and 128 is clock divider
+#define MOTOR2_ENC_LOW_SPEED_SCALE      (2.0 * M_PI * MOTOR2_ENC_RESOLUTION_SCALE * DEVICE_SYSCLK_FREQ * QEP_CAPTURE_CLOCK_DIV / QEP_UNIT_POS_EVENT_DIV)
+//LPF_setBandwidth(&foc->encoder.speedEst.lpf, PWM_FREQUENCY, 200); // 200Hz low-pass filter for velocity estimation
 
 
 
 // Initialization define
 //#define QEP_UNIT_TIMER_TICKS            DEVICE_SYSCLK_FREQ / QEP_UNIT_TIMER_FREQ
 
-/******************************************************************************************************
-*                                           Motor 1 constants
-*******************************************************************************************************/
+/*** Motor 1 constants ***/
 #define MOTOR1_KV                           300.0     // Motor constant (rpm/V)
 #define MOTOR1_KE                           0.0017    //1.0 / (MOTOR1_KV * FM_RPM2RADPS * MOTOR1_POLES_PAIRS) // Motor back EMF constant (V/rad/s)
 #define MOTOR1_KI                           0.1       // Motor torque constant (N.m/A)
@@ -469,9 +469,7 @@
 #define MOTOR1_POLES_PAIRS                  12        // Number of poles
 #define MOTOR1_CUR_LOOP_BANDWIDTH           500.0     // Current loop bandwidth (Hz)
 
-/******************************************************************************************************
-*                                           Motor 2 constants
-*******************************************************************************************************/
+/*** Motor 2 constants ***/
 #define MOTOR2_KV                           300.0     // Motor constant (rpm/V)
 #define MOTOR2_KE                           0.0017    // Motor back EMF constant (V/rad/s)
 #define MOTOR2_KI                           0.1       // Motor torque constant (N.m/A)

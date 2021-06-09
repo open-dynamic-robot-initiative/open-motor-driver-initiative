@@ -204,60 +204,25 @@ static const MOTOR_PARAMS motor_params[] =
  {.Rs = MOTOR2_RS, .Ld = MOTOR2_LD, .Lq = MOTOR2_LQ, .kv = MOTOR2_KV, .ke = MOTOR2_KE, .ki = MOTOR2_KI, .polePairs = MOTOR2_POLES_PAIRS},
 };
 
-static FOC motor_foc[] =
-{
- {.enabled = true,
-  .piId.integral = 0.0f, .piId.err = 0.0f, .piId.ff = 0.0f, .piId.out = 0.0f,
-  .piIq.integral = 0.0f, .piIq.err = 0.0f, .piIq.ff = 0.0f, .piIq.out = 0.0f,
-  .posPd.err = 0.0f, .posPd.vErr = 0.0f, .posPd.out = 0.0f,
-  .alignRoutine.state = ALIGN_COUNT_UP, .alignRoutine.counter = 0, .alignRoutine.idAlign = 0.0f,
-
-  .encoder.mechAngle = 0.0f, .encoder.elecAngle = 0.0f,
-  .encoder.isIndexCompensated = false, .encoder.indexAngle = 0.0f, .encoder.indexedMechAngle = 0.0f,
-  .encoder.lastMechAngle = 0.0f, .encoder.absoluteAngle = 0.0f,
-  .encoder.speedEst.alpha = 0.0f,
-  .encoder.speedEst.speedRef = 0.0f,
-  .encoder.speedEst.angle = 0.0f,
-  .encoder.speedEst.lastAngle = 0.0f,
-  .encoder.speedEst.lowMechSpeedEst = 0.0f,
-  .encoder.speedEst.highMechSpeedEst = 0.0f,
-  .encoder.speedEst.mechSpeed = 0.0f,
-  .encoder.speedEst.elecSpeed = 0.0f,
-  .encoder.turnNb = 0,
-  .encoder.indexDetected = false,
-  .encoder.indexToggle = false,
-  .encoder.rollOverFlag = false,
-
-  .ia = 0.0f, .ib = 0.0f, .ic = 0.0f, .ialpha = 0.0f, .ibeta = 0.0f, .id = 0.0f, .iq = 0.0f,
-  .va = 0.0f, .vb = 0.0f, .vc = 0.0f, .valpha = 0.0f, .vbeta = 0.0f, .vd = 0.0f, .vq = 0.0f,
-  .auxAdc = 0.0f, .phaseAVolt = 0.0f, .phaseBVolt = 0.0f, .phaseCVolt = 0.0f, .resistanceEst = 0.0f,
-  .Rs = MOTOR1_RS, .Ld = MOTOR1_LD, .Lq = MOTOR1_LQ, .ke = MOTOR1_KE
- },
- {.enabled = true,
-  .piId.integral = 0.0f, .piId.err = 0.0f, .piId.ff = 0.0f, .piId.out = 0.0f,
-  .piIq.integral = 0.0f, .piIq.err = 0.0f, .piIq.ff = 0.0f, .piIq.out = 0.0f,
-  .posPd.err = 0.0f, .posPd.vErr = 0.0f, .posPd.out = 0.0f,
-  .alignRoutine.state = ALIGN_COUNT_UP, .alignRoutine.counter = 0, .alignRoutine.idAlign = 0.0f,
-  .ia = 0.0f, .ib = 0.0f, .ic = 0.0f, .ialpha = 0.0f, .ibeta = 0.0f, .id = 0.0f, .iq = 0.0f,
-  .va = 0.0f, .vb = 0.0f, .vc = 0.0f, .valpha = 0.0f, .vbeta = 0.0f, .vd = 0.0f, .vq = 0.0f,
-  .auxAdc = 0.0f, .phaseAVolt = 0.0f, .phaseBVolt = 0.0f, .phaseCVolt = 0.0f, .resistanceEst = 0.0f,
-  .Rs = MOTOR2_RS, .Ld = MOTOR2_LD, .Lq = MOTOR2_LQ, .ke = MOTOR2_KE
- },
-};
-
 static ENCODER encoder[] =
 {
  {
+  .motorID          = MOTOR_1,
   .p_qepHandle      = &QepCfgList[0],
   .p_qepRegs        = (struct EQEP_REGS *)(MOTOR1_QEP_BASE),
-  .encoderPosReg    = (volatile int32_t *)(MOTOR1_QEP_COUNTER_ADDR),
+  .p_encoderPosReg  = (volatile int32_t *)(MOTOR1_QEP_COUNTER_ADDR),
   .mechAngle        = 0.0f,
+  .mechAngleNorm    = (float32_t)(MOTOR1_ENC_RESOLUTION_SCALE),
+  .p_polePairs      = (uint8_t *)(&motor_params[MOTOR_1].polePairs),
  },
  {
+  .motorID          = MOTOR_2,
   .p_qepHandle      = &QepCfgList[1],
   .p_qepRegs        = (struct EQEP_REGS *)(MOTOR2_QEP_BASE),
-  .encoderPosReg    = (volatile int32_t *)(MOTOR2_QEP_COUNTER_ADDR),
+  .p_encoderPosReg  = (volatile int32_t *)(MOTOR2_QEP_COUNTER_ADDR),
   .mechAngle        = 0.0f,
+  .mechAngleNorm    = (float32_t)(MOTOR2_ENC_RESOLUTION_SCALE),
+  .p_polePairs      = (uint8_t *)(&motor_params[MOTOR_2].polePairs),
  },
 };
 
@@ -274,7 +239,7 @@ static MOTOR_MEASURES motor_meas[] =
   .iaMeasReg        = (volatile int32_t *)(MOTOR1_IA_ADC_PPB_RESULT_ADDR),
   .ibMeasReg        = (volatile int32_t *)(MOTOR1_IB_ADC_PPB_RESULT_ADDR),
   .icMeasReg        = (volatile int32_t *)(MOTOR1_IC_ADC_PPB_RESULT_ADDR),
-  .encoderPosReg    = (volatile int32_t *)(&(encoder[MOTOR_1].encoderPosReg)),
+  .encoderPosReg    = (volatile int32_t *)(&encoder[MOTOR_1].p_encoderPosReg),
  },
  {.motorID          = MOTOR_2,
   .ia = 0.0f, .ib = 0.0f, .ic = 0.0f,
@@ -287,11 +252,65 @@ static MOTOR_MEASURES motor_meas[] =
   .iaMeasReg        = (volatile int32_t *)(MOTOR2_IA_ADC_PPB_RESULT_ADDR),
   .ibMeasReg        = (volatile int32_t *)(MOTOR2_IB_ADC_PPB_RESULT_ADDR),
   .icMeasReg        = (volatile int32_t *)(MOTOR2_IC_ADC_PPB_RESULT_ADDR),
-  .encoderPosReg    = (volatile int32_t *)(&(encoder[MOTOR_2].encoderPosReg)),
+  .encoderPosReg    = (volatile int32_t *)(&(encoder[MOTOR_2].p_encoderPosReg)),
  },
 };
 
+static FOC motor_foc[] =
+{
+ {.enabled = true,
+  .piId.integral = 0.0f, .piId.err = 0.0f, .piId.ff = 0.0f, .piId.out = 0.0f,
+  .piIq.integral = 0.0f, .piIq.err = 0.0f, .piIq.ff = 0.0f, .piIq.out = 0.0f,
+  .posPd.err = 0.0f, .posPd.vErr = 0.0f, .posPd.out = 0.0f,
+  .alignRoutine.state = ALIGN_COUNT_UP, .alignRoutine.counter = 0, .alignRoutine.idAlign = 0.0f,
 
+  .encoder.mechAngle = 0.0f, .encoder.elecAngle = 0.0f,
+  .encoder.isIndexCompensated = false, .encoder.indexAngle = 0.0f, .encoder.indexedMechAngle = 0.0f,
+  .encoder.lastMechAngle = 0.0f, .encoder.absoluteAngle = 0.0f,
+  .encoder.speedEst.alpha = 0.0f,
+  .encoder.speedEst.speedRef = 0.0f,
+  .encoder.speedEst.angle = {0.0f, 0.0f},
+  .encoder.speedEst.lowMechSpeedEst = 0.0f,
+  .encoder.speedEst.highMechSpeedEst = 0.0f,
+  .encoder.speedEst.mechSpeed = 0.0f,
+  .encoder.speedEst.elecSpeed = 0.0f,
+  .encoder.turnNb = 0,
+  .encoder.indexDetected = false,
+  .encoder.indexToggle = false,
+  .encoder.rollOverFlag = false,
+
+  .ia = 0.0f, .ib = 0.0f, .ic = 0.0f, .ialpha = 0.0f, .ibeta = 0.0f, .id = 0.0f, .iq = 0.0f,
+  .va = 0.0f, .vb = 0.0f, .vc = 0.0f, .valpha = 0.0f, .vbeta = 0.0f, .vd = 0.0f, .vq = 0.0f,
+
+  .mechAngle = (float32_t *)(&encoder[MOTOR_1].mechAngle),
+  .elecAngle = (float32_t *)(&encoder[MOTOR_1].elecAngle),
+  .sinTheta = 0.0f, .cosTheta = 0.0f,
+
+  .auxAdc = 0.0f, .phaseAVolt = 0.0f, .phaseBVolt = 0.0f, .phaseCVolt = 0.0f, .resistanceEst = 0.0f,
+  .Rs = (float32_t *)(&motor_params[MOTOR_1].Rs),
+  .Ld = (float32_t *)(&motor_params[MOTOR_1].Ld),
+  .Lq = (float32_t *)(&motor_params[MOTOR_1].Lq),
+  .ke = (float32_t *)(&motor_params[MOTOR_1].ke),
+ },
+ {.enabled = true,
+  .piId.integral = 0.0f, .piId.err = 0.0f, .piId.ff = 0.0f, .piId.out = 0.0f,
+  .piIq.integral = 0.0f, .piIq.err = 0.0f, .piIq.ff = 0.0f, .piIq.out = 0.0f,
+  .posPd.err = 0.0f, .posPd.vErr = 0.0f, .posPd.out = 0.0f,
+  .alignRoutine.state = ALIGN_COUNT_UP, .alignRoutine.counter = 0, .alignRoutine.idAlign = 0.0f,
+  .ia = 0.0f, .ib = 0.0f, .ic = 0.0f, .ialpha = 0.0f, .ibeta = 0.0f, .id = 0.0f, .iq = 0.0f,
+  .va = 0.0f, .vb = 0.0f, .vc = 0.0f, .valpha = 0.0f, .vbeta = 0.0f, .vd = 0.0f, .vq = 0.0f,
+
+  .mechAngle = (float32_t *)(&encoder[MOTOR_2].mechAngle),
+  .elecAngle = (float32_t *)(&encoder[MOTOR_2].elecAngle),
+  .sinTheta = 0.0f, .cosTheta = 0.0f,
+
+  .auxAdc = 0.0f, .phaseAVolt = 0.0f, .phaseBVolt = 0.0f, .phaseCVolt = 0.0f, .resistanceEst = 0.0f,
+  .Rs = (float32_t *)(&motor_params[MOTOR_2].Rs),
+  .Ld = (float32_t *)(&motor_params[MOTOR_2].Ld),
+  .Lq = (float32_t *)(&motor_params[MOTOR_2].Lq),
+  .ke = (float32_t *)(&motor_params[MOTOR_2].ke),
+ },
+};
 static MOTOR_STRUCT motor[] =
 {
  {
