@@ -220,13 +220,13 @@ __interrupt void isrMotor1(void)
     GPIO_writePin(DEBUG_INT_PIN1, 1);
     if (motor[MOTOR_1].motorFOC->enabled)
     {
-        //-------------------------------------------------------------------//
-        //                          FOC update                               //
-        //-------------------------------------------------------------------//
+        /* FOC update */
         // Read encoder position
         encoder_GetPosition(motor[MOTOR_1].motorEncoder);
         // Compute sine cosine
         FOC_sineCosine(motor[MOTOR_1].motorFOC);
+
+        encoder_GetSpeed(motor[MOTOR_1].motorEncoder);
 
         //bwhile((motor[MOTOR_1].motorFOC->adcIntFlag->all & (1<<MOTOR_1)) == 0);
     }

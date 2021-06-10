@@ -17,11 +17,11 @@
 typedef struct __SpeedEst__
 {
     // High speed estimation
-    float32_t highSpeedScaler;  // [rad/s/pu], dAngle * scaler = velocity
-    float32_t highMechSpeedEst; // [rad/s]
+    float32_t highSpeedScaler;  // [rad/s/pu], diff_angular * scaler = velocity
+    float32_t highMechSpeed; // [rad/s]
     // Low speed estimation
     float32_t lowSpeedScaler;  // [rad.register], scaler / dtRegister = velocity
-    float32_t lowMechSpeedEst; // [rad/s]
+    float32_t lowMechSpeed; // [rad/s]
 
     // Speed merge
     float32_t alpha;     // Speed merge coefficient
@@ -35,7 +35,7 @@ typedef struct __SpeedEst__
     float32_t elecSpeed; // [rad/s]
 
     // Utility variables
-    float32_t angle[2];     // [pu]
+    float32_t pos[2];     // [pu]
 } SpeedEst;
 
 typedef struct __Encoder__
@@ -44,14 +44,15 @@ typedef struct __Encoder__
     // pointers on HAL structure, QEP registers and direct access to QEP counter register
     const eQEP_TypeDef* p_qepHandle;
     struct EQEP_REGS*   p_qepRegs;
-    volatile int32_t*   p_encoderPosReg;
-    // Scalers
-    const float32_t     mechAngleNorm; // [pu/register]
+    volatile int32_t*   p_qepCntPosReg;
+
     const uint8_t*      p_polePairs;  // Number of pole pairs of the motor
 
+    // Scalers
+    const float32_t     mechPosNorm; // [pu/register]
     // Angles
-    float32_t elecAngle; // [pu]
-    float32_t mechAngle; // [pu]
+    float32_t           elecPos; // [pu]
+    float32_t           mechPos[2]; // [pu]
 
     // Indexed angles
     bool  isIndexCompensated;   // Is index compensation activated
@@ -74,7 +75,7 @@ typedef struct __Encoder__
 inline void ENC_reset(ENCODER *encoder);
 inline void ENC_resetQepPos(ENCODER *encoder);
 inline void encoder_GetPosition(ENCODER *encoder);
-inline void ENC_update(ENCODER *encoder);
+inline void encoder_GetSpeed(ENCODER *encoder);
 
 
 

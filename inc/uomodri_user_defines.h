@@ -366,15 +366,12 @@
  */
 #define QEP1_SWAP                       EQEP_CONFIG_NO_SWAP         // Set to EQEP_CONFIG_SWAP if increments in the wrong direction
 #define QEP2_SWAP                       EQEP_CONFIG_NO_SWAP
-//#define QEP_CONFIG                      (EQEP_CONFIG_2X_RESOLUTION | EQEP_CONFIG_UP_COUNT | EQEP_CONFIG_NO_SWAP)
 #define QEP_EMUL_MODE                   EQEP_EMULATIONMODE_RUNFREE
 #define QEP_LATCH_MODE                  (EQEP_LATCH_RISING_INDEX | EQEP_LATCH_UNIT_TIME_OUT)
-//#define QEP_ENCODER_STEPS               5000
-//#define QEP_ENCODER_POSITION_MAX        ((4 * QEP_ENCODER_STEPS) - 1)
 #define QEP_RESET_POSITION_MODE         EQEP_POSITION_RESET_MAX_POS
-#define QEP_CAPTURE_CLOCK_DIV           EQEP_CAPTURE_CLK_DIV_8
-#define QEP_UNIT_POS_EVENT_DIV          EQEP_UNIT_POS_EVNT_DIV_16
-#define PERxSYSCLK_TO_EQEPCLK_DIV       1
+#define QEP_CAPTURE_CLOCK_DIV           EQEP_CAPTURE_CLK_DIV_128
+#define QEP_UNIT_POS_EVENT_DIV          EQEP_UNIT_POS_EVNT_DIV_4
+#define PERxSYSCLK_TO_EQEPCLK_DIV       (1)
 #define EQEPCLK_FREQ                    (DEVICE_SYSCLK_FREQ / pow(2.0, ((QEP_CAPTURE_CLOCK_DIV >> 4) & 0x07)))
 
 //#define QEP_UNIT_TIMER_TICKS            PWM_TBPRD               // Sync QEP with PWM

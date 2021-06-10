@@ -4,8 +4,9 @@
 // This function is defined here because of compilation problems
 inline void ENC_reset(ENCODER *encoder)
 {
-    encoder->mechAngle = 0.0f;
-    encoder->elecAngle = 0.0f;
+    encoder->mechPos[NEW] = 0.0;
+    encoder->mechPos[OLD] = 0.0;
+    encoder->elecPos = 0.0f;
 
     encoder->isIndexCompensated = false;
     encoder->indexAngle = 0.0f;
@@ -16,10 +17,10 @@ inline void ENC_reset(ENCODER *encoder)
 
     encoder->speedEst.alpha = 0.0f;
     encoder->speedEst.speedRef = 0.0f;
-    encoder->speedEst.angle[0] = 0.0f;
-    encoder->speedEst.angle[1] = 0.0f;
-    encoder->speedEst.lowMechSpeedEst = 0.0f;
-    encoder->speedEst.highMechSpeedEst = 0.0f;
+    encoder->speedEst.pos[NEW] = 0.0f;
+    encoder->speedEst.pos[OLD] = 0.0f;
+    encoder->speedEst.lowMechSpeed = 0.0f;
+    encoder->speedEst.highMechSpeed = 0.0f;
     encoder->speedEst.mechSpeed = 0.0f;
     encoder->speedEst.elecSpeed = 0.0f;
 
@@ -42,23 +43,23 @@ inline void ENC_resetQepPos(ENCODER* p_encoder)
 // Read rotor position
 inline void encoder_GetPosition(ENCODER *p_encoder)
 {
-    // Compute mechanical angle (normalized (0 -> 1))
-    p_encoder->mechAngle = (float32_t)(*p_encoder->p_encoderPosReg) / p_encoder->mechAngleNorm;
-    // Compute electrical angle (each pole pair is normalized (0 -> 1))
-    p_encoder->elecAngle = (*p_encoder->p_polePairs) * p_encoder->mechAngle;
-    p_encoder->elecAngle -= (float32_t)((int32_t)p_encoder->elecAngle);
+    // Compute mechanical angle normalized between 0 and 1
+    p_encoder->mechPos[NEW] = (float32_t)(*p_encoder->p_qepCntPosReg) / p_encoder->mechPosNorm;
+    // Compute electrical angle (each pole pair is normalized between 0 and 1)
+    p_encoder->elecPos = (*p_encoder->p_polePairs) * p_encoder->mechPos[NEW];
+    p_encoder->elecPos -= (float32_t)((int32_t)p_encoder->elecPos);
 }
 
 // Encoder update routine, this is not critical for the control loop to be executed
 // so it is executed after the control loop.
 // Reference manual par 27.6 contains all the information
 // necessary to understand this routine
-inline void encoder_Update(ENCODER* p_encoder)
+inline void encoder_GetSpeed(ENCODER* p_encoder)
 {
 
     struct EQEP_REGS*   p_qepRegs   = p_encoder->p_qepRegs;
-    SpeedEst            p_speedEst  = p_encoder->speedEst;
-    float32_t dAngle;
+    SpeedEst            p_speed     = p_encoder->speedEst;
+    float32_t           deltaAngle  = 0.0;
 
     //-------------------------------------------------------------------//
     //                      HIGH SPEED ESTIMATION                        //
@@ -66,16 +67,16 @@ inline void encoder_Update(ENCODER* p_encoder)
     // Check if unit timer overflow event happened for high speed calculation
     if (p_qepRegs->QFLG.bit.UTO)
     {
-        // Read latched angle
-        p_speedEst.angle[0] = p_qepRegs->QPOSLAT * p_encoder->mechAngleNorm;
+        // Read latched angle normalized between 0 and 1
+        p_speed.pos[NEW] = p_qepRegs->QPOSLAT / p_encoder->mechPosNorm;
         // Compute angle difference
-        dAngle = p_speedEst.angle[0] - p_speedEst.angle[1];
+        deltaAngle = p_speed.pos[NEW] - p_speed.pos[OLD];
         // Saturate it between -0.5 and 0.5
-        dAngle += ((dAngle > 0.5f) ? (-1.0f) : ((dAngle < -0.5f) ? (1.0f) : (0.0f)));
+        deltaAngle += (deltaAngle > 0.5) ? (-1.0) : ((deltaAngle < -0.5) ? (1.0) : (0.0));
         // Compute high speed estimation
-        p_speedEst.highMechSpeedEst = dAngle * p_speedEst.highSpeedScaler;
+        p_speed.highMechSpeed = deltaAngle * p_speed.highSpeedScaler;
         // Save last angle
-        p_speedEst.angle[1] = p_speedEst.angle[0];
+        p_speed.pos[OLD] = p_speed.pos[NEW];
         // Clear UTO flag
         p_qepRegs->QCLR.all = EQEP_INT_UNIT_TIME_OUT;
     }
@@ -87,30 +88,14 @@ inline void encoder_Update(ENCODER* p_encoder)
     if (p_qepRegs->QEPSTS.bit.UPEVNT)
     {
         // Check if capture value is not valid (direction change and timer overflow)
-        if (p_qepRegs->QEPSTS.all & 0xC)
-        {
+        if (p_qepRegs->QEPSTS.all & (EQEP_STS_CAP_OVRFLW_ERROR | EQEP_STS_CAP_DIR_ERROR))
             // Speed is very close to zero because direction changed or the rotor doesn't move fast enough
-            p_speedEst.lowMechSpeedEst = 0.0f;
-
-            // Clear flags
-            p_qepRegs->QEPSTS.all = 0xC;
-        } else {
-            // Check that capture value isn't 0xFFFF (error mode)
-            if (p_qepRegs->QCPRD != 0xFFFF)
-            {
-                // Compute low speed estimation
-                p_speedEst.lowMechSpeedEst = p_speedEst.lowSpeedScaler / p_qepRegs->QCPRD;
-
-                // Check if rotation is counter clock-wise
-                if (p_qepRegs->QEPSTS.bit.QDF == 0)
-                {
-                    p_speedEst.lowMechSpeedEst *= -1.0f;
-                }
-            }
-        }
-
-        // Clear position event flag
-        p_qepRegs->QEPSTS.all = EQEP_STS_UNIT_POS_EVNT;
+            p_speed.lowMechSpeed = 0.0;
+        else
+            // Compute low speed estimation, set sign according QDF
+            p_speed.lowMechSpeed = ((p_qepRegs->QEPSTS.bit.QDF == 0) ? (-1.0) : (1.0)) * p_speed.lowSpeedScaler / p_qepRegs->QCPRD;
+        // Clear position event, direction change and timer overflow flags (even if direction and timer overflow are not set)
+        p_qepRegs->QEPSTS.all = EQEP_STS_UNIT_POS_EVNT | EQEP_STS_CAP_OVRFLW_ERROR | EQEP_STS_CAP_DIR_ERROR;
     }
 
     //-------------------------------------------------------------------//
@@ -133,59 +118,31 @@ inline void encoder_Update(ENCODER* p_encoder)
      */
 
     // Compute merge coefficient
-    p_speedEst.alpha = __fmin(__fmax(0.05f * (FM_ABS(p_speedEst.highMechSpeedEst) - SPEED_ESTIMATION_THRESHOLD), 0.0f), 1.0f);
-
+    p_speed.alpha = __fmin(__fmax(0.05f * (FM_ABS(p_speed.highMechSpeed) - SPEED_ESTIMATION_THRESHOLD), 0.0f), 1.0f);
     // Compute speed reference // TODO investigate if low speed calculation is useful
     //p_encoder->speedEst.speedRef = (1.0f - p_encoder->speedEst.alpha) * p_encoder->speedEst.lowMechSpeedEst + p_encoder->speedEst.alpha * p_encoder->speedEst.highMechSpeedEst;
-    p_speedEst.speedRef = p_speedEst.highMechSpeedEst;
-
+    p_speed.speedRef = p_speed.highMechSpeed;
     // Update speeds
-    LPF_FILTER(p_speedEst.lpf, p_speedEst.mechSpeed, p_speedEst.speedRef);
-    p_speedEst.elecSpeed = *(p_encoder->p_polePairs) * p_speedEst.mechSpeed;
+    LPF_FILTER(p_speed.lpf, p_speed.mechSpeed, p_speed.speedRef);
+    p_speed.elecSpeed = *(p_encoder->p_polePairs) * p_speed.mechSpeed;
 
     //-------------------------------------------------------------------//
     //                        ANGLES COMPUTATION                         //
     //-------------------------------------------------------------------//
-
     // Update turnNb
-    dAngle = p_encoder->mechAngle - p_encoder->lastMechAngle;
-
+    deltaAngle = p_encoder->mechPos[NEW] - p_encoder->mechPos[OLD];
     // If angle difference is high enough, we overflowed or underflowed
-    if (dAngle > 0.5f)
-    {
-        p_encoder->turnNb--;
-    } else if (dAngle < -0.5f)
-    {
-        p_encoder->turnNb++;
-    }
-
+    p_encoder->turnNb += (deltaAngle > 0.5f) ? (-1.0f) : ((deltaAngle < -0.5f) ? (1.0f) : (0.0f));
     // Saturate turnNb between -128 and 127
-    if (p_encoder->turnNb > 127)
-    {
-        p_encoder->turnNb = -128;
-
-        // Raise roll-over flag
-        p_encoder->rollOverFlag = true;
-    }
-    else if (p_encoder->turnNb < -128)
-    {
-        p_encoder->turnNb = 127;
-
-        // Raise roll-over flag
-        p_encoder->rollOverFlag = true;
-    }
-
+    p_encoder->turnNb = (p_encoder->turnNb > 127) ? (-128) : ((p_encoder->turnNb < -128) ? (127) : (p_encoder->turnNb));
+    p_encoder->rollOverFlag = ((p_encoder->turnNb > 127) || (p_encoder->turnNb < -128)) ? (true) : (false);
     // Update last angle
-    p_encoder->lastMechAngle = p_encoder->mechAngle;
-
+    p_encoder->mechPos[OLD] = p_encoder->mechPos[NEW];
     // Compute indexed angle
-    p_encoder->indexedMechAngle = p_encoder->mechAngle - p_encoder->indexAngle;
-    if (p_encoder->indexedMechAngle < 0.0f)
-        p_encoder->indexedMechAngle += 1.0f;
-
+    p_encoder->indexedMechAngle = p_encoder->mechPos[NEW] - p_encoder->indexAngle;
+    p_encoder->indexedMechAngle += (p_encoder->indexedMechAngle < 0.0f) ? (1.0f) : (0.0f);
     // Compute new absolute angle
-    p_encoder->absoluteAngle = (p_encoder->isIndexCompensated ? p_encoder->indexedMechAngle : p_encoder->mechAngle)
-            + (float32_t)p_encoder->turnNb;
+    p_encoder->absoluteAngle = (p_encoder->isIndexCompensated ? p_encoder->indexedMechAngle : p_encoder->mechPos[NEW]) + (float32_t)p_encoder->turnNb;
 
     //-------------------------------------------------------------------//
     //                          INDEX HANDLING                           //
@@ -193,16 +150,13 @@ inline void encoder_Update(ENCODER* p_encoder)
 
     // Check if index have been detected
     p_encoder->indexDetected = p_qepRegs->QEPSTS.bit.FIMF;
-
     // Check if index has been detected
     if (p_qepRegs->QFLG.all & EQEP_INT_INDEX_EVNT_LATCH)
     {
         // Save index position
-        p_encoder->indexAngle = p_encoder->mechAngleNorm * p_qepRegs->QPOSILAT;
-
+        p_encoder->indexAngle = p_encoder->mechPosNorm * p_qepRegs->QPOSILAT;
         // Toggle index
         p_encoder->indexToggle = !p_encoder->indexToggle;
-
         // Clear flag
         p_qepRegs->QCLR.all = EQEP_INT_INDEX_EVNT_LATCH;
     }

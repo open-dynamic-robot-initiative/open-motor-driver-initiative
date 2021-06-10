@@ -11,6 +11,16 @@
 #include "f2838x_device.h"
 
 /**
+ * @enum    ArrayID
+ * @brief   Easier array management for history.
+ */
+typedef enum
+{
+    NEW = 0,    /*!< Current data */
+    OLD = 1,    /*!< Previous data */
+} ArrayID;
+
+/**
  * @enum    MotorID
  * @brief   Easier motor identification
  */
