@@ -170,8 +170,8 @@ void CL_initFoc(FOC* p_foc, const uint16_t motorIndex)
     }
 
     // Speed estimation initialization
-    p_foc->encoder.speedEst.highSpeedScaler = 2.0 * FM_PI * QEP_UNIT_TIMER_FREQ; // 2pi / dt
-    p_foc->encoder.speedEst.lowSpeedScaler = 2.0 * FM_PI * p_foc->encoder.mechPosNorm * DEVICE_SYSCLK_FREQ * 4.0 / 128.0; // 4 is pos divider and 128 is clock divider
+    p_foc->encoder.speedEst.highSpeedNorm = 2.0 * FM_PI * QEP_UNIT_TIMER_FREQ; // 2pi / dt
+    p_foc->encoder.speedEst.lowSpeedNorm = 2.0 * FM_PI * p_foc->encoder.mechPosNorm * DEVICE_SYSCLK_FREQ * 4.0 / 128.0; // 4 is pos divider and 128 is clock divider
     LPF_setBandwidth(&p_foc->encoder.speedEst.lpf, PWM_FREQUENCY, 200); // 200Hz low-pass filter for velocity estimation
 
     // Initialize PI controllers

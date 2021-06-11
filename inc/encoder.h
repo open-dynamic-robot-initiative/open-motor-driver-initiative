@@ -17,11 +17,11 @@
 typedef struct __SpeedEst__
 {
     // High speed estimation
-    float32_t highSpeedScaler;  // [rad/s/pu], diff_angular * scaler = velocity
-    float32_t highMechSpeed; // [rad/s]
+    float32_t highSpeedNorm;// [rad/s/pu], diff_angular * scaler = velocity
+    float32_t highSpeed;    // [rad/s]
     // Low speed estimation
-    float32_t lowSpeedScaler;  // [rad.register], scaler / dtRegister = velocity
-    float32_t lowMechSpeed; // [rad/s]
+    float32_t lowSpeedNorm; // [rad.register], scaler / dtRegister = velocity
+    float32_t lowSpeed;     // [rad/s]
 
     // Speed merge
     float32_t alpha;     // Speed merge coefficient
