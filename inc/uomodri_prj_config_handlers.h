@@ -144,7 +144,6 @@ static DRV8353 drv[] =
 {
  {.drvCfgHandler = &DrvCfgList[MOTOR_1], .drvRegHandler = &DrvRegList[MOTOR_1], .enableTimeOut = true, .rxTimeOut = true},
  {.drvCfgHandler = &DrvCfgList[MOTOR_2], .drvRegHandler = &DrvRegList[MOTOR_2], .enableTimeOut = true, .rxTimeOut = true},
- {.drvCfgHandler = NULL},
 };
 
 static const MOTOR_HAL_CFG motor_hal_cfg[] =
@@ -219,6 +218,8 @@ static ENCODER encoder[] =
   .speedEst.lowSpeedNorm    = MOTOR1_ENC_LOW_SPEED_SCALE,
   .speedEst.mechSpeed       = PWM_FREQUENCY,
   .speedEst.speedRef        = 200,
+  .speedEst.lpf             = {.a = (1.0 / (1.0 + 2.0 * M_PI * 200 / PWM_FREQ)), .b = 1.0 - (1.0 / (1.0 + 2.0 * M_PI * 200 / PWM_FREQ))},
+
  },
  {
   .motorID          = MOTOR_2,
@@ -237,6 +238,7 @@ static MOTOR_MEASURES motor_meas[] =
   .ia = 0.0f, .ib = 0.0f, .ic = 0.0f,
   .va = 0.0f, .vb = 0.0f, .vc = 0.0f,
   .mechanicalAngle  = &encoder[MOTOR_1].mechPos[NEW],
+  .vMeasNew = false, .iMeasNew = false,
   .vaMeasReg        = (volatile int32_t *)(MOTOR1_VA_ADC_PPB_RESULT_ADDR),
   .vbMeasReg        = (volatile int32_t *)(MOTOR1_VB_ADC_PPB_RESULT_ADDR),
   .vcMeasReg        = (volatile int32_t *)(MOTOR1_VC_ADC_PPB_RESULT_ADDR),
@@ -250,6 +252,7 @@ static MOTOR_MEASURES motor_meas[] =
   .ia = 0.0f, .ib = 0.0f, .ic = 0.0f,
   .va = 0.0f, .vb = 0.0f, .vc = 0.0f,
   .mechanicalAngle  = &encoder[MOTOR_2].mechPos[NEW],
+  .vMeasNew = false, .iMeasNew = false,
   .vaMeasReg        = (volatile int32_t *)(MOTOR2_VA_ADC_PPB_RESULT_ADDR),
   .vbMeasReg        = (volatile int32_t *)(MOTOR2_VB_ADC_PPB_RESULT_ADDR),
   .vcMeasReg        = (volatile int32_t *)(MOTOR2_VC_ADC_PPB_RESULT_ADDR),
@@ -263,7 +266,23 @@ static MOTOR_MEASURES motor_meas[] =
 
 static FOC motor_foc[] =
 {
- {.enabled = true,
+ {.currentScaler = ADC_CURRENT_SCALE,
+  .currentScalerReg = -1.0 * ADC_CURRENT_SCALE / 0x8000L, // from register value to amps
+  // signed 15 bits resolution
+  .voltageScaler = ADC_VOLTAGE_SCALE,
+  .voltageScalerReg = ADC_VOLTAGE_SCALE / 0x10000L, // unsigned 16 bits resolution
+
+//  .adcScaler = ADC_POT_VOLTAGE_SCALE,
+//  .adcScalerReg = ADC_POT_VOLTAGE_SCALE / 0x10000L, // unsigned 16 bits resolution
+
+  // Initialize duty cycle saturation
+  .dutyCycleSat = 0.4,
+
+  // Initialize control loop low-pass filter
+  .controlLoopLpf.a = 1.0 / (1.0 + 2.0 * M_PI * MOTOR1_CUR_LOOP_BANDWIDTH / PWM_FREQ),
+  .controlLoopLpf.b = 1.0 - (1.0 / (1.0 + 2.0 * M_PI * MOTOR1_CUR_LOOP_BANDWIDTH / PWM_FREQ)),
+
+  .enabled = true,
   .piId.integral = 0.0f, .piId.err = 0.0f, .piId.ff = 0.0f, .piId.out = 0.0f,
   .piIq.integral = 0.0f, .piIq.err = 0.0f, .piIq.ff = 0.0f, .piIq.out = 0.0f,
   .posPd.err = 0.0f, .posPd.vErr = 0.0f, .posPd.out = 0.0f,
@@ -335,7 +354,7 @@ static MOTOR_STRUCT motor[] =
   .motorID = MOTOR_2,
   .motorHalCfg = &motor_hal_cfg[MOTOR_2],
   .motorParams = &motor_params[MOTOR_2],
-  .motorMeas = &motor_meas[MOTOR_1],
+  .motorMeas = &motor_meas[MOTOR_2],
   .motorEncoder = &encoder[MOTOR_2],
   .motorDRV = &drv[MOTOR_2],
   .motorFOC = &motor_foc[MOTOR_2],

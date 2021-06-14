@@ -46,8 +46,18 @@ inline void encoder_GetPosition(ENCODER *p_encoder)
     // Compute mechanical angle normalized between 0 and 1
     p_encoder->mechPos[NEW] = (float32_t)(*p_encoder->p_qepCntPosReg) / p_encoder->mechPosNorm;
     // Compute electrical angle (each pole pair is normalized between 0 and 1)
-    p_encoder->elecPos = (*p_encoder->p_polePairs) * p_encoder->mechPos[NEW];
+    p_encoder->elecPos  = (*p_encoder->p_polePairs) * p_encoder->mechPos[NEW];
     p_encoder->elecPos -= (float32_t)((int32_t)p_encoder->elecPos);
+    p_encoder->posNew   = true;
+
+    if(p_encoder->motorID == MOTOR_1)
+        // Clear the interrupt flag
+        HWREGH(EPWM1_BASE + EPWM_O_ETCLR) |= EPWM_ETCLR_INT; // EPWM_clearEventTriggerInterruptFlag(EPWM1_BASE);
+    else
+        // Clear the interrupt flag
+        HWREGH(EPWM4_BASE + EPWM_O_ETCLR) |= EPWM_ETCLR_INT; // EPWM_clearEventTriggerInterruptFlag(EPWM4_BASE);
+    // Acknowledge the interrupt (Acknowledge PIE Interrupt Group 10)
+    HWREGH(PIECTRL_BASE + PIE_O_ACK) = INTERRUPT_ACK_GROUP3; // Interrupt_clearACKGroup(INTERRUPT_ACK_GROUP10);
 }
 
 // Encoder update routine, this is not critical for the control loop to be executed
@@ -67,18 +77,29 @@ inline void encoder_GetSpeed(ENCODER* p_encoder)
     // Check if unit timer overflow event happened for high speed calculation
     if(p_qepRegs->QFLG.bit.UTO)
     {
-        // Read latched angle normalized between 0 and 1
-        p_speed.pos[NEW] = p_qepRegs->QPOSLAT / p_encoder->mechPosNorm;
-        // Compute angle difference
+        p_speed.pos[NEW] = p_qepRegs->QPOSLAT;
+
         deltaPos = p_speed.pos[NEW] - p_speed.pos[OLD];
-        // Saturate it between -0.5 and 0.5
-        deltaPos += (deltaPos > 0.5) ? (-1.0) : ((deltaPos < -0.5) ? (1.0) : (0.0));
-        // Compute high speed estimation
+        deltaPos += (p_qepRegs->QFLG.bit.PCO) ? (p_encoder->mechPosNorm) : (0.0);
+        deltaPos -= (p_qepRegs->QFLG.bit.PCU) ? (p_encoder->mechPosNorm) : (0.0);
+
         p_speed.highSpeed = deltaPos * p_speed.highSpeedNorm;
         // Save last angle
         p_speed.pos[OLD] = p_speed.pos[NEW];
         // Clear UTO flag
-        p_qepRegs->QCLR.all = EQEP_INT_UNIT_TIME_OUT;
+        p_qepRegs->QCLR.all = EQEP_INT_UNIT_TIME_OUT | EQEP_INT_OVERFLOW | EQEP_INT_UNDERFLOW;
+//        // Read latched angle normalized between 0 and 1
+//        p_speed.pos[NEW] = p_qepRegs->QPOSLAT / p_encoder->mechPosNorm;
+//        // Compute angle difference
+//        deltaPos = p_speed.pos[NEW] - p_speed.pos[OLD];
+//        // Saturate it between -0.5 and 0.5
+//        deltaPos += (deltaPos > 0.5) ? (-1.0) : ((deltaPos < -0.5) ? (1.0) : (0.0));
+//        // Compute high speed estimation
+//        p_speed.highSpeed = deltaPos * p_speed.highSpeedNorm;
+//        // Save last angle
+//        p_speed.pos[OLD] = p_speed.pos[NEW];
+//        // Clear UTO flag
+//        p_qepRegs->QCLR.all = EQEP_INT_UNIT_TIME_OUT;
     }
 
     //-------------------------------------------------------------------//

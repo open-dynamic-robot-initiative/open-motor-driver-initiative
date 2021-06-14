@@ -54,6 +54,7 @@ typedef struct __Encoder__
     float32_t           elecPos; // [pu]
     float32_t           mechPos[2]; // [pu]
 
+    bool                posNew;
     // Indexed angles
     bool  isIndexCompensated;   // Is index compensation activated
     float32_t indexAngle;       // Index mech angle

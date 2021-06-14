@@ -28,6 +28,7 @@
 #include "lowpass_filter.h"
 #include "anticoagging.h"
 #include "uomodri_user_defines.h"
+//#include "uomodri_prj_config_handlers.h"
 
 typedef struct __MOTOR_PARAMS__
 {
@@ -60,6 +61,9 @@ typedef struct __MOTOR_MEASURES__
     float32_t ic;       // [A]
 
     float32_t* mechanicalAngle; // between 0 and 1
+
+    bool vMeasNew;
+    bool iMeasNew;
 
     // ADC result registers
     volatile int32_t* vaMeasReg;
@@ -156,5 +160,8 @@ typedef struct __MOTOR_STRUCT__
     // ADC interrupt flag register
     volatile union ADCINTFLG_REG *adcIntFlag;
 } MOTOR_STRUCT;
+
+inline void MOTOR_getCurrent(MOTOR_STRUCT*);
+inline void MOTOR_getVoltage(MOTOR_STRUCT*);
 
 #endif /* INC_MOTOR_H_ */

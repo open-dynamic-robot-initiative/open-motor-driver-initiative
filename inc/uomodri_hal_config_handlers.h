@@ -79,7 +79,6 @@ static const ADC_INIT_TypeDef AdcInitList[] =
  {.adcBase = MOTOR2_VC_ADC_ADDR,    .adcChannel = MOTOR2_VC_CH,     .adcSOCNumber = MOTOR2_VC_SOC_NUM,      .adcTriggerSrc = ADC_TRIGGER_EVT2},
  {.adcBase = MOTOR1_IC_ADC_ADDR,    .adcChannel = MOTOR1_IC_CH,     .adcSOCNumber = MOTOR1_IC_SOC_NUM,      .adcTriggerSrc = ADC_TRIGGER_EVT3},
  {.adcBase = MOTOR2_IC_ADC_ADDR,    .adcChannel = MOTOR2_IC_CH,     .adcSOCNumber = MOTOR2_IC_SOC_NUM,      .adcTriggerSrc = ADC_TRIGGER_EVT4},
-
  // END OF ARRAY
  {.adcBase = 0xFFFFFFFF},
 };
@@ -233,6 +232,7 @@ static const ePWM_DB_TypeDef PwmDeadBandCfgList[] =
  {.epwmBase = MOTOR2_PWM1_BASE, .redCount = PWM_DBRED, .fedCount = PWM_DBFED, .DelayMode = EPWM_DELAY_ENABLE},
  {.epwmBase = MOTOR2_PWM2_BASE, .redCount = PWM_DBRED, .fedCount = PWM_DBFED, .DelayMode = EPWM_DELAY_ENABLE},
  {.epwmBase = MOTOR2_PWM3_BASE, .redCount = PWM_DBRED, .fedCount = PWM_DBFED, .DelayMode = EPWM_DELAY_ENABLE},
+ // END OF ARRAY
  {.epwmBase = 0xFFFFFFFF},
 };
 

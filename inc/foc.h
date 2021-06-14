@@ -165,7 +165,7 @@ inline void FOC_getPhaseCurrent(FOC*, MOTOR_HAL_CFG*);
 inline void FOC_getPhaseVoltage(FOC*, MOTOR_HAL_CFG*);
 inline void FOC_getBusVoltage(FOC*, MOTOR_HAL_CFG*);
 
-inline void FOC_getMeasures(FOC*, MOTOR_HAL_CFG*);
+//inline void FOC_getMeasures(FOC*, MOTOR_HAL_CFG*);
 inline void FOC_sineCosine(FOC*);
 inline void FOC_parkClarke(FOC*);
 

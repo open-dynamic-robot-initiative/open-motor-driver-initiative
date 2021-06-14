@@ -31,35 +31,6 @@ inline void FOC_getBusVoltage(FOC* p_foc, MOTOR_HAL_CFG* p_motor)
 }
 
 
-// Read current measures
-inline void FOC_getMeasures(FOC* p_foc, MOTOR_HAL_CFG* p_motor)
-{
-    // Get the latest position of the Quadrature Encoder
-
-//    p_motor[p_motor->motorID].encoderPos = HWREG(p_motor->p_qep->eqepBase + EQEP_O_QPOSCNT);
-//    // Get the latest ADC results to the buffer
-//    p_motor[p_motor->motorID].ia      = HWREGH(p_motor->p_iConv->adcResultBase + ADC_SOC_NUMBER0);
-//    p_motor[p_motor->motorID].ib      = HWREGH(ADCBRESULT_BASE + ADC_SOC_NUMBER0);
-//    p_motor[p_motor->motorID].ic      = HWREGH(ADCDRESULT_BASE + ADC_SOC_NUMBER0);
-//    p_motor[p_motor->motorID].vbus    = HWREGH(ADCCRESULT_BASE + ADC_SOC_NUMBER0);
-
-//    motor[MOTOR_1].ia = (float32_t)HWSREGH(motor[MOTOR_1].motorHalCfg->p_iConv[0]->adcPPBResultBase) * ADC_CURRENT_SCALE;
-//    motor[MOTOR_1].ib = (float32_t)HWSREGH(motor[MOTOR_1].motorHalCfg->p_iConv[1]->adcPPBResultBase) * ADC_CURRENT_SCALE;
-//    motor[MOTOR_1].ic = (float32_t)HWSREGH(motor[MOTOR_1].motorHalCfg->p_iConv[2]->adcPPBResultBase) * ADC_CURRENT_SCALE;
-
-
-
-    // Convert currents from registers
-    //p_foc->ia = (*p_foc->isenAResult) * p_foc->currentScalerReg;
-    //p_foc->ib = (*p_foc->isenBResult) * p_foc->currentScalerReg;
-    //p_foc->ic = (*p_foc->isenCResult) * p_foc->currentScalerReg;
-
-    // Get bus voltage (minimum is one to avoid dividing by zero later)
-    //p_foc->vBus = __fmax(*(p_foc->vBusSenResult) * p_foc->voltageScalerReg, 1.0f);
-
-    // Get potentiometer voltage
-    //p_foc->auxAdc = (*p_foc->potResult) * p_foc->adcScalerReg;
-}
 
 // Compute electrical angle sine and cosine
 inline void FOC_sineCosine(FOC* p_foc)
@@ -83,24 +54,24 @@ inline void FOC_parkClarke(FOC* p_foc)
 }
 
 // Compute errors, feed-forwards and execute PI current controllers
-//inline void FOC_runPi(FOC *foc)
-//{
-//    // Run PI Id controller
-//    p_foc->piId.err = p_foc->idRef - p_foc->id;
-//    // Compute feed-forward term. Don't use the U=RI part because idRef = 0
-//    p_foc->piId.ff = -p_foc->encoder.speedEst.elecSpeed * p_foc->Lq * p_foc->iq;
-//    //PI_run(&p_foc->piId);
-//
-//    // Run PI Iq controller
-//    p_foc->piIq.err = p_foc->iqRef - p_foc->iq;
-//    // Compute feed-forward term. The coupled id term decreases performances so we don't use it
-//    p_foc->piIq.ff = p_foc->Rs * p_foc->iqRef + p_foc->encoder.speedEst.elecSpeed * p_foc->ke;
-//    //PI_run(&p_foc->piIq);
-//
-//    // Copy output variables
-//    p_foc->vd = p_foc->piId.out;
-//    p_foc->vq = p_foc->piIq.out;
-//}
+inline void FOC_runPi(FOC* p_foc)
+{
+    // Run PI Id controller
+    p_foc->piId.err = p_foc->idRef - p_foc->id;
+    // Compute feed-forward term. Don't use the U=RI part because idRef = 0
+    p_foc->piId.ff = -1.0 * p_foc->encoder.speedEst.elecSpeed * (*p_foc->Lq) * p_foc->iq;
+    PI_run(&p_foc->piId);
+
+    // Run PI Iq controller
+    p_foc->piIq.err = p_foc->iqRef - p_foc->iq;
+    // Compute feed-forward term. The coupled id term decreases performances so we don't use it
+    p_foc->piIq.ff = (*p_foc->Rs) * p_foc->iqRef + p_foc->encoder.speedEst.elecSpeed * (*p_foc->ke);
+    PI_run(&p_foc->piIq);
+
+    // Copy output variables
+    p_foc->vd = p_foc->piId.out;
+    p_foc->vq = p_foc->piIq.out;
+}
 
 // Compute phase voltages from controller outputs
 inline void FOC_invParkClarke(FOC* p_foc)
