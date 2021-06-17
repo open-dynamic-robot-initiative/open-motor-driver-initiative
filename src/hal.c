@@ -77,8 +77,7 @@ void HAL_GPIO_init(const GPIO_TypeDef* p_gpio)
  */
 void HAL_ADC_init(const ADC_TypeDef* p_adcCfg)
 {
-    if((p_adcCfg != NULL) && (ADC_isBaseValid(p_adcCfg->adcBase)) && (p_adcCfg->adcInit != NULL) &&
-            (p_adcCfg->adcAcq != NULL) && (p_adcCfg->adcIt != NULL))
+    if((p_adcCfg != NULL) && (ADC_isBaseValid(p_adcCfg->adcBase)) && (p_adcCfg->adcInit != NULL) && (p_adcCfg->adcAcq != NULL))
     {
         const ADC_INIT_TypeDef* p_adcInit   = p_adcCfg->adcInit;
         const ADC_ACQ_TypeDef*  p_adcAcq    = p_adcCfg->adcAcq;
@@ -122,12 +121,15 @@ void HAL_ADC_init(const ADC_TypeDef* p_adcCfg)
                 p_adcAcq++;
             }
 
-            while(p_adcIT->adcBase == adcBase)
+            if(p_adcCfg->adcIt != NULL)
             {
-                ADC_setInterruptSource(adcBase, p_adcIT->adcIntNumber, p_adcIT->adcEOCNumber);
-                ADC_enableInterrupt(adcBase, p_adcIT->adcIntNumber);
-                ADC_clearInterruptStatus(adcBase, p_adcIT->adcIntNumber);
-                p_adcIT++;
+                while(p_adcIT->adcBase == adcBase)
+                {
+                    ADC_setInterruptSource(adcBase, p_adcIT->adcIntNumber, p_adcIT->adcEOCNumber);
+                    ADC_enableInterrupt(adcBase, p_adcIT->adcIntNumber);
+                    ADC_clearInterruptStatus(adcBase, p_adcIT->adcIntNumber);
+                    p_adcIT++;
+                }
             }
             adcBase = (++p_adcCfg)->adcBase;
         }
@@ -564,12 +566,13 @@ void HAL_IT_init(const IT_TypeDef* p_ITCfg)
             Interrupt_register(intNum, p_ITCfg->handler);
             // Enable Interrupts
             Interrupt_enable(intNum);
+            Interrupt_enableInCPU(p_ITCfg->intCpuGroup);
             intNum = (++p_ITCfg)->intNum;
         }
         // Enable interrupt group 1 (ePWM 1 and 4 interrupts are here)
-        Interrupt_enableInCPU(INTERRUPT_CPU_INT1);
-        Interrupt_enableInCPU(INTERRUPT_CPU_INT3);
-        Interrupt_enableInCPU(INTERRUPT_CPU_INT10);
+//        Interrupt_enableInCPU(INTERRUPT_CPU_INT1);
+//        Interrupt_enableInCPU(INTERRUPT_CPU_INT3);
+//        Interrupt_enableInCPU(INTERRUPT_CPU_INT10);
 
         // enable global interrupt
         EINT;

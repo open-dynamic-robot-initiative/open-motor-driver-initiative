@@ -60,32 +60,32 @@ inline void MOTOR_getVoltage(MOTOR_STRUCT* p_motor)
     p_motor->motorMeas->vc = (float32_t)(*p_motor->motorMeas->vcMeasReg) * ADC_VOLTAGE_SCALE;
     p_motor->motorMeas->vMeasNew = true;
 
-    if( p_motor->motorID == MOTOR_1)
-    {
-        p_motor->motorMeas->vbus    = __fmax((float32_t)(*p_motor->motorMeas->vBusMeasReg) * ADC_VOLTAGE_SCALE, 1.0f);
-
-        HWREGH(ADCA_BASE + ADC_O_INTOVFCLR) = (1U << ADC_INT_NUMBER1);
-        //        ADC_clearInterruptOverflowStatus(ADCA_BASE, ADC_INT_NUMBER1);
-        // Clear the interrupt flag
-        HWREGH(ADCA_BASE + ADC_O_INTFLGCLR) = (1U << ADC_INT_NUMBER1);
-        //        ADC_clearInterruptStatus(ADCA_BASE, ADC_INT_NUMBER1);
-        //        HWREG(PIECTRL_BASE + PIE_O_IFR1) = (1U << ADC_INT_NUMBER1);
-        // Acknowledge the interrupt (Acknowledge PIE Interrupt Group 1)
-        HWREGH(PIECTRL_BASE + PIE_O_ACK) = INTERRUPT_ACK_GROUP1;
-        //        Interrupt_clearACKGroup(INTERRUPT_ACK_GROUP1);
-    }
-    else
-    {
-        // Clear the interrupt overflow flag
-        HWREGH(ADCA_BASE + ADC_O_INTOVFCLR) = (1U << ADC_INT_NUMBER2);
-        //        ADC_clearInterruptOverflowStatus(ADCA_BASE, ADC_INT_NUMBER2);
-        // Clear the interrupt flag
-        HWREGH(ADCA_BASE + ADC_O_INTFLGCLR) = (1U << ADC_INT_NUMBER2);
-        //        ADC_clearInterruptStatus(ADCA_BASE, ADC_INT_NUMBER2);
-        //        HWREG(PIECTRL_BASE + PIE_O_IFR10) = (1U << ADC_INT_NUMBER2);
-        // Acknowledge the interrupt (Acknowledge PIE Interrupt Group 10)
-        HWREGH(PIECTRL_BASE + PIE_O_ACK) = INTERRUPT_ACK_GROUP10;
-        //        Interrupt_clearACKGroup(INTERRUPT_ACK_GROUP10);
-    }
+//    if( p_motor->motorID == MOTOR_1)
+//    {
+//        p_motor->motorMeas->vbus    = __fmax((float32_t)(*p_motor->motorMeas->vBusMeasReg) * ADC_VOLTAGE_SCALE, 1.0f);
+//
+//        HWREGH(ADCA_BASE + ADC_O_INTOVFCLR) = (1U << ADC_INT_NUMBER1);
+//        //        ADC_clearInterruptOverflowStatus(ADCA_BASE, ADC_INT_NUMBER1);
+//        // Clear the interrupt flag
+//        HWREGH(ADCA_BASE + ADC_O_INTFLGCLR) = (1U << ADC_INT_NUMBER1);
+//        //        ADC_clearInterruptStatus(ADCA_BASE, ADC_INT_NUMBER1);
+//        //        HWREG(PIECTRL_BASE + PIE_O_IFR1) = (1U << ADC_INT_NUMBER1);
+//        // Acknowledge the interrupt (Acknowledge PIE Interrupt Group 1)
+//        HWREGH(PIECTRL_BASE + PIE_O_ACK) = INTERRUPT_ACK_GROUP1;
+//        //        Interrupt_clearACKGroup(INTERRUPT_ACK_GROUP1);
+//    }
+//    else
+//    {
+//        // Clear the interrupt overflow flag
+//        HWREGH(ADCA_BASE + ADC_O_INTOVFCLR) = (1U << ADC_INT_NUMBER2);
+//        //        ADC_clearInterruptOverflowStatus(ADCA_BASE, ADC_INT_NUMBER2);
+//        // Clear the interrupt flag
+//        HWREGH(ADCA_BASE + ADC_O_INTFLGCLR) = (1U << ADC_INT_NUMBER2);
+//        //        ADC_clearInterruptStatus(ADCA_BASE, ADC_INT_NUMBER2);
+//        //        HWREG(PIECTRL_BASE + PIE_O_IFR10) = (1U << ADC_INT_NUMBER2);
+//        // Acknowledge the interrupt (Acknowledge PIE Interrupt Group 10)
+//        HWREGH(PIECTRL_BASE + PIE_O_ACK) = INTERRUPT_ACK_GROUP10;
+//        //        Interrupt_clearACKGroup(INTERRUPT_ACK_GROUP10);
+//    }
 }
 

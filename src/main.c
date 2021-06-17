@@ -219,6 +219,7 @@ __interrupt void adc3ISR(void)
 {
     GPIO_writePin(DEBUG_INT_PIN1, 1);
     MOTOR_getCurrent(&motor[MOTOR_1]);
+    MOTOR_getVoltage(&motor[MOTOR_1]);
     GPIO_writePin(DEBUG_INT_PIN1, 0);
 //    if(ADC_getInterruptStatus(ADCA_BASE, ADC_INT_NUMBER3))
 //    {
@@ -255,6 +256,7 @@ __interrupt void adc4ISR(void)
 {
     GPIO_writePin(DEBUG_INT_PIN2, 1);
     MOTOR_getCurrent(&motor[MOTOR_2]);
+    MOTOR_getVoltage(&motor[MOTOR_2]);
     GPIO_writePin(DEBUG_INT_PIN2, 0);
 
 ////    if(ADC_getInterruptStatus(ADCA_BASE, ADC_INT_NUMBER4))

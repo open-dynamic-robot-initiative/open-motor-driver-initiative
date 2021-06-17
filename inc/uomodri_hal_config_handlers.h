@@ -114,8 +114,8 @@ static const ADC_ACQ_TypeDef AdcAcqList[] =
  */
 static const ADC_IT_TypeDef AdcIntList[] =
 {
- {.adcBase = MOTOR12_IVA_ADC_ADDR, .adcEOCNumber = MOTOR1_VA_SOC_NUM,   .adcIntNumber = ADC_INT_NUMBER1},
- {.adcBase = MOTOR12_IVA_ADC_ADDR, .adcEOCNumber = MOTOR2_VA_SOC_NUM,   .adcIntNumber = ADC_INT_NUMBER2},
+// {.adcBase = MOTOR12_IVA_ADC_ADDR, .adcEOCNumber = MOTOR1_VA_SOC_NUM,   .adcIntNumber = ADC_INT_NUMBER1},
+// {.adcBase = MOTOR12_IVA_ADC_ADDR, .adcEOCNumber = MOTOR2_VA_SOC_NUM,   .adcIntNumber = ADC_INT_NUMBER2},
  {.adcBase = MOTOR12_IVA_ADC_ADDR, .adcEOCNumber = MOTOR1_IA_SOC_NUM,   .adcIntNumber = ADC_INT_NUMBER3},
  {.adcBase = MOTOR12_IVA_ADC_ADDR, .adcEOCNumber = MOTOR2_IA_SOC_NUM,   .adcIntNumber = ADC_INT_NUMBER4},
  // END OF ARRAY
@@ -128,9 +128,9 @@ static const ADC_IT_TypeDef AdcIntList[] =
 static const ADC_TypeDef AdcCfgList[] =
 {
  {.adcBase = MOTOR12_IVA_ADC_ADDR,  .adcResultBase = MOTOR12_IVA_ADC_RESULT_ADDR,   .adcInit = &AdcInitList[0], .adcAcq = &AdcAcqList[0],   .adcIt = &AdcIntList[0]},
- {.adcBase = MOTOR12_IVB_ADC_ADDR,  .adcResultBase = MOTOR12_IVB_ADC_RESULT_ADDR,   .adcInit = &AdcInitList[4], .adcAcq = &AdcAcqList[4],   .adcIt = &AdcIntList[1]},
- {.adcBase = MOTOR12_VBUS_ADC_ADDR, .adcResultBase = MOTOR12_VBUS_ADC_RESULT_ADDR,  .adcInit = &AdcInitList[8], .adcAcq = &AdcAcqList[8],   .adcIt = &AdcIntList[2]},
- {.adcBase = MOTOR12_IVC_ADC_ADDR,  .adcResultBase = MOTOR12_IVC_ADC_RESULT_ADDR,   .adcInit = &AdcInitList[9], .adcAcq = &AdcAcqList[9],   .adcIt = &AdcIntList[3]},
+ {.adcBase = MOTOR12_IVB_ADC_ADDR,  .adcResultBase = MOTOR12_IVB_ADC_RESULT_ADDR,   .adcInit = &AdcInitList[4], .adcAcq = &AdcAcqList[4],   .adcIt = NULL},
+ {.adcBase = MOTOR12_VBUS_ADC_ADDR, .adcResultBase = MOTOR12_VBUS_ADC_RESULT_ADDR,  .adcInit = &AdcInitList[8], .adcAcq = &AdcAcqList[8],   .adcIt = NULL},
+ {.adcBase = MOTOR12_IVC_ADC_ADDR,  .adcResultBase = MOTOR12_IVC_ADC_RESULT_ADDR,   .adcInit = &AdcInitList[9], .adcAcq = &AdcAcqList[9],   .adcIt = NULL},
  // END OF ARRAY
  {.adcBase = 0xFFFFFFFF},
 };

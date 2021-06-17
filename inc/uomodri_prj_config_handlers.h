@@ -30,12 +30,12 @@ extern __interrupt void isrMotor2(void);
 
 static const IT_TypeDef InterruptList[] =
 {
- {.intNum = INT_ADCA1, .handler = &adc1ISR},
- {.intNum = INT_ADCA2, .handler = &adc2ISR},
- {.intNum = INT_ADCA3, .handler = &adc3ISR},
- {.intNum = INT_ADCA4, .handler = &adc4ISR},
- {.intNum = INT_EPWM1, .handler = &isrMotor1},
- {.intNum = INT_EPWM4, .handler = &isrMotor2},
+// {.intNum = INT_ADCA1, .handler = &adc1ISR},
+// {.intNum = INT_ADCA2, .handler = &adc2ISR},
+ {.intNum = INT_ADCA3, .intCpuGroup = INTERRUPT_CPU_INT10, .intAckGroup = INTERRUPT_ACK_GROUP10, .handler = &adc3ISR},
+ {.intNum = INT_ADCA4, .intCpuGroup = INTERRUPT_CPU_INT10, .intAckGroup = INTERRUPT_ACK_GROUP10, .handler = &adc4ISR},
+ {.intNum = INT_EPWM1, .intCpuGroup = INTERRUPT_CPU_INT3, .intAckGroup = INTERRUPT_ACK_GROUP3, .handler = &isrMotor1},
+ {.intNum = INT_EPWM4, .intCpuGroup = INTERRUPT_CPU_INT3, .intAckGroup = INTERRUPT_ACK_GROUP3, .handler = &isrMotor2},
  // END OF ARRAY
  {.intNum = 0xFFFFFFFF},
 };

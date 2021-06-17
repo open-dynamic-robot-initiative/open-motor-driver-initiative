@@ -277,6 +277,8 @@ typedef struct _ADC_TypeDef_
 typedef struct _IT_TypeDef_
 {
     uint32_t intNum;
+    uint16_t intCpuGroup;
+    uint16_t intAckGroup;
     void (*handler)(void);
 } IT_TypeDef;
 
