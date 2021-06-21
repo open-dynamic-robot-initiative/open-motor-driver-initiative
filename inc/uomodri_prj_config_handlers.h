@@ -21,21 +21,45 @@
 extern DualBufferW dualBufferW;
 extern DualBufferR dualBufferR;
 
-extern __interrupt void adc1ISR(void);
-extern __interrupt void adc2ISR(void);
-extern __interrupt void adc3ISR(void);
-extern __interrupt void adc4ISR(void);
-extern __interrupt void isrMotor1(void);
-extern __interrupt void isrMotor2(void);
+extern __interrupt void adc_isrMotor1(void);
+extern __interrupt void adc_isrMotor2(void);
+//extern __interrupt void adc3ISR(void);
+//extern __interrupt void adc4ISR(void);
+extern __interrupt void pwm_isrMotor1(void);
+extern __interrupt void pwm_isrMotor2(void);
 
 static const IT_TypeDef InterruptList[] =
 {
-// {.intNum = INT_ADCA1, .handler = &adc1ISR},
-// {.intNum = INT_ADCA2, .handler = &adc2ISR},
- {.intNum = INT_ADCA3, .intCpuGroup = INTERRUPT_CPU_INT10, .intAckGroup = INTERRUPT_ACK_GROUP10, .handler = &adc3ISR},
- {.intNum = INT_ADCA4, .intCpuGroup = INTERRUPT_CPU_INT10, .intAckGroup = INTERRUPT_ACK_GROUP10, .handler = &adc4ISR},
- {.intNum = INT_EPWM1, .intCpuGroup = INTERRUPT_CPU_INT3, .intAckGroup = INTERRUPT_ACK_GROUP3, .handler = &isrMotor1},
- {.intNum = INT_EPWM4, .intCpuGroup = INTERRUPT_CPU_INT3, .intAckGroup = INTERRUPT_ACK_GROUP3, .handler = &isrMotor2},
+ {.motorID          = MOTOR_1,
+  .intNum           = MOTOR1_IA_INT_CH,
+  .intPeriphBase    = MOTOR12_IVA_ADC_ADDR,
+  .intPeriphSrc     = MOTOR1_IA_INT_NUM,
+  .intCpuGroup      = INTERRUPT_CPU_INT10,
+  .intAckGroup      = INTERRUPT_ACK_GROUP10,
+  .handler          = &adc_isrMotor1
+ },
+ {.motorID          = MOTOR_2,
+  .intNum           = MOTOR2_IA_INT_CH,
+  .intPeriphBase    = MOTOR12_IVA_ADC_ADDR,
+  .intPeriphSrc     = MOTOR2_IA_INT_NUM,
+  .intCpuGroup      = INTERRUPT_CPU_INT10,
+  .intAckGroup      = INTERRUPT_ACK_GROUP10,
+  .handler          = &adc_isrMotor2
+ },
+ {.motorID          = MOTOR_1,
+  .intNum           = INT_EPWM1,
+  .intPeriphBase    = MOTOR1_PWM1_BASE,
+  .intCpuGroup      = INTERRUPT_CPU_INT3,
+  .intAckGroup      = INTERRUPT_ACK_GROUP3,
+  .handler          = &pwm_isrMotor1
+ },
+ {.motorID          = MOTOR_2,
+  .intNum           = INT_EPWM4,
+  .intPeriphBase    = MOTOR2_PWM1_BASE,
+  .intCpuGroup      = INTERRUPT_CPU_INT3,
+  .intAckGroup      = INTERRUPT_ACK_GROUP3,
+  .handler          = &pwm_isrMotor2
+ },
  // END OF ARRAY
  {.intNum = 0xFFFFFFFF},
 };
@@ -153,7 +177,7 @@ static const MOTOR_HAL_CFG motor_hal_cfg[] =
   .p_vConv      = {&AdcAcqList[0], &AdcAcqList[4], &AdcAcqList[9]},
   .p_iConv      = {&AdcAcqList[2], &AdcAcqList[6], &AdcAcqList[11]},
   .p_vbusConv   = &AdcAcqList[8],
-  .p_ITConv     = {&AdcIntList[0], &AdcIntList[2]},
+  .p_ITConv     = &AdcIntList[0],// &AdcIntList[2]},
 //  .p_ia         = ((volatile int16_t *)(.p_iConv[0]->adcPPBResultBase)),
 //  .p_ib         = (volatile int16_t *)(.p_iConv[1]->adcPPBResultBase),
 //  .p_ic         = (volatile int16_t *)(.p_iConv[2]->adcPPBResultBase),
@@ -175,7 +199,7 @@ static const MOTOR_HAL_CFG motor_hal_cfg[] =
   .p_vConv      = {&AdcAcqList[1], &AdcAcqList[5], &AdcAcqList[10]},
   .p_iConv      = {&AdcAcqList[3], &AdcAcqList[7], &AdcAcqList[12]},
   .p_vbusConv   = &AdcAcqList[8],
-  .p_ITConv     = {&AdcIntList[1], &AdcIntList[3]},
+  .p_ITConv     = &AdcIntList[1],// &AdcIntList[3]},
 //  .p_ia         = (((volatile int16_t *)((uintptr_t)(M2_IA_ADC_PPB_RESULT_ADDR)))),
 //  .p_ia         = (&((volatile int16_t *)((AdcPPBsList[1].adcPPBResultBase)))),
 //  .p_ia         = (((volatile int16_t *)((uintptr_t)&(AdcPPBsList[1]->adcPPBResultBase)))),
@@ -238,7 +262,7 @@ static MOTOR_MEASURES motor_meas[] =
   .ia = 0.0f, .ib = 0.0f, .ic = 0.0f,
   .va = 0.0f, .vb = 0.0f, .vc = 0.0f,
   .mechanicalAngle  = &encoder[MOTOR_1].mechPos[NEW],
-  .vMeasNew = false, .iMeasNew = false,
+  .MeasNew          = false,
   .vaMeasReg        = (volatile int32_t *)(MOTOR1_VA_ADC_PPB_RESULT_ADDR),
   .vbMeasReg        = (volatile int32_t *)(MOTOR1_VB_ADC_PPB_RESULT_ADDR),
   .vcMeasReg        = (volatile int32_t *)(MOTOR1_VC_ADC_PPB_RESULT_ADDR),
@@ -252,7 +276,7 @@ static MOTOR_MEASURES motor_meas[] =
   .ia = 0.0f, .ib = 0.0f, .ic = 0.0f,
   .va = 0.0f, .vb = 0.0f, .vc = 0.0f,
   .mechanicalAngle  = &encoder[MOTOR_2].mechPos[NEW],
-  .vMeasNew = false, .iMeasNew = false,
+  .MeasNew          = false,
   .vaMeasReg        = (volatile int32_t *)(MOTOR2_VA_ADC_PPB_RESULT_ADDR),
   .vbMeasReg        = (volatile int32_t *)(MOTOR2_VB_ADC_PPB_RESULT_ADDR),
   .vcMeasReg        = (volatile int32_t *)(MOTOR2_VC_ADC_PPB_RESULT_ADDR),
@@ -338,29 +362,29 @@ static FOC motor_foc[] =
 static MOTOR_STRUCT motor[] =
 {
  {
-  .motorID = MOTOR_1,
-  .motorHalCfg = &motor_hal_cfg[MOTOR_1],
-  .motorParams = &motor_params[MOTOR_1],
-  .motorMeas = &motor_meas[MOTOR_1],
-  .motorEncoder = &encoder[MOTOR_1],
-  .motorDRV = &drv[MOTOR_1],
-  .motorFOC = &motor_foc[MOTOR_1],
-  .currentScaler = ADC_CURRENT_SCALE,
+  .motorID          = MOTOR_1,
+  .motorHalCfg      = &motor_hal_cfg[MOTOR_1],
+  .motorParams      = &motor_params[MOTOR_1],
+  .motorMeas        = &motor_meas[MOTOR_1],
+  .motorEncoder     = &encoder[MOTOR_1],
+  .motorDRV         = &drv[MOTOR_1],
+  .motorFOC         = &motor_foc[MOTOR_1],
+  .currentScaler    = ADC_CURRENT_SCALE,
   .currentScalerReg = ADC_CURRENT_SCALE / 0x8000L,
-  .voltageScaler = ADC_VOLTAGE_SCALE,
+  .voltageScaler    = ADC_VOLTAGE_SCALE,
   .voltageScalerReg = ADC_VOLTAGE_SCALE / 0x10000L,
  },
  {
-  .motorID = MOTOR_2,
-  .motorHalCfg = &motor_hal_cfg[MOTOR_2],
-  .motorParams = &motor_params[MOTOR_2],
-  .motorMeas = &motor_meas[MOTOR_2],
-  .motorEncoder = &encoder[MOTOR_2],
-  .motorDRV = &drv[MOTOR_2],
-  .motorFOC = &motor_foc[MOTOR_2],
-  .currentScaler = ADC_CURRENT_SCALE,
+  .motorID          = MOTOR_2,
+  .motorHalCfg      = &motor_hal_cfg[MOTOR_2],
+  .motorParams      = &motor_params[MOTOR_2],
+  .motorMeas        = &motor_meas[MOTOR_2],
+  .motorEncoder     = &encoder[MOTOR_2],
+  .motorDRV         = &drv[MOTOR_2],
+  .motorFOC         = &motor_foc[MOTOR_2],
+  .currentScaler    = ADC_CURRENT_SCALE,
   .currentScalerReg = ADC_CURRENT_SCALE / 0x8000L,
-  .voltageScaler = ADC_VOLTAGE_SCALE,
+  .voltageScaler    = ADC_VOLTAGE_SCALE,
   .voltageScalerReg = ADC_VOLTAGE_SCALE / 0x10000L,
  },
 };

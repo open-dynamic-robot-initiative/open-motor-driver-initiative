@@ -78,6 +78,15 @@
 #define MOTOR2_VA_ADC_PPB_RESULT_ADDR       (ADCARESULT_BASE + ADC_PPBxRESULT_OFFSET_BASE + (2U * MOTOR2_VA_PPB_NUM))
 #define MOTOR1_IA_ADC_PPB_RESULT_ADDR       (ADCARESULT_BASE + ADC_PPBxRESULT_OFFSET_BASE + (2U * MOTOR1_IA_PPB_NUM))
 #define MOTOR2_IA_ADC_PPB_RESULT_ADDR       (ADCARESULT_BASE + ADC_PPBxRESULT_OFFSET_BASE + (2U * MOTOR2_IA_PPB_NUM))
+//
+#define MOTOR1_VA_INT_CH                    INT_ADCA1
+#define MOTOR1_VA_INT_NUM                   ADC_INT_NUMBER1
+#define MOTOR2_VA_INT_CH                    INT_ADCA2
+#define MOTOR2_VA_INT_NUM                   ADC_INT_NUMBER2
+#define MOTOR1_IA_INT_CH                    INT_ADCA3
+#define MOTOR1_IA_INT_NUM                   ADC_INT_NUMBER3
+#define MOTOR2_IA_INT_CH                    INT_ADCA4
+#define MOTOR2_IA_INT_NUM                   ADC_INT_NUMBER4
 /**
  * @}
  */

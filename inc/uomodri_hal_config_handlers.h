@@ -114,10 +114,10 @@ static const ADC_ACQ_TypeDef AdcAcqList[] =
  */
 static const ADC_IT_TypeDef AdcIntList[] =
 {
-// {.adcBase = MOTOR12_IVA_ADC_ADDR, .adcEOCNumber = MOTOR1_VA_SOC_NUM,   .adcIntNumber = ADC_INT_NUMBER1},
-// {.adcBase = MOTOR12_IVA_ADC_ADDR, .adcEOCNumber = MOTOR2_VA_SOC_NUM,   .adcIntNumber = ADC_INT_NUMBER2},
- {.adcBase = MOTOR12_IVA_ADC_ADDR, .adcEOCNumber = MOTOR1_IA_SOC_NUM,   .adcIntNumber = ADC_INT_NUMBER3},
- {.adcBase = MOTOR12_IVA_ADC_ADDR, .adcEOCNumber = MOTOR2_IA_SOC_NUM,   .adcIntNumber = ADC_INT_NUMBER4},
+// {.adcBase = MOTOR12_IVA_ADC_ADDR, .adcEOCNumber = MOTOR1_VA_SOC_NUM,   .adcIntNumber = MOTOR1_VA_INT_NUM},
+// {.adcBase = MOTOR12_IVA_ADC_ADDR, .adcEOCNumber = MOTOR2_VA_SOC_NUM,   .adcIntNumber = MOTOR2_VA_INT_NUM},
+ {.adcBase = MOTOR12_IVA_ADC_ADDR, .adcEOCNumber = MOTOR1_IA_SOC_NUM,   .adcIntNumber = MOTOR1_IA_INT_NUM},
+ {.adcBase = MOTOR12_IVA_ADC_ADDR, .adcEOCNumber = MOTOR2_IA_SOC_NUM,   .adcIntNumber = MOTOR2_IA_INT_NUM},
  // END OF ARRAY
  {.adcBase = 0xFFFFFFFF}
 };

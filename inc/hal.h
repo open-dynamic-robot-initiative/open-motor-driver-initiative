@@ -276,12 +276,14 @@ typedef struct _ADC_TypeDef_
 
 typedef struct _IT_TypeDef_
 {
-    uint32_t intNum;
-    uint16_t intCpuGroup;
-    uint16_t intAckGroup;
-    void (*handler)(void);
+    const MotorID   motorID;
+    uint32_t        intNum;
+    uint32_t        intPeriphBase;
+    uint16_t        intPeriphSrc;
+    uint16_t        intCpuGroup;
+    uint16_t        intAckGroup;
+    void            (*handler)(void);
 } IT_TypeDef;
-
 
 /**
  * @struct  HAL_
@@ -306,7 +308,7 @@ typedef struct _MOTOR_HAL_CFG_
     const ADC_ACQ_TypeDef*  p_iConv[3];
     const ADC_ACQ_TypeDef*  p_vConv[3];
     const ADC_ACQ_TypeDef*  p_vbusConv;
-    const ADC_IT_TypeDef*   p_ITConv[2];
+    const ADC_IT_TypeDef*   p_ITConv;
     const eQEP_TypeDef*     p_qep;
 //    // ADC results scaled (expressed in (A))
 //    float32_t               i[3];

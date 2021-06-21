@@ -62,7 +62,7 @@ int main(void)
             motor[MOTOR_2].motorEncoder->posNew = false;
         }
 
-        if(motor[MOTOR_1].motorMeas->iMeasNew == true)
+        if(motor[MOTOR_1].motorMeas->MeasNew == true)
         {
 //            // Current transforms
 //            FOC_parkClarke(motor[MOTOR_1].motorFOC);
@@ -72,10 +72,10 @@ int main(void)
 //            FOC_invParkClarke(motor[MOTOR_1].motorFOC);
 //            // Update PWM compare registers
 //            FOC_svm(motor[MOTOR_1].motorFOC);
-            motor[MOTOR_1].motorMeas->iMeasNew = false;
+            motor[MOTOR_1].motorMeas->MeasNew = false;
         }
 
-        if(motor[MOTOR_2].motorMeas->iMeasNew == true)
+        if(motor[MOTOR_2].motorMeas->MeasNew == true)
         {
 //            // Current transforms
 //            FOC_parkClarke(motor[MOTOR_2].motorFOC);
@@ -85,14 +85,8 @@ int main(void)
 //            FOC_invParkClarke(motor[MOTOR_2].motorFOC);
 //            // Update PWM compare registers
 //            FOC_svm(motor[MOTOR_2].motorFOC);
-            motor[MOTOR_2].motorMeas->iMeasNew = false;
+            motor[MOTOR_2].motorMeas->MeasNew = false;
         }
-
-        if(motor[MOTOR_1].motorMeas->vMeasNew == true)
-            motor[MOTOR_1].motorMeas->iMeasNew = false;
-
-        if(motor[MOTOR_2].motorMeas->iMeasNew == true)
-            motor[MOTOR_2].motorMeas->iMeasNew = false;
     }
 }
 
@@ -117,9 +111,10 @@ static void Mcu_init(void)
 /**
  * @brief   ADC1 interrupt. Read Ia, Ib, Ic \& Vbus of MOTOR_1
  */
-__interrupt void adc1ISR(void)
+__interrupt void adc_isrMotor1(void)
 {
     GPIO_writePin(DEBUG_INT_PIN1, 1);
+    MOTOR_getCurrent(&motor[MOTOR_1], &InterruptList[0]);
     MOTOR_getVoltage(&motor[MOTOR_1]);
     GPIO_writePin(DEBUG_INT_PIN1, 0);
 //    if(ADC_getInterruptStatus(ADCA_BASE, ADC_INT_NUMBER1))
@@ -176,9 +171,10 @@ __interrupt void adc1ISR(void)
 
 }
 
-__interrupt void adc2ISR(void)
+__interrupt void adc_isrMotor2(void)
 {
     GPIO_writePin(DEBUG_INT_PIN2, 1);
+    MOTOR_getCurrent(&motor[MOTOR_2], &InterruptList[1]);
     MOTOR_getVoltage(&motor[MOTOR_2]);
     GPIO_writePin(DEBUG_INT_PIN2, 0);
 //    if(ADC_getInterruptStatus(ADCA_BASE, ADC_INT_NUMBER2))
@@ -215,12 +211,13 @@ __interrupt void adc2ISR(void)
 //    }
 }
 
-__interrupt void adc3ISR(void)
-{
-    GPIO_writePin(DEBUG_INT_PIN1, 1);
-    MOTOR_getCurrent(&motor[MOTOR_1]);
-    MOTOR_getVoltage(&motor[MOTOR_1]);
-    GPIO_writePin(DEBUG_INT_PIN1, 0);
+//__interrupt void adc3ISR(void)
+//{
+//    GPIO_writePin(DEBUG_INT_PIN1, 1);
+//    MOTOR_getCurrent(&motor[MOTOR_1]);
+//    MOTOR_getVoltage(&motor[MOTOR_1]);
+//    GPIO_writePin(DEBUG_INT_PIN1, 0);
+
 //    if(ADC_getInterruptStatus(ADCA_BASE, ADC_INT_NUMBER3))
 //    {
 ////        uint8_t loop = 0;
@@ -250,14 +247,14 @@ __interrupt void adc3ISR(void)
 //        //        Interrupt_clearACKGroup(INTERRUPT_ACK_GROUP10);
 //        GPIO_writePin(DEBUG_INT_PIN1, 0);
 //    }
-}
+//}
 
-__interrupt void adc4ISR(void)
-{
-    GPIO_writePin(DEBUG_INT_PIN2, 1);
-    MOTOR_getCurrent(&motor[MOTOR_2]);
-    MOTOR_getVoltage(&motor[MOTOR_2]);
-    GPIO_writePin(DEBUG_INT_PIN2, 0);
+//__interrupt void adc4ISR(void)
+//{
+//    GPIO_writePin(DEBUG_INT_PIN2, 1);
+//    MOTOR_getCurrent(&motor[MOTOR_2]);
+//    MOTOR_getVoltage(&motor[MOTOR_2]);
+//    GPIO_writePin(DEBUG_INT_PIN2, 0);
 
 ////    if(ADC_getInterruptStatus(ADCA_BASE, ADC_INT_NUMBER4))
 ////    {
@@ -289,9 +286,9 @@ __interrupt void adc4ISR(void)
 //
 //        GPIO_writePin(DEBUG_INT_PIN2, 0);
 ////}
-}
+//}
 
-__interrupt void isrMotor1(void)
+__interrupt void pwm_isrMotor1(void)
 {
     GPIO_writePin(DEBUG_INT_PIN1, 1);
     if (motor[MOTOR_1].motorFOC->enabled)
@@ -340,7 +337,7 @@ __interrupt void isrMotor1(void)
     GPIO_writePin(DEBUG_INT_PIN1, 0);
 }
 
-__interrupt void isrMotor2(void)
+__interrupt void pwm_isrMotor2(void)
 {
     GPIO_writePin(DEBUG_INT_PIN2, 1);
     if (motor[MOTOR_2].motorFOC->enabled)
