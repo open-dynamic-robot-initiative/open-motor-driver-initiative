@@ -30,36 +30,10 @@ extern __interrupt void pwm_isrMotor2(void);
 
 static const IT_TypeDef InterruptList[] =
 {
- {.motorID          = MOTOR_1,
-  .intNum           = MOTOR1_IA_INT_CH,
-  .intPeriphBase    = MOTOR12_IVA_ADC_ADDR,
-  .intPeriphSrc     = MOTOR1_IA_INT_NUM,
-  .intCpuGroup      = INTERRUPT_CPU_INT10,
-  .intAckGroup      = INTERRUPT_ACK_GROUP10,
-  .handler          = &adc_isrMotor1
- },
- {.motorID          = MOTOR_2,
-  .intNum           = MOTOR2_IA_INT_CH,
-  .intPeriphBase    = MOTOR12_IVA_ADC_ADDR,
-  .intPeriphSrc     = MOTOR2_IA_INT_NUM,
-  .intCpuGroup      = INTERRUPT_CPU_INT10,
-  .intAckGroup      = INTERRUPT_ACK_GROUP10,
-  .handler          = &adc_isrMotor2
- },
- {.motorID          = MOTOR_1,
-  .intNum           = INT_EPWM1,
-  .intPeriphBase    = MOTOR1_PWM1_BASE,
-  .intCpuGroup      = INTERRUPT_CPU_INT3,
-  .intAckGroup      = INTERRUPT_ACK_GROUP3,
-  .handler          = &pwm_isrMotor1
- },
- {.motorID          = MOTOR_2,
-  .intNum           = INT_EPWM4,
-  .intPeriphBase    = MOTOR2_PWM1_BASE,
-  .intCpuGroup      = INTERRUPT_CPU_INT3,
-  .intAckGroup      = INTERRUPT_ACK_GROUP3,
-  .handler          = &pwm_isrMotor2
- },
+ {.motorID = MOTOR_1,   .intNum = MOTOR1_IA_INT_CH, .intPeriphBase = MOTOR12_IVA_ADC_ADDR,  .intPeriphSrc = MOTOR1_IA_INT_NUM,  .intCpuGroup = INTERRUPT_CPU_INT10, .intAckGroup = INTERRUPT_ACK_GROUP10,   .handler = &adc_isrMotor1},
+ {.motorID = MOTOR_2,   .intNum = MOTOR2_IA_INT_CH, .intPeriphBase = MOTOR12_IVA_ADC_ADDR,  .intPeriphSrc = MOTOR2_IA_INT_NUM,  .intCpuGroup = INTERRUPT_CPU_INT10, .intAckGroup = INTERRUPT_ACK_GROUP10,   .handler = &adc_isrMotor2},
+ {.motorID = MOTOR_1,   .intNum = INT_EPWM1,        .intPeriphBase = MOTOR1_PWM1_BASE,                                          .intCpuGroup = INTERRUPT_CPU_INT3,  .intAckGroup = INTERRUPT_ACK_GROUP3,    .handler = &pwm_isrMotor1},
+ {.motorID = MOTOR_2,   .intNum = INT_EPWM4,        .intPeriphBase = MOTOR2_PWM1_BASE,                                          .intCpuGroup = INTERRUPT_CPU_INT3,  .intAckGroup = INTERRUPT_ACK_GROUP3,    .handler = &pwm_isrMotor2},
  // END OF ARRAY
  {.intNum = 0xFFFFFFFF},
 };

@@ -32,6 +32,18 @@ typedef enum
 } MotorID;
 
 /**
+ * @enum    itID
+ * @brief   Easier interrupts identification
+ */
+typedef enum
+{
+    ADC_IT_MOTOR_1  = 0,    /*!< Select the ADC interrupt source of Motor_1 */
+    ADC_IT_MOTOR_2  = 1,    /*!< Select the ADC interrupt source of Motor_2 */
+    PWM_IT_MOTOR_1  = 2,    /*!< Select the PWM interrupt source of Motor_1 */
+    PWM_IT_MOTOR_2  = 3,    /*!< Select the PWM interrupt source of Motor_1 */
+} itID;
+
+/**
  * @enum    EPWM_DelayModeEnable
  * @brief   Enable or disable Deadband delay unit.
  */
