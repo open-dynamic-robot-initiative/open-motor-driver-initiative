@@ -73,10 +73,10 @@ typedef struct __Encoder__
     bool rollOverFlag;  // Roll-over error flag
 } ENCODER;
 
-inline void ENC_reset(ENCODER *encoder);
-inline void ENC_resetQepPos(ENCODER *encoder);
-inline void encoder_GetPosition(ENCODER *encoder);
-inline void encoder_GetSpeed(ENCODER *encoder);
+inline void ENC_reset(ENCODER*);
+inline void ENC_resetQepPos(ENCODER*);
+inline void encoder_GetPosition(ENCODER*);
+inline void encoder_GetSpeed(ENCODER*);
 
 
 

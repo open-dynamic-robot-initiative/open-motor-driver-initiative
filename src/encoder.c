@@ -41,7 +41,7 @@ inline void ENC_resetQepPos(ENCODER* p_encoder)
 }
 
 // Read rotor position
-inline void encoder_GetPosition(ENCODER *p_encoder)
+inline void encoder_GetPosition(ENCODER* p_encoder)
 {
     // Compute mechanical angle normalized between 0 and 1
     p_encoder->mechPos[NEW] = (float32_t)(*p_encoder->p_qepCntPosReg) / p_encoder->mechPosNorm;
@@ -49,15 +49,6 @@ inline void encoder_GetPosition(ENCODER *p_encoder)
     p_encoder->elecPos  = (*p_encoder->p_polePairs) * p_encoder->mechPos[NEW];
     p_encoder->elecPos -= (float32_t)((int32_t)p_encoder->elecPos);
     p_encoder->posNew   = true;
-
-    if(p_encoder->motorID == MOTOR_1)
-        // Clear the interrupt flag
-        HWREGH(EPWM1_BASE + EPWM_O_ETCLR) |= EPWM_ETCLR_INT; // EPWM_clearEventTriggerInterruptFlag(EPWM1_BASE);
-    else
-        // Clear the interrupt flag
-        HWREGH(EPWM4_BASE + EPWM_O_ETCLR) |= EPWM_ETCLR_INT; // EPWM_clearEventTriggerInterruptFlag(EPWM4_BASE);
-    // Acknowledge the interrupt (Acknowledge PIE Interrupt Group 10)
-    HWREGH(PIECTRL_BASE + PIE_O_ACK) = INTERRUPT_ACK_GROUP3; // Interrupt_clearACKGroup(INTERRUPT_ACK_GROUP10);
 }
 
 // Encoder update routine, this is not critical for the control loop to be executed

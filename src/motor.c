@@ -18,30 +18,20 @@ static void LPF_setBandwidth_simple(FILTER_PARAMS* p_flt, float32_t freq, float3
 
 
 // Read current measures
-inline void MOTOR_getCurrent(MOTOR_STRUCT* p_motor, const IT_TypeDef* p_ITsrc)
+inline void MOTOR_getCurrent(MOTOR_MEASURES* p_measure)
 {
-    p_motor->motorMeas->ia = (float32_t)(*p_motor->motorMeas->iaMeasReg) * ADC_CURRENT_SCALE;
-    p_motor->motorMeas->ib = (float32_t)(*p_motor->motorMeas->ibMeasReg) * ADC_CURRENT_SCALE;
-    p_motor->motorMeas->ic = (float32_t)(*p_motor->motorMeas->icMeasReg) * ADC_CURRENT_SCALE;
-    p_motor->motorMeas->MeasNew = true;
-
-    ADC_IntNumber   adcIntNum   = (ADC_IntNumber)(p_ITsrc->intPeriphSrc);
-    uint32_t        adcBase     = p_ITsrc->intPeriphBase;
-
-    // Clear the interrupt overflow flag
-    ADC_clearInterruptOverflowStatus(adcBase, adcIntNum);   // HWREGH(adcBase + ADC_O_INTOVFCLR) = 1U << (uint16_t)adcIntNum;
-    // Clear the interrupt flag
-    ADC_clearInterruptStatus(adcBase, adcIntNum);           // HWREGH(adcBase + ADC_O_INTFLGCLR) = 1U << (uint16_t)adcIntNum;
-    // Acknowledge the interrupt (Acknowledge PIE Interrupt Group 10)
-    Interrupt_clearACKGroup(p_ITsrc->intAckGroup);          // HWREGH(PIECTRL_BASE + PIE_O_ACK) = p_ITsrc->intAckGroup;
+    p_measure->ia       = (float32_t)(*p_measure->iaMeasReg) * ADC_CURRENT_SCALE;
+    p_measure->ib       = (float32_t)(*p_measure->ibMeasReg) * ADC_CURRENT_SCALE;
+    p_measure->ic       = (float32_t)(*p_measure->icMeasReg) * ADC_CURRENT_SCALE;
+    p_measure->MeasNew  = true;
 }
 
-inline void MOTOR_getVoltage(MOTOR_STRUCT* p_motor)
+inline void MOTOR_getVoltage(MOTOR_MEASURES* p_measure)
 {
-    p_motor->motorMeas->va      = (float32_t)(*p_motor->motorMeas->vaMeasReg)   * ADC_VOLTAGE_SCALE;
-    p_motor->motorMeas->vb      = (float32_t)(*p_motor->motorMeas->vbMeasReg)   * ADC_VOLTAGE_SCALE;
-    p_motor->motorMeas->vc      = (float32_t)(*p_motor->motorMeas->vcMeasReg)   * ADC_VOLTAGE_SCALE;
-    p_motor->motorMeas->vbus    = (float32_t)(*p_motor->motorMeas->vBusMeasReg) * ADC_VOLTAGE_SCALE;
+    p_measure->va   = (float32_t)(*p_measure->vaMeasReg)   * ADC_VOLTAGE_SCALE;
+    p_measure->vb   = (float32_t)(*p_measure->vbMeasReg)   * ADC_VOLTAGE_SCALE;
+    p_measure->vc   = (float32_t)(*p_measure->vcMeasReg)   * ADC_VOLTAGE_SCALE;
+    p_measure->vbus = (float32_t)(*p_measure->vBusMeasReg) * ADC_VOLTAGE_SCALE;
 }
 
 inline void MOTOR_SetPwmCmd(MOTOR_STRUCT* p_motor, float32_t CmdChA, float32_t CmdChB, float32_t CmdChC)
@@ -61,7 +51,7 @@ inline void MOTOR_SetPwmCmd(MOTOR_STRUCT* p_motor, float32_t CmdChA, float32_t C
 //            cmdVal[i] = 0;
 //    }
 
-    *(p_motor->pwmChAReg) = CmdChA * PWM_CMD_SCALE;
-    *(p_motor->pwmChBReg) = CmdChB * PWM_CMD_SCALE;
-    *(p_motor->pwmChCReg) = CmdChC * PWM_CMD_SCALE;
+    *(p_motor->pwmChAReg) = CmdChA;
+    *(p_motor->pwmChBReg) = CmdChB;
+    *(p_motor->pwmChCReg) = CmdChC;
 }

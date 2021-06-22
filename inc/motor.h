@@ -165,8 +165,8 @@ typedef struct __MOTOR_STRUCT__
 } MOTOR_STRUCT;
 
 //inline void MOTOR_getCurrent(MOTOR_STRUCT*);
-inline void MOTOR_getCurrent(MOTOR_STRUCT*, const IT_TypeDef*);
-inline void MOTOR_getVoltage(MOTOR_STRUCT*);
+inline void MOTOR_getCurrent(MOTOR_MEASURES*);
+inline void MOTOR_getVoltage(MOTOR_MEASURES*);
 inline void MOTOR_SetPwmCmd(MOTOR_STRUCT*, float32_t, float32_t, float32_t);
 
 #endif /* INC_MOTOR_H_ */
