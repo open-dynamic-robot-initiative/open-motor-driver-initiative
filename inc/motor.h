@@ -156,6 +156,10 @@ typedef struct __MOTOR_STRUCT__
     volatile uint32_t *pwmCompB;
     volatile uint32_t *pwmCompC;
 
+    volatile uint16_t* pwmChAReg;
+    volatile uint16_t* pwmChBReg;
+    volatile uint16_t* pwmChCReg;
+
     // ADC interrupt flag register
     volatile union ADCINTFLG_REG *adcIntFlag;
 } MOTOR_STRUCT;
@@ -163,5 +167,6 @@ typedef struct __MOTOR_STRUCT__
 //inline void MOTOR_getCurrent(MOTOR_STRUCT*);
 inline void MOTOR_getCurrent(MOTOR_STRUCT*, const IT_TypeDef*);
 inline void MOTOR_getVoltage(MOTOR_STRUCT*);
+inline void MOTOR_SetPwmCmd(MOTOR_STRUCT*, float32_t, float32_t, float32_t);
 
 #endif /* INC_MOTOR_H_ */

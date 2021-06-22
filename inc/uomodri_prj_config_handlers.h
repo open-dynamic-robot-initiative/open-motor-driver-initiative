@@ -347,6 +347,9 @@ static MOTOR_STRUCT motor[] =
   .currentScalerReg = ADC_CURRENT_SCALE / 0x8000L,
   .voltageScaler    = ADC_VOLTAGE_SCALE,
   .voltageScalerReg = ADC_VOLTAGE_SCALE / 0x10000L,
+  .pwmChAReg        = (volatile uint16_t *)(MOTOR1_PWM1_CMD_ADDR),
+  .pwmChBReg        = (volatile uint16_t *)(MOTOR1_PWM2_CMD_ADDR),
+  .pwmChCReg        = (volatile uint16_t *)(MOTOR1_PWM3_CMD_ADDR),
  },
  {
   .motorID          = MOTOR_2,
@@ -360,6 +363,9 @@ static MOTOR_STRUCT motor[] =
   .currentScalerReg = ADC_CURRENT_SCALE / 0x8000L,
   .voltageScaler    = ADC_VOLTAGE_SCALE,
   .voltageScalerReg = ADC_VOLTAGE_SCALE / 0x10000L,
+  .pwmChAReg        = (volatile uint16_t *)(MOTOR2_PWM1_CMD_ADDR),
+  .pwmChBReg        = (volatile uint16_t *)(MOTOR2_PWM2_CMD_ADDR),
+  .pwmChCReg        = (volatile uint16_t *)(MOTOR2_PWM3_CMD_ADDR),
  },
 };
 

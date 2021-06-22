@@ -218,6 +218,12 @@
 #define MOTOR2_PWM1_BASE                EPWM4_BASE
 #define MOTOR2_PWM2_BASE                EPWM5_BASE
 #define MOTOR2_PWM3_BASE                EPWM6_BASE
+#define MOTOR1_PWM1_CMD_ADDR            (MOTOR1_PWM1_BASE + EPWM_O_CMPA + 1U)
+#define MOTOR1_PWM2_CMD_ADDR            (MOTOR1_PWM2_BASE + EPWM_O_CMPA + 1U)
+#define MOTOR1_PWM3_CMD_ADDR            (MOTOR1_PWM3_BASE + EPWM_O_CMPA + 1U)
+#define MOTOR2_PWM1_CMD_ADDR            (MOTOR2_PWM1_BASE + EPWM_O_CMPA + 1U)
+#define MOTOR2_PWM2_CMD_ADDR            (MOTOR2_PWM2_BASE + EPWM_O_CMPA + 1U)
+#define MOTOR2_PWM3_CMD_ADDR            (MOTOR2_PWM3_BASE + EPWM_O_CMPA + 1U)
 /**
  * @}
  */
@@ -281,6 +287,7 @@
 #define PWM_DBRED                       (0) // PWM rising edge delay. ePWMxA (low to high) & ePWMxB (high to low) - Active High Complementary (AHC)
 #define PWM_DBFED                       (0) // PWM falling edge delay. ePWMxA (high to low) & ePWMxB (low to high) - Active High Complementary (AHC)
 #define PWM_SHADOW_MODE_EN              (1) // PWM Shadow mode definition
+#define PWM_CMD_SCALE                   (PWM_TBPRD)
 #if PWM_SHADOW_MODE_EN
 #define PWM_SHADOW_MODE_ET              EPWM_PERIOD_SHADOW_LOAD
 #define PWM_SHADOW_MODE_EVENT_ET        EPWM_SHADOW_LOAD_MODE_COUNTER_SYNC
