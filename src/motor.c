@@ -7,32 +7,34 @@
 
 #include "motor.h"
 
-static void LPF_setBandwidth_simple(FILTER_PARAMS* p_flt, float32_t freq, float32_t bw)
-{
-    p_flt->a = 1.0 / (1.0 + 2.0 * M_PI * bw / freq);
-    p_flt->b = 1.0 - p_flt->a;
-}
+//static void LPF_setBandwidth_simple(FILTER_PARAMS* p_flt, float32_t freq, float32_t bw)
+//{
+//    p_flt->a = 1.0 / (1.0 + 2.0 * M_PI * bw / freq);
+//    p_flt->b = 1.0 - p_flt->a;
+//}
+//
+//#define LPF_FILTER(filt, x, y)     (x) = filt.b * (y) + filt.a * (x);
 
-#define LPF_FILTER(filt, x, y)     (x) = filt.b * (y) + filt.a * (x);
 
 
-
-// Read current measures
-inline void MOTOR_getCurrent(MOTOR_MEASURES* p_measure)
-{
-    p_measure->ia       = (float32_t)(*p_measure->iaMeasReg) * ADC_CURRENT_SCALE;
-    p_measure->ib       = (float32_t)(*p_measure->ibMeasReg) * ADC_CURRENT_SCALE;
-    p_measure->ic       = (float32_t)(*p_measure->icMeasReg) * ADC_CURRENT_SCALE;
-    p_measure->MeasNew  = true;
-}
-
-inline void MOTOR_getVoltage(MOTOR_MEASURES* p_measure)
-{
-    p_measure->va   = (float32_t)(*p_measure->vaMeasReg)   * ADC_VOLTAGE_SCALE;
-    p_measure->vb   = (float32_t)(*p_measure->vbMeasReg)   * ADC_VOLTAGE_SCALE;
-    p_measure->vc   = (float32_t)(*p_measure->vcMeasReg)   * ADC_VOLTAGE_SCALE;
-    p_measure->vbus = (float32_t)(*p_measure->vBusMeasReg) * ADC_VOLTAGE_SCALE;
-}
+//// Read current measures
+//inline void MOTOR_getCurrent(MOTOR_MEASURES* p_measure)
+//{
+//    p_measure->ia       = (float32_t)(*p_measure->iaMeasReg) * ADC_CURRENT_SCALE;
+//    p_measure->ib       = (float32_t)(*p_measure->ibMeasReg) * ADC_CURRENT_SCALE;
+//    p_measure->ic       = (float32_t)(*p_measure->icMeasReg) * ADC_CURRENT_SCALE;
+//    p_measure->MeasNew  = true;
+//}
+//
+//inline void MOTOR_getVoltage(MOTOR_MEASURES* p_measure)
+//{
+//    p_measure->va   = (float32_t)(*p_measure->vaMeasReg)   * ADC_VOLTAGE_SCALE;
+//    p_measure->vb   = (float32_t)(*p_measure->vbMeasReg)   * ADC_VOLTAGE_SCALE;
+//    p_measure->vc   = (float32_t)(*p_measure->vcMeasReg)   * ADC_VOLTAGE_SCALE;
+//    p_measure->vbus = (float32_t)(*p_measure->vBusMeasReg) * ADC_VOLTAGE_SCALE;
+//    // Get bus voltage (minimum is one to avoid dividing by zero later)
+//    p_measure->vbus = __fmax(p_measure->vbus, 1.0f);
+//}
 
 inline void MOTOR_SetPwmCmd(MOTOR_STRUCT* p_motor, float32_t CmdChA, float32_t CmdChB, float32_t CmdChC)
 {

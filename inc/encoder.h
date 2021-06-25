@@ -5,7 +5,7 @@
 #include "device.h"
 #include "f2838x_device.h"
 //#include <f28x_project.h>
-#include "lowpass_filter.h"
+//#include "lowpass_filter.h"
 #include "math_defines.h"
 
 #include "uomodri_user_defines.h"
@@ -40,7 +40,6 @@ typedef struct __SpeedEst__
 
 typedef struct __Encoder__
 {
-    const MotorID       motorID;
     // pointers on HAL structure, QEP registers and direct access to QEP counter register
     const eQEP_TypeDef* p_qepHandle;
     struct EQEP_REGS*   p_qepRegs;

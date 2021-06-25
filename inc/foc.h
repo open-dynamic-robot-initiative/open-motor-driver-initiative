@@ -7,7 +7,7 @@
 
 //#include "pid.h"
 //#include <stdint.h>
-#include "lowpass_filter.h"
+//#include "lowpass_filter.h"
 #include "hal.h"
 
 #include "pd.h"
@@ -16,7 +16,8 @@
 #include "align_routine.h"
 #include "encoder.h"
 #include "math_defines.h"
-#include "lowpass_filter.h"
+//#include "motor.h"
+//#include "lowpass_filter.h"
 #include "anticoagging.h"
 #include "uomodri_user_defines.h"
 
@@ -41,9 +42,79 @@
 //-------------------------------------------------------------------------------//
 //                                 FOC STRUCTURE                                 //
 //-------------------------------------------------------------------------------//
+typedef struct __MOTOR_PARAMETERS__
+{
+    // Motor constants
+    float32_t Rs;       // Stator resistance [Ohm]
+    float32_t Ld;       // Direct axis inductance [H]
+    float32_t Lq;       // Quadratic axis inductance [H]
+    float32_t kv;       // Motor speed constant [RPM/V or rad/s/V]
+    float32_t ke;       // Motor back EMF constant [V/rad/s] (electrical radians) = 1/kv
+    float32_t ki;       // Motor torque constant [N.m/A]
+    uint8_t polePairs;  // Number of pole pairs
+} MOTOR_PARAMS;
+
+typedef struct __MOTOR_ACQUISITIONS__
+{
+    // ADC result registers
+    volatile int32_t* vaMeasReg;
+    volatile int32_t* vbMeasReg;
+    volatile int32_t* vcMeasReg;
+    volatile int32_t* vBusMeasReg;
+    volatile int32_t* iaMeasReg;
+    volatile int32_t* ibMeasReg;
+    volatile int32_t* icMeasReg;
+
+    // ADC values scaled
+    float32_t va;   // [V]
+    float32_t vb;   // [V]
+    float32_t vc;   // [V]
+    float32_t vbus; // [V]
+    float32_t ia;   // [A]
+    float32_t ib;   // [A]
+    float32_t ic;   // [A]
+
+    // ADC conversion done
+    bool measNew;
+} MOTOR_ACQ;
+
 
 typedef struct __FOC__
 {
+    const MOTOR_ID       motorID;
+    // Motor configuration parameters
+    const MOTOR_PARAMS  motorParams;
+    // Current & Voltage measures
+    MOTOR_ACQ           motor_acq;
+    // Encoder position & speed
+    ENCODER             motor_enc;
+
+    // Low-pass control loop filter
+    LowpassFilter       iParkLpf;
+
+    // Rotor electrical angle sine cosine
+    float32_t sinTheta;
+    float32_t cosTheta;
+
+    // Direct Clarke transform result
+    float32_t ialpha;   // [A]
+    float32_t ibeta;    // [A]
+    // Direct Park transform result
+    float32_t id;       // [A]
+    float32_t iq;       // [A]
+
+    float32_t id_tmp;       // [A]
+    float32_t iq_tmp;       // [A]
+
+    // Voltage transforms
+    float32_t vd;       // [V]
+    float32_t vq;       // [V]
+
+    float32_t valpha;   // [V]
+    float32_t vbeta;    // [V]
+
+
+
     // Enable flag
     bool enabled;
     // Alignment routine structure
@@ -62,50 +133,25 @@ typedef struct __FOC__
     float32_t dutyCycleSat;
 
     // Motor constants
-    float32_t* Rs; // Stator resistance [Ohm]
-    float32_t* Ld; // Direct axis inductance [H]
-    float32_t* Lq; // Quadratic axis inductance [H]
-    float32_t* ke; // Motor back EMF constant [V/rad/s] (electrical radians)
+//    float32_t* Rs; // Stator resistance [Ohm]
+//    float32_t* Ld; // Direct axis inductance [H]
+//    float32_t* Lq; // Quadratic axis inductance [H]
+//    float32_t* ke; // Motor back EMF constant [V/rad/s] (electrical radians)
 
     // Bus voltage
     float32_t vBus; // [V]
 
     // Angles
-    float32_t* mechAngle; // [pu]
-    float32_t* elecAngle; // [pu]
-    // Rotor electrical angle sine cosine
-    float32_t sinTheta;
-    float32_t cosTheta;
+//    float32_t* mechAngle; // [pu]
+//    float32_t* elecAngle; // [pu]
 
 
-    // Low-pass control loop filter
-    LowpassFilter controlLoopLpf;
 
-    // Encoder
-    ENCODER encoder;
 
-    // Current transforms
-    float32_t ia;       // [A]
-    float32_t ib;       // [A]
-    float32_t ic;       // [A]
-
-    float32_t ialpha;   // [A]
-    float32_t ibeta;    // [A]
-
-    float32_t id;       // [A]
-    float32_t iq;       // [A]
-
-    // Voltage transforms
-    float32_t vd;       // [V]
-    float32_t vq;       // [V]
-
-    float32_t valpha;   // [V]
-    float32_t vbeta;    // [V]
-
-    float32_t va;       // [V]
-    float32_t vb;       // [V]
-    float32_t vc;       // [V]
-    float32_t vbus;     // [V]
+//    float32_t* va;       // [V]
+//    float32_t* vb;       // [V]
+//    float32_t* vc;       // [V]
+//    float32_t vbus;     // [V]
 
     // Duty cycles
     float32_t ducya;    // [pu] between -0.5 and 0.5
@@ -160,10 +206,11 @@ typedef struct __FOC__
 //-------------------------------------------------------------------------------//
 //                             FUNCTIONS DECLARATION                             //
 //-------------------------------------------------------------------------------//
+
 inline void FOC_getPosition(FOC*, MOTOR_HAL_CFG*);
-inline void FOC_getPhaseCurrent(FOC*, MOTOR_HAL_CFG*);
-inline void FOC_getPhaseVoltage(FOC*, MOTOR_HAL_CFG*);
-inline void FOC_getBusVoltage(FOC*, MOTOR_HAL_CFG*);
+inline void FOC_getPhaseCurrent(MOTOR_ACQ*);
+inline void FOC_getPhaseVoltage(MOTOR_ACQ*);
+inline void FOC_getBusVoltage(MOTOR_ACQ*);
 
 //inline void FOC_getMeasures(FOC*, MOTOR_HAL_CFG*);
 inline void FOC_sineCosine(FOC*);

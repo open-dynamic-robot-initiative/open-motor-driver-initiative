@@ -77,7 +77,7 @@ void HAL_GPIO_init(const GPIO_TypeDef* p_gpio)
  */
 void HAL_ADC_init(const ADC_TypeDef* p_adcCfg)
 {
-    if((p_adcCfg != NULL) && (ADC_isBaseValid(p_adcCfg->adcBase)) && (p_adcCfg->adcInit != NULL) && (p_adcCfg->adcAcq != NULL))
+    if((p_adcCfg != NULL) && (p_adcCfg->adcInit != NULL) && (p_adcCfg->adcAcq != NULL))
     {
         const ADC_INIT_TypeDef* p_adcInit   = p_adcCfg->adcInit;
         const ADC_ACQ_TypeDef*  p_adcAcq    = p_adcCfg->adcAcq;
@@ -184,9 +184,11 @@ void HAL_ADC_offsetCalib(const MOTOR_HAL_CFG* p_motorHalCfg)
             for(loop = 0; loop < 3; loop++)
             {
                 // Clear the interrupt overflow flag
-                HWREGH(p_motorHalCfg->p_iConv[loop]->adcBase + ADC_O_INTOVFCLR) = (1U << ((uint16_t)p_ITConv->adcIntNumber));
+                ADC_clearInterruptOverflowStatus(p_motorHalCfg->p_iConv[loop]->adcBase, p_ITConv->adcIntNumber);
+//                HWREGH(p_motorHalCfg->p_iConv[loop]->adcBase + ADC_O_INTOVFCLR) = (1U << ((uint16_t)p_ITConv->adcIntNumber));
                 // Clear the interrupt flag
-                HWREGH(p_motorHalCfg->p_iConv[loop]->adcBase + ADC_O_INTFLGCLR) = (1U << ((uint16_t)p_ITConv->adcIntNumber));
+                ADC_clearInterruptStatus(p_motorHalCfg->p_iConv[loop]->adcBase, p_ITConv->adcIntNumber);
+//                HWREGH(p_motorHalCfg->p_iConv[loop]->adcBase + ADC_O_INTFLGCLR) = (1U << ((uint16_t)p_ITConv->adcIntNumber));
             }
         }
 
@@ -441,7 +443,7 @@ void HAL_eQEP_init(const eQEP_TypeDef* p_qepCfg)
             // Position counter is reset when reaching max position (1 turn).
             EQEP_setPositionCounterConfig(qepBase, QEP_RESET_POSITION_MODE, p_qepCfg->eqepMaxResolution);
             // Set unit timer for speed measurement and enable it.
-            EQEP_enableUnitTimer(qepBase, QEP_UNIT_TIMER_TICKS - 1);
+            EQEP_enableUnitTimer(qepBase, p_qepCfg->eqepUnitTimerPeriod);
             // Disable Compare, watchdog and IT units.
             EQEP_disableCompare(qepBase);
             EQEP_disableWatchdog(qepBase);

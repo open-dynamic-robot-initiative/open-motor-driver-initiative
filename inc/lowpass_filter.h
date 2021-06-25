@@ -18,6 +18,6 @@ static void LPF_setBandwidth(LowpassFilter *lpf, float freq, float bw)
     lpf->b = 1.0 - lpf->a;
 }
 
-#define LPF_FILTER(filt, x, y)     (x) = filt.b * (y) + filt.a * (x);
+#define LPF_FILTER(filt, y, x)     (y) = filt.b * (x) + filt.a * (y);
 
 #endif

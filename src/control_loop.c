@@ -130,7 +130,7 @@ void CL_initFoc(FOC* p_foc, const uint16_t motorIndex)
     p_foc->dutyCycleSat = 0.4;
 
     // Initialize control loop low-pass filter
-    LPF_setBandwidth(&p_foc->controlLoopLpf, PWM_FREQUENCY, MOTOR1_CUR_LOOP_BANDWIDTH);
+    //LPF_setBandwidth(&p_foc->controlLoopLpf, PWM_FREQ, MOTOR1_CUR_LOOP_BANDWIDTH);
 
 
     // Initialize motor constants
@@ -148,44 +148,44 @@ void CL_initFoc(FOC* p_foc, const uint16_t motorIndex)
 //    }
 
     // Initialize PWM compare register scaler
-    p_foc->pwmCompScaler = PWM_HALF_PERIOD * 0x10000L; // 32 bits registers in HRPWM device function compare register
+    p_foc->pwmCompScaler = PWM_HALF_TBPRD * 0x10000L; // 32 bits registers in HRPWM device function compare register
 
     // Initialize align routine
     ALIGN_reset(&p_foc->alignRoutine);
-    p_foc->alignRoutine.max = PWM_FREQUENCY; // Stay at max Id for a second
+    p_foc->alignRoutine.max = PWM_FREQ; // Stay at max Id for a second
     p_foc->alignRoutine.idAlignRef = 0.4;    // 400mA alignment current
 
     // Initialize encoder
-    ENC_reset(&p_foc->encoder);
+    ENC_reset(&p_foc->motor_enc);
 
     if (motorIndex == 0)
     {
-        p_foc->encoder.p_qepRegs = (struct EQEP_REGS *)MOTOR1_QEP_BASE;
+        p_foc->motor_enc.p_qepRegs = (struct EQEP_REGS *)MOTOR1_QEP_BASE;
         //p_foc->encoder.mechAngleNorm = 0.25 / MOTOR1_ENCODER_LINES_NB;
         //p_foc->encoder.polePairs = MOTOR1_POLES_PAIRS;
     } else {
-        p_foc->encoder.p_qepRegs = (struct EQEP_REGS *)MOTOR2_QEP_BASE;
+        p_foc->motor_enc.p_qepRegs = (struct EQEP_REGS *)MOTOR2_QEP_BASE;
        //p_foc->encoder.mechAngleNorm = 0.25 / MOTOR2_ENCODER_LINES_NB;
         //p_foc->encoder.polePairs = MOTOR2_POLES_PAIRS;
     }
 
     // Speed estimation initialization
-    p_foc->encoder.speedEst.highSpeedNorm = 2.0 * FM_PI * QEP_UNIT_TIMER_FREQ; // 2pi / dt
-    p_foc->encoder.speedEst.lowSpeedNorm = 2.0 * FM_PI * p_foc->encoder.mechPosNorm * DEVICE_SYSCLK_FREQ * 4.0 / 128.0; // 4 is pos divider and 128 is clock divider
-    LPF_setBandwidth(&p_foc->encoder.speedEst.lpf, PWM_FREQUENCY, 200); // 200Hz low-pass filter for velocity estimation
+    p_foc->motor_enc.speedEst.highSpeedNorm = 2.0 * FM_PI * MOTOR1_ENC_HIGH_SPEED_SAMPLING_FREQ; // 2pi / dt
+    p_foc->motor_enc.speedEst.lowSpeedNorm = 2.0 * FM_PI * p_foc->motor_enc.mechPosNorm * DEVICE_SYSCLK_FREQ * 4.0 / 128.0; // 4 is pos divider and 128 is clock divider
+    //LPF_setBandwidth(&p_foc->encoder.speedEst.lpf, PWM_FREQ, 200); // 200Hz low-pass filter for velocity estimation
 
     // Initialize PI controllers
     if (motorIndex == 0)
     {
-        p_foc->piId.kp = MOTOR1_LD * 2.0*FM_PI*MOTOR1_CUR_LOOP_BANDWIDTH;
-        p_foc->piId.ki = MOTOR1_RS * 2.0*FM_PI*MOTOR1_CUR_LOOP_BANDWIDTH / PWM_FREQUENCY;
-        p_foc->piIq.kp = MOTOR1_LQ * 2.0*FM_PI*MOTOR1_CUR_LOOP_BANDWIDTH;
-        p_foc->piIq.ki = MOTOR1_RS * 2.0*FM_PI*MOTOR1_CUR_LOOP_BANDWIDTH / PWM_FREQUENCY;
+        p_foc->piId.kp = MOTOR1_LD * 2.0*FM_PI*MOTOR1_CURRENT_CUTOFF_FREQ;
+        p_foc->piId.ki = MOTOR1_RS * 2.0*FM_PI*MOTOR1_CURRENT_CUTOFF_FREQ / PWM_FREQ;
+        p_foc->piIq.kp = MOTOR1_LQ * 2.0*FM_PI*MOTOR1_CURRENT_CUTOFF_FREQ;
+        p_foc->piIq.ki = MOTOR1_RS * 2.0*FM_PI*MOTOR1_CURRENT_CUTOFF_FREQ / PWM_FREQ;
     } else {
-        p_foc->piId.kp = MOTOR2_LD * 2.0*FM_PI*MOTOR2_CUR_LOOP_BANDWIDTH;
-        p_foc->piId.ki = MOTOR2_RS * 2.0*FM_PI*MOTOR2_CUR_LOOP_BANDWIDTH / PWM_FREQUENCY;
-        p_foc->piIq.kp = MOTOR2_LQ * 2.0*FM_PI*MOTOR2_CUR_LOOP_BANDWIDTH;
-        p_foc->piIq.ki = MOTOR2_RS * 2.0*FM_PI*MOTOR2_CUR_LOOP_BANDWIDTH / PWM_FREQUENCY;
+        p_foc->piId.kp = MOTOR2_LD * 2.0*FM_PI*MOTOR2_CURRENT_CUTOFF_FREQ;
+        p_foc->piId.ki = MOTOR2_RS * 2.0*FM_PI*MOTOR2_CURRENT_CUTOFF_FREQ / PWM_FREQ;
+        p_foc->piIq.kp = MOTOR2_LQ * 2.0*FM_PI*MOTOR2_CURRENT_CUTOFF_FREQ;
+        p_foc->piIq.ki = MOTOR2_RS * 2.0*FM_PI*MOTOR2_CURRENT_CUTOFF_FREQ / PWM_FREQ;
     }
 
     // Controller saturations is 40% of bus voltage (10% margin). This is completely arbitrary.
@@ -207,7 +207,7 @@ void CL_initFoc(FOC* p_foc, const uint16_t motorIndex)
     p_foc->posPd.sat = 4.0f; // 4 amps saturation
 
     // Initialize resistance estimation
-    LPF_setBandwidth(&p_foc->resEstLpf, PWM_FREQUENCY, 0.2); // Very slow low-pass filter for resistance estimation
+    //LPF_setBandwidth(&p_foc->resEstLpf, PWM_FREQ, 0.2); // Very slow low-pass filter for resistance estimation
 
     // Initialize measures PWM and interrupt registers
     if (motorIndex == 0)
@@ -264,12 +264,12 @@ void CL_resetFoc(FOC* p_foc)
     PD_reset(&p_foc->posPd);
 
     // Reset encoder
-    ENC_reset(&p_foc->encoder);
+    ENC_reset(&p_foc->motor_enc);
 
     // Reset currents and voltages
-    p_foc->ia = 0.0f;
-    p_foc->ib = 0.0f;
-    p_foc->ic = 0.0f;
+//    p_foc->ia = 0.0f;
+//    p_foc->ib = 0.0f;
+//    p_foc->ic = 0.0f;
 
     p_foc->ialpha = 0.0f;
     p_foc->ibeta = 0.0f;
@@ -283,9 +283,9 @@ void CL_resetFoc(FOC* p_foc)
     p_foc->valpha = 0.0f;
     p_foc->vbeta = 0.0f;
 
-    p_foc->va = 0.0f;
-    p_foc->vb = 0.0f;
-    p_foc->vc = 0.0f;
+//    p_foc->va = 0.0f;
+//    p_foc->vb = 0.0f;
+//    p_foc->vc = 0.0f;
 
     // Reset potentiometer voltage
     p_foc->auxAdc = 0.0f;

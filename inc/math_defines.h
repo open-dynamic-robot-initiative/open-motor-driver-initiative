@@ -8,11 +8,15 @@
 #endif
 
 #ifndef FM_SQRT3
-#define FM_SQRT3 1.7320508075689f
+#define FM_SQRT3 1.7320508075689f  /* sqrt(3) */
 #endif
 
-#ifndef FM_ISQRT3
-#define FM_ISQRT3 0.57735026919f
+#ifndef FM_1DIVSQRT3
+#define FM_1DIVSQRT3 0.57735026919f  /* 1/sqrt(3) */
+#endif
+
+#ifndef FM_1DIV3
+#define FM_1DIV3 0.333333333333f  /* 1/3 */
 #endif
 
 #ifndef FM_RPM2RADPS

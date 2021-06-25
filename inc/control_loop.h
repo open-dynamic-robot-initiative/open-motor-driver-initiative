@@ -5,6 +5,7 @@
 #include "foc.h"
 #include "pd.h"
 #include "pi.h"
+#include "uomodri_user_defines.h"
 
 // Debug-only structure used to store motor data
 typedef struct _MotorDebug_

@@ -43,8 +43,8 @@ static const IT_TypeDef InterruptList[] =
  */
 static const DRV_Cfg DrvCfgList[] =
 {
- {.spiHandle = DRV_SPI_BASE, .gpioNumber_CS = DRV1_GPIO_CS, .gpioNumber_EN = DRV1_GPIO_EN},
- {.spiHandle = DRV_SPI_BASE, .gpioNumber_CS = DRV2_GPIO_CS, .gpioNumber_EN = DRV2_GPIO_EN},
+ {.spiHandle = DRV_SPI_BASE, .gpioNumber_CS = MOTOR1_DRV_GPIO_CS, .gpioNumber_EN = MOTOR1_DRV_GPIO_EN},
+ {.spiHandle = DRV_SPI_BASE, .gpioNumber_CS = MOTOR2_DRV_GPIO_CS, .gpioNumber_EN = MOTOR2_DRV_GPIO_EN},
  // END OF ARRAY
  {.spiHandle = 0xFFFFFFFF},
 };
@@ -63,8 +63,8 @@ static DRV_Reg DrvRegList[] =
    .Ctrl_Reg_02.ctrl02.OTW_REP      = true,                 // Over Temperature Warning will raise nFault
    .Ctrl_Reg_02.ctrl02.DIS_GDF      = false,
    .Ctrl_Reg_02.ctrl02.DIS_GDUV     = false,
-#ifdef UOMODRI
-   .Ctrl_Reg_02.Ctrl02.OCP_ACT      = true,
+#if (UOMODRI == 1)
+   .Ctrl_Reg_02.ctrl02.OCP_ACT      = true,
 #endif
    // Gate Drive HS register initialization (Address: 0x3)
    .Ctrl_Reg_03.ctrl03.IDRIVEN_HS   = DRV_ISINK_HS_0P300_A,
@@ -103,8 +103,8 @@ static DRV_Reg DrvRegList[] =
    .Ctrl_Reg_02.ctrl02.OTW_REP      = true,                 // Over Temperature Warning will raise nFault
    .Ctrl_Reg_02.ctrl02.DIS_GDF      = false,
    .Ctrl_Reg_02.ctrl02.DIS_GDUV     = false,
-#ifdef UOMODRI
-   .Ctrl_Reg_02.Ctrl02.OCP_ACT      = true,
+#if (UOMODRI == 1)
+   .Ctrl_Reg_02.ctrl02.OCP_ACT      = true,
 #endif
    // Gate Drive HS register initialization (Address: 0x3)
    .Ctrl_Reg_03.ctrl03.IDRIVEN_HS   = DRV_ISINK_HS_0P300_A,
@@ -151,124 +151,153 @@ static const MOTOR_HAL_CFG motor_hal_cfg[] =
   .p_vConv      = {&AdcAcqList[0], &AdcAcqList[4], &AdcAcqList[9]},
   .p_iConv      = {&AdcAcqList[2], &AdcAcqList[6], &AdcAcqList[11]},
   .p_vbusConv   = &AdcAcqList[8],
-  .p_ITConv     = &AdcIntList[0],// &AdcIntList[2]},
-//  .p_ia         = ((volatile int16_t *)(.p_iConv[0]->adcPPBResultBase)),
-//  .p_ib         = (volatile int16_t *)(.p_iConv[1]->adcPPBResultBase),
-//  .p_ic         = (volatile int16_t *)(.p_iConv[2]->adcPPBResultBase),
-//  .p_iMesured   = {(*((volatile uint16_t *)(.p_iConv[0]->adcResultBase + ADC_O_PPB1RESULT))), (&((.p_iConv[0]->adcResultBase + ADC_O_PPB1RESULT))), (&((.p_iConv[0]->adcResultBase + ADC_O_PPB1RESULT)))},
-//  .p_iMesured   = {(*((volatile uint16_t *)(AdcPPBsList[0].adcResultBase)))},
-//  .p_iMesured   = {&(.p_iConv[0]->adcResultBase), (AdcPPBsList[4].adcResultBase), (AdcPPBsList[10].adcResultBase)},
-//  .p_iMesured   = {((volatile int16_t *)(AdcPPBsList[0].adcResultBase)),
-//                   ((volatile int16_t *)(AdcPPBsList[4].adcResultBase)),
-//                   ((volatile int16_t *)(AdcPPBsList[10].adcResultBase))},
-//  .p_vMesured   = {((volatile int16_t *)(AdcPPBsList[2].adcResultBase)),
-//                   ((volatile int16_t *)(AdcPPBsList[6].adcResultBase)),
-//                   ((volatile int16_t *)(AdcPPBsList[12].adcResultBase))},
-//  .p_vBusMesured= (volatile int16_t *)(AdcPPBsList[8].adcResultBase),
-//  .dataValid    = {false, false},
-  //  .offsetCal      = true
+  .p_ITConv     = &AdcIntList[0],
  },
  {.motorID      = MOTOR_2,
   .p_pwmCntCmp  = {&PwmCounterCompareCfgList[3], &PwmCounterCompareCfgList[4], &PwmCounterCompareCfgList[5]},
   .p_vConv      = {&AdcAcqList[1], &AdcAcqList[5], &AdcAcqList[10]},
   .p_iConv      = {&AdcAcqList[3], &AdcAcqList[7], &AdcAcqList[12]},
   .p_vbusConv   = &AdcAcqList[8],
-  .p_ITConv     = &AdcIntList[1],// &AdcIntList[3]},
-//  .p_ia         = (((volatile int16_t *)((uintptr_t)(M2_IA_ADC_PPB_RESULT_ADDR)))),
-//  .p_ia         = (&((volatile int16_t *)((AdcPPBsList[1].adcPPBResultBase)))),
-//  .p_ia         = (((volatile int16_t *)((uintptr_t)&(AdcPPBsList[1]->adcPPBResultBase)))),
-//  .p_ia         = (&((volatile uint16_t *)((uintptr_t)(motors_acq[MOTOR_2].p_iConv[0]->adcPPBResultBase)))),
-//  .p_ia         = ((int32_t *)(AdcPPBsList[1].adcPPBResultBase)),
-//  .p_iMesured   = {((volatile int32_t *)(AdcPPBsList[1].adcPPBResultBase)), ((volatile int32_t *)(AdcPPBsList[5].adcPPBResultBase)), ((volatile int32_t *)(AdcPPBsList[11].adcPPBResultBase))},
-//  .p_iMesured   = {(*((volatile uint16_t *)(AdcPPBsList[1].adcResultBase)))},
+  .p_ITConv     = &AdcIntList[1],
+ },
+};
+
+//static const MOTOR_PARAMS motor_params[] =
+//{
+// {.Rs = MOTOR1_RS, .Ld = MOTOR1_LD, .Lq = MOTOR1_LQ, .kv = MOTOR1_KV, .ke = MOTOR1_KE, .ki = MOTOR1_KI, .polePairs = MOTOR1_POLES_PAIRS},
+// {.Rs = MOTOR2_RS, .Ld = MOTOR2_LD, .Lq = MOTOR2_LQ, .kv = MOTOR2_KV, .ke = MOTOR2_KE, .ki = MOTOR2_KI, .polePairs = MOTOR2_POLES_PAIRS},
+//};
+
+//static ENCODER encoder[] =
+//{
+// {
+//  .p_qepHandle      = &QepCfgList[0],
+//  .p_qepRegs        = (struct EQEP_REGS *)(MOTOR1_QEP_BASE),
+//  .p_qepCntPosReg   = (volatile int32_t *)(MOTOR1_QEP_COUNTER_ADDR),
+//  .p_polePairs      = (uint8_t *)(&motor_params[MOTOR_1].polePairs),
+//  .mechPos          = {0.0, 0.0},
+//  .mechPosNorm      = (float32_t)(MOTOR1_ENC_RESOLUTION_SCALE),
 //
-//  {((volatile int16_t *)(AdcPPBsList[1].adcResultBase)),
-//                   ((volatile int16_t *)(AdcPPBsList[5].adcResultBase)),
-//                   ((volatile int16_t *)(AdcPPBsList[11].adcResultBase))},
-//  .p_vMesured   = {((volatile int16_t *)(AdcPPBsList[3].adcResultBase)),
-//                   ((volatile int16_t *)(AdcPPBsList[7].adcResultBase)),
-//                   ((volatile int16_t *)(AdcPPBsList[13].adcResultBase))},
-//  .p_vBusMesured= (volatile int16_t *)(AdcPPBsList[9].adcResultBase),
-//  .dataValid    = {false, false},
-  //  .offsetCal      = true
- },
-// {.motorID      = NO_MOT},
-};
+//  .speedEst.highSpeedNorm   = MOTOR1_ENC_HIGH_SPEED_SCALE,
+//  .speedEst.lowSpeedNorm    = MOTOR1_ENC_LOW_SPEED_SCALE,
+//  .speedEst.mechSpeed       = PWM_FREQ,
+//  .speedEst.speedRef        = 200,
+//  .speedEst.lpf.a           = 1.0 - (1.0 / (1.0 + 2.0 * M_PI * 200 / PWM_FREQ)),
+//  .speedEst.lpf.b           = (1.0 / (1.0 + 2.0 * M_PI * 200 / PWM_FREQ)),
+//
+// },
+// {
+//  .motorID          = MOTOR_2,
+//  .p_qepHandle      = &QepCfgList[1],
+//  .p_qepRegs        = (struct EQEP_REGS *)(MOTOR2_QEP_BASE),
+//  .p_qepCntPosReg   = (volatile int32_t *)(MOTOR2_QEP_COUNTER_ADDR),
+//  .p_polePairs      = (uint8_t *)(&motor_params[MOTOR_2].polePairs),
+//  .mechPos          = {0.0, 0.0},
+//  .mechPosNorm      = (float32_t)(MOTOR2_ENC_RESOLUTION_SCALE),
+// },
+//};
 
-static const MOTOR_PARAMS motor_params[] =
-{
- {.Rs = MOTOR1_RS, .Ld = MOTOR1_LD, .Lq = MOTOR1_LQ, .kv = MOTOR1_KV, .ke = MOTOR1_KE, .ki = MOTOR1_KI, .polePairs = MOTOR1_POLES_PAIRS},
- {.Rs = MOTOR2_RS, .Ld = MOTOR2_LD, .Lq = MOTOR2_LQ, .kv = MOTOR2_KV, .ke = MOTOR2_KE, .ki = MOTOR2_KI, .polePairs = MOTOR2_POLES_PAIRS},
-};
-
-static ENCODER encoder[] =
-{
- {
-  .motorID          = MOTOR_1,
-  .p_qepHandle      = &QepCfgList[0],
-  .p_qepRegs        = (struct EQEP_REGS *)(MOTOR1_QEP_BASE),
-  .p_qepCntPosReg   = (volatile int32_t *)(MOTOR1_QEP_COUNTER_ADDR),
-  .p_polePairs      = (uint8_t *)(&motor_params[MOTOR_1].polePairs),
-  .mechPos          = {0.0, 0.0},
-  .mechPosNorm      = (float32_t)(MOTOR1_ENC_RESOLUTION_SCALE),
-
-  .speedEst.highSpeedNorm   = MOTOR1_ENC_HIGH_SPEED_SCALE,
-  .speedEst.lowSpeedNorm    = MOTOR1_ENC_LOW_SPEED_SCALE,
-  .speedEst.mechSpeed       = PWM_FREQUENCY,
-  .speedEst.speedRef        = 200,
-  .speedEst.lpf             = {.a = (1.0 / (1.0 + 2.0 * M_PI * 200 / PWM_FREQ)), .b = 1.0 - (1.0 / (1.0 + 2.0 * M_PI * 200 / PWM_FREQ))},
-
- },
- {
-  .motorID          = MOTOR_2,
-  .p_qepHandle      = &QepCfgList[1],
-  .p_qepRegs        = (struct EQEP_REGS *)(MOTOR2_QEP_BASE),
-  .p_qepCntPosReg   = (volatile int32_t *)(MOTOR2_QEP_COUNTER_ADDR),
-  .p_polePairs      = (uint8_t *)(&motor_params[MOTOR_2].polePairs),
-  .mechPos          = {0.0, 0.0},
-  .mechPosNorm      = (float32_t)(MOTOR2_ENC_RESOLUTION_SCALE),
- },
-};
-
-static MOTOR_MEASURES motor_meas[] =
-{
- {.motorID          = MOTOR_1,
-  .ia = 0.0f, .ib = 0.0f, .ic = 0.0f,
-  .va = 0.0f, .vb = 0.0f, .vc = 0.0f,
-  .mechanicalAngle  = &encoder[MOTOR_1].mechPos[NEW],
-  .MeasNew          = false,
-  .vaMeasReg        = (volatile int32_t *)(MOTOR1_VA_ADC_PPB_RESULT_ADDR),
-  .vbMeasReg        = (volatile int32_t *)(MOTOR1_VB_ADC_PPB_RESULT_ADDR),
-  .vcMeasReg        = (volatile int32_t *)(MOTOR1_VC_ADC_PPB_RESULT_ADDR),
-  .vBusMeasReg      = (volatile int32_t *)(MOTOR12_VBUS_ADC_PPB_RESULT_ADDR),
-  .iaMeasReg        = (volatile int32_t *)(MOTOR1_IA_ADC_PPB_RESULT_ADDR),
-  .ibMeasReg        = (volatile int32_t *)(MOTOR1_IB_ADC_PPB_RESULT_ADDR),
-  .icMeasReg        = (volatile int32_t *)(MOTOR1_IC_ADC_PPB_RESULT_ADDR),
-  .encoderPosReg    = (volatile int32_t *)(&encoder[MOTOR_1].p_qepCntPosReg),
- },
- {.motorID          = MOTOR_2,
-  .ia = 0.0f, .ib = 0.0f, .ic = 0.0f,
-  .va = 0.0f, .vb = 0.0f, .vc = 0.0f,
-  .mechanicalAngle  = &encoder[MOTOR_2].mechPos[NEW],
-  .MeasNew          = false,
-  .vaMeasReg        = (volatile int32_t *)(MOTOR2_VA_ADC_PPB_RESULT_ADDR),
-  .vbMeasReg        = (volatile int32_t *)(MOTOR2_VB_ADC_PPB_RESULT_ADDR),
-  .vcMeasReg        = (volatile int32_t *)(MOTOR2_VC_ADC_PPB_RESULT_ADDR),
-  .vBusMeasReg      = (volatile int32_t *)(MOTOR12_VBUS_ADC_PPB_RESULT_ADDR),
-  .iaMeasReg        = (volatile int32_t *)(MOTOR2_IA_ADC_PPB_RESULT_ADDR),
-  .ibMeasReg        = (volatile int32_t *)(MOTOR2_IB_ADC_PPB_RESULT_ADDR),
-  .icMeasReg        = (volatile int32_t *)(MOTOR2_IC_ADC_PPB_RESULT_ADDR),
-  .encoderPosReg    = (volatile int32_t *)(&(encoder[MOTOR_2].p_qepCntPosReg)),
- },
-};
+//static MOTOR_MEASURES motor_meas[] =
+//{
+// {.motorID          = MOTOR_1,
+//  .ia = 0.0f, .ib = 0.0f, .ic = 0.0f,
+//  .va = 0.0f, .vb = 0.0f, .vc = 0.0f,
+//  .mechanicalAngle  = &encoder[MOTOR_1].mechPos[NEW],
+//  .MeasNew          = false,
+//  .vaMeasReg        = (volatile int32_t *)(MOTOR1_VA_ADC_PPB_RESULT_ADDR),
+//  .vbMeasReg        = (volatile int32_t *)(MOTOR1_VB_ADC_PPB_RESULT_ADDR),
+//  .vcMeasReg        = (volatile int32_t *)(MOTOR1_VC_ADC_PPB_RESULT_ADDR),
+//  .vBusMeasReg      = (volatile int32_t *)(MOTOR12_VBUS_ADC_PPB_RESULT_ADDR),
+//  .iaMeasReg        = (volatile int32_t *)(MOTOR1_IA_ADC_PPB_RESULT_ADDR),
+//  .ibMeasReg        = (volatile int32_t *)(MOTOR1_IB_ADC_PPB_RESULT_ADDR),
+//  .icMeasReg        = (volatile int32_t *)(MOTOR1_IC_ADC_PPB_RESULT_ADDR),
+//  .encoderPosReg    = (volatile int32_t *)(&encoder[MOTOR_1].p_qepCntPosReg),
+// },
+// {.motorID          = MOTOR_2,
+//  .ia = 0.0f, .ib = 0.0f, .ic = 0.0f,
+//  .va = 0.0f, .vb = 0.0f, .vc = 0.0f,
+//  .mechanicalAngle  = &encoder[MOTOR_2].mechPos[NEW],
+//  .MeasNew          = false,
+//  .vaMeasReg        = (volatile int32_t *)(MOTOR2_VA_ADC_PPB_RESULT_ADDR),
+//  .vbMeasReg        = (volatile int32_t *)(MOTOR2_VB_ADC_PPB_RESULT_ADDR),
+//  .vcMeasReg        = (volatile int32_t *)(MOTOR2_VC_ADC_PPB_RESULT_ADDR),
+//  .vBusMeasReg      = (volatile int32_t *)(MOTOR12_VBUS_ADC_PPB_RESULT_ADDR),
+//  .iaMeasReg        = (volatile int32_t *)(MOTOR2_IA_ADC_PPB_RESULT_ADDR),
+//  .ibMeasReg        = (volatile int32_t *)(MOTOR2_IB_ADC_PPB_RESULT_ADDR),
+//  .icMeasReg        = (volatile int32_t *)(MOTOR2_IC_ADC_PPB_RESULT_ADDR),
+//  .encoderPosReg    = (volatile int32_t *)(&(encoder[MOTOR_2].p_qepCntPosReg)),
+// },
+//};
 
 static FOC motor_foc[] =
 {
- {.currentScaler = ADC_CURRENT_SCALE,
+ {
+  .motorID          = MOTOR_1,
+
+  .currentScaler = ADC_CURRENT_SCALE,
   .currentScalerReg = -1.0 * ADC_CURRENT_SCALE / 0x8000L, // from register value to amps
   // signed 15 bits resolution
   .voltageScaler = ADC_VOLTAGE_SCALE,
   .voltageScalerReg = ADC_VOLTAGE_SCALE / 0x10000L, // unsigned 16 bits resolution
+
+  .motorParams  = {.Rs = MOTOR1_RS, .Ld = MOTOR1_LD, .Lq = MOTOR1_LQ,
+                   .kv = MOTOR1_KV, .ke = MOTOR1_KE, .ki = MOTOR1_KI,
+                   .polePairs = MOTOR1_POLES_PAIRS
+  },
+  .motor_acq    = {.vaMeasReg      = (volatile int32_t *)(MOTOR1_VA_ADC_PPB_RESULT_ADDR),
+                   .vbMeasReg      = (volatile int32_t *)(MOTOR1_VB_ADC_PPB_RESULT_ADDR),
+                   .vcMeasReg      = (volatile int32_t *)(MOTOR1_VC_ADC_PPB_RESULT_ADDR),
+                   .vBusMeasReg    = (volatile int32_t *)(MOTOR12_VBUS_ADC_PPB_RESULT_ADDR),
+                   .iaMeasReg      = (volatile int32_t *)(MOTOR1_IA_ADC_PPB_RESULT_ADDR),
+                   .ibMeasReg      = (volatile int32_t *)(MOTOR1_IB_ADC_PPB_RESULT_ADDR),
+                   .icMeasReg      = (volatile int32_t *)(MOTOR1_IC_ADC_PPB_RESULT_ADDR),
+                   .va = 0.0f, .vb = 0.0f, .vc = 0.0f, .vbus = 0.0f, .ia = 0.0f, .ib = 0.0f, .ic = 0.0f,
+                   .measNew        = false,
+  },
+  .motor_enc    = {.p_qepHandle     = &QepCfgList[0],
+                   .p_qepRegs       = (struct EQEP_REGS *)(MOTOR1_QEP_BASE),
+                   .p_qepCntPosReg  = (volatile int32_t *)(MOTOR1_QEP_COUNTER_ADDR),
+                   .p_polePairs     = (uint8_t *)(&motor_foc[MOTOR_1].motorParams.polePairs),
+                   .mechPos         = {0.0, 0.0},
+                   .mechPosNorm     = (float32_t)(MOTOR1_ENC_RESOLUTION_SCALE),
+                   .speedEst        = {.highSpeedNorm   = MOTOR1_ENC_HIGH_SPEED_SCALE,
+                                       .lowSpeedNorm    = MOTOR1_ENC_LOW_SPEED_SCALE,
+                                       .mechSpeed       = PWM_FREQ,
+                                       .speedRef        = 200,
+                                       .lpf.a           = 1.0 - (1.0 / (1.0 + 2.0 * M_PI * 200 / PWM_FREQ)),
+                                       .lpf.b           = (1.0 / (1.0 + 2.0 * M_PI * 200 / PWM_FREQ))},
+  },
+  //  Initialize control loop low-pass filter
+  //  alpha = 1 / (1 + (1 / (2 * PI * CUTTOFF_FREQ / PWM_FREQ)))
+  //  Simplifying :
+  //  alpha = 1 - (1 / (1 + (2 * PI * CUTTOFF_FREQ / PWM_FREQ)))
+  //  1 - alpha = 1 / (1 + (2 * PI * CUTTOFF_FREQ / PWM_FREQ))
+  .iParkLpf     = {.a               = MOTOR1_CURRENT_LPF_ALPHA,//1.0 - (1.0 / (1.0 + (2.0 * M_PI * MOTOR1_CUR_LOOP_BANDWIDTH / PWM_FREQ))),
+                   .b               = MOTOR1_CURRENT_LPF_ONE_MINUS_ALPHA,//1.0 / (1.0 + (2.0 * M_PI * MOTOR1_CUR_LOOP_BANDWIDTH / PWM_FREQ)),
+  },
+
+  //  Initialize PI & PD controllers
+  .idRef = 0.0f, .iqRef = 0.0f,
+
+  .piId         = {.integral = 0.0f, .err = 0.0f, .ff = 0.0f, .out = 0.0f,
+                   .kp = MOTOR1_ID_REGULATOR_KP_COEF, .ki = MOTOR1_ID_REGULATOR_KI_COEF
+  },
+  .piIq         = {.integral = 0.0f, .err = 0.0f, .ff = 0.0f, .out = 0.0f,
+                   .kp = MOTOR1_IQ_REGULATOR_KP_COEF, .ki = MOTOR1_IQ_REGULATOR_KI_COEF
+  },
+
+  .posPd.err = 0.0f, .posPd.vErr = 0.0f, .posPd.out = 0.0f,
+
+//  .mechanicalAngle  = &encoder[MOTOR_1].mechPos[NEW],
+//  .MeasNew          = false,
+//  .vaMeasReg        = (volatile int32_t *)(MOTOR1_VA_ADC_PPB_RESULT_ADDR),
+//  .vbMeasReg        = (volatile int32_t *)(MOTOR1_VB_ADC_PPB_RESULT_ADDR),
+//  .vcMeasReg        = (volatile int32_t *)(MOTOR1_VC_ADC_PPB_RESULT_ADDR),
+//  .vBusMeasReg      = (volatile int32_t *)(MOTOR12_VBUS_ADC_PPB_RESULT_ADDR),
+//  .iaMeasReg        = (volatile int32_t *)(MOTOR1_IA_ADC_PPB_RESULT_ADDR),
+//  .ibMeasReg        = (volatile int32_t *)(MOTOR1_IB_ADC_PPB_RESULT_ADDR),
+//  .icMeasReg        = (volatile int32_t *)(MOTOR1_IC_ADC_PPB_RESULT_ADDR),
+//  .encoderPosReg    = (volatile int32_t *)(&encoder[MOTOR_1].p_qepCntPosReg),
 
 //  .adcScaler = ADC_POT_VOLTAGE_SCALE,
 //  .adcScalerReg = ADC_POT_VOLTAGE_SCALE / 0x10000L, // unsigned 16 bits resolution
@@ -276,61 +305,129 @@ static FOC motor_foc[] =
   // Initialize duty cycle saturation
   .dutyCycleSat = 0.4,
 
-  // Initialize control loop low-pass filter
-  .controlLoopLpf.a = 1.0 / (1.0 + 2.0 * M_PI * MOTOR1_CUR_LOOP_BANDWIDTH / PWM_FREQ),
-  .controlLoopLpf.b = 1.0 - (1.0 / (1.0 + 2.0 * M_PI * MOTOR1_CUR_LOOP_BANDWIDTH / PWM_FREQ)),
+  .enabled = true,
+//  Initialize PI & PD controllers
+  .idRef = 0.0f, .iqRef = 0.0f,
+  .piId.integral = 0.0f, .piId.err = 0.0f, .piId.ff = 0.0f, .piId.out = 0.0f,
+  .piIq.integral = 0.0f, .piIq.err = 0.0f, .piIq.ff = 0.0f, .piIq.out = 0.0f,
+  .posPd.err = 0.0f, .posPd.vErr = 0.0f, .posPd.out = 0.0f,
+
+  .alignRoutine.state = ALIGN_COUNT_UP, .alignRoutine.counter = 0, .alignRoutine.idAlign = 0.0f,
+
+//  .motor_enc.mechPos = {0.0, 0.0},
+//  .encoder.elecPos = 0.0f,
+//  .encoder.isIndexCompensated = false, .encoder.indexAngle = 0.0f, .encoder.indexedMechAngle = 0.0f,
+//  .encoder.lastMechAngle = 0.0f, .encoder.absoluteAngle = 0.0f,
+//  .encoder.speedEst.alpha = 0.0f,
+////  .encoder.speedEst.speedRef = 0.0f,
+//  .encoder.speedEst.pos = {0.0f, 0.0f},
+//  .encoder.speedEst.lowSpeed = 0.0f,
+//  .encoder.speedEst.highSpeed = 0.0f,
+////  .encoder.speedEst.mechSpeed = 0.0f,
+//  .encoder.speedEst.elecSpeed = 0.0f,
+//  .encoder.turnNb = 0,
+//  .encoder.indexDetected = false,
+//  .encoder.indexToggle = false,
+//  .encoder.rollOverFlag = false,
+
+//  .ia = (float32_t *)(&motor_meas[MOTOR_1].ia),
+//  .ib = (float32_t *)(&motor_meas[MOTOR_1].ib),
+//  .ic = (float32_t *)(&motor_meas[MOTOR_1].ic),
+  .ialpha = 0.0f, .ibeta = 0.0f,
+  .id = 0.0f, .iq = 0.0f,
+//  .va = (float32_t *)(&motor_meas[MOTOR_1].va),
+//  .vb = (float32_t *)(&motor_meas[MOTOR_1].vb),
+//  .vc = (float32_t *)(&motor_meas[MOTOR_1].vc),
+  .valpha = 0.0f, .vbeta = 0.0f,
+  .vd = 0.0f, .vq = 0.0f,
+
+//  .mechAngle = (float32_t *)(&encoder[MOTOR_1].mechPos[NEW]),
+//  .elecAngle = (float32_t *)(&encoder[MOTOR_1].elecPos),
+  .sinTheta = 0.0f, .cosTheta = 0.0f,
+
+  .auxAdc = 0.0f, .phaseAVolt = 0.0f, .phaseBVolt = 0.0f, .phaseCVolt = 0.0f, .resistanceEst = 0.0f,
+//  .Rs = (float32_t *)(&motor_params[MOTOR_1].Rs),
+//  .Ld = (float32_t *)(&motor_params[MOTOR_1].Ld),
+//  .Lq = (float32_t *)(&motor_params[MOTOR_1].Lq),
+//  .ke = (float32_t *)(&motor_params[MOTOR_1].ke),
+ },
+ {
+  .motorParams  = {.Rs = MOTOR2_RS, .Ld = MOTOR2_LD, .Lq = MOTOR2_LQ,
+                   .kv = MOTOR2_KV, .ke = MOTOR2_KE, .ki = MOTOR2_KI,
+                   .polePairs = MOTOR2_POLES_PAIRS,
+  },
+  .motor_acq    = {.vaMeasReg      = (volatile int32_t *)(MOTOR2_VA_ADC_PPB_RESULT_ADDR),
+                   .vbMeasReg      = (volatile int32_t *)(MOTOR2_VB_ADC_PPB_RESULT_ADDR),
+                   .vcMeasReg      = (volatile int32_t *)(MOTOR2_VC_ADC_PPB_RESULT_ADDR),
+                   .vBusMeasReg    = (volatile int32_t *)(MOTOR12_VBUS_ADC_PPB_RESULT_ADDR),
+                   .iaMeasReg      = (volatile int32_t *)(MOTOR2_IA_ADC_PPB_RESULT_ADDR),
+                   .ibMeasReg      = (volatile int32_t *)(MOTOR2_IB_ADC_PPB_RESULT_ADDR),
+                   .icMeasReg      = (volatile int32_t *)(MOTOR2_IC_ADC_PPB_RESULT_ADDR),
+                   .va = 0.0f, .vb = 0.0f, .vc = 0.0f, .vbus = 0.0f, .ia = 0.0f, .ib = 0.0f, .ic = 0.0f,
+                   .measNew        = false,
+  },
+  .motor_enc    = {.p_qepHandle      = &QepCfgList[1],
+                   .p_qepRegs        = (struct EQEP_REGS *)(MOTOR2_QEP_BASE),
+                   .p_qepCntPosReg   = (volatile int32_t *)(MOTOR2_QEP_COUNTER_ADDR),
+                   .p_polePairs      = (uint8_t *)(&motor_foc[MOTOR_2].motorParams.polePairs),
+                   .mechPos          = {0.0, 0.0},
+                   .mechPosNorm      = (float32_t)(MOTOR2_ENC_RESOLUTION_SCALE),
+
+                   .speedEst.highSpeedNorm   = MOTOR2_ENC_HIGH_SPEED_SCALE,
+                   .speedEst.lowSpeedNorm    = MOTOR2_ENC_LOW_SPEED_SCALE,
+                   .speedEst.mechSpeed       = PWM_FREQ,
+                   .speedEst.speedRef        = 200,
+                   .speedEst.lpf.a           = 1.0 - (1.0 / (1.0 + 2.0 * M_PI * 200 / PWM_FREQ)),
+                   .speedEst.lpf.b           = (1.0 / (1.0 + 2.0 * M_PI * 200 / PWM_FREQ)),
+  },
+
+//  .mechanicalAngle  = &encoder[MOTOR_2].mechPos[NEW],
+//  .MeasNew          = false,
+//  .vaMeasReg        = (volatile int32_t *)(MOTOR2_VA_ADC_PPB_RESULT_ADDR),
+//  .vbMeasReg        = (volatile int32_t *)(MOTOR2_VB_ADC_PPB_RESULT_ADDR),
+//  .vcMeasReg        = (volatile int32_t *)(MOTOR2_VC_ADC_PPB_RESULT_ADDR),
+//  .vBusMeasReg      = (volatile int32_t *)(MOTOR12_VBUS_ADC_PPB_RESULT_ADDR),
+//  .iaMeasReg        = (volatile int32_t *)(MOTOR2_IA_ADC_PPB_RESULT_ADDR),
+//  .ibMeasReg        = (volatile int32_t *)(MOTOR2_IB_ADC_PPB_RESULT_ADDR),
+//  .icMeasReg        = (volatile int32_t *)(MOTOR2_IC_ADC_PPB_RESULT_ADDR),
+//  .encoderPosReg    = (volatile int32_t *)(&(encoder[MOTOR_2].p_qepCntPosReg)),
 
   .enabled = true,
-  .piId.integral = 0.0f, .piId.err = 0.0f, .piId.ff = 0.0f, .piId.out = 0.0f,
-  .piIq.integral = 0.0f, .piIq.err = 0.0f, .piIq.ff = 0.0f, .piIq.out = 0.0f,
+
+  //  Initialize PI & PD controllers
+  .idRef = 0.0f, .iqRef = 0.0f,
+
+  .piId         = {.integral = 0.0f, .err = 0.0f, .ff = 0.0f, .out = 0.0f,
+                   .kp = MOTOR2_ID_REGULATOR_KP_COEF, .ki = MOTOR2_ID_REGULATOR_KI_COEF
+  },
+  .piIq         = {.integral = 0.0f, .err = 0.0f, .ff = 0.0f, .out = 0.0f,
+                   .kp = MOTOR2_IQ_REGULATOR_KP_COEF, .ki = MOTOR2_IQ_REGULATOR_KI_COEF
+  },
+
   .posPd.err = 0.0f, .posPd.vErr = 0.0f, .posPd.out = 0.0f,
+
   .alignRoutine.state = ALIGN_COUNT_UP, .alignRoutine.counter = 0, .alignRoutine.idAlign = 0.0f,
 
-  .encoder.mechPos = {0.0, 0.0}, .encoder.elecPos = 0.0f,
-  .encoder.isIndexCompensated = false, .encoder.indexAngle = 0.0f, .encoder.indexedMechAngle = 0.0f,
-  .encoder.lastMechAngle = 0.0f, .encoder.absoluteAngle = 0.0f,
-  .encoder.speedEst.alpha = 0.0f,
-  .encoder.speedEst.speedRef = 0.0f,
-  .encoder.speedEst.pos = {0.0f, 0.0f},
-  .encoder.speedEst.lowSpeed = 0.0f,
-  .encoder.speedEst.highSpeed = 0.0f,
-  .encoder.speedEst.mechSpeed = 0.0f,
-  .encoder.speedEst.elecSpeed = 0.0f,
-  .encoder.turnNb = 0,
-  .encoder.indexDetected = false,
-  .encoder.indexToggle = false,
-  .encoder.rollOverFlag = false,
+//  .ia = (float32_t *)(&motor_meas[MOTOR_2].ia),
+//  .ib = (float32_t *)(&motor_meas[MOTOR_2].ib),
+//  .ic = (float32_t *)(&motor_meas[MOTOR_2].ic),
+  .ialpha = 0.0f, .ibeta = 0.0f,
+  .id = 0.0f, .iq = 0.0f,
+//  .va = (float32_t *)(&motor_meas[MOTOR_2].va),
+//  .vb = (float32_t *)(&motor_meas[MOTOR_2].vb),
+//  .vc = (float32_t *)(&motor_meas[MOTOR_2].vc),
+  .valpha = 0.0f, .vbeta = 0.0f,
+  .vd = 0.0f, .vq = 0.0f,
 
-  .ia = 0.0f, .ib = 0.0f, .ic = 0.0f, .ialpha = 0.0f, .ibeta = 0.0f, .id = 0.0f, .iq = 0.0f,
-  .va = 0.0f, .vb = 0.0f, .vc = 0.0f, .valpha = 0.0f, .vbeta = 0.0f, .vd = 0.0f, .vq = 0.0f,
-
-  .mechAngle = (float32_t *)(&encoder[MOTOR_1].mechPos[NEW]),
-  .elecAngle = (float32_t *)(&encoder[MOTOR_1].elecPos),
+//  .mechAngle = (float32_t *)(&encoder[MOTOR_2].mechPos[NEW]),
+//  .elecAngle = (float32_t *)(&encoder[MOTOR_2].elecPos),
   .sinTheta = 0.0f, .cosTheta = 0.0f,
 
   .auxAdc = 0.0f, .phaseAVolt = 0.0f, .phaseBVolt = 0.0f, .phaseCVolt = 0.0f, .resistanceEst = 0.0f,
-  .Rs = (float32_t *)(&motor_params[MOTOR_1].Rs),
-  .Ld = (float32_t *)(&motor_params[MOTOR_1].Ld),
-  .Lq = (float32_t *)(&motor_params[MOTOR_1].Lq),
-  .ke = (float32_t *)(&motor_params[MOTOR_1].ke),
- },
- {.enabled = true,
-  .piId.integral = 0.0f, .piId.err = 0.0f, .piId.ff = 0.0f, .piId.out = 0.0f,
-  .piIq.integral = 0.0f, .piIq.err = 0.0f, .piIq.ff = 0.0f, .piIq.out = 0.0f,
-  .posPd.err = 0.0f, .posPd.vErr = 0.0f, .posPd.out = 0.0f,
-  .alignRoutine.state = ALIGN_COUNT_UP, .alignRoutine.counter = 0, .alignRoutine.idAlign = 0.0f,
-  .ia = 0.0f, .ib = 0.0f, .ic = 0.0f, .ialpha = 0.0f, .ibeta = 0.0f, .id = 0.0f, .iq = 0.0f,
-  .va = 0.0f, .vb = 0.0f, .vc = 0.0f, .valpha = 0.0f, .vbeta = 0.0f, .vd = 0.0f, .vq = 0.0f,
-
-  .mechAngle = (float32_t *)(&encoder[MOTOR_2].mechPos[NEW]),
-  .elecAngle = (float32_t *)(&encoder[MOTOR_2].elecPos),
-  .sinTheta = 0.0f, .cosTheta = 0.0f,
-
-  .auxAdc = 0.0f, .phaseAVolt = 0.0f, .phaseBVolt = 0.0f, .phaseCVolt = 0.0f, .resistanceEst = 0.0f,
-  .Rs = (float32_t *)(&motor_params[MOTOR_2].Rs),
-  .Ld = (float32_t *)(&motor_params[MOTOR_2].Ld),
-  .Lq = (float32_t *)(&motor_params[MOTOR_2].Lq),
-  .ke = (float32_t *)(&motor_params[MOTOR_2].ke),
+//  .Rs = (float32_t *)(&motor_params[MOTOR_2].Rs),
+//  .Ld = (float32_t *)(&motor_params[MOTOR_2].Ld),
+//  .Lq = (float32_t *)(&motor_params[MOTOR_2].Lq),
+//  .ke = (float32_t *)(&motor_params[MOTOR_2].ke),
  },
 };
 static MOTOR_STRUCT motor[] =
@@ -338,9 +435,6 @@ static MOTOR_STRUCT motor[] =
  {
   .motorID          = MOTOR_1,
   .motorHalCfg      = &motor_hal_cfg[MOTOR_1],
-  .motorParams      = &motor_params[MOTOR_1],
-  .motorMeas        = &motor_meas[MOTOR_1],
-  .motorEncoder     = &encoder[MOTOR_1],
   .motorDRV         = &drv[MOTOR_1],
   .motorFOC         = &motor_foc[MOTOR_1],
   .currentScaler    = ADC_CURRENT_SCALE,
@@ -354,9 +448,6 @@ static MOTOR_STRUCT motor[] =
  {
   .motorID          = MOTOR_2,
   .motorHalCfg      = &motor_hal_cfg[MOTOR_2],
-  .motorParams      = &motor_params[MOTOR_2],
-  .motorMeas        = &motor_meas[MOTOR_2],
-  .motorEncoder     = &encoder[MOTOR_2],
   .motorDRV         = &drv[MOTOR_2],
   .motorFOC         = &motor_foc[MOTOR_2],
   .currentScaler    = ADC_CURRENT_SCALE,

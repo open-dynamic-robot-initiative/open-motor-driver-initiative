@@ -25,22 +25,10 @@
 #include "foc.h"
 #include "encoder.h"
 #include "math_defines.h"
-#include "lowpass_filter.h"
+//#include "lowpass_filter.h"
 #include "anticoagging.h"
 #include "uomodri_user_defines.h"
 //#include "uomodri_prj_config_handlers.h"
-
-typedef struct __MOTOR_PARAMS__
-{
-    // Motor constants
-    float32_t Rs;       // Stator resistance [Ohm]
-    float32_t Ld;       // Direct axis inductance [H]
-    float32_t Lq;       // Quadratic axis inductance [H]
-    float32_t kv;       // Motor speed constant [RPM/V or rad/s/V]
-    float32_t ke;       // Motor back EMF constant [V/rad/s] (electrical radians) = 1/kv
-    float32_t ki;       // Motor torque constant [N.m/A]
-    uint8_t polePairs;  // Number of pole pairs
-} MOTOR_PARAMS;
 
 typedef struct __FILTER_PARAMS__
 {
@@ -48,42 +36,42 @@ typedef struct __FILTER_PARAMS__
     float32_t a;
 } FILTER_PARAMS;
 
-typedef struct __MOTOR_MEASURES__
-{
-    const MotorID motorID;
-    float32_t va;       // [V]
-    float32_t vb;       // [V]
-    float32_t vc;       // [V]
-    float32_t vbus;     // [V]
-
-    float32_t ia;       // [A]
-    float32_t ib;       // [A]
-    float32_t ic;       // [A]
-
-    float32_t* mechanicalAngle; // between 0 and 1
-
-    bool MeasNew;
-
-    // ADC result registers
-    volatile int32_t* vaMeasReg;
-    volatile int32_t* vbMeasReg;
-    volatile int32_t* vcMeasReg;
-    volatile int32_t* vBusMeasReg;
-
-    volatile int32_t* iaMeasReg;
-    volatile int32_t* ibMeasReg;
-    volatile int32_t* icMeasReg;
-
-    volatile int32_t* encoderPosReg;
-} MOTOR_MEASURES;
+//typedef struct __MOTOR_MEASURES__
+//{
+//    const MotorID motorID;
+//    float32_t va;       // [V]
+//    float32_t vb;       // [V]
+//    float32_t vc;       // [V]
+//    float32_t vbus;     // [V]
+//
+//    float32_t ia;       // [A]
+//    float32_t ib;       // [A]
+//    float32_t ic;       // [A]
+//
+//    float32_t* mechanicalAngle; // between 0 and 1
+//
+//    bool MeasNew;
+//
+//    // ADC result registers
+//    volatile int32_t* vaMeasReg;
+//    volatile int32_t* vbMeasReg;
+//    volatile int32_t* vcMeasReg;
+//    volatile int32_t* vBusMeasReg;
+//
+//    volatile int32_t* iaMeasReg;
+//    volatile int32_t* ibMeasReg;
+//    volatile int32_t* icMeasReg;
+//
+//    volatile int32_t* encoderPosReg;
+//} MOTOR_MEASURES;
 
 typedef struct __MOTOR_STRUCT__
 {
-    const MotorID           motorID;
+    const MOTOR_ID          motorID;
     const MOTOR_HAL_CFG*    motorHalCfg;
-    const MOTOR_PARAMS*     motorParams;
-    MOTOR_MEASURES*         motorMeas;
-    ENCODER*                motorEncoder;
+//    const MOTOR_PARAMS*     motorParams;
+//    MOTOR_MEASURES*         motorMeas;
+//    ENCODER*                motorEncoder;
     DRV8353*                motorDRV;
     FOC*                    motorFOC;
 
@@ -104,10 +92,10 @@ typedef struct __MOTOR_STRUCT__
     float32_t dutyCycleSat;
 
     // Motor constants
-    float32_t Rs; // Stator resistance [Ohm]
-    float32_t Ld; // Direct axis inductance [H]
-    float32_t Lq; // Quadratic axis inductance [H]
-    float32_t ke; // Motor back EMF constant [V/rad/s] (electrical radians)
+//    float32_t Rs; // Stator resistance [Ohm]
+//    float32_t Ld; // Direct axis inductance [H]
+//    float32_t Lq; // Quadratic axis inductance [H]
+//    float32_t ke; // Motor back EMF constant [V/rad/s] (electrical radians)
 
      // Rotor electrical angle sine cosine
     float32_t sinTheta;
@@ -165,8 +153,8 @@ typedef struct __MOTOR_STRUCT__
 } MOTOR_STRUCT;
 
 //inline void MOTOR_getCurrent(MOTOR_STRUCT*);
-inline void MOTOR_getCurrent(MOTOR_MEASURES*);
-inline void MOTOR_getVoltage(MOTOR_MEASURES*);
+//inline void MOTOR_getCurrent(MOTOR_MEASURES*);
+//inline void MOTOR_getVoltage(MOTOR_MEASURES*);
 inline void MOTOR_SetPwmCmd(MOTOR_STRUCT*, float32_t, float32_t, float32_t);
 
 #endif /* INC_MOTOR_H_ */

@@ -29,7 +29,7 @@ typedef enum
     MOTOR_1 = 0,    /*!< Select Motor_1 */
     MOTOR_2 = 1,    /*!< Select Motor_2 */
     NO_MOT  = -1    /*!< No motor selected */
-} MotorID;
+} MOTOR_ID;
 
 /**
  * @enum    itID
@@ -158,6 +158,7 @@ typedef struct _eQEP_Cfg_TypeDef_
 {
     uint32_t eqepBase;                              /*!< eQEP peripheral address. */
     uint32_t eqepMaxResolution;
+    uint32_t eqepUnitTimerPeriod;
     uint16_t config;
 } eQEP_TypeDef;
 
@@ -288,7 +289,7 @@ typedef struct _ADC_TypeDef_
 
 typedef struct _IT_TypeDef_
 {
-    const MotorID   motorID;
+    const MOTOR_ID  motorID;
     uint32_t        intNum;
     uint32_t        intPeriphBase;
     uint16_t        intPeriphSrc;
@@ -351,7 +352,7 @@ typedef struct _MOTOR_HAL_CFG_
 ////    ACQ raw;
 //    uint32_t encoderPos;
 //
-    const MotorID           motorID;
+    const MOTOR_ID          motorID;
 //
 //    bool dataValid[2];
 //    bool offsetCal;
