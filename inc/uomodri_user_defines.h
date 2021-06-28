@@ -16,6 +16,7 @@
  * @{
  */
 #define UOMODRI                     0
+#define UOMODRI_FLT_FORM            2
 #define OMODRI_PAL_SETUP            0   // Set this to 1 to use the PAL pin affectation
 #define SPI_DEBUG_CONFIGURATION     0   // Set this to 1 to use debug configuration
 // Word number in a full communication

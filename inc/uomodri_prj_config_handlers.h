@@ -242,7 +242,7 @@ static FOC motor_foc[] =
 
   .motorParams  = {.Rs = MOTOR1_RS, .Ld = MOTOR1_LD, .Lq = MOTOR1_LQ,
                    .kv = MOTOR1_KV, .ke = MOTOR1_KE, .ki = MOTOR1_KI,
-                   .polePairs = MOTOR1_POLES_PAIRS
+                   .polePairs = MOTOR1_POLES_PAIRS,
   },
   .motor_acq    = {.vaMeasReg      = (volatile int32_t *)(MOTOR1_VA_ADC_PPB_RESULT_ADDR),
                    .vbMeasReg      = (volatile int32_t *)(MOTOR1_VB_ADC_PPB_RESULT_ADDR),
@@ -267,11 +267,11 @@ static FOC motor_foc[] =
                                        .lpf.a           = 1.0 - (1.0 / (1.0 + 2.0 * M_PI * 200 / PWM_FREQ)),
                                        .lpf.b           = (1.0 / (1.0 + 2.0 * M_PI * 200 / PWM_FREQ))},
   },
-  //  Initialize control loop low-pass filter
-  //  alpha = 1 / (1 + (1 / (2 * PI * CUTTOFF_FREQ / PWM_FREQ)))
-  //  Simplifying :
-  //  alpha = 1 - (1 / (1 + (2 * PI * CUTTOFF_FREQ / PWM_FREQ)))
-  //  1 - alpha = 1 / (1 + (2 * PI * CUTTOFF_FREQ / PWM_FREQ))
+//  Initialize control loop low-pass filter
+//  alpha = 1 / (1 + (1 / (2 * PI * CUTTOFF_FREQ / PWM_FREQ)))
+//  Simplifying :
+//  alpha = 1 - (1 / (1 + (2 * PI * CUTTOFF_FREQ / PWM_FREQ)))
+//  1 - alpha = 1 / (1 + (2 * PI * CUTTOFF_FREQ / PWM_FREQ))
   .iParkLpf     = {.a               = MOTOR1_CURRENT_LPF_ALPHA,//1.0 - (1.0 / (1.0 + (2.0 * M_PI * MOTOR1_CUR_LOOP_BANDWIDTH / PWM_FREQ))),
                    .b               = MOTOR1_CURRENT_LPF_ONE_MINUS_ALPHA,//1.0 / (1.0 + (2.0 * M_PI * MOTOR1_CUR_LOOP_BANDWIDTH / PWM_FREQ)),
   },
@@ -279,14 +279,18 @@ static FOC motor_foc[] =
   //  Initialize PI & PD controllers
   .idRef = 0.0f, .iqRef = 0.0f,
 
-  .piId         = {.integral = 0.0f, .err = 0.0f, .ff = 0.0f, .out = 0.0f,
-                   .kp = MOTOR1_ID_REGULATOR_KP_COEF, .ki = MOTOR1_ID_REGULATOR_KI_COEF
+  .piId         = {.err = 0.0f, .errPrev = 0.0f,
+                   .kp = MOTOR1_ID_REGULATOR_KP_COEF, .ki = MOTOR1_ID_REGULATOR_KI_COEF, .kd = 0.0f,
+                   .integral = 0.0f, .derivative = 0.0f, .ff = 0.0f, .out = 0.0f, .sat =  0.4,// * ((float32_t *)(&motor_foc[MOTOR_1].motor_acq.vbus)),
   },
-  .piIq         = {.integral = 0.0f, .err = 0.0f, .ff = 0.0f, .out = 0.0f,
-                   .kp = MOTOR1_IQ_REGULATOR_KP_COEF, .ki = MOTOR1_IQ_REGULATOR_KI_COEF
+  .piIq         = {.err = 0.0f, .errPrev = 0.0f,
+                   .kp = MOTOR1_IQ_REGULATOR_KP_COEF, .ki = MOTOR1_IQ_REGULATOR_KI_COEF, .kd = 0.0f,
+                   .integral = 0.0f, .derivative = 0.0f, .ff = 0.0f, .out = 0.0f, .sat =  0.4,// * ((float32_t *)(&motor_foc[MOTOR_1].motor_acq.vbus)),
   },
-
-  .posPd.err = 0.0f, .posPd.vErr = 0.0f, .posPd.out = 0.0f,
+  .pdPos        = {.err = 0.0f, .errPrev = 0.0f,
+                   .kp = MOTOR1_IQ_REGULATOR_KP_COEF, .ki = MOTOR1_IQ_REGULATOR_KI_COEF, .kd = 0.0f,
+                   .integral = 0.0f, .derivative = 0.0f, .ff = 0.0f, .out = 0.0f, .sat =  4.0f,
+  },
 
 //  .mechanicalAngle  = &encoder[MOTOR_1].mechPos[NEW],
 //  .MeasNew          = false,
@@ -307,10 +311,9 @@ static FOC motor_foc[] =
 
   .enabled = true,
 //  Initialize PI & PD controllers
-  .idRef = 0.0f, .iqRef = 0.0f,
-  .piId.integral = 0.0f, .piId.err = 0.0f, .piId.ff = 0.0f, .piId.out = 0.0f,
-  .piIq.integral = 0.0f, .piIq.err = 0.0f, .piIq.ff = 0.0f, .piIq.out = 0.0f,
-  .posPd.err = 0.0f, .posPd.vErr = 0.0f, .posPd.out = 0.0f,
+//  .idRef = 0.0f, .iqRef = 0.0f,
+//  .piId.integral = 0.0f, .piId.err = 0.0f, .piId.ff = 0.0f, .piId.out = 0.0f,
+//  .piIq.integral = 0.0f, .piIq.err = 0.0f, .piIq.ff = 0.0f, .piIq.out = 0.0f,
 
   .alignRoutine.state = ALIGN_COUNT_UP, .alignRoutine.counter = 0, .alignRoutine.idAlign = 0.0f,
 
@@ -338,8 +341,9 @@ static FOC motor_foc[] =
 //  .va = (float32_t *)(&motor_meas[MOTOR_1].va),
 //  .vb = (float32_t *)(&motor_meas[MOTOR_1].vb),
 //  .vc = (float32_t *)(&motor_meas[MOTOR_1].vc),
-  .valpha = 0.0f, .vbeta = 0.0f,
-  .vd = 0.0f, .vq = 0.0f,
+  .ualpha = 0.0f, .ubeta = 0.0f,
+  .ud = 0.0f, .uq = 0.0f,
+  .uBus = (float32_t *)(&motor_foc[MOTOR_1].motor_acq.vbus),
 
 //  .mechAngle = (float32_t *)(&encoder[MOTOR_1].mechPos[NEW]),
 //  .elecAngle = (float32_t *)(&encoder[MOTOR_1].elecPos),
@@ -397,14 +401,18 @@ static FOC motor_foc[] =
   //  Initialize PI & PD controllers
   .idRef = 0.0f, .iqRef = 0.0f,
 
-  .piId         = {.integral = 0.0f, .err = 0.0f, .ff = 0.0f, .out = 0.0f,
-                   .kp = MOTOR2_ID_REGULATOR_KP_COEF, .ki = MOTOR2_ID_REGULATOR_KI_COEF
+  .piId         = {.err = 0.0f, .errPrev = 0.0f,
+                   .kp = MOTOR2_ID_REGULATOR_KP_COEF, .ki = MOTOR2_ID_REGULATOR_KI_COEF, .kd = 0.0f,
+                   .integral = 0.0f, .derivative = 0.0f, .ff = 0.0f, .out = 0.0f, .sat =  0.4,// * ((float32_t *)(&motor_foc[MOTOR_2].motor_acq.vbus)),
   },
-  .piIq         = {.integral = 0.0f, .err = 0.0f, .ff = 0.0f, .out = 0.0f,
-                   .kp = MOTOR2_IQ_REGULATOR_KP_COEF, .ki = MOTOR2_IQ_REGULATOR_KI_COEF
+  .piIq         = {.err = 0.0f, .errPrev = 0.0f,
+                   .kp = MOTOR2_IQ_REGULATOR_KP_COEF, .ki = MOTOR2_IQ_REGULATOR_KI_COEF, .kd = 0.0f,
+                   .integral = 0.0f, .derivative = 0.0f, .ff = 0.0f, .out = 0.0f, .sat =  0.4,// * ((float32_t *)(&motor_foc[MOTOR_2].motor_acq.vbus)),
   },
-
-  .posPd.err = 0.0f, .posPd.vErr = 0.0f, .posPd.out = 0.0f,
+  .pdPos        = {.err = 0.0f, .errPrev = 0.0f,
+                   .kp = MOTOR2_IQ_REGULATOR_KP_COEF, .ki = MOTOR2_IQ_REGULATOR_KI_COEF, .kd = 0.0f,
+                   .integral = 0.0f, .derivative = 0.0f, .ff = 0.0f, .out = 0.0f, .sat =  4.0f,
+  },
 
   .alignRoutine.state = ALIGN_COUNT_UP, .alignRoutine.counter = 0, .alignRoutine.idAlign = 0.0f,
 
@@ -416,8 +424,9 @@ static FOC motor_foc[] =
 //  .va = (float32_t *)(&motor_meas[MOTOR_2].va),
 //  .vb = (float32_t *)(&motor_meas[MOTOR_2].vb),
 //  .vc = (float32_t *)(&motor_meas[MOTOR_2].vc),
-  .valpha = 0.0f, .vbeta = 0.0f,
-  .vd = 0.0f, .vq = 0.0f,
+  .ualpha = 0.0f, .ubeta = 0.0f,
+  .ud = 0.0f, .uq = 0.0f,
+  .uBus = (float32_t *)(&motor_foc[MOTOR_2].motor_acq.vbus),
 
 //  .mechAngle = (float32_t *)(&encoder[MOTOR_2].mechPos[NEW]),
 //  .elecAngle = (float32_t *)(&encoder[MOTOR_2].elecPos),

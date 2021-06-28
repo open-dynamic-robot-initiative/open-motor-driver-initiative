@@ -42,6 +42,22 @@
 //-------------------------------------------------------------------------------//
 //                                 FOC STRUCTURE                                 //
 //-------------------------------------------------------------------------------//
+typedef struct __PID_CONTROLLER__
+{
+    float32_t err;          // Current error
+    float32_t errPrev;      // Previous error
+
+    float32_t kp;           // Proportional gain
+    float32_t ki;           // Integral gain
+    float32_t kd;           // Derivative gain
+
+    float32_t integral;     // Integral term partial computation
+    float32_t derivative;   // Derivative term partial computation
+    float32_t ff;           // Feed-forward term
+    float32_t out;          // Controller output
+    float32_t sat;          // Controller saturation
+} PID_CONTROLLER;
+
 typedef struct __MOTOR_PARAMETERS__
 {
     // Motor constants
@@ -78,7 +94,6 @@ typedef struct __MOTOR_ACQUISITIONS__
     bool measNew;
 } MOTOR_ACQ;
 
-
 typedef struct __FOC__
 {
     const MOTOR_ID       motorID;
@@ -93,25 +108,38 @@ typedef struct __FOC__
     LowpassFilter       iParkLpf;
 
     // Rotor electrical angle sine cosine
-    float32_t sinTheta;
-    float32_t cosTheta;
-
+    float32_t           sinTheta;
+    float32_t           cosTheta;
     // Direct Clarke transform result
-    float32_t ialpha;   // [A]
-    float32_t ibeta;    // [A]
+    float32_t           ialpha; // [A]
+    float32_t           ibeta;  // [A]
     // Direct Park transform result
-    float32_t id;       // [A]
-    float32_t iq;       // [A]
+    float32_t           id;     // [A]
+    float32_t           iq;     // [A]
+    // Inverse Park transform result
+    float32_t           ud;     // [V]
+    float32_t           uq;     // [V]
+    // Inverse Clarke transform result
+    float32_t           ualpha; // [V]
+    float32_t           ubeta;  // [V]
+    // Bus voltage
+    float32_t*          uBus;   // [V]
+    // Phase commands
+    float32_t           ua;     // [V]
+    float32_t           ub;     // [V]
+    float32_t           uc;     // [V]
 
-    float32_t id_tmp;       // [A]
-    float32_t iq_tmp;       // [A]
 
-    // Voltage transforms
-    float32_t vd;       // [V]
-    float32_t vq;       // [V]
-
-    float32_t valpha;   // [V]
-    float32_t vbeta;    // [V]
+    // PI set point values
+    float32_t           idRef;  // [A]
+    float32_t           iqRef;  // [A]
+    // PI controllers for current control
+    PID_CONTROLLER      piId;
+    PID_CONTROLLER      piIq;
+    //PD set point values
+    float32_t           posRef; // [rpm/s]
+    // PD controller for position control
+    PID_CONTROLLER      pdPos;
 
 
 
@@ -138,8 +166,7 @@ typedef struct __FOC__
 //    float32_t* Lq; // Quadratic axis inductance [H]
 //    float32_t* ke; // Motor back EMF constant [V/rad/s] (electrical radians)
 
-    // Bus voltage
-    float32_t vBus; // [V]
+
 
     // Angles
 //    float32_t* mechAngle; // [pu]
@@ -147,27 +174,24 @@ typedef struct __FOC__
 
 
 
-
-//    float32_t* va;       // [V]
-//    float32_t* vb;       // [V]
-//    float32_t* vc;       // [V]
-//    float32_t vbus;     // [V]
-
     // Duty cycles
     float32_t ducya;    // [pu] between -0.5 and 0.5
     float32_t ducyb;    // [pu] between -0.5 and 0.5
     float32_t ducyc;    // [pu] between -0.5 and 0.5
 
 
-    // PI controllers
-    float32_t idRef;    // [A]
-    float32_t iqRef;    // [A]
-
-    PI_controller piId;
-    PI_controller piIq;
-
-    // Position PD controller
-    PD_controller posPd;
+//    // PI controllers
+//    float32_t idRef;    // [A]
+//    float32_t iqRef;    // [A]
+//
+////    PI_controller piId;
+////    PI_controller piIq;
+//
+//    PID_controller piId;
+//    PID_controller piIq;
+//
+//    // Position PD controller
+//    PD_controller posPd;
 
     // Phase measured voltages
     float32_t phaseAVolt;   // [V]
@@ -194,6 +218,7 @@ typedef struct __FOC__
     volatile union ADCINTFLG_REG *adcIntFlag;
 } FOC;
 
+
 //-------------------------------------------------------------------------------//
 //                                    DEFINES                                    //
 //-------------------------------------------------------------------------------//
@@ -208,19 +233,23 @@ typedef struct __FOC__
 //-------------------------------------------------------------------------------//
 
 inline void FOC_getPosition(FOC*, MOTOR_HAL_CFG*);
-inline void FOC_getPhaseCurrent(MOTOR_ACQ*);
-inline void FOC_getPhaseVoltage(MOTOR_ACQ*);
-inline void FOC_getBusVoltage(MOTOR_ACQ*);
+inline void FOC_getMeasures(MOTOR_ACQ*, bool);
+//inline void FOC_getPhaseCurrent(MOTOR_ACQ*);
+//inline void FOC_getPhaseVoltage(MOTOR_ACQ*);
+//inline void FOC_getBusVoltage(MOTOR_ACQ*);
 
 //inline void FOC_getMeasures(FOC*, MOTOR_HAL_CFG*);
 inline void FOC_sineCosine(FOC*);
-inline void FOC_parkClarke(FOC*);
+//inline void FOC_parkClarke(FOC*);
 
-inline void FOC_runPi(FOC*);
+//inline void FOC_runPi(FOC*);
 
-inline void FOC_invParkClarke(FOC*);
-inline void FOC_svm(FOC*);
+//inline void FOC_invParkClarke(FOC*);
+//inline void FOC_svm(FOC*);
+inline void FOC_control(FOC*);
 
 inline void FOC_resistanceEstimation(FOC*);
+
+static inline void FOC_PID(PID_CONTROLLER*, float32_t, float32_t);
 
 #endif

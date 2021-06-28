@@ -55,10 +55,11 @@ int main(void)
 
         if(motor[MOTOR_1].motorFOC->motor_acq.measNew == true)
         {
-            // Current transforms
-            FOC_parkClarke(motor[MOTOR_1].motorFOC);
-            // Run PI controllers
-            FOC_runPi(motor[MOTOR_1].motorFOC);
+            FOC_control(motor[MOTOR_1].motorFOC);
+//            // Current transforms
+//            FOC_parkClarke(motor[MOTOR_1].motorFOC);
+//            // Run PI controllers
+//            FOC_runPi(motor[MOTOR_1].motorFOC);
 
 
 //            for (ch = 0; ch < 3; ch++)
@@ -79,10 +80,11 @@ int main(void)
 
         if(motor[MOTOR_2].motorFOC->motor_acq.measNew == true)
         {
-            // Current transforms
-            FOC_parkClarke(motor[MOTOR_2].motorFOC);
-            // Run PI controllers
-            FOC_runPi(motor[MOTOR_2].motorFOC);
+            FOC_control(motor[MOTOR_2].motorFOC);
+//            // Current transforms
+//            FOC_parkClarke(motor[MOTOR_2].motorFOC);
+//            // Run PI controllers
+//            FOC_runPi(motor[MOTOR_2].motorFOC);
 //            for (ch = 0; ch < 3; ch++)
 //                j[ch] = (j[ch] < 199) ? (j[ch] + 1) : (0);
 //
@@ -131,12 +133,8 @@ __interrupt void adc_isrMotor1(void)
     uint32_t        base        = InterruptList[ADC_IT_MOTOR_1].intPeriphBase;
     uint16_t        group       = InterruptList[ADC_IT_MOTOR_1].intAckGroup;
     ADC_IntNumber   adcIntNum   = (ADC_IntNumber)InterruptList[ADC_IT_MOTOR_1].intPeriphSrc;
-    // Read the phases voltage + Vbus
-    FOC_getPhaseVoltage(p_acq);
-    // Read Vbus voltage
-    FOC_getBusVoltage(p_acq);
-    // Read the phases currents
-    FOC_getPhaseCurrent(p_acq);
+    // Read the phases current, voltage & Vbus
+    FOC_getMeasures(p_acq, true);
     // Clear the interrupt overflow flag
     ADC_clearInterruptOverflowStatus(base, adcIntNum);
     // Clear the interrupt flag
@@ -160,10 +158,8 @@ __interrupt void adc_isrMotor2(void)
     uint32_t        base        = InterruptList[ADC_IT_MOTOR_2].intPeriphBase;
     uint16_t        group       = InterruptList[ADC_IT_MOTOR_2].intAckGroup;
     ADC_IntNumber   adcIntNum   = (ADC_IntNumber)InterruptList[ADC_IT_MOTOR_2].intPeriphSrc;
-    // Read the phases voltage + Vbus
-    FOC_getPhaseVoltage(p_acq);
-    // Read the phases currents
-    FOC_getPhaseCurrent(p_acq);
+    // Read the phases current, voltage
+    FOC_getMeasures(p_acq, false);
     // Clear the interrupt overflow flag
     ADC_clearInterruptOverflowStatus(base, adcIntNum);
     // Clear the interrupt flag
