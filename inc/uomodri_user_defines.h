@@ -26,8 +26,13 @@
  */
 
 #define HWSREGH(x)                              (*((volatile int16_t *)((uintptr_t)(x))))
-#define LPF_FILTER(filt_strut, y, x)            (y) = filt_strut.a * (x) + filt_strut.b * (y)
-#define LPF_FILTER2(filter_coef, y, x)          (y) += (filter_coef * ((x) - (y)))
+#if (UOMODRI_FLT_FORM == 1)
+#define LPF_FILTER(flt_coef, y, x)              (y) = flt_coef.a * (x) + flt_coef.b * (y)
+#elif (UOMODRI_FLT_FORM == 2)
+#define LPF_FILTER(flt_coef, y, x)              (y) += (flt_coef * ((x) - (y)))
+#endif
+
+
 typedef struct __LowpassFilter__
 {
     float b;
@@ -143,7 +148,7 @@ typedef struct __LowpassFilter__
 #define BRIDGE_DIVIDER                          ((5.1f + 100.0f) / 5.1f)
 #endif
 #define ADC_VOLTAGE_SCALE                       (ADC_VREF * BRIDGE_DIVIDER / ((ADC_RESOLUTION) ? (65536.0f) : (4096.0f)))// Voltage divider R1:4.99kO R2:82kO
-#define ADC_CURRENT_SCALE                       (ADC_VREF * (-0.5f) / DRV_CSA_GAIN_VAL / R_SHUNT / ((ADC_RESOLUTION) ? (32768.0f) : (2048.0f)))
+#define ADC_CURRENT_SCALE                       (ADC_VREF * (-0.5f) / DRV_CSA_GAIN_VAL / R_SHUNT / ((ADC_RESOLUTION) ? (32768.0f) : (2048.0f))) //(0x1000 << (ADC_RESOLUTION >> 4)))
 /**
  * @}
  */

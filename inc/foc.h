@@ -9,11 +9,12 @@
 //#include <stdint.h>
 //#include "lowpass_filter.h"
 #include "hal.h"
+//#include "motor.h"
 
-#include "pd.h"
-#include "pi.h"
+//#include "pd.h"
+//#include "pi.h"
 
-#include "align_routine.h"
+//#include "align_routine.h"
 #include "encoder.h"
 #include "math_defines.h"
 //#include "motor.h"
@@ -39,9 +40,9 @@
 //
 //#define FM_ABS(x)   ((x) >= 0.0f ? (x) : -(x))
 
-//-------------------------------------------------------------------------------//
-//                                 FOC STRUCTURE                                 //
-//-------------------------------------------------------------------------------//
+/*********************************************************************************/
+/**                                FOC STRUCTURE                                **/
+/*********************************************************************************/
 typedef struct __PID_CONTROLLER__
 {
     float32_t err;          // Current error
@@ -96,7 +97,7 @@ typedef struct __MOTOR_ACQUISITIONS__
 
 typedef struct __FOC__
 {
-    const MOTOR_ID       motorID;
+    const MOTOR_ID      motorID;
     // Motor configuration parameters
     const MOTOR_PARAMS  motorParams;
     // Current & Voltage measures
@@ -141,12 +142,10 @@ typedef struct __FOC__
     // PD controller for position control
     PID_CONTROLLER      pdPos;
 
-
-
     // Enable flag
-    bool enabled;
+    bool                enabled;
     // Alignment routine structure
-    AlignRoutine alignRoutine;
+//    AlignRoutine        alignRoutine;
 
     // Utility variables
     float32_t currentScaler;    // [A/pu]
@@ -167,11 +166,9 @@ typedef struct __FOC__
 //    float32_t* ke; // Motor back EMF constant [V/rad/s] (electrical radians)
 
 
-
     // Angles
 //    float32_t* mechAngle; // [pu]
 //    float32_t* elecAngle; // [pu]
-
 
 
     // Duty cycles

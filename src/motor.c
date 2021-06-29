@@ -57,3 +57,49 @@ inline void MOTOR_SetPwmCmd(MOTOR_STRUCT* p_motor, float32_t CmdChA, float32_t C
     *(p_motor->pwmChBReg) = CmdChB;
     *(p_motor->pwmChCReg) = CmdChC;
 }
+
+
+
+static void ALIGN_reset(AlignRoutine *align)
+{
+    align->state = ALIGN_COUNT_UP;
+    align->counter = 0;
+    align->idAlign = 0.0f;
+}
+
+// Return true if calibration is finished
+static void ALIGN_run(AlignRoutine *align)
+{
+    switch (align->state)
+    {
+    case ALIGN_COUNT_UP:
+        // Increment alignment current
+        align->idAlign += 1e-5;
+
+        if(align->idAlign >= align->idAlignRef)
+        {
+            align->state = ALIGN_STAY;
+        }
+        break;
+
+    case ALIGN_STAY:
+        // Maintain alignment current
+        if(++align->counter >= align->max)
+        {
+            align->state = ALIGN_COUNT_DOWN;
+        }
+        break;
+
+    case ALIGN_COUNT_DOWN:
+        // Decrement alignment current
+        align->idAlign -= 1e-5;
+
+        if(align->idAlign <= 0.0f)
+        {
+            align->counter = 0;
+            align->idAlign = 0.0f;
+            align->state = ALIGN_DONE;
+        }
+        break;
+    }
+}

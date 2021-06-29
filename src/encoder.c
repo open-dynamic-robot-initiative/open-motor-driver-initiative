@@ -136,7 +136,12 @@ inline void encoder_GetSpeed(ENCODER* p_encoder)
     //p_encoder->speedEst.speedRef = (1.0f - p_encoder->speedEst.alpha) * p_encoder->speedEst.lowMechSpeedEst + p_encoder->speedEst.alpha * p_encoder->speedEst.highMechSpeedEst;
     p_speed.speedRef = p_speed.highSpeed;
     // Update speeds
+#if (UOMODRI_FLT_FORM == 1)
     LPF_FILTER(p_speed.lpf, p_speed.mechSpeed, p_speed.speedRef);
+#elif (UOMODRI_FLT_FORM == 2)
+    LPF_FILTER(p_speed.lpf.a, p_speed.mechSpeed, p_speed.speedRef);
+#endif
+
     p_speed.elecSpeed = *(p_encoder->p_polePairs) * p_speed.mechSpeed;
 
     //-------------------------------------------------------------------//

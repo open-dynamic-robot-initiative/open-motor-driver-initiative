@@ -12,7 +12,7 @@
 #include "foc.h"
 #include "motor.h"
 #include "spi_communication.h"
-#include "align_routine.h"
+//#include "align_routine.h"
 
 #include "uomodri_user_defines.h"
 #include "uomodri_hal_config_handlers.h"
@@ -244,15 +244,15 @@ static FOC motor_foc[] =
                    .kv = MOTOR1_KV, .ke = MOTOR1_KE, .ki = MOTOR1_KI,
                    .polePairs = MOTOR1_POLES_PAIRS,
   },
-  .motor_acq    = {.vaMeasReg      = (volatile int32_t *)(MOTOR1_VA_ADC_PPB_RESULT_ADDR),
-                   .vbMeasReg      = (volatile int32_t *)(MOTOR1_VB_ADC_PPB_RESULT_ADDR),
-                   .vcMeasReg      = (volatile int32_t *)(MOTOR1_VC_ADC_PPB_RESULT_ADDR),
-                   .vBusMeasReg    = (volatile int32_t *)(MOTOR12_VBUS_ADC_PPB_RESULT_ADDR),
-                   .iaMeasReg      = (volatile int32_t *)(MOTOR1_IA_ADC_PPB_RESULT_ADDR),
-                   .ibMeasReg      = (volatile int32_t *)(MOTOR1_IB_ADC_PPB_RESULT_ADDR),
-                   .icMeasReg      = (volatile int32_t *)(MOTOR1_IC_ADC_PPB_RESULT_ADDR),
+  .motor_acq    = {.vaMeasReg       = (volatile int32_t *)(MOTOR1_VA_ADC_PPB_RESULT_ADDR),
+                   .vbMeasReg       = (volatile int32_t *)(MOTOR1_VB_ADC_PPB_RESULT_ADDR),
+                   .vcMeasReg       = (volatile int32_t *)(MOTOR1_VC_ADC_PPB_RESULT_ADDR),
+                   .vBusMeasReg     = (volatile int32_t *)(MOTOR12_VBUS_ADC_PPB_RESULT_ADDR),
+                   .iaMeasReg       = (volatile int32_t *)(MOTOR1_IA_ADC_PPB_RESULT_ADDR),
+                   .ibMeasReg       = (volatile int32_t *)(MOTOR1_IB_ADC_PPB_RESULT_ADDR),
+                   .icMeasReg       = (volatile int32_t *)(MOTOR1_IC_ADC_PPB_RESULT_ADDR),
                    .va = 0.0f, .vb = 0.0f, .vc = 0.0f, .vbus = 0.0f, .ia = 0.0f, .ib = 0.0f, .ic = 0.0f,
-                   .measNew        = false,
+                   .measNew         = false,
   },
   .motor_enc    = {.p_qepHandle     = &QepCfgList[0],
                    .p_qepRegs       = (struct EQEP_REGS *)(MOTOR1_QEP_BASE),
@@ -315,7 +315,7 @@ static FOC motor_foc[] =
 //  .piId.integral = 0.0f, .piId.err = 0.0f, .piId.ff = 0.0f, .piId.out = 0.0f,
 //  .piIq.integral = 0.0f, .piIq.err = 0.0f, .piIq.ff = 0.0f, .piIq.out = 0.0f,
 
-  .alignRoutine.state = ALIGN_COUNT_UP, .alignRoutine.counter = 0, .alignRoutine.idAlign = 0.0f,
+  //.alignRoutine.state = ALIGN_COUNT_UP, .alignRoutine.counter = 0, .alignRoutine.idAlign = 0.0f,
 
 //  .motor_enc.mechPos = {0.0, 0.0},
 //  .encoder.elecPos = 0.0f,
@@ -384,7 +384,14 @@ static FOC motor_foc[] =
                    .speedEst.lpf.a           = 1.0 - (1.0 / (1.0 + 2.0 * M_PI * 200 / PWM_FREQ)),
                    .speedEst.lpf.b           = (1.0 / (1.0 + 2.0 * M_PI * 200 / PWM_FREQ)),
   },
-
+//  Initialize control loop low-pass filter
+//  alpha = 1 / (1 + (1 / (2 * PI * CUTTOFF_FREQ / PWM_FREQ)))
+//  Simplifying :
+//  alpha = 1 - (1 / (1 + (2 * PI * CUTTOFF_FREQ / PWM_FREQ)))
+//  1 - alpha = 1 / (1 + (2 * PI * CUTTOFF_FREQ / PWM_FREQ))
+  .iParkLpf     = {.a               = MOTOR2_CURRENT_LPF_ALPHA,//1.0 - (1.0 / (1.0 + (2.0 * M_PI * MOTOR1_CUR_LOOP_BANDWIDTH / PWM_FREQ))),
+                   .b               = MOTOR2_CURRENT_LPF_ONE_MINUS_ALPHA,//1.0 / (1.0 + (2.0 * M_PI * MOTOR1_CUR_LOOP_BANDWIDTH / PWM_FREQ)),
+  },
 //  .mechanicalAngle  = &encoder[MOTOR_2].mechPos[NEW],
 //  .MeasNew          = false,
 //  .vaMeasReg        = (volatile int32_t *)(MOTOR2_VA_ADC_PPB_RESULT_ADDR),
@@ -414,7 +421,7 @@ static FOC motor_foc[] =
                    .integral = 0.0f, .derivative = 0.0f, .ff = 0.0f, .out = 0.0f, .sat =  4.0f,
   },
 
-  .alignRoutine.state = ALIGN_COUNT_UP, .alignRoutine.counter = 0, .alignRoutine.idAlign = 0.0f,
+//  .alignRoutine.state = ALIGN_COUNT_UP, .alignRoutine.counter = 0, .alignRoutine.idAlign = 0.0f,
 
 //  .ia = (float32_t *)(&motor_meas[MOTOR_2].ia),
 //  .ib = (float32_t *)(&motor_meas[MOTOR_2].ib),

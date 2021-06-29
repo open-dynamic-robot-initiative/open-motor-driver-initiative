@@ -18,10 +18,10 @@
 #include <math.h>
 #include "hal.h"
 
-#include "pd.h"
-#include "pi.h"
+//#include "pd.h"
+//#include "pi.h"
 
-#include "align_routine.h"
+//#include "align_routine.h"
 #include "foc.h"
 #include "encoder.h"
 #include "math_defines.h"
@@ -29,6 +29,25 @@
 #include "anticoagging.h"
 #include "uomodri_user_defines.h"
 //#include "uomodri_prj_config_handlers.h"
+
+typedef enum
+{
+    ALIGN_COUNT_UP,
+    ALIGN_STAY,
+    ALIGN_COUNT_DOWN,
+    ALIGN_DONE
+} AlignState;
+
+typedef struct __ALIGNE_ROUTINE__
+{
+    AlignState state;
+
+    uint32_t counter;
+    uint32_t max;
+
+    float32_t idAlignRef;
+    float32_t idAlign;
+} AlignRoutine;
 
 typedef struct __FILTER_PARAMS__
 {
@@ -98,8 +117,8 @@ typedef struct __MOTOR_STRUCT__
 //    float32_t ke; // Motor back EMF constant [V/rad/s] (electrical radians)
 
      // Rotor electrical angle sine cosine
-    float32_t sinTheta;
-    float32_t cosTheta;
+//    float32_t sinTheta;
+//    float32_t cosTheta;
 
     // Low-pass control loop filter
     LowpassFilter controlLoopLpf;
@@ -117,11 +136,11 @@ typedef struct __MOTOR_STRUCT__
     float32_t idRef;    // [A]
     float32_t iqRef;    // [A]
 
-    PI_controller piId;
-    PI_controller piIq;
+//    PI_controller piId;
+//    PI_controller piIq;
 
     // Position PD controller
-    PD_controller posPd;
+//    PD_controller posPd;
 
     // Phase measured voltages
     float32_t phaseAVolt;   // [V]
@@ -156,5 +175,7 @@ typedef struct __MOTOR_STRUCT__
 //inline void MOTOR_getCurrent(MOTOR_MEASURES*);
 //inline void MOTOR_getVoltage(MOTOR_MEASURES*);
 inline void MOTOR_SetPwmCmd(MOTOR_STRUCT*, float32_t, float32_t, float32_t);
+static void ALIGN_reset(AlignRoutine*);
+static void ALIGN_run(AlignRoutine*);
 
 #endif /* INC_MOTOR_H_ */
