@@ -47,6 +47,7 @@ typedef struct __PID_CONTROLLER__
 {
     float32_t err;          // Current error
     float32_t errPrev;      // Previous error
+    float32_t deltaT;       // Time step
 
     float32_t kp;           // Proportional gain
     float32_t ki;           // Integral gain
@@ -130,13 +131,13 @@ typedef struct __FOC__
     float32_t           ub;     // [V]
     float32_t           uc;     // [V]
 
-
     // PI set point values
     float32_t           idRef;  // [A]
     float32_t           iqRef;  // [A]
     // PI controllers for current control
     PID_CONTROLLER      piId;
     PID_CONTROLLER      piIq;
+
     //PD set point values
     float32_t           posRef; // [rpm/s]
     // PD controller for position control
@@ -148,12 +149,12 @@ typedef struct __FOC__
 //    AlignRoutine        alignRoutine;
 
     // Utility variables
-    float32_t currentScaler;    // [A/pu]
-    float32_t currentScalerReg; // [A/register]
-    float32_t voltageScaler;    // [V/pu]
-    float32_t voltageScalerReg; // [V/register]
-    float32_t adcScaler;        // [V/pu]
-    float32_t adcScalerReg;     // [V/register]
+//    float32_t currentScaler;    // [A/pu]
+//    float32_t currentScalerReg; // [A/register]
+//    float32_t voltageScaler;    // [V/pu]
+//    float32_t voltageScalerReg; // [V/register]
+//    float32_t adcScaler;        // [V/pu]
+//    float32_t adcScalerReg;     // [V/register]
     float32_t pwmCompScaler;    // [register/pu]
 
     // Duty-cycle saturation
@@ -247,6 +248,8 @@ inline void FOC_control(FOC*);
 
 inline void FOC_resistanceEstimation(FOC*);
 
-static inline void FOC_PID(PID_CONTROLLER*, float32_t, float32_t);
+//static inline void FOC_PID(PID_CONTROLLER*);
+static inline void FOC_PI(PID_CONTROLLER*);
+static inline void FOC_PD(PID_CONTROLLER*);
 
 #endif

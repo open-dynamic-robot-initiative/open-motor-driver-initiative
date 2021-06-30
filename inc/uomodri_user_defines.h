@@ -16,7 +16,8 @@
  * @{
  */
 #define UOMODRI                     0
-#define UOMODRI_FLT_FORM            2
+#define UOMODRI_FLT_FORM            3
+#define UOMODRI_FOC_FEED_FORWARD    1
 #define OMODRI_PAL_SETUP            0   // Set this to 1 to use the PAL pin affectation
 #define SPI_DEBUG_CONFIGURATION     0   // Set this to 1 to use debug configuration
 // Word number in a full communication
@@ -522,6 +523,8 @@ typedef struct __LowpassFilter__
 #define MOTOR1_ID_REGULATOR_KI_COEF             (MOTOR1_RS * 2.0 * M_PI * MOTOR1_CURRENT_CUTOFF_FREQ / PWM_FREQ)
 #define MOTOR1_IQ_REGULATOR_KP_COEF             (MOTOR1_LQ * 2.0 * M_PI * MOTOR1_CURRENT_CUTOFF_FREQ)
 #define MOTOR1_IQ_REGULATOR_KI_COEF             (MOTOR1_RS * 2.0 * M_PI * MOTOR1_CURRENT_CUTOFF_FREQ / PWM_FREQ)
+#define MOTOR1_DUTY_CYCLE_MAX                   (0.95f)     // Max duty cycle
+#define MOTOR1_DUTY_CYCLE_MIN                   (0.05f)     // Min duty cycle
 //#define MOTOR1_CUR_LOOP_ONE_MINUS_ALPHA         (1.0 / (1.0 + (2.0 * M_PI * MOTOR1_CUR_LOOP_BANDWIDTH / PWM_FREQ)))
 //#define MOTOR1_CUR_LOOP_ALPHA                   (1.0 - (MOTOR1_CUR_LOOP_ONE_MINUS_ALPHA))
 
@@ -540,6 +543,8 @@ typedef struct __LowpassFilter__
 #define MOTOR2_ID_REGULATOR_KI_COEF             (MOTOR2_RS * 2.0 * M_PI * MOTOR2_CURRENT_CUTOFF_FREQ / PWM_FREQ)
 #define MOTOR2_IQ_REGULATOR_KP_COEF             (MOTOR2_LQ * 2.0 * M_PI * MOTOR2_CURRENT_CUTOFF_FREQ)
 #define MOTOR2_IQ_REGULATOR_KI_COEF             (MOTOR2_RS * 2.0 * M_PI * MOTOR2_CURRENT_CUTOFF_FREQ / PWM_FREQ)
+#define MOTOR2_DUTY_CYCLE_MAX                   (0.95f)     // Max duty cycle
+#define MOTOR2_DUTY_CYCLE_MIN                   (0.05f)     // Min duty cycle
 //#define MOTOR2_CUR_LOOP_ONE_MINUS_ALPHA         (1.0 / (1.0 + (2.0 * M_PI * MOTOR2_CUR_LOOP_BANDWIDTH / PWM_FREQ)))
 //#define MOTOR2_CUR_LOOP_ALPHA                   (1.0 - (MOTOR2_CUR_LOOP_ONE_MINUS_ALPHA))
 

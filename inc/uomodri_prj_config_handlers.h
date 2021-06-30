@@ -234,11 +234,11 @@ static FOC motor_foc[] =
  {
   .motorID          = MOTOR_1,
 
-  .currentScaler = ADC_CURRENT_SCALE,
-  .currentScalerReg = -1.0 * ADC_CURRENT_SCALE / 0x8000L, // from register value to amps
+//  .currentScaler = ADC_CURRENT_SCALE,
+//  .currentScalerReg = -1.0 * ADC_CURRENT_SCALE / 0x8000L, // from register value to amps
   // signed 15 bits resolution
-  .voltageScaler = ADC_VOLTAGE_SCALE,
-  .voltageScalerReg = ADC_VOLTAGE_SCALE / 0x10000L, // unsigned 16 bits resolution
+//  .voltageScaler = ADC_VOLTAGE_SCALE,
+//  .voltageScalerReg = ADC_VOLTAGE_SCALE / 0x10000L, // unsigned 16 bits resolution
 
   .motorParams  = {.Rs = MOTOR1_RS, .Ld = MOTOR1_LD, .Lq = MOTOR1_LQ,
                    .kv = MOTOR1_KV, .ke = MOTOR1_KE, .ki = MOTOR1_KI,
@@ -279,18 +279,16 @@ static FOC motor_foc[] =
   //  Initialize PI & PD controllers
   .idRef = 0.0f, .iqRef = 0.0f,
 
-  .piId         = {.err = 0.0f, .errPrev = 0.0f,
-                   .kp = MOTOR1_ID_REGULATOR_KP_COEF, .ki = MOTOR1_ID_REGULATOR_KI_COEF, .kd = 0.0f,
-                   .integral = 0.0f, .derivative = 0.0f, .ff = 0.0f, .out = 0.0f, .sat =  0.4,// * ((float32_t *)(&motor_foc[MOTOR_1].motor_acq.vbus)),
+  .piId         = {.err = 0.0f, .kp = MOTOR1_ID_REGULATOR_KP_COEF, .ki = MOTOR1_ID_REGULATOR_KI_COEF,
+                   .integral = 0.0f, .ff = 0.0f, .out = 0.0f, .sat =  0.4, // * ((float32_t *)(&motor_foc[MOTOR_2].motor_acq.vbus)),
   },
-  .piIq         = {.err = 0.0f, .errPrev = 0.0f,
-                   .kp = MOTOR1_IQ_REGULATOR_KP_COEF, .ki = MOTOR1_IQ_REGULATOR_KI_COEF, .kd = 0.0f,
-                   .integral = 0.0f, .derivative = 0.0f, .ff = 0.0f, .out = 0.0f, .sat =  0.4,// * ((float32_t *)(&motor_foc[MOTOR_1].motor_acq.vbus)),
+  .piIq         = {.err = 0.0f, .kp = MOTOR1_IQ_REGULATOR_KP_COEF, .ki = MOTOR1_IQ_REGULATOR_KI_COEF,
+                   .integral = 0.0f, .ff = 0.0f, .out = 0.0f, .sat =  0.4,// * ((float32_t *)(&motor_foc[MOTOR_2].motor_acq.vbus)),
   },
-  .pdPos        = {.err = 0.0f, .errPrev = 0.0f,
-                   .kp = MOTOR1_IQ_REGULATOR_KP_COEF, .ki = MOTOR1_IQ_REGULATOR_KI_COEF, .kd = 0.0f,
-                   .integral = 0.0f, .derivative = 0.0f, .ff = 0.0f, .out = 0.0f, .sat =  4.0f,
-  },
+//  .pdPos        = {.err = 0.0f, .errPrev = 0.0f,
+//                   .kp = MOTOR1_IQ_REGULATOR_KP_COEF, .ki = MOTOR1_IQ_REGULATOR_KI_COEF, .kd = 0.0f,
+//                   .integral = 0.0f, .derivative = 0.0f, .ff = 0.0f, .out = 0.0f, .sat =  4.0f,
+//  },
 
 //  .mechanicalAngle  = &encoder[MOTOR_1].mechPos[NEW],
 //  .MeasNew          = false,
@@ -408,18 +406,16 @@ static FOC motor_foc[] =
   //  Initialize PI & PD controllers
   .idRef = 0.0f, .iqRef = 0.0f,
 
-  .piId         = {.err = 0.0f, .errPrev = 0.0f,
-                   .kp = MOTOR2_ID_REGULATOR_KP_COEF, .ki = MOTOR2_ID_REGULATOR_KI_COEF, .kd = 0.0f,
-                   .integral = 0.0f, .derivative = 0.0f, .ff = 0.0f, .out = 0.0f, .sat =  0.4,// * ((float32_t *)(&motor_foc[MOTOR_2].motor_acq.vbus)),
+  .piId         = {.err = 0.0f, .kp = MOTOR2_ID_REGULATOR_KP_COEF, .ki = MOTOR2_ID_REGULATOR_KI_COEF,
+                   .integral = 0.0f, .ff = 0.0f, .out = 0.0f, .sat =  0.4, // * ((float32_t *)(&motor_foc[MOTOR_2].motor_acq.vbus)),
   },
-  .piIq         = {.err = 0.0f, .errPrev = 0.0f,
-                   .kp = MOTOR2_IQ_REGULATOR_KP_COEF, .ki = MOTOR2_IQ_REGULATOR_KI_COEF, .kd = 0.0f,
-                   .integral = 0.0f, .derivative = 0.0f, .ff = 0.0f, .out = 0.0f, .sat =  0.4,// * ((float32_t *)(&motor_foc[MOTOR_2].motor_acq.vbus)),
+  .piIq         = {.err = 0.0f, .kp = MOTOR2_IQ_REGULATOR_KP_COEF, .ki = MOTOR2_IQ_REGULATOR_KI_COEF,
+                   .integral = 0.0f, .ff = 0.0f, .out = 0.0f, .sat =  0.4,// * ((float32_t *)(&motor_foc[MOTOR_2].motor_acq.vbus)),
   },
-  .pdPos        = {.err = 0.0f, .errPrev = 0.0f,
-                   .kp = MOTOR2_IQ_REGULATOR_KP_COEF, .ki = MOTOR2_IQ_REGULATOR_KI_COEF, .kd = 0.0f,
-                   .integral = 0.0f, .derivative = 0.0f, .ff = 0.0f, .out = 0.0f, .sat =  4.0f,
-  },
+//  .pdPos        = {.err = 0.0f, .errPrev = 0.0f,
+//                   .kp = MOTOR2_IQ_REGULATOR_KP_COEF, .ki = MOTOR2_IQ_REGULATOR_KI_COEF, .kd = 0.0f,
+//                   .integral = 0.0f, .derivative = 0.0f, .ff = 0.0f, .out = 0.0f, .sat =  4.0f,
+//  },
 
 //  .alignRoutine.state = ALIGN_COUNT_UP, .alignRoutine.counter = 0, .alignRoutine.idAlign = 0.0f,
 
