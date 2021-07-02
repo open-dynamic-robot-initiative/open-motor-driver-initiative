@@ -121,7 +121,7 @@ typedef struct __MOTOR_STRUCT__
 //    float32_t cosTheta;
 
     // Low-pass control loop filter
-    LowpassFilter controlLoopLpf;
+    LpfStruct controlLoopLpf;
 
     // Encoder
 //    ENCODER encoder;
@@ -150,7 +150,7 @@ typedef struct __MOTOR_STRUCT__
     // Q-axis resistance estimation
     float32_t resistanceEst;    // [Ohm]
     // Resistance estimation low-pass filter
-    LowpassFilter resEstLpf;
+    LpfStruct resEstLpf;
 
     // Anti-coagging structure
     Anticoagging acog;

@@ -28,7 +28,7 @@ typedef struct __SpeedEst__
     float32_t speedRef;  // [rad/s] Merged of low speed and high speed estimation
 
     // Low-pass filter
-    LowpassFilter lpf;
+    LpfStruct lpf;
 
     // Output speeds
     float32_t mechSpeed; // [rad/s]

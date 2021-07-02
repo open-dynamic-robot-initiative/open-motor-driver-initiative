@@ -134,7 +134,7 @@ __interrupt void adc_isrMotor1(void)
     uint16_t        group       = InterruptList[ADC_IT_MOTOR_1].intAckGroup;
     ADC_IntNumber   adcIntNum   = (ADC_IntNumber)InterruptList[ADC_IT_MOTOR_1].intPeriphSrc;
     // Read the phases current, voltage & Vbus
-    FOC_getMeasures(p_acq, true);
+    FOC_getMeasures(p_acq);
     // Clear the interrupt overflow flag
     ADC_clearInterruptOverflowStatus(base, adcIntNum);
     // Clear the interrupt flag
@@ -159,7 +159,7 @@ __interrupt void adc_isrMotor2(void)
     uint16_t        group       = InterruptList[ADC_IT_MOTOR_2].intAckGroup;
     ADC_IntNumber   adcIntNum   = (ADC_IntNumber)InterruptList[ADC_IT_MOTOR_2].intPeriphSrc;
     // Read the phases current, voltage
-    FOC_getMeasures(p_acq, false);
+    FOC_getMeasures(p_acq);
     // Clear the interrupt overflow flag
     ADC_clearInterruptOverflowStatus(base, adcIntNum);
     // Clear the interrupt flag

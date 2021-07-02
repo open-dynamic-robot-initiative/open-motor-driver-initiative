@@ -16,7 +16,10 @@
  * @{
  */
 #define UOMODRI                     0
-#define UOMODRI_FLT_FORM            3
+#define UOMODRI_VBUS_FLT            1
+#define UOMODRI_IDQ_FLT             1
+#define UOMODRI_RES_ESTIM_FLT       2
+
 #define UOMODRI_FOC_FEED_FORWARD    1
 #define OMODRI_PAL_SETUP            0   // Set this to 1 to use the PAL pin affectation
 #define SPI_DEBUG_CONFIGURATION     0   // Set this to 1 to use debug configuration
@@ -27,18 +30,17 @@
  */
 
 #define HWSREGH(x)                              (*((volatile int16_t *)((uintptr_t)(x))))
-#if (UOMODRI_FLT_FORM == 1)
-#define LPF_FILTER(flt_coef, y, x)              (y) = flt_coef.a * (x) + flt_coef.b * (y)
-#elif (UOMODRI_FLT_FORM == 2)
-#define LPF_FILTER(flt_coef, y, x)              (y) += (flt_coef * ((x) - (y)))
-#endif
+#define LPF_FILTER_1(flt_coef, y, x)            (y) += (flt_coef.a * ((x) - (y)))
+#define LPF_FILTER_2(flt_coef, y, x)            (y) = flt_coef.a * (x) + flt_coef.one_minus_a * (y)
+#define FMAX3(x, y, z)                          (((x) > (y)) ? (((x) > (z)) ? (x) : (z)) : (((y) > (z)) ? (y) : (z)))
+#define FMIN3(x, y, z)                          (((x) < (y)) ? (((x) < (z)) ? (x) : (z)) : (((y) < (z)) ? (y) : (z)))
+#define FMINMAX(x, y, z)                        (fmaxf(fminf((x), (y)), (z)))
 
-
-typedef struct __LowpassFilter__
+typedef struct __LowpassFilter_Structure__
 {
-    float b;
-    float a;
-} LowpassFilter;
+    float32_t a;
+    float32_t one_minus_a;
+} LpfStruct;
 
 /******************************************************************************************************
 *                                               DEBUG Defines
@@ -548,5 +550,9 @@ typedef struct __LowpassFilter__
 //#define MOTOR2_CUR_LOOP_ONE_MINUS_ALPHA         (1.0 / (1.0 + (2.0 * M_PI * MOTOR2_CUR_LOOP_BANDWIDTH / PWM_FREQ)))
 //#define MOTOR2_CUR_LOOP_ALPHA                   (1.0 - (MOTOR2_CUR_LOOP_ONE_MINUS_ALPHA))
 
-
+#define MOTOR12_OVERMODULATION                  (1.15)
+#define MOTOR12_VBUS_CUTOFF_FREQ                (500.0)     // vbus voltage loop bandwidth (Hz)
+#define MOTOR12_VBUS_LPF_ALPHA                  (1.0 / (1.0 + (1.0 / (2.0 * M_PI * MOTOR12_VBUS_CUTOFF_FREQ / PWM_FREQ))))
+#define MOTOR12_VBUS_LPF_ONE_MINUS_ALPHA        (1.0 - MOTOR12_VBUS_LPF_ALPHA)
+#define MOTOR12_IMAX                            (20.0)
 #endif

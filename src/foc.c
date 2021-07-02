@@ -13,9 +13,8 @@
 /**
  * @brief       Read the phases voltage, phases current and bus voltage
  * @param[in]   *p_acq  Pointer on the motor acquisition structure.
- * @param[in]   vbus_en Enable or disable the voltage bus acquisition.
  */
-inline void FOC_getMeasures(MOTOR_ACQ* p_acq, bool vbus_en)
+inline void FOC_getMeasures(MOTOR_ACQ* p_acq)
 {
     // Get the latest current values in Amps
     p_acq->ia       = (float32_t)(*p_acq->iaMeasReg)    * ADC_CURRENT_SCALE;
@@ -26,7 +25,15 @@ inline void FOC_getMeasures(MOTOR_ACQ* p_acq, bool vbus_en)
     p_acq->vb       = (float32_t)(*p_acq->vbMeasReg)    * ADC_VOLTAGE_SCALE;
     p_acq->vc       = (float32_t)(*p_acq->vcMeasReg)    * ADC_VOLTAGE_SCALE;
     // Get the latest Voltage supply value in Volt (minimum is one to avoid dividing by zero later)
-    p_acq->vbus     = (vbus_en) ? (fmaxf(((float32_t)(*p_acq->vBusMeasReg) * ADC_VOLTAGE_SCALE), 1.0f)) : (p_acq->vbus);
+    float32_t vbus  = fmaxf(((float32_t)(*p_acq->vBusMeasReg) * ADC_VOLTAGE_SCALE), 1.0f);
+#if (UOMODRI_VBUS_FLT == 1)
+        LPF_FILTER_1(p_acq->vBusLpf, p_acq->vbus, vbus);
+#elif (UOMODRI_VBUS_FLT == 2)
+        LPF_FILTER_2(p_acq->vBusLpf, p_acq->vbus, vbus);
+#else
+        p_acq->vbus = vbus;
+#endif
+        p_acq->vmax = MOTOR12_OVERMODULATION * p_acq->vbus * (MOTOR1_DUTY_CYCLE_MAX - MOTOR1_DUTY_CYCLE_MIN) * FM_1DIVSQRT3;
     p_acq->measNew  = true;
 }
 
@@ -53,10 +60,10 @@ inline void FOC_resistanceEstimation(FOC* p_foc)
     // Only compute if measured current is over a threshold
     if (FM_ABS(p_foc->iq) > FOC_RE_CURRENT_THRESHOLD)
     {
-#if (UOMODRI_FLT_FORM == 1)
-        LPF_FILTER(p_foc->resEstLpf, p_foc->resistanceEst, (p_foc->uq - p_foc->motor_enc.speedEst.elecSpeed * p_foc->motorParams.ke) / p_foc->iq);
-#elif (UOMODRI_FLT_FORM == 2)
-        LPF_FILTER(p_foc->resEstLpf.a, p_foc->resistanceEst, (p_foc->uq - p_foc->motor_enc.speedEst.elecSpeed * p_foc->motorParams.ke) / p_foc->iq);
+#if (UOMODRI_RES_ESTIM_FLT == 1)
+        LPF_FILTER_1(p_foc->resEstLpf, p_foc->resistanceEst, (p_foc->uq - p_foc->motor_enc.speedEst.elecSpeed * p_foc->motorParams.ke) / p_foc->iq);
+#elif (UOMODRI_RES_ESTIM_FLT == 2)
+        LPF_FILTER_2(p_foc->resEstLpf, p_foc->resistanceEst, (p_foc->uq - p_foc->motor_enc.speedEst.elecSpeed * p_foc->motorParams.ke) / p_foc->iq);
 #endif
     }
 }
@@ -68,59 +75,69 @@ inline void FOC_resistanceEstimation(FOC* p_foc)
 inline void FOC_control(FOC* p_foc)
 {
     // Clarke transform
-    p_foc->ialpha   = ((2.0f * p_foc->motor_acq.ia) - (p_foc->motor_acq.ib + p_foc->motor_acq.ic)) * FM_1DIV3;
-    p_foc->ibeta    = (p_foc->motor_acq.ib - p_foc->motor_acq.ic) * FM_1DIVSQRT3;
-#if (UOMODRI_FLT_FORM == 1)
+    p_foc->ialpha       = ((2.0f * p_foc->motor_acq.ia) - (p_foc->motor_acq.ib + p_foc->motor_acq.ic)) * FM_1DIV3;
+    p_foc->ibeta        = (p_foc->motor_acq.ib - p_foc->motor_acq.ic) * FM_1DIVSQRT3;
+#if (UOMODRI_IDQ_FLT == 1)
     // Park transform
-    float32_t id    = (p_foc->sinTheta * p_foc->ibeta) + (p_foc->cosTheta * p_foc->ialpha);
-    float32_t iq    = (p_foc->cosTheta * p_foc->ibeta) - (p_foc->sinTheta * p_foc->ialpha);
-    LPF_FILTER(p_foc->iParkLpf, p_foc->id, id);
-    LPF_FILTER(p_foc->iParkLpf, p_foc->iq, iq);
-#elif (UOMODRI_FLT_FORM == 2)
+    LPF_FILTER_1(p_foc->iParkLpf, p_foc->id, ((p_foc->sinTheta * p_foc->ibeta) + (p_foc->cosTheta * p_foc->ialpha)));
+    LPF_FILTER_1(p_foc->iParkLpf, p_foc->iq, ((p_foc->cosTheta * p_foc->ibeta) - (p_foc->sinTheta * p_foc->ialpha)));
+#elif (UOMODRI_IDQ_FLT == 2)
     // Park transform
-    float32_t id    = (p_foc->sinTheta * p_foc->ibeta) + (p_foc->cosTheta * p_foc->ialpha);
-    float32_t iq    = (p_foc->cosTheta * p_foc->ibeta) - (p_foc->sinTheta * p_foc->ialpha);
-    LPF_FILTER(p_foc->iParkLpf.a, p_foc->id, id);
-    LPF_FILTER(p_foc->iParkLpf.a, p_foc->iq, iq);
-#elif (UOMODRI_FLT_FORM == 3)
+    LPF_FILTER_2(p_foc->iParkLpf, p_foc->id, ((p_foc->sinTheta * p_foc->ibeta) + (p_foc->cosTheta * p_foc->ialpha)));
+    LPF_FILTER_2(p_foc->iParkLpf, p_foc->iq, ((p_foc->cosTheta * p_foc->ibeta) - (p_foc->sinTheta * p_foc->ialpha)));
+#else
     // Park transform
     p_foc->id       = (p_foc->sinTheta * p_foc->ibeta) + (p_foc->cosTheta * p_foc->ialpha);
     p_foc->iq       = (p_foc->cosTheta * p_foc->ibeta) - (p_foc->sinTheta * p_foc->ialpha);
 #endif
+
 #if (UOMODRI_FOC_FEED_FORWARD == 1)
     // Compute decoupling feed-forward terms
-    p_foc->piId.ff  = -1.0 * p_foc->motor_enc.speedEst.elecSpeed * p_foc->motorParams.Lq * p_foc->iq;
-    p_foc->piIq.ff  = p_foc->motorParams.Rs * p_foc->iqRef + p_foc->motor_enc.speedEst.elecSpeed * p_foc->motorParams.ke; //    p_foc->piIq.ff  = p_foc->motor_enc.speedEst.elecSpeed * (p_foc->motorParams.Ld * p_foc->id + p_foc->motorParams.ke);
+    p_foc->piId.ff      = -1.0 * p_foc->motor_enc.speedEst.elecSpeed * p_foc->motorParams.Lq * p_foc->iq;
+    p_foc->piIq.ff      = p_foc->motorParams.Rs * p_foc->iqRef + p_foc->motor_enc.speedEst.elecSpeed * p_foc->motorParams.ke;
+    //    p_foc->piIq.ff  = p_foc->motor_enc.speedEst.elecSpeed * (p_foc->motorParams.Ld * p_foc->id + p_foc->motorParams.ke);
 #else
     p_foc->piId.ff  = 0.0;
     p_foc->piIq.ff  = 0.0;
 #endif
+    //
+//    limit_norm(&p_foc->idRef, &p_foc->iqRef, p_foc->motor_acq.imax);
     // Compute error for PI controllers
-    p_foc->piId.err = p_foc->idRef - p_foc->id;
-    p_foc->piIq.err = p_foc->iqRef - p_foc->iq;
+    p_foc->piId.err     = p_foc->idRef - p_foc->id;
+    p_foc->piIq.err     = p_foc->iqRef - p_foc->iq;
     // PI controller - Id(Flux Current Controller) & Iq (Torque Current Controller)
-    FOC_PI(&p_foc->piId);
-    FOC_PI(&p_foc->piIq);
-    // Copy output variables
-    p_foc->ud = p_foc->piId.out;
-    p_foc->uq = p_foc->piIq.out;
+    p_foc->ud           = FOC_PI(&p_foc->piId);
+    p_foc->uq           = FOC_PI(&p_foc->piIq);
+//    float32_t uq_max    = sqrtf((p_foc->motor_acq.vmax * p_foc->motor_acq.vmax) - (p_foc->ud * p_foc->ud));
+//    float32_t v_ref     = sqrtf((p_foc->ud * p_foc->ud) + (p_foc->uq * p_foc->uq));
+//    limit_norm(&p_foc->ud, &p_foc->uq, p_foc->motor_acq.vmax);
     // Inverse Park transform
     p_foc->ualpha = p_foc->cosTheta * p_foc->ud - p_foc->sinTheta * p_foc->uq;
     p_foc->ubeta  = p_foc->sinTheta * p_foc->ud + p_foc->cosTheta * p_foc->uq;
     // Inverse Clarke transform
     p_foc->ua = p_foc->ualpha;
-    p_foc->ub =  0.5f * (FM_SQRT3 * p_foc->ubeta - p_foc->ualpha);
-    p_foc->uc = -0.5f * (FM_SQRT3 * p_foc->ubeta + p_foc->ualpha);
+    p_foc->ub =  0.5f * ((FM_SQRT3 * p_foc->ubeta) - p_foc->ualpha);
+    p_foc->uc = -0.5f * ((FM_SQRT3 * p_foc->ubeta) + p_foc->ualpha);
     // Compute middle voltage to center PWM duty cycles around it
-    float32_t uMid = 0.5f * (fminf(fminf(p_foc->ua, p_foc->ub), p_foc->uc) + fmaxf(fmaxf(p_foc->ua, p_foc->ub), p_foc->uc));
+    float32_t uOffset   = 0.5f * (FMIN3(p_foc->ua, p_foc->ub, p_foc->uc) + FMAX3(p_foc->ua, p_foc->ub, p_foc->uc));
+    //float32_t uMid = 0.5f * (fminf(fminf(p_foc->ua, p_foc->ub), p_foc->uc) + fmaxf(fmaxf(p_foc->ua, p_foc->ub), p_foc->uc));
+//    float32_t uMidPoint = 0.5f * (MOTOR1_DUTY_CYCLE_MAX - MOTOR1_DUTY_CYCLE_MIN);
     // Compute duty cycles
-    p_foc->ducya = fminf(fmaxf((p_foc->ua - uMid) / *p_foc->uBus, -p_foc->dutyCycleSat), p_foc->dutyCycleSat);
-    p_foc->ducyb = fminf(fmaxf((p_foc->ub - uMid) / *p_foc->uBus, -p_foc->dutyCycleSat), p_foc->dutyCycleSat);
-    p_foc->ducyc = fminf(fmaxf((p_foc->uc - uMid) / *p_foc->uBus, -p_foc->dutyCycleSat), p_foc->dutyCycleSat);
+    p_foc->ducya = FMINMAX((((p_foc->ua - uOffset) / *p_foc->uBus) + 0.5f), p_foc->dutyCycleMax, p_foc->dutyCycleMin);
+//    p_foc->ducya = fminf(fmaxf((p_foc->ua - uOffset) / *p_foc->uBus, -p_foc->dutyCycleSat), p_foc->dutyCycleSat);
+    p_foc->ducyb = FMINMAX((((p_foc->ub - uOffset) / *p_foc->uBus) + 0.5f), p_foc->dutyCycleMax, p_foc->dutyCycleMin);
+//    p_foc->ducyb = fminf(fmaxf((p_foc->ub - uOffset) / *p_foc->uBus, -p_foc->dutyCycleSat), p_foc->dutyCycleSat);
+    p_foc->ducyc = FMINMAX((((p_foc->uc - uOffset) / *p_foc->uBus) + 0.5f), p_foc->dutyCycleMax, p_foc->dutyCycleMin);
+//    p_foc->ducyc = fminf(fmaxf((p_foc->uc - uOffset) / *p_foc->uBus, -p_foc->dutyCycleSat), p_foc->dutyCycleSat);
     // Compute compare registers:
-    *(p_foc->pwmCompA) = (p_foc->ducya + 0.5f) * PWM_HALF_TBPRD * 0x10000L;
-    *(p_foc->pwmCompB) = (p_foc->ducyb + 0.5f) * PWM_HALF_TBPRD * 0x10000L;
-    *(p_foc->pwmCompC) = (p_foc->ducyc + 0.5f) * PWM_HALF_TBPRD * 0x10000L;
+    *(p_foc->pwmCompA) = p_foc->ducya * PWM_HALF_TBPRD;
+    *(p_foc->pwmCompB) = p_foc->ducyb * PWM_HALF_TBPRD;
+    *(p_foc->pwmCompC) = p_foc->ducyc * PWM_HALF_TBPRD;
+
+//    *(p_foc->pwmCompA) = fminf(fmaxf((.5f * (p_foc->ua - uOffset) * MOTOR12_OVERMODULATION / p_foc->motor_acq.vmax + uMidPoint), MOTOR1_DUTY_CYCLE_MIN), MOTOR1_DUTY_CYCLE_MAX);
+//    *(p_foc->pwmCompB) = fminf(fmaxf((.5f * (p_foc->ub - uOffset) * MOTOR12_OVERMODULATION / p_foc->motor_acq.vmax + uMidPoint), MOTOR1_DUTY_CYCLE_MIN), MOTOR1_DUTY_CYCLE_MAX);
+//    *(p_foc->pwmCompC) = fminf(fmaxf((.5f * (p_foc->uc - uOffset) * MOTOR12_OVERMODULATION / p_foc->motor_acq.vmax + uMidPoint), MOTOR1_DUTY_CYCLE_MIN), MOTOR1_DUTY_CYCLE_MAX);
+
 }
 
 //static inline void FOC_PID(PID_CONTROLLER* p_pid)
@@ -134,25 +151,37 @@ inline void FOC_control(FOC* p_foc)
 //    p_pid->errPrev      = p_pid->err;
 //}
 
-static inline void FOC_PI(PID_CONTROLLER* p_pid)
+static inline float32_t FOC_PI(PID_CONTROLLER* p_pid)
 {
     p_pid->integral    += p_pid->ki * p_pid->err;
-    p_pid->integral     = fmaxf(fminf(p_pid->integral, p_pid->sat), -p_pid->sat);
+    p_pid->integral     = FMINMAX(p_pid->integral, *p_pid->sat, -(*p_pid->sat)); //fmaxf(fminf(p_pid->integral, *p_pid->sat), -(*p_pid->sat));
     // Compute PID and clamp output.
     p_pid->out          = (p_pid->kp * p_pid->err) + p_pid->integral + p_pid->ff;
-    p_pid->out          = fmaxf(fminf(p_pid->out, p_pid->sat), -p_pid->sat);//fminf(fmaxf(p_pid->out, -p_pid->sat), p_pid->sat);
+    p_pid->out          = FMINMAX(p_pid->out, *p_pid->sat, -(*p_pid->sat)); //fmaxf(fminf(p_pid->out, *p_pid->sat), -(*p_pid->sat));
+    return(p_pid->out);
 }
 
-static inline void FOC_PD(PID_CONTROLLER* p_pid)
+static inline float32_t FOC_PD(PID_CONTROLLER* p_pid)
 {
     p_pid->derivative   = p_pid->kd * (p_pid->err - p_pid->errPrev) / p_pid->deltaT;
     // Compute PID and clamp output.
     p_pid->out          = (p_pid->kp * p_pid->err) + p_pid->derivative + p_pid->ff;
-    p_pid->out          = fminf(fmaxf(p_pid->out, -p_pid->sat), p_pid->sat);
+    p_pid->out          = FMINMAX(p_pid->out, *p_pid->sat, -(*p_pid->sat)); //fmaxf(fminf(p_pid->out, *p_pid->sat), -(*p_pid->sat));
     // Save current error
     p_pid->errPrev      = p_pid->err;
+    return(p_pid->out);
 }
 
+void limit_norm(float32_t *x, float32_t *y, float32_t limit)
+{
+    /// Scales the length of vector (x, y) to be <= limit ///
+    float32_t norm = sqrtf((*x) * (*x) + (*y) * (*y));
+    if(norm > limit)
+    {
+        *x *= limit / norm;
+        *y *= limit / norm;
+    }
+}
 //inline void FOC_getPhaseCurrent(MOTOR_ACQ* p_acq)
 //{
 //    // Get the latest current values in Amps

@@ -57,7 +57,7 @@ typedef struct __PID_CONTROLLER__
     float32_t derivative;   // Derivative term partial computation
     float32_t ff;           // Feed-forward term
     float32_t out;          // Controller output
-    float32_t sat;          // Controller saturation
+    float32_t* sat;         // Controller saturation
 } PID_CONTROLLER;
 
 typedef struct __MOTOR_PARAMETERS__
@@ -91,7 +91,9 @@ typedef struct __MOTOR_ACQUISITIONS__
     float32_t ia;   // [A]
     float32_t ib;   // [A]
     float32_t ic;   // [A]
-
+    float32_t vmax; // [V]
+    float32_t imax; // [A]
+    LpfStruct vBusLpf;
     // ADC conversion done
     bool measNew;
 } MOTOR_ACQ;
@@ -107,7 +109,7 @@ typedef struct __FOC__
     ENCODER             motor_enc;
 
     // Low-pass control loop filter
-    LowpassFilter       iParkLpf;
+    LpfStruct           iParkLpf;
 
     // Rotor electrical angle sine cosine
     float32_t           sinTheta;
@@ -158,8 +160,8 @@ typedef struct __FOC__
     float32_t pwmCompScaler;    // [register/pu]
 
     // Duty-cycle saturation
-    float32_t dutyCycleSat;
-
+    float32_t dutyCycleMax;
+    float32_t dutyCycleMin;
     // Motor constants
 //    float32_t* Rs; // Stator resistance [Ohm]
 //    float32_t* Ld; // Direct axis inductance [H]
@@ -199,7 +201,7 @@ typedef struct __FOC__
     // Q-axis resistance estimation
     float32_t resistanceEst;    // [Ohm]
     // Resistance estimation low-pass filter
-    LowpassFilter resEstLpf;
+    LpfStruct resEstLpf;
 
     // Anti-coagging structure
     Anticoagging acog;
@@ -208,9 +210,9 @@ typedef struct __FOC__
     float32_t auxAdc;   // [V]
 
     // PWM result registers
-    volatile uint32_t *pwmCompA;
-    volatile uint32_t *pwmCompB;
-    volatile uint32_t *pwmCompC;
+    volatile uint16_t *pwmCompA;
+    volatile uint16_t *pwmCompB;
+    volatile uint16_t *pwmCompC;
 
     // ADC interrupt flag register
     volatile union ADCINTFLG_REG *adcIntFlag;
@@ -231,7 +233,7 @@ typedef struct __FOC__
 //-------------------------------------------------------------------------------//
 
 inline void FOC_getPosition(FOC*, MOTOR_HAL_CFG*);
-inline void FOC_getMeasures(MOTOR_ACQ*, bool);
+inline void FOC_getMeasures(MOTOR_ACQ*);
 //inline void FOC_getPhaseCurrent(MOTOR_ACQ*);
 //inline void FOC_getPhaseVoltage(MOTOR_ACQ*);
 //inline void FOC_getBusVoltage(MOTOR_ACQ*);
@@ -249,7 +251,8 @@ inline void FOC_control(FOC*);
 inline void FOC_resistanceEstimation(FOC*);
 
 //static inline void FOC_PID(PID_CONTROLLER*);
-static inline void FOC_PI(PID_CONTROLLER*);
-static inline void FOC_PD(PID_CONTROLLER*);
+static inline float32_t FOC_PI(PID_CONTROLLER*);
+static inline float32_t FOC_PD(PID_CONTROLLER*);
+void limit_norm(float*, float*, float);
 
 #endif
