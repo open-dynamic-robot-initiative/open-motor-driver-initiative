@@ -2,23 +2,18 @@
 #define __FOC_H__
 
 #include <math.h>
+
 #include "driverlib.h"
 #include "device.h"
+#include "f2838x_device.h"
 
-//#include "pid.h"
-//#include <stdint.h>
-//#include "lowpass_filter.h"
-#include "hal.h"
+//#include "hal.h"
 //#include "motor.h"
-
-//#include "pd.h"
-//#include "pi.h"
-
 //#include "align_routine.h"
-#include "encoder.h"
-#include "math_defines.h"
+//#include "communication_interface.h"
 //#include "motor.h"
 //#include "lowpass_filter.h"
+#include "encoder.h"
 #include "anticoagging.h"
 #include "uomodri_user_defines.h"
 
@@ -46,7 +41,7 @@
 typedef struct __PID_CONTROLLER__
 {
     float32_t err;          // Current error
-    float32_t errPrev;      // Previous error
+    float32_t vErr;         // Previous error
     float32_t deltaT;       // Time step
 
     float32_t kp;           // Proportional gain
@@ -232,27 +227,23 @@ typedef struct __FOC__
 //                             FUNCTIONS DECLARATION                             //
 //-------------------------------------------------------------------------------//
 
-inline void FOC_getPosition(FOC*, MOTOR_HAL_CFG*);
+//inline void FOC_getPosition(FOC*, MOTOR_HAL_CFG*);
 inline void FOC_getMeasures(MOTOR_ACQ*);
 //inline void FOC_getPhaseCurrent(MOTOR_ACQ*);
 //inline void FOC_getPhaseVoltage(MOTOR_ACQ*);
 //inline void FOC_getBusVoltage(MOTOR_ACQ*);
-
 //inline void FOC_getMeasures(FOC*, MOTOR_HAL_CFG*);
-inline void FOC_sineCosine(FOC*);
+//inline void FOC_sineCosine(FOC*);
 //inline void FOC_parkClarke(FOC*);
-
 //inline void FOC_runPi(FOC*);
-
 //inline void FOC_invParkClarke(FOC*);
 //inline void FOC_svm(FOC*);
 inline void FOC_control(FOC*);
-
 inline void FOC_resistanceEstimation(FOC*);
-
 //static inline void FOC_PID(PID_CONTROLLER*);
 static inline float32_t FOC_PI(PID_CONTROLLER*);
 static inline float32_t FOC_PD(PID_CONTROLLER*);
+void FOC_resetStruct(FOC*);
 void limit_norm(float*, float*, float);
 
 #endif

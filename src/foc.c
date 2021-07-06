@@ -1,4 +1,9 @@
 #include "foc.h"
+#include "math_defines.h"
+
+
+//extern ComInterface comInterface;
+//extern MOTOR_STRUCT motor[2];
 //#include "f28x_project.h"
 
 // Read current measures
@@ -41,11 +46,11 @@ inline void FOC_getMeasures(MOTOR_ACQ* p_acq)
  * @brief       Compute sine and cosine from the electrical angle
  * @param[in]   *p_foc  Pointer on the FOC motor control structure.
  */
-inline void FOC_sineCosine(FOC* p_foc)
-{
-    p_foc->sinTheta = __sinpuf32(p_foc->motor_enc.elecPos);
-    p_foc->cosTheta = __cospuf32(p_foc->motor_enc.elecPos);
-}
+//inline void FOC_sineCosine(FOC* p_foc)
+//{
+//    p_foc->sinTheta = __sinpuf32(p_foc->motor_enc.elecPos);
+//    p_foc->cosTheta = __cospuf32(p_foc->motor_enc.elecPos);
+//}
 
 // Q-axis resistance estimation
 // TODO Use VSEN results instead of Iq controller output
@@ -77,6 +82,9 @@ inline void FOC_control(FOC* p_foc)
     // Clarke transform
     p_foc->ialpha       = ((2.0f * p_foc->motor_acq.ia) - (p_foc->motor_acq.ib + p_foc->motor_acq.ic)) * FM_1DIV3;
     p_foc->ibeta        = (p_foc->motor_acq.ib - p_foc->motor_acq.ic) * FM_1DIVSQRT3;
+    // Compute sine and cosine from the electrical angle
+    p_foc->sinTheta     = __sinpuf32(p_foc->motor_enc.elecPos);
+    p_foc->cosTheta     = __cospuf32(p_foc->motor_enc.elecPos);
 #if (UOMODRI_IDQ_FLT == 1)
     // Park transform
     LPF_FILTER_1(p_foc->iParkLpf, p_foc->id, ((p_foc->sinTheta * p_foc->ibeta) + (p_foc->cosTheta * p_foc->ialpha)));
@@ -163,25 +171,148 @@ static inline float32_t FOC_PI(PID_CONTROLLER* p_pid)
 
 static inline float32_t FOC_PD(PID_CONTROLLER* p_pid)
 {
-    p_pid->derivative   = p_pid->kd * (p_pid->err - p_pid->errPrev) / p_pid->deltaT;
+    p_pid->derivative   = p_pid->kd * p_pid->vErr;//(p_pid->err - p_pid->errPrev) / p_pid->deltaT;
     // Compute PID and clamp output.
     p_pid->out          = (p_pid->kp * p_pid->err) + p_pid->derivative + p_pid->ff;
     p_pid->out          = FMINMAX(p_pid->out, *p_pid->sat, -(*p_pid->sat)); //fmaxf(fminf(p_pid->out, *p_pid->sat), -(*p_pid->sat));
     // Save current error
-    p_pid->errPrev      = p_pid->err;
+    //p_pid->errPrev      = p_pid->err;
     return(p_pid->out);
 }
 
 void limit_norm(float32_t *x, float32_t *y, float32_t limit)
 {
     /// Scales the length of vector (x, y) to be <= limit ///
-    float32_t norm = sqrtf((*x) * (*x) + (*y) * (*y));
+    float32_t norm = __sqrtf((*x) * (*x) + (*y) * (*y));
     if(norm > limit)
     {
         *x *= limit / norm;
         *y *= limit / norm;
     }
 }
+
+void FOC_resetStruct(FOC* p_foc)
+{
+    // Reset controllers
+    p_foc->piId.err             = 0.0f;
+    p_foc->piId.kp              = MOTOR1_ID_REGULATOR_KP_COEF;
+    p_foc->piId.ki              = MOTOR1_ID_REGULATOR_KI_COEF;
+    p_foc->piId.integral        = 0.0f;
+    p_foc->piId.ff              = 0.0f;
+    p_foc->piId.out             = 0.0f;
+    p_foc->piId.sat             = ((float32_t *)(&p_foc->motor_acq.vmax));
+
+    p_foc->piIq.err             = 0.0f;
+    p_foc->piIq.kp              = MOTOR1_IQ_REGULATOR_KP_COEF;
+    p_foc->piIq.ki              = MOTOR1_IQ_REGULATOR_KI_COEF;
+    p_foc->piIq.integral        = 0.0f;
+    p_foc->piIq.ff              = 0.0f;
+    p_foc->piIq.out             = 0.0f;
+    p_foc->piIq.sat             = ((float32_t *)(&p_foc->motor_acq.vmax));
+
+    // Reset alignment routine
+    //ALIGN_reset(&foc->alignRoutine);
+
+    // Reset position PD controller
+    p_foc->pdPos.err            = 0.0f;
+    p_foc->pdPos.vErr           = 0.0f;
+    p_foc->pdPos.kp             = MOTOR1_IQ_REGULATOR_KP_COEF;
+    p_foc->pdPos.ki             = MOTOR1_IQ_REGULATOR_KI_COEF;
+    p_foc->pdPos.kd             = 0.0f;
+    p_foc->pdPos.integral       = 0.0f;
+    p_foc->pdPos.derivative     = 0.0f;
+    p_foc->pdPos.ff             = 0.0f;
+    p_foc->pdPos.out            = 0.0f;
+    p_foc->pdPos.sat            = NULL;
+
+    // Reset encoder
+    p_foc->motor_enc.mechPos[NEW] = 0.0;
+    p_foc->motor_enc.mechPos[OLD] = 0.0;
+    p_foc->motor_enc.elecPos = 0.0f;
+
+    p_foc->motor_enc.isIndexCompensated = false;
+    p_foc->motor_enc.indexAngle = 0.0f;
+    p_foc->motor_enc.indexedMechAngle = 0.0f;
+
+    p_foc->motor_enc.lastMechAngle = 0.0f;
+    p_foc->motor_enc.absoluteAngle = 0.0f;
+
+    p_foc->motor_enc.speedEst.alpha = 0.0f;
+    p_foc->motor_enc.speedEst.speedRef = 0.0f;
+    p_foc->motor_enc.speedEst.pos[NEW] = 0.0f;
+    p_foc->motor_enc.speedEst.pos[OLD] = 0.0f;
+    p_foc->motor_enc.speedEst.lowSpeed = 0.0f;
+    p_foc->motor_enc.speedEst.highSpeed = 0.0f;
+    p_foc->motor_enc.speedEst.mechSpeed = 0.0f;
+    p_foc->motor_enc.speedEst.elecSpeed = 0.0f;
+
+    p_foc->motor_enc.turnNb = 0;
+    p_foc->motor_enc.indexDetected = false;
+    p_foc->motor_enc.indexToggle = false;
+    p_foc->motor_enc.rollOverFlag = false;
+
+    // Reset currents and voltages
+//    p_foc->ia = 0.0f;
+//    foc->ib = 0.0f;
+//    foc->ic = 0.0f;
+
+    p_foc->ialpha = 0.0f;
+    p_foc->ibeta = 0.0f;
+
+    p_foc->id = 0.0f;
+    p_foc->iq = 0.0f;
+
+    p_foc->ud = 0.0f;
+    p_foc->uq = 0.0f;
+
+    p_foc->ualpha = 0.0f;
+    p_foc->ubeta = 0.0f;
+
+    p_foc->ua = 0.0f;
+    p_foc->ub = 0.0f;
+    p_foc->uc = 0.0f;
+
+    // Reset potentiometer voltage
+    p_foc->auxAdc = 0.0f;
+
+    // Reset resistance estimation
+    p_foc->phaseAVolt = 0.0f;
+    p_foc->phaseBVolt = 0.0f;
+    p_foc->phaseCVolt = 0.0f;
+
+    p_foc->resistanceEst = 0.0f;
+}
+
+
+// No current is generated on motor phases
+//static void FOC_noVoltage(const uint16_t motorIndex)
+//{
+//    EPWM_setCounterCompareValue(hal_motors[motorIndex].pwmHandle[0], EPWM_COUNTER_COMPARE_A, 0);
+//    EPWM_setCounterCompareValue(hal_motors[motorIndex].pwmHandle[1], EPWM_COUNTER_COMPARE_A, 0);
+//    EPWM_setCounterCompareValue(hal_motors[motorIndex].pwmHandle[2], EPWM_COUNTER_COMPARE_A, 0);
+//}
+
+//// Set the motor phases in security mode
+//void FOC_emergencyStop()
+//{
+//    // Turn off control loop
+//    comInterface.systemEnabled = false;
+//    motor[MOTOR_1].motorFOC->enabled = false;
+//    motor[MOTOR_2].motorFOC->enabled = false;
+//
+//    // Disable ePWM interrupts
+//    Interrupt_disableInCPU(INTERRUPT_CPU_INT3);
+//
+//    // Tie phases to ground
+//    MOTOR_SetCommand(&motor[MOTOR_1], 0.0, 0.0, 0.0);
+//    MOTOR_SetCommand(&motor[MOTOR_2], 0.0, 0.0, 0.0);
+//
+//    // Reset foc structures
+//    FOC_resetStruct(motor_foc[MOTOR_1]);
+//    FOC_resetStruct(motor_foc[MOTOR_2]);
+//
+//}
+
 //inline void FOC_getPhaseCurrent(MOTOR_ACQ* p_acq)
 //{
 //    // Get the latest current values in Amps

@@ -6,6 +6,11 @@
  */
 
 #include "motor.h"
+#include "communication_interface.h"
+#include "uomodri_prj_config_handlers.h"
+
+//extern ComInterface comInterface;
+//extern MOTOR_STRUCT motor[2];
 
 //static void LPF_setBandwidth_simple(FILTER_PARAMS* p_flt, float32_t freq, float32_t bw)
 //{
@@ -36,7 +41,7 @@
 //    p_measure->vbus = __fmax(p_measure->vbus, 1.0f);
 //}
 
-inline void MOTOR_SetPwmCmd(MOTOR_STRUCT* p_motor, float32_t CmdChA, float32_t CmdChB, float32_t CmdChC)
+inline void MOTOR_SetCommand(MOTOR_STRUCT* p_motor, float32_t CmdChA, float32_t CmdChB, float32_t CmdChC)
 {
 //    uint16_t cmdVal[3]  = {0, 0, 0};
 //    uint8_t loop        = 0;
@@ -58,9 +63,7 @@ inline void MOTOR_SetPwmCmd(MOTOR_STRUCT* p_motor, float32_t CmdChA, float32_t C
     *(p_motor->pwmChCReg) = CmdChC;
 }
 
-
-
-static void ALIGN_reset(AlignRoutine *align)
+static void ALIGN_reset(AlignRoutine* align)
 {
     align->state = ALIGN_COUNT_UP;
     align->counter = 0;
@@ -68,7 +71,7 @@ static void ALIGN_reset(AlignRoutine *align)
 }
 
 // Return true if calibration is finished
-static void ALIGN_run(AlignRoutine *align)
+static void ALIGN_run(AlignRoutine* align)
 {
     switch (align->state)
     {
@@ -102,4 +105,23 @@ static void ALIGN_run(AlignRoutine *align)
         }
         break;
     }
+}
+
+// Set the motor phases in security mode
+void MOTOR_emergencyStop()
+{
+    // Turn off control loop
+    comInterface.systemEnabled          = false;
+//    motor[MOTOR_1].motorFOC->enabled    = false;
+//    motor[MOTOR_2].motorFOC->enabled    = false;
+
+    // Disable ePWM interrupts
+    Interrupt_disableInCPU(INTERRUPT_CPU_INT3);
+    // Tie phases to ground
+//    MOTOR_SetCommand(&motor[MOTOR_1], 0.0, 0.0, 0.0);
+//    MOTOR_SetCommand(&motor[MOTOR_2], 0.0, 0.0, 0.0);
+    // Reset foc structures
+//    FOC_resetStruct(motor[MOTOR_1].motorFOC);
+//    FOC_resetStruct(motor[MOTOR_2].motorFOC);
+
 }

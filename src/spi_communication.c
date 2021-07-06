@@ -28,7 +28,7 @@ uint32_t comSuccess = 0;
 //-----------------------------------------------------------------------
 
 // Communication initialization routine
-void Communication_init(const DMA_TypeDef* p_dmaCfg)
+void SPI_initCommunication(const DMA_TypeDef* p_dmaCfg)
 {
     if(p_dmaCfg != NULL)
     {
@@ -36,9 +36,9 @@ void Communication_init(const DMA_TypeDef* p_dmaCfg)
 
         while(dmaChBase != 0xFFFFFFFF)
         {
-            if(p_dmaCfg->dmaChBase == DMA_CH5_BASE)
+            if(p_dmaCfg->dmaChBase == COM_SPI_TX_DMA_BASE_ADDR)
                 dualBufferW.ptrDmaCh = (volatile struct CH_REGS*)p_dmaCfg->dmaChBase;
-            else if(p_dmaCfg->dmaChBase == DMA_CH6_BASE)
+            else if(p_dmaCfg->dmaChBase == COM_SPI_RX_DMA_BASE_ADDR)
                 dualBufferR.ptrDmaCh = (volatile struct CH_REGS*)p_dmaCfg->dmaChBase;
             // DMA register pointers initialization
             // Start channel
@@ -55,7 +55,7 @@ void Communication_init(const DMA_TypeDef* p_dmaCfg)
 // Returns a pointer to the packet that isn't sent to the master board
 inline ComPacketWPtr SPI_getAvailableWPacket()
 {
-    return dualBufferW.comPackets + !dualBufferW.index; // !index corresponds to the unused packet index
+    return (dualBufferW.comPackets + !dualBufferW.index); // !index corresponds to the unused packet index
 }
 
 // Compute CRC and swap Tx packets after the unused one has been updated
@@ -68,7 +68,7 @@ inline void SPI_pushWPacket()
     availablePacketAddress = dualBufferW.comPackets + dualBufferW.index;
 
     // Compute packet CRC
-    uint32_t crc = COM_crc32((uint16_t *)availablePacketAddress, SPI_COM_LENGTH - 2); // The last two words are CRC fields
+    uint32_t crc = COM_crc32((uint16_t *)availablePacketAddress, COM_SPI_TX_RX_LENGTH - 2); // The last two words are CRC fields
     // Update packet CRC
     availablePacketAddress->crc_msb = MSB_32(crc);
     availablePacketAddress->crc_lsb = LSB_32(crc);
@@ -118,7 +118,7 @@ inline ComPacketRPtr SPI_getAvailableRPacket()
     EDIS;
 
     // Compute CRC
-    uint32_t crc = COM_crc32((uint16_t *)currentPacketAddress, SPI_COM_LENGTH - 2); // The last two words are CRC fields
+    uint32_t crc = COM_crc32((uint16_t *)currentPacketAddress, COM_SPI_TX_RX_LENGTH - 2); // The last two words are CRC fields
 
     // Mark packet as read
     currentPacketAddress->mode.bit.rsvd = 1;

@@ -6,7 +6,7 @@
 #include "uomodri_user_defines.h"
 
 // Word number in a full communication
-#define SPI_COM_LENGTH      17
+
 
 //-----------------------------------------------------------------------
 //                      COMMUNICATION FIELDS
@@ -185,7 +185,7 @@ typedef struct __DualBufferW__
 //                      FUNCTION SIGNATURES
 //-----------------------------------------------------------------------
 // Communication initialization routine
-void Communication_init(const DMA_TypeDef*);
+void SPI_initCommunication(const DMA_TypeDef*);
 
 // Returns a pointer to the packet that isn't sent to the master board
 inline ComPacketWPtr SPI_getAvailableWPacket();

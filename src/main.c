@@ -4,6 +4,12 @@
 //extern HAL hal;
 //extern FOC foc[];
 
+// Communication interface
+//#pragma DATA_SECTION(comInterface, "ramgs0");
+extern ComInterface comInterface;
+extern MOTOR_STRUCT motor[];
+extern const HAL    hal;
+
 /**
  * main.c
  */
@@ -16,15 +22,21 @@ int main(void)
     // DRV8323 initialization
     DRV_init(motor[MOTOR_1].motorDRV);
     DRV_init(motor[MOTOR_2].motorDRV);
+    // Communication initialization
+    SPI_initCommunication(hal.dmaHandler);
     // ADC offset calib for debug
     HAL_ADC_offsetCalib(motor[MOTOR_1].motorHalCfg);
     HAL_ADC_offsetCalib(motor[MOTOR_2].motorHalCfg);
     // Interrupts initialization
     HAL_IT_init(InterruptList);
 
-    // Set PWM to an initial output
-    MOTOR_SetPwmCmd(&motor[MOTOR_1], 3 * PWM_TBPRD / 4, 2 * PWM_TBPRD / 4, 1 * PWM_TBPRD / 4);
-    MOTOR_SetPwmCmd(&motor[MOTOR_2], 3 * PWM_TBPRD / 4, 2 * PWM_TBPRD / 4, 1 * PWM_TBPRD / 4);
+#if UOMODRI_SPI_DEBUG_CONFIG
+    comInterface.systemEnabled = true;
+    motor_foc[MOTOR_1].enabled = true;
+#endif
+//    // Set PWM to an initial output
+//    MOTOR_SetPwmCmd(&motor[MOTOR_1], 3 * PWM_TBPRD / 4, 2 * PWM_TBPRD / 4, 1 * PWM_TBPRD / 4);
+//    MOTOR_SetPwmCmd(&motor[MOTOR_2], 3 * PWM_TBPRD / 4, 2 * PWM_TBPRD / 4, 1 * PWM_TBPRD / 4);
 
 //    MOTOR_SetPwmCmd(&motor[MOTOR_1], Sinus1kHz[i[0]], Sinus1kHz[i[1]], Sinus1kHz[i[2]]);
 //    MOTOR_SetPwmCmd(&motor[MOTOR_2], Sinus1kHz[j[0]], Sinus1kHz[j[1]], Sinus1kHz[j[2]]);
@@ -39,34 +51,42 @@ int main(void)
     // Infinite loop
     while(1)
     {
-        if(motor[MOTOR_1].motorFOC->motor_enc.posNew == true)
-        {
-            // Compute sine cosine
-            FOC_sineCosine(motor[MOTOR_1].motorFOC);
-            motor[MOTOR_1].motorFOC->motor_enc.posNew = false;
-        }
-
-        if(motor[MOTOR_2].motorFOC->motor_enc.posNew == true)
-        {
-            // Compute sine cosine
-            FOC_sineCosine(motor[MOTOR_2].motorFOC);
-            motor[MOTOR_2].motorFOC->motor_enc.posNew = false;
-        }
-
-        if(motor[MOTOR_1].motorFOC->motor_acq.measNew == true)
-        {
-            FOC_control(motor[MOTOR_1].motorFOC);
+#if UOMODRI_SPI_DEBUG_CONFIG
+        // Continuously write data for logging
+        UpdateLogPacket();
+#else
+        // Continuously read and write data to master board
+        UpdateSensorPacket();
+        ReadCommandPacket();
+#endif
+//        if(motor[MOTOR_1].motorFOC->motor_enc.posNew == true)
+//        {
+//            // Compute sine cosine
+//            FOC_sineCosine(motor[MOTOR_1].motorFOC);
+//            motor[MOTOR_1].motorFOC->motor_enc.posNew = false;
+//        }
+//
+//        if(motor[MOTOR_2].motorFOC->motor_enc.posNew == true)
+//        {
+//            // Compute sine cosine
+//            FOC_sineCosine(motor[MOTOR_2].motorFOC);
+//            motor[MOTOR_2].motorFOC->motor_enc.posNew = false;
+//        }
+//
+//        if(motor[MOTOR_1].motorFOC->motor_acq.measNew == true)
+//        {
+//            FOC_control(motor[MOTOR_1].motorFOC);
 //            // Current transforms
 //            FOC_parkClarke(motor[MOTOR_1].motorFOC);
 //            // Run PI controllers
 //            FOC_runPi(motor[MOTOR_1].motorFOC);
-
-
+//
+//
 //            for (ch = 0; ch < 3; ch++)
 //                i[ch] = (i[ch] < 199) ? (i[ch] + 1) : (0);
 //
 //            MOTOR_SetPwmCmd(&motor[MOTOR_1], Sinus1kHz[i[0]], Sinus1kHz[i[1]], Sinus1kHz[i[2]]);
-
+//
 //            // Current transforms
 //            FOC_parkClarke(motor[MOTOR_1].motorFOC);
 //            // Run PI controllers
@@ -75,12 +95,12 @@ int main(void)
 //            FOC_invParkClarke(motor[MOTOR_1].motorFOC);
 //            // Update PWM compare registers
 //            FOC_svm(motor[MOTOR_1].motorFOC);
-            motor[MOTOR_1].motorFOC->motor_acq.measNew = false;
-        }
-
-        if(motor[MOTOR_2].motorFOC->motor_acq.measNew == true)
-        {
-            FOC_control(motor[MOTOR_2].motorFOC);
+//            motor[MOTOR_1].motorFOC->motor_acq.measNew = false;
+//        }
+//
+//        if(motor[MOTOR_2].motorFOC->motor_acq.measNew == true)
+//        {
+//            FOC_control(motor[MOTOR_2].motorFOC);
 //            // Current transforms
 //            FOC_parkClarke(motor[MOTOR_2].motorFOC);
 //            // Run PI controllers
@@ -89,7 +109,7 @@ int main(void)
 //                j[ch] = (j[ch] < 199) ? (j[ch] + 1) : (0);
 //
 //            MOTOR_SetPwmCmd(&motor[MOTOR_2], Sinus1kHz[j[0]], Sinus1kHz[j[1]], Sinus1kHz[j[2]]);
-
+//
 //            // Current transforms
 //            FOC_parkClarke(motor[MOTOR_2].motorFOC);
 //            // Run PI controllers
@@ -98,8 +118,8 @@ int main(void)
 //            FOC_invParkClarke(motor[MOTOR_2].motorFOC);
 //            // Update PWM compare registers
 //            FOC_svm(motor[MOTOR_2].motorFOC);
-            motor[MOTOR_2].motorFOC->motor_acq.measNew = false;
-        }
+//            motor[MOTOR_2].motorFOC->motor_acq.measNew = false;
+//        }
     }
 }
 
@@ -129,12 +149,23 @@ __interrupt void adc_isrMotor1(void)
 #if (UOMODRI == 0)
     GPIO_writePin(DEBUG_INT_PIN1, 1);
 #endif
-    MOTOR_ACQ*      p_acq       = &motor[MOTOR_1].motorFOC->motor_acq;
     uint32_t        base        = InterruptList[ADC_IT_MOTOR_1].intPeriphBase;
     uint16_t        group       = InterruptList[ADC_IT_MOTOR_1].intAckGroup;
     ADC_IntNumber   adcIntNum   = (ADC_IntNumber)InterruptList[ADC_IT_MOTOR_1].intPeriphSrc;
-    // Read the phases current, voltage & Vbus
-    FOC_getMeasures(p_acq);
+    if (comInterface.systemEnabled && motor[MOTOR_1].motorFOC->enabled)
+    {
+        // Read the phases current, voltage & Vbus
+        FOC_getMeasures(&motor[MOTOR_1].motorFOC->motor_acq);
+        // Compute FOC algorithm
+        FOC_control(motor[MOTOR_1].motorFOC);
+    }
+    else
+    {
+        // Don't send current to motors
+        MOTOR_SetCommand(&motor[MOTOR_1], 0.0, 0.0, 0.0);
+        // Reset controllers
+        FOC_resetStruct(motor[MOTOR_1].motorFOC);
+    }
     // Clear the interrupt overflow flag
     ADC_clearInterruptOverflowStatus(base, adcIntNum);
     // Clear the interrupt flag
@@ -154,12 +185,23 @@ __interrupt void adc_isrMotor2(void)
 #if (UOMODRI == 0)
     GPIO_writePin(DEBUG_INT_PIN2, 1);
 #endif
-    MOTOR_ACQ*      p_acq       = &motor[MOTOR_2].motorFOC->motor_acq;
     uint32_t        base        = InterruptList[ADC_IT_MOTOR_2].intPeriphBase;
     uint16_t        group       = InterruptList[ADC_IT_MOTOR_2].intAckGroup;
     ADC_IntNumber   adcIntNum   = (ADC_IntNumber)InterruptList[ADC_IT_MOTOR_2].intPeriphSrc;
-    // Read the phases current, voltage
-    FOC_getMeasures(p_acq);
+    if (comInterface.systemEnabled && motor[MOTOR_2].motorFOC->enabled)
+    {
+        // Read the phases current, voltage & Vbus
+        FOC_getMeasures(&motor[MOTOR_2].motorFOC->motor_acq);
+        // Compute FOC algorithm
+        FOC_control(motor[MOTOR_2].motorFOC);
+    }
+    else
+    {
+        // Don't send current to motors
+        MOTOR_SetCommand(&motor[MOTOR_2], 0.0, 0.0, 0.0);
+        // Reset controllers
+        FOC_resetStruct(motor[MOTOR_2].motorFOC);
+    }
     // Clear the interrupt overflow flag
     ADC_clearInterruptOverflowStatus(base, adcIntNum);
     // Clear the interrupt flag

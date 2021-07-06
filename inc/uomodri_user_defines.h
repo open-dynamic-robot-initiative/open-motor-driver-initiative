@@ -7,22 +7,25 @@
 #define __UOMODRI_USER_DEFINES_H__
 
 #include "driverlib.h"
+#include "device.h"
+#include "f2838x_device.h"
 
-#include "hal.h"
+//#include "hal.h"
 #include "drv8353.h"
 
 /** @defgroup DEV_defines
  *  @brief    Special configurations definitions.
  * @{
  */
-#define UOMODRI                     0
-#define UOMODRI_VBUS_FLT            1
-#define UOMODRI_IDQ_FLT             1
-#define UOMODRI_RES_ESTIM_FLT       2
+#define UOMODRI                                 0
+#define UOMODRI_VBUS_FLT                        1
+#define UOMODRI_IDQ_FLT                         1
+#define UOMODRI_RES_ESTIM_FLT                   2
+#define UOMODRI_SPI_DEBUG_CONFIG                0
 
-#define UOMODRI_FOC_FEED_FORWARD    1
-#define OMODRI_PAL_SETUP            0   // Set this to 1 to use the PAL pin affectation
-#define SPI_DEBUG_CONFIGURATION     0   // Set this to 1 to use debug configuration
+#define UOMODRI_FOC_FEED_FORWARD                1
+#define OMODRI_PAL_SETUP                        0   // Set this to 1 to use the PAL pin affectation
+#define SPI_DEBUG_CONFIGURATION                 0   // Set this to 1 to use debug configuration
 // Word number in a full communication
 //#define SPI_COM_LENGTH              17
 /**
@@ -35,12 +38,13 @@
 #define FMAX3(x, y, z)                          (((x) > (y)) ? (((x) > (z)) ? (x) : (z)) : (((y) > (z)) ? (y) : (z)))
 #define FMIN3(x, y, z)                          (((x) < (y)) ? (((x) < (z)) ? (x) : (z)) : (((y) < (z)) ? (y) : (z)))
 #define FMINMAX(x, y, z)                        (fmaxf(fminf((x), (y)), (z)))
-
-typedef struct __LowpassFilter_Structure__
-{
-    float32_t a;
-    float32_t one_minus_a;
-} LpfStruct;
+// 16 bits macros
+#define LSB_16(x)                               ((x) & 0xFF)
+#define MSB_16(x)                               (((x) >> 8) & 0xFF)
+#define FUS_16_TO_32(x, y)                      (((uint32_t)(x) << 16) | (uint32_t)(y))
+// 32 bits macros
+#define LSB_32(x)                               ((x) & 0xFFFF)
+#define MSB_32(x)                               (((x) >> 16) & 0xFFFF)
 
 /******************************************************************************************************
 *                                               DEBUG Defines
@@ -62,12 +66,30 @@ typedef struct __LowpassFilter_Structure__
 /******************************************************************************************************
 *                                               SPI Defines
 *******************************************************************************************************/
-/** @defgroup ePWM_GPIO_pins configuration.
- *  @brief    Configure GPIO pins associated to 12x ePWM (2 motors).
+/** @defgroup SPI configuration.
+ *  @brief    Configure SPI modules associated to DRV \& communication.
  * @{
  */
 #define DRV_SPI_BASE                            SPIA_BASE
 #define COM_SPI_BASE                            SPIB_BASE
+#define COM_SPI_TX_BASE_ADDR                    (COM_SPI_BASE + SPI_O_TXBUF)
+#define COM_SPI_RX_BASE_ADDR                    (COM_SPI_BASE + SPI_O_RXBUF)
+#define COM_SPI_TX_DMA_BASE_ADDR                DMA_CH5_BASE
+#define COM_SPI_RX_DMA_BASE_ADDR                DMA_CH6_BASE
+#define COM_SPI_TX_RX_LENGTH                    (17)
+/**
+ * @}
+ */
+
+/******************************************************************************************************
+*                                               DMA Defines
+*******************************************************************************************************/
+/** @defgroup DMA configuration.
+ *  @brief    Configure DMA channels associated to SPI communication.
+ * @{
+ */
+//#define DMA_TX_BASE_ADDR                        DMA_CH5_BASE
+//#define DMA_RX_BASE_ADDR                        DMA_CH6_BASE
 /**
  * @}
  */
@@ -469,17 +491,25 @@ typedef struct __LowpassFilter_Structure__
  * @{
  */
 #define MOTOR1_ENC_RESOLUTION                   (5000)
-#define MOTOR2_ENC_RESOLUTION                   (5000)
 #define MOTOR1_ENC_RESOLUTION_SCALE             (4.0 * MOTOR1_ENC_RESOLUTION)
-#define MOTOR2_ENC_RESOLUTION_SCALE             (4.0 * MOTOR2_ENC_RESOLUTION)
 #define MOTOR1_ENC_HIGH_SPEED_SAMPLING_FREQ     (1000) // [Hz] Velocity computation frequency
-#define MOTOR2_ENC_HIGH_SPEED_SAMPLING_FREQ     (1000) // [Hz] Velocity computation frequency
 #define MOTOR1_ENC_HIGH_SPEED_SAMPLING_TICKS    (DEVICE_SYSCLK_FREQ / MOTOR1_ENC_HIGH_SPEED_SAMPLING_FREQ)
-#define MOTOR2_ENC_HIGH_SPEED_SAMPLING_TICKS    (DEVICE_SYSCLK_FREQ / MOTOR2_ENC_HIGH_SPEED_SAMPLING_FREQ)
 #define MOTOR1_ENC_HIGH_SPEED_SCALE             (2.0 * M_PI * MOTOR1_ENC_HIGH_SPEED_SAMPLING_FREQ / MOTOR1_ENC_RESOLUTION_SCALE) // 2pi / dt
-#define MOTOR2_ENC_HIGH_SPEED_SCALE             (2.0 * M_PI * MOTOR2_ENC_HIGH_SPEED_SAMPLING_FREQ / MOTOR2_ENC_RESOLUTION_SCALE) // 2pi / dt
 #define MOTOR1_ENC_LOW_SPEED_SCALE              (2.0 * M_PI * DEVICE_SYSCLK_FREQ * (1 << QEP_UNIT_POS_EVENT_DIV) / (1 << (QEP_CAPTURE_CLOCK_DIV >> 4)) / MOTOR1_ENC_RESOLUTION_SCALE)
+#define MOTOR1_ENC_SPEED_CUTOFF_FREQ            (200.0)     // cutoff frequency for velocity estimation
+#define MOTOR1_ENC_SPEED_LPF_ALPHA              (1.0 / (1.0 + (1.0 / (2.0 * M_PI * MOTOR1_ENC_SPEED_CUTOFF_FREQ / PWM_FREQ))))
+#define MOTOR1_ENC_SPEED_LPF_ONE_MINUS_ALPHA    (1.0 - MOTOR1_ENC_SPEED_LPF_ALPHA)
+
+#define MOTOR2_ENC_RESOLUTION                   (5000)
+#define MOTOR2_ENC_RESOLUTION_SCALE             (4.0 * MOTOR2_ENC_RESOLUTION)
+#define MOTOR2_ENC_HIGH_SPEED_SAMPLING_FREQ     (1000) // [Hz] Velocity computation frequency
+#define MOTOR2_ENC_HIGH_SPEED_SAMPLING_TICKS    (DEVICE_SYSCLK_FREQ / MOTOR2_ENC_HIGH_SPEED_SAMPLING_FREQ)
+#define MOTOR2_ENC_HIGH_SPEED_SCALE             (2.0 * M_PI * MOTOR2_ENC_HIGH_SPEED_SAMPLING_FREQ / MOTOR2_ENC_RESOLUTION_SCALE) // 2pi / dt
 #define MOTOR2_ENC_LOW_SPEED_SCALE              (2.0 * M_PI * DEVICE_SYSCLK_FREQ * (1 << QEP_UNIT_POS_EVENT_DIV) / (1 << (QEP_CAPTURE_CLOCK_DIV >> 4)) / MOTOR2_ENC_RESOLUTION_SCALE)
+#define MOTOR2_ENC_SPEED_CUTOFF_FREQ            (200.0)     // cutoff frequency for velocity estimation
+#define MOTOR2_ENC_SPEED_LPF_ALPHA              (1.0 / (1.0 + (1.0 / (2.0 * M_PI * MOTOR2_ENC_SPEED_CUTOFF_FREQ / PWM_FREQ))))
+#define MOTOR2_ENC_SPEED_LPF_ONE_MINUS_ALPHA    (1.0 - MOTOR2_ENC_SPEED_LPF_ALPHA)
+
 //#define MOTOR1_ENC_LOW_SPEED_SCALE      (2.0 * M_PI * MOTOR1_ENC_RESOLUTION_SCALE * DEVICE_SYSCLK_FREQ * (1 << QEP_UNIT_POS_EVENT_DIV) / (1 << (QEP_CAPTURE_CLOCK_DIV >> 4)))
 //#define MOTOR2_ENC_LOW_SPEED_SCALE      (2.0 * M_PI * MOTOR2_ENC_RESOLUTION_SCALE * DEVICE_SYSCLK_FREQ * (1 << QEP_UNIT_POS_EVENT_DIV) / (1 << (QEP_CAPTURE_CLOCK_DIV >> 4)))
 /**
@@ -555,4 +585,44 @@ typedef struct __LowpassFilter_Structure__
 #define MOTOR12_VBUS_LPF_ALPHA                  (1.0 / (1.0 + (1.0 / (2.0 * M_PI * MOTOR12_VBUS_CUTOFF_FREQ / PWM_FREQ))))
 #define MOTOR12_VBUS_LPF_ONE_MINUS_ALPHA        (1.0 - MOTOR12_VBUS_LPF_ALPHA)
 #define MOTOR12_IMAX                            (20.0)
+
+typedef struct __LowpassFilter_Structure__
+{
+    float32_t a;
+    float32_t one_minus_a;
+} LpfStruct;
+
+/**
+ * @enum    ArrayID
+ * @brief   Easier array management for history.
+ */
+typedef enum
+{
+    NEW = 0,    /*!< Current data */
+    OLD = 1,    /*!< Previous data */
+} ArrayID;
+
+/**
+ * @enum    MotorID
+ * @brief   Easier motor identification
+ */
+typedef enum
+{
+    MOTOR_1 = 0,    /*!< Select Motor_1 */
+    MOTOR_2 = 1,    /*!< Select Motor_2 */
+    NO_MOT  = -1    /*!< No motor selected */
+} MOTOR_ID;
+
+/**
+ * @enum    itID
+ * @brief   Easier interrupts identification
+ */
+typedef enum
+{
+    ADC_IT_MOTOR_1  = 0,    /*!< Select the ADC interrupt source of Motor_1 */
+    ADC_IT_MOTOR_2  = 1,    /*!< Select the ADC interrupt source of Motor_2 */
+    PWM_IT_MOTOR_1  = 2,    /*!< Select the PWM interrupt source of Motor_1 */
+    PWM_IT_MOTOR_2  = 3,    /*!< Select the PWM interrupt source of Motor_1 */
+} itID;
+
 #endif

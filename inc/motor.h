@@ -12,23 +12,11 @@
 #include "device.h"
 #include "f2838x_device.h"
 
-//#include "pid.h"
-//#include <stdint.h>
-//#include "lowpass_filter.h"
 #include <math.h>
 #include "hal.h"
-
-//#include "pd.h"
-//#include "pi.h"
-
-//#include "align_routine.h"
 #include "foc.h"
-#include "encoder.h"
-#include "math_defines.h"
-//#include "lowpass_filter.h"
 #include "anticoagging.h"
 #include "uomodri_user_defines.h"
-//#include "uomodri_prj_config_handlers.h"
 
 typedef enum
 {
@@ -49,52 +37,13 @@ typedef struct __ALIGNE_ROUTINE__
     float32_t idAlign;
 } AlignRoutine;
 
-typedef struct __FILTER_PARAMS__
-{
-    float32_t b;
-    float32_t a;
-} FILTER_PARAMS;
-
-//typedef struct __MOTOR_MEASURES__
-//{
-//    const MotorID motorID;
-//    float32_t va;       // [V]
-//    float32_t vb;       // [V]
-//    float32_t vc;       // [V]
-//    float32_t vbus;     // [V]
-//
-//    float32_t ia;       // [A]
-//    float32_t ib;       // [A]
-//    float32_t ic;       // [A]
-//
-//    float32_t* mechanicalAngle; // between 0 and 1
-//
-//    bool MeasNew;
-//
-//    // ADC result registers
-//    volatile int32_t* vaMeasReg;
-//    volatile int32_t* vbMeasReg;
-//    volatile int32_t* vcMeasReg;
-//    volatile int32_t* vBusMeasReg;
-//
-//    volatile int32_t* iaMeasReg;
-//    volatile int32_t* ibMeasReg;
-//    volatile int32_t* icMeasReg;
-//
-//    volatile int32_t* encoderPosReg;
-//} MOTOR_MEASURES;
-
 typedef struct __MOTOR_STRUCT__
 {
     const MOTOR_ID          motorID;
-    const MOTOR_HAL_CFG*    motorHalCfg;
-//    const MOTOR_PARAMS*     motorParams;
-//    MOTOR_MEASURES*         motorMeas;
-//    ENCODER*                motorEncoder;
+    const HAL_MOTOR_CFG*    motorHalCfg;
     DRV8353*                motorDRV;
     FOC*                    motorFOC;
-
-    bool enabled;
+    bool                    enabled;
     // Alignment routine structure
     AlignRoutine alignRoutine;
 
@@ -174,8 +123,9 @@ typedef struct __MOTOR_STRUCT__
 //inline void MOTOR_getCurrent(MOTOR_STRUCT*);
 //inline void MOTOR_getCurrent(MOTOR_MEASURES*);
 //inline void MOTOR_getVoltage(MOTOR_MEASURES*);
-inline void MOTOR_SetPwmCmd(MOTOR_STRUCT*, float32_t, float32_t, float32_t);
+inline void MOTOR_SetCommand(MOTOR_STRUCT*, float32_t, float32_t, float32_t);
 static void ALIGN_reset(AlignRoutine*);
 static void ALIGN_run(AlignRoutine*);
+void MOTOR_emergencyStop(void);
 
 #endif /* INC_MOTOR_H_ */

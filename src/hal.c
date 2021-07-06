@@ -142,9 +142,9 @@ void HAL_ADC_init(const ADC_TypeDef* p_adcCfg)
  * @brief       ADC calibration function for the PPB (Post Processing Block)
  * @param[in]   *p_motor    Pointer on the motor configuration structure
  */
-void HAL_ADC_offsetCalib(const MOTOR_HAL_CFG* p_motorHalCfg)
+void HAL_ADC_offsetCalib(const HAL_MOTOR_CFG* p_halMotorCfg)
 {
-    if(p_motorHalCfg != NULL)
+    if(p_halMotorCfg != NULL)
     {
         const ePWM_CC_TypeDef*  p_pwmCC     = NULL;
         const ADC_IT_TypeDef*   p_ITConv    = NULL;
@@ -156,7 +156,7 @@ void HAL_ADC_offsetCalib(const MOTOR_HAL_CFG* p_motorHalCfg)
         // force no switching with low side transistors closed
         for(loop = 0; loop < 3; loop++)
         {
-            p_pwmCC = p_motorHalCfg->p_pwmCntCmp[loop];
+            p_pwmCC = p_halMotorCfg->p_pwmCntCmp[loop];
             EPWM_setCounterCompareValue(p_pwmCC->epwmBase, p_pwmCC->compModule, p_pwmCC->compCount);
         }
 
@@ -164,30 +164,30 @@ void HAL_ADC_offsetCalib(const MOTOR_HAL_CFG* p_motorHalCfg)
         {
             // Wait data acquisition for Ia, Ib, Ic . Blocking.
             // Va, Vb, Vc & Vbus will be also available.
-            p_ITConv = p_motorHalCfg->p_ITConv;
+            p_ITConv = p_halMotorCfg->p_ITConv;
             // Wait IT flag event
             while(ADC_getInterruptStatus(p_ITConv->adcBase, p_ITConv->adcIntNumber) == false);
             if (calibCnt > 1000)
                 for(loop = 0; loop < 3; loop++)
                 {
-                    i[loop] = 0.998f * i[loop] + 0.002f * HWREGH(p_motorHalCfg->p_iConv[loop]->adcResultBase);
-                    v[loop] = 0.998f * v[loop] + 0.002f * HWREGH(p_motorHalCfg->p_vConv[loop]->adcResultBase);
+                    i[loop] = 0.998f * i[loop] + 0.002f * HWREGH(p_halMotorCfg->p_iConv[loop]->adcResultBase);
+                    v[loop] = 0.998f * v[loop] + 0.002f * HWREGH(p_halMotorCfg->p_vConv[loop]->adcResultBase);
                 }
             else
                 for(loop = 0; loop < 3; loop++)
                 {
-                    i[loop] = HWREGH(p_motorHalCfg->p_iConv[loop]->adcResultBase);
-                    v[loop] = HWREGH(p_motorHalCfg->p_vConv[loop]->adcResultBase);
+                    i[loop] = HWREGH(p_halMotorCfg->p_iConv[loop]->adcResultBase);
+                    v[loop] = HWREGH(p_halMotorCfg->p_vConv[loop]->adcResultBase);
                 }
 
             // clear flags
             for(loop = 0; loop < 3; loop++)
             {
                 // Clear the interrupt overflow flag
-                ADC_clearInterruptOverflowStatus(p_motorHalCfg->p_iConv[loop]->adcBase, p_ITConv->adcIntNumber);
+                ADC_clearInterruptOverflowStatus(p_halMotorCfg->p_iConv[loop]->adcBase, p_ITConv->adcIntNumber);
 //                HWREGH(p_motorHalCfg->p_iConv[loop]->adcBase + ADC_O_INTOVFCLR) = (1U << ((uint16_t)p_ITConv->adcIntNumber));
                 // Clear the interrupt flag
-                ADC_clearInterruptStatus(p_motorHalCfg->p_iConv[loop]->adcBase, p_ITConv->adcIntNumber);
+                ADC_clearInterruptStatus(p_halMotorCfg->p_iConv[loop]->adcBase, p_ITConv->adcIntNumber);
 //                HWREGH(p_motorHalCfg->p_iConv[loop]->adcBase + ADC_O_INTFLGCLR) = (1U << ((uint16_t)p_ITConv->adcIntNumber));
             }
         }
@@ -196,11 +196,11 @@ void HAL_ADC_offsetCalib(const MOTOR_HAL_CFG* p_motorHalCfg)
         for(loop = 0; loop < 3; loop++)
         {
             // Sets the post processing block reference offset for tensions
-            ADC_setPPBReferenceOffset(p_motorHalCfg->p_vConv[loop]->adcBase, p_motorHalCfg->p_vConv[loop]->adcPPBNumber, (uint16_t)v[loop]);
+            ADC_setPPBReferenceOffset(p_halMotorCfg->p_vConv[loop]->adcBase, p_halMotorCfg->p_vConv[loop]->adcPPBNumber, (uint16_t)v[loop]);
             // Sets the post processing block reference offset for tensions
-            ADC_setPPBReferenceOffset(p_motorHalCfg->p_iConv[loop]->adcBase, p_motorHalCfg->p_iConv[loop]->adcPPBNumber, (uint16_t)i[loop]);
+            ADC_setPPBReferenceOffset(p_halMotorCfg->p_iConv[loop]->adcBase, p_halMotorCfg->p_iConv[loop]->adcPPBNumber, (uint16_t)i[loop]);
             // Enables two's complement capability
-            ADC_enablePPBTwosComplement(p_motorHalCfg->p_iConv[loop]->adcBase, p_motorHalCfg->p_iConv[loop]->adcPPBNumber);
+            ADC_enablePPBTwosComplement(p_halMotorCfg->p_iConv[loop]->adcBase, p_halMotorCfg->p_iConv[loop]->adcPPBNumber);
         }
     }
 
@@ -532,7 +532,6 @@ void HAL_DMA_init(const DMA_TypeDef* p_dmaCfg)
             /* Enable Trigger source & DMA channel */
             DMA_clearTriggerFlag(dmaChBase);
             DMA_enableTrigger(dmaChBase);
-            DMA_startChannel(dmaChBase);
             dmaChBase = (++p_dmaCfg)->dmaChBase;
         }
     }

@@ -2,8 +2,9 @@
 #define __UOMODRI_HAL_CONFIG_HANDLERS_H__
 
 // drivers
-#include "device.h"
 #include "driverlib.h"
+#include "device.h"
+#include "f2838x_device.h"
 
 #include "hal.h"
 #include "spi_communication.h"
@@ -20,8 +21,8 @@ static const GPIO_TypeDef GpioPinsCfgList[] =
 {
 #if (UOMODRI == 0)
  // Debug Pins
- {.pinNumber = DEBUG_INT_PIN1,  .fctMux = DEBUG_INT_PIN1_CFG,   .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0},
- {.pinNumber = DEBUG_INT_PIN2,  .fctMux = DEBUG_INT_PIN2_CFG,   .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0},
+ {.pinNumber = DEBUG_INT_PIN1,          .fctMux = DEBUG_INT_PIN1_CFG,           .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0},
+ {.pinNumber = DEBUG_INT_PIN2,          .fctMux = DEBUG_INT_PIN2_CFG,           .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0},
 #endif
  // Quadrature encoder #1
  {.pinNumber = MOTOR1_ENC_CHA,          .fctMux = MOTOR1_ENC_CHA_CFG,           .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_IN,  .samplingInMode = GPIO_QUAL_6SAMPLE,.setValue = 0},
@@ -173,16 +174,30 @@ static const DMA_TypeDef dmaCfgList[] =
 {
  // DMA base register initialization
  // DMA for SPI communication Tx
- {.dmaChBase = DMA_CH5_BASE, .transferSize = SPI_COM_LENGTH, .srcWrapSize = SPI_COM_LENGTH, .destWrapSize = 0,
-  .config = ( DMA_CFG_ONESHOT_DISABLE | DMA_CFG_CONTINUOUS_ENABLE | DMA_CFG_SIZE_16BIT),
-  .burstSize = 1, .destStep = 0, .srcStep = 1,
-  .destAddr = (uint16_t*)(COM_SPI_BASE + SPI_O_TXBUF), .srcAddr = dualBufferW.comPackets, .trigger = DMA_TRIGGER_SPIBTX
+ {.dmaChBase    = COM_SPI_TX_DMA_BASE_ADDR,
+  .transferSize = COM_SPI_TX_RX_LENGTH,
+  .srcWrapSize  = COM_SPI_TX_RX_LENGTH,
+  .destWrapSize = 0,
+  .config       = (DMA_CFG_ONESHOT_DISABLE | DMA_CFG_CONTINUOUS_ENABLE | DMA_CFG_SIZE_16BIT),
+  .burstSize    = 1,
+  .destStep     = 0,
+  .srcStep      = 1,
+  .destAddr     = (uint16_t*)COM_SPI_TX_BASE_ADDR,
+  .srcAddr      = dualBufferW.comPackets,
+  .trigger      = DMA_TRIGGER_SPIBTX
  },
  // DMA for SPI communication Rx
- {.dmaChBase = DMA_CH6_BASE, .transferSize = SPI_COM_LENGTH, .srcWrapSize = 0, .destWrapSize = SPI_COM_LENGTH,
-  .config = (DMA_CFG_ONESHOT_DISABLE | DMA_CFG_CONTINUOUS_ENABLE | DMA_CFG_SIZE_16BIT),
-  .burstSize = 1, .destStep = 1, .srcStep = 0,
-  .destAddr = dualBufferR.comPackets, .srcAddr = (uint16_t*)(COM_SPI_BASE + SPI_O_RXBUF), .trigger = DMA_TRIGGER_SPIBRX
+ {.dmaChBase    = COM_SPI_RX_DMA_BASE_ADDR,
+  .transferSize = COM_SPI_TX_RX_LENGTH,
+  .srcWrapSize  = 0,
+  .destWrapSize = COM_SPI_TX_RX_LENGTH,
+  .config       = (DMA_CFG_ONESHOT_DISABLE | DMA_CFG_CONTINUOUS_ENABLE | DMA_CFG_SIZE_16BIT),
+  .burstSize    = 1,
+  .destStep     = 1,
+  .srcStep      = 0,
+  .destAddr     = dualBufferR.comPackets,
+  .srcAddr      = (uint16_t*)COM_SPI_RX_BASE_ADDR,
+  .trigger      = DMA_TRIGGER_SPIBRX
  },
  // END OF ARRAY
  {.dmaChBase = 0xFFFFFFFF},
@@ -277,29 +292,59 @@ static const ePWM_IT_TypeDef PwmInterruptsEventCfgList[] =
  */
 static const ePWM_TypeDef PwmCfgList[] =
 {
- {.epwmBase = MOTOR1_PWM1_BASE, .epwmTimeBase = &PwmTimeBaseCfgList[0], .epwmCaptureCompare = &PwmCounterCompareCfgList[0],
-  .epwmActionQualifier = &PwmActionQualifierCfgList[0], .epwmDeadband = &PwmDeadBandCfgList[0], .epwmProgChopper = NULL,
-  .epwmAdcSocEventTrigger = &PwmAdcSocEventTriggerCfgList[0], .epwmInterruptsEvent = &PwmInterruptsEventCfgList[0]
+ {.epwmBase                 = MOTOR1_PWM1_BASE,
+  .epwmTimeBase             = &PwmTimeBaseCfgList[0],
+  .epwmCaptureCompare       = &PwmCounterCompareCfgList[0],
+  .epwmActionQualifier      = &PwmActionQualifierCfgList[0],
+  .epwmDeadband             = &PwmDeadBandCfgList[0],
+  .epwmProgChopper          = NULL,
+  .epwmAdcSocEventTrigger   = &PwmAdcSocEventTriggerCfgList[0],
+  .epwmInterruptsEvent      = &PwmInterruptsEventCfgList[0]
  },
- {.epwmBase = MOTOR1_PWM2_BASE, .epwmTimeBase = &PwmTimeBaseCfgList[1], .epwmCaptureCompare = &PwmCounterCompareCfgList[1],
-  .epwmActionQualifier = &PwmActionQualifierCfgList[1], .epwmDeadband = &PwmDeadBandCfgList[1], .epwmProgChopper = NULL,
-  .epwmAdcSocEventTrigger = NULL, .epwmInterruptsEvent = NULL
+ {.epwmBase                 = MOTOR1_PWM2_BASE,
+  .epwmTimeBase             = &PwmTimeBaseCfgList[1],
+  .epwmCaptureCompare       = &PwmCounterCompareCfgList[1],
+  .epwmActionQualifier      = &PwmActionQualifierCfgList[1],
+  .epwmDeadband             = &PwmDeadBandCfgList[1],
+  .epwmProgChopper          = NULL,
+  .epwmAdcSocEventTrigger   = NULL,
+  .epwmInterruptsEvent      = NULL
  },
- {.epwmBase = MOTOR1_PWM3_BASE, .epwmTimeBase = &PwmTimeBaseCfgList[2], .epwmCaptureCompare = &PwmCounterCompareCfgList[2],
-  .epwmActionQualifier = &PwmActionQualifierCfgList[2], .epwmDeadband = &PwmDeadBandCfgList[2], .epwmProgChopper = NULL,
-  .epwmAdcSocEventTrigger = NULL, .epwmInterruptsEvent = NULL
+ {.epwmBase                 = MOTOR1_PWM3_BASE,
+  .epwmTimeBase             = &PwmTimeBaseCfgList[2],
+  .epwmCaptureCompare       = &PwmCounterCompareCfgList[2],
+  .epwmActionQualifier      = &PwmActionQualifierCfgList[2],
+  .epwmDeadband             = &PwmDeadBandCfgList[2],
+  .epwmProgChopper          = NULL,
+  .epwmAdcSocEventTrigger   = NULL,
+  .epwmInterruptsEvent      = NULL
  },
- {.epwmBase = MOTOR2_PWM1_BASE, .epwmTimeBase = &PwmTimeBaseCfgList[3], .epwmCaptureCompare = &PwmCounterCompareCfgList[3],
-  .epwmActionQualifier = &PwmActionQualifierCfgList[3], .epwmDeadband = &PwmDeadBandCfgList[3], .epwmProgChopper = NULL,
-  .epwmAdcSocEventTrigger = &PwmAdcSocEventTriggerCfgList[2], .epwmInterruptsEvent = &PwmInterruptsEventCfgList[1]
+ {.epwmBase                 = MOTOR2_PWM1_BASE,
+  .epwmTimeBase             = &PwmTimeBaseCfgList[3],
+  .epwmCaptureCompare       = &PwmCounterCompareCfgList[3],
+  .epwmActionQualifier      = &PwmActionQualifierCfgList[3],
+  .epwmDeadband             = &PwmDeadBandCfgList[3],
+  .epwmProgChopper          = NULL,
+  .epwmAdcSocEventTrigger   = &PwmAdcSocEventTriggerCfgList[2],
+  .epwmInterruptsEvent      = &PwmInterruptsEventCfgList[1]
  },
- {.epwmBase = MOTOR2_PWM2_BASE, .epwmTimeBase = &PwmTimeBaseCfgList[4], .epwmCaptureCompare = &PwmCounterCompareCfgList[4],
-  .epwmActionQualifier = &PwmActionQualifierCfgList[4], .epwmDeadband = &PwmDeadBandCfgList[4], .epwmProgChopper = NULL,
-  .epwmAdcSocEventTrigger = NULL, .epwmInterruptsEvent = NULL
+ {.epwmBase                 = MOTOR2_PWM2_BASE,
+  .epwmTimeBase             = &PwmTimeBaseCfgList[4],
+  .epwmCaptureCompare       = &PwmCounterCompareCfgList[4],
+  .epwmActionQualifier      = &PwmActionQualifierCfgList[4],
+  .epwmDeadband             = &PwmDeadBandCfgList[4],
+  .epwmProgChopper          = NULL,
+  .epwmAdcSocEventTrigger   = NULL,
+  .epwmInterruptsEvent      = NULL
  },
- {.epwmBase = MOTOR2_PWM3_BASE, .epwmTimeBase = &PwmTimeBaseCfgList[5], .epwmCaptureCompare = &PwmCounterCompareCfgList[5],
-  .epwmActionQualifier = &PwmActionQualifierCfgList[5], .epwmDeadband = &PwmDeadBandCfgList[5], .epwmProgChopper = NULL,
-  .epwmAdcSocEventTrigger = NULL, .epwmInterruptsEvent = NULL
+ {.epwmBase                 = MOTOR2_PWM3_BASE,
+  .epwmTimeBase             = &PwmTimeBaseCfgList[5],
+  .epwmCaptureCompare       = &PwmCounterCompareCfgList[5],
+  .epwmActionQualifier      = &PwmActionQualifierCfgList[5],
+  .epwmDeadband             = &PwmDeadBandCfgList[5],
+  .epwmProgChopper          = NULL,
+  .epwmAdcSocEventTrigger   = NULL,
+  .epwmInterruptsEvent      = NULL
  },
  // END OF ARRAY
  {.epwmBase = 0xFFFFFFFF},
@@ -309,12 +354,12 @@ static const ePWM_TypeDef PwmCfgList[] =
  *  @brief  General configuration structure for the Hardware Abstraction Layer.
  */
 static const HAL hal =
-{.gpioHandler = GpioPinsCfgList,
- .adcHandler  = AdcCfgList,
- .epwmHandler = PwmCfgList,
- .eqepHandler = QepCfgList,
- .dmaHandler  = NULL,
- .spiHandler  = spiCfgList
+{.gpioHandler   = GpioPinsCfgList,
+ .adcHandler    = AdcCfgList,
+ .epwmHandler   = PwmCfgList,
+ .eqepHandler   = QepCfgList,
+ .dmaHandler    = dmaCfgList,
+ .spiHandler    = spiCfgList
 };
 
 #endif  /*__UOMODRI_HAL_CONFIG_HANDLERS_H__*/

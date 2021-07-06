@@ -10,38 +10,7 @@
 #include "device.h"
 #include "f2838x_device.h"
 
-/**
- * @enum    ArrayID
- * @brief   Easier array management for history.
- */
-typedef enum
-{
-    NEW = 0,    /*!< Current data */
-    OLD = 1,    /*!< Previous data */
-} ArrayID;
-
-/**
- * @enum    MotorID
- * @brief   Easier motor identification
- */
-typedef enum
-{
-    MOTOR_1 = 0,    /*!< Select Motor_1 */
-    MOTOR_2 = 1,    /*!< Select Motor_2 */
-    NO_MOT  = -1    /*!< No motor selected */
-} MOTOR_ID;
-
-/**
- * @enum    itID
- * @brief   Easier interrupts identification
- */
-typedef enum
-{
-    ADC_IT_MOTOR_1  = 0,    /*!< Select the ADC interrupt source of Motor_1 */
-    ADC_IT_MOTOR_2  = 1,    /*!< Select the ADC interrupt source of Motor_2 */
-    PWM_IT_MOTOR_1  = 2,    /*!< Select the PWM interrupt source of Motor_1 */
-    PWM_IT_MOTOR_2  = 3,    /*!< Select the PWM interrupt source of Motor_1 */
-} itID;
+#include "uomodri_user_defines.h"
 
 /**
  * @enum    EPWM_DelayModeEnable
@@ -314,49 +283,16 @@ typedef struct _HAL_
 } HAL;
 
 // Motor Hardware Abstraction Layer structure
-typedef struct _MOTOR_HAL_CFG_
+typedef struct _HAL_MOTOR_CFG_
 {
-//    ADC_SOC_TypeDef* p_adcSoc[3];
     const ePWM_CC_TypeDef*  p_pwmCntCmp[3];
     const ADC_ACQ_TypeDef*  p_iConv[3];
     const ADC_ACQ_TypeDef*  p_vConv[3];
     const ADC_ACQ_TypeDef*  p_vbusConv;
     const ADC_IT_TypeDef*   p_ITConv;
     const eQEP_TypeDef*     p_qep;
-//    // ADC results scaled (expressed in (A))
-//    float32_t               i[3];
-//    float32_t               v[3];
-//    float32_t               vbus;
-//
-//    // PWM command registers (CMPx regs)
-//    volatile uint16_t*      p_pwmCmd[3];
-//
-////    const ADC_TypeDef*    p_adcCfg;
-////    const ePWM_TypeDef*   p_pwmCfg;
-////    const eQEP_TypeDef*   p_qepCfg;
-//
-//    uint32_t    pwmBaseAddress[3];
-//
-////    ADC_SOCNumber i_socNum[3];
-////    ADC_SOCNumber v_socNum[3];
-////
-////    ADC_SOCNumber ia_socNum;
-////    ADC_SOCNumber ib_socNum;
-////    ADC_SOCNumber ic_socNum;
-////    ADC_SOCNumber va_socNum;
-////    ADC_SOCNumber vb_socNum;
-////    ADC_SOCNumber vc_socNum;
-////    ADC_SOCNumber vbus_socNum;
-////
-////    ACQ_OFFSET offset;
-////    ACQ raw;
-//    uint32_t encoderPos;
-//
     const MOTOR_ID          motorID;
-//
-//    bool dataValid[2];
-//    bool offsetCal;
-} MOTOR_HAL_CFG;
+} HAL_MOTOR_CFG;
 
 /*
  * Function prototypes
@@ -372,6 +308,6 @@ void HAL_IT_init(const IT_TypeDef*);
 //extern __interrupt void adc4ISR(void);
 //extern __interrupt void isrMotor1(void);
 
-void HAL_ADC_offsetCalib(const MOTOR_HAL_CFG*);
+void HAL_ADC_offsetCalib(const HAL_MOTOR_CFG*);
 
 #endif

@@ -4,10 +4,9 @@
 #include "driverlib.h"
 #include "device.h"
 #include "f2838x_device.h"
-//#include <f28x_project.h>
-//#include "lowpass_filter.h"
-#include "math_defines.h"
 
+#include "hal.h"
+#include "math_defines.h"
 #include "uomodri_user_defines.h"
 
 // This threshold corresponds to the middle speed for low/high speed estimation merge
@@ -76,7 +75,5 @@ inline void ENC_reset(ENCODER*);
 inline void ENC_resetQepPos(ENCODER*);
 inline void encoder_GetPosition(ENCODER*);
 inline void encoder_GetSpeed(ENCODER*);
-
-
 
 #endif
