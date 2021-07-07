@@ -71,7 +71,7 @@ static void ALIGN_reset(AlignRoutine* align)
 }
 
 // Return true if calibration is finished
-static void ALIGN_run(AlignRoutine* align)
+static void MOTOR_warmup(AlignRoutine* align)
 {
     switch (align->state)
     {
@@ -112,16 +112,32 @@ void MOTOR_emergencyStop()
 {
     // Turn off control loop
     comInterface.systemEnabled          = false;
-//    motor[MOTOR_1].motorFOC->enabled    = false;
-//    motor[MOTOR_2].motorFOC->enabled    = false;
+    motor[MOTOR_1].motorFOC->enabled    = false;
+    motor[MOTOR_2].motorFOC->enabled    = false;
 
     // Disable ePWM interrupts
     Interrupt_disableInCPU(INTERRUPT_CPU_INT3);
     // Tie phases to ground
-//    MOTOR_SetCommand(&motor[MOTOR_1], 0.0, 0.0, 0.0);
-//    MOTOR_SetCommand(&motor[MOTOR_2], 0.0, 0.0, 0.0);
+    MOTOR_SetCommand(&motor[MOTOR_1], 0.0, 0.0, 0.0);
+    MOTOR_SetCommand(&motor[MOTOR_2], 0.0, 0.0, 0.0);
     // Reset foc structures
-//    FOC_resetStruct(motor[MOTOR_1].motorFOC);
-//    FOC_resetStruct(motor[MOTOR_2].motorFOC);
+    FOC_resetStruct(motor[MOTOR_1].motorFOC);
+    FOC_resetStruct(motor[MOTOR_2].motorFOC);
 
+}
+
+inline void MOTOR_StatorResistance(MOTOR_STRUCT* p_motor)
+{
+//
+//    // Read measures
+//    foc->phaseAVolt = (*foc->vsenaResult) * foc->voltageScalerReg;
+//    foc->phaseBVolt = (*foc->vsenbResult) * foc->voltageScalerReg;
+//    foc->phaseCVolt = (*foc->vsencResult) * foc->voltageScalerReg;
+
+    // Compute resistance
+    // Only compute if measured current is over a threshold
+    if (FM_ABS(p_motor->motorFOC->iq) > FOC_RE_CURRENT_THRESHOLD)
+    {
+//        LPF_FILTER(foc->resEstLpf, foc->resistanceEst, (foc->uq - foc->encoder.speedEst.elecSpeed * foc->ke) / foc->iq);
+    }
 }

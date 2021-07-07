@@ -256,3 +256,41 @@ __interrupt void pwm_isrMotor2(void)
     GPIO_writePin(DEBUG_INT_PIN2, 0);
 #endif
 }
+
+__interrupt void gpio_isrFault1(void)
+{
+    // Trigger emergency stop
+    MOTOR_emergencyStop();
+
+    // Read DRV data to get status registers
+    DRV_readStatus(motor[MOTOR_1].motorDRV->drvCfgHandler, motor[MOTOR_1].motorDRV->drvRegHandler);
+//    HAL_readDRVData(&hal_motors[0].drvHandle, &drvVars[0]);
+
+    // Set CAN error
+    comInterface.canError = SPI_SENSOR_STATUS_ERROR_DRV_NFAULT;
+
+    // Update sensor packet
+    UpdateSensorPacket();
+
+    // Infinite loop
+    while(1);
+
+}
+
+__interrupt void gpio_isrFault2(void)
+{
+    // Trigger emergency stop
+    MOTOR_emergencyStop();
+
+    // Read DRV data to get status registers
+//    HAL_readDRVData(&hal_motors[1].drvHandle, &drvVars[1]);
+
+    // Set CAN error
+    comInterface.canError = SPI_SENSOR_STATUS_ERROR_DRV_NFAULT;
+
+    // Update sensor packet
+    UpdateSensorPacket();
+
+    // Infinite loop
+    while(1);
+}

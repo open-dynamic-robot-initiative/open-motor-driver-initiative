@@ -64,6 +64,12 @@ void HAL_GPIO_init(const GPIO_TypeDef* p_gpio)
                 GPIO_setQualificationMode(pinNum, p_gpio->samplingInMode);
             else
                 GPIO_writePin(pinNum, (uint32_t) p_gpio->setValue);
+            if(p_gpio->intEnable)
+            {
+                GPIO_setInterruptPin(pinNum, p_gpio->extIntNum);
+                GPIO_setInterruptType(p_gpio->extIntNum, p_gpio->intType);
+                GPIO_enableInterrupt(p_gpio->extIntNum);
+            }
             pinNum = (++p_gpio)->pinNumber;
         }
     }
@@ -126,6 +132,7 @@ void HAL_ADC_init(const ADC_TypeDef* p_adcCfg)
                 while(p_adcIT->adcBase == adcBase)
                 {
                     ADC_setInterruptSource(adcBase, p_adcIT->adcIntNumber, p_adcIT->adcEOCNumber);
+                    ADC_enableContinuousMode(adcBase, p_adcIT->adcIntNumber);
                     ADC_enableInterrupt(adcBase, p_adcIT->adcIntNumber);
                     ADC_clearInterruptStatus(adcBase, p_adcIT->adcIntNumber);
                     p_adcIT++;

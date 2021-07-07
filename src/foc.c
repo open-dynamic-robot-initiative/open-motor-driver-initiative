@@ -195,31 +195,33 @@ void FOC_resetStruct(FOC* p_foc)
 {
     // Reset controllers
     p_foc->piId.err             = 0.0f;
-    p_foc->piId.kp              = MOTOR1_ID_REGULATOR_KP_COEF;
-    p_foc->piId.ki              = MOTOR1_ID_REGULATOR_KI_COEF;
+//    p_foc->piId.kp              = MOTOR1_ID_REGULATOR_KP_COEF;
+//    p_foc->piId.ki              = MOTOR1_ID_REGULATOR_KI_COEF;
+//    p_foc->piId.kd              = 0.0f
     p_foc->piId.integral        = 0.0f;
     p_foc->piId.ff              = 0.0f;
     p_foc->piId.out             = 0.0f;
-    p_foc->piId.sat             = ((float32_t *)(&p_foc->motor_acq.vmax));
+//    p_foc->piId.sat             = ((float32_t *)(&p_foc->motor_acq.vmax));
 
     p_foc->piIq.err             = 0.0f;
-    p_foc->piIq.kp              = MOTOR1_IQ_REGULATOR_KP_COEF;
-    p_foc->piIq.ki              = MOTOR1_IQ_REGULATOR_KI_COEF;
+//    p_foc->piIq.kp              = MOTOR1_IQ_REGULATOR_KP_COEF;
+//    p_foc->piIq.ki              = MOTOR1_IQ_REGULATOR_KI_COEF;
+//    p_foc->piIq.kd              = 0.0f
     p_foc->piIq.integral        = 0.0f;
     p_foc->piIq.ff              = 0.0f;
     p_foc->piIq.out             = 0.0f;
-    p_foc->piIq.sat             = ((float32_t *)(&p_foc->motor_acq.vmax));
+//    p_foc->piIq.sat             = ((float32_t *)(&p_foc->motor_acq.vmax));
 
     // Reset alignment routine
-    //ALIGN_reset(&foc->alignRoutine);
+//    ALIGN_reset(&foc->alignRoutine);
 
     // Reset position PD controller
     p_foc->pdPos.err            = 0.0f;
     p_foc->pdPos.vErr           = 0.0f;
-    p_foc->pdPos.kp             = MOTOR1_IQ_REGULATOR_KP_COEF;
-    p_foc->pdPos.ki             = MOTOR1_IQ_REGULATOR_KI_COEF;
-    p_foc->pdPos.kd             = 0.0f;
-    p_foc->pdPos.integral       = 0.0f;
+//    p_foc->pdPos.kp             = MOTOR1_SPEED_REGULATOR_KP_COEF;
+//    p_foc->pdPos.ki             = 0.0f;
+//    p_foc->pdPos.kd             = MOTOR1_SPEED_REGULATOR_KD_COEF;
+//    p_foc->pdPos.integral       = 0.0f;
     p_foc->pdPos.derivative     = 0.0f;
     p_foc->pdPos.ff             = 0.0f;
     p_foc->pdPos.out            = 0.0f;

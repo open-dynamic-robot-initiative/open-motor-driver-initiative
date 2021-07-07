@@ -498,7 +498,7 @@
 #define MOTOR1_ENC_LOW_SPEED_SCALE              (2.0 * M_PI * DEVICE_SYSCLK_FREQ * (1 << QEP_UNIT_POS_EVENT_DIV) / (1 << (QEP_CAPTURE_CLOCK_DIV >> 4)) / MOTOR1_ENC_RESOLUTION_SCALE)
 #define MOTOR1_ENC_SPEED_CUTOFF_FREQ            (200.0)     // cutoff frequency for velocity estimation
 #define MOTOR1_ENC_SPEED_LPF_ALPHA              (1.0 / (1.0 + (1.0 / (2.0 * M_PI * MOTOR1_ENC_SPEED_CUTOFF_FREQ / PWM_FREQ))))
-#define MOTOR1_ENC_SPEED_LPF_ONE_MINUS_ALPHA    (1.0 - MOTOR1_ENC_SPEED_LPF_ALPHA)
+#define MOTOR1_ENC_SPEED_LPF_ONE_M_ALPHA        (1.0 - MOTOR1_ENC_SPEED_LPF_ALPHA)
 
 #define MOTOR2_ENC_RESOLUTION                   (5000)
 #define MOTOR2_ENC_RESOLUTION_SCALE             (4.0 * MOTOR2_ENC_RESOLUTION)
@@ -508,7 +508,7 @@
 #define MOTOR2_ENC_LOW_SPEED_SCALE              (2.0 * M_PI * DEVICE_SYSCLK_FREQ * (1 << QEP_UNIT_POS_EVENT_DIV) / (1 << (QEP_CAPTURE_CLOCK_DIV >> 4)) / MOTOR2_ENC_RESOLUTION_SCALE)
 #define MOTOR2_ENC_SPEED_CUTOFF_FREQ            (200.0)     // cutoff frequency for velocity estimation
 #define MOTOR2_ENC_SPEED_LPF_ALPHA              (1.0 / (1.0 + (1.0 / (2.0 * M_PI * MOTOR2_ENC_SPEED_CUTOFF_FREQ / PWM_FREQ))))
-#define MOTOR2_ENC_SPEED_LPF_ONE_MINUS_ALPHA    (1.0 - MOTOR2_ENC_SPEED_LPF_ALPHA)
+#define MOTOR2_ENC_SPEED_LPF_ONE_M_ALPHA        (1.0 - MOTOR2_ENC_SPEED_LPF_ALPHA)
 
 //#define MOTOR1_ENC_LOW_SPEED_SCALE      (2.0 * M_PI * MOTOR1_ENC_RESOLUTION_SCALE * DEVICE_SYSCLK_FREQ * (1 << QEP_UNIT_POS_EVENT_DIV) / (1 << (QEP_CAPTURE_CLOCK_DIV >> 4)))
 //#define MOTOR2_ENC_LOW_SPEED_SCALE      (2.0 * M_PI * MOTOR2_ENC_RESOLUTION_SCALE * DEVICE_SYSCLK_FREQ * (1 << QEP_UNIT_POS_EVENT_DIV) / (1 << (QEP_CAPTURE_CLOCK_DIV >> 4)))
@@ -550,15 +550,20 @@
 #define MOTOR1_POLES_PAIRS                      (12)        // Number of poles
 #define MOTOR1_CURRENT_CUTOFF_FREQ              (500.0)     // Current loop bandwidth (Hz)
 #define MOTOR1_CURRENT_LPF_ALPHA                (1.0 / (1.0 + (1.0 / (2.0 * M_PI * MOTOR1_CURRENT_CUTOFF_FREQ / PWM_FREQ))))
-#define MOTOR1_CURRENT_LPF_ONE_MINUS_ALPHA      (1.0 - MOTOR1_CURRENT_LPF_ALPHA)
+#define MOTOR1_CURRENT_LPF_ONE_M_ALPHA          (1.0 - MOTOR1_CURRENT_LPF_ALPHA)
 #define MOTOR1_ID_REGULATOR_KP_COEF             (MOTOR1_LD * 2.0 * M_PI * MOTOR1_CURRENT_CUTOFF_FREQ)
 #define MOTOR1_ID_REGULATOR_KI_COEF             (MOTOR1_RS * 2.0 * M_PI * MOTOR1_CURRENT_CUTOFF_FREQ / PWM_FREQ)
 #define MOTOR1_IQ_REGULATOR_KP_COEF             (MOTOR1_LQ * 2.0 * M_PI * MOTOR1_CURRENT_CUTOFF_FREQ)
 #define MOTOR1_IQ_REGULATOR_KI_COEF             (MOTOR1_RS * 2.0 * M_PI * MOTOR1_CURRENT_CUTOFF_FREQ / PWM_FREQ)
+#define MOTOR1_SPEED_REGULATOR_KP_COEF          (1.0f)
+#define MOTOR1_SPEED_REGULATOR_KD_COEF          (0.02f)
 #define MOTOR1_DUTY_CYCLE_MAX                   (0.95f)     // Max duty cycle
 #define MOTOR1_DUTY_CYCLE_MIN                   (0.05f)     // Min duty cycle
-//#define MOTOR1_CUR_LOOP_ONE_MINUS_ALPHA         (1.0 / (1.0 + (2.0 * M_PI * MOTOR1_CUR_LOOP_BANDWIDTH / PWM_FREQ)))
-//#define MOTOR1_CUR_LOOP_ALPHA                   (1.0 - (MOTOR1_CUR_LOOP_ONE_MINUS_ALPHA))
+#define MOTOR1_STATOR_RESISTOR_CUTOFF_FREQ      (0.2)
+#define MOTOR1_STATOR_RESISTOR_LPF_ALPHA        (1.0 / (1.0 + (1.0 / (2.0 * M_PI * MOTOR1_STATOR_RESISTOR_CUTOFF_FREQ / PWM_FREQ))))
+#define MOTOR1_STATOR_RESISTOR_LPF_ONE_M_ALPHA  (1.0 - MOTOR1_STATOR_RESISTOR_LPF_ALPHA)
+//#define MOTOR1_CUR_LOOP_ONE_M_ALPHA         (1.0 / (1.0 + (2.0 * M_PI * MOTOR1_CUR_LOOP_BANDWIDTH / PWM_FREQ)))
+//#define MOTOR1_CUR_LOOP_ALPHA                   (1.0 - (MOTOR1_CUR_LOOP_ONE_M_ALPHA))
 
 /*** Motor 2 constants ***/
 #define MOTOR2_KV                               (300.0)     // Motor constant (rpm/V)
@@ -570,20 +575,25 @@
 #define MOTOR2_POLES_PAIRS                      (12)        // Number of poles
 #define MOTOR2_CURRENT_CUTOFF_FREQ              (500.0)     // Current loop bandwidth (Hz)
 #define MOTOR2_CURRENT_LPF_ALPHA                (1.0 / (1.0 + (1.0 / (2.0 * M_PI * MOTOR2_CURRENT_CUTOFF_FREQ / PWM_FREQ))))
-#define MOTOR2_CURRENT_LPF_ONE_MINUS_ALPHA      (1.0 - MOTOR2_CURRENT_LPF_ALPHA)
+#define MOTOR2_CURRENT_LPF_ONE_M_ALPHA          (1.0 - MOTOR2_CURRENT_LPF_ALPHA)
 #define MOTOR2_ID_REGULATOR_KP_COEF             (MOTOR2_LD * 2.0 * M_PI * MOTOR2_CURRENT_CUTOFF_FREQ)
 #define MOTOR2_ID_REGULATOR_KI_COEF             (MOTOR2_RS * 2.0 * M_PI * MOTOR2_CURRENT_CUTOFF_FREQ / PWM_FREQ)
 #define MOTOR2_IQ_REGULATOR_KP_COEF             (MOTOR2_LQ * 2.0 * M_PI * MOTOR2_CURRENT_CUTOFF_FREQ)
 #define MOTOR2_IQ_REGULATOR_KI_COEF             (MOTOR2_RS * 2.0 * M_PI * MOTOR2_CURRENT_CUTOFF_FREQ / PWM_FREQ)
+#define MOTOR2_SPEED_REGULATOR_KP_COEF          (1.0f)
+#define MOTOR2_SPEED_REGULATOR_KD_COEF          (0.02f)
 #define MOTOR2_DUTY_CYCLE_MAX                   (0.95f)     // Max duty cycle
 #define MOTOR2_DUTY_CYCLE_MIN                   (0.05f)     // Min duty cycle
-//#define MOTOR2_CUR_LOOP_ONE_MINUS_ALPHA         (1.0 / (1.0 + (2.0 * M_PI * MOTOR2_CUR_LOOP_BANDWIDTH / PWM_FREQ)))
-//#define MOTOR2_CUR_LOOP_ALPHA                   (1.0 - (MOTOR2_CUR_LOOP_ONE_MINUS_ALPHA))
+#define MOTOR2_STATOR_RESISTOR_CUTOFF_FREQ      (0.2f)
+#define MOTOR2_STATOR_RESISTOR_LPF_ALPHA        (1.0 / (1.0 + (1.0 / (2.0 * M_PI * MOTOR2_STATOR_RESISTOR_CUTOFF_FREQ / PWM_FREQ))))
+#define MOTOR2_STATOR_RESISTOR_LPF_ONE_M_ALPHA  (1.0 - MOTOR2_STATOR_RESISTOR_LPF_ALPHA)
+//#define MOTOR2_CUR_LOOP_ONE_M_ALPHA         (1.0 / (1.0 + (2.0 * M_PI * MOTOR2_CUR_LOOP_BANDWIDTH / PWM_FREQ)))
+//#define MOTOR2_CUR_LOOP_ALPHA                   (1.0 - (MOTOR2_CUR_LOOP_ONE_M_ALPHA))
 
 #define MOTOR12_OVERMODULATION                  (1.15)
 #define MOTOR12_VBUS_CUTOFF_FREQ                (500.0)     // vbus voltage loop bandwidth (Hz)
 #define MOTOR12_VBUS_LPF_ALPHA                  (1.0 / (1.0 + (1.0 / (2.0 * M_PI * MOTOR12_VBUS_CUTOFF_FREQ / PWM_FREQ))))
-#define MOTOR12_VBUS_LPF_ONE_MINUS_ALPHA        (1.0 - MOTOR12_VBUS_LPF_ALPHA)
+#define MOTOR12_VBUS_LPF_ONE_M_ALPHA            (1.0 - MOTOR12_VBUS_LPF_ALPHA)
 #define MOTOR12_IMAX                            (20.0)
 
 typedef struct __LowpassFilter_Structure__

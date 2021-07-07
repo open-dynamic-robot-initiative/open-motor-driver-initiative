@@ -5,6 +5,7 @@
 #include "spi_communication.h"
 #include "checksum.h"
 #include "lsb_msb_macros.h"
+//#include "uomodri_hal_config_handlers.h"
 
 //-----------------------------------------------------------------------
 //                      GLOBAL VARIABLES
@@ -12,9 +13,19 @@
 // Global dual buffer declarations
 // Put them in the RAMG so DMA can reach them
 #pragma DATA_SECTION(dualBufferW, "ramgs0");
-DualBufferW dualBufferW;
+DualBufferW dualBufferW =
+{
+ .ptrDmaCh  = (volatile struct CH_REGS*)COM_SPI_TX_DMA_BASE_ADDR,//(&dmaCfgList[0].dmaChBase),
+ .index     = 0,
+ //     ComPacketW comPackets[2];
+};
 #pragma DATA_SECTION(dualBufferR, "ramgs0");
-DualBufferR dualBufferR;
+DualBufferR dualBufferR =
+{
+ .ptrDmaCh  = (volatile struct CH_REGS*)COM_SPI_RX_DMA_BASE_ADDR,//(&dmaCfgList[1].dmaChBase),
+ .index     = 0,
+ //  ComPacketR comPackets[2];
+};
 
 // Debug
 uint32_t comError = 0;
@@ -36,11 +47,11 @@ void SPI_initCommunication(const DMA_TypeDef* p_dmaCfg)
 
         while(dmaChBase != 0xFFFFFFFF)
         {
-            if(p_dmaCfg->dmaChBase == COM_SPI_TX_DMA_BASE_ADDR)
-                dualBufferW.ptrDmaCh = (volatile struct CH_REGS*)p_dmaCfg->dmaChBase;
-            else if(p_dmaCfg->dmaChBase == COM_SPI_RX_DMA_BASE_ADDR)
-                dualBufferR.ptrDmaCh = (volatile struct CH_REGS*)p_dmaCfg->dmaChBase;
-            // DMA register pointers initialization
+//            // DMA register pointers initialization
+//            if(p_dmaCfg->dmaChBase == COM_SPI_TX_DMA_BASE_ADDR)
+//                dualBufferW.ptrDmaCh = (volatile struct CH_REGS*)p_dmaCfg->dmaChBase;
+//            else if(p_dmaCfg->dmaChBase == COM_SPI_RX_DMA_BASE_ADDR)
+//                dualBufferR.ptrDmaCh = (volatile struct CH_REGS*)p_dmaCfg->dmaChBase;
             // Start channel
             DMA_startChannel(dmaChBase);
             dmaChBase = (++p_dmaCfg)->dmaChBase;

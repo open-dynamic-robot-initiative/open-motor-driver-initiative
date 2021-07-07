@@ -201,6 +201,9 @@ typedef struct _GPIO_Cfg_TypeDef_
     - \em GPIO_QUAL_3SAMPLE,
     - \em GPIO_QUAL_6SAMPLE,
     - \em GPIO_QUAL_ASYNC */
+    GPIO_ExternalIntNum extIntNum;                  /*!< GPIO external interrupt source number */
+    GPIO_IntType intType;                           /*!< GPIO interrupt event source */
+    bool intEnable;                                 /*!< GPIO can be configured as IT source */
     bool setValue;                                  /*!< GPIO initial value if defined as output. */
 //    GPIO_ExternalIntNum extIntNum;
 } GPIO_TypeDef;
