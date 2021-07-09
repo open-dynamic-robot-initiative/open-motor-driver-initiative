@@ -70,13 +70,13 @@ typedef struct __MOTOR_PARAMETERS__
 typedef struct __MOTOR_ACQUISITIONS__
 {
     // ADC result registers
-    volatile int32_t* vaMeasReg;
-    volatile int32_t* vbMeasReg;
-    volatile int32_t* vcMeasReg;
-    volatile int32_t* vBusMeasReg;
-    volatile int32_t* iaMeasReg;
-    volatile int32_t* ibMeasReg;
-    volatile int32_t* icMeasReg;
+    volatile uint16_t*  vaMeasReg;
+    volatile uint16_t*  vbMeasReg;
+    volatile uint16_t*  vcMeasReg;
+    volatile uint16_t*  vBusMeasReg;
+    volatile int16_t*   iaMeasReg;
+    volatile int16_t*   ibMeasReg;
+    volatile int16_t*   icMeasReg;
 
     // ADC values scaled
     float32_t va;   // [V]
@@ -155,8 +155,9 @@ typedef struct __FOC__
     float32_t pwmCompScaler;    // [register/pu]
 
     // Duty-cycle saturation
-    float32_t dutyCycleMax;
-    float32_t dutyCycleMin;
+    float32_t dtcMax;
+    float32_t dtcMin;
+
     // Motor constants
 //    float32_t* Rs; // Stator resistance [Ohm]
 //    float32_t* Ld; // Direct axis inductance [H]
@@ -170,9 +171,9 @@ typedef struct __FOC__
 
 
     // Duty cycles
-    float32_t ducya;    // [pu] between -0.5 and 0.5
-    float32_t ducyb;    // [pu] between -0.5 and 0.5
-    float32_t ducyc;    // [pu] between -0.5 and 0.5
+    float32_t dtcPhaseA;    // [pu] between -0.5 and 0.5
+    float32_t dtcPhaseB;    // [pu] between -0.5 and 0.5
+    float32_t dtcPhaseC;    // [pu] between -0.5 and 0.5
 
 
 //    // PI controllers
@@ -241,8 +242,8 @@ inline void FOC_getMeasures(MOTOR_ACQ*);
 inline void FOC_control(FOC*);
 inline void FOC_resistanceEstimation(FOC*);
 //static inline void FOC_PID(PID_CONTROLLER*);
-static inline float32_t FOC_PI(PID_CONTROLLER*);
-static inline float32_t FOC_PD(PID_CONTROLLER*);
+inline float32_t FOC_pi(PID_CONTROLLER*);
+inline float32_t FOC_pd(PID_CONTROLLER*);
 void FOC_resetStruct(FOC*);
 void limit_norm(float*, float*, float);
 

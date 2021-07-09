@@ -92,25 +92,46 @@ static const ADC_INIT_TypeDef AdcInitList[] =
 static const ADC_ACQ_TypeDef AdcAcqList[] =
 {
  /* ADCA : Va_M1, Va_M2, Ia_M1, Ia_M2; SOC0 - 3; PPB1 - 4 */
- {.adcBase = MOTOR1_VA_ADC_ADDR,    .adcResultBase = MOTOR1_VA_ADC_RESULT_ADDR,     .adcPPBResultBase = MOTOR1_VA_ADC_PPB_RESULT_ADDR,      .adcSOCNumber = MOTOR1_VA_SOC_NUM,      .adcPPBNumber = MOTOR1_VA_PPB_NUM},
- {.adcBase = MOTOR2_VA_ADC_ADDR,    .adcResultBase = MOTOR2_VA_ADC_RESULT_ADDR,     .adcPPBResultBase = MOTOR2_VA_ADC_PPB_RESULT_ADDR,      .adcSOCNumber = MOTOR2_VA_SOC_NUM,      .adcPPBNumber = MOTOR2_VA_PPB_NUM},
- {.adcBase = MOTOR1_IA_ADC_ADDR,    .adcResultBase = MOTOR1_IA_ADC_RESULT_ADDR,     .adcPPBResultBase = MOTOR1_IA_ADC_PPB_RESULT_ADDR,      .adcSOCNumber = MOTOR1_IA_SOC_NUM,      .adcPPBNumber = MOTOR1_IA_PPB_NUM},
- {.adcBase = MOTOR2_IA_ADC_ADDR,    .adcResultBase = MOTOR2_IA_ADC_RESULT_ADDR,     .adcPPBResultBase = MOTOR2_IA_ADC_PPB_RESULT_ADDR,      .adcSOCNumber = MOTOR2_IA_SOC_NUM,      .adcPPBNumber = MOTOR2_IA_PPB_NUM},
+ {.adcBase = MOTOR1_VA_ADC_ADDR,    .adcResultReg = (volatile uint16_t *)(MOTOR1_VA_ADC_RESULT_ADDR),   .adcSOCNumber = MOTOR1_VA_SOC_NUM,      .adcPPBNumber = MOTOR1_VA_PPB_NUM},
+ {.adcBase = MOTOR2_VA_ADC_ADDR,    .adcResultReg = (volatile uint16_t *)(MOTOR2_VA_ADC_RESULT_ADDR),   .adcSOCNumber = MOTOR2_VA_SOC_NUM,      .adcPPBNumber = MOTOR2_VA_PPB_NUM},
+ {.adcBase = MOTOR1_IA_ADC_ADDR,    .adcResultReg = (volatile uint16_t *)(MOTOR1_IA_ADC_RESULT_ADDR),   .adcSOCNumber = MOTOR1_IA_SOC_NUM,      .adcPPBNumber = MOTOR1_IA_PPB_NUM},
+ {.adcBase = MOTOR2_IA_ADC_ADDR,    .adcResultReg = (volatile uint16_t *)(MOTOR2_IA_ADC_RESULT_ADDR),   .adcSOCNumber = MOTOR2_IA_SOC_NUM,      .adcPPBNumber = MOTOR2_IA_PPB_NUM},
  /* ADCB : Vb_M1, Vb_M2, Ib_M1, Ib_M2; SOC0 - 3; PPB1 - 4 */
- {.adcBase = MOTOR1_VB_ADC_ADDR,    .adcResultBase = MOTOR1_VB_ADC_RESULT_ADDR,     .adcPPBResultBase = MOTOR1_VB_ADC_PPB_RESULT_ADDR,      .adcSOCNumber = MOTOR1_VB_SOC_NUM,      .adcPPBNumber = MOTOR1_VB_PPB_NUM},
- {.adcBase = MOTOR2_VB_ADC_ADDR,    .adcResultBase = MOTOR2_VB_ADC_RESULT_ADDR,     .adcPPBResultBase = MOTOR2_VB_ADC_PPB_RESULT_ADDR,      .adcSOCNumber = MOTOR2_VB_SOC_NUM,      .adcPPBNumber = MOTOR2_VB_PPB_NUM},
- {.adcBase = MOTOR1_IB_ADC_ADDR,    .adcResultBase = MOTOR1_IB_ADC_RESULT_ADDR,     .adcPPBResultBase = MOTOR1_IB_ADC_PPB_RESULT_ADDR,      .adcSOCNumber = MOTOR1_IB_SOC_NUM,      .adcPPBNumber = MOTOR1_IB_PPB_NUM},
- {.adcBase = MOTOR2_IB_ADC_ADDR,    .adcResultBase = MOTOR2_IB_ADC_RESULT_ADDR,     .adcPPBResultBase = MOTOR2_IB_ADC_PPB_RESULT_ADDR,      .adcSOCNumber = MOTOR2_IB_SOC_NUM,      .adcPPBNumber = MOTOR2_IB_PPB_NUM},
+ {.adcBase = MOTOR1_VB_ADC_ADDR,    .adcResultReg = (volatile uint16_t *)(MOTOR1_VB_ADC_RESULT_ADDR),   .adcSOCNumber = MOTOR1_VB_SOC_NUM,      .adcPPBNumber = MOTOR1_VB_PPB_NUM},
+ {.adcBase = MOTOR2_VB_ADC_ADDR,    .adcResultReg = (volatile uint16_t *)(MOTOR2_VB_ADC_RESULT_ADDR),   .adcSOCNumber = MOTOR2_VB_SOC_NUM,      .adcPPBNumber = MOTOR2_VB_PPB_NUM},
+ {.adcBase = MOTOR1_IB_ADC_ADDR,    .adcResultReg = (volatile uint16_t *)(MOTOR1_IB_ADC_RESULT_ADDR),   .adcSOCNumber = MOTOR1_IB_SOC_NUM,      .adcPPBNumber = MOTOR1_IB_PPB_NUM},
+ {.adcBase = MOTOR2_IB_ADC_ADDR,    .adcResultReg = (volatile uint16_t *)(MOTOR2_IB_ADC_RESULT_ADDR),   .adcSOCNumber = MOTOR2_IB_SOC_NUM,      .adcPPBNumber = MOTOR2_IB_PPB_NUM},
  /* ADCC : Vbus_M12; SOC0; PPB1 */
- {.adcBase = MOTOR12_VBUS_ADC_ADDR, .adcResultBase = MOTOR12_VBUS_ADC_RESULT_ADDR,  .adcPPBResultBase = MOTOR12_VBUS_ADC_PPB_RESULT_ADDR,   .adcSOCNumber = MOTOR12_VBUS_SOC_NUM,   .adcPPBNumber = MOTOR12_VBUS_PPB_NUM},
+ {.adcBase = MOTOR12_VBUS_ADC_ADDR, .adcResultReg = (volatile uint16_t *)(MOTOR12_VBUS_ADC_RESULT_ADDR),.adcSOCNumber = MOTOR12_VBUS_SOC_NUM,   .adcPPBNumber = MOTOR12_VBUS_PPB_NUM},
  /* ADCD : Vc_M1, Vc_M2, Ic_M1, Ic_M2; SOC0 - 3; PPB1 - 4 */
- {.adcBase = MOTOR1_VC_ADC_ADDR,    .adcResultBase = MOTOR1_VC_ADC_RESULT_ADDR,     .adcPPBResultBase = MOTOR1_VC_ADC_PPB_RESULT_ADDR,      .adcSOCNumber = MOTOR1_VC_SOC_NUM,      .adcPPBNumber = MOTOR1_VC_PPB_NUM},
- {.adcBase = MOTOR2_VC_ADC_ADDR,    .adcResultBase = MOTOR2_VC_ADC_RESULT_ADDR,     .adcPPBResultBase = MOTOR2_VC_ADC_PPB_RESULT_ADDR,      .adcSOCNumber = MOTOR2_VC_SOC_NUM,      .adcPPBNumber = MOTOR2_VC_PPB_NUM},
- {.adcBase = MOTOR1_IC_ADC_ADDR,    .adcResultBase = MOTOR1_IC_ADC_RESULT_ADDR,     .adcPPBResultBase = MOTOR1_IC_ADC_PPB_RESULT_ADDR,      .adcSOCNumber = MOTOR1_IC_SOC_NUM,      .adcPPBNumber = MOTOR1_IC_PPB_NUM},
- {.adcBase = MOTOR2_IC_ADC_ADDR,    .adcResultBase = MOTOR2_IC_ADC_RESULT_ADDR,     .adcPPBResultBase = MOTOR2_IC_ADC_PPB_RESULT_ADDR,      .adcSOCNumber = MOTOR2_IC_SOC_NUM,      .adcPPBNumber = MOTOR2_IC_PPB_NUM},
+ {.adcBase = MOTOR1_VC_ADC_ADDR,    .adcResultReg = (volatile uint16_t *)(MOTOR1_VC_ADC_RESULT_ADDR),   .adcSOCNumber = MOTOR1_VC_SOC_NUM,      .adcPPBNumber = MOTOR1_VC_PPB_NUM},
+ {.adcBase = MOTOR2_VC_ADC_ADDR,    .adcResultReg = (volatile uint16_t *)(MOTOR2_VC_ADC_RESULT_ADDR),   .adcSOCNumber = MOTOR2_VC_SOC_NUM,      .adcPPBNumber = MOTOR2_VC_PPB_NUM},
+ {.adcBase = MOTOR1_IC_ADC_ADDR,    .adcResultReg = (volatile uint16_t *)(MOTOR1_IC_ADC_RESULT_ADDR),   .adcSOCNumber = MOTOR1_IC_SOC_NUM,      .adcPPBNumber = MOTOR1_IC_PPB_NUM},
+ {.adcBase = MOTOR2_IC_ADC_ADDR,    .adcResultReg = (volatile uint16_t *)(MOTOR2_IC_ADC_RESULT_ADDR),   .adcSOCNumber = MOTOR2_IC_SOC_NUM,      .adcPPBNumber = MOTOR2_IC_PPB_NUM},
  // END OF ARRAY
  {.adcBase = 0xFFFFFFFF}
 };
+//{
+// /* ADCA : Va_M1, Va_M2, Ia_M1, Ia_M2; SOC0 - 3; PPB1 - 4 */
+// {.adcBase = MOTOR1_VA_ADC_ADDR,    .adcResultReg = (volatile uint16_t *)(MOTOR1_VA_ADC_RESULT_ADDR),   .adcPPBResultReg = (volatile uint16_t *)(MOTOR1_VA_ADC_PPB_RESULT_ADDR),    .adcSOCNumber = MOTOR1_VA_SOC_NUM,      .adcPPBNumber = MOTOR1_VA_PPB_NUM},
+// {.adcBase = MOTOR2_VA_ADC_ADDR,    .adcResultReg = (volatile uint16_t *)(MOTOR2_VA_ADC_RESULT_ADDR),   .adcPPBResultReg = (volatile uint16_t *)(MOTOR2_VA_ADC_PPB_RESULT_ADDR),    .adcSOCNumber = MOTOR2_VA_SOC_NUM,      .adcPPBNumber = MOTOR2_VA_PPB_NUM},
+// {.adcBase = MOTOR1_IA_ADC_ADDR,    .adcResultReg = (volatile uint16_t *)(MOTOR1_IA_ADC_RESULT_ADDR),   .adcPPBResultReg = (volatile uint16_t *)(MOTOR1_IA_ADC_PPB_RESULT_ADDR),     .adcSOCNumber = MOTOR1_IA_SOC_NUM,      .adcPPBNumber = MOTOR1_IA_PPB_NUM},
+// {.adcBase = MOTOR2_IA_ADC_ADDR,    .adcResultReg = (volatile uint16_t *)(MOTOR2_IA_ADC_RESULT_ADDR),   .adcPPBResultReg = (volatile uint16_t *)(MOTOR2_IA_ADC_PPB_RESULT_ADDR),     .adcSOCNumber = MOTOR2_IA_SOC_NUM,      .adcPPBNumber = MOTOR2_IA_PPB_NUM},
+// /* ADCB : Vb_M1, Vb_M2, Ib_M1, Ib_M2; SOC0 - 3; PPB1 - 4 */
+// {.adcBase = MOTOR1_VB_ADC_ADDR,    .adcResultReg = (volatile uint16_t *)(MOTOR1_VB_ADC_RESULT_ADDR),   .adcPPBResultReg = (volatile uint16_t *)(MOTOR1_VB_ADC_PPB_RESULT_ADDR),    .adcSOCNumber = MOTOR1_VB_SOC_NUM,      .adcPPBNumber = MOTOR1_VB_PPB_NUM},
+// {.adcBase = MOTOR2_VB_ADC_ADDR,    .adcResultReg = (volatile uint16_t *)(MOTOR2_VB_ADC_RESULT_ADDR),   .adcPPBResultReg = (volatile uint16_t *)(MOTOR2_VB_ADC_PPB_RESULT_ADDR),    .adcSOCNumber = MOTOR2_VB_SOC_NUM,      .adcPPBNumber = MOTOR2_VB_PPB_NUM},
+// {.adcBase = MOTOR1_IB_ADC_ADDR,    .adcResultReg = (volatile uint16_t *)(MOTOR1_IB_ADC_RESULT_ADDR),   .adcPPBResultReg = (volatile uint16_t *)(MOTOR1_IB_ADC_PPB_RESULT_ADDR),     .adcSOCNumber = MOTOR1_IB_SOC_NUM,      .adcPPBNumber = MOTOR1_IB_PPB_NUM},
+// {.adcBase = MOTOR2_IB_ADC_ADDR,    .adcResultReg = (volatile uint16_t *)(MOTOR2_IB_ADC_RESULT_ADDR),   .adcPPBResultReg = (volatile uint16_t *)(MOTOR2_IB_ADC_PPB_RESULT_ADDR),     .adcSOCNumber = MOTOR2_IB_SOC_NUM,      .adcPPBNumber = MOTOR2_IB_PPB_NUM},
+// /* ADCC : Vbus_M12; SOC0; PPB1 */
+// {.adcBase = MOTOR12_VBUS_ADC_ADDR, .adcResultReg = (volatile uint16_t *)(MOTOR12_VBUS_ADC_RESULT_ADDR),.adcPPBResultReg = (volatile uint16_t *)(MOTOR12_VBUS_ADC_PPB_RESULT_ADDR), .adcSOCNumber = MOTOR12_VBUS_SOC_NUM,   .adcPPBNumber = MOTOR12_VBUS_PPB_NUM},
+// /* ADCD : Vc_M1, Vc_M2, Ic_M1, Ic_M2; SOC0 - 3; PPB1 - 4 */
+// {.adcBase = MOTOR1_VC_ADC_ADDR,    .adcResultReg = (volatile uint16_t *)(MOTOR1_VC_ADC_RESULT_ADDR),   .adcPPBResultReg = (volatile uint16_t *)(MOTOR1_VC_ADC_PPB_RESULT_ADDR),    .adcSOCNumber = MOTOR1_VC_SOC_NUM,      .adcPPBNumber = MOTOR1_VC_PPB_NUM},
+// {.adcBase = MOTOR2_VC_ADC_ADDR,    .adcResultReg = (volatile uint16_t *)(MOTOR2_VC_ADC_RESULT_ADDR),   .adcPPBResultReg = (volatile uint16_t *)(MOTOR2_VC_ADC_PPB_RESULT_ADDR),    .adcSOCNumber = MOTOR2_VC_SOC_NUM,      .adcPPBNumber = MOTOR2_VC_PPB_NUM},
+// {.adcBase = MOTOR1_IC_ADC_ADDR,    .adcResultReg = (volatile uint16_t *)(MOTOR1_IC_ADC_RESULT_ADDR),   .adcPPBResultReg = (volatile uint16_t *)(MOTOR1_IC_ADC_PPB_RESULT_ADDR),     .adcSOCNumber = MOTOR1_IC_SOC_NUM,      .adcPPBNumber = MOTOR1_IC_PPB_NUM},
+// {.adcBase = MOTOR2_IC_ADC_ADDR,    .adcResultReg = (volatile uint16_t *)(MOTOR2_IC_ADC_RESULT_ADDR),   .adcPPBResultReg = (volatile uint16_t *)(MOTOR2_IC_ADC_PPB_RESULT_ADDR),     .adcSOCNumber = MOTOR2_IC_SOC_NUM,      .adcPPBNumber = MOTOR2_IC_PPB_NUM},
+// // END OF ARRAY
+// {.adcBase = 0xFFFFFFFF}
+//};
 
 /** @var    ADC_IT_TypeDef AdcIntList[]
  *  @brief  List all the interrupts source generated by ADC modules.

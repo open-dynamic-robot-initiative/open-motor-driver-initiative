@@ -41,7 +41,7 @@
 //    p_measure->vbus = __fmax(p_measure->vbus, 1.0f);
 //}
 
-inline void MOTOR_SetCommand(MOTOR_STRUCT* p_motor, float32_t CmdChA, float32_t CmdChB, float32_t CmdChC)
+void MOTOR_command(MOTOR_STRUCT* p_motor, float32_t CmdChA, float32_t CmdChB, float32_t CmdChC)
 {
 //    uint16_t cmdVal[3]  = {0, 0, 0};
 //    uint8_t loop        = 0;
@@ -63,7 +63,7 @@ inline void MOTOR_SetCommand(MOTOR_STRUCT* p_motor, float32_t CmdChA, float32_t 
     *(p_motor->pwmChCReg) = CmdChC;
 }
 
-static void ALIGN_reset(AlignRoutine* align)
+void MOTOR_alignResetStruct(AlignRoutine* align)
 {
     align->state = ALIGN_COUNT_UP;
     align->counter = 0;
@@ -71,7 +71,7 @@ static void ALIGN_reset(AlignRoutine* align)
 }
 
 // Return true if calibration is finished
-static void MOTOR_warmup(AlignRoutine* align)
+void MOTOR_alignRun(AlignRoutine* align)
 {
     switch (align->state)
     {
@@ -108,7 +108,7 @@ static void MOTOR_warmup(AlignRoutine* align)
 }
 
 // Set the motor phases in security mode
-void MOTOR_emergencyStop()
+void MOTOR_emergencyStop(void)
 {
     // Turn off control loop
     comInterface.systemEnabled          = false;
@@ -118,15 +118,15 @@ void MOTOR_emergencyStop()
     // Disable ePWM interrupts
     Interrupt_disableInCPU(INTERRUPT_CPU_INT3);
     // Tie phases to ground
-    MOTOR_SetCommand(&motor[MOTOR_1], 0.0, 0.0, 0.0);
-    MOTOR_SetCommand(&motor[MOTOR_2], 0.0, 0.0, 0.0);
+    MOTOR_command(&motor[MOTOR_1], 0.0, 0.0, 0.0);
+    MOTOR_command(&motor[MOTOR_2], 0.0, 0.0, 0.0);
     // Reset foc structures
     FOC_resetStruct(motor[MOTOR_1].motorFOC);
     FOC_resetStruct(motor[MOTOR_2].motorFOC);
 
 }
 
-inline void MOTOR_StatorResistance(MOTOR_STRUCT* p_motor)
+inline void MOTOR_StatorResEst(MOTOR_STRUCT* p_motor)
 {
 //
 //    // Read measures
@@ -134,10 +134,18 @@ inline void MOTOR_StatorResistance(MOTOR_STRUCT* p_motor)
 //    foc->phaseBVolt = (*foc->vsenbResult) * foc->voltageScalerReg;
 //    foc->phaseCVolt = (*foc->vsencResult) * foc->voltageScalerReg;
 
+    FOC* p_foc = p_motor->motorFOC;
     // Compute resistance
     // Only compute if measured current is over a threshold
     if (FM_ABS(p_motor->motorFOC->iq) > FOC_RE_CURRENT_THRESHOLD)
     {
+#if (UOMODRI_RES_ESTIM_FLT == 1)
+    LPF_FILTER_1(p_motor->statorResEstLpf, p_motor->statorResEst, (p_foc->uq - (p_foc->motor_enc.speedEst.elecSpeed * p_foc->motorParams.ke)) / p_foc->iq);
+#elif (UOMODRI_RES_ESTIM_FLT == 2)
+    LPF_FILTER_2(p_motor->statorResEstLpf, p_motor->statorResEst, (p_foc->uq - (p_foc->motor_enc.speedEst.elecSpeed * p_foc->motorParams.ke)) / p_foc->iq);
+#else
+    p_motor->statorResEst = (p_foc->uq - (p_foc->motor_enc.speedEst.elecSpeed * p_foc->motorParams.ke)) / p_foc->iq;
+#endif
 //        LPF_FILTER(foc->resEstLpf, foc->resistanceEst, (foc->uq - foc->encoder.speedEst.elecSpeed * foc->ke) / foc->iq);
     }
 }

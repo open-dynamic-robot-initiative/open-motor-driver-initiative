@@ -20,10 +20,11 @@
 #define UOMODRI                                 0
 #define UOMODRI_VBUS_FLT                        1
 #define UOMODRI_IDQ_FLT                         1
-#define UOMODRI_RES_ESTIM_FLT                   2
+#define UOMODRI_RES_ESTIM_FLT                   1
+#define UOMODRI_SPEED_FLT                       1
 #define UOMODRI_SPI_DEBUG_CONFIG                0
-
 #define UOMODRI_FOC_FEED_FORWARD                1
+
 #define OMODRI_PAL_SETUP                        0   // Set this to 1 to use the PAL pin affectation
 #define SPI_DEBUG_CONFIGURATION                 0   // Set this to 1 to use debug configuration
 // Word number in a full communication
@@ -32,7 +33,7 @@
  * @}
  */
 
-#define HWSREGH(x)                              (*((volatile int16_t *)((uintptr_t)(x))))
+//#define HWSREGH(x)                              (*((volatile int16_t *)((uintptr_t)(x))))
 #define LPF_FILTER_1(flt_coef, y, x)            (y) += (flt_coef.a * ((x) - (y)))
 #define LPF_FILTER_2(flt_coef, y, x)            (y) = flt_coef.a * (x) + flt_coef.one_minus_a * (y)
 #define FMAX3(x, y, z)                          (((x) > (y)) ? (((x) > (z)) ? (x) : (z)) : (((y) > (z)) ? (y) : (z)))
@@ -494,7 +495,7 @@
 #define MOTOR1_ENC_RESOLUTION_SCALE             (4.0 * MOTOR1_ENC_RESOLUTION)
 #define MOTOR1_ENC_HIGH_SPEED_SAMPLING_FREQ     (1000) // [Hz] Velocity computation frequency
 #define MOTOR1_ENC_HIGH_SPEED_SAMPLING_TICKS    (DEVICE_SYSCLK_FREQ / MOTOR1_ENC_HIGH_SPEED_SAMPLING_FREQ)
-#define MOTOR1_ENC_HIGH_SPEED_SCALE             (2.0 * M_PI * MOTOR1_ENC_HIGH_SPEED_SAMPLING_FREQ / MOTOR1_ENC_RESOLUTION_SCALE) // 2pi / dt
+#define MOTOR1_ENC_HIGH_SPEED_SCALE             (2.0 * M_PI * MOTOR1_ENC_HIGH_SPEED_SAMPLING_FREQ) // 2pi / dt
 #define MOTOR1_ENC_LOW_SPEED_SCALE              (2.0 * M_PI * DEVICE_SYSCLK_FREQ * (1 << QEP_UNIT_POS_EVENT_DIV) / (1 << (QEP_CAPTURE_CLOCK_DIV >> 4)) / MOTOR1_ENC_RESOLUTION_SCALE)
 #define MOTOR1_ENC_SPEED_CUTOFF_FREQ            (200.0)     // cutoff frequency for velocity estimation
 #define MOTOR1_ENC_SPEED_LPF_ALPHA              (1.0 / (1.0 + (1.0 / (2.0 * M_PI * MOTOR1_ENC_SPEED_CUTOFF_FREQ / PWM_FREQ))))
@@ -504,7 +505,7 @@
 #define MOTOR2_ENC_RESOLUTION_SCALE             (4.0 * MOTOR2_ENC_RESOLUTION)
 #define MOTOR2_ENC_HIGH_SPEED_SAMPLING_FREQ     (1000) // [Hz] Velocity computation frequency
 #define MOTOR2_ENC_HIGH_SPEED_SAMPLING_TICKS    (DEVICE_SYSCLK_FREQ / MOTOR2_ENC_HIGH_SPEED_SAMPLING_FREQ)
-#define MOTOR2_ENC_HIGH_SPEED_SCALE             (2.0 * M_PI * MOTOR2_ENC_HIGH_SPEED_SAMPLING_FREQ / MOTOR2_ENC_RESOLUTION_SCALE) // 2pi / dt
+#define MOTOR2_ENC_HIGH_SPEED_SCALE             (2.0 * M_PI * MOTOR2_ENC_HIGH_SPEED_SAMPLING_FREQ) // 2pi / dt
 #define MOTOR2_ENC_LOW_SPEED_SCALE              (2.0 * M_PI * DEVICE_SYSCLK_FREQ * (1 << QEP_UNIT_POS_EVENT_DIV) / (1 << (QEP_CAPTURE_CLOCK_DIV >> 4)) / MOTOR2_ENC_RESOLUTION_SCALE)
 #define MOTOR2_ENC_SPEED_CUTOFF_FREQ            (200.0)     // cutoff frequency for velocity estimation
 #define MOTOR2_ENC_SPEED_LPF_ALPHA              (1.0 / (1.0 + (1.0 / (2.0 * M_PI * MOTOR2_ENC_SPEED_CUTOFF_FREQ / PWM_FREQ))))
@@ -557,8 +558,8 @@
 #define MOTOR1_IQ_REGULATOR_KI_COEF             (MOTOR1_RS * 2.0 * M_PI * MOTOR1_CURRENT_CUTOFF_FREQ / PWM_FREQ)
 #define MOTOR1_SPEED_REGULATOR_KP_COEF          (1.0f)
 #define MOTOR1_SPEED_REGULATOR_KD_COEF          (0.02f)
-#define MOTOR1_DUTY_CYCLE_MAX                   (0.95f)     // Max duty cycle
-#define MOTOR1_DUTY_CYCLE_MIN                   (0.05f)     // Min duty cycle
+#define MOTOR1_DUTY_CYCLE_MAX                   (0.8f)     // Max duty cycle
+#define MOTOR1_DUTY_CYCLE_MIN                   (0.2f)     // Min duty cycle
 #define MOTOR1_STATOR_RESISTOR_CUTOFF_FREQ      (0.2)
 #define MOTOR1_STATOR_RESISTOR_LPF_ALPHA        (1.0 / (1.0 + (1.0 / (2.0 * M_PI * MOTOR1_STATOR_RESISTOR_CUTOFF_FREQ / PWM_FREQ))))
 #define MOTOR1_STATOR_RESISTOR_LPF_ONE_M_ALPHA  (1.0 - MOTOR1_STATOR_RESISTOR_LPF_ALPHA)
@@ -582,8 +583,8 @@
 #define MOTOR2_IQ_REGULATOR_KI_COEF             (MOTOR2_RS * 2.0 * M_PI * MOTOR2_CURRENT_CUTOFF_FREQ / PWM_FREQ)
 #define MOTOR2_SPEED_REGULATOR_KP_COEF          (1.0f)
 #define MOTOR2_SPEED_REGULATOR_KD_COEF          (0.02f)
-#define MOTOR2_DUTY_CYCLE_MAX                   (0.95f)     // Max duty cycle
-#define MOTOR2_DUTY_CYCLE_MIN                   (0.05f)     // Min duty cycle
+#define MOTOR2_DUTY_CYCLE_MAX                   (0.8f)     // Max duty cycle
+#define MOTOR2_DUTY_CYCLE_MIN                   (0.2f)     // Min duty cycle
 #define MOTOR2_STATOR_RESISTOR_CUTOFF_FREQ      (0.2f)
 #define MOTOR2_STATOR_RESISTOR_LPF_ALPHA        (1.0 / (1.0 + (1.0 / (2.0 * M_PI * MOTOR2_STATOR_RESISTOR_CUTOFF_FREQ / PWM_FREQ))))
 #define MOTOR2_STATOR_RESISTOR_LPF_ONE_M_ALPHA  (1.0 - MOTOR2_STATOR_RESISTOR_LPF_ALPHA)

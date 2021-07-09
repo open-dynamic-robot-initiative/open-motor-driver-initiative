@@ -226,13 +226,13 @@ typedef struct _ADC_INIT_TypeDef_
  */
 typedef struct _ADC_ACQ_TypeDef_
 {
-    uint32_t adcBase;                               /*!< ADC peripheral address. */
-    uint32_t adcResultBase;
-    uint32_t adcPPBResultBase;
+    uint32_t            adcBase;                               /*!< ADC peripheral address. */
+    volatile uint16_t*  adcResultReg;
+    //volatile uint16_t*  adcPPBResultReg;
 //    uint16_t adcCalib;
 //    uint16_t adcOffset;
-    ADC_SOCNumber adcSOCNumber;
-    ADC_PPBNumber adcPPBNumber;
+    ADC_SOCNumber       adcSOCNumber;
+    ADC_PPBNumber       adcPPBNumber;
 } ADC_ACQ_TypeDef;
 
 /**

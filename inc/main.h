@@ -20,7 +20,7 @@
 #include "uomodri_hal_config_handlers.h"
 #include "uomodri_prj_config_handlers.h"
 
-static void Mcu_init();
+static void MCU_init();
 
 // ADC interrupt service routine
 //__interrupt void adc1ISR(void);

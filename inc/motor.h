@@ -97,9 +97,9 @@ typedef struct __MOTOR_STRUCT__
     float32_t phaseCVolt;   // [V]
 
     // Q-axis resistance estimation
-    float32_t resistanceEst;    // [Ohm]
+    float32_t statorResEst;    // [Ohm]
     // Resistance estimation low-pass filter
-    LpfStruct resEstLpf;
+    LpfStruct statorResEstLpf;
 
     // Anti-coagging structure
     Anticoagging acog;
@@ -123,9 +123,11 @@ typedef struct __MOTOR_STRUCT__
 //inline void MOTOR_getCurrent(MOTOR_STRUCT*);
 //inline void MOTOR_getCurrent(MOTOR_MEASURES*);
 //inline void MOTOR_getVoltage(MOTOR_MEASURES*);
-inline void MOTOR_SetCommand(MOTOR_STRUCT*, float32_t, float32_t, float32_t);
-static void ALIGN_reset(AlignRoutine*);
-static void ALIGN_run(AlignRoutine*);
+void MOTOR_command(MOTOR_STRUCT*, float32_t, float32_t, float32_t);
+void MOTOR_alignResetStruct(AlignRoutine*);
+//void ALIGN_run(AlignRoutine*);
+void MOTOR_alignRun(AlignRoutine*);
 void MOTOR_emergencyStop(void);
+void MOTOR_StatorResEst(MOTOR_STRUCT*);
 
 #endif /* INC_MOTOR_H_ */

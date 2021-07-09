@@ -177,14 +177,14 @@ void HAL_ADC_offsetCalib(const HAL_MOTOR_CFG* p_halMotorCfg)
             if (calibCnt > 1000)
                 for(loop = 0; loop < 3; loop++)
                 {
-                    i[loop] = 0.998f * i[loop] + 0.002f * HWREGH(p_halMotorCfg->p_iConv[loop]->adcResultBase);
-                    v[loop] = 0.998f * v[loop] + 0.002f * HWREGH(p_halMotorCfg->p_vConv[loop]->adcResultBase);
+                    i[loop] = 0.998f * i[loop] + 0.002f * (*p_halMotorCfg->p_iConv[loop]->adcResultReg);
+                    v[loop] = 0.998f * v[loop] + 0.002f * (*p_halMotorCfg->p_vConv[loop]->adcResultReg);
                 }
             else
                 for(loop = 0; loop < 3; loop++)
                 {
-                    i[loop] = HWREGH(p_halMotorCfg->p_iConv[loop]->adcResultBase);
-                    v[loop] = HWREGH(p_halMotorCfg->p_vConv[loop]->adcResultBase);
+                    i[loop] = *(p_halMotorCfg->p_iConv[loop]->adcResultReg);
+                    v[loop] = *(p_halMotorCfg->p_vConv[loop]->adcResultReg);
                 }
 
             // clear flags
