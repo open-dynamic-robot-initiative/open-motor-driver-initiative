@@ -67,17 +67,29 @@
 /******************************************************************************************************
 *                                               SPI Defines
 *******************************************************************************************************/
-/** @defgroup SPI configuration.
- *  @brief    Configure SPI modules associated to DRV \& communication.
+/** @defgroup SPI_GPIO_pins - COM configuration.
+ *  @brief    Configure GPIO pins associated to external communication.
  * @{
  */
-#define DRV_SPI_BASE                            SPIA_BASE
+#define COM_SPI_SIMO                            (60)
+#define COM_SPI_SIMO_CFG                        GPIO_60_SPISIMOB
+#define COM_SPI_SOMI                            (61)
+#define COM_SPI_SOMI_CFG                        GPIO_61_SPISOMIB
+#define COM_SPI_CLK                             (65)
+#define COM_SPI_CLK_CFG                         GPIO_65_SPICLKB
+#define COM_SPI_CS                              (59)
+#define COM_SPI_CS_CFG                          GPIO_59_SPISTEB
+/**
+ * @}
+ */
+
+/** @defgroup SPI communication configuration.
+ *  @brief    Configure SPI modules associated with external communication.
+ * @{
+ */
 #define COM_SPI_BASE                            SPIB_BASE
 #define COM_SPI_TX_BASE_ADDR                    (COM_SPI_BASE + SPI_O_TXBUF)
 #define COM_SPI_RX_BASE_ADDR                    (COM_SPI_BASE + SPI_O_RXBUF)
-#define COM_SPI_TX_DMA_BASE_ADDR                DMA_CH5_BASE
-#define COM_SPI_RX_DMA_BASE_ADDR                DMA_CH6_BASE
-#define COM_SPI_TX_RX_LENGTH                    (17)
 /**
  * @}
  */
@@ -89,6 +101,9 @@
  *  @brief    Configure DMA channels associated to SPI communication.
  * @{
  */
+#define DMA_COM_SPI_TX_BASE_ADDR                DMA_CH5_BASE
+#define DMA_COM_SPI_RX_BASE_ADDR                DMA_CH6_BASE
+#define DMA_COM_SPI_TX_RX_LENGTH                (17)
 //#define DMA_TX_BASE_ADDR                        DMA_CH5_BASE
 //#define DMA_RX_BASE_ADDR                        DMA_CH6_BASE
 /**
@@ -102,6 +117,7 @@
  *  @brief    Configure GPIO pins associated to DRVs communication.
  * @{
  */
+#define DRV_SPI_BASE                            SPIA_BASE
 #define DRV_SPI_SIMO                            (16)
 #define DRV_SPI_SIMO_CFG                        GPIO_16_SPISIMOA
 #define DRV_SPI_SOMI                            (17)

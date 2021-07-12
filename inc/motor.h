@@ -46,15 +46,18 @@ typedef struct __MOTOR_STRUCT__
     bool                    enabled;
     // Alignment routine structure
     AlignRoutine alignRoutine;
+    // Cycle counter events
+    uint32_t clCycleNb;
+    uint64_t interruptCounter;
 
     // Utility variables
-    float32_t currentScaler;    // [A/pu]
-    float32_t currentScalerReg; // [A/register]
-    float32_t voltageScaler;    // [V/pu]
-    float32_t voltageScalerReg; // [V/register]
-    float32_t adcScaler;        // [V/pu]
-    float32_t adcScalerReg;     // [V/register]
-    float32_t pwmCompScaler;    // [register/pu]
+//    float32_t currentScaler;    // [A/pu]
+//    float32_t currentScalerReg; // [A/register]
+//    float32_t voltageScaler;    // [V/pu]
+//    float32_t voltageScalerReg; // [V/register]
+//    float32_t adcScaler;        // [V/pu]
+//    float32_t adcScalerReg;     // [V/register]
+//    float32_t pwmCompScaler;    // [register/pu]
 
     // Duty-cycle saturation
     float32_t dutyCycleSat;
@@ -82,8 +85,8 @@ typedef struct __MOTOR_STRUCT__
 
 
     // PI controllers
-    float32_t idRef;    // [A]
-    float32_t iqRef;    // [A]
+//    float32_t idRef;    // [A]
+//    float32_t iqRef;    // [A]
 
 //    PI_controller piId;
 //    PI_controller piIq;
@@ -92,9 +95,9 @@ typedef struct __MOTOR_STRUCT__
 //    PD_controller posPd;
 
     // Phase measured voltages
-    float32_t phaseAVolt;   // [V]
-    float32_t phaseBVolt;   // [V]
-    float32_t phaseCVolt;   // [V]
+//    float32_t phaseAVolt;   // [V]
+//    float32_t phaseBVolt;   // [V]
+//    float32_t phaseCVolt;   // [V]
 
     // Q-axis resistance estimation
     float32_t statorResEst;    // [Ohm]
@@ -115,6 +118,8 @@ typedef struct __MOTOR_STRUCT__
     volatile uint16_t* pwmChAReg;
     volatile uint16_t* pwmChBReg;
     volatile uint16_t* pwmChCReg;
+
+
 
     // ADC interrupt flag register
     volatile union ADCINTFLG_REG *adcIntFlag;

@@ -40,8 +40,8 @@ static const DRV_Cfg DrvCfgList[] =
 {
  {.spiHandle = DRV_SPI_BASE, .gpioNumber_CS = MOTOR1_DRV_GPIO_CS, .gpioNumber_EN = MOTOR1_DRV_GPIO_EN},
  {.spiHandle = DRV_SPI_BASE, .gpioNumber_CS = MOTOR2_DRV_GPIO_CS, .gpioNumber_EN = MOTOR2_DRV_GPIO_EN},
- // END OF ARRAY
- {.spiHandle = 0xFFFFFFFF},
+// // END OF ARRAY
+// {.spiHandle = 0xFFFFFFFF},
 };
 
 /** @var    DRV_Reg     DrvRegList[]
@@ -293,7 +293,7 @@ static FOC motor_foc[] =
 //  .vc = (float32_t *)(&motor_meas[MOTOR_1].vc),
   .ualpha = 0.0, .ubeta = 0.0,
   .ud = 0.0, .uq = 0.0,
-  .uBus = (float32_t *)(&motor_foc[MOTOR_1].motor_acq.vbus),
+  //.uBus = (float32_t *)(&motor_foc[MOTOR_1].motor_acq.vbus),
 
 //  .mechAngle = (float32_t *)(&encoder[MOTOR_1].mechPos[NEW]),
 //  .elecAngle = (float32_t *)(&encoder[MOTOR_1].elecPos),
@@ -370,7 +370,7 @@ static FOC motor_foc[] =
                    .integral        = 0.0,
                    .ff              = 0.0,
                    .out             = 0.0,
-                   .sat             = ((float32_t *)(&motor_foc[MOTOR_2].motor_acq.vmax)),
+                   .sat             = ((float32_t *)(&motor_foc[MOTOR_2].motor_acq.vbus)),
   },
   .piIq         = {.err             = 0.0,
                    .kp              = MOTOR2_IQ_REGULATOR_KP_COEF,
@@ -378,7 +378,7 @@ static FOC motor_foc[] =
                    .integral        = 0.0,
                    .ff              = 0.0,
                    .out             = 0.0,
-                   .sat             = ((float32_t *)(&motor_foc[MOTOR_2].motor_acq.vmax)),
+                   .sat             = ((float32_t *)(&motor_foc[MOTOR_2].motor_acq.vbus)),
   },
   .pdPos        = {.err             = 0.0,
                    .vErr            = 0.0,
@@ -418,7 +418,7 @@ static FOC motor_foc[] =
 //  .vc = (float32_t *)(&motor_meas[MOTOR_2].vc),
   .ualpha = 0.0, .ubeta = 0.0,
   .ud = 0.0, .uq = 0.0,
-  .uBus = (float32_t *)(&motor_foc[MOTOR_2].motor_acq.vbus),
+  //.uBus = (float32_t *)(&motor_foc[MOTOR_2].motor_acq.vbus),
 
 //  .mechAngle = (float32_t *)(&encoder[MOTOR_2].mechPos[NEW]),
 //  .elecAngle = (float32_t *)(&encoder[MOTOR_2].elecPos),
@@ -435,6 +435,10 @@ static FOC motor_foc[] =
 //  .ke = (float32_t *)(&motor_params[MOTOR_2].ke),
  },
 };
+
+/** @var    MOTOR_STRUCT    motor[]
+ *  @brief  General structure array configuration structure for the Hardware Abstraction Layer.
+ */
 static MOTOR_STRUCT motor[] =
 {
  {
@@ -442,19 +446,13 @@ static MOTOR_STRUCT motor[] =
   .motorHalCfg      = &hal_motor_cfg[MOTOR_1],
   .motorDRV         = &drv[MOTOR_1],
   .motorFOC         = &motor_foc[MOTOR_1],
-  .alignRoutine     = {.state       = ALIGN_COUNT_UP,
-                       .counter     = 0,
-                       .max         = PWM_FREQ,
-                       .idAlignRef  = 0.4,    // 400mA alignment current
-                       .idAlign     = 0.0,
-  },
-  .statorResEstLpf  = {.a           = MOTOR1_STATOR_RESISTOR_LPF_ALPHA,
-                       .one_minus_a = MOTOR1_STATOR_RESISTOR_LPF_ONE_M_ALPHA},
+  .alignRoutine     = {.state = ALIGN_COUNT_UP, .counter = 0, .max = PWM_FREQ, .idAlignRef = 0.4, .idAlign = 0.0},// 400mA alignment current
+  .statorResEstLpf  = {.a = MOTOR1_STATOR_RESISTOR_LPF_ALPHA, .one_minus_a = MOTOR1_STATOR_RESISTOR_LPF_ONE_M_ALPHA},
   .enabled          = false,
-  .currentScaler    = ADC_CURRENT_SCALE,
-  .currentScalerReg = ADC_CURRENT_SCALE / 0x8000L,
-  .voltageScaler    = ADC_VOLTAGE_SCALE,
-  .voltageScalerReg = ADC_VOLTAGE_SCALE / 0x10000L,
+  //  .currentScaler    = ADC_CURRENT_SCALE,
+  //  .currentScalerReg = ADC_CURRENT_SCALE / 0x8000L,
+  //  .voltageScaler    = ADC_VOLTAGE_SCALE,
+  //  .voltageScalerReg = ADC_VOLTAGE_SCALE / 0x10000L,
   .pwmChAReg        = (volatile uint16_t *)(MOTOR1_PWM1_CMD_ADDR),
   .pwmChBReg        = (volatile uint16_t *)(MOTOR1_PWM2_CMD_ADDR),
   .pwmChCReg        = (volatile uint16_t *)(MOTOR1_PWM3_CMD_ADDR),
@@ -464,19 +462,13 @@ static MOTOR_STRUCT motor[] =
   .motorHalCfg      = &hal_motor_cfg[MOTOR_2],
   .motorDRV         = &drv[MOTOR_2],
   .motorFOC         = &motor_foc[MOTOR_2],
-  .alignRoutine     = {.state       = ALIGN_COUNT_UP,
-                       .counter     = 0,
-                       .max         = PWM_FREQ,
-                       .idAlignRef  = 0.4,    // 400mA alignment current
-                       .idAlign     = 0.0f
-  },
-  .statorResEstLpf  = {.a           = MOTOR2_STATOR_RESISTOR_LPF_ALPHA,
-                       .one_minus_a = MOTOR2_STATOR_RESISTOR_LPF_ONE_M_ALPHA},
+  .alignRoutine     = {.state = ALIGN_COUNT_UP, .counter = 0, .max = PWM_FREQ, .idAlignRef = 0.4, .idAlign = 0.0},// 400mA alignment current
+  .statorResEstLpf  = {.a = MOTOR2_STATOR_RESISTOR_LPF_ALPHA, .one_minus_a = MOTOR2_STATOR_RESISTOR_LPF_ONE_M_ALPHA},
   .enabled          = false,
-  .currentScaler    = ADC_CURRENT_SCALE,
-  .currentScalerReg = ADC_CURRENT_SCALE / 0x8000L,
-  .voltageScaler    = ADC_VOLTAGE_SCALE,
-  .voltageScalerReg = ADC_VOLTAGE_SCALE / 0x10000L,
+  //  .currentScaler    = ADC_CURRENT_SCALE,
+  //  .currentScalerReg = ADC_CURRENT_SCALE / 0x8000L,
+  //  .voltageScaler    = ADC_VOLTAGE_SCALE,
+  //  .voltageScalerReg = ADC_VOLTAGE_SCALE / 0x10000L,
   .pwmChAReg        = (volatile uint16_t *)(MOTOR2_PWM1_CMD_ADDR),
   .pwmChBReg        = (volatile uint16_t *)(MOTOR2_PWM2_CMD_ADDR),
   .pwmChCReg        = (volatile uint16_t *)(MOTOR2_PWM3_CMD_ADDR),

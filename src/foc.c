@@ -129,11 +129,11 @@ inline void FOC_control(FOC* p_foc)
     float32_t uOffset   = 0.5f * (FMIN3(p_foc->ua, p_foc->ub, p_foc->uc) + FMAX3(p_foc->ua, p_foc->ub, p_foc->uc));
 //    float32_t uMidPoint = 0.5f * (MOTOR1_DUTY_CYCLE_MAX - MOTOR1_DUTY_CYCLE_MIN);
     // Compute duty cycles
-    p_foc->dtcPhaseA    = FMINMAX((((p_foc->ua - uOffset) / *p_foc->uBus) + 0.5f), p_foc->dtcMax, p_foc->dtcMin);
+    p_foc->dtcPhaseA    = FMINMAX((((p_foc->ua - uOffset) / p_foc->motor_acq.vbus) + 0.5f), p_foc->dtcMax, p_foc->dtcMin);
 //    p_foc->ducya = fminf(fmaxf((p_foc->ua - uOffset) / *p_foc->uBus, -p_foc->dutyCycleSat), p_foc->dutyCycleSat);
-    p_foc->dtcPhaseB    = FMINMAX((((p_foc->ub - uOffset) / *p_foc->uBus) + 0.5f), p_foc->dtcMax, p_foc->dtcMin);
+    p_foc->dtcPhaseB    = FMINMAX((((p_foc->ub - uOffset) / p_foc->motor_acq.vbus) + 0.5f), p_foc->dtcMax, p_foc->dtcMin);
 //    p_foc->ducyb = fminf(fmaxf((p_foc->ub - uOffset) / *p_foc->uBus, -p_foc->dutyCycleSat), p_foc->dutyCycleSat);
-    p_foc->dtcPhaseC    = FMINMAX((((p_foc->uc - uOffset) / *p_foc->uBus) + 0.5f), p_foc->dtcMax, p_foc->dtcMin);
+    p_foc->dtcPhaseC    = FMINMAX((((p_foc->uc - uOffset) / p_foc->motor_acq.vbus) + 0.5f), p_foc->dtcMax, p_foc->dtcMin);
 //    p_foc->ducyc = fminf(fmaxf((p_foc->uc - uOffset) / *p_foc->uBus, -p_foc->dutyCycleSat), p_foc->dutyCycleSat);
     // Compute compare registers:
     *(p_foc->pwmCompA)  = p_foc->dtcPhaseA * PWM_HALF_TBPRD;
@@ -160,10 +160,10 @@ inline void FOC_control(FOC* p_foc)
 inline float32_t FOC_pi(PID_CONTROLLER* p_pid)
 {
     p_pid->integral    += p_pid->ki * p_pid->err;
-    p_pid->integral     = FMINMAX(p_pid->integral, *p_pid->sat, -(*p_pid->sat)); //fmaxf(fminf(p_pid->integral, *p_pid->sat), -(*p_pid->sat));
+    //p_pid->integral     = FMINMAX(p_pid->integral, *p_pid->sat, -(*p_pid->sat)); //fmaxf(fminf(p_pid->integral, *p_pid->sat), -(*p_pid->sat));
     // Compute PID and clamp output.
     p_pid->out          = (p_pid->kp * p_pid->err) + p_pid->integral + p_pid->ff;
-    p_pid->out          = FMINMAX(p_pid->out, *p_pid->sat, -(*p_pid->sat)); //fmaxf(fminf(p_pid->out, *p_pid->sat), -(*p_pid->sat));
+    p_pid->out          = FMINMAX(p_pid->out, (0.5 * (*p_pid->sat)), (-0.5 * (*p_pid->sat))); //fmaxf(fminf(p_pid->out, *p_pid->sat), -(*p_pid->sat));
     return(p_pid->out);
 }
 

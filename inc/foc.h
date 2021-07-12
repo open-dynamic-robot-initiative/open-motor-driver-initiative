@@ -122,7 +122,7 @@ typedef struct __FOC__
     float32_t           ualpha; // [V]
     float32_t           ubeta;  // [V]
     // Bus voltage
-    float32_t*          uBus;   // [V]
+    //float32_t*          uBus;   // [V]
     // Phase commands
     float32_t           ua;     // [V]
     float32_t           ub;     // [V]

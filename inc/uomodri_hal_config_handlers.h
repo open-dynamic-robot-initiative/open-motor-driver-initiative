@@ -32,10 +32,15 @@ static const GPIO_TypeDef GpioPinsCfgList[] =
  {.pinNumber = MOTOR2_ENC_CHA,          .fctMux = MOTOR2_ENC_CHA_CFG,           .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_IN,  .samplingInMode = GPIO_QUAL_6SAMPLE,.setValue = 0,  .intEnable = false},
  {.pinNumber = MOTOR2_ENC_CHB,          .fctMux = MOTOR2_ENC_CHB_CFG,           .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_IN,  .samplingInMode = GPIO_QUAL_6SAMPLE,.setValue = 0,  .intEnable = false},
  {.pinNumber = MOTOR2_ENC_CHI,          .fctMux = MOTOR2_ENC_CHI_CFG,           .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_IN,  .samplingInMode = GPIO_QUAL_6SAMPLE,.setValue = 0,  .intEnable = false},
- // SPIA pins
+ // SPIA pins : DRV COM
  {.pinNumber = DRV_SPI_SIMO,            .fctMux = DRV_SPI_SIMO_CFG,             .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 1,  .intEnable = false},
  {.pinNumber = DRV_SPI_SOMI,            .fctMux = DRV_SPI_SOMI_CFG,             .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_IN,  .samplingInMode = GPIO_QUAL_3SAMPLE,.setValue = 0,  .intEnable = false},
  {.pinNumber = DRV_SPI_CLK,             .fctMux = DRV_SPI_CLK_CFG,              .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 1,  .intEnable = false},
+ // SPIB pins : EXTERNAL COM
+ {.pinNumber = COM_SPI_SIMO,            .fctMux = COM_SPI_SIMO_CFG,             .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_IN,  .samplingInMode = GPIO_QUAL_3SAMPLE,.setValue = 1,  .intEnable = false},
+ {.pinNumber = COM_SPI_SOMI,            .fctMux = COM_SPI_SOMI_CFG,             .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0,  .intEnable = false},
+ {.pinNumber = COM_SPI_CLK,             .fctMux = COM_SPI_CLK_CFG,              .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_IN,  .samplingInMode = GPIO_QUAL_3SAMPLE,.setValue = 1,  .intEnable = false},
+ {.pinNumber = COM_SPI_CS,              .fctMux = COM_SPI_CS_CFG,               .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_IN,  .samplingInMode = GPIO_QUAL_3SAMPLE,.setValue = 1,  .intEnable = false},
  // DRV1 pins
  {.pinNumber = MOTOR1_DRV_GPIO_EN,      .fctMux = MOTOR1_DRV_GPIO_EN_CFG,       .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0,  .intEnable = false},
  {.pinNumber = MOTOR1_PWM1_CHA,         .fctMux = MOTOR1_PWM1_CHA_CFG,          .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0,  .intEnable = false},
@@ -45,7 +50,7 @@ static const GPIO_TypeDef GpioPinsCfgList[] =
  {.pinNumber = MOTOR1_PWM3_CHA,         .fctMux = MOTOR1_PWM3_CHA_CFG,          .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0,  .intEnable = false},
  {.pinNumber = MOTOR1_PWM3_CHB,         .fctMux = MOTOR1_PWM3_CHB_CFG,          .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 1,  .intEnable = false},
  {.pinNumber = MOTOR1_DRV_GPIO_CS,      .fctMux = MOTOR1_DRV_GPIO_CS_CFG,       .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 1,  .intEnable = false},
- {.pinNumber = MOTOR1_DRV_GPIO_NFAULT,  .fctMux = MOTOR1_DRV_GPIO_NFAULT_CFG,   .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_IN,  .samplingInMode = GPIO_QUAL_3SAMPLE,.setValue = 0,  .intEnable = true,   .extIntNum = GPIO_INT_XINT1,    .intType = GPIO_INT_TYPE_RISING_EDGE},
+ {.pinNumber = MOTOR1_DRV_GPIO_NFAULT,  .fctMux = MOTOR1_DRV_GPIO_NFAULT_CFG,   .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_IN,  .samplingInMode = GPIO_QUAL_3SAMPLE,.setValue = 0,  .intEnable = true,  .extIntNum = GPIO_INT_XINT1,    .intType = GPIO_INT_TYPE_FALLING_EDGE},
  // DRV2 pins
  {.pinNumber = MOTOR2_DRV_GPIO_EN,      .fctMux = MOTOR2_DRV_GPIO_EN_CFG,       .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0,  .intEnable = false},
  {.pinNumber = MOTOR2_PWM1_CHA,         .fctMux = MOTOR2_PWM1_CHA_CFG,          .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0,  .intEnable = false},
@@ -55,7 +60,7 @@ static const GPIO_TypeDef GpioPinsCfgList[] =
  {.pinNumber = MOTOR2_PWM3_CHA,         .fctMux = MOTOR2_PWM3_CHA_CFG,          .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0,  .intEnable = false},
  {.pinNumber = MOTOR2_PWM3_CHB,         .fctMux = MOTOR2_PWM3_CHB_CFG,          .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 1,  .intEnable = false},
  {.pinNumber = MOTOR2_DRV_GPIO_CS,      .fctMux = MOTOR2_DRV_GPIO_CS_CFG,       .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 1,  .intEnable = false},
- {.pinNumber = MOTOR2_DRV_GPIO_NFAULT,  .fctMux = MOTOR2_DRV_GPIO_NFAULT_CFG,   .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_IN,  .samplingInMode = GPIO_QUAL_3SAMPLE,.setValue = 0,  .intEnable = true,  .extIntNum = GPIO_INT_XINT2,    .intType = GPIO_INT_TYPE_RISING_EDGE},
+ {.pinNumber = MOTOR2_DRV_GPIO_NFAULT,  .fctMux = MOTOR2_DRV_GPIO_NFAULT_CFG,   .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_IN,  .samplingInMode = GPIO_QUAL_3SAMPLE,.setValue = 0,  .intEnable = true,  .extIntNum = GPIO_INT_XINT2,    .intType = GPIO_INT_TYPE_FALLING_EDGE},
  // END OF ARRAY
  {.pinNumber = 0xFFFFFFFF},
 };
@@ -195,9 +200,9 @@ static const DMA_TypeDef dmaCfgList[] =
 {
  // DMA base register initialization
  // DMA for SPI communication Tx
- {.dmaChBase    = COM_SPI_TX_DMA_BASE_ADDR,
-  .transferSize = COM_SPI_TX_RX_LENGTH,
-  .srcWrapSize  = COM_SPI_TX_RX_LENGTH,
+ {.dmaChBase    = DMA_COM_SPI_TX_BASE_ADDR,
+  .transferSize = DMA_COM_SPI_TX_RX_LENGTH,
+  .srcWrapSize  = DMA_COM_SPI_TX_RX_LENGTH,
   .destWrapSize = 0,
   .config       = (DMA_CFG_ONESHOT_DISABLE | DMA_CFG_CONTINUOUS_ENABLE | DMA_CFG_SIZE_16BIT),
   .burstSize    = 1,
@@ -208,10 +213,10 @@ static const DMA_TypeDef dmaCfgList[] =
   .trigger      = DMA_TRIGGER_SPIBTX
  },
  // DMA for SPI communication Rx
- {.dmaChBase    = COM_SPI_RX_DMA_BASE_ADDR,
-  .transferSize = COM_SPI_TX_RX_LENGTH,
+ {.dmaChBase    = DMA_COM_SPI_RX_BASE_ADDR,
+  .transferSize = DMA_COM_SPI_TX_RX_LENGTH,
   .srcWrapSize  = 0,
-  .destWrapSize = COM_SPI_TX_RX_LENGTH,
+  .destWrapSize = DMA_COM_SPI_TX_RX_LENGTH,
   .config       = (DMA_CFG_ONESHOT_DISABLE | DMA_CFG_CONTINUOUS_ENABLE | DMA_CFG_SIZE_16BIT),
   .burstSize    = 1,
   .destStep     = 1,

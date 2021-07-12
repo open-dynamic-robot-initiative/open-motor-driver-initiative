@@ -15,14 +15,14 @@
 #pragma DATA_SECTION(dualBufferW, "ramgs0");
 DualBufferW dualBufferW =
 {
- .ptrDmaCh  = (volatile struct CH_REGS*)COM_SPI_TX_DMA_BASE_ADDR,//(&dmaCfgList[0].dmaChBase),
+ .ptrDmaCh  = (volatile struct CH_REGS*)DMA_COM_SPI_TX_BASE_ADDR,//(&dmaCfgList[0].dmaChBase),
  .index     = 0,
  //     ComPacketW comPackets[2];
 };
 #pragma DATA_SECTION(dualBufferR, "ramgs0");
 DualBufferR dualBufferR =
 {
- .ptrDmaCh  = (volatile struct CH_REGS*)COM_SPI_RX_DMA_BASE_ADDR,//(&dmaCfgList[1].dmaChBase),
+ .ptrDmaCh  = (volatile struct CH_REGS*)DMA_COM_SPI_RX_BASE_ADDR,//(&dmaCfgList[1].dmaChBase),
  .index     = 0,
  //  ComPacketR comPackets[2];
 };
@@ -79,7 +79,7 @@ inline void SPI_pushWPacket()
     availablePacketAddress = dualBufferW.comPackets + dualBufferW.index;
 
     // Compute packet CRC
-    uint32_t crc = COM_crc32((uint16_t *)availablePacketAddress, COM_SPI_TX_RX_LENGTH - 2); // The last two words are CRC fields
+    uint32_t crc = COM_crc32((uint16_t *)availablePacketAddress, DMA_COM_SPI_TX_RX_LENGTH - 2); // The last two words are CRC fields
     // Update packet CRC
     availablePacketAddress->crc_msb = MSB_32(crc);
     availablePacketAddress->crc_lsb = LSB_32(crc);
@@ -129,7 +129,7 @@ inline ComPacketRPtr SPI_getAvailableRPacket()
     EDIS;
 
     // Compute CRC
-    uint32_t crc = COM_crc32((uint16_t *)currentPacketAddress, COM_SPI_TX_RX_LENGTH - 2); // The last two words are CRC fields
+    uint32_t crc = COM_crc32((uint16_t *)currentPacketAddress, DMA_COM_SPI_TX_RX_LENGTH - 2); // The last two words are CRC fields
 
     // Mark packet as read
     currentPacketAddress->mode.bit.rsvd = 1;
