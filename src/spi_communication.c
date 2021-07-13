@@ -57,6 +57,8 @@ void SPI_initCommunication(const DMA_TypeDef* p_dmaCfg)
             dmaChBase = (++p_dmaCfg)->dmaChBase;
         }
     }
+
+    return;
 }
 
 //-----------------------------------------------------------------------

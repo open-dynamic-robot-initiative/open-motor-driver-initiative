@@ -553,7 +553,8 @@ void HAL_IT_init(const IT_TypeDef* p_ITCfg)
     if(p_ITCfg != NULL)
     {
         uint32_t intNum = p_ITCfg->intNum;
-        Interrupt_enablePIE();
+        // Clear & set IT flags & enable IT bits in a known state.
+        Interrupt_initModule();
         // Setup Interrupts
         while(intNum != 0xFFFFFFFF)
         {

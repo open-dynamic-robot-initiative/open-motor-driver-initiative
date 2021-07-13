@@ -23,7 +23,7 @@
 #define UOMODRI_RES_ESTIM_FLT                   1
 #define UOMODRI_SPEED_FLT                       1
 #define UOMODRI_SPI_DEBUG_CONFIG                0
-#define UOMODRI_FOC_FEED_FORWARD                1
+#define UOMODRI_FOC_FEED_FORWARD                0
 
 #define OMODRI_PAL_SETUP                        0   // Set this to 1 to use the PAL pin affectation
 #define SPI_DEBUG_CONFIGURATION                 0   // Set this to 1 to use debug configuration

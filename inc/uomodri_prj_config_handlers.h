@@ -110,7 +110,7 @@ static DRV_Reg DrvRegList[] =
    .Ctrl_Reg_04.ctrl04.IDRIVEP_LS   = DRV_ISOUR_LS_0P300_A,
    .Ctrl_Reg_04.ctrl04.TDRIVE       = DRV_TSOUR_4000_NS,
    // Over Current Protection register initialization (Address: 0x5)
-   .Ctrl_Reg_05.ctrl05.VDS_LVL      = DRV_VDS_LVL_0P600_V,
+   .Ctrl_Reg_05.ctrl05.VDS_LVL      = DRV_VDS_LVL_0P700_V,
    .Ctrl_Reg_05.ctrl05.OCP_DEG      = DRV_OCPDEG_8_US,
    .Ctrl_Reg_05.ctrl05.OCP_MODE     = DRV_AUTOMATIC_RETRY,
    .Ctrl_Reg_05.ctrl05.DEAD_TIME    = DRV_DEADTIME_400_NS,
