@@ -1,6 +1,8 @@
 #ifndef __LEGACY_SPI_H__
 #define __LEGACY_SPI_H__
 
+#include "uomodri_user_defines.h"
+
 //**********************************************************************************************//
 //                                        INCLUDES                                              //
 //**********************************************************************************************//
@@ -35,7 +37,7 @@
 //                                   FUNCTION SIGNATURES                                        //
 //**********************************************************************************************//
 
-#if SPI_DEBUG_CONFIGURATION
+#if UOMODRI_SPI_DEBUG_CONFIG
 // Updates the sensor packet
 void UpdateLogPacket();
 

@@ -29,10 +29,13 @@ int main(void)
     HAL_ADC_offsetCalib(motor[MOTOR_2].motorHalCfg);
     // Interrupts initialization
     HAL_IT_init(InterruptList);
+    // Clear the interrupt flag
+//    EPWM_clearEventTriggerInterruptFlag(InterruptList[PWM_IT_MOTOR_1].intPeriphBase);
+//    EPWM_clearEventTriggerInterruptFlag(InterruptList[PWM_IT_MOTOR_2].intPeriphBase);
 
 #if UOMODRI_SPI_DEBUG_CONFIG
-    comInterface.systemEnabled = true;
-    motor_foc[MOTOR_1].enabled = true;
+    comInterface.systemEnabled          = true;
+    motor[MOTOR_1].motorFOC->enabled    = true;
 #endif
 //    // Set PWM to an initial output
 //    MOTOR_SetPwmCmd(&motor[MOTOR_1], 3 * PWM_TBPRD / 4, 2 * PWM_TBPRD / 4, 1 * PWM_TBPRD / 4);
@@ -217,9 +220,9 @@ __interrupt void adc_isrMotor1(void)
 #endif
 
         // Set position reference
-        motor[MOTOR_1].motorFOC->pdPos.err  = 2.0f * M_PI * (comInterface.positionRef[MOTOR_1] - motor[MOTOR_1].motorFOC->motor_enc.absoluteAngle); // Convert to radians
+        motor[MOTOR_1].motorFOC->pdPos.err  = 2.0f * M_PI * (comInterface.positionRef[MOTOR_1] - motor[MOTOR_1].motorFOC->motor_enc.thetaAbsolute); // Convert to radians
         // Set speed reference
-        motor[MOTOR_1].motorFOC->pdPos.vErr = comInterface.velocityRef[MOTOR_1] - motor[MOTOR_1].motorFOC->motor_enc.speedEst.mechSpeed;
+        motor[MOTOR_1].motorFOC->pdPos.vErr = comInterface.velocityRef[MOTOR_1] - motor[MOTOR_1].motorFOC->motor_enc.speedEst.speedMech;
         // Set feed-forward current
         motor[MOTOR_1].motorFOC->pdPos.ff   = comInterface.iqRef[MOTOR_1];
         // Run PD controller
@@ -344,9 +347,9 @@ __interrupt void adc_isrMotor2(void)
 #endif
 
         // Set position reference
-        motor[MOTOR_2].motorFOC->pdPos.err  = 2.0f * M_PI * (comInterface.positionRef[MOTOR_2] - motor[MOTOR_2].motorFOC->motor_enc.absoluteAngle); // Convert to radians
+        motor[MOTOR_2].motorFOC->pdPos.err  = 2.0f * M_PI * (comInterface.positionRef[MOTOR_2] - motor[MOTOR_2].motorFOC->motor_enc.thetaAbsolute); // Convert to radians
         // Set speed reference
-        motor[MOTOR_2].motorFOC->pdPos.vErr = comInterface.velocityRef[MOTOR_2] - motor[MOTOR_2].motorFOC->motor_enc.speedEst.mechSpeed;
+        motor[MOTOR_2].motorFOC->pdPos.vErr = comInterface.velocityRef[MOTOR_2] - motor[MOTOR_2].motorFOC->motor_enc.speedEst.speedMech;
         // Set feed-forward current
         motor[MOTOR_2].motorFOC->pdPos.ff   = comInterface.iqRef[MOTOR_2];
         // Run PD controller
@@ -452,9 +455,10 @@ __interrupt void gpio_isrFault1(void)
     // Set CAN error
     comInterface.canError = SPI_SENSOR_STATUS_ERROR_DRV_NFAULT;
 
+#if !UOMODRI_SPI_DEBUG_CONFIG
     // Update sensor packet
     UpdateSensorPacket();
-
+#endif
     // Infinite loop
     while(1);
 
@@ -472,9 +476,10 @@ __interrupt void gpio_isrFault2(void)
     // Set CAN error
     comInterface.canError = SPI_SENSOR_STATUS_ERROR_DRV_NFAULT;
 
+#if !UOMODRI_SPI_DEBUG_CONFIG
     // Update sensor packet
     UpdateSensorPacket();
-
+#endif
     // Infinite loop
     while(1);
 }

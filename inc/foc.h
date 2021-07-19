@@ -106,7 +106,7 @@ typedef struct __FOC__
     // Low-pass control loop filter
     LpfStruct           iParkLpf;
 
-    // Rotor electrical angle sine cosine
+    // Rotor electrical angle sine/cosine
     float32_t           sinTheta;
     float32_t           cosTheta;
     // Direct Clarke transform result

@@ -14,7 +14,7 @@
 //                                    FUNCTION DEFINITIONS                                      //
 //**********************************************************************************************//
 
-#if (SPI_DEBUG_CONFIGURATION == 1)
+#if UOMODRI_SPI_DEBUG_CONFIG
 
 // Choose which motor is logged
 #define DEBUG_LOGGED_MOTOR      0
@@ -28,30 +28,30 @@ void UpdateLogPacket()
     // Update fields
     uint32_t timestamp = motor[DEBUG_LOGGED_MOTOR].alignRoutine.state == ALIGN_DONE ? (uint32_t)(comInterface.time * 10000.0f) : 0;
     //uint32_t timestamp = TIME_S * 10000.0f;
-//    comPacket->timeStamp = MSB_32(timestamp);
-    comPacket->timestamp = LSB_32(timestamp);
+    comPacket->timestamp_msb = MSB_32(timestamp);
+    comPacket->timestamp_lsb = LSB_32(timestamp);
 
-    comPacket->idRef = (int16_t)(foc[DEBUG_LOGGED_MOTOR].idRef / comInterface.iqResolution);
-    comPacket->idFbk = (int16_t)(foc[DEBUG_LOGGED_MOTOR].id / comInterface.iqResolution);
-    comPacket->iqRef = (int16_t)(foc[DEBUG_LOGGED_MOTOR].iqRef / comInterface.iqResolution);
-    comPacket->iqFbk = (int16_t)(foc[DEBUG_LOGGED_MOTOR].iq / comInterface.iqResolution);
+    comPacket->idRef = (int16_t)(motor[DEBUG_LOGGED_MOTOR].motorFOC->idRef);// / comInterface.iqResolution);
+    comPacket->idFbk = (int16_t)(motor[DEBUG_LOGGED_MOTOR].motorFOC->id);// / comInterface.iqResolution);
+    comPacket->iqRef = (int16_t)(motor[DEBUG_LOGGED_MOTOR].motorFOC->iqRef);// / comInterface.iqResolution);
+    comPacket->iqFbk = (int16_t)(motor[DEBUG_LOGGED_MOTOR].motorFOC->iq);// / comInterface.iqResolution);
 
-    int32_t position = (int32_t)(foc[DEBUG_LOGGED_MOTOR].encoder.absoluteAngle / comInterface.positionResolution);
+    int32_t position = (int32_t)(motor[DEBUG_LOGGED_MOTOR].motorFOC->motor_enc.thetaAbsolute);// / comInterface.positionResolution);
     comPacket->position_msb = MSB_32(position);
     comPacket->position_lsb = LSB_32(position);
 
-    int32_t refPosition = (int32_t)(comInterface.positionRef[DEBUG_LOGGED_MOTOR] / comInterface.positionResolution);
+    int32_t refPosition = (int32_t)(comInterface.positionRef[DEBUG_LOGGED_MOTOR]);// / comInterface.positionResolution);
     comPacket->refPos_msb = MSB_32(refPosition);
     comPacket->refPos_lsb = LSB_32(refPosition);
 
-    comPacket->velocity = (int16_t)(foc[DEBUG_LOGGED_MOTOR].encoder.speedEst.mechSpeed / comInterface.velocityResolution);
+    comPacket->velocity = (int16_t)(motor[DEBUG_LOGGED_MOTOR].motorFOC->motor_enc.speedEst.speedMech);// / comInterface.velocityResolution);
 
-    comPacket->refVel = (int16_t)(comInterface.velocityRef[DEBUG_LOGGED_MOTOR] / comInterface.velocityResolution);
+    comPacket->refVel = (int16_t)(comInterface.velocityRef[DEBUG_LOGGED_MOTOR]);// / comInterface.velocityResolution);
 
-    comPacket->ud = (int16_t)(foc[DEBUG_LOGGED_MOTOR].ud / comInterface.iqResolution);
-    comPacket->uq = (int16_t)(foc[DEBUG_LOGGED_MOTOR].uq / comInterface.iqResolution);
+    comPacket->ud = (int16_t)(motor[DEBUG_LOGGED_MOTOR].motorFOC->ud);// / comInterface.iqResolution);
+    comPacket->uq = (int16_t)(motor[DEBUG_LOGGED_MOTOR].motorFOC->uq);// / comInterface.iqResolution);
 
-    comPacket->resistance = (uint16_t)(foc[DEBUG_LOGGED_MOTOR].resistanceEst / comInterface.resistanceResolution);
+    comPacket->resistance = (uint16_t)(motor[DEBUG_LOGGED_MOTOR].motorFOC->resistanceEst); // / comInterface.resistanceResolution);
 
     // Push packet
     SPI_pushWPacket();
@@ -95,16 +95,16 @@ void UpdateSensorPacket()
 
     // Update motor 1 position
     // convert position to signed value
-    int32_t position                    = (int32_t)(p_foc_m1->motor_enc.absoluteAngle / comInterface.positionLsb);
+    int32_t position                    = (int32_t)(p_foc_m1->motor_enc.thetaAbsolute / comInterface.positionLsb);
     p_sensorPacket->position1_msb       = MSB_32(position);
     p_sensorPacket->position1_lsb       = LSB_32(position);
     // Update motor 2 position
-    position                            = (int32_t)(p_foc_m2->motor_enc.absoluteAngle / comInterface.positionLsb);
+    position                            = (int32_t)(p_foc_m2->motor_enc.thetaAbsolute / comInterface.positionLsb);
     p_sensorPacket->position2_msb       = MSB_32(position);
     p_sensorPacket->position2_lsb       = LSB_32(position);
     // Update motor velocities
-    p_sensorPacket->velocity1           = (int16_t)(p_foc_m1->motor_enc.speedEst.mechSpeed / comInterface.velocityLsb);
-    p_sensorPacket->velocity2           = (int16_t)(p_foc_m2->motor_enc.speedEst.mechSpeed / comInterface.velocityLsb);
+    p_sensorPacket->velocity1           = (int16_t)(p_foc_m1->motor_enc.speedEst.speedMech / comInterface.velocityLsb);
+    p_sensorPacket->velocity2           = (int16_t)(p_foc_m2->motor_enc.speedEst.speedMech / comInterface.velocityLsb);
     // Update quadrature currents
     p_sensorPacket->iq1                 = (int16_t)(p_foc_m1->iq / comInterface.iqLsb);
     p_sensorPacket->iq2                 = (int16_t)(p_foc_m2->iq / comInterface.iqLsb);
@@ -177,8 +177,8 @@ void ReadCommandPacket()
     comInterface.rolloverErrorFlag = commandPacket->mode.bit.EPRE;
 
     // Index offset compensation
-    p_foc_m1->motor_enc.isIndexCompensated = commandPacket->mode.bit.EI1OC;
-    p_foc_m2->motor_enc.isIndexCompensated = commandPacket->mode.bit.EI2OC;
+    p_foc_m1->motor_enc.indexCompensated = commandPacket->mode.bit.EI1OC;
+    p_foc_m2->motor_enc.indexCompensated = commandPacket->mode.bit.EI2OC;
 
     // Update timeout
     comInterface.timeoutThreshold = commandPacket->mode.bit.TIMEOUT;

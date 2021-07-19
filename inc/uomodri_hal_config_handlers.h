@@ -208,7 +208,7 @@ static const DMA_TypeDef dmaCfgList[] =
   .burstSize    = 1,
   .destStep     = 0,
   .srcStep      = 1,
-  .destAddr     = (uint16_t*)COM_SPI_TX_BASE_ADDR,
+  .destAddr     = (uint16_t *) COM_SPI_TX_BASE_ADDR,
   .srcAddr      = dualBufferW.comPackets,
   .trigger      = DMA_TRIGGER_SPIBTX
  },
@@ -222,7 +222,7 @@ static const DMA_TypeDef dmaCfgList[] =
   .destStep     = 1,
   .srcStep      = 0,
   .destAddr     = dualBufferR.comPackets,
-  .srcAddr      = (uint16_t*)COM_SPI_RX_BASE_ADDR,
+  .srcAddr      = (uint16_t *) COM_SPI_RX_BASE_ADDR,
   .trigger      = DMA_TRIGGER_SPIBRX
  },
  // END OF ARRAY

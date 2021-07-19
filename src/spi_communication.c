@@ -15,14 +15,14 @@
 #pragma DATA_SECTION(dualBufferW, "ramgs0");
 DualBufferW dualBufferW =
 {
- .ptrDmaCh  = (volatile struct CH_REGS*)DMA_COM_SPI_TX_BASE_ADDR,//(&dmaCfgList[0].dmaChBase),
+ .ptrDmaCh  = (volatile struct CH_REGS *) DMA_COM_SPI_TX_BASE_ADDR,//(&dmaCfgList[0].dmaChBase),
  .index     = 0,
  //     ComPacketW comPackets[2];
 };
 #pragma DATA_SECTION(dualBufferR, "ramgs0");
 DualBufferR dualBufferR =
 {
- .ptrDmaCh  = (volatile struct CH_REGS*)DMA_COM_SPI_RX_BASE_ADDR,//(&dmaCfgList[1].dmaChBase),
+ .ptrDmaCh  = (volatile struct CH_REGS *) DMA_COM_SPI_RX_BASE_ADDR,//(&dmaCfgList[1].dmaChBase),
  .index     = 0,
  //  ComPacketR comPackets[2];
 };

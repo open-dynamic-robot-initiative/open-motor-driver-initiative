@@ -57,7 +57,7 @@ union MB_STATUS
 //                      COMMUNICATION STRUCTURES
 //-----------------------------------------------------------------------
 
-#if SPI_DEBUG_CONFIGURATION
+#if UOMODRI_SPI_DEBUG_CONFIG
 
 // Debug packet for real-time logging
 typedef struct __ComPacketW__

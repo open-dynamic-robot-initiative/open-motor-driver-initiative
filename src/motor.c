@@ -140,11 +140,11 @@ inline void MOTOR_StatorResEst(MOTOR_STRUCT* p_motor)
     if (FM_ABS(p_motor->motorFOC->iq) > FOC_RE_CURRENT_THRESHOLD)
     {
 #if (UOMODRI_RES_ESTIM_FLT == 1)
-    LPF_FILTER_1(p_motor->statorResEstLpf, p_motor->statorResEst, (p_foc->uq - (p_foc->motor_enc.speedEst.elecSpeed * p_foc->motorParams.ke)) / p_foc->iq);
+    LPF_FILTER_1(p_motor->statorResEstLpf, p_motor->statorResEst, (p_foc->uq - (p_foc->motor_enc.speedEst.speedElec * p_foc->motorParams.ke)) / p_foc->iq);
 #elif (UOMODRI_RES_ESTIM_FLT == 2)
-    LPF_FILTER_2(p_motor->statorResEstLpf, p_motor->statorResEst, (p_foc->uq - (p_foc->motor_enc.speedEst.elecSpeed * p_foc->motorParams.ke)) / p_foc->iq);
+    LPF_FILTER_2(p_motor->statorResEstLpf, p_motor->statorResEst, (p_foc->uq - (p_foc->motor_enc.speedEst.speedElec * p_foc->motorParams.ke)) / p_foc->iq);
 #else
-    p_motor->statorResEst = (p_foc->uq - (p_foc->motor_enc.speedEst.elecSpeed * p_foc->motorParams.ke)) / p_foc->iq;
+    p_motor->statorResEst = (p_foc->uq - (p_foc->motor_enc.speedEst.speedElec * p_foc->motorParams.ke)) / p_foc->iq;
 #endif
 //        LPF_FILTER(foc->resEstLpf, foc->resistanceEst, (foc->uq - foc->encoder.speedEst.elecSpeed * foc->ke) / foc->iq);
     }

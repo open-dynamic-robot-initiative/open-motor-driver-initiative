@@ -22,11 +22,12 @@
 #define UOMODRI_IDQ_FLT                         1
 #define UOMODRI_RES_ESTIM_FLT                   1
 #define UOMODRI_SPEED_FLT                       1
-#define UOMODRI_SPI_DEBUG_CONFIG                0
+#define UOMODRI_SPI_DEBUG_CONFIG                1
 #define UOMODRI_FOC_FEED_FORWARD                0
 
 #define OMODRI_PAL_SETUP                        0   // Set this to 1 to use the PAL pin affectation
-#define SPI_DEBUG_CONFIGURATION                 0   // Set this to 1 to use debug configuration
+#define UOMODRI_DEBUG_LOGGED_MOTOR              MOTOR_1
+//#define SPI_DEBUG_CONFIGURATION                 0   // Set this to 1 to use debug configuration
 // Word number in a full communication
 //#define SPI_COM_LENGTH              17
 /**
@@ -67,7 +68,7 @@
 /******************************************************************************************************
 *                                               SPI Defines
 *******************************************************************************************************/
-/** @defgroup SPI_GPIO_pins - COM configuration.
+/** @defgroup SPI_COM_GPIO_pins - COM configuration.
  *  @brief    Configure GPIO pins associated to external communication.
  * @{
  */
@@ -84,7 +85,7 @@
  */
 
 /** @defgroup SPI communication configuration.
- *  @brief    Configure SPI modules associated with external communication.
+ *  @brief    Configure SPI module associated with external communication.
  * @{
  */
 #define COM_SPI_BASE                            SPIB_BASE
@@ -93,6 +94,41 @@
 /**
  * @}
  */
+
+/** @defgroup SPI_DRV_GPIO_pins - DRV configuration.
+ *  @brief    Configure GPIO pins associated to DRVs communication.
+ * @{
+ */
+#define DRV_SPI_SIMO                            (16)
+#define DRV_SPI_SIMO_CFG                        GPIO_16_SPISIMOA
+#define DRV_SPI_SOMI                            (17)
+#define DRV_SPI_SOMI_CFG                        GPIO_17_SPISOMIA
+#define DRV_SPI_CLK                             (18)
+#define DRV_SPI_CLK_CFG                         GPIO_18_SPICLKA
+#define MOTOR1_DRV_GPIO_CS                      (19)
+#define MOTOR1_DRV_GPIO_CS_CFG                  GPIO_19_GPIO19
+#if (UOMODRI == 0)
+// DRV2 SPI defines
+#define MOTOR2_DRV_GPIO_CS                      (61)
+#define MOTOR2_DRV_GPIO_CS_CFG                  GPIO_61_GPIO61
+#else
+// DRV2 SPI defines
+#define MOTOR2_DRV_GPIO_CS                      (35)
+#define MOTOR2_DRV_GPIO_CS_CFG                  GPIO_35_GPIO35
+#endif
+/**
+ * @}
+ */
+
+/** @defgroup SPI DRV configuration.
+ *  @brief    Configure SPI module associated with DRV communication.
+ * @{
+ */
+#define DRV_SPI_BASE                            SPIA_BASE
+/**
+ * @}
+ */
+
 
 /******************************************************************************************************
 *                                               DMA Defines
@@ -113,46 +149,30 @@
 /******************************************************************************************************
 *                                               DRV Defines
 *******************************************************************************************************/
-/** @defgroup SPI_GPIO_pins - DRV configuration.
- *  @brief    Configure GPIO pins associated to DRVs communication.
+/** @defgroup DRV_GPIO_pins - DRV GPIO pins configuration.
+ *  @brief    Configure the pins necessaries for DRV selection \& fault status.
  * @{
  */
-#define DRV_SPI_BASE                            SPIA_BASE
-#define DRV_SPI_SIMO                            (16)
-#define DRV_SPI_SIMO_CFG                        GPIO_16_SPISIMOA
-#define DRV_SPI_SOMI                            (17)
-#define DRV_SPI_SOMI_CFG                        GPIO_17_SPISOMIA
-#define DRV_SPI_CLK                             (18)
-#define DRV_SPI_CLK_CFG                         GPIO_18_SPICLKA
-
 #if (UOMODRI == 0)
 // DRV1 SPI defines
 #define MOTOR1_DRV_GPIO_EN                      (89)
 #define MOTOR1_DRV_GPIO_EN_CFG                  GPIO_89_GPIO89
-#define MOTOR1_DRV_GPIO_CS                      (19)
-#define MOTOR1_DRV_GPIO_CS_CFG                  GPIO_19_GPIO19
 #define MOTOR1_DRV_GPIO_NFAULT                  (91)
 #define MOTOR1_DRV_GPIO_NFAULT_CFG              GPIO_91_GPIO91
 // DRV2 SPI defines
 #define MOTOR2_DRV_GPIO_EN                      (133)
 #define MOTOR2_DRV_GPIO_EN_CFG                  GPIO_133_GPIO133
-#define MOTOR2_DRV_GPIO_CS                      (61)
-#define MOTOR2_DRV_GPIO_CS_CFG                  GPIO_61_GPIO61
 #define MOTOR2_DRV_GPIO_NFAULT                  (67)
 #define MOTOR2_DRV_GPIO_NFAULT_CFG              GPIO_67_GPIO67
 #else
 // DRV1 SPI defines
 #define MOTOR1_DRV_GPIO_EN                      (89)
 #define MOTOR1_DRV_GPIO_EN_CFG                  GPIO_89_GPIO89
-#define MOTOR1_DRV_GPIO_CS                      (19)
-#define MOTOR1_DRV_GPIO_CS_CFG                  GPIO_19_GPIO19
 #define MOTOR1_DRV_GPIO_NFAULT                  (90)
 #define MOTOR1_DRV_GPIO_NFAULT_CFG              GPIO_90_GPIO90
 // DRV2 SPI defines
 #define MOTOR2_DRV_GPIO_EN                      (37)
 #define MOTOR2_DRV_GPIO_EN_CFG                  GPIO_37_GPIO37
-#define MOTOR2_DRV_GPIO_CS                      (35)
-#define MOTOR2_DRV_GPIO_CS_CFG                  GPIO_35_GPIO35
 #define MOTOR2_DRV_GPIO_NFAULT                  (36)
 #define MOTOR2_DRV_GPIO_NFAULT_CFG              GPIO_36_GPIO36
 #endif
@@ -172,7 +192,9 @@
 #define ADCCLK_FREQ                             (DEVICE_SYSCLK_FREQ / ((PERxSYSCLK_TO_ADCCLK_DIV / 2) + 1))
 // ADC defines
 #define ADC_SAMPLING_WINDOW                     119   // From data sheet Table 20-12
-#define ADC_RESOLUTION                          ADC_RESOLUTION_16BIT
+#define ADC_RESOLUTION_BIT						ADC_RESOLUTION_16BIT
+#define ADC_RESOLUTION_MAX                      ((ADC_RESOLUTION_BIT) ? (65536) : (4096))
+//#define ADC_RESOLUTION_MID                      (ADC_RESOLUTION_MAX / 2)
 #define ADC_SIGNAL_MODE                         ADC_MODE_SINGLE_ENDED
 #define ADC_PULSE_END_MODE                      ADC_PULSE_END_OF_CONV
 #define ADC_SOC_PRIORITY                        ADC_PRI_THRU_SOC3_HIPRI  //ADC_PRI_ALL_ROUND_ROBIN
@@ -189,8 +211,8 @@
 #define R_SHUNT                                 0.01f // [Ohm]
 #define BRIDGE_DIVIDER                          ((5.1f + 100.0f) / 5.1f)
 #endif
-#define ADC_VOLTAGE_SCALE                       (ADC_VREF * BRIDGE_DIVIDER / ((ADC_RESOLUTION) ? (65536.0f) : (4096.0f)))// Voltage divider R1:4.99kO R2:82kO
-#define ADC_CURRENT_SCALE                       (ADC_VREF * (-0.5f) / DRV_CSA_GAIN_VAL / R_SHUNT / ((ADC_RESOLUTION) ? (32768.0f) : (2048.0f))) //(0x1000 << (ADC_RESOLUTION >> 4)))
+#define ADC_VOLTAGE_SCALE                       (ADC_VREF * BRIDGE_DIVIDER / ADC_RESOLUTION_MAX)// Voltage divider R1:4.99kO R2:82kO
+#define ADC_CURRENT_SCALE                       (ADC_VREF * (-0.5f) / DRV_CSA_GAIN_VAL / R_SHUNT / ADC_RESOLUTION_MAX / 2) //(0x1000 << (ADC_RESOLUTION >> 4)))
 /**
  * @}
  */
@@ -649,7 +671,9 @@ typedef enum
     ADC_IT_MOTOR_1  = 0,    /*!< Select the ADC interrupt source of Motor_1 */
     ADC_IT_MOTOR_2  = 1,    /*!< Select the ADC interrupt source of Motor_2 */
     PWM_IT_MOTOR_1  = 2,    /*!< Select the PWM interrupt source of Motor_1 */
-    PWM_IT_MOTOR_2  = 3,    /*!< Select the PWM interrupt source of Motor_1 */
+    PWM_IT_MOTOR_2  = 3,    /*!< Select the PWM interrupt source of Motor_2 */
+    DRV_IT_MOTOR_1  = 4,    /*!< Select the GPIO (DRV fault) interrupt source of Motor_1 */
+    DRV_IT_MOTOR_2  = 5,    /*!< Select the GPIO (DRV fault) interrupt source of Motor_2 */
 } itID;
 
 #endif

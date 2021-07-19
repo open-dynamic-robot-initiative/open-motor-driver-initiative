@@ -66,9 +66,9 @@ inline void FOC_resistanceEstimation(FOC* p_foc)
     if (FM_ABS(p_foc->iq) > FOC_RE_CURRENT_THRESHOLD)
     {
 #if (UOMODRI_RES_ESTIM_FLT == 1)
-        LPF_FILTER_1(p_foc->resEstLpf, p_foc->resistanceEst, (p_foc->uq - p_foc->motor_enc.speedEst.elecSpeed * p_foc->motorParams.ke) / p_foc->iq);
+        LPF_FILTER_1(p_foc->resEstLpf, p_foc->resistanceEst, (p_foc->uq - p_foc->motor_enc.speedEst.speedElec * p_foc->motorParams.ke) / p_foc->iq);
 #elif (UOMODRI_RES_ESTIM_FLT == 2)
-        LPF_FILTER_2(p_foc->resEstLpf, p_foc->resistanceEst, (p_foc->uq - p_foc->motor_enc.speedEst.elecSpeed * p_foc->motorParams.ke) / p_foc->iq);
+        LPF_FILTER_2(p_foc->resEstLpf, p_foc->resistanceEst, (p_foc->uq - p_foc->motor_enc.speedEst.speedElec * p_foc->motorParams.ke) / p_foc->iq);
 #endif
     }
 }
@@ -228,20 +228,20 @@ void FOC_resetStruct(FOC* p_foc)
     p_foc->motor_enc.thetaDir               = false;
     p_foc->motor_enc.thetaNew               = false;
 
-    p_foc->motor_enc.isIndexCompensated     = false;
-    p_foc->motor_enc.indexAngle             = 0.0;
-    p_foc->motor_enc.indexedMechAngle       = 0.0;
+    p_foc->motor_enc.indexCompensated       = false;
+    p_foc->motor_enc.indexTheta             = 0.0;
+    p_foc->motor_enc.indexedThetaMech       = 0.0;
 
-    p_foc->motor_enc.absoluteAngle          = 0.0;
+    p_foc->motor_enc.thetaAbsolute          = 0.0;
 
     p_foc->motor_enc.speedEst.alpha         = 0.0;
-    p_foc->motor_enc.speedEst.refSpeed      = 0.0;
+    p_foc->motor_enc.speedEst.speedRef      = 0.0;
     p_foc->motor_enc.speedEst.theta[NEW]    = 0.0;
     p_foc->motor_enc.speedEst.theta[OLD]    = 0.0;
     p_foc->motor_enc.speedEst.lowSpeed      = 0.0;
     p_foc->motor_enc.speedEst.highSpeed     = 0.0;
-    p_foc->motor_enc.speedEst.mechSpeed     = 0.0;
-    p_foc->motor_enc.speedEst.elecSpeed     = 0.0;
+    p_foc->motor_enc.speedEst.speedMech     = 0.0;
+    p_foc->motor_enc.speedEst.speedElec     = 0.0;
 
     p_foc->motor_enc.turnNb                 = 0;
     p_foc->motor_enc.indexDetected          = false;

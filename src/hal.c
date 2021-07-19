@@ -99,7 +99,7 @@ void HAL_ADC_init(const ADC_TypeDef* p_adcCfg)
              * Enables ADC converter
              */
             ADC_setPrescaler(adcBase, PERxSYSCLK_TO_ADCCLK_DIV);
-            ADC_setMode(adcBase, ADC_RESOLUTION, ADC_SIGNAL_MODE);
+            ADC_setMode(adcBase, ADC_RESOLUTION_BIT, ADC_SIGNAL_MODE);
             ADC_setInterruptPulseMode(adcBase, ADC_PULSE_END_MODE);
             ADC_enableConverter(adcBase);
 
@@ -169,8 +169,8 @@ void HAL_ADC_offsetCalib(const HAL_MOTOR_CFG* p_halMotorCfg)
 
         for (calibCnt = 0; calibCnt < 10000; calibCnt++)
         {
-            // Wait data acquisition for Ia, Ib, Ic . Blocking.
-            // Va, Vb, Vc & Vbus will be also available.
+            /* Wait data acquisition for Ia, Ib, Ic . Blocking.
+             Va, Vb, Vc & Vbus will be also available. */
             p_ITConv = p_halMotorCfg->p_ITConv;
             // Wait IT flag event
             while(ADC_getInterruptStatus(p_ITConv->adcBase, p_ITConv->adcIntNumber) == false);
@@ -192,10 +192,8 @@ void HAL_ADC_offsetCalib(const HAL_MOTOR_CFG* p_halMotorCfg)
             {
                 // Clear the interrupt overflow flag
                 ADC_clearInterruptOverflowStatus(p_halMotorCfg->p_iConv[loop]->adcBase, p_ITConv->adcIntNumber);
-//                HWREGH(p_motorHalCfg->p_iConv[loop]->adcBase + ADC_O_INTOVFCLR) = (1U << ((uint16_t)p_ITConv->adcIntNumber));
                 // Clear the interrupt flag
                 ADC_clearInterruptStatus(p_halMotorCfg->p_iConv[loop]->adcBase, p_ITConv->adcIntNumber);
-//                HWREGH(p_motorHalCfg->p_iConv[loop]->adcBase + ADC_O_INTFLGCLR) = (1U << ((uint16_t)p_ITConv->adcIntNumber));
             }
         }
 
@@ -447,6 +445,7 @@ void HAL_eQEP_init(const eQEP_TypeDef* p_qepCfg)
             EQEP_setEmulationMode(qepBase, QEP_EMUL_MODE);
             // Position counter latched on a unit time out and on rising edge of index pulse.
             EQEP_setLatchMode(qepBase, QEP_LATCH_MODE);
+            //EQEP_setStrobeSource(qepBase, EQEP_STROBE_OR_ADCSOCA);
             // Position counter is reset when reaching max position (1 turn).
             EQEP_setPositionCounterConfig(qepBase, QEP_RESET_POSITION_MODE, p_qepCfg->eqepMaxResolution);
             // Set unit timer for speed measurement and enable it.
@@ -506,6 +505,7 @@ void HAL_SPI_init(const SPI_TypeDef* p_spiCfg)
             spiBase = (++p_spiCfg)->spiBase;
         }
     }
+
     return;
 }
 
@@ -542,6 +542,7 @@ void HAL_DMA_init(const DMA_TypeDef* p_dmaCfg)
             dmaChBase = (++p_dmaCfg)->dmaChBase;
         }
     }
+
     return;
 }
 
@@ -562,8 +563,6 @@ void HAL_IT_init(const IT_TypeDef* p_ITCfg)
             Interrupt_register(intNum, p_ITCfg->handler);
             // Enable Interrupts
             Interrupt_enable(intNum);
-            // Enable CPU interrupt channels
-            Interrupt_enableInCPU(p_ITCfg->intCpuGroup);
             intNum = (++p_ITCfg)->intNum;
         }
         // enable global interrupt

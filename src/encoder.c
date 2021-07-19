@@ -10,20 +10,20 @@ inline void encoder_resetStruct(ENCODER *p_encoder)
     p_encoder->thetaDir             = false;
     p_encoder->thetaNew             = false;
 
-    p_encoder->isIndexCompensated   = false;
-    p_encoder->indexAngle           = 0.0f;
-    p_encoder->indexedMechAngle     = 0.0f;
+    p_encoder->indexCompensated     = false;
+    p_encoder->indexTheta           = 0.0f;
+    p_encoder->indexedThetaMech     = 0.0f;
 
-    p_encoder->absoluteAngle        = 0.0f;
+    p_encoder->thetaAbsolute        = 0.0f;
 
     p_encoder->speedEst.alpha       = 0.0f;
-    p_encoder->speedEst.refSpeed    = 0.0f;
+    p_encoder->speedEst.speedRef    = 0.0f;
     p_encoder->speedEst.theta[NEW]  = 0.0f;
     p_encoder->speedEst.theta[OLD]  = 0.0f;
     p_encoder->speedEst.lowSpeed    = 0.0f;
     p_encoder->speedEst.highSpeed   = 0.0f;
-    p_encoder->speedEst.mechSpeed   = 0.0f;
-    p_encoder->speedEst.elecSpeed   = 0.0f;
+    p_encoder->speedEst.speedMech   = 0.0f;
+    p_encoder->speedEst.speedElec   = 0.0f;
 
     p_encoder->turnNb               = 0;
     p_encoder->indexDetected        = false;
@@ -46,7 +46,7 @@ inline void encoder_GetPosition(ENCODER* p_encoder)
 {
     p_encoder->thetaMech[OLD]   = p_encoder->thetaMech[NEW];
     // Compute mechanical angle normalized between 0 and 1
-    p_encoder->thetaMech[NEW]   = (float32_t)(p_encoder->p_qepRegs->QPOSCNT) / p_encoder->mechScaler;
+    p_encoder->thetaMech[NEW]   = (float32_t)(p_encoder->p_qepRegs->QPOSCNT) / p_encoder->thetaMechScaler;
     //p_encoder->thetaMech    = (float32_t)(*p_encoder->p_qepCntPosReg) / p_encoder->mechScaler;
     // Get direction : 0 = CCW/reverse, 1 = CW/forward
     p_encoder->thetaDir         = p_encoder->p_qepRegs->QEPSTS.bit.QDF;
@@ -75,7 +75,7 @@ inline void encoder_GetSpeed(ENCODER* p_encoder)
     if(p_qepRegs->QFLG.bit.UTO)
     {
         p_speed.thetaDir    = p_qepRegs->QEPSTS.bit.QDF;
-        p_speed.theta[NEW]  = p_qepRegs->QPOSLAT / p_encoder->mechScaler;
+        p_speed.theta[NEW]  = p_qepRegs->QPOSLAT / p_encoder->thetaMechScaler;
 #if 0
         if(!p_speed.thetaDir)
             deltaTheta      = p_speed.theta[NEW] - p_speed.theta[OLD] - ((p_speed.theta[NEW] > p_speed.theta[OLD]) ? (1.0) : (0.0));
@@ -147,14 +147,14 @@ inline void encoder_GetSpeed(ENCODER* p_encoder)
 //    p_speed.alpha = FMINMAX((0.05f * (FM_ABS(p_speed.highSpeed) - SPEED_ESTIMATION_THRESHOLD)), 1.0f, 0.0f);//    p_speed.alpha = __fmin(__fmax(0.05f * (FM_ABS(p_speed.highSpeed) - SPEED_ESTIMATION_THRESHOLD), 0.0f), 1.0f);
     // Compute speed reference // TODO merge high & low speed - CSDT
     // see : http://www.diegm.uniud.it/petrella/Azionamenti%20Elettrici%20II/Tesine/Petrella%20et%20al.%20-%20Speed%20Measurement%20Algorithms%20for%20Low-Resolution%20Incremental%20Encoder%20Equipped%20Drives_a%20Comparative%20Analysis.pdf
-    p_speed.refSpeed = p_speed.highSpeed;//    p_encoder->speedEst.speedRef = (1.0f - p_encoder->speedEst.alpha) * p_encoder->speedEst.lowMechSpeedEst + p_encoder->speedEst.alpha * p_encoder->speedEst.highMechSpeedEst;
+    p_speed.speedRef = p_speed.highSpeed;//    p_encoder->speedEst.speedRef = (1.0f - p_encoder->speedEst.alpha) * p_encoder->speedEst.lowMechSpeedEst + p_encoder->speedEst.alpha * p_encoder->speedEst.highMechSpeedEst;
     // Update speeds
 #if (UOMODRI_SPEED_FLT == 1)
-    LPF_FILTER_1(p_speed.lpf, p_speed.mechSpeed, p_speed.refSpeed);
+    LPF_FILTER_1(p_speed.lpf, p_speed.speedMech, p_speed.speedRef);
 #elif (UOMODRI_SPEED_FLT == 2)
-    LPF_FILTER_2(p_speed.lpf, p_speed.mechSpeed, p_speed.refSpeed);
+    LPF_FILTER_2(p_speed.lpf, p_speed.speedMech, p_speed.speedRef);
 #endif
-    p_speed.elecSpeed = p_encoder->polePairs * p_speed.mechSpeed;
+    p_speed.speedElec = p_encoder->polePairs * p_speed.speedMech;
 
     //-------------------------------------------------------------------//
     //                        ANGLES COMPUTATION                         //
@@ -167,26 +167,26 @@ inline void encoder_GetSpeed(ENCODER* p_encoder)
     p_encoder->turnNb           = (p_encoder->turnNb > 127) ? (-128) : ((p_encoder->turnNb < -128) ? (127) : (p_encoder->turnNb));
     p_encoder->rollOverFlag     = ((p_encoder->turnNb == 127) || (p_encoder->turnNb == -128)) ? (true) : (false);
     // Compute indexed angle
-    p_encoder->indexedMechAngle = p_encoder->thetaMech[NEW] - p_encoder->indexAngle;
-    p_encoder->indexedMechAngle+= (p_encoder->indexedMechAngle < 0.0f) ? (1.0f) : (0.0f);
+    p_encoder->indexedThetaMech = p_encoder->thetaMech[NEW] - p_encoder->indexTheta;
+    p_encoder->indexedThetaMech+= (p_encoder->indexedThetaMech < 0.0f) ? (1.0f) : (0.0f);
     // Compute new absolute angle
-    p_encoder->absoluteAngle    = ((p_encoder->isIndexCompensated) ? (p_encoder->indexedMechAngle) : (p_encoder->thetaMech[NEW])) + (float32_t)p_encoder->turnNb;
+    p_encoder->thetaAbsolute    = ((p_encoder->indexCompensated) ? (p_encoder->indexedThetaMech) : (p_encoder->thetaMech[NEW])) + (float32_t)p_encoder->turnNb;
 
     //-------------------------------------------------------------------//
     //                          INDEX HANDLING                           //
     //-------------------------------------------------------------------//
 
     // Check if index have been detected
-    p_encoder->indexDetected = p_qepRegs->QEPSTS.bit.FIMF;
+    p_encoder->indexDetected    = p_qepRegs->QEPSTS.bit.FIMF;
     // Check if index has been detected
     if (p_qepRegs->QFLG.all & EQEP_INT_INDEX_EVNT_LATCH)
     {
         // Save index position
-        p_encoder->indexAngle = p_encoder->mechScaler * p_qepRegs->QPOSILAT;
+        p_encoder->indexTheta   = p_encoder->thetaMechScaler * p_qepRegs->QPOSILAT;
         // Toggle index
-        p_encoder->indexToggle = !p_encoder->indexToggle;
+        p_encoder->indexToggle  = !p_encoder->indexToggle;
         // Clear flag
-        p_qepRegs->QCLR.all = EQEP_INT_INDEX_EVNT_LATCH;
+        p_qepRegs->QCLR.all     = EQEP_INT_INDEX_EVNT_LATCH;
     }
 }
 

@@ -25,14 +25,14 @@ typedef struct __SpeedEst__
 
     // Speed merge
     float32_t alpha;     // Speed merge coefficient
-    float32_t refSpeed;  // [rad/s] Merged of low speed and high speed estimation
+    float32_t speedRef;  // [rad/s] Merged of low speed and high speed estimation
 
     // Low-pass filter
     LpfStruct lpf;
 
     // Output speeds
-    float32_t mechSpeed; // [rad/s]
-    float32_t elecSpeed; // [rad/s]
+    float32_t speedMech; // [rad/s]
+    float32_t speedElec; // [rad/s]
 
     // Utility variables
     float32_t theta[2]; // [pu]
@@ -48,17 +48,17 @@ typedef struct __Encoder__
 
     const uint8_t       polePairs;    // Number of pole pairs of the motor
     // Scalers
-    const float32_t     mechScaler; // [pu/register]
+    const float32_t     thetaMechScaler; // [pu/register]
     // Angles
     float32_t           thetaElec; // [pu]
     float32_t           thetaMech[2]; // [pu]
     bool                thetaDir; //0 = CCW/reverse, 1 = CW/forward
     bool                thetaNew; // New sample available?
     // Indexed angles
-    bool                isIndexCompensated;   // Is index compensation activated
-    float32_t           indexAngle;       // Index mech angle
-    float32_t           indexedMechAngle; // Mech angle relative to the index [pu]
-    float32_t           absoluteAngle; // [turns]
+    bool                indexCompensated;   // Is index compensation activated
+    float32_t           indexTheta;       // Index mech angle
+    float32_t           indexedThetaMech; // Mech angle relative to the index [pu]
+    float32_t           thetaAbsolute; // [turns]
 
     // Speed estimation structure
     SpeedEst            speedEst;
