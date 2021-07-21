@@ -86,11 +86,11 @@ typedef struct __MOTOR_ACQUISITIONS__
     float32_t ia;   // [A]
     float32_t ib;   // [A]
     float32_t ic;   // [A]
-    float32_t vmax; // [V]
+//    float32_t vmax; // [V]
     float32_t imax; // [A]
     LpfStruct vBusLpf;
     // ADC conversion done
-    bool measNew;
+//    bool measNew;
 } MOTOR_ACQ;
 
 typedef struct __FOC__
@@ -190,9 +190,9 @@ typedef struct __FOC__
 //    PD_controller posPd;
 
     // Phase measured voltages
-    float32_t phaseAVolt;   // [V]
-    float32_t phaseBVolt;   // [V]
-    float32_t phaseCVolt;   // [V]
+//    float32_t phaseAVolt;   // [V]
+//    float32_t phaseBVolt;   // [V]
+//    float32_t phaseCVolt;   // [V]
 
     // Q-axis resistance estimation
     float32_t resistanceEst;    // [Ohm]
@@ -203,12 +203,12 @@ typedef struct __FOC__
     Anticoagging acog;
 
     // Auxiliary ADC voltage
-    float32_t auxAdc;   // [V]
+//    float32_t auxAdc;   // [V]
 
-    // PWM result registers
-    volatile uint16_t *pwmCompA;
-    volatile uint16_t *pwmCompB;
-    volatile uint16_t *pwmCompC;
+//    // PWM result registers
+//    volatile uint16_t *pwmCompA;
+//    volatile uint16_t *pwmCompB;
+//    volatile uint16_t *pwmCompC;
 
     // ADC interrupt flag register
     volatile union ADCINTFLG_REG *adcIntFlag;

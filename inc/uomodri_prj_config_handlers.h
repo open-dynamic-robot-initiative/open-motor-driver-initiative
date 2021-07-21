@@ -16,19 +16,21 @@
 
 extern __interrupt void adc_isrMotor1(void);
 extern __interrupt void adc_isrMotor2(void);
-extern __interrupt void pwm_isrMotor1(void);
-extern __interrupt void pwm_isrMotor2(void);
+//extern __interrupt void pwm_isrMotor1(void);
+//extern __interrupt void pwm_isrMotor2(void);
 extern __interrupt void gpio_isrFault1(void);
 extern __interrupt void gpio_isrFault2(void);
+
+extern float32_t pdSat;
 
 static const IT_TypeDef InterruptList[] =
 {
  {.motorID = MOTOR_1,   .intNum = MOTOR1_IA_INT_CH, .intPeriphBase = MOTOR12_IVA_ADC_ADDR,  .intPeriphSrc = MOTOR1_IA_INT_NUM,  .intCpuGroup = INTERRUPT_CPU_INT10, .intAckGroup = INTERRUPT_ACK_GROUP10,   .handler = &adc_isrMotor1},
  {.motorID = MOTOR_2,   .intNum = MOTOR2_IA_INT_CH, .intPeriphBase = MOTOR12_IVA_ADC_ADDR,  .intPeriphSrc = MOTOR2_IA_INT_NUM,  .intCpuGroup = INTERRUPT_CPU_INT10, .intAckGroup = INTERRUPT_ACK_GROUP10,   .handler = &adc_isrMotor2},
- {.motorID = MOTOR_1,   .intNum = INT_EPWM1,        .intPeriphBase = MOTOR1_PWM1_BASE,                                          .intCpuGroup = INTERRUPT_CPU_INT3,  .intAckGroup = INTERRUPT_ACK_GROUP3,    .handler = &pwm_isrMotor1},
- {.motorID = MOTOR_2,   .intNum = INT_EPWM4,        .intPeriphBase = MOTOR2_PWM1_BASE,                                          .intCpuGroup = INTERRUPT_CPU_INT3,  .intAckGroup = INTERRUPT_ACK_GROUP3,    .handler = &pwm_isrMotor2},
+// {.motorID = MOTOR_1,   .intNum = INT_EPWM1,        .intPeriphBase = MOTOR1_PWM1_BASE,                                          .intCpuGroup = INTERRUPT_CPU_INT3,  .intAckGroup = INTERRUPT_ACK_GROUP3,    .handler = &pwm_isrMotor1},
+// {.motorID = MOTOR_2,   .intNum = INT_EPWM4,        .intPeriphBase = MOTOR2_PWM1_BASE,                                          .intCpuGroup = INTERRUPT_CPU_INT3,  .intAckGroup = INTERRUPT_ACK_GROUP3,    .handler = &pwm_isrMotor2},
  {.motorID = MOTOR_1,   .intNum = INT_XINT1,                                                                                    .intCpuGroup = INTERRUPT_CPU_INT1,  .intAckGroup = INTERRUPT_ACK_GROUP1,    .handler = &gpio_isrFault1},
- {.motorID = MOTOR_2,   .intNum = INT_XINT2,                                                                                    .intCpuGroup = INTERRUPT_CPU_INT1,  .intAckGroup = INTERRUPT_ACK_GROUP1,    .handler = &gpio_isrFault2},
+ //{.motorID = MOTOR_2,   .intNum = INT_XINT2,                                                                                    .intCpuGroup = INTERRUPT_CPU_INT1,  .intAckGroup = INTERRUPT_ACK_GROUP1,    .handler = &gpio_isrFault2},
  // END OF ARRAY
  {.intNum = 0xFFFFFFFF},
 };
@@ -176,9 +178,9 @@ static FOC motor_foc[] =
                    .iaMeasReg       = (volatile int16_t *)(MOTOR1_IA_ADC_PPB_RESULT_ADDR),
                    .ibMeasReg       = (volatile int16_t *)(MOTOR1_IB_ADC_PPB_RESULT_ADDR),
                    .icMeasReg       = (volatile int16_t *)(MOTOR1_IC_ADC_PPB_RESULT_ADDR),
-                   .va = 0.0, .vb = 0.0, .vc = 0.0, .vmax = 0.0, .vbus = 0.0,
+                   .va = 0.0, .vb = 0.0, .vc = 0.0, .vbus = 0.0, //.vmax = 0.0,
                    .ia = 0.0, .ib = 0.0, .ic = 0.0, .imax = MOTOR12_IMAX,
-                   .measNew         = false,
+//                   .measNew         = false,
                    .vBusLpf         = {.a               = MOTOR12_VBUS_LPF_ALPHA,
                                        .one_minus_a     = MOTOR12_VBUS_LPF_ONE_M_ALPHA},
   },
@@ -188,7 +190,7 @@ static FOC motor_foc[] =
                    .thetaMech       = {0.0, 0.0},
                    .thetaElec       = 0.0,
                    .thetaDir        = 0,
-                   .thetaNew        = false,
+//                   .thetaNew        = false,
                    .thetaMechScaler = (float32_t)(MOTOR1_ENC_RESOLUTION_SCALE),
                    .indexCompensated= false,
                    .indexTheta      = 0.0,
@@ -198,8 +200,8 @@ static FOC motor_foc[] =
                    .indexDetected   = false,
                    .indexToggle     = false,
                    .rollOverFlag    = false,
-                   .speedEst        = {.highSpeedScaler = MOTOR1_ENC_HIGH_SPEED_SCALE,
-                                       .lowSpeedScaler  = MOTOR1_ENC_LOW_SPEED_SCALE,
+                   .speedEst        = {.speedHighScaler = MOTOR1_ENC_SPEED_HIGH_SCALE,
+                                       .speedLowScaler  = MOTOR1_ENC_SPEED_LOW_SCALE,
                                        .speedMech       = PWM_FREQ,
                                        .speedRef        = MOTOR1_ENC_SPEED_CUTOFF_FREQ,
                                        .lpf             = {.a           = MOTOR1_ENC_SPEED_LPF_ALPHA,
@@ -220,7 +222,7 @@ static FOC motor_foc[] =
                    .integral        = 0.0,
                    .ff              = 0.0,
                    .out             = 0.0,
-                   .sat             = ((float32_t *)(&motor_foc[MOTOR_1].motor_acq.vmax)),
+                   .sat             = ((float32_t *)(&motor_foc[MOTOR_1].motor_acq.vbus)),
   },
   .piIq         = {.err             = 0.0,
                    .kp              = MOTOR1_IQ_REGULATOR_KP_COEF,
@@ -228,7 +230,7 @@ static FOC motor_foc[] =
                    .integral        = 0.0,
                    .ff              = 0.0,
                    .out             = 0.0,
-                   .sat             = ((float32_t *)(&motor_foc[MOTOR_1].motor_acq.vmax)),
+                   .sat             = ((float32_t *)(&motor_foc[MOTOR_1].motor_acq.vbus)),
   },
   .pdPos        = {.err             = 0.0,
                    .vErr            = 0.0,
@@ -239,7 +241,7 @@ static FOC motor_foc[] =
                    .derivative      = 0.0,
                    .ff              = 0.0,
                    .out             = 0.0,
-                   .sat             = NULL,
+                   .sat             = ((float32_t *)(&pdSat)),
   },
   .idRef        = 0.0,
   .iqRef        = 0.0,
@@ -264,10 +266,12 @@ static FOC motor_foc[] =
   .ualpha       = 0.0,
   .ubeta        = 0.0,
 
-  .auxAdc = 0.0, .phaseAVolt = 0.0, .phaseBVolt = 0.0, .phaseCVolt = 0.0, .resistanceEst = 0.0,
-  .pwmCompA = (volatile uint16_t *)(MOTOR1_PWM1_CMD_ADDR),
-  .pwmCompB = (volatile uint16_t *)(MOTOR1_PWM2_CMD_ADDR),
-  .pwmCompC = (volatile uint16_t *)(MOTOR1_PWM3_CMD_ADDR),
+//  .auxAdc = 0.0,
+//  .phaseAVolt = 0.0, .phaseBVolt = 0.0, .phaseCVolt = 0.0,
+  .resistanceEst = 0.0,
+//  .pwmCompA = (volatile uint16_t *)(MOTOR1_PWM1_CMD_ADDR),
+//  .pwmCompB = (volatile uint16_t *)(MOTOR1_PWM2_CMD_ADDR),
+//  .pwmCompC = (volatile uint16_t *)(MOTOR1_PWM3_CMD_ADDR),
 //  .Rs = (float32_t *)(&motor_params[MOTOR_1].Rs),
 //  .Ld = (float32_t *)(&motor_params[MOTOR_1].Ld),
 //  .Lq = (float32_t *)(&motor_params[MOTOR_1].Lq),
@@ -290,9 +294,9 @@ static FOC motor_foc[] =
                    .iaMeasReg       = (volatile int16_t *)(MOTOR2_IA_ADC_PPB_RESULT_ADDR),
                    .ibMeasReg       = (volatile int16_t *)(MOTOR2_IB_ADC_PPB_RESULT_ADDR),
                    .icMeasReg       = (volatile int16_t *)(MOTOR2_IC_ADC_PPB_RESULT_ADDR),
-                   .va = 0.0, .vb = 0.0, .vc = 0.0, .vmax = 0.0, .vbus = 0.0,
+                   .va = 0.0, .vb = 0.0, .vc = 0.0, .vbus = 0.0,//.vmax = 0.0,
                    .ia = 0.0, .ib = 0.0, .ic = 0.0, .imax = MOTOR12_IMAX,
-                   .measNew         = false,
+//                   .measNew         = false,
                    .vBusLpf         = {.a               = MOTOR12_VBUS_LPF_ALPHA,
                                        .one_minus_a     = MOTOR12_VBUS_LPF_ONE_M_ALPHA},
   },
@@ -302,7 +306,7 @@ static FOC motor_foc[] =
                    .thetaMech       = {0.0, 0.0},
                    .thetaElec       = 0.0,
                    .thetaDir        = 0,
-                   .thetaNew        = false,
+//                   .thetaNew        = false,
                    .thetaMechScaler = (float32_t)(MOTOR2_ENC_RESOLUTION_SCALE),
                    .indexCompensated= false,
                    .indexTheta      = 0.0,
@@ -312,8 +316,8 @@ static FOC motor_foc[] =
                    .indexDetected   = false,
                    .indexToggle     = false,
                    .rollOverFlag    = false,
-                   .speedEst        = {.highSpeedScaler = MOTOR2_ENC_HIGH_SPEED_SCALE,
-                                       .lowSpeedScaler  = MOTOR2_ENC_LOW_SPEED_SCALE,
+                   .speedEst        = {.speedHighScaler = MOTOR2_ENC_SPEED_HIGH_SCALE,
+                                       .speedLowScaler  = MOTOR2_ENC_SPEED_LOW_SCALE,
                                        .speedMech       = PWM_FREQ,
                                        .speedRef        = MOTOR2_ENC_SPEED_CUTOFF_FREQ,
                                        .lpf             = {.a           = MOTOR2_ENC_SPEED_LPF_ALPHA,
@@ -353,7 +357,7 @@ static FOC motor_foc[] =
                    .derivative      = 0.0,
                    .ff              = 0.0,
                    .out             = 0.0,
-                   .sat             = NULL,
+                   .sat             = ((float32_t *)(&pdSat)),
   },
   // Initialize duty cycle saturation
   .dtcMax       = MOTOR2_DUTY_CYCLE_MAX,
@@ -376,11 +380,12 @@ static FOC motor_foc[] =
   .ualpha       = 0.0,
   .ubeta        = 0.0,
 
-  .auxAdc = 0.0, .phaseAVolt = 0.0, .phaseBVolt = 0.0, .phaseCVolt = 0.0, .resistanceEst = 0.0,
+//  .auxAdc = 0.0, .phaseAVolt = 0.0, .phaseBVolt = 0.0, .phaseCVolt = 0.0,
+  .resistanceEst = 0.0,
 
-  .pwmCompA = (volatile uint16_t *)(MOTOR2_PWM1_CMD_ADDR),
-  .pwmCompB = (volatile uint16_t *)(MOTOR2_PWM2_CMD_ADDR),
-  .pwmCompC = (volatile uint16_t *)(MOTOR2_PWM3_CMD_ADDR),
+//  .pwmCompA = (volatile uint16_t *)(MOTOR2_PWM1_CMD_ADDR),
+//  .pwmCompB = (volatile uint16_t *)(MOTOR2_PWM2_CMD_ADDR),
+//  .pwmCompC = (volatile uint16_t *)(MOTOR2_PWM3_CMD_ADDR),
 //  .Rs = (float32_t *)(&motor_params[MOTOR_2].Rs),
 //  .Ld = (float32_t *)(&motor_params[MOTOR_2].Ld),
 //  .Lq = (float32_t *)(&motor_params[MOTOR_2].Lq),

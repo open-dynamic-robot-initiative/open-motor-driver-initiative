@@ -110,13 +110,14 @@ typedef struct _ePWM_Interrupts_Event_TypeDef_
 typedef struct _ePWM_Cfg_TypeDef_
 {
     const uint32_t epwmBase;                              /*!< ePWM peripheral address. */
-    const ePWM_TB_TypeDef* epwmTimeBase;
-    const ePWM_CC_TypeDef* epwmCaptureCompare;
-    const ePWM_AQ_TypeDef* epwmActionQualifier;
-    const ePWM_DB_TypeDef* epwmDeadband;
-    const ePWM_PC_TypeDef* epwmProgChopper;
-    const ePWM_ET_TypeDef* epwmAdcSocEventTrigger;
-    const ePWM_IT_TypeDef* epwmInterruptsEvent;
+    const ePWM_TB_TypeDef*  epwmTimeBase;
+    const ePWM_CC_TypeDef*  epwmCaptureCompare;
+    const ePWM_AQ_TypeDef*  epwmActionQualifier;
+    const ePWM_DB_TypeDef*  epwmDeadband;
+    const ePWM_PC_TypeDef*  epwmProgChopper;
+    const ePWM_ET_TypeDef*  epwmAdcSocEventTrigger;
+    const ePWM_IT_TypeDef*  epwmInterruptsEvent;
+    const uint32_t          epwmAdcSocSrcExtern;
 } ePWM_TypeDef;
 
 /**
@@ -128,7 +129,8 @@ typedef struct _eQEP_Cfg_TypeDef_
     uint32_t eqepBase;                              /*!< eQEP peripheral address. */
     uint32_t eqepMaxResolution;
     uint32_t eqepUnitTimerPeriod;
-    uint16_t config;
+    uint16_t eqepConfig;
+    EQEP_StrobeSource eqepStrobeSrc;
 } eQEP_TypeDef;
 
 /**

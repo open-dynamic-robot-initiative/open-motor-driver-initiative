@@ -172,14 +172,16 @@ static const eQEP_TypeDef QepCfgList[] =
  {
   .eqepBase             = MOTOR1_QEP_BASE,
   .eqepMaxResolution    = (MOTOR1_ENC_RESOLUTION_SCALE - 1),
-  .eqepUnitTimerPeriod  = (MOTOR1_ENC_HIGH_SPEED_SAMPLING_TICKS - 1),
-  .config               = (EQEP_CONFIG_2X_RESOLUTION | EQEP_CONFIG_QUADRATURE | MOTOR1_QEP_SWAP)
+  .eqepUnitTimerPeriod  = (MOTOR1_ENC_SPEED_HIGH_SAMPLING_TICKS - 1),
+  .eqepConfig           = (EQEP_CONFIG_2X_RESOLUTION | EQEP_CONFIG_QUADRATURE | MOTOR1_QEP_SWAP),
+  .eqepStrobeSrc        = EQEP_STROBE_OR_ADCSOCA,
  },
  {
   .eqepBase             = MOTOR2_QEP_BASE,
   .eqepMaxResolution    = (MOTOR2_ENC_RESOLUTION_SCALE - 1),
-  .eqepUnitTimerPeriod  = (MOTOR2_ENC_HIGH_SPEED_SAMPLING_TICKS - 1),
-  .config               = (EQEP_CONFIG_2X_RESOLUTION | EQEP_CONFIG_QUADRATURE | MOTOR2_QEP_SWAP)
+  .eqepUnitTimerPeriod  = (MOTOR2_ENC_SPEED_HIGH_SAMPLING_TICKS - 1),
+  .eqepConfig           = (EQEP_CONFIG_2X_RESOLUTION | EQEP_CONFIG_QUADRATURE | MOTOR2_QEP_SWAP),
+  .eqepStrobeSrc        = EQEP_STROBE_OR_ADCSOCB,
  },
  // END OF ARRAY
  {.eqepBase = 0xFFFFFFFF},
@@ -294,8 +296,8 @@ static const ePWM_DB_TypeDef PwmDeadBandCfgList[] =
  */
 static const ePWM_ET_TypeDef PwmAdcSocEventTriggerCfgList[] =
 {
- {.epwmBase = MOTOR1_PWM1_BASE, .adcSOCEvtCount = 1, .adcSOCType = EPWM_SOC_A, .adcSOCSource = EPWM_SOC_TBCTR_PERIOD},
- {.epwmBase = MOTOR1_PWM1_BASE, .adcSOCEvtCount = 1, .adcSOCType = EPWM_SOC_B, .adcSOCSource = EPWM_SOC_TBCTR_ZERO},
+ {.epwmBase = MOTOR1_PWM1_BASE, .adcSOCEvtCount = 1, .adcSOCType = EPWM_SOC_B, .adcSOCSource = EPWM_SOC_TBCTR_PERIOD},
+ {.epwmBase = MOTOR1_PWM1_BASE, .adcSOCEvtCount = 1, .adcSOCType = EPWM_SOC_A, .adcSOCSource = EPWM_SOC_TBCTR_ZERO},
  {.epwmBase = MOTOR2_PWM1_BASE, .adcSOCEvtCount = 1, .adcSOCType = EPWM_SOC_A, .adcSOCSource = EPWM_SOC_TBCTR_PERIOD},
  {.epwmBase = MOTOR2_PWM1_BASE, .adcSOCEvtCount = 1, .adcSOCType = EPWM_SOC_B, .adcSOCSource = EPWM_SOC_TBCTR_ZERO},
  // END OF ARRAY
@@ -325,7 +327,8 @@ static const ePWM_TypeDef PwmCfgList[] =
   .epwmDeadband             = &PwmDeadBandCfgList[0],
   .epwmProgChopper          = NULL,
   .epwmAdcSocEventTrigger   = &PwmAdcSocEventTriggerCfgList[0],
-  .epwmInterruptsEvent      = &PwmInterruptsEventCfgList[0]
+  .epwmInterruptsEvent      = NULL,//&PwmInterruptsEventCfgList[0],
+  .epwmAdcSocSrcExtern      = SYSCTL_ADCSOC_SRC_PWM1SOCA,
  },
  {.epwmBase                 = MOTOR1_PWM2_BASE,
   .epwmTimeBase             = &PwmTimeBaseCfgList[1],
@@ -334,7 +337,8 @@ static const ePWM_TypeDef PwmCfgList[] =
   .epwmDeadband             = &PwmDeadBandCfgList[1],
   .epwmProgChopper          = NULL,
   .epwmAdcSocEventTrigger   = NULL,
-  .epwmInterruptsEvent      = NULL
+  .epwmInterruptsEvent      = NULL,
+  .epwmAdcSocSrcExtern      = 0,
  },
  {.epwmBase                 = MOTOR1_PWM3_BASE,
   .epwmTimeBase             = &PwmTimeBaseCfgList[2],
@@ -343,7 +347,8 @@ static const ePWM_TypeDef PwmCfgList[] =
   .epwmDeadband             = &PwmDeadBandCfgList[2],
   .epwmProgChopper          = NULL,
   .epwmAdcSocEventTrigger   = NULL,
-  .epwmInterruptsEvent      = NULL
+  .epwmInterruptsEvent      = NULL,
+  .epwmAdcSocSrcExtern      = 0,
  },
  {.epwmBase                 = MOTOR2_PWM1_BASE,
   .epwmTimeBase             = &PwmTimeBaseCfgList[3],
@@ -352,7 +357,8 @@ static const ePWM_TypeDef PwmCfgList[] =
   .epwmDeadband             = &PwmDeadBandCfgList[3],
   .epwmProgChopper          = NULL,
   .epwmAdcSocEventTrigger   = &PwmAdcSocEventTriggerCfgList[2],
-  .epwmInterruptsEvent      = &PwmInterruptsEventCfgList[1]
+  .epwmInterruptsEvent      = NULL,//&PwmInterruptsEventCfgList[1],
+  .epwmAdcSocSrcExtern      = SYSCTL_ADCSOC_SRC_PWM4SOCB,
  },
  {.epwmBase                 = MOTOR2_PWM2_BASE,
   .epwmTimeBase             = &PwmTimeBaseCfgList[4],
@@ -361,7 +367,8 @@ static const ePWM_TypeDef PwmCfgList[] =
   .epwmDeadband             = &PwmDeadBandCfgList[4],
   .epwmProgChopper          = NULL,
   .epwmAdcSocEventTrigger   = NULL,
-  .epwmInterruptsEvent      = NULL
+  .epwmInterruptsEvent      = NULL,
+  .epwmAdcSocSrcExtern      = 0,
  },
  {.epwmBase                 = MOTOR2_PWM3_BASE,
   .epwmTimeBase             = &PwmTimeBaseCfgList[5],
@@ -370,7 +377,8 @@ static const ePWM_TypeDef PwmCfgList[] =
   .epwmDeadband             = &PwmDeadBandCfgList[5],
   .epwmProgChopper          = NULL,
   .epwmAdcSocEventTrigger   = NULL,
-  .epwmInterruptsEvent      = NULL
+  .epwmInterruptsEvent      = NULL,
+  .epwmAdcSocSrcExtern      = 0,
  },
  // END OF ARRAY
  {.epwmBase = 0xFFFFFFFF},

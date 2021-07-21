@@ -30,7 +30,7 @@ inline void FOC_getMeasures(MOTOR_ACQ* p_acq)
     p_acq->vb       = (float32_t)(*p_acq->vbMeasReg)    * ADC_VOLTAGE_SCALE;
     p_acq->vc       = (float32_t)(*p_acq->vcMeasReg)    * ADC_VOLTAGE_SCALE;
     // Get the latest Voltage supply value in Volt (minimum is one to avoid dividing by zero later)
-    float32_t vbus  = fmaxf(((float32_t)(*p_acq->vBusMeasReg) * ADC_VOLTAGE_SCALE), 1.0f);
+    float32_t vbus  = __fmax(((float32_t)(*p_acq->vBusMeasReg) * ADC_VOLTAGE_SCALE), 1.0f);
 #if (UOMODRI_VBUS_FLT == 1)
         LPF_FILTER_1(p_acq->vBusLpf, p_acq->vbus, vbus);
 #elif (UOMODRI_VBUS_FLT == 2)
@@ -38,8 +38,8 @@ inline void FOC_getMeasures(MOTOR_ACQ* p_acq)
 #else
         p_acq->vbus = vbus;
 #endif
-        p_acq->vmax = MOTOR12_OVERMODULATION * p_acq->vbus * (MOTOR1_DUTY_CYCLE_MAX - MOTOR1_DUTY_CYCLE_MIN) * FM_1DIVSQRT3;
-    p_acq->measNew  = true;
+//        p_acq->vmax = MOTOR12_OVERMODULATION * p_acq->vbus * (MOTOR1_DUTY_CYCLE_MAX - MOTOR1_DUTY_CYCLE_MIN) * FM_1DIVSQRT3;
+//    p_acq->measNew  = true;
 }
 
 /**
@@ -80,7 +80,7 @@ inline void FOC_resistanceEstimation(FOC* p_foc)
 inline void FOC_control(FOC* p_foc)
 {
     // Clarke transform
-    p_foc->ialpha       = ((2.0f * p_foc->motor_acq.ia) - (p_foc->motor_acq.ib + p_foc->motor_acq.ic)) * FM_1DIV3;
+    p_foc->ialpha       = ((2.0f * p_foc->motor_acq.ia) - p_foc->motor_acq.ib - p_foc->motor_acq.ic) * FM_1DIV3;
     p_foc->ibeta        = (p_foc->motor_acq.ib - p_foc->motor_acq.ic) * FM_1DIVSQRT3;
     // Compute sine and cosine from the electrical angle
     p_foc->sinTheta     = __sinpuf32(p_foc->motor_enc.thetaElec);
@@ -129,16 +129,24 @@ inline void FOC_control(FOC* p_foc)
     float32_t uOffset   = 0.5f * (FMIN3(p_foc->ua, p_foc->ub, p_foc->uc) + FMAX3(p_foc->ua, p_foc->ub, p_foc->uc));
 //    float32_t uMidPoint = 0.5f * (MOTOR1_DUTY_CYCLE_MAX - MOTOR1_DUTY_CYCLE_MIN);
     // Compute duty cycles
-    p_foc->dtcPhaseA    = FMINMAX((((p_foc->ua - uOffset) / p_foc->motor_acq.vbus) + 0.5f), p_foc->dtcMax, p_foc->dtcMin);
-//    p_foc->ducya = fminf(fmaxf((p_foc->ua - uOffset) / *p_foc->uBus, -p_foc->dutyCycleSat), p_foc->dutyCycleSat);
-    p_foc->dtcPhaseB    = FMINMAX((((p_foc->ub - uOffset) / p_foc->motor_acq.vbus) + 0.5f), p_foc->dtcMax, p_foc->dtcMin);
-//    p_foc->ducyb = fminf(fmaxf((p_foc->ub - uOffset) / *p_foc->uBus, -p_foc->dutyCycleSat), p_foc->dutyCycleSat);
-    p_foc->dtcPhaseC    = FMINMAX((((p_foc->uc - uOffset) / p_foc->motor_acq.vbus) + 0.5f), p_foc->dtcMax, p_foc->dtcMin);
+    p_foc->dtcPhaseA = FMINMAX(((p_foc->ua - uOffset) / p_foc->motor_acq.vbus), p_foc->dtcMax, p_foc->dtcMin) + 0.5f;
+    p_foc->dtcPhaseB = FMINMAX(((p_foc->ub - uOffset) / p_foc->motor_acq.vbus), p_foc->dtcMax, p_foc->dtcMin) + 0.5f;
+    p_foc->dtcPhaseC = FMINMAX(((p_foc->uc - uOffset) / p_foc->motor_acq.vbus), p_foc->dtcMax, p_foc->dtcMin) + 0.5f;
+
+//    p_foc->dtcPhaseA = __fmin(__fmax((p_foc->ua - uOffset) / p_foc->motor_acq.vbus, p_foc->dtcMin), p_foc->dtcMax);
+//    p_foc->dtcPhaseB = __fmin(__fmax((p_foc->ub - uOffset) / p_foc->motor_acq.vbus, p_foc->dtcMin), p_foc->dtcMax);
+//    p_foc->dtcPhaseC = __fmin(__fmax((p_foc->uc - uOffset) / p_foc->motor_acq.vbus, p_foc->dtcMin), p_foc->dtcMax);
+
+//    p_foc->dtcPhaseA    = FMINMAX((((p_foc->ua - uOffset) / p_foc->motor_acq.vbus) + 0.5f), p_foc->dtcMax, p_foc->dtcMin);
+////    p_foc->ducya = fminf(fmaxf((p_foc->ua - uOffset) / *p_foc->uBus, -p_foc->dutyCycleSat), p_foc->dutyCycleSat);
+//    p_foc->dtcPhaseB    = FMINMAX((((p_foc->ub - uOffset) / p_foc->motor_acq.vbus) + 0.5f), p_foc->dtcMax, p_foc->dtcMin);
+////    p_foc->ducyb = fminf(fmaxf((p_foc->ub - uOffset) / *p_foc->uBus, -p_foc->dutyCycleSat), p_foc->dutyCycleSat);
+//    p_foc->dtcPhaseC    = FMINMAX((((p_foc->uc - uOffset) / p_foc->motor_acq.vbus) + 0.5f), p_foc->dtcMax, p_foc->dtcMin);
 //    p_foc->ducyc = fminf(fmaxf((p_foc->uc - uOffset) / *p_foc->uBus, -p_foc->dutyCycleSat), p_foc->dutyCycleSat);
     // Compute compare registers:
-    *(p_foc->pwmCompA)  = p_foc->dtcPhaseA * PWM_HALF_TBPRD;
-    *(p_foc->pwmCompB)  = p_foc->dtcPhaseB * PWM_HALF_TBPRD;
-    *(p_foc->pwmCompC)  = p_foc->dtcPhaseC * PWM_HALF_TBPRD;
+//    *(p_foc->pwmCompA)  = p_foc->dtcPhaseA * PWM_HALF_TBPRD;
+//    *(p_foc->pwmCompB)  = p_foc->dtcPhaseB * PWM_HALF_TBPRD;
+//    *(p_foc->pwmCompC)  = p_foc->dtcPhaseC * PWM_HALF_TBPRD;
 
 //    *(p_foc->pwmCompA) = fminf(fmaxf((.5f * (p_foc->ua - uOffset) * MOTOR12_OVERMODULATION / p_foc->motor_acq.vmax + uMidPoint), MOTOR1_DUTY_CYCLE_MIN), MOTOR1_DUTY_CYCLE_MAX);
 //    *(p_foc->pwmCompB) = fminf(fmaxf((.5f * (p_foc->ub - uOffset) * MOTOR12_OVERMODULATION / p_foc->motor_acq.vmax + uMidPoint), MOTOR1_DUTY_CYCLE_MIN), MOTOR1_DUTY_CYCLE_MAX);
@@ -163,7 +171,7 @@ inline float32_t FOC_pi(PID_CONTROLLER* p_pid)
     //p_pid->integral     = FMINMAX(p_pid->integral, *p_pid->sat, -(*p_pid->sat)); //fmaxf(fminf(p_pid->integral, *p_pid->sat), -(*p_pid->sat));
     // Compute PID and clamp output.
     p_pid->out          = (p_pid->kp * p_pid->err) + p_pid->integral + p_pid->ff;
-    p_pid->out          = FMINMAX(p_pid->out, (0.5 * (*p_pid->sat)), (-0.5 * (*p_pid->sat))); //fmaxf(fminf(p_pid->out, *p_pid->sat), -(*p_pid->sat));
+    p_pid->out          = FMINMAX(p_pid->out, (0.4f * (*p_pid->sat)), (-0.4f * (*p_pid->sat))); //fmaxf(fminf(p_pid->out, *p_pid->sat), -(*p_pid->sat));
     return(p_pid->out);
 }
 
@@ -226,7 +234,7 @@ void FOC_resetStruct(FOC* p_foc)
     p_foc->motor_enc.thetaMech[OLD]         = 0.0;
     p_foc->motor_enc.thetaElec              = 0.0;
     p_foc->motor_enc.thetaDir               = false;
-    p_foc->motor_enc.thetaNew               = false;
+//    p_foc->motor_enc.thetaNew               = false;
 
     p_foc->motor_enc.indexCompensated       = false;
     p_foc->motor_enc.indexTheta             = 0.0;
@@ -238,8 +246,8 @@ void FOC_resetStruct(FOC* p_foc)
     p_foc->motor_enc.speedEst.speedRef      = 0.0;
     p_foc->motor_enc.speedEst.theta[NEW]    = 0.0;
     p_foc->motor_enc.speedEst.theta[OLD]    = 0.0;
-    p_foc->motor_enc.speedEst.lowSpeed      = 0.0;
-    p_foc->motor_enc.speedEst.highSpeed     = 0.0;
+    p_foc->motor_enc.speedEst.speedLow      = 0.0;
+    p_foc->motor_enc.speedEst.speedHigh     = 0.0;
     p_foc->motor_enc.speedEst.speedMech     = 0.0;
     p_foc->motor_enc.speedEst.speedElec     = 0.0;
 
@@ -266,9 +274,9 @@ void FOC_resetStruct(FOC* p_foc)
     p_foc->uc                               = 0.0;
 
     // Reset resistance estimation
-    p_foc->phaseAVolt                       = 0.0;
-    p_foc->phaseBVolt                       = 0.0;
-    p_foc->phaseCVolt                       = 0.0;
+//    p_foc->phaseAVolt                       = 0.0;
+//    p_foc->phaseBVolt                       = 0.0;
+//    p_foc->phaseCVolt                       = 0.0;
 
     p_foc->resistanceEst                    = 0.0;
 }

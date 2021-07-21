@@ -58,9 +58,25 @@ void MOTOR_command(MOTOR_STRUCT* p_motor, float32_t CmdChA, float32_t CmdChB, fl
 //            cmdVal[i] = 0;
 //    }
 
-    *(p_motor->pwmChAReg) = CmdChA;
-    *(p_motor->pwmChBReg) = CmdChB;
-    *(p_motor->pwmChCReg) = CmdChC;
+    *(p_motor->pwmChAReg) = (uint16_t)(CmdChA * PWM_HALF_TBPRD);
+    *(p_motor->pwmChBReg) = (uint16_t)(CmdChB * PWM_HALF_TBPRD);
+    *(p_motor->pwmChCReg) = (uint16_t)(CmdChC * PWM_HALF_TBPRD);
+}
+
+void MOTOR_interruptClearFlags(void)
+{
+    // Clear the interrupt overflow flag
+    ADC_clearInterruptOverflowStatus(InterruptList[ADC_IT_MOTOR_1].intPeriphBase, (ADC_IntNumber)InterruptList[ADC_IT_MOTOR_1].intPeriphSrc);
+    ADC_clearInterruptStatus(InterruptList[ADC_IT_MOTOR_1].intPeriphBase, (ADC_IntNumber)InterruptList[ADC_IT_MOTOR_1].intPeriphSrc);
+    // Clear the interrupt overflow flag
+    ADC_clearInterruptOverflowStatus(InterruptList[ADC_IT_MOTOR_2].intPeriphBase, (ADC_IntNumber)InterruptList[ADC_IT_MOTOR_2].intPeriphSrc);
+    ADC_clearInterruptStatus(InterruptList[ADC_IT_MOTOR_2].intPeriphBase, (ADC_IntNumber)InterruptList[ADC_IT_MOTOR_2].intPeriphSrc);
+    // Clear the event trigger interrupt flag
+//    EPWM_clearEventTriggerInterruptFlag(InterruptList[PWM_IT_MOTOR_1].intPeriphBase);
+//    EPWM_clearEventTriggerInterruptFlag(InterruptList[PWM_IT_MOTOR_2].intPeriphBase);
+    // Clear the interrupt flag associated to XINT1 & XINT2
+    XBAR_clearInputFlag(XBAR_INPUT_FLG_INPUT4);
+    XBAR_clearInputFlag(XBAR_INPUT_FLG_INPUT5);
 }
 
 void MOTOR_alignResetStruct(AlignRoutine* align)

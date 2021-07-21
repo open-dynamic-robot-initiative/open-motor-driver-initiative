@@ -130,6 +130,7 @@ typedef struct __MOTOR_STRUCT__
 //inline void MOTOR_getVoltage(MOTOR_MEASURES*);
 void MOTOR_command(MOTOR_STRUCT*, float32_t, float32_t, float32_t);
 void MOTOR_alignResetStruct(AlignRoutine*);
+void MOTOR_interruptClearFlags(void);
 //void ALIGN_run(AlignRoutine*);
 void MOTOR_alignRun(AlignRoutine*);
 void MOTOR_emergencyStop(void);

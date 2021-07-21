@@ -413,7 +413,8 @@ void HAL_ePWM_init(const ePWM_TypeDef* p_pwmCfg)
                     p_pwmInterruptsEvent++;
                 }
             }
-
+            if(p_pwmCfg->epwmAdcSocSrcExtern)
+                SysCtl_enableExtADCSOCSource(p_pwmCfg->epwmAdcSocSrcExtern);
             // Configure synchronization
             //        EPWM_setCountModeAfterSync(pwmbase, EPWM_COUNT_MODE_UP_AFTER_SYNC);
             //        EPWM_setSyncOutPulseMode(pwmbase, EPWM_SYNC_OUT_PULSE_ON_EPWMxSYNCIN);
@@ -440,12 +441,13 @@ void HAL_eQEP_init(const eQEP_TypeDef* p_qepCfg)
         while(qepBase != 0xFFFFFFFF)
         {
             // Configure the decoder for up-count mode, counting both on rising & falling edges (quadrature encoders)
-            EQEP_setDecoderConfig(qepBase, p_qepCfg->config);
+            EQEP_setDecoderConfig(qepBase, p_qepCfg->eqepConfig);
             // Position & watchdog counter, unit & capture timer are all unaffected by an emulation suspend.
             EQEP_setEmulationMode(qepBase, QEP_EMUL_MODE);
             // Position counter latched on a unit time out and on rising edge of index pulse.
             EQEP_setLatchMode(qepBase, QEP_LATCH_MODE);
-            //EQEP_setStrobeSource(qepBase, EQEP_STROBE_OR_ADCSOCA);
+            // Position counter strobe source define : external GPIO, ADCSOCA or ADCSOCB.
+            EQEP_setStrobeSource(qepBase, p_qepCfg->eqepStrobeSrc);
             // Position counter is reset when reaching max position (1 turn).
             EQEP_setPositionCounterConfig(qepBase, QEP_RESET_POSITION_MODE, p_qepCfg->eqepMaxResolution);
             // Set unit timer for speed measurement and enable it.

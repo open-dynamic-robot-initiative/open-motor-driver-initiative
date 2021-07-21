@@ -17,11 +17,11 @@
 typedef struct __SpeedEst__
 {
     // High speed estimation
-    float32_t highSpeedScaler;// [rad/s/pu], diff_angular * scaler = velocity
-    float32_t highSpeed;    // [rad/s]
+    float32_t speedHighScaler;// [rad/s/pu], diff_angular * scaler = velocity
+    float32_t speedHigh;    // [rad/s]
     // Low speed estimation
-    float32_t lowSpeedScaler; // [rad.register], scaler / dtRegister = velocity
-    float32_t lowSpeed;     // [rad/s]
+    float32_t speedLowScaler; // [rad.register], scaler / dtRegister = velocity
+    float32_t speedLow;     // [rad/s]
 
     // Speed merge
     float32_t alpha;     // Speed merge coefficient
@@ -53,7 +53,7 @@ typedef struct __Encoder__
     float32_t           thetaElec; // [pu]
     float32_t           thetaMech[2]; // [pu]
     bool                thetaDir; //0 = CCW/reverse, 1 = CW/forward
-    bool                thetaNew; // New sample available?
+//    bool                thetaNew; // New sample available?
     // Indexed angles
     bool                indexCompensated;   // Is index compensation activated
     float32_t           indexTheta;       // Index mech angle
@@ -70,8 +70,8 @@ typedef struct __Encoder__
 } ENCODER;
 
 inline void encoder_resetStruct(ENCODER*);
-inline void encoder_SetPosition(ENCODER*, uint32_t);
-inline void encoder_GetPosition(ENCODER*);
-inline void encoder_GetSpeed(ENCODER*);
+inline void encoder_setPosition(ENCODER*, uint32_t);
+inline void encoder_getPosition(ENCODER*);
+inline void encoder_getSpeed(ENCODER*);
 
 #endif
