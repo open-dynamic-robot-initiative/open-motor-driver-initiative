@@ -38,22 +38,57 @@
 /*********************************************************************************/
 /**                                FOC STRUCTURE                                **/
 /*********************************************************************************/
-typedef struct __PID_CONTROLLER__
+//typedef struct __PID_CONTROLLER__
+//{
+//    float32_t* in;          // pointer on the loopback current
+//    float32_t* set;         // pointer on the setpoint current
+//    float32_t err;          // Current error
+//    float32_t vErr;         // Previous error
+//    float32_t deltaT;       // Time step
+//
+//    float32_t kp;           // Proportional gain
+//    float32_t ki;           // Integral gain
+//    float32_t kd;           // Derivative gain
+//
+//    float32_t integral;     // Integral term partial computation
+//    float32_t derivative;   // Derivative term partial computation
+//    float32_t ff;           // Feed-forward term
+//    float32_t out;          // Controller output
+//    float32_t* sat;         // Controller saturation
+//} PID_CONTROLLER;
+
+typedef struct __PI_CONTROLLER__
 {
+    float32_t* in;          // pointer on the loopback current
+    float32_t* set;         // pointer on the setpoint current
     float32_t err;          // Current error
-    float32_t vErr;         // Previous error
-    float32_t deltaT;       // Time step
 
     float32_t kp;           // Proportional gain
     float32_t ki;           // Integral gain
-    float32_t kd;           // Derivative gain
 
     float32_t integral;     // Integral term partial computation
+    float32_t ff;           // Feed-forward term
+    float32_t out;          // Controller output
+    float32_t* sat;         // Controller saturation
+} PI_CONTROLLER;
+
+typedef struct __PD_CONTROLLER__
+{
+    float32_t* inTheta;     // pointer on the loopback position
+    float32_t* setTheta;    // pointer on the setpoint position
+    float32_t errTheta;     // position error
+    float32_t* inSpeed;     // pointer on the loopback speed
+    float32_t* setSpeed;    // pointer on the setpoint speed
+    float32_t errSpeed;     // speed error
+
+    float32_t kp;           // Proportional gain
+    float32_t kd;           // Derivative gain
+
     float32_t derivative;   // Derivative term partial computation
     float32_t ff;           // Feed-forward term
     float32_t out;          // Controller output
     float32_t* sat;         // Controller saturation
-} PID_CONTROLLER;
+} PD_CONTROLLER;
 
 typedef struct __MOTOR_PARAMETERS__
 {
@@ -86,7 +121,7 @@ typedef struct __MOTOR_ACQUISITIONS__
     float32_t ia;   // [A]
     float32_t ib;   // [A]
     float32_t ic;   // [A]
-//    float32_t vmax; // [V]
+    float32_t vmax; // [V]
     float32_t imax; // [A]
     LpfStruct vBusLpf;
     // ADC conversion done
@@ -97,7 +132,7 @@ typedef struct __FOC__
 {
     const MOTOR_ID      motorID;
     // Motor configuration parameters
-    const MOTOR_PARAMS  motorParams;
+    const MOTOR_PARAMS  motor_cfg;
     // Current & Voltage measures
     MOTOR_ACQ           motor_acq;
     // Encoder position & speed
@@ -132,13 +167,13 @@ typedef struct __FOC__
     float32_t           idRef;  // [A]
     float32_t           iqRef;  // [A]
     // PI controllers for current control
-    PID_CONTROLLER      piId;
-    PID_CONTROLLER      piIq;
+    PI_CONTROLLER       piId;
+    PI_CONTROLLER       piIq;
 
     //PD set point values
     float32_t           posRef; // [rpm/s]
     // PD controller for position control
-    PID_CONTROLLER      pdPos;
+    PD_CONTROLLER       pdPos;
 
     // Enable flag
     bool                enabled;
@@ -171,9 +206,9 @@ typedef struct __FOC__
 
 
     // Duty cycles
-    float32_t dtcPhaseA;    // [pu] between -0.5 and 0.5
-    float32_t dtcPhaseB;    // [pu] between -0.5 and 0.5
-    float32_t dtcPhaseC;    // [pu] between -0.5 and 0.5
+    float32_t dtc_u;    // [pu] between -0.5 and 0.5
+    float32_t dtc_v;    // [pu] between -0.5 and 0.5
+    float32_t dtc_w;    // [pu] between -0.5 and 0.5
 
 
 //    // PI controllers
@@ -242,9 +277,18 @@ inline void FOC_getMeasures(MOTOR_ACQ*);
 inline void FOC_control(FOC*);
 inline void FOC_resistanceEstimation(FOC*);
 //static inline void FOC_PID(PID_CONTROLLER*);
-inline float32_t FOC_pi(PID_CONTROLLER*);
-inline float32_t FOC_pd(PID_CONTROLLER*);
+//inline float32_t FOC_pi(PID_CONTROLLER*);
+inline float32_t FOC_pi(PI_CONTROLLER*);
+inline float32_t FOC_pd(PD_CONTROLLER*);
 void FOC_resetStruct(FOC*);
 void limit_norm(float*, float*, float);
+
+inline void FOC_clarke(FOC*);
+inline FOC_sineCosine(FOC*);
+inline FOC_park(FOC*);
+inline FOC_feedForward(FOC*);
+inline FOC_parkInv(FOC*);
+inline FOC_clarkeInv(FOC*);
+inline FOC_clarke2pwm(FOC*);
 
 #endif

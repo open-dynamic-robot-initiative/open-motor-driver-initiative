@@ -255,11 +255,11 @@ void HAL_ePWM_init(const ePWM_TypeDef* p_pwmCfg)
 #else
                 EPWM_disableGlobalLoad(pwmBase);
 #endif
-                EPWM_setTimeBasePeriod(pwmBase, PWM_TBPRD);
+                EPWM_setTimeBasePeriod(pwmBase, PWM_TIMEBASE_CNT);
                 (pwmBase == MOTOR1_PWM1_BASE) ? (EPWM_disablePhaseShiftLoad(pwmBase)) : (EPWM_enablePhaseShiftLoad(pwmBase));
                 EPWM_setPhaseShift(pwmBase, p_pwmTimeBase->phaseCount);
                 EPWM_setTimeBaseCounterMode(pwmBase, PWM_COUNTER_MODE);
-                EPWM_setTimeBaseCounter(pwmBase, PWM_TBCTR);
+                EPWM_setTimeBaseCounter(pwmBase, PWM_INITIAL_CNT_VAL);
                 EPWM_enableSyncOutPulseSource(pwmBase, p_pwmTimeBase->syncOutputMode);
                 p_pwmTimeBase++;
             }

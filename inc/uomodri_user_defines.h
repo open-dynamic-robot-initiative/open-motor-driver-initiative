@@ -41,7 +41,7 @@
 //(((x) > (y)) ? (((x) > (z)) ? (x) : (z)) : (((y) > (z)) ? (y) : (z)))
 #define FMIN3(x, y, z)                          (__fmin(__fmin((x), (y)), (z)))
 //(((x) < (y)) ? (((x) < (z)) ? (x) : (z)) : (((y) < (z)) ? (y) : (z)))
-#define FMINMAX(x, y, z)                        (__fmax(__fmin((x), (y)), (z)))
+//#define FMINMAX(x, y, z)                        (__fmax(__fmin((x), (y)), (z)))
 // 16 bits macros
 #define LSB_16(x)                               ((x) & 0xFF)
 #define MSB_16(x)                               (((x) >> 8) & 0xFF)
@@ -478,14 +478,15 @@
  */
 #define PWM_FREQ                                (40000) //[Hz]
 #define PWM_COUNTER_MODE                        EPWM_COUNTER_MODE_UP_DOWN
-#define PWM_TBPRD                               (TBCLK_FREQ / PWM_FREQ / ((PWM_COUNTER_MODE == EPWM_COUNTER_MODE_UP_DOWN) ? (2) : (1))) // PWM Period register (max value)
-#define PWM_HALF_TBPRD                          (PWM_TBPRD / 2)
-#define PWM_TBPHS                               (0) // PWM Phase register (min reload value)
-#define PWM_TBCTR                               (0) // PWM initial current counter
-#define PWM_CCCMPx                              PWM_TBPRD // PWM initial value for capture/compare register
-#define PWM_DBRED                               (0) // PWM rising edge delay. ePWMxA (low to high) & ePWMxB (high to low) - Active High Complementary (AHC)
-#define PWM_DBFED                               (0) // PWM falling edge delay. ePWMxA (high to low) & ePWMxB (low to high) - Active High Complementary (AHC)
-#define PWM_CMD_SCALE                           PWM_TBPRD
+#define PWM_TIMEBASE_CNT                        (TBCLK_FREQ / PWM_FREQ / ((PWM_COUNTER_MODE == EPWM_COUNTER_MODE_UP_DOWN) ? (2) : (1))) // PWM Period register (max value)
+#define PWM_TIMEBASE_HALF_CNT                   (PWM_TIMEBASE_CNT / 2)
+#define PWM_INITIAL_PHASE_0                     (0)                     // PWM initial phase offset (MOTOR_1)
+#define PWM_INITIAL_PHASE_90                    PWM_TIMEBASE_HALF_CNT   // PWM initial phase offset (MOTOR_2)
+#define PWM_INITIAL_CNT_VAL                     (0)
+#define PWM_INITIAL_COMP_VAL                    PWM_TIMEBASE_CNT        // PWM initial value for capture/compare register
+#define PWM_DEADBAND_RISING_EDGE_DELAY          (0) // PWM rising edge delay. ePWMxA (low to high) & ePWMxB (high to low) - Active High Complementary (AHC)
+#define PWM_DEADBAND_FALLING_EDGE_DELAY         (0) // PWM falling edge delay. ePWMxA (high to low) & ePWMxB (low to high) - Active High Complementary (AHC)
+//#define PWM_CMD_SCALE                           PWM_TBPRD
 #define PWM_SHADOW_MODE_EN                      (1) // PWM Shadow mode definition
 #if PWM_SHADOW_MODE_EN
 #define PWM_SHADOW_MODE_ET                      EPWM_PERIOD_SHADOW_LOAD
@@ -598,8 +599,8 @@
 #define MOTOR1_IQ_REGULATOR_KI_COEF             (MOTOR1_RS * 2.0 * M_PI * MOTOR1_CURRENT_CUTOFF_FREQ / PWM_FREQ)
 #define MOTOR1_SPEED_REGULATOR_KP_COEF          (1.0f)
 #define MOTOR1_SPEED_REGULATOR_KD_COEF          (0.02f)
-#define MOTOR1_DUTY_CYCLE_MAX                   (0.4f)     // Max duty cycle
-#define MOTOR1_DUTY_CYCLE_MIN                   (-0.4f)     // Min duty cycle
+#define MOTOR1_DUTY_CYCLE_MAX                   (0.8f)     // Max duty cycle
+#define MOTOR1_DUTY_CYCLE_MIN                   (0.2f)     // Min duty cycle
 #define MOTOR1_STATOR_RESISTOR_CUTOFF_FREQ      (0.2)
 #define MOTOR1_STATOR_RESISTOR_LPF_ALPHA        (1.0 / (1.0 + (1.0 / (2.0 * M_PI * MOTOR1_STATOR_RESISTOR_CUTOFF_FREQ / PWM_FREQ))))
 #define MOTOR1_STATOR_RESISTOR_LPF_ONE_M_ALPHA  (1.0 - MOTOR1_STATOR_RESISTOR_LPF_ALPHA)

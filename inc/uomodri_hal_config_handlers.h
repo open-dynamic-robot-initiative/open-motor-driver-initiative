@@ -236,12 +236,12 @@ static const DMA_TypeDef dmaCfgList[] =
  */
 static const ePWM_TB_TypeDef PwmTimeBaseCfgList[] =
 {
- {.epwmBase = MOTOR1_PWM1_BASE, .phaseCount = PWM_TBPHS,        .syncOutputMode = EPWM_SYNC_OUT_PULSE_ON_CNTR_ZERO},
- {.epwmBase = MOTOR1_PWM2_BASE, .phaseCount = PWM_TBPHS,        .syncOutputMode = EPWM_SYNC_OUT_PULSE_ON_SOFTWARE},
- {.epwmBase = MOTOR1_PWM3_BASE, .phaseCount = PWM_TBPHS,        .syncOutputMode = EPWM_SYNC_OUT_PULSE_ON_SOFTWARE},
- {.epwmBase = MOTOR2_PWM1_BASE, .phaseCount = PWM_HALF_TBPRD,   .syncOutputMode = EPWM_SYNC_OUT_PULSE_ON_SOFTWARE},
- {.epwmBase = MOTOR2_PWM2_BASE, .phaseCount = PWM_HALF_TBPRD,   .syncOutputMode = EPWM_SYNC_OUT_PULSE_ON_SOFTWARE},
- {.epwmBase = MOTOR2_PWM3_BASE, .phaseCount = PWM_HALF_TBPRD,   .syncOutputMode = EPWM_SYNC_OUT_PULSE_ON_SOFTWARE},
+ {.epwmBase = MOTOR1_PWM1_BASE, .phaseCount = PWM_INITIAL_PHASE_0,  .syncOutputMode = EPWM_SYNC_OUT_PULSE_ON_CNTR_ZERO},
+ {.epwmBase = MOTOR1_PWM2_BASE, .phaseCount = PWM_INITIAL_PHASE_0,  .syncOutputMode = EPWM_SYNC_OUT_PULSE_ON_SOFTWARE},
+ {.epwmBase = MOTOR1_PWM3_BASE, .phaseCount = PWM_INITIAL_PHASE_0,  .syncOutputMode = EPWM_SYNC_OUT_PULSE_ON_SOFTWARE},
+ {.epwmBase = MOTOR2_PWM1_BASE, .phaseCount = PWM_INITIAL_PHASE_90, .syncOutputMode = EPWM_SYNC_OUT_PULSE_ON_SOFTWARE},
+ {.epwmBase = MOTOR2_PWM2_BASE, .phaseCount = PWM_INITIAL_PHASE_90, .syncOutputMode = EPWM_SYNC_OUT_PULSE_ON_SOFTWARE},
+ {.epwmBase = MOTOR2_PWM3_BASE, .phaseCount = PWM_INITIAL_PHASE_90, .syncOutputMode = EPWM_SYNC_OUT_PULSE_ON_SOFTWARE},
  // END OF ARRAY
  {.epwmBase = 0xFFFFFFFF},
 };
@@ -251,12 +251,12 @@ static const ePWM_TB_TypeDef PwmTimeBaseCfgList[] =
  */
 static const ePWM_CC_TypeDef PwmCounterCompareCfgList[] =
 {
- {.epwmBase = MOTOR1_PWM1_BASE, .compCount = PWM_CCCMPx, .compModule = EPWM_COUNTER_COMPARE_A},
- {.epwmBase = MOTOR1_PWM2_BASE, .compCount = PWM_CCCMPx, .compModule = EPWM_COUNTER_COMPARE_A},
- {.epwmBase = MOTOR1_PWM3_BASE, .compCount = PWM_CCCMPx, .compModule = EPWM_COUNTER_COMPARE_A},
- {.epwmBase = MOTOR2_PWM1_BASE, .compCount = PWM_CCCMPx, .compModule = EPWM_COUNTER_COMPARE_A},
- {.epwmBase = MOTOR2_PWM2_BASE, .compCount = PWM_CCCMPx, .compModule = EPWM_COUNTER_COMPARE_A},
- {.epwmBase = MOTOR2_PWM3_BASE, .compCount = PWM_CCCMPx, .compModule = EPWM_COUNTER_COMPARE_A},
+ {.epwmBase = MOTOR1_PWM1_BASE, .compCount = PWM_INITIAL_COMP_VAL,  .compModule = EPWM_COUNTER_COMPARE_A},
+ {.epwmBase = MOTOR1_PWM2_BASE, .compCount = PWM_INITIAL_COMP_VAL,  .compModule = EPWM_COUNTER_COMPARE_A},
+ {.epwmBase = MOTOR1_PWM3_BASE, .compCount = PWM_INITIAL_COMP_VAL,  .compModule = EPWM_COUNTER_COMPARE_A},
+ {.epwmBase = MOTOR2_PWM1_BASE, .compCount = PWM_INITIAL_COMP_VAL,  .compModule = EPWM_COUNTER_COMPARE_A},
+ {.epwmBase = MOTOR2_PWM2_BASE, .compCount = PWM_INITIAL_COMP_VAL,  .compModule = EPWM_COUNTER_COMPARE_A},
+ {.epwmBase = MOTOR2_PWM3_BASE, .compCount = PWM_INITIAL_COMP_VAL,  .compModule = EPWM_COUNTER_COMPARE_A},
  // END OF ARRAY
  {.epwmBase = 0xFFFFFFFF},
 };
@@ -281,12 +281,12 @@ static const ePWM_AQ_TypeDef PwmActionQualifierCfgList[] =
  */
 static const ePWM_DB_TypeDef PwmDeadBandCfgList[] =
 {
- {.epwmBase = MOTOR1_PWM1_BASE, .redCount = PWM_DBRED, .fedCount = PWM_DBFED, .DelayMode = EPWM_DELAY_ENABLE},
- {.epwmBase = MOTOR1_PWM2_BASE, .redCount = PWM_DBRED, .fedCount = PWM_DBFED, .DelayMode = EPWM_DELAY_ENABLE},
- {.epwmBase = MOTOR1_PWM3_BASE, .redCount = PWM_DBRED, .fedCount = PWM_DBFED, .DelayMode = EPWM_DELAY_ENABLE},
- {.epwmBase = MOTOR2_PWM1_BASE, .redCount = PWM_DBRED, .fedCount = PWM_DBFED, .DelayMode = EPWM_DELAY_ENABLE},
- {.epwmBase = MOTOR2_PWM2_BASE, .redCount = PWM_DBRED, .fedCount = PWM_DBFED, .DelayMode = EPWM_DELAY_ENABLE},
- {.epwmBase = MOTOR2_PWM3_BASE, .redCount = PWM_DBRED, .fedCount = PWM_DBFED, .DelayMode = EPWM_DELAY_ENABLE},
+ {.epwmBase = MOTOR1_PWM1_BASE, .redCount = PWM_DEADBAND_RISING_EDGE_DELAY, .fedCount = PWM_DEADBAND_FALLING_EDGE_DELAY,    .DelayMode = EPWM_DELAY_ENABLE},
+ {.epwmBase = MOTOR1_PWM2_BASE, .redCount = PWM_DEADBAND_RISING_EDGE_DELAY, .fedCount = PWM_DEADBAND_FALLING_EDGE_DELAY,    .DelayMode = EPWM_DELAY_ENABLE},
+ {.epwmBase = MOTOR1_PWM3_BASE, .redCount = PWM_DEADBAND_RISING_EDGE_DELAY, .fedCount = PWM_DEADBAND_FALLING_EDGE_DELAY,    .DelayMode = EPWM_DELAY_ENABLE},
+ {.epwmBase = MOTOR2_PWM1_BASE, .redCount = PWM_DEADBAND_RISING_EDGE_DELAY, .fedCount = PWM_DEADBAND_FALLING_EDGE_DELAY,    .DelayMode = EPWM_DELAY_ENABLE},
+ {.epwmBase = MOTOR2_PWM2_BASE, .redCount = PWM_DEADBAND_RISING_EDGE_DELAY, .fedCount = PWM_DEADBAND_FALLING_EDGE_DELAY,    .DelayMode = EPWM_DELAY_ENABLE},
+ {.epwmBase = MOTOR2_PWM3_BASE, .redCount = PWM_DEADBAND_RISING_EDGE_DELAY, .fedCount = PWM_DEADBAND_FALLING_EDGE_DELAY,    .DelayMode = EPWM_DELAY_ENABLE},
  // END OF ARRAY
  {.epwmBase = 0xFFFFFFFF},
 };

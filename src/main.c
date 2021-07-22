@@ -63,7 +63,7 @@ int main(void)
     {
 #if UOMODRI_SPI_DEBUG_CONFIG
         // Continuously write data for logging
-        //UpdateLogPacket();
+        UpdateLogPacket();
 #else
         // Continuously read and write data to master board
         UpdateSensorPacket();
@@ -159,6 +159,7 @@ __interrupt void adc_isrMotor1(void)
 #if (UOMODRI == 0)
     GPIO_writePin(DEBUG_INT_PIN1, 1);
 #endif
+    FOC*            p_foc       = motor[MOTOR_1].motorFOC;
     uint32_t        base        = InterruptList[ADC_IT_MOTOR_1].intPeriphBase;
     uint16_t        group       = InterruptList[ADC_IT_MOTOR_1].intAckGroup;
     ADC_IntNumber   adcIntNum   = (ADC_IntNumber)InterruptList[ADC_IT_MOTOR_1].intPeriphSrc;
@@ -166,15 +167,25 @@ __interrupt void adc_isrMotor1(void)
     if (comInterface.systemEnabled && motor[MOTOR_1].motorFOC->enabled)
     {
         // Read encoder position
-        encoder_getPosition(&motor[MOTOR_1].motorFOC->motor_enc);
+        encoder_getPosition(&p_foc->motor_enc);
         // Read the phases current, voltage & Vbus
-        FOC_getMeasures(&motor[MOTOR_1].motorFOC->motor_acq);
+        FOC_getMeasures(&p_foc->motor_acq);
         // Compute FOC algorithm
-        if((motor[MOTOR_1].interruptCounter % 100) == 0)
-            GPIO_writePin(DEBUG_INT_PIN1, 0);
-        FOC_control(motor[MOTOR_1].motorFOC);
+//        if((motor[MOTOR_1].interruptCounter % 100) == 0)
+//            GPIO_writePin(DEBUG_INT_PIN1, 0);
+        FOC_control(p_foc);
+//        FOC_sineCosine(p_foc);
+//        FOC_clarke(p_foc);
+//        FOC_park(p_foc);
+//        FOC_feedForward(p_foc);
+//        // PI controller - Id(Flux Current Controller) & Iq (Torque Current Controller)
+//        p_foc->ud = FOC_pi(&p_foc->piId);
+//        p_foc->uq = FOC_pi(&p_foc->piIq);
+//        FOC_parkInv(p_foc);
+//        FOC_clarkeInv(p_foc);
+//        FOC_clarke2pwm(p_foc);
         // Set new PWM command
-        MOTOR_command(&motor[MOTOR_1], motor[MOTOR_1].motorFOC->dtcPhaseA, motor[MOTOR_1].motorFOC->dtcPhaseB, motor[MOTOR_1].motorFOC->dtcPhaseC);
+        MOTOR_command(&motor[MOTOR_1], p_foc->dtc_u, p_foc->dtc_v, p_foc->dtc_w);
 
         //-------------------------------------------------------------------//
         //                         Wrap functions                            //
@@ -189,10 +200,10 @@ __interrupt void adc_isrMotor1(void)
 //        Interrupt_clearACKGroup(group);
 
         // Run encoder update
-        encoder_getSpeed(&motor[MOTOR_1].motorFOC->motor_enc);
+        encoder_getSpeed(&p_foc->motor_enc);
         //ENC_update(motor[MOTOR_1].motorFOC->motor_enc);
         // Check for roll-over error
-        if (comInterface.rolloverErrorFlag && motor[MOTOR_1].motorFOC->motor_enc.rollOverFlag)
+        if (comInterface.rolloverErrorFlag && p_foc->motor_enc.rollOverFlag)
         {
             // Set CAN error
             comInterface.canError = SPI_SENSOR_STATUS_ERROR_POS_ROLLOVER;
@@ -219,7 +230,7 @@ __interrupt void adc_isrMotor1(void)
         //-------------------------------------------------------------------//
 
         // Id reference update
-        motor[MOTOR_1].motorFOC->idRef      = motor[MOTOR_1].alignRoutine.state == ALIGN_DONE ? 0.0f : motor[MOTOR_1].alignRoutine.idAlign;
+        p_foc->idRef      = motor[MOTOR_1].alignRoutine.state == ALIGN_DONE ? 0.0f : motor[MOTOR_1].alignRoutine.idAlign;
 
         // Iq reference update
 
@@ -231,16 +242,16 @@ __interrupt void adc_isrMotor1(void)
 #endif
 
         // Set position reference
-        motor[MOTOR_1].motorFOC->pdPos.err  = 2.0f * M_PI * (comInterface.positionRef[MOTOR_1] - motor[MOTOR_1].motorFOC->motor_enc.thetaAbsolute); // Convert to radians
+        //p_foc->pdPos.err  = 2.0f * M_PI * (comInterface.positionRef[MOTOR_1] - p_foc->motor_enc.thetaAbsolute); // Convert to radians
         // Set speed reference
-        motor[MOTOR_1].motorFOC->pdPos.vErr = comInterface.velocityRef[MOTOR_1] - motor[MOTOR_1].motorFOC->motor_enc.speedEst.speedMech;
+        //p_foc->pdPos.vErr = comInterface.velocityRef[MOTOR_1] - p_foc->motor_enc.speedEst.speedMech;
         // Set feed-forward current
-        motor[MOTOR_1].motorFOC->pdPos.ff   = comInterface.iqRef[MOTOR_1];
+        p_foc->pdPos.ff   = comInterface.iqRef[MOTOR_1];
         // Run PD controller
-        FOC_pd(&motor[MOTOR_1].motorFOC->pdPos);
+        FOC_pd(&p_foc->pdPos);
 
         // Set current reference
-        motor[MOTOR_1].motorFOC->iqRef      =  motor[MOTOR_1].alignRoutine.state == ALIGN_DONE ?  motor[MOTOR_1].motorFOC->pdPos.out : 0.0f;
+        p_foc->iqRef      =  motor[MOTOR_1].alignRoutine.state == ALIGN_DONE ?  p_foc->pdPos.out : 0.0f;
 
         //-------------------------------------------------------------------//
         //                           Anti-coagging                           //
@@ -261,7 +272,7 @@ __interrupt void adc_isrMotor1(void)
         // Don't send current to motors
         MOTOR_command(&motor[MOTOR_1], 0.0, 0.0, 0.0);
         // Reset controllers
-        FOC_resetStruct(motor[MOTOR_1].motorFOC);
+        FOC_resetStruct(p_foc);
     }
 
     //-------------------------------------------------------------------//
@@ -303,7 +314,7 @@ __interrupt void adc_isrMotor2(void)
         // Compute FOC algorithm
         FOC_control(motor[MOTOR_2].motorFOC);
         // Set new PWM command
-        MOTOR_command(&motor[MOTOR_2], motor[MOTOR_2].motorFOC->dtcPhaseA, motor[MOTOR_2].motorFOC->dtcPhaseB, motor[MOTOR_2].motorFOC->dtcPhaseC);
+        MOTOR_command(&motor[MOTOR_2], motor[MOTOR_2].motorFOC->dtc_u, motor[MOTOR_2].motorFOC->dtc_v, motor[MOTOR_2].motorFOC->dtc_w);
 
         //-------------------------------------------------------------------//
         //                         Wrap functions                            //
@@ -360,9 +371,9 @@ __interrupt void adc_isrMotor2(void)
 #endif
 
         // Set position reference
-        motor[MOTOR_2].motorFOC->pdPos.err  = 2.0f * M_PI * (comInterface.positionRef[MOTOR_2] - motor[MOTOR_2].motorFOC->motor_enc.thetaAbsolute); // Convert to radians
-        // Set speed reference
-        motor[MOTOR_2].motorFOC->pdPos.vErr = comInterface.velocityRef[MOTOR_2] - motor[MOTOR_2].motorFOC->motor_enc.speedEst.speedMech;
+//        motor[MOTOR_2].motorFOC->pdPos.err  = 2.0f * M_PI * (comInterface.positionRef[MOTOR_2] - motor[MOTOR_2].motorFOC->motor_enc.thetaAbsolute); // Convert to radians
+//        // Set speed reference
+//        motor[MOTOR_2].motorFOC->pdPos.vErr = comInterface.velocityRef[MOTOR_2] - motor[MOTOR_2].motorFOC->motor_enc.speedEst.speedMech;
         // Set feed-forward current
         motor[MOTOR_2].motorFOC->pdPos.ff   = comInterface.iqRef[MOTOR_2];
         // Run PD controller

@@ -51,9 +51,7 @@ inline void encoder_getPosition(ENCODER* p_encoder)
     // Get direction : 0 = CCW/reverse, 1 = CW/forward
     p_encoder->thetaDir         = p_encoder->p_qepRegs->QEPSTS.bit.QDF;
     // Compute electrical angle (each pole pair is normalized between 0 and 1)
-    p_encoder->thetaElec        = p_encoder->polePairs * p_encoder->thetaMech[NEW];
-    p_encoder->thetaElec       -= (float32_t)((int32_t)p_encoder->thetaElec);
-//    p_encoder->thetaNew         = true;
+    p_encoder->thetaElec        = __fracf32(p_encoder->polePairs * p_encoder->thetaMech[NEW]);
 }
 
 // Encoder update routine, this is not critical for the control loop to be executed
@@ -86,7 +84,7 @@ inline void encoder_getSpeed(ENCODER* p_encoder)
 //        deltaTheta         -= (p_qepRegs->QFLG.bit.PCU) ? (1.0) : (0.0);
         deltaTheta          = p_speed.theta[NEW] - p_speed.theta[OLD] + (1.0 * (p_qepRegs->QFLG.bit.PCO)) - (1.0 * (p_qepRegs->QFLG.bit.PCU));
         // Saturate it between -0.5 and 0.5
-        deltaTheta          = FMINMAX(deltaTheta, 1.0, -1.0) * 0.5f;
+        deltaTheta          = __fsat(deltaTheta, 1.0, -1.0) * 0.5f;//FMINMAX(deltaTheta, 1.0, -1.0) * 0.5f;
 //        deltaTheta          = (deltaTheta > 1.0) ? (1.0) : ((deltaTheta < -1.0) ? (-1.0) : (deltaTheta));
         // Compute high speed estimation
         p_speed.speedHigh   = deltaTheta * p_speed.speedHighScaler;

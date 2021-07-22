@@ -58,9 +58,9 @@ void MOTOR_command(MOTOR_STRUCT* p_motor, float32_t CmdChA, float32_t CmdChB, fl
 //            cmdVal[i] = 0;
 //    }
 
-    *(p_motor->pwmChAReg) = (uint16_t)(CmdChA * PWM_HALF_TBPRD);
-    *(p_motor->pwmChBReg) = (uint16_t)(CmdChB * PWM_HALF_TBPRD);
-    *(p_motor->pwmChCReg) = (uint16_t)(CmdChC * PWM_HALF_TBPRD);
+    *(p_motor->pwmChAReg) = (uint16_t)(CmdChA * PWM_TIMEBASE_HALF_CNT);
+    *(p_motor->pwmChBReg) = (uint16_t)(CmdChB * PWM_TIMEBASE_HALF_CNT);
+    *(p_motor->pwmChCReg) = (uint16_t)(CmdChC * PWM_TIMEBASE_HALF_CNT);
 }
 
 void MOTOR_interruptClearFlags(void)
@@ -156,11 +156,11 @@ inline void MOTOR_StatorResEst(MOTOR_STRUCT* p_motor)
     if (FM_ABS(p_motor->motorFOC->iq) > FOC_RE_CURRENT_THRESHOLD)
     {
 #if (UOMODRI_RES_ESTIM_FLT == 1)
-    LPF_FILTER_1(p_motor->statorResEstLpf, p_motor->statorResEst, (p_foc->uq - (p_foc->motor_enc.speedEst.speedElec * p_foc->motorParams.ke)) / p_foc->iq);
+    LPF_FILTER_1(p_motor->statorResEstLpf, p_motor->statorResEst, (p_foc->uq - (p_foc->motor_enc.speedEst.speedElec * p_foc->motor_cfg.ke)) / p_foc->iq);
 #elif (UOMODRI_RES_ESTIM_FLT == 2)
-    LPF_FILTER_2(p_motor->statorResEstLpf, p_motor->statorResEst, (p_foc->uq - (p_foc->motor_enc.speedEst.speedElec * p_foc->motorParams.ke)) / p_foc->iq);
+    LPF_FILTER_2(p_motor->statorResEstLpf, p_motor->statorResEst, (p_foc->uq - (p_foc->motor_enc.speedEst.speedElec * p_foc->motor_cfg.ke)) / p_foc->iq);
 #else
-    p_motor->statorResEst = (p_foc->uq - (p_foc->motor_enc.speedEst.speedElec * p_foc->motorParams.ke)) / p_foc->iq;
+    p_motor->statorResEst = (p_foc->uq - (p_foc->motor_enc.speedEst.speedElec * p_foc->motor_cfg.ke)) / p_foc->iq;
 #endif
 //        LPF_FILTER(foc->resEstLpf, foc->resistanceEst, (foc->uq - foc->encoder.speedEst.elecSpeed * foc->ke) / foc->iq);
     }
