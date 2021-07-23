@@ -4,7 +4,7 @@
 
 #include "spi_communication.h"
 #include "checksum.h"
-#include "lsb_msb_macros.h"
+//#include "lsb_msb_macros.h"
 //#include "uomodri_hal_config_handlers.h"
 
 //-----------------------------------------------------------------------

@@ -26,7 +26,7 @@ typedef enum
     ALIGN_DONE
 } AlignState;
 
-typedef struct __ALIGNE_ROUTINE__
+typedef struct __MOTOR_ALIGN__
 {
     AlignState state;
 
@@ -35,7 +35,7 @@ typedef struct __ALIGNE_ROUTINE__
 
     float32_t idAlignRef;
     float32_t idAlign;
-} AlignRoutine;
+} MOTOR_ALIGN;
 
 typedef struct __MOTOR_STRUCT__
 {
@@ -45,7 +45,7 @@ typedef struct __MOTOR_STRUCT__
     FOC*                    motorFOC;
     bool                    enabled;
     // Alignment routine structure
-    AlignRoutine alignRoutine;
+    MOTOR_ALIGN             motorAlign;
     // Cycle counter events
     uint32_t clCycleNb;
     uint64_t interruptCounter;
@@ -128,12 +128,14 @@ typedef struct __MOTOR_STRUCT__
 //inline void MOTOR_getCurrent(MOTOR_STRUCT*);
 //inline void MOTOR_getCurrent(MOTOR_MEASURES*);
 //inline void MOTOR_getVoltage(MOTOR_MEASURES*);
-void MOTOR_command(MOTOR_STRUCT*, float32_t, float32_t, float32_t);
-void MOTOR_alignResetStruct(AlignRoutine*);
-void MOTOR_interruptClearFlags(void);
+void MOT_runCommand(MOTOR_STRUCT*, float32_t, float32_t, float32_t);
+void MOT_stopCommand(MOTOR_STRUCT*);
+void MOT_resetAlignStruct(MOTOR_ALIGN*);
+void MOT_runAlign(MOTOR_ALIGN*);
+void MOT_interruptClearFlags(void);
 //void ALIGN_run(AlignRoutine*);
-void MOTOR_alignRun(AlignRoutine*);
-void MOTOR_emergencyStop(void);
-void MOTOR_StatorResEst(MOTOR_STRUCT*);
+
+void MOT_emergencyStop(void);
+void MOT_StatorResEst(MOTOR_STRUCT*);
 
 #endif /* INC_MOTOR_H_ */

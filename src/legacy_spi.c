@@ -17,7 +17,7 @@
 #if UOMODRI_SPI_DEBUG_CONFIG
 
 // Choose which motor is logged
-#define DEBUG_LOGGED_MOTOR      0
+#define DEBUG_LOGGED_MOTOR      MOTOR_1
 
 // Used for real-time logging when the master board isn't connected
 void UpdateLogPacket()
@@ -26,7 +26,7 @@ void UpdateLogPacket()
     ComPacketW* comPacket = SPI_getAvailableWPacket();
 
     // Update fields
-    uint32_t timestamp = motor[DEBUG_LOGGED_MOTOR].alignRoutine.state == ALIGN_DONE ? (uint32_t)(comInterface.time * 10000.0f) : 0;
+    uint32_t timestamp = motor[DEBUG_LOGGED_MOTOR].motorAlign.state == ALIGN_DONE ? (uint32_t)(comInterface.time * 10000.0f) : 0;
     //uint32_t timestamp = TIME_S * 10000.0f;
     comPacket->timestamp_msb = MSB_32(timestamp);
     comPacket->timestamp_lsb = LSB_32(timestamp);

@@ -2,7 +2,7 @@
 #define __CHECKSUM_H__
 
 #include <stdint.h>
-#include "lsb_msb_macros.h"
+#include "uomodri_user_defines.h"
 
 // CRC table
 static const uint32_t crc32_table[] =

@@ -164,28 +164,16 @@ __interrupt void adc_isrMotor1(void)
     uint16_t        group       = InterruptList[ADC_IT_MOTOR_1].intAckGroup;
     ADC_IntNumber   adcIntNum   = (ADC_IntNumber)InterruptList[ADC_IT_MOTOR_1].intPeriphSrc;
 
-    if (comInterface.systemEnabled && motor[MOTOR_1].motorFOC->enabled)
+    if (comInterface.systemEnabled && p_foc->enabled)
     {
         // Read encoder position
-        encoder_getPosition(&p_foc->motor_enc);
+        ENC_getPosition(&p_foc->motor_enc);
         // Read the phases current, voltage & Vbus
         FOC_getMeasures(&p_foc->motor_acq);
         // Compute FOC algorithm
-//        if((motor[MOTOR_1].interruptCounter % 100) == 0)
-//            GPIO_writePin(DEBUG_INT_PIN1, 0);
-        FOC_control(p_foc);
-//        FOC_sineCosine(p_foc);
-//        FOC_clarke(p_foc);
-//        FOC_park(p_foc);
-//        FOC_feedForward(p_foc);
-//        // PI controller - Id(Flux Current Controller) & Iq (Torque Current Controller)
-//        p_foc->ud = FOC_pi(&p_foc->piId);
-//        p_foc->uq = FOC_pi(&p_foc->piIq);
-//        FOC_parkInv(p_foc);
-//        FOC_clarkeInv(p_foc);
-//        FOC_clarke2pwm(p_foc);
+        FOC_runControl(p_foc);
         // Set new PWM command
-        MOTOR_command(&motor[MOTOR_1], p_foc->dtc_u, p_foc->dtc_v, p_foc->dtc_w);
+        MOT_runCommand(&motor[MOTOR_1], p_foc->dtc_u, p_foc->dtc_v, p_foc->dtc_w);
 
         //-------------------------------------------------------------------//
         //                         Wrap functions                            //
@@ -198,9 +186,8 @@ __interrupt void adc_isrMotor1(void)
         ADC_clearInterruptStatus(base, adcIntNum);
         // Acknowledge the interrupt (Acknowledge PIE Interrupt Group)
 //        Interrupt_clearACKGroup(group);
-
         // Run encoder update
-        encoder_getSpeed(&p_foc->motor_enc);
+        ENC_getSpeed(&p_foc->motor_enc);
         //ENC_update(motor[MOTOR_1].motorFOC->motor_enc);
         // Check for roll-over error
         if (comInterface.rolloverErrorFlag && p_foc->motor_enc.rollOverFlag)
@@ -208,21 +195,21 @@ __interrupt void adc_isrMotor1(void)
             // Set CAN error
             comInterface.canError = SPI_SENSOR_STATUS_ERROR_POS_ROLLOVER;
             // Disable the system
-            MOTOR_emergencyStop();
+            MOT_emergencyStop();
         }
         // Run resistance estimation
-        MOTOR_StatorResEst(&motor[MOTOR_1]);
+        MOT_StatorResEst(&motor[MOTOR_1]);
         //-------------------------------------------------------------------//
         //                       Alignment routine                           //
         //-------------------------------------------------------------------//
-        if(motor[MOTOR_1].alignRoutine.state != ALIGN_DONE)
+        if(motor[MOTOR_1].motorAlign.state != ALIGN_DONE)
         {
             // Run alignment routine
-            MOTOR_alignRun(&motor[MOTOR_1].alignRoutine);
+            MOT_runAlign(&motor[MOTOR_1].motorAlign);
 
             // Reset QEP position counter to set angle to zero
-            if (motor[MOTOR_1].alignRoutine.state <= ALIGN_STAY)
-                encoder_setPosition(&motor[MOTOR_1].motorFOC->motor_enc, 0);
+            if (motor[MOTOR_1].motorAlign.state <= ALIGN_STAY)
+                ENC_setPosition(&motor[MOTOR_1].motorFOC->motor_enc, 0);
         }
 
         //-------------------------------------------------------------------//
@@ -230,7 +217,7 @@ __interrupt void adc_isrMotor1(void)
         //-------------------------------------------------------------------//
 
         // Id reference update
-        p_foc->idRef      = motor[MOTOR_1].alignRoutine.state == ALIGN_DONE ? 0.0f : motor[MOTOR_1].alignRoutine.idAlign;
+        p_foc->idRef      = motor[MOTOR_1].motorAlign.state == ALIGN_DONE ? 0.0f : motor[MOTOR_1].motorAlign.idAlign;
 
         // Iq reference update
 
@@ -248,10 +235,10 @@ __interrupt void adc_isrMotor1(void)
         // Set feed-forward current
         p_foc->pdPos.ff   = comInterface.iqRef[MOTOR_1];
         // Run PD controller
-        FOC_pd(&p_foc->pdPos);
+        FOC_runPD(&p_foc->pdPos);
 
         // Set current reference
-        p_foc->iqRef      =  motor[MOTOR_1].alignRoutine.state == ALIGN_DONE ?  p_foc->pdPos.out : 0.0f;
+        p_foc->iqRef      =  motor[MOTOR_1].motorAlign.state == ALIGN_DONE ?  p_foc->pdPos.out : 0.0f;
 
         //-------------------------------------------------------------------//
         //                           Anti-coagging                           //
@@ -270,7 +257,7 @@ __interrupt void adc_isrMotor1(void)
     else
     {
         // Don't send current to motors
-        MOTOR_command(&motor[MOTOR_1], 0.0, 0.0, 0.0);
+        MOT_stopCommand(&motor[MOTOR_1]);
         // Reset controllers
         FOC_resetStruct(p_foc);
     }
@@ -301,20 +288,21 @@ __interrupt void adc_isrMotor2(void)
 #if (UOMODRI == 0)
     GPIO_writePin(DEBUG_INT_PIN2, 1);
 #endif
+    FOC*            p_foc       = motor[MOTOR_2].motorFOC;
     uint32_t        base        = InterruptList[ADC_IT_MOTOR_2].intPeriphBase;
     uint16_t        group       = InterruptList[ADC_IT_MOTOR_2].intAckGroup;
     ADC_IntNumber   adcIntNum   = (ADC_IntNumber)InterruptList[ADC_IT_MOTOR_2].intPeriphSrc;
 
-    if (comInterface.systemEnabled && motor[MOTOR_2].motorFOC->enabled)
+    if (comInterface.systemEnabled && p_foc->enabled)
     {
         // Read encoder position
-        encoder_getPosition(&motor[MOTOR_2].motorFOC->motor_enc);
+        ENC_getPosition(&p_foc->motor_enc);
         // Read the phases current, voltage & Vbus
-        FOC_getMeasures(&motor[MOTOR_2].motorFOC->motor_acq);
+        FOC_getMeasures(&p_foc->motor_acq);
         // Compute FOC algorithm
-        FOC_control(motor[MOTOR_2].motorFOC);
+        FOC_runControl(p_foc);
         // Set new PWM command
-        MOTOR_command(&motor[MOTOR_2], motor[MOTOR_2].motorFOC->dtc_u, motor[MOTOR_2].motorFOC->dtc_v, motor[MOTOR_2].motorFOC->dtc_w);
+        MOT_runCommand(&motor[MOTOR_2], p_foc->dtc_u, p_foc->dtc_v, p_foc->dtc_w);
 
         //-------------------------------------------------------------------//
         //                         Wrap functions                            //
@@ -329,29 +317,29 @@ __interrupt void adc_isrMotor2(void)
 //        Interrupt_clearACKGroup(group);
 
         // Run encoder update
-        encoder_getSpeed(&motor[MOTOR_2].motorFOC->motor_enc);
+        ENC_getSpeed(&p_foc->motor_enc);
         //ENC_update(motor[MOTOR_1].motorFOC->motor_enc);
         // Check for roll-over error
-        if (comInterface.rolloverErrorFlag && motor[MOTOR_2].motorFOC->motor_enc.rollOverFlag)
+        if (comInterface.rolloverErrorFlag && p_foc->motor_enc.rollOverFlag)
         {
             // Set CAN error
             comInterface.canError = SPI_SENSOR_STATUS_ERROR_POS_ROLLOVER;
             // Disable the system
-            MOTOR_emergencyStop();
+            MOT_emergencyStop();
         }
         // Run resistance estimation
-        MOTOR_StatorResEst(&motor[MOTOR_2]);
+        MOT_StatorResEst(&motor[MOTOR_2]);
         //-------------------------------------------------------------------//
         //                       Alignment routine                           //
         //-------------------------------------------------------------------//
-        if(motor[MOTOR_2].alignRoutine.state != ALIGN_DONE)
+        if(motor[MOTOR_2].motorAlign.state != ALIGN_DONE)
         {
             // Run alignment routine
-            MOTOR_alignRun(&motor[MOTOR_2].alignRoutine);
+            MOT_runAlign(&motor[MOTOR_2].motorAlign);
 
             // Reset QEP position counter to set angle to zero
-            if (motor[MOTOR_2].alignRoutine.state <= ALIGN_STAY)
-                encoder_setPosition(&motor[MOTOR_2].motorFOC->motor_enc, 0);
+            if (motor[MOTOR_2].motorAlign.state <= ALIGN_STAY)
+                ENC_setPosition(&p_foc->motor_enc, 0);
         }
 
         //-------------------------------------------------------------------//
@@ -359,7 +347,7 @@ __interrupt void adc_isrMotor2(void)
         //-------------------------------------------------------------------//
 
         // Id reference update
-        motor[MOTOR_2].motorFOC->idRef      = motor[MOTOR_2].alignRoutine.state == ALIGN_DONE ? 0.0f : motor[MOTOR_2].alignRoutine.idAlign;
+        p_foc->idRef      = motor[MOTOR_2].motorAlign.state == ALIGN_DONE ? 0.0f : motor[MOTOR_2].motorAlign.idAlign;
 
         // Iq reference update
 
@@ -371,16 +359,16 @@ __interrupt void adc_isrMotor2(void)
 #endif
 
         // Set position reference
-//        motor[MOTOR_2].motorFOC->pdPos.err  = 2.0f * M_PI * (comInterface.positionRef[MOTOR_2] - motor[MOTOR_2].motorFOC->motor_enc.thetaAbsolute); // Convert to radians
+//        p_foc->pdPos.err  = 2.0f * M_PI * (comInterface.positionRef[MOTOR_2] - p_foc->motor_enc.thetaAbsolute); // Convert to radians
 //        // Set speed reference
-//        motor[MOTOR_2].motorFOC->pdPos.vErr = comInterface.velocityRef[MOTOR_2] - motor[MOTOR_2].motorFOC->motor_enc.speedEst.speedMech;
+//        p_foc->pdPos.vErr = comInterface.velocityRef[MOTOR_2] - p_foc->motor_enc.speedEst.speedMech;
         // Set feed-forward current
-        motor[MOTOR_2].motorFOC->pdPos.ff   = comInterface.iqRef[MOTOR_2];
+        p_foc->pdPos.ff   = comInterface.iqRef[MOTOR_2];
         // Run PD controller
-        FOC_pd(&motor[MOTOR_2].motorFOC->pdPos);
+        FOC_runPD(&p_foc->pdPos);
 
         // Set current reference
-        motor[MOTOR_2].motorFOC->iqRef      =  motor[MOTOR_2].alignRoutine.state == ALIGN_DONE ?  motor[MOTOR_2].motorFOC->pdPos.out : 0.0f;
+        p_foc->iqRef      =  motor[MOTOR_2].motorAlign.state == ALIGN_DONE ?  p_foc->pdPos.out : 0.0f;
 
         //-------------------------------------------------------------------//
         //                           Anti-coagging                           //
@@ -399,7 +387,7 @@ __interrupt void adc_isrMotor2(void)
     else
     {
         // Don't send current to motors
-        MOTOR_command(&motor[MOTOR_2], 0.0, 0.0, 0.0);
+        MOT_stopCommand(&motor[MOTOR_2]);
         // Reset controllers
         FOC_resetStruct(motor[MOTOR_2].motorFOC);
     }
@@ -469,7 +457,7 @@ __interrupt void adc_isrMotor2(void)
 __interrupt void gpio_isrFault1(void)
 {
     // Trigger emergency stop
-    MOTOR_emergencyStop();
+    MOT_emergencyStop();
 
     // Read DRV data to get status registers
     DRV_readStatus(motor[MOTOR_1].motorDRV->drvCfgHandler, motor[MOTOR_1].motorDRV->drvRegHandler);
@@ -490,7 +478,7 @@ __interrupt void gpio_isrFault1(void)
 __interrupt void gpio_isrFault2(void)
 {
     // Trigger emergency stop
-    MOTOR_emergencyStop();
+    MOT_emergencyStop();
 
     // Read DRV data to get status registers
     DRV_readStatus(motor[MOTOR_2].motorDRV->drvCfgHandler, motor[MOTOR_2].motorDRV->drvRegHandler);

@@ -156,12 +156,18 @@ typedef struct __FOC__
     // Inverse Clarke transform result
     float32_t           ualpha; // [V]
     float32_t           ubeta;  // [V]
-    // Bus voltage
-    //float32_t*          uBus;   // [V]
     // Phase commands
     float32_t           ua;     // [V]
     float32_t           ub;     // [V]
     float32_t           uc;     // [V]
+
+    // Duty-cycle saturation
+    float32_t           dtcMax;
+    float32_t           dtcMin;
+    // Duty cycles
+    float32_t           dtc_u;  // [pu] between -0.5 and 0.5
+    float32_t           dtc_v;  // [pu] between -0.5 and 0.5
+    float32_t           dtc_w;  // [pu] between -0.5 and 0.5
 
     // PI set point values
     float32_t           idRef;  // [A]
@@ -169,84 +175,30 @@ typedef struct __FOC__
     // PI controllers for current control
     PI_CONTROLLER       piId;
     PI_CONTROLLER       piIq;
-
-    //PD set point values
+    // PD set point values
     float32_t           posRef; // [rpm/s]
     // PD controller for position control
     PD_CONTROLLER       pdPos;
 
+    // Q-axis resistance estimation
+    float32_t           resistanceEst;    // [Ohm]
+    // Resistance estimation low-pass filter
+    LpfStruct           resEstLpf;
+    // Anti-coagging structure
+    Anticoagging        acog;
     // Enable flag
     bool                enabled;
-    // Alignment routine structure
-//    AlignRoutine        alignRoutine;
-
-    // Utility variables
-//    float32_t currentScaler;    // [A/pu]
-//    float32_t currentScalerReg; // [A/register]
-//    float32_t voltageScaler;    // [V/pu]
-//    float32_t voltageScalerReg; // [V/register]
-//    float32_t adcScaler;        // [V/pu]
-//    float32_t adcScalerReg;     // [V/register]
-    float32_t pwmCompScaler;    // [register/pu]
-
-    // Duty-cycle saturation
-    float32_t dtcMax;
-    float32_t dtcMin;
-
-    // Motor constants
-//    float32_t* Rs; // Stator resistance [Ohm]
-//    float32_t* Ld; // Direct axis inductance [H]
-//    float32_t* Lq; // Quadratic axis inductance [H]
-//    float32_t* ke; // Motor back EMF constant [V/rad/s] (electrical radians)
-
-
-    // Angles
-//    float32_t* mechAngle; // [pu]
-//    float32_t* elecAngle; // [pu]
-
-
-    // Duty cycles
-    float32_t dtc_u;    // [pu] between -0.5 and 0.5
-    float32_t dtc_v;    // [pu] between -0.5 and 0.5
-    float32_t dtc_w;    // [pu] between -0.5 and 0.5
-
-
-//    // PI controllers
-//    float32_t idRef;    // [A]
-//    float32_t iqRef;    // [A]
-//
-////    PI_controller piId;
-////    PI_controller piIq;
-//
-//    PID_controller piId;
-//    PID_controller piIq;
-//
-//    // Position PD controller
-//    PD_controller posPd;
 
     // Phase measured voltages
 //    float32_t phaseAVolt;   // [V]
 //    float32_t phaseBVolt;   // [V]
 //    float32_t phaseCVolt;   // [V]
 
-    // Q-axis resistance estimation
-    float32_t resistanceEst;    // [Ohm]
-    // Resistance estimation low-pass filter
-    LpfStruct resEstLpf;
-
-    // Anti-coagging structure
-    Anticoagging acog;
-
     // Auxiliary ADC voltage
 //    float32_t auxAdc;   // [V]
 
-//    // PWM result registers
-//    volatile uint16_t *pwmCompA;
-//    volatile uint16_t *pwmCompB;
-//    volatile uint16_t *pwmCompC;
-
     // ADC interrupt flag register
-    volatile union ADCINTFLG_REG *adcIntFlag;
+//    volatile union ADCINTFLG_REG *adcIntFlag;
 } FOC;
 
 
@@ -262,33 +214,14 @@ typedef struct __FOC__
 //-------------------------------------------------------------------------------//
 //                             FUNCTIONS DECLARATION                             //
 //-------------------------------------------------------------------------------//
-
-//inline void FOC_getPosition(FOC*, MOTOR_HAL_CFG*);
 inline void FOC_getMeasures(MOTOR_ACQ*);
-//inline void FOC_getPhaseCurrent(MOTOR_ACQ*);
-//inline void FOC_getPhaseVoltage(MOTOR_ACQ*);
-//inline void FOC_getBusVoltage(MOTOR_ACQ*);
-//inline void FOC_getMeasures(FOC*, MOTOR_HAL_CFG*);
-//inline void FOC_sineCosine(FOC*);
-//inline void FOC_parkClarke(FOC*);
-//inline void FOC_runPi(FOC*);
-//inline void FOC_invParkClarke(FOC*);
-//inline void FOC_svm(FOC*);
-inline void FOC_control(FOC*);
 inline void FOC_resistanceEstimation(FOC*);
-//static inline void FOC_PID(PID_CONTROLLER*);
-//inline float32_t FOC_pi(PID_CONTROLLER*);
-inline float32_t FOC_pi(PI_CONTROLLER*);
-inline float32_t FOC_pd(PD_CONTROLLER*);
+inline void FOC_runControl(FOC*);
+inline void FOC_resetPI(PI_CONTROLLER*);
+inline float32_t FOC_runPI(PI_CONTROLLER*);
+inline void FOC_resetPD(PD_CONTROLLER*);
+inline float32_t FOC_runPD(PD_CONTROLLER*);
 void FOC_resetStruct(FOC*);
-void limit_norm(float*, float*, float);
-
-inline void FOC_clarke(FOC*);
-inline FOC_sineCosine(FOC*);
-inline FOC_park(FOC*);
-inline FOC_feedForward(FOC*);
-inline FOC_parkInv(FOC*);
-inline FOC_clarkeInv(FOC*);
-inline FOC_clarke2pwm(FOC*);
+void limit_norm(float32_t*, float32_t*, float32_t);
 
 #endif

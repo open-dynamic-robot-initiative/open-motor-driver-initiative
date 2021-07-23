@@ -41,7 +41,7 @@
 //    p_measure->vbus = __fmax(p_measure->vbus, 1.0f);
 //}
 
-void MOTOR_command(MOTOR_STRUCT* p_motor, float32_t CmdChA, float32_t CmdChB, float32_t CmdChC)
+void MOT_runCommand(MOTOR_STRUCT* p_motor, float32_t CmdChA, float32_t CmdChB, float32_t CmdChC)
 {
 //    uint16_t cmdVal[3]  = {0, 0, 0};
 //    uint8_t loop        = 0;
@@ -58,9 +58,16 @@ void MOTOR_command(MOTOR_STRUCT* p_motor, float32_t CmdChA, float32_t CmdChB, fl
 //            cmdVal[i] = 0;
 //    }
 
-    *(p_motor->pwmChAReg) = (uint16_t)(CmdChA * PWM_TIMEBASE_HALF_CNT);
-    *(p_motor->pwmChBReg) = (uint16_t)(CmdChB * PWM_TIMEBASE_HALF_CNT);
-    *(p_motor->pwmChCReg) = (uint16_t)(CmdChC * PWM_TIMEBASE_HALF_CNT);
+    *(p_motor->pwmChAReg) = (uint16_t)((1.0 - CmdChA) * PWM_TIMEBASE_CNT);
+    *(p_motor->pwmChBReg) = (uint16_t)((1.0 - CmdChB) * PWM_TIMEBASE_CNT);
+    *(p_motor->pwmChCReg) = (uint16_t)((1.0 - CmdChC) * PWM_TIMEBASE_CNT);
+}
+
+void MOT_stopCommand(MOTOR_STRUCT* p_motor)
+{
+    *(p_motor->pwmChAReg) = (uint16_t)PWM_TIMEBASE_CNT;
+    *(p_motor->pwmChBReg) = (uint16_t)PWM_TIMEBASE_CNT;
+    *(p_motor->pwmChCReg) = (uint16_t)PWM_TIMEBASE_CNT;
 }
 
 void MOTOR_interruptClearFlags(void)
@@ -79,52 +86,50 @@ void MOTOR_interruptClearFlags(void)
     XBAR_clearInputFlag(XBAR_INPUT_FLG_INPUT5);
 }
 
-void MOTOR_alignResetStruct(AlignRoutine* align)
+void MOT_resetAlignStruct(MOTOR_ALIGN* p_align)
 {
-    align->state = ALIGN_COUNT_UP;
-    align->counter = 0;
-    align->idAlign = 0.0f;
+    p_align->state      = ALIGN_COUNT_UP;
+    p_align->counter    = 0;
+    p_align->idAlign    = 0.0f;
 }
 
 // Return true if calibration is finished
-void MOTOR_alignRun(AlignRoutine* align)
+void MOT_runAlign(MOTOR_ALIGN* p_align)
 {
-    switch (align->state)
+    switch (p_align->state)
     {
     case ALIGN_COUNT_UP:
         // Increment alignment current
-        align->idAlign += 1e-5;
-
-        if(align->idAlign >= align->idAlignRef)
-        {
-            align->state = ALIGN_STAY;
-        }
+        p_align->idAlign   += 1e-5;
+        p_align->state      = (p_align->idAlign >= p_align->idAlignRef) ? (ALIGN_STAY) : (ALIGN_COUNT_UP);
         break;
 
     case ALIGN_STAY:
         // Maintain alignment current
-        if(++align->counter >= align->max)
-        {
-            align->state = ALIGN_COUNT_DOWN;
-        }
+        p_align->state      = (++p_align->counter >= p_align->max) ? (ALIGN_COUNT_DOWN) : (ALIGN_STAY);
         break;
 
     case ALIGN_COUNT_DOWN:
         // Decrement alignment current
-        align->idAlign -= 1e-5;
-
-        if(align->idAlign <= 0.0f)
-        {
-            align->counter = 0;
-            align->idAlign = 0.0f;
-            align->state = ALIGN_DONE;
-        }
+        p_align->idAlign   -= 1e-5;
+        p_align->state      = (p_align->idAlign <= 0.0f) ? (ALIGN_DONE) : (ALIGN_COUNT_DOWN);
+//        if(p_align->idAlign <= 0.0f)
+//        {
+//            p_align->counter = 0;
+//            p_align->idAlign = 0.0f;
+//            p_align->state = ALIGN_DONE;
+//        }
         break;
+
+    default:
+        p_align->state      = ALIGN_DONE;
+        p_align->counter    = 0;
+        p_align->idAlign    = 0.0f;
     }
 }
 
 // Set the motor phases in security mode
-void MOTOR_emergencyStop(void)
+void MOT_emergencyStop(void)
 {
     // Turn off control loop
     comInterface.systemEnabled          = false;
@@ -134,15 +139,15 @@ void MOTOR_emergencyStop(void)
     // Disable ePWM interrupts
     Interrupt_disableInCPU(INTERRUPT_CPU_INT3);
     // Tie phases to ground
-    MOTOR_command(&motor[MOTOR_1], 0.0, 0.0, 0.0);
-    MOTOR_command(&motor[MOTOR_2], 0.0, 0.0, 0.0);
+    MOT_stopCommand(&motor[MOTOR_1]);
+    MOT_stopCommand(&motor[MOTOR_2]);
     // Reset foc structures
     FOC_resetStruct(motor[MOTOR_1].motorFOC);
     FOC_resetStruct(motor[MOTOR_2].motorFOC);
 
 }
 
-inline void MOTOR_StatorResEst(MOTOR_STRUCT* p_motor)
+inline void MOT_StatorResEst(MOTOR_STRUCT* p_motor)
 {
 //
 //    // Read measures
