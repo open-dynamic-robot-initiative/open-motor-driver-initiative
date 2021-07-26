@@ -200,9 +200,9 @@ static FOC motor_foc[] =
                    .iaMeasReg       = (volatile int16_t *)(MOTOR1_IA_ADC_PPB_RESULT_ADDR),
                    .ibMeasReg       = (volatile int16_t *)(MOTOR1_IB_ADC_PPB_RESULT_ADDR),
                    .icMeasReg       = (volatile int16_t *)(MOTOR1_IC_ADC_PPB_RESULT_ADDR),
-                   .va = 0.0, .vb = 0.0, .vc = 0.0, .vmax = 0.0, .vbus = 0.0,
-                   .ia = 0.0, .ib = 0.0, .ic = 0.0, .imax = MOTOR12_IMAX,
-//                   .measNew         = false,
+                   .va = 0.0, .vb = 0.0, .vc = 0.0, .vbus = 0.0,
+                   .ia = 0.0, .ib = 0.0, .ic = 0.0,
+                   .measNew         = false,
                    .vBusLpf         = {.a               = MOTOR12_VBUS_LPF_ALPHA,
                                        .one_minus_a     = MOTOR12_VBUS_LPF_ONE_M_ALPHA},
   },
@@ -266,9 +266,12 @@ static FOC motor_foc[] =
   },
   .idRef        = 0.0,
   .iqRef        = 0.0,
+  // FOC max current and voltage
+  .vmax         = 0.0,
+  .imax         = MOTOR12_IMAX,
   // Initialize duty cycle saturation
-  .dtcMax       = MOTOR1_DUTY_CYCLE_MAX,
-  .dtcMin       = MOTOR1_DUTY_CYCLE_MIN,
+  .dtcMax       = MOTOR1_DTC_MAX,
+  .dtcMin       = MOTOR1_DTC_MIN,
   // FOC controller enable to start?
   .enabled      = false,
   // FOC - Sine / Cosine results of angular position
@@ -315,9 +318,9 @@ static FOC motor_foc[] =
                    .iaMeasReg       = (volatile int16_t *)(MOTOR2_IA_ADC_PPB_RESULT_ADDR),
                    .ibMeasReg       = (volatile int16_t *)(MOTOR2_IB_ADC_PPB_RESULT_ADDR),
                    .icMeasReg       = (volatile int16_t *)(MOTOR2_IC_ADC_PPB_RESULT_ADDR),
-                   .va = 0.0, .vb = 0.0, .vc = 0.0, .vmax = 0.0, .vbus = 0.0,
-                   .ia = 0.0, .ib = 0.0, .ic = 0.0, .imax = MOTOR12_IMAX,
-//                   .measNew         = false,
+                   .va = 0.0, .vb = 0.0, .vc = 0.0, .vbus = 0.0,
+                   .ia = 0.0, .ib = 0.0, .ic = 0.0,
+                   .measNew         = false,
                    .vBusLpf         = {.a               = MOTOR12_VBUS_LPF_ALPHA,
                                        .one_minus_a     = MOTOR12_VBUS_LPF_ONE_M_ALPHA},
   },
@@ -380,9 +383,14 @@ static FOC motor_foc[] =
                    .ff              = 0.0,
                    .sat             = ((float32_t *)(&pdSat)),
   },
+  .idRef        = 0.0,
+  .iqRef        = 0.0,
+  // FOC max current and voltage
+  .vmax         = 0.0,
+  .imax         = MOTOR12_IMAX,
   // Initialize duty cycle saturation
-  .dtcMax       = MOTOR2_DUTY_CYCLE_MAX,
-  .dtcMin       = MOTOR2_DUTY_CYCLE_MIN,
+  .dtcMax       = MOTOR2_DTC_MAX,
+  .dtcMin       = MOTOR2_DTC_MIN,
   // FOC controller enable to start?
   .enabled      = false,
   // FOC - Sine / Cosine results of angular position

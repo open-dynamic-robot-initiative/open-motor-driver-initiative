@@ -15,9 +15,9 @@ float32_t debugFreq = 1.0f;
 float32_t pdSat = 4.0;
 
 // Time macro
-//const float32_t dt = 1.0 / PWM_FREQ;
-#define TIME_S      (motor[MOTOR_1].interruptCounter / PWM_FREQ)
-#define TIME_MS     ((motor[motor_1].interruptCounter * 1000U) / PWM_FREQ)
+const float32_t     dt = 1.0 / PWM_FREQ;
+#define TIME_S      ((float32_t)motor[MOTOR_1].interruptCounter * dt)
+#define TIME_MS     ((float32_t)motor[motor_1].interruptCounter * 1000.0f * dt)
 
 /**
  * main.c
@@ -44,23 +44,11 @@ int main(void)
     motor[MOTOR_1].motorFOC->enabled    = true;
     motor[MOTOR_2].motorFOC->enabled    = false;
 #endif
-//    // Set PWM to an initial output
-//    MOTOR_SetPwmCmd(&motor[MOTOR_1], 3 * PWM_TBPRD / 4, 2 * PWM_TBPRD / 4, 1 * PWM_TBPRD / 4);
-//    MOTOR_SetPwmCmd(&motor[MOTOR_2], 3 * PWM_TBPRD / 4, 2 * PWM_TBPRD / 4, 1 * PWM_TBPRD / 4);
-
-//    MOTOR_SetPwmCmd(&motor[MOTOR_1], Sinus1kHz[i[0]], Sinus1kHz[i[1]], Sinus1kHz[i[2]]);
-//    MOTOR_SetPwmCmd(&motor[MOTOR_2], Sinus1kHz[j[0]], Sinus1kHz[j[1]], Sinus1kHz[j[2]]);
-
-//    *(motor[MOTOR_1].pwmChAReg) = 3 * PWM_TBPRD / 4;
-//    *(motor[MOTOR_1].pwmChBReg) = 2 * PWM_TBPRD / 4;
-//    *(motor[MOTOR_1].pwmChCReg) = 1 * PWM_TBPRD / 4;
-//    *(motor[MOTOR_2].pwmChAReg) = 3 * PWM_TBPRD / 4;
-//    *(motor[MOTOR_2].pwmChBReg) = 2 * PWM_TBPRD / 4;
-//    *(motor[MOTOR_2].pwmChCReg) = 1 * PWM_TBPRD / 4;
 
     // Infinite loop
     while(1)
     {
+
 #if UOMODRI_SPI_DEBUG_CONFIG
         // Continuously write data for logging
         UpdateLogPacket();
@@ -160,6 +148,7 @@ __interrupt void adc_isrMotor1(void)
     GPIO_writePin(DEBUG_INT_PIN1, 1);
 #endif
     FOC*            p_foc       = motor[MOTOR_1].motorFOC;
+    MOTOR_ALIGN*    p_align     = &motor[MOTOR_1].motorAlign;
     uint32_t        base        = InterruptList[ADC_IT_MOTOR_1].intPeriphBase;
     uint16_t        group       = InterruptList[ADC_IT_MOTOR_1].intAckGroup;
     ADC_IntNumber   adcIntNum   = (ADC_IntNumber)InterruptList[ADC_IT_MOTOR_1].intPeriphSrc;
@@ -198,27 +187,23 @@ __interrupt void adc_isrMotor1(void)
             MOT_emergencyStop();
         }
         // Run resistance estimation
-        MOT_StatorResEst(&motor[MOTOR_1]);
+        MOT_resistorEstimation(&motor[MOTOR_1]);
         //-------------------------------------------------------------------//
         //                       Alignment routine                           //
         //-------------------------------------------------------------------//
-        if(motor[MOTOR_1].motorAlign.state != ALIGN_DONE)
+        if(p_align->state != ALIGN_DONE)
         {
             // Run alignment routine
-            MOT_runAlign(&motor[MOTOR_1].motorAlign);
+            MOT_runAlign(p_align);
 
             // Reset QEP position counter to set angle to zero
-            if (motor[MOTOR_1].motorAlign.state <= ALIGN_STAY)
-                ENC_setPosition(&motor[MOTOR_1].motorFOC->motor_enc, 0);
+            if (p_align->state <= ALIGN_STAY)
+                ENC_setPosition(&p_foc->motor_enc, 0);
         }
 
         //-------------------------------------------------------------------//
         //                         Reference update                          //
         //-------------------------------------------------------------------//
-
-        // Id reference update
-        p_foc->idRef      = motor[MOTOR_1].motorAlign.state == ALIGN_DONE ? 0.0f : motor[MOTOR_1].motorAlign.idAlign;
-
         // Iq reference update
 
 #if UOMODRI_SPI_DEBUG_CONFIG
@@ -227,18 +212,14 @@ __interrupt void adc_isrMotor1(void)
         comInterface.velocityRef[MOTOR_1]   = 4.0f * FM_PI * FM_PI * debugFreq * __cospuf32(debugFreq * TIME_S);
         comInterface.iqRef[MOTOR_1]         = 0.0f;
 #endif
-
-        // Set position reference
-        //p_foc->pdPos.err  = 2.0f * M_PI * (comInterface.positionRef[MOTOR_1] - p_foc->motor_enc.thetaAbsolute); // Convert to radians
-        // Set speed reference
-        //p_foc->pdPos.vErr = comInterface.velocityRef[MOTOR_1] - p_foc->motor_enc.speedEst.speedMech;
         // Set feed-forward current
-        p_foc->pdPos.ff   = comInterface.iqRef[MOTOR_1];
+        p_foc->pdPos.ff = comInterface.iqRef[MOTOR_1];
         // Run PD controller
         FOC_runPD(&p_foc->pdPos);
-
         // Set current reference
-        p_foc->iqRef      =  motor[MOTOR_1].motorAlign.state == ALIGN_DONE ?  p_foc->pdPos.out : 0.0f;
+        p_foc->iqRef    = (p_align->state == ALIGN_DONE) ? (p_foc->pdPos.out) : (0.0f);
+        // Id reference update
+        p_foc->idRef    = (p_align->state == ALIGN_DONE) ? (0.0f) : (p_align->idAlign);
 
         //-------------------------------------------------------------------//
         //                           Anti-coagging                           //
@@ -328,7 +309,7 @@ __interrupt void adc_isrMotor2(void)
             MOT_emergencyStop();
         }
         // Run resistance estimation
-        MOT_StatorResEst(&motor[MOTOR_2]);
+        MOT_resistorEstimation(&motor[MOTOR_2]);
         //-------------------------------------------------------------------//
         //                       Alignment routine                           //
         //-------------------------------------------------------------------//

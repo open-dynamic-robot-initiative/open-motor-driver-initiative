@@ -43,24 +43,11 @@
 
 void MOT_runCommand(MOTOR_STRUCT* p_motor, float32_t CmdChA, float32_t CmdChB, float32_t CmdChC)
 {
-//    uint16_t cmdVal[3]  = {0, 0, 0};
-//    uint8_t loop        = 0;
-//
-//    cmdVal[0] = CmdChA * PWM_CMD_SCALE;
-//    cmdVal[1] = CmdChB * PWM_CMD_SCALE;
-//    cmdVal[2] = CmdChC * PWM_CMD_SCALE;
-//
-//    for(i = 0; i < 3; i++)
-//    {
-//        if(cmdVal[i] > PWM_CMD_SCALE)
-//            cmdVal[i] = PWM_CMD_SCALE;
-//        else if(cmdVal[i] < 0)
-//            cmdVal[i] = 0;
-//    }
-
     *(p_motor->pwmChAReg) = (uint16_t)((1.0 - CmdChA) * PWM_TIMEBASE_CNT);
     *(p_motor->pwmChBReg) = (uint16_t)((1.0 - CmdChB) * PWM_TIMEBASE_CNT);
     *(p_motor->pwmChCReg) = (uint16_t)((1.0 - CmdChC) * PWM_TIMEBASE_CNT);
+
+    return;
 }
 
 void MOT_stopCommand(MOTOR_STRUCT* p_motor)
@@ -112,20 +99,25 @@ void MOT_runAlign(MOTOR_ALIGN* p_align)
     case ALIGN_COUNT_DOWN:
         // Decrement alignment current
         p_align->idAlign   -= 1e-5;
-        p_align->state      = (p_align->idAlign <= 0.0f) ? (ALIGN_DONE) : (ALIGN_COUNT_DOWN);
-//        if(p_align->idAlign <= 0.0f)
-//        {
-//            p_align->counter = 0;
-//            p_align->idAlign = 0.0f;
-//            p_align->state = ALIGN_DONE;
-//        }
+//        p_align->state      = (p_align->idAlign <= 0.0f) ? (ALIGN_DONE) : (ALIGN_COUNT_DOWN);
+        if(p_align->idAlign <= 0.0f)
+        {
+            p_align->counter = 0;
+            p_align->idAlign = 0.0f;
+            p_align->state = ALIGN_DONE;
+        }
+        else
+            p_align->state = ALIGN_COUNT_DOWN;
         break;
 
+    case ALIGN_DONE:
     default:
         p_align->state      = ALIGN_DONE;
         p_align->counter    = 0;
         p_align->idAlign    = 0.0f;
     }
+
+    return;
 }
 
 // Set the motor phases in security mode
@@ -147,26 +139,16 @@ void MOT_emergencyStop(void)
 
 }
 
-inline void MOT_StatorResEst(MOTOR_STRUCT* p_motor)
+inline void MOT_resistorEstimation(MOTOR_STRUCT* p_motor)
 {
-//
-//    // Read measures
-//    foc->phaseAVolt = (*foc->vsenaResult) * foc->voltageScalerReg;
-//    foc->phaseBVolt = (*foc->vsenbResult) * foc->voltageScalerReg;
-//    foc->phaseCVolt = (*foc->vsencResult) * foc->voltageScalerReg;
 
-    FOC* p_foc = p_motor->motorFOC;
+    FOC*        p_foc   = p_motor->motorFOC;
+    float32_t   resEst  = (p_foc->uq - (p_foc->motor_enc.speedEst.speedElec * p_foc->motor_cfg.ke)) / p_foc->iq;
+
     // Compute resistance
     // Only compute if measured current is over a threshold
-    if (FM_ABS(p_motor->motorFOC->iq) > FOC_RE_CURRENT_THRESHOLD)
-    {
-#if (UOMODRI_RES_ESTIM_FLT == 1)
-    LPF_FILTER_1(p_motor->statorResEstLpf, p_motor->statorResEst, (p_foc->uq - (p_foc->motor_enc.speedEst.speedElec * p_foc->motor_cfg.ke)) / p_foc->iq);
-#elif (UOMODRI_RES_ESTIM_FLT == 2)
-    LPF_FILTER_2(p_motor->statorResEstLpf, p_motor->statorResEst, (p_foc->uq - (p_foc->motor_enc.speedEst.speedElec * p_foc->motor_cfg.ke)) / p_foc->iq);
-#else
-    p_motor->statorResEst = (p_foc->uq - (p_foc->motor_enc.speedEst.speedElec * p_foc->motor_cfg.ke)) / p_foc->iq;
-#endif
-//        LPF_FILTER(foc->resEstLpf, foc->resistanceEst, (foc->uq - foc->encoder.speedEst.elecSpeed * foc->ke) / foc->iq);
-    }
+    if (FM_ABS(p_foc->iq) > FOC_RE_CURRENT_THRESHOLD)
+        UOMODRI_RES_ESTIM_FLT(p_motor->statorResEstLpf, p_motor->statorResEst, resEst);
+
+    return;
 }

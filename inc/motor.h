@@ -136,6 +136,6 @@ void MOT_interruptClearFlags(void);
 //void ALIGN_run(AlignRoutine*);
 
 void MOT_emergencyStop(void);
-void MOT_StatorResEst(MOTOR_STRUCT*);
+void MOT_resistorEstimation(MOTOR_STRUCT*);
 
 #endif /* INC_MOTOR_H_ */

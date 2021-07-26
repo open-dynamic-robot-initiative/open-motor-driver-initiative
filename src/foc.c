@@ -31,8 +31,7 @@ inline void FOC_getMeasures(MOTOR_ACQ* p_acq)
     p_acq->vc       = (float32_t)(*p_acq->vcMeasReg) * ADC_VOLTAGE_SCALE;
     // Get the latest Voltage supply value in Volt (minimum is one to avoid dividing by zero later)
     UOMODRI_VBUS_FLT(p_acq->vBusLpf, p_acq->vbus, __fmax(((float32_t)(*p_acq->vBusMeasReg) * ADC_VOLTAGE_SCALE), 1.0f));
-    p_acq->vmax     = MOTOR12_OVERMODULATION * p_acq->vbus * (MOTOR1_DUTY_CYCLE_MAX - MOTOR1_DUTY_CYCLE_MIN) * FM_1DIVSQRT3;
-
+    p_acq->measNew  = true;
     return;
 }
 
@@ -61,18 +60,25 @@ inline void FOC_resistanceEstimation(FOC* p_foc)
  */
 inline void FOC_runControl(FOC* p_foc)
 {
+    MOTOR_PARAMS p_cfg  = p_foc->motor_cfg;
+    MOTOR_ACQ    p_acq  = p_foc->motor_acq;
+    ENCODER      p_enc  = p_foc->motor_enc;
+    SpeedEst     p_speed= p_foc->motor_enc.speedEst;
+
+//    p_foc->vmax         = MOTOR12_OVERMODULATION * p_acq.vbus * (MOTOR1_DTC_MAX - MOTOR1_DTC_MIN) * FM_1DIVSQRT3;
+//    p_foc->imax         = MOTOR12_IMAX;
     // Compute sine and cosine from the electrical angle
-    p_foc->sinTheta     = __sinpuf32(p_foc->motor_enc.thetaElec);
-    p_foc->cosTheta     = __cospuf32(p_foc->motor_enc.thetaElec);
+    p_foc->sinTheta     = __sinpuf32(p_enc.thetaElec);
+    p_foc->cosTheta     = __cospuf32(p_enc.thetaElec);
     // Clarke transform
-    p_foc->ialpha       = ((2.0f * p_foc->motor_acq.ia) - p_foc->motor_acq.ib - p_foc->motor_acq.ic) * FM_1DIV3;
-    p_foc->ibeta        = (p_foc->motor_acq.ib - p_foc->motor_acq.ic) * FM_1DIVSQRT3;
+    p_foc->ialpha       = ((2.0f * p_acq.ia) - p_acq.ib - p_acq.ic) * FM_1DIV3;
+    p_foc->ibeta        = (p_acq.ib - p_acq.ic) * FM_1DIVSQRT3;
     // Park transform + filtering
     UOMODRI_IDQ_FLT(p_foc->iParkLpf, p_foc->id, ((p_foc->sinTheta * p_foc->ibeta) + (p_foc->cosTheta * p_foc->ialpha)));
     UOMODRI_IDQ_FLT(p_foc->iParkLpf, p_foc->iq, ((p_foc->cosTheta * p_foc->ibeta) - (p_foc->sinTheta * p_foc->ialpha)));
     // Compute decoupling feed-forward terms
-    p_foc->piId.ff      = -1.0f * p_foc->motor_enc.speedEst.speedElec * p_foc->motor_cfg.Lq * p_foc->iq * UOMODRI_FOC_FEED_FORWARD_EN;
-    p_foc->piIq.ff      = (p_foc->motor_cfg.Rs * p_foc->iqRef + p_foc->motor_enc.speedEst.speedElec * p_foc->motor_cfg.ke) * UOMODRI_FOC_FEED_FORWARD_EN;
+    p_foc->piId.ff      = UOMODRI_FEED_FORWARD_EN ? (-1.0f * p_speed.speedElec * p_cfg.Lq * p_foc->iq)       : (0.0);//* UOMODRI_FOC_FEED_FORWARD_EN;
+    p_foc->piIq.ff      = UOMODRI_FEED_FORWARD_EN ? (p_cfg.Rs * p_foc->iqRef + p_speed.speedElec * p_cfg.ke) : (0.0);// * UOMODRI_FOC_FEED_FORWARD_EN;
 //    p_foc->piIq.ff  = p_foc->motor_enc.speedEst.elecSpeed * (p_foc->motorParams.Ld * p_foc->id + p_foc->motorParams.ke);
 //    limit_norm(&p_foc->idRef, &p_foc->iqRef, p_foc->motor_acq.imax);
     // Compute error for PI controllers
@@ -91,11 +97,14 @@ inline void FOC_runControl(FOC* p_foc)
     p_foc->uc           = -0.5f * ((FM_SQRT3 * p_foc->ubeta) + p_foc->ualpha);
     // Compute middle voltage to center PWM duty cycles around it
     float32_t uOffset   = 0.5f * (FMIN3(p_foc->ua, p_foc->ub, p_foc->uc) + FMAX3(p_foc->ua, p_foc->ub, p_foc->uc));
-//    float32_t uMidPoint = 0.5f * (MOTOR1_DUTY_CYCLE_MAX - MOTOR1_DUTY_CYCLE_MIN);
+    float32_t uMidPoint = 0.5f * (p_foc->dtcMax - p_foc->dtcMin);
     // Compute duty cycles
-    p_foc->dtc_u        = __fsat((((p_foc->ua - uOffset) / p_foc->motor_acq.vbus) + 0.5f), p_foc->dtcMax, p_foc->dtcMin);//FMINMAX(((p_foc->ua - uOffset) / p_foc->motor_acq.vbus), p_foc->dtcMax, p_foc->dtcMin) + 0.5f;
-    p_foc->dtc_v        = __fsat((((p_foc->ub - uOffset) / p_foc->motor_acq.vbus) + 0.5f), p_foc->dtcMax, p_foc->dtcMin);
-    p_foc->dtc_w        = __fsat((((p_foc->uc - uOffset) / p_foc->motor_acq.vbus) + 0.5f), p_foc->dtcMax, p_foc->dtcMin);
+//    p_foc->dtc_u        = __fsat((((p_foc->ua - uOffset) / p_foc->motor_acq.vbus) + 0.5f), p_foc->dtcMax, p_foc->dtcMin);//FMINMAX(((p_foc->ua - uOffset) / p_foc->motor_acq.vbus), p_foc->dtcMax, p_foc->dtcMin) + 0.5f;
+//    p_foc->dtc_v        = __fsat((((p_foc->ub - uOffset) / p_foc->motor_acq.vbus) + 0.5f), p_foc->dtcMax, p_foc->dtcMin);
+//    p_foc->dtc_w        = __fsat((((p_foc->uc - uOffset) / p_foc->motor_acq.vbus) + 0.5f), p_foc->dtcMax, p_foc->dtcMin);
+    p_foc->dtc_u        = __fsat(((0.5f * (p_foc->ua - uOffset) / p_acq.vbus) + uMidPoint), p_foc->dtcMax, p_foc->dtcMin);
+    p_foc->dtc_v        = __fsat(((0.5f * (p_foc->ub - uOffset) / p_acq.vbus) + uMidPoint), p_foc->dtcMax, p_foc->dtcMin);
+    p_foc->dtc_w        = __fsat(((0.5f * (p_foc->uc - uOffset) / p_acq.vbus) + uMidPoint), p_foc->dtcMax, p_foc->dtcMin);
 
     return;
 }
@@ -117,6 +126,7 @@ inline void FOC_resetPI(PI_CONTROLLER* p_pi)
 /**
  * @brief           Run the Proportional Integral Controller (PI)
  * @param[inout]    *p_pi   Pointer on the PI control structure.
+ * @return          out     Command of PI controller
  */
 inline float32_t FOC_runPI(PI_CONTROLLER* p_pi)
 {
@@ -150,6 +160,7 @@ inline void FOC_resetPD(PD_CONTROLLER* p_pd)
 /**
  * @brief           Run the Proportional Derivative (PD) Controller
  * @param[inout]    *p_pd   Pointer on the PD control structure.
+ * @return          out     Command of PD controller
  */
 inline float32_t FOC_runPD(PD_CONTROLLER* p_pd)
 {

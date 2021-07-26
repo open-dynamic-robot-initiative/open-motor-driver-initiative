@@ -2,6 +2,7 @@
 #define __FOC_H__
 
 #include <math.h>
+#include <stdbool.h>
 
 #include "driverlib.h"
 #include "device.h"
@@ -121,11 +122,9 @@ typedef struct __MOTOR_ACQUISITIONS__
     float32_t ia;   // [A]
     float32_t ib;   // [A]
     float32_t ic;   // [A]
-    float32_t vmax; // [V]
-    float32_t imax; // [A]
     LpfStruct vBusLpf;
     // ADC conversion done
-//    bool measNew;
+    bool    measNew;
 } MOTOR_ACQ;
 
 typedef struct __FOC__
@@ -161,6 +160,9 @@ typedef struct __FOC__
     float32_t           ub;     // [V]
     float32_t           uc;     // [V]
 
+
+    float32_t           vmax; // [V]
+    float32_t           imax; // [A]
     // Duty-cycle saturation
     float32_t           dtcMax;
     float32_t           dtcMin;

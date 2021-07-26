@@ -26,7 +26,7 @@
 #define UOMODRI_RES_ESTIM_FLT(flt_coef, y, x)   LPF_FILTER_1(flt_coef, y, x)
 #define UOMODRI_SPEED_FLT(flt_coef, y, x)       LPF_FILTER_1(flt_coef, y, x)
 #define UOMODRI_SPI_DEBUG_CONFIG                1
-#define UOMODRI_FOC_FEED_FORWARD_EN             0.0f
+#define UOMODRI_FEED_FORWARD_EN                 0
 
 #define OMODRI_PAL_SETUP                        0   // Set this to 1 to use the PAL pin affectation
 #define UOMODRI_DEBUG_LOGGED_MOTOR              MOTOR_1
@@ -603,8 +603,8 @@
 #define MOTOR1_IQ_REGULATOR_KI_COEF             (MOTOR1_RS * 2.0 * M_PI * MOTOR1_CURRENT_CUTOFF_FREQ / PWM_FREQ)
 #define MOTOR1_SPEED_REGULATOR_KP_COEF          (1.0f)
 #define MOTOR1_SPEED_REGULATOR_KD_COEF          (0.02f)
-#define MOTOR1_DUTY_CYCLE_MAX                   (0.6f)     // Max duty cycle
-#define MOTOR1_DUTY_CYCLE_MIN                   (0.05f)     // Min duty cycle
+#define MOTOR1_DTC_MAX                          (0.9f)     // Max duty cycle
+#define MOTOR1_DTC_MIN                          (0.05f)     // Min duty cycle
 #define MOTOR1_STATOR_RESISTOR_CUTOFF_FREQ      (0.2f)
 #define MOTOR1_STATOR_RESISTOR_LPF_ALPHA        (1.0 / (1.0 + (1.0 / (2.0 * M_PI * MOTOR1_STATOR_RESISTOR_CUTOFF_FREQ / PWM_FREQ))))
 #define MOTOR1_STATOR_RESISTOR_LPF_ONE_M_ALPHA  (1.0 - MOTOR1_STATOR_RESISTOR_LPF_ALPHA)
@@ -628,8 +628,8 @@
 #define MOTOR2_IQ_REGULATOR_KI_COEF             (MOTOR2_RS * 2.0 * M_PI * MOTOR2_CURRENT_CUTOFF_FREQ / PWM_FREQ)
 #define MOTOR2_SPEED_REGULATOR_KP_COEF          (1.0f)
 #define MOTOR2_SPEED_REGULATOR_KD_COEF          (0.02f)
-#define MOTOR2_DUTY_CYCLE_MAX                   (0.9f)     // Max duty cycle
-#define MOTOR2_DUTY_CYCLE_MIN                   (0.4f)     // Min duty cycle
+#define MOTOR2_DTC_MAX                          (0.9f)     // Max duty cycle
+#define MOTOR2_DTC_MIN                          (0.4f)     // Min duty cycle
 #define MOTOR2_STATOR_RESISTOR_CUTOFF_FREQ      (0.2f)
 #define MOTOR2_STATOR_RESISTOR_LPF_ALPHA        (1.0 / (1.0 + (1.0 / (2.0 * M_PI * MOTOR2_STATOR_RESISTOR_CUTOFF_FREQ / PWM_FREQ))))
 #define MOTOR2_STATOR_RESISTOR_LPF_ONE_M_ALPHA  (1.0 - MOTOR2_STATOR_RESISTOR_LPF_ALPHA)
