@@ -21,40 +21,22 @@
 //#define LPF_FILTER(filt, x, y)     (x) = filt.b * (y) + filt.a * (x);
 
 
-
-//// Read current measures
-//inline void MOTOR_getCurrent(MOTOR_MEASURES* p_measure)
-//{
-//    p_measure->ia       = (float32_t)(*p_measure->iaMeasReg) * ADC_CURRENT_SCALE;
-//    p_measure->ib       = (float32_t)(*p_measure->ibMeasReg) * ADC_CURRENT_SCALE;
-//    p_measure->ic       = (float32_t)(*p_measure->icMeasReg) * ADC_CURRENT_SCALE;
-//    p_measure->MeasNew  = true;
-//}
-//
-//inline void MOTOR_getVoltage(MOTOR_MEASURES* p_measure)
-//{
-//    p_measure->va   = (float32_t)(*p_measure->vaMeasReg)   * ADC_VOLTAGE_SCALE;
-//    p_measure->vb   = (float32_t)(*p_measure->vbMeasReg)   * ADC_VOLTAGE_SCALE;
-//    p_measure->vc   = (float32_t)(*p_measure->vcMeasReg)   * ADC_VOLTAGE_SCALE;
-//    p_measure->vbus = (float32_t)(*p_measure->vBusMeasReg) * ADC_VOLTAGE_SCALE;
-//    // Get bus voltage (minimum is one to avoid dividing by zero later)
-//    p_measure->vbus = __fmax(p_measure->vbus, 1.0f);
-//}
-
 void MOT_runCommand(MOTOR_STRUCT* p_motor, float32_t CmdChA, float32_t CmdChB, float32_t CmdChC)
 {
-    *(p_motor->pwmChAReg) = (uint16_t)((1.0 - CmdChA) * PWM_TIMEBASE_CNT);
-    *(p_motor->pwmChBReg) = (uint16_t)((1.0 - CmdChB) * PWM_TIMEBASE_CNT);
-    *(p_motor->pwmChCReg) = (uint16_t)((1.0 - CmdChC) * PWM_TIMEBASE_CNT);
+    *(p_motor->motorChAReg) = (uint16_t)((CmdChA) * PWM_TIMEBASE_CNT);
+    *(p_motor->motorChBReg) = (uint16_t)((CmdChB) * PWM_TIMEBASE_CNT);
+    *(p_motor->motorChCReg) = (uint16_t)((CmdChC) * PWM_TIMEBASE_CNT);
 
     return;
 }
 
 void MOT_stopCommand(MOTOR_STRUCT* p_motor)
 {
-    *(p_motor->pwmChAReg) = (uint16_t)PWM_TIMEBASE_CNT;
-    *(p_motor->pwmChBReg) = (uint16_t)PWM_TIMEBASE_CNT;
-    *(p_motor->pwmChCReg) = (uint16_t)PWM_TIMEBASE_CNT;
+    *(p_motor->motorChAReg) = (uint16_t)PWM_TIMEBASE_CNT;
+    *(p_motor->motorChBReg) = (uint16_t)PWM_TIMEBASE_CNT;
+    *(p_motor->motorChCReg) = (uint16_t)PWM_TIMEBASE_CNT;
+
+    return;
 }
 
 void MOTOR_interruptClearFlags(void)
@@ -73,15 +55,18 @@ void MOTOR_interruptClearFlags(void)
     XBAR_clearInputFlag(XBAR_INPUT_FLG_INPUT5);
 }
 
-void MOT_resetAlignStruct(MOTOR_ALIGN* p_align)
+void MOT_resetAlignStruct(ALIGN_STRUCT* p_align)
 {
-    p_align->state      = ALIGN_COUNT_UP;
-    p_align->counter    = 0;
-    p_align->idAlign    = 0.0f;
+    p_align->state          = ALIGN_COUNT_UP;
+    p_align->cnt            = 0;
+    p_align->cntMax         = PWM_FREQ;
+    p_align->idAlign        = 0.0f;
+
+    return;
 }
 
 // Return true if calibration is finished
-void MOT_runAlign(MOTOR_ALIGN* p_align)
+void MOT_runAlign(ALIGN_STRUCT* p_align)
 {
     switch (p_align->state)
     {
@@ -93,7 +78,7 @@ void MOT_runAlign(MOTOR_ALIGN* p_align)
 
     case ALIGN_STAY:
         // Maintain alignment current
-        p_align->state      = (++p_align->counter >= p_align->max) ? (ALIGN_COUNT_DOWN) : (ALIGN_STAY);
+        p_align->state      = (++p_align->cnt >= p_align->cntMax) ? (ALIGN_COUNT_DOWN) : (ALIGN_STAY);
         break;
 
     case ALIGN_COUNT_DOWN:
@@ -102,18 +87,19 @@ void MOT_runAlign(MOTOR_ALIGN* p_align)
 //        p_align->state      = (p_align->idAlign <= 0.0f) ? (ALIGN_DONE) : (ALIGN_COUNT_DOWN);
         if(p_align->idAlign <= 0.0f)
         {
-            p_align->counter = 0;
-            p_align->idAlign = 0.0f;
-            p_align->state = ALIGN_DONE;
+            p_align->cnt    = 0;
+            p_align->idAlign= 0.0f;
+            p_align->state  = ALIGN_DONE;
         }
         else
-            p_align->state = ALIGN_COUNT_DOWN;
+            p_align->state  = ALIGN_COUNT_DOWN;
         break;
 
     case ALIGN_DONE:
     default:
         p_align->state      = ALIGN_DONE;
-        p_align->counter    = 0;
+        p_align->cnt        = 0;
+        p_align->cntMax     = PWM_FREQ;
         p_align->idAlign    = 0.0f;
     }
 
@@ -137,13 +123,14 @@ void MOT_emergencyStop(void)
     FOC_resetStruct(motor[MOTOR_1].motorFOC);
     FOC_resetStruct(motor[MOTOR_2].motorFOC);
 
+    return;
 }
 
 inline void MOT_resistorEstimation(MOTOR_STRUCT* p_motor)
 {
 
-    FOC*        p_foc   = p_motor->motorFOC;
-    float32_t   resEst  = (p_foc->uq - (p_foc->motor_enc.speedEst.speedElec * p_foc->motor_cfg.ke)) / p_foc->iq;
+    FOC_STRUCT* p_foc   = p_motor->motorFOC;
+    float32_t resEst    = (p_foc->uq - (p_foc->motor_enc.speedEst.speedElec * p_foc->motor_cfg.ke)) / p_foc->iq;
 
     // Compute resistance
     // Only compute if measured current is over a threshold

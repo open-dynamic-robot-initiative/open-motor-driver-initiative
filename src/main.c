@@ -16,8 +16,8 @@ float32_t pdSat = 4.0;
 
 // Time macro
 const float32_t     dt = 1.0 / PWM_FREQ;
-#define TIME_S      ((float32_t)motor[MOTOR_1].interruptCounter * dt)
-#define TIME_MS     ((float32_t)motor[motor_1].interruptCounter * 1000.0f * dt)
+#define TIME_S      ((float32_t)motor[MOTOR_1].interruptCnt * dt)
+#define TIME_MS     ((float32_t)motor[motor_1].interruptCnt * 1000.0f * dt)
 
 /**
  * main.c
@@ -147,8 +147,8 @@ __interrupt void adc_isrMotor1(void)
 #if (UOMODRI == 0)
     GPIO_writePin(DEBUG_INT_PIN1, 1);
 #endif
-    FOC*            p_foc       = motor[MOTOR_1].motorFOC;
-    MOTOR_ALIGN*    p_align     = &motor[MOTOR_1].motorAlign;
+    FOC_STRUCT*     p_foc       = motor[MOTOR_1].motorFOC;
+    ALIGN_STRUCT*   p_align     = &motor[MOTOR_1].motorAlign;
     uint32_t        base        = InterruptList[ADC_IT_MOTOR_1].intPeriphBase;
     uint16_t        group       = InterruptList[ADC_IT_MOTOR_1].intAckGroup;
     ADC_IntNumber   adcIntNum   = (ADC_IntNumber)InterruptList[ADC_IT_MOTOR_1].intPeriphSrc;
@@ -208,8 +208,8 @@ __interrupt void adc_isrMotor1(void)
 
 #if UOMODRI_SPI_DEBUG_CONFIG
         // Set predefined trajectory reference
-        comInterface.positionRef[MOTOR_1]   = __sinpuf32(debugFreq * TIME_S);
-        comInterface.velocityRef[MOTOR_1]   = 4.0f * FM_PI * FM_PI * debugFreq * __cospuf32(debugFreq * TIME_S);
+        comInterface.positionRef[MOTOR_1]   = __sinpuf32(debugFreq * TIME_S);//debugFreq * TIME_S;//
+        comInterface.velocityRef[MOTOR_1]   = 4.0f * FM_PI * FM_PI * debugFreq * __cospuf32(debugFreq * TIME_S);//debugFreq * TIME_S;//
         comInterface.iqRef[MOTOR_1]         = 0.0f;
 #endif
         // Set feed-forward current
@@ -246,13 +246,15 @@ __interrupt void adc_isrMotor1(void)
     //-------------------------------------------------------------------//
     //                   Interrupt wrap functions                        //
     //-------------------------------------------------------------------//
-
-    // Save number of cycles elapsed since control loop startup
-    motor[MOTOR_1].clCycleNb = EPWM_getTimeBaseCounterValue(MOTOR1_PWM1_BASE);
-    // Increment interrupt counter
-    motor[MOTOR_1].interruptCounter++;
-    // Compute time
-    comInterface.time = TIME_S;//(motor[MOTOR_1].interruptCounter / PWM_FREQ);
+    if(p_align->state == ALIGN_DONE)
+    {
+        // Save number of cycles elapsed since control loop startup
+        motor[MOTOR_1].clCycleNb = EPWM_getTimeBaseCounterValue(MOTOR1_PWM1_BASE);
+        // Increment interrupt counter
+        motor[MOTOR_1].interruptCnt++;
+        // Compute time
+        comInterface.time = TIME_S;//(motor[MOTOR_1].interruptCounter / PWM_FREQ);
+    }
     // Acknowledge PWM and CLA interrupt flag
     Interrupt_clearACKGroup(group);
 
@@ -269,7 +271,7 @@ __interrupt void adc_isrMotor2(void)
 #if (UOMODRI == 0)
     GPIO_writePin(DEBUG_INT_PIN2, 1);
 #endif
-    FOC*            p_foc       = motor[MOTOR_2].motorFOC;
+    FOC_STRUCT*     p_foc       = motor[MOTOR_2].motorFOC;
     uint32_t        base        = InterruptList[ADC_IT_MOTOR_2].intPeriphBase;
     uint16_t        group       = InterruptList[ADC_IT_MOTOR_2].intAckGroup;
     ADC_IntNumber   adcIntNum   = (ADC_IntNumber)InterruptList[ADC_IT_MOTOR_2].intPeriphSrc;
@@ -380,7 +382,7 @@ __interrupt void adc_isrMotor2(void)
     // Save number of cycles elapsed since control loop startup
     motor[MOTOR_2].clCycleNb = EPWM_getTimeBaseCounterValue(MOTOR2_PWM1_BASE);
     // Increment interrupt counter
-    motor[MOTOR_2].interruptCounter++;
+    motor[MOTOR_2].interruptCnt++;
     // Compute time
     comInterface.time = TIME_S;//(motor[MOTOR_2].interruptCounter / PWM_FREQ);
     // Acknowledge PWM and CLA interrupt flag

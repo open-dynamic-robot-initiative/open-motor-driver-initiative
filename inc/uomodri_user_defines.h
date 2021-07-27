@@ -667,7 +667,7 @@ typedef enum
     MOTOR_1 = 0,    /*!< Select Motor_1 */
     MOTOR_2 = 1,    /*!< Select Motor_2 */
     NO_MOT  = -1    /*!< No motor selected */
-} MOTOR_ID;
+} ID_ENUM;
 
 /**
  * @enum    itID
@@ -681,6 +681,6 @@ typedef enum
 //    PWM_IT_MOTOR_2  = 3,    /*!< Select the PWM interrupt source of Motor_2 */
     DRV_IT_MOTOR_1  = 2,    /*!< Select the GPIO (DRV fault) interrupt source of Motor_1 */
     DRV_IT_MOTOR_2  = 3,    /*!< Select the GPIO (DRV fault) interrupt source of Motor_2 */
-} itID;
+} IT_ENUM;
 
 #endif

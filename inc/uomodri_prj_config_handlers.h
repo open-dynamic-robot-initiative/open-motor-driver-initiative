@@ -47,12 +47,19 @@ static ComInterface comInterface =
 
 static const IT_TypeDef InterruptList[] =
 {
- {.motorID = MOTOR_1,   .intNum = MOTOR1_IA_INT_CH, .intPeriphBase = MOTOR12_IVA_ADC_ADDR,  .intPeriphSrc = MOTOR1_IA_INT_NUM,  .intCpuGroup = INTERRUPT_CPU_INT10, .intAckGroup = INTERRUPT_ACK_GROUP10,   .handler = &adc_isrMotor1},
- {.motorID = MOTOR_2,   .intNum = MOTOR2_IA_INT_CH, .intPeriphBase = MOTOR12_IVA_ADC_ADDR,  .intPeriphSrc = MOTOR2_IA_INT_NUM,  .intCpuGroup = INTERRUPT_CPU_INT10, .intAckGroup = INTERRUPT_ACK_GROUP10,   .handler = &adc_isrMotor2},
+// {.motorID = MOTOR_1,   .intNum = MOTOR1_IA_INT_CH, .intPeriphBase = MOTOR12_IVA_ADC_ADDR,  .intPeriphSrc = MOTOR1_IA_INT_NUM,  .intCpuGroup = INTERRUPT_CPU_INT10, .intAckGroup = INTERRUPT_ACK_GROUP10,   .handler = &adc_isrMotor1},
+// {.motorID = MOTOR_2,   .intNum = MOTOR2_IA_INT_CH, .intPeriphBase = MOTOR12_IVA_ADC_ADDR,  .intPeriphSrc = MOTOR2_IA_INT_NUM,  .intCpuGroup = INTERRUPT_CPU_INT10, .intAckGroup = INTERRUPT_ACK_GROUP10,   .handler = &adc_isrMotor2},
+//// {.motorID = MOTOR_1,   .intNum = INT_EPWM1,        .intPeriphBase = MOTOR1_PWM1_BASE,                                          .intCpuGroup = INTERRUPT_CPU_INT3,  .intAckGroup = INTERRUPT_ACK_GROUP3,    .handler = &pwm_isrMotor1},
+//// {.motorID = MOTOR_2,   .intNum = INT_EPWM4,        .intPeriphBase = MOTOR2_PWM1_BASE,                                          .intCpuGroup = INTERRUPT_CPU_INT3,  .intAckGroup = INTERRUPT_ACK_GROUP3,    .handler = &pwm_isrMotor2},
+// {.motorID = MOTOR_1,   .intNum = INT_XINT1,                                                                                    .intCpuGroup = INTERRUPT_CPU_INT1,  .intAckGroup = INTERRUPT_ACK_GROUP1,    .handler = &gpio_isrFault1},
+// {.motorID = MOTOR_2,   .intNum = INT_XINT2,                                                                                    .intCpuGroup = INTERRUPT_CPU_INT1,  .intAckGroup = INTERRUPT_ACK_GROUP1,    .handler = &gpio_isrFault2},
+ {.intNum = MOTOR1_IA_INT_CH, .intPeriphBase = MOTOR12_IVA_ADC_ADDR,  .intPeriphSrc = MOTOR1_IA_INT_NUM,  .intCpuGroup = INTERRUPT_CPU_INT10, .intAckGroup = INTERRUPT_ACK_GROUP10,   .handler = &adc_isrMotor1},
+ {.intNum = MOTOR2_IA_INT_CH, .intPeriphBase = MOTOR12_IVA_ADC_ADDR,  .intPeriphSrc = MOTOR2_IA_INT_NUM,  .intCpuGroup = INTERRUPT_CPU_INT10, .intAckGroup = INTERRUPT_ACK_GROUP10,   .handler = &adc_isrMotor2},
 // {.motorID = MOTOR_1,   .intNum = INT_EPWM1,        .intPeriphBase = MOTOR1_PWM1_BASE,                                          .intCpuGroup = INTERRUPT_CPU_INT3,  .intAckGroup = INTERRUPT_ACK_GROUP3,    .handler = &pwm_isrMotor1},
 // {.motorID = MOTOR_2,   .intNum = INT_EPWM4,        .intPeriphBase = MOTOR2_PWM1_BASE,                                          .intCpuGroup = INTERRUPT_CPU_INT3,  .intAckGroup = INTERRUPT_ACK_GROUP3,    .handler = &pwm_isrMotor2},
- {.motorID = MOTOR_1,   .intNum = INT_XINT1,                                                                                    .intCpuGroup = INTERRUPT_CPU_INT1,  .intAckGroup = INTERRUPT_ACK_GROUP1,    .handler = &gpio_isrFault1},
- //{.motorID = MOTOR_2,   .intNum = INT_XINT2,                                                                                    .intCpuGroup = INTERRUPT_CPU_INT1,  .intAckGroup = INTERRUPT_ACK_GROUP1,    .handler = &gpio_isrFault2},
+ {.intNum = INT_XINT1,                                                                                    .intCpuGroup = INTERRUPT_CPU_INT1,  .intAckGroup = INTERRUPT_ACK_GROUP1,    .handler = &gpio_isrFault1},
+ {.intNum = INT_XINT2,                                                                                    .intCpuGroup = INTERRUPT_CPU_INT1,  .intAckGroup = INTERRUPT_ACK_GROUP1,    .handler = &gpio_isrFault2},
+
  // END OF ARRAY
  {.intNum = 0xFFFFFFFF},
 };
@@ -167,24 +174,24 @@ static const HAL_MOTOR_CFG hal_motor_cfg[] =
 {
  {.motorID      = MOTOR_1,
   .p_pwmCntCmp  = {&PwmCounterCompareCfgList[0], &PwmCounterCompareCfgList[1], &PwmCounterCompareCfgList[2]},
-  .p_vConv      = {&AdcAcqList[0], &AdcAcqList[4], &AdcAcqList[9]},
-  .p_iConv      = {&AdcAcqList[2], &AdcAcqList[6], &AdcAcqList[11]},
-  .p_vbusConv   = &AdcAcqList[8],
-  .p_ITConv     = &AdcIntList[0],
+  .p_vAcq       = {&AdcAcqList[0], &AdcAcqList[4], &AdcAcqList[9]},
+  .p_iAcq       = {&AdcAcqList[2], &AdcAcqList[6], &AdcAcqList[11]},
+  .p_vbusAcq    = &AdcAcqList[8],
+  .p_ITAcq      = &AdcIntList[0],
  },
  {.motorID      = MOTOR_2,
   .p_pwmCntCmp  = {&PwmCounterCompareCfgList[3], &PwmCounterCompareCfgList[4], &PwmCounterCompareCfgList[5]},
-  .p_vConv      = {&AdcAcqList[1], &AdcAcqList[5], &AdcAcqList[10]},
-  .p_iConv      = {&AdcAcqList[3], &AdcAcqList[7], &AdcAcqList[12]},
-  .p_vbusConv   = &AdcAcqList[8],
-  .p_ITConv     = &AdcIntList[1],
+  .p_vAcq       = {&AdcAcqList[1], &AdcAcqList[5], &AdcAcqList[10]},
+  .p_iAcq       = {&AdcAcqList[3], &AdcAcqList[7], &AdcAcqList[12]},
+  .p_vbusAcq    = &AdcAcqList[8],
+  .p_ITAcq      = &AdcIntList[1],
  },
 };
 
-static FOC motor_foc[] =
+static FOC_STRUCT motor_foc[] =
 {
  {
-  .motorID      = MOTOR_1,
+//  .motorID      = MOTOR_1,
   .motor_cfg    = {.Rs              = MOTOR1_RS,
                    .Ld              = MOTOR1_LD,
                    .Lq              = MOTOR1_LQ,
@@ -293,16 +300,9 @@ static FOC motor_foc[] =
 //  .auxAdc = 0.0,
 //  .phaseAVolt = 0.0, .phaseBVolt = 0.0, .phaseCVolt = 0.0,
   .resistanceEst = 0.0,
-//  .pwmCompA = (volatile uint16_t *)(MOTOR1_PWM1_CMD_ADDR),
-//  .pwmCompB = (volatile uint16_t *)(MOTOR1_PWM2_CMD_ADDR),
-//  .pwmCompC = (volatile uint16_t *)(MOTOR1_PWM3_CMD_ADDR),
-//  .Rs = (float32_t *)(&motor_params[MOTOR_1].Rs),
-//  .Ld = (float32_t *)(&motor_params[MOTOR_1].Ld),
-//  .Lq = (float32_t *)(&motor_params[MOTOR_1].Lq),
-//  .ke = (float32_t *)(&motor_params[MOTOR_1].ke),
  },
  {
-  .motorID      = MOTOR_2,
+//  .motorID      = MOTOR_2,
   .motor_cfg    = {.Rs              = MOTOR2_RS,
                    .Ld              = MOTOR2_LD,
                    .Lq              = MOTOR2_LQ,
@@ -411,14 +411,6 @@ static FOC motor_foc[] =
 
 //  .auxAdc = 0.0, .phaseAVolt = 0.0, .phaseBVolt = 0.0, .phaseCVolt = 0.0,
   .resistanceEst = 0.0,
-
-//  .pwmCompA = (volatile uint16_t *)(MOTOR2_PWM1_CMD_ADDR),
-//  .pwmCompB = (volatile uint16_t *)(MOTOR2_PWM2_CMD_ADDR),
-//  .pwmCompC = (volatile uint16_t *)(MOTOR2_PWM3_CMD_ADDR),
-//  .Rs = (float32_t *)(&motor_params[MOTOR_2].Rs),
-//  .Ld = (float32_t *)(&motor_params[MOTOR_2].Ld),
-//  .Lq = (float32_t *)(&motor_params[MOTOR_2].Lq),
-//  .ke = (float32_t *)(&motor_params[MOTOR_2].ke),
  },
 };
 
@@ -428,36 +420,36 @@ static FOC motor_foc[] =
 static MOTOR_STRUCT motor[] =
 {
  {
-  .motorID          = MOTOR_1,
+//  .motorID          = MOTOR_1,
   .motorHalCfg      = &hal_motor_cfg[MOTOR_1],
   .motorDRV         = &drv[MOTOR_1],
   .motorFOC         = &motor_foc[MOTOR_1],
-  .motorAlign       = {.state = ALIGN_COUNT_UP, .counter = 0, .max = PWM_FREQ, .idAlignRef = 0.5, .idAlign = 0.0},// 400mA alignment current
+  .motorAlign       = {.state = ALIGN_COUNT_UP, .cnt = 0, .cntMax = PWM_FREQ, .idAlignRef = 0.5, .idAlign = 0.0},// 400mA alignment current
   .statorResEstLpf  = {.a = MOTOR1_STATOR_RESISTOR_LPF_ALPHA, .one_minus_a = MOTOR1_STATOR_RESISTOR_LPF_ONE_M_ALPHA},
   .enabled          = false,
-  //  .currentScaler    = ADC_CURRENT_SCALE,
-  //  .currentScalerReg = ADC_CURRENT_SCALE / 0x8000L,
-  //  .voltageScaler    = ADC_VOLTAGE_SCALE,
-  //  .voltageScalerReg = ADC_VOLTAGE_SCALE / 0x10000L,
-  .pwmChAReg        = (volatile uint16_t *)(MOTOR1_PWM1_CMD_ADDR),
-  .pwmChBReg        = (volatile uint16_t *)(MOTOR1_PWM2_CMD_ADDR),
-  .pwmChCReg        = (volatile uint16_t *)(MOTOR1_PWM3_CMD_ADDR),
+//  .currentScaler    = ADC_CURRENT_SCALE,
+//  .currentScalerReg = ADC_CURRENT_SCALE / 0x8000L,
+//  .voltageScaler    = ADC_VOLTAGE_SCALE,
+//  .voltageScalerReg = ADC_VOLTAGE_SCALE / 0x10000L,
+  .motorChAReg      = (volatile uint16_t *)(MOTOR1_PWM1_CMD_ADDR),
+  .motorChBReg      = (volatile uint16_t *)(MOTOR1_PWM2_CMD_ADDR),
+  .motorChCReg      = (volatile uint16_t *)(MOTOR1_PWM3_CMD_ADDR),
  },
  {
-  .motorID          = MOTOR_2,
+//  .motorID          = MOTOR_2,
   .motorHalCfg      = &hal_motor_cfg[MOTOR_2],
   .motorDRV         = &drv[MOTOR_2],
   .motorFOC         = &motor_foc[MOTOR_2],
-  .motorAlign       = {.state = ALIGN_COUNT_UP, .counter = 0, .max = PWM_FREQ, .idAlignRef = 0.5, .idAlign = 0.0},// 400mA alignment current
+  .motorAlign       = {.state = ALIGN_COUNT_UP, .cnt = 0, .cntMax = PWM_FREQ, .idAlignRef = 0.5, .idAlign = 0.0},// 400mA alignment current
   .statorResEstLpf  = {.a = MOTOR2_STATOR_RESISTOR_LPF_ALPHA, .one_minus_a = MOTOR2_STATOR_RESISTOR_LPF_ONE_M_ALPHA},
   .enabled          = false,
-  //  .currentScaler    = ADC_CURRENT_SCALE,
-  //  .currentScalerReg = ADC_CURRENT_SCALE / 0x8000L,
-  //  .voltageScaler    = ADC_VOLTAGE_SCALE,
-  //  .voltageScalerReg = ADC_VOLTAGE_SCALE / 0x10000L,
-  .pwmChAReg        = (volatile uint16_t *)(MOTOR2_PWM1_CMD_ADDR),
-  .pwmChBReg        = (volatile uint16_t *)(MOTOR2_PWM2_CMD_ADDR),
-  .pwmChCReg        = (volatile uint16_t *)(MOTOR2_PWM3_CMD_ADDR),
+//  .currentScaler    = ADC_CURRENT_SCALE,
+//  .currentScalerReg = ADC_CURRENT_SCALE / 0x8000L,
+//  .voltageScaler    = ADC_VOLTAGE_SCALE,
+//  .voltageScalerReg = ADC_VOLTAGE_SCALE / 0x10000L,
+  .motorChAReg      = (volatile uint16_t *)(MOTOR2_PWM1_CMD_ADDR),
+  .motorChBReg      = (volatile uint16_t *)(MOTOR2_PWM2_CMD_ADDR),
+  .motorChCReg      = (volatile uint16_t *)(MOTOR2_PWM3_CMD_ADDR),
  },
 };
 
