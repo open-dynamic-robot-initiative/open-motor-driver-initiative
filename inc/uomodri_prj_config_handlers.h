@@ -69,8 +69,8 @@ static const IT_TypeDef InterruptList[] =
  */
 static const DRV_Cfg DrvCfgList[] =
 {
- {.spiHandle = DRV_SPI_BASE, .gpioNumber_CS = MOTOR1_DRV_GPIO_CS, .gpioNumber_EN = MOTOR1_DRV_GPIO_EN},
- {.spiHandle = DRV_SPI_BASE, .gpioNumber_CS = MOTOR2_DRV_GPIO_CS, .gpioNumber_EN = MOTOR2_DRV_GPIO_EN},
+ {.spiHandle = DRV_SPI_BASE, .gpioNumber_CS = MOTOR1_DRV_SPI_CS, .gpioNumber_EN = MOTOR1_DRV_GPIO_EN},
+ {.spiHandle = DRV_SPI_BASE, .gpioNumber_CS = MOTOR2_DRV_SPI_CS, .gpioNumber_EN = MOTOR2_DRV_GPIO_EN},
 // // END OF ARRAY
 // {.spiHandle = 0xFFFFFFFF},
 };

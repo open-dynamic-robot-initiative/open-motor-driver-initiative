@@ -62,10 +62,10 @@
  * @{
  */
 #if (UOMODRI == 0)
-#define DEBUG_INT_PIN1                          35
-#define DEBUG_INT_PIN1_CFG                      GPIO_35_GPIO35
-#define DEBUG_INT_PIN2                          37
-#define DEBUG_INT_PIN2_CFG                      GPIO_37_GPIO37
+#define DEBUG_INT_PIN1                          40
+#define DEBUG_INT_PIN1_CFG                      GPIO_40_GPIO40
+#define DEBUG_INT_PIN2                          41
+#define DEBUG_INT_PIN2_CFG                      GPIO_41_GPIO41
 #endif
 /**
  * @}
@@ -111,17 +111,10 @@
 #define DRV_SPI_SOMI_CFG                        GPIO_17_SPISOMIA
 #define DRV_SPI_CLK                             (18)
 #define DRV_SPI_CLK_CFG                         GPIO_18_SPICLKA
-#define MOTOR1_DRV_GPIO_CS                      (19)
-#define MOTOR1_DRV_GPIO_CS_CFG                  GPIO_19_GPIO19
-#if (UOMODRI == 0)
-// DRV2 SPI defines
-#define MOTOR2_DRV_GPIO_CS                      (61)
-#define MOTOR2_DRV_GPIO_CS_CFG                  GPIO_61_GPIO61
-#else
-// DRV2 SPI defines
-#define MOTOR2_DRV_GPIO_CS                      (35)
-#define MOTOR2_DRV_GPIO_CS_CFG                  GPIO_35_GPIO35
-#endif
+#define MOTOR1_DRV_SPI_CS                       (19)
+#define MOTOR1_DRV_SPI_CS_CFG                   GPIO_19_GPIO19
+#define MOTOR2_DRV_SPI_CS                       (35)
+#define MOTOR2_DRV_SPI_CS_CFG                   GPIO_35_GPIO35
 /**
  * @}
  */
@@ -159,18 +152,6 @@
  *  @brief    Configure the pins necessaries for DRV selection \& fault status.
  * @{
  */
-#if (UOMODRI == 0)
-// DRV1 SPI defines
-#define MOTOR1_DRV_GPIO_EN                      (89)
-#define MOTOR1_DRV_GPIO_EN_CFG                  GPIO_89_GPIO89
-#define MOTOR1_DRV_GPIO_NFAULT                  (91)
-#define MOTOR1_DRV_GPIO_NFAULT_CFG              GPIO_91_GPIO91
-// DRV2 SPI defines
-#define MOTOR2_DRV_GPIO_EN                      (133)
-#define MOTOR2_DRV_GPIO_EN_CFG                  GPIO_133_GPIO133
-#define MOTOR2_DRV_GPIO_NFAULT                  (67)
-#define MOTOR2_DRV_GPIO_NFAULT_CFG              GPIO_67_GPIO67
-#else
 // DRV1 SPI defines
 #define MOTOR1_DRV_GPIO_EN                      (89)
 #define MOTOR1_DRV_GPIO_EN_CFG                  GPIO_89_GPIO89
@@ -181,7 +162,6 @@
 #define MOTOR2_DRV_GPIO_EN_CFG                  GPIO_37_GPIO37
 #define MOTOR2_DRV_GPIO_NFAULT                  (36)
 #define MOTOR2_DRV_GPIO_NFAULT_CFG              GPIO_36_GPIO36
-#endif
 /**
  * @}
  */
@@ -522,12 +502,12 @@
 #define MOTOR1_ENC_CHB_CFG                      GPIO_21_EQEP1B
 #define MOTOR1_ENC_CHI                          (23)
 #define MOTOR1_ENC_CHI_CFG                      GPIO_23_EQEP1I
-#define MOTOR2_ENC_CHA                          (54)
-#define MOTOR2_ENC_CHA_CFG                      GPIO_54_EQEP2A
-#define MOTOR2_ENC_CHB                          (55)
-#define MOTOR2_ENC_CHB_CFG                      GPIO_55_EQEP2B
-#define MOTOR2_ENC_CHI                          (57)
-#define MOTOR2_ENC_CHI_CFG                      GPIO_57_EQEP2I
+#define MOTOR2_ENC_CHA                          (24)
+#define MOTOR2_ENC_CHA_CFG                      GPIO_24_EQEP2A
+#define MOTOR2_ENC_CHB                          (25)
+#define MOTOR2_ENC_CHB_CFG                      GPIO_25_EQEP2B
+#define MOTOR2_ENC_CHI                          (26)
+#define MOTOR2_ENC_CHI_CFG                      GPIO_26_EQEP2I
 /**
  * @}
  */

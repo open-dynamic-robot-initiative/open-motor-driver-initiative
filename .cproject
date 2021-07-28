@@ -56,7 +56,6 @@
 									<listOptionValue builtIn="false" value="CPU1"/>
 									<listOptionValue builtIn="false" value="F2838x_DEVICE"/>
 									<listOptionValue builtIn="false" value="DUAL_HEADERS"/>
-									<listOptionValue builtIn="false" value="USE_20MHZ_XTAL"/>
 									<listOptionValue builtIn="false" value="DEBUG"/>
 									<listOptionValue builtIn="false" value="__TI_EABI__"/>
 								</option>
