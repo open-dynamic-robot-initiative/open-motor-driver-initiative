@@ -18,6 +18,8 @@ float32_t pdSat = 4.0;
 const float32_t     dt = 1.0 / PWM_FREQ;
 #define TIME_S      ((float32_t)motor[MOTOR_1].interruptCnt * dt)
 #define TIME_MS     ((float32_t)motor[motor_1].interruptCnt * 1000.0f * dt)
+bool                isrMotor1Ready = false;
+bool                isrMotor2Ready = false;
 
 /**
  * main.c
@@ -42,12 +44,81 @@ int main(void)
 #if UOMODRI_SPI_DEBUG_CONFIG
     comInterface.systemEnabled          = true;
     motor[MOTOR_1].motorFOC->enabled    = true;
-    motor[MOTOR_2].motorFOC->enabled    = true;
+    motor[MOTOR_2].motorFOC->enabled    = false;
 #endif
 
     // Infinite loop
     while(1)
     {
+//        if(isrMotor1Ready)
+//        {
+//            //-------------------------------------------------------------------//
+//            //                         Wrap functions                            //
+//            //-------------------------------------------------------------------//
+//            // Functions that can be executed between two control loop executions
+//            // Run encoder update
+//            ENC_getSpeed(&motor[MOTOR_1].motorFOC->motor_enc);//ENC_update(motor[MOTOR_1].motorFOC->motor_enc);
+//            // Check for roll-over error
+//            if (comInterface.rolloverErrorFlag && motor[MOTOR_1].motorFOC->motor_enc.rollOverFlag)
+//            {
+//                // Set CAN error
+//                comInterface.canError = SPI_SENSOR_STATUS_ERROR_POS_ROLLOVER;
+//                // Disable the system
+//                MOT_emergencyStop();
+//            }
+//            // Run resistance estimation
+//            //MOT_resistorEstimation(&motor[MOTOR_1]);
+//            //-------------------------------------------------------------------//
+//            //                       Alignment routine                           //
+//            //-------------------------------------------------------------------//
+//            if(motor[MOTOR_1].motorAlign.state != ALIGN_DONE)
+//            {
+//                // Run alignment routine
+//                MOT_runAlign(&motor[MOTOR_1].motorAlign);
+//
+//                // Reset QEP position counter to set angle to zero
+//                if (motor[MOTOR_1].motorAlign.state <= ALIGN_STAY)
+//                    ENC_setPosition(&motor[MOTOR_1].motorFOC->motor_enc, 0);
+//            }
+//
+//            //-------------------------------------------------------------------//
+//            //                         Reference update                          //
+//            //-------------------------------------------------------------------//
+//            // Iq reference update
+//
+//#if UOMODRI_SPI_DEBUG_CONFIG
+//            // Set predefined trajectory reference
+//            comInterface.positionRef[MOTOR_1]   = __sinpuf32(debugFreq * TIME_S);//debugFreq * TIME_S;//
+//            comInterface.velocityRef[MOTOR_1]   = 4.0f * FM_PI * FM_PI * debugFreq * __cospuf32(debugFreq * TIME_S);//debugFreq * TIME_S;//
+//            comInterface.iqRef[MOTOR_1]         = 0.0f;
+//#endif
+//            // Set feed-forward current
+//            motor[MOTOR_1].motorFOC->pdPos.ff = comInterface.iqRef[MOTOR_1];
+//            // Run PD controller
+//            FOC_runPD(&motor[MOTOR_1].motorFOC->pdPos);
+//            // Set current reference
+//            motor[MOTOR_1].motorFOC->iqRef  = (motor[MOTOR_1].motorAlign.state == ALIGN_DONE) ? (motor[MOTOR_1].motorFOC->pdPos.out) : (0.0f);
+//            // Id reference update
+//            motor[MOTOR_1].motorFOC->idRef  = (motor[MOTOR_1].motorAlign.state == ALIGN_DONE) ? (0.0f) : (motor[MOTOR_1].motorAlign.idAlign);
+//
+//            //-------------------------------------------------------------------//
+//            //                   Interrupt wrap functions                        //
+//            //-------------------------------------------------------------------//
+//            if(motor[MOTOR_1].motorAlign.state == ALIGN_DONE)
+//            {
+//                // Save number of cycles elapsed since control loop startup
+//                motor[MOTOR_1].clCycleNb = EPWM_getTimeBaseCounterValue(MOTOR1_PWM1_BASE);
+//                // Increment interrupt counter
+//                motor[MOTOR_1].interruptCnt++;
+//                // Compute time
+//                comInterface.time = TIME_S;//(motor[MOTOR_1].interruptCounter / PWM_FREQ);
+//            }
+//
+//            isrMotor1Ready = false;
+//        }
+//
+//
+//
 
 #if UOMODRI_SPI_DEBUG_CONFIG
         // Continuously write data for logging

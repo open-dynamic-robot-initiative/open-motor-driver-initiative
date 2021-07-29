@@ -293,10 +293,10 @@ typedef struct _HAL_MOTOR_CFG_
     const ePWM_CC_TypeDef*  p_pwmCntCmp[3];
     const ADC_ACQ_TypeDef*  p_iAcq[3];
     const ADC_ACQ_TypeDef*  p_vAcq[3];
-    const ADC_ACQ_TypeDef*  p_vbusAcq;
+  //  const ADC_ACQ_TypeDef*  p_vbusAcq;
     const ADC_IT_TypeDef*   p_ITAcq;
     const eQEP_TypeDef*     p_qep;
-    const ID_ENUM           motorID;
+    //const ID_ENUM           motorID;
 } HAL_MOTOR_CFG;
 
 /*

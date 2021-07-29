@@ -172,18 +172,18 @@ static DRV8353 drv[] =
 
 static const HAL_MOTOR_CFG hal_motor_cfg[] =
 {
- {.motorID      = MOTOR_1,
+ {//.motorID      = MOTOR_1,
   .p_pwmCntCmp  = {&PwmCounterCompareCfgList[0], &PwmCounterCompareCfgList[1], &PwmCounterCompareCfgList[2]},
-  .p_vAcq       = {&AdcAcqList[0], &AdcAcqList[4], &AdcAcqList[9]},
-  .p_iAcq       = {&AdcAcqList[2], &AdcAcqList[6], &AdcAcqList[11]},
-  .p_vbusAcq    = &AdcAcqList[8],
+  .p_vAcq       = {&AdcAcqList[0], &AdcAcqList[4], &AdcAcqList[8]},
+  .p_iAcq       = {&AdcAcqList[2], &AdcAcqList[6], &AdcAcqList[10]},
+  //.p_vbusAcq    = &AdcAcqList[8],
   .p_ITAcq      = &AdcIntList[0],
  },
- {.motorID      = MOTOR_2,
+ {//.motorID      = MOTOR_2,
   .p_pwmCntCmp  = {&PwmCounterCompareCfgList[3], &PwmCounterCompareCfgList[4], &PwmCounterCompareCfgList[5]},
-  .p_vAcq       = {&AdcAcqList[1], &AdcAcqList[5], &AdcAcqList[10]},
-  .p_iAcq       = {&AdcAcqList[3], &AdcAcqList[7], &AdcAcqList[12]},
-  .p_vbusAcq    = &AdcAcqList[8],
+  .p_vAcq       = {&AdcAcqList[1], &AdcAcqList[5], &AdcAcqList[9]},
+  .p_iAcq       = {&AdcAcqList[3], &AdcAcqList[7], &AdcAcqList[11]},
+  //.p_vbusAcq    = NULL,//&AdcAcqList[8],
   .p_ITAcq      = &AdcIntList[1],
  },
 };
