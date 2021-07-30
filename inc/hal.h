@@ -6,9 +6,9 @@
 #ifndef __HAL_H__
 #define __HAL_H__
 
+#include "f2838x_device.h"
 #include "driverlib.h"
 #include "device.h"
-#include "f2838x_device.h"
 
 #include "uomodri_user_defines.h"
 

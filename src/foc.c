@@ -30,9 +30,9 @@ inline void FOC_getMeasures(ACQ_STRUCT* p_acq)
     p_acq->vb           = (float32_t)(*p_acq->vbMeasReg) * ADC_VOLTAGE_SCALE;
     p_acq->vc           = (float32_t)(*p_acq->vcMeasReg) * ADC_VOLTAGE_SCALE;
     // Get the latest Voltage supply value in Volt (minimum is one to avoid dividing by zero later)
-    float32_t vbus      = (float32_t)(*p_acq->vBusMeasReg) * ADC_VOLTAGE_SCALE;
-//    UOMODRI_VBUS_FLT(p_acq->vBusLpf, p_acq->vbus, __fmax(((float32_t)(*p_acq->vBusMeasReg) * ADC_VOLTAGE_SCALE), 1.0f));
-    UOMODRI_VBUS_FLT(p_acq->vBusLpf, p_acq->vbus, __fmax(vbus ,1.0f));
+//    float32_t vbus      = (float32_t)(*p_acq->vBusMeasReg) * ADC_VOLTAGE_SCALE;
+    UOMODRI_VBUS_FLT(p_acq->vBusLpf, p_acq->vbus, __fmax(((float32_t)(*p_acq->vBusMeasReg) * ADC_VOLTAGE_SCALE), 1.0f));
+//    UOMODRI_VBUS_FLT(p_acq->vBusLpf, p_acq->vbus, __fmax(vbus ,1.0f));
     p_acq->measNew      = true;
     return;
 }

@@ -2,9 +2,9 @@
 #define __MAIN_H__
 
 // Project includes
-#include "device.h"
-#include "driverlib.h"
 #include "f2838x_device.h"
+#include "driverlib.h"
+#include "device.h"
 
 #include "hal.h"
 #include "drv8353.h"

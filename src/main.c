@@ -43,8 +43,8 @@ int main(void)
 
 #if UOMODRI_SPI_DEBUG_CONFIG
     comInterface.systemEnabled          = true;
-    motor[MOTOR_1].motorFOC->enabled    = true;
-    motor[MOTOR_2].motorFOC->enabled    = false;
+    motor[MOTOR_1].motorFOC->enabled    = false;
+    motor[MOTOR_2].motorFOC->enabled    = true;
 #endif
 
     // Infinite loop

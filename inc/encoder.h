@@ -2,9 +2,9 @@
 #define __ENCODERS_H__
 
 #include <math.h>
+#include "f2838x_device.h"
 #include "driverlib.h"
 #include "device.h"
-#include "f2838x_device.h"
 
 #include "hal.h"
 #include "math_defines.h"

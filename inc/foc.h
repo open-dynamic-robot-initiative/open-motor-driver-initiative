@@ -4,9 +4,9 @@
 #include <math.h>
 #include <stdbool.h>
 
+#include "f2838x_device.h"
 #include "driverlib.h"
 #include "device.h"
-#include "f2838x_device.h"
 
 //#include "hal.h"
 //#include "motor.h"

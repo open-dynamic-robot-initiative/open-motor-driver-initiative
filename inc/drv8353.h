@@ -2,9 +2,9 @@
 #define __DRV8353_H__
 
 // drivers
+#include "f2838x_device.h"
 #include "driverlib.h"
 #include "device.h"
-#include "f2838x_device.h"
 
 //#include "hal.h"
 

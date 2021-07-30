@@ -6,9 +6,9 @@
 #ifndef __UOMODRI_USER_DEFINES_H__
 #define __UOMODRI_USER_DEFINES_H__
 
+#include "f2838x_device.h"
 #include "driverlib.h"
 #include "device.h"
-#include "f2838x_device.h"
 
 //#include "hal.h"
 #include "drv8353.h"
@@ -20,8 +20,8 @@
  *  @brief    Special configurations definitions.
  * @{
  */
-#define UOMODRI                                 0
-#define UOMODRI_VBUS_FLT(flt_coef, y, x)        LPF_FILTER_3(flt_coef, y, x)
+#define UOMODRI                                 1
+#define UOMODRI_VBUS_FLT(flt_coef, y, x)        LPF_FILTER_1(flt_coef, y, x)
 #define UOMODRI_IDQ_FLT(flt_coef, y, x)         LPF_FILTER_1(flt_coef, y, x)
 #define UOMODRI_RES_ESTIM_FLT(flt_coef, y, x)   LPF_FILTER_1(flt_coef, y, x)
 #define UOMODRI_SPEED_FLT(flt_coef, y, x)       LPF_FILTER_1(flt_coef, y, x)
@@ -79,13 +79,13 @@
  * @{
  */
 #define COM_SPI_SIMO                            (60)
-#define COM_SPI_SIMO_CFG                        GPIO_60_SPISIMOB
+#define COM_SPI_SIMO_CFG                        GPIO_60_SPIB_SIMO
 #define COM_SPI_SOMI                            (61)
-#define COM_SPI_SOMI_CFG                        GPIO_61_SPISOMIB
+#define COM_SPI_SOMI_CFG                        GPIO_61_SPIB_SOMI
 #define COM_SPI_CLK                             (65)
-#define COM_SPI_CLK_CFG                         GPIO_65_SPICLKB
+#define COM_SPI_CLK_CFG                         GPIO_65_SPIB_CLK
 #define COM_SPI_CS                              (59)
-#define COM_SPI_CS_CFG                          GPIO_59_SPISTEB
+#define COM_SPI_CS_CFG                          GPIO_59_SPIB_STEN
 /**
  * @}
  */
@@ -106,11 +106,11 @@
  * @{
  */
 #define DRV_SPI_SIMO                            (16)
-#define DRV_SPI_SIMO_CFG                        GPIO_16_SPISIMOA
+#define DRV_SPI_SIMO_CFG                        GPIO_16_SPIA_SIMO
 #define DRV_SPI_SOMI                            (17)
-#define DRV_SPI_SOMI_CFG                        GPIO_17_SPISOMIA
+#define DRV_SPI_SOMI_CFG                        GPIO_17_SPIA_SOMI
 #define DRV_SPI_CLK                             (18)
-#define DRV_SPI_CLK_CFG                         GPIO_18_SPICLKA
+#define DRV_SPI_CLK_CFG                         GPIO_18_SPIA_CLK
 #define MOTOR1_DRV_SPI_CS                       (19)
 #define MOTOR1_DRV_SPI_CS_CFG                   GPIO_19_GPIO19
 #define MOTOR2_DRV_SPI_CS                       (35)
@@ -489,17 +489,17 @@
  * @{
  */
 #define MOTOR1_ENC_CHA                          (20)
-#define MOTOR1_ENC_CHA_CFG                      GPIO_20_EQEP1A
+#define MOTOR1_ENC_CHA_CFG                      GPIO_20_EQEP1_A
 #define MOTOR1_ENC_CHB                          (21)
-#define MOTOR1_ENC_CHB_CFG                      GPIO_21_EQEP1B
+#define MOTOR1_ENC_CHB_CFG                      GPIO_21_EQEP1_B
 #define MOTOR1_ENC_CHI                          (23)
-#define MOTOR1_ENC_CHI_CFG                      GPIO_23_EQEP1I
+#define MOTOR1_ENC_CHI_CFG                      GPIO_23_EQEP1_INDEX
 #define MOTOR2_ENC_CHA                          (24)
-#define MOTOR2_ENC_CHA_CFG                      GPIO_24_EQEP2A
+#define MOTOR2_ENC_CHA_CFG                      GPIO_24_EQEP2_A
 #define MOTOR2_ENC_CHB                          (25)
-#define MOTOR2_ENC_CHB_CFG                      GPIO_25_EQEP2B
+#define MOTOR2_ENC_CHB_CFG                      GPIO_25_EQEP2_B
 #define MOTOR2_ENC_CHI                          (26)
-#define MOTOR2_ENC_CHI_CFG                      GPIO_26_EQEP2I
+#define MOTOR2_ENC_CHI_CFG                      GPIO_26_EQEP2_INDEX
 /**
  * @}
  */

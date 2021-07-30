@@ -33,7 +33,7 @@
 		<link>
 			<name>device/f2838x_globalvariabledefs.c</name>
 			<type>1</type>
-			<locationURI>MOTORWARE_ROOT/c2000ware/device_support/f2838x/headers/source/f2838x_globalvariabledefs.c</locationURI>
+			<locationURI>SOFTWARE_ROOT/device_support/f2838x/headers/source/f2838x_globalvariabledefs.c</locationURI>
 		</link>
 		<link>
 			<name>device/driverlib/adc.c</name>
@@ -213,12 +213,8 @@
 	</linkedResources>
 	<variableList>
 		<variable>
-			<name>MOTORWARE_ROOT</name>
-			<value>file:/C:/STM32Toolchain/TI/c2000/C2000Ware_MotorControl_SDK_3_00_01_00</value>
-		</variable>
-		<variable>
 			<name>SOFTWARE_ROOT</name>
-			<value>file:/C:/STM32Toolchain/TI/c2000/C2000Ware_3_02_00_00</value>
+			<value>file:/C:/STM32Toolchain/TI/c2000/C2000Ware_3_04_00_00</value>
 		</variable>
 	</variableList>
 </projectDescription>

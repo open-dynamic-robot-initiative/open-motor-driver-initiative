@@ -8,9 +8,9 @@
 #ifndef INC_MOTOR_H_
 #define INC_MOTOR_H_
 
+#include "f2838x_device.h"
 #include "driverlib.h"
 #include "device.h"
-#include "f2838x_device.h"
 
 #include <math.h>
 #include "hal.h"
