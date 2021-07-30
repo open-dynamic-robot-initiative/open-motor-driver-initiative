@@ -16,8 +16,10 @@ float32_t pdSat = 4.0;
 
 // Time macro
 const float32_t     dt = 1.0 / PWM_FREQ;
-#define TIME_S      ((float32_t)motor[MOTOR_1].interruptCnt * dt)
-#define TIME_MS     ((float32_t)motor[motor_1].interruptCnt * 1000.0f * dt)
+#define TIME_M1_S   ((float32_t)motor[MOTOR_1].interruptCnt * dt)
+#define TIME_M1_MS  ((float32_t)motor[motor_1].interruptCnt * 1000.0f * dt)
+#define TIME_M2_S   ((float32_t)motor[MOTOR_2].interruptCnt * dt)
+#define TIME_M2_MS  ((float32_t)motor[motor_2].interruptCnt * 1000.0f * dt)
 bool                isrMotor1Ready = false;
 bool                isrMotor2Ready = false;
 
@@ -43,7 +45,7 @@ int main(void)
 
 #if UOMODRI_SPI_DEBUG_CONFIG
     comInterface.systemEnabled          = true;
-    motor[MOTOR_1].motorFOC->enabled    = false;
+    motor[MOTOR_1].motorFOC->enabled    = true;
     motor[MOTOR_2].motorFOC->enabled    = true;
 #endif
 
@@ -279,8 +281,8 @@ __interrupt void adc_isrMotor1(void)
 
 #if UOMODRI_SPI_DEBUG_CONFIG
         // Set predefined trajectory reference
-        comInterface.positionRef[MOTOR_1]   = __sinpuf32(debugFreq * TIME_S);//debugFreq * TIME_S;//
-        comInterface.velocityRef[MOTOR_1]   = 4.0f * FM_PI * FM_PI * debugFreq * __cospuf32(debugFreq * TIME_S);//debugFreq * TIME_S;//
+        comInterface.positionRef[MOTOR_1]   = __sinpuf32(debugFreq * TIME_M1_S);//debugFreq * TIME_S;//
+        comInterface.velocityRef[MOTOR_1]   = 4.0f * FM_PI * FM_PI * debugFreq * __cospuf32(debugFreq * TIME_M1_S);//debugFreq * TIME_S;//
         comInterface.iqRef[MOTOR_1]         = 0.0f;
 #endif
         // Set feed-forward current
@@ -324,7 +326,7 @@ __interrupt void adc_isrMotor1(void)
         // Increment interrupt counter
         motor[MOTOR_1].interruptCnt++;
         // Compute time
-        comInterface.time = TIME_S;//(motor[MOTOR_1].interruptCounter / PWM_FREQ);
+        comInterface.time = TIME_M1_S;//(motor[MOTOR_1].interruptCounter / PWM_FREQ);
     }
     // Acknowledge PWM and CLA interrupt flag
     Interrupt_clearACKGroup(group);
@@ -403,8 +405,8 @@ __interrupt void adc_isrMotor2(void)
 
 #if UOMODRI_SPI_DEBUG_CONFIG
         // Set predefined trajectory reference
-        comInterface.positionRef[MOTOR_2]   = __sinpuf32(debugFreq * TIME_S);//debugFreq * TIME_S;//
-        comInterface.velocityRef[MOTOR_2]   = 4.0f * FM_PI * FM_PI * debugFreq * __cospuf32(debugFreq * TIME_S);//debugFreq * TIME_S;//
+        comInterface.positionRef[MOTOR_2]   = __sinpuf32(debugFreq * TIME_M2_S);//debugFreq * TIME_S;//
+        comInterface.velocityRef[MOTOR_2]   = 4.0f * FM_PI * FM_PI * debugFreq * __cospuf32(debugFreq * TIME_M2_S);//debugFreq * TIME_S;//
         comInterface.iqRef[MOTOR_2]         = 0.0f;
 #endif
         // Set feed-forward current
@@ -448,7 +450,7 @@ __interrupt void adc_isrMotor2(void)
         // Increment interrupt counter
         motor[MOTOR_2].interruptCnt++;
         // Compute time
-        //comInterface.time = TIME_S;//(motor[MOTOR_1].interruptCounter / PWM_FREQ);
+        comInterface.time = TIME_M2_S;//(motor[MOTOR_1].interruptCounter / PWM_FREQ);
     }
     // Acknowledge PWM and CLA interrupt flag
     Interrupt_clearACKGroup(group);
