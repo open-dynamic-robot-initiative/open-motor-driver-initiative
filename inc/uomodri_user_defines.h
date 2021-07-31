@@ -576,7 +576,7 @@
 #define MOTOR1_SPEED_REGULATOR_KP_COEF          (1.0f)
 #define MOTOR1_SPEED_REGULATOR_KD_COEF          (0.02f)
 #define MOTOR1_DTC_MAX                          (0.9f)     // Max duty cycle
-#define MOTOR1_DTC_MIN                          (0.05f)     // Min duty cycle
+#define MOTOR1_DTC_MIN                          (0.1f)     // Min duty cycle
 #define MOTOR1_STATOR_RESISTOR_CUTOFF_FREQ      (0.2f)
 #define MOTOR1_STATOR_RESISTOR_LPF_ALPHA        (1.0 / (1.0 + (1.0 / (2.0 * M_PI * MOTOR1_STATOR_RESISTOR_CUTOFF_FREQ / PWM_FREQ))))
 #define MOTOR1_STATOR_RESISTOR_LPF_ONE_M_ALPHA  (1.0 - MOTOR1_STATOR_RESISTOR_LPF_ALPHA)
@@ -601,7 +601,7 @@
 #define MOTOR2_SPEED_REGULATOR_KP_COEF          (1.0f)
 #define MOTOR2_SPEED_REGULATOR_KD_COEF          (0.02f)
 #define MOTOR2_DTC_MAX                          (0.9f)     // Max duty cycle
-#define MOTOR2_DTC_MIN                          (0.4f)     // Min duty cycle
+#define MOTOR2_DTC_MIN                          (0.1f)     // Min duty cycle
 #define MOTOR2_STATOR_RESISTOR_CUTOFF_FREQ      (0.2f)
 #define MOTOR2_STATOR_RESISTOR_LPF_ALPHA        (1.0 / (1.0 + (1.0 / (2.0 * M_PI * MOTOR2_STATOR_RESISTOR_CUTOFF_FREQ / PWM_FREQ))))
 #define MOTOR2_STATOR_RESISTOR_LPF_ONE_M_ALPHA  (1.0 - MOTOR2_STATOR_RESISTOR_LPF_ALPHA)
