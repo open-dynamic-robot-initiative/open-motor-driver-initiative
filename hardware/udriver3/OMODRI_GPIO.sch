@@ -3,7 +3,7 @@ EELAYER 30 0
 EELAYER END
 $Descr A4 11693 8268
 encoding utf-8
-Sheet 12 19
+Sheet 17 19
 Title "Open MOtor DRiver Initiative (OMODRI)"
 Date "2020-12-16"
 Rev "1.0"
@@ -278,7 +278,6 @@ NoConn ~ 4500 2825
 NoConn ~ 4500 2625
 NoConn ~ 4500 2325
 NoConn ~ 4500 2225
-NoConn ~ 4500 1925
 NoConn ~ 4500 1825
 NoConn ~ 2150 5675
 NoConn ~ 2150 5575
@@ -286,7 +285,6 @@ NoConn ~ 2150 5475
 NoConn ~ 2150 5375
 NoConn ~ 2150 5075
 NoConn ~ 2150 4975
-NoConn ~ 4500 1025
 NoConn ~ 4500 925 
 NoConn ~ 4500 725 
 NoConn ~ 2150 4375
@@ -879,4 +877,9 @@ Wire Wire Line
 	8900 5325 8850 5325
 Wire Wire Line
 	8900 5725 8850 5725
+Text HLabel 4550 1025 2    50   Input ~ 0
+USB_vbus_detect
+Wire Wire Line
+	4500 1025 4550 1025
+NoConn ~ 4500 1925
 $EndSCHEMATC
