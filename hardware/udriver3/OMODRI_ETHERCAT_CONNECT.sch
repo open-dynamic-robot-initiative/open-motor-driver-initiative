@@ -3,10 +3,10 @@ EELAYER 30 0
 EELAYER END
 $Descr A4 11693 8268
 encoding utf-8
-Sheet 14 19
+Sheet 19 19
 Title "Open MOtor DRiver Initiative (OMODRI)"
 Date "2020-12-16"
-Rev "1.0"
+Rev "1.1"
 Comp "LAAS/CNRS"
 Comment1 ""
 Comment2 ""
@@ -21,7 +21,7 @@ AR Path="/5FA3E1E3" Ref="J?"  Part="3"
 AR Path="/5F5975A7/5FA2AE4C/5FA3E1E3" Ref="J16"  Part="3" 
 F 0 "J16" H 6225 3800 50  0000 L CNN
 F 1 "ADM6_ADF6" H 6225 2700 50  0000 L CNN
-F 2 "udriver3:ADF6-10-XX.X-XXX-4-X-A-XR" H 6225 3250 50  0001 C CNN
+F 2 "footprint:SAMTEC_ADF6-10-03.5-L-4-2-A-TR" H 6225 3250 50  0001 C CNN
 F 3 "http://suddendocs.samtec.com/prints/adf6-xxx-xx.x-xxx-4-x-x-xr-mkt.pdf" H 6225 3250 50  0001 C CNN
 F 4 "612-ADF6-10-03.5-L-4-2-A-TR-ND" H 6225 3250 50  0001 C CNN "DigiKey"
 F 5 "3462763" H 6225 3250 50  0001 C CNN "Farnell"
@@ -39,7 +39,7 @@ AR Path="/5FA3E1E9" Ref="J?"  Part="4"
 AR Path="/5F5975A7/5FA2AE4C/5FA3E1E9" Ref="J16"  Part="4" 
 F 0 "J16" H 7725 3800 50  0000 L CNN
 F 1 "ADM6_ADF6" H 7725 2700 50  0000 L CNN
-F 2 "udriver3:ADF6-10-XX.X-XXX-4-X-A-XR" H 7725 3250 50  0001 C CNN
+F 2 "footprint:SAMTEC_ADF6-10-03.5-L-4-2-A-TR" H 7725 3250 50  0001 C CNN
 F 3 "http://suddendocs.samtec.com/prints/adf6-xxx-xx.x-xxx-4-x-x-xr-mkt.pdf" H 7725 3250 50  0001 C CNN
 F 4 "612-ADF6-10-03.5-L-4-2-A-TR-ND" H 7725 3250 50  0001 C CNN "DigiKey"
 F 5 "3462763" H 7725 3250 50  0001 C CNN "Farnell"
@@ -57,7 +57,7 @@ AR Path="/5FA472E1" Ref="J?"  Part="1"
 AR Path="/5F5975A7/5FA2AE4C/5FA472E1" Ref="J15"  Part="1" 
 F 0 "J15" H 3150 5300 50  0000 L CNN
 F 1 "ADM6_ADF6" H 3150 4200 50  0000 L CNN
-F 2 "udriver3:ADF6-10-XX.X-XXX-4-X-A-XR" H 3150 4750 50  0001 C CNN
+F 2 "footprint:SAMTEC_ADF6-10-03.5-L-4-2-A-TR" H 3150 4750 50  0001 C CNN
 F 3 "http://suddendocs.samtec.com/prints/adf6-xxx-xx.x-xxx-4-x-x-xr-mkt.pdf" H 3150 4750 50  0001 C CNN
 F 4 "612-ADF6-10-03.5-L-4-2-A-TR-ND" H 3150 4750 50  0001 C CNN "DigiKey"
 F 5 "3462763" H 3150 4750 50  0001 C CNN "Farnell"
@@ -141,7 +141,7 @@ AR Path="/5FA472F3" Ref="J?"  Part="4"
 AR Path="/5F5975A7/5FA2AE4C/5FA472F3" Ref="J15"  Part="4" 
 F 0 "J15" H 7725 5300 50  0000 L CNN
 F 1 "ADM6_ADF6" H 7725 4200 50  0000 L CNN
-F 2 "udriver3:ADF6-10-XX.X-XXX-4-X-A-XR" H 7725 4750 50  0001 C CNN
+F 2 "footprint:SAMTEC_ADF6-10-03.5-L-4-2-A-TR" H 7725 4750 50  0001 C CNN
 F 3 "http://suddendocs.samtec.com/prints/adf6-xxx-xx.x-xxx-4-x-x-xr-mkt.pdf" H 7725 4750 50  0001 C CNN
 F 4 "612-ADF6-10-03.5-L-4-2-A-TR-ND" H 7725 4750 50  0001 C CNN "DigiKey"
 F 5 "3462763" H 7725 4750 50  0001 C CNN "Farnell"
@@ -211,7 +211,7 @@ AR Path="/5FA472ED" Ref="J?"  Part="3"
 AR Path="/5F5975A7/5FA2AE4C/5FA472ED" Ref="J15"  Part="3" 
 F 0 "J15" H 6225 5300 50  0000 L CNN
 F 1 "ADM6_ADF6" H 6225 4200 50  0000 L CNN
-F 2 "udriver3:ADF6-10-XX.X-XXX-4-X-A-XR" H 6225 4750 50  0001 C CNN
+F 2 "footprint:SAMTEC_ADF6-10-03.5-L-4-2-A-TR" H 6225 4750 50  0001 C CNN
 F 3 "http://suddendocs.samtec.com/prints/adf6-xxx-xx.x-xxx-4-x-x-xr-mkt.pdf" H 6225 4750 50  0001 C CNN
 F 4 "612-ADF6-10-03.5-L-4-2-A-TR-ND" H 6225 4750 50  0001 C CNN "DigiKey"
 F 5 "3462763" H 6225 4750 50  0001 C CNN "Farnell"
@@ -355,7 +355,7 @@ AR Path="/5FA472E7" Ref="J?"  Part="2"
 AR Path="/5F5975A7/5FA2AE4C/5FA472E7" Ref="J15"  Part="2" 
 F 0 "J15" H 4650 5300 50  0000 L CNN
 F 1 "ADM6_ADF6" H 4650 4200 50  0000 L CNN
-F 2 "udriver3:ADF6-10-XX.X-XXX-4-X-A-XR" H 4650 4750 50  0001 C CNN
+F 2 "footprint:SAMTEC_ADF6-10-03.5-L-4-2-A-TR" H 4650 4750 50  0001 C CNN
 F 3 "http://suddendocs.samtec.com/prints/adf6-xxx-xx.x-xxx-4-x-x-xr-mkt.pdf" H 4650 4750 50  0001 C CNN
 F 4 "612-ADF6-10-03.5-L-4-2-A-TR-ND" H 4650 4750 50  0001 C CNN "DigiKey"
 F 5 "3462763" H 4650 4750 50  0001 C CNN "Farnell"
@@ -488,7 +488,7 @@ AR Path="/5FA3E1D7" Ref="J?"  Part="1"
 AR Path="/5F5975A7/5FA2AE4C/5FA3E1D7" Ref="J16"  Part="1" 
 F 0 "J16" H 3150 3800 50  0000 L CNN
 F 1 "ADM6_ADF6" H 3150 2700 50  0000 L CNN
-F 2 "udriver3:ADF6-10-XX.X-XXX-4-X-A-XR" H 3150 3250 50  0001 C CNN
+F 2 "footprint:SAMTEC_ADF6-10-03.5-L-4-2-A-TR" H 3150 3250 50  0001 C CNN
 F 3 "http://suddendocs.samtec.com/prints/adf6-xxx-xx.x-xxx-4-x-x-xr-mkt.pdf" H 3150 3250 50  0001 C CNN
 F 4 "612-ADF6-10-03.5-L-4-2-A-TR-ND" H 3150 3250 50  0001 C CNN "DigiKey"
 F 5 "3462763" H 3150 3250 50  0001 C CNN "Farnell"
@@ -547,7 +547,7 @@ AR Path="/5FA3E1DD" Ref="J?"  Part="2"
 AR Path="/5F5975A7/5FA2AE4C/5FA3E1DD" Ref="J16"  Part="2" 
 F 0 "J16" H 4650 3800 50  0000 L CNN
 F 1 "ADM6_ADF6" H 4650 2700 50  0000 L CNN
-F 2 "udriver3:ADF6-10-XX.X-XXX-4-X-A-XR" H 4650 3250 50  0001 C CNN
+F 2 "footprint:SAMTEC_ADF6-10-03.5-L-4-2-A-TR" H 4650 3250 50  0001 C CNN
 F 3 "http://suddendocs.samtec.com/prints/adf6-xxx-xx.x-xxx-4-x-x-xr-mkt.pdf" H 4650 3250 50  0001 C CNN
 F 4 "612-ADF6-10-03.5-L-4-2-A-TR-ND" H 4650 3250 50  0001 C CNN "DigiKey"
 F 5 "3462763" H 4650 3250 50  0001 C CNN "Farnell"

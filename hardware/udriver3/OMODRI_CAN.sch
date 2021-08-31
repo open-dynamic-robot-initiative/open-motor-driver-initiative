@@ -6,7 +6,7 @@ encoding utf-8
 Sheet 8 19
 Title "Open MOtor DRiver Initiative (OMODRI)"
 Date "2020-12-16"
-Rev "1.0"
+Rev "1.1"
 Comp "LAAS/CNRS"
 Comment1 ""
 Comment2 ""

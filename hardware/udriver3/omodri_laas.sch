@@ -6,7 +6,7 @@ encoding utf-8
 Sheet 1 19
 Title "Open MOtor DRiver Initiative (OMODRI)"
 Date "2020-12-16"
-Rev "1.0"
+Rev "1.1"
 Comp "LAAS/CNRS"
 Comment1 ""
 Comment2 ""
@@ -1030,12 +1030,12 @@ AR Path="/6131DFFC" Ref="R67"  Part="1"
 F 0 "R67" H 1600 5425 50  0000 L CNN
 F 1 "100k" H 1600 5350 50  0000 L CNN
 F 2 "Resistor_SMD:R_0201_0603Metric" V 1480 5425 50  0001 C CNN
-F 3 "https://media.digikey.com/pdf/Data%20Sheets/Panasonic%20Resistors%20Thermistors%20PDFs/ERJ%205%25.pdf" H 1550 5425 50  0001 C CNN
-F 4 "P100KAGCT-ND" H 1550 5425 50  0001 C CNN "DigiKey"
-F 5 "" H 1550 5425 50  0001 C CNN "Farnell"
-F 6 "667-ERJ-1GEJ104C" H 1550 5425 50  0001 C CNN "Mouser"
-F 7 "ERJ-1GEJ104C" H 1550 5425 50  0001 C CNN "Part No"
-F 8 "" H 1550 5425 50  0001 C CNN "RS"
+F 3 "https://industrial.panasonic.com/cdbs/www-data/pdf/RDA0000/AOA0000C304.pdf" H 1550 5425 50  0001 C CNN
+F 4 "P122655CT-ND" H 1550 5425 50  0001 C CNN "DigiKey"
+F 5 "2302389" H 1550 5425 50  0001 C CNN "Farnell"
+F 6 "667-ERJ-1GNF1003C" H 1550 5425 50  0001 C CNN "Mouser"
+F 7 "ERJ-1GNF1003C" H 1550 5425 50  0001 C CNN "Part No"
+F 8 "179-7130" H 1550 5425 50  0001 C CNN "RS"
 	1    1550 5425
 	1    0    0    -1  
 $EndComp

@@ -1,6 +1,5 @@
 (fp_lib_table
-  (lib (name udriver3)(type KiCad)(uri ${KIPRJMOD}/udriver3.pretty)(options "")(descr "")) 
-  (lib (name github-test)(type Github)(uri https://github.com/liftoff-sr/pretty_footprints)(options "")
-    (descr "Testing of GITHUB_PLUGIN for KiCad, it has some footprints which came from various other libraries on my system.")
-  )
+  (lib (name udriver3)(type KiCad)(uri ${KIPRJMOD}/udriver3.pretty)(options "")(descr ""))
+  (lib (name github-test)(type Github)(uri https://github.com/liftoff-sr/pretty_footprints)(options "")(descr "Testing of GITHUB_PLUGIN for KiCad, it has some footprints which came from various other libraries on my system.")(disabled))
+  (lib (name footprint)(type KiCad)(uri ${KIPRJMOD}/footprint)(options "")(descr ""))
 )
