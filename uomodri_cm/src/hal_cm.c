@@ -15,7 +15,7 @@ void HAL_CM_IPC_init(const IPC_TypeDef*);
 void HAL_CM_CRC_init(const CRC_TypeDef*);
 
 //#pragma DATA_ALIGN(ucControlTable, 1024)
-extern UDMA_ControlTable ucControlTable[64];
+extern UDMA_ControlTable ucControlTable[32];
 
 extern __interrupt void UART_RX_IntHandler(void);
 
@@ -61,8 +61,9 @@ void HAL_CM_uDMA_init(const uDMA_TypeDef* p_udmaCfg)
         {
             /* Put the attributes in a known state for the uDMA software channel.
              * These should already be disabled by default. */            //
-            UDMA_disableChannelAttribute(UDMA_BASE, dmaChannel, UDMA_CH_ATTR_HIGH_PRIORITY | UDMA_CH_ATTR_USEBURST | UDMA_CH_ATTR_ALTSELECT | UDMA_CH_ATTR_REQMASK);//UDMA_CH_ATTR_ALL);
-//            UDMA_enableChannelAttribute(UDMA_BASE, dmaChannel, UDMA_CH_ATTR_HIGH_PRIORITY);
+            UDMA_disableChannelAttribute(UDMA_BASE, dmaChannel, UDMA_CH_ATTR_ALTSELECT | UDMA_CH_ATTR_HIGH_PRIORITY | UDMA_CH_ATTR_REQMASK); //UDMA_CH_ATTR_ALL);
+            //            UDMA_disableChannelAttribute(UDMA_BASE, dmaChannel, UDMA_CH_ATTR_ALTSELECT | UDMA_CH_ATTR_REQMASK);
+            UDMA_enableChannelAttribute(UDMA_BASE, dmaChannel, UDMA_CH_ATTR_USEBURST);
             /* Configure the control parameters for the UART TX/RX channels
              * Tx channel will be used to transfer data from the buffer to the UART Data register.
              * Data size = 8
@@ -92,13 +93,13 @@ void HAL_CM_UART_init(const UART_TypeDef* p_uart)
 {
     if(p_uart != NULL)
     {
-        UART_setFIFOLevel(UART0_BASE, UART_FIFO_TX2_8, UART_FIFO_RX2_8);
+        UART_setFIFOLevel(UART0_BASE, UART_FIFO_TX6_8, UART_FIFO_RX6_8);
         UART_enableFIFO(UART0_BASE);
 
 //        if(p_uart->loopBackEnable)
 //            // Enable loopback mode
 //            UART_enableLoopback(UART0_BASE);
-        UART_enableLoopback(UART0_BASE);
+        //UART_enableLoopback(UART0_BASE);
         UART_enableDMA(UART0_BASE, p_uart->dmaFlags);
         // Configure UART & Enable the module.
         UART_setConfig(UART0_BASE, UART_CLK_FREQ, p_uart->baudRate, p_uart->uartCfg);

@@ -31,6 +31,9 @@ typedef  float  float32_t;
 #define UOMODRI_FEED_FORWARD_EN                 1
 
 #define OMODRI_PAL_SETUP                        0   // Set this to 1 to use the PAL pin affectation
+
+#define MSG_TX_SIZE                             24
+#define MSG_RX_SIZE                             4
 //#define UOMODRI_DEBUG_LOGGED_MOTOR              MOTOR_1
 //#define SPI_DEBUG_CONFIGURATION                 0   // Set this to 1 to use debug configuration
 // Word number in a full communication

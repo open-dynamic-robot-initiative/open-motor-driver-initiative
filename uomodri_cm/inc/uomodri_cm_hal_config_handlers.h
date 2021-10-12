@@ -8,13 +8,15 @@
 #include "hal_cm.h"
 #include "uomodri_cm_user_defines.h"
 
-extern float32_t    arrayTx[8];
-extern float32_t    arrayRx[8];
+//extern float32_t    arrayTx[4];
+//extern float32_t    arrayRx[4];
+extern uint8_t      arrayTx[MSG_TX_SIZE];
+extern uint8_t      arrayRx[MSG_RX_SIZE];
 extern __interrupt void IPC_ISR0(void);
 
 static const UART_TypeDef uartCfg =
 {.uartCfg = (UART_CONFIG_WLEN_8 | UART_CONFIG_STOP_ONE |UART_CONFIG_PAR_NONE),
- .baudRate = 3686400, //115200,//7372800
+ .baudRate = 12000000,//7372800, //3686400, //115200,
  .dmaFlags = (UART_DMA_TX | UART_DMA_RX),
  .dmaEnable = true,
  .loopBackEnable = true,
@@ -23,21 +25,21 @@ static const UART_TypeDef uartCfg =
 static const uDMA_TypeDef udmaCfgList[] =
 {
  {.dmaChannel   = UDMA_CHANNEL_UART0_RX,
-  .dmaCfg       = (UDMA_SIZE_8 | UDMA_SRC_INC_NONE | UDMA_DST_INC_8 | UDMA_ARB_4),
+  .dmaCfg       = (UDMA_SIZE_8 | UDMA_SRC_INC_NONE | UDMA_DST_INC_8 | UDMA_ARB_4 | UDMA_NEXT_USEBURST),
 //  .flagAttr     = UDMA_CH_ATTR_ALL,
 //  .index        = ,
   .srcAddr      = (void *)(UART0_BASE + UART_O_DR),
   .dstAddr      = (void *)&arrayRx[0],
   .transferMode = UDMA_MODE_BASIC,
-  .transferSize = 24,
+  .transferSize = MSG_RX_SIZE,
  },
  {.dmaChannel   = UDMA_CHANNEL_UART0_TX,
-  .dmaCfg       = (UDMA_SIZE_8 | UDMA_SRC_INC_8 | UDMA_DST_INC_NONE | UDMA_ARB_4),
+  .dmaCfg       = (UDMA_SIZE_8 | UDMA_SRC_INC_8 | UDMA_DST_INC_NONE | UDMA_ARB_4 | UDMA_NEXT_USEBURST),
 //  .flagAttr     = UDMA_CH_ATTR_ALL,
   .srcAddr      = (void *)&arrayTx[0],
   .dstAddr      = (void *)(UART0_BASE + UART_O_DR),
   .transferMode = UDMA_MODE_BASIC,
-  .transferSize = 24,
+  .transferSize = MSG_TX_SIZE,
  },
  {.dmaChannel   = 0xFFFFFFFF},
 };

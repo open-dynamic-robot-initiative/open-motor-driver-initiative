@@ -19,6 +19,9 @@
 
 extern const HAL_CM hal_cm;
 
+#pragma DATA_ALIGN(ucControlTable, 1024)
+UDMA_ControlTable ucControlTable[32];
+
 //typedef float         float32_t;
 
 /*********************************************************************************/
@@ -260,12 +263,13 @@ typedef struct __FOC_STRUCT__
 
 //__interrupt void UART_RX_IntHandler(void);
 __interrupt void IPC_ISR0(void);
+void msgCreate(FOC_STRUCT*, uint8_t*);
 
-#pragma DATA_ALIGN(ucControlTable, 1024)
-UDMA_ControlTable ucControlTable[64];
+//float32_t   arrayTx[4], arrayRx[4];
+uint32_t    CntMsg = 0;
+uint8_t     arrayTx[MSG_TX_SIZE], arrayRx[MSG_RX_SIZE];
 
-FOC_STRUCT* p_foc = NULL;
-float32_t   arrayTx[8], arrayRx[8];
+//uint8_t     arrayRxShort[24];
 
 //IPC_MessageQueue_t msgQueue;
 ////
@@ -303,20 +307,36 @@ float32_t   arrayTx[8], arrayRx[8];
 //
 __interrupt void IPC_ISR0(void)
 {
-    uint32_t command, data, addr;
+//    FOC_STRUCT* p_foc = NULL;
+    uint32_t    command, data, addr;
+//    uint8_t* p_arrayRx = (uint8_t *)arrayRx;
+//    uint8_t i;
     // Read the command
     IPC_readCommand(ipcCfgList[0].ipcType, IPC_FLAG0, IPC_ADDR_CORRECTION_ENABLE, &command, &addr, &data);
-    p_foc = (FOC_STRUCT *)addr;
-    arrayTx[0] = p_foc->motor_acq.ia;
-    arrayTx[1] = p_foc->motor_acq.ib;
-    arrayTx[2] = p_foc->motor_acq.ic;
-    arrayTx[3] = p_foc->motor_enc.thetaMech[NEW];
-    arrayTx[4] = p_foc->motor_enc.thetaElec;
+//    p_foc = (FOC_STRUCT *)addr;
+
+    msgCreate((FOC_STRUCT *)addr, arrayTx);
+
+//    while((HWREG(UART0_BASE + UART_O_FR) & UART_FR_TXFE) == 0);
+    while((HWREG(UART0_BASE + UART_O_FR) & UART_FR_BUSY) == 1);
+    while(UART_readCharNonBlocking(UART0_BASE) != -1);
 
     // Enable the UDMA channels
-    UDMA_enableChannel(UDMA_BASE, UDMA_CHANNEL_UART0_RX);
-    UDMA_enableChannel(UDMA_BASE, UDMA_CHANNEL_UART0_TX);//udmaCfgList[1].dmaChannel);
+//    if(!UDMA_isChannelEnabled(UDMA_BASE, UDMA_CHANNEL_UART0_RX))
+//    {
+//        ucControlTable[UDMA_CHANNEL_UART0_RX].chControlAttr |= udmaCfgList[0].transferMode;
+//        ucControlTable[UDMA_CHANNEL_UART0_RX].chControlAttr |= ((udmaCfgList[0].transferSize - 1) << UDMA_DMACHCTL_XFERSIZE_S);
+//        UDMA_enableChannel(UDMA_BASE, UDMA_CHANNEL_UART0_RX);
+//    }
 
+    if(!UDMA_isChannelEnabled(UDMA_BASE, UDMA_CHANNEL_UART0_TX))
+    {
+        ucControlTable[UDMA_CHANNEL_UART0_TX].chControlAttr |= udmaCfgList[1].transferMode;
+        ucControlTable[UDMA_CHANNEL_UART0_TX].chControlAttr |= ((udmaCfgList[1].transferSize - 1) << UDMA_DMACHCTL_XFERSIZE_S);
+        UDMA_enableChannel(UDMA_BASE, UDMA_CHANNEL_UART0_TX);//udmaCfgList[1].dmaChannel);
+    }
+
+//    UDMA_requestSoftwareTransfer(UDMA_BASE, UDMA_CHANNEL_SW_CH30);
     // Wait until the complete transfer is done
 //    while(UDMA_isChannelEnabled(UDMA_BASE, UDMA_CHANNEL_UART0_TX));
 //    while(UDMA_isChannelEnabled(UDMA_BASE, UDMA_CHANNEL_UART0_RX));
@@ -327,6 +347,9 @@ __interrupt void IPC_ISR0(void)
 //    // Send response to C28x core
 //    IPC_sendResponse(IPC_CM_L_CPU1_R, (status) ? (TEST_PASS) : (TEST_FAIL));
     // Acknowledge the flag
+//    for(i = 0; i < 24; i++)
+//        arrayRxShort[i] = *p_arrayRx++;
+
     IPC_ackFlagRtoL(IPC_CM_L_CPU1_R, IPC_FLAG0);
 
 //    // Read the message from the message queue
@@ -387,22 +410,32 @@ void main(void)
     while(1);
 }
 
-void msgCreate(FOC_STRUCT* p_foc)
+void msgCreate(FOC_STRUCT* p_foc, uint8_t* p_array)
 {
-//    p_foc->idRef;
-//    p_foc->piId.in;
-//    p_foc->iqRef;
-//    p_foc->piIq.in;
-//    p_foc->motor_enc.thetaElec;
-//    p_foc->pdPos.setTheta;
-//    p_foc->motor_enc.speedEst.speedMech;
-//    p_foc->motor_enc.speedEst.speedRef;
-//    p_foc->ud;
-//    p_foc->uq;
-//    p_foc->resistanceEst;
+    float32_t   arrayTmp[4];
+    //    uint8_t     aMsgCreate[MSG_SIZE] = {'a', 'b', 'c', 'd'};
+    uint8_t     *pspl, *pCntMsg;
+    uint8_t     i;
 
+    arrayTmp[0] = p_foc->motor_acq.ia + 1.0;
+    arrayTmp[1] = p_foc->motor_acq.ib + 1.0;
+    arrayTmp[2] = p_foc->motor_acq.ic + 1.0;
+    arrayTmp[3] = p_foc->motor_enc.thetaMech[NEW];
+    //arrayTmp[4] = p_foc->motor_enc.thetaElec;
+    pCntMsg     = (uint8_t *)&CntMsg;
+    pspl        = (uint8_t *)&arrayTmp[0];
 
-
+    for(i = 0; i < MSG_TX_SIZE; i++)
+    {
+        if(i < 4)
+            *p_array = 'a' + i; //aMsgCreate[i] = 'a' + i;
+        else if(i < 8)
+            *p_array = *pCntMsg++; //aMsgCreate[i] = *pCntMsg++;
+        else if(i < MSG_TX_SIZE)
+            *p_array = *pspl++; //aMsgCreate[i] = *pspl++;
+        p_array++;
+    }
+    CntMsg++;
 }
 
 
