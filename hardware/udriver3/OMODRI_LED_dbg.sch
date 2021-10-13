@@ -3,7 +3,7 @@ EELAYER 30 0
 EELAYER END
 $Descr A4 11693 8268
 encoding utf-8
-Sheet 18 19
+Sheet 15 19
 Title "Open MOtor DRiver Initiative (OMODRI)"
 Date "2020-12-16"
 Rev "1.1"
@@ -42,6 +42,9 @@ F 0 "D5" H 5875 3850 50  0000 L CNN
 F 1 "WS2812B" H 5675 4350 50  0000 L CNN
 F 2 "LED_SMD:LED_WS2812B_PLCC4_5.0x5.0mm_P3.2mm" H 6125 3800 50  0001 L TNN
 F 3 "https://cdn-shop.adafruit.com/datasheets/WS2812B.pdf" H 6175 3725 50  0001 L TNN
+F 4 "1568-COM-16347CT-ND " H 6075 4100 50  0001 C CNN "DigiKey"
+F 5 "474-COM-16346" H 6075 4100 50  0001 C CNN "Mouser"
+F 6 "WS2812B 5050" H 6075 4100 50  0001 C CNN "Part No"
 	1    6075 4100
 	-1   0    0    -1  
 $EndComp
