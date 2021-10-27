@@ -68,11 +68,12 @@ typedef struct _IT_TypeDef_
 typedef struct _IPC_TypeDef_
 {
     const IPC_Type_t                ipcType;
-    volatile IPC_MessageQueue_t*    p_msgQ;
+    volatile IPC_MessageQueue_t*    p_ipcMsgQ;
     const uint32_t                  ipcIntMsgQL;
     const uint32_t                  ipcIntMsgQR;
+    const uint32_t                  ipcFlag;
     const uint32_t                  ipcInt;
-    void                            (*ipcIntHandler)(void);
+    void                            (*p_ipcIntHandler)(void);
     const bool                      ipcMsgQEnable;
     const bool                      ipcIntEnable;
 } IPC_TypeDef;

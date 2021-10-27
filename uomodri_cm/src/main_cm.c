@@ -9,10 +9,12 @@
 
 #include <stdbool.h>
 #include <stdint.h>
+#include <math.h>
 #include "driverlib_cm.h"
 #include "cm.h"
 
 //#include "foc.h"
+#include "communication_interface.h"
 #include "uomodri_cm_user_defines.h"
 #include "uomodri_cm_hal_config_handlers.h"
 //#include "uomodri_prj_config_handlers.h"
@@ -21,6 +23,25 @@ extern const HAL_CM hal_cm;
 
 #pragma DATA_ALIGN(ucControlTable, 1024)
 UDMA_ControlTable ucControlTable[32];
+
+#pragma DATA_SECTION(msgComInter, "MSGRAM_CM_TO_CPU1")
+ComInterface msgComInter;
+#pragma DATA_SECTION(msgArrayTx, "MSGRAM_CM_TO_CPU1");
+uint8_t msgArrayTx[MSG_TX_SIZE];
+#pragma DATA_SECTION(msgArrayRx, "MSGRAM_CM_TO_CPU1");
+uint8_t msgArrayRx[MSG_RX_SIZE];
+
+uint64_t    interruptCnt_M1 = 0;
+uint64_t    interruptCnt_M2 = 0;
+
+#define TIME_M1_S   ((float32_t)interruptCnt_M1 * dt)
+#define TIME_M1_MS  ((float32_t)interruptCnt_M1 * 1000.0f * dt)
+#define TIME_M2_S   ((float32_t)interruptCnt_M2 * dt)
+#define TIME_M2_MS  ((float32_t)interruptCnt_M2 * 1000.0f * dt)
+
+#define IPC_CMD_READ_MEM    0x1001
+#define MSG_COM_INTER       0x2001
+#define MSG_COM_ADDR        0x3001
 
 //typedef float         float32_t;
 
@@ -265,9 +286,34 @@ typedef struct __FOC_STRUCT__
 __interrupt void IPC_ISR0(void);
 void msgCreate(FOC_STRUCT*, uint8_t*);
 
+
+// Sine for debug
+const float32_t     debugFreq = 1.0f;
+const float32_t     dt = 1.0 / PWM_FREQ;
 //float32_t   arrayTx[4], arrayRx[4];
 uint32_t    CntMsg = 0;
-uint8_t     arrayTx[MSG_TX_SIZE], arrayRx[MSG_RX_SIZE];
+
+//static ComInterface comInterface =
+//{
+// .systemEnabled     = false,
+// .lastCommandIndex  = 0,
+// .time              = 0.0,
+// .lastMessageMs     = 0,
+// .timeoutThreshold  = 0xFFFF,
+// .rolloverErrorFlag = false,
+// .canError          = SPI_SENSOR_STATUS_ERROR_NO_ERROR,
+// .positionRef       = {0.0, 0.0},
+// .velocityRef       = {0.0, 0.0},
+// .iqRef             = {0.0, 0.0},
+// .positionLsb       = CI_POSITION_LSB,
+// .velocityLsb       = CI_VELOCITY_LSB,
+// .iqLsb             = CI_IQ_LSB,
+// .currentSatLsb     = CI_CURRENT_SAT_LSB,
+// .resistanceLsb     = CI_LSBISTANCE_LSB,
+// .voltageLsb        = CI_VOLTAGE_LSB,
+// .kpLsb             = CI_KP_LSB,
+// .kdLsb             = CI_KD_LSB,
+//};
 
 //uint8_t     arrayRxShort[24];
 
@@ -307,78 +353,62 @@ uint8_t     arrayTx[MSG_TX_SIZE], arrayRx[MSG_RX_SIZE];
 //
 __interrupt void IPC_ISR0(void)
 {
-//    FOC_STRUCT* p_foc = NULL;
     uint32_t    command, data, addr;
-//    uint8_t* p_arrayRx = (uint8_t *)arrayRx;
-//    uint8_t i;
-    // Read the command
-    IPC_readCommand(ipcCfgList[0].ipcType, IPC_FLAG0, IPC_ADDR_CORRECTION_ENABLE, &command, &addr, &data);
-//    p_foc = (FOC_STRUCT *)addr;
+    uint8_t     ipcCfgIndex     = 0;
+    uint8_t     udmaCfgIndex    = 0;
 
-    msgCreate((FOC_STRUCT *)addr, arrayTx);
-
-//    while((HWREG(UART0_BASE + UART_O_FR) & UART_FR_TXFE) == 0);
+    // Get index associated to IPC structure configuration
+    while((cm_ipcCfgList[ipcCfgIndex].p_ipcIntHandler != &IPC_ISR0) ? (ipcCfgIndex++) : (ipcCfgIndex));
+    // Get structure address
+    IPC_readCommand(cm_ipcCfgList[ipcCfgIndex].ipcType, cm_ipcCfgList[ipcCfgIndex].ipcFlag, IPC_ADDR_CORRECTION_ENABLE, &command, &addr, &data);
+    // Create message
+    msgCreate((FOC_STRUCT *)addr, msgArrayTx);
+    // Wait Tx buffer + UART Tx module are empty.
     while((HWREG(UART0_BASE + UART_O_FR) & UART_FR_BUSY) == 1);
+    // Force purge of Rx buffer.
     while(UART_readCharNonBlocking(UART0_BASE) != -1);
+    // Get the index associated to uDMA UART0_TX configuration
+    while((cm_udmaCfgList[udmaCfgIndex].dmaChannel != UDMA_CHANNEL_UART0_TX) ? (udmaCfgIndex++) : (udmaCfgIndex));
+    // Enable the uDMA UART0 Tx channel
+    if(!UDMA_isChannelEnabled(UDMA_BASE, UDMA_CHANNEL_UART0_TX))
+    {
+        ucControlTable[UDMA_CHANNEL_UART0_TX].chControlAttr |= cm_udmaCfgList[udmaCfgIndex].transferMode;
+        ucControlTable[UDMA_CHANNEL_UART0_TX].chControlAttr |= ((cm_udmaCfgList[udmaCfgIndex].transferSize - 1) << UDMA_DMACHCTL_XFERSIZE_S);
+        UDMA_enableChannel(UDMA_BASE, UDMA_CHANNEL_UART0_TX);
+    }
+    // Acknowledge IT
+    IPC_ackFlagRtoL(cm_ipcCfgList[ipcCfgIndex].ipcType, cm_ipcCfgList[ipcCfgIndex].ipcFlag);
+    // Get index associated to IPC structure configuration
+    ipcCfgIndex = 0;
+    while((cm_ipcCfgList[ipcCfgIndex].p_ipcIntHandler != NULL) ? (ipcCfgIndex++) : (ipcCfgIndex));
+    // Share the message generated with C28-CPU1
+    IPC_sendCommand(cm_ipcCfgList[ipcCfgIndex].ipcType, cm_ipcCfgList[ipcCfgIndex].ipcFlag, IPC_ADDR_CORRECTION_ENABLE, MSG_COM_INTER, (uint32_t)(&msgArrayTx), 1);
+//    IPC_sendCommand(IPC_CM_L_CPU1_R, IPC_FLAG1, IPC_ADDR_CORRECTION_ENABLE, 0, 0, 1);
 
-    // Enable the UDMA channels
+//    i = 0;
+//    // Get The raw number associated to uDMA UART0_RX configuration
+//    while((udmaCfgList[i].dmaChannel != UDMA_CHANNEL_UART0_RX) ? (i++) : (i));
+//    // Enable the uDMA UART0 Rx channel
 //    if(!UDMA_isChannelEnabled(UDMA_BASE, UDMA_CHANNEL_UART0_RX))
 //    {
-//        ucControlTable[UDMA_CHANNEL_UART0_RX].chControlAttr |= udmaCfgList[0].transferMode;
-//        ucControlTable[UDMA_CHANNEL_UART0_RX].chControlAttr |= ((udmaCfgList[0].transferSize - 1) << UDMA_DMACHCTL_XFERSIZE_S);
+//        ucControlTable[UDMA_CHANNEL_UART0_RX].chControlAttr |= udmaCfgList[i].transferMode;
+//        ucControlTable[UDMA_CHANNEL_UART0_RX].chControlAttr |= ((udmaCfgList[i].transferSize - 1) << UDMA_DMACHCTL_XFERSIZE_S);
 //        UDMA_enableChannel(UDMA_BASE, UDMA_CHANNEL_UART0_RX);
 //    }
 
-    if(!UDMA_isChannelEnabled(UDMA_BASE, UDMA_CHANNEL_UART0_TX))
-    {
-        ucControlTable[UDMA_CHANNEL_UART0_TX].chControlAttr |= udmaCfgList[1].transferMode;
-        ucControlTable[UDMA_CHANNEL_UART0_TX].chControlAttr |= ((udmaCfgList[1].transferSize - 1) << UDMA_DMACHCTL_XFERSIZE_S);
-        UDMA_enableChannel(UDMA_BASE, UDMA_CHANNEL_UART0_TX);//udmaCfgList[1].dmaChannel);
-    }
+//#if UOMODRI_SPI_DEBUG_CONFIG
+    // Compute predefined trajectory reference
+//    msgComInter.positionRef[MOTOR_1]   = sinf(debugFreq * TIME_M1_S);//debugFreq * TIME_S;//
+//    msgComInter.velocityRef[MOTOR_1]   = 4.0f * M_PI * M_PI * debugFreq * cosf(debugFreq * TIME_M1_S);//debugFreq * TIME_S;//
+//    msgComInter.iqRef[MOTOR_1]         = 0.0f;
+//    /* Send a message without message queue.
+//     * Since C28x and CM does not share the same address space for shared RAM,
+//     * ADDRESS_CORRECTION is enabled
+//     * Length of the data to be read is passed as data. */
+//    IPC_sendCommand(IPC_CM_L_CPU1_R, IPC_FLAG1, IPC_ADDR_CORRECTION_ENABLE, IPC_CMD_RESP, (uint32_t)(&msgComInter), 1);
+//#endif
+//    interruptCnt_M1++;
 
-//    UDMA_requestSoftwareTransfer(UDMA_BASE, UDMA_CHANNEL_SW_CH30);
-    // Wait until the complete transfer is done
-//    while(UDMA_isChannelEnabled(UDMA_BASE, UDMA_CHANNEL_UART0_TX));
-//    while(UDMA_isChannelEnabled(UDMA_BASE, UDMA_CHANNEL_UART0_RX));
-    // Wait until the complete transfer is done
-//    while(UDMA_isChannelEnabled(UDMA_BASE, udmaCfgList[0].dmaChannel));
-
-//    status = (command == IPC_CMD_READ_MEM) ? (true) : (false);
-//    // Send response to C28x core
-//    IPC_sendResponse(IPC_CM_L_CPU1_R, (status) ? (TEST_PASS) : (TEST_FAIL));
-    // Acknowledge the flag
-//    for(i = 0; i < 24; i++)
-//        arrayRxShort[i] = *p_arrayRx++;
-
-    IPC_ackFlagRtoL(IPC_CM_L_CPU1_R, IPC_FLAG0);
-
-//    // Read the message from the message queue
-//    IPC_readMessageFromQueue(IPC_CM_L_CPU1_R, &msgQueue, IPC_ADDR_CORRECTION_ENABLE, &msgRx, IPC_NONBLOCKING_CALL);
-//
-//
-//    if(msgRx.command == IPC_CMD_READ_MEM)
-//    {
-//        status = true;
-//        // Read and compare data
-//        for(i = 0; i < msgRx.dataw1; i++)
-//            if((*(uint32_t *)msgRx.address + i) != i)
-//                status = false;
-//    }
-//
-//    // Send response message
-//    msgTx.command = IPC_CMD_RESP;
-//    msgTx.address = 0; // Not used
-//    msgTx.dataw1  = status ? TEST_PASS : TEST_FAIL;
-//    msgTx.dataw2  = msgRx.dataw2; // Use the message identifier from the received message
-//
-//    IPC_sendMessageToQueue(IPC_CM_L_CPU1_R, &msgQueue, IPC_ADDR_CORRECTION_DISABLE, &msgTx, IPC_NONBLOCKING_CALL);
-//    // Acknowledge the flag
-//    IPC_ackFlagRtoL(IPC_CM_L_CPU1_R, IPC_FLAG1);
-//
-//    if(status == true)
-//        GPIO_writePin(DEBUG_LED_PIN2, 0);
-//    else if(status == false)
-//        GPIO_writePin(DEBUG_LED_PIN2, 1);
 }
 
 //__interrupt void UART_RX_IntHandler(void)
@@ -401,10 +431,16 @@ __interrupt void IPC_ISR0(void)
 //
 void main(void)
 {
+    uint8_t     ipcCfgIndex     = 0;
     // Initialize device clock and peripherals
     CM_init();
     // Hardware Abstraction Layer initialization
     HAL_CM_init(&hal_cm);
+
+    // Get index associated to IPC structure configuration
+    while((cm_ipcCfgList[ipcCfgIndex].p_ipcIntHandler != NULL) ? (ipcCfgIndex++) : (ipcCfgIndex));
+    // Share the message generated with C28-CPU1
+    IPC_sendCommand(cm_ipcCfgList[ipcCfgIndex].ipcType, cm_ipcCfgList[ipcCfgIndex].ipcFlag, IPC_ADDR_CORRECTION_ENABLE, MSG_COM_ADDR, (uint32_t)(&msgArrayTx), 1);
 
     // Loop forever. Wait for IPC interrupt
     while(1);

@@ -28,7 +28,7 @@
 #define UOMODRI_RES_ESTIM_FLT(flt_coef, y, x)   LPF_FILTER_1(flt_coef, y, x)
 #define UOMODRI_SPEED_FLT(flt_coef, y, x)       LPF_FILTER_1(flt_coef, y, x)
 #define UOMODRI_SPI_DEBUG_CONFIG                1
-#define UOMODRI_FEED_FORWARD_EN                 1
+#define UOMODRI_FEED_FORWARD_EN                 0
 
 #define OMODRI_PAL_SETUP                        0   // Set this to 1 to use the PAL pin affectation
 //#define UOMODRI_DEBUG_LOGGED_MOTOR              MOTOR_1
@@ -182,7 +182,10 @@
  */
 #define DMA_COM_SPI_TX_BASE_ADDR                DMA_CH5_BASE
 #define DMA_COM_SPI_RX_BASE_ADDR                DMA_CH6_BASE
-#define DMA_COM_SPI_TX_RX_LENGTH                (17)
+#define DMA_COM_SPI_TX_RX_8BIT_LENGTH           (24)
+#define DMA_COM_SPI_TX_RX_16BIT_LENGTH          (DMA_COM_SPI_TX_RX_8BIT_LENGTH  / 2)
+#define DMA_COM_SPI_TX_RX_16BIT_BURST_SIZE      (2)
+#define DMA_COM_SPI_TX_RX_TRANSFER_NB           (DMA_COM_SPI_TX_RX_16BIT_LENGTH / DMA_COM_SPI_TX_RX_16BIT_BURST_SIZE)
 //#define DMA_TX_BASE_ADDR                        DMA_CH5_BASE
 //#define DMA_RX_BASE_ADDR                        DMA_CH6_BASE
 /**

@@ -23,7 +23,8 @@
 //extern float32_t    thetaElec; // [pu]
 //extern float32_t    thetaMechCal[2]; // [pu]
 extern float32_t    pdSat;
-
+__attribute__((interrupt)) void IPC_ISR1(void);
+//__attribute__((interrupt)) void dma5_isr(void);
 __attribute__((interrupt)) void adc_isrMotor1(void);
 __attribute__((interrupt)) void adc_isrMotor2(void);
 //extern __interrupt void pwm_isrMotor1(void);
@@ -65,14 +66,16 @@ static const IT_TypeDef InterruptList[] =
 //// {.motorID = MOTOR_2,   .intNum = INT_EPWM4,        .intPeriphBase = MOTOR2_PWM1_BASE,                                          .intCpuGroup = INTERRUPT_CPU_INT3,  .intAckGroup = INTERRUPT_ACK_GROUP3,    .handler = &pwm_isrMotor2},
 // {.motorID = MOTOR_1,   .intNum = INT_XINT1,                                                                                    .intCpuGroup = INTERRUPT_CPU_INT1,  .intAckGroup = INTERRUPT_ACK_GROUP1,    .handler = &gpio_isrFault1},
 // {.motorID = MOTOR_2,   .intNum = INT_XINT2,                                                                                    .intCpuGroup = INTERRUPT_CPU_INT1,  .intAckGroup = INTERRUPT_ACK_GROUP1,    .handler = &gpio_isrFault2},
- {.intNum = MOTOR1_IA_INT_CH,   .intPeriphBase = MOTOR12_IVA_ADC_ADDR,  .intPeriphSrc = MOTOR1_IA_INT_NUM,  .intCpuGroup = INTERRUPT_CPU_INT10, .intAckGroup = INTERRUPT_ACK_GROUP10,   .handler = &adc_isrMotor1}, //
- {.intNum = MOTOR2_IA_INT_CH,   .intPeriphBase = MOTOR12_IVA_ADC_ADDR,  .intPeriphSrc = MOTOR2_IA_INT_NUM,  .intCpuGroup = INTERRUPT_CPU_INT10, .intAckGroup = INTERRUPT_ACK_GROUP10,   .handler = &adc_isrMotor2}, //
+ {.intNum = MOTOR1_IA_INT_CH,   .intAckGroup = INTERRUPT_ACK_GROUP10,   .handler = &adc_isrMotor1,  .intPeriphBase = MOTOR12_IVA_ADC_ADDR,  .intPeriphSrc = MOTOR1_IA_INT_NUM}, //
+ {.intNum = MOTOR2_IA_INT_CH,   .intAckGroup = INTERRUPT_ACK_GROUP10,   .handler = &adc_isrMotor2,  .intPeriphBase = MOTOR12_IVA_ADC_ADDR,  .intPeriphSrc = MOTOR2_IA_INT_NUM}, //
 // {.motorID = MOTOR_1,   .intNum = INT_EPWM1,        .intPeriphBase = MOTOR1_PWM1_BASE,                                          .intCpuGroup = INTERRUPT_CPU_INT3,  .intAckGroup = INTERRUPT_ACK_GROUP3,    .handler = &pwm_isrMotor1},
 // {.motorID = MOTOR_2,   .intNum = INT_EPWM4,        .intPeriphBase = MOTOR2_PWM1_BASE,                                          .intCpuGroup = INTERRUPT_CPU_INT3,  .intAckGroup = INTERRUPT_ACK_GROUP3,    .handler = &pwm_isrMotor2},
- {.intNum = INT_XINT1,                                                                                      .intCpuGroup = INTERRUPT_CPU_INT1,  .intAckGroup = INTERRUPT_ACK_GROUP1,    .handler = &gpio_isrFault1},
- {.intNum = INT_XINT2,                                                                                      .intCpuGroup = INTERRUPT_CPU_INT1,  .intAckGroup = INTERRUPT_ACK_GROUP1,    .handler = &gpio_isrFault2},
+ {.intNum = INT_CMTOCPUXIPC1,   .intAckGroup = INTERRUPT_ACK_GROUP11,   .handler = &IPC_ISR1},
+// {.intNum = INT_DMA_CH5,        .intAckGroup = INTERRUPT_ACK_GROUP7,    .handler = &dma5_isr},
+ {.intNum = INT_XINT1,          .intAckGroup = INTERRUPT_ACK_GROUP1,    .handler = &gpio_isrFault1},
+ {.intNum = INT_XINT2,          .intAckGroup = INTERRUPT_ACK_GROUP1,    .handler = &gpio_isrFault2},
 #if (CLA == 1)
- {.intNum = INT_CLA1_1,                                                                                     .intCpuGroup = INTERRUPT_CPU_INT11, .intAckGroup = INTERRUPT_ACK_GROUP11,   .handler = &cla1_isr1},
+ {.intNum = INT_CLA1_1,         .intAckGroup = INTERRUPT_ACK_GROUP11,   .handler = &cla1_isr1},
 #endif
  // END OF ARRAY
  {.intNum = 0xFFFFFFFF},

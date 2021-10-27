@@ -136,6 +136,36 @@ static void MCU_init(void)
 }
 
 //-------------------------------------------------------------------------------------------------
+__attribute__((interrupt)) void IPC_ISR1(void)
+{
+//    ComInterface* p_comInterface = NULL;
+    uint32_t command, addr, data;
+    IPC_readCommand(IPC_CPU1_L_CM_R, IPC_FLAG1, IPC_ADDR_CORRECTION_ENABLE, &command, &addr, &data);
+//    DmaRegs.CH5.SRC_BEG_ADDR_ACTIVE = addr;
+//    DMA_startChannel(DMA_COM_SPI_TX_BASE_ADDR);//dmaCfgList[0].dmaChBase);
+    DMA_forceTrigger(DMA_COM_SPI_TX_BASE_ADDR);
+    if(DmaRegs.CH5.CONTROL.bit.RUNSTS)
+        GPIO_togglePin(DEBUG_INT_PIN1);
+
+//    p_comInterface = (ComInterface *)addr;
+//    comInterface.positionRef[MOTOR_1]   = p_comInterface->positionRef[MOTOR_1];
+//    comInterface.velocityRef[MOTOR_1]   = p_comInterface->velocityRef[MOTOR_1];
+//    comInterface.iqRef[MOTOR_1]         = p_comInterface->iqRef[MOTOR_1];
+    IPC_ackFlagRtoL(IPC_CPU1_L_CM_R, IPC_FLAG1);
+    Interrupt_clearACKGroup(INTERRUPT_ACK_GROUP11);
+}
+
+//-------------------------------------------------------------------------------------------------
+//__attribute__((interrupt)) void dma5_isr(void)
+//{
+//    DMA_stopChannel(DMA_COM_SPI_TX_BASE_ADDR);
+//    DmaRegs.CH5.CONTROL.bit.PERINTCLR = 1;
+//    //IPC_ackFlagRtoL(IPC_CPU1_L_CM_R, IPC_FLAG1);
+//    Interrupt_clearACKGroup(INTERRUPT_ACK_GROUP7);
+//
+//}
+
+//-------------------------------------------------------------------------------------------------
 /**
  * @brief   ADC interrupt. Read Va, Vb, Vc, Vbus, Ia, Ib \& Ic of MOTOR_1
  */
@@ -150,7 +180,7 @@ __attribute__((interrupt)) void adc_isrMotor1(void)
     uint16_t        group       = InterruptList[ADC_IT_MOTOR_1].intAckGroup;
     ADC_IntNumber   adcIntNum   = (ADC_IntNumber)InterruptList[ADC_IT_MOTOR_1].intPeriphSrc; //MOTOR1_IA_INT_NUM;
 
-    if (comInterface.systemEnabled && p_foc->enabled)
+    if(comInterface.systemEnabled && p_foc->enabled)
     {
         // Read encoder position
         ENC_getPosition(&p_foc->motor_enc);

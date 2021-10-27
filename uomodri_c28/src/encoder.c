@@ -83,8 +83,13 @@ inline void ENC_getSpeed(ENC_STRUCT* p_enc)
         p_speed->theta[NEW]     = p_qepRegs->QPOSLAT / p_enc->thetaMechScaler;
         // Compute angle difference & saturate it between -0.5 and 0.5
 //        deltaTheta          = __fsat((speedEst.theta[NEW] - speedEst.theta[OLD] + (float32_t)(p_qepRegs->QFLG.bit.PCO) - (float32_t)(p_qepRegs->QFLG.bit.PCU)), 1.0f, -1.0f) * 0.5f;
-        deltaTheta              = p_speed->theta[NEW] - p_speed->theta[OLD] + (float32_t)(p_qepRegs->QFLG.bit.PCO) - (float32_t)(p_qepRegs->QFLG.bit.PCU);
-        deltaTheta              = __fsat(deltaTheta, 1.0f, -1.0f);// * 0.5f;
+
+//        deltaTheta              = p_speed->theta[NEW] - p_speed->theta[OLD] + (float32_t)(p_qepRegs->QFLG.bit.PCO) - (float32_t)(p_qepRegs->QFLG.bit.PCU);
+//        deltaTheta              = __fsat(deltaTheta, 1.0f, -1.0f);// * 0.5f;
+
+        deltaTheta              = p_speed->theta[NEW] - p_speed->theta[OLD];
+        deltaTheta             -= (deltaTheta > 0.5f) ? (1.0f) : (0.0f);
+        deltaTheta             += (deltaTheta < -0.5f) ? (1.0f) : (0.0f);
         // Compute high speed estimation
         p_speed->speedHigh      = deltaTheta * p_speed->speedHighScaler;
         // Save last angle

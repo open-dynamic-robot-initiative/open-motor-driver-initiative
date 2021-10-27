@@ -34,6 +34,8 @@ typedef  float  float32_t;
 
 #define MSG_TX_SIZE                             24
 #define MSG_RX_SIZE                             4
+
+#define PWM_FREQ                                (40000) //[Hz]
 //#define UOMODRI_DEBUG_LOGGED_MOTOR              MOTOR_1
 //#define SPI_DEBUG_CONFIGURATION                 0   // Set this to 1 to use debug configuration
 // Word number in a full communication
@@ -150,14 +152,14 @@ typedef  float  float32_t;
 #define DRV_CSA_GAIN_VAL                        (5 << DRV_CSA_GAIN_REG) // base gain
 
 #if (UOMODRI == 0)
-#define R_SHUNT                                 0.007f // [Ohm]
-#define BRIDGE_DIVIDER                          ((4.99f + 82.0f) / 4.99f)
+//#define R_SHUNT                                 0.007f // [Ohm]
+//#define BRIDGE_DIVIDER                          ((4.99f + 82.0f) / 4.99f)
 #else
 #define R_SHUNT                                 0.01f // [Ohm]
 #define BRIDGE_DIVIDER                          ((5.1f + 100.0f) / 5.1f)
 #endif
-#define ADC_VOLTAGE_SCALE                       (ADC_VREF * BRIDGE_DIVIDER / ADC_RESOLUTION_MAX)// Voltage divider R1:4.99kO R2:82kO
-#define ADC_CURRENT_SCALE                       (ADC_VREF * (-0.5f) / DRV_CSA_GAIN_VAL / R_SHUNT / ADC_RESOLUTION_MAX / 2) //(0x1000 << (ADC_RESOLUTION >> 4)))
+//#define ADC_VOLTAGE_SCALE                       (ADC_VREF * BRIDGE_DIVIDER / ADC_RESOLUTION_MAX)// Voltage divider R1:4.99kO R2:82kO
+//#define ADC_CURRENT_SCALE                       (ADC_VREF * (-0.5f) / DRV_CSA_GAIN_VAL / R_SHUNT / ADC_RESOLUTION_MAX / 2) //(0x1000 << (ADC_RESOLUTION >> 4)))
 /**
  * @}
  */

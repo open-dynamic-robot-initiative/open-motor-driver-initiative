@@ -44,8 +44,8 @@
 #if (CM == 1)
 #pragma DATA_SECTION(motorCpuToCM, "MSGRAM_CPU_TO_CM")
 FOC_STRUCT motorCpuToCM[2];
-#pragma DATA_SECTION(motorCMToCpu, "MSGRAM_CM_TO_CPU")
-FOC_STRUCT motorCMToCpu[2];
+//#pragma DATA_SECTION(msgComInter, "MSGRAM_CM_TO_CPU")
+//ComInterface msgComInter;
 #endif
 
 //#pragma DATA_SECTION(motor_enc_in, "CpuToCla1MsgRAM");
@@ -76,6 +76,8 @@ float   thetaElec; // [pu]
 //#pragma DATA_SECTION(thetaMechCal, "Cla1ToCpuMsgRAM");
 //float32_t   thetaMechCal; // [pu]
 #endif
+
+//const void*         p_msgComInter = NULL;
 
 // Sine for debug
 float32_t           debugFreq = 1.0f;
@@ -111,6 +113,8 @@ static void MCU_init();
 //  - add the End-of-Task 1 prototype here
 //void CLA_initCpu1Cla1( void );
 //void CLA_configClaMemory(void);
+__attribute__((interrupt)) void IPC_ISR1(void);
+//__attribute__((interrupt)) void dma5_isr(void);
 __attribute__((interrupt)) void adc_isrMotor1(void);
 __attribute__((interrupt)) void adc_isrMotor2(void);
 //extern __interrupt void pwm_isrMotor1(void);

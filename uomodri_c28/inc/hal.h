@@ -147,6 +147,7 @@ typedef struct _SPI_Cfg_TypeDef_
     SPI_TransferProtocol    protocol;
     SPI_TxFIFOLevel         txLevel;
     SPI_RxFIFOLevel         rxLevel;
+    bool                    highSpeedMode;
 } SPI_TypeDef;
 
 /**
@@ -276,20 +277,23 @@ typedef struct _IT_TypeDef_
     uint32_t    intNum;
     uint32_t    intPeriphBase;
     uint16_t    intPeriphSrc;
-    uint16_t    intCpuGroup;
+    //uint16_t    intCpuGroup;
     uint16_t    intAckGroup;
     void        (*handler)(void);
 } IT_TypeDef;
 
 typedef struct _IPC_TypeDef_
 {
-    const uint32_t                  ipcBase;
+//    const uint32_t                  ipcBase;
     const IPC_Type_t                ipcType;
-    volatile IPC_MessageQueue_t*    p_msgQueue;
-    const uint32_t                  msgTx;
-    const uint32_t                  msgRx;
-    const uint32_t                  ipcFlag;
-    const bool                      msgQueueEnable;
+    volatile IPC_MessageQueue_t*    p_msgQ;
+    const uint32_t                  ipcIntMsgQL;
+    const uint32_t                  ipcIntMsgQR;
+//    const uint32_t                  ipcFlag;
+    const uint32_t                  ipcInt;
+    void                            (*ipcIntHandler)(void);
+    const bool                      ipcMsgQEnable;
+    const bool                      ipcIntEnable;
 } IPC_TypeDef;
 
 /**

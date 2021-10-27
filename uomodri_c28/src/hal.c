@@ -17,6 +17,8 @@ void HAL_DMA_init(const DMA_TypeDef*);
 void HAL_IPC_init(const IPC_TypeDef*);
 void HAL_CLA_init(const CLA_TypeDef*);
 
+const void* p_msgComInter;
+
 // Function definitions
 /**
  * @brief       Initialize all peripherals necessaries.
@@ -24,6 +26,7 @@ void HAL_CLA_init(const CLA_TypeDef*);
  */
 void HAL_init(const HAL* p_hal)
 {
+    uint32_t    command, data, addr;
     if(p_hal != NULL)
     {
         // Initialize GPIO pins
@@ -34,12 +37,18 @@ void HAL_init(const HAL* p_hal)
         HAL_ePWM_init(p_hal->p_epwmHandler);
         // Initialize eQEP
         HAL_eQEP_init(p_hal->p_eqepHandler);
+        // Initialize IPC communication
+        HAL_IPC_init(p_hal->p_ipcHandler);
+        IPC_waitForFlag(IPC_CPU1_L_CM_R, IPC_FLAG1);
+        IPC_readCommand(IPC_CPU1_L_CM_R, IPC_FLAG1, IPC_ADDR_CORRECTION_ENABLE, &command, &addr, &data);
+        p_msgComInter = (const void *)addr;
+        IPC_ackFlagRtoL(IPC_CPU1_L_CM_R, IPC_FLAG1);
+        //p_msgComInter = (command == 0x3001) ? ((void *)addr) : (NULL);
+        //p_hal->p_dmaHandler->srcAddr = (command == 0x3001) ? ((const void *)addr) : (NULL);
         // Initialize DMA
         HAL_DMA_init(p_hal->p_dmaHandler);
         // Initialize SPIA device
         HAL_SPI_init(p_hal->p_spiHandler);
-        // Initialize IPC communication
-        HAL_IPC_init(p_hal->p_ipcHandler);
         // Initialize CLA
         HAL_CLA_init(p_hal->p_claHandler);
     }
@@ -511,10 +520,10 @@ void HAL_SPI_init(const SPI_TypeDef* p_spiCfg)
             if((p_spiCfg->rxLevel != SPI_FIFO_RXEMPTY) || (p_spiCfg->txLevel != SPI_FIFO_TXEMPTY))
             {
                 SPI_enableFIFO(spiBase);
-                SPI_resetTxFIFO(spiBase);
-                SPI_resetRxFIFO(spiBase);
+                //SPI_resetTxFIFO(spiBase);
+                //SPI_resetRxFIFO(spiBase);
                 SPI_setFIFOInterruptLevel(spiBase, p_spiCfg->txLevel, p_spiCfg->rxLevel);
-                SPI_enableInterrupt(spiBase, SPI_INT_TXFF | SPI_INT_RXFF | SPI_INT_RXFF_OVERFLOW);
+                //SPI_enableInterrupt(spiBase, SPI_INT_TXFF | SPI_INT_RXFF | SPI_INT_RXFF_OVERFLOW);
             }
             /* Enable SPI module */
             SPI_enableModule(spiBase);
@@ -534,6 +543,7 @@ void HAL_DMA_init(const DMA_TypeDef* p_dmaCfg)
     if(p_dmaCfg != NULL)
     {
         uint32_t dmaChBase = p_dmaCfg->dmaChBase;
+        //void* srcAddr = NULL;
 
         /* Global hardware reset of the DMA controller. */
         DMA_initController();
@@ -541,20 +551,24 @@ void HAL_DMA_init(const DMA_TypeDef* p_dmaCfg)
 
         while(dmaChBase != 0xFFFFFFFF)
         {
+            const void* p_srcAddr = *((uint32_t *)p_dmaCfg->srcAddr);
             /* DMA channel initialization
              * Configure direction, words per burst
              */
-            DMA_configAddresses(dmaChBase, p_dmaCfg->destAddr, p_dmaCfg->srcAddr);
+            DMA_configAddresses(dmaChBase, p_dmaCfg->destAddr, p_srcAddr);//(const void *)srcAddr);//(uint16_t *)srcAddr);
             DMA_configBurst(dmaChBase, p_dmaCfg->burstSize, p_dmaCfg->srcStep, p_dmaCfg->destStep);
             DMA_configTransfer(dmaChBase, p_dmaCfg->transferSize, p_dmaCfg->srcStep, p_dmaCfg->destStep);
-            DMA_configWrap(dmaChBase, p_dmaCfg->srcWrapSize, p_dmaCfg->srcStep, p_dmaCfg->destWrapSize, p_dmaCfg->destStep);
+            //DMA_configWrap(dmaChBase, p_dmaCfg->srcWrapSize, p_dmaCfg->srcStep, p_dmaCfg->destWrapSize, p_dmaCfg->destStep);
             DMA_configMode(dmaChBase, p_dmaCfg->trigger, p_dmaCfg->config);
             /* Clear flags & disable interrupts */
             DMA_disableOverrunInterrupt(dmaChBase);
-            DMA_disableInterrupt(dmaChBase);
+            DMA_setInterruptMode(DMA_CH5_BASE, DMA_INT_AT_END);
+            DMA_enableInterrupt(dmaChBase);//DMA_disableInterrupt(dmaChBase); //
             /* Enable Trigger source & DMA channel */
             DMA_clearTriggerFlag(dmaChBase);
             DMA_enableTrigger(dmaChBase);
+
+            DMA_startChannel(dmaChBase);
             dmaChBase = (++p_dmaCfg)->dmaChBase;
         }
     }
@@ -570,18 +584,27 @@ void HAL_IPC_init(const IPC_TypeDef* p_ipcCfg)
 {
     if(p_ipcCfg != NULL)
     {
-        IPC_Type_t ipcType = p_ipcCfg->ipcType;
+        IPC_Type_t  ipcType     = p_ipcCfg->ipcType;
+        /* (0) - C_CPU1_L_CPU2_R, (1) - IPC_CPU1_L_CM_R, (2) - IPC_CPU2_L_CPU1_R, (3) - IPC_CPU2_L_CM_R*/
+        uint8_t     ipcSyncDone = 0;
 
         while(ipcType != IPC_TOTAL_NUM)
         {
-            //if(p_ipcCfg->ipcBase == IPC_CPUXTOCM_BASE)
-            // Clear any IPC flags if set already
-            IPC_clearFlagLtoR(ipcType, IPC_FLAG_ALL);
-            if(p_ipcCfg->msgQueueEnable)
-                // Initialize message queue
-                IPC_initMessageQueue(ipcType, p_ipcCfg->p_msgQueue, p_ipcCfg->msgTx, p_ipcCfg->msgRx);
+            // Enable IPC interrupts
+            if(p_ipcCfg->ipcIntEnable == true)
+                IPC_registerInterrupt(ipcType, p_ipcCfg->ipcInt, p_ipcCfg->ipcIntHandler);
+            // Initialize message queue
+            if(p_ipcCfg->ipcMsgQEnable == true)
+                IPC_initMessageQueue(ipcType, p_ipcCfg->p_msgQ, p_ipcCfg->ipcIntMsgQL, p_ipcCfg->ipcIntMsgQR);
             // Synchronize both the cores.
-            IPC_sync(ipcType, IPC_FLAG31);
+            if(!(ipcSyncDone & (1 << ipcType)))
+            {
+                // Clear any IPC flags if set already
+                IPC_clearFlagLtoR(ipcType, IPC_FLAG_ALL);
+                // Synchronize both the cores.
+                IPC_sync(ipcType, IPC_FLAG31);
+                ipcSyncDone |= (1 << ipcType);
+            }
             ipcType = (++p_ipcCfg)->ipcType;
         }
     }

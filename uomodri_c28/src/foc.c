@@ -73,7 +73,7 @@ inline void FOC_runControl(FOC_STRUCT* p_foc)
     UOMODRI_IDQ_FLT(p_foc->iParkLpf, p_foc->iq, ((p_foc->cosTheta * p_foc->ibeta) - (p_foc->sinTheta * p_foc->ialpha)));
     // Compute decoupling feed-forward terms
     p_foc->piId.ff      = UOMODRI_FEED_FORWARD_EN ? (-1.0f * p_speed->speedElec * p_cfg->Lq * p_foc->iq)        : (0.0);//* UOMODRI_FOC_FEED_FORWARD_EN;
-    p_foc->piIq.ff      = UOMODRI_FEED_FORWARD_EN ? (p_cfg->Rs * p_foc->iqRef + p_speed->speedElec * p_cfg->ke) : (0.0);// * UOMODRI_FOC_FEED_FORWARD_EN;
+    p_foc->piIq.ff      = UOMODRI_FEED_FORWARD_EN ? (p_cfg->Rs * p_foc->iqRef + p_speed->speedElec * p_cfg->ke) : (0.0);//* UOMODRI_FOC_FEED_FORWARD_EN;
 //    p_foc->piIq.ff  = p_foc->motor_enc.speedEst.elecSpeed * (p_foc->motorParams.Ld * p_foc->id + p_foc->motorParams.ke);
 //    limit_norm(&p_foc->idRef, &p_foc->iqRef, p_foc->motor_acq.imax);
     // Compute error for PI controllers
