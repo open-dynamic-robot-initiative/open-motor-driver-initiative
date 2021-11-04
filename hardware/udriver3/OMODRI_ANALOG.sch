@@ -13,23 +13,6 @@ Comment2 ""
 Comment3 ""
 Comment4 ""
 $EndDescr
-$Comp
-L omodri_lib:TMS320F28388D U?
-U 3 1 5F935FFE
-P 3575 4400
-AR Path="/5F3A5338/5F935FFE" Ref="U?"  Part="3" 
-AR Path="/5F5975A7/5F935FFE" Ref="U?"  Part="3" 
-AR Path="/5F5975A7/5F91076F/5F935FFE" Ref="U1"  Part="3" 
-F 0 "U1" H 3175 6500 60  0000 C CNN
-F 1 "TMS320F28388D" H 3475 6400 60  0000 C CNN
-F 2 "udriver3:NFBGA_337" H 3575 6400 60  0001 C CNN
-F 3 "https://www.ti.com/lit/ds/symlink/tms320f28388d.pdf" H 3575 6451 60  0001 C CNN
-F 4 " 	296-F28388DZWTS-ND" H 3575 4400 50  0001 C CNN "DigiKey"
-F 5 "595-F28388DZWTS" H 3575 4400 50  0001 C CNN "Mouser"
-F 6 "F28388DZWTS" H 3575 4400 50  0001 C CNN "Part No"
-	3    3575 4400
-	1    0    0    -1  
-$EndComp
 Text HLabel 4375 2500 2    50   Input ~ 0
 M1_Ia
 Text HLabel 4375 3200 2    50   Input ~ 0
@@ -446,4 +429,22 @@ F 6 "TPD1E04U04DPLT" H 8550 4125 50  0001 C CNN "Part No"
 $EndComp
 Wire Wire Line
 	8100 4125 8150 4125
+$Comp
+L omodri_lib:TMS320F28388D U?
+U 3 1 5F935FFE
+P 3575 4400
+AR Path="/5F3A5338/5F935FFE" Ref="U?"  Part="3" 
+AR Path="/5F5975A7/5F935FFE" Ref="U?"  Part="3" 
+AR Path="/5F5975A7/5F91076F/5F935FFE" Ref="U1"  Part="3" 
+AR Path="/5F935FFE" Ref="U1"  Part="3" 
+F 0 "U1" H 3175 6500 60  0000 C CNN
+F 1 "TMS320F28388D" H 3475 6400 60  0000 C CNN
+F 2 "udriver3:NFBGA_337" H 3575 6400 60  0001 C CNN
+F 3 "https://www.ti.com/lit/ds/symlink/tms320f28388d.pdf" H 3575 6451 60  0001 C CNN
+F 4 " 	296-F28388DZWTS-ND" H 3575 4400 50  0001 C CNN "DigiKey"
+F 5 "595-F28388DZWTS" H 3575 4400 50  0001 C CNN "Mouser"
+F 6 "F28388DZWTS" H 3575 4400 50  0001 C CNN "Part No"
+	3    3575 4400
+	1    0    0    -1  
+$EndComp
 $EndSCHEMATC
