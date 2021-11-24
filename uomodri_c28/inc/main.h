@@ -7,7 +7,9 @@
 // Project includes
 //#include "communication.h"
 #include "f2838x_device.h"
-//#include "f2838x_cla_defines.h"
+#if (CLA == 1)
+#include "f2838x_cla_defines.h"
+#endif
 #include "f2838x_examples.h"
 #include "driverlib.h"
 #include "device.h"
@@ -20,12 +22,12 @@
 #include "motor.h"
 
 #include "communication_interface.h"
-#include "legacy_spi.h"
+//#include "legacy_spi.h"
 
 #include "uomodri_user_defines.h"
 #include "uomodri_hal_config_handlers.h"
 #include "uomodri_prj_config_handlers.h"
-#include "uOmodriClaTasksShare.h"
+//#include "uOmodriClaTasksShare.h"
 
 /*****************************************************************************
  * defines
@@ -81,7 +83,7 @@ float   thetaElec; // [pu]
 
 // Sine for debug
 float32_t           debugFreq = 1.0f;
-float32_t           pdSat = 4.0;
+//float32_t           pdSat = 4.0;
 // Time macro
 const float32_t     dt = 1.0 / PWM_FREQ;
 bool                isrMotor1Ready = false;
@@ -113,7 +115,7 @@ static void MCU_init();
 //  - add the End-of-Task 1 prototype here
 //void CLA_initCpu1Cla1( void );
 //void CLA_configClaMemory(void);
-__attribute__((interrupt)) void IPC_ISR1(void);
+__attribute__((interrupt)) void ipc_isrComInter(void);
 //__attribute__((interrupt)) void dma5_isr(void);
 __attribute__((interrupt)) void adc_isrMotor1(void);
 __attribute__((interrupt)) void adc_isrMotor2(void);

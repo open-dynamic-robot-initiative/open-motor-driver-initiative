@@ -1,23 +1,25 @@
 #ifndef __FOC_H__
 #define __FOC_H__
 
-#include <math.h>
 #include <stdbool.h>
-
+#include <stdint.h>
+#include <math.h>
+#ifdef C28_CORE
 #include "f2838x_device.h"
 #include "f2838x_struct.h"
 #include "f2838x_examples.h"
 #include "driverlib.h"
 #include "device.h"
-//#include "hal.h"
-//#include "motor.h"
-//#include "align_routine.h"
-//#include "communication_interface.h"
-//#include "motor.h"
-//#include "lowpass_filter.h"
+
+#include "uomodri_user_defines.h"
+#elif defined CM_CORE
+#include "driverlib_cm.h"
+#include "cm.h"
+
+#include "uomodri_cm_user_defines.h"
+#endif
 #include "encoder.h"
 #include "anticoagging.h"
-#include "uomodri_user_defines.h"
 
 //#ifndef FM_PI
 //#define FM_PI 3.14159265358979f
@@ -61,8 +63,8 @@
 
 typedef struct __PI_STRUCT__
 {
-    float32_t*          p_in;       // pointer on the loopback current
-    float32_t*          p_set;      // pointer on the setpoint current
+    float32_t           in;         // Loopback current
+    float32_t           set;        // Setpoint current
     float32_t           err;        // Current error
 
     float32_t           kp;         // Proportional gain
@@ -71,17 +73,17 @@ typedef struct __PI_STRUCT__
     float32_t           integral;   // Integral term partial computation
     float32_t           ff;         // Feed-forward term
     float32_t           out;        // Controller output
-    float32_t*          p_sat;      // Controller saturation
+    float32_t           sat;        // Controller saturation
 } PI_STRUCT;
 
 typedef struct __PD_STRUCT__
 {
-    float32_t*          p_inTheta;  // pointer on the loopback position
-    float32_t*          p_setTheta; // pointer on the setpoint position
-    float32_t           errTheta;   // position error
-    float32_t*          p_inSpeed;  // pointer on the loopback speed
-    float32_t*          p_setSpeed; // pointer on the setpoint speed
-    float32_t           errSpeed;   // speed error
+    float32_t           inTheta;    // Loopback position
+    float32_t           setTheta;   // Setpoint position
+    float32_t           errTheta;   // Error position
+    float32_t           inSpeed;    // Loopback speed
+    float32_t           setSpeed;   // Setpoint speed
+    float32_t           errSpeed;   // Error speed
 
     float32_t           kp;         // Proportional gain
     float32_t           kd;         // Derivative gain
@@ -89,7 +91,7 @@ typedef struct __PD_STRUCT__
     float32_t           derivative; // Derivative term partial computation
     float32_t           ff;         // Feed-forward term
     float32_t           out;        // Controller output
-    float32_t*          p_sat;      // Controller saturation
+    float32_t           sat;        // Controller saturation
 } PD_STRUCT;
 
 typedef struct __PARAMETERS_STRUCT__
@@ -101,21 +103,26 @@ typedef struct __PARAMETERS_STRUCT__
     float32_t           kv;         // Motor speed constant [RPM/V or rad/s/V]
     float32_t           ke;         // Motor back EMF constant [V/rad/s] (electrical radians) = 1/kv
     float32_t           ki;         // Motor torque constant [N.m/A]
-    uint8_t             polePairs;  // Number of pole pairs
+    const uint8_t       polePairs;  // Number of pole pairs
 } PARAMS_STRUCT;
 
 typedef struct __ACQUISITIONS_STRUCT__
 {
-    volatile struct ADC_REGS*           p_adcRegs[MAX_ADC];
-    volatile struct ADC_RESULT_REGS*    p_adcResultRegs[MAX_ADC];
+#ifdef C28_CORE
+    volatile struct ADC_REGS*           const p_adcRegs[MAX_ADC];
+    volatile struct ADC_RESULT_REGS*    const p_adcResultRegs[MAX_ADC];
+#elif defined CM_CORE
+    uint32_t                            rsvd1[5];
+    uint32_t                            rsvd2[5];
+#endif
     // ADC result registers
-    volatile uint16_t*                  p_vaMeasReg;
-    volatile uint16_t*                  p_vbMeasReg;
-    volatile uint16_t*                  p_vcMeasReg;
-    volatile uint16_t*                  p_vBusMeasReg;
-    volatile int16_t*                   p_iaMeasReg;
-    volatile int16_t*                   p_ibMeasReg;
-    volatile int16_t*                   p_icMeasReg;
+    volatile uint16_t*                  const p_vaMeasReg;
+    volatile uint16_t*                  const p_vbMeasReg;
+    volatile uint16_t*                  const p_vcMeasReg;
+    volatile uint16_t*                  const p_vBusMeasReg;
+    volatile int16_t*                   const p_iaMeasReg;
+    volatile int16_t*                   const p_ibMeasReg;
+    volatile int16_t*                   const p_icMeasReg;
     // ADC values scaled
     float32_t                           va;         // [V]
     float32_t                           vb;         // [V]
@@ -124,7 +131,7 @@ typedef struct __ACQUISITIONS_STRUCT__
     float32_t                           ia;         // [A]
     float32_t                           ib;         // [A]
     float32_t                           ic;         // [A]
-    LpfStruct                           vBusLpf;
+    LPFSTRUCT                           vBusLpf;
 
     bool                                measNew;    // ADC conversion done
 } ACQ_STRUCT;
@@ -139,10 +146,8 @@ typedef struct __FOC_STRUCT__
     ACQ_STRUCT          motor_acq;
     // Encoder position & speed
     ENC_STRUCT          motor_enc;
-
     // Low-pass control loop filter
-    LpfStruct           iParkLpf;
-
+    LPFSTRUCT           iParkLpf;
     // Rotor electrical angle sine/cosine
     float32_t           sinTheta;
     float32_t           cosTheta;
@@ -163,7 +168,6 @@ typedef struct __FOC_STRUCT__
     float32_t           ub;     // [V]
     float32_t           uc;     // [V]
 
-
     float32_t           vmax; // [V]
     float32_t           imax; // [A]
     // Duty-cycle saturation
@@ -181,14 +185,14 @@ typedef struct __FOC_STRUCT__
     PI_STRUCT           piId;
     PI_STRUCT           piIq;
     // PD set point values
-    float32_t           posRef; // [rpm/s]
+    //float32_t           posRef; // [rpm/s]
     // PD controller for position control
     PD_STRUCT           pdPos;
 
     // Q-axis resistance estimation
     float32_t           resistanceEst;    // [Ohm]
     // Resistance estimation low-pass filter
-    LpfStruct           resEstLpf;
+    LPFSTRUCT           resEstLpf;
     // Anti-coagging structure
     Anticoagging        acog;
     // Enable flag

@@ -41,7 +41,6 @@ void HAL_CM_init(const HAL_CM* p_hal_cm)
     return;
 }
 
-
 /**
  * @brief       DMA initialization function.
  * @param[in]   *p_dmaCfg   Pointer on the DMA configuration structure

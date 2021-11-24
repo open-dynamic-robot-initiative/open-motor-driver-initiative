@@ -54,7 +54,7 @@ typedef struct __MOTOR_STRUCT__
     // Q-axis resistance estimation
     float32_t               statorResEst;    // [Ohm]
     // Resistance estimation low-pass filter
-    LpfStruct               statorResEstLpf;
+    LPFSTRUCT               statorResEstLpf;
 
     // Anti-coagging structure
     Anticoagging            acog;
@@ -72,10 +72,11 @@ void MOT_runCommand(MOTOR_STRUCT*, float32_t, float32_t, float32_t);
 void MOT_stopCommand(MOTOR_STRUCT*);
 void MOT_resetAlignStruct(ALIGN_STRUCT*);
 void MOT_runAlign(ALIGN_STRUCT*);
-void MOT_interruptClearFlags(void);
+//void MOTOR_interruptClearFlags(IT_TypeDef*);
 //void ALIGN_run(AlignRoutine*);
 
-void MOT_emergencyStop(void);
+//void MOT_emergencyStop(void);
+//void MOT_emergencyStop(MOTOR_STRUCT*);
 void MOT_resistorEstimation(MOTOR_STRUCT*);
 
 #endif /* INC_MOTOR_H_ */

@@ -4,7 +4,7 @@
  * @brief           Reset the ENCODER structure
  * @param[inout]    *p_enc   Pointer on the ENCODER structure to reset.
  */
-inline void ENC_resetStruct(ENC_STRUCT* p_enc)
+void ENC_resetStruct(ENC_STRUCT* p_enc)
 {
     SPEED_STRUCT* p_speed   = &p_enc->speedEst;
 
@@ -17,22 +17,21 @@ inline void ENC_resetStruct(ENC_STRUCT* p_enc)
     p_enc->indexCompensated = false;
     p_enc->indexTheta       = 0.0f;
     p_enc->indexedThetaMech = 0.0f;
-
     p_enc->thetaAbsolute    = 0.0f;
+    p_enc->turnNb           = 0;
+    p_enc->indexDetected    = false;
+    p_enc->indexToggle      = false;
+    p_enc->rollOverFlag     = false;
 
     p_speed->alpha          = 0.0f;
     p_speed->speedRef       = 0.0f;
     p_speed->theta[NEW]     = 0.0f;
     p_speed->theta[OLD]     = 0.0f;
-    p_speed->speedLow       = 0.0f;
     p_speed->speedHigh      = 0.0f;
+    p_speed->speedLow       = 0.0f;
     p_speed->speedMech      = 0.0f;
     p_speed->speedElec      = 0.0f;
-
-    p_enc->turnNb           = 0;
-    p_enc->indexDetected    = false;
-    p_enc->indexToggle      = false;
-    p_enc->rollOverFlag     = false;
+    p_speed->thetaDir       = false;
 }
 
 /**
@@ -60,7 +59,12 @@ inline void ENC_getPosition(ENC_STRUCT* p_enc)
     // Get direction : 0 = CCW/reverse, 1 = CW/forward
     p_enc->thetaDir         = p_enc->p_qepRegs->QEPSTS.bit.QDF;
     // Compute electrical angle (each pole pair is normalized between 0 and 1)
+#ifdef C28_CORE
     p_enc->thetaElec        = __fracf32(p_enc->polePairs * p_enc->thetaMech[NEW]);
+#elif defined CM_CORE
+    p_enc->thetaElec        = p_enc->polePairs * p_enc->thetaMech[NEW];
+    p_enc->thetaElec       -= (float32_t)((int32_t)p_enc->thetaElec);
+#endif
 }
 
 // Encoder update routine, this is not critical for the control loop to be executed
@@ -79,7 +83,8 @@ inline void ENC_getSpeed(ENC_STRUCT* p_enc)
     // Check if unit timer overflow event happened for high speed calculation
     if(p_qepRegs->QFLG.bit.UTO)
     {
-        p_speed->thetaDir       = p_qepRegs->QEPSTS.bit.QDF; //(!(p_qepRegs->QEPSTS.bit.QDF)) ? (-1.0) : (1.0);
+        p_speed->thetaDir       = p_enc->thetaDir;//p_qepRegs->QEPSTS.bit.QDF; //(!(p_qepRegs->QEPSTS.bit.QDF)) ? (-1.0) : (1.0);
+        p_speed->theta[OLD]     = p_speed->theta[NEW];
         p_speed->theta[NEW]     = p_qepRegs->QPOSLAT / p_enc->thetaMechScaler;
         // Compute angle difference & saturate it between -0.5 and 0.5
 //        deltaTheta          = __fsat((speedEst.theta[NEW] - speedEst.theta[OLD] + (float32_t)(p_qepRegs->QFLG.bit.PCO) - (float32_t)(p_qepRegs->QFLG.bit.PCU)), 1.0f, -1.0f) * 0.5f;
@@ -92,8 +97,6 @@ inline void ENC_getSpeed(ENC_STRUCT* p_enc)
         deltaTheta             += (deltaTheta < -0.5f) ? (1.0f) : (0.0f);
         // Compute high speed estimation
         p_speed->speedHigh      = deltaTheta * p_speed->speedHighScaler;
-        // Save last angle
-        p_speed->theta[OLD]     = p_speed->theta[NEW];
         // Clear UTO flag
         p_qepRegs->QCLR.all     = EQEP_INT_UNIT_TIME_OUT | EQEP_INT_OVERFLOW | EQEP_INT_UNDERFLOW;
 //        // Read latched angle normalized between 0 and 1
@@ -120,7 +123,7 @@ inline void ENC_getSpeed(ENC_STRUCT* p_enc)
         bool qepStatus          = (p_qepRegs->QEPSTS.all & (EQEP_STS_CAP_OVRFLW_ERROR | EQEP_STS_CAP_DIR_ERROR));
         // Compute low speed estimation, set sign according QDF
         // Speed is very close to zero because direction changed or the rotor doesn't move fast enough
-        p_speed->speedLow       = (qepStatus) ? (0.0) : (((!(p_qepRegs->QEPSTS.bit.QDF)) ? (-1.0) : (1.0)) * p_speed->speedLowScaler / p_qepRegs->QCPRDLAT);
+        p_speed->speedLow       = (qepStatus) ? (0.0) : (((!(p_qepRegs->QEPSTS.bit.QDF)) ? (-1.0) : (1.0)) * p_speed->speedLowScaler / ((float32_t)p_qepRegs->QCPRDLAT));
         // Clear position event, direction change and timer overflow flags (even if direction and timer overflow are not set)
         p_qepRegs->QEPSTS.all   = EQEP_STS_UNIT_POS_EVNT | EQEP_STS_CAP_OVRFLW_ERROR | EQEP_STS_CAP_DIR_ERROR;
     }
@@ -159,10 +162,25 @@ inline void ENC_getSpeed(ENC_STRUCT* p_enc)
     // Update turnNb
     deltaTheta                  = p_enc->thetaMech[NEW] - p_enc->thetaMech[OLD];
     // If angle difference is high enough, we overflowed or underflowed
-    p_enc->turnNb              += (deltaTheta > 0.5f) ? (-1.0f) : ((deltaTheta < -0.5f) ? (1.0f) : (0.0f));
+//    p_enc->turnNb              += (deltaTheta > 0.5f) ? (-1) : ((deltaTheta < -0.5f) ? (1) : (0));
+    p_enc->turnNb              -= (deltaTheta > 0.5f)   ? (1) : (0);
+    p_enc->turnNb              += (deltaTheta < -0.5f)  ? (1) : (0);
     // Saturate turnNb between -128 and 127
-    p_enc->turnNb               = (p_enc->turnNb > 127) ? (-128) : ((p_enc->turnNb < -128) ? (127) : (p_enc->turnNb));
-    p_enc->rollOverFlag         = ((p_enc->turnNb == 127) || (p_enc->turnNb == -128)) ? (true) : (false);
+//    p_enc->turnNb               = (p_enc->turnNb > 127) ? (-128) : ((p_enc->turnNb < -128) ? (127) : (p_enc->turnNb));
+    p_enc->rollOverFlag         = ((p_enc->turnNb > 127) || (p_enc->turnNb < -128)) ? (true)    : (false);
+    p_enc->turnNb               = (p_enc->turnNb > 127)                             ? (-128)    : (p_enc->turnNb);
+    p_enc->turnNb               = (p_enc->turnNb < -128)                            ? (127)     : (p_enc->turnNb);
+//    if(p_enc->turnNb > 127)
+//    {
+//        p_enc->turnNb           = -128;
+//        p_enc->rollOverFlag     = true;
+//    }
+//    else if(p_enc->turnNb < -128)
+//    {
+//        p_enc->turnNb           = 127;
+//        p_enc->rollOverFlag     = true;
+//    }
+
     // Compute indexed angle
     p_enc->indexedThetaMech     = p_enc->thetaMech[NEW] - p_enc->indexTheta;
     p_enc->indexedThetaMech    += (p_enc->indexedThetaMech < 0.0f) ? (1.0f) : (0.0f);

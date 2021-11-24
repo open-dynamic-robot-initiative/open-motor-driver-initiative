@@ -10,8 +10,9 @@
 
 #include "hal.h"
 #include "uomodri_user_defines.h"
+//#include "uOmodriClaTasksShare.h"
 
-__attribute__((interrupt)) void IPC_ISR1(void);
+__attribute__((interrupt)) void ipc_isrComInter(void);
 
 // Communication dual buffers for initialization
 //#pragma DATA_SECTION(msgComInter, "MSGRAM_CM_TO_CPU1")
@@ -21,7 +22,6 @@ __attribute__((interrupt)) void IPC_ISR1(void);
 //extern IPC_MessageQueue_t msgQueue;
 
 extern const void* p_msgComInter;
-
 
 /** @var    GPIO_TypeDef GpioPinsCfgList[]
  *  @brief  List all the GPIO definitions except the analog pins.
@@ -274,15 +274,21 @@ static const DMA_TypeDef dmaCfgList[] =
 static const IPC_TypeDef ipcCfgList[] =
 {
  {.ipcType = IPC_CPU1_L_CM_R,   .ipcMsgQEnable = false, .ipcIntEnable = false},//.ipcFlag   = IPC_FLAG31,.ipcBase = IPC_CPUXTOCM_BASE,
- {.ipcType = IPC_CPU1_L_CM_R,   .ipcMsgQEnable = false, .ipcIntEnable = true,   .ipcInt = IPC_INT1, .ipcIntHandler = &IPC_ISR1},
+ {.ipcType = IPC_CPU1_L_CM_R,   .ipcMsgQEnable = false, .ipcIntEnable = true,   .ipcInt = IPC_INT1, .ipcIntHandler = &ipc_isrComInter},
 // {.ipcType  = IPC_CM_L_CPU1_R, .ipcbase = IPC_CPU1_L_CM_R, .ipcFlag   = IPC_FLAG31, .msgQueueEnable   = false},
  {.ipcType = IPC_TOTAL_NUM},
 };
 
+#if (CLA == 1)
 static const CLA_TypeDef claCfgList[] =
 {
- {.progRAM = MEMCFG_SECT_LS5, .dataRAM = (MEMCFG_SECT_LS0 | MEMCFG_SECT_LS1)},
+ {.progRAM = MEMCFG_SECT_LS5,
+  .dataRAM = (MEMCFG_SECT_LS0 | MEMCFG_SECT_LS1),
+//  .ClaTaskCfg = {.claTaskAddr = (uint16_t)(&Cla1Task1),
+//                 .claIntVect = CLA_MVECT_1},
+ },
 };
+#endif
 
 /** @var    ePWM_TB_TypeDef PwmTimeBaseCfgList[]
  *  @brief  List all the configurations necessaries for ePWM Time Base submodule.
@@ -447,8 +453,10 @@ static const HAL hal =
  .p_eqepHandler = QepCfgList,
  .p_dmaHandler  = dmaCfgList,
  .p_ipcHandler  = ipcCfgList,
+ .p_spiHandler  = spiCfgList,
+#if (CLA == 1)
  .p_claHandler  = claCfgList,
- .p_spiHandler  = spiCfgList
+#endif
 };
 
 #endif  /*__UOMODRI_HAL_CONFIG_HANDLERS_H__*/

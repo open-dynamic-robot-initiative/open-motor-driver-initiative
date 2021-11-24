@@ -38,7 +38,7 @@ typedef struct __ComInterface__
     uint16_t lastCommandIndex;
 
     // Time variables
-    float32_t time;             // Time in seconds since startup
+    float32_t time[2];             // Time in seconds since startup
     uint64_t lastMessageMs;     // Last time stamp (milliseconds) at which a message has been received
     uint16_t timeoutThreshold;  // Duration in milliseconds before triggering timeout
 

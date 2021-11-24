@@ -12,6 +12,7 @@ int main(void)
 {
     // uOmodri low level devices initializations
     MCU_init();
+//    motor[MOTOR_1].p_motorFOC->motor_enc.p_qepHandle = &QepCfgList[MOTOR_1];
     // Hardware Abstraction Layer initialization
     HAL_init(&hal);
     // DRV8323 initialization
@@ -24,7 +25,7 @@ int main(void)
 #if (UOMODRI_SPI_DEBUG_CONFIG == 1)
     comInterface.systemEnabled          = true;
     motor[MOTOR_1].p_motorFOC->enabled  = true;
-    motor[MOTOR_2].p_motorFOC->enabled  = false;
+    motor[MOTOR_2].p_motorFOC->enabled  = true;
 #endif
 
 //#if (CM == 1)
@@ -136,7 +137,7 @@ static void MCU_init(void)
 }
 
 //-------------------------------------------------------------------------------------------------
-__attribute__((interrupt)) void IPC_ISR1(void)
+__attribute__((interrupt)) void ipc_isrComInter(void)
 {
 //    ComInterface* p_comInterface = NULL;
     uint32_t command, addr, data;
@@ -144,8 +145,8 @@ __attribute__((interrupt)) void IPC_ISR1(void)
 //    DmaRegs.CH5.SRC_BEG_ADDR_ACTIVE = addr;
 //    DMA_startChannel(DMA_COM_SPI_TX_BASE_ADDR);//dmaCfgList[0].dmaChBase);
     DMA_forceTrigger(DMA_COM_SPI_TX_BASE_ADDR);
-    if(DmaRegs.CH5.CONTROL.bit.RUNSTS)
-        GPIO_togglePin(DEBUG_INT_PIN1);
+//    if(DmaRegs.CH5.CONTROL.bit.RUNSTS)
+//        GPIO_togglePin(DEBUG_INT_PIN1);
 
 //    p_comInterface = (ComInterface *)addr;
 //    comInterface.positionRef[MOTOR_1]   = p_comInterface->positionRef[MOTOR_1];
@@ -190,31 +191,34 @@ __attribute__((interrupt)) void adc_isrMotor1(void)
         FOC_runControl(p_foc);
         // Set new PWM command
         MOT_runCommand(&motor[MOTOR_1], p_foc->dtc_u, p_foc->dtc_v, p_foc->dtc_w);
-
-        //-------------------------------------------------------------------//
-        //                         Wrap functions                            //
-        //-------------------------------------------------------------------//
-        // Functions that can be executed between two control loop executions
-
         // Clear the interrupt overflow flag
         ADC_clearInterruptOverflowStatus(base, adcIntNum);
         // Clear the interrupt flag
         ADC_clearInterruptStatus(base, adcIntNum);
+
         // Acknowledge the interrupt (Acknowledge PIE Interrupt Group)
         //        Interrupt_clearACKGroup(group);
         // Run encoder update
         ENC_getSpeed(&p_foc->motor_enc);
+
         //ENC_update(motor[MOTOR_1].motorFOC->motor_enc);
         // Check for roll-over error
         if (comInterface.rolloverErrorFlag && p_foc->motor_enc.rollOverFlag)
         {
             // Set CAN error
             comInterface.canError = SPI_SENSOR_STATUS_ERROR_POS_ROLLOVER;
-            // Disable the system
-            MOT_emergencyStop();
+            // Turn off control loop
+//            motor[MOTOR_1].p_motorFOC->enabled  = false;
+            // Disable ePWM interrupts
+//            Interrupt_disableInCPU(INTERRUPT_CPU_INT1);
+            // Tie phases to ground
+            MOT_stopCommand(&motor[MOTOR_1]);
+            // Reset controllers
+            FOC_resetStruct(p_foc);
+//            MOT_emergencyStop(&motor[MOTOR_1]);
         }
         // Run resistance estimation
-        MOT_resistorEstimation(&motor[MOTOR_1]);
+//        MOT_resistorEstimation(&motor[MOTOR_1]);
         //-------------------------------------------------------------------//
         //                       Alignment routine                           //
         //-------------------------------------------------------------------//
@@ -239,8 +243,11 @@ __attribute__((interrupt)) void adc_isrMotor1(void)
         comInterface.velocityRef[MOTOR_1]   = 4.0f * M_PI * M_PI * debugFreq * __cospuf32(debugFreq * TIME_M1_S);//debugFreq * TIME_S;//
         comInterface.iqRef[MOTOR_1]         = 0.0f;
 #endif
-        // Set feed-forward current
-        p_foc->pdPos.ff = comInterface.iqRef[MOTOR_1];
+        p_foc->pdPos.inTheta    = p_foc->motor_enc.thetaAbsolute;
+        p_foc->pdPos.setTheta   = comInterface.positionRef[MOTOR_1];
+        p_foc->pdPos.inSpeed    = p_foc->motor_enc.speedEst.speedMech;
+        p_foc->pdPos.setSpeed   = comInterface.velocityRef[MOTOR_1];
+        p_foc->pdPos.ff         = comInterface.iqRef[MOTOR_1];// Set feed-forward current
         // Run PD controller
         FOC_runPD(&p_foc->pdPos);
         // Set current reference
@@ -280,23 +287,22 @@ __attribute__((interrupt)) void adc_isrMotor1(void)
         // Increment interrupt counter
         motor[MOTOR_1].interruptCnt++;
         // Compute time
-        comInterface.time = TIME_M1_S;//(motor[MOTOR_1].interruptCounter / PWM_FREQ);
+        comInterface.time[MOTOR_1] = TIME_M1_S;//(motor[MOTOR_1].interruptCounter / PWM_FREQ);
     }
 
     //-------------------------------------------------------------------//
     //                   Transmit structure functions                    //
     //-------------------------------------------------------------------//
-    memcpy(&motorCpuToCM[MOTOR_1], motor[MOTOR_1].p_motorFOC, sizeof(FOC_STRUCT));
+//    memcpy(&motorCpuToCM[MOTOR_1], motor[MOTOR_1].p_motorFOC, sizeof(FOC_STRUCT));
     //motorCpuToCM[MOTOR_1] = *motor[MOTOR_1].p_motorFOC;
     /* Send a message without message queue.
      * Since C28x and CM does not share the same address space for shared RAM,
      * ADDRESS_CORRECTION is enabled
      * Length of the data to be read is passed as data. */
-    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_FLAG0, IPC_ADDR_CORRECTION_ENABLE, IPC_CMD_READ_MEM, (uint32_t)(&motorCpuToCM[MOTOR_1]), 1);
-
+//    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_FLAG0, IPC_ADDR_CORRECTION_ENABLE, IPC_CMD_READ_MEM, (uint32_t)(&motorCpuToCM[MOTOR_1]), 1);
+    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_FLAG0, IPC_ADDR_CORRECTION_ENABLE, IPC_CMD_READ_MEM, (uint32_t)(motor[MOTOR_1].p_motorFOC), 1);
     // Acknowledge PWM and CLA interrupt flag
     Interrupt_clearACKGroup(group);
-
 #if (UOMODRI == 0)
     GPIO_writePin(DEBUG_INT_PIN1, 0);
 #endif
@@ -307,16 +313,16 @@ __attribute__((interrupt)) void adc_isrMotor1(void)
  */
 __attribute__((interrupt)) void adc_isrMotor2(void)
 {
-//#if (UOMODRI == 0)
-//    GPIO_writePin(DEBUG_INT_PIN2, 1);
-//#endif
+#if (UOMODRI == 0)
+    GPIO_writePin(DEBUG_INT_PIN2, 1);
+#endif
     FOC_STRUCT*     p_foc       = motor[MOTOR_2].p_motorFOC;
     ALIGN_STRUCT*   p_align     = &motor[MOTOR_2].motorAlign;
-    uint32_t        base        = InterruptList[ADC_IT_MOTOR_2].intPeriphBase;
+    uint32_t        base        = InterruptList[ADC_IT_MOTOR_2].intPeriphBase; //MOTOR12_IVA_ADC_ADDR;
     uint16_t        group       = InterruptList[ADC_IT_MOTOR_2].intAckGroup;
-    ADC_IntNumber   adcIntNum   = (ADC_IntNumber)InterruptList[ADC_IT_MOTOR_2].intPeriphSrc;
+    ADC_IntNumber   adcIntNum   = (ADC_IntNumber)InterruptList[ADC_IT_MOTOR_2].intPeriphSrc; //MOTOR1_IA_INT_NUM;
 
-    if (comInterface.systemEnabled && p_foc->enabled)
+    if(comInterface.systemEnabled && p_foc->enabled)
     {
         // Read encoder position
         ENC_getPosition(&p_foc->motor_enc);
@@ -326,31 +332,34 @@ __attribute__((interrupt)) void adc_isrMotor2(void)
         FOC_runControl(p_foc);
         // Set new PWM command
         MOT_runCommand(&motor[MOTOR_2], p_foc->dtc_u, p_foc->dtc_v, p_foc->dtc_w);
-
-        //-------------------------------------------------------------------//
-        //                         Wrap functions                            //
-        //-------------------------------------------------------------------//
-        // Functions that can be executed between two control loop executions
-
         // Clear the interrupt overflow flag
         ADC_clearInterruptOverflowStatus(base, adcIntNum);
         // Clear the interrupt flag
         ADC_clearInterruptStatus(base, adcIntNum);
+
         // Acknowledge the interrupt (Acknowledge PIE Interrupt Group)
         //        Interrupt_clearACKGroup(group);
         // Run encoder update
         ENC_getSpeed(&p_foc->motor_enc);
+
         //ENC_update(motor[MOTOR_1].motorFOC->motor_enc);
         // Check for roll-over error
         if (comInterface.rolloverErrorFlag && p_foc->motor_enc.rollOverFlag)
         {
             // Set CAN error
             comInterface.canError = SPI_SENSOR_STATUS_ERROR_POS_ROLLOVER;
-            // Disable the system
-            MOT_emergencyStop();
+            // Turn off control loop
+//            motor[MOTOR_1].p_motorFOC->enabled  = false;
+            // Disable ePWM interrupts
+//            Interrupt_disableInCPU(INTERRUPT_CPU_INT1);
+            // Tie phases to ground
+            MOT_stopCommand(&motor[MOTOR_2]);
+            // Reset controllers
+            FOC_resetStruct(p_foc);
+//            MOT_emergencyStop(&motor[MOTOR_2]);
         }
         // Run resistance estimation
-        MOT_resistorEstimation(&motor[MOTOR_2]);
+//        MOT_resistorEstimation(&motor[MOTOR_2]);
         //-------------------------------------------------------------------//
         //                       Alignment routine                           //
         //-------------------------------------------------------------------//
@@ -375,8 +384,11 @@ __attribute__((interrupt)) void adc_isrMotor2(void)
         comInterface.velocityRef[MOTOR_2]   = 4.0f * M_PI * M_PI * debugFreq * __cospuf32(debugFreq * TIME_M2_S);//debugFreq * TIME_S;//
         comInterface.iqRef[MOTOR_2]         = 0.0f;
 #endif
-        // Set feed-forward current
-        p_foc->pdPos.ff = comInterface.iqRef[MOTOR_2];
+        p_foc->pdPos.inTheta    = p_foc->motor_enc.thetaAbsolute;
+        p_foc->pdPos.setTheta   = comInterface.positionRef[MOTOR_2];
+        p_foc->pdPos.inSpeed    = p_foc->motor_enc.speedEst.speedMech;
+        p_foc->pdPos.setSpeed   = comInterface.velocityRef[MOTOR_2];
+        p_foc->pdPos.ff         = comInterface.iqRef[MOTOR_2];// Set feed-forward current
         // Run PD controller
         FOC_runPD(&p_foc->pdPos);
         // Set current reference
@@ -416,27 +428,25 @@ __attribute__((interrupt)) void adc_isrMotor2(void)
         // Increment interrupt counter
         motor[MOTOR_2].interruptCnt++;
         // Compute time
-        comInterface.time = TIME_M2_S;//(motor[MOTOR_1].interruptCounter / PWM_FREQ);
+        comInterface.time[MOTOR_2] = TIME_M2_S;//(motor[MOTOR_1].interruptCounter / PWM_FREQ);
     }
 
     //-------------------------------------------------------------------//
     //                   Transmit structure functions                    //
     //-------------------------------------------------------------------//
-    //memcpy((FOC_STRUCT *)motor[MOTOR_2].p_motorFOC, (FOC_STRUCT *)&motorMsg[MOTOR_2], sizeof(FOC_STRUCT)); //motorFOCMsg[MOTOR_1] = motor_foc[MOTOR_1];//*(motor[MOTOR_1].motorFOC);//&(FOC_STRUCT *)(motor[MOTOR_1].motorFOC);
-    //memcpy(&motorCpuToCM[MOTOR_2], motor[MOTOR_2].p_motorFOC, sizeof(FOC_STRUCT));
-//    motorCpuToCM[MOTOR_2] = *motor[MOTOR_2].p_motorFOC;
+//    memcpy(&motorCpuToCM[MOTOR_1], motor[MOTOR_1].p_motorFOC, sizeof(FOC_STRUCT));
+    //motorCpuToCM[MOTOR_1] = *motor[MOTOR_1].p_motorFOC;
     /* Send a message without message queue.
      * Since C28x and CM does not share the same address space for shared RAM,
      * ADDRESS_CORRECTION is enabled
      * Length of the data to be read is passed as data. */
-//    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_FLAG0, IPC_ADDR_CORRECTION_ENABLE, IPC_CMD_READ_MEM, (uint32_t)(&motorCpuToCM[MOTOR_2]), 1);
-
+//    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_FLAG0, IPC_ADDR_CORRECTION_ENABLE, IPC_CMD_READ_MEM, (uint32_t)(&motorCpuToCM[MOTOR_1]), 1);
+    //IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_FLAG0, IPC_ADDR_CORRECTION_ENABLE, IPC_CMD_READ_MEM, (uint32_t)(motor[MOTOR_1].p_motorFOC), 1);
     // Acknowledge PWM and CLA interrupt flag
     Interrupt_clearACKGroup(group);
-
-//#if (UOMODRI == 0)
-//    GPIO_writePin(DEBUG_INT_PIN2, 0);
-//#endif
+#if (UOMODRI == 0)
+    GPIO_writePin(DEBUG_INT_PIN2, 0);
+#endif
 }
 
 /**
@@ -485,8 +495,12 @@ __attribute__((interrupt)) void adc_isrMotor2(void)
 
 __attribute__((interrupt)) void gpio_isrFault1(void)
 {
+    comInterface.systemEnabled = false;
+    MOT_stopCommand(&motor[MOTOR_1]);
+    // Reset controllers
+    FOC_resetStruct(motor[MOTOR_1].p_motorFOC);
     // Trigger emergency stop
-    MOT_emergencyStop();
+//    MOT_emergencyStop(&motor[MOTOR_1]);
 
     // Read DRV data to get status registers
     DRV_readStatus(motor[MOTOR_1].p_motorDRV->drvCfgHandler, motor[MOTOR_1].p_motorDRV->drvRegHandler);
@@ -506,8 +520,12 @@ __attribute__((interrupt)) void gpio_isrFault1(void)
 
 __attribute__((interrupt)) void gpio_isrFault2(void)
 {
+    comInterface.systemEnabled = false;
+    MOT_stopCommand(&motor[MOTOR_2]);
+    // Reset controllers
+    FOC_resetStruct(motor[MOTOR_2].p_motorFOC);
     // Trigger emergency stop
-    MOT_emergencyStop();
+//    MOT_emergencyStop(&motor[MOTOR_2]);
 
     // Read DRV data to get status registers
     DRV_readStatus(motor[MOTOR_2].p_motorDRV->drvCfgHandler, motor[MOTOR_2].p_motorDRV->drvRegHandler);

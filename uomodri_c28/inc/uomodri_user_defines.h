@@ -66,6 +66,11 @@
 #define FM_ABS(x)                               ((x) >= 0.0f ? (x) : -(x))
 
 //#define HWSREGH(x)                              (*((volatile int16_t *)((uintptr_t)(x))))
+/* Initialize control loop low-pass filter
+   alpha = 1 / (1 + (1 / (2 * PI * CUTTOFF_FREQ / PWM_FREQ)))
+   Simplifying :
+   alpha = 1 - (1 / (1 + (2 * PI * CUTTOFF_FREQ / PWM_FREQ)))
+   1 - alpha = 1 / (1 + (2 * PI * CUTTOFF_FREQ / PWM_FREQ)) */
 #define LPF_FILTER_1(flt_coef, y, x)            (y) = ((y) + (flt_coef.a * ((x) - (y))))
 #define LPF_FILTER_2(flt_coef, y, x)            (y) = ((flt_coef.a * (x)) + (flt_coef.one_minus_a * (y)))
 #define LPF_FILTER_3(flt_coef, y, x)            (y) = (x)
@@ -431,15 +436,15 @@
  *  @brief    Define the ADC result registers for all the conversion to be performed.
  * @{
  */
-#define MOTOR12_IVA_ADC_VAR                     (&AdcaRegs)
-#define MOTOR12_IVB_ADC_VAR                     (&AdcbRegs)
-#define MOTOR12_VBUS_ADC_VAR                    (&AdccRegs)
-#define MOTOR12_IVC_ADC_VAR                     (&AdcdRegs)
+#define MOTOR12_IVA_ADC_REGS                    (&AdcaRegs)
+#define MOTOR12_IVB_ADC_REGS                    (&AdcbRegs)
+#define MOTOR12_VBUS_ADC_REGS                   (&AdccRegs)
+#define MOTOR12_IVC_ADC_REGS                    (&AdcdRegs)
 
-#define MOTOR12_IVA_ADC_RESULT_VAR              (&AdcaResultRegs)
-#define MOTOR12_IVB_ADC_RESULT_VAR              (&AdcbResultRegs)
-#define MOTOR12_VBUS_ADC_RESULT_VAR             (&AdccResultRegs)
-#define MOTOR12_IVC_ADC_RESULT_VAR              (&AdcdResultRegs)
+#define MOTOR12_IVA_ADC_RESULT_REGS             (&AdcaResultRegs)
+#define MOTOR12_IVB_ADC_RESULT_REGS             (&AdcbResultRegs)
+#define MOTOR12_VBUS_ADC_RESULT_REGS            (&AdccResultRegs)
+#define MOTOR12_IVC_ADC_RESULT_REGS             (&AdcdResultRegs)
 /**
  * @}
  */
@@ -647,6 +652,7 @@
 #define MOTOR1_IQ_REGULATOR_KI_COEF             (MOTOR1_RS * 2.0 * M_PI * MOTOR1_CURRENT_CUTOFF_FREQ / PWM_FREQ)
 #define MOTOR1_SPEED_REGULATOR_KP_COEF          (1.0f)
 #define MOTOR1_SPEED_REGULATOR_KD_COEF          (0.02f)
+#define MOTOR1_SPEED_REGULATOR_SATURATION       (4.0f)
 #define MOTOR1_DTC_MAX                          (0.9f)     // Max duty cycle
 #define MOTOR1_DTC_MIN                          (0.1f)     // Min duty cycle
 #define MOTOR1_STATOR_RESISTOR_CUTOFF_FREQ      (0.2f)
@@ -672,6 +678,7 @@
 #define MOTOR2_IQ_REGULATOR_KI_COEF             (MOTOR2_RS * 2.0 * M_PI * MOTOR2_CURRENT_CUTOFF_FREQ / PWM_FREQ)
 #define MOTOR2_SPEED_REGULATOR_KP_COEF          (1.0f)
 #define MOTOR2_SPEED_REGULATOR_KD_COEF          (0.02f)
+#define MOTOR2_SPEED_REGULATOR_SATURATION       (4.0f)
 #define MOTOR2_DTC_MAX                          (0.9f)     // Max duty cycle
 #define MOTOR2_DTC_MIN                          (0.1f)     // Min duty cycle
 #define MOTOR2_STATOR_RESISTOR_CUTOFF_FREQ      (0.2f)
@@ -690,7 +697,7 @@ typedef struct __LowpassFilter_Structure__
 {
     float32_t a;
     float32_t one_minus_a;
-} LpfStruct;
+} LPFSTRUCT;
 
 /**
  * @enum    ArrayID

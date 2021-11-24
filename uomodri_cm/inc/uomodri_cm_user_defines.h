@@ -497,7 +497,7 @@ typedef struct __LowpassFilter_Structure__
 {
     float32_t a;
     float32_t one_minus_a;
-} LpfStruct;
+} LPFSTRUCT;
 
 /**
  * @enum    ArrayID

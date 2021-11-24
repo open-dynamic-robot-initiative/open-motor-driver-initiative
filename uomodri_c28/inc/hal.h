@@ -169,6 +169,17 @@ typedef struct _DMA_Cfg_TypeDef_
     DMA_Trigger trigger;
 } DMA_TypeDef;
 
+#if (CLA == 1)
+/**
+ * @struct  CLA_TASK_TypeDef
+ * @brief   CLA TASK global Hardware Abstraction Layer structure - To be updated
+ */
+//typedef struct _CLA_TASK_Cfg_TypeDef_
+//{
+//    uint16_t                claTaskAddr;
+//    CLA_MVECTNumber         claIntVect;
+//} CLA_TASK_TypeDef;
+
 /**
  * @struct  CLA_TypeDef
  * @brief   CLA global Hardware Abstraction Layer structure - To be updated
@@ -176,11 +187,11 @@ typedef struct _DMA_Cfg_TypeDef_
 typedef struct _CLA_Cfg_TypeDef_
 {
 //    uint32_t claBase;
-    uint32_t        progRAM;
-    uint32_t        dataRAM;
-//    CLA_MVECTNumber claIntVect;
-    uint16_t        claTaskAddr;
+    uint32_t                progRAM;
+    uint32_t                dataRAM;
+//    CLA_TASK_TypeDef        claTaskCfg;
 } CLA_TypeDef;
+#endif
 
 /**
  * @struct  GPIO_TypeDef
@@ -282,6 +293,10 @@ typedef struct _IT_TypeDef_
     void        (*handler)(void);
 } IT_TypeDef;
 
+/**
+ * @struct  IPC_TypeDef
+ * @brief   IPC module configuration handler
+ */
 typedef struct _IPC_TypeDef_
 {
 //    const uint32_t                  ipcBase;
@@ -309,7 +324,9 @@ typedef struct _HAL_
     const SPI_TypeDef*  p_spiHandler;
     const IPC_TypeDef*  p_ipcHandler;
     const DMA_TypeDef*  p_dmaHandler;
+#if (CLA == 1)
     const CLA_TypeDef*  p_claHandler;
+#endif
 } HAL;
 
 // Motor Hardware Abstraction Layer structure
@@ -318,10 +335,10 @@ typedef struct _HAL_MOTOR_CFG_
     const ePWM_CC_TypeDef*  p_pwmCntCmp[3];
     const ADC_ACQ_TypeDef*  p_iAcq[3];
     const ADC_ACQ_TypeDef*  p_vAcq[3];
-  //  const ADC_ACQ_TypeDef*  p_vbusAcq;
     const ADC_IT_TypeDef*   p_ITAcq;
-    const eQEP_TypeDef*     p_qep;
-    //const ID_ENUM           motorID;
+//    const ADC_ACQ_TypeDef*  p_vbusAcq;
+//    const eQEP_TypeDef*     p_qep;
+//    const ID_ENUM           motorID;
 } HAL_MOTOR_CFG;
 
 /*

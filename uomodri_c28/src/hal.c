@@ -15,7 +15,9 @@ void HAL_eQEP_init(const eQEP_TypeDef*);
 void HAL_SPI_init(const SPI_TypeDef*);
 void HAL_DMA_init(const DMA_TypeDef*);
 void HAL_IPC_init(const IPC_TypeDef*);
+#if (CLA == 1)
 void HAL_CLA_init(const CLA_TypeDef*);
+#endif
 
 const void* p_msgComInter;
 
@@ -49,8 +51,10 @@ void HAL_init(const HAL* p_hal)
         HAL_DMA_init(p_hal->p_dmaHandler);
         // Initialize SPIA device
         HAL_SPI_init(p_hal->p_spiHandler);
+#if (CLA == 1)
         // Initialize CLA
         HAL_CLA_init(p_hal->p_claHandler);
+#endif
     }
 
     return;
@@ -552,6 +556,7 @@ void HAL_DMA_init(const DMA_TypeDef* p_dmaCfg)
         while(dmaChBase != 0xFFFFFFFF)
         {
             const void* p_srcAddr = *((uint32_t *)p_dmaCfg->srcAddr);
+//            const void* p_srcAddr = *((uint32_t *)p_dmaCfg->srcAddr);
             /* DMA channel initialization
              * Configure direction, words per burst
              */
@@ -612,6 +617,7 @@ void HAL_IPC_init(const IPC_TypeDef* p_ipcCfg)
     return;
 }
 
+#if (CLA == 1)
 /**
  * @brief       CLA initialization function.
  * @param[in]   *p_claCfg   Pointer on the CLA configuration structure
@@ -665,8 +671,8 @@ void HAL_CLA_init(const CLA_TypeDef* p_clacCfg)
 //             * opposed to offsets used on older Type-0 CLAs */
 //
 //        #pragma diag_suppress=770
-//            CLA_mapTaskVector(CLA1_BASE,CLA_MVECT_1,(uint16_t)(&Cla1Task1));
-//            CLA_mapTaskVector(CLA1_BASE,CLA_MVECT_8,(uint16_t)&(Cla1Task8));
+//            CLA_mapTaskVector(CLA1_BASE, CLA_MVECT_1, (uint16_t)(&Cla1Task1));
+//            CLA_mapTaskVector(CLA1_BASE, CLA_MVECT_8, (uint16_t)(&Cla1Task8));
 //        #pragma diag_warning=770
 //
 //            /* Enable the IACK instruction to start a task on CLA in software
@@ -674,9 +680,9 @@ void HAL_CLA_init(const CLA_TypeDef* p_clacCfg)
 //            * subset of tasks) by writing to their respective bits in the
 //            * MIER register */
 //        //    CLA_enableIACK(CLA1_BASE);
-//            CLA_setTriggerSource(CLA_TASK_1, CLA_TRIGGER_EPWM1INT);//CLA_TRIGGER_ADCA3);
-//            CLA_setTriggerSource(CLA_TASK_8, CLA_TRIGGER_SOFTWARE);
-//            CLA_enableTasks(CLA1_BASE, CLA_TASKFLAG_1 | CLA_TASKFLAG_8);//CLA_TASKFLAG_ALL);
+            CLA_setTriggerSource(CLA_TASK_1, CLA_TRIGGER_EPWM1INT);//CLA_TRIGGER_ADCA3);
+            CLA_setTriggerSource(CLA_TASK_8, CLA_TRIGGER_SOFTWARE);
+            CLA_enableTasks(CLA1_BASE, CLA_TASKFLAG_1 | CLA_TASKFLAG_8);//CLA_TASKFLAG_ALL);
 //
 //            /* <Step 6>: Enable software forcing and run task 8 once
 //             *    - The MCTL register allows for a task to be triggered by software
@@ -714,6 +720,7 @@ void HAL_CLA_init(const CLA_TypeDef* p_clacCfg)
 
     return;
 }
+#endif
 
 /**
  * @brief       Interrupts initialization function.

@@ -4,9 +4,9 @@
  *  Created on: 20 mai 2021
  *      Author: jmanhes
  */
-
+#include "hal.h"
 #include "motor.h"
-#include "communication_interface.h"
+//#include "communication_interface.h"
 #include "uomodri_prj_config_handlers.h"
 
 //extern ComInterface comInterface;
@@ -39,21 +39,23 @@ void MOT_stopCommand(MOTOR_STRUCT* p_motor)
     return;
 }
 
-void MOTOR_interruptClearFlags(void)
-{
-    // Clear the interrupt overflow flag
-    ADC_clearInterruptOverflowStatus(InterruptList[ADC_IT_MOTOR_1].intPeriphBase, (ADC_IntNumber)InterruptList[ADC_IT_MOTOR_1].intPeriphSrc);
-    ADC_clearInterruptStatus(InterruptList[ADC_IT_MOTOR_1].intPeriphBase, (ADC_IntNumber)InterruptList[ADC_IT_MOTOR_1].intPeriphSrc);
-    // Clear the interrupt overflow flag
-    ADC_clearInterruptOverflowStatus(InterruptList[ADC_IT_MOTOR_2].intPeriphBase, (ADC_IntNumber)InterruptList[ADC_IT_MOTOR_2].intPeriphSrc);
-    ADC_clearInterruptStatus(InterruptList[ADC_IT_MOTOR_2].intPeriphBase, (ADC_IntNumber)InterruptList[ADC_IT_MOTOR_2].intPeriphSrc);
-    // Clear the event trigger interrupt flag
-//    EPWM_clearEventTriggerInterruptFlag(InterruptList[PWM_IT_MOTOR_1].intPeriphBase);
-//    EPWM_clearEventTriggerInterruptFlag(InterruptList[PWM_IT_MOTOR_2].intPeriphBase);
-    // Clear the interrupt flag associated to XINT1 & XINT2
-    XBAR_clearInputFlag(XBAR_INPUT_FLG_INPUT4);
-    XBAR_clearInputFlag(XBAR_INPUT_FLG_INPUT5);
-}
+//void MOTOR_interruptClearFlags(IT_TypeDef* p_ItList)
+//{
+//    // Clear the interrupt overflow flag
+//    ADC_clearInterruptOverflowStatus(p_ItList->intPeriphBase, (ADC_IntNumber)p_ItList->intPeriphSrc);
+//    ADC_clearInterruptStatus(p_ItList->intPeriphBase, (ADC_IntNumber)p_ItList->intPeriphSrc);
+////    ADC_clearInterruptOverflowStatus(InterruptList[ADC_IT_MOTOR_1].intPeriphBase, (ADC_IntNumber)InterruptList[ADC_IT_MOTOR_1].intPeriphSrc);
+////    ADC_clearInterruptStatus(InterruptList[ADC_IT_MOTOR_1].intPeriphBase, (ADC_IntNumber)InterruptList[ADC_IT_MOTOR_1].intPeriphSrc);
+//    // Clear the interrupt overflow flag
+////    ADC_clearInterruptOverflowStatus(InterruptList[ADC_IT_MOTOR_2].intPeriphBase, (ADC_IntNumber)InterruptList[ADC_IT_MOTOR_2].intPeriphSrc);
+////    ADC_clearInterruptStatus(InterruptList[ADC_IT_MOTOR_2].intPeriphBase, (ADC_IntNumber)InterruptList[ADC_IT_MOTOR_2].intPeriphSrc);
+//    // Clear the event trigger interrupt flag
+////    EPWM_clearEventTriggerInterruptFlag(InterruptList[PWM_IT_MOTOR_1].intPeriphBase);
+////    EPWM_clearEventTriggerInterruptFlag(InterruptList[PWM_IT_MOTOR_2].intPeriphBase);
+//    // Clear the interrupt flag associated to XINT1 & XINT2
+//    XBAR_clearInputFlag(XBAR_INPUT_FLG_INPUT4);
+//    XBAR_clearInputFlag(XBAR_INPUT_FLG_INPUT5);
+//}
 
 void MOT_resetAlignStruct(ALIGN_STRUCT* p_align)
 {
@@ -107,24 +109,26 @@ void MOT_runAlign(ALIGN_STRUCT* p_align)
 }
 
 // Set the motor phases in security mode
-void MOT_emergencyStop(void)
-{
-    // Turn off control loop
-    comInterface.systemEnabled          = false;
-    motor[MOTOR_1].p_motorFOC->enabled  = false;
-    motor[MOTOR_2].p_motorFOC->enabled  = false;
-
-    // Disable ePWM interrupts
-    Interrupt_disableInCPU(INTERRUPT_CPU_INT3);
-    // Tie phases to ground
-    MOT_stopCommand(&motor[MOTOR_1]);
-    MOT_stopCommand(&motor[MOTOR_2]);
-    // Reset foc structures
-    FOC_resetStruct(motor[MOTOR_1].p_motorFOC);
-    FOC_resetStruct(motor[MOTOR_2].p_motorFOC);
-
-    return;
-}
+//void MOT_emergencyStop(MOTOR_STRUCT* p_motor)
+//{
+//    // Turn off control loop
+//    p_motor->p_motorFOC->enabled = false;
+////    motor[MOTOR_1].p_motorFOC->enabled  = false;
+////    motor[MOTOR_2].p_motorFOC->enabled  = false;
+//
+//    // Disable ePWM interrupts
+//    Interrupt_disableInCPU(INTERRUPT_CPU_INT3);
+//    // Tie phases to ground
+//    MOT_stopCommand(p_motor);
+////    MOT_stopCommand(&motor[MOTOR_1]);
+////    MOT_stopCommand(&motor[MOTOR_2]);
+//    // Reset foc structures
+//    FOC_resetStruct(p_motor->p_motorFOC);
+////    FOC_resetStruct(motor[MOTOR_1].p_motorFOC);
+////    FOC_resetStruct(motor[MOTOR_2].p_motorFOC);
+//
+//    return;
+//}
 
 inline void MOT_resistorEstimation(MOTOR_STRUCT* p_motor)
 {

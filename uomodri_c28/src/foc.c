@@ -1,16 +1,5 @@
 #include "foc.h"
 
-//extern ComInterface comInterface;
-//extern MOTOR_STRUCT motor[2];
-//#include "f28x_project.h"
-
-// Read current measures
-//inline void FOC_getPosition(FOC* p_foc, MOTOR_HAL_CFG* p_motor)
-//{
-//    // Get latest position of the Quadrature Encoder
-//    p_motor[p_motor->motorID].encoderPos = HWREG(p_motor->p_qep->eqepBase + EQEP_O_QPOSCNT);
-//}
-
 // Function definitions
 
 /**
@@ -28,9 +17,7 @@ inline void FOC_getMeasures(ACQ_STRUCT* p_acq)
     p_acq->vb           = (float32_t)(*p_acq->p_vbMeasReg) * ADC_VOLTAGE_SCALE;
     p_acq->vc           = (float32_t)(*p_acq->p_vcMeasReg) * ADC_VOLTAGE_SCALE;
     // Get the latest Voltage supply value in Volt (minimum is one to avoid dividing by zero later)
-//    float32_t vbus      = (float32_t)(*p_acq->p_vBusMeasReg) * ADC_VOLTAGE_SCALE;
     UOMODRI_VBUS_FLT(p_acq->vBusLpf, p_acq->vbus, __fmax(((float32_t)(*p_acq->p_vBusMeasReg) * ADC_VOLTAGE_SCALE), 1.0f));
-//    UOMODRI_VBUS_FLT(p_acq->vBusLpf, p_acq->vbus, __fmax(vbus ,1.0f));
     p_acq->measNew      = true;
     return;
 }
@@ -72,12 +59,18 @@ inline void FOC_runControl(FOC_STRUCT* p_foc)
     UOMODRI_IDQ_FLT(p_foc->iParkLpf, p_foc->id, ((p_foc->sinTheta * p_foc->ibeta) + (p_foc->cosTheta * p_foc->ialpha)));
     UOMODRI_IDQ_FLT(p_foc->iParkLpf, p_foc->iq, ((p_foc->cosTheta * p_foc->ibeta) - (p_foc->sinTheta * p_foc->ialpha)));
     // Compute decoupling feed-forward terms
-    p_foc->piId.ff      = UOMODRI_FEED_FORWARD_EN ? (-1.0f * p_speed->speedElec * p_cfg->Lq * p_foc->iq)        : (0.0);//* UOMODRI_FOC_FEED_FORWARD_EN;
-    p_foc->piIq.ff      = UOMODRI_FEED_FORWARD_EN ? (p_cfg->Rs * p_foc->iqRef + p_speed->speedElec * p_cfg->ke) : (0.0);//* UOMODRI_FOC_FEED_FORWARD_EN;
-//    p_foc->piIq.ff  = p_foc->motor_enc.speedEst.elecSpeed * (p_foc->motorParams.Ld * p_foc->id + p_foc->motorParams.ke);
+    //    p_foc->piIq.ff  = p_foc->motor_enc.speedEst.elecSpeed * (p_foc->motorParams.Ld * p_foc->id + p_foc->motorParams.ke);
 //    limit_norm(&p_foc->idRef, &p_foc->iqRef, p_foc->motor_acq.imax);
     // Compute error for PI controllers
     // PI controller - Id(Flux Current Controller) & Iq (Torque Current Controller)
+    p_foc->piId.in      = p_foc->id;
+    p_foc->piId.set     = p_foc->idRef;
+    p_foc->piId.ff      = UOMODRI_FEED_FORWARD_EN ? (-1.0f * p_speed->speedElec * p_cfg->Lq * p_foc->iq)        : (0.0);//* UOMODRI_FOC_FEED_FORWARD_EN;
+    p_foc->piId.sat     = p_foc->motor_acq.vbus;
+    p_foc->piIq.in      = p_foc->iq;
+    p_foc->piIq.set     = p_foc->iqRef;
+    p_foc->piIq.ff      = UOMODRI_FEED_FORWARD_EN ? (p_cfg->Rs * p_foc->iqRef + p_speed->speedElec * p_cfg->ke) : (0.0);//* UOMODRI_FOC_FEED_FORWARD_EN;
+    p_foc->piIq.sat     = p_foc->motor_acq.vbus;
     p_foc->ud           = FOC_runPI(&p_foc->piId);
     p_foc->uq           = FOC_runPI(&p_foc->piIq);
 //    float32_t uq_max    = __sqrt((p_foc->motor_acq.vmax * p_foc->motor_acq.vmax) - (p_foc->ud * p_foc->ud));
@@ -107,10 +100,11 @@ inline void FOC_runControl(FOC_STRUCT* p_foc)
  */
 inline void FOC_resetPI(PI_STRUCT* p_pi)
 {
+    p_pi->in            = 0.0;
+    p_pi->set           = 0.0;
     p_pi->err           = 0.0;
     p_pi->integral      = 0.0;
     p_pi->ff            = 0.0;
-    p_pi->out           = 0.0;
 
     return;
 }
@@ -122,10 +116,10 @@ inline void FOC_resetPI(PI_STRUCT* p_pi)
  */
 inline float32_t FOC_runPI(PI_STRUCT* p_pi)
 {
-    float32_t   sat_max = 0.5f  * (*p_pi->p_sat);
-    float32_t   sat_min = -0.5f * (*p_pi->p_sat);
+    float32_t   sat_max = 0.5f  * (p_pi->sat);
+    float32_t   sat_min = -0.5f * (p_pi->sat);
 
-    p_pi->err           = *p_pi->p_set - *p_pi->p_in;
+    p_pi->err           = p_pi->set - p_pi->in;
     p_pi->integral     += p_pi->ki * p_pi->err;
     //p_pid->integral     = FMINMAX(p_pid->integral, *p_pid->sat, -(*p_pid->sat)); //fmaxf(fminf(p_pid->integral, *p_pid->sat), -(*p_pid->sat));
     // Compute PID and clamp output.
@@ -141,11 +135,14 @@ inline float32_t FOC_runPI(PI_STRUCT* p_pi)
  */
 inline void FOC_resetPD(PD_STRUCT* p_pd)
 {
+    p_pd->inTheta       = 0.0;
+    p_pd->setTheta      = 0.0;
     p_pd->errTheta      = 0.0;
+    p_pd->inSpeed       = 0.0;
+    p_pd->setSpeed      = 0.0;
     p_pd->errSpeed      = 0.0;
     p_pd->derivative    = 0.0;
     p_pd->ff            = 0.0;
-    p_pd->out           = 0.0;
 
     return;
 }
@@ -157,11 +154,11 @@ inline void FOC_resetPD(PD_STRUCT* p_pd)
  */
 inline float32_t FOC_runPD(PD_STRUCT* p_pd)
 {
-    float32_t   sat_max = 1.0f  * (*p_pd->p_sat);
-    float32_t   sat_min = -1.0f * (*p_pd->p_sat);
+    float32_t   sat_max = 1.0f  * (p_pd->sat);
+    float32_t   sat_min = -1.0f * (p_pd->sat);
 
-    p_pd->errTheta      = __mpy2pif32(*p_pd->p_setTheta - *p_pd->p_inTheta);
-    p_pd->errSpeed      = *p_pd->p_setSpeed - *p_pd->p_inSpeed;
+    p_pd->errTheta      = __mpy2pif32(p_pd->setTheta - p_pd->inTheta);
+    p_pd->errSpeed      = p_pd->setSpeed - p_pd->inSpeed;
     p_pd->derivative    = p_pd->kd * p_pd->errSpeed;//(p_pid->err - p_pid->errPrev) / p_pid->deltaT;
     // Compute PID and clamp output.
     p_pd->out           = (p_pd->kp * p_pd->errTheta) + p_pd->derivative + p_pd->ff;
@@ -184,34 +181,24 @@ void FOC_resetStruct(FOC_STRUCT* p_foc)
     FOC_resetPD(&p_foc->pdPos);
     // Reset encoder structure
     ENC_resetStruct(&p_foc->motor_enc);
-
     // Reset currents and voltages
     p_foc->sinTheta     = 0.0;
     p_foc->cosTheta     = 0.0;
-
     p_foc->ialpha       = 0.0;
     p_foc->ibeta        = 0.0;
-
     p_foc->id           = 0.0;
     p_foc->iq           = 0.0;
-
     p_foc->ud           = 0.0;
     p_foc->uq           = 0.0;
-
     p_foc->ualpha       = 0.0;
     p_foc->ubeta        = 0.0;
-
     p_foc->ua           = 0.0;
     p_foc->ub           = 0.0;
     p_foc->uc           = 0.0;
-
     p_foc->dtc_u        = 0.0;
     p_foc->dtc_v        = 0.0;
     p_foc->dtc_w        = 0.0;
-
-    // Reset resistance estimation
     p_foc->resistanceEst= 0.0;
-
     p_foc->enabled      = false;
 
     return;
