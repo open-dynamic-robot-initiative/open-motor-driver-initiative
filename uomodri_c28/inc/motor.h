@@ -18,24 +18,7 @@
 #include "anticoagging.h"
 #include "uomodri_user_defines.h"
 
-typedef enum
-{
-    ALIGN_COUNT_UP,
-    ALIGN_STAY,
-    ALIGN_COUNT_DOWN,
-    ALIGN_DONE
-} AlignState;
 
-typedef struct __ALIGN_STRUCT__
-{
-    AlignState              state;
-
-    uint32_t                cnt;
-    uint32_t                cntMax;
-
-    float32_t               idAlignRef;
-    float32_t               idAlign;
-} ALIGN_STRUCT;
 
 typedef struct __MOTOR_STRUCT__
 {
@@ -46,7 +29,7 @@ typedef struct __MOTOR_STRUCT__
     //bool                    enabled;
 
     // Alignment routine structure
-    ALIGN_STRUCT            motorAlign;
+//    ALIGN_STRUCT            motorAlign;
     // Cycle counter events
     uint32_t                clCycleNb;
     uint64_t                interruptCnt;

@@ -6,32 +6,33 @@
  */
 void ENC_resetStruct(ENC_STRUCT* p_enc)
 {
-    SPEED_STRUCT* p_speed   = &p_enc->speedEst;
+    SPEED_STRUCT* p_speed           = &p_enc->speedEst;
 
-    p_enc->thetaMech[NEW]   = 0.0;
-    p_enc->thetaMech[OLD]   = 0.0;
-    p_enc->thetaElec        = 0.0;
-    p_enc->thetaDir         = false;
+    p_enc->thetaMech[NEW]           = 0.0;
+    p_enc->thetaMech[OLD]           = 0.0;
+    p_enc->thetaElec                = 0.0;
+    p_enc->thetaDir                 = false;
 //    p_enc->thetaNew             = false;
 
-    p_enc->indexCompensated = false;
-    p_enc->indexTheta       = 0.0f;
-    p_enc->indexedThetaMech = 0.0f;
-    p_enc->thetaAbsolute    = 0.0f;
-    p_enc->turnNb           = 0;
-    p_enc->indexDetected    = false;
-    p_enc->indexToggle      = false;
-    p_enc->rollOverFlag     = false;
+    p_enc->indexCompensated         = false;
+    p_enc->indexTheta               = 0.0f;
+    p_enc->indexedThetaMech         = 0.0f;
+    p_enc->thetaAbsolute            = 0.0f;
+    p_enc->turnNb                   = 0;
+    p_enc->indexDetected            = false;
+    p_enc->indexToggle              = false;
+    p_enc->rollOverErrorFlag        = false;
+    p_enc->rollOverErrorFlagEnable  = false;
 
-    p_speed->alpha          = 0.0f;
-    p_speed->speedRef       = 0.0f;
-    p_speed->theta[NEW]     = 0.0f;
-    p_speed->theta[OLD]     = 0.0f;
-    p_speed->speedHigh      = 0.0f;
-    p_speed->speedLow       = 0.0f;
-    p_speed->speedMech      = 0.0f;
-    p_speed->speedElec      = 0.0f;
-    p_speed->thetaDir       = false;
+    p_speed->alpha                  = 0.0f;
+    p_speed->speedRef               = 0.0f;
+    p_speed->theta[NEW]             = 0.0f;
+    p_speed->theta[OLD]             = 0.0f;
+    p_speed->speedHigh              = 0.0f;
+    p_speed->speedLow               = 0.0f;
+    p_speed->speedMech              = 0.0f;
+    p_speed->speedElec              = 0.0f;
+    p_speed->thetaDir               = false;
 }
 
 /**
@@ -167,7 +168,7 @@ inline void ENC_getSpeed(ENC_STRUCT* p_enc)
     p_enc->turnNb              += (deltaTheta < -0.5f)  ? (1) : (0);
     // Saturate turnNb between -128 and 127
 //    p_enc->turnNb               = (p_enc->turnNb > 127) ? (-128) : ((p_enc->turnNb < -128) ? (127) : (p_enc->turnNb));
-    p_enc->rollOverFlag         = ((p_enc->turnNb > 127) || (p_enc->turnNb < -128)) ? (true)    : (false);
+    p_enc->rollOverErrorFlag    = ((p_enc->turnNb > 127) || (p_enc->turnNb < -128)) ? (true)    : (false);
     p_enc->turnNb               = (p_enc->turnNb > 127)                             ? (-128)    : (p_enc->turnNb);
     p_enc->turnNb               = (p_enc->turnNb < -128)                            ? (127)     : (p_enc->turnNb);
 //    if(p_enc->turnNb > 127)

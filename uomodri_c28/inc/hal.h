@@ -6,11 +6,14 @@
 #ifndef __HAL_H__
 #define __HAL_H__
 
+#include <stdbool.h>
+
 #include "f2838x_device.h"
 #include "f2838x_examples.h"
 #include "driverlib.h"
 #include "device.h"
 
+//#include "communication_cm.h"
 #include "uomodri_user_defines.h"
 
 /**
@@ -299,14 +302,14 @@ typedef struct _IT_TypeDef_
  */
 typedef struct _IPC_TypeDef_
 {
-//    const uint32_t                  ipcBase;
     const IPC_Type_t                ipcType;
-    volatile IPC_MessageQueue_t*    p_msgQ;
+    volatile IPC_MessageQueue_t*    p_ipcMsgQ;
     const uint32_t                  ipcIntMsgQL;
     const uint32_t                  ipcIntMsgQR;
-//    const uint32_t                  ipcFlag;
+    const uint32_t                  ipcFlagIn;
+    const uint32_t                  ipcFlagOut;
     const uint32_t                  ipcInt;
-    void                            (*ipcIntHandler)(void);
+    void                            (*p_ipcIntHandler)(void);
     const bool                      ipcMsgQEnable;
     const bool                      ipcIntEnable;
 } IPC_TypeDef;

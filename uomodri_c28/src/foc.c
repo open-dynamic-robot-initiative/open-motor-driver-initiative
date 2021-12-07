@@ -199,7 +199,8 @@ void FOC_resetStruct(FOC_STRUCT* p_foc)
     p_foc->dtc_v        = 0.0;
     p_foc->dtc_w        = 0.0;
     p_foc->resistanceEst= 0.0;
-    p_foc->enabled      = false;
+    p_foc->motor_enable = false;
+    p_foc->system_enable= false;
 
     return;
 }

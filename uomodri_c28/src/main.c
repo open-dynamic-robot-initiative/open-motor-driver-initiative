@@ -1,18 +1,17 @@
+/*
+ * File name: main.c
+ * Description: Source file containing main function and IT running on CPU1 - C28 processor.
+ */
+
 #include "main.h"
 
-
-// Communication interface
-//#pragma DATA_SECTION(comInterface, "ramgs0");
-//extern ComInterface comInterface;
-
 /**
- * main.c
+ * @brief   Main function running on CPU1/C28. MCU init, DRV init, ADC init \& calibration, IT init.
  */
-int main(void)
+void main(void)
 {
-    // uOmodri low level devices initializations
+    // uOmodri low level device initialization
     MCU_init();
-//    motor[MOTOR_1].p_motorFOC->motor_enc.p_qepHandle = &QepCfgList[MOTOR_1];
     // Hardware Abstraction Layer initialization
     HAL_init(&hal);
     // DRV8323 initialization
@@ -24,8 +23,10 @@ int main(void)
 
 #if (UOMODRI_SPI_DEBUG_CONFIG == 1)
     comInterface.systemEnabled          = true;
-    motor[MOTOR_1].p_motorFOC->enabled  = true;
-    motor[MOTOR_2].p_motorFOC->enabled  = true;
+    motor[MOTOR_1].p_motorFOC->motor_enable = true;
+    motor[MOTOR_1].p_motorFOC->system_enable= true;
+    motor[MOTOR_2].p_motorFOC->motor_enable = false;
+    motor[MOTOR_2].p_motorFOC->system_enable= true;
 #endif
 
 //#if (CM == 1)
@@ -176,12 +177,11 @@ __attribute__((interrupt)) void adc_isrMotor1(void)
     GPIO_writePin(DEBUG_INT_PIN1, 1);
 #endif
     FOC_STRUCT*     p_foc       = motor[MOTOR_1].p_motorFOC;
-    ALIGN_STRUCT*   p_align     = &motor[MOTOR_1].motorAlign;
     uint32_t        base        = InterruptList[ADC_IT_MOTOR_1].intPeriphBase; //MOTOR12_IVA_ADC_ADDR;
     uint16_t        group       = InterruptList[ADC_IT_MOTOR_1].intAckGroup;
     ADC_IntNumber   adcIntNum   = (ADC_IntNumber)InterruptList[ADC_IT_MOTOR_1].intPeriphSrc; //MOTOR1_IA_INT_NUM;
 
-    if(comInterface.systemEnabled && p_foc->enabled)
+    if((p_foc->system_enable == true) && (p_foc->motor_enable == true))
     {
         // Read encoder position
         ENC_getPosition(&p_foc->motor_enc);
@@ -200,35 +200,27 @@ __attribute__((interrupt)) void adc_isrMotor1(void)
         //        Interrupt_clearACKGroup(group);
         // Run encoder update
         ENC_getSpeed(&p_foc->motor_enc);
-
-        //ENC_update(motor[MOTOR_1].motorFOC->motor_enc);
         // Check for roll-over error
-        if (comInterface.rolloverErrorFlag && p_foc->motor_enc.rollOverFlag)
+        if (p_foc->motor_enc.rollOverErrorFlag && p_foc->motor_enc.rollOverErrorFlagEnable)
         {
-            // Set CAN error
-            comInterface.canError = SPI_SENSOR_STATUS_ERROR_POS_ROLLOVER;
-            // Turn off control loop
-//            motor[MOTOR_1].p_motorFOC->enabled  = false;
-            // Disable ePWM interrupts
-//            Interrupt_disableInCPU(INTERRUPT_CPU_INT1);
+            p_foc->errorMsg = SPI_SENSOR_STATUS_ERROR_POS_ROLLOVER;
             // Tie phases to ground
             MOT_stopCommand(&motor[MOTOR_1]);
             // Reset controllers
             FOC_resetStruct(p_foc);
-//            MOT_emergencyStop(&motor[MOTOR_1]);
         }
         // Run resistance estimation
 //        MOT_resistorEstimation(&motor[MOTOR_1]);
         //-------------------------------------------------------------------//
         //                       Alignment routine                           //
         //-------------------------------------------------------------------//
-        if(p_align->state != ALIGN_DONE)
+        if(p_foc->motor_align.state != ALIGN_DONE)
         {
             // Run alignment routine
-            MOT_runAlign(p_align);
+            MOT_runAlign(&p_foc->motor_align);
 
             // Reset QEP position counter to set angle to zero
-            if (p_align->state <= ALIGN_STAY)
+            if(p_foc->motor_align.state <= ALIGN_STAY)
                 ENC_setPosition(&p_foc->motor_enc, 0);
         }
 
@@ -251,9 +243,9 @@ __attribute__((interrupt)) void adc_isrMotor1(void)
         // Run PD controller
         FOC_runPD(&p_foc->pdPos);
         // Set current reference
-        p_foc->iqRef    = (p_align->state == ALIGN_DONE) ? (p_foc->pdPos.out) : (0.0f);
+        p_foc->iqRef    = (p_foc->motor_align.state == ALIGN_DONE) ? (p_foc->pdPos.out) : (0.0f);
         // Id reference update
-        p_foc->idRef    = (p_align->state == ALIGN_DONE) ? (0.0f) : (p_align->idAlign);
+        p_foc->idRef    = (p_foc->motor_align.state == ALIGN_DONE) ? (0.0f) : (p_foc->motor_align.idAlign);
 
         //-------------------------------------------------------------------//
         //                           Anti-coagging                           //
@@ -280,7 +272,7 @@ __attribute__((interrupt)) void adc_isrMotor1(void)
     //-------------------------------------------------------------------//
     //                   Interrupt wrap functions                        //
     //-------------------------------------------------------------------//
-    if(p_align->state == ALIGN_DONE)
+    if(p_foc->motor_align.state == ALIGN_DONE)
     {
         // Save number of cycles elapsed since control loop startup
         motor[MOTOR_1].clCycleNb = EPWM_getTimeBaseCounterValue(MOTOR1_PWM1_BASE);
@@ -300,7 +292,7 @@ __attribute__((interrupt)) void adc_isrMotor1(void)
      * ADDRESS_CORRECTION is enabled
      * Length of the data to be read is passed as data. */
 //    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_FLAG0, IPC_ADDR_CORRECTION_ENABLE, IPC_CMD_READ_MEM, (uint32_t)(&motorCpuToCM[MOTOR_1]), 1);
-    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_FLAG0, IPC_ADDR_CORRECTION_ENABLE, IPC_CMD_READ_MEM, (uint32_t)(motor[MOTOR_1].p_motorFOC), 1);
+    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_FLAG0, IPC_ADDR_CORRECTION_ENABLE, IPC_CMD_READ_MEM, (uint32_t)(p_foc), 1);
     // Acknowledge PWM and CLA interrupt flag
     Interrupt_clearACKGroup(group);
 #if (UOMODRI == 0)
@@ -317,12 +309,12 @@ __attribute__((interrupt)) void adc_isrMotor2(void)
     GPIO_writePin(DEBUG_INT_PIN2, 1);
 #endif
     FOC_STRUCT*     p_foc       = motor[MOTOR_2].p_motorFOC;
-    ALIGN_STRUCT*   p_align     = &motor[MOTOR_2].motorAlign;
+//    ALIGN_STRUCT*   p_align     = &p_foc->motor_align;
     uint32_t        base        = InterruptList[ADC_IT_MOTOR_2].intPeriphBase; //MOTOR12_IVA_ADC_ADDR;
     uint16_t        group       = InterruptList[ADC_IT_MOTOR_2].intAckGroup;
     ADC_IntNumber   adcIntNum   = (ADC_IntNumber)InterruptList[ADC_IT_MOTOR_2].intPeriphSrc; //MOTOR1_IA_INT_NUM;
 
-    if(comInterface.systemEnabled && p_foc->enabled)
+    if((p_foc->system_enable == true) && (p_foc->motor_enable == true))
     {
         // Read encoder position
         ENC_getPosition(&p_foc->motor_enc);
@@ -344,10 +336,9 @@ __attribute__((interrupt)) void adc_isrMotor2(void)
 
         //ENC_update(motor[MOTOR_1].motorFOC->motor_enc);
         // Check for roll-over error
-        if (comInterface.rolloverErrorFlag && p_foc->motor_enc.rollOverFlag)
+        if (p_foc->motor_enc.rollOverErrorFlag && p_foc->motor_enc.rollOverErrorFlagEnable)
         {
-            // Set CAN error
-            comInterface.canError = SPI_SENSOR_STATUS_ERROR_POS_ROLLOVER;
+            p_foc->errorMsg = SPI_SENSOR_STATUS_ERROR_POS_ROLLOVER;
             // Turn off control loop
 //            motor[MOTOR_1].p_motorFOC->enabled  = false;
             // Disable ePWM interrupts
@@ -363,13 +354,13 @@ __attribute__((interrupt)) void adc_isrMotor2(void)
         //-------------------------------------------------------------------//
         //                       Alignment routine                           //
         //-------------------------------------------------------------------//
-        if(p_align->state != ALIGN_DONE)
+        if(p_foc->motor_align.state != ALIGN_DONE)
         {
             // Run alignment routine
-            MOT_runAlign(p_align);
+            MOT_runAlign(&p_foc->motor_align);
 
             // Reset QEP position counter to set angle to zero
-            if (p_align->state <= ALIGN_STAY)
+            if (p_foc->motor_align.state <= ALIGN_STAY)
                 ENC_setPosition(&p_foc->motor_enc, 0);
         }
 
@@ -392,9 +383,9 @@ __attribute__((interrupt)) void adc_isrMotor2(void)
         // Run PD controller
         FOC_runPD(&p_foc->pdPos);
         // Set current reference
-        p_foc->iqRef    = (p_align->state == ALIGN_DONE) ? (p_foc->pdPos.out) : (0.0f);
+        p_foc->iqRef    = (p_foc->motor_align.state == ALIGN_DONE) ? (p_foc->pdPos.out) : (0.0f);
         // Id reference update
-        p_foc->idRef    = (p_align->state == ALIGN_DONE) ? (0.0f) : (p_align->idAlign);
+        p_foc->idRef    = (p_foc->motor_align.state == ALIGN_DONE) ? (0.0f) : (p_foc->motor_align.idAlign);
 
         //-------------------------------------------------------------------//
         //                           Anti-coagging                           //
@@ -421,7 +412,7 @@ __attribute__((interrupt)) void adc_isrMotor2(void)
     //-------------------------------------------------------------------//
     //                   Interrupt wrap functions                        //
     //-------------------------------------------------------------------//
-    if(p_align->state == ALIGN_DONE)
+    if(p_foc->motor_align.state == ALIGN_DONE)
     {
         // Save number of cycles elapsed since control loop startup
         motor[MOTOR_2].clCycleNb = EPWM_getTimeBaseCounterValue(MOTOR2_PWM1_BASE);
@@ -511,7 +502,7 @@ __attribute__((interrupt)) void gpio_isrFault1(void)
 
 #if !UOMODRI_SPI_DEBUG_CONFIG
     // Update sensor packet
-    UpdateSensorPacket();
+//    UpdateSensorPacket();
 #endif
     // Infinite loop
     while(1);
@@ -536,7 +527,7 @@ __attribute__((interrupt)) void gpio_isrFault2(void)
 
 #if !UOMODRI_SPI_DEBUG_CONFIG
     // Update sensor packet
-    UpdateSensorPacket();
+//    UpdateSensorPacket();
 #endif
     // Infinite loop
     while(1);

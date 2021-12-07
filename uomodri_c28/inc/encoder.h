@@ -73,7 +73,8 @@ typedef struct __ENCODER_STRUCT__
     int16_t                     turnNb;     // Number of full turns (signed)
     bool                        indexDetected; // Has index been detected
     bool                        indexToggle;   // Flag that toggles every time index is seen
-    bool                        rollOverFlag;  // Roll-over error flag
+    bool                        rollOverErrorFlag;  // Roll-over error flag
+    bool                        rollOverErrorFlagEnable; // Enable roll-over error flag
 } ENC_STRUCT;
 
 void ENC_resetStruct(ENC_STRUCT*);

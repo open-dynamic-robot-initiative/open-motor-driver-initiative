@@ -21,7 +21,7 @@ __attribute__((interrupt)) void ipc_isrComInter(void);
 //extern DualBufferR dualBufferR;
 //extern IPC_MessageQueue_t msgQueue;
 
-extern const void* p_msgComInter;
+//extern const void* p_msgComInter;
 
 /** @var    GPIO_TypeDef GpioPinsCfgList[]
  *  @brief  List all the GPIO definitions except the analog pins.
@@ -227,8 +227,8 @@ static const SPI_TypeDef spiCfgList[] =
  {.spiBase              = COM_SPI_BASE,
   .bitRate              = 12000000U,
   .dataWidth            = 16U,
-  .mode                 = SPI_MODE_MASTER,
-  .protocol             = SPI_PROT_POL0PHA0,
+  .mode                 = SPI_MODE_SLAVE,
+  .protocol             = SPI_PROT_POL0PHA1,
   .txLevel              = SPI_FIFO_TX4,
   .rxLevel              = SPI_FIFO_RX4,
   .highSpeedMode        = false
@@ -250,7 +250,7 @@ static const DMA_TypeDef dmaCfgList[] =
   .destStep     = 0,
   .srcStep      = 1,
   .destAddr     = (uint16_t *) COM_SPI_TX_BASE_ADDR,
-  .srcAddr      = &p_msgComInter,
+  .srcAddr      = NULL,//&p_msgComInter,
 //  .srcAddr      = (uint16_t *) CMTOCPUXMSGRAM0_BASE,//CPUXTOCMMSGRAM0_BASE,
   .trigger      = DMA_TRIGGER_SOFTWARE,
  },
@@ -273,8 +273,19 @@ static const DMA_TypeDef dmaCfgList[] =
 
 static const IPC_TypeDef ipcCfgList[] =
 {
- {.ipcType = IPC_CPU1_L_CM_R,   .ipcMsgQEnable = false, .ipcIntEnable = false},//.ipcFlag   = IPC_FLAG31,.ipcBase = IPC_CPUXTOCM_BASE,
- {.ipcType = IPC_CPU1_L_CM_R,   .ipcMsgQEnable = false, .ipcIntEnable = true,   .ipcInt = IPC_INT1, .ipcIntHandler = &ipc_isrComInter},
+ {
+  .ipcType          = IPC_CPU1_L_CM_R,
+  .ipcFlagIn        = IPC_FLAG31,
+  .ipcMsgQEnable    = false,
+  .ipcIntEnable     = false
+ },
+ {
+  .ipcType          = IPC_CPU1_L_CM_R,
+  .ipcMsgQEnable    = false,
+  .ipcIntEnable     = true,
+  .ipcInt           = IPC_INT1,
+  .p_ipcIntHandler  = &ipc_isrComInter,
+ },
 // {.ipcType  = IPC_CM_L_CPU1_R, .ipcbase = IPC_CPU1_L_CM_R, .ipcFlag   = IPC_FLAG31, .msgQueueEnable   = false},
  {.ipcType = IPC_TOTAL_NUM},
 };

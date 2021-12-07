@@ -21,6 +21,7 @@
 #include "foc.h"
 #include "motor.h"
 
+#include "communication_cm.h"
 #include "communication_interface.h"
 //#include "legacy_spi.h"
 
@@ -101,6 +102,9 @@ bool                isrMotor2Ready = false;
 //    qualifier to do just that
 //extern uint32_t Cla1ProgRunStart, Cla1ProgLoadStart, Cla1ProgLoadSize;
 //extern uint32_t Cla1ConstRunStart, Cla1ConstLoadStart, Cla1ConstLoadSize;
+
+rx_uomodri_t* com_rx_cmd;
+tx_msg_t* com_tx_msg;
 
 extern MOTOR_STRUCT motor[];
 extern const HAL    hal;

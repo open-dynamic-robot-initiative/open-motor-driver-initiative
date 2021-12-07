@@ -85,16 +85,48 @@ static const IT_TypeDef InterruptList[] =
 //// {.motorID = MOTOR_2,   .intNum = INT_EPWM4,        .intPeriphBase = MOTOR2_PWM1_BASE,                                          .intCpuGroup = INTERRUPT_CPU_INT3,  .intAckGroup = INTERRUPT_ACK_GROUP3,    .handler = &pwm_isrMotor2},
 // {.motorID = MOTOR_1,   .intNum = INT_XINT1,                                                                                    .intCpuGroup = INTERRUPT_CPU_INT1,  .intAckGroup = INTERRUPT_ACK_GROUP1,    .handler = &gpio_isrFault1},
 // {.motorID = MOTOR_2,   .intNum = INT_XINT2,                                                                                    .intCpuGroup = INTERRUPT_CPU_INT1,  .intAckGroup = INTERRUPT_ACK_GROUP1,    .handler = &gpio_isrFault2},
- {.intNum = MOTOR1_IA_INT_CH,   .intAckGroup = INTERRUPT_ACK_GROUP10,   .handler = &adc_isrMotor1,  .intPeriphBase = MOTOR12_IVA_ADC_ADDR,  .intPeriphSrc = MOTOR1_IA_INT_NUM}, //
- {.intNum = MOTOR2_IA_INT_CH,   .intAckGroup = INTERRUPT_ACK_GROUP10,   .handler = &adc_isrMotor2,  .intPeriphBase = MOTOR12_IVA_ADC_ADDR,  .intPeriphSrc = MOTOR2_IA_INT_NUM}, //
+ {
+  .intNum           = MOTOR1_IA_INT_CH,
+  .intAckGroup      = INTERRUPT_ACK_GROUP10,
+  .handler          = &adc_isrMotor1,
+  .intPeriphBase    = MOTOR12_IVA_ADC_ADDR,
+  .intPeriphSrc     = MOTOR1_IA_INT_NUM
+ }, //
+ {
+  .intNum           = MOTOR2_IA_INT_CH,
+  .intAckGroup      = INTERRUPT_ACK_GROUP10,
+  .handler          = &adc_isrMotor2,
+  .intPeriphBase    = MOTOR12_IVA_ADC_ADDR,
+  .intPeriphSrc     = MOTOR2_IA_INT_NUM
+ }, //
 // {.motorID = MOTOR_1,   .intNum = INT_EPWM1,        .intPeriphBase = MOTOR1_PWM1_BASE,                                          .intCpuGroup = INTERRUPT_CPU_INT3,  .intAckGroup = INTERRUPT_ACK_GROUP3,    .handler = &pwm_isrMotor1},
 // {.motorID = MOTOR_2,   .intNum = INT_EPWM4,        .intPeriphBase = MOTOR2_PWM1_BASE,                                          .intCpuGroup = INTERRUPT_CPU_INT3,  .intAckGroup = INTERRUPT_ACK_GROUP3,    .handler = &pwm_isrMotor2},
- {.intNum = INT_CMTOCPUXIPC1,   .intAckGroup = INTERRUPT_ACK_GROUP11,   .handler = &ipc_isrComInter},
-// {.intNum = INT_DMA_CH5,        .intAckGroup = INTERRUPT_ACK_GROUP7,    .handler = &dma5_isr},
- {.intNum = INT_XINT1,          .intAckGroup = INTERRUPT_ACK_GROUP1,    .handler = &gpio_isrFault1},
- {.intNum = INT_XINT2,          .intAckGroup = INTERRUPT_ACK_GROUP1,    .handler = &gpio_isrFault2},
+ {
+  .intNum           = INT_CMTOCPUXIPC1,
+  .intAckGroup      = INTERRUPT_ACK_GROUP11,
+  .handler          = &ipc_isrComInter
+ },
+// {
+//  .intNum           = INT_DMA_CH5,
+//  .intAckGroup      = INTERRUPT_ACK_GROUP7,
+//  .handler          = &dma5_isr
+// },
+ {
+  .intNum           = INT_XINT1,
+  .intAckGroup      = INTERRUPT_ACK_GROUP1,
+  .handler          = &gpio_isrFault1
+ },
+ {
+  .intNum           = INT_XINT2,
+  .intAckGroup      = INTERRUPT_ACK_GROUP1,
+  .handler          = &gpio_isrFault2
+ },
 #if (CLA == 1)
- {.intNum = INT_CLA1_1,         .intAckGroup = INTERRUPT_ACK_GROUP11,   .handler = &cla1_isr1},
+ {
+  .intNum           = INT_CLA1_1,
+  .intAckGroup      = INTERRUPT_ACK_GROUP11,
+  .handler          = &cla1_isr1
+ },
 #endif
  // END OF ARRAY
  {.intNum = 0xFFFFFFFF},
@@ -116,7 +148,8 @@ static const DRV_Cfg DrvCfgList[] =
  */
 static DRV_Reg DrvRegList[] =
 {
- { .Ctrl_Reg_02.ctrl02.CLR_FLT      = false,
+ {
+   .Ctrl_Reg_02.ctrl02.CLR_FLT      = false,
    .Ctrl_Reg_02.ctrl02.BRAKE        = false,
    .Ctrl_Reg_02.ctrl02.COAST        = false,
    .Ctrl_Reg_02.ctrl02.PWM1_DIR     = false,
@@ -156,7 +189,8 @@ static DRV_Reg DrvRegList[] =
    // Amplifier calibration calibration routine (Address: 0x7)
    .Ctrl_Reg_07.ctrl07.CAL_MODE     = true
  },
- { .Ctrl_Reg_02.ctrl02.CLR_FLT      = false,
+ {
+   .Ctrl_Reg_02.ctrl02.CLR_FLT      = false,
    .Ctrl_Reg_02.ctrl02.BRAKE        = false,
    .Ctrl_Reg_02.ctrl02.COAST        = false,
    .Ctrl_Reg_02.ctrl02.PWM1_DIR     = false,
@@ -202,12 +236,14 @@ static DRV_Reg DrvRegList[] =
  */
 static DRV8353 drv_cfg[] =
 {
- {.drvCfgHandler    = &DrvCfgList[MOTOR_1],
+ {
+  .drvCfgHandler    = &DrvCfgList[MOTOR_1],
   .drvRegHandler    = &DrvRegList[MOTOR_1],
   .enableTimeOut    = true,
   .rxTimeOut        = true,
  },
- {.drvCfgHandler    = &DrvCfgList[MOTOR_2],
+ {
+  .drvCfgHandler    = &DrvCfgList[MOTOR_2],
   .drvRegHandler    = &DrvRegList[MOTOR_2],
   .enableTimeOut    = true,
   .rxTimeOut        = true,
@@ -216,7 +252,7 @@ static DRV8353 drv_cfg[] =
 
 static const HAL_MOTOR_CFG hal_motor_cfg[] =
 {
- {//.motorID      = MOTOR_1,
+ {
   .p_pwmCntCmp[0]   = &PwmCounterCompareCfgList[0],
   .p_pwmCntCmp[1]   = &PwmCounterCompareCfgList[1],
   .p_pwmCntCmp[2]   = &PwmCounterCompareCfgList[2],
@@ -229,7 +265,7 @@ static const HAL_MOTOR_CFG hal_motor_cfg[] =
   //.p_vbusAcq    = &AdcAcqList[8],
   .p_ITAcq          = &AdcIntList[0],
  },
- {//.motorID      = MOTOR_2,
+ {
   .p_pwmCntCmp[0]   = &PwmCounterCompareCfgList[3],
   .p_pwmCntCmp[1]   = &PwmCounterCompareCfgList[4],
   .p_pwmCntCmp[2]   = &PwmCounterCompareCfgList[5],
@@ -250,6 +286,7 @@ static FOC_STRUCT motor_foc[] =
 {
  {
   //--- MOTOR_1 ---------------------------------------------------------------
+  .motor_id                             = MOTOR_1,
   //--- MOTOR PARAMS STRUCTURE ------------------------------------------------
   .motor_cfg.Rs                         = (float32_t)MOTOR1_RS,
   .motor_cfg.Ld                         = (float32_t)MOTOR1_LD,
@@ -300,13 +337,20 @@ static FOC_STRUCT motor_foc[] =
   .motor_enc.turnNb                     = 0,
   .motor_enc.indexDetected              = false,
   .motor_enc.indexToggle                = false,
-  .motor_enc.rollOverFlag               = false,
+  .motor_enc.rollOverErrorFlag          = false,
+  .motor_enc.rollOverErrorFlagEnable    = false,
   .motor_enc.speedEst.speedHighScaler   = (float32_t)MOTOR1_ENC_SPEED_HIGH_SCALE,
   .motor_enc.speedEst.speedLowScaler    = (float32_t)MOTOR1_ENC_SPEED_LOW_SCALE,
   .motor_enc.speedEst.speedMech         = (float32_t)PWM_FREQ,
   .motor_enc.speedEst.speedRef          = (float32_t)MOTOR1_ENC_SPEED_CUTOFF_FREQ,
   .motor_enc.speedEst.lpf.a             = (float32_t)MOTOR1_ENC_SPEED_LPF_ALPHA,
   .motor_enc.speedEst.lpf.one_minus_a   = (float32_t)MOTOR1_ENC_SPEED_LPF_ONE_M_ALPHA,
+  //---------------------------------------------------------------------------
+  .motor_align.state                    = ALIGN_COUNT_UP,
+  .motor_align.cnt                      = 0,
+  .motor_align.cntMax                   = PWM_FREQ,
+  .motor_align.idAlignRef               = 0.5,// 500mA alignment current
+  .motor_align.idAlign                  = 0.0,
   //---------------------------------------------------------------------------
   .iParkLpf.a                           = MOTOR1_CURRENT_LPF_ALPHA,
   .iParkLpf.one_minus_a                 = MOTOR1_CURRENT_LPF_ONE_M_ALPHA,
@@ -380,143 +424,153 @@ static FOC_STRUCT motor_foc[] =
   //--- Anti-coagging structure -----------------------------------------------
   //acog;
   //--- FOC controller enable to start? ---------------------------------------
-  .enabled                              = false,
+  .motor_enable                         = false,
+  .system_enable                        = false,
  },
  //---------------------------------------------------------------------------
  //---------------------------------------------------------------------------
  {
-   //--- MOTOR_2 ---------------------------------------------------------------
-   //--- MOTOR PARAMS STRUCTURE ------------------------------------------------
-   .motor_cfg.Rs                        = (float32_t)MOTOR2_RS,
-   .motor_cfg.Ld                        = (float32_t)MOTOR2_LD,
-   .motor_cfg.Lq                        = (float32_t)MOTOR2_LQ,
-   .motor_cfg.kv                        = (float32_t)MOTOR2_KV,
-   .motor_cfg.ke                        = (float32_t)MOTOR2_KE,
-   .motor_cfg.ki                        = (float32_t)MOTOR2_KI,
-   .motor_cfg.polePairs                 = (float32_t)MOTOR2_POLES_PAIRS,
-   //--- MOTOR ACQUISITION STRUCTURE -------------------------------------------
-   .motor_acq.p_adcRegs[0]              = MOTOR12_IVA_ADC_REGS,
-   .motor_acq.p_adcRegs[1]              = MOTOR12_IVB_ADC_REGS,
-   .motor_acq.p_adcRegs[2]              = MOTOR12_IVC_ADC_REGS,
-   .motor_acq.p_adcRegs[3]              = MOTOR12_VBUS_ADC_REGS,
-   .motor_acq.p_adcResultRegs[0]        = MOTOR12_IVA_ADC_RESULT_REGS,
-   .motor_acq.p_adcResultRegs[1]        = MOTOR12_IVB_ADC_RESULT_REGS,
-   .motor_acq.p_adcResultRegs[2]        = MOTOR12_IVC_ADC_RESULT_REGS,
-   .motor_acq.p_adcResultRegs[3]        = MOTOR12_VBUS_ADC_RESULT_REGS,
-   .motor_acq.p_vaMeasReg               = (volatile uint16_t *)(MOTOR2_VA_ADC_PPB_RESULT_ADDR),
-   .motor_acq.p_vbMeasReg               = (volatile uint16_t *)(MOTOR2_VB_ADC_PPB_RESULT_ADDR),
-   .motor_acq.p_vcMeasReg               = (volatile uint16_t *)(MOTOR2_VC_ADC_PPB_RESULT_ADDR),
-   .motor_acq.p_vBusMeasReg             = (volatile uint16_t *)(MOTOR12_VBUS_ADC_PPB_RESULT_ADDR),
-   .motor_acq.p_iaMeasReg               = (volatile int16_t *)(MOTOR2_IA_ADC_PPB_RESULT_ADDR),
-   .motor_acq.p_ibMeasReg               = (volatile int16_t *)(MOTOR2_IB_ADC_PPB_RESULT_ADDR),
-   .motor_acq.p_icMeasReg               = (volatile int16_t *)(MOTOR2_IC_ADC_PPB_RESULT_ADDR),
-   .motor_acq.va                        = 0.0,
-   .motor_acq.vb                        = 0.0,
-   .motor_acq.vc                        = 0.0,
-   .motor_acq.vbus                      = 0.0,
-   .motor_acq.ia                        = 0.0,
-   .motor_acq.ib                        = 0.0,
-   .motor_acq.ic                        = 0.0,
-   .motor_acq.measNew                   = false,
-   .motor_acq.vBusLpf.a                 = MOTOR12_VBUS_LPF_ALPHA,
-   .motor_acq.vBusLpf.one_minus_a       = MOTOR12_VBUS_LPF_ONE_M_ALPHA,
-   //--- MOTOR ENCORDER STRUCTURE ----------------------------------------------
-   .motor_enc.p_qepHandle               = (&QepCfgList[MOTOR_2]),//(const eQEP_TypeDef*)&QepCfgList[MOTOR_2],
-   .motor_enc.p_qepRegs                 = MOTOR2_QEP_VAR,
-   .motor_enc.polePairs                 = MOTOR2_POLES_PAIRS,
-   .motor_enc.thetaMech[NEW]            = 0.0,
-   .motor_enc.thetaMech[OLD]            = 0.0,
-   .motor_enc.thetaElec                 = 0.0,
-   .motor_enc.thetaDir                  = 0,
-   .motor_enc.thetaMechScaler           = (float32_t)(MOTOR2_ENC_RESOLUTION_SCALE),
-   .motor_enc.indexCompensated          = false,
-   .motor_enc.indexTheta                = 0.0,
-   .motor_enc.indexedThetaMech          = 0.0,
-   .motor_enc.thetaAbsolute             = 0.0,
-   .motor_enc.turnNb                    = 0,
-   .motor_enc.indexDetected             = false,
-   .motor_enc.indexToggle               = false,
-   .motor_enc.rollOverFlag              = false,
-   .motor_enc.speedEst.speedHighScaler  = (float32_t)MOTOR2_ENC_SPEED_HIGH_SCALE,
-   .motor_enc.speedEst.speedLowScaler   = (float32_t)MOTOR2_ENC_SPEED_LOW_SCALE,
-   .motor_enc.speedEst.speedMech        = (float32_t)PWM_FREQ,
-   .motor_enc.speedEst.speedRef         = (float32_t)MOTOR2_ENC_SPEED_CUTOFF_FREQ,
-   .motor_enc.speedEst.lpf.a            = (float32_t)MOTOR2_ENC_SPEED_LPF_ALPHA,
-   .motor_enc.speedEst.lpf.one_minus_a  = (float32_t)MOTOR2_ENC_SPEED_LPF_ONE_M_ALPHA,
-   //--------------------------------------------------------------------------
-   .iParkLpf.a                          = MOTOR2_CURRENT_LPF_ALPHA,
-   .iParkLpf.one_minus_a                = MOTOR2_CURRENT_LPF_ONE_M_ALPHA,
-   //--- FOC - Sine / Cosine computation of angular position -------------------
-   .sinTheta                            = 0.0,
-   .cosTheta                            = 0.0,
-   //--- FOC - Clarke transform results ---------------------------------------
-   .ialpha                              = 0.0,
-   .ibeta                               = 0.0,
-   //--- FOC - Park transform results ------------------------------------------
-   .id                                  = 0.0,
-   .iq                                  = 0.0,
-   //--- FOC - Inverse Park transform results ----------------------------------
-   .ud                                  = 0.0,
-   .uq                                  = 0.0,
-   //--- FOC - Inverse Clarke transform results --------------------------------
-   .ualpha                              = 0.0,
-   .ubeta                               = 0.0,
-   //--- FOC - Phase commands --------------------------------------------------
-   .ua                                  = 0.0,
-   .ub                                  = 0.0,
-   .uc                                  = 0.0,
-   //--- FOC - Max current and voltage -----------------------------------------
-   .vmax                                = 0.0,
-   .imax                                = MOTOR12_IMAX,
-   //--- FOC - Initialize duty cycle saturation --------------------------------
-   .dtcMax                              = MOTOR2_DTC_MAX,
-   .dtcMin                              = MOTOR2_DTC_MIN,
-   //--- FOC - Duty cycles -----------------------------------------------------
-   .dtc_u                               = 0.0,
-   .dtc_v                               = 0.0,
-   .dtc_w                               = 0.0,
-   //--- FOC - PI setpoint values ----------------------------------------------
-   .idRef                               = 0.0,
-   .iqRef                               = 0.0,
-   //--- FOC - Initialize PI controller (Id) -----------------------------------
-   .piId.in                             = 0.0,//((float32_t *)(&motor_foc[MOTOR_2].id)),
-   .piId.set                            = 0.0,//((float32_t *)(&motor_foc[MOTOR_2].idRef)),
-   .piId.err                            = 0.0,
-   .piId.kp                             = (float32_t)MOTOR2_ID_REGULATOR_KP_COEF,
-   .piId.ki                             = (float32_t)MOTOR2_ID_REGULATOR_KI_COEF,
-   .piId.integral                       = 0.0,
-   .piId.ff                             = 0.0,
-   .piId.sat                            = 0.0,//((float32_t *)(&motor_foc[MOTOR_2].motor_acq.vbus)),
-   //--- FOC - Initialize PI controller (Iq) -----------------------------------
-   .piIq.in                             = 0.0,//((float32_t *)(&motor_foc[MOTOR_2].iq)),
-   .piIq.set                            = 0.0,//((float32_t *)(&motor_foc[MOTOR_2].iqRef)),
-   .piIq.err                            = 0.0,
-   .piIq.kp                             = (float32_t)MOTOR2_IQ_REGULATOR_KP_COEF,
-   .piIq.ki                             = (float32_t)MOTOR2_IQ_REGULATOR_KI_COEF,
-   .piIq.integral                       = 0.0,
-   .piIq.ff                             = 0.0,
-   .piIq.sat                            = 0.0,//((float32_t *)(&motor_foc[MOTOR_2].motor_acq.vbus)),
-   //--- FOC - Initialize PD controller (Speed & position) ---------------------
-   .pdPos.inTheta                       = 0.0,//((float32_t *)(&motor_foc[MOTOR_2].motor_enc.thetaAbsolute)),
-   .pdPos.setTheta                      = 0.0,//((float32_t *)(&comInterface.positionRef[MOTOR_2])),
-   .pdPos.errTheta                      = 0.0,
-   .pdPos.inSpeed                       = 0.0,//((float32_t *)(&motor_foc[MOTOR_2].motor_enc.speedEst.speedMech)),
-   .pdPos.setSpeed                      = 0.0,//((float32_t *)(&comInterface.velocityRef[MOTOR_2])),
-   .pdPos.errSpeed                      = 0.0,
-   .pdPos.kp                            = (float32_t)MOTOR2_SPEED_REGULATOR_KP_COEF,
-   .pdPos.kd                            = (float32_t)MOTOR2_SPEED_REGULATOR_KD_COEF,
-   .pdPos.derivative                    = 0.0,
-   .pdPos.ff                            = 0.0,
-   .pdPos.sat                           = (float32_t)MOTOR2_SPEED_REGULATOR_SATURATION,//((float32_t *)(&pdSat)),
-   //--- FOC - Q-axis resistance estimation ------------------------------------
-   .resistanceEst                       = 0.0,
-   //--- Resistance estimation low-pass filter ---------------------------------
-   .resEstLpf.a                         = 0.0,
-   .resEstLpf.one_minus_a               = 0.0,
-   //--- Anti-coagging structure -----------------------------------------------
-   //acog;
-   //--- FOC controller enable to start? ---------------------------------------
-   .enabled                             = false,
+  //--- MOTOR_2 ---------------------------------------------------------------
+  .motor_id                             = MOTOR_2,
+  //--- MOTOR PARAMS STRUCTURE ------------------------------------------------
+  .motor_cfg.Rs                         = (float32_t)MOTOR2_RS,
+  .motor_cfg.Ld                         = (float32_t)MOTOR2_LD,
+  .motor_cfg.Lq                         = (float32_t)MOTOR2_LQ,
+  .motor_cfg.kv                         = (float32_t)MOTOR2_KV,
+  .motor_cfg.ke                         = (float32_t)MOTOR2_KE,
+  .motor_cfg.ki                         = (float32_t)MOTOR2_KI,
+  .motor_cfg.polePairs                  = (float32_t)MOTOR2_POLES_PAIRS,
+  //--- MOTOR ACQUISITION STRUCTURE -------------------------------------------
+  .motor_acq.p_adcRegs[0]               = MOTOR12_IVA_ADC_REGS,
+  .motor_acq.p_adcRegs[1]               = MOTOR12_IVB_ADC_REGS,
+  .motor_acq.p_adcRegs[2]               = MOTOR12_IVC_ADC_REGS,
+  .motor_acq.p_adcRegs[3]               = MOTOR12_VBUS_ADC_REGS,
+  .motor_acq.p_adcResultRegs[0]         = MOTOR12_IVA_ADC_RESULT_REGS,
+  .motor_acq.p_adcResultRegs[1]         = MOTOR12_IVB_ADC_RESULT_REGS,
+  .motor_acq.p_adcResultRegs[2]         = MOTOR12_IVC_ADC_RESULT_REGS,
+  .motor_acq.p_adcResultRegs[3]         = MOTOR12_VBUS_ADC_RESULT_REGS,
+  .motor_acq.p_vaMeasReg                = (volatile uint16_t *)(MOTOR2_VA_ADC_PPB_RESULT_ADDR),
+  .motor_acq.p_vbMeasReg                = (volatile uint16_t *)(MOTOR2_VB_ADC_PPB_RESULT_ADDR),
+  .motor_acq.p_vcMeasReg                = (volatile uint16_t *)(MOTOR2_VC_ADC_PPB_RESULT_ADDR),
+  .motor_acq.p_vBusMeasReg              = (volatile uint16_t *)(MOTOR12_VBUS_ADC_PPB_RESULT_ADDR),
+  .motor_acq.p_iaMeasReg                = (volatile int16_t *)(MOTOR2_IA_ADC_PPB_RESULT_ADDR),
+  .motor_acq.p_ibMeasReg                = (volatile int16_t *)(MOTOR2_IB_ADC_PPB_RESULT_ADDR),
+  .motor_acq.p_icMeasReg                = (volatile int16_t *)(MOTOR2_IC_ADC_PPB_RESULT_ADDR),
+  .motor_acq.va                         = 0.0,
+  .motor_acq.vb                         = 0.0,
+  .motor_acq.vc                         = 0.0,
+  .motor_acq.vbus                       = 0.0,
+  .motor_acq.ia                         = 0.0,
+  .motor_acq.ib                         = 0.0,
+  .motor_acq.ic                         = 0.0,
+  .motor_acq.measNew                    = false,
+  .motor_acq.vBusLpf.a                  = MOTOR12_VBUS_LPF_ALPHA,
+  .motor_acq.vBusLpf.one_minus_a        = MOTOR12_VBUS_LPF_ONE_M_ALPHA,
+  //--- MOTOR ENCORDER STRUCTURE ----------------------------------------------
+  .motor_enc.p_qepHandle                = (&QepCfgList[MOTOR_2]),//(const eQEP_TypeDef*)&QepCfgList[MOTOR_2],
+  .motor_enc.p_qepRegs                  = MOTOR2_QEP_VAR,
+  .motor_enc.polePairs                  = MOTOR2_POLES_PAIRS,
+  .motor_enc.thetaMech[NEW]             = 0.0,
+  .motor_enc.thetaMech[OLD]             = 0.0,
+  .motor_enc.thetaElec                  = 0.0,
+  .motor_enc.thetaDir                   = 0,
+  .motor_enc.thetaMechScaler            = (float32_t)(MOTOR2_ENC_RESOLUTION_SCALE),
+  .motor_enc.indexCompensated           = false,
+  .motor_enc.indexTheta                 = 0.0,
+  .motor_enc.indexedThetaMech           = 0.0,
+  .motor_enc.thetaAbsolute              = 0.0,
+  .motor_enc.turnNb                     = 0,
+  .motor_enc.indexDetected              = false,
+  .motor_enc.indexToggle                = false,
+  .motor_enc.rollOverErrorFlag          = false,
+  .motor_enc.rollOverErrorFlagEnable    = false,
+  .motor_enc.speedEst.speedHighScaler   = (float32_t)MOTOR2_ENC_SPEED_HIGH_SCALE,
+  .motor_enc.speedEst.speedLowScaler    = (float32_t)MOTOR2_ENC_SPEED_LOW_SCALE,
+  .motor_enc.speedEst.speedMech         = (float32_t)PWM_FREQ,
+  .motor_enc.speedEst.speedRef          = (float32_t)MOTOR2_ENC_SPEED_CUTOFF_FREQ,
+  .motor_enc.speedEst.lpf.a             = (float32_t)MOTOR2_ENC_SPEED_LPF_ALPHA,
+  .motor_enc.speedEst.lpf.one_minus_a   = (float32_t)MOTOR2_ENC_SPEED_LPF_ONE_M_ALPHA,
+  //---------------------------------------------------------------------------
+  .motor_align.state                    = ALIGN_COUNT_UP,
+  .motor_align.cnt                      = 0,
+  .motor_align.cntMax                   = PWM_FREQ,
+  .motor_align.idAlignRef               = 0.5,// 500mA alignment current
+  .motor_align.idAlign                  = 0.0,
+  //---------------------------------------------------------------------------
+  .iParkLpf.a                           = MOTOR2_CURRENT_LPF_ALPHA,
+  .iParkLpf.one_minus_a                 = MOTOR2_CURRENT_LPF_ONE_M_ALPHA,
+  //--- FOC - Sine / Cosine computation of angular position -------------------
+  .sinTheta                             = 0.0,
+  .cosTheta                             = 0.0,
+  //--- FOC - Clarke transform results ----------------------------------------
+  .ialpha                               = 0.0,
+  .ibeta                                = 0.0,
+  //--- FOC - Park transform results ------------------------------------------
+  .id                                   = 0.0,
+  .iq                                   = 0.0,
+  //--- FOC - Inverse Park transform results ----------------------------------
+  .ud                                   = 0.0,
+  .uq                                   = 0.0,
+  //--- FOC - Inverse Clarke transform results --------------------------------
+  .ualpha                               = 0.0,
+  .ubeta                                = 0.0,
+  //--- FOC - Phase commands --------------------------------------------------
+  .ua                                   = 0.0,
+  .ub                                   = 0.0,
+  .uc                                   = 0.0,
+  //--- FOC - Max current and voltage -----------------------------------------
+  .vmax                                 = 0.0,
+  .imax                                 = MOTOR12_IMAX,
+  //--- FOC - Initialize duty cycle saturation --------------------------------
+  .dtcMax                               = MOTOR2_DTC_MAX,
+  .dtcMin                               = MOTOR2_DTC_MIN,
+  //--- FOC - Duty cycles -----------------------------------------------------
+  .dtc_u                                = 0.0,
+  .dtc_v                                = 0.0,
+  .dtc_w                                = 0.0,
+  //--- FOC - PI setpoint values ----------------------------------------------
+  .idRef                                = 0.0,
+  .iqRef                                = 0.0,
+  //--- FOC - Initialize PI controller (Id) -----------------------------------
+  .piId.in                              = 0.0,//((float32_t *)(&motor_foc[MOTOR_2].id)),
+  .piId.set                             = 0.0,//((float32_t *)(&motor_foc[MOTOR_2].idRef)),
+  .piId.err                             = 0.0,
+  .piId.kp                              = (float32_t)MOTOR2_ID_REGULATOR_KP_COEF,
+  .piId.ki                              = (float32_t)MOTOR2_ID_REGULATOR_KI_COEF,
+  .piId.integral                        = 0.0,
+  .piId.ff                              = 0.0,
+  .piId.sat                             = 0.0,//((float32_t *)(&motor_foc[MOTOR_2].motor_acq.vbus)),
+  //--- FOC - Initialize PI controller (Iq) -----------------------------------
+  .piIq.in                              = 0.0,//((float32_t *)(&motor_foc[MOTOR_2].iq)),
+  .piIq.set                             = 0.0,//((float32_t *)(&motor_foc[MOTOR_2].iqRef)),
+  .piIq.err                             = 0.0,
+  .piIq.kp                              = (float32_t)MOTOR2_IQ_REGULATOR_KP_COEF,
+  .piIq.ki                              = (float32_t)MOTOR2_IQ_REGULATOR_KI_COEF,
+  .piIq.integral                        = 0.0,
+  .piIq.ff                              = 0.0,
+  .piIq.sat                             = 0.0,//((float32_t *)(&motor_foc[MOTOR_2].motor_acq.vbus)),
+  //--- FOC - Initialize PD controller (Speed & position) ---------------------
+  .pdPos.inTheta                        = 0.0,//((float32_t *)(&motor_foc[MOTOR_2].motor_enc.thetaAbsolute)),
+  .pdPos.setTheta                       = 0.0,//((float32_t *)(&comInterface.positionRef[MOTOR_2])),
+  .pdPos.errTheta                       = 0.0,
+  .pdPos.inSpeed                        = 0.0,//((float32_t *)(&motor_foc[MOTOR_2].motor_enc.speedEst.speedMech)),
+  .pdPos.setSpeed                       = 0.0,//((float32_t *)(&comInterface.velocityRef[MOTOR_2])),
+  .pdPos.errSpeed                       = 0.0,
+  .pdPos.kp                             = (float32_t)MOTOR2_SPEED_REGULATOR_KP_COEF,
+  .pdPos.kd                             = (float32_t)MOTOR2_SPEED_REGULATOR_KD_COEF,
+  .pdPos.derivative                     = 0.0,
+  .pdPos.ff                             = 0.0,
+  .pdPos.sat                            = (float32_t)MOTOR2_SPEED_REGULATOR_SATURATION,//((float32_t *)(&pdSat)),
+  //--- FOC - Q-axis resistance estimation ------------------------------------
+  .resistanceEst                        = 0.0,
+  //--- Resistance estimation low-pass filter ---------------------------------
+  .resEstLpf.a                          = 0.0,
+  .resEstLpf.one_minus_a                = 0.0,
+  //--- Anti-coagging structure -----------------------------------------------
+  //acog;
+  //--- FOC controller enable to start? ---------------------------------------
+  .motor_enable                         = false,
+  .system_enable                        = false,
  },
 };
 
@@ -530,11 +584,11 @@ static MOTOR_STRUCT motor[] =
   .p_motorHalCfg                    = &hal_motor_cfg[MOTOR_1],
   .p_motorDRV                       = &drv_cfg[MOTOR_1],
   .p_motorFOC                       = &motor_foc[MOTOR_1],
-  .motorAlign.state                 = ALIGN_COUNT_UP,
-  .motorAlign.cnt                   = 0,
-  .motorAlign.cntMax                = PWM_FREQ,
-  .motorAlign.idAlignRef            = 0.5,// 500mA alignment current
-  .motorAlign.idAlign               = 0.0,
+//  .motorAlign.state                 = ALIGN_COUNT_UP,
+//  .motorAlign.cnt                   = 0,
+//  .motorAlign.cntMax                = PWM_FREQ,
+//  .motorAlign.idAlignRef            = 0.5,// 500mA alignment current
+//  .motorAlign.idAlign               = 0.0,
   .statorResEstLpf.a                = MOTOR1_STATOR_RESISTOR_LPF_ALPHA,
   .statorResEstLpf.one_minus_a      = MOTOR1_STATOR_RESISTOR_LPF_ONE_M_ALPHA,
 //  .enabled          = false,
@@ -554,11 +608,11 @@ static MOTOR_STRUCT motor[] =
   .p_motorHalCfg                    = &hal_motor_cfg[MOTOR_2],
   .p_motorDRV                       = &drv_cfg[MOTOR_2],
   .p_motorFOC                       = &motor_foc[MOTOR_2],
-  .motorAlign.state                 = ALIGN_COUNT_UP,
-  .motorAlign.cnt                   = 0,
-  .motorAlign.cntMax                = PWM_FREQ,
-  .motorAlign.idAlignRef            = 0.5,// 500mA alignment current
-  .motorAlign.idAlign               = 0.0,
+//  .motorAlign.state                 = ALIGN_COUNT_UP,
+//  .motorAlign.cnt                   = 0,
+//  .motorAlign.cntMax                = PWM_FREQ,
+//  .motorAlign.idAlignRef            = 0.5,// 500mA alignment current
+//  .motorAlign.idAlign               = 0.0,
   .statorResEstLpf.a                = MOTOR2_STATOR_RESISTOR_LPF_ALPHA,
   .statorResEstLpf.one_minus_a      = MOTOR2_STATOR_RESISTOR_LPF_ONE_M_ALPHA,
 //  .enabled          = false,

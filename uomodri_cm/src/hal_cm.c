@@ -17,7 +17,7 @@ void HAL_CM_CRC_init(const CRC_TypeDef*);
 //#pragma DATA_ALIGN(ucControlTable, 1024)
 extern UDMA_ControlTable ucControlTable[32];
 
-extern __interrupt void UART_RX_IntHandler(void);
+//extern __interrupt void UART_RX_IntHandler(void);
 
 // Function definitions
 /**
@@ -33,7 +33,7 @@ void HAL_CM_init(const HAL_CM* p_hal_cm)
         // Initialize CM_UART
         HAL_CM_UART_init(p_hal_cm->p_uartHandler);
         // Initialize CM_CRC
-//        HAL_CM_CRC_init(p_hal_cm->p_crcHandler);
+        HAL_CM_CRC_init(p_hal_cm->p_crcHandler);
         // Initialize IPC communication
         HAL_CM_IPC_init(p_hal_cm->p_ipcHandler);
     }
@@ -180,11 +180,12 @@ void HAL_CM_CRC_init(const CRC_TypeDef* p_crcCfg)
     if(p_crcCfg != NULL)
     {
         // Configure the GCRC module
-        GCRC_setPolynomial(GCRC_BASE, p_crcCfg->poly, p_crcCfg->width);
+        GCRC_setPolynomial(GCRC_BASE, p_crcCfg->poly, p_crcCfg->polysize);
         GCRC_setDataType(GCRC_BASE, p_crcCfg->dataType);
         GCRC_setDataEndianness(GCRC_BASE, p_crcCfg->endianness);
         GCRC_setDataMask(GCRC_BASE, p_crcCfg->dataMask);
         GCRC_enableBitReverse(GCRC_BASE, p_crcCfg->bitRev);
+        GCRC_setSeedValue(GCRC_BASE, p_crcCfg->seed);
     }
 
     return;

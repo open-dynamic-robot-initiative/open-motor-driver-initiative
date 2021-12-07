@@ -19,7 +19,9 @@
 #include "uomodri_cm_user_defines.h"
 #endif
 #include "encoder.h"
+#ifdef C28_CORE
 #include "anticoagging.h"
+#endif
 
 //#ifndef FM_PI
 //#define FM_PI 3.14159265358979f
@@ -60,6 +62,13 @@
 //    float32_t out;          // Controller output
 //    float32_t* sat;         // Controller saturation
 //} PID_CONTROLLER;
+typedef enum
+{
+    ALIGN_COUNT_UP,
+    ALIGN_STAY,
+    ALIGN_COUNT_DOWN,
+    ALIGN_DONE
+} AlignState;
 
 typedef struct __PI_STRUCT__
 {
@@ -131,14 +140,26 @@ typedef struct __ACQUISITIONS_STRUCT__
     float32_t                           ia;         // [A]
     float32_t                           ib;         // [A]
     float32_t                           ic;         // [A]
+    float32_t                           auxAcq;
     LPFSTRUCT                           vBusLpf;
 
     bool                                measNew;    // ADC conversion done
 } ACQ_STRUCT;
 
+typedef struct __ALIGN_STRUCT__
+{
+    AlignState              state;
+
+    uint32_t                cnt;
+    uint32_t                cntMax;
+
+    float32_t               idAlignRef;
+    float32_t               idAlign;
+} ALIGN_STRUCT;
+
 typedef struct __FOC_STRUCT__
 {
-//    const ID_ENUM       motorID;
+    const ID_ENUM       motor_id;
     // Motor configuration parameters
     PARAMS_STRUCT       motor_cfg;
 //    const PARAMS_STRUCT motor_cfg;
@@ -146,6 +167,8 @@ typedef struct __FOC_STRUCT__
     ACQ_STRUCT          motor_acq;
     // Encoder position & speed
     ENC_STRUCT          motor_enc;
+    // Alignment calibration procedure
+    ALIGN_STRUCT        motor_align;
     // Low-pass control loop filter
     LPFSTRUCT           iParkLpf;
     // Rotor electrical angle sine/cosine
@@ -194,9 +217,16 @@ typedef struct __FOC_STRUCT__
     // Resistance estimation low-pass filter
     LPFSTRUCT           resEstLpf;
     // Anti-coagging structure
+#ifdef C28_CORE
     Anticoagging        acog;
+#elif defined CM_CORE
+    uint8_t             rsvd[11];
+#endif
+    // Error messages
+    uint16_t            errorMsg;
     // Enable flag
-    bool                enabled;
+    bool                motor_enable;
+    bool                system_enable;
 
     // Phase measured voltages
 //    float32_t phaseAVolt;   // [V]

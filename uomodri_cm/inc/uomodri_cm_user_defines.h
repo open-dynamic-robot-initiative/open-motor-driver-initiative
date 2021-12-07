@@ -32,7 +32,7 @@ typedef  float  float32_t;
 
 #define OMODRI_PAL_SETUP                        0   // Set this to 1 to use the PAL pin affectation
 
-#define MSG_TX_SIZE                             24
+#define DBG_TX_MSG_SIZE                         (24)
 #define MSG_RX_SIZE                             4
 
 #define PWM_FREQ                                (40000) //[Hz]
@@ -492,6 +492,20 @@ typedef  float  float32_t;
 #define MOTOR12_VBUS_LPF_ALPHA                  (1.0 / (1.0 + (1.0 / (2.0 * M_PI * MOTOR12_VBUS_CUTOFF_FREQ / PWM_FREQ))))
 #define MOTOR12_VBUS_LPF_ONE_M_ALPHA            (1.0 - MOTOR12_VBUS_LPF_ALPHA)
 #define MOTOR12_IMAX                            (20.0)
+
+/******************************************************************************************************
+*                                               Communication Defines
+*******************************************************************************************************/
+/*** Communication constants ***/
+#define POSITION_LSB                            (5.960464477539063e-08)                 // 2**(-24)
+#define VELOCITY_LSB                            (0.00048828125 * 1000.0 * FM_RPM2RADPS) // 2**(-11) // Added rad/s to krpm conversion
+#define IQ_LSB                                  (0.0009765625)                          // 2**(-10)
+#define CURRENT_SAT_LSB                         (0.125)                                 // 2**(-3)
+#define RESISTANCE_LSB                          (3.0517578125e-05)                      // 2**(-15)
+#define VOLTAGE_LSB                             (6.103515625e-05)                       // 2**(-14)
+#define KP_LSB                                  (0.00048828125)                         // 2**(-11)
+#define KD_LSB                                  (0.0009765625)                          // 2**(-10)
+
 
 typedef struct __LowpassFilter_Structure__
 {

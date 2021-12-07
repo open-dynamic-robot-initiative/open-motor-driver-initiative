@@ -71,7 +71,8 @@ typedef struct _IPC_TypeDef_
     volatile IPC_MessageQueue_t*    p_ipcMsgQ;
     const uint32_t                  ipcIntMsgQL;
     const uint32_t                  ipcIntMsgQR;
-    const uint32_t                  ipcFlag;
+    const uint32_t                  ipcFlagIn;
+    const uint32_t                  ipcFlagOut;
     const uint32_t                  ipcInt;
     void                            (*p_ipcIntHandler)(void);
     const bool                      ipcMsgQEnable;
@@ -81,12 +82,12 @@ typedef struct _IPC_TypeDef_
 typedef struct _GCRC_TypeDef_
 {
     uint32_t    poly;
-    uint32_t    width;
+    uint32_t    polysize;
     uint32_t    seed;
     uint32_t    endianness;
     uint32_t    dataType;
-    bool        bitRev;
     uint32_t    dataMask;
+    bool        bitRev;
 } CRC_TypeDef;
 
 /**
