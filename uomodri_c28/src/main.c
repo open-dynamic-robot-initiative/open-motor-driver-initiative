@@ -83,7 +83,37 @@ void main(void)
 //#endif
 
     // Infinite loop
-    while(1);
+    while(1)
+    {
+        if(cpt >= 40)
+        {
+            uint64_t interruptCnt                   = motor[MOTOR_1].interruptCnt;
+            mst_tx_msg.payload.modeReg.bit.ES       = true;
+            mst_tx_msg.payload.modeReg.bit.EM1      = true;
+            mst_tx_msg.payload.modeReg.bit.EM2      = false;
+            mst_tx_msg.payload.modeReg.bit.EPRE     = false;
+            mst_tx_msg.payload.modeReg.bit.EI1OC    = false;
+            mst_tx_msg.payload.modeReg.bit.EI2OC    = false;
+            mst_tx_msg.payload.modeReg.bit.TIMEOUT  = 0xFFFF;
+            mst_tx_msg.payload.positionRef[MOTOR_1] = (int32_t)(__sinpuf32((float32_t)interruptCnt / PWM_FREQ) / POSITION_LSB);
+            mst_tx_msg.payload.positionRef[MOTOR_2] = 0;
+            mst_tx_msg.payload.velocityRef[MOTOR_1] = (int16_t)(4.0f * M_PI * M_PI * __cospuf32((float32_t)interruptCnt / PWM_FREQ) / VELOCITY_LSB);
+            mst_tx_msg.payload.velocityRef[MOTOR_2] = 0;
+            mst_tx_msg.payload.iqRef[MOTOR_1]       = 0;
+            mst_tx_msg.payload.iqRef[MOTOR_2]       = 0;
+            mst_tx_msg.payload.kpCoeff[MOTOR_1]     = (uint16_t)(1.0 / KP_LSB);
+            mst_tx_msg.payload.kpCoeff[MOTOR_2]     = (uint16_t)(1.0 / KP_LSB);
+            mst_tx_msg.payload.kdCoeff[MOTOR_1]     = (uint16_t)(0.02 / KD_LSB);
+            mst_tx_msg.payload.kdCoeff[MOTOR_2]     = (uint16_t)(0.02 / KD_LSB);
+            mst_tx_msg.payload.iSat[MOTOR_1]        = 0;
+            mst_tx_msg.payload.iSat[MOTOR_2]        = 0;
+            mst_tx_msg.payload.index                = 0;
+            mst_tx_msg.crc                          = COM_crc32((uint16_t *)&mst_tx_msg, DMA_COM_SPI_TX_RX_TRANSFER_NB);
+            cpt                                     = 0;
+//            DMA_startChannel(DMA_MST_SPI_TX_BASE_ADDR);
+            DMA_forceTrigger(DMA_MST_SPI_TX_BASE_ADDR);
+        }
+    }
 //    {
 //#if UOMODRI_SPI_DEBUG_CONFIG
 //        // Continuously write data for logging
@@ -137,35 +167,55 @@ static void MCU_init(void)
 #endif
 }
 
-//-------------------------------------------------------------------------------------------------
-__attribute__((interrupt)) void ipc_isrComInter(void)
+static inline uint32_t COM_crc32 (uint16_t* buf, uint16_t len)
 {
-//    ComInterface* p_comInterface = NULL;
-    uint32_t command, addr, data;
-    IPC_readCommand(IPC_CPU1_L_CM_R, IPC_FLAG1, IPC_ADDR_CORRECTION_ENABLE, &command, &addr, &data);
-//    DmaRegs.CH5.SRC_BEG_ADDR_ACTIVE = addr;
-//    DMA_startChannel(DMA_COM_SPI_TX_BASE_ADDR);//dmaCfgList[0].dmaChBase);
-    DMA_forceTrigger(DMA_COM_SPI_TX_BASE_ADDR);
-//    if(DmaRegs.CH5.CONTROL.bit.RUNSTS)
-//        GPIO_togglePin(DEBUG_INT_PIN1);
+  uint32_t crc = 0xFFFFFFFF;
+  while (len--)
+    {
+      crc = (crc << 8) ^ crc32_table[((crc >> 24) ^ MSB_16(*buf)) & 0xFF];
+      crc = (crc << 8) ^ crc32_table[((crc >> 24) ^ LSB_16(*buf)) & 0xFF];
+      buf++;
+    }
+  return crc;
+}
+//-------------------------------------------------------------------------------------------------
+__attribute__((interrupt)) void ipc_isrStatusMsg(void)
+{
+    uint32_t    cmd, data, addr;
+    uint8_t     ipcCfgIdx = 0, i = 0;
+    // Get index associated to IPC structure configuration
+    while(ipcCfgList[(ipcCfgList[ipcCfgIdx].p_ipcIntHandler != &ipc_isrStatusMsg) ? (ipcCfgIdx++) : (ipcCfgIdx)].p_ipcIntHandler != &ipc_isrStatusMsg);
+    // Get structure address
+    IPC_readCommand(ipcCfgList[ipcCfgIdx].ipcType, ipcCfgList[ipcCfgIdx].ipcFlag, IPC_ADDR_CORRECTION_ENABLE, &cmd, &addr, &data);
+    i = motor[MOTOR_1].interruptCnt % 2;
+    memcpy(&com_tx_msg[i], (tx_msg_t *)addr, sizeof(tx_msg_t));
 
-//    p_comInterface = (ComInterface *)addr;
-//    comInterface.positionRef[MOTOR_1]   = p_comInterface->positionRef[MOTOR_1];
-//    comInterface.velocityRef[MOTOR_1]   = p_comInterface->velocityRef[MOTOR_1];
-//    comInterface.iqRef[MOTOR_1]         = p_comInterface->iqRef[MOTOR_1];
-    IPC_ackFlagRtoL(IPC_CPU1_L_CM_R, IPC_FLAG1);
+    if(!(*((volatile uint32_t *)(DMA_COM_SPI_TX_BASE_ADDR + DMA_O_CONTROL)) &
+            (DMA_CONTROL_PERINTFLG | DMA_CONTROL_TRANSFERSTS | DMA_CONTROL_BURSTSTS)))
+    {
+        *((volatile uint32_t *)(DMA_COM_SPI_TX_BASE_ADDR + DMA_O_CONTROL))             |= DMA_CONTROL_HALT;
+        *((volatile uint32_t *)(DMA_COM_SPI_TX_BASE_ADDR + DMA_O_SRC_BEG_ADDR_SHADOW))  = (uint32_t)&com_tx_msg[i];
+        *((volatile uint32_t *)(DMA_COM_SPI_TX_BASE_ADDR + DMA_O_SRC_ADDR_SHADOW))      = (uint32_t)&com_tx_msg[i];
+        *((volatile uint32_t *)(DMA_COM_SPI_TX_BASE_ADDR + DMA_O_CONTROL))             |= DMA_CONTROL_RUN;
+    }
+
+    IPC_ackFlagRtoL(ipcCfgList[ipcCfgIdx].ipcType, ipcCfgList[ipcCfgIdx].ipcFlag);
     Interrupt_clearACKGroup(INTERRUPT_ACK_GROUP11);
 }
 
 //-------------------------------------------------------------------------------------------------
-//__attribute__((interrupt)) void dma5_isr(void)
-//{
-//    DMA_stopChannel(DMA_COM_SPI_TX_BASE_ADDR);
-//    DmaRegs.CH5.CONTROL.bit.PERINTCLR = 1;
-//    //IPC_ackFlagRtoL(IPC_CPU1_L_CM_R, IPC_FLAG1);
-//    Interrupt_clearACKGroup(INTERRUPT_ACK_GROUP7);
-//
-//}
+__attribute__((interrupt)) void ipc_isrMsgCmd(void)
+{
+    uint32_t    cmd, data, addr;
+    uint8_t     ipcCfgIdx = 0;
+    // Get index associated to IPC structure configuration
+    while(ipcCfgList[(ipcCfgList[ipcCfgIdx].p_ipcIntHandler != &ipc_isrMsgCmd) ? (ipcCfgIdx++) : (ipcCfgIdx)].p_ipcIntHandler != &ipc_isrMsgCmd);
+    // Get structure address
+    IPC_readCommand(ipcCfgList[ipcCfgIdx].ipcType, ipcCfgList[ipcCfgIdx].ipcFlag, IPC_ADDR_CORRECTION_ENABLE, &cmd, &addr, &data);
+    memcpy(&com_rx_cmd, (rx_uomodri_t *)addr, sizeof(rx_uomodri_t));
+    IPC_ackFlagRtoL(ipcCfgList[ipcCfgIdx].ipcType, ipcCfgList[ipcCfgIdx].ipcFlag);
+    Interrupt_clearACKGroup(INTERRUPT_ACK_GROUP11);
+}
 
 //-------------------------------------------------------------------------------------------------
 /**
@@ -181,7 +231,7 @@ __attribute__((interrupt)) void adc_isrMotor1(void)
     uint16_t        group       = InterruptList[ADC_IT_MOTOR_1].intAckGroup;
     ADC_IntNumber   adcIntNum   = (ADC_IntNumber)InterruptList[ADC_IT_MOTOR_1].intPeriphSrc; //MOTOR1_IA_INT_NUM;
 
-    if((p_foc->system_enable == true) && (p_foc->motor_enable == true))
+    if(com_rx_cmd.modeReg.bit.ES && com_rx_cmd.modeReg.bit.EM1)
     {
         // Read encoder position
         ENC_getPosition(&p_foc->motor_enc);
@@ -201,7 +251,7 @@ __attribute__((interrupt)) void adc_isrMotor1(void)
         // Run encoder update
         ENC_getSpeed(&p_foc->motor_enc);
         // Check for roll-over error
-        if (p_foc->motor_enc.rollOverErrorFlag && p_foc->motor_enc.rollOverErrorFlagEnable)
+        if (p_foc->motor_enc.rollOverErrorFlag && com_rx_cmd.modeReg.bit.EPRE)
         {
             p_foc->errorMsg = SPI_SENSOR_STATUS_ERROR_POS_ROLLOVER;
             // Tie phases to ground
@@ -218,7 +268,6 @@ __attribute__((interrupt)) void adc_isrMotor1(void)
         {
             // Run alignment routine
             MOT_runAlign(&p_foc->motor_align);
-
             // Reset QEP position counter to set angle to zero
             if(p_foc->motor_align.state <= ALIGN_STAY)
                 ENC_setPosition(&p_foc->motor_enc, 0);
@@ -231,15 +280,18 @@ __attribute__((interrupt)) void adc_isrMotor1(void)
 
 #if UOMODRI_SPI_DEBUG_CONFIG
         // Set predefined trajectory reference
-        comInterface.positionRef[MOTOR_1]   = __sinpuf32(debugFreq * TIME_M1_S);//debugFreq * TIME_S;//
-        comInterface.velocityRef[MOTOR_1]   = 4.0f * M_PI * M_PI * debugFreq * __cospuf32(debugFreq * TIME_M1_S);//debugFreq * TIME_S;//
-        comInterface.iqRef[MOTOR_1]         = 0.0f;
+//        com_rx_cmd.positionRef[MOTOR_1]   = __sinpuf32(debugFreq * TIME_M1_S);
+//        com_rx_cmd.velocityRef[MOTOR_1]   = 4.0f * M_PI * M_PI * debugFreq * __cospuf32(debugFreq * TIME_M1_S);//debugFreq * TIME_S;//
+//        com_rx_cmd.iqRef[MOTOR_1]         = 0.0f;
+        com_rx_cmd.positionRef[MOTOR_1] = __sinpuf32((float32_t)motor[MOTOR_1].interruptCnt / PWM_FREQ);
+        com_rx_cmd.velocityRef[MOTOR_1] = 4.0f * M_PI * M_PI * __cospuf32((float32_t)motor[MOTOR_1].interruptCnt / PWM_FREQ);
+        com_rx_cmd.iqRef[MOTOR_1]       = 0.0f;
 #endif
         p_foc->pdPos.inTheta    = p_foc->motor_enc.thetaAbsolute;
-        p_foc->pdPos.setTheta   = comInterface.positionRef[MOTOR_1];
+        p_foc->pdPos.setTheta   = com_rx_cmd.positionRef[MOTOR_1];
         p_foc->pdPos.inSpeed    = p_foc->motor_enc.speedEst.speedMech;
-        p_foc->pdPos.setSpeed   = comInterface.velocityRef[MOTOR_1];
-        p_foc->pdPos.ff         = comInterface.iqRef[MOTOR_1];// Set feed-forward current
+        p_foc->pdPos.setSpeed   = com_rx_cmd.velocityRef[MOTOR_1];
+        p_foc->pdPos.ff         = com_rx_cmd.iqRef[MOTOR_1];// Set feed-forward current
         // Run PD controller
         FOC_runPD(&p_foc->pdPos);
         // Set current reference
@@ -279,7 +331,7 @@ __attribute__((interrupt)) void adc_isrMotor1(void)
         // Increment interrupt counter
         motor[MOTOR_1].interruptCnt++;
         // Compute time
-        comInterface.time[MOTOR_1] = TIME_M1_S;//(motor[MOTOR_1].interruptCounter / PWM_FREQ);
+//        com_rx_cmd.time[MOTOR_1] = TIME_M1_S;//(motor[MOTOR_1].interruptCounter / PWM_FREQ);
     }
 
     //-------------------------------------------------------------------//
@@ -309,12 +361,11 @@ __attribute__((interrupt)) void adc_isrMotor2(void)
     GPIO_writePin(DEBUG_INT_PIN2, 1);
 #endif
     FOC_STRUCT*     p_foc       = motor[MOTOR_2].p_motorFOC;
-//    ALIGN_STRUCT*   p_align     = &p_foc->motor_align;
     uint32_t        base        = InterruptList[ADC_IT_MOTOR_2].intPeriphBase; //MOTOR12_IVA_ADC_ADDR;
     uint16_t        group       = InterruptList[ADC_IT_MOTOR_2].intAckGroup;
     ADC_IntNumber   adcIntNum   = (ADC_IntNumber)InterruptList[ADC_IT_MOTOR_2].intPeriphSrc; //MOTOR1_IA_INT_NUM;
 
-    if((p_foc->system_enable == true) && (p_foc->motor_enable == true))
+    if(com_rx_cmd.modeReg.bit.ES && com_rx_cmd.modeReg.bit.EM2)
     {
         // Read encoder position
         ENC_getPosition(&p_foc->motor_enc);
@@ -336,7 +387,7 @@ __attribute__((interrupt)) void adc_isrMotor2(void)
 
         //ENC_update(motor[MOTOR_1].motorFOC->motor_enc);
         // Check for roll-over error
-        if (p_foc->motor_enc.rollOverErrorFlag && p_foc->motor_enc.rollOverErrorFlagEnable)
+        if (p_foc->motor_enc.rollOverErrorFlag && com_rx_cmd.modeReg.bit.EPRE)
         {
             p_foc->errorMsg = SPI_SENSOR_STATUS_ERROR_POS_ROLLOVER;
             // Turn off control loop
@@ -371,15 +422,18 @@ __attribute__((interrupt)) void adc_isrMotor2(void)
 
 #if UOMODRI_SPI_DEBUG_CONFIG
         // Set predefined trajectory reference
-        comInterface.positionRef[MOTOR_2]   = __sinpuf32(debugFreq * TIME_M2_S);//debugFreq * TIME_S;//
-        comInterface.velocityRef[MOTOR_2]   = 4.0f * M_PI * M_PI * debugFreq * __cospuf32(debugFreq * TIME_M2_S);//debugFreq * TIME_S;//
-        comInterface.iqRef[MOTOR_2]         = 0.0f;
+//        comInterface.positionRef[MOTOR_2]   = __sinpuf32(debugFreq * TIME_M2_S);//debugFreq * TIME_S;//
+//        comInterface.velocityRef[MOTOR_2]   = 4.0f * M_PI * M_PI * debugFreq * __cospuf32(debugFreq * TIME_M2_S);//debugFreq * TIME_S;//
+//        comInterface.iqRef[MOTOR_2]         = 0.0f;
+        com_rx_cmd.positionRef[MOTOR_2] = __sinpuf32((float32_t)motor[MOTOR_2].interruptCnt / PWM_FREQ);
+        com_rx_cmd.velocityRef[MOTOR_2] = 4.0f * M_PI * M_PI * __cospuf32((float32_t)motor[MOTOR_2].interruptCnt / PWM_FREQ);
+        com_rx_cmd.iqRef[MOTOR_2]       = 0.0f;
 #endif
         p_foc->pdPos.inTheta    = p_foc->motor_enc.thetaAbsolute;
-        p_foc->pdPos.setTheta   = comInterface.positionRef[MOTOR_2];
+        p_foc->pdPos.setTheta   = com_rx_cmd.positionRef[MOTOR_2];
         p_foc->pdPos.inSpeed    = p_foc->motor_enc.speedEst.speedMech;
-        p_foc->pdPos.setSpeed   = comInterface.velocityRef[MOTOR_2];
-        p_foc->pdPos.ff         = comInterface.iqRef[MOTOR_2];// Set feed-forward current
+        p_foc->pdPos.setSpeed   = com_rx_cmd.velocityRef[MOTOR_2];
+        p_foc->pdPos.ff         = com_rx_cmd.iqRef[MOTOR_2];// Set feed-forward current
         // Run PD controller
         FOC_runPD(&p_foc->pdPos);
         // Set current reference
@@ -418,8 +472,9 @@ __attribute__((interrupt)) void adc_isrMotor2(void)
         motor[MOTOR_2].clCycleNb = EPWM_getTimeBaseCounterValue(MOTOR2_PWM1_BASE);
         // Increment interrupt counter
         motor[MOTOR_2].interruptCnt++;
+
         // Compute time
-        comInterface.time[MOTOR_2] = TIME_M2_S;//(motor[MOTOR_1].interruptCounter / PWM_FREQ);
+//        com_rx_cmd.time[MOTOR_2] = TIME_M2_S;//(motor[MOTOR_1].interruptCounter / PWM_FREQ);
     }
 
     //-------------------------------------------------------------------//
@@ -433,7 +488,9 @@ __attribute__((interrupt)) void adc_isrMotor2(void)
      * Length of the data to be read is passed as data. */
 //    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_FLAG0, IPC_ADDR_CORRECTION_ENABLE, IPC_CMD_READ_MEM, (uint32_t)(&motorCpuToCM[MOTOR_1]), 1);
     //IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_FLAG0, IPC_ADDR_CORRECTION_ENABLE, IPC_CMD_READ_MEM, (uint32_t)(motor[MOTOR_1].p_motorFOC), 1);
+//    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_FLAG0, IPC_ADDR_CORRECTION_ENABLE, IPC_CMD_READ_MEM, (uint32_t)(p_foc), 1);
     // Acknowledge PWM and CLA interrupt flag
+    cpt++;
     Interrupt_clearACKGroup(group);
 #if (UOMODRI == 0)
     GPIO_writePin(DEBUG_INT_PIN2, 0);
@@ -483,10 +540,17 @@ __attribute__((interrupt)) void adc_isrMotor2(void)
 //    GPIO_writePin(DEBUG_INT_PIN2, 0);
 //#endif
 //}
+__attribute__((interrupt)) void dma_isrMsgRx(void)
+{
+    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_FLAG1, IPC_ADDR_CORRECTION_ENABLE, IPC_CMD_READ_MEM, (uint32_t)(&com_rx_raw), 1);
+    DMA_clearTriggerFlag(DMA_COM_SPI_RX_BASE_ADDR);
+    // Clear the interrupt flag
+    Interrupt_clearACKGroup(INTERRUPT_ACK_GROUP7);
+}
 
 __attribute__((interrupt)) void gpio_isrFault1(void)
 {
-    comInterface.systemEnabled = false;
+    com_rx_cmd.modeReg.bit.ES = false;
     MOT_stopCommand(&motor[MOTOR_1]);
     // Reset controllers
     FOC_resetStruct(motor[MOTOR_1].p_motorFOC);
@@ -498,7 +562,7 @@ __attribute__((interrupt)) void gpio_isrFault1(void)
 //    HAL_readDRVData(&hal_motors[0].drvHandle, &drvVars[0]);
 
     // Set CAN error
-    comInterface.canError = SPI_SENSOR_STATUS_ERROR_DRV_NFAULT;
+    motor[MOTOR_1].p_motorFOC->errorMsg = SPI_SENSOR_STATUS_ERROR_DRV_NFAULT;
 
 #if !UOMODRI_SPI_DEBUG_CONFIG
     // Update sensor packet
@@ -511,7 +575,7 @@ __attribute__((interrupt)) void gpio_isrFault1(void)
 
 __attribute__((interrupt)) void gpio_isrFault2(void)
 {
-    comInterface.systemEnabled = false;
+    com_rx_cmd.modeReg.bit.ES = false;
     MOT_stopCommand(&motor[MOTOR_2]);
     // Reset controllers
     FOC_resetStruct(motor[MOTOR_2].p_motorFOC);
@@ -523,7 +587,7 @@ __attribute__((interrupt)) void gpio_isrFault2(void)
 //    HAL_readDRVData(&hal_motors[0].drvHandle, &drvVars[0]);
 
     // Set CAN error
-    comInterface.canError = SPI_SENSOR_STATUS_ERROR_DRV_NFAULT;
+    motor[MOTOR_1].p_motorFOC->errorMsg = SPI_SENSOR_STATUS_ERROR_DRV_NFAULT;
 
 #if !UOMODRI_SPI_DEBUG_CONFIG
     // Update sensor packet

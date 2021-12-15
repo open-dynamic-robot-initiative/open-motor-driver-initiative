@@ -159,17 +159,21 @@ typedef struct _SPI_Cfg_TypeDef_
  */
 typedef struct _DMA_Cfg_TypeDef_
 {
-    uint32_t    dmaChBase;
-    uint32_t    transferSize;//    uint32_t dmaRxBase;
-    uint32_t    srcWrapSize;
-    uint32_t    destWrapSize;
-    uint32_t    config;
-    uint16_t    burstSize;
-    int16_t     destStep;
-    int16_t     srcStep;
-    const void* destAddr;
-    const void* srcAddr;
-    DMA_Trigger trigger;
+    uint32_t            dmaChBase;
+    const void*         p_destAddr;
+    const void*         p_srcAddr;
+    uint32_t            transferSize;
+    uint32_t            srcWrapSize;
+    uint32_t            destWrapSize;
+    uint32_t            config;
+    uint16_t            burstSize;
+    int16_t             destBurstStep;
+    int16_t             srcBurstStep;
+    int16_t             destTransferStep;
+    int16_t             srcTransferStep;
+    DMA_Trigger         trigger;
+    DMA_InterruptMode   ITMode;
+    bool                ITEnable;
 } DMA_TypeDef;
 
 #if (CLA == 1)
@@ -306,8 +310,7 @@ typedef struct _IPC_TypeDef_
     volatile IPC_MessageQueue_t*    p_ipcMsgQ;
     const uint32_t                  ipcIntMsgQL;
     const uint32_t                  ipcIntMsgQR;
-    const uint32_t                  ipcFlagIn;
-    const uint32_t                  ipcFlagOut;
+    const uint32_t                  ipcFlag;
     const uint32_t                  ipcInt;
     void                            (*p_ipcIntHandler)(void);
     const bool                      ipcMsgQEnable;
@@ -348,7 +351,7 @@ typedef struct _HAL_MOTOR_CFG_
  * Function prototypes
  */
 
-void HAL_init(const HAL*);
+void HAL_init(HAL*);
 void HAL_IT_init(const IT_TypeDef*);
 
 // ADC interrupt service routine

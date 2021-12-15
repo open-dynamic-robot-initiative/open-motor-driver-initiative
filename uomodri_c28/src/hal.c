@@ -7,96 +7,8 @@
 #include "communication_cm.h"
 #include "uomodri_hal_config_handlers.h"
 
-
-//typedef struct _mode_reg_t_
-//{
-//    uint16_t        TIMEOUT     : 8;    /*!< Bits 7-0   : R/W - Timeout disable system after no valid command                           */
-//    uint16_t        MODE_RSV1   : 2;    /*!< Bits 9-8   : R/W - Reserved                                                                */
-//    uint16_t        EI2OC       : 1;    /*!< Bits 10    : R/W - Enable/Disable incremental encoder index offset compensation - MOTOR_2  */
-//    uint16_t        EI1OC       : 1;    /*!< Bits 11    : R/W - Enable/Disable incremental encoder index offset compensation - MOTOR_1  */
-//    uint16_t        EPRE        : 1;    /*!< Bits 12    : R/W - Enable/Disable position rollover error - position range : -128 to +128  */
-//    uint16_t        EM2         : 1;    /*!< Bits 13    : R/W - Enable(calibration procedure, alignment \& run)/Disable - MOTOR_2       */
-//    uint16_t        EM1         : 1;    /*!< Bits 14    : R/W - Enable(calibration procedure, alignment \& run)/Disable - MOTOR_1       */
-//    uint16_t        ES          : 1;    /*!< Bits 15    : R/W - Enable/Disable System                                                   */
-//} mode_reg_t;
-//
-//typedef union _mode_reg_u_
-//{
-//  uint16_t          raw;                /*!< Short (16bits) type access */
-//  mode_reg_t        bit;                /*!< @see command_mode_t        */
-//} mode_reg_u;
-//
-//typedef struct _rx_payload_t_
-//{
-//    mode_reg_u      modeReg;
-//    uint32_t        positionRef[2];
-//    uint16_t        velocityRef[2];
-//    uint16_t        iqRef[2];
-//    uint16_t        kpCoeff[2];
-//    uint16_t        kdCoeff[2];
-//    uint8_t         iSat[2];
-//    uint16_t        index;
-//} rx_payload_t;
-//
-//typedef struct _rx_uomodri_t_
-//{
-//    mode_reg_u      modeReg;
-//    float32_t       positionRef[2];
-//    float32_t       velocityRef[2];
-//    float32_t       iqRef[2];
-//    float32_t       kpCoeff[2];
-//    float32_t       kdCoeff[2];
-//    float32_t       iSat[2];
-//} rx_uomodri_t;
-//
-//typedef struct _rx_msg_t_
-//{
-//    rx_payload_t    payload;
-//    uint32_t        crc;
-//} rx_msg_t;
-//
-//typedef struct _status_reg_t_
-//{
-//    uint16_t        ERROR_CODE  : 4;    /*!< Bits 3-0   : R/W - Timeout disable system after no valid command               */
-//    uint16_t        STATUS_RSV1 : 3;    /*!< Bits 6-4   : R/W - Reserved                                                    */
-//    uint16_t        IDX2T       : 1;    /*!< Bits 7     : R/W - incremental encoder status toggle on index detect - MOTOR_2 */
-//    uint16_t        IDX1T       : 1;    /*!< Bits 8     : R/W - incremental encoder status toggle on index detect - MOTOR_1 */
-//    uint16_t        IDX2D       : 1;    /*!< Bits 9     : R/W - incremental encoder status index detected - MOTOR_2         */
-//    uint16_t        IDX1D       : 1;    /*!< Bits 10    : R/W - incremental encoder status index detected - MOTOR_1         */
-//    uint16_t        M2R         : 1;    /*!< Bits 11    : R/W - MOTOR_2 ready/not ready                                     */
-//    uint16_t        M2E         : 1;    /*!< Bits 12    : R/W - MOTOR_2 enabled/not enabled                                 */
-//    uint16_t        M1R         : 1;    /*!< Bits 13    : R/W - MOTOR_1 ready/not ready                                     */
-//    uint16_t        M1E         : 1;    /*!< Bits 14    : R/W - MOTOR_1 enabled/not enabled                                 */
-//    uint16_t        SE          : 1;    /*!< Bits 15    : R/W - System enabled/disabled                                     */
-//} status_reg_t;
-//
-//typedef union _status_reg_u_
-//{
-//  uint16_t          raw;                /*!< Short (16bits) type access */
-//  status_reg_t      bit;                /*!< @see DRV_Stat00_t          */
-//} status_reg_u;
-//
-//typedef struct _tx_payload_t_
-//{
-//    status_reg_u    statusReg;
-//    uint16_t        timeStamp;
-//    uint32_t        position[2];
-//    uint16_t        velocity[2];
-//    uint16_t        iq[2];
-//    uint16_t        coilRes[2];
-//    uint16_t        adcSamples[2];
-//    uint16_t        lastCmdIndex;
-//} tx_payload_t;
-//
-//typedef struct _tx_msg_t_
-//{
-//    tx_payload_t    payload;
-//    uint32_t        crc;
-//    float32_t       time[2];             // Time in seconds since startup
-//} tx_msg_t;
-
-extern rx_uomodri_t* com_rx_cmd;
-extern tx_msg_t* com_tx_msg;
+//extern rx_uomodri_t* com_rx_cmd;
+//extern tx_msg_t* com_tx_msg;
 
 /* Static function signatures */
 // Device HAL
@@ -119,7 +31,7 @@ void HAL_CLA_init(const CLA_TypeDef*);
  * @brief       Initialize all peripherals necessaries.
  * @param[in]   *p_hal  Pointer on the general HAL structure definition
  */
-void HAL_init(const HAL* p_hal)
+void HAL_init(HAL* p_hal)
 {
 //    uint32_t    command, data, addr;
     if(p_hal != NULL)
@@ -134,24 +46,11 @@ void HAL_init(const HAL* p_hal)
         HAL_eQEP_init(p_hal->p_eqepHandler);
         // Initialize IPC communication
         HAL_IPC_init(p_hal->p_ipcHandler);
-        // Memory address sharing CM to CPU1
-        com_rx_cmd = (void *)HAL_IPC_addr_init(&ipcCfgList[0], 0x1000);
-        com_tx_msg = (void *)HAL_IPC_addr_init(&ipcCfgList[0], 0x1001);
-//        IPC_waitForFlag(IPC_CPU1_L_CM_R, IPC_FLAG0);
-//        IPC_readCommand(IPC_CPU1_L_CM_R, IPC_FLAG0, IPC_ADDR_CORRECTION_ENABLE, &command, &addr, &data);
-//        if(*command == COM_RX_CMD_ADDR)
-//            com_rx_cmd = (const void *)addr;
-//        IPC_ackFlagRtoL(IPC_CPU1_L_CM_R, IPC_FLAG0);
-        // Memory address sharing CM to CPU1
-//        IPC_waitForFlag(IPC_CPU1_L_CM_R, IPC_FLAG0);
-//        IPC_readCommand(IPC_CPU1_L_CM_R, IPC_FLAG0, IPC_ADDR_CORRECTION_ENABLE, &command, &addr, &data);
-//        if(*command == COM_TX_MSG_ADDR)
-//            com_tx_msg = (const void *)addr;
-//        IPC_ackFlagRtoL(IPC_CPU1_L_CM_R, IPC_FLAG0);
-
-
-        //p_msgComInter = (command == 0x3001) ? ((void *)addr) : (NULL);
-        //p_hal->p_dmaHandler->srcAddr = (command == 0x3001) ? ((const void *)addr) : (NULL);
+//        // Memory address sharing CM to CPU1
+//        while(p_hal->p_ipcHandler->p_ipcIntHandler != NULL)
+//            p_hal->p_ipcHandler++;
+//        com_rx_cmd = (void *)HAL_IPC_addr_init(p_hal->p_ipcHandler, 0x1000);
+//        com_tx_msg = (void *)HAL_IPC_addr_init(p_hal->p_ipcHandler, 0x1001);
         // Initialize DMA
         HAL_DMA_init(p_hal->p_dmaHandler);
         // Initialize SPIA device
@@ -652,7 +551,6 @@ void HAL_DMA_init(const DMA_TypeDef* p_dmaCfg)
     if(p_dmaCfg != NULL)
     {
         uint32_t dmaChBase = p_dmaCfg->dmaChBase;
-        //void* srcAddr = NULL;
 
         /* Global hardware reset of the DMA controller. */
         DMA_initController();
@@ -660,24 +558,21 @@ void HAL_DMA_init(const DMA_TypeDef* p_dmaCfg)
 
         while(dmaChBase != 0xFFFFFFFF)
         {
-            const void* p_srcAddr = *((uint32_t *)p_dmaCfg->srcAddr);
-//            const void* p_srcAddr = *((uint32_t *)p_dmaCfg->srcAddr);
             /* DMA channel initialization
              * Configure direction, words per burst
              */
-            DMA_configAddresses(dmaChBase, p_dmaCfg->destAddr, p_srcAddr);//(const void *)srcAddr);//(uint16_t *)srcAddr);
-            DMA_configBurst(dmaChBase, p_dmaCfg->burstSize, p_dmaCfg->srcStep, p_dmaCfg->destStep);
-            DMA_configTransfer(dmaChBase, p_dmaCfg->transferSize, p_dmaCfg->srcStep, p_dmaCfg->destStep);
+            DMA_configAddresses(dmaChBase, p_dmaCfg->p_destAddr, p_dmaCfg->p_srcAddr);
+            DMA_configBurst(dmaChBase, p_dmaCfg->burstSize, p_dmaCfg->srcBurstStep, p_dmaCfg->destBurstStep);
+            DMA_configTransfer(dmaChBase, p_dmaCfg->transferSize, p_dmaCfg->srcTransferStep, p_dmaCfg->destTransferStep);
             //DMA_configWrap(dmaChBase, p_dmaCfg->srcWrapSize, p_dmaCfg->srcStep, p_dmaCfg->destWrapSize, p_dmaCfg->destStep);
             DMA_configMode(dmaChBase, p_dmaCfg->trigger, p_dmaCfg->config);
             /* Clear flags & disable interrupts */
             DMA_disableOverrunInterrupt(dmaChBase);
-            DMA_setInterruptMode(DMA_CH5_BASE, DMA_INT_AT_END);
-            DMA_enableInterrupt(dmaChBase);//DMA_disableInterrupt(dmaChBase); //
+            DMA_setInterruptMode(dmaChBase, p_dmaCfg->ITMode);
+            (p_dmaCfg->ITEnable) ? (DMA_enableInterrupt(dmaChBase)) : (DMA_disableInterrupt(dmaChBase));
             /* Enable Trigger source & DMA channel */
             DMA_clearTriggerFlag(dmaChBase);
             DMA_enableTrigger(dmaChBase);
-
             DMA_startChannel(dmaChBase);
             dmaChBase = (++p_dmaCfg)->dmaChBase;
         }
@@ -712,7 +607,7 @@ void HAL_IPC_init(const IPC_TypeDef* p_ipcCfg)
                 // Clear any IPC flags if set already
                 IPC_clearFlagLtoR(ipcType, IPC_FLAG_ALL);
                 // Synchronize both the cores.
-                IPC_sync(ipcType, p_ipcCfg->ipcFlagOut);
+                IPC_sync(ipcType, IPC_SYNC_FLAG);
                 ipcSyncDone |= (1 << ipcType);
             }
             ipcType = (++p_ipcCfg)->ipcType;
@@ -725,11 +620,12 @@ void HAL_IPC_init(const IPC_TypeDef* p_ipcCfg)
 void* HAL_IPC_addr_init(const IPC_TypeDef* p_ipcCfg, uint32_t cmd_valid)
 {
     uint32_t cmd, data, addr;
-    bool addrCorrection = (p_ipcCfg->ipcType == IPC_CPU1_L_CM_R || p_ipcCfg->ipcType == IPC_CPU2_L_CM_R) ? (IPC_ADDR_CORRECTION_ENABLE) : (IPC_ADDR_CORRECTION_DISABLE);;
+    bool addrCorr = ((p_ipcCfg->ipcType == IPC_CPU1_L_CM_R) || (p_ipcCfg->ipcType == IPC_CPU2_L_CM_R)) ?
+            (IPC_ADDR_CORRECTION_ENABLE) : (IPC_ADDR_CORRECTION_DISABLE);
     // Memory address sharing CM to CPU1
-    IPC_waitForFlag(p_ipcCfg->ipcType, p_ipcCfg->ipcFlagIn);
-    IPC_readCommand(p_ipcCfg->ipcType, p_ipcCfg->ipcFlagIn, addrCorrection, &cmd, &addr, &data);
-    IPC_ackFlagRtoL(p_ipcCfg->ipcType, p_ipcCfg->ipcFlagOut);
+    IPC_waitForFlag(p_ipcCfg->ipcType, p_ipcCfg->ipcFlag);
+    IPC_readCommand(p_ipcCfg->ipcType, p_ipcCfg->ipcFlag, addrCorr, &cmd, &addr, &data);
+    IPC_ackFlagRtoL(p_ipcCfg->ipcType, p_ipcCfg->ipcFlag);
 
     return((cmd == cmd_valid) ? ((void *)addr) : (NULL));
 }

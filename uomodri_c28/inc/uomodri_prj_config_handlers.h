@@ -16,23 +16,23 @@
 #include "uomodri_user_defines.h"
 #include "uomodri_hal_config_handlers.h"
 
-extern const GPIO_TypeDef GpioPinsCfgList[];
-extern const ADC_INIT_TypeDef AdcInitList[];
-extern const ADC_ACQ_TypeDef AdcAcqList[];
-extern const ADC_IT_TypeDef AdcIntList[];
-extern const ADC_TypeDef AdcCfgList[];
-extern const eQEP_TypeDef QepCfgList[];
-extern const SPI_TypeDef spiCfgList[];
-extern const DMA_TypeDef dmaCfgList[];
-extern const IPC_TypeDef ipcCfgList[];
-extern const ePWM_TB_TypeDef PwmTimeBaseCfgList[];
-extern const ePWM_CC_TypeDef PwmCounterCompareCfgList[];
-extern const ePWM_AQ_TypeDef PwmActionQualifierCfgList[];
-extern const ePWM_DB_TypeDef PwmDeadBandCfgList[];
-extern const ePWM_ET_TypeDef PwmAdcSocEventTriggerCfgList[];
-extern const ePWM_IT_TypeDef PwmInterruptsEventCfgList[];
-extern const ePWM_TypeDef PwmCfgList[];
-extern const HAL hal;
+//extern const GPIO_TypeDef GpioPinsCfgList[];
+//extern const ADC_INIT_TypeDef AdcInitList[];
+//extern const ADC_ACQ_TypeDef AdcAcqList[];
+//extern const ADC_IT_TypeDef AdcIntList[];
+//extern const ADC_TypeDef AdcCfgList[];
+//extern const eQEP_TypeDef QepCfgList[];
+//extern const SPI_TypeDef spiCfgList[];
+//extern const DMA_TypeDef dmaCfgList[];
+//extern const IPC_TypeDef ipcCfgList[];
+//extern const ePWM_TB_TypeDef PwmTimeBaseCfgList[];
+//extern const ePWM_CC_TypeDef PwmCounterCompareCfgList[];
+//extern const ePWM_AQ_TypeDef PwmActionQualifierCfgList[];
+//extern const ePWM_DB_TypeDef PwmDeadBandCfgList[];
+//extern const ePWM_ET_TypeDef PwmAdcSocEventTriggerCfgList[];
+//extern const ePWM_IT_TypeDef PwmInterruptsEventCfgList[];
+//extern const ePWM_TypeDef PwmCfgList[];
+//extern       HAL hal;
 
 //extern uint8_t      polePairs;    // Number of pole pairs of the motor
 //extern float32_t    thetaMechScaler; // [pu/register]
@@ -41,7 +41,9 @@ extern const HAL hal;
 //extern float32_t    thetaElec; // [pu]
 //extern float32_t    thetaMechCal[2]; // [pu]
 //extern float32_t    pdSat;
-__attribute__((interrupt)) void ipc_isrComInter(void);
+__attribute__((interrupt)) void ipc_isrStatusMsg(void);
+__attribute__((interrupt)) void ipc_isrMsgCmd(void);
+__attribute__((interrupt)) void dma_isrMsgRx(void);
 //__attribute__((interrupt)) void dma5_isr(void);
 __attribute__((interrupt)) void adc_isrMotor1(void);
 __attribute__((interrupt)) void adc_isrMotor2(void);
@@ -50,32 +52,32 @@ __attribute__((interrupt)) void adc_isrMotor2(void);
 __attribute__((interrupt)) void gpio_isrFault1(void);
 __attribute__((interrupt)) void gpio_isrFault2(void);
 
-__attribute__((interrupt)) void cla1_isr1(void);
+//__attribute__((interrupt)) void cla1_isr1(void);
 //CLA C Tasks defined in Cla1Tasks_C.cla
 //__attribute__((interrupt)) void Cla1Task1(void);
 //__attribute__((interrupt)) void Cla1Task8(void);
 
-static ComInterface comInterface =
-{
- .systemEnabled     = false,
- .lastCommandIndex  = 0,
- .time              = {0.0, 0.0},
- .lastMessageMs     = 0,
- .timeoutThreshold  = 0xFFFF,
- .rolloverErrorFlag = false,
- .canError          = SPI_SENSOR_STATUS_ERROR_NO_ERROR,
- .positionRef       = {0.0, 0.0},
- .velocityRef       = {0.0, 0.0},
- .iqRef             = {0.0, 0.0},
- .positionLsb       = CI_POSITION_LSB,
- .velocityLsb       = CI_VELOCITY_LSB,
- .iqLsb             = CI_IQ_LSB,
- .currentSatLsb     = CI_CURRENT_SAT_LSB,
- .resistanceLsb     = CI_LSBISTANCE_LSB,
- .voltageLsb        = CI_VOLTAGE_LSB,
- .kpLsb             = CI_KP_LSB,
- .kdLsb             = CI_KD_LSB,
-};
+//static ComInterface comInterface =
+//{
+// .systemEnabled     = false,
+// .lastCommandIndex  = 0,
+// .time              = {0.0, 0.0},
+// .lastMessageMs     = 0,
+// .timeoutThreshold  = 0xFFFF,
+// .rolloverErrorFlag = false,
+// .canError          = SPI_SENSOR_STATUS_ERROR_NO_ERROR,
+// .positionRef       = {0.0, 0.0},
+// .velocityRef       = {0.0, 0.0},
+// .iqRef             = {0.0, 0.0},
+// .positionLsb       = CI_POSITION_LSB,
+// .velocityLsb       = CI_VELOCITY_LSB,
+// .iqLsb             = CI_IQ_LSB,
+// .currentSatLsb     = CI_CURRENT_SAT_LSB,
+// .resistanceLsb     = CI_LSBISTANCE_LSB,
+// .voltageLsb        = CI_VOLTAGE_LSB,
+// .kpLsb             = CI_KP_LSB,
+// .kdLsb             = CI_KD_LSB,
+//};
 
 static const IT_TypeDef InterruptList[] =
 {
@@ -99,27 +101,30 @@ static const IT_TypeDef InterruptList[] =
   .intPeriphBase    = MOTOR12_IVA_ADC_ADDR,
   .intPeriphSrc     = MOTOR2_IA_INT_NUM
  }, //
-// {.motorID = MOTOR_1,   .intNum = INT_EPWM1,        .intPeriphBase = MOTOR1_PWM1_BASE,                                          .intCpuGroup = INTERRUPT_CPU_INT3,  .intAckGroup = INTERRUPT_ACK_GROUP3,    .handler = &pwm_isrMotor1},
-// {.motorID = MOTOR_2,   .intNum = INT_EPWM4,        .intPeriphBase = MOTOR2_PWM1_BASE,                                          .intCpuGroup = INTERRUPT_CPU_INT3,  .intAckGroup = INTERRUPT_ACK_GROUP3,    .handler = &pwm_isrMotor2},
+ {
+  .intNum           = INT_CMTOCPUXIPC0,
+  .intAckGroup      = INTERRUPT_ACK_GROUP11,
+  .handler          = &ipc_isrStatusMsg,
+ },
  {
   .intNum           = INT_CMTOCPUXIPC1,
   .intAckGroup      = INTERRUPT_ACK_GROUP11,
-  .handler          = &ipc_isrComInter
+  .handler          = &ipc_isrMsgCmd,
  },
-// {
-//  .intNum           = INT_DMA_CH5,
-//  .intAckGroup      = INTERRUPT_ACK_GROUP7,
-//  .handler          = &dma5_isr
-// },
+ {
+  .intNum           = DMA_COM_SPI_RX_INT,
+  .intAckGroup      = INTERRUPT_ACK_GROUP7,
+  .handler          = &dma_isrMsgRx,
+ },
  {
   .intNum           = INT_XINT1,
   .intAckGroup      = INTERRUPT_ACK_GROUP1,
-  .handler          = &gpio_isrFault1
+  .handler          = &gpio_isrFault1,
  },
  {
   .intNum           = INT_XINT2,
   .intAckGroup      = INTERRUPT_ACK_GROUP1,
-  .handler          = &gpio_isrFault2
+  .handler          = &gpio_isrFault2,
  },
 #if (CLA == 1)
  {
@@ -584,11 +589,14 @@ static MOTOR_STRUCT motor[] =
   .p_motorHalCfg                    = &hal_motor_cfg[MOTOR_1],
   .p_motorDRV                       = &drv_cfg[MOTOR_1],
   .p_motorFOC                       = &motor_foc[MOTOR_1],
+  .clCycleNb                        = 0,
+  .interruptCnt                     = 0,
 //  .motorAlign.state                 = ALIGN_COUNT_UP,
 //  .motorAlign.cnt                   = 0,
 //  .motorAlign.cntMax                = PWM_FREQ,
 //  .motorAlign.idAlignRef            = 0.5,// 500mA alignment current
 //  .motorAlign.idAlign               = 0.0,
+  .statorResEst                     = 1.0,
   .statorResEstLpf.a                = MOTOR1_STATOR_RESISTOR_LPF_ALPHA,
   .statorResEstLpf.one_minus_a      = MOTOR1_STATOR_RESISTOR_LPF_ONE_M_ALPHA,
 //  .enabled          = false,
@@ -608,11 +616,14 @@ static MOTOR_STRUCT motor[] =
   .p_motorHalCfg                    = &hal_motor_cfg[MOTOR_2],
   .p_motorDRV                       = &drv_cfg[MOTOR_2],
   .p_motorFOC                       = &motor_foc[MOTOR_2],
+  .clCycleNb                        = 0,
+  .interruptCnt                     = 0,
 //  .motorAlign.state                 = ALIGN_COUNT_UP,
 //  .motorAlign.cnt                   = 0,
 //  .motorAlign.cntMax                = PWM_FREQ,
 //  .motorAlign.idAlignRef            = 0.5,// 500mA alignment current
 //  .motorAlign.idAlign               = 0.0,
+  .statorResEst                     = 1.0,
   .statorResEstLpf.a                = MOTOR2_STATOR_RESISTOR_LPF_ALPHA,
   .statorResEstLpf.one_minus_a      = MOTOR2_STATOR_RESISTOR_LPF_ONE_M_ALPHA,
 //  .enabled          = false,

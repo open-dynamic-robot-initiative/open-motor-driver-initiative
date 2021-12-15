@@ -75,6 +75,9 @@ SECTIONS
    .reset           : > RESET, TYPE = DSECT /* not used, */
 
    .stack           : > RAMM1
+
+    /* uomodri named section at given address: */
+   //.ComRxCmdSection	: > 0x039000
 #if defined(__TI_EABI__)
    .bss             : > RAMLS2
    //.bss             : > RAMLS5

@@ -2,25 +2,32 @@
 #define __UOMODRI_HAL_CONFIG_HANDLERS_H__
 
 // drivers
-#include "communication_interface.h"
+//#include "communication_interface.h"
 #include "f2838x_device.h"
 #include "f2838x_examples.h"
 #include "driverlib.h"
 #include "device.h"
 
 #include "hal.h"
+#include "communication_cm.h"
 #include "uomodri_user_defines.h"
 //#include "uOmodriClaTasksShare.h"
 
-__attribute__((interrupt)) void ipc_isrComInter(void);
-
+//__attribute__((interrupt)) void ipc_isrComInter(void);
+__attribute__((interrupt)) void ipc_isrStatusMsg(void);
+__attribute__((interrupt)) void ipc_isrMsgCmd(void);
 // Communication dual buffers for initialization
 //#pragma DATA_SECTION(msgComInter, "MSGRAM_CM_TO_CPU1")
 //extern ComInterface msgComInter;
 //extern DualBufferW dualBufferW;
 //extern DualBufferR dualBufferR;
 //extern IPC_MessageQueue_t msgQueue;
-
+extern rx_msg_t com_rx_raw;
+extern tx_msg_t com_tx_msg[2];
+#if (UOMODRI == 0)
+extern rx_msg_t mst_tx_msg;
+#endif
+//extern rx_msg_t __attribute__((section (".ComRxCmdSection"))) com_rx_raw;
 //extern const void* p_msgComInter;
 
 /** @var    GPIO_TypeDef GpioPinsCfgList[]
@@ -45,6 +52,11 @@ static const GPIO_TypeDef GpioPinsCfgList[] =
  {.pinNumber = UART_DBG_TX,             .fctMux = UART_DBG_TX_CFG,              .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CM,     .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0,  .intEnable = false},
  {.pinNumber = UART_DBG_RX,             .fctMux = UART_DBG_RX_CFG,              .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CM,     .direction = GPIO_DIR_MODE_IN,  .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0,  .intEnable = false},
 #endif
+ // SPIC pins : MASTER DEBUG SRC
+ {.pinNumber = MST_SPI_SIMO,            .fctMux = MST_SPI_SIMO_CFG,             .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 1,  .intEnable = false},
+ {.pinNumber = MST_SPI_SOMI,            .fctMux = MST_SPI_SOMI_CFG,             .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_IN,  .samplingInMode = GPIO_QUAL_3SAMPLE,.setValue = 0,  .intEnable = false},
+ {.pinNumber = MST_SPI_CLK,             .fctMux = MST_SPI_CLK_CFG,              .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 1,  .intEnable = false},
+ {.pinNumber = MST_SPI_CS,              .fctMux = MST_SPI_CS_CFG,               .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 1,  .intEnable = false},
 #endif
  // Quadrature encoder #1
  {.pinNumber = MOTOR1_ENC_CHA,          .fctMux = MOTOR1_ENC_CHA_CFG,           .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_IN,  .samplingInMode = GPIO_QUAL_6SAMPLE,.setValue = 0,  .intEnable = false},
@@ -59,10 +71,10 @@ static const GPIO_TypeDef GpioPinsCfgList[] =
  {.pinNumber = DRV_SPI_SOMI,            .fctMux = DRV_SPI_SOMI_CFG,             .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_IN,  .samplingInMode = GPIO_QUAL_3SAMPLE,.setValue = 0,  .intEnable = false},
  {.pinNumber = DRV_SPI_CLK,             .fctMux = DRV_SPI_CLK_CFG,              .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 1,  .intEnable = false},
  // SPIB pins : EXTERNAL COM
- {.pinNumber = COM_SPI_SIMO,            .fctMux = COM_SPI_SIMO_CFG,             .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 1,  .intEnable = false},
- {.pinNumber = COM_SPI_SOMI,            .fctMux = COM_SPI_SOMI_CFG,             .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_IN,  .samplingInMode = GPIO_QUAL_3SAMPLE,.setValue = 0,  .intEnable = false},
- {.pinNumber = COM_SPI_CLK,             .fctMux = COM_SPI_CLK_CFG,              .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 1,  .intEnable = false},
- {.pinNumber = COM_SPI_CS,              .fctMux = COM_SPI_CS_CFG,               .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 1,  .intEnable = false},
+ {.pinNumber = COM_SPI_SIMO,            .fctMux = COM_SPI_SIMO_CFG,             .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_IN,  .samplingInMode = GPIO_QUAL_3SAMPLE,.setValue = 0,  .intEnable = false},
+ {.pinNumber = COM_SPI_SOMI,            .fctMux = COM_SPI_SOMI_CFG,             .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 1,  .intEnable = false},
+ {.pinNumber = COM_SPI_CLK,             .fctMux = COM_SPI_CLK_CFG,              .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_IN,  .samplingInMode = GPIO_QUAL_3SAMPLE,.setValue = 0,  .intEnable = false},
+ {.pinNumber = COM_SPI_CS,              .fctMux = COM_SPI_CS_CFG,               .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_IN,  .samplingInMode = GPIO_QUAL_3SAMPLE,.setValue = 0,  .intEnable = false},
  // DRV1 pins
  {.pinNumber = MOTOR1_DRV_GPIO_EN,      .fctMux = MOTOR1_DRV_GPIO_EN_CFG,       .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0,  .intEnable = false},
  {.pinNumber = MOTOR1_PWM1_CHA,         .fctMux = MOTOR1_PWM1_CHA_CFG,          .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0,  .intEnable = false},
@@ -225,7 +237,7 @@ static const SPI_TypeDef spiCfgList[] =
   .highSpeedMode        = false
  },
  {.spiBase              = COM_SPI_BASE,
-  .bitRate              = 12000000U,
+  .bitRate              = 8000000U,
   .dataWidth            = 16U,
   .mode                 = SPI_MODE_SLAVE,
   .protocol             = SPI_PROT_POL0PHA1,
@@ -233,6 +245,17 @@ static const SPI_TypeDef spiCfgList[] =
   .rxLevel              = SPI_FIFO_RX4,
   .highSpeedMode        = false
  },
+#if (UOMODRI == 0)
+ {.spiBase              = MST_SPI_BASE,
+  .bitRate              = 8000000U,
+  .dataWidth            = 16U,
+  .mode                 = SPI_MODE_MASTER,
+  .protocol             = SPI_PROT_POL0PHA1,
+  .txLevel              = SPI_FIFO_TX4,
+  .rxLevel              = SPI_FIFO_RX4,
+  .highSpeedMode        = false
+ },
+#endif
  // END OF ARRAY
  {.spiBase = 0xFFFFFFFF},
 };
@@ -240,33 +263,60 @@ static const SPI_TypeDef spiCfgList[] =
 static const DMA_TypeDef dmaCfgList[] =
 {
  // DMA base register initialization
- // DMA for SPI communication Tx
- {.dmaChBase    = DMA_COM_SPI_TX_BASE_ADDR,
-  .transferSize = DMA_COM_SPI_TX_RX_TRANSFER_NB,
-  .srcWrapSize  = DMA_COM_SPI_TX_RX_TRANSFER_NB + 1,
-  .destWrapSize = 0,
-  .config       = (DMA_CFG_ONESHOT_ENABLE | DMA_CFG_CONTINUOUS_ENABLE | DMA_CFG_SIZE_16BIT),
-  .burstSize    = DMA_COM_SPI_TX_RX_16BIT_BURST_SIZE, // an object of type uint32_t or float32_t
-  .destStep     = 0,
-  .srcStep      = 1,
-  .destAddr     = (uint16_t *) COM_SPI_TX_BASE_ADDR,
-  .srcAddr      = NULL,//&p_msgComInter,
-//  .srcAddr      = (uint16_t *) CMTOCPUXMSGRAM0_BASE,//CPUXTOCMMSGRAM0_BASE,
-  .trigger      = DMA_TRIGGER_SOFTWARE,
- },
  // DMA for SPI communication Rx
-// {.dmaChBase    = DMA_COM_SPI_RX_BASE_ADDR,
-//  .transferSize = DMA_COM_SPI_TX_RX_LENGTH,
-//  .srcWrapSize  = 0,
-//  .destWrapSize = DMA_COM_SPI_TX_RX_LENGTH,
-//  .config       = (DMA_CFG_ONESHOT_DISABLE | DMA_CFG_CONTINUOUS_ENABLE | DMA_CFG_SIZE_16BIT),
-//  .burstSize    = 1,
-//  .destStep     = 1,
-//  .srcStep      = 0,
-//  .destAddr     = dualBufferR.comPackets,
-//  .srcAddr      = (uint16_t *) COM_SPI_RX_BASE_ADDR,
-//  .trigger      = DMA_TRIGGER_SPIBRX
-// },
+ {
+  .dmaChBase        = DMA_COM_SPI_RX_BASE_ADDR,
+  .p_destAddr       = (rx_msg_t *) &com_rx_raw,
+  .p_srcAddr        = (uint16_t *) COM_SPI_RX_BASE_ADDR,
+  .burstSize        = DMA_COM_SPI_TX_RX_16BIT_BURST_SIZE,
+  .transferSize     = DMA_COM_SPI_TX_RX_TRANSFER_NB,
+  // .srcWrapSize  = 0,
+  // .destWrapSize = DMA_COM_SPI_TX_RX_TRANSFER_NB + 1,
+  .destBurstStep    = 1,
+  .srcBurstStep     = 0,
+  .destTransferStep = DMA_COM_SPI_TX_RX_16BIT_BURST_SIZE,
+  .srcTransferStep  = 0,
+  .config           = (DMA_CFG_ONESHOT_DISABLE | DMA_CFG_CONTINUOUS_DISABLE | DMA_CFG_SIZE_16BIT),
+  .trigger          = DMA_TRIGGER_SPIBRX,
+  .ITMode           = DMA_INT_AT_END,
+  .ITEnable         = true,
+ },
+ // DMA for SPI communication Tx
+ {
+  .dmaChBase        = DMA_COM_SPI_TX_BASE_ADDR,
+  .p_destAddr       = (uint16_t *) COM_SPI_TX_BASE_ADDR,
+  .p_srcAddr        = &com_tx_msg[0],
+  .burstSize        = DMA_COM_SPI_TX_RX_16BIT_BURST_SIZE, // an object of type uint32_t or float32_t
+  .transferSize     = DMA_COM_SPI_TX_RX_TRANSFER_NB,
+  //  .srcWrapSize  = DMA_COM_SPI_TX_RX_TRANSFER_NB + 1,
+  .destBurstStep    = 0,
+  .srcBurstStep     = 1,
+  .destTransferStep = 0,
+  .srcTransferStep  = DMA_COM_SPI_TX_RX_16BIT_BURST_SIZE,
+  .config           = (DMA_CFG_ONESHOT_DISABLE | DMA_CFG_CONTINUOUS_DISABLE | DMA_CFG_SIZE_16BIT),
+  .trigger          = DMA_TRIGGER_SPIBTX,
+  .ITMode           = DMA_INT_AT_END,
+  .ITEnable         = false,
+ },
+#if (UOMODRI == 0)
+ {
+  .dmaChBase        = DMA_MST_SPI_TX_BASE_ADDR,
+  .p_destAddr       = (uint16_t *) MST_SPI_TX_BASE_ADDR,
+  .p_srcAddr        = (uint16_t *) &mst_tx_msg,
+  .burstSize        = DMA_MST_SPI_TX_RX_16BIT_BURST_SIZE, // an object of type uint32_t or float32_t
+  .transferSize     = DMA_MST_SPI_TX_RX_TRANSFER_NB,
+  .srcWrapSize      = DMA_MST_SPI_TX_RX_TRANSFER_NB + 1,
+  .destWrapSize     = 0,
+  .destBurstStep    = 0,
+  .srcBurstStep     = 1,
+  .destTransferStep = 0,
+  .srcTransferStep  = DMA_MST_SPI_TX_RX_16BIT_BURST_SIZE,
+  .config           = (DMA_CFG_ONESHOT_ENABLE | DMA_CFG_CONTINUOUS_ENABLE | DMA_CFG_SIZE_16BIT),
+  .trigger          = DMA_TRIGGER_SOFTWARE,
+  .ITMode           = DMA_INT_AT_END,
+  .ITEnable         = false,
+ },
+#endif
  // END OF ARRAY
  {.dmaChBase = 0xFFFFFFFF},
 };
@@ -275,17 +325,37 @@ static const IPC_TypeDef ipcCfgList[] =
 {
  {
   .ipcType          = IPC_CPU1_L_CM_R,
-  .ipcFlagIn        = IPC_FLAG31,
+  .p_ipcMsgQ        = NULL,
+  .ipcIntMsgQL      = 0,
+  .ipcIntMsgQR      = 0,
+  .ipcFlag          = IPC_FLAG0,
+  .ipcInt           = IPC_INT0,
+  .p_ipcIntHandler  = &ipc_isrStatusMsg,
   .ipcMsgQEnable    = false,
-  .ipcIntEnable     = false
+  .ipcIntEnable     = true,
  },
  {
   .ipcType          = IPC_CPU1_L_CM_R,
+  .p_ipcMsgQ        = NULL,
+  .ipcIntMsgQL      = 0,
+  .ipcIntMsgQR      = 0,
+  .ipcFlag          = IPC_FLAG1,
+  .ipcInt           = IPC_INT1,
+  .p_ipcIntHandler  = &ipc_isrMsgCmd,
   .ipcMsgQEnable    = false,
   .ipcIntEnable     = true,
-  .ipcInt           = IPC_INT1,
-  .p_ipcIntHandler  = &ipc_isrComInter,
  },
+// {
+//  .ipcType          = IPC_CPU1_L_CM_R,
+//  .p_ipcMsgQ        = NULL,
+//  .ipcIntMsgQL      = 0,
+//  .ipcIntMsgQR      = 0,
+//  .ipcFlag          = IPC_FLAG0,
+//  .ipcInt           = 0,
+//  .p_ipcIntHandler  = NULL,
+//  .ipcMsgQEnable    = false,
+//  .ipcIntEnable     = false,
+// },
 // {.ipcType  = IPC_CM_L_CPU1_R, .ipcbase = IPC_CPU1_L_CM_R, .ipcFlag   = IPC_FLAG31, .msgQueueEnable   = false},
  {.ipcType = IPC_TOTAL_NUM},
 };
@@ -457,7 +527,7 @@ static const ePWM_TypeDef PwmCfgList[] =
 /** @var    HAL     hal
  *  @brief  General configuration structure for the Hardware Abstraction Layer.
  */
-static const HAL hal =
+static HAL hal =
 {.p_gpioHandler = GpioPinsCfgList,
  .p_adcHandler  = AdcCfgList,
  .p_epwmHandler = PwmCfgList,

@@ -66,11 +66,12 @@ uint8_t dbg_tx_msg[DBG_TX_MSG_SIZE];
 #pragma DATA_SECTION(msgArrayRx, "MSGRAM_CM_TO_CPU1");
 uint8_t msgArrayRx[MSG_RX_SIZE];
 
-//#pragma DATA_SECTION(com_rx_cmd, "MSGRAM_CM_TO_CPU1");
-rx_uomodri_t __attribute__((section (".ComRxCmdSection"))) com_rx_cmd;
-//#pragma DATA_SECTION(com_tx_msg, "MSGRAM_CM_TO_CPU1");
-//tx_msg_t com_tx_msg;
-tx_msg_t __attribute__((section (".ComTxMsgSection"))) com_tx_msg;
+#pragma DATA_SECTION(com_rx_cmd, "MSGRAM_CM_TO_CPU1");
+rx_uomodri_t com_rx_cmd;
+//rx_uomodri_t __attribute__((section (".ComRxCmdSection"))) com_rx_cmd;
+#pragma DATA_SECTION(com_tx_msg, "MSGRAM_CM_TO_CPU1");
+tx_msg_t com_tx_msg;
+//tx_msg_t __attribute__((section (".ComTxMsgSection"))) com_tx_msg;
 
 extern const HAL_CM hal_cm;
 

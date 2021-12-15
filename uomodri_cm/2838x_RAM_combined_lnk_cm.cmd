@@ -66,8 +66,8 @@ SECTIONS
    .bss             : > SxRAM
    .const           : > C1RAM
    /* uomodri named section at given address: */
-   .ComRxCmdSection	: > 0x20082000
-   .ComTxMsgSection	: > 0x20082040
+//   .ComRxCmdSection	: > 0x20082000
+//   .ComTxMsgSection	: > 0x20082040
 
 /*
     MSGRAM_CM_TO_CPU1 : > CMTOCPU1MSGRAM0, type=NOINIT
@@ -75,7 +75,7 @@ SECTIONS
     MSGRAM_CPU1_TO_CM : > CPU1TOCMMSGRAM0, type=NOINIT
     MSGRAM_CPU2_TO_CM : > CPU2TOCMMSGRAM0, type=NOINIT
 */
-    MSGRAM_CM_TO_CPU1 : > CMTOCPU1MSGRAM, type=NOINIT
+    MSGRAM_CM_TO_CPU1 : > CMTOCPU1MSGRAM//, type=NOINIT
     MSGRAM_CM_TO_CPU2 : > CMTOCPU2MSGRAM, type=NOINIT
     MSGRAM_CPU1_TO_CM : > CPU1TOCMMSGRAM, type=NOINIT
     MSGRAM_CPU2_TO_CM : > CPU2TOCMMSGRAM, type=NOINIT

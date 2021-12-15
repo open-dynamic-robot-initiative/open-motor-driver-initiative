@@ -116,10 +116,41 @@
 #define UART_DBG_RX                             43
 #define UART_DBG_RX_CFG                         GPIO_43_UARTA_RX
 #endif
+#define MST_SPI_SIMO                            (69)
+#define MST_SPI_SIMO_CFG                        GPIO_69_SPIC_SIMO
+#define MST_SPI_SOMI                            (70)
+#define MST_SPI_SOMI_CFG                        GPIO_70_SPIC_SOMI
+#define MST_SPI_CLK                             (71)
+#define MST_SPI_CLK_CFG                         GPIO_71_SPIC_CLK
+#define MST_SPI_CS                              (72)
+#define MST_SPI_CS_CFG                          GPIO_72_SPIC_STEN
+
+#define MST_SPI_BASE                            SPIC_BASE
+#define MST_SPI_TX_BASE_ADDR                    (MST_SPI_BASE + SPI_O_TXBUF)
+#define MST_SPI_RX_BASE_ADDR                    (MST_SPI_BASE + SPI_O_RXBUF)
+
+#define DMA_MST_SPI_TX_BASE_ADDR                DMA_CH3_BASE
+//#define DMA_MST_SPI_TX_INT                      INT_DMA_CH3
+#define DMA_MST_SPI_TX_RX_8BIT_LENGTH           (34)
+#define DMA_MST_SPI_TX_RX_16BIT_LENGTH          (DMA_MST_SPI_TX_RX_8BIT_LENGTH / 2)
+#define DMA_MST_SPI_TX_RX_16BIT_BURST_SIZE      (1)
+#define DMA_MST_SPI_TX_RX_TRANSFER_NB           ((DMA_MST_SPI_TX_RX_16BIT_LENGTH / DMA_MST_SPI_TX_RX_16BIT_BURST_SIZE) + \
+                                                (((DMA_MST_SPI_TX_RX_16BIT_LENGTH % DMA_MST_SPI_TX_RX_16BIT_BURST_SIZE) != 0) ? \
+                                                (1) : (0)))
+
 #endif
 /**
  * @}
  */
+
+/******************************************************************************************************
+*                                               IPC Defines
+******************************************************************************************************/
+/** @defgroup Debug pins configuration.
+ *  @brief    Configure 2 pins (pin number and mux function) for debug.
+ * @{
+ */
+#define IPC_SYNC_FLAG                           IPC_FLAG31
 
 /******************************************************************************************************
 *                                               SPI Defines
@@ -185,12 +216,16 @@
  *  @brief    Configure DMA channels associated to SPI communication.
  * @{
  */
-#define DMA_COM_SPI_TX_BASE_ADDR                DMA_CH5_BASE
-#define DMA_COM_SPI_RX_BASE_ADDR                DMA_CH6_BASE
-#define DMA_COM_SPI_TX_RX_8BIT_LENGTH           (24)
-#define DMA_COM_SPI_TX_RX_16BIT_LENGTH          (DMA_COM_SPI_TX_RX_8BIT_LENGTH  / 2)
-#define DMA_COM_SPI_TX_RX_16BIT_BURST_SIZE      (2)
-#define DMA_COM_SPI_TX_RX_TRANSFER_NB           (DMA_COM_SPI_TX_RX_16BIT_LENGTH / DMA_COM_SPI_TX_RX_16BIT_BURST_SIZE)
+#define DMA_COM_SPI_TX_BASE_ADDR                DMA_CH1_BASE
+#define DMA_COM_SPI_TX_INT                      INT_DMA_CH1
+#define DMA_COM_SPI_RX_BASE_ADDR                DMA_CH2_BASE
+#define DMA_COM_SPI_RX_INT                      INT_DMA_CH2
+#define DMA_COM_SPI_TX_RX_8BIT_LENGTH           (34)
+#define DMA_COM_SPI_TX_RX_16BIT_LENGTH          (DMA_COM_SPI_TX_RX_8BIT_LENGTH / 2)
+#define DMA_COM_SPI_TX_RX_16BIT_BURST_SIZE      (1)
+#define DMA_COM_SPI_TX_RX_TRANSFER_NB           ((DMA_COM_SPI_TX_RX_16BIT_LENGTH / DMA_COM_SPI_TX_RX_16BIT_BURST_SIZE) + \
+                                                (((DMA_COM_SPI_TX_RX_16BIT_LENGTH % DMA_COM_SPI_TX_RX_16BIT_BURST_SIZE) != 0) ? \
+                                                (1) : (0)))
 //#define DMA_TX_BASE_ADDR                        DMA_CH5_BASE
 //#define DMA_RX_BASE_ADDR                        DMA_CH6_BASE
 /**
@@ -693,6 +728,18 @@
 #define MOTOR12_VBUS_LPF_ONE_M_ALPHA            (1.0 - MOTOR12_VBUS_LPF_ALPHA)
 #define MOTOR12_IMAX                            (20.0)
 
+/******************************************************************************************************
+*                                               Communication Defines
+*******************************************************************************************************/
+/*** Communication constants ***/
+#define POSITION_LSB                            (5.960464477539063e-08)                 // 2**(-24)
+#define VELOCITY_LSB                            (0.00048828125 * 1000.0 * FM_RPM2RADPS) // 2**(-11) // Added rad/s to krpm conversion
+#define IQ_LSB                                  (0.0009765625)                          // 2**(-10)
+#define CURRENT_SAT_LSB                         (0.125)                                 // 2**(-3)
+#define RESISTANCE_LSB                          (3.0517578125e-05)                      // 2**(-15)
+#define VOLTAGE_LSB                             (6.103515625e-05)                       // 2**(-14)
+#define KP_LSB                                  (0.00048828125)                         // 2**(-11)
+#define KD_LSB                                  (0.0009765625)                          // 2**(-10)
 typedef struct __LowpassFilter_Structure__
 {
     float32_t a;
