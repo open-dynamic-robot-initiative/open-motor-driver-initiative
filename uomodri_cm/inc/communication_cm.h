@@ -6,34 +6,12 @@
 #include <math.h>
 //#include "math_defines.h"
 #include "foc.h"
+//#include "uomodri_user_defines.h"
 //#include "legacy_spi.h"
-
-/******************************************************************************************************
- *                                               LSB definitions
- ******************************************************************************************************/
-/** @defgroup LSB_defines
- *  @brief    Special configurations definitions.
- *  @
- * @{
- */
-//-------------------------------------------------------------------------------//
-//                               LSB DEFINITIONS                                 //
-//-------------------------------------------------------------------------------//
-/*
- * These values are extracted from the Open-Dynamic-Robot-Initiative Github project
- * Documentation:
- * https://github.com/open-dynamic-robot-initiative/master-board/blob/master/documentation/BLMC_%C2%B5Driver_SPI_interface.md
- */
-
-
-
-//-------------------------------------------------------------------------------//
-//                             STRUCTURE DEFINITION                              //
-//-------------------------------------------------------------------------------//
 
 typedef struct _mode_reg_t_
 {
-    uint16_t        TIMEOUT     : 8;    /*!< Bits 7-0   : R/W - Timeout disable system after no valid command                           */
+    uint16_t        TIMEOUT     : 8;    /*!< Bits 7-0   : R/W - Timeout disable system after no valid command in milliseconds           */
     uint16_t        MODE_RSV1   : 2;    /*!< Bits 9-8   : R/W - Reserved                                                                */
     uint16_t        EI2OC       : 1;    /*!< Bits 10    : R/W - Enable/Disable incremental encoder index offset compensation - MOTOR_2  */
     uint16_t        EI1OC       : 1;    /*!< Bits 11    : R/W - Enable/Disable incremental encoder index offset compensation - MOTOR_1  */
@@ -45,7 +23,7 @@ typedef struct _mode_reg_t_
 
 typedef union _mode_reg_u_
 {
-  uint16_t          raw;                /*!< Short (16bits) type access */
+  uint16_t          all;                /*!< Short (16bits) type access */
   mode_reg_t        bit;                /*!< @see command_mode_t        */
 } mode_reg_u;
 
@@ -57,7 +35,7 @@ typedef struct _rx_payload_t_
     uint16_t        iqRef[2];
     uint16_t        kpCoeff[2];
     uint16_t        kdCoeff[2];
-    uint8_t         iSat[2];
+    uint8_t         iSat;
     uint16_t        index;
 } rx_payload_t;
 
@@ -95,7 +73,7 @@ typedef struct _status_reg_t_
 
 typedef union _status_reg_u_
 {
-  uint16_t          raw;                /*!< Short (16bits) type access */
+  uint16_t          all;                /*!< Short (16bits) type access */
   status_reg_t      bit;                /*!< @see DRV_Stat00_t          */
 } status_reg_u;
 
@@ -115,8 +93,40 @@ typedef struct _tx_msg_t_
 {
     tx_payload_t    payload;
     uint32_t        crc;
-    float32_t       time[2];             // Time in seconds since startup
+//    float32_t       time[2];             // Time in seconds since startup
 } tx_msg_t;
+//-----------------------------------------------------------------------
+//                          DUAL BUFFERS
+//-----------------------------------------------------------------------
+/*
+ * Dual buffers are used to avoid writing on data while it'is being transmitted
+ * or received through SPI.
+ *
+ * They contain three attributes:
+ *  - ptrDmaCh: Pointer to the associated DMA channel register structure
+ *  - index: Index of the currently used packet
+ *  - comPackets: Two communication packets, one of which is constantly
+ *                being used by the master board communication.
+ *                When a user packet update occurs, the second packet is the
+ *                one updated by the user and becomes the packet used for the SPI communication.
+ */
+
+// Dual source buffer for received data
+//typedef struct __DualBufferR__
+//{
+//    volatile struct CH_REGS* ptrDmaCh;
+//    uint16_t index;
+//    rx_msg_t com_rx_msg[2];
+//} DualBufferR;
+
+// Dual source buffer for sent data
+//typedef struct __DualBufferW__
+//{
+//    volatile struct CH_REGS* ptrDmaCh;
+//    uint16_t index;
+//    tx_msg_t com_tx_msg[2];
+//} DualBufferW;
+
 
 //// Packet received from master board
 //typedef struct __ComPacketR__
@@ -216,6 +226,7 @@ typedef struct _tx_msg_t_
 
 bool com_cmdRx(rx_msg_t*, rx_uomodri_t*);
 bool com_msgTx(FOC_STRUCT*, tx_msg_t*);
-void com_msgDbgTx(FOC_STRUCT*, uint8_t*);
+//uint32_t com_crc32(uint16_t*, uint16_t);
+//void com_msgDbgTx(FOC_STRUCT*, uint8_t*);
 
 #endif /*__COMMUNICATION_CM_H__*/

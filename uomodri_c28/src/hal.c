@@ -4,7 +4,7 @@
  */
 
 #include "hal.h"
-#include "communication_cm.h"
+#include "communication.h"
 #include "uomodri_hal_config_handlers.h"
 
 //extern rx_uomodri_t* com_rx_cmd;
@@ -45,7 +45,8 @@ void HAL_init(HAL* p_hal)
         // Initialize eQEP
         HAL_eQEP_init(p_hal->p_eqepHandler);
         // Initialize IPC communication
-        HAL_IPC_init(p_hal->p_ipcHandler);
+//        HAL_IPC_init(p_hal->p_ipcHandler);
+
 //        // Memory address sharing CM to CPU1
 //        while(p_hal->p_ipcHandler->p_ipcIntHandler != NULL)
 //            p_hal->p_ipcHandler++;
@@ -511,28 +512,26 @@ void HAL_SPI_init(const SPI_TypeDef* p_spiCfg)
 
         while(spiBase != 0xFFFFFFFF)
         {
-            /* Disable SPI before configuration
-             * Set SPI configuration
-             * Disable loopback
-             * Free run (debug mode)
-             */
+            /* Disable SPI before configuration */
             SPI_disableModule(spiBase);
-            SPI_disableLoopback(spiBase);
-            SPI_setConfig(spiBase, DEVICE_LSPCLK_FREQ, p_spiCfg->protocol, p_spiCfg->mode, p_spiCfg->bitRate, p_spiCfg->dataWidth);
-            SPI_setEmulationMode(spiBase, SPI_EMULATION_FREE_RUN);
-            /* Clear flags & disable interrupts */
-            SPI_clearInterruptStatus(spiBase, SPI_INT_RX_DATA_TX_EMPTY | SPI_INT_RX_OVERRUN | SPI_INT_TXFF | SPI_INT_RXFF | SPI_INT_RXFF_OVERFLOW);
-            SPI_disableInterrupt(spiBase, SPI_INT_RX_DATA_TX_EMPTY | SPI_INT_RX_OVERRUN | SPI_INT_TXFF | SPI_INT_RXFF | SPI_INT_RXFF_OVERFLOW);
             /* Configure FIFO if required. */
             SPI_disableFIFO(spiBase);
-            if((p_spiCfg->rxLevel != SPI_FIFO_RXEMPTY) || (p_spiCfg->txLevel != SPI_FIFO_TXEMPTY))
+            if((p_spiCfg->rxLevel != SPI_FIFO_RXEMPTY) || (p_spiCfg->rxLevel != SPI_FIFO_RX0) ||
+                    (p_spiCfg->txLevel != SPI_FIFO_TXEMPTY) || (p_spiCfg->txLevel != SPI_FIFO_TX0))
             {
                 SPI_enableFIFO(spiBase);
-                //SPI_resetTxFIFO(spiBase);
-                //SPI_resetRxFIFO(spiBase);
+                SPI_resetTxFIFO(spiBase);
+                SPI_resetRxFIFO(spiBase);
                 SPI_setFIFOInterruptLevel(spiBase, p_spiCfg->txLevel, p_spiCfg->rxLevel);
-                //SPI_enableInterrupt(spiBase, SPI_INT_TXFF | SPI_INT_RXFF | SPI_INT_RXFF_OVERFLOW);
             }
+            /* Set SPI configuration, disable loopback, enable free run (debug mode) */
+            SPI_setConfig(spiBase, DEVICE_LSPCLK_FREQ, p_spiCfg->protocol, p_spiCfg->mode, p_spiCfg->bitRate, p_spiCfg->dataWidth);
+            SPI_setEmulationMode(spiBase, SPI_EMULATION_FREE_RUN);
+            SPI_disableLoopback(spiBase);
+            /* Clear flags & enable or disable interrupts */
+            SPI_clearInterruptStatus(spiBase, SPI_INT_RX_DATA_TX_EMPTY | SPI_INT_RX_OVERRUN | SPI_INT_TXFF | SPI_INT_RXFF | SPI_INT_RXFF_OVERFLOW);
+            SPI_disableInterrupt(spiBase, SPI_INT_RX_DATA_TX_EMPTY | SPI_INT_RX_OVERRUN | SPI_INT_TXFF | SPI_INT_RXFF | SPI_INT_RXFF_OVERFLOW);
+            (p_spiCfg->intEnable == true) ? (SPI_enableInterrupt(spiBase, p_spiCfg->intSrc)) : (1);
             /* Enable SPI module */
             SPI_enableModule(spiBase);
             spiBase = (++p_spiCfg)->spiBase;
@@ -554,25 +553,47 @@ void HAL_DMA_init(const DMA_TypeDef* p_dmaCfg)
 
         /* Global hardware reset of the DMA controller. */
         DMA_initController();
+#ifdef DEBUG
         DMA_setEmulationMode(DMA_EMULATION_FREE_RUN);
+#endif
 
         while(dmaChBase != 0xFFFFFFFF)
         {
             /* DMA channel initialization
              * Configure direction, words per burst
              */
-            DMA_configAddresses(dmaChBase, p_dmaCfg->p_destAddr, p_dmaCfg->p_srcAddr);
-            DMA_configBurst(dmaChBase, p_dmaCfg->burstSize, p_dmaCfg->srcBurstStep, p_dmaCfg->destBurstStep);
-            DMA_configTransfer(dmaChBase, p_dmaCfg->transferSize, p_dmaCfg->srcTransferStep, p_dmaCfg->destTransferStep);
-            //DMA_configWrap(dmaChBase, p_dmaCfg->srcWrapSize, p_dmaCfg->srcStep, p_dmaCfg->destWrapSize, p_dmaCfg->destStep);
+            DMA_configAddresses(dmaChBase, p_dmaCfg->p_dstAddr, p_dmaCfg->p_srcAddr);
+            DMA_configBurst(dmaChBase, p_dmaCfg->burstSize, p_dmaCfg->srcStep, p_dmaCfg->dstStep);
+            DMA_configTransfer(dmaChBase, p_dmaCfg->transferSize, p_dmaCfg->srcStep, p_dmaCfg->dstStep);
+            DMA_configWrap(dmaChBase, p_dmaCfg->srcWrapSize, p_dmaCfg->srcWrapStep, p_dmaCfg->dstWrapSize, p_dmaCfg->dstWrapStep);
             DMA_configMode(dmaChBase, p_dmaCfg->trigger, p_dmaCfg->config);
             /* Clear flags & disable interrupts */
             DMA_disableOverrunInterrupt(dmaChBase);
-            DMA_setInterruptMode(dmaChBase, p_dmaCfg->ITMode);
-            (p_dmaCfg->ITEnable) ? (DMA_enableInterrupt(dmaChBase)) : (DMA_disableInterrupt(dmaChBase));
+            DMA_setInterruptMode(dmaChBase, p_dmaCfg->intMode);
+            DMA_enableInterrupt(dmaChBase);
+//            (p_dmaCfg->intEnable) ? (DMA_enableInterrupt(dmaChBase)) : (DMA_disableInterrupt(dmaChBase));
             /* Enable Trigger source & DMA channel */
             DMA_clearTriggerFlag(dmaChBase);
             DMA_enableTrigger(dmaChBase);
+//            DMA_startChannel(dmaChBase);
+            dmaChBase = (++p_dmaCfg)->dmaChBase;
+        }
+    }
+
+    return;
+}
+
+/**
+ * @brief       DMA start function.
+ * @param[in]   *p_dmaCfg   Pointer on the DMA configuration structure to be started
+ */
+void HAL_DMA_start(const DMA_TypeDef* p_dmaCfg)
+{
+    if(p_dmaCfg != NULL)
+    {
+        uint32_t dmaChBase = p_dmaCfg->dmaChBase;
+        while(dmaChBase != 0xFFFFFFFF)
+        {
             DMA_startChannel(dmaChBase);
             dmaChBase = (++p_dmaCfg)->dmaChBase;
         }
@@ -738,21 +759,21 @@ void HAL_CLA_init(const CLA_TypeDef* p_clacCfg)
 /**
  * @brief       Interrupts initialization function.
  */
-void HAL_IT_init(const IT_TypeDef* p_ITCfg)
+void HAL_IT_init(const IT_TypeDef* p_intCfg)
 {
-    if(p_ITCfg != NULL)
+    if(p_intCfg != NULL)
     {
-        uint32_t intNum = p_ITCfg->intNum;
+        uint32_t intNum = p_intCfg->intNum;
         // Clear & set IT flags & enable IT bits in a known state.
         Interrupt_initModule();
         // Setup Interrupts
         while(intNum != 0xFFFFFFFF)
         {
             // Attach ISR to interrupt
-            Interrupt_register(intNum, p_ITCfg->handler);
+            Interrupt_register(intNum, p_intCfg->p_intHandler);
             // Enable Interrupts
             Interrupt_enable(intNum);
-            intNum = (++p_ITCfg)->intNum;
+            intNum = (++p_intCfg)->intNum;
         }
         // enable global interrupt (INTM)
         EINT;

@@ -5,6 +5,15 @@
 
 #include "main.h"
 
+//cmd_msg_t* p_CmdMsgAddr = &cmd_msg[0];
+bool newFocCtrl_M1      = false;
+bool newFocCtrl_M2      = false;
+bool newCmdMsg          = false;
+cmd_msg_t*      p_crCmdMsgAddr      = &cmd_msg[0];
+cmd_msg_t*      p_nxCmdMsgAddr      = &cmd_msg[1];
+status_msg_t*   p_crStatusMsgAddr   = &status_msg[0];
+status_msg_t*   p_nxStatusMsgAddr   = &status_msg[1];
+
 /**
  * @brief   Main function running on CPU1/C28. MCU init, DRV init, ADC init \& calibration, IT init.
  */
@@ -14,6 +23,19 @@ void main(void)
     MCU_init();
     // Hardware Abstraction Layer initialization
     HAL_init(&hal);
+//    uint8_t index = 0;
+//    while(dmaCfgList[(dmaCfgList[index].p_destAddr != (uint16_t *)COM_SPI_TX_BASE_ADDR) ? (index++) : (index)].p_destAddr != (uint16_t *)COM_SPI_TX_BASE_ADDR);
+
+//    p_crStatusMsgAddr   = (status_msg_t *)HWREG(DMA_COM_SPI_TX_BASE_ADDR + DMA_O_SRC_BEG_ADDR_SHADOW);
+//    p_nxStatusMsgAddr   = (p_crStatusMsgAddr == &status_msg[0]) ? (&status_msg[1]) : (&status_msg[0]);
+//    p_crCmdMsgAddr      = (cmd_msg_t *) HWREG(DMA_COM_SPI_RX_BASE_ADDR + DMA_O_DST_BEG_ADDR_SHADOW);
+//    p_nxCmdMsgAddr      = (p_crCmdMsgAddr == &cmd_msg[0]) ? (&cmd_msg[1]) : (&cmd_msg[0]);
+
+//    status_msg_t* p_crAddr = (status_msg_t *)HWREG(dmaCfgList[index].dmaChBase + DMA_O_SRC_BEG_ADDR_SHADOW);// = *((volatile status_msg_t *)(DMA_COM_SPI_TX_BASE_ADDR + DMA_O_SRC_BEG_ADDR_SHADOW));
+//    status_msg_t*   p_crStatusMsgAddr   = (status_msg_t *)HWREG(DMA_COM_SPI_TX_BASE_ADDR + DMA_O_SRC_BEG_ADDR_SHADOW);
+//    status_msg_t*   p_nxStatusMsgAddr   = (p_crStatusMsgAddr == &status_msg[0]) ? (&status_msg[1]) : (&status_msg[0]);
+//    cmd_msg_t*      p_crCmdMsgAddr      = (cmd_msg_t *) HWREG(DMA_COM_SPI_RX_BASE_ADDR + DMA_O_DST_BEG_ADDR_SHADOW);
+//    cmd_msg_t*      p_nxCmdMsgAddr      = (p_crCmdMsgAddr == &cmd_msg[0]) ? (&cmd_msg[1]) : (&cmd_msg[0]);
     // DRV8323 initialization
     DRV_init(motor[MOTOR_1].p_motorDRV);
     DRV_init(motor[MOTOR_2].p_motorDRV);
@@ -39,6 +61,8 @@ void main(void)
 //#endif
     // Interrupts initialization
     HAL_IT_init(InterruptList);
+    // enable DMA channels
+    HAL_DMA_start(hal.p_dmaHandler);
 
 //#if (CM == 1)
 //    // Enable realtime interrupt (DBGM)
@@ -85,34 +109,83 @@ void main(void)
     // Infinite loop
     while(1)
     {
+//        if(newCmdMsg)
+//        {
+//            newCmdMsg = false;
+//            com_cmdMsgExtract(p_crCmdMsgAddr, &cmd_uOmodri);
+//            p_crCmdMsgAddr  = p_nxCmdMsgAddr;
+//            p_nxCmdMsgAddr  = (p_crCmdMsgAddr == &cmd_msg[0]) ? (&cmd_msg[1]) : (&cmd_msg[0]);
+//
+//        }
+        if(newFocCtrl_M1)
+        {
+            com_statusMsgCreate(&motor_foc[MOTOR_1], &cmd_uOmodri, p_nxStatusMsgAddr);
+            newFocCtrl_M1 = false;
+        }
+        if(newFocCtrl_M2)
+        {
+            com_statusMsgCreate(&motor_foc[MOTOR_2], &cmd_uOmodri, p_nxStatusMsgAddr);
+            //while(GPIO_ReadPin(COM_SPI_CS) == 0);
+            //while(HWREG(DMA_COM_SPI_TX_BASE_ADDR + DMA_O_CONTROL) & DMA_CONTROL_TRANSFERSTS);
+            DMA_configSourceAddress(DMA_COM_SPI_TX_BASE_ADDR, (status_msg_t *)p_nxStatusMsgAddr);
+            //SPI_resetTxFIFO(COM_SPI_BASE);
+//            DMA_startChannel(DMA_COM_SPI_TX_BASE_ADDR);
+
+            status_msg_t* p_tmpStatusMsgAddr = p_crStatusMsgAddr;
+            p_crStatusMsgAddr   = p_nxStatusMsgAddr;
+            p_nxStatusMsgAddr   = p_tmpStatusMsgAddr;
+            newFocCtrl_M2       = false;
+        }
+#if (UOMODRI == 0)
         if(cpt >= 40)
         {
-            uint64_t interruptCnt                   = motor[MOTOR_1].interruptCnt;
-            mst_tx_msg.payload.modeReg.bit.ES       = true;
-            mst_tx_msg.payload.modeReg.bit.EM1      = true;
-            mst_tx_msg.payload.modeReg.bit.EM2      = false;
-            mst_tx_msg.payload.modeReg.bit.EPRE     = false;
-            mst_tx_msg.payload.modeReg.bit.EI1OC    = false;
-            mst_tx_msg.payload.modeReg.bit.EI2OC    = false;
-            mst_tx_msg.payload.modeReg.bit.TIMEOUT  = 0xFFFF;
-            mst_tx_msg.payload.positionRef[MOTOR_1] = (int32_t)(__sinpuf32((float32_t)interruptCnt / PWM_FREQ) / POSITION_LSB);
-            mst_tx_msg.payload.positionRef[MOTOR_2] = 0;
-            mst_tx_msg.payload.velocityRef[MOTOR_1] = (int16_t)(4.0f * M_PI * M_PI * __cospuf32((float32_t)interruptCnt / PWM_FREQ) / VELOCITY_LSB);
-            mst_tx_msg.payload.velocityRef[MOTOR_2] = 0;
-            mst_tx_msg.payload.iqRef[MOTOR_1]       = 0;
-            mst_tx_msg.payload.iqRef[MOTOR_2]       = 0;
-            mst_tx_msg.payload.kpCoeff[MOTOR_1]     = (uint16_t)(1.0 / KP_LSB);
-            mst_tx_msg.payload.kpCoeff[MOTOR_2]     = (uint16_t)(1.0 / KP_LSB);
-            mst_tx_msg.payload.kdCoeff[MOTOR_1]     = (uint16_t)(0.02 / KD_LSB);
-            mst_tx_msg.payload.kdCoeff[MOTOR_2]     = (uint16_t)(0.02 / KD_LSB);
-            mst_tx_msg.payload.iSat[MOTOR_1]        = 0;
-            mst_tx_msg.payload.iSat[MOTOR_2]        = 0;
-            mst_tx_msg.payload.index                = 0;
-            mst_tx_msg.crc                          = COM_crc32((uint16_t *)&mst_tx_msg, DMA_COM_SPI_TX_RX_TRANSFER_NB);
-            cpt                                     = 0;
+//            uint32_t* p_pos_m1                          = (uint32_t *)&cmd_Master_msg.positionRef[MOTOR_1];
+//            uint32_t* p_pos_m2                          = (uint32_t *)&cmd_Master_msg.positionRef[MOTOR_2];
+//            uint32_t* p_pos_m1                          = (uint32_t *)&cmd_Master_msg.positionRef[MOTOR_1].u16_lsb;
+//            uint32_t* p_pos_m2                          = (uint32_t *)&cmd_Master_msg.positionRef[MOTOR_2].u16_lsb;
+//            *p_pos_m1   = 0x01234567;
+//            *p_pos_m2   = 0x89ABCDEF;
+            //uint64_t interruptCnt                       = motor[MOTOR_1].interruptCnt;
+            cmd_Master_msg.cmdReg.bit.ES                = true;
+            cmd_Master_msg.cmdReg.bit.EM1               = true;
+            cmd_Master_msg.cmdReg.bit.EM2               = false;
+            cmd_Master_msg.cmdReg.bit.EPRE              = false;
+            cmd_Master_msg.cmdReg.bit.EI1OC             = false;
+            cmd_Master_msg.cmdReg.bit.EI2OC             = false;
+            cmd_Master_msg.cmdReg.bit.TIMEOUT           = 0xFF;
+            float32_t   itcnt_m1                        = (float32_t) motor[MOTOR_1].interruptCnt / (float32_t) PWM_FREQ;
+            int32_t     pos_m1                          = (int32_t)((__sinpuf32(itcnt_m1) / (float32_t) POSITION_LSB));
+            cmd_Master_msg.positionRef[MOTOR_1].u16_msb = MSB_32(pos_m1);//(int32_t)(__sinpuf32((float32_t)interruptCnt / PWM_FREQ) / POSITION_LSB);
+            cmd_Master_msg.positionRef[MOTOR_1].u16_lsb = LSB_32(pos_m1);
+            float32_t   itcnt_m2                        = (float32_t) motor[MOTOR_2].interruptCnt / (float32_t) PWM_FREQ;
+            int32_t     pos_m2                          = (int32_t)(__sinpuf32(itcnt_m2) / (float32_t) POSITION_LSB);
+            cmd_Master_msg.positionRef[MOTOR_2].u16_msb = MSB_32(pos_m2);
+            cmd_Master_msg.positionRef[MOTOR_2].u16_lsb = LSB_32(pos_m2);
+            int16_t     vel_m1                          = (int16_t) (4.0f * M_PI * M_PI * __cospuf32(itcnt_m1) / (float32_t) VELOCITY_LSB);
+            cmd_Master_msg.velocityRef[MOTOR_1]         = vel_m1;//(int16_t)(4.0f * M_PI * M_PI * __cospuf32((float32_t)interruptCnt / PWM_FREQ) / VELOCITY_LSB);
+            int16_t     vel_m2                          = (int16_t)(4.0f * M_PI * M_PI * __cospuf32(itcnt_m2) / (float32_t) VELOCITY_LSB);
+            cmd_Master_msg.velocityRef[MOTOR_2]         = vel_m2;
+            cmd_Master_msg.iqRef[MOTOR_1]               = 0;
+            cmd_Master_msg.iqRef[MOTOR_2]               = 0;
+            cmd_Master_msg.kpCoeff[MOTOR_1]             = (uint16_t)((float32_t) MOTOR1_SPEED_REGULATOR_KP_COEF / (float32_t) KP_LSB);
+            cmd_Master_msg.kpCoeff[MOTOR_2]             = (uint16_t)((float32_t) MOTOR2_SPEED_REGULATOR_KP_COEF / (float32_t) KP_LSB);
+            cmd_Master_msg.kdCoeff[MOTOR_1]             = (uint16_t)((float32_t) MOTOR1_SPEED_REGULATOR_KD_COEF / (float32_t) KD_LSB);
+            cmd_Master_msg.kdCoeff[MOTOR_2]             = (uint16_t)((float32_t) MOTOR2_SPEED_REGULATOR_KD_COEF / (float32_t) KD_LSB);
+            cmd_Master_msg.iSat                         = 0;
+            cmd_Master_msg.index                        = 0;
+            uint32_t    tmp                             = com_crc32((uint16_t *) &cmd_Master_msg, DMA_MST_SPI_TX_RX_16BIT_PAYLOAD_LENGTH);
+            cmd_Master_msg.crc.u16_msb                  = MSB_32(tmp);
+            cmd_Master_msg.crc.u16_lsb                  = LSB_32(tmp);
+            cpt                                         = 0;
+
+            while(HWREG(DMA_MST_SPI_TX_BASE_ADDR + DMA_O_CONTROL) & DMA_CONTROL_TRANSFERSTS);
+            DMA_startChannel(DMA_MST_SPI_TX_BASE_ADDR);
+//            DMA_forceTrigger(DMA_CH3_BASE);//DMA_MST_SPI_TX_BASE_ADDR);
 //            DMA_startChannel(DMA_MST_SPI_TX_BASE_ADDR);
-            DMA_forceTrigger(DMA_MST_SPI_TX_BASE_ADDR);
+//            DMA_startChannel(DMA_MST_SPI_RX_BASE_ADDR);
+//            DMA_forceTrigger(DMA_MST_SPI_TX_BASE_ADDR);
         }
+#endif
     }
 //    {
 //#if UOMODRI_SPI_DEBUG_CONFIG
@@ -167,55 +240,45 @@ static void MCU_init(void)
 #endif
 }
 
-static inline uint32_t COM_crc32 (uint16_t* buf, uint16_t len)
-{
-  uint32_t crc = 0xFFFFFFFF;
-  while (len--)
-    {
-      crc = (crc << 8) ^ crc32_table[((crc >> 24) ^ MSB_16(*buf)) & 0xFF];
-      crc = (crc << 8) ^ crc32_table[((crc >> 24) ^ LSB_16(*buf)) & 0xFF];
-      buf++;
-    }
-  return crc;
-}
-//-------------------------------------------------------------------------------------------------
-__attribute__((interrupt)) void ipc_isrStatusMsg(void)
-{
-    uint32_t    cmd, data, addr;
-    uint8_t     ipcCfgIdx = 0, i = 0;
-    // Get index associated to IPC structure configuration
-    while(ipcCfgList[(ipcCfgList[ipcCfgIdx].p_ipcIntHandler != &ipc_isrStatusMsg) ? (ipcCfgIdx++) : (ipcCfgIdx)].p_ipcIntHandler != &ipc_isrStatusMsg);
-    // Get structure address
-    IPC_readCommand(ipcCfgList[ipcCfgIdx].ipcType, ipcCfgList[ipcCfgIdx].ipcFlag, IPC_ADDR_CORRECTION_ENABLE, &cmd, &addr, &data);
-    i = motor[MOTOR_1].interruptCnt % 2;
-    memcpy(&com_tx_msg[i], (tx_msg_t *)addr, sizeof(tx_msg_t));
-
-    if(!(*((volatile uint32_t *)(DMA_COM_SPI_TX_BASE_ADDR + DMA_O_CONTROL)) &
-            (DMA_CONTROL_PERINTFLG | DMA_CONTROL_TRANSFERSTS | DMA_CONTROL_BURSTSTS)))
-    {
-        *((volatile uint32_t *)(DMA_COM_SPI_TX_BASE_ADDR + DMA_O_CONTROL))             |= DMA_CONTROL_HALT;
-        *((volatile uint32_t *)(DMA_COM_SPI_TX_BASE_ADDR + DMA_O_SRC_BEG_ADDR_SHADOW))  = (uint32_t)&com_tx_msg[i];
-        *((volatile uint32_t *)(DMA_COM_SPI_TX_BASE_ADDR + DMA_O_SRC_ADDR_SHADOW))      = (uint32_t)&com_tx_msg[i];
-        *((volatile uint32_t *)(DMA_COM_SPI_TX_BASE_ADDR + DMA_O_CONTROL))             |= DMA_CONTROL_RUN;
-    }
-
-    IPC_ackFlagRtoL(ipcCfgList[ipcCfgIdx].ipcType, ipcCfgList[ipcCfgIdx].ipcFlag);
-    Interrupt_clearACKGroup(INTERRUPT_ACK_GROUP11);
-}
 
 //-------------------------------------------------------------------------------------------------
-__attribute__((interrupt)) void ipc_isrMsgCmd(void)
-{
-    uint32_t    cmd, data, addr;
-    uint8_t     ipcCfgIdx = 0;
-    // Get index associated to IPC structure configuration
-    while(ipcCfgList[(ipcCfgList[ipcCfgIdx].p_ipcIntHandler != &ipc_isrMsgCmd) ? (ipcCfgIdx++) : (ipcCfgIdx)].p_ipcIntHandler != &ipc_isrMsgCmd);
-    // Get structure address
-    IPC_readCommand(ipcCfgList[ipcCfgIdx].ipcType, ipcCfgList[ipcCfgIdx].ipcFlag, IPC_ADDR_CORRECTION_ENABLE, &cmd, &addr, &data);
-    memcpy(&com_rx_cmd, (rx_uomodri_t *)addr, sizeof(rx_uomodri_t));
-    IPC_ackFlagRtoL(ipcCfgList[ipcCfgIdx].ipcType, ipcCfgList[ipcCfgIdx].ipcFlag);
-    Interrupt_clearACKGroup(INTERRUPT_ACK_GROUP11);
-}
+//__attribute__((interrupt)) void ipc_isrStatusMsg(void)
+//{
+//    uint32_t    cmd, data, addr;
+//    uint8_t     ipcCfgIdx = 0, i = 0;
+//    // Get index associated to IPC structure configuration
+//    while(ipcCfgList[(ipcCfgList[ipcCfgIdx].p_ipcIntHandler != &ipc_isrStatusMsg) ? (ipcCfgIdx++) : (ipcCfgIdx)].p_ipcIntHandler != &ipc_isrStatusMsg);
+//    // Get structure address
+//    IPC_readCommand(ipcCfgList[ipcCfgIdx].ipcType, ipcCfgList[ipcCfgIdx].ipcFlag, IPC_ADDR_CORRECTION_ENABLE, &cmd, &addr, &data);
+//    i = motor[MOTOR_1].interruptCnt % 2;
+//    memcpy(&status_msg[i], (status_msg_t *)addr, sizeof(status_msg_t));
+//
+//    if(!(*((volatile uint32_t *)(DMA_COM_SPI_TX_BASE_ADDR + DMA_O_CONTROL)) &
+//            (DMA_CONTROL_PERINTFLG | DMA_CONTROL_TRANSFERSTS | DMA_CONTROL_BURSTSTS)))
+//    {
+//        *((volatile uint32_t *)(DMA_COM_SPI_TX_BASE_ADDR + DMA_O_CONTROL))             |= DMA_CONTROL_HALT;
+//        *((volatile uint32_t *)(DMA_COM_SPI_TX_BASE_ADDR + DMA_O_SRC_BEG_ADDR_SHADOW))  = (uint32_t)&status_msg[i];
+//        *((volatile uint32_t *)(DMA_COM_SPI_TX_BASE_ADDR + DMA_O_SRC_ADDR_SHADOW))      = (uint32_t)&status_msg[i];
+//        *((volatile uint32_t *)(DMA_COM_SPI_TX_BASE_ADDR + DMA_O_CONTROL))             |= DMA_CONTROL_RUN;
+//    }
+//
+//    IPC_ackFlagRtoL(ipcCfgList[ipcCfgIdx].ipcType, ipcCfgList[ipcCfgIdx].ipcFlag);
+//    Interrupt_clearACKGroup(INTERRUPT_ACK_GROUP11);
+//}
+
+//-------------------------------------------------------------------------------------------------
+//__attribute__((interrupt)) void ipc_isrMsgCmd(void)
+//{
+//    uint32_t    cmd, data, addr;
+//    uint8_t     ipcCfgIdx = 0;
+//    // Get index associated to IPC structure configuration
+//    while(ipcCfgList[(ipcCfgList[ipcCfgIdx].p_ipcIntHandler != &ipc_isrMsgCmd) ? (ipcCfgIdx++) : (ipcCfgIdx)].p_ipcIntHandler != &ipc_isrMsgCmd);
+//    // Get structure address
+//    IPC_readCommand(ipcCfgList[ipcCfgIdx].ipcType, ipcCfgList[ipcCfgIdx].ipcFlag, IPC_ADDR_CORRECTION_ENABLE, &cmd, &addr, &data);
+//    memcpy(&cmd_msg, (cmd_uomodri_t *)addr, sizeof(cmd_uomodri_t));
+//    IPC_ackFlagRtoL(ipcCfgList[ipcCfgIdx].ipcType, ipcCfgList[ipcCfgIdx].ipcFlag);
+//    Interrupt_clearACKGroup(INTERRUPT_ACK_GROUP11);
+//}
 
 //-------------------------------------------------------------------------------------------------
 /**
@@ -226,12 +289,9 @@ __attribute__((interrupt)) void adc_isrMotor1(void)
 #if (UOMODRI == 0)
     GPIO_writePin(DEBUG_INT_PIN1, 1);
 #endif
-    FOC_STRUCT*     p_foc       = motor[MOTOR_1].p_motorFOC;
-    uint32_t        base        = InterruptList[ADC_IT_MOTOR_1].intPeriphBase; //MOTOR12_IVA_ADC_ADDR;
-    uint16_t        group       = InterruptList[ADC_IT_MOTOR_1].intAckGroup;
-    ADC_IntNumber   adcIntNum   = (ADC_IntNumber)InterruptList[ADC_IT_MOTOR_1].intPeriphSrc; //MOTOR1_IA_INT_NUM;
+    FOC_STRUCT* p_foc = motor[MOTOR_1].p_motorFOC;
 
-    if(com_rx_cmd.modeReg.bit.ES && com_rx_cmd.modeReg.bit.EM1)
+    if(cmd_uOmodri.cmdReg.bit.ES && cmd_uOmodri.cmdReg.bit.EM1)
     {
         // Read encoder position
         ENC_getPosition(&p_foc->motor_enc);
@@ -242,16 +302,16 @@ __attribute__((interrupt)) void adc_isrMotor1(void)
         // Set new PWM command
         MOT_runCommand(&motor[MOTOR_1], p_foc->dtc_u, p_foc->dtc_v, p_foc->dtc_w);
         // Clear the interrupt overflow flag
-        ADC_clearInterruptOverflowStatus(base, adcIntNum);
+        ADC_clearInterruptOverflowStatus(MOTOR12_IVA_ADC_ADDR, MOTOR1_IA_INT_NUM);
         // Clear the interrupt flag
-        ADC_clearInterruptStatus(base, adcIntNum);
+        ADC_clearInterruptStatus(MOTOR12_IVA_ADC_ADDR, MOTOR1_IA_INT_NUM);
 
         // Acknowledge the interrupt (Acknowledge PIE Interrupt Group)
         //        Interrupt_clearACKGroup(group);
         // Run encoder update
         ENC_getSpeed(&p_foc->motor_enc);
         // Check for roll-over error
-        if (p_foc->motor_enc.rollOverErrorFlag && com_rx_cmd.modeReg.bit.EPRE)
+        if (p_foc->motor_enc.rollOverErrorFlag && cmd_uOmodri.cmdReg.bit.EPRE)
         {
             p_foc->errorMsg = SPI_SENSOR_STATUS_ERROR_POS_ROLLOVER;
             // Tie phases to ground
@@ -280,18 +340,18 @@ __attribute__((interrupt)) void adc_isrMotor1(void)
 
 #if UOMODRI_SPI_DEBUG_CONFIG
         // Set predefined trajectory reference
-//        com_rx_cmd.positionRef[MOTOR_1]   = __sinpuf32(debugFreq * TIME_M1_S);
-//        com_rx_cmd.velocityRef[MOTOR_1]   = 4.0f * M_PI * M_PI * debugFreq * __cospuf32(debugFreq * TIME_M1_S);//debugFreq * TIME_S;//
-//        com_rx_cmd.iqRef[MOTOR_1]         = 0.0f;
-        com_rx_cmd.positionRef[MOTOR_1] = __sinpuf32((float32_t)motor[MOTOR_1].interruptCnt / PWM_FREQ);
-        com_rx_cmd.velocityRef[MOTOR_1] = 4.0f * M_PI * M_PI * __cospuf32((float32_t)motor[MOTOR_1].interruptCnt / PWM_FREQ);
-        com_rx_cmd.iqRef[MOTOR_1]       = 0.0f;
+//        cmd_uOmodri.positionRef[MOTOR_1]   = __sinpuf32(debugFreq * TIME_M1_S);
+//        cmd_uOmodri.velocityRef[MOTOR_1]   = 4.0f * M_PI * M_PI * debugFreq * __cospuf32(debugFreq * TIME_M1_S);//debugFreq * TIME_S;//
+//        cmd_uOmodri.iqRef[MOTOR_1]         = 0.0f;
+        cmd_uOmodri.positionRef[MOTOR_1] = __sinpuf32((float32_t)motor[MOTOR_1].interruptCnt / PWM_FREQ);
+        cmd_uOmodri.velocityRef[MOTOR_1] = 4.0f * M_PI * M_PI * __cospuf32((float32_t)motor[MOTOR_1].interruptCnt / PWM_FREQ);
+        cmd_uOmodri.iqRef[MOTOR_1]       = 0.0f;
 #endif
         p_foc->pdPos.inTheta    = p_foc->motor_enc.thetaAbsolute;
-        p_foc->pdPos.setTheta   = com_rx_cmd.positionRef[MOTOR_1];
+        p_foc->pdPos.setTheta   = cmd_uOmodri.positionRef[MOTOR_1];
         p_foc->pdPos.inSpeed    = p_foc->motor_enc.speedEst.speedMech;
-        p_foc->pdPos.setSpeed   = com_rx_cmd.velocityRef[MOTOR_1];
-        p_foc->pdPos.ff         = com_rx_cmd.iqRef[MOTOR_1];// Set feed-forward current
+        p_foc->pdPos.setSpeed   = cmd_uOmodri.velocityRef[MOTOR_1];
+        p_foc->pdPos.ff         = cmd_uOmodri.iqRef[MOTOR_1];// Set feed-forward current
         // Run PD controller
         FOC_runPD(&p_foc->pdPos);
         // Set current reference
@@ -331,7 +391,7 @@ __attribute__((interrupt)) void adc_isrMotor1(void)
         // Increment interrupt counter
         motor[MOTOR_1].interruptCnt++;
         // Compute time
-//        com_rx_cmd.time[MOTOR_1] = TIME_M1_S;//(motor[MOTOR_1].interruptCounter / PWM_FREQ);
+//        cmd_uOmodri.time[MOTOR_1] = TIME_M1_S;//(motor[MOTOR_1].interruptCounter / PWM_FREQ);
     }
 
     //-------------------------------------------------------------------//
@@ -344,9 +404,10 @@ __attribute__((interrupt)) void adc_isrMotor1(void)
      * ADDRESS_CORRECTION is enabled
      * Length of the data to be read is passed as data. */
 //    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_FLAG0, IPC_ADDR_CORRECTION_ENABLE, IPC_CMD_READ_MEM, (uint32_t)(&motorCpuToCM[MOTOR_1]), 1);
-    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_FLAG0, IPC_ADDR_CORRECTION_ENABLE, IPC_CMD_READ_MEM, (uint32_t)(p_foc), 1);
+//    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_FLAG0, IPC_ADDR_CORRECTION_ENABLE, IPC_CMD_READ_MEM, (uint32_t)(p_foc), 1);
+    newFocCtrl_M1 = true;
     // Acknowledge PWM and CLA interrupt flag
-    Interrupt_clearACKGroup(group);
+    Interrupt_clearACKGroup(MOTOR1_IA_INT_ACK_GROUP);
 #if (UOMODRI == 0)
     GPIO_writePin(DEBUG_INT_PIN1, 0);
 #endif
@@ -358,14 +419,11 @@ __attribute__((interrupt)) void adc_isrMotor1(void)
 __attribute__((interrupt)) void adc_isrMotor2(void)
 {
 #if (UOMODRI == 0)
-    GPIO_writePin(DEBUG_INT_PIN2, 1);
+    GPIO_writePin(DEBUG_INT_PIN1, 1);
 #endif
-    FOC_STRUCT*     p_foc       = motor[MOTOR_2].p_motorFOC;
-    uint32_t        base        = InterruptList[ADC_IT_MOTOR_2].intPeriphBase; //MOTOR12_IVA_ADC_ADDR;
-    uint16_t        group       = InterruptList[ADC_IT_MOTOR_2].intAckGroup;
-    ADC_IntNumber   adcIntNum   = (ADC_IntNumber)InterruptList[ADC_IT_MOTOR_2].intPeriphSrc; //MOTOR1_IA_INT_NUM;
+    FOC_STRUCT* p_foc = motor[MOTOR_2].p_motorFOC;
 
-    if(com_rx_cmd.modeReg.bit.ES && com_rx_cmd.modeReg.bit.EM2)
+    if(cmd_uOmodri.cmdReg.bit.ES && cmd_uOmodri.cmdReg.bit.EM2)
     {
         // Read encoder position
         ENC_getPosition(&p_foc->motor_enc);
@@ -376,9 +434,9 @@ __attribute__((interrupt)) void adc_isrMotor2(void)
         // Set new PWM command
         MOT_runCommand(&motor[MOTOR_2], p_foc->dtc_u, p_foc->dtc_v, p_foc->dtc_w);
         // Clear the interrupt overflow flag
-        ADC_clearInterruptOverflowStatus(base, adcIntNum);
+        ADC_clearInterruptOverflowStatus(MOTOR12_IVA_ADC_ADDR, MOTOR2_IA_INT_NUM);
         // Clear the interrupt flag
-        ADC_clearInterruptStatus(base, adcIntNum);
+        ADC_clearInterruptStatus(MOTOR12_IVA_ADC_ADDR, MOTOR2_IA_INT_NUM);
 
         // Acknowledge the interrupt (Acknowledge PIE Interrupt Group)
         //        Interrupt_clearACKGroup(group);
@@ -387,7 +445,7 @@ __attribute__((interrupt)) void adc_isrMotor2(void)
 
         //ENC_update(motor[MOTOR_1].motorFOC->motor_enc);
         // Check for roll-over error
-        if (p_foc->motor_enc.rollOverErrorFlag && com_rx_cmd.modeReg.bit.EPRE)
+        if (p_foc->motor_enc.rollOverErrorFlag && cmd_uOmodri.cmdReg.bit.EPRE)
         {
             p_foc->errorMsg = SPI_SENSOR_STATUS_ERROR_POS_ROLLOVER;
             // Turn off control loop
@@ -425,15 +483,15 @@ __attribute__((interrupt)) void adc_isrMotor2(void)
 //        comInterface.positionRef[MOTOR_2]   = __sinpuf32(debugFreq * TIME_M2_S);//debugFreq * TIME_S;//
 //        comInterface.velocityRef[MOTOR_2]   = 4.0f * M_PI * M_PI * debugFreq * __cospuf32(debugFreq * TIME_M2_S);//debugFreq * TIME_S;//
 //        comInterface.iqRef[MOTOR_2]         = 0.0f;
-        com_rx_cmd.positionRef[MOTOR_2] = __sinpuf32((float32_t)motor[MOTOR_2].interruptCnt / PWM_FREQ);
-        com_rx_cmd.velocityRef[MOTOR_2] = 4.0f * M_PI * M_PI * __cospuf32((float32_t)motor[MOTOR_2].interruptCnt / PWM_FREQ);
-        com_rx_cmd.iqRef[MOTOR_2]       = 0.0f;
+        cmd_uOmodri.positionRef[MOTOR_2] = __sinpuf32((float32_t)motor[MOTOR_2].interruptCnt / PWM_FREQ);
+        cmd_uOmodri.velocityRef[MOTOR_2] = 4.0f * M_PI * M_PI * __cospuf32((float32_t)motor[MOTOR_2].interruptCnt / PWM_FREQ);
+        cmd_uOmodri.iqRef[MOTOR_2]       = 0.0f;
 #endif
         p_foc->pdPos.inTheta    = p_foc->motor_enc.thetaAbsolute;
-        p_foc->pdPos.setTheta   = com_rx_cmd.positionRef[MOTOR_2];
+        p_foc->pdPos.setTheta   = cmd_uOmodri.positionRef[MOTOR_2];
         p_foc->pdPos.inSpeed    = p_foc->motor_enc.speedEst.speedMech;
-        p_foc->pdPos.setSpeed   = com_rx_cmd.velocityRef[MOTOR_2];
-        p_foc->pdPos.ff         = com_rx_cmd.iqRef[MOTOR_2];// Set feed-forward current
+        p_foc->pdPos.setSpeed   = cmd_uOmodri.velocityRef[MOTOR_2];
+        p_foc->pdPos.ff         = cmd_uOmodri.iqRef[MOTOR_2];// Set feed-forward current
         // Run PD controller
         FOC_runPD(&p_foc->pdPos);
         // Set current reference
@@ -474,7 +532,7 @@ __attribute__((interrupt)) void adc_isrMotor2(void)
         motor[MOTOR_2].interruptCnt++;
 
         // Compute time
-//        com_rx_cmd.time[MOTOR_2] = TIME_M2_S;//(motor[MOTOR_1].interruptCounter / PWM_FREQ);
+//        cmd_uOmodri.time[MOTOR_2] = TIME_M2_S;//(motor[MOTOR_1].interruptCounter / PWM_FREQ);
     }
 
     //-------------------------------------------------------------------//
@@ -490,10 +548,11 @@ __attribute__((interrupt)) void adc_isrMotor2(void)
     //IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_FLAG0, IPC_ADDR_CORRECTION_ENABLE, IPC_CMD_READ_MEM, (uint32_t)(motor[MOTOR_1].p_motorFOC), 1);
 //    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_FLAG0, IPC_ADDR_CORRECTION_ENABLE, IPC_CMD_READ_MEM, (uint32_t)(p_foc), 1);
     // Acknowledge PWM and CLA interrupt flag
-    cpt++;
-    Interrupt_clearACKGroup(group);
+    newFocCtrl_M2 = true;
+    Interrupt_clearACKGroup(MOTOR2_IA_INT_ACK_GROUP);
 #if (UOMODRI == 0)
-    GPIO_writePin(DEBUG_INT_PIN2, 0);
+    cpt++;
+    GPIO_writePin(DEBUG_INT_PIN1, 0);
 #endif
 }
 
@@ -540,17 +599,61 @@ __attribute__((interrupt)) void adc_isrMotor2(void)
 //    GPIO_writePin(DEBUG_INT_PIN2, 0);
 //#endif
 //}
-__attribute__((interrupt)) void dma_isrMsgRx(void)
+__attribute__((interrupt)) void dma_isrCmdMsg(void)
 {
-    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_FLAG1, IPC_ADDR_CORRECTION_ENABLE, IPC_CMD_READ_MEM, (uint32_t)(&com_rx_raw), 1);
-    DMA_clearTriggerFlag(DMA_COM_SPI_RX_BASE_ADDR);
+#if (UOMODRI == 0)
+    GPIO_writePin(DEBUG_INT_PIN2, 1);
+#endif
+//    DMA_stopChannel(DMA_COM_SPI_RX_BASE_ADDR);
+    //while(HWREG(DMA_COM_SPI_RX_BASE_ADDR + DMA_O_CONTROL) & DMA_CONTROL_TRANSFERSTS);
+    DMA_configDestAddress(DMA_COM_SPI_RX_BASE_ADDR, p_nxCmdMsgAddr);
+//    DMA_startChannel(DMA_COM_SPI_RX_BASE_ADDR);
+//    DMA_startChannel(DMA_COM_SPI_TX_BASE_ADDR);
+//    EALLOW;
+//    HWREG(DMA_COM_SPI_RX_BASE_ADDR + DMA_O_DST_BEG_ADDR_SHADOW) = (uint32_t)p_nxCmdMsgAddr;
+//    EDIS;
+//    DMA_startChannel(DMA_COM_SPI_RX_BASE_ADDR);
+//    newCmdMsg = true;
+//    p_nxCmdMsgAddr  = (p_crCmdMsgAddr == &cmd_msg[0]) ? (&cmd_msg[1]) : (&cmd_msg[0]);
+    com_cmdMsgExtract(p_crCmdMsgAddr, &cmd_uOmodri);
+    cmd_msg_t* p_tmpCmdMsgAddr  = p_crCmdMsgAddr;
+    p_crCmdMsgAddr              = p_nxCmdMsgAddr;
+    p_nxCmdMsgAddr              = p_tmpCmdMsgAddr;
     // Clear the interrupt flag
-    Interrupt_clearACKGroup(INTERRUPT_ACK_GROUP7);
+    Interrupt_clearACKGroup(DMA_COM_SPI_RX_INT_ACK_GROUP);
+
+#if (UOMODRI == 0)
+    GPIO_writePin(DEBUG_INT_PIN2, 0);
+#endif
 }
 
-__attribute__((interrupt)) void gpio_isrFault1(void)
+//__attribute__((interrupt)) void spi_isrRx(void)
+//{
+////    uint8_t index               = 0;
+////    while(InterruptList[index].p_intHandler != &spi_isrRx) index++;
+////    uint16_t group              = InterruptList[index].intAckGroup;
+//    static uint16_t tmp[17];
+//    static uint8_t i = 0;
+//
+//    while((SPI_getRxFIFOStatus(COM_SPI_BASE) != SPI_FIFO_RXEMPTY) && (i < 17))
+//        tmp[i++] = SPI_readDataNonBlocking(COM_SPI_BASE);
+//
+//    if(i == 0)
+//        p_CmdMsgAddr = (p_CmdMsgAddr == &cmd_msg[0]) ? (&cmd_msg[1]) : (&cmd_msg[0]);
+//    else if(i >= 17)
+//    {
+//        i = 0;
+//        memcpy((cmd_msg_t*)p_CmdMsgAddr, &tmp[0], sizeof(cmd_msg_t));
+//        newCmdMsg = true;
+//    }
+//
+//    SPI_clearInterruptStatus(COM_SPI_BASE, SPI_INT_RXFF);
+//    Interrupt_clearACKGroup(INTERRUPT_ACK_GROUP6);
+//}
+
+__attribute__((interrupt)) void gpio_isrFaultMotor1(void)
 {
-    com_rx_cmd.modeReg.bit.ES = false;
+    cmd_uOmodri.cmdReg.bit.ES = false;
     MOT_stopCommand(&motor[MOTOR_1]);
     // Reset controllers
     FOC_resetStruct(motor[MOTOR_1].p_motorFOC);
@@ -573,9 +676,9 @@ __attribute__((interrupt)) void gpio_isrFault1(void)
 
 }
 
-__attribute__((interrupt)) void gpio_isrFault2(void)
+__attribute__((interrupt)) void gpio_isrFaultMotor2(void)
 {
-    com_rx_cmd.modeReg.bit.ES = false;
+    cmd_uOmodri.cmdReg.bit.ES = false;
     MOT_stopCommand(&motor[MOTOR_2]);
     // Reset controllers
     FOC_resetStruct(motor[MOTOR_2].p_motorFOC);

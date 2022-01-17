@@ -225,8 +225,8 @@ typedef struct __FOC_STRUCT__
     // Error messages
     uint16_t            errorMsg;
     // Enable flag
-    bool                motor_enable;
-    bool                system_enable;
+//    bool                motor_enable;
+//    bool                system_enable;
 
     // Phase measured voltages
 //    float32_t phaseAVolt;   // [V]

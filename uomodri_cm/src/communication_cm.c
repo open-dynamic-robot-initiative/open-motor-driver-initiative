@@ -56,8 +56,8 @@ bool com_cmdRx(rx_msg_t* p_msg, rx_uomodri_t* p_cmd)
         p_cmd->kpCoeff[MOTOR_2]     = (float32_t)(p_msg->payload.kpCoeff[MOTOR_2]       * KP_LSB);
         p_cmd->kdCoeff[MOTOR_1]     = (float32_t)(p_msg->payload.kdCoeff[MOTOR_1]       * KD_LSB);
         p_cmd->kdCoeff[MOTOR_2]     = (float32_t)(p_msg->payload.kdCoeff[MOTOR_2]       * KD_LSB);
-        p_cmd->iSat[MOTOR_1]        = (float32_t)(p_msg->payload.iSat[MOTOR_1]          * CURRENT_SAT_LSB);
-        p_cmd->iSat[MOTOR_1]        = (float32_t)(p_msg->payload.iSat[MOTOR_2]          * CURRENT_SAT_LSB);
+//        p_cmd->iSat[MOTOR_1]        = (float32_t)(p_msg->payload.iSat[MOTOR_1]          * CURRENT_SAT_LSB);
+//        p_cmd->iSat[MOTOR_1]        = (float32_t)(p_msg->payload.iSat[MOTOR_2]          * CURRENT_SAT_LSB);
         rx_msg_valid                = true;
     }
 
@@ -84,7 +84,7 @@ bool com_msgTx(FOC_STRUCT* p_foc, tx_msg_t* p_msg)
         p_msg->payload.statusReg.bit.IDX1T  = p_foc->motor_enc.indexToggle;                                 // MOTOR_1 index toggle
         p_msg->payload.statusReg.bit.IDX1D  = p_foc->motor_enc.indexDetected;                               // MOTOR_1 index detected
         // Update time stamp in milliseconds - MOTOR_1
-        p_msg->payload.timeStamp            = (uint16_t)(p_msg->time[MOTOR_1] * 1000.0f);
+//        p_msg->payload.timeStamp            = (uint16_t)(p_msg->time[MOTOR_1] * 1000.0f);
         // Update motor position, velocity, Iq, coil resistance and alternative aquisition - MOTOR_1
         p_msg->payload.position[MOTOR_1]    = (int32_t)(p_foc->motor_enc.thetaAbsolute / POSITION_LSB);
         p_msg->payload.velocity[MOTOR_1]    = (int16_t)(p_foc->motor_enc.speedEst.speedMech / VELOCITY_LSB);
@@ -102,7 +102,7 @@ bool com_msgTx(FOC_STRUCT* p_foc, tx_msg_t* p_msg)
         p_msg->payload.statusReg.bit.IDX2T  = p_foc->motor_enc.indexToggle;                                 // MOTOR_2 index toggle
         p_msg->payload.statusReg.bit.IDX2D  = p_foc->motor_enc.indexDetected;                               // MOTOR_2 index detected
         // Update time stamp in milliseconds - MOTOR_1
-        p_msg->payload.timeStamp            = (uint16_t)(p_msg->time[MOTOR_2] * 1000.0f);
+//        p_msg->payload.timeStamp            = (uint16_t)(p_msg->time[MOTOR_2] * 1000.0f);
         // Update motor position, velocity, Iq, coil resistance and alternative aquisition - MOTOR_1
         p_msg->payload.position[MOTOR_2]    = (int32_t)(p_foc->motor_enc.thetaAbsolute / POSITION_LSB);
         p_msg->payload.velocity[MOTOR_2]    = (int16_t)(p_foc->motor_enc.speedEst.speedMech / VELOCITY_LSB);

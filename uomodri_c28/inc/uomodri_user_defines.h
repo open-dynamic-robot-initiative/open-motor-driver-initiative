@@ -83,6 +83,7 @@
 #define LSB_16(x)                               ((x) & 0xFF)
 #define MSB_16(x)                               (((x) >> 8) & 0xFF)
 #define FUS_16_TO_32(x, y)                      (((uint32_t)(x) << 16) | (uint32_t)(y))
+//#define SEP_32_TO_16(x, y)
 // 32 bits macros
 #define LSB_32(x)                               ((x) & 0xFFFF)
 #define MSB_32(x)                               (((x) >> 16) & 0xFFFF)
@@ -116,28 +117,6 @@
 #define UART_DBG_RX                             43
 #define UART_DBG_RX_CFG                         GPIO_43_UARTA_RX
 #endif
-#define MST_SPI_SIMO                            (69)
-#define MST_SPI_SIMO_CFG                        GPIO_69_SPIC_SIMO
-#define MST_SPI_SOMI                            (70)
-#define MST_SPI_SOMI_CFG                        GPIO_70_SPIC_SOMI
-#define MST_SPI_CLK                             (71)
-#define MST_SPI_CLK_CFG                         GPIO_71_SPIC_CLK
-#define MST_SPI_CS                              (72)
-#define MST_SPI_CS_CFG                          GPIO_72_SPIC_STEN
-
-#define MST_SPI_BASE                            SPIC_BASE
-#define MST_SPI_TX_BASE_ADDR                    (MST_SPI_BASE + SPI_O_TXBUF)
-#define MST_SPI_RX_BASE_ADDR                    (MST_SPI_BASE + SPI_O_RXBUF)
-
-#define DMA_MST_SPI_TX_BASE_ADDR                DMA_CH3_BASE
-//#define DMA_MST_SPI_TX_INT                      INT_DMA_CH3
-#define DMA_MST_SPI_TX_RX_8BIT_LENGTH           (34)
-#define DMA_MST_SPI_TX_RX_16BIT_LENGTH          (DMA_MST_SPI_TX_RX_8BIT_LENGTH / 2)
-#define DMA_MST_SPI_TX_RX_16BIT_BURST_SIZE      (1)
-#define DMA_MST_SPI_TX_RX_TRANSFER_NB           ((DMA_MST_SPI_TX_RX_16BIT_LENGTH / DMA_MST_SPI_TX_RX_16BIT_BURST_SIZE) + \
-                                                (((DMA_MST_SPI_TX_RX_16BIT_LENGTH % DMA_MST_SPI_TX_RX_16BIT_BURST_SIZE) != 0) ? \
-                                                (1) : (0)))
-
 #endif
 /**
  * @}
@@ -155,29 +134,37 @@
 /******************************************************************************************************
 *                                               SPI Defines
 *******************************************************************************************************/
-/** @defgroup SPI_COM_GPIO_pins - COM configuration.
- *  @brief    Configure GPIO pins associated to external communication.
+/** @defgroup SPI DRV configuration.
+ *  @brief    Configure SPI module associated with DRV communication.
  * @{
  */
-#define COM_SPI_SIMO                            (60)
-#define COM_SPI_SIMO_CFG                        GPIO_60_SPIB_SIMO
-#define COM_SPI_SOMI                            (61)
-#define COM_SPI_SOMI_CFG                        GPIO_61_SPIB_SOMI
-#define COM_SPI_CLK                             (65)
-#define COM_SPI_CLK_CFG                         GPIO_65_SPIB_CLK
-#define COM_SPI_CS                              (59)
-#define COM_SPI_CS_CFG                          GPIO_59_SPIB_STEN
+#define DRV_SPI_BASE                            SPIA_BASE
+#define DRV_SPI_TX_BASE_REG_ADDR                (DRV_SPI_BASE + SPI_O_TXBUF)
+#define DRV_SPI_RX_BASE_REG_ADDR                (DRV_SPI_BASE + SPI_O_RXBUF)
 /**
  * @}
  */
 
-/** @defgroup SPI communication configuration.
+/** @defgroup Slave SPI communication configuration.
  *  @brief    Configure SPI module associated with external communication.
  * @{
  */
 #define COM_SPI_BASE                            SPIB_BASE
-#define COM_SPI_TX_BASE_ADDR                    (COM_SPI_BASE + SPI_O_TXBUF)
-#define COM_SPI_RX_BASE_ADDR                    (COM_SPI_BASE + SPI_O_RXBUF)
+#define COM_SPI_TX_BASE_REG_ADDR                (COM_SPI_BASE + SPI_O_TXBUF)
+#define COM_SPI_RX_BASE_REG_ADDR                (COM_SPI_BASE + SPI_O_RXBUF)
+#define COM_SPI_TX_INT                          INT_SPIB_TX
+#define COM_SPI_RX_INT                          INT_SPIB_RX
+/**
+ * @}
+ */
+
+/** @defgroup Master SPI communication configuration.
+ *  @brief    Configure master SPI module (simulating master board).
+ * @{
+ */
+#define MST_SPI_BASE                            SPIC_BASE
+#define MST_SPI_TX_BASE_REG_ADDR                (MST_SPI_BASE + SPI_O_TXBUF)
+#define MST_SPI_RX_BASE_REG_ADDR                (MST_SPI_BASE + SPI_O_RXBUF)
 /**
  * @}
  */
@@ -200,14 +187,39 @@
  * @}
  */
 
-/** @defgroup SPI DRV configuration.
- *  @brief    Configure SPI module associated with DRV communication.
+/** @defgroup SPI_COM_GPIO_pins - COM configuration.
+ *  @brief    Configure GPIO pins associated to external communication.
  * @{
  */
-#define DRV_SPI_BASE                            SPIA_BASE
+#define COM_SPI_SIMO                            (60)
+#define COM_SPI_SIMO_CFG                        GPIO_60_SPIB_SIMO
+#define COM_SPI_SOMI                            (61)
+#define COM_SPI_SOMI_CFG                        GPIO_61_SPIB_SOMI
+#define COM_SPI_CLK                             (65)
+#define COM_SPI_CLK_CFG                         GPIO_65_SPIB_CLK
+#define COM_SPI_CS                              (59)
+#define COM_SPI_CS_CFG                          GPIO_59_SPIB_STEN
 /**
  * @}
  */
+
+#if (UOMODRI == 0)
+/** @defgroup SPI_MST_GPIO_pins - MST com configuration.
+ *  @brief    Configure GPIO pins associated to master board communication.
+ * @{
+ */
+#define MST_SPI_SIMO                            (69)
+#define MST_SPI_SIMO_CFG                        GPIO_69_SPIC_SIMO
+#define MST_SPI_SOMI                            (70)
+#define MST_SPI_SOMI_CFG                        GPIO_70_SPIC_SOMI
+#define MST_SPI_CLK                             (71)
+#define MST_SPI_CLK_CFG                         GPIO_71_SPIC_CLK
+#define MST_SPI_CS                              (72)
+#define MST_SPI_CS_CFG                          GPIO_72_SPIC_STEN
+/**
+ * @}
+ */
+#endif
 
 /******************************************************************************************************
 *                                               DMA Defines
@@ -216,18 +228,38 @@
  *  @brief    Configure DMA channels associated to SPI communication.
  * @{
  */
-#define DMA_COM_SPI_TX_BASE_ADDR                DMA_CH1_BASE
-#define DMA_COM_SPI_TX_INT                      INT_DMA_CH1
-#define DMA_COM_SPI_RX_BASE_ADDR                DMA_CH2_BASE
-#define DMA_COM_SPI_RX_INT                      INT_DMA_CH2
+#define DMA_NO_WRAP                             (0x10000)
+#define DMA_COM_SPI_TX_BASE_ADDR                DMA_CH5_BASE
+#define DMA_COM_SPI_TX_INT                      INT_DMA_CH5
+#define DMA_COM_SPI_TX_TRIGGER_SRC              DMA_TRIGGER_SPIBTX
+#define DMA_COM_SPI_RX_BASE_ADDR                DMA_CH6_BASE
+#define DMA_COM_SPI_RX_INT                      INT_DMA_CH6
+#define DMA_COM_SPI_RX_TRIGGER_SRC              DMA_TRIGGER_SPIBRX
+#define DMA_COM_SPI_RX_INT_ACK_GROUP            INTERRUPT_ACK_GROUP7
+#if (UOMODRI == 0)
+#define DMA_MST_SPI_TX_BASE_ADDR                DMA_CH3_BASE
+#define DMA_MST_SPI_TX_INT                      INT_DMA_CH3
+#define DMA_MST_SPI_TX_TRIGGER_SRC              DMA_TRIGGER_SPICTX
+#define DMA_MST_SPI_RX_BASE_ADDR                DMA_CH4_BASE
+#define DMA_MST_SPI_RX_INT                      INT_DMA_CH4
+#endif
 #define DMA_COM_SPI_TX_RX_8BIT_LENGTH           (34)
-#define DMA_COM_SPI_TX_RX_16BIT_LENGTH          (DMA_COM_SPI_TX_RX_8BIT_LENGTH / 2)
-#define DMA_COM_SPI_TX_RX_16BIT_BURST_SIZE      (1)
-#define DMA_COM_SPI_TX_RX_TRANSFER_NB           ((DMA_COM_SPI_TX_RX_16BIT_LENGTH / DMA_COM_SPI_TX_RX_16BIT_BURST_SIZE) + \
-                                                (((DMA_COM_SPI_TX_RX_16BIT_LENGTH % DMA_COM_SPI_TX_RX_16BIT_BURST_SIZE) != 0) ? \
-                                                (1) : (0)))
-//#define DMA_TX_BASE_ADDR                        DMA_CH5_BASE
-//#define DMA_RX_BASE_ADDR                        DMA_CH6_BASE
+#define DMA_COM_SPI_TX_RX_16BIT_FULL_LENGTH     (DMA_COM_SPI_TX_RX_8BIT_LENGTH / 2)
+#define DMA_COM_SPI_TX_RX_16BIT_CRC_LENGTH      (2)
+#define DMA_COM_SPI_TX_RX_16BIT_PAYLOAD_LENGTH  (DMA_COM_SPI_TX_RX_16BIT_FULL_LENGTH - DMA_COM_SPI_TX_RX_16BIT_CRC_LENGTH)
+#define DMA_COM_SPI_TX_RX_16BIT_BURST_EVT       (1)
+#define DMA_COM_SPI_TX_RX_TRANSFER_EVT          (DMA_COM_SPI_TX_RX_16BIT_FULL_LENGTH / DMA_COM_SPI_TX_RX_16BIT_BURST_EVT)
+//#define DMA_COM_SPI_TX_RX_TRANSFER_EVT          ((DMA_COM_SPI_TX_RX_16BIT_LENGTH / DMA_COM_SPI_TX_RX_16BIT_BURST_EVT) + \
+//                                                (((DMA_COM_SPI_TX_RX_16BIT_LENGTH % DMA_COM_SPI_TX_RX_16BIT_BURST_EVT) != 0) ? \
+//                                                (1) : (0)))
+#if (UOMODRI == 0)
+#define DMA_MST_SPI_TX_RX_8BIT_LENGTH           (34)
+#define DMA_MST_SPI_TX_RX_16BIT_FULL_LENGTH     (DMA_MST_SPI_TX_RX_8BIT_LENGTH / 2)
+#define DMA_MST_SPI_TX_RX_16BIT_CRC_LENGTH      (2)
+#define DMA_MST_SPI_TX_RX_16BIT_PAYLOAD_LENGTH  (DMA_MST_SPI_TX_RX_16BIT_FULL_LENGTH - DMA_MST_SPI_TX_RX_16BIT_CRC_LENGTH)
+#define DMA_MST_SPI_TX_RX_16BIT_BURST_EVT       (1)
+#define DMA_MST_SPI_TX_RX_TRANSFER_EVT          (DMA_MST_SPI_TX_RX_16BIT_FULL_LENGTH / DMA_MST_SPI_TX_RX_16BIT_BURST_EVT)
+#endif
 /**
  * @}
  */
@@ -244,11 +276,15 @@
 #define MOTOR1_DRV_GPIO_EN_CFG                  GPIO_89_GPIO89
 #define MOTOR1_DRV_GPIO_NFAULT                  (90)
 #define MOTOR1_DRV_GPIO_NFAULT_CFG              GPIO_90_GPIO90
+#define MOTOR1_DRV_GPIO_NFAULT_INT              INT_XINT1
+#define MOTOR1_DRV_GPIO_NFAULT_INT_ACK_GROUP    INTERRUPT_ACK_GROUP1
 // DRV2 SPI defines
 #define MOTOR2_DRV_GPIO_EN                      (37)
 #define MOTOR2_DRV_GPIO_EN_CFG                  GPIO_37_GPIO37
 #define MOTOR2_DRV_GPIO_NFAULT                  (36)
 #define MOTOR2_DRV_GPIO_NFAULT_CFG              GPIO_36_GPIO36
+#define MOTOR2_DRV_GPIO_NFAULT_INT              INT_XINT2
+#define MOTOR2_DRV_GPIO_NFAULT_INT_ACK_GROUP    INTERRUPT_ACK_GROUP1
 /**
  * @}
  */
@@ -375,7 +411,7 @@
  * @}
  */
 
-/** @defgroup ADC interrupts source
+/** @defgroup ADC interrupts source \& acknowledge group
  *  @brief    Define the interrupt source \& the PIE Interrupt Number associated
  * @{
  */
@@ -384,6 +420,9 @@
 
 #define MOTOR1_IA_INT_NUM                       ADC_INT_NUMBER3
 #define MOTOR2_IA_INT_NUM                       ADC_INT_NUMBER4
+
+#define MOTOR1_IA_INT_ACK_GROUP                 INTERRUPT_ACK_GROUP10
+#define MOTOR2_IA_INT_ACK_GROUP                 INTERRUPT_ACK_GROUP10
 /**
  * @}
  */
@@ -671,75 +710,75 @@
 *                                               Motors Defines
 *******************************************************************************************************/
 /*** Motor 1 constants ***/
-#define MOTOR1_KV                               (300.0)     // Motor constant (rpm/V)
-#define MOTOR1_KE                               (0.0017)    //1.0 / (MOTOR1_KV * FM_RPM2RADPS * MOTOR1_POLES_PAIRS) // Motor back EMF constant (V/rad/s)
-#define MOTOR1_KI                               (0.1)       // Motor torque constant (N.m/A)
-#define MOTOR1_RS                               (0.7)       // Stator resistance (ohm)
-#define MOTOR1_LD                               (134e-6)    // Stator d-axis inductance (H)
-#define MOTOR1_LQ                               (140e-6)    // Stator q-axis inductance (H)
+#define MOTOR1_KV                               (300.0f)     // Motor constant (rpm/V)
+#define MOTOR1_KE                               (0.0017f)    //1.0 / (MOTOR1_KV * FM_RPM2RADPS * MOTOR1_POLES_PAIRS) // Motor back EMF constant (V/rad/s)
+#define MOTOR1_KI                               (0.1f)       // Motor torque constant (N.m/A)
+#define MOTOR1_RS                               (0.7f)       // Stator resistance (ohm)
+#define MOTOR1_LD                               (134e-6f)    // Stator d-axis inductance (H)
+#define MOTOR1_LQ                               (140e-6f)    // Stator q-axis inductance (H)
 #define MOTOR1_POLES_PAIRS                      (12)        // Number of poles
-#define MOTOR1_CURRENT_CUTOFF_FREQ              (500.0)     // Current loop bandwidth (Hz)
-#define MOTOR1_CURRENT_LPF_ALPHA                (1.0 / (1.0 + (1.0 / (2.0 * M_PI * MOTOR1_CURRENT_CUTOFF_FREQ / PWM_FREQ))))
-#define MOTOR1_CURRENT_LPF_ONE_M_ALPHA          (1.0 - MOTOR1_CURRENT_LPF_ALPHA)
-#define MOTOR1_ID_REGULATOR_KP_COEF             (MOTOR1_LD * 2.0 * M_PI * MOTOR1_CURRENT_CUTOFF_FREQ)
-#define MOTOR1_ID_REGULATOR_KI_COEF             (MOTOR1_RS * 2.0 * M_PI * MOTOR1_CURRENT_CUTOFF_FREQ / PWM_FREQ)
-#define MOTOR1_IQ_REGULATOR_KP_COEF             (MOTOR1_LQ * 2.0 * M_PI * MOTOR1_CURRENT_CUTOFF_FREQ)
-#define MOTOR1_IQ_REGULATOR_KI_COEF             (MOTOR1_RS * 2.0 * M_PI * MOTOR1_CURRENT_CUTOFF_FREQ / PWM_FREQ)
+#define MOTOR1_CURRENT_CUTOFF_FREQ              (500.0f)     // Current loop bandwidth (Hz)
+#define MOTOR1_CURRENT_LPF_ALPHA                (1.0f / (1.0f + (1.0f / (2.0f * M_PI * MOTOR1_CURRENT_CUTOFF_FREQ / PWM_FREQ))))
+#define MOTOR1_CURRENT_LPF_ONE_M_ALPHA          (1.0f - MOTOR1_CURRENT_LPF_ALPHA)
+#define MOTOR1_ID_REGULATOR_KP_COEF             (MOTOR1_LD * 2.0f * M_PI * MOTOR1_CURRENT_CUTOFF_FREQ)
+#define MOTOR1_ID_REGULATOR_KI_COEF             (MOTOR1_RS * 2.0f * M_PI * MOTOR1_CURRENT_CUTOFF_FREQ / PWM_FREQ)
+#define MOTOR1_IQ_REGULATOR_KP_COEF             (MOTOR1_LQ * 2.0f * M_PI * MOTOR1_CURRENT_CUTOFF_FREQ)
+#define MOTOR1_IQ_REGULATOR_KI_COEF             (MOTOR1_RS * 2.0f * M_PI * MOTOR1_CURRENT_CUTOFF_FREQ / PWM_FREQ)
 #define MOTOR1_SPEED_REGULATOR_KP_COEF          (1.0f)
 #define MOTOR1_SPEED_REGULATOR_KD_COEF          (0.02f)
 #define MOTOR1_SPEED_REGULATOR_SATURATION       (4.0f)
 #define MOTOR1_DTC_MAX                          (0.9f)     // Max duty cycle
 #define MOTOR1_DTC_MIN                          (0.1f)     // Min duty cycle
 #define MOTOR1_STATOR_RESISTOR_CUTOFF_FREQ      (0.2f)
-#define MOTOR1_STATOR_RESISTOR_LPF_ALPHA        (1.0 / (1.0 + (1.0 / (2.0 * M_PI * MOTOR1_STATOR_RESISTOR_CUTOFF_FREQ / PWM_FREQ))))
-#define MOTOR1_STATOR_RESISTOR_LPF_ONE_M_ALPHA  (1.0 - MOTOR1_STATOR_RESISTOR_LPF_ALPHA)
+#define MOTOR1_STATOR_RESISTOR_LPF_ALPHA        (1.0f / (1.0f + (1.0f / (2.0f * M_PI * MOTOR1_STATOR_RESISTOR_CUTOFF_FREQ / PWM_FREQ))))
+#define MOTOR1_STATOR_RESISTOR_LPF_ONE_M_ALPHA  (1.0f - MOTOR1_STATOR_RESISTOR_LPF_ALPHA)
 //#define MOTOR1_CUR_LOOP_ONE_M_ALPHA         (1.0 / (1.0 + (2.0 * M_PI * MOTOR1_CUR_LOOP_BANDWIDTH / PWM_FREQ)))
 //#define MOTOR1_CUR_LOOP_ALPHA                   (1.0 - (MOTOR1_CUR_LOOP_ONE_M_ALPHA))
 
 /*** Motor 2 constants ***/
-#define MOTOR2_KV                               (300.0)     // Motor constant (rpm/V)
-#define MOTOR2_KE                               (0.0017)    // Motor back EMF constant (V/rad/s)
-#define MOTOR2_KI                               (0.1)       // Motor torque constant (N.m/A)
-#define MOTOR2_RS                               (0.7)       // Stator resistance (ohm)
+#define MOTOR2_KV                               (300.0f)     // Motor constant (rpm/V)
+#define MOTOR2_KE                               (0.0017f)    // Motor back EMF constant (V/rad/s)
+#define MOTOR2_KI                               (0.1f)       // Motor torque constant (N.m/A)
+#define MOTOR2_RS                               (0.7f)       // Stator resistance (ohm)
 #define MOTOR2_LD                               (134e-6)    // Stator d-axis inductance (H)
 #define MOTOR2_LQ                               (140e-6)    // Stator q-axis inductance (H)
 #define MOTOR2_POLES_PAIRS                      (12)        // Number of poles
-#define MOTOR2_CURRENT_CUTOFF_FREQ              (500.0)     // Current loop bandwidth (Hz)
-#define MOTOR2_CURRENT_LPF_ALPHA                (1.0 / (1.0 + (1.0 / (2.0 * M_PI * MOTOR2_CURRENT_CUTOFF_FREQ / PWM_FREQ))))
-#define MOTOR2_CURRENT_LPF_ONE_M_ALPHA          (1.0 - MOTOR2_CURRENT_LPF_ALPHA)
-#define MOTOR2_ID_REGULATOR_KP_COEF             (MOTOR2_LD * 2.0 * M_PI * MOTOR2_CURRENT_CUTOFF_FREQ)
-#define MOTOR2_ID_REGULATOR_KI_COEF             (MOTOR2_RS * 2.0 * M_PI * MOTOR2_CURRENT_CUTOFF_FREQ / PWM_FREQ)
-#define MOTOR2_IQ_REGULATOR_KP_COEF             (MOTOR2_LQ * 2.0 * M_PI * MOTOR2_CURRENT_CUTOFF_FREQ)
-#define MOTOR2_IQ_REGULATOR_KI_COEF             (MOTOR2_RS * 2.0 * M_PI * MOTOR2_CURRENT_CUTOFF_FREQ / PWM_FREQ)
+#define MOTOR2_CURRENT_CUTOFF_FREQ              (500.0f)     // Current loop bandwidth (Hz)
+#define MOTOR2_CURRENT_LPF_ALPHA                (1.0f / (1.0f + (1.0f / (2.0f * M_PI * MOTOR2_CURRENT_CUTOFF_FREQ / PWM_FREQ))))
+#define MOTOR2_CURRENT_LPF_ONE_M_ALPHA          (1.0f - MOTOR2_CURRENT_LPF_ALPHA)
+#define MOTOR2_ID_REGULATOR_KP_COEF             (MOTOR2_LD * 2.0f * M_PI * MOTOR2_CURRENT_CUTOFF_FREQ)
+#define MOTOR2_ID_REGULATOR_KI_COEF             (MOTOR2_RS * 2.0f * M_PI * MOTOR2_CURRENT_CUTOFF_FREQ / PWM_FREQ)
+#define MOTOR2_IQ_REGULATOR_KP_COEF             (MOTOR2_LQ * 2.0f * M_PI * MOTOR2_CURRENT_CUTOFF_FREQ)
+#define MOTOR2_IQ_REGULATOR_KI_COEF             (MOTOR2_RS * 2.0f * M_PI * MOTOR2_CURRENT_CUTOFF_FREQ / PWM_FREQ)
 #define MOTOR2_SPEED_REGULATOR_KP_COEF          (1.0f)
 #define MOTOR2_SPEED_REGULATOR_KD_COEF          (0.02f)
 #define MOTOR2_SPEED_REGULATOR_SATURATION       (4.0f)
 #define MOTOR2_DTC_MAX                          (0.9f)     // Max duty cycle
 #define MOTOR2_DTC_MIN                          (0.1f)     // Min duty cycle
 #define MOTOR2_STATOR_RESISTOR_CUTOFF_FREQ      (0.2f)
-#define MOTOR2_STATOR_RESISTOR_LPF_ALPHA        (1.0 / (1.0 + (1.0 / (2.0 * M_PI * MOTOR2_STATOR_RESISTOR_CUTOFF_FREQ / PWM_FREQ))))
-#define MOTOR2_STATOR_RESISTOR_LPF_ONE_M_ALPHA  (1.0 - MOTOR2_STATOR_RESISTOR_LPF_ALPHA)
+#define MOTOR2_STATOR_RESISTOR_LPF_ALPHA        (1.0f / (1.0f + (1.0f / (2.0f * M_PI * MOTOR2_STATOR_RESISTOR_CUTOFF_FREQ / PWM_FREQ))))
+#define MOTOR2_STATOR_RESISTOR_LPF_ONE_M_ALPHA  (1.0f - MOTOR2_STATOR_RESISTOR_LPF_ALPHA)
 //#define MOTOR2_CUR_LOOP_ONE_M_ALPHA         (1.0 / (1.0 + (2.0 * M_PI * MOTOR2_CUR_LOOP_BANDWIDTH / PWM_FREQ)))
 //#define MOTOR2_CUR_LOOP_ALPHA                   (1.0 - (MOTOR2_CUR_LOOP_ONE_M_ALPHA))
 
-#define MOTOR12_OVERMODULATION                  (1.15)
-#define MOTOR12_VBUS_CUTOFF_FREQ                (500.0)     // vbus voltage loop bandwidth (Hz)
+#define MOTOR12_OVERMODULATION                  (1.15f)
+#define MOTOR12_VBUS_CUTOFF_FREQ                (500.0f)     // vbus voltage loop bandwidth (Hz)
 #define MOTOR12_VBUS_LPF_ALPHA                  (1.0 / (1.0 + (1.0 / (2.0 * M_PI * MOTOR12_VBUS_CUTOFF_FREQ / PWM_FREQ))))
 #define MOTOR12_VBUS_LPF_ONE_M_ALPHA            (1.0 - MOTOR12_VBUS_LPF_ALPHA)
-#define MOTOR12_IMAX                            (20.0)
+#define MOTOR12_IMAX                            (20.0f)
 
 /******************************************************************************************************
 *                                               Communication Defines
 *******************************************************************************************************/
 /*** Communication constants ***/
-#define POSITION_LSB                            (5.960464477539063e-08)                 // 2**(-24)
-#define VELOCITY_LSB                            (0.00048828125 * 1000.0 * FM_RPM2RADPS) // 2**(-11) // Added rad/s to krpm conversion
-#define IQ_LSB                                  (0.0009765625)                          // 2**(-10)
-#define CURRENT_SAT_LSB                         (0.125)                                 // 2**(-3)
-#define RESISTANCE_LSB                          (3.0517578125e-05)                      // 2**(-15)
-#define VOLTAGE_LSB                             (6.103515625e-05)                       // 2**(-14)
-#define KP_LSB                                  (0.00048828125)                         // 2**(-11)
-#define KD_LSB                                  (0.0009765625)                          // 2**(-10)
+#define POSITION_LSB                            (5.960464477539063e-08f)                 // 2**(-24)
+#define VELOCITY_LSB                            (0.00048828125f * 1000.0f * FM_RPM2RADPS) // 2**(-11) // Added rad/s to krpm conversion
+#define IQ_LSB                                  (0.0009765625f)                          // 2**(-10)
+#define CURRENT_SAT_LSB                         (0.125f)                                 // 2**(-3)
+#define RESISTANCE_LSB                          (3.0517578125e-05f)                      // 2**(-15)
+#define VOLTAGE_LSB                             (6.103515625e-05f)                       // 2**(-14)
+#define KP_LSB                                  (0.00048828125f)                         // 2**(-11)
+#define KD_LSB                                  (0.0009765625f)                          // 2**(-10)
 typedef struct __LowpassFilter_Structure__
 {
     float32_t a;
@@ -771,15 +810,18 @@ typedef enum
  * @enum    itID
  * @brief   Easier interrupts identification
  */
-typedef enum
-{
-    ADC_IT_MOTOR_1  = 0,    /*!< Select the ADC interrupt source of Motor_1 */
-    ADC_IT_MOTOR_2  = 1,    /*!< Select the ADC interrupt source of Motor_2 */
-//    PWM_IT_MOTOR_1  = 2,    /*!< Select the PWM interrupt source of Motor_1 */
-//    PWM_IT_MOTOR_2  = 3,    /*!< Select the PWM interrupt source of Motor_2 */
-    DRV_IT_MOTOR_1  = 2,    /*!< Select the GPIO (DRV fault) interrupt source of Motor_1 */
-    DRV_IT_MOTOR_2  = 3,    /*!< Select the GPIO (DRV fault) interrupt source of Motor_2 */
-    CLA_IT_MOTOR_1  = 4,    /*!< Select the PWM interrupt source of Motor_1 */
-} IT_ENUM;
+//typedef enum
+//{
+//    ADC_IT_MOTOR_1  = 0,    /*!< Select the ADC interrupt source of Motor_1 */
+//    ADC_IT_MOTOR_2  = 1,    /*!< Select the ADC interrupt source of Motor_2 */
+////    PWM_IT_MOTOR_1  = 2,    /*!< Select the PWM interrupt source of Motor_1 */
+////    PWM_IT_MOTOR_2  = 3,    /*!< Select the PWM interrupt source of Motor_2 */
+//    IPC_IT_STATUS   = 2,
+//    IPC_IT_MSG_CMD  = 3,
+//    DMA_IT_MSG_RX   = 4,
+//    DRV_IT_MOTOR_1  = 5,    /*!< Select the GPIO (DRV fault) interrupt source of Motor_1 */
+//    DRV_IT_MOTOR_2  = 6,    /*!< Select the GPIO (DRV fault) interrupt source of Motor_2 */
+//    CLA_IT_MOTOR_1  = 7,    /*!< Select the PWM interrupt source of Motor_1 */
+//} IT_ENUM;
 
 #endif

@@ -150,7 +150,9 @@ typedef struct _SPI_Cfg_TypeDef_
     SPI_TransferProtocol    protocol;
     SPI_TxFIFOLevel         txLevel;
     SPI_RxFIFOLevel         rxLevel;
+    uint16_t                intSrc;
     bool                    highSpeedMode;
+    bool                    intEnable;              /*!< GPIO can be configured as IT source */
 } SPI_TypeDef;
 
 /**
@@ -160,20 +162,24 @@ typedef struct _SPI_Cfg_TypeDef_
 typedef struct _DMA_Cfg_TypeDef_
 {
     uint32_t            dmaChBase;
-    const void*         p_destAddr;
     const void*         p_srcAddr;
+    const void*         p_dstAddr;
     uint32_t            transferSize;
     uint32_t            srcWrapSize;
-    uint32_t            destWrapSize;
+    uint32_t            dstWrapSize;
     uint32_t            config;
     uint16_t            burstSize;
-    int16_t             destBurstStep;
-    int16_t             srcBurstStep;
-    int16_t             destTransferStep;
-    int16_t             srcTransferStep;
+    int16_t             srcStep;
+    int16_t             dstStep;
+//    int16_t             srcTransferStep;
+//    int16_t             dstTransferStep;
+//    int16_t             srcBurstStep;
+//    int16_t             dstBurstStep;
+    int16_t             srcWrapStep;
+    int16_t             dstWrapStep;
     DMA_Trigger         trigger;
-    DMA_InterruptMode   ITMode;
-    bool                ITEnable;
+    DMA_InterruptMode   intMode;
+    bool                intEnable;
 } DMA_TypeDef;
 
 #if (CLA == 1)
@@ -293,11 +299,11 @@ typedef struct _IT_TypeDef_
 {
 //    const ID_ENUM   motorID;
     uint32_t    intNum;
-    uint32_t    intPeriphBase;
-    uint16_t    intPeriphSrc;
+//    uint32_t    intPeriphBase;
+//    uint16_t    intPeriphSrc;
     //uint16_t    intCpuGroup;
     uint16_t    intAckGroup;
-    void        (*handler)(void);
+    void        (*p_intHandler)(void);
 } IT_TypeDef;
 
 /**
@@ -352,6 +358,7 @@ typedef struct _HAL_MOTOR_CFG_
  */
 
 void HAL_init(HAL*);
+void HAL_DMA_start(const DMA_TypeDef*);
 void HAL_IT_init(const IT_TypeDef*);
 
 // ADC interrupt service routine

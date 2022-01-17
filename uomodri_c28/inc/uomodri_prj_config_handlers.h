@@ -12,7 +12,7 @@
 #include "drv8353.h"
 #include "foc.h"
 #include "motor.h"
-#include "communication_interface.h"
+#include "communication.h"
 #include "uomodri_user_defines.h"
 #include "uomodri_hal_config_handlers.h"
 
@@ -41,16 +41,17 @@
 //extern float32_t    thetaElec; // [pu]
 //extern float32_t    thetaMechCal[2]; // [pu]
 //extern float32_t    pdSat;
-__attribute__((interrupt)) void ipc_isrStatusMsg(void);
-__attribute__((interrupt)) void ipc_isrMsgCmd(void);
-__attribute__((interrupt)) void dma_isrMsgRx(void);
+//__attribute__((interrupt)) void ipc_isrStatusMsg(void);
+//__attribute__((interrupt)) void ipc_isrMsgCmd(void);
+__attribute__((interrupt)) void dma_isrCmdMsg(void);
+//__attribute__((interrupt)) void spi_isrRx(void);
 //__attribute__((interrupt)) void dma5_isr(void);
 __attribute__((interrupt)) void adc_isrMotor1(void);
 __attribute__((interrupt)) void adc_isrMotor2(void);
 //extern __interrupt void pwm_isrMotor1(void);
 //extern __interrupt void pwm_isrMotor2(void);
-__attribute__((interrupt)) void gpio_isrFault1(void);
-__attribute__((interrupt)) void gpio_isrFault2(void);
+__attribute__((interrupt)) void gpio_isrFaultMotor1(void);
+__attribute__((interrupt)) void gpio_isrFaultMotor2(void);
 
 //__attribute__((interrupt)) void cla1_isr1(void);
 //CLA C Tasks defined in Cla1Tasks_C.cla
@@ -89,42 +90,44 @@ static const IT_TypeDef InterruptList[] =
 // {.motorID = MOTOR_2,   .intNum = INT_XINT2,                                                                                    .intCpuGroup = INTERRUPT_CPU_INT1,  .intAckGroup = INTERRUPT_ACK_GROUP1,    .handler = &gpio_isrFault2},
  {
   .intNum           = MOTOR1_IA_INT_CH,
-  .intAckGroup      = INTERRUPT_ACK_GROUP10,
-  .handler          = &adc_isrMotor1,
-  .intPeriphBase    = MOTOR12_IVA_ADC_ADDR,
-  .intPeriphSrc     = MOTOR1_IA_INT_NUM
+  .intAckGroup      = MOTOR1_IA_INT_ACK_GROUP,
+  .p_intHandler     = &adc_isrMotor1,
  }, //
  {
   .intNum           = MOTOR2_IA_INT_CH,
-  .intAckGroup      = INTERRUPT_ACK_GROUP10,
-  .handler          = &adc_isrMotor2,
-  .intPeriphBase    = MOTOR12_IVA_ADC_ADDR,
-  .intPeriphSrc     = MOTOR2_IA_INT_NUM
+  .intAckGroup      = MOTOR2_IA_INT_ACK_GROUP,
+  .p_intHandler     = &adc_isrMotor2,
  }, //
- {
-  .intNum           = INT_CMTOCPUXIPC0,
-  .intAckGroup      = INTERRUPT_ACK_GROUP11,
-  .handler          = &ipc_isrStatusMsg,
- },
- {
-  .intNum           = INT_CMTOCPUXIPC1,
-  .intAckGroup      = INTERRUPT_ACK_GROUP11,
-  .handler          = &ipc_isrMsgCmd,
- },
+// {
+//  .intNum           = INT_CMTOCPUXIPC0,
+//  .intAckGroup      = INTERRUPT_ACK_GROUP11,
+//  .handler          = &ipc_isrStatusMsg,
+// },
+// {
+//  .intNum           = INT_CMTOCPUXIPC1,
+//  .intAckGroup      = INTERRUPT_ACK_GROUP11,
+//  .handler          = &ipc_isrMsgCmd,
+// },
+
  {
   .intNum           = DMA_COM_SPI_RX_INT,
-  .intAckGroup      = INTERRUPT_ACK_GROUP7,
-  .handler          = &dma_isrMsgRx,
+  .intAckGroup      = DMA_COM_SPI_RX_INT_ACK_GROUP,
+  .p_intHandler     = &dma_isrCmdMsg,
+ },
+// {
+//  .intNum           = COM_SPI_RX_INT,
+//  .intAckGroup      = INTERRUPT_ACK_GROUP6,
+//  .p_intHandler     = &spi_isrRx,
+// },
+ {
+  .intNum           = MOTOR1_DRV_GPIO_NFAULT_INT,
+  .intAckGroup      = MOTOR1_DRV_GPIO_NFAULT_INT_ACK_GROUP,
+  .p_intHandler     = &gpio_isrFaultMotor1,
  },
  {
-  .intNum           = INT_XINT1,
-  .intAckGroup      = INTERRUPT_ACK_GROUP1,
-  .handler          = &gpio_isrFault1,
- },
- {
-  .intNum           = INT_XINT2,
-  .intAckGroup      = INTERRUPT_ACK_GROUP1,
-  .handler          = &gpio_isrFault2,
+  .intNum           = MOTOR2_DRV_GPIO_NFAULT_INT,
+  .intAckGroup      = MOTOR2_DRV_GPIO_NFAULT_INT_ACK_GROUP,
+  .p_intHandler     = &gpio_isrFaultMotor2,
  },
 #if (CLA == 1)
  {
@@ -429,8 +432,8 @@ static FOC_STRUCT motor_foc[] =
   //--- Anti-coagging structure -----------------------------------------------
   //acog;
   //--- FOC controller enable to start? ---------------------------------------
-  .motor_enable                         = false,
-  .system_enable                        = false,
+//  .motor_enable                         = false,
+//  .system_enable                        = false,
  },
  //---------------------------------------------------------------------------
  //---------------------------------------------------------------------------
@@ -574,8 +577,8 @@ static FOC_STRUCT motor_foc[] =
   //--- Anti-coagging structure -----------------------------------------------
   //acog;
   //--- FOC controller enable to start? ---------------------------------------
-  .motor_enable                         = false,
-  .system_enable                        = false,
+//  .motor_enable                         = false,
+//  .system_enable                        = false,
  },
 };
 
