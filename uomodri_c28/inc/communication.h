@@ -104,14 +104,14 @@ static const uint32_t crc32_table[] =
  */
 typedef struct _cmd_reg_t_
 {
-    uint16_t    TIMEOUT     : 8;    /*!< Bits 7-0   : R/W - Timeout disable system after no valid command in milliseconds           */
-    uint16_t    CMD_RSV1    : 2;    /*!< Bits 9-8   : R/W - Reserved                                                                */
-    uint16_t    EI2OC       : 1;    /*!< Bits 10    : R/W - Enable/Disable incremental encoder index offset compensation - MOTOR_2  */
-    uint16_t    EI1OC       : 1;    /*!< Bits 11    : R/W - Enable/Disable incremental encoder index offset compensation - MOTOR_1  */
-    uint16_t    EPRE        : 1;    /*!< Bits 12    : R/W - Enable/Disable position rollover error - position range : -128 to +128  */
-    uint16_t    EM2         : 1;    /*!< Bits 13    : R/W - Enable(calibration procedure, alignment \& run)/Disable - MOTOR_2       */
-    uint16_t    EM1         : 1;    /*!< Bits 14    : R/W - Enable(calibration procedure, alignment \& run)/Disable - MOTOR_1       */
-    uint16_t    ES          : 1;    /*!< Bits 15    : R/W - Enable/Disable System                                                   */
+    uint16_t        TIMEOUT     : 8;    /*!< Bits 7-0   : R/W - Timeout disable system after no valid command in milliseconds           */
+    uint16_t        CMD_RSV1    : 2;    /*!< Bits 9-8   : R/W - Reserved                                                                */
+    uint16_t        EI2OC       : 1;    /*!< Bits 10    : R/W - Enable/Disable incremental encoder index offset compensation - MOTOR_2  */
+    uint16_t        EI1OC       : 1;    /*!< Bits 11    : R/W - Enable/Disable incremental encoder index offset compensation - MOTOR_1  */
+    uint16_t        EPRE        : 1;    /*!< Bits 12    : R/W - Enable/Disable position rollover error - position range : -128 to +128  */
+    uint16_t        EM2         : 1;    /*!< Bits 13    : R/W - Enable(calibration procedure, alignment \& run)/Disable - MOTOR_2       */
+    uint16_t        EM1         : 1;    /*!< Bits 14    : R/W - Enable(calibration procedure, alignment \& run)/Disable - MOTOR_1       */
+    uint16_t        ES          : 1;    /*!< Bits 15    : R/W - Enable/Disable System                                                   */
 } cmd_reg_t;
 
 /**
@@ -120,8 +120,8 @@ typedef struct _cmd_reg_t_
  */
 typedef union _cmd_reg_u_
 {
-  uint16_t      all;                /*!< Short (16bits) type access */
-  cmd_reg_t     bit;                /*!< @see command_mode_t        */
+  uint16_t          all;                /*!< Short (16bits) type access */
+  cmd_reg_t         bit;                /*!< @see command_mode_t        */
 } cmd_reg_u;
 
 /**
@@ -130,17 +130,17 @@ typedef union _cmd_reg_u_
  */
 typedef struct _status_reg_t_
 {
-    uint16_t    ERROR_CODE  : 4;    /*!< Bits 3-0   : R/W - Timeout disable system after no valid command               */
-    uint16_t    STATUS_RSV1 : 3;    /*!< Bits 6-4   : R/W - Reserved                                                    */
-    uint16_t    IDX2T       : 1;    /*!< Bits 7     : R/W - incremental encoder status toggle on index detect - MOTOR_2 */
-    uint16_t    IDX1T       : 1;    /*!< Bits 8     : R/W - incremental encoder status toggle on index detect - MOTOR_1 */
-    uint16_t    IDX2D       : 1;    /*!< Bits 9     : R/W - incremental encoder status index detected - MOTOR_2         */
-    uint16_t    IDX1D       : 1;    /*!< Bits 10    : R/W - incremental encoder status index detected - MOTOR_1         */
-    uint16_t    M2R         : 1;    /*!< Bits 11    : R/W - MOTOR_2 ready/not ready                                     */
-    uint16_t    M2E         : 1;    /*!< Bits 12    : R/W - MOTOR_2 enabled/not enabled                                 */
-    uint16_t    M1R         : 1;    /*!< Bits 13    : R/W - MOTOR_1 ready/not ready                                     */
-    uint16_t    M1E         : 1;    /*!< Bits 14    : R/W - MOTOR_1 enabled/not enabled                                 */
-    uint16_t    SE          : 1;    /*!< Bits 15    : R/W - System enabled/disabled                                     */
+    uint16_t        ERROR_CODE  : 4;    /*!< Bits 3-0   : R/W - Timeout disable system after no valid command               */
+    uint16_t        STATUS_RSV1 : 3;    /*!< Bits 6-4   : R/W - Reserved                                                    */
+    uint16_t        IDX2T       : 1;    /*!< Bits 7     : R/W - incremental encoder status toggle on index detect - MOTOR_2 */
+    uint16_t        IDX1T       : 1;    /*!< Bits 8     : R/W - incremental encoder status toggle on index detect - MOTOR_1 */
+    uint16_t        IDX2D       : 1;    /*!< Bits 9     : R/W - incremental encoder status index detected - MOTOR_2         */
+    uint16_t        IDX1D       : 1;    /*!< Bits 10    : R/W - incremental encoder status index detected - MOTOR_1         */
+    uint16_t        M2R         : 1;    /*!< Bits 11    : R/W - MOTOR_2 ready/not ready                                     */
+    uint16_t        M2E         : 1;    /*!< Bits 12    : R/W - MOTOR_2 enabled/not enabled                                 */
+    uint16_t        M1R         : 1;    /*!< Bits 13    : R/W - MOTOR_1 ready/not ready                                     */
+    uint16_t        M1E         : 1;    /*!< Bits 14    : R/W - MOTOR_1 enabled/not enabled                                 */
+    uint16_t        SE          : 1;    /*!< Bits 15    : R/W - System enabled/disabled                                     */
 } status_reg_t;
 
 /**
@@ -149,14 +149,14 @@ typedef struct _status_reg_t_
  */
 typedef union _status_reg_u_
 {
-  uint16_t      all;                /*!< Short (16bits) type access */
-  status_reg_t  bit;                /*!< @see DRV_Stat00_t          */
+  uint16_t          all;                /*!< Short (16bits) type access */
+  status_reg_t      bit;                /*!< @see DRV_Stat00_t          */
 } status_reg_u;
 
 typedef struct _pos_reg_t_
 {
-    uint16_t    u16_msb;
-    uint16_t    u16_lsb;
+    uint16_t        u16_msb;
+    uint16_t        u16_lsb;
 } pos_reg_t;
 
 /**
@@ -181,13 +181,13 @@ typedef struct _pos_reg_t_
  */
 typedef struct _cmd_uomodri_t_
 {
-    cmd_reg_u   cmdReg;
-    float32_t   positionRef[2];
-    float32_t   velocityRef[2];
-    float32_t   iqRef[2];
-    float32_t   kpCoeff[2];
-    float32_t   kdCoeff[2];
-    float32_t   iSat[2];
+    cmd_reg_u       cmdReg;
+    float32_t       positionRef[2];
+    float32_t       velocityRef[2];
+    float32_t       iqRef[2];
+    float32_t       kpCoeff[2];
+    float32_t       kdCoeff[2];
+    float32_t       iSat[2];
 } cmd_uomodri_t;
 
 /**
@@ -197,33 +197,16 @@ typedef struct _cmd_uomodri_t_
 typedef struct _cmd_msg_t_
 {
 //    cmd_payload_t   payload;
-    cmd_reg_u   cmdReg;
-    pos_reg_t   positionRef[2];
-    uint16_t    velocityRef[2];
-    uint16_t    iqRef[2];
-    uint16_t    kpCoeff[2];
-    uint16_t    kdCoeff[2];
-    uint16_t    iSat;
-    uint16_t    index;
-//    uint32_t    crc;
-    pos_reg_t   crc;
+    cmd_reg_u       cmdReg;
+    pos_reg_t       positionRef[2];
+    uint16_t        velocityRef[2];
+    uint16_t        iqRef[2];
+    uint16_t        kpCoeff[2];
+    uint16_t        kdCoeff[2];
+    uint16_t        iSat;
+    uint16_t        index;
+    pos_reg_t       crc;
 } cmd_msg_t;
-
-/**
- * @struct  status_payload_t
- * @brief   Payload of a status message from uOmodri
- */
-//typedef struct _status_payload_t_
-//{
-//    status_reg_u    statusReg;
-//    uint16_t        timeStamp;
-//    uint32_t        position[2];
-//    uint16_t        velocity[2];
-//    uint16_t        iq[2];
-//    uint16_t        coilRes[2];
-//    uint16_t        adcSamples[2];
-//    uint16_t        lastCmdIndex;
-//} status_payload_t;
 
 /**
  * @struct  status_msg_t

@@ -18,7 +18,7 @@ inline void FOC_getMeasures(ACQ_STRUCT* p_acq)
     p_acq->vc           = (float32_t)(*p_acq->p_vcMeasReg) * ADC_VOLTAGE_SCALE;
     // Get the latest Voltage supply value in Volt (minimum is one to avoid dividing by zero later)
     UOMODRI_VBUS_FLT(p_acq->vBusLpf, p_acq->vbus, __fmax(((float32_t)(*p_acq->p_vBusMeasReg) * ADC_VOLTAGE_SCALE), 1.0f));
-    p_acq->measNew      = true;
+//    p_acq->measNew      = true;
     return;
 }
 
@@ -67,11 +67,11 @@ inline void FOC_runControl(FOC_STRUCT* p_foc)
     p_foc->piId.set     = p_foc->idRef;
     p_foc->piId.ff      = UOMODRI_FEED_FORWARD_EN ? (-1.0f * p_speed->speedElec * p_cfg->Lq * p_foc->iq)        : (0.0);//* UOMODRI_FOC_FEED_FORWARD_EN;
     p_foc->piId.sat     = p_foc->motor_acq.vbus;
+    p_foc->ud           = FOC_runPI(&p_foc->piId);
     p_foc->piIq.in      = p_foc->iq;
     p_foc->piIq.set     = p_foc->iqRef;
     p_foc->piIq.ff      = UOMODRI_FEED_FORWARD_EN ? (p_cfg->Rs * p_foc->iqRef + p_speed->speedElec * p_cfg->ke) : (0.0);//* UOMODRI_FOC_FEED_FORWARD_EN;
     p_foc->piIq.sat     = p_foc->motor_acq.vbus;
-    p_foc->ud           = FOC_runPI(&p_foc->piId);
     p_foc->uq           = FOC_runPI(&p_foc->piIq);
 //    float32_t uq_max    = __sqrt((p_foc->motor_acq.vmax * p_foc->motor_acq.vmax) - (p_foc->ud * p_foc->ud));
 //    float32_t v_ref     = __sqrt((p_foc->ud * p_foc->ud) + (p_foc->uq * p_foc->uq));

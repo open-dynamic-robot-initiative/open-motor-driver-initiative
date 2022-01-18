@@ -143,7 +143,7 @@ typedef struct __ACQUISITIONS_STRUCT__
     float32_t                           auxAcq;
     LPFSTRUCT                           vBusLpf;
 
-    bool                                measNew;    // ADC conversion done
+//    bool                                measNew;    // ADC conversion done
 } ACQ_STRUCT;
 
 typedef struct __ALIGN_STRUCT__

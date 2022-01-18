@@ -326,7 +326,7 @@ static FOC_STRUCT motor_foc[] =
   .motor_acq.ia                         = 0.0,
   .motor_acq.ib                         = 0.0,
   .motor_acq.ic                         = 0.0,
-  .motor_acq.measNew                    = false,
+//  .motor_acq.measNew                    = false,
   .motor_acq.vBusLpf.a                  = MOTOR12_VBUS_LPF_ALPHA,
   .motor_acq.vBusLpf.one_minus_a        = MOTOR12_VBUS_LPF_ONE_M_ALPHA,
   //--- MOTOR ENCORDER STRUCTURE ----------------------------------------------
@@ -471,7 +471,7 @@ static FOC_STRUCT motor_foc[] =
   .motor_acq.ia                         = 0.0,
   .motor_acq.ib                         = 0.0,
   .motor_acq.ic                         = 0.0,
-  .motor_acq.measNew                    = false,
+//  .motor_acq.measNew                    = false,
   .motor_acq.vBusLpf.a                  = MOTOR12_VBUS_LPF_ALPHA,
   .motor_acq.vBusLpf.one_minus_a        = MOTOR12_VBUS_LPF_ONE_M_ALPHA,
   //--- MOTOR ENCORDER STRUCTURE ----------------------------------------------

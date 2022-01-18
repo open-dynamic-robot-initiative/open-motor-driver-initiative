@@ -43,14 +43,6 @@ void main(void)
     HAL_ADC_offsetCalib(motor[MOTOR_1].p_motorHalCfg);
     HAL_ADC_offsetCalib(motor[MOTOR_2].p_motorHalCfg);
 
-#if (UOMODRI_SPI_DEBUG_CONFIG == 1)
-    comInterface.systemEnabled          = true;
-    motor[MOTOR_1].p_motorFOC->motor_enable = true;
-    motor[MOTOR_1].p_motorFOC->system_enable= true;
-    motor[MOTOR_2].p_motorFOC->motor_enable = false;
-    motor[MOTOR_2].p_motorFOC->system_enable= true;
-#endif
-
 //#if (CM == 1)
 //    // Clear any IPC flags if set already
 //    IPC_clearFlagLtoR(IPC_CPU1_L_CM_R, IPC_FLAG_ALL);
@@ -148,29 +140,29 @@ void main(void)
             //uint64_t interruptCnt                       = motor[MOTOR_1].interruptCnt;
             cmd_Master_msg.cmdReg.bit.ES                = true;
             cmd_Master_msg.cmdReg.bit.EM1               = true;
-            cmd_Master_msg.cmdReg.bit.EM2               = false;
+            cmd_Master_msg.cmdReg.bit.EM2               = true;
             cmd_Master_msg.cmdReg.bit.EPRE              = false;
             cmd_Master_msg.cmdReg.bit.EI1OC             = false;
             cmd_Master_msg.cmdReg.bit.EI2OC             = false;
             cmd_Master_msg.cmdReg.bit.TIMEOUT           = 0xFF;
-            float32_t   itcnt_m1                        = (float32_t) motor[MOTOR_1].interruptCnt / (float32_t) PWM_FREQ;
-            int32_t     pos_m1                          = (int32_t)((__sinpuf32(itcnt_m1) / (float32_t) POSITION_LSB));
+            float32_t   intcnt_m1                       = (float32_t)motor[MOTOR_1].interruptCnt / PWM_FREQ;
+            int32_t     pos_m1                          = (int32_t)(__sinpuf32(intcnt_m1) / POSITION_LSB);
             cmd_Master_msg.positionRef[MOTOR_1].u16_msb = MSB_32(pos_m1);//(int32_t)(__sinpuf32((float32_t)interruptCnt / PWM_FREQ) / POSITION_LSB);
             cmd_Master_msg.positionRef[MOTOR_1].u16_lsb = LSB_32(pos_m1);
-            float32_t   itcnt_m2                        = (float32_t) motor[MOTOR_2].interruptCnt / (float32_t) PWM_FREQ;
-            int32_t     pos_m2                          = (int32_t)(__sinpuf32(itcnt_m2) / (float32_t) POSITION_LSB);
+            float32_t   intcnt_m2                       = (float32_t)motor[MOTOR_2].interruptCnt / PWM_FREQ;
+            int32_t     pos_m2                          = (int32_t)(__sinpuf32(intcnt_m2) / POSITION_LSB);
             cmd_Master_msg.positionRef[MOTOR_2].u16_msb = MSB_32(pos_m2);
             cmd_Master_msg.positionRef[MOTOR_2].u16_lsb = LSB_32(pos_m2);
-            int16_t     vel_m1                          = (int16_t) (4.0f * M_PI * M_PI * __cospuf32(itcnt_m1) / (float32_t) VELOCITY_LSB);
-            cmd_Master_msg.velocityRef[MOTOR_1]         = vel_m1;//(int16_t)(4.0f * M_PI * M_PI * __cospuf32((float32_t)interruptCnt / PWM_FREQ) / VELOCITY_LSB);
-            int16_t     vel_m2                          = (int16_t)(4.0f * M_PI * M_PI * __cospuf32(itcnt_m2) / (float32_t) VELOCITY_LSB);
-            cmd_Master_msg.velocityRef[MOTOR_2]         = vel_m2;
+            cmd_Master_msg.velocityRef[MOTOR_1]         = (int16_t)(4.0f * M_PI * M_PI * __cospuf32(intcnt_m1) / VELOCITY_LSB);
+            //(int16_t)(4.0f * M_PI * M_PI * __cospuf32((float32_t)interruptCnt / PWM_FREQ) / VELOCITY_LSB);
+            cmd_Master_msg.velocityRef[MOTOR_2]         = (int16_t)(4.0f * M_PI * M_PI * __cospuf32(intcnt_m2) / VELOCITY_LSB);
+//            cmd_Master_msg.velocityRef[MOTOR_2]         = vel_m2;
             cmd_Master_msg.iqRef[MOTOR_1]               = 0;
             cmd_Master_msg.iqRef[MOTOR_2]               = 0;
-            cmd_Master_msg.kpCoeff[MOTOR_1]             = (uint16_t)((float32_t) MOTOR1_SPEED_REGULATOR_KP_COEF / (float32_t) KP_LSB);
-            cmd_Master_msg.kpCoeff[MOTOR_2]             = (uint16_t)((float32_t) MOTOR2_SPEED_REGULATOR_KP_COEF / (float32_t) KP_LSB);
-            cmd_Master_msg.kdCoeff[MOTOR_1]             = (uint16_t)((float32_t) MOTOR1_SPEED_REGULATOR_KD_COEF / (float32_t) KD_LSB);
-            cmd_Master_msg.kdCoeff[MOTOR_2]             = (uint16_t)((float32_t) MOTOR2_SPEED_REGULATOR_KD_COEF / (float32_t) KD_LSB);
+            cmd_Master_msg.kpCoeff[MOTOR_1]             = (uint16_t)(MOTOR1_SPEED_REGULATOR_KP_COEF / KP_LSB);
+            cmd_Master_msg.kpCoeff[MOTOR_2]             = (uint16_t)(MOTOR2_SPEED_REGULATOR_KP_COEF / KP_LSB);
+            cmd_Master_msg.kdCoeff[MOTOR_1]             = (uint16_t)(MOTOR1_SPEED_REGULATOR_KD_COEF / KD_LSB);
+            cmd_Master_msg.kdCoeff[MOTOR_2]             = (uint16_t)(MOTOR2_SPEED_REGULATOR_KD_COEF / KD_LSB);
             cmd_Master_msg.iSat                         = 0;
             cmd_Master_msg.index                        = 0;
             uint32_t    tmp                             = com_crc32((uint16_t *) &cmd_Master_msg, DMA_MST_SPI_TX_RX_16BIT_PAYLOAD_LENGTH);
@@ -406,6 +398,7 @@ __attribute__((interrupt)) void adc_isrMotor1(void)
 //    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_FLAG0, IPC_ADDR_CORRECTION_ENABLE, IPC_CMD_READ_MEM, (uint32_t)(&motorCpuToCM[MOTOR_1]), 1);
 //    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_FLAG0, IPC_ADDR_CORRECTION_ENABLE, IPC_CMD_READ_MEM, (uint32_t)(p_foc), 1);
     newFocCtrl_M1 = true;
+    cpt++;
     // Acknowledge PWM and CLA interrupt flag
     Interrupt_clearACKGroup(MOTOR1_IA_INT_ACK_GROUP);
 #if (UOMODRI == 0)
@@ -551,7 +544,6 @@ __attribute__((interrupt)) void adc_isrMotor2(void)
     newFocCtrl_M2 = true;
     Interrupt_clearACKGroup(MOTOR2_IA_INT_ACK_GROUP);
 #if (UOMODRI == 0)
-    cpt++;
     GPIO_writePin(DEBUG_INT_PIN1, 0);
 #endif
 }

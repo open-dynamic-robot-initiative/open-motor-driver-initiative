@@ -22,7 +22,7 @@
  */
 #define UOMODRI                                 0
 #define CLA                                     0
-#define CM                                      1
+#define CM                                      0
 #define UOMODRI_VBUS_FLT(flt_coef, y, x)        LPF_FILTER_1(flt_coef, y, x)
 #define UOMODRI_IDQ_FLT(flt_coef, y, x)         LPF_FILTER_1(flt_coef, y, x)
 #define UOMODRI_RES_ESTIM_FLT(flt_coef, y, x)   LPF_FILTER_1(flt_coef, y, x)
@@ -60,7 +60,7 @@
 #endif
 
 #ifndef FM_RPM2RADPS
-#define FM_RPM2RADPS                            (2.0 * M_PI / 60.0)
+#define FM_RPM2RADPS                            (2.0f * M_PI / 60.0f)
 #endif
 
 #define FM_ABS(x)                               ((x) >= 0.0f ? (x) : -(x))
@@ -87,6 +87,8 @@
 // 32 bits macros
 #define LSB_32(x)                               ((x) & 0xFFFF)
 #define MSB_32(x)                               (((x) >> 16) & 0xFFFF)
+
+//#define RGB(r, g, b)                            ((uint8_t)(g) << 16 | (uint8_t)(r) << 8 | (uint8_t)(b))
 
 /******************************************************************************************************
 *                                               DEBUG Defines
@@ -309,19 +311,19 @@
 #define ADC_SOC_PRIORITY                        ADC_PRI_THRU_SOC3_HIPRI  //ADC_PRI_ALL_ROUND_ROBIN
 #define ADC_INT_SOC_TRIGGER                     ADC_INT_SOC_TRIGGER_NONE
 
-#define ADC_VREF                                3.0f   // [V]
+#define ADC_VREF                                (3.0f)   // [V]
 #define DRV_CSA_GAIN_REG                        DRV_CSA_GAIN_10_V_V  // [V/V] Possible values: 5, 10, 20, 40
 #define DRV_CSA_GAIN_VAL                        (5 << DRV_CSA_GAIN_REG) // base gain
 
 #if (UOMODRI == 0)
-#define R_SHUNT                                 0.007f // [Ohm]
+#define R_SHUNT                                 (0.007f) // [Ohm]
 #define BRIDGE_DIVIDER                          ((4.99f + 82.0f) / 4.99f)
 #else
 #define R_SHUNT                                 0.01f // [Ohm]
 #define BRIDGE_DIVIDER                          ((5.1f + 100.0f) / 5.1f)
 #endif
 #define ADC_VOLTAGE_SCALE                       (ADC_VREF * BRIDGE_DIVIDER / ADC_RESOLUTION_MAX)// Voltage divider R1:4.99kO R2:82kO
-#define ADC_CURRENT_SCALE                       (ADC_VREF * (-0.5f) / DRV_CSA_GAIN_VAL / R_SHUNT / ADC_RESOLUTION_MAX / 2) //(0x1000 << (ADC_RESOLUTION >> 4)))
+#define ADC_CURRENT_SCALE                       (ADC_VREF * (-0.5f) / DRV_CSA_GAIN_VAL / R_SHUNT / ADC_RESOLUTION_MAX / (2.0f)) //(0x1000 << (ADC_RESOLUTION >> 4)))
 /**
  * @}
  */
@@ -772,7 +774,7 @@
 *******************************************************************************************************/
 /*** Communication constants ***/
 #define POSITION_LSB                            (5.960464477539063e-08f)                 // 2**(-24)
-#define VELOCITY_LSB                            (0.00048828125f * 1000.0f * FM_RPM2RADPS) // 2**(-11) // Added rad/s to krpm conversion
+#define VELOCITY_LSB                            (0.00048828125f * FM_RPM2RADPS) // 2**(-11) // Added rad/s to krpm conversion
 #define IQ_LSB                                  (0.0009765625f)                          // 2**(-10)
 #define CURRENT_SAT_LSB                         (0.125f)                                 // 2**(-3)
 #define RESISTANCE_LSB                          (3.0517578125e-05f)                      // 2**(-15)
