@@ -1,9 +1,9 @@
 #ifndef __ENCODERS_H__
 #define __ENCODERS_H__
 
-#include <math.h>
-#include <stdint.h>
 #include <stdbool.h>
+#include <stdint.h>
+#include <math.h>
 
 #ifdef C28_CORE
 #include "f2838x_device.h"

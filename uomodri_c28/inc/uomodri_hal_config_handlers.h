@@ -28,7 +28,7 @@ extern cmd_msg_t    cmd_msg[2];
 extern status_msg_t status_msg[2];
 //extern status_msg_t*    p_crStatusMsgAddr;
 //extern status_msg_t*    p_nxStatusMsgAddr;
-#if (UOMODRI == 0)
+#if (defined UOMODRI_CONFIG_ENABLE) && (!UOMODRI_CONFIG_ENABLE)
 extern cmd_msg_t    cmd_Master_msg;
 extern status_msg_t status_Master_msg;
 #endif
@@ -40,7 +40,7 @@ extern status_msg_t status_Master_msg;
  */
 static const GPIO_TypeDef GpioPinsCfgList[] =
 {
-#if (UOMODRI == 0)
+#if (defined UOMODRI_CONFIG_ENABLE) && (!UOMODRI_CONFIG_ENABLE)
  // LED Pins
  {.pinNumber = DEBUG_LED_PIN1,          .fctMux = DEBUG_LED_PIN1_CFG,           .pinType = GPIO_PIN_TYPE_OD,    .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0,  .intEnable = false},
  {.pinNumber = DEBUG_LED_PIN2,          .fctMux = DEBUG_LED_PIN2_CFG,           .pinType = GPIO_PIN_TYPE_OD,    .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0,  .intEnable = false},
@@ -252,7 +252,7 @@ static const SPI_TypeDef spiCfgList[] =
   .intEnable            = false,
  },
  {.spiBase              = COM_SPI_BASE,
-  .bitRate              = 8000000U,
+  .bitRate              = 6000000U,
   .dataWidth            = 16U,
   .mode                 = SPI_MODE_SLAVE,
   .protocol             = SPI_PROT_POL0PHA1,
@@ -262,7 +262,7 @@ static const SPI_TypeDef spiCfgList[] =
   .highSpeedMode        = false,
   .intEnable            = false,//true,
  },
-#if (UOMODRI == 0)
+#if (defined UOMODRI_CONFIG_ENABLE) && (!UOMODRI_CONFIG_ENABLE)
  {.spiBase              = MST_SPI_BASE,
   .bitRate              = 8000000U,
   .dataWidth            = 16U,
@@ -288,13 +288,13 @@ static const DMA_TypeDef dmaCfgList[] =
   .p_dstAddr            = (uint16_t *) COM_SPI_TX_BASE_REG_ADDR,
   .p_srcAddr            = (uint16_t *) &status_msg[0],//p_crStatusMsgAddr,//
   .burstSize            = DMA_COM_SPI_TX_RX_16BIT_BURST_EVT,
-  .transferSize         = DMA_COM_SPI_TX_RX_TRANSFER_EVT,
-  .dstWrapSize          = DMA_NO_WRAP,
-  .srcWrapSize          = DMA_NO_WRAP,
+  .transferSize         = DMA_COM_SPI_TX_RX_16BIT_TRANSFER_EVT,
+  .dstWrapSize          = DMA_NO_WRAP,//0,//
+  .srcWrapSize          = DMA_NO_WRAP,//DMA_COM_SPI_TX_RX_TRANSFER_EVT,//
   .dstStep              = 0,
   .srcStep              = DMA_COM_SPI_TX_RX_16BIT_BURST_EVT,
   .dstWrapStep          = 0,
-  .srcWrapStep          = 0,
+  .srcWrapStep          = 0,//-(DMA_COM_SPI_TX_RX_TRANSFER_EVT - 1),//
   .config               = (DMA_CFG_ONESHOT_DISABLE | DMA_CFG_CONTINUOUS_ENABLE | DMA_CFG_SIZE_16BIT),
   .trigger              = DMA_COM_SPI_TX_TRIGGER_SRC,
   .intMode              = DMA_INT_AT_END,
@@ -306,25 +306,25 @@ static const DMA_TypeDef dmaCfgList[] =
   .p_dstAddr            = (uint16_t *) &cmd_msg[0],//p_crCmdMsgAddr,//
   .p_srcAddr            = (uint16_t *) COM_SPI_RX_BASE_REG_ADDR,
   .burstSize            = DMA_COM_SPI_TX_RX_16BIT_BURST_EVT,
-  .transferSize         = DMA_COM_SPI_TX_RX_TRANSFER_EVT,
+  .transferSize         = DMA_COM_SPI_TX_RX_16BIT_TRANSFER_EVT,
   .dstWrapSize          = DMA_NO_WRAP,
-  .srcWrapSize          = DMA_NO_WRAP,
+  .srcWrapSize          = DMA_NO_WRAP,//DMA_COM_SPI_TX_RX_TRANSFER_EVT,//
   .dstStep              = DMA_COM_SPI_TX_RX_16BIT_BURST_EVT,
   .srcStep              = 0,
-  .dstWrapStep          = 0,
+  .dstWrapStep          = 0,//-(DMA_COM_SPI_TX_RX_TRANSFER_EVT - 1),//
   .srcWrapStep          = 0,
   .config               = (DMA_CFG_ONESHOT_DISABLE | DMA_CFG_CONTINUOUS_ENABLE | DMA_CFG_SIZE_16BIT),
   .trigger              = DMA_COM_SPI_RX_TRIGGER_SRC,
   .intMode              = DMA_INT_AT_END,
   .intEnable            = true,//false,//
  },
-#if (UOMODRI == 0)
+#if (defined UOMODRI_CONFIG_ENABLE) && (!UOMODRI_CONFIG_ENABLE)
  {
   .dmaChBase            = DMA_MST_SPI_TX_BASE_ADDR,
   .p_dstAddr            = (uint16_t *) MST_SPI_TX_BASE_REG_ADDR,
   .p_srcAddr            = (uint16_t *) &cmd_Master_msg,
   .burstSize            = DMA_MST_SPI_TX_RX_16BIT_BURST_EVT,
-  .transferSize         = DMA_MST_SPI_TX_RX_TRANSFER_EVT,
+  .transferSize         = DMA_MST_SPI_TX_RX_16BIT_TRANSFER_EVT,
   .dstWrapSize          = DMA_NO_WRAP,
   .srcWrapSize          = DMA_NO_WRAP,
   .dstStep              = 0,
@@ -395,7 +395,7 @@ static const DMA_TypeDef dmaCfgList[] =
 // {.ipcType = IPC_TOTAL_NUM},
 //};
 
-#if (CLA == 1)
+#if (defined CLA_ENABLE) && (CLA_ENABLE)
 static const CLA_TypeDef claCfgList[] =
 {
  {.progRAM = MEMCFG_SECT_LS5,
@@ -570,7 +570,7 @@ static HAL hal =
  .p_dmaHandler  = dmaCfgList,//NULL,//
 // .p_ipcHandler  = ipcCfgList,
  .p_spiHandler  = spiCfgList,
-#if (CLA == 1)
+#if (defined CLA_ENABLE) && (CLA_ENABLE)
  .p_claHandler  = claCfgList,
 #endif
 };

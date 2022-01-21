@@ -6,9 +6,8 @@
 #include "main.h"
 
 //cmd_msg_t* p_CmdMsgAddr = &cmd_msg[0];
-bool newFocCtrl_M1      = false;
-bool newFocCtrl_M2      = false;
-bool newCmdMsg          = false;
+bool            newFocCtrl_M1       = false;
+bool            newFocCtrl_M2       = false;
 cmd_msg_t*      p_crCmdMsgAddr      = &cmd_msg[0];
 cmd_msg_t*      p_nxCmdMsgAddr      = &cmd_msg[1];
 status_msg_t*   p_crStatusMsgAddr   = &status_msg[0];
@@ -23,27 +22,14 @@ void main(void)
     MCU_init();
     // Hardware Abstraction Layer initialization
     HAL_init(&hal);
-//    uint8_t index = 0;
-//    while(dmaCfgList[(dmaCfgList[index].p_destAddr != (uint16_t *)COM_SPI_TX_BASE_ADDR) ? (index++) : (index)].p_destAddr != (uint16_t *)COM_SPI_TX_BASE_ADDR);
-
-//    p_crStatusMsgAddr   = (status_msg_t *)HWREG(DMA_COM_SPI_TX_BASE_ADDR + DMA_O_SRC_BEG_ADDR_SHADOW);
-//    p_nxStatusMsgAddr   = (p_crStatusMsgAddr == &status_msg[0]) ? (&status_msg[1]) : (&status_msg[0]);
-//    p_crCmdMsgAddr      = (cmd_msg_t *) HWREG(DMA_COM_SPI_RX_BASE_ADDR + DMA_O_DST_BEG_ADDR_SHADOW);
-//    p_nxCmdMsgAddr      = (p_crCmdMsgAddr == &cmd_msg[0]) ? (&cmd_msg[1]) : (&cmd_msg[0]);
-
-//    status_msg_t* p_crAddr = (status_msg_t *)HWREG(dmaCfgList[index].dmaChBase + DMA_O_SRC_BEG_ADDR_SHADOW);// = *((volatile status_msg_t *)(DMA_COM_SPI_TX_BASE_ADDR + DMA_O_SRC_BEG_ADDR_SHADOW));
-//    status_msg_t*   p_crStatusMsgAddr   = (status_msg_t *)HWREG(DMA_COM_SPI_TX_BASE_ADDR + DMA_O_SRC_BEG_ADDR_SHADOW);
-//    status_msg_t*   p_nxStatusMsgAddr   = (p_crStatusMsgAddr == &status_msg[0]) ? (&status_msg[1]) : (&status_msg[0]);
-//    cmd_msg_t*      p_crCmdMsgAddr      = (cmd_msg_t *) HWREG(DMA_COM_SPI_RX_BASE_ADDR + DMA_O_DST_BEG_ADDR_SHADOW);
-//    cmd_msg_t*      p_nxCmdMsgAddr      = (p_crCmdMsgAddr == &cmd_msg[0]) ? (&cmd_msg[1]) : (&cmd_msg[0]);
+//    SPI_enableModule(DRV_SPI_BASE);
     // DRV8323 initialization
     DRV_init(motor[MOTOR_1].p_motorDRV);
     DRV_init(motor[MOTOR_2].p_motorDRV);
     // ADC offset calib for debug
     HAL_ADC_offsetCalib(motor[MOTOR_1].p_motorHalCfg);
     HAL_ADC_offsetCalib(motor[MOTOR_2].p_motorHalCfg);
-
-//#if (CM == 1)
+//#if (defined CM_ENABLE) && (CM_ENABLE)
 //    // Clear any IPC flags if set already
 //    IPC_clearFlagLtoR(IPC_CPU1_L_CM_R, IPC_FLAG_ALL);
 ////    // Initialize message queue
@@ -53,10 +39,8 @@ void main(void)
 //#endif
     // Interrupts initialization
     HAL_IT_init(InterruptList);
-    // enable DMA channels
-    HAL_DMA_start(hal.p_dmaHandler);
 
-//#if (CM == 1)
+//#if (defined CM_ENABLE) && (CM_ENABLE)
 //    // Enable realtime interrupt (DBGM)
 //    ERTM;
 //
@@ -94,21 +78,9 @@ void main(void)
 //    pass = (IPC_getResponse(IPC_CPU1_L_CM_R) == TEST_PASS) ? (1) : (0);
 //#endif
 
-//#if (UOMODRI == 0)
-//    GPIO_writePin(DEBUG_LED_PIN1, 1);
-//#endif
-
     // Infinite loop
     while(1)
     {
-//        if(newCmdMsg)
-//        {
-//            newCmdMsg = false;
-//            com_cmdMsgExtract(p_crCmdMsgAddr, &cmd_uOmodri);
-//            p_crCmdMsgAddr  = p_nxCmdMsgAddr;
-//            p_nxCmdMsgAddr  = (p_crCmdMsgAddr == &cmd_msg[0]) ? (&cmd_msg[1]) : (&cmd_msg[0]);
-//
-//        }
         if(newFocCtrl_M1)
         {
             com_statusMsgCreate(&motor_foc[MOTOR_1], &cmd_uOmodri, p_nxStatusMsgAddr);
@@ -117,6 +89,16 @@ void main(void)
         if(newFocCtrl_M2)
         {
             com_statusMsgCreate(&motor_foc[MOTOR_2], &cmd_uOmodri, p_nxStatusMsgAddr);
+//            if(p_nxStatusMsgAddr == &status_msg[0])
+//            {
+//                p_nxStatusMsgAddr->crc.u16_lsb = 0x0123;
+//                p_nxStatusMsgAddr->crc.u16_msb = 0x4567;
+//            }
+//            else
+//            {
+//                p_nxStatusMsgAddr->crc.u16_lsb = 0x89AB;
+//                p_nxStatusMsgAddr->crc.u16_msb = 0xCDEF;
+//            }
             //while(GPIO_ReadPin(COM_SPI_CS) == 0);
             //while(HWREG(DMA_COM_SPI_TX_BASE_ADDR + DMA_O_CONTROL) & DMA_CONTROL_TRANSFERSTS);
             DMA_configSourceAddress(DMA_COM_SPI_TX_BASE_ADDR, (status_msg_t *)p_nxStatusMsgAddr);
@@ -128,16 +110,9 @@ void main(void)
             p_nxStatusMsgAddr   = p_tmpStatusMsgAddr;
             newFocCtrl_M2       = false;
         }
-#if (UOMODRI == 0)
+#if (defined UOMODRI_CONFIG_ENABLE) && (!UOMODRI_CONFIG_ENABLE)
         if(cpt >= 40)
         {
-//            uint32_t* p_pos_m1                          = (uint32_t *)&cmd_Master_msg.positionRef[MOTOR_1];
-//            uint32_t* p_pos_m2                          = (uint32_t *)&cmd_Master_msg.positionRef[MOTOR_2];
-//            uint32_t* p_pos_m1                          = (uint32_t *)&cmd_Master_msg.positionRef[MOTOR_1].u16_lsb;
-//            uint32_t* p_pos_m2                          = (uint32_t *)&cmd_Master_msg.positionRef[MOTOR_2].u16_lsb;
-//            *p_pos_m1   = 0x01234567;
-//            *p_pos_m2   = 0x89ABCDEF;
-            //uint64_t interruptCnt                       = motor[MOTOR_1].interruptCnt;
             cmd_Master_msg.cmdReg.bit.ES                = true;
             cmd_Master_msg.cmdReg.bit.EM1               = true;
             cmd_Master_msg.cmdReg.bit.EM2               = true;
@@ -211,11 +186,13 @@ static void MCU_init(void)
                        SYSCTL_AUXPLL_DIV_2 |
                        SYSCTL_AUXPLL_ENABLE |
                        SYSCTL_DCC_BASE_0);
-    // Allocate Shared Peripheral USB to the CM Side.
-//    SysCtl_allocateSharedPeripheral(SYSCTL_PALLOCATE_USBA, 1);
     /* Set the CM Clock to run at 125MHz.
      * The CM Clock is a fractional multiple of the AUXPLL Clock (125 MHz). */
+#if (defined CM_ENABLE) && (CM_ENABLE)
     SysCtl_setCMClk(SYSCTL_CMCLKOUT_DIV_1, SYSCTL_SOURCE_AUXPLL);
+    /* Allocate Shared Peripheral USB to the CM Side. */
+//    SysCtl_allocateSharedPeripheral(SYSCTL_PALLOCATE_USBA, 1);
+#endif
     // Initialize GPIO
     Device_initGPIO();
     // Initialize PIE control registers and flags. Disables CPU interrupts.
@@ -223,7 +200,7 @@ static void MCU_init(void)
     // Initialize the PIE vector table with pointers to the shell Interrupt Service Routines (ISR).
     Interrupt_initVectorTable();
     // Boot CM core
-#if (CM == 1)
+#if (defined CM_ENABLE) && (CM_ENABLE)
 #ifdef _FLASH
     Device_bootCM(BOOTMODE_BOOT_TO_FLASH_SECTOR0);
 #else
@@ -234,51 +211,53 @@ static void MCU_init(void)
 
 
 //-------------------------------------------------------------------------------------------------
-//__attribute__((interrupt)) void ipc_isrStatusMsg(void)
-//{
-//    uint32_t    cmd, data, addr;
-//    uint8_t     ipcCfgIdx = 0, i = 0;
-//    // Get index associated to IPC structure configuration
-//    while(ipcCfgList[(ipcCfgList[ipcCfgIdx].p_ipcIntHandler != &ipc_isrStatusMsg) ? (ipcCfgIdx++) : (ipcCfgIdx)].p_ipcIntHandler != &ipc_isrStatusMsg);
-//    // Get structure address
-//    IPC_readCommand(ipcCfgList[ipcCfgIdx].ipcType, ipcCfgList[ipcCfgIdx].ipcFlag, IPC_ADDR_CORRECTION_ENABLE, &cmd, &addr, &data);
-//    i = motor[MOTOR_1].interruptCnt % 2;
-//    memcpy(&status_msg[i], (status_msg_t *)addr, sizeof(status_msg_t));
-//
-//    if(!(*((volatile uint32_t *)(DMA_COM_SPI_TX_BASE_ADDR + DMA_O_CONTROL)) &
-//            (DMA_CONTROL_PERINTFLG | DMA_CONTROL_TRANSFERSTS | DMA_CONTROL_BURSTSTS)))
-//    {
-//        *((volatile uint32_t *)(DMA_COM_SPI_TX_BASE_ADDR + DMA_O_CONTROL))             |= DMA_CONTROL_HALT;
-//        *((volatile uint32_t *)(DMA_COM_SPI_TX_BASE_ADDR + DMA_O_SRC_BEG_ADDR_SHADOW))  = (uint32_t)&status_msg[i];
-//        *((volatile uint32_t *)(DMA_COM_SPI_TX_BASE_ADDR + DMA_O_SRC_ADDR_SHADOW))      = (uint32_t)&status_msg[i];
-//        *((volatile uint32_t *)(DMA_COM_SPI_TX_BASE_ADDR + DMA_O_CONTROL))             |= DMA_CONTROL_RUN;
-//    }
-//
-//    IPC_ackFlagRtoL(ipcCfgList[ipcCfgIdx].ipcType, ipcCfgList[ipcCfgIdx].ipcFlag);
-//    Interrupt_clearACKGroup(INTERRUPT_ACK_GROUP11);
-//}
+#if (defined CM_ENABLE) && (CM_ENABLE)
+__attribute__((interrupt)) void ipc_isrStatusMsg(void)
+{
+    uint32_t    cmd, data, addr;
+    uint8_t     ipcCfgIdx = 0, i = 0;
+    // Get index associated to IPC structure configuration
+    while(ipcCfgList[(ipcCfgList[ipcCfgIdx].p_ipcIntHandler != &ipc_isrStatusMsg) ? (ipcCfgIdx++) : (ipcCfgIdx)].p_ipcIntHandler != &ipc_isrStatusMsg);
+    // Get structure address
+    IPC_readCommand(ipcCfgList[ipcCfgIdx].ipcType, ipcCfgList[ipcCfgIdx].ipcFlag, IPC_ADDR_CORRECTION_ENABLE, &cmd, &addr, &data);
+    i = motor[MOTOR_1].interruptCnt % 2;
+    memcpy(&status_msg[i], (status_msg_t *)addr, sizeof(status_msg_t));
 
+    if(!(*((volatile uint32_t *)(DMA_COM_SPI_TX_BASE_ADDR + DMA_O_CONTROL)) &
+            (DMA_CONTROL_PERINTFLG | DMA_CONTROL_TRANSFERSTS | DMA_CONTROL_BURSTSTS)))
+    {
+        *((volatile uint32_t *)(DMA_COM_SPI_TX_BASE_ADDR + DMA_O_CONTROL))             |= DMA_CONTROL_HALT;
+        *((volatile uint32_t *)(DMA_COM_SPI_TX_BASE_ADDR + DMA_O_SRC_BEG_ADDR_SHADOW))  = (uint32_t)&status_msg[i];
+        *((volatile uint32_t *)(DMA_COM_SPI_TX_BASE_ADDR + DMA_O_SRC_ADDR_SHADOW))      = (uint32_t)&status_msg[i];
+        *((volatile uint32_t *)(DMA_COM_SPI_TX_BASE_ADDR + DMA_O_CONTROL))             |= DMA_CONTROL_RUN;
+    }
+
+    IPC_ackFlagRtoL(ipcCfgList[ipcCfgIdx].ipcType, ipcCfgList[ipcCfgIdx].ipcFlag);
+    Interrupt_clearACKGroup(INTERRUPT_ACK_GROUP11);
+}
+#endif
 //-------------------------------------------------------------------------------------------------
-//__attribute__((interrupt)) void ipc_isrMsgCmd(void)
-//{
-//    uint32_t    cmd, data, addr;
-//    uint8_t     ipcCfgIdx = 0;
-//    // Get index associated to IPC structure configuration
-//    while(ipcCfgList[(ipcCfgList[ipcCfgIdx].p_ipcIntHandler != &ipc_isrMsgCmd) ? (ipcCfgIdx++) : (ipcCfgIdx)].p_ipcIntHandler != &ipc_isrMsgCmd);
-//    // Get structure address
-//    IPC_readCommand(ipcCfgList[ipcCfgIdx].ipcType, ipcCfgList[ipcCfgIdx].ipcFlag, IPC_ADDR_CORRECTION_ENABLE, &cmd, &addr, &data);
-//    memcpy(&cmd_msg, (cmd_uomodri_t *)addr, sizeof(cmd_uomodri_t));
-//    IPC_ackFlagRtoL(ipcCfgList[ipcCfgIdx].ipcType, ipcCfgList[ipcCfgIdx].ipcFlag);
-//    Interrupt_clearACKGroup(INTERRUPT_ACK_GROUP11);
-//}
-
+#if (defined CM_ENABLE) && (CM_ENABLE)
+__attribute__((interrupt)) void ipc_isrMsgCmd(void)
+{
+    uint32_t    cmd, data, addr;
+    uint8_t     ipcCfgIdx = 0;
+    // Get index associated to IPC structure configuration
+    while(ipcCfgList[(ipcCfgList[ipcCfgIdx].p_ipcIntHandler != &ipc_isrMsgCmd) ? (ipcCfgIdx++) : (ipcCfgIdx)].p_ipcIntHandler != &ipc_isrMsgCmd);
+    // Get structure address
+    IPC_readCommand(ipcCfgList[ipcCfgIdx].ipcType, ipcCfgList[ipcCfgIdx].ipcFlag, IPC_ADDR_CORRECTION_ENABLE, &cmd, &addr, &data);
+    memcpy(&cmd_msg, (cmd_uomodri_t *)addr, sizeof(cmd_uomodri_t));
+    IPC_ackFlagRtoL(ipcCfgList[ipcCfgIdx].ipcType, ipcCfgList[ipcCfgIdx].ipcFlag);
+    Interrupt_clearACKGroup(INTERRUPT_ACK_GROUP11);
+}
+#endif
 //-------------------------------------------------------------------------------------------------
 /**
  * @brief   ADC interrupt. Read Va, Vb, Vc, Vbus, Ia, Ib \& Ic of MOTOR_1
  */
 __attribute__((interrupt)) void adc_isrMotor1(void)
 {
-#if (UOMODRI == 0)
+#if (defined UOMODRI_CONFIG_ENABLE) && (!UOMODRI_CONFIG_ENABLE)
     GPIO_writePin(DEBUG_INT_PIN1, 1);
 #endif
     FOC_STRUCT* p_foc = motor[MOTOR_1].p_motorFOC;
@@ -401,7 +380,7 @@ __attribute__((interrupt)) void adc_isrMotor1(void)
     cpt++;
     // Acknowledge PWM and CLA interrupt flag
     Interrupt_clearACKGroup(MOTOR1_IA_INT_ACK_GROUP);
-#if (UOMODRI == 0)
+#if (defined UOMODRI_CONFIG_ENABLE) && (!UOMODRI_CONFIG_ENABLE)
     GPIO_writePin(DEBUG_INT_PIN1, 0);
 #endif
 }
@@ -411,7 +390,7 @@ __attribute__((interrupt)) void adc_isrMotor1(void)
  */
 __attribute__((interrupt)) void adc_isrMotor2(void)
 {
-#if (UOMODRI == 0)
+#if (defined UOMODRI_CONFIG_ENABLE) && (!UOMODRI_CONFIG_ENABLE)
     GPIO_writePin(DEBUG_INT_PIN1, 1);
 #endif
     FOC_STRUCT* p_foc = motor[MOTOR_2].p_motorFOC;
@@ -543,62 +522,27 @@ __attribute__((interrupt)) void adc_isrMotor2(void)
     // Acknowledge PWM and CLA interrupt flag
     newFocCtrl_M2 = true;
     Interrupt_clearACKGroup(MOTOR2_IA_INT_ACK_GROUP);
-#if (UOMODRI == 0)
+#if (defined UOMODRI_CONFIG_ENABLE) && (!UOMODRI_CONFIG_ENABLE)
     GPIO_writePin(DEBUG_INT_PIN1, 0);
 #endif
 }
 
 /**
- * @brief   PWM interrupt. Read encoder position of MOTOR_1
+ * @brief   DMA interrupt. New command message has been received from master
  */
-//__interrupt void pwm_isrMotor1(void)
-//{
-//#if (UOMODRI == 0)
-//    GPIO_writePin(DEBUG_INT_PIN1, 1);
-//#endif
-//    ENCODER* p_enc  = &motor[MOTOR_1].motorFOC->motor_enc;
-//    uint32_t base   = InterruptList[PWM_IT_MOTOR_1].intPeriphBase;
-//    uint16_t group  = InterruptList[PWM_IT_MOTOR_1].intAckGroup;
-//    // Read encoder position
-//    encoder_GetPosition(p_enc);
-//    // Clear the interrupt flag
-//    EPWM_clearEventTriggerInterruptFlag(base);
-//    // Acknowledge the interrupt (Acknowledge PIE Interrupt Group)
-//    Interrupt_clearACKGroup(group);
-//#if (UOMODRI == 0)
-//    GPIO_writePin(DEBUG_INT_PIN1, 0);
-//#endif
-//}
-
-/**
- * @brief   PWM interrupt. Read encoder position of MOTOR_2
- */
-//__interrupt void pwm_isrMotor2(void)
-//{
-//#if (UOMODRI == 0)
-//    GPIO_writePin(DEBUG_INT_PIN2, 1);
-//#endif
-//    ENCODER* p_enc  = &motor[MOTOR_2].motorFOC->motor_enc;
-//    uint32_t base   = InterruptList[PWM_IT_MOTOR_2].intPeriphBase;
-//    uint16_t group  = InterruptList[PWM_IT_MOTOR_2].intAckGroup;
-//    // Read encoder position
-//    encoder_GetPosition(p_enc);
-//    // Clear the interrupt flag
-//    EPWM_clearEventTriggerInterruptFlag(base);
-//    // Acknowledge the interrupt (Acknowledge PIE Interrupt Group)
-//    Interrupt_clearACKGroup(group);
-//#if (UOMODRI == 0)
-//    GPIO_writePin(DEBUG_INT_PIN2, 0);
-//#endif
-//}
 __attribute__((interrupt)) void dma_isrCmdMsg(void)
 {
-#if (UOMODRI == 0)
+#if (defined UOMODRI_CONFIG_ENABLE) && (!UOMODRI_CONFIG_ENABLE)
     GPIO_writePin(DEBUG_INT_PIN2, 1);
 #endif
 //    DMA_stopChannel(DMA_COM_SPI_RX_BASE_ADDR);
-    //while(HWREG(DMA_COM_SPI_RX_BASE_ADDR + DMA_O_CONTROL) & DMA_CONTROL_TRANSFERSTS);
+
+//    while(HWREG(DMA_COM_SPI_RX_BASE_ADDR + DMA_O_CONTROL) & DMA_CONTROL_TRANSFERSTS);
+//    SPI_isBusy(COM_SPI_BASE);
+
     DMA_configDestAddress(DMA_COM_SPI_RX_BASE_ADDR, p_nxCmdMsgAddr);
+    //while(SPI_isBusy(COM_SPI_BASE) == true);
+//    DMA_startChannel(DMA_COM_SPI_RX_BASE_ADDR);
 //    DMA_startChannel(DMA_COM_SPI_RX_BASE_ADDR);
 //    DMA_startChannel(DMA_COM_SPI_TX_BASE_ADDR);
 //    EALLOW;
@@ -614,34 +558,10 @@ __attribute__((interrupt)) void dma_isrCmdMsg(void)
     // Clear the interrupt flag
     Interrupt_clearACKGroup(DMA_COM_SPI_RX_INT_ACK_GROUP);
 
-#if (UOMODRI == 0)
+#if (defined UOMODRI_CONFIG_ENABLE) && (!UOMODRI_CONFIG_ENABLE)
     GPIO_writePin(DEBUG_INT_PIN2, 0);
 #endif
 }
-
-//__attribute__((interrupt)) void spi_isrRx(void)
-//{
-////    uint8_t index               = 0;
-////    while(InterruptList[index].p_intHandler != &spi_isrRx) index++;
-////    uint16_t group              = InterruptList[index].intAckGroup;
-//    static uint16_t tmp[17];
-//    static uint8_t i = 0;
-//
-//    while((SPI_getRxFIFOStatus(COM_SPI_BASE) != SPI_FIFO_RXEMPTY) && (i < 17))
-//        tmp[i++] = SPI_readDataNonBlocking(COM_SPI_BASE);
-//
-//    if(i == 0)
-//        p_CmdMsgAddr = (p_CmdMsgAddr == &cmd_msg[0]) ? (&cmd_msg[1]) : (&cmd_msg[0]);
-//    else if(i >= 17)
-//    {
-//        i = 0;
-//        memcpy((cmd_msg_t*)p_CmdMsgAddr, &tmp[0], sizeof(cmd_msg_t));
-//        newCmdMsg = true;
-//    }
-//
-//    SPI_clearInterruptStatus(COM_SPI_BASE, SPI_INT_RXFF);
-//    Interrupt_clearACKGroup(INTERRUPT_ACK_GROUP6);
-//}
 
 __attribute__((interrupt)) void gpio_isrFaultMotor1(void)
 {
@@ -659,10 +579,10 @@ __attribute__((interrupt)) void gpio_isrFaultMotor1(void)
     // Set CAN error
     motor[MOTOR_1].p_motorFOC->errorMsg = SPI_SENSOR_STATUS_ERROR_DRV_NFAULT;
 
-#if !UOMODRI_SPI_DEBUG_CONFIG
-    // Update sensor packet
-//    UpdateSensorPacket();
-#endif
+//#if !UOMODRI_SPI_DEBUG_CONFIG
+//    // Update sensor packet
+////    UpdateSensorPacket();
+//#endif
     // Infinite loop
     while(1);
 
@@ -684,18 +604,18 @@ __attribute__((interrupt)) void gpio_isrFaultMotor2(void)
     // Set CAN error
     motor[MOTOR_1].p_motorFOC->errorMsg = SPI_SENSOR_STATUS_ERROR_DRV_NFAULT;
 
-#if !UOMODRI_SPI_DEBUG_CONFIG
-    // Update sensor packet
-//    UpdateSensorPacket();
-#endif
+//#if !UOMODRI_SPI_DEBUG_CONFIG
+//    // Update sensor packet
+////    UpdateSensorPacket();
+//#endif
     // Infinite loop
     while(1);
 }
 
-#if (CLA == 1)
+#if (defined CLA_ENABLE) && (CLA_ENABLE)
 __attribute__((interrupt)) void cla1_isr1(void)
 {
-#if (UOMODRI == 0)
+#if (defined UOMODRI_CONFIG_ENABLE) && (!UOMODRI_CONFIG_ENABLE)
     GPIO_writePin(DEBUG_INT_PIN2, 1);
 #endif
     // Clear the ePWM  interrupt flag so the next INT can occur
@@ -714,7 +634,7 @@ __attribute__((interrupt)) void cla1_isr1(void)
     // Acknowledge the end-of-task interrupt for task 1
     Interrupt_clearACKGroup(INTERRUPT_ACK_GROUP11); //    PieCtrlRegs.PIEACK.all = M_INT11;
 
-#if (UOMODRI == 0)
+#if (defined UOMODRI_CONFIG_ENABLE) && (!UOMODRI_CONFIG_ENABLE)
     GPIO_writePin(DEBUG_INT_PIN2, 0);
 #endif
 }

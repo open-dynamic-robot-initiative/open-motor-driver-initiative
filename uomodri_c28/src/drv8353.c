@@ -100,7 +100,7 @@ static void DRV_Calibration(const DRV_Cfg* p_cfgHandle, DRV_Reg* p_regHandle)
 {
     if((p_cfgHandle != NULL) && (p_regHandle != NULL))
     {
-#if (UOMODRI == 1)
+#if (defined UOMODRI_CONFIG_ENABLE) && (!UOMODRI_CONFIG_ENABLE)
         // Set auto calibration
         DRV_Ctrl07_u auto_calib = {.ctrl07.CAL_MODE = true};
         DRV_writeOne(p_cfgHandle, DRV_ADDRESS_CONTROL_7, auto_calib.raw);
@@ -158,7 +158,7 @@ void DRV_readAll(const DRV_Cfg* p_cfgHandle, DRV_Reg* p_regHandle)
         p_regHandle->Ctrl_Reg_04.raw = DRV_readOne(p_cfgHandle, DRV_ADDRESS_CONTROL_4); // Read Control Register 4
         p_regHandle->Ctrl_Reg_05.raw = DRV_readOne(p_cfgHandle, DRV_ADDRESS_CONTROL_5); // Read Control Register 5
         p_regHandle->Ctrl_Reg_06.raw = DRV_readOne(p_cfgHandle, DRV_ADDRESS_CONTROL_6); // Read Control Register 6
-#if (UOMODRI == 1)
+#if (defined UOMODRI_CONFIG_ENABLE) && (!UOMODRI_CONFIG_ENABLE)
         p_regHandle->Ctrl_Reg_07.raw = DRV_readOne(p_cfgHandle, DRV_ADDRESS_CONTROL_7); // Read Control Register 7
 #endif
     }
@@ -182,7 +182,7 @@ void DRV_writeAll(const DRV_Cfg* p_cfgHandle, DRV_Reg* p_regHandle)
         DRV_writeOne(p_cfgHandle, DRV_ADDRESS_CONTROL_4, p_regHandle->Ctrl_Reg_04.raw); // Write Control Register 4
         DRV_writeOne(p_cfgHandle, DRV_ADDRESS_CONTROL_5, p_regHandle->Ctrl_Reg_05.raw); // Write Control Register 5
         DRV_writeOne(p_cfgHandle, DRV_ADDRESS_CONTROL_6, p_regHandle->Ctrl_Reg_06.raw); // Write Control Register 6
-#if (UOMODRI == 1)
+#if (defined UOMODRI_CONFIG_ENABLE) && (!UOMODRI_CONFIG_ENABLE)
         DRV_writeOne(p_cfgHandle, DRV_ADDRESS_CONTROL_7, p_regHandle->Ctrl_Reg_07.raw); // Write Control Register 7
 #endif
     }

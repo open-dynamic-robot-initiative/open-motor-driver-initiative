@@ -129,7 +129,7 @@ static const IT_TypeDef InterruptList[] =
   .intAckGroup      = MOTOR2_DRV_GPIO_NFAULT_INT_ACK_GROUP,
   .p_intHandler     = &gpio_isrFaultMotor2,
  },
-#if (CLA == 1)
+#if (defined CLA_ENABLE) && (CLA_ENABLE)
  {
   .intNum           = INT_CLA1_1,
   .intAckGroup      = INTERRUPT_ACK_GROUP11,
@@ -166,7 +166,7 @@ static DRV_Reg DrvRegList[] =
    .Ctrl_Reg_02.ctrl02.OTW_REP      = true,                 // Over Temperature Warning will raise nFault
    .Ctrl_Reg_02.ctrl02.DIS_GDF      = false,
    .Ctrl_Reg_02.ctrl02.DIS_GDUV     = false,
-#if (UOMODRI == 1)
+#if (defined UOMODRI_CONFIG_ENABLE) && (!UOMODRI_CONFIG_ENABLE)
    .Ctrl_Reg_02.ctrl02.OCP_ACT      = true,
 #endif
    // Gate Drive HS register initialization (Address: 0x3)
@@ -207,7 +207,7 @@ static DRV_Reg DrvRegList[] =
    .Ctrl_Reg_02.ctrl02.OTW_REP      = true,                 // Over Temperature Warning will raise nFault
    .Ctrl_Reg_02.ctrl02.DIS_GDF      = false,
    .Ctrl_Reg_02.ctrl02.DIS_GDUV     = false,
-#if (UOMODRI == 1)
+#if (defined UOMODRI_CONFIG_ENABLE) && (!UOMODRI_CONFIG_ENABLE)
    .Ctrl_Reg_02.ctrl02.OCP_ACT      = true,
 #endif
    // Gate Drive HS register initialization (Address: 0x3)

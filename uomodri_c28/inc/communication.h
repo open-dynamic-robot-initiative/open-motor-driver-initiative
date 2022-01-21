@@ -1,6 +1,10 @@
 #ifndef __COMMUNICATION_H__
 #define __COMMUNICATION_H__
 
+#include <stdbool.h>
+#include <stdint.h>
+#include <math.h>
+
 #include "f2838x_device.h"
 #include "hal.h"
 
@@ -437,4 +441,5 @@ bool com_cmdMsgExtract(cmd_msg_t*, cmd_uomodri_t*);
 //bool com_statusMsgCreate(FOC_STRUCT*, status_msg_t*);
 bool com_statusMsgCreate(FOC_STRUCT*, cmd_uomodri_t*, status_msg_t*);
 uint32_t com_crc32(uint16_t*, uint16_t);
+void com_DMA_sync(void);
 #endif

@@ -182,7 +182,7 @@ typedef struct _DMA_Cfg_TypeDef_
     bool                intEnable;
 } DMA_TypeDef;
 
-#if (CLA == 1)
+#if (defined CLA_ENABLE) && (CLA_ENABLE)
 /**
  * @struct  CLA_TASK_TypeDef
  * @brief   CLA TASK global Hardware Abstraction Layer structure - To be updated
@@ -336,7 +336,7 @@ typedef struct _HAL_
     const SPI_TypeDef*  p_spiHandler;
     const IPC_TypeDef*  p_ipcHandler;
     const DMA_TypeDef*  p_dmaHandler;
-#if (CLA == 1)
+#if (defined CLA_ENABLE) && (CLA_ENABLE)
     const CLA_TypeDef*  p_claHandler;
 #endif
 } HAL;
@@ -358,7 +358,8 @@ typedef struct _HAL_MOTOR_CFG_
  */
 
 void HAL_init(HAL*);
-void HAL_DMA_start(const DMA_TypeDef*);
+void HAL_SPI_start(const SPI_TypeDef*);
+//void HAL_DMA_start(const DMA_TypeDef*);
 void HAL_IT_init(const IT_TypeDef*);
 
 // ADC interrupt service routine

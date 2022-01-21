@@ -65,12 +65,12 @@ inline void FOC_runControl(FOC_STRUCT* p_foc)
     // PI controller - Id(Flux Current Controller) & Iq (Torque Current Controller)
     p_foc->piId.in      = p_foc->id;
     p_foc->piId.set     = p_foc->idRef;
-    p_foc->piId.ff      = UOMODRI_FEED_FORWARD_EN ? (-1.0f * p_speed->speedElec * p_cfg->Lq * p_foc->iq)        : (0.0);//* UOMODRI_FOC_FEED_FORWARD_EN;
+    p_foc->piId.ff      = UOMODRI_FEED_FORWARD_ENABLE ? (-1.0f * p_speed->speedElec * p_cfg->Lq * p_foc->iq)        : (0.0);//* UOMODRI_FOC_FEED_FORWARD_EN;
     p_foc->piId.sat     = p_foc->motor_acq.vbus;
     p_foc->ud           = FOC_runPI(&p_foc->piId);
     p_foc->piIq.in      = p_foc->iq;
     p_foc->piIq.set     = p_foc->iqRef;
-    p_foc->piIq.ff      = UOMODRI_FEED_FORWARD_EN ? (p_cfg->Rs * p_foc->iqRef + p_speed->speedElec * p_cfg->ke) : (0.0);//* UOMODRI_FOC_FEED_FORWARD_EN;
+    p_foc->piIq.ff      = UOMODRI_FEED_FORWARD_ENABLE ? (p_cfg->Rs * p_foc->iqRef + p_speed->speedElec * p_cfg->ke) : (0.0);//* UOMODRI_FOC_FEED_FORWARD_EN;
     p_foc->piIq.sat     = p_foc->motor_acq.vbus;
     p_foc->uq           = FOC_runPI(&p_foc->piIq);
 //    float32_t uq_max    = __sqrt((p_foc->motor_acq.vmax * p_foc->motor_acq.vmax) - (p_foc->ud * p_foc->ud));

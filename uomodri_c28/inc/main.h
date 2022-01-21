@@ -7,7 +7,7 @@
 // Project includes
 //#include "communication.h"
 #include "f2838x_device.h"
-#if (CLA == 1)
+#if (defined CLA_ENABLE) && (CLA_ENABLE)
 #include "f2838x_cla_defines.h"
 #endif
 #include "f2838x_examples.h"
@@ -21,7 +21,6 @@
 #include "encoder.h"
 #include "foc.h"
 #include "motor.h"
-
 #include "communication.h"
 //#include "communication_interface.h"
 //#include "legacy_spi.h"
@@ -37,15 +36,15 @@
 #define IPC_CMD_READ_MEM   0x1001
 #define IPC_CMD_RESP       0x2001
 
-#define TIME_M1_S   ((float32_t)motor[MOTOR_1].interruptCnt * dt)
-#define TIME_M1_MS  ((float32_t)motor[motor_1].interruptCnt * 1000.0f * dt)
-#define TIME_M2_S   ((float32_t)motor[MOTOR_2].interruptCnt * dt)
-#define TIME_M2_MS  ((float32_t)motor[motor_2].interruptCnt * 1000.0f * dt)
+//#define TIME_M1_S   ((float32_t)motor[MOTOR_1].interruptCnt * dt)
+//#define TIME_M1_MS  ((float32_t)motor[motor_1].interruptCnt * 1000.0f * dt)
+//#define TIME_M2_S   ((float32_t)motor[MOTOR_2].interruptCnt * dt)
+//#define TIME_M2_MS  ((float32_t)motor[motor_2].interruptCnt * 1000.0f * dt)
 
 /*****************************************************************************
  * globals
  *****************************************************************************/
-#if (CM == 1)
+#if (defined CM_ENABLE) && (CM_ENABLE)
 //#pragma DATA_SECTION(com_rx_raw, "MSGRAM_CPU_TO_CM")
 
 //rx_msg_t __attribute__((section (".ComRxCmdSection"))) com_rx_raw;
@@ -56,7 +55,7 @@
 
 //#pragma DATA_SECTION(motor_enc_in, "CpuToCla1MsgRAM");
 //ENC_STRUCT motor_enc_in;// = motor[MOTOR_1].p_motorFOC->motor_enc;
-#if (CLA == 1)
+#if (defined CLA_ENABLE) && (CLA_ENABLE)
 // <Step 1>: Assign the CLA variables to their respective memory spaces
 //  - Input/Output variables should go into the Cla1ToCpuMsgRam/CpuToCla1MsgRam
 //  - Global variables in the .cla file are automatically placed in the ".bss_cla" so
@@ -90,8 +89,8 @@ float   thetaElec; // [pu]
 //float32_t           pdSat = 4.0;
 // Time macro
 //const float32_t     dt = 1.0 / PWM_FREQ;
-bool                isrMotor1Ready = false;
-bool                isrMotor2Ready = false;
+//bool                isrMotor1Ready = false;
+//bool                isrMotor2Ready = false;
 
 // <Step 2>: The CLA can only operate out of RAM i.e. its program and data spaces are restricted
 //           to RAM. Depending on the device, the CLA may be configured to access the entire lower
@@ -107,8 +106,6 @@ bool                isrMotor2Ready = false;
 //extern uint32_t Cla1ConstRunStart, Cla1ConstLoadStart, Cla1ConstLoadSize;
 #pragma DATA_SECTION(cmd_msg, "ramgs0");
 cmd_msg_t       cmd_msg[2];
-//cmd_msg_t*      p_crCmdMsgAddr = &cmd_msg[0];
-//cmd_msg_t*      p_nxCmdMsgAddr = &cmd_msg[1];
 #pragma DATA_SECTION(status_msg, "ramgs0");
 status_msg_t    status_msg[2] =
 {
@@ -190,7 +187,7 @@ cmd_uomodri_t   cmd_uOmodri =
  .iSat[MOTOR_2]             = 0.0,
 };
 
-#if (UOMODRI == 0)
+#if (defined UOMODRI_CONFIG_ENABLE) && (!UOMODRI_CONFIG_ENABLE)
 //#pragma DATA_ALIGN ( cmd_Master_msg , 2 )
 #pragma DATA_SECTION(cmd_Master_msg, "ramgs0");
 cmd_msg_t       cmd_Master_msg;
@@ -228,7 +225,7 @@ __attribute__((interrupt)) void adc_isrMotor2(void);
 //extern __interrupt void pwm_isrMotor2(void);
 __attribute__((interrupt)) void gpio_isrFaultMotor1(void);
 __attribute__((interrupt)) void gpio_isrFaultMotor2(void);
-#if (CLA == 1)
+#if (defined CLA_ENABLE) && (CLA_ENABLE)
 __attribute__((interrupt)) void cla1_isr1(void);
 #endif
 #endif // end of MAIN_H definition

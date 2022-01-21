@@ -18,9 +18,10 @@ void HAL_ePWM_init(const ePWM_TypeDef*);
 void HAL_eQEP_init(const eQEP_TypeDef*);
 void HAL_SPI_init(const SPI_TypeDef*);
 void HAL_DMA_init(const DMA_TypeDef*);
+void HAL_DMA_sync(void);
 void HAL_IPC_init(const IPC_TypeDef*);
 void* HAL_IPC_addr_init(const IPC_TypeDef*, uint32_t);
-#if (CLA == 1)
+#if (defined CLA_ENABLE) && (CLA_ENABLE)
 void HAL_CLA_init(const CLA_TypeDef*);
 #endif
 
@@ -52,11 +53,13 @@ void HAL_init(HAL* p_hal)
 //            p_hal->p_ipcHandler++;
 //        com_rx_cmd = (void *)HAL_IPC_addr_init(p_hal->p_ipcHandler, 0x1000);
 //        com_tx_msg = (void *)HAL_IPC_addr_init(p_hal->p_ipcHandler, 0x1001);
+        // Initialize SPI
+        HAL_SPI_init(p_hal->p_spiHandler);
         // Initialize DMA
         HAL_DMA_init(p_hal->p_dmaHandler);
-        // Initialize SPIA device
-        HAL_SPI_init(p_hal->p_spiHandler);
-#if (CLA == 1)
+        // enable DMA channels
+        HAL_DMA_sync();
+#if (defined CLA_ENABLE) && (CLA_ENABLE)
         // Initialize CLA
         HAL_CLA_init(p_hal->p_claHandler);
 #endif
@@ -509,7 +512,6 @@ void HAL_SPI_init(const SPI_TypeDef* p_spiCfg)
     if(p_spiCfg != NULL)
     {
         uint32_t spiBase = p_spiCfg->spiBase;
-
         while(spiBase != 0xFFFFFFFF)
         {
             /* Disable SPI before configuration */
@@ -541,6 +543,22 @@ void HAL_SPI_init(const SPI_TypeDef* p_spiCfg)
     return;
 }
 
+//void HAL_SPI_start(const SPI_TypeDef* p_spiCfg)
+//{
+//    if(p_spiCfg != NULL)
+//    {
+//        uint32_t spiBase = p_spiCfg->spiBase;
+//        while(spiBase != 0xFFFFFFFF)
+//        {
+//            /* Enable SPI module */
+//            SPI_enableModule(spiBase);
+//            spiBase = (++p_spiCfg)->spiBase;
+//        }
+//    }
+//
+//    return;
+//}
+
 /**
  * @brief       DMA initialization function.
  * @param[in]   *p_dmaCfg   Pointer on the DMA configuration structure
@@ -553,10 +571,7 @@ void HAL_DMA_init(const DMA_TypeDef* p_dmaCfg)
 
         /* Global hardware reset of the DMA controller. */
         DMA_initController();
-#ifdef DEBUG
         DMA_setEmulationMode(DMA_EMULATION_FREE_RUN);
-#endif
-
         while(dmaChBase != 0xFFFFFFFF)
         {
             /* DMA channel initialization
@@ -567,15 +582,16 @@ void HAL_DMA_init(const DMA_TypeDef* p_dmaCfg)
             DMA_configTransfer(dmaChBase, p_dmaCfg->transferSize, p_dmaCfg->srcStep, p_dmaCfg->dstStep);
             DMA_configWrap(dmaChBase, p_dmaCfg->srcWrapSize, p_dmaCfg->srcWrapStep, p_dmaCfg->dstWrapSize, p_dmaCfg->dstWrapStep);
             DMA_configMode(dmaChBase, p_dmaCfg->trigger, p_dmaCfg->config);
-            /* Clear flags & disable interrupts */
+            /* Clear flags & set or disable interrupts */
             DMA_disableOverrunInterrupt(dmaChBase);
             DMA_setInterruptMode(dmaChBase, p_dmaCfg->intMode);
-            DMA_enableInterrupt(dmaChBase);
-//            (p_dmaCfg->intEnable) ? (DMA_enableInterrupt(dmaChBase)) : (DMA_disableInterrupt(dmaChBase));
-            /* Enable Trigger source & DMA channel */
-            DMA_clearTriggerFlag(dmaChBase);
+//            DMA_enableInterrupt(dmaChBase);
+            (p_dmaCfg->intEnable) ? (DMA_enableInterrupt(dmaChBase)) : (DMA_disableInterrupt(dmaChBase));
+            /* Enable Trigger source */
+//            DMA_clearTriggerFlag(dmaChBase);
             DMA_enableTrigger(dmaChBase);
-//            DMA_startChannel(dmaChBase);
+//            if(dmaChBase == DMA_COM_SPI_RX_BASE_ADDR)
+//                DMA_startChannel(dmaChBase);
             dmaChBase = (++p_dmaCfg)->dmaChBase;
         }
     }
@@ -584,22 +600,15 @@ void HAL_DMA_init(const DMA_TypeDef* p_dmaCfg)
 }
 
 /**
- * @brief       DMA start function.
- * @param[in]   *p_dmaCfg   Pointer on the DMA configuration structure to be started
+ * @brief       DMA sync function.
  */
-void HAL_DMA_start(const DMA_TypeDef* p_dmaCfg)
+void HAL_DMA_sync(void)
 {
-    if(p_dmaCfg != NULL)
-    {
-        uint32_t dmaChBase = p_dmaCfg->dmaChBase;
-        while(dmaChBase != 0xFFFFFFFF)
-        {
-            DMA_startChannel(dmaChBase);
-            dmaChBase = (++p_dmaCfg)->dmaChBase;
-        }
-    }
-
-    return;
+    // DMA_RX must be started before DMA_TX
+    DMA_startChannel(DMA_COM_SPI_RX_BASE_ADDR);
+    while(!GPIO_ReadPin(COM_SPI_CS));
+    SPI_resetTxFIFO(COM_SPI_BASE);
+    DMA_startChannel(DMA_COM_SPI_TX_BASE_ADDR);
 }
 
 /**
@@ -651,7 +660,7 @@ void* HAL_IPC_addr_init(const IPC_TypeDef* p_ipcCfg, uint32_t cmd_valid)
     return((cmd == cmd_valid) ? ((void *)addr) : (NULL));
 }
 
-#if (CLA == 1)
+#if (defined CLA_ENABLE) && (CLA_ENABLE)
 /**
  * @brief       CLA initialization function.
  * @param[in]   *p_claCfg   Pointer on the CLA configuration structure

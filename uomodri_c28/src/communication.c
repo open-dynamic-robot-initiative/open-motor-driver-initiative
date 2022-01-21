@@ -196,8 +196,12 @@ bool com_cmdMsgExtract(cmd_msg_t* p_msg, cmd_uomodri_t* p_cmd)
         p_cmd->cmdReg.bit.EM2       = p_msg->cmdReg.bit.EM2;
         p_cmd->cmdReg.bit.EM1       = p_msg->cmdReg.bit.EM1;
         p_cmd->cmdReg.bit.ES        = p_msg->cmdReg.bit.ES;
-        p_cmd->positionRef[MOTOR_1] = (float32_t)((int32_t)FUS_16_TO_32(p_msg->positionRef[MOTOR_1].u16_msb, p_msg->positionRef[MOTOR_1].u16_lsb) * POSITION_LSB);
-        p_cmd->positionRef[MOTOR_2] = (float32_t)((int32_t)FUS_16_TO_32(p_msg->positionRef[MOTOR_2].u16_msb, p_msg->positionRef[MOTOR_2].u16_lsb) * POSITION_LSB);
+        int32_t pos_fus             = (int32_t)FUS_16_TO_32(p_msg->positionRef[MOTOR_1].u16_msb, p_msg->positionRef[MOTOR_1].u16_lsb);
+//        p_cmd->positionRef[MOTOR_1] = (float32_t)((int32_t)FUS_16_TO_32(p_msg->positionRef[MOTOR_1].u16_msb, p_msg->positionRef[MOTOR_1].u16_lsb) * POSITION_LSB);
+        p_cmd->positionRef[MOTOR_1] = (float32_t)(pos_fus                       * POSITION_LSB);
+        pos_fus                     = (int32_t)FUS_16_TO_32(p_msg->positionRef[MOTOR_2].u16_msb, p_msg->positionRef[MOTOR_2].u16_lsb);
+//        p_cmd->positionRef[MOTOR_2] = (float32_t)((int32_t)FUS_16_TO_32(p_msg->positionRef[MOTOR_2].u16_msb, p_msg->positionRef[MOTOR_2].u16_lsb) * POSITION_LSB);
+        p_cmd->positionRef[MOTOR_2] = (float32_t)(pos_fus                       * POSITION_LSB);
         p_cmd->velocityRef[MOTOR_1] = (float32_t)(p_msg->velocityRef[MOTOR_1]   * VELOCITY_LSB);
         p_cmd->velocityRef[MOTOR_2] = (float32_t)(p_msg->velocityRef[MOTOR_2]   * VELOCITY_LSB);
         p_cmd->iqRef[MOTOR_1]       = (float32_t)(p_msg->iqRef[MOTOR_1]         * IQ_LSB);
@@ -263,8 +267,8 @@ bool com_statusMsgCreate(FOC_STRUCT* p_foc, cmd_uomodri_t* p_cmd, status_msg_t* 
         p_msg->adcSamples[MOTOR_2]          = (uint16_t)(p_foc->motor_acq.auxAcq / VOLTAGE_LSB);
         // Compute CRC
         uint32_t crc = com_crc32((uint16_t *)p_msg, DMA_COM_SPI_TX_RX_16BIT_PAYLOAD_LENGTH);
-        p_msg->crc.u16_msb                  = MSB_32(crc);
-        p_msg->crc.u16_lsb                  = LSB_32(crc);
+        p_msg->crc.u16_msb                  = LSB_32(crc); // required for Solo
+        p_msg->crc.u16_lsb                  = MSB_32(crc);
         tx_msg_end                          = true;
     }
 
@@ -285,6 +289,17 @@ uint32_t com_crc32 (uint16_t* buf, uint16_t len)
       buf++;
     }
   return crc;
+}
+
+void com_DMA_sync(void)
+{
+    // DMA_RX must be started before DMA_TX
+    while(GPIO_ReadPin(COM_SPI_CS));
+    SPI_resetRxFIFO(COM_SPI_BASE);
+    DMA_startChannel(DMA_COM_SPI_RX_BASE_ADDR);
+    while(!GPIO_ReadPin(COM_SPI_CS));
+    SPI_resetTxFIFO(COM_SPI_BASE);
+    DMA_startChannel(DMA_COM_SPI_TX_BASE_ADDR);
 }
 
 //void com_bgcrc32_init(void)

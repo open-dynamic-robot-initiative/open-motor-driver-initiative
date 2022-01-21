@@ -20,15 +20,15 @@
  *  @brief    Special configurations definitions.
  * @{
  */
-#define UOMODRI                                 0
-#define CLA                                     0
-#define CM                                      0
+#define UOMODRI_CONFIG_ENABLE                   1
+#define CLA_ENABLE                              0
+#define CM_ENABLE                               0
 #define UOMODRI_VBUS_FLT(flt_coef, y, x)        LPF_FILTER_1(flt_coef, y, x)
 #define UOMODRI_IDQ_FLT(flt_coef, y, x)         LPF_FILTER_1(flt_coef, y, x)
 #define UOMODRI_RES_ESTIM_FLT(flt_coef, y, x)   LPF_FILTER_1(flt_coef, y, x)
 #define UOMODRI_SPEED_FLT(flt_coef, y, x)       LPF_FILTER_1(flt_coef, y, x)
 #define UOMODRI_SPI_DEBUG_CONFIG                0
-#define UOMODRI_FEED_FORWARD_EN                 0
+#define UOMODRI_FEED_FORWARD_ENABLE             0
 
 #define OMODRI_PAL_SETUP                        0   // Set this to 1 to use the PAL pin affectation
 //#define UOMODRI_DEBUG_LOGGED_MOTOR              MOTOR_1
@@ -97,7 +97,7 @@
  *  @brief    Configure 2 pins (pin number and mux function) for debug.
  * @{
  */
-#if (UOMODRI == 0)
+#if (defined UOMODRI_CONFIG_ENABLE) && (!UOMODRI_CONFIG_ENABLE)
 #define DEBUG_LED_PIN1                          31
 #define DEBUG_LED_PIN1_CFG                      GPIO_31_GPIO31
 #define DEBUG_LED_PIN2                          34
@@ -205,7 +205,7 @@
  * @}
  */
 
-#if (UOMODRI == 0)
+#if (defined UOMODRI_CONFIG_ENABLE) && (!UOMODRI_CONFIG_ENABLE)
 /** @defgroup SPI_MST_GPIO_pins - MST com configuration.
  *  @brief    Configure GPIO pins associated to master board communication.
  * @{
@@ -238,7 +238,8 @@
 #define DMA_COM_SPI_RX_INT                      INT_DMA_CH6
 #define DMA_COM_SPI_RX_TRIGGER_SRC              DMA_TRIGGER_SPIBRX
 #define DMA_COM_SPI_RX_INT_ACK_GROUP            INTERRUPT_ACK_GROUP7
-#if (UOMODRI == 0)
+
+#if (defined UOMODRI_CONFIG_ENABLE) && (!UOMODRI_CONFIG_ENABLE)
 #define DMA_MST_SPI_TX_BASE_ADDR                DMA_CH3_BASE
 #define DMA_MST_SPI_TX_INT                      INT_DMA_CH3
 #define DMA_MST_SPI_TX_TRIGGER_SRC              DMA_TRIGGER_SPICTX
@@ -250,17 +251,17 @@
 #define DMA_COM_SPI_TX_RX_16BIT_CRC_LENGTH      (2)
 #define DMA_COM_SPI_TX_RX_16BIT_PAYLOAD_LENGTH  (DMA_COM_SPI_TX_RX_16BIT_FULL_LENGTH - DMA_COM_SPI_TX_RX_16BIT_CRC_LENGTH)
 #define DMA_COM_SPI_TX_RX_16BIT_BURST_EVT       (1)
-#define DMA_COM_SPI_TX_RX_TRANSFER_EVT          (DMA_COM_SPI_TX_RX_16BIT_FULL_LENGTH / DMA_COM_SPI_TX_RX_16BIT_BURST_EVT)
-//#define DMA_COM_SPI_TX_RX_TRANSFER_EVT          ((DMA_COM_SPI_TX_RX_16BIT_LENGTH / DMA_COM_SPI_TX_RX_16BIT_BURST_EVT) + \
+#define DMA_COM_SPI_TX_RX_16BIT_TRANSFER_EVT    (DMA_COM_SPI_TX_RX_16BIT_FULL_LENGTH / DMA_COM_SPI_TX_RX_16BIT_BURST_EVT)
+//#define DMA_COM_SPI_TX_RX_16BIT_TRANSFER_EVT    ((DMA_COM_SPI_TX_RX_16BIT_LENGTH / DMA_COM_SPI_TX_RX_16BIT_BURST_EVT) + \
 //                                                (((DMA_COM_SPI_TX_RX_16BIT_LENGTH % DMA_COM_SPI_TX_RX_16BIT_BURST_EVT) != 0) ? \
 //                                                (1) : (0)))
-#if (UOMODRI == 0)
+#if (defined UOMODRI_CONFIG_ENABLE) && (!UOMODRI_CONFIG_ENABLE)
 #define DMA_MST_SPI_TX_RX_8BIT_LENGTH           (34)
 #define DMA_MST_SPI_TX_RX_16BIT_FULL_LENGTH     (DMA_MST_SPI_TX_RX_8BIT_LENGTH / 2)
 #define DMA_MST_SPI_TX_RX_16BIT_CRC_LENGTH      (2)
 #define DMA_MST_SPI_TX_RX_16BIT_PAYLOAD_LENGTH  (DMA_MST_SPI_TX_RX_16BIT_FULL_LENGTH - DMA_MST_SPI_TX_RX_16BIT_CRC_LENGTH)
 #define DMA_MST_SPI_TX_RX_16BIT_BURST_EVT       (1)
-#define DMA_MST_SPI_TX_RX_TRANSFER_EVT          (DMA_MST_SPI_TX_RX_16BIT_FULL_LENGTH / DMA_MST_SPI_TX_RX_16BIT_BURST_EVT)
+#define DMA_MST_SPI_TX_RX_16BIT_TRANSFER_EVT    (DMA_MST_SPI_TX_RX_16BIT_FULL_LENGTH / DMA_MST_SPI_TX_RX_16BIT_BURST_EVT)
 #endif
 /**
  * @}
@@ -315,7 +316,7 @@
 #define DRV_CSA_GAIN_REG                        DRV_CSA_GAIN_10_V_V  // [V/V] Possible values: 5, 10, 20, 40
 #define DRV_CSA_GAIN_VAL                        (5 << DRV_CSA_GAIN_REG) // base gain
 
-#if (UOMODRI == 0)
+#if (defined UOMODRI_CONFIG_ENABLE) && (!UOMODRI_CONFIG_ENABLE)
 #define R_SHUNT                                 (0.007f) // [Ohm]
 #define BRIDGE_DIVIDER                          ((4.99f + 82.0f) / 4.99f)
 #else
