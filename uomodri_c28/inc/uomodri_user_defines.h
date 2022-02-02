@@ -21,13 +21,15 @@
  * @{
  */
 #define UOMODRI_CONFIG_ENABLE                   1
+//#define UOMODRI_USE_ENC_GET_REGISTERS_FCT
 #define CLA_ENABLE                              0
 #define CM_ENABLE                               0
 #define UOMODRI_VBUS_FLT(flt_coef, y, x)        LPF_FILTER_1(flt_coef, y, x)
 #define UOMODRI_IDQ_FLT(flt_coef, y, x)         LPF_FILTER_1(flt_coef, y, x)
 #define UOMODRI_RES_ESTIM_FLT(flt_coef, y, x)   LPF_FILTER_1(flt_coef, y, x)
 #define UOMODRI_SPEED_FLT(flt_coef, y, x)       LPF_FILTER_1(flt_coef, y, x)
-#define UOMODRI_SPI_DEBUG_CONFIG                0
+#define UOMODRI_HAL_ADC_CALIB(flt_coef, y, x)   LPF_FILTER_1(flt_coef, y, x)
+//#define UOMODRI_SPI_DEBUG_CONFIG
 #define UOMODRI_FEED_FORWARD_ENABLE             0
 
 #define OMODRI_PAL_SETUP                        0   // Set this to 1 to use the PAL pin affectation
@@ -171,6 +173,17 @@
  * @}
  */
 
+/** @defgroup SPI RGB LED control.
+ *  @brief    Configure master SPI module associated with RGB LED.
+ * @{
+ */
+#define LED_SPI_BASE                            SPID_BASE
+#define LED_SPI_TX_BASE_REG_ADDR                (LED_SPI_BASE + SPI_O_TXBUF)
+#define LED_SPI_RX_BASE_REG_ADDR                (LED_SPI_BASE + SPI_O_RXBUF)
+/**
+ * @}
+ */
+
 /** @defgroup SPI_DRV_GPIO_pins - DRV configuration.
  *  @brief    Configure GPIO pins associated to DRVs communication.
  * @{
@@ -223,6 +236,16 @@
  */
 #endif
 
+/** @defgroup SPI_LED_GPIO_pins - RGB LED configuration.
+ *  @brief    Configure GPIO pins associated with RGB LED.
+ * @{
+ */
+#define LED_SPI_SIMO                            (91)
+#define LED_SPI_SIMO_CFG                        GPIO_91_SPID_SIMO
+/**
+ * @}
+ */
+
 /******************************************************************************************************
 *                                               DMA Defines
 *******************************************************************************************************/
@@ -231,6 +254,9 @@
  * @{
  */
 #define DMA_NO_WRAP                             (0x10000)
+#define DMA_LED_SPI_TX_BASE_ADDR                DMA_CH4_BASE
+#define DMA_LED_SPI_TX_INT                      INT_DMA_CH4
+#define DMA_LED_SPI_TX_TRIGGER_SRC              DMA_TRIGGER_SPIDTX
 #define DMA_COM_SPI_TX_BASE_ADDR                DMA_CH5_BASE
 #define DMA_COM_SPI_TX_INT                      INT_DMA_CH5
 #define DMA_COM_SPI_TX_TRIGGER_SRC              DMA_TRIGGER_SPIBTX
@@ -239,6 +265,10 @@
 #define DMA_COM_SPI_RX_TRIGGER_SRC              DMA_TRIGGER_SPIBRX
 #define DMA_COM_SPI_RX_INT_ACK_GROUP            INTERRUPT_ACK_GROUP7
 
+#define DMA_LED_SPI_TX_8BIT_LENGTH              (12)
+#define DMA_LED_SPI_TX_16BIT_FULL_LENGTH        (DMA_LED_SPI_TX_8BIT_LENGTH / 2)
+#define DMA_LED_SPI_TX_16BIT_BURST_EVT          (3)
+#define DMA_LED_SPI_TX_16BIT_TRANSFER_EVT       (DMA_LED_SPI_TX_16BIT_FULL_LENGTH / DMA_LED_SPI_TX_16BIT_BURST_EVT)
 #if (defined UOMODRI_CONFIG_ENABLE) && (!UOMODRI_CONFIG_ENABLE)
 #define DMA_MST_SPI_TX_BASE_ADDR                DMA_CH3_BASE
 #define DMA_MST_SPI_TX_INT                      INT_DMA_CH3
@@ -782,11 +812,12 @@
 #define VOLTAGE_LSB                             (6.103515625e-05f)                       // 2**(-14)
 #define KP_LSB                                  (0.00048828125f)                         // 2**(-11)
 #define KD_LSB                                  (0.0009765625f)                          // 2**(-10)
-typedef struct __LowpassFilter_Structure__
+
+typedef struct __LOWPASSFILTER_STRUCT__
 {
     float32_t a;
     float32_t one_minus_a;
-} LPFSTRUCT;
+} lpf_t;
 
 /**
  * @enum    ArrayID
@@ -807,7 +838,7 @@ typedef enum
     MOTOR_1 = 0,    /*!< Select Motor_1 */
     MOTOR_2 = 1,    /*!< Select Motor_2 */
     NO_MOT  = -1    /*!< No motor selected */
-} ID_ENUM;
+} motor_id_e;
 
 /**
  * @enum    itID

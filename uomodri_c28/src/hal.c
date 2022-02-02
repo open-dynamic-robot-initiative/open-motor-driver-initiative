@@ -3,65 +3,63 @@
  * Description: Source file containing Hardware Abstraction Layer source code
  */
 
+/***********************************************************************
+ * INCLUDE FILES
+ ***********************************************************************/
 #include "hal.h"
-#include "communication.h"
-#include "uomodri_hal_config_handlers.h"
 
-//extern rx_uomodri_t* com_rx_cmd;
-//extern tx_msg_t* com_tx_msg;
-
-/* Static function signatures */
-// Device HAL
-void HAL_GPIO_init(const GPIO_TypeDef*);
-void HAL_ADC_init(const ADC_TypeDef*);
-void HAL_ePWM_init(const ePWM_TypeDef*);
-void HAL_eQEP_init(const eQEP_TypeDef*);
-void HAL_SPI_init(const SPI_TypeDef*);
-void HAL_DMA_init(const DMA_TypeDef*);
+/***********************************************************************
+ * FUNCTIONS DECLARATION
+ ***********************************************************************/
+void HAL_GPIO_ini(const gpio_cfg_t*);
+void HAL_ADC_ini(const adc_cfg_t*);
+void HAL_ePWM_ini(const epwm_cfg_t*);
+void HAL_eQEP_ini(const eqep_cfg_t*);
+void HAL_SPI_ini(const spi_cfg_t*);
+void HAL_DMA_ini(const dma_cfg_t*);
 void HAL_DMA_sync(void);
-void HAL_IPC_init(const IPC_TypeDef*);
-void* HAL_IPC_addr_init(const IPC_TypeDef*, uint32_t);
+void HAL_IPC_ini(const ipc_cfg_t*);
+void* HAL_IPC_addr_ini(const ipc_cfg_t*, uint32_t);
 #if (defined CLA_ENABLE) && (CLA_ENABLE)
-void HAL_CLA_init(const CLA_TypeDef*);
+void HAL_CLA_ini(const CLA_TypeDef*);
 #endif
 
-//const void* p_msgComInter;
-
-// Function definitions
+/***********************************************************************
+ * FUNCTIONS DEFINITIONS
+ ***********************************************************************/
 /**
  * @brief       Initialize all peripherals necessaries.
  * @param[in]   *p_hal  Pointer on the general HAL structure definition
  */
-void HAL_init(HAL* p_hal)
+void HAL_ini(hal_cfg_t* p_hal)
 {
-//    uint32_t    command, data, addr;
     if(p_hal != NULL)
     {
         // Initialize GPIO pins
-        HAL_GPIO_init(p_hal->p_gpioHandler);
+        HAL_GPIO_ini(p_hal->p_gpioHandle);
         // Initialize ADC
-        HAL_ADC_init(p_hal->p_adcHandler);
+        HAL_ADC_ini(p_hal->p_adcHandle);
         // Initialize ePWM
-        HAL_ePWM_init(p_hal->p_epwmHandler);
+        HAL_ePWM_ini(p_hal->p_epwmHandle);
         // Initialize eQEP
-        HAL_eQEP_init(p_hal->p_eqepHandler);
+        HAL_eQEP_ini(p_hal->p_eqepHandle);
         // Initialize IPC communication
-//        HAL_IPC_init(p_hal->p_ipcHandler);
+//        HAL_IPC_ini(p_hal->p_ipcHandle);
 
 //        // Memory address sharing CM to CPU1
 //        while(p_hal->p_ipcHandler->p_ipcIntHandler != NULL)
 //            p_hal->p_ipcHandler++;
-//        com_rx_cmd = (void *)HAL_IPC_addr_init(p_hal->p_ipcHandler, 0x1000);
-//        com_tx_msg = (void *)HAL_IPC_addr_init(p_hal->p_ipcHandler, 0x1001);
+//        com_rx_cmd = (void *)HAL_IPC_addr_init(p_hal->p_ipcHandle, 0x1000);
+//        com_tx_msg = (void *)HAL_IPC_addr_init(p_hal->p_ipcHandle, 0x1001);
         // Initialize SPI
-        HAL_SPI_init(p_hal->p_spiHandler);
+        HAL_SPI_ini(p_hal->p_spiHandle);
         // Initialize DMA
-        HAL_DMA_init(p_hal->p_dmaHandler);
+        HAL_DMA_ini(p_hal->p_dmaHandle);
         // enable DMA channels
         HAL_DMA_sync();
 #if (defined CLA_ENABLE) && (CLA_ENABLE)
         // Initialize CLA
-        HAL_CLA_init(p_hal->p_claHandler);
+        HAL_CLA_ini(p_hal->p_claHandle);
 #endif
     }
 
@@ -72,7 +70,7 @@ void HAL_init(HAL* p_hal)
  * @brief       GPIO initialization function.
  * @param[in]   *p_gpio     Pointer on the GPIO structure definition
  */
-void HAL_GPIO_init(const GPIO_TypeDef* p_gpio)
+void HAL_GPIO_ini(const gpio_cfg_t* p_gpio)
 {
     if(p_gpio != NULL)
     {
@@ -110,14 +108,14 @@ void HAL_GPIO_init(const GPIO_TypeDef* p_gpio)
  * @brief       ADC initialization function.
  * @param[in]   *p_adcCfg   Pointer on the ADC configuration structure
  */
-void HAL_ADC_init(const ADC_TypeDef* p_adcCfg)
+void HAL_ADC_ini(const adc_cfg_t* p_adcCfg)
 {
-    if((p_adcCfg != NULL) && (p_adcCfg->p_adcInit != NULL) && (p_adcCfg->p_adcAcq != NULL))
+    if((p_adcCfg != NULL) && (p_adcCfg->p_adcIni != NULL) && (p_adcCfg->p_adcAcq != NULL))
     {
-        const ADC_INIT_TypeDef* p_adcInit   = p_adcCfg->p_adcInit;
-        const ADC_ACQ_TypeDef*  p_adcAcq    = p_adcCfg->p_adcAcq;
-        const ADC_IT_TypeDef*   p_adcIT     = p_adcCfg->p_adcIt;
-        uint32_t                adcBase     = p_adcCfg->adcBase;
+        const adc_ini_t*    p_adcIni    = p_adcCfg->p_adcIni;
+        const adc_acq_t*    p_adcAcq    = p_adcCfg->p_adcAcq;
+        const adc_int_t*    p_adcInt    = p_adcCfg->p_adcInt;
+        uint32_t            adcBase     = p_adcCfg->adcBase;
 
         while(adcBase != 0xFFFFFFFF)
         {
@@ -135,16 +133,16 @@ void HAL_ADC_init(const ADC_TypeDef* p_adcCfg)
             // Let some time to power up ADCs
             DEVICE_DELAY_US(1500U);
 
-            while(p_adcInit->adcBase == adcBase)
+            while(p_adcIni->adcBase == adcBase)
             {
                 /* Set priorities according round-robin
                  * Set the input channel, SOC number, trigger source & S/H window
                  * SOC source will be PWM, no IT.
                  */
                 ADC_setSOCPriority(adcBase, ADC_SOC_PRIORITY);
-                ADC_setupSOC(adcBase, p_adcInit->adcSOCNumber, p_adcInit->adcTriggerSrc, p_adcInit->adcChannel, ADC_SAMPLING_WINDOW);
-                ADC_setInterruptSOCTrigger(adcBase, p_adcInit->adcSOCNumber, ADC_INT_SOC_TRIGGER);
-                p_adcInit++;
+                ADC_setupSOC(adcBase, p_adcIni->adcSOCNumber, p_adcIni->adcTriggerSrc, p_adcIni->adcChannel, ADC_SAMPLING_WINDOW);
+                ADC_setInterruptSOCTrigger(adcBase, p_adcIni->adcSOCNumber, ADC_INT_SOC_TRIGGER);
+                p_adcIni++;
             }
 
             while(p_adcAcq->adcBase == adcBase)
@@ -156,15 +154,15 @@ void HAL_ADC_init(const ADC_TypeDef* p_adcCfg)
                 p_adcAcq++;
             }
 
-            if(p_adcCfg->p_adcIt != NULL)
+            if(p_adcCfg->p_adcInt != NULL)
             {
-                while(p_adcIT->adcBase == adcBase)
+                while(p_adcInt->adcBase == adcBase)
                 {
-                    ADC_setInterruptSource(adcBase, p_adcIT->adcIntNumber, p_adcIT->adcEOCNumber);
-                    ADC_enableContinuousMode(adcBase, p_adcIT->adcIntNumber);
-                    ADC_enableInterrupt(adcBase, p_adcIT->adcIntNumber);
-                    ADC_clearInterruptStatus(adcBase, p_adcIT->adcIntNumber);
-                    p_adcIT++;
+                    ADC_setInterruptSource(adcBase, p_adcInt->adcIntNumber, p_adcInt->adcEOCNumber);
+                    ADC_enableContinuousMode(adcBase, p_adcInt->adcIntNumber);
+                    ADC_enableInterrupt(adcBase, p_adcInt->adcIntNumber);
+                    ADC_clearInterruptStatus(adcBase, p_adcInt->adcIntNumber);
+                    p_adcInt++;
                 }
             }
             adcBase = (++p_adcCfg)->adcBase;
@@ -178,16 +176,17 @@ void HAL_ADC_init(const ADC_TypeDef* p_adcCfg)
  * @brief       ADC calibration function for the PPB (Post Processing Block)
  * @param[in]   *p_motor    Pointer on the motor configuration structure
  */
-void HAL_ADC_offsetCalib(const HAL_MOTOR_CFG* p_halMotorCfg)
+void HAL_ADC_offsetCalib(const hal_motor_cfg_t* p_halMotorCfg)
 {
     if(p_halMotorCfg != NULL)
     {
-        const ePWM_CC_TypeDef*  p_pwmCC     = NULL;
-        const ADC_IT_TypeDef*   p_ITConv    = NULL;
-        float32_t               i[3]        = {0.0f, 0.0f, 0.0f};
-        float32_t               v[3]        = {0.0f, 0.0f, 0.0f};
-        uint16_t                calibCnt    = 0;
-        uint8_t                 loop        = 0;
+        const epwm_cc_t*    p_pwmCC     = NULL;
+        const adc_int_t*    p_ITConv    = NULL;
+        lpf_t               filterCoef  = {.a = 0.998f, .one_minus_a = 0.002f};
+        float32_t           i[3]        = {0.0f, 0.0f, 0.0f};
+        float32_t           v[3]        = {0.0f, 0.0f, 0.0f};
+        uint16_t            calibCnt    = 0;
+        uint8_t             loop        = 0;
 
         // force no switching with low side transistors closed
         for(loop = 0; loop < 3; loop++)
@@ -206,14 +205,16 @@ void HAL_ADC_offsetCalib(const HAL_MOTOR_CFG* p_halMotorCfg)
             if (calibCnt > 1000)
                 for(loop = 0; loop < 3; loop++)
                 {
-                    i[loop] = 0.998f * i[loop] + 0.002f * (*p_halMotorCfg->p_iAcq[loop]->adcResultReg);
-                    v[loop] = 0.998f * v[loop] + 0.002f * (*p_halMotorCfg->p_vAcq[loop]->adcResultReg);
+                   UOMODRI_HAL_ADC_CALIB(filterCoef, i[loop], (float32_t) *p_halMotorCfg->p_iAcq[loop]->adcResultReg);
+//                   i[loop] = 0.998f * i[loop] + 0.002f * (*p_halMotorCfg->p_iAcq[loop]->adcResultReg);
+                   UOMODRI_HAL_ADC_CALIB(filterCoef, v[loop], (float32_t) *p_halMotorCfg->p_vAcq[loop]->adcResultReg);
+//                   v[loop] = 0.998f * v[loop] + 0.002f * (*p_halMotorCfg->p_vAcq[loop]->adcResultReg);
                 }
             else
                 for(loop = 0; loop < 3; loop++)
                 {
-                    i[loop] = *(p_halMotorCfg->p_iAcq[loop]->adcResultReg);
-                    v[loop] = *(p_halMotorCfg->p_vAcq[loop]->adcResultReg);
+                    i[loop] = (float32_t) *(p_halMotorCfg->p_iAcq[loop]->adcResultReg);
+                    v[loop] = (float32_t) *(p_halMotorCfg->p_vAcq[loop]->adcResultReg);
                 }
 
             // clear flags
@@ -245,16 +246,16 @@ void HAL_ADC_offsetCalib(const HAL_MOTOR_CFG* p_halMotorCfg)
  * @brief       ePWM global peripheral initialization function.
  * @param[in]   *p_pwmCfg   Pointer on the PWM configuration structure
  */
-void HAL_ePWM_init(const ePWM_TypeDef* p_pwmCfg)
+void HAL_ePWM_ini(const epwm_cfg_t* p_pwmCfg)
 {
     if((p_pwmCfg != NULL) && ( p_pwmCfg->p_epwmTimeBase != NULL) && (p_pwmCfg->p_epwmCaptureCompare) &&
             (p_pwmCfg->p_epwmActionQualifier != NULL) && (p_pwmCfg->p_epwmDeadband != NULL))
     {
-        const ePWM_TB_TypeDef* p_pwmTimeBase        = p_pwmCfg->p_epwmTimeBase;
-        const ePWM_CC_TypeDef* p_pwmCounterCompare  = p_pwmCfg->p_epwmCaptureCompare;
-        const ePWM_AQ_TypeDef* p_pwmActionQualifier = p_pwmCfg->p_epwmActionQualifier;
-        const ePWM_DB_TypeDef* p_pwmDeadBand        = p_pwmCfg->p_epwmDeadband;
-        uint32_t               pwmBase              = p_pwmCfg->epwmBase;
+        const epwm_tb_t* p_pwmTimeBase          = p_pwmCfg->p_epwmTimeBase;
+        const epwm_cc_t* p_pwmCounterCompare    = p_pwmCfg->p_epwmCaptureCompare;
+        const epwm_aq_t* p_pwmActionQualifier   = p_pwmCfg->p_epwmActionQualifier;
+        const epwm_db_t* p_pwmDeadBand          = p_pwmCfg->p_epwmDeadband;
+        uint32_t         pwmBase                = p_pwmCfg->epwmBase;
 
         // Disable global PWM clock during initialization
         SysCtl_disablePeripheral(SYSCTL_PERIPH_CLK_GTBCLKSYNC);
@@ -383,7 +384,7 @@ void HAL_ePWM_init(const ePWM_TypeDef* p_pwmCfg)
              */
             if(p_pwmCfg->p_epwmProgChopper != NULL)
             {
-                const ePWM_PC_TypeDef* p_pwmProgChopper = p_pwmCfg->p_epwmProgChopper;
+                const epwm_pc_t* p_pwmProgChopper = p_pwmCfg->p_epwmProgChopper;
 
                 while(p_pwmProgChopper->epwmBase == pwmBase)
                 {
@@ -400,7 +401,7 @@ void HAL_ePWM_init(const ePWM_TypeDef* p_pwmCfg)
              */
             if(p_pwmCfg->p_epwmAdcSocEventTrigger != NULL)
             {
-                const ePWM_ET_TypeDef* p_pwmAdcSocEvtTrigger = p_pwmCfg->p_epwmAdcSocEventTrigger;
+                const epwm_et_t* p_pwmAdcSocEvtTrigger = p_pwmCfg->p_epwmAdcSocEventTrigger;
 
                 while(p_pwmAdcSocEvtTrigger->epwmBase == pwmBase)
                 {
@@ -424,7 +425,7 @@ void HAL_ePWM_init(const ePWM_TypeDef* p_pwmCfg)
              */
             if(p_pwmCfg->p_epwmInterruptsEvent != NULL)
             {
-                const ePWM_IT_TypeDef* p_pwmInterruptsEvent = p_pwmCfg->p_epwmInterruptsEvent;
+                const epwm_it_t* p_pwmInterruptsEvent = p_pwmCfg->p_epwmInterruptsEvent;
 
                 while(p_pwmInterruptsEvent->epwmBase == pwmBase)
                 {
@@ -467,7 +468,7 @@ void HAL_ePWM_init(const ePWM_TypeDef* p_pwmCfg)
  * @brief       EQEP (Quadrature encoder reading) initialization function.
  * @param[in]   *p_qepCfg   Pointer on the QEP configuration structure
  */
-void HAL_eQEP_init(const eQEP_TypeDef* p_qepCfg)
+void HAL_eQEP_ini(const eqep_cfg_t* p_qepCfg)
 {
     if(p_qepCfg != NULL)
     {
@@ -507,7 +508,7 @@ void HAL_eQEP_init(const eQEP_TypeDef* p_qepCfg)
  * @brief       SPI bus initialization function.
  * @param[in]   *p_spiCfg   Pointer on the SPI configuration structure
  */
-void HAL_SPI_init(const SPI_TypeDef* p_spiCfg)
+void HAL_SPI_ini(const spi_cfg_t* p_spiCfg)
 {
     if(p_spiCfg != NULL)
     {
@@ -563,7 +564,7 @@ void HAL_SPI_init(const SPI_TypeDef* p_spiCfg)
  * @brief       DMA initialization function.
  * @param[in]   *p_dmaCfg   Pointer on the DMA configuration structure
  */
-void HAL_DMA_init(const DMA_TypeDef* p_dmaCfg)
+void HAL_DMA_ini(const dma_cfg_t* p_dmaCfg)
 {
     if(p_dmaCfg != NULL)
     {
@@ -609,13 +610,14 @@ void HAL_DMA_sync(void)
     while(!GPIO_ReadPin(COM_SPI_CS));
     SPI_resetTxFIFO(COM_SPI_BASE);
     DMA_startChannel(DMA_COM_SPI_TX_BASE_ADDR);
+    DMA_startChannel(DMA_LED_SPI_TX_BASE_ADDR);
 }
 
 /**
  * @brief       IPC initialization function.
  * @param[in]   *p_ipcCfg   Pointer on the IPC configuration structure
  */
-void HAL_IPC_init(const IPC_TypeDef* p_ipcCfg)
+void HAL_IPC_ini(const ipc_cfg_t* p_ipcCfg)
 {
     if(p_ipcCfg != NULL)
     {
@@ -647,10 +649,10 @@ void HAL_IPC_init(const IPC_TypeDef* p_ipcCfg)
     return;
 }
 
-void* HAL_IPC_addr_init(const IPC_TypeDef* p_ipcCfg, uint32_t cmd_valid)
+void* HAL_IPC_addr_ini(const ipc_cfg_t* p_ipcCfg, uint32_t cmd_valid)
 {
     uint32_t cmd, data, addr;
-    bool addrCorr = ((p_ipcCfg->ipcType == IPC_CPU1_L_CM_R) || (p_ipcCfg->ipcType == IPC_CPU2_L_CM_R)) ?
+    bool_t addrCorr = ((p_ipcCfg->ipcType == IPC_CPU1_L_CM_R) || (p_ipcCfg->ipcType == IPC_CPU2_L_CM_R)) ?
             (IPC_ADDR_CORRECTION_ENABLE) : (IPC_ADDR_CORRECTION_DISABLE);
     // Memory address sharing CM to CPU1
     IPC_waitForFlag(p_ipcCfg->ipcType, p_ipcCfg->ipcFlag);
@@ -768,7 +770,7 @@ void HAL_CLA_init(const CLA_TypeDef* p_clacCfg)
 /**
  * @brief       Interrupts initialization function.
  */
-void HAL_IT_init(const IT_TypeDef* p_intCfg)
+void HAL_INT_ini(const int_cfg_t* p_intCfg)
 {
     if(p_intCfg != NULL)
     {

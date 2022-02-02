@@ -1,36 +1,33 @@
-/*
- * motor.c
- *
- *  Created on: 20 mai 2021
- *      Author: jmanhes
- */
-#include "hal.h"
+/***********************************************************************
+ * INCLUDE FILES
+ ***********************************************************************/
 #include "motor.h"
-//#include "communication_interface.h"
-#include "uomodri_prj_config_handlers.h"
+//#include "uomodri_prj_config_handlers.h"
 
-//extern ComInterface comInterface;
-//extern MOTOR_STRUCT motor[2];
-
-//static void LPF_setBandwidth_simple(FILTER_PARAMS* p_flt, float32_t freq, float32_t bw)
-//{
-//    p_flt->a = 1.0 / (1.0 + 2.0 * M_PI * bw / freq);
-//    p_flt->b = 1.0 - p_flt->a;
-//}
-//
-//#define LPF_FILTER(filt, x, y)     (x) = filt.b * (y) + filt.a * (x);
-
-
-void MOT_runCommand(MOTOR_STRUCT* p_motor, float32_t CmdChA, float32_t CmdChB, float32_t CmdChC)
+/***********************************************************************
+ * FUNCTIONS DEFINITIONS
+ ***********************************************************************/
+/**
+ * @brief       Command for the 3 phases of the ePWM
+ * @param[out]  p_motor Pointer on the associated motor structure
+ * @param[in]   cmd_a   Normalized command on PWM channel A (between 0 and 1)
+ * @param[in]   cmd_b   Normalized command on PWM channel B (between 0 and 1)
+ * @param[in]   cmd_c   Normalized command on PWM channel C (between 0 and 1)
+ */
+void MOT_runCommand(motor_t* p_motor, float32_t cmd_a, float32_t cmd_b, float32_t cmd_c)
 {
-    *(p_motor->p_motorChAReg) = (uint16_t)((CmdChA) * PWM_TIMEBASE_CNT);
-    *(p_motor->p_motorChBReg) = (uint16_t)((CmdChB) * PWM_TIMEBASE_CNT);
-    *(p_motor->p_motorChCReg) = (uint16_t)((CmdChC) * PWM_TIMEBASE_CNT);
+    *(p_motor->p_motorChAReg) = (uint16_t)((cmd_a) * PWM_TIMEBASE_CNT);
+    *(p_motor->p_motorChBReg) = (uint16_t)((cmd_b) * PWM_TIMEBASE_CNT);
+    *(p_motor->p_motorChCReg) = (uint16_t)((cmd_c) * PWM_TIMEBASE_CNT);
 
     return;
 }
 
-void MOT_stopCommand(MOTOR_STRUCT* p_motor)
+/**
+ * @brief       Force a hard stop on the 3 phases of the ePWM (low side active)
+ * @param[out]  p_motor Pointer on the associated motor structure
+ */
+void MOT_stopCommand(motor_t* p_motor)
 {
     *(p_motor->p_motorChAReg) = (uint16_t)PWM_TIMEBASE_CNT;
     *(p_motor->p_motorChBReg) = (uint16_t)PWM_TIMEBASE_CNT;
@@ -39,25 +36,7 @@ void MOT_stopCommand(MOTOR_STRUCT* p_motor)
     return;
 }
 
-//void MOTOR_interruptClearFlags(IT_TypeDef* p_ItList)
-//{
-//    // Clear the interrupt overflow flag
-//    ADC_clearInterruptOverflowStatus(p_ItList->intPeriphBase, (ADC_IntNumber)p_ItList->intPeriphSrc);
-//    ADC_clearInterruptStatus(p_ItList->intPeriphBase, (ADC_IntNumber)p_ItList->intPeriphSrc);
-////    ADC_clearInterruptOverflowStatus(InterruptList[ADC_IT_MOTOR_1].intPeriphBase, (ADC_IntNumber)InterruptList[ADC_IT_MOTOR_1].intPeriphSrc);
-////    ADC_clearInterruptStatus(InterruptList[ADC_IT_MOTOR_1].intPeriphBase, (ADC_IntNumber)InterruptList[ADC_IT_MOTOR_1].intPeriphSrc);
-//    // Clear the interrupt overflow flag
-////    ADC_clearInterruptOverflowStatus(InterruptList[ADC_IT_MOTOR_2].intPeriphBase, (ADC_IntNumber)InterruptList[ADC_IT_MOTOR_2].intPeriphSrc);
-////    ADC_clearInterruptStatus(InterruptList[ADC_IT_MOTOR_2].intPeriphBase, (ADC_IntNumber)InterruptList[ADC_IT_MOTOR_2].intPeriphSrc);
-//    // Clear the event trigger interrupt flag
-////    EPWM_clearEventTriggerInterruptFlag(InterruptList[PWM_IT_MOTOR_1].intPeriphBase);
-////    EPWM_clearEventTriggerInterruptFlag(InterruptList[PWM_IT_MOTOR_2].intPeriphBase);
-//    // Clear the interrupt flag associated to XINT1 & XINT2
-//    XBAR_clearInputFlag(XBAR_INPUT_FLG_INPUT4);
-//    XBAR_clearInputFlag(XBAR_INPUT_FLG_INPUT5);
-//}
-
-void MOT_resetAlignStruct(ALIGN_STRUCT* p_align)
+void MOT_resetAlignStruct(align_t* p_align)
 {
     p_align->state          = ALIGN_COUNT_UP;
     p_align->cnt            = 0;
@@ -68,7 +47,7 @@ void MOT_resetAlignStruct(ALIGN_STRUCT* p_align)
 }
 
 // Return true if calibration is finished
-void MOT_runAlign(ALIGN_STRUCT* p_align)
+void MOT_runAlign(align_t* p_align)
 {
     switch (p_align->state)
     {
@@ -130,16 +109,16 @@ void MOT_runAlign(ALIGN_STRUCT* p_align)
 //    return;
 //}
 
-inline void MOT_resistorEstimation(MOTOR_STRUCT* p_motor)
+inline void MOT_resistorEstimation(motor_t* p_motor)
 {
 
-    FOC_STRUCT* p_foc   = p_motor->p_motorFOC;
-    float32_t resEst    = (p_foc->uq - (p_foc->motor_enc.speedEst.speedElec * p_foc->motor_cfg.ke)) / p_foc->iq;
+    foc_t*      p_foc   = p_motor->p_motorFOC;
+    float32_t   resEst  = (p_foc->uq - (p_foc->motor_enc.speed.speedElec * p_foc->motor_cfg.ke)) / p_foc->iq;
 
     // Compute resistance
     // Only compute if measured current is over a threshold
     if (FM_ABS(p_foc->iq) > FOC_RE_CURRENT_THRESHOLD)
-        UOMODRI_RES_ESTIM_FLT(p_motor->statorResEstLpf, p_motor->statorResEst, resEst);
+        UOMODRI_RES_ESTIM_FLT(p_motor->statorResEstFilter, p_motor->statorResEst, resEst);
 
     return;
 }

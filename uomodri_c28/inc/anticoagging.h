@@ -42,7 +42,7 @@ static const float m2_acogCoeffs[2 * M2_ACOG_ARRAY_LEN] = {
 typedef struct __Anticoagging__
 {
     // Enabled flag
-    bool enabled;
+    bool_t enabled;
 
     // Number of coefficients
     uint16_t coeffNb;

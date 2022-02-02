@@ -1,35 +1,40 @@
-/*
- * motor.h
- *
- *  Created on: 20 mai 2021
- *      Author: jmanhes
- */
+#ifndef __MOTOR_H__
+#define __MOTOR_H__
 
-#ifndef INC_MOTOR_H_
-#define INC_MOTOR_H_
+/***********************************************************************
+ * INCLUDE FILES
+ ***********************************************************************/
+#include <stdbool.h>
+#include <stdint.h>
+#include <math.h>
 
 #include "f2838x_device.h"
 #include "driverlib.h"
 #include "device.h"
 
-#include <math.h>
 #include "hal.h"
 #include "foc.h"
-#include "anticoagging.h"
 #include "uomodri_user_defines.h"
+#include "anticoagging.h"
 
 
+typedef enum
+{
+    MOTOR_ALIGN_COUNT_UP    = 0,/*!< No error */
+    MOTOR_ALIGN_STAY        = 1, /*!< Encoder_1 error too high */
+    MOTOR_ALIGN_COUNT_DOWN  = 2,/*!< Timeout for receiving current references exceeded */
+    MOTOR_ALIGN_DONE        = 3, /*!< Motor temperature reached critical valued */
+    MOTOR_RUN               = 4,/*!< Unused error */
+    MOTOR_TEMP              = 5,
+    MOTOR_ANTICOGGING       = 6,
+} motor_state;
 
-typedef struct __MOTOR_STRUCT__
+typedef struct __MOTORS_STRUCT__
 {
 //    const ID_ENUM           motorID;
-    const HAL_MOTOR_CFG*    p_motorHalCfg;
-    DRV8353*                p_motorDRV;
-    FOC_STRUCT*             p_motorFOC;
-    //bool                    enabled;
-
-    // Alignment routine structure
-//    ALIGN_STRUCT            motorAlign;
+    const hal_motor_cfg_t*  p_motorHalCfg;
+    drv8353_t*              p_motorDRV;
+    foc_t*                  p_motorFOC;
     // Cycle counter events
     uint32_t                clCycleNb;
     uint64_t                interruptCnt;
@@ -37,7 +42,7 @@ typedef struct __MOTOR_STRUCT__
     // Q-axis resistance estimation
     float32_t               statorResEst;    // [Ohm]
     // Resistance estimation low-pass filter
-    LPFSTRUCT               statorResEstLpf;
+    lpf_t                   statorResEstFilter;
 
     // Anti-coagging structure
     Anticoagging            acog;
@@ -46,20 +51,20 @@ typedef struct __MOTOR_STRUCT__
     volatile uint16_t*      p_motorChAReg;
     volatile uint16_t*      p_motorChBReg;
     volatile uint16_t*      p_motorChCReg;
-} MOTOR_STRUCT;
+} motor_t;
 
 //inline void MOTOR_getCurrent(MOTOR_STRUCT*);
 //inline void MOTOR_getCurrent(MOTOR_MEASURES*);
 //inline void MOTOR_getVoltage(MOTOR_MEASURES*);
-void MOT_runCommand(MOTOR_STRUCT*, float32_t, float32_t, float32_t);
-void MOT_stopCommand(MOTOR_STRUCT*);
-void MOT_resetAlignStruct(ALIGN_STRUCT*);
-void MOT_runAlign(ALIGN_STRUCT*);
+void MOT_runCommand(motor_t*, float32_t, float32_t, float32_t);
+void MOT_stopCommand(motor_t*);
+void MOT_resetAlignStruct(align_t*);
+void MOT_runAlign(align_t*);
 //void MOTOR_interruptClearFlags(IT_TypeDef*);
 //void ALIGN_run(AlignRoutine*);
 
 //void MOT_emergencyStop(void);
 //void MOT_emergencyStop(MOTOR_STRUCT*);
-void MOT_resistorEstimation(MOTOR_STRUCT*);
+void MOT_resistorEstimation(motor_t*);
 
-#endif /* INC_MOTOR_H_ */
+#endif /* __MOTOR_H__ */

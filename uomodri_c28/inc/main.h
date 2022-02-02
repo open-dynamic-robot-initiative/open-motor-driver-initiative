@@ -1,9 +1,9 @@
 #ifndef __MAIN_H__
 #define __MAIN_H__
 
-/*****************************************************************************
- * includes
- *****************************************************************************/
+/***********************************************************************
+ * INCLUDES
+ ***********************************************************************/
 // Project includes
 //#include "communication.h"
 #include "f2838x_device.h"
@@ -18,6 +18,7 @@
 
 #include "hal.h"
 #include "drv8353.h"
+#include "ws2812b.h"
 #include "encoder.h"
 #include "foc.h"
 #include "motor.h"
@@ -30,9 +31,9 @@
 #include "uomodri_prj_config_handlers.h"
 //#include "uOmodriClaTasksShare.h"
 
-/*****************************************************************************
- * defines
- *****************************************************************************/
+/***********************************************************************
+ * DEFINES
+ ***********************************************************************/
 #define IPC_CMD_READ_MEM   0x1001
 #define IPC_CMD_RESP       0x2001
 
@@ -82,111 +83,18 @@ float   thetaElec; // [pu]
 //float32_t   thetaMechCal; // [pu]
 #endif
 
-//const void*         p_msgComInter = NULL;
-
-// Sine for debug
-//float32_t           debugFreq = 1.0f;
-//float32_t           pdSat = 4.0;
-// Time macro
-//const float32_t     dt = 1.0 / PWM_FREQ;
-//bool                isrMotor1Ready = false;
-//bool                isrMotor2Ready = false;
-
-// <Step 2>: The CLA can only operate out of RAM i.e. its program and data spaces are restricted
-//           to RAM. Depending on the device, the CLA may be configured to access the entire lower
-//           64K of RAM (F2837x) or its prorgam and data spaces are restricted to certain RAMs
-//           (F2806x, F2803x, F2805x program -> RAML3, data -> RAML0,1,/2)
-//  - In standalone mode, you must load the CLA code and constants to FLASH  and then copy
-//    these over to RAM at runtime
-//  - The linker defines placement variables for the section "Cla1Prog" and ".const_cla"
-//  - In order to use these variables in a memcpy() we need to tell the C compiler that
-//    these variables are declared externally (by the linker). We use the "extern" storage
-//    qualifier to do just that
-//extern uint32_t Cla1ProgRunStart, Cla1ProgLoadStart, Cla1ProgLoadSize;
-//extern uint32_t Cla1ConstRunStart, Cla1ConstLoadStart, Cla1ConstLoadSize;
 #pragma DATA_SECTION(cmd_msg, "ramgs0");
-cmd_msg_t       cmd_msg[2];
+mst2slv_msg_t   cmd_msg[2];
 #pragma DATA_SECTION(status_msg, "ramgs0");
-status_msg_t    status_msg[2] =
-{
- {
-  .statusReg.bit.ERROR_CODE = 0,
-  .statusReg.bit.IDX2T      = false,
-  .statusReg.bit.IDX1T      = false,
-  .statusReg.bit.IDX2D      = false,
-  .statusReg.bit.IDX1D      = false,
-  .statusReg.bit.M2R        = false,
-  .statusReg.bit.M2E        = false,
-  .statusReg.bit.M1R        = false,
-  .statusReg.bit.M1E        = false,
-  .statusReg.bit.SE         = false,
-  .timeStamp                = 0,
-  .position[MOTOR_1]        = 0,
-  .position[MOTOR_2]        = 0,
-  .velocity[MOTOR_1]        = 0,
-  .velocity[MOTOR_2]        = 0,
-  .iq[MOTOR_1]              = 0,
-  .iq[MOTOR_2]              = 0,
-  .coilRes[MOTOR_1]         = 0,
-  .coilRes[MOTOR_2]         = 0,
-  .adcSamples[MOTOR_1]      = 0,
-  .adcSamples[MOTOR_2]      = 0,
-  .lastCmdIndex             = 0,
-  .crc                      = 0,
-  .timeStamp                = 0,
- },
- {
-  .statusReg.bit.ERROR_CODE = 0,
-  .statusReg.bit.IDX2T      = false,
-  .statusReg.bit.IDX1T      = false,
-  .statusReg.bit.IDX2D      = false,
-  .statusReg.bit.IDX1D      = false,
-  .statusReg.bit.M2R        = false,
-  .statusReg.bit.M2E        = false,
-  .statusReg.bit.M1R        = false,
-  .statusReg.bit.M1E        = false,
-  .statusReg.bit.SE         = false,
-  .timeStamp                = 0,
-  .position[MOTOR_1]        = 0,
-  .position[MOTOR_2]        = 0,
-  .velocity[MOTOR_1]        = 0,
-  .velocity[MOTOR_2]        = 0,
-  .iq[MOTOR_1]              = 0,
-  .iq[MOTOR_2]              = 0,
-  .coilRes[MOTOR_1]         = 0,
-  .coilRes[MOTOR_2]         = 0,
-  .adcSamples[MOTOR_1]      = 0,
-  .adcSamples[MOTOR_2]      = 0,
-  .lastCmdIndex             = 0,
-  .crc                      = 0,
-  .timeStamp                = 0,
- },
-};
-
+slv2mst_msg_t   status_msg[2];
 #pragma DATA_SECTION(cmd_uOmodri, "ramgs0");
-cmd_uomodri_t   cmd_uOmodri =
-{
- .cmdReg.bit.TIMEOUT        = 0xFFFF,
- .cmdReg.bit.EI2OC          = false,
- .cmdReg.bit.EI1OC          = false,
- .cmdReg.bit.EPRE           = false,
- .cmdReg.bit.EM2            = false,
- .cmdReg.bit.EM1            = false,
- .cmdReg.bit.ES             = false,
- .positionRef[MOTOR_1]      = 0.0,
- .positionRef[MOTOR_2]      = 0.0,
- .velocityRef[MOTOR_1]      = 0.0,
- .velocityRef[MOTOR_2]      = 0.0,
- .iqRef[MOTOR_1]            = 0.0,
- .iqRef[MOTOR_2]            = 0.0,
- .kpCoeff[MOTOR_1]          = 0.0,
- .kpCoeff[MOTOR_2]          = 0.0,
- .kdCoeff[MOTOR_1]          = 0.0,
- .kdCoeff[MOTOR_2]          = 0.0,
- .iSat[MOTOR_1]             = 0.0,
- .iSat[MOTOR_2]             = 0.0,
-};
-
+cmd_uomodri_t   cmd_uOmodri;
+#pragma DATA_SECTION(led_msg, "ramgs0");
+uint16_t        led_msg[6];//          = {0x0000, 0x9B6D, 0xA492, 0x4924, 0x9249, 0x2400}; // vert
+//{0x0000, 0x9249, 0x24DB, 0x6DB6, 0x9249, 0x2400}; // rouge
+//{0x0000, 0x9B6D, 0xA492, 0x4924, 0x9249, 0x2400}; // vert
+//{0x0000, 0x9249, 0x24DB, 0x6DB6, 0x9249, 0x2400}; // rouge
+//{0x0000, 0x9249, 0x2492, 0x4924, 0xDB6D, 0xB600}; // bleu
 #if (defined UOMODRI_CONFIG_ENABLE) && (!UOMODRI_CONFIG_ENABLE)
 //#pragma DATA_ALIGN ( cmd_Master_msg , 2 )
 #pragma DATA_SECTION(cmd_Master_msg, "ramgs0");
@@ -195,37 +103,23 @@ cmd_msg_t       cmd_Master_msg;
 status_msg_t    status_Master_msg;
 #endif
 
-bool    newMsgRxRaw = false;
+bool_t  newMsgRxRaw = false;
 
 uint8_t cpt = 0;
 
-extern MOTOR_STRUCT motor[];
-extern HAL          hal;
+extern motor_t      motor[];
+extern hal_cfg_t    hal;
 
-/*****************************************************************************
- * Function Prototypes
- *****************************************************************************/
-static void MCU_init();
-
-// Step 3: Setup the CLA in initCLA() and its memory resources in
-//         configCLAMemory()
-//  - see the initCLA() and configCLAMemory() for more steps
-//  - add the End-of-Task 1 prototype here
-//void CLA_initCpu1Cla1( void );
-//void CLA_configClaMemory(void);
-//__attribute__((interrupt)) void ipc_isrComInter(void);
-
-//__attribute__((interrupt)) void ipc_isrStatusMsg(void);
-//__attribute__((interrupt)) void ipc_isrMsgCmd(void);
+/***********************************************************************
+ * FUNCTIONS DECLARATION
+ ***********************************************************************/
 __attribute__((interrupt)) void dma_isrCmdMsg(void);
-//__attribute__((interrupt)) void dma5_isr(void);
 __attribute__((interrupt)) void adc_isrMotor1(void);
 __attribute__((interrupt)) void adc_isrMotor2(void);
-//extern __interrupt void pwm_isrMotor1(void);
-//extern __interrupt void pwm_isrMotor2(void);
 __attribute__((interrupt)) void gpio_isrFaultMotor1(void);
 __attribute__((interrupt)) void gpio_isrFaultMotor2(void);
 #if (defined CLA_ENABLE) && (CLA_ENABLE)
 __attribute__((interrupt)) void cla1_isr1(void);
 #endif
-#endif // end of MAIN_H definition
+
+#endif /* __MAIN_H__ */

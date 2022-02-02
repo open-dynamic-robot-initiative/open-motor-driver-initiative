@@ -6,369 +6,375 @@
 #ifndef __HAL_H__
 #define __HAL_H__
 
+/***********************************************************************
+ * INCLUDES
+ ***********************************************************************/
 #include <stdbool.h>
+#include <stdint.h>
 
 #include "f2838x_device.h"
 #include "f2838x_examples.h"
 #include "driverlib.h"
 #include "device.h"
 
-//#include "communication_cm.h"
 #include "uomodri_user_defines.h"
 
+/***********************************************************************
+ * DEFINES
+ ***********************************************************************/
+
+/***********************************************************************
+ * ENUMARATIONS
+ ***********************************************************************/
 /**
  * @enum    EPWM_DelayModeEnable
  * @brief   Enable or disable Deadband delay unit.
  */
 typedef enum
 {
-    EPWM_DELAY_DISABLE  = 0,                        /*!< Disable/bypass Deadband delay mode. */
-    EPWM_DELAY_ENABLE   = 1                         /*!< Enable Deadband delay mode. */
-} EPWM_DelayModeEnable;
+    EPWM_DELAY_DISABLE  = 0,                                        /*!< Disable/bypass Deadband delay mode. */
+    EPWM_DELAY_ENABLE   = 1                                         /*!< Enable Deadband delay mode. */
+} EPWM_DelayModeEnable_e;
 
+/***********************************************************************
+ * HARDWARE ABSTRACTION LAYER (HAL) CONTROL STRUCTURES
+ ***********************************************************************/
 /**
- * @struct  ePWM_TB_TypeDef
+ * @struct  __EPWM_TIME_BASE_t__
  * @brief   ePWM - Time Base submodule structure definition.
  */
-typedef struct  _ePWM_Time_Base_TypeDef_
+typedef struct __EPWM_TIME_BASE_t__
 {
-    uint32_t    epwmBase;                           /*!< ePWM peripheral address. */
-    uint16_t    phaseCount;                         /*!< Phase counter. Sets offset (min value). */
+    uint32_t                            epwmBase;                   /*!< ePWM peripheral address. */
+    uint16_t                            phaseCount;                 /*!< Phase counter. Sets offset (min value). */
     //EPWM_TimeBaseCountMode counterMode;             /*!< Counting direction (up-count, down-count or up and down count). \see EPWM_TimeBaseCountMode */
-    uint16_t    syncOutputMode;                     /*!< Output sync signal generation. \see EPWM_SyncOutPulseMode */
-} ePWM_TB_TypeDef;
+    uint16_t                            syncOutputMode;             /*!< Output sync signal generation. \see EPWM_SyncOutPulseMode */
+} epwm_tb_t;
 
 /**
- * @struct  ePWM_CC_TypeDef
+ * @struct  __EPWM_COUNTER_COMPARE_t__
  * @brief   ePWM - Counter Compare submodule structure definition.
  */
-typedef struct _ePWM_Counter_Compare_TypeDef_
+typedef struct __EPWM_COUNTER_COMPARE_t__
 {
-    uint32_t                    epwmBase;           /*!< ePWM peripheral address. */
-    uint16_t                    compCount;          /*!< Compare reference register. */
-    EPWM_CounterCompareModule   compModule;         /*!< Compare module (A, B, C or D). \see EPWM_CounterCompareModule */
-} ePWM_CC_TypeDef;
+    uint32_t                            epwmBase;                   /*!< ePWM peripheral address. */
+    uint16_t                            compCount;                  /*!< Compare reference register. */
+    EPWM_CounterCompareModule           compModule;                 /*!< Compare module (A, B, C or D). \see EPWM_CounterCompareModule */
+} epwm_cc_t;
 
 /**
- * @struct  ePWM_AQ_TypeDef
+ * @struct  __EPWM_ACTION_QUALIFIER_t__
  * @brief   ePWM - Action Qualifier submodule structure definition.
  */
-typedef struct _ePWM_Action_Qualifier_TypeDef_
+typedef struct __EPWM_ACTION_QUALIFIER_t__
 {
-    uint32_t                            epwmBase;   /*!< ePWM peripheral address. */
-    uint16_t                            actionsEvt; /*!< Actions associated to events matching detection. \see EPWM_ActionQualifierEventAction */
-    EPWM_ActionQualifierOutputModule    epwmOutput; /*!< Output channel output (A or B). \see EPWM_ActionQualifierOutputModule */
-} ePWM_AQ_TypeDef;
+    uint32_t                            epwmBase;                   /*!< ePWM peripheral address. */
+    uint16_t                            actionsEvt;                 /*!< Actions associated to events matching detection. \see EPWM_ActionQualifierEventAction */
+    EPWM_ActionQualifierOutputModule    epwmOutput;                 /*!< Output channel output (A or B). \see EPWM_ActionQualifierOutputModule */
+} epwm_aq_t;
 
 /**
- * @struct  ePWM_DB_TypeDef
+ * @struct  __EPWM_DEADBAND_t__
  * @brief   ePWM - DeadBand Unit submodule structure definition.
  */
-typedef struct _ePWM_Deadband_TypeDef_
+typedef struct __EPWM_DEADBAND_t__
 {
-    uint32_t                epwmBase;               /*!< ePWM peripheral address. */
-    uint16_t                redCount;               /*!< Rising Edge Delay counter. */
-    uint16_t                fedCount;               /*!< Falling Edge Delay counter. */
-    EPWM_DelayModeEnable    DelayMode;              /*!< Enable deadband unit. */
-} ePWM_DB_TypeDef;
+    uint32_t                            epwmBase;                   /*!< ePWM peripheral address. */
+    uint16_t                            redCount;                   /*!< Rising Edge Delay counter. */
+    uint16_t                            fedCount;                   /*!< Falling Edge Delay counter. */
+    EPWM_DelayModeEnable_e              DelayMode;                  /*!< Enable deadband unit. */
+} epwm_db_t;
 
 /**
- * @struct  ePWM_PC_TypeDef
+ * @struct  __EPWM_CHOPPER_t__
  * @brief   ePWM - Chopper submodule structure definition.
  */
-typedef struct _ePWM_Chopper_TypeDef_
+typedef struct __EPWM_CHOPPER_t__
 {
-    uint32_t    epwmBase;                           /*!< ePWM peripheral address. */
-    uint16_t    dutyCycleCount;                     /*!< Programmable chopping (carrier) frequency */
-    uint16_t    freqDiv;
-    uint16_t    firstPulseWidth;                    /*!< Programmable duty cycle of second and subsequent pulses */
-} ePWM_PC_TypeDef;
+    uint32_t                            epwmBase;                   /*!< ePWM peripheral address. */
+    uint16_t                            dutyCycleCount;             /*!< Programmable chopping (carrier) frequency */
+    uint16_t                            freqDiv;
+    uint16_t                            firstPulseWidth;            /*!< Programmable duty cycle of second and subsequent pulses */
+} epwm_pc_t;
 
 /**
- * @struct  ePWM_ET_TypeDef
+ * @struct  __EPWM_ADC_SOC_EVENT_TRIGGER_t__
  * @brief   ePWM - ADC SOC events trigger submodule structure definition.
  */
-typedef struct _ePWM_ADC_SOC_Event_Trigger_TypeDef_
+typedef struct __EPWM_ADC_SOC_EVENT_TRIGGER_t__
 {
-    uint32_t                        epwmBase;       /*!< ePWM peripheral address. */
-    uint16_t                        adcSOCEvtCount; /*!< Delays by N events before generating an ADC SOC event. */
-    EPWM_ADCStartOfConversionType   adcSOCType;     /*!< ADC Start of Conversion (SOC) target \em EPWM_SOC_A or \em EPWM_SOC_B */
-    EPWM_ADCStartOfConversionSource adcSOCSource;   /*!< PWM events source for a ADC SOC. \see EPWM_ADCStartOfConversionSource */
-} ePWM_ET_TypeDef;
+    uint32_t                            epwmBase;                   /*!< ePWM peripheral address. */
+    uint16_t                            adcSOCEvtCount;             /*!< Delays by N events before generating an ADC SOC event. */
+    EPWM_ADCStartOfConversionType       adcSOCType;                 /*!< ADC Start of Conversion (SOC) target \em EPWM_SOC_A or \em EPWM_SOC_B */
+    EPWM_ADCStartOfConversionSource     adcSOCSource;               /*!< PWM events source for a ADC SOC. \see EPWM_ADCStartOfConversionSource */
+} epwm_et_t;
 
 /**
- * @struct  ePWM_IT_TypeDef
+ * @struct  __EPWM_INTERRUPT_EVENTS_t__
  * @brief   ePWM - Interrupts Events submodule structure definition.
  */
-typedef struct _ePWM_Interrupts_Event_TypeDef_
+typedef struct __EPWM_INTERRUPT_EVENTS_t__
 {
-    uint32_t epwmBase;                              /*!< ePWM peripheral address. */
-    uint16_t intEvtCount;                           /*!< Delays by N events before generating an IT. */
-    uint16_t intSource;                             /*!< PWM events source IT. <em> EPWM_INT_TBCTR_ZERO, _PERIOD, _ZERO_OR_PERIOD, _U_CMPx, _D_CMPx,...</em>  */
-} ePWM_IT_TypeDef;
+    uint32_t                            epwmBase;                   /*!< ePWM peripheral address. */
+    uint16_t                            intEvtCount;                /*!< Delays by N events before generating an IT. */
+    uint16_t                            intSource;                  /*!< PWM events source IT. <em> EPWM_INT_TBCTR_ZERO, _PERIOD, _ZERO_OR_PERIOD, _U_CMPx, _D_CMPx,...</em>  */
+} epwm_it_t;
 
 /**
- * @struct  ePWM_TypeDef
+ * @struct  __EPWM_CFG_t__
  * @brief   ePWM global Hardware Abstraction Layer structure
  */
-typedef struct _ePWM_Cfg_TypeDef_
+typedef struct __EPWM_CFG_t__
 {
-    const uint32_t          epwmBase;               /*!< ePWM peripheral address. */
-    const ePWM_TB_TypeDef*  p_epwmTimeBase;
-    const ePWM_CC_TypeDef*  p_epwmCaptureCompare;
-    const ePWM_AQ_TypeDef*  p_epwmActionQualifier;
-    const ePWM_DB_TypeDef*  p_epwmDeadband;
-    const ePWM_PC_TypeDef*  p_epwmProgChopper;
-    const ePWM_ET_TypeDef*  p_epwmAdcSocEventTrigger;
-    const ePWM_IT_TypeDef*  p_epwmInterruptsEvent;
-    const uint32_t          epwmAdcSocSrcExtern;
-} ePWM_TypeDef;
+    const uint32_t                      epwmBase;                   /*!< ePWM peripheral address. */
+    const epwm_tb_t*                    p_epwmTimeBase;
+    const epwm_cc_t*                    p_epwmCaptureCompare;
+    const epwm_aq_t*                    p_epwmActionQualifier;
+    const epwm_db_t*                    p_epwmDeadband;
+    const epwm_pc_t*                    p_epwmProgChopper;
+    const epwm_et_t*                    p_epwmAdcSocEventTrigger;
+    const epwm_it_t*                    p_epwmInterruptsEvent;
+    const uint32_t                      epwmAdcSocSrcExtern;
+} epwm_cfg_t;
 
 /**
- * @struct  eQEP_TypeDef
+ * @struct  __EQEP_CFG_t__
  * @brief   eQEP global Hardware Abstraction Layer structure
  */
-typedef struct _eQEP_Cfg_TypeDef_
+typedef struct __EQEP_CFG_t__
 {
-    uint32_t                eqepBase;               /*!< eQEP peripheral address. */
-    uint32_t                eqepMaxResolution;
-    uint32_t                eqepUnitTimerPeriod;
-    uint16_t                eqepConfig;
-    EQEP_StrobeSource       eqepStrobeSrc;
-} eQEP_TypeDef;
+    uint32_t                            eqepBase;                   /*!< eQEP peripheral address. */
+    uint32_t                            eqepMaxResolution;
+    uint32_t                            eqepUnitTimerPeriod;
+    uint16_t                            eqepConfig;
+    EQEP_StrobeSource                   eqepStrobeSrc;
+} eqep_cfg_t;
 
 /**
- * @struct  SPI_TypeDef
+ * @struct  __SPI_CFG_t__
  * @brief   SPI global Hardware Abstraction Layer structure
  */
-typedef struct _SPI_Cfg_TypeDef_
+typedef struct __SPI_CFG_t__
 {
-    uint32_t                spiBase;                /*!< ADC peripheral address. */
-    uint32_t                bitRate;
-    uint16_t                dataWidth;
-    SPI_Mode                mode;
-    SPI_TransferProtocol    protocol;
-    SPI_TxFIFOLevel         txLevel;
-    SPI_RxFIFOLevel         rxLevel;
-    uint16_t                intSrc;
-    bool                    highSpeedMode;
-    bool                    intEnable;              /*!< GPIO can be configured as IT source */
-} SPI_TypeDef;
+    uint32_t                            spiBase;                    /*!< ADC peripheral address. */
+    uint32_t                            bitRate;
+    uint16_t                            dataWidth;
+    SPI_Mode                            mode;
+    SPI_TransferProtocol                protocol;
+    SPI_TxFIFOLevel                     txLevel;
+    SPI_RxFIFOLevel                     rxLevel;
+    uint16_t                            intSrc;
+    bool_t                              highSpeedMode;
+    bool_t                              intEnable;                  /*!< GPIO can be configured as IT source */
+} spi_cfg_t;
 
 /**
- * @struct  DMA_TypeDef
+ * @struct  __DMA_CFG_t__
  * @brief   DMA global Hardware Abstraction Layer structure
  */
-typedef struct _DMA_Cfg_TypeDef_
+typedef struct __DMA_CFG_t__
 {
-    uint32_t            dmaChBase;
-    const void*         p_srcAddr;
-    const void*         p_dstAddr;
-    uint32_t            transferSize;
-    uint32_t            srcWrapSize;
-    uint32_t            dstWrapSize;
-    uint32_t            config;
-    uint16_t            burstSize;
-    int16_t             srcStep;
-    int16_t             dstStep;
+    uint32_t                            dmaChBase;
+    const void*                         p_srcAddr;
+    const void*                         p_dstAddr;
+    uint32_t                            transferSize;
+    uint32_t                            srcWrapSize;
+    uint32_t                            dstWrapSize;
+    uint32_t                            config;
+    uint16_t                            burstSize;
+    int16_t                             srcStep;
+    int16_t                             dstStep;
 //    int16_t             srcTransferStep;
 //    int16_t             dstTransferStep;
 //    int16_t             srcBurstStep;
 //    int16_t             dstBurstStep;
-    int16_t             srcWrapStep;
-    int16_t             dstWrapStep;
-    DMA_Trigger         trigger;
-    DMA_InterruptMode   intMode;
-    bool                intEnable;
-} DMA_TypeDef;
+    int16_t                             srcWrapStep;
+    int16_t                             dstWrapStep;
+    DMA_Trigger                         trigger;
+    DMA_InterruptMode                   intMode;
+    bool_t                              intEnable;
+} dma_cfg_t;
 
 #if (defined CLA_ENABLE) && (CLA_ENABLE)
 /**
  * @struct  CLA_TASK_TypeDef
  * @brief   CLA TASK global Hardware Abstraction Layer structure - To be updated
  */
-//typedef struct _CLA_TASK_Cfg_TypeDef_
+//typedef struct __CLA_TASK_CFG_t__
 //{
 //    uint16_t                claTaskAddr;
 //    CLA_MVECTNumber         claIntVect;
-//} CLA_TASK_TypeDef;
+//} CLA_TASK_t;
 
 /**
  * @struct  CLA_TypeDef
  * @brief   CLA global Hardware Abstraction Layer structure - To be updated
  */
-typedef struct _CLA_Cfg_TypeDef_
+typedef struct __CLA_CFG_t__
 {
 //    uint32_t claBase;
     uint32_t                progRAM;
     uint32_t                dataRAM;
 //    CLA_TASK_TypeDef        claTaskCfg;
-} CLA_TypeDef;
+} CLA_t;
 #endif
 
 /**
- * @struct  GPIO_TypeDef
+ * @struct  __GPIO_CFG_t__
  * @brief   GPIO structure definition for all IOs except analog ones.
  */
-typedef struct _GPIO_Cfg_TypeDef_
+typedef struct __GPIO_CFG_t__
 {
-    uint32_t                pinNumber;              /*!< GPIO pin number (GPIO0 - GPIO168). */
-    uint32_t                fctMux;                 /*!< GPIO configuration functions (peripheral affectation matrix). \see pin_map.h */
-    uint32_t 	            pinType;                /*!< GPIO pad configuration :
-    - \em GPIO_PIN_TYPE_STD (Push-pull output or floating input),
-    - \em GPIO_PIN_TYPE_PULLUP (Pull-up enable for input),
-    - \em GPIO_PIN_TYPE_INVERT (Invert polarity on input),
-    - \em GPIO_PIN_TYPE_OD (Open-drain on output) */
-    GPIO_CoreSelect         coreSelect;             /*!< GPIO core dependency.
-    - \em GPIO_CORE_CPU1,
-    - \em GPIO_CORE_CPU1_CLA1,
-    - \em GPIO_CORE_CPU2,
-    - \em GPIO_CORE_CPU2_CLA1 */
-    GPIO_Direction          direction;              /*!< GPIO direction :
-    - \em GPIO_DIR_MODE_IN,
-    - \em GPIO_DIR_MODE_OUT */
-    GPIO_QualificationMode	samplingInMode;         /*!< GPIO input sampling mode :
-    - \em GPIO_QUAL_SYNC,
-    - \em GPIO_QUAL_3SAMPLE,
-    - \em GPIO_QUAL_6SAMPLE,
-    - \em GPIO_QUAL_ASYNC */
-    GPIO_AnalogMode         analogModeEnable;       /*!< GPIO is dedicated to USB */
-    GPIO_ExternalIntNum     extIntNum;              /*!< GPIO external interrupt source number */
-    GPIO_IntType            intType;                /*!< GPIO interrupt event source */
-    bool                    intEnable;              /*!< GPIO can be configured as IT source */
-    bool                    setValue;               /*!< GPIO initial value if defined as output. */
+    uint32_t                            pinNumber;                  /*!< GPIO pin number (GPIO0 - GPIO168). */
+    uint32_t                            fctMux;                     /*!< GPIO configuration functions (peripheral affectation matrix). \see pin_map.h */
+    uint32_t 	            	        pinType;                	/*!< GPIO pad configuration :
+                                                                        - \em GPIO_PIN_TYPE_STD (Push-pull output or floating input),
+                                                                        - \em GPIO_PIN_TYPE_PULLUP (Pull-up enable for input),
+                                                                        - \em GPIO_PIN_TYPE_INVERT (Invert polarity on input),
+                                                                        - \em GPIO_PIN_TYPE_OD (Open-drain on output) */
+    GPIO_CoreSelect         	        coreSelect;             	/*!< GPIO core dependency.
+                                                                        - \em GPIO_CORE_CPU1,
+                                                                        - \em GPIO_CORE_CPU1_CLA1,
+                                                                        - \em GPIO_CORE_CPU2,
+                                                                        - \em GPIO_CORE_CPU2_CLA1 */
+    GPIO_Direction          	        direction;              	/*!< GPIO direction :
+                                                                        - \em GPIO_DIR_MODE_IN,
+                                                                        - \em GPIO_DIR_MODE_OUT */
+    GPIO_QualificationMode		        samplingInMode;         	/*!< GPIO input sampling mode :
+                                                                        - \em GPIO_QUAL_SYNC,
+                                                                        - \em GPIO_QUAL_3SAMPLE,
+                                                                        - \em GPIO_QUAL_6SAMPLE,
+                                                                        - \em GPIO_QUAL_ASYNC */
+    GPIO_AnalogMode                     analogModeEnable;           /*!< GPIO is dedicated to USB */
+    GPIO_ExternalIntNum                 extIntNum;                  /*!< GPIO external interrupt source number */
+    GPIO_IntType                        intType;                    /*!< GPIO interrupt event source */
+    bool_t                              intEnable;                  /*!< GPIO can be configured as IT source */
+    bool_t                              setValue;                   /*!< GPIO initial value if defined as output. */
 //    GPIO_ExternalIntNum extIntNum;
-} GPIO_TypeDef;
+} gpio_cfg_t;
 
 /**
- * @struct  ADC_Init_TypeDef
+ * @struct  __ADC_INITIALIZATION_t__
  * @brief   ADC initial configuration (start-of-conversion) handler
  */
-typedef struct _ADC_INIT_TypeDef_
+typedef struct __ADC_INITIALIZATION_t__
 {
-    uint32_t        adcBase;                        /*!< ADC peripheral address. */
-    ADC_Channel     adcChannel;                     /*!< ADC sampling channel. */
-    ADC_SOCNumber   adcSOCNumber;                   /*!< ADC Start-Of-Conversion (SOC) number (0-15). */
-    ADC_Trigger     adcTriggerSrc;                  /*!< ADC SOC trigger source. */
-} ADC_INIT_TypeDef;
+    uint32_t                            adcBase;                    /*!< ADC peripheral address. */
+    ADC_Channel                         adcChannel;                 /*!< ADC sampling channel. */
+    ADC_SOCNumber                       adcSOCNumber;               /*!< ADC Start-Of-Conversion (SOC) number (0-15). */
+    ADC_Trigger                         adcTriggerSrc;              /*!< ADC SOC trigger source. */
+} adc_ini_t;
 
 /**
- * @struct  ADC_ACQ_TypeDef
+ * @struct  __ADC_ACQUISITIONS_RESULTS_t__
  * @brief   ADC acquisition results (base and Post-Processing Block) configuration handler
  */
-typedef struct _ADC_ACQ_TypeDef_
+typedef struct __ADC_ACQUISITIONS_RESULTS_t__
 {
-    uint32_t            adcBase;                    /*!< ADC peripheral address. */
-    volatile uint16_t*  adcResultReg;
+    uint32_t                            adcBase;                    /*!< ADC peripheral address. */
+    volatile uint16_t*                  adcResultReg;
     //volatile uint16_t*  adcPPBResultReg;
 //    uint16_t adcCalib;
 //    uint16_t adcOffset;
-    ADC_SOCNumber       adcSOCNumber;
-    ADC_PPBNumber       adcPPBNumber;
-} ADC_ACQ_TypeDef;
+    ADC_SOCNumber                       adcSOCNumber;
+    ADC_PPBNumber                       adcPPBNumber;
+} adc_acq_t;
 
 /**
- * @struct  ADC_IT_TypeDef
+ * @struct  __ADC_INTERRUPT_EVENTS_t__
  * @brief   ADC Interrupt source configuration handler
  */
-typedef struct _ADC_IT_TypeDef_
+typedef struct __ADC_INTERRUPT_EVENTS_t__
 {
-    uint32_t        adcBase;                        /*!< ADC peripheral address. */
-    ADC_SOCNumber   adcEOCNumber;                   /*!< ADC End-Of-Conversion (EOC) number (0-15). */
-    ADC_IntNumber   adcIntNumber;                   /*!< IT source (0-3) associated to ADC \& SOC number. */
-} ADC_IT_TypeDef;
+    uint32_t                            adcBase;                    /*!< ADC peripheral address. */
+    ADC_SOCNumber                       adcEOCNumber;               /*!< ADC End-Of-Conversion (EOC) number (0-15). */
+    ADC_IntNumber                       adcIntNumber;               /*!< IT source (0-3) associated to ADC \& SOC number. */
+} adc_int_t;
 
 /**
- * @struct  ADC_TypeDef
+ * @struct  __ADC_CFG_t__
  * @brief   ADC module configuration handler
  */
-typedef struct _ADC_TypeDef_
+typedef struct __ADC_CFG_t__
 {
-    const uint32_t          adcBase;                /*!< ADC peripheral address. */
-    const uint32_t          adcResultBase;          /*!< ADC results address. */
-    const ADC_INIT_TypeDef* p_adcInit;              /*!< Pointer on ADC start-of-conversion configuration handler */
-    const ADC_ACQ_TypeDef*  p_adcAcq;               /*!< Pointer on ADC result configuration handler */
-    const ADC_IT_TypeDef*   p_adcIt;                /*!< Pointer on ADC Interrupt source configuration handler */
-} ADC_TypeDef;
+    const uint32_t                      adcBase;                    /*!< ADC peripheral address. */
+    const uint32_t                      adcResultBase;              /*!< ADC results address. */
+    const adc_ini_t*                    p_adcIni;                   /*!< Pointer on ADC start-of-conversion configuration handler */
+    const adc_acq_t*                    p_adcAcq;                   /*!< Pointer on ADC result configuration handler */
+    const adc_int_t*                    p_adcInt;                   /*!< Pointer on ADC Interrupt source configuration handler */
+} adc_cfg_t;
 
 /**
- * @struct  IT_TypeDef
+ * @struct  __INT_CFG_t__
  * @brief   Interrupt source configuration handler
  */
-typedef struct _IT_TypeDef_
+typedef struct __INT_CFG_t__
 {
 //    const ID_ENUM   motorID;
-    uint32_t    intNum;
+    uint32_t                            intNum;
 //    uint32_t    intPeriphBase;
 //    uint16_t    intPeriphSrc;
     //uint16_t    intCpuGroup;
-    uint16_t    intAckGroup;
-    void        (*p_intHandler)(void);
-} IT_TypeDef;
+    uint16_t                            intAckGroup;
+    void                                (*p_intHandler)(void);
+} int_cfg_t;
 
 /**
- * @struct  IPC_TypeDef
+ * @struct  __IPC_CFG_t__
  * @brief   IPC module configuration handler
  */
-typedef struct _IPC_TypeDef_
+typedef struct __IPC_CFG_t__
 {
-    const IPC_Type_t                ipcType;
-    volatile IPC_MessageQueue_t*    p_ipcMsgQ;
-    const uint32_t                  ipcIntMsgQL;
-    const uint32_t                  ipcIntMsgQR;
-    const uint32_t                  ipcFlag;
-    const uint32_t                  ipcInt;
-    void                            (*p_ipcIntHandler)(void);
-    const bool                      ipcMsgQEnable;
-    const bool                      ipcIntEnable;
-} IPC_TypeDef;
+    const IPC_Type_t                    ipcType;
+    volatile IPC_MessageQueue_t*        p_ipcMsgQ;
+    const uint32_t                      ipcIntMsgQL;
+    const uint32_t                      ipcIntMsgQR;
+    const uint32_t                      ipcFlag;
+    const uint32_t                      ipcInt;
+    void                                (*p_ipcIntHandler)(void);
+    const bool_t                        ipcMsgQEnable;
+    const bool_t                        ipcIntEnable;
+} ipc_cfg_t;
 
 /**
- * @struct  HAL_
+ * @struct  __HAL_CFG_t__
  * @brief   General HAL structure handler for the project
  */
-typedef struct _HAL_
+typedef struct __HAL_CFG_t__
 {
-    const GPIO_TypeDef* p_gpioHandler;
-    const ADC_TypeDef*  p_adcHandler;
-    const ePWM_TypeDef* p_epwmHandler;
-    const eQEP_TypeDef* p_eqepHandler;
-    const SPI_TypeDef*  p_spiHandler;
-    const IPC_TypeDef*  p_ipcHandler;
-    const DMA_TypeDef*  p_dmaHandler;
+    const gpio_cfg_t*                   p_gpioHandle;
+    const adc_cfg_t*                    p_adcHandle;
+    const epwm_cfg_t*                   p_epwmHandle;
+    const eqep_cfg_t*                   p_eqepHandle;
+    const spi_cfg_t*                    p_spiHandle;
+    const ipc_cfg_t*                    p_ipcHandle;
+    const dma_cfg_t*                    p_dmaHandle;
 #if (defined CLA_ENABLE) && (CLA_ENABLE)
-    const CLA_TypeDef*  p_claHandler;
+    const cla_cfg_t*                    p_claHandle;
 #endif
-} HAL;
+} hal_cfg_t;
 
-// Motor Hardware Abstraction Layer structure
-typedef struct _HAL_MOTOR_CFG_
+/**
+ * @struct  __HAL_MOTOR_CFG_t__
+ * @brief   General Motor Hardware Abstraction Layer structure
+ */
+typedef struct __HAL_MOTOR_CFG_t__
 {
-    const ePWM_CC_TypeDef*  p_pwmCntCmp[3];
-    const ADC_ACQ_TypeDef*  p_iAcq[3];
-    const ADC_ACQ_TypeDef*  p_vAcq[3];
-    const ADC_IT_TypeDef*   p_ITAcq;
+    const epwm_cc_t*                    p_pwmCntCmp[3];
+    const adc_acq_t*                    p_iAcq[3];
+    const adc_acq_t*                    p_vAcq[3];
+    const adc_int_t*                    p_ITAcq;
 //    const ADC_ACQ_TypeDef*  p_vbusAcq;
 //    const eQEP_TypeDef*     p_qep;
 //    const ID_ENUM           motorID;
-} HAL_MOTOR_CFG;
+} hal_motor_cfg_t;
 
-/*
- * Function prototypes
- */
-
-void HAL_init(HAL*);
-void HAL_SPI_start(const SPI_TypeDef*);
-//void HAL_DMA_start(const DMA_TypeDef*);
-void HAL_IT_init(const IT_TypeDef*);
-
-// ADC interrupt service routine
-//extern __interrupt void adc1ISR(void);
-//extern __interrupt void adc2ISR(void);
-//extern __interrupt void adc3ISR(void);
-//extern __interrupt void adc4ISR(void);
-//extern __interrupt void isrMotor1(void);
-
-void HAL_ADC_offsetCalib(const HAL_MOTOR_CFG*);
+/***********************************************************************
+ * FUNCTIONS DECLARATION
+ ***********************************************************************/
+void HAL_ini(hal_cfg_t*);
+void HAL_SPI_start(const spi_cfg_t*);
+void HAL_INT_ini(const int_cfg_t*);
+void HAL_ADC_offsetCalib(const hal_motor_cfg_t*);
 
 #endif
