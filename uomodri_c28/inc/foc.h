@@ -85,7 +85,7 @@ typedef enum
  */
 typedef struct __PROPORTIONAL_INTEGRAL_t__
 {
-    float32_t*      p_in;       /*!< Pointer on the loopback current */
+    float32_t*      p_fb;       /*!< Pointer on the feedback current */
     float32_t*      p_set;      /*!< Pointer on the setpoint current */
     float32_t       err;        /*!< Current error */
     float32_t       kp;         /*!< Proportional gain */
@@ -102,16 +102,16 @@ typedef struct __PROPORTIONAL_INTEGRAL_t__
  */
 typedef struct __PROPORTIONAL_DERIVATIVE_t__
 {
-    float32_t*      p_inTheta;  /*!< Loopback position */
-    float32_t*      p_setTheta; /*!< Setpoint position */
+    float32_t*      p_fbTheta;  /*!< Pointer on the feedback position */
+    float32_t*      p_setTheta; /*!< Pointer on the setpoint position */
     float32_t       errTheta;   /*!< Error position */
-    float32_t*      p_inSpeed;  /*!< Loopback speed */
-    float32_t*      p_setSpeed; /*!< Setpoint speed */
+    float32_t*      p_fbSpeed;  /*!< Pointer on the feedback speed */
+    float32_t*      p_setSpeed; /*!< Pointer on the Set point speed */
     float32_t       errSpeed;   /*!< Error speed */
-    float32_t       kp;         /*!< Proportional gain */
-    float32_t       kd;         /*!< Derivative gain */
+    float32_t*      p_kp;       /*!< Pointer on the Proportional gain */
+    float32_t*      p_kd;       /*!< Pointer on the Derivative gain */
     float32_t       derivative; /*!< Derivative term partial computation */
-    float32_t*      p_ff;       /*!< Feed-forward term */
+    float32_t*      p_ff;       /*!< Pointer on the feed-forward term */
     float32_t       out;        /*!< Controller output */
     float32_t       sat;        /*!< Controller saturation */
 } pd_t;

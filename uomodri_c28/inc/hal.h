@@ -336,6 +336,14 @@ typedef struct __IPC_CFG_t__
     const bool_t                        ipcIntEnable;
 } ipc_cfg_t;
 
+typedef struct __CPU_TIMER_CFG_t__
+{
+    uint32_t                            cpuTimerBase;
+    uint32_t                            periodCount;                /*!< in uSeconds */
+    uint16_t                            prescaler;
+    bool_t                              intEnable;
+} tmr_cfg_t;
+
 /**
  * @struct  __HAL_CFG_t__
  * @brief   General HAL structure handler for the project
@@ -349,6 +357,7 @@ typedef struct __HAL_CFG_t__
     const spi_cfg_t*                    p_spiHandle;
     const ipc_cfg_t*                    p_ipcHandle;
     const dma_cfg_t*                    p_dmaHandle;
+    const tmr_cfg_t*                    p_timerHandle;
 #if (defined CLA_ENABLE) && (CLA_ENABLE)
     const cla_cfg_t*                    p_claHandle;
 #endif
@@ -363,7 +372,7 @@ typedef struct __HAL_MOTOR_CFG_t__
     const epwm_cc_t*                    p_pwmCntCmp[3];
     const adc_acq_t*                    p_iAcq[3];
     const adc_acq_t*                    p_vAcq[3];
-    const adc_int_t*                    p_ITAcq;
+    const adc_int_t*                    p_intAcq;
 //    const ADC_ACQ_TypeDef*  p_vbusAcq;
 //    const eQEP_TypeDef*     p_qep;
 //    const ID_ENUM           motorID;

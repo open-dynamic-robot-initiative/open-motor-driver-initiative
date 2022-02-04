@@ -29,7 +29,9 @@
 #define UOMODRI_RES_ESTIM_FLT(flt_coef, y, x)   LPF_FILTER_1(flt_coef, y, x)
 #define UOMODRI_SPEED_FLT(flt_coef, y, x)       LPF_FILTER_1(flt_coef, y, x)
 #define UOMODRI_HAL_ADC_CALIB(flt_coef, y, x)   LPF_FILTER_1(flt_coef, y, x)
-//#define UOMODRI_SPI_DEBUG_CONFIG
+
+#define UOMODRI_DEBUG_MASTER_BOARD_ENABLE       1
+#define UOMODRI_DEBUG_ENABLE                    1
 #define UOMODRI_FEED_FORWARD_ENABLE             0
 
 #define OMODRI_PAL_SETUP                        0   // Set this to 1 to use the PAL pin affectation
@@ -122,6 +124,22 @@
 #define UART_DBG_RX_CFG                         GPIO_43_UARTA_RX
 #endif
 #endif
+/**
+ * @}
+ */
+
+/******************************************************************************************************
+*                                               CPU Timer Defines
+*******************************************************************************************************/
+/** @defgroup CPU Timer configuration.
+ *  @brief    Configure CPU timer for system tick generation.
+ * @{
+ */
+#define CPU_TIMER_0_BASE                        CPUTIMER0_BASE
+#define CPU_TIMER_0_PERIOD                      (1000U)                             // Period counter - 1ms
+#define CPU_TIMER_0_PRESCALER                   ((DEVICE_SYSCLK_FREQ / 1e6) - 1)    // Prescaler increment - 1us
+#define CPU_TIMER_0_INT                         INT_TIMER0
+#define CPU_TIMER_0_INT_ACK_GROUP               INTERRUPT_ACK_GROUP1
 /**
  * @}
  */
@@ -269,7 +287,7 @@
 #define DMA_LED_SPI_TX_16BIT_FULL_LENGTH        (DMA_LED_SPI_TX_8BIT_LENGTH / 2)
 #define DMA_LED_SPI_TX_16BIT_BURST_EVT          (3)
 #define DMA_LED_SPI_TX_16BIT_TRANSFER_EVT       (DMA_LED_SPI_TX_16BIT_FULL_LENGTH / DMA_LED_SPI_TX_16BIT_BURST_EVT)
-#if (defined UOMODRI_CONFIG_ENABLE) && (!UOMODRI_CONFIG_ENABLE)
+#if (defined UOMODRI_DEBUG_MASTER_BOARD_ENABLE) && (!UOMODRI_DEBUG_MASTER_BOARD_ENABLE)
 #define DMA_MST_SPI_TX_BASE_ADDR                DMA_CH3_BASE
 #define DMA_MST_SPI_TX_INT                      INT_DMA_CH3
 #define DMA_MST_SPI_TX_TRIGGER_SRC              DMA_TRIGGER_SPICTX
@@ -285,7 +303,7 @@
 //#define DMA_COM_SPI_TX_RX_16BIT_TRANSFER_EVT    ((DMA_COM_SPI_TX_RX_16BIT_LENGTH / DMA_COM_SPI_TX_RX_16BIT_BURST_EVT) + \
 //                                                (((DMA_COM_SPI_TX_RX_16BIT_LENGTH % DMA_COM_SPI_TX_RX_16BIT_BURST_EVT) != 0) ? \
 //                                                (1) : (0)))
-#if (defined UOMODRI_CONFIG_ENABLE) && (!UOMODRI_CONFIG_ENABLE)
+#if (defined UOMODRI_DEBUG_MASTER_BOARD_ENABLE) && (!UOMODRI_DEBUG_MASTER_BOARD_ENABLE)
 #define DMA_MST_SPI_TX_RX_8BIT_LENGTH           (34)
 #define DMA_MST_SPI_TX_RX_16BIT_FULL_LENGTH     (DMA_MST_SPI_TX_RX_8BIT_LENGTH / 2)
 #define DMA_MST_SPI_TX_RX_16BIT_CRC_LENGTH      (2)
@@ -722,8 +740,8 @@
  */
 #define MOTOR1_QEP_BASE                         EQEP1_BASE
 #define MOTOR2_QEP_BASE                         EQEP2_BASE
-#define MOTOR1_QEP_VAR                          (&EQep1Regs)
-#define MOTOR2_QEP_VAR                          (&EQep2Regs)
+#define MOTOR1_QEP_REGS                         (&EQep1Regs)
+#define MOTOR2_QEP_REGS                         (&EQep2Regs)
 #define MOTOR1_QEP_COUNTER_ADDR                 (MOTOR1_QEP_BASE + EQEP_O_QPOSCNT)
 #define MOTOR2_QEP_COUNTER_ADDR                 (MOTOR2_QEP_BASE + EQEP_O_QPOSCNT)
 #define MOTOR1_QEP_SWAP                         EQEP_CONFIG_NO_SWAP // Set to EQEP_CONFIG_SWAP if increments in the wrong direction

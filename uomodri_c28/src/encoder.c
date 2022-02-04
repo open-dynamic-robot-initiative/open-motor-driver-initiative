@@ -26,7 +26,7 @@ void ENC_resetStruct(encoder_t* p_enc)
     p_enc->turnNb           = 0;
     p_enc->indexDetected    = false;
     p_enc->indexToggle      = false;
-    p_enc->rollOverFlag     = false;
+    p_enc->rollOverFlag     = false;//p_enc->rollOverFlag;
 
     p_speed->alpha          = 0.0f;
     p_speed->speedRef       = 0.0f;
@@ -192,6 +192,8 @@ inline void ENC_getSpeed(encoder_t* p_enc)
 //    speedEst.alpha = FMINMAX((0.05f * (FM_ABS(speedEst.highSpeed) - SPEED_ESTIMATION_THRESHOLD)), 1.0f, 0.0f);//    speedEst.alpha = __fmin(__fmax(0.05f * (FM_ABS(speedEst.highSpeed) - SPEED_ESTIMATION_THRESHOLD), 0.0f), 1.0f);
 // Compute speed reference // TODO merge high & low speed - CSDT
 // see : http://www.diegm.uniud.it/petrella/Azionamenti%20Elettrici%20II/Tesine/Petrella%20et%20al.%20-%20Speed%20Measurement%20Algorithms%20for%20Low-Resolution%20Incremental%20Encoder%20Equipped%20Drives_a%20Comparative%20Analysis.pdf
+    // Compute merge coefficient
+    p_speed->alpha              = __fsat((float32_t)(0.05f * (fabs(p_speed->speedHigh) - SPEED_ESTIMATION_THRESHOLD)), 1.0f, 0.0f);
     p_speed->speedRef           = p_speed->speedHigh;//    p_enc->speedEst.speedRef = (1.0f - p_enc->speedEst.alpha) * p_enc->speedEst.lowMechSpeedEst + p_enc->speedEst.alpha * p_enc->speedEst.highMechSpeedEst;
     UOMODRI_SPEED_FLT(p_speed->speedFlt, p_speed->speedMech, p_speed->speedRef);
     p_speed->speedElec          = p_enc->polePairs * p_speed->speedMech;

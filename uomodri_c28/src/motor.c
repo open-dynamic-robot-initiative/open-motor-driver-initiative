@@ -118,7 +118,7 @@ inline void MOT_resistorEstimation(motor_t* p_motor)
     // Compute resistance
     // Only compute if measured current is over a threshold
     if (FM_ABS(p_foc->iq) > FOC_RE_CURRENT_THRESHOLD)
-        UOMODRI_RES_ESTIM_FLT(p_motor->statorResEstFilter, p_motor->statorResEst, resEst);
+        UOMODRI_RES_ESTIM_FLT(p_motor->statorResEstFlt, p_motor->statorResEst, resEst);
 
     return;
 }

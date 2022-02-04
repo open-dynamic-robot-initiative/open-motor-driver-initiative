@@ -16,10 +16,13 @@ void HAL_ADC_ini(const adc_cfg_t*);
 void HAL_ePWM_ini(const epwm_cfg_t*);
 void HAL_eQEP_ini(const eqep_cfg_t*);
 void HAL_SPI_ini(const spi_cfg_t*);
+void HAL_TIMER_ini(const tmr_cfg_t*);
 void HAL_DMA_ini(const dma_cfg_t*);
 void HAL_DMA_sync(void);
+#if (defined CM_ENABLE) && (CM_ENABLE)
 void HAL_IPC_ini(const ipc_cfg_t*);
 void* HAL_IPC_addr_ini(const ipc_cfg_t*, uint32_t);
+#endif
 #if (defined CLA_ENABLE) && (CLA_ENABLE)
 void HAL_CLA_ini(const CLA_TypeDef*);
 #endif
@@ -51,6 +54,8 @@ void HAL_ini(hal_cfg_t* p_hal)
 //            p_hal->p_ipcHandler++;
 //        com_rx_cmd = (void *)HAL_IPC_addr_init(p_hal->p_ipcHandle, 0x1000);
 //        com_tx_msg = (void *)HAL_IPC_addr_init(p_hal->p_ipcHandle, 0x1001);
+        // Initialize CPU TIMERS
+        HAL_TIMER_ini(p_hal->p_timerHandle);
         // Initialize SPI
         HAL_SPI_ini(p_hal->p_spiHandle);
         // Initialize DMA
@@ -76,7 +81,7 @@ void HAL_GPIO_ini(const gpio_cfg_t* p_gpio)
     {
         uint32_t pinNum = p_gpio->pinNumber;
 
-        while(pinNum != 0xFFFFFFFF)
+        while(pinNum != UINT32_MAX)
         {
             GPIO_setMasterCore(pinNum, p_gpio->coreSelect);
             if(p_gpio->analogModeEnable == GPIO_ANALOG_DISABLED)
@@ -117,7 +122,7 @@ void HAL_ADC_ini(const adc_cfg_t* p_adcCfg)
         const adc_int_t*    p_adcInt    = p_adcCfg->p_adcInt;
         uint32_t            adcBase     = p_adcCfg->adcBase;
 
-        while(adcBase != 0xFFFFFFFF)
+        while(adcBase != UINT32_MAX)
         {
             /* Sets ADC clock to 50MHz (ADCCLK (derived from PERx.SYSCLK))
              * Set converting input mode : "ADC_MODE_SINGLE_ENDED" or "ADC_MODE_DIFFERENTIAL"
@@ -199,7 +204,7 @@ void HAL_ADC_offsetCalib(const hal_motor_cfg_t* p_halMotorCfg)
         {
             /* Wait data acquisition for Ia, Ib, Ic . Blocking.
              Va, Vb, Vc & Vbus will be also available. */
-            p_ITConv = p_halMotorCfg->p_ITAcq;
+            p_ITConv = p_halMotorCfg->p_intAcq;
             // Wait IT flag event
             while(ADC_getInterruptStatus(p_ITConv->adcBase, p_ITConv->adcIntNumber) == false);
             if (calibCnt > 1000)
@@ -262,7 +267,7 @@ void HAL_ePWM_ini(const epwm_cfg_t* p_pwmCfg)
         // Set correct frequency for EPWMCLK (max = PLLSYSCLK / 2)
         SysCtl_setEPWMClockDivider(SYSCTL_EPWMCLK_DIV_2);
 
-        while(pwmBase != 0xFFFFFFFF)
+        while(pwmBase != UINT32_MAX)
         {
             /* Time-Base (TB) Submodule Registers
              * Set the time base clock and the high speed time base clock count prescaler
@@ -474,7 +479,7 @@ void HAL_eQEP_ini(const eqep_cfg_t* p_qepCfg)
     {
         uint32_t qepBase = p_qepCfg->eqepBase;
 
-        while(qepBase != 0xFFFFFFFF)
+        while(qepBase != UINT32_MAX)
         {
             // Configure the decoder for up-count mode, counting both on rising & falling edges (quadrature encoders)
             EQEP_setDecoderConfig(qepBase, p_qepCfg->eqepConfig);
@@ -513,7 +518,7 @@ void HAL_SPI_ini(const spi_cfg_t* p_spiCfg)
     if(p_spiCfg != NULL)
     {
         uint32_t spiBase = p_spiCfg->spiBase;
-        while(spiBase != 0xFFFFFFFF)
+        while(spiBase != UINT32_MAX)
         {
             /* Disable SPI before configuration */
             SPI_disableModule(spiBase);
@@ -549,7 +554,7 @@ void HAL_SPI_ini(const spi_cfg_t* p_spiCfg)
 //    if(p_spiCfg != NULL)
 //    {
 //        uint32_t spiBase = p_spiCfg->spiBase;
-//        while(spiBase != 0xFFFFFFFF)
+//        while(spiBase != UINT32_MAX)
 //        {
 //            /* Enable SPI module */
 //            SPI_enableModule(spiBase);
@@ -573,7 +578,7 @@ void HAL_DMA_ini(const dma_cfg_t* p_dmaCfg)
         /* Global hardware reset of the DMA controller. */
         DMA_initController();
         DMA_setEmulationMode(DMA_EMULATION_FREE_RUN);
-        while(dmaChBase != 0xFFFFFFFF)
+        while(dmaChBase != UINT32_MAX)
         {
             /* DMA channel initialization
              * Configure direction, words per burst
@@ -778,7 +783,7 @@ void HAL_INT_ini(const int_cfg_t* p_intCfg)
         // Clear & set IT flags & enable IT bits in a known state.
         Interrupt_initModule();
         // Setup Interrupts
-        while(intNum != 0xFFFFFFFF)
+        while(intNum != UINT32_MAX)
         {
             // Attach ISR to interrupt
             Interrupt_register(intNum, p_intCfg->p_intHandler);
@@ -793,4 +798,30 @@ void HAL_INT_ini(const int_cfg_t* p_intCfg)
     }
 
     return;
+}
+
+void HAL_TIMER_ini(const tmr_cfg_t* p_TimerCfg)
+{
+    if(p_TimerCfg != NULL)
+    {
+        uint32_t cpuTimerBase = p_TimerCfg->cpuTimerBase;
+
+        while(cpuTimerBase != UINT32_MAX)
+        {
+            /* Make sure timer is stopped */
+            CPUTimer_stopTimer(cpuTimerBase);
+            /* Debug mode of the CPU Timers. */
+            CPUTimer_setEmulationMode(cpuTimerBase, CPUTIMER_EMULATIONMODE_RUNFREE);
+            /* Initialize pre-scale & period counters. Reload counters. */
+            CPUTimer_setPreScaler(cpuTimerBase, p_TimerCfg->prescaler);
+            CPUTimer_setPeriod(cpuTimerBase, p_TimerCfg->periodCount);
+            /* clear flags & set or clear associated interrupts */
+            CPUTimer_clearOverflowFlag(cpuTimerBase);
+            (p_TimerCfg->intEnable) ? (CPUTimer_enableInterrupt(cpuTimerBase)) : (CPUTimer_disableInterrupt(cpuTimerBase));
+            /* Reload & start CPU-Timer */
+            CPUTimer_reloadTimerCounter(cpuTimerBase);
+            CPUTimer_startTimer(cpuTimerBase);
+            cpuTimerBase = (++p_TimerCfg)->cpuTimerBase;
+        }
+    }
 }

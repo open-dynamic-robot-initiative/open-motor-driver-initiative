@@ -95,16 +95,12 @@ inline void FOC_runControl(foc_t* p_foc)
  */
 inline void FOC_resetPI(pi_t* p_pi)
 {
-//    p_pi->in            = 0.0;
-//    p_pi->set           = 0.0;
-//    p_pi->err           = 0.0;
-//    p_pi->integral      = 0.0;
-//    p_pi->ff            = 0.0;
-    *p_pi->p_in         = 0.0;
+    *p_pi->p_fb         = 0.0;
     *p_pi->p_set        = 0.0;
     p_pi->err           = 0.0;
     p_pi->integral      = 0.0;
     p_pi->ff            = 0.0;
+    p_pi->out           = 0.0;
 
     return;
 }
@@ -116,15 +112,12 @@ inline void FOC_resetPI(pi_t* p_pi)
  */
 inline float32_t FOC_runPI(pi_t* p_pi)
 {
-    float32_t   sat_max = 0.5f  * (*p_pi->p_sat);
-    float32_t   sat_min = -0.5f * (*p_pi->p_sat);
-
-    p_pi->err           = *p_pi->p_set - *p_pi->p_in;
+    float32_t sat_max   = 0.5f  * (*p_pi->p_sat);
+    float32_t sat_min   = -0.5f * (*p_pi->p_sat);
+    p_pi->err           = (*p_pi->p_set) - (*p_pi->p_fb);
     p_pi->integral     += p_pi->ki * p_pi->err;
-    //p_pid->integral     = FMINMAX(p_pid->integral, *p_pid->sat, -(*p_pid->sat)); //fmaxf(fminf(p_pid->integral, *p_pid->sat), -(*p_pid->sat));
-    // Compute PID and clamp output.
     p_pi->out           = (p_pi->kp * p_pi->err) + p_pi->integral + p_pi->ff;
-    p_pi->out           = __fsat(p_pi->out, sat_max, sat_min);//FMINMAX(p_pi->out, (0.4f * (*p_pi->sat)), (-0.4f * (*p_pi->sat))); //fmaxf(fminf(p_pid->out, *p_pid->sat), -(*p_pid->sat));
+    p_pi->out           = __fsat(p_pi->out, sat_max, sat_min);
 
     return(p_pi->out);
 }
@@ -135,14 +128,15 @@ inline float32_t FOC_runPI(pi_t* p_pi)
  */
 inline void FOC_resetPD(pd_t* p_pd)
 {
-    *p_pd->p_inTheta    = 0.0;
+    *p_pd->p_fbTheta    = 0.0;
     *p_pd->p_setTheta   = 0.0;
     p_pd->errTheta      = 0.0;
-    *p_pd->p_inSpeed    = 0.0;
+    *p_pd->p_fbSpeed    = 0.0;
     *p_pd->p_setSpeed   = 0.0;
     p_pd->errSpeed      = 0.0;
     p_pd->derivative    = 0.0;
     *p_pd->p_ff         = 0.0;
+//    p_pd->out           = 0.0;
 
     return;
 }
@@ -154,17 +148,15 @@ inline void FOC_resetPD(pd_t* p_pd)
  */
 inline float32_t FOC_runPD(pd_t* p_pd)
 {
-    float32_t   sat_max = 1.0f  * (p_pd->sat);
-    float32_t   sat_min = -1.0f * (p_pd->sat);
-
-    p_pd->errTheta      = __mpy2pif32((*p_pd->p_setTheta) - (*p_pd->p_inTheta));
-    p_pd->errSpeed      = *(p_pd->p_setSpeed) - *(p_pd->p_inSpeed);
-    p_pd->derivative    = p_pd->kd * p_pd->errSpeed;//(p_pid->err - p_pid->errPrev) / p_pid->deltaT;
+    float32_t sat_max   = 1.0f  * p_pd->sat;
+    float32_t sat_min   = -1.0f * p_pd->sat;
+    p_pd->errTheta      = __mpy2pif32((*p_pd->p_setTheta) - (*p_pd->p_fbTheta));
+    p_pd->errSpeed      = (*p_pd->p_setSpeed) - (*p_pd->p_fbSpeed);
+    p_pd->derivative    = (*p_pd->p_kd) * p_pd->errSpeed;
     // Compute PID and clamp output.
-    p_pd->out           = (p_pd->kp * p_pd->errTheta) + p_pd->derivative + *p_pd->p_ff;
-    p_pd->out           = __fsat(p_pd->out, sat_max, sat_min);//FMINMAX(p_pd->out, *p_pd->sat, -(*p_pd->sat)); //fmaxf(fminf(p_pid->out, *p_pid->sat), -(*p_pid->sat));
-    // Save current error
-    //p_pid->errPrev      = p_pid->err;
+    p_pd->out           = ((*p_pd->p_kp) * p_pd->errTheta) + p_pd->derivative + (*p_pd->p_ff);
+    p_pd->out           = __fsat(p_pd->out, sat_max, sat_min);
+
     return(p_pd->out);
 }
 

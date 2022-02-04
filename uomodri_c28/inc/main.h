@@ -37,11 +37,6 @@
 #define IPC_CMD_READ_MEM   0x1001
 #define IPC_CMD_RESP       0x2001
 
-//#define TIME_M1_S   ((float32_t)motor[MOTOR_1].interruptCnt * dt)
-//#define TIME_M1_MS  ((float32_t)motor[motor_1].interruptCnt * 1000.0f * dt)
-//#define TIME_M2_S   ((float32_t)motor[MOTOR_2].interruptCnt * dt)
-//#define TIME_M2_MS  ((float32_t)motor[motor_2].interruptCnt * 1000.0f * dt)
-
 /*****************************************************************************
  * globals
  *****************************************************************************/
@@ -89,6 +84,10 @@ mst2slv_msg_t   cmd_msg[2];
 slv2mst_msg_t   status_msg[2];
 #pragma DATA_SECTION(cmd_uOmodri, "ramgs0");
 cmd_uomodri_t   cmd_uOmodri;
+#if (defined UOMODRI_DEBUG_MASTER_BOARD_ENABLE) && (!UOMODRI_DEBUG_MASTER_BOARD_ENABLE)
+#pragma DATA_SECTION(cmd_master_msg, "ramgs0");
+mst2slv_msg_t   cmd_master_msg;
+#endif
 #pragma DATA_SECTION(led_msg, "ramgs0");
 uint16_t        led_msg[6];//          = {0x0000, 0x9B6D, 0xA492, 0x4924, 0x9249, 0x2400}; // vert
 //{0x0000, 0x9249, 0x24DB, 0x6DB6, 0x9249, 0x2400}; // rouge
@@ -102,10 +101,6 @@ cmd_msg_t       cmd_Master_msg;
 #pragma DATA_SECTION(status_Master_msg, "ramgs0");
 status_msg_t    status_Master_msg;
 #endif
-
-bool_t  newMsgRxRaw = false;
-
-uint8_t cpt = 0;
 
 extern motor_t      motor[];
 extern hal_cfg_t    hal;

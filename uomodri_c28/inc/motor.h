@@ -31,22 +31,19 @@ typedef enum
 
 typedef struct __MOTORS_STRUCT__
 {
-//    const ID_ENUM           motorID;
     const hal_motor_cfg_t*  p_motorHalCfg;
     drv8353_t*              p_motorDRV;
     foc_t*                  p_motorFOC;
     // Cycle counter events
-    uint32_t                clCycleNb;
     uint64_t                interruptCnt;
-
+    uint32_t                clCycleNb;
     // Q-axis resistance estimation
     float32_t               statorResEst;    // [Ohm]
     // Resistance estimation low-pass filter
-    lpf_t                   statorResEstFilter;
-
+    lpf_t                   statorResEstFlt;
     // Anti-coagging structure
     Anticoagging            acog;
-
+    bool_t                  interruptDone;
     // PWM address register for FOC command
     volatile uint16_t*      p_motorChAReg;
     volatile uint16_t*      p_motorChBReg;
