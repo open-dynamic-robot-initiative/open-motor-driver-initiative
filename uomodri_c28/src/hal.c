@@ -19,11 +19,11 @@ void HAL_SPI_ini(const spi_cfg_t*);
 void HAL_TIMER_ini(const tmr_cfg_t*);
 void HAL_DMA_ini(const dma_cfg_t*);
 void HAL_DMA_sync(void);
-#if (defined CM_ENABLE) && (CM_ENABLE)
+#if (defined CM_CORE_ENABLE) && (CM_CORE_ENABLE)
 void HAL_IPC_ini(const ipc_cfg_t*);
 void* HAL_IPC_addr_ini(const ipc_cfg_t*, uint32_t);
 #endif
-#if (defined CLA_ENABLE) && (CLA_ENABLE)
+#if (defined CLA_CORE_ENABLE) && (CLA_CORE_ENABLE)
 void HAL_CLA_ini(const CLA_TypeDef*);
 #endif
 
@@ -47,7 +47,7 @@ void HAL_ini(hal_cfg_t* p_hal)
         // Initialize eQEP
         HAL_eQEP_ini(p_hal->p_eqepHandle);
         // Initialize IPC communication
-//        HAL_IPC_ini(p_hal->p_ipcHandle);
+        HAL_IPC_ini(p_hal->p_ipcHandle);
 
 //        // Memory address sharing CM to CPU1
 //        while(p_hal->p_ipcHandler->p_ipcIntHandler != NULL)
@@ -62,7 +62,7 @@ void HAL_ini(hal_cfg_t* p_hal)
         HAL_DMA_ini(p_hal->p_dmaHandle);
         // enable DMA channels
         HAL_DMA_sync();
-#if (defined CLA_ENABLE) && (CLA_ENABLE)
+#if (defined CLA_CORE_ENABLE) && (CLA_CORE_ENABLE)
         // Initialize CLA
         HAL_CLA_ini(p_hal->p_claHandle);
 #endif
@@ -187,7 +187,7 @@ void HAL_ADC_offsetCalib(const hal_motor_cfg_t* p_halMotorCfg)
     {
         const epwm_cc_t*    p_pwmCC     = NULL;
         const adc_int_t*    p_ITConv    = NULL;
-        lpf_t               filterCoef  = {.a = 0.998f, .one_minus_a = 0.002f};
+        lpf_t               fltCoef     = {.a = 0.998f, .one_minus_a = 0.002f};
         float32_t           i[3]        = {0.0f, 0.0f, 0.0f};
         float32_t           v[3]        = {0.0f, 0.0f, 0.0f};
         uint16_t            calibCnt    = 0;
@@ -210,10 +210,8 @@ void HAL_ADC_offsetCalib(const hal_motor_cfg_t* p_halMotorCfg)
             if (calibCnt > 1000)
                 for(loop = 0; loop < 3; loop++)
                 {
-                   UOMODRI_HAL_ADC_CALIB(filterCoef, i[loop], (float32_t) *p_halMotorCfg->p_iAcq[loop]->adcResultReg);
-//                   i[loop] = 0.998f * i[loop] + 0.002f * (*p_halMotorCfg->p_iAcq[loop]->adcResultReg);
-                   UOMODRI_HAL_ADC_CALIB(filterCoef, v[loop], (float32_t) *p_halMotorCfg->p_vAcq[loop]->adcResultReg);
-//                   v[loop] = 0.998f * v[loop] + 0.002f * (*p_halMotorCfg->p_vAcq[loop]->adcResultReg);
+                   UOMODRI_HAL_ADC_CALIB(fltCoef, i[loop], (float32_t) *p_halMotorCfg->p_iAcq[loop]->adcResultReg);
+                   UOMODRI_HAL_ADC_CALIB(fltCoef, v[loop], (float32_t) *p_halMotorCfg->p_vAcq[loop]->adcResultReg);
                 }
             else
                 for(loop = 0; loop < 3; loop++)
@@ -667,7 +665,7 @@ void* HAL_IPC_addr_ini(const ipc_cfg_t* p_ipcCfg, uint32_t cmd_valid)
     return((cmd == cmd_valid) ? ((void *)addr) : (NULL));
 }
 
-#if (defined CLA_ENABLE) && (CLA_ENABLE)
+#if (defined CLA_CORE_ENABLE) && (CLA_CORE_ENABLE)
 /**
  * @brief       CLA initialization function.
  * @param[in]   *p_claCfg   Pointer on the CLA configuration structure

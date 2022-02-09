@@ -22,15 +22,16 @@
  */
 #define UOMODRI_CONFIG_ENABLE                   1
 //#define UOMODRI_USE_ENC_GET_REGISTERS_FCT
-#define CLA_ENABLE                              0
-#define CM_ENABLE                               0
+#define CLA_CORE_ENABLE                         0
+#define CM_CORE_ENABLE                          1
 #define UOMODRI_VBUS_FLT(flt_coef, y, x)        LPF_FILTER_1(flt_coef, y, x)
+#define UOMODRI_VEXT_FLT(flt_coef, y, x)        LPF_FILTER_1(flt_coef, y, x)
 #define UOMODRI_IDQ_FLT(flt_coef, y, x)         LPF_FILTER_1(flt_coef, y, x)
 #define UOMODRI_RES_ESTIM_FLT(flt_coef, y, x)   LPF_FILTER_1(flt_coef, y, x)
 #define UOMODRI_SPEED_FLT(flt_coef, y, x)       LPF_FILTER_1(flt_coef, y, x)
 #define UOMODRI_HAL_ADC_CALIB(flt_coef, y, x)   LPF_FILTER_1(flt_coef, y, x)
 
-#define UOMODRI_DEBUG_MASTER_BOARD_ENABLE       1
+#define UOMODRI_DEBUG_MASTER_BOARD_ENABLE       0
 #define UOMODRI_DEBUG_ENABLE                    1
 #define UOMODRI_FEED_FORWARD_ENABLE             0
 
@@ -110,6 +111,8 @@
 #define DEBUG_INT_PIN1_CFG                      GPIO_40_GPIO40
 #define DEBUG_INT_PIN2                          41
 #define DEBUG_INT_PIN2_CFG                      GPIO_41_GPIO41
+#endif
+#if (defined CM_CORE_ENABLE) && (CM_CORE_ENABLE)
 #ifdef  USB
 #define USB_M                                   42
 #define USB_M_CFG                               GPIO_42_GPIO42
@@ -287,7 +290,7 @@
 #define DMA_LED_SPI_TX_16BIT_FULL_LENGTH        (DMA_LED_SPI_TX_8BIT_LENGTH / 2)
 #define DMA_LED_SPI_TX_16BIT_BURST_EVT          (3)
 #define DMA_LED_SPI_TX_16BIT_TRANSFER_EVT       (DMA_LED_SPI_TX_16BIT_FULL_LENGTH / DMA_LED_SPI_TX_16BIT_BURST_EVT)
-#if (defined UOMODRI_DEBUG_MASTER_BOARD_ENABLE) && (!UOMODRI_DEBUG_MASTER_BOARD_ENABLE)
+#if (defined UOMODRI_DEBUG_MASTER_BOARD_ENABLE) && (UOMODRI_DEBUG_MASTER_BOARD_ENABLE)
 #define DMA_MST_SPI_TX_BASE_ADDR                DMA_CH3_BASE
 #define DMA_MST_SPI_TX_INT                      INT_DMA_CH3
 #define DMA_MST_SPI_TX_TRIGGER_SRC              DMA_TRIGGER_SPICTX
@@ -303,7 +306,7 @@
 //#define DMA_COM_SPI_TX_RX_16BIT_TRANSFER_EVT    ((DMA_COM_SPI_TX_RX_16BIT_LENGTH / DMA_COM_SPI_TX_RX_16BIT_BURST_EVT) + \
 //                                                (((DMA_COM_SPI_TX_RX_16BIT_LENGTH % DMA_COM_SPI_TX_RX_16BIT_BURST_EVT) != 0) ? \
 //                                                (1) : (0)))
-#if (defined UOMODRI_DEBUG_MASTER_BOARD_ENABLE) && (!UOMODRI_DEBUG_MASTER_BOARD_ENABLE)
+#if (defined UOMODRI_DEBUG_MASTER_BOARD_ENABLE) && (UOMODRI_DEBUG_MASTER_BOARD_ENABLE)
 #define DMA_MST_SPI_TX_RX_8BIT_LENGTH           (34)
 #define DMA_MST_SPI_TX_RX_16BIT_FULL_LENGTH     (DMA_MST_SPI_TX_RX_8BIT_LENGTH / 2)
 #define DMA_MST_SPI_TX_RX_16BIT_CRC_LENGTH      (2)
@@ -368,11 +371,13 @@
 #define R_SHUNT                                 (0.007f) // [Ohm]
 #define BRIDGE_DIVIDER                          ((4.99f + 82.0f) / 4.99f)
 #else
-#define R_SHUNT                                 0.01f // [Ohm]
+#define R_SHUNT                                 (0.01f) // [Ohm]
 #define BRIDGE_DIVIDER                          ((5.1f + 100.0f) / 5.1f)
 #endif
-#define ADC_VOLTAGE_SCALE                       (ADC_VREF * BRIDGE_DIVIDER / ADC_RESOLUTION_MAX)// Voltage divider R1:4.99kO R2:82kO
-#define ADC_CURRENT_SCALE                       (ADC_VREF * (-0.5f) / DRV_CSA_GAIN_VAL / R_SHUNT / ADC_RESOLUTION_MAX / (2.0f)) //(0x1000 << (ADC_RESOLUTION >> 4)))
+#define ADC_EXTERN_VOLTAGE_SCALE                (ADC_VREF / ADC_RESOLUTION_MAX)
+#define ADC_VBUS_VOLTAGE_SCALE                  (ADC_VREF * BRIDGE_DIVIDER / ADC_RESOLUTION_MAX)
+#define ADC_MOTOR_VOLTAGE_SCALE                 (ADC_VREF * BRIDGE_DIVIDER / ADC_RESOLUTION_MAX)
+#define ADC_MOTOR_CURRENT_SCALE                 (ADC_VREF * (-0.5f) / DRV_CSA_GAIN_VAL / R_SHUNT / ADC_RESOLUTION_MAX / (2.0f))
 /**
  * @}
  */
@@ -386,6 +391,10 @@
 
 #define MOTOR2_ADC_SOC_TRIGGER_EVT2             ADC_TRIGGER_EPWM4_SOCA
 #define MOTOR2_ADC_SOC_TRIGGER_EVT4             ADC_TRIGGER_EPWM4_SOCB
+
+#define VBUS_ADC_SOC_TRIGGER_EVT                ADC_TRIGGER_EPWM1_SOCB
+#define EXTERN_ADC_SOC_TRIGGER_EVT1             ADC_TRIGGER_EPWM1_SOCA
+#define EXTERN_ADC_SOC_TRIGGER_EVT2             ADC_TRIGGER_EPWM4_SOCB
 /**
  * @}
  */
@@ -397,7 +406,7 @@
 #define MOTOR1_VA_CH                            ADC_CH_ADCIN2
 #define MOTOR1_VB_CH                            ADC_CH_ADCIN2
 #define MOTOR1_VC_CH                            ADC_CH_ADCIN2
-#define MOTOR12_VBUS_CH                         ADC_CH_ADCIN2
+#define VBUS_CH                                 ADC_CH_ADCIN2
 
 #define MOTOR1_IA_CH                            ADC_CH_ADCIN0
 #define MOTOR1_IB_CH                            ADC_CH_ADCIN0
@@ -410,6 +419,9 @@
 #define MOTOR2_IA_CH                            ADC_CH_ADCIN1
 #define MOTOR2_IB_CH                            ADC_CH_ADCIN1
 #define MOTOR2_IC_CH                            ADC_CH_ADCIN1
+
+#define EXTERN_V1_CH                            ADC_CH_ADCIN14
+#define EXTERN_V2_CH                            ADC_CH_ADCIN15
 /**
  * @}
  */
@@ -421,11 +433,12 @@
 #define MOTOR1_VA_SOC_NUM                       ADC_SOC_NUMBER0
 #define MOTOR1_VB_SOC_NUM                       ADC_SOC_NUMBER0
 #define MOTOR1_VC_SOC_NUM                       ADC_SOC_NUMBER0
-#define MOTOR12_VBUS_SOC_NUM                    ADC_SOC_NUMBER0
+#define VBUS_SOC_NUM                            ADC_SOC_NUMBER0
 
 #define MOTOR1_IA_SOC_NUM                       ADC_SOC_NUMBER2
 #define MOTOR1_IB_SOC_NUM                       ADC_SOC_NUMBER2
 #define MOTOR1_IC_SOC_NUM                       ADC_SOC_NUMBER2
+#define EXTERN_V1_SOC_NUM                       ADC_SOC_NUMBER2
 
 #define MOTOR2_VA_SOC_NUM                       ADC_SOC_NUMBER1
 #define MOTOR2_VB_SOC_NUM                       ADC_SOC_NUMBER1
@@ -434,6 +447,7 @@
 #define MOTOR2_IA_SOC_NUM                       ADC_SOC_NUMBER3
 #define MOTOR2_IB_SOC_NUM                       ADC_SOC_NUMBER3
 #define MOTOR2_IC_SOC_NUM                       ADC_SOC_NUMBER3
+#define EXTERN_V2_SOC_NUM                       ADC_SOC_NUMBER3
 /**
  * @}
  */
@@ -445,11 +459,12 @@
 #define MOTOR1_VA_PPB_NUM                       ADC_PPB_NUMBER1
 #define MOTOR1_VB_PPB_NUM                       ADC_PPB_NUMBER1
 #define MOTOR1_VC_PPB_NUM                       ADC_PPB_NUMBER1
-#define MOTOR12_VBUS_PPB_NUM                    ADC_PPB_NUMBER1
+#define VBUS_PPB_NUM                            ADC_PPB_NUMBER1
 
 #define MOTOR1_IA_PPB_NUM                       ADC_PPB_NUMBER3
 #define MOTOR1_IB_PPB_NUM                       ADC_PPB_NUMBER3
 #define MOTOR1_IC_PPB_NUM                       ADC_PPB_NUMBER3
+#define EXTERN_V1_PPB_NUM                       ADC_PPB_NUMBER3
 
 #define MOTOR2_VA_PPB_NUM                       ADC_PPB_NUMBER2
 #define MOTOR2_VB_PPB_NUM                       ADC_PPB_NUMBER2
@@ -458,6 +473,7 @@
 #define MOTOR2_IA_PPB_NUM                       ADC_PPB_NUMBER4
 #define MOTOR2_IB_PPB_NUM                       ADC_PPB_NUMBER4
 #define MOTOR2_IC_PPB_NUM                       ADC_PPB_NUMBER4
+#define EXTERN_V2_PPB_NUM                       ADC_PPB_NUMBER4
 /**
  * @}
  */
@@ -495,7 +511,9 @@
 #define MOTOR2_IB_ADC_ADDR                      ADCB_BASE
 #define MOTOR12_IVB_ADC_ADDR                    ADCB_BASE
 
-#define MOTOR12_VBUS_ADC_ADDR                   ADCC_BASE
+#define VBUS_ADC_ADDR                           ADCC_BASE
+#define EXTERN_V1_ADC_ADDR                      ADCC_BASE
+#define EXTERN_V2_ADC_ADDR                      ADCC_BASE
 
 #define MOTOR1_VC_ADC_ADDR                      ADCD_BASE
 #define MOTOR1_IC_ADC_ADDR                      ADCD_BASE
@@ -522,7 +540,9 @@
 #define MOTOR2_IB_ADC_RESULT_ADDR               (ADCBRESULT_BASE + ADC_RESULTx_OFFSET_BASE + (1U * MOTOR2_IB_SOC_NUM))
 #define MOTOR12_IVB_ADC_RESULT_ADDR             ADCBRESULT_BASE
 
-#define MOTOR12_VBUS_ADC_RESULT_ADDR            (ADCCRESULT_BASE + ADC_RESULTx_OFFSET_BASE + (1U * MOTOR12_VBUS_SOC_NUM))
+#define VBUS_ADC_RESULT_ADDR                    (ADCCRESULT_BASE + ADC_RESULTx_OFFSET_BASE + (1U * VBUS_SOC_NUM))
+#define EXTERN_V1_ADC_RESULT_ADDR               (ADCCRESULT_BASE + ADC_RESULTx_OFFSET_BASE + (1U * EXTERN_V1_SOC_NUM))
+#define EXTERN_V2_ADC_RESULT_ADDR               (ADCCRESULT_BASE + ADC_RESULTx_OFFSET_BASE + (1U * EXTERN_V2_SOC_NUM))
 
 #define MOTOR1_VC_ADC_RESULT_ADDR               (ADCDRESULT_BASE + ADC_RESULTx_OFFSET_BASE + (1U * MOTOR1_VC_SOC_NUM))
 #define MOTOR1_IC_ADC_RESULT_ADDR               (ADCDRESULT_BASE + ADC_RESULTx_OFFSET_BASE + (1U * MOTOR1_IC_SOC_NUM))
@@ -547,7 +567,9 @@
 #define MOTOR2_VB_ADC_PPB_RESULT_ADDR           (ADCBRESULT_BASE + ADC_PPBxRESULT_OFFSET_BASE + (2U * MOTOR2_VB_PPB_NUM))
 #define MOTOR2_IB_ADC_PPB_RESULT_ADDR           (ADCBRESULT_BASE + ADC_PPBxRESULT_OFFSET_BASE + (2U * MOTOR2_IB_PPB_NUM))
 
-#define MOTOR12_VBUS_ADC_PPB_RESULT_ADDR        (ADCCRESULT_BASE + ADC_PPBxRESULT_OFFSET_BASE + (2U * MOTOR12_VBUS_PPB_NUM))
+#define VBUS_ADC_PPB_RESULT_ADDR                (ADCCRESULT_BASE + ADC_PPBxRESULT_OFFSET_BASE + (2U * VBUS_PPB_NUM))
+#define EXTERN_V1_ADC_PPB_RESULT_ADDR           (ADCCRESULT_BASE + ADC_PPBxRESULT_OFFSET_BASE + (2U * EXTERN_V1_PPB_NUM))
+#define EXTERN_V2_ADC_PPB_RESULT_ADDR           (ADCCRESULT_BASE + ADC_PPBxRESULT_OFFSET_BASE + (2U * EXTERN_V2_PPB_NUM))
 
 #define MOTOR1_VC_ADC_PPB_RESULT_ADDR           (ADCDRESULT_BASE + ADC_PPBxRESULT_OFFSET_BASE + (2U * MOTOR1_VC_PPB_NUM))
 #define MOTOR1_IC_ADC_PPB_RESULT_ADDR           (ADCDRESULT_BASE + ADC_PPBxRESULT_OFFSET_BASE + (2U * MOTOR1_IC_PPB_NUM))
@@ -563,13 +585,19 @@
  */
 #define MOTOR12_IVA_ADC_REGS                    (&AdcaRegs)
 #define MOTOR12_IVB_ADC_REGS                    (&AdcbRegs)
-#define MOTOR12_VBUS_ADC_REGS                   (&AdccRegs)
 #define MOTOR12_IVC_ADC_REGS                    (&AdcdRegs)
+
+#define VBUS_ADC_REGS                           (&AdccRegs)
+#define EXTERN_V1_ADC_REGS                      (&AdccRegs)
+#define EXTERN_V2_ADC_REGS                      (&AdccRegs)
 
 #define MOTOR12_IVA_ADC_RESULT_REGS             (&AdcaResultRegs)
 #define MOTOR12_IVB_ADC_RESULT_REGS             (&AdcbResultRegs)
-#define MOTOR12_VBUS_ADC_RESULT_REGS            (&AdccResultRegs)
 #define MOTOR12_IVC_ADC_RESULT_REGS             (&AdcdResultRegs)
+
+#define VBUS_ADC_RESULT_REGS                    (&AdccResultRegs)
+#define EXTERN_V1_ADC_RESULT_REGS               (&AdccResultRegs)
+#define EXTERN_V2_ADC_RESULT_REGS               (&AdccResultRegs)
 /**
  * @}
  */
@@ -813,9 +841,12 @@
 //#define MOTOR2_CUR_LOOP_ALPHA                   (1.0 - (MOTOR2_CUR_LOOP_ONE_M_ALPHA))
 
 #define MOTOR12_OVERMODULATION                  (1.15f)
-#define MOTOR12_VBUS_CUTOFF_FREQ                (500.0f)     // vbus voltage loop bandwidth (Hz)
-#define MOTOR12_VBUS_LPF_ALPHA                  (1.0 / (1.0 + (1.0 / (2.0 * M_PI * MOTOR12_VBUS_CUTOFF_FREQ / PWM_FREQ))))
-#define MOTOR12_VBUS_LPF_ONE_M_ALPHA            (1.0 - MOTOR12_VBUS_LPF_ALPHA)
+#define VBUS_CUTOFF_FREQ                        (500.0f)     // vbus voltage loop bandwidth (Hz)
+#define VBUS_LPF_ALPHA                          (1.0 / (1.0 + (1.0 / (2.0 * M_PI * VBUS_CUTOFF_FREQ / PWM_FREQ))))
+#define VBUS_LPF_ONE_M_ALPHA                    (1.0 - VBUS_LPF_ALPHA)
+#define VEXT_CUTOFF_FREQ                        (4000.0f)     // vbus voltage loop bandwidth (Hz)
+#define VEXT_LPF_ALPHA                          (1.0 / (1.0 + (1.0 / (2.0 * M_PI * VEXT_CUTOFF_FREQ / PWM_FREQ))))
+#define VEXT_LPF_ONE_M_ALPHA                    (1.0 - VEXT_LPF_ALPHA)
 #define MOTOR12_IMAX                            (20.0f)
 
 /******************************************************************************************************

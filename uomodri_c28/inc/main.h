@@ -4,17 +4,14 @@
 /***********************************************************************
  * INCLUDES
  ***********************************************************************/
-// Project includes
-//#include "communication.h"
 #include "f2838x_device.h"
-#if (defined CLA_ENABLE) && (CLA_ENABLE)
+#if (defined CLA_CORE_ENABLE) && (CLA_CORE_ENABLE)
 #include "f2838x_cla_defines.h"
 #endif
 #include "f2838x_examples.h"
 #include "driverlib.h"
 #include "device.h"
 #include "hw_types.h"
-//#include "sysctl.h"
 
 #include "hal.h"
 #include "drv8353.h"
@@ -23,8 +20,6 @@
 #include "foc.h"
 #include "motor.h"
 #include "communication.h"
-//#include "communication_interface.h"
-//#include "legacy_spi.h"
 
 #include "uomodri_user_defines.h"
 #include "uomodri_hal_config_handlers.h"
@@ -34,24 +29,13 @@
 /***********************************************************************
  * DEFINES
  ***********************************************************************/
-#define IPC_CMD_READ_MEM   0x1001
-#define IPC_CMD_RESP       0x2001
+#define IPC_CMD_M1      0x1001
+#define IPC_CMD_M2      0x2001
 
 /*****************************************************************************
  * globals
  *****************************************************************************/
-#if (defined CM_ENABLE) && (CM_ENABLE)
-//#pragma DATA_SECTION(com_rx_raw, "MSGRAM_CPU_TO_CM")
-
-//rx_msg_t __attribute__((section (".ComRxCmdSection"))) com_rx_raw;
-
-//#pragma DATA_SECTION(msgComInter, "MSGRAM_CM_TO_CPU")
-//ComInterface msgComInter;
-#endif
-
-//#pragma DATA_SECTION(motor_enc_in, "CpuToCla1MsgRAM");
-//ENC_STRUCT motor_enc_in;// = motor[MOTOR_1].p_motorFOC->motor_enc;
-#if (defined CLA_ENABLE) && (CLA_ENABLE)
+#if (defined CLA_CORE_ENABLE) && (CLA_CORE_ENABLE)
 // <Step 1>: Assign the CLA variables to their respective memory spaces
 //  - Input/Output variables should go into the Cla1ToCpuMsgRam/CpuToCla1MsgRam
 //  - Global variables in the .cla file are automatically placed in the ".bss_cla" so
@@ -89,11 +73,10 @@ cmd_uomodri_t   cmd_uOmodri;
 mst2slv_msg_t   cmd_master_msg;
 #endif
 #pragma DATA_SECTION(led_msg, "ramgs0");
-uint16_t        led_msg[6];//          = {0x0000, 0x9B6D, 0xA492, 0x4924, 0x9249, 0x2400}; // vert
-//{0x0000, 0x9249, 0x24DB, 0x6DB6, 0x9249, 0x2400}; // rouge
-//{0x0000, 0x9B6D, 0xA492, 0x4924, 0x9249, 0x2400}; // vert
-//{0x0000, 0x9249, 0x24DB, 0x6DB6, 0x9249, 0x2400}; // rouge
-//{0x0000, 0x9249, 0x2492, 0x4924, 0xDB6D, 0xB600}; // bleu
+uint16_t        led_msg[6];//          = {0x0000, 0x9B6D, 0xA492, 0x4924, 0x9249, 0x2400}; // green
+//{0x0000, 0x9B6D, 0xA492, 0x4924, 0x9249, 0x2400}; // green
+//{0x0000, 0x9249, 0x24DB, 0x6DB6, 0x9249, 0x2400}; // red
+//{0x0000, 0x9249, 0x2492, 0x4924, 0xDB6D, 0xB600}; // blue
 #if (defined UOMODRI_CONFIG_ENABLE) && (!UOMODRI_CONFIG_ENABLE)
 //#pragma DATA_ALIGN ( cmd_Master_msg , 2 )
 #pragma DATA_SECTION(cmd_Master_msg, "ramgs0");
@@ -113,7 +96,7 @@ __attribute__((interrupt)) void adc_isrMotor1(void);
 __attribute__((interrupt)) void adc_isrMotor2(void);
 __attribute__((interrupt)) void gpio_isrFaultMotor1(void);
 __attribute__((interrupt)) void gpio_isrFaultMotor2(void);
-#if (defined CLA_ENABLE) && (CLA_ENABLE)
+#if (defined CLA_CORE_ENABLE) && (CLA_CORE_ENABLE)
 __attribute__((interrupt)) void cla1_isr1(void);
 #endif
 

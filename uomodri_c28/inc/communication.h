@@ -9,7 +9,11 @@
 #include <math.h>
 
 #include "foc.h"
+#ifdef USE_CM_CORE
+#include "uomodri_cm_user_defines.h"
+#else
 #include "uomodri_user_defines.h"
+#endif
 
 /***********************************************************************
  * COMMUNICATION CRC TABLE

@@ -8,18 +8,18 @@
 #include <stdint.h>
 #include <math.h>
 
-#ifdef C28_CORE
+#ifdef USE_CM_CORE
+#include "driverlib_cm.h"
+#include "cm.h"
+
+#include "uomodri_cm_user_defines.h"
+#else
 #include "f2838x_device.h"
 #include "driverlib.h"
 #include "device.h"
 
 #include "hal.h"
 #include "uomodri_user_defines.h"
-#elif defined CM_CORE
-#include "driverlib_cm.h"
-#include "cm.h"
-
-#include "uomodri_cm_user_defines.h"
 #endif
 
 /***********************************************************************
@@ -42,13 +42,13 @@ typedef struct __SPEED_ESTIMATOR_STRUCT__
 
 typedef struct __ENCODER_STRUCT__
 {
-#ifdef C28_CORE
+#ifdef USE_CM_CORE
+    uint32_t                    rsvd1;
+    uint32_t                    rsvd2;
+#else
     // pointers on HAL structure, QEP registers and direct access to QEP counter register
     const eqep_cfg_t*           p_qepHandle;        /*!< Pointer on HAL structure */
     volatile struct EQEP_REGS*  p_qepRegs;          /*!< Pointer on the QEP registers */
-#elif defined CM_CORE
-    uint32_t                    rsvd1;
-    uint32_t                    rsvd2;
 #endif
     const uint8_t               polePairs;          /*!< Number of motor pole pairs */
     float32_t                   thetaElec;          /*!< Angular electrical position  - [pu] */

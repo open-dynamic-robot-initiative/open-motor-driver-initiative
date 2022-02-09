@@ -7,28 +7,25 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <math.h>
-#ifdef C28_CORE
+#ifdef USE_CM_CORE
+#include "driverlib_cm.h"
+#include "cm.h"
+
+#include "uomodri_cm_user_defines.h"
+#else
 #include "f2838x_device.h"
 #include "f2838x_struct.h"
 #include "f2838x_examples.h"
 #include "driverlib.h"
 #include "device.h"
 
-//#include "communication.h"
 #include "uomodri_user_defines.h"
-#elif defined CM_CORE
-#include "driverlib_cm.h"
-#include "cm.h"
-
-#include "uomodri_cm_user_defines.h"
-#endif
-#include "encoder.h"
-#ifdef C28_CORE
 #include "anticoagging.h"
 #endif
+#include "encoder.h"
 
 /***********************************************************************
- * ENUMARATIONS
+ * TYPDEF ENUM
  ***********************************************************************/
 /**
  * @enum    align_state_e
@@ -130,18 +127,19 @@ typedef struct __MOTOR_PARAMETERS_t__
 
 typedef struct __MOTOR_ACQUISITIONS_t__
 {
-#ifdef C28_CORE
-    volatile struct ADC_REGS*           const p_adcRegs[MAX_ADC];
-    volatile struct ADC_RESULT_REGS*    const p_adcResultRegs[MAX_ADC];
-#elif defined CM_CORE
+#ifdef USE_CM_CORE
     uint32_t                            rsvd1[5];
     uint32_t                            rsvd2[5];
+#else
+    volatile struct ADC_REGS*           const p_adcRegs[MAX_ADC];
+    volatile struct ADC_RESULT_REGS*    const p_adcResultRegs[MAX_ADC];
 #endif
     // ADC result registers
     volatile uint16_t*                  const p_vaMeasReg;
     volatile uint16_t*                  const p_vbMeasReg;
     volatile uint16_t*                  const p_vcMeasReg;
     volatile uint16_t*                  const p_vBusMeasReg;
+    volatile uint16_t*                  const p_vExtMeasReg;
     volatile int16_t*                   const p_iaMeasReg;
     volatile int16_t*                   const p_ibMeasReg;
     volatile int16_t*                   const p_icMeasReg;
@@ -150,11 +148,12 @@ typedef struct __MOTOR_ACQUISITIONS_t__
     float32_t                           vb;         // [V]
     float32_t                           vc;         // [V]
     float32_t                           vbus;       // [V]
+    float32_t                           vExt;       // [V]
     float32_t                           ia;         // [A]
     float32_t                           ib;         // [A]
     float32_t                           ic;         // [A]
-    float32_t                           auxAcq;
-    lpf_t                               vBusFilter;
+    lpf_t                               vBusFlt;
+    lpf_t                               vExtFlt;
 } acq_t;
 
 typedef struct __MOTOR_ALIGNEMENT_t__
@@ -175,8 +174,7 @@ typedef struct __MOTOR_FOC_CONTROL_t__
     acq_t               motor_acq;      /*!< Current \& voltage acquisitions */
     encoder_t           motor_enc;      /*!< Encoder position & speed */
     align_t             motor_align;    /*!< Alignment calibration procedure */
-    lpf_t               iParkFilter;    /*!< Low-pass filter parameters affected to park transform */
-//    float32_t           auxAdc;         /*!< Auxiliary ADC voltage - [V] */
+    lpf_t               iParkFlt;       /*!< Low-pass filter parameters affected to park transform */
     float32_t           sinTheta;       /*!< Sinus of the electrical rotor angle */
     float32_t           cosTheta;       /*!< Cosine of the electrical rotor angle  */
     float32_t           ialpha;         /*!< Direct Clarke transform result - [A] */
@@ -203,11 +201,11 @@ typedef struct __MOTOR_FOC_CONTROL_t__
     pi_t                piIq;           /*!< PI controller structure for current control */
     pd_t                pdPos;          /*!< PD controller structure for position/velocity control */
     float32_t           resEst;         /*!< Q-axis resistance estimation - [Ohm] */
-    lpf_t               resEstFilter;   /*!< Q-axis resistance estimation filter structure */
-#ifdef C28_CORE
-    Anticoagging        acog;           /*!< Anti-coagging structure */
-#elif defined CM_CORE
+    lpf_t               resEstFlt;      /*!< Q-axis resistance estimation filter structure */
+#ifdef USE_CM_CORE
     uint8_t             rsvd[11];
+#else
+    Anticoagging        acog;           /*!< Anti-coagging structure */
 #endif
     foc_error_e         errorMsg;       /*!< Error messages */
 } foc_t;

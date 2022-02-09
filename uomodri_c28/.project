@@ -3,6 +3,7 @@
 	<name>uOmodri_c28</name>
 	<comment></comment>
 	<projects>
+		<project>uomodri_cm</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

@@ -195,7 +195,7 @@ typedef struct __DMA_CFG_t__
     bool_t                              intEnable;
 } dma_cfg_t;
 
-#if (defined CLA_ENABLE) && (CLA_ENABLE)
+#if (defined CLA_CORE_ENABLE) && (CLA_CORE_ENABLE)
 /**
  * @struct  CLA_TASK_TypeDef
  * @brief   CLA TASK global Hardware Abstraction Layer structure - To be updated
@@ -326,6 +326,7 @@ typedef struct __INT_CFG_t__
 typedef struct __IPC_CFG_t__
 {
     const IPC_Type_t                    ipcType;
+    const uint32_t                      ipcBase;
     volatile IPC_MessageQueue_t*        p_ipcMsgQ;
     const uint32_t                      ipcIntMsgQL;
     const uint32_t                      ipcIntMsgQR;
@@ -358,7 +359,7 @@ typedef struct __HAL_CFG_t__
     const ipc_cfg_t*                    p_ipcHandle;
     const dma_cfg_t*                    p_dmaHandle;
     const tmr_cfg_t*                    p_timerHandle;
-#if (defined CLA_ENABLE) && (CLA_ENABLE)
+#if (defined CLA_CORE_ENABLE) && (CLA_CORE_ENABLE)
     const cla_cfg_t*                    p_claHandle;
 #endif
 } hal_cfg_t;

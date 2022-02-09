@@ -137,7 +137,7 @@ static const int_cfg_t InterruptList[] =
   .intAckGroup      = CPU_TIMER_0_INT_ACK_GROUP,
   .p_intHandler     = &cpu_isrTimer0,
  },
-#if (defined CLA_ENABLE) && (CLA_ENABLE)
+#if (defined CLA_CORE_ENABLE) && (CLA_CORE_ENABLE)
  {
   .intNum           = INT_CLA1_1,
   .intAckGroup      = INTERRUPT_ACK_GROUP11,
@@ -319,15 +319,16 @@ static foc_t motor_foc[] =
   .motor_acq.p_adcRegs[0]               = MOTOR12_IVA_ADC_REGS,
   .motor_acq.p_adcRegs[1]               = MOTOR12_IVB_ADC_REGS,
   .motor_acq.p_adcRegs[2]               = MOTOR12_IVC_ADC_REGS,
-  .motor_acq.p_adcRegs[3]               = MOTOR12_VBUS_ADC_REGS,
+  .motor_acq.p_adcRegs[3]               = VBUS_ADC_REGS,
   .motor_acq.p_adcResultRegs[0]         = MOTOR12_IVA_ADC_RESULT_REGS,
   .motor_acq.p_adcResultRegs[1]         = MOTOR12_IVB_ADC_RESULT_REGS,
   .motor_acq.p_adcResultRegs[2]         = MOTOR12_IVC_ADC_RESULT_REGS,
-  .motor_acq.p_adcResultRegs[3]         = MOTOR12_VBUS_ADC_RESULT_REGS,
+  .motor_acq.p_adcResultRegs[3]         = VBUS_ADC_RESULT_REGS,
   .motor_acq.p_vaMeasReg                = (volatile uint16_t *)(MOTOR1_VA_ADC_PPB_RESULT_ADDR),
   .motor_acq.p_vbMeasReg                = (volatile uint16_t *)(MOTOR1_VB_ADC_PPB_RESULT_ADDR),
   .motor_acq.p_vcMeasReg                = (volatile uint16_t *)(MOTOR1_VC_ADC_PPB_RESULT_ADDR),
-  .motor_acq.p_vBusMeasReg              = (volatile uint16_t *)(MOTOR12_VBUS_ADC_PPB_RESULT_ADDR),
+  .motor_acq.p_vExtMeasReg              = (volatile uint16_t *)(EXTERN_V1_ADC_PPB_RESULT_ADDR),
+  .motor_acq.p_vBusMeasReg              = (volatile uint16_t *)(VBUS_ADC_PPB_RESULT_ADDR),
   .motor_acq.p_iaMeasReg                = (volatile int16_t *)(MOTOR1_IA_ADC_PPB_RESULT_ADDR),
   .motor_acq.p_ibMeasReg                = (volatile int16_t *)(MOTOR1_IB_ADC_PPB_RESULT_ADDR),
   .motor_acq.p_icMeasReg                = (volatile int16_t *)(MOTOR1_IC_ADC_PPB_RESULT_ADDR),
@@ -335,12 +336,15 @@ static foc_t motor_foc[] =
   .motor_acq.vb                         = 0.0,
   .motor_acq.vc                         = 0.0,
   .motor_acq.vbus                       = 0.0,
+  .motor_acq.vExt                       = 0.0,
   .motor_acq.ia                         = 0.0,
   .motor_acq.ib                         = 0.0,
   .motor_acq.ic                         = 0.0,
 //  .motor_acq.measNew                    = false,
-  .motor_acq.vBusFilter.a               = MOTOR12_VBUS_LPF_ALPHA,
-  .motor_acq.vBusFilter.one_minus_a     = MOTOR12_VBUS_LPF_ONE_M_ALPHA,
+  .motor_acq.vBusFlt.a                  = VBUS_LPF_ALPHA,
+  .motor_acq.vBusFlt.one_minus_a        = VBUS_LPF_ONE_M_ALPHA,
+  .motor_acq.vExtFlt.a                  = VEXT_LPF_ALPHA,
+  .motor_acq.vExtFlt.one_minus_a        = VEXT_LPF_ONE_M_ALPHA,
   //--- MOTOR ENCORDER STRUCTURE ----------------------------------------------
   .motor_enc.p_qepHandle                = (&QepCfgList[MOTOR_1]),
   .motor_enc.p_qepRegs                  = MOTOR1_QEP_REGS,
@@ -372,8 +376,8 @@ static foc_t motor_foc[] =
   .motor_align.idAlignRef               = 0.5,// 500mA alignment current
   .motor_align.idAlign                  = 0.0,
   //---------------------------------------------------------------------------
-  .iParkFilter.a                        = MOTOR1_CURRENT_LPF_ALPHA,
-  .iParkFilter.one_minus_a              = MOTOR1_CURRENT_LPF_ONE_M_ALPHA,
+  .iParkFlt.a                           = MOTOR1_CURRENT_LPF_ALPHA,
+  .iParkFlt.one_minus_a                 = MOTOR1_CURRENT_LPF_ONE_M_ALPHA,
   //--- FOC - Sine / Cosine computation of angular position -------------------
   .sinTheta                             = 0.0,
   .cosTheta                             = 0.0,
@@ -440,8 +444,8 @@ static foc_t motor_foc[] =
   //--- FOC - Q-axis resistance estimation ------------------------------------
   .resEst                               = 0.0,
   //--- Resistance estimation low-pass filter ---------------------------------
-  .resEstFilter.a                       = 0.0,
-  .resEstFilter.one_minus_a             = 0.0,
+  .resEstFlt.a                          = 0.0,
+  .resEstFlt.one_minus_a                = 0.0,
   //--- Anti-coagging structure -----------------------------------------------
   //acog;
   //--- FOC controller enable to start? ---------------------------------------
@@ -465,15 +469,16 @@ static foc_t motor_foc[] =
   .motor_acq.p_adcRegs[0]               = MOTOR12_IVA_ADC_REGS,
   .motor_acq.p_adcRegs[1]               = MOTOR12_IVB_ADC_REGS,
   .motor_acq.p_adcRegs[2]               = MOTOR12_IVC_ADC_REGS,
-  .motor_acq.p_adcRegs[3]               = MOTOR12_VBUS_ADC_REGS,
+  .motor_acq.p_adcRegs[3]               = VBUS_ADC_REGS,
   .motor_acq.p_adcResultRegs[0]         = MOTOR12_IVA_ADC_RESULT_REGS,
   .motor_acq.p_adcResultRegs[1]         = MOTOR12_IVB_ADC_RESULT_REGS,
   .motor_acq.p_adcResultRegs[2]         = MOTOR12_IVC_ADC_RESULT_REGS,
-  .motor_acq.p_adcResultRegs[3]         = MOTOR12_VBUS_ADC_RESULT_REGS,
+  .motor_acq.p_adcResultRegs[3]         = VBUS_ADC_RESULT_REGS,
   .motor_acq.p_vaMeasReg                = (volatile uint16_t *)(MOTOR2_VA_ADC_PPB_RESULT_ADDR),
   .motor_acq.p_vbMeasReg                = (volatile uint16_t *)(MOTOR2_VB_ADC_PPB_RESULT_ADDR),
   .motor_acq.p_vcMeasReg                = (volatile uint16_t *)(MOTOR2_VC_ADC_PPB_RESULT_ADDR),
-  .motor_acq.p_vBusMeasReg              = (volatile uint16_t *)(MOTOR12_VBUS_ADC_PPB_RESULT_ADDR),
+  .motor_acq.p_vExtMeasReg              = (volatile uint16_t *)(EXTERN_V2_ADC_PPB_RESULT_ADDR),
+  .motor_acq.p_vBusMeasReg              = (volatile uint16_t *)(VBUS_ADC_PPB_RESULT_ADDR),
   .motor_acq.p_iaMeasReg                = (volatile int16_t *)(MOTOR2_IA_ADC_PPB_RESULT_ADDR),
   .motor_acq.p_ibMeasReg                = (volatile int16_t *)(MOTOR2_IB_ADC_PPB_RESULT_ADDR),
   .motor_acq.p_icMeasReg                = (volatile int16_t *)(MOTOR2_IC_ADC_PPB_RESULT_ADDR),
@@ -485,8 +490,10 @@ static foc_t motor_foc[] =
   .motor_acq.ib                         = 0.0,
   .motor_acq.ic                         = 0.0,
 //  .motor_acq.measNew                    = false,
-  .motor_acq.vBusFilter.a               = MOTOR12_VBUS_LPF_ALPHA,
-  .motor_acq.vBusFilter.one_minus_a     = MOTOR12_VBUS_LPF_ONE_M_ALPHA,
+  .motor_acq.vBusFlt.a                  = VBUS_LPF_ALPHA,
+  .motor_acq.vBusFlt.one_minus_a        = VBUS_LPF_ONE_M_ALPHA,
+  .motor_acq.vExtFlt.a                  = VEXT_LPF_ALPHA,
+  .motor_acq.vExtFlt.one_minus_a        = VEXT_LPF_ONE_M_ALPHA,
   //--- MOTOR ENCORDER STRUCTURE ----------------------------------------------
   .motor_enc.p_qepHandle                = (&QepCfgList[MOTOR_2]),//(const eQEP_TypeDef*)&QepCfgList[MOTOR_2],
   .motor_enc.p_qepRegs                  = MOTOR2_QEP_REGS,
@@ -518,8 +525,8 @@ static foc_t motor_foc[] =
   .motor_align.idAlignRef               = 0.5,// 500mA alignment current
   .motor_align.idAlign                  = 0.0,
   //---------------------------------------------------------------------------
-  .iParkFilter.a                        = MOTOR2_CURRENT_LPF_ALPHA,
-  .iParkFilter.one_minus_a              = MOTOR2_CURRENT_LPF_ONE_M_ALPHA,
+  .iParkFlt.a                           = MOTOR2_CURRENT_LPF_ALPHA,
+  .iParkFlt.one_minus_a                 = MOTOR2_CURRENT_LPF_ONE_M_ALPHA,
   //--- FOC - Sine / Cosine computation of angular position -------------------
   .sinTheta                             = 0.0,
   .cosTheta                             = 0.0,
@@ -585,8 +592,8 @@ static foc_t motor_foc[] =
   //--- FOC - Q-axis resistance estimation ------------------------------------
   .resEst                               = 0.0,
   //--- Resistance estimation low-pass filter ---------------------------------
-  .resEstFilter.a                       = 0.0,
-  .resEstFilter.one_minus_a             = 0.0,
+  .resEstFlt.a                          = 0.0,
+  .resEstFlt.one_minus_a                = 0.0,
   //--- Anti-coagging structure -----------------------------------------------
   //acog;
   //--- FOC controller enable to start? ---------------------------------------

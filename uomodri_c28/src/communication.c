@@ -71,7 +71,7 @@ bool_t com_MsgCreate(foc_t* p_foc, cmd_uomodri_t* p_cmd, slv2mst_msg_t* p_msg)
         p_msg->velocity[MOTOR_1]            = (int16_t)(p_foc->motor_enc.speed.speedMech / VELOCITY_LSB);
         p_msg->current[MOTOR_1]             = (int16_t)(p_foc->iq / IQ_LSB);
         p_msg->coilRes[MOTOR_1]             = (uint16_t)(p_foc->resEst / RESISTANCE_LSB);
-        p_msg->adcSamples[MOTOR_1]          = (uint16_t)(p_foc->motor_acq.auxAcq / VOLTAGE_LSB);
+        p_msg->adcSamples[MOTOR_1]          = (uint16_t)(p_foc->motor_acq.vExt / VOLTAGE_LSB);
     }
     else if(p_foc->motor_id == MOTOR_2)
     {
@@ -85,7 +85,7 @@ bool_t com_MsgCreate(foc_t* p_foc, cmd_uomodri_t* p_cmd, slv2mst_msg_t* p_msg)
         p_msg->velocity[MOTOR_2]            = (int16_t)(p_foc->motor_enc.speed.speedMech / VELOCITY_LSB);
         p_msg->current[MOTOR_2]             = (int16_t)(p_foc->iq / IQ_LSB);
         p_msg->coilRes[MOTOR_2]             = (uint16_t)(p_foc->resEst / RESISTANCE_LSB);
-        p_msg->adcSamples[MOTOR_2]          = (uint16_t)(p_foc->motor_acq.auxAcq / VOLTAGE_LSB);
+        p_msg->adcSamples[MOTOR_2]          = (uint16_t)(p_foc->motor_acq.vExt / VOLTAGE_LSB);
         // Compute CRC
         uint32_t crc = com_crc32((uint16_t *)p_msg, DMA_COM_SPI_TX_RX_16BIT_PAYLOAD_LENGTH);
         p_msg->crc.u16_msb                  = LSB_32(crc);// required for Solo
@@ -114,36 +114,4 @@ uint32_t com_crc32 (uint16_t* p_buf, uint16_t len)
   return crc;
 }
 
-/**
- * @brief       Message created/updates for debug
- * @param p_foc Pointer on data structure array used for motor control.
- * @param p_msg Pointer on the message created /updated for debug.
- */
-//void com_msgDbgTx(FOC_STRUCT* p_foc, uint8_t* p_msg)
-//{
-//    float32_t       arrayTmp[4];
-//    static uint32_t CntMsg = 0;
-//    //    uint8_t     aMsgCreate[MSG_SIZE] = {'a', 'b', 'c', 'd'};
-//    uint8_t         *pspl = NULL, *pCntMsg = NULL, i = 0;
-//
-//    arrayTmp[0] = p_foc->motor_acq.ia + 1.0;
-//    arrayTmp[1] = p_foc->motor_acq.ib + 1.0;
-//    arrayTmp[2] = p_foc->motor_acq.ic + 1.0;
-//    arrayTmp[3] = p_foc->motor_enc.thetaMech[NEW];
-//    //arrayTmp[4] = p_foc->motor_enc.thetaElec;
-//    pCntMsg     = (uint8_t *)&CntMsg;
-//    pspl        = (uint8_t *)&arrayTmp[0];
-//
-//    for(i = 0; i < DBG_TX_MSG_SIZE; i++)
-//    {
-//        if(i < 4)
-//            *p_msg = 'a' + i; //aMsgCreate[i] = 'a' + i;
-//        else if(i < 8)
-//            *p_msg = *pCntMsg++; //aMsgCreate[i] = *pCntMsg++;
-//        else if(i < DBG_TX_MSG_SIZE)
-//            *p_msg = *pspl++; //aMsgCreate[i] = *pspl++;
-//        p_msg++;
-//    }
-//    CntMsg++;
-//}
 

@@ -13,16 +13,18 @@
 inline void FOC_getMeasures(acq_t* p_acq)
 {
     // Get the latest current values in Amps
-    p_acq->ia       = (float32_t)(*p_acq->p_iaMeasReg) * ADC_CURRENT_SCALE;
-    p_acq->ib       = (float32_t)(*p_acq->p_ibMeasReg) * ADC_CURRENT_SCALE;
-    p_acq->ic       = (float32_t)(*p_acq->p_icMeasReg) * ADC_CURRENT_SCALE;
+    p_acq->ia       = (float32_t)(*p_acq->p_iaMeasReg) * ADC_MOTOR_CURRENT_SCALE;
+    p_acq->ib       = (float32_t)(*p_acq->p_ibMeasReg) * ADC_MOTOR_CURRENT_SCALE;
+    p_acq->ic       = (float32_t)(*p_acq->p_icMeasReg) * ADC_MOTOR_CURRENT_SCALE;
     // Get the latest phase voltage values in Volt
-    p_acq->va       = (float32_t)(*p_acq->p_vaMeasReg) * ADC_VOLTAGE_SCALE;
-    p_acq->vb       = (float32_t)(*p_acq->p_vbMeasReg) * ADC_VOLTAGE_SCALE;
-    p_acq->vc       = (float32_t)(*p_acq->p_vcMeasReg) * ADC_VOLTAGE_SCALE;
+    p_acq->va       = (float32_t)(*p_acq->p_vaMeasReg) * ADC_MOTOR_VOLTAGE_SCALE;
+    p_acq->vb       = (float32_t)(*p_acq->p_vbMeasReg) * ADC_MOTOR_VOLTAGE_SCALE;
+    p_acq->vc       = (float32_t)(*p_acq->p_vcMeasReg) * ADC_MOTOR_VOLTAGE_SCALE;
     // Get the latest Voltage supply value in Volt (minimum is one to avoid dividing by zero later)
-    float32_t vbus  = __fmax(((float32_t)(*p_acq->p_vBusMeasReg) * ADC_VOLTAGE_SCALE), 1.0f);
-    UOMODRI_VBUS_FLT(p_acq->vBusFilter, p_acq->vbus, vbus);
+    float32_t vbus  = __fmax(((float32_t)(*p_acq->p_vBusMeasReg) * ADC_VBUS_VOLTAGE_SCALE), 1.0f);
+    UOMODRI_VBUS_FLT(p_acq->vBusFlt, p_acq->vbus, vbus);
+    float32_t vext  = (float32_t)(*p_acq->p_vExtMeasReg) * ADC_EXTERN_VOLTAGE_SCALE;
+    UOMODRI_VEXT_FLT(p_acq->vExtFlt, p_acq->vExt, vext);
     return;
 }
 
@@ -37,7 +39,7 @@ inline void FOC_resistanceEstimation(foc_t* p_foc)
     // Compute resistance
     // Only compute if measured current is over a threshold
     if (FM_ABS(p_foc->iq) > FOC_RE_CURRENT_THRESHOLD)
-        UOMODRI_RES_ESTIM_FLT(p_foc->resEstFilter, p_foc->resEst, (p_foc->uq - p_foc->motor_enc.speed.speedElec * p_foc->motor_cfg.ke) / p_foc->iq);
+        UOMODRI_RES_ESTIM_FLT(p_foc->resEstFlt, p_foc->resEst, (p_foc->uq - p_foc->motor_enc.speed.speedElec * p_foc->motor_cfg.ke) / p_foc->iq);
 }
 
 /**
@@ -58,9 +60,9 @@ inline void FOC_runControl(foc_t* p_foc)
     p_foc->ibeta            = (p_acq->ib - p_acq->ic) * FM_1DIVSQRT3;
     // Park transform + filtering
     float32_t id            = (p_foc->sinTheta * p_foc->ibeta) + (p_foc->cosTheta * p_foc->ialpha);
-    UOMODRI_IDQ_FLT(p_foc->iParkFilter, p_foc->id, id);
+    UOMODRI_IDQ_FLT(p_foc->iParkFlt, p_foc->id, id);
     float32_t iq            = (p_foc->cosTheta * p_foc->ibeta) - (p_foc->sinTheta * p_foc->ialpha);
-    UOMODRI_IDQ_FLT(p_foc->iParkFilter, p_foc->iq, iq);
+    UOMODRI_IDQ_FLT(p_foc->iParkFlt, p_foc->iq, iq);
     // Compute decoupling feed-forward terms
     p_foc->piId.ff          = UOMODRI_FEED_FORWARD_ENABLE ? (-1.0f * p_speed->speedElec * p_cfg->Lq * p_foc->iq)        : (0.0);
     p_foc->piIq.ff          = UOMODRI_FEED_FORWARD_ENABLE ? (p_cfg->Rs * p_foc->iqRef + p_speed->speedElec * p_cfg->ke) : (0.0);

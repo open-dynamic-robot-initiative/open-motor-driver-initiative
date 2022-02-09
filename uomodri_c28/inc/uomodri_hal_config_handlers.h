@@ -37,13 +37,7 @@ extern status_msg_t status_Master_msg;
  */
 static const gpio_cfg_t GpioPinsCfgList[] =
 {
-#if (defined UOMODRI_CONFIG_ENABLE) && (!UOMODRI_CONFIG_ENABLE)
- // LED Pins
- {.pinNumber = DEBUG_LED_PIN1,          .fctMux = DEBUG_LED_PIN1_CFG,           .pinType = GPIO_PIN_TYPE_OD,    .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0,  .intEnable = false},
- {.pinNumber = DEBUG_LED_PIN2,          .fctMux = DEBUG_LED_PIN2_CFG,           .pinType = GPIO_PIN_TYPE_OD,    .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0,  .intEnable = false},
- // Debug Pins
- {.pinNumber = DEBUG_INT_PIN1,          .fctMux = DEBUG_INT_PIN1_CFG,           .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0,  .intEnable = false},
- {.pinNumber = DEBUG_INT_PIN2,          .fctMux = DEBUG_INT_PIN2_CFG,           .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0,  .intEnable = false},
+#if (defined CM_CORE_ENABLE) && (CM_CORE_ENABLE)
 #ifdef USB
  // USB Pins
  {.pinNumber = USB_M,                   .fctMux = USB_M_CFG,                    .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CM,     .direction = GPIO_DIR_MODE_OUT,  .samplingInMode = GPIO_QUAL_SYNC,  .setValue = 0,  .intEnable = false, .analogModeEnable = GPIO_ANALOG_ENABLED},
@@ -54,6 +48,15 @@ static const gpio_cfg_t GpioPinsCfgList[] =
  {.pinNumber = UART_DBG_TX,             .fctMux = UART_DBG_TX_CFG,              .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CM,     .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0,  .intEnable = false},
  {.pinNumber = UART_DBG_RX,             .fctMux = UART_DBG_RX_CFG,              .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CM,     .direction = GPIO_DIR_MODE_IN,  .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0,  .intEnable = false},
 #endif
+#endif
+#if (defined UOMODRI_CONFIG_ENABLE) && (!UOMODRI_CONFIG_ENABLE)
+ // LED Pins
+ {.pinNumber = DEBUG_LED_PIN1,          .fctMux = DEBUG_LED_PIN1_CFG,           .pinType = GPIO_PIN_TYPE_OD,    .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0,  .intEnable = false},
+ {.pinNumber = DEBUG_LED_PIN2,          .fctMux = DEBUG_LED_PIN2_CFG,           .pinType = GPIO_PIN_TYPE_OD,    .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0,  .intEnable = false},
+ // Debug Pins
+ {.pinNumber = DEBUG_INT_PIN1,          .fctMux = DEBUG_INT_PIN1_CFG,           .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0,  .intEnable = false},
+ {.pinNumber = DEBUG_INT_PIN2,          .fctMux = DEBUG_INT_PIN2_CFG,           .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0,  .intEnable = false},
+
  // SPIC pins : MASTER DEBUG SRC
  {.pinNumber = MST_SPI_SIMO,            .fctMux = MST_SPI_SIMO_CFG,             .pinType = GPIO_PIN_TYPE_PULLUP,.coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 1,  .intEnable = false},
  {.pinNumber = MST_SPI_SOMI,            .fctMux = MST_SPI_SOMI_CFG,             .pinType = GPIO_PIN_TYPE_PULLUP,.coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_IN,  .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 1,  .intEnable = false},
@@ -117,22 +120,24 @@ static const gpio_cfg_t GpioPinsCfgList[] =
 static const adc_ini_t  AdcInitList[] =
 {
  /* ADCA - ADCINA0 : Ia Motor1, ADCINA1 : Ia Motor2, ADCINA2 : Va Motor1, ADCINA3 : Va Motor2 */
- {.adcBase = MOTOR1_VA_ADC_ADDR,    .adcChannel = MOTOR1_VA_CH,     .adcSOCNumber = MOTOR1_VA_SOC_NUM,      .adcTriggerSrc = MOTOR1_ADC_SOC_TRIGGER_EVT1},
- {.adcBase = MOTOR2_VA_ADC_ADDR,    .adcChannel = MOTOR2_VA_CH,     .adcSOCNumber = MOTOR2_VA_SOC_NUM,      .adcTriggerSrc = MOTOR2_ADC_SOC_TRIGGER_EVT2},
- {.adcBase = MOTOR1_IA_ADC_ADDR,    .adcChannel = MOTOR1_IA_CH,     .adcSOCNumber = MOTOR1_IA_SOC_NUM,      .adcTriggerSrc = MOTOR1_ADC_SOC_TRIGGER_EVT3},
- {.adcBase = MOTOR2_IA_ADC_ADDR,    .adcChannel = MOTOR2_IA_CH,     .adcSOCNumber = MOTOR2_IA_SOC_NUM,      .adcTriggerSrc = MOTOR2_ADC_SOC_TRIGGER_EVT4},
+ {.adcBase = MOTOR1_VA_ADC_ADDR,    .adcChannel = MOTOR1_VA_CH, .adcSOCNumber = MOTOR1_VA_SOC_NUM,  .adcTriggerSrc = MOTOR1_ADC_SOC_TRIGGER_EVT1},
+ {.adcBase = MOTOR2_VA_ADC_ADDR,    .adcChannel = MOTOR2_VA_CH, .adcSOCNumber = MOTOR2_VA_SOC_NUM,  .adcTriggerSrc = MOTOR2_ADC_SOC_TRIGGER_EVT2},
+ {.adcBase = MOTOR1_IA_ADC_ADDR,    .adcChannel = MOTOR1_IA_CH, .adcSOCNumber = MOTOR1_IA_SOC_NUM,  .adcTriggerSrc = MOTOR1_ADC_SOC_TRIGGER_EVT3},
+ {.adcBase = MOTOR2_IA_ADC_ADDR,    .adcChannel = MOTOR2_IA_CH, .adcSOCNumber = MOTOR2_IA_SOC_NUM,  .adcTriggerSrc = MOTOR2_ADC_SOC_TRIGGER_EVT4},
  /* ADCB - ADCINB0 : Ib Motor1, ADCINB1 : Ib Motor2, ADCINB2 : Vb Motor1, ADCINB3 : Vb Motor2 */
- {.adcBase = MOTOR1_VB_ADC_ADDR,    .adcChannel = MOTOR1_VB_CH,     .adcSOCNumber = MOTOR1_VB_SOC_NUM,      .adcTriggerSrc = MOTOR1_ADC_SOC_TRIGGER_EVT1},
- {.adcBase = MOTOR2_VB_ADC_ADDR,    .adcChannel = MOTOR2_VB_CH,     .adcSOCNumber = MOTOR2_VB_SOC_NUM,      .adcTriggerSrc = MOTOR2_ADC_SOC_TRIGGER_EVT2},
- {.adcBase = MOTOR1_IB_ADC_ADDR,    .adcChannel = MOTOR1_IB_CH,     .adcSOCNumber = MOTOR1_IB_SOC_NUM,      .adcTriggerSrc = MOTOR1_ADC_SOC_TRIGGER_EVT3},
- {.adcBase = MOTOR2_IB_ADC_ADDR,    .adcChannel = MOTOR2_IB_CH,     .adcSOCNumber = MOTOR2_IB_SOC_NUM,      .adcTriggerSrc = MOTOR2_ADC_SOC_TRIGGER_EVT4},
+ {.adcBase = MOTOR1_VB_ADC_ADDR,    .adcChannel = MOTOR1_VB_CH, .adcSOCNumber = MOTOR1_VB_SOC_NUM,  .adcTriggerSrc = MOTOR1_ADC_SOC_TRIGGER_EVT1},
+ {.adcBase = MOTOR2_VB_ADC_ADDR,    .adcChannel = MOTOR2_VB_CH, .adcSOCNumber = MOTOR2_VB_SOC_NUM,  .adcTriggerSrc = MOTOR2_ADC_SOC_TRIGGER_EVT2},
+ {.adcBase = MOTOR1_IB_ADC_ADDR,    .adcChannel = MOTOR1_IB_CH, .adcSOCNumber = MOTOR1_IB_SOC_NUM,  .adcTriggerSrc = MOTOR1_ADC_SOC_TRIGGER_EVT3},
+ {.adcBase = MOTOR2_IB_ADC_ADDR,    .adcChannel = MOTOR2_IB_CH, .adcSOCNumber = MOTOR2_IB_SOC_NUM,  .adcTriggerSrc = MOTOR2_ADC_SOC_TRIGGER_EVT4},
  /* ADCD - ADCIND0 : Ic Motor1, ADCIND1 : Ic Motor2, ADCIND2 : Vc Motor1, ADCIND3 : Vc Motor2 */
- {.adcBase = MOTOR1_VC_ADC_ADDR,    .adcChannel = MOTOR1_VC_CH,     .adcSOCNumber = MOTOR1_VC_SOC_NUM,      .adcTriggerSrc = MOTOR1_ADC_SOC_TRIGGER_EVT1},
- {.adcBase = MOTOR2_VC_ADC_ADDR,    .adcChannel = MOTOR2_VC_CH,     .adcSOCNumber = MOTOR2_VC_SOC_NUM,      .adcTriggerSrc = MOTOR2_ADC_SOC_TRIGGER_EVT2},
- {.adcBase = MOTOR1_IC_ADC_ADDR,    .adcChannel = MOTOR1_IC_CH,     .adcSOCNumber = MOTOR1_IC_SOC_NUM,      .adcTriggerSrc = MOTOR1_ADC_SOC_TRIGGER_EVT3},
- {.adcBase = MOTOR2_IC_ADC_ADDR,    .adcChannel = MOTOR2_IC_CH,     .adcSOCNumber = MOTOR2_IC_SOC_NUM,      .adcTriggerSrc = MOTOR2_ADC_SOC_TRIGGER_EVT4},
- /* ADCC - ADCINC2 : Vbus Motor1, ADCINC3 : Vbus Motor2, ADCINC4 : Vpot Motor1, ADCINC5 : Vpot Motor2 */
- {.adcBase = MOTOR12_VBUS_ADC_ADDR, .adcChannel = MOTOR12_VBUS_CH,  .adcSOCNumber = MOTOR12_VBUS_SOC_NUM,   .adcTriggerSrc = MOTOR1_ADC_SOC_TRIGGER_EVT1},
+ {.adcBase = MOTOR1_VC_ADC_ADDR,    .adcChannel = MOTOR1_VC_CH, .adcSOCNumber = MOTOR1_VC_SOC_NUM,  .adcTriggerSrc = MOTOR1_ADC_SOC_TRIGGER_EVT1},
+ {.adcBase = MOTOR2_VC_ADC_ADDR,    .adcChannel = MOTOR2_VC_CH, .adcSOCNumber = MOTOR2_VC_SOC_NUM,  .adcTriggerSrc = MOTOR2_ADC_SOC_TRIGGER_EVT2},
+ {.adcBase = MOTOR1_IC_ADC_ADDR,    .adcChannel = MOTOR1_IC_CH, .adcSOCNumber = MOTOR1_IC_SOC_NUM,  .adcTriggerSrc = MOTOR1_ADC_SOC_TRIGGER_EVT3},
+ {.adcBase = MOTOR2_IC_ADC_ADDR,    .adcChannel = MOTOR2_IC_CH, .adcSOCNumber = MOTOR2_IC_SOC_NUM,  .adcTriggerSrc = MOTOR2_ADC_SOC_TRIGGER_EVT4},
+ /* ADCC - ADCINC2 : Vbus Motor1, ADCINC14 : Vin1 external analog input, ADCINC15 : Vin2 external analog input */
+ {.adcBase = VBUS_ADC_ADDR,         .adcChannel = VBUS_CH,      .adcSOCNumber = VBUS_SOC_NUM,       .adcTriggerSrc = VBUS_ADC_SOC_TRIGGER_EVT},
+ {.adcBase = EXTERN_V1_ADC_ADDR,    .adcChannel = EXTERN_V1_CH, .adcSOCNumber = EXTERN_V1_SOC_NUM,  .adcTriggerSrc = EXTERN_ADC_SOC_TRIGGER_EVT1},
+ {.adcBase = EXTERN_V2_ADC_ADDR,    .adcChannel = EXTERN_V2_CH, .adcSOCNumber = EXTERN_V2_SOC_NUM,  .adcTriggerSrc = EXTERN_ADC_SOC_TRIGGER_EVT2},
  // END OF ARRAY
  {.adcBase = UINT32_MAX},
 };
@@ -143,22 +148,24 @@ static const adc_ini_t  AdcInitList[] =
 static const adc_acq_t  AdcAcqList[] =
 {
  /* ADCA : Va_M1, Va_M2, Ia_M1, Ia_M2; SOC0 - 3; PPB1 - 4 */
- {.adcBase = MOTOR1_VA_ADC_ADDR,    .adcResultReg = (volatile uint16_t *)(MOTOR1_VA_ADC_RESULT_ADDR),   .adcSOCNumber = MOTOR1_VA_SOC_NUM,      .adcPPBNumber = MOTOR1_VA_PPB_NUM},
- {.adcBase = MOTOR2_VA_ADC_ADDR,    .adcResultReg = (volatile uint16_t *)(MOTOR2_VA_ADC_RESULT_ADDR),   .adcSOCNumber = MOTOR2_VA_SOC_NUM,      .adcPPBNumber = MOTOR2_VA_PPB_NUM},
- {.adcBase = MOTOR1_IA_ADC_ADDR,    .adcResultReg = (volatile uint16_t *)(MOTOR1_IA_ADC_RESULT_ADDR),   .adcSOCNumber = MOTOR1_IA_SOC_NUM,      .adcPPBNumber = MOTOR1_IA_PPB_NUM},
- {.adcBase = MOTOR2_IA_ADC_ADDR,    .adcResultReg = (volatile uint16_t *)(MOTOR2_IA_ADC_RESULT_ADDR),   .adcSOCNumber = MOTOR2_IA_SOC_NUM,      .adcPPBNumber = MOTOR2_IA_PPB_NUM},
+ {.adcBase = MOTOR1_VA_ADC_ADDR,.adcResultReg = (volatile uint16_t *)(MOTOR1_VA_ADC_RESULT_ADDR),   .adcSOCNumber = MOTOR1_VA_SOC_NUM,  .adcPPBNumber = MOTOR1_VA_PPB_NUM},
+ {.adcBase = MOTOR2_VA_ADC_ADDR,.adcResultReg = (volatile uint16_t *)(MOTOR2_VA_ADC_RESULT_ADDR),   .adcSOCNumber = MOTOR2_VA_SOC_NUM,  .adcPPBNumber = MOTOR2_VA_PPB_NUM},
+ {.adcBase = MOTOR1_IA_ADC_ADDR,.adcResultReg = (volatile uint16_t *)(MOTOR1_IA_ADC_RESULT_ADDR),   .adcSOCNumber = MOTOR1_IA_SOC_NUM,  .adcPPBNumber = MOTOR1_IA_PPB_NUM},
+ {.adcBase = MOTOR2_IA_ADC_ADDR,.adcResultReg = (volatile uint16_t *)(MOTOR2_IA_ADC_RESULT_ADDR),   .adcSOCNumber = MOTOR2_IA_SOC_NUM,  .adcPPBNumber = MOTOR2_IA_PPB_NUM},
  /* ADCB : Vb_M1, Vb_M2, Ib_M1, Ib_M2; SOC0 - 3; PPB1 - 4 */
- {.adcBase = MOTOR1_VB_ADC_ADDR,    .adcResultReg = (volatile uint16_t *)(MOTOR1_VB_ADC_RESULT_ADDR),   .adcSOCNumber = MOTOR1_VB_SOC_NUM,      .adcPPBNumber = MOTOR1_VB_PPB_NUM},
- {.adcBase = MOTOR2_VB_ADC_ADDR,    .adcResultReg = (volatile uint16_t *)(MOTOR2_VB_ADC_RESULT_ADDR),   .adcSOCNumber = MOTOR2_VB_SOC_NUM,      .adcPPBNumber = MOTOR2_VB_PPB_NUM},
- {.adcBase = MOTOR1_IB_ADC_ADDR,    .adcResultReg = (volatile uint16_t *)(MOTOR1_IB_ADC_RESULT_ADDR),   .adcSOCNumber = MOTOR1_IB_SOC_NUM,      .adcPPBNumber = MOTOR1_IB_PPB_NUM},
- {.adcBase = MOTOR2_IB_ADC_ADDR,    .adcResultReg = (volatile uint16_t *)(MOTOR2_IB_ADC_RESULT_ADDR),   .adcSOCNumber = MOTOR2_IB_SOC_NUM,      .adcPPBNumber = MOTOR2_IB_PPB_NUM},
+ {.adcBase = MOTOR1_VB_ADC_ADDR,.adcResultReg = (volatile uint16_t *)(MOTOR1_VB_ADC_RESULT_ADDR),   .adcSOCNumber = MOTOR1_VB_SOC_NUM,  .adcPPBNumber = MOTOR1_VB_PPB_NUM},
+ {.adcBase = MOTOR2_VB_ADC_ADDR,.adcResultReg = (volatile uint16_t *)(MOTOR2_VB_ADC_RESULT_ADDR),   .adcSOCNumber = MOTOR2_VB_SOC_NUM,  .adcPPBNumber = MOTOR2_VB_PPB_NUM},
+ {.adcBase = MOTOR1_IB_ADC_ADDR,.adcResultReg = (volatile uint16_t *)(MOTOR1_IB_ADC_RESULT_ADDR),   .adcSOCNumber = MOTOR1_IB_SOC_NUM,  .adcPPBNumber = MOTOR1_IB_PPB_NUM},
+ {.adcBase = MOTOR2_IB_ADC_ADDR,.adcResultReg = (volatile uint16_t *)(MOTOR2_IB_ADC_RESULT_ADDR),   .adcSOCNumber = MOTOR2_IB_SOC_NUM,  .adcPPBNumber = MOTOR2_IB_PPB_NUM},
  /* ADCD : Vc_M1, Vc_M2, Ic_M1, Ic_M2; SOC0 - 3; PPB1 - 4 */
- {.adcBase = MOTOR1_VC_ADC_ADDR,    .adcResultReg = (volatile uint16_t *)(MOTOR1_VC_ADC_RESULT_ADDR),   .adcSOCNumber = MOTOR1_VC_SOC_NUM,      .adcPPBNumber = MOTOR1_VC_PPB_NUM},
- {.adcBase = MOTOR2_VC_ADC_ADDR,    .adcResultReg = (volatile uint16_t *)(MOTOR2_VC_ADC_RESULT_ADDR),   .adcSOCNumber = MOTOR2_VC_SOC_NUM,      .adcPPBNumber = MOTOR2_VC_PPB_NUM},
- {.adcBase = MOTOR1_IC_ADC_ADDR,    .adcResultReg = (volatile uint16_t *)(MOTOR1_IC_ADC_RESULT_ADDR),   .adcSOCNumber = MOTOR1_IC_SOC_NUM,      .adcPPBNumber = MOTOR1_IC_PPB_NUM},
- {.adcBase = MOTOR2_IC_ADC_ADDR,    .adcResultReg = (volatile uint16_t *)(MOTOR2_IC_ADC_RESULT_ADDR),   .adcSOCNumber = MOTOR2_IC_SOC_NUM,      .adcPPBNumber = MOTOR2_IC_PPB_NUM},
- /* ADCC : Vbus_M12; SOC0; PPB1 */
- {.adcBase = MOTOR12_VBUS_ADC_ADDR, .adcResultReg = (volatile uint16_t *)(MOTOR12_VBUS_ADC_RESULT_ADDR),.adcSOCNumber = MOTOR12_VBUS_SOC_NUM,   .adcPPBNumber = MOTOR12_VBUS_PPB_NUM},
+ {.adcBase = MOTOR1_VC_ADC_ADDR,.adcResultReg = (volatile uint16_t *)(MOTOR1_VC_ADC_RESULT_ADDR),   .adcSOCNumber = MOTOR1_VC_SOC_NUM,  .adcPPBNumber = MOTOR1_VC_PPB_NUM},
+ {.adcBase = MOTOR2_VC_ADC_ADDR,.adcResultReg = (volatile uint16_t *)(MOTOR2_VC_ADC_RESULT_ADDR),   .adcSOCNumber = MOTOR2_VC_SOC_NUM,  .adcPPBNumber = MOTOR2_VC_PPB_NUM},
+ {.adcBase = MOTOR1_IC_ADC_ADDR,.adcResultReg = (volatile uint16_t *)(MOTOR1_IC_ADC_RESULT_ADDR),   .adcSOCNumber = MOTOR1_IC_SOC_NUM,  .adcPPBNumber = MOTOR1_IC_PPB_NUM},
+ {.adcBase = MOTOR2_IC_ADC_ADDR,.adcResultReg = (volatile uint16_t *)(MOTOR2_IC_ADC_RESULT_ADDR),   .adcSOCNumber = MOTOR2_IC_SOC_NUM,  .adcPPBNumber = MOTOR2_IC_PPB_NUM},
+ /* ADCC : Vbus, External_V1, External_V2; SOC0 & SOC2 - 3; PPB1 & PPB3 - 4 */
+ {.adcBase = VBUS_ADC_ADDR,     .adcResultReg = (volatile uint16_t *)(VBUS_ADC_RESULT_ADDR),        .adcSOCNumber = VBUS_SOC_NUM,       .adcPPBNumber = VBUS_PPB_NUM},
+ {.adcBase = EXTERN_V1_ADC_ADDR,.adcResultReg = (volatile uint16_t *)(EXTERN_V1_ADC_RESULT_ADDR),   .adcSOCNumber = EXTERN_V1_SOC_NUM,  .adcPPBNumber = EXTERN_V1_PPB_NUM},
+ {.adcBase = EXTERN_V2_ADC_ADDR,.adcResultReg = (volatile uint16_t *)(EXTERN_V2_ADC_RESULT_ADDR),   .adcSOCNumber = EXTERN_V2_SOC_NUM,  .adcPPBNumber = EXTERN_V2_PPB_NUM},
  // END OF ARRAY
  {.adcBase = UINT32_MAX}
 };
@@ -182,7 +189,7 @@ static const adc_cfg_t  AdcCfgList[] =
  {.adcBase = MOTOR12_IVA_ADC_ADDR,  .adcResultBase = MOTOR12_IVA_ADC_RESULT_ADDR,   .p_adcIni = &AdcInitList[0],    .p_adcAcq = &AdcAcqList[0], .p_adcInt = &AdcIntList[0]},
  {.adcBase = MOTOR12_IVB_ADC_ADDR,  .adcResultBase = MOTOR12_IVB_ADC_RESULT_ADDR,   .p_adcIni = &AdcInitList[4],    .p_adcAcq = &AdcAcqList[4], .p_adcInt = NULL},
  {.adcBase = MOTOR12_IVC_ADC_ADDR,  .adcResultBase = MOTOR12_IVC_ADC_RESULT_ADDR,   .p_adcIni = &AdcInitList[8],    .p_adcAcq = &AdcAcqList[8], .p_adcInt = NULL},
- {.adcBase = MOTOR12_VBUS_ADC_ADDR, .adcResultBase = MOTOR12_VBUS_ADC_RESULT_ADDR,  .p_adcIni = &AdcInitList[12],   .p_adcAcq = &AdcAcqList[12],.p_adcInt = NULL},
+ {.adcBase = VBUS_ADC_ADDR,         .adcResultBase = VBUS_ADC_RESULT_ADDR,          .p_adcIni = &AdcInitList[12],   .p_adcAcq = &AdcAcqList[12],.p_adcInt = NULL},
 
  // END OF ARRAY
  {.adcBase = UINT32_MAX},
@@ -361,6 +368,19 @@ static const dma_cfg_t  dmaCfgList[] =
  {.dmaChBase            = UINT32_MAX},
 };
 
+static const ipc_cfg_t  ipcCfgList[] =
+{
+ {
+  .ipcType              = IPC_CPU1_L_CM_R,
+//  .ipcBase              = IPC_CPUXTOCM_BASE,
+  .ipcFlag              = IPC_FLAG0,
+  .ipcMsgQEnable        = false,
+  .ipcIntEnable         = false,
+ },
+  // END OF ARRAY
+ {.ipcType              = IPC_TOTAL_NUM},
+};
+
 static const tmr_cfg_t  timerCfgList[] =
 {
  {
@@ -413,7 +433,7 @@ static const tmr_cfg_t  timerCfgList[] =
 // {.ipcType = IPC_TOTAL_NUM},
 //};
 
-#if (defined CLA_ENABLE) && (CLA_ENABLE)
+#if (defined CLA_CORE_ENABLE) && (CLA_CORE_ENABLE)
 static const CLA_TypeDef claCfgList[] =
 {
  {.progRAM = MEMCFG_SECT_LS5,
@@ -586,10 +606,10 @@ static hal_cfg_t hal =
  .p_epwmHandle  = PwmCfgList,
  .p_eqepHandle  = QepCfgList,
  .p_dmaHandle   = dmaCfgList,//NULL,//
-// .p_ipcHandle  = ipcCfgList,
+ .p_ipcHandle   = ipcCfgList,
  .p_spiHandle   = spiCfgList,
  .p_timerHandle = timerCfgList,
-#if (defined CLA_ENABLE) && (CLA_ENABLE)
+#if (defined CLA_CORE_ENABLE) && (CLA_CORE_ENABLE)
  .p_claHandle  = claCfgList,
 #endif
 };
