@@ -118,6 +118,7 @@ inline float32_t FOC_runPI(pi_t* p_pi)
     float32_t sat_min   = -0.5f * (*p_pi->p_sat);
     p_pi->err           = (*p_pi->p_set) - (*p_pi->p_fb);
     p_pi->integral     += p_pi->ki * p_pi->err;
+    p_pi->integral      = __fsat(p_pi->integral, sat_max, sat_min);
     p_pi->out           = (p_pi->kp * p_pi->err) + p_pi->integral + p_pi->ff;
     p_pi->out           = __fsat(p_pi->out, sat_max, sat_min);
 
