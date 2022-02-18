@@ -133,8 +133,8 @@ typedef struct __mst2slv_msg_t__
 {
     mst2slv_reg_u   mode;
     U32toU16_reg_t  position[2];
-    uint16_t        velocity[2];
-    uint16_t        current[2];
+    int16_t         velocity[2];
+    int16_t         current[2];
     uint16_t        kpCoeff[2];
     uint16_t        kdCoeff[2];
     uint16_t        iSat;
@@ -151,8 +151,8 @@ typedef struct __slv2mst_msg_t__
     slv2mst_reg_u   status;
     uint16_t        timeStamp;
     U32toU16_reg_t  position[2];
-    uint16_t        velocity[2];
-    uint16_t        current[2];
+    int16_t         velocity[2];
+    int16_t         current[2];
     uint16_t        coilRes[2];
     uint16_t        adcSamples[2];
     uint16_t        lastCmdIndex;

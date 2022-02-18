@@ -36,13 +36,6 @@ extern cmd_uomodri_t cmd_uOmodri;
 //extern const ePWM_TypeDef PwmCfgList[];
 //extern       HAL hal;
 
-//extern uint8_t      polePairs;    // Number of pole pairs of the motor
-//extern float32_t    thetaMechScaler; // [pu/register]
-//extern float32_t    thetaMech[2]; // [pu]
-//extern bool         thetaDir; //0 = CCW/reverse, 1 = CW/forward
-//extern float32_t    thetaElec; // [pu]
-//extern float32_t    thetaMechCal[2]; // [pu]
-//extern float32_t    pdSat;
 //__attribute__((interrupt)) void ipc_isrStatusMsg(void);
 //__attribute__((interrupt)) void ipc_isrMsgCmd(void);
 __attribute__((interrupt)) void dma_isrCmdMsg(void);
@@ -112,11 +105,12 @@ static const int_cfg_t InterruptList[] =
 //  .handler          = &ipc_isrMsgCmd,
 // },
 
- {
-  .intNum           = DMA_COM_SPI_RX_INT,
-  .intAckGroup      = DMA_COM_SPI_RX_INT_ACK_GROUP,
-  .p_intHandler     = &dma_isrCmdMsg,
- },
+// {
+//  .intNum           = DMA_COM_SPI_RX_INT,
+//  .intAckGroup      = DMA_COM_SPI_RX_INT_ACK_GROUP,
+//  .p_intHandler     = &dma_isrCmdMsg,
+// },
+
 // {
 //  .intNum           = COM_SPI_RX_INT,
 //  .intAckGroup      = INTERRUPT_ACK_GROUP6,
@@ -352,7 +346,7 @@ static foc_t motor_foc[] =
   .motor_enc.thetaElec                  = 0.0,
   .motor_enc.thetaMech[NEW]             = 0.0,
   .motor_enc.thetaMech[OLD]             = 0.0,
-  .motor_enc.thetaMechScaler            = (float32_t)(MOTOR1_ENC_RESOLUTION_SCALE),
+  .motor_enc.thetaMechScaler            = (float32_t)MOTOR1_ENC_RESOLUTION_SCALE,
   .motor_enc.thetaIndex                 = 0.0,
   .motor_enc.thetaMechIndexed           = 0.0,
   .motor_enc.thetaAbsolute              = 0.0,
@@ -364,9 +358,12 @@ static foc_t motor_foc[] =
   .motor_enc.rollOverFlag               = false,
 //  .motor_enc.rollOverFlagEn             = false,
   .motor_enc.speed.speedHighScaler      = (float32_t)MOTOR1_ENC_SPEED_HIGH_SCALE,
+  .motor_enc.speed.speedHigh            = 0.0,
   .motor_enc.speed.speedLowScaler       = (float32_t)MOTOR1_ENC_SPEED_LOW_SCALE,
-  .motor_enc.speed.speedMech            = (float32_t)PWM_FREQ,
-  .motor_enc.speed.speedRef             = (float32_t)MOTOR1_ENC_SPEED_CUTOFF_FREQ,
+  .motor_enc.speed.speedLow             = 0.0,
+//  .motor_enc.speed.speedRef             = 0.0,
+  .motor_enc.speed.speedMech            = 0.0,
+  .motor_enc.speed.speedElec            = 0.0,
   .motor_enc.speed.speedFlt.a           = (float32_t)MOTOR1_ENC_SPEED_LPF_ALPHA,
   .motor_enc.speed.speedFlt.one_minus_a = (float32_t)MOTOR1_ENC_SPEED_LPF_ONE_M_ALPHA,
   //---------------------------------------------------------------------------
@@ -440,9 +437,9 @@ static foc_t motor_foc[] =
 
   .pdPos.derivative                     = 0.0,
   .pdPos.p_ff                           = (float32_t *)(&cmd_uOmodri.current[MOTOR_1]),
-  .pdPos.sat                            = (float32_t)MOTOR1_SPEED_REGULATOR_SATURATION,//((float32_t *)(&pdSat)),
+  .pdPos.p_sat                          = (float32_t *)(&cmd_uOmodri.iSat[MOTOR_1]),//MOTOR1_SPEED_REGULATOR_SATURATION,//((float32_t *)(&pdSat)),
   //--- FOC - Q-axis resistance estimation ------------------------------------
-  .resEst                               = 0.0,
+  .resEst                               = 1.0,
   //--- Resistance estimation low-pass filter ---------------------------------
   .resEstFlt.a                          = 0.0,
   .resEstFlt.one_minus_a                = 0.0,
@@ -501,7 +498,7 @@ static foc_t motor_foc[] =
   .motor_enc.thetaElec                  = 0.0,
   .motor_enc.thetaMech[NEW]             = 0.0,
   .motor_enc.thetaMech[OLD]             = 0.0,
-  .motor_enc.thetaMechScaler            = (float32_t)(MOTOR2_ENC_RESOLUTION_SCALE),
+  .motor_enc.thetaMechScaler            = (float32_t)MOTOR2_ENC_RESOLUTION_SCALE,
   .motor_enc.thetaIndex                 = 0.0,
   .motor_enc.thetaMechIndexed           = 0.0,
   .motor_enc.thetaAbsolute              = 0.0,
@@ -513,9 +510,12 @@ static foc_t motor_foc[] =
   .motor_enc.rollOverFlag               = false,
 //  .motor_enc.rollOverFlagEn             = false,
   .motor_enc.speed.speedHighScaler      = (float32_t)MOTOR2_ENC_SPEED_HIGH_SCALE,
+  .motor_enc.speed.speedHigh            = 0.0,
   .motor_enc.speed.speedLowScaler       = (float32_t)MOTOR2_ENC_SPEED_LOW_SCALE,
-  .motor_enc.speed.speedMech            = (float32_t)PWM_FREQ,
-  .motor_enc.speed.speedRef             = (float32_t)MOTOR2_ENC_SPEED_CUTOFF_FREQ,
+  .motor_enc.speed.speedLow             = 0.0,
+//  .motor_enc.speed.speedRef             = 0.0,
+  .motor_enc.speed.speedMech            = 0.0,
+  .motor_enc.speed.speedElec            = 0.0,
   .motor_enc.speed.speedFlt.a           = (float32_t)MOTOR2_ENC_SPEED_LPF_ALPHA,
   .motor_enc.speed.speedFlt.one_minus_a = (float32_t)MOTOR2_ENC_SPEED_LPF_ONE_M_ALPHA,
   //---------------------------------------------------------------------------
@@ -588,7 +588,7 @@ static foc_t motor_foc[] =
   .pdPos.p_kd                           = (float32_t *)(&cmd_uOmodri.kdCoeff[MOTOR_2]),//(float32_t)MOTOR2_SPEED_REGULATOR_KD_COEF,
   .pdPos.derivative                     = 0.0,
   .pdPos.p_ff                           = (float32_t *)(&cmd_uOmodri.current[MOTOR_2]),
-  .pdPos.sat                            = (float32_t)MOTOR2_SPEED_REGULATOR_SATURATION,//((float32_t *)(&pdSat)),
+  .pdPos.p_sat                          = (float32_t *)(&cmd_uOmodri.iSat[MOTOR_2]),//(float32_t)MOTOR2_SPEED_REGULATOR_SATURATION,
   //--- FOC - Q-axis resistance estimation ------------------------------------
   .resEst                               = 0.0,
   //--- Resistance estimation low-pass filter ---------------------------------
@@ -615,6 +615,7 @@ static motor_t motor[] =
   .clCycleNb                    = 0,
   .interruptCnt                 = 0,
   .statorResEst                 = 1.0,
+  .interruptDone                = false,
   .statorResEstFlt.a            = MOTOR1_STATOR_RESISTOR_LPF_ALPHA,
   .statorResEstFlt.one_minus_a  = MOTOR1_STATOR_RESISTOR_LPF_ONE_M_ALPHA,
 //  .enabled          = false,
@@ -637,6 +638,7 @@ static motor_t motor[] =
   .clCycleNb                    = 0,
   .interruptCnt                 = 0,
   .statorResEst                 = 1.0,
+  .interruptDone                = false,
   .statorResEstFlt.a            = MOTOR2_STATOR_RESISTOR_LPF_ALPHA,
   .statorResEstFlt.one_minus_a  = MOTOR2_STATOR_RESISTOR_LPF_ONE_M_ALPHA,
 //  .enabled          = false,

@@ -32,12 +32,11 @@ typedef struct __SPEED_ESTIMATOR_STRUCT__
     float32_t   speedLowScaler;     /*!< Low speed estimation - [rad.register] - scaler / dtRegister = velocity */
     float32_t   speedLow;           /*!< Low speed estimation - [rad/s] - scaler / dtRegister = velocity */
     float32_t   alpha;              /*!< Speed merge coefficient */
-    float32_t   speedRef;           /*!< Speed merge - [rad/s] - Low speed and high speed merge estimation */
+//    float32_t   speedRef;           /*!< Speed merge - [rad/s] - Low speed and high speed merge estimation */
     lpf_t       speedFlt;           /*!< Filter structure for speed filtering */
     float32_t   speedMech;          /*!< Mechanical output speed - [rad/s] */
     float32_t   speedElec;          /*!< Electrical output speed (pole pairs integration) - [rad/s] */
     float32_t   theta[2];           /*!< Angular position of rotor - [pu] */
-//    bool        thetaDir;           /*!< Rotor direction - 0 = CCW/reverse, 1 = CW/forward */
 } speed_t;
 
 typedef struct __ENCODER_STRUCT__
@@ -81,6 +80,9 @@ typedef struct __ENCODER_STRUCT__
  ***********************************************************************/
 void ENC_resetStruct(encoder_t*);
 inline void ENC_setPosition(encoder_t*, uint32_t);
+#if (defined UOMODRI_USE_ENCODER_GET_REG_FUNCTION) && (UOMODRI_USE_ENCODER_GET_REG_FUNCTION)
+inline void ENC_getRegisters(encoder_t*);
+#endif
 inline void ENC_getPosition(encoder_t*);
 inline void ENC_getSpeed(encoder_t*);
 inline void ENC_getTheta(encoder_t*);

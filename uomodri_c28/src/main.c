@@ -11,10 +11,8 @@
 /***********************************************************************
  * VARIABLES
  ***********************************************************************/
-mst2slv_msg_t*  p_crCmdMsgAddr      = &cmd_msg[0];
-mst2slv_msg_t*  p_nxCmdMsgAddr      = &cmd_msg[1];
-slv2mst_msg_t*  p_crStatusMsgAddr   = &status_msg[0];
-slv2mst_msg_t*  p_nxStatusMsgAddr   = &status_msg[1];
+mst2slv_msg_t*  p_cmdMsg[2]     = {&cmd_msg[0],     &cmd_msg[1]};
+slv2mst_msg_t*  p_statusMsg[2]  = {&status_msg[0],  &status_msg[1]};
 
 /***********************************************************************
  * FUNCTIONS DECLARATION
@@ -46,37 +44,42 @@ void main(void)
     // Infinite loop
     while(1)
     {
-        if(motor[MOTOR_1].interruptDone)
+//        com_MsgExtract(p_cmdMsg[CURRENT], &cmd_uOmodri);
+//        com_MsgCreate(&motor_foc[MOTOR_1], &cmd_uOmodri, p_statusMsg[NEXT]);
+//        com_MsgCreate(&motor_foc[MOTOR_2], &cmd_uOmodri, p_statusMsg[NEXT]);
+//
+//        while(GPIO_ReadPin(COM_SPI_CS) == 0);
+//
+//        HWREGH(DMA_COM_SPI_TX_BASE_ADDR + DMA_O_CONTROL) |= DMA_CONTROL_SOFTRESET; /* Reset DMA associated with COM SPI Tx */
+//        DMA_configSourceAddress(DMA_COM_SPI_TX_BASE_ADDR, (slv2mst_msg_t *)p_statusMsg[NEXT]);
+//        HWREGH(DMA_COM_SPI_TX_BASE_ADDR + DMA_O_CONTROL) |= DMA_CONTROL_RUN;
+//        ptr_swap((int32_t**)&p_statusMsg[CURRENT], (int32_t**)&p_statusMsg[NEXT]);
+
+        if(HWREGH(DMA_COM_SPI_RX_BASE_ADDR + DMA_O_TRANSFER_COUNT) == 0)
         {
-            com_MsgCreate(&motor_foc[MOTOR_1], &cmd_uOmodri, p_nxStatusMsgAddr);
-            motor[MOTOR_1].interruptDone = false;
+            com_MsgExtract(p_cmdMsg[CURRENT], &cmd_uOmodri);
+            while(GPIO_ReadPin(COM_SPI_CS) == 0);
+            HWREGH(DMA_COM_SPI_RX_BASE_ADDR + DMA_O_CONTROL) |= DMA_CONTROL_SOFTRESET; /* Reset DMA associated with COM SPI Tx */
+            DMA_configDestAddress(DMA_COM_SPI_RX_BASE_ADDR, (mst2slv_msg_t *)p_cmdMsg[NEXT]);
+            HWREGH(DMA_COM_SPI_RX_BASE_ADDR + DMA_O_CONTROL) |= DMA_CONTROL_RUN;
+            ptr_swap((int32_t**)&p_cmdMsg[CURRENT], (int32_t**)&p_cmdMsg[NEXT]);
         }
+
+//        if(motor[MOTOR_1].interruptDone)
+//        {
+//            com_MsgCreate(&motor_foc[MOTOR_1], &cmd_uOmodri, p_statusMsg[NEXT]);
+//            motor[MOTOR_1].interruptDone = false;
+//        }
+
         if(motor[MOTOR_2].interruptDone)
         {
-            com_MsgCreate(&motor_foc[MOTOR_2], &cmd_uOmodri, p_nxStatusMsgAddr);
-//            if(GPIO_ReadPin(COM_SPI_CS))
-//            {
-//                HWREGH(DMA_CH5_BASE + DMA_O_CONTROL) |= DMA_CONTROL_SOFTRESET; /* Reset DMA associated with COM SPI Tx */
-//                HWREGH(DMA_CH6_BASE + DMA_O_CONTROL) |= DMA_CONTROL_SOFTRESET; /* Reset DMA associated with COM SPI Rx */
-//                HWREGH(SPIB_BASE + SPI_O_FFRX) &= ~SPI_FFRX_RXFIFORESET;    /* Force reset on SPI FIFO Rx pointer */
-//                HWREGH(SPIB_BASE + SPI_O_FFTX) &= ~SPI_FFTX_TXFIFO;         /* Force reset on SPI FIFO Tx pointer */
-//                HWREGH(SPIB_BASE + SPI_O_FFRX) |= SPI_FFRX_RXFIFORESET;     /* Enable SPI FIFO Rx pointer */
-//                HWREGH(SPIB_BASE + SPI_O_FFTX) |= SPI_FFTX_TXFIFO;          /* Enable SPI FIFO Tx pointer */
-
-//                HWREGH(SPIB_BASE + SPI_O_FFTX) &= ~SPI_FFTX_SPIRST;
-//                HWREGH(SPIB_BASE + SPI_O_FFTX) |= SPI_FFTX_SPIRST;
-//                HWREGH(DMA_BASE + DMA_O_CTRL) |= DMA_CONTROL_RUN;
-//            }
-//
-
-            if(!(HWREGH(DMA_CH5_BASE + DMA_O_CONTROL) & DMA_CONTROL_TRANSFERSTS))
-            {
-
-                DMA_configSourceAddress(DMA_COM_SPI_TX_BASE_ADDR, (slv2mst_msg_t *)p_nxStatusMsgAddr);
-//                HWREGH(DMA_CH5_BASE + DMA_O_CONTROL) |= DMA_CONTROL_RUN;
-//                HWREGH(DMA_CH6_BASE + DMA_O_CONTROL) |= DMA_CONTROL_RUN;
-                ptr_swap((int32_t**)&p_crStatusMsgAddr, (int32_t**)&p_nxStatusMsgAddr);
-            }
+            com_MsgCreate(&motor_foc[MOTOR_1], &cmd_uOmodri, p_statusMsg[NEXT]);
+            com_MsgCreate(&motor_foc[MOTOR_2], &cmd_uOmodri, p_statusMsg[NEXT]);
+            while(GPIO_ReadPin(COM_SPI_CS) == 0);
+            HWREGH(DMA_COM_SPI_TX_BASE_ADDR + DMA_O_CONTROL) |= DMA_CONTROL_SOFTRESET; /* Reset DMA associated with COM SPI Tx */
+            DMA_configSourceAddress(DMA_COM_SPI_TX_BASE_ADDR, (slv2mst_msg_t *)p_statusMsg[NEXT]);
+            HWREGH(DMA_COM_SPI_TX_BASE_ADDR + DMA_O_CONTROL) |= DMA_CONTROL_RUN;
+            ptr_swap((int32_t**)&p_statusMsg[CURRENT], (int32_t**)&p_statusMsg[NEXT]);
             motor[MOTOR_2].interruptDone = false;
         }
     }
@@ -315,7 +318,9 @@ __attribute__((interrupt)) void dma_isrCmdMsg(void)
 #if (defined UOMODRI_CONFIG_ENABLE) && (!UOMODRI_CONFIG_ENABLE)
     GPIO_writePin(DEBUG_INT_PIN2, 1);
 #endif
-    com_MsgExtract(p_crCmdMsgAddr, &cmd_uOmodri);
+    com_MsgExtract(p_cmdMsg[CURRENT], &cmd_uOmodri);
+//    com_MsgCreate(&motor_foc[MOTOR_1], &cmd_uOmodri, p_statusMsg[CURRENT]);
+//    com_MsgCreate(&motor_foc[MOTOR_2], &cmd_uOmodri, p_statusMsg[CURRENT]);
 #if (defined UOMODRI_DEBUG_MASTER_BOARD_ENABLE) && (UOMODRI_DEBUG_MASTER_BOARD_ENABLE)
     cmd_uOmodri.mode.bit.EI2OC      = false;
     cmd_uOmodri.mode.bit.EI1OC      = false;
@@ -335,10 +340,18 @@ __attribute__((interrupt)) void dma_isrCmdMsg(void)
     cmd_uOmodri.iSat[MOTOR_1]       = (float32_t)MOTOR1_SPEED_REGULATOR_SATURATION;
     cmd_uOmodri.iSat[MOTOR_2]       = (float32_t)MOTOR2_SPEED_REGULATOR_SATURATION;
 #endif
-//    if(!(HWREGH(DMA_CH6_BASE + DMA_O_CONTROL) & DMA_CONTROL_TRANSFERSTS))
+//    while(GPIO_ReadPin(COM_SPI_CS) == 0);
+
+//    HWREGH(DMA_COM_SPI_RX_BASE_ADDR + DMA_O_CONTROL) |= DMA_CONTROL_SOFTRESET; /* Reset DMA associated with COM SPI Tx */
+//    DMA_configDestAddress(DMA_COM_SPI_RX_BASE_ADDR, (mst2slv_msg_t *)p_cmdMsg[NEXT]);
+//    HWREGH(DMA_COM_SPI_RX_BASE_ADDR + DMA_O_CONTROL) |= DMA_CONTROL_RUN;
+//    ptr_swap((int32_t**)&p_cmdMsg[CURRENT], (int32_t**)&p_cmdMsg[NEXT]);
+
+
+//    if(!(HWREGH(DMA_COM_SPI_RX_BASE_ADDR + DMA_O_CONTROL) & DMA_CONTROL_TRANSFERSTS))
 //    {
-        DMA_configDestAddress(DMA_COM_SPI_RX_BASE_ADDR, p_nxCmdMsgAddr);
-        ptr_swap((int32_t**)&p_crCmdMsgAddr, (int32_t**)&p_nxCmdMsgAddr);
+//        DMA_configDestAddress(DMA_COM_SPI_RX_BASE_ADDR, p_cmdMsg[NEXT]);
+//        ptr_swap((int32_t**)&p_cmdMsg[CURRENT], (int32_t**)&p_cmdMsg[NEXT]);
 //    }
     // Clear the interrupt flag
     Interrupt_clearACKGroup(DMA_COM_SPI_RX_INT_ACK_GROUP);

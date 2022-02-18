@@ -110,7 +110,7 @@ typedef struct __PROPORTIONAL_DERIVATIVE_t__
     float32_t       derivative; /*!< Derivative term partial computation */
     float32_t*      p_ff;       /*!< Pointer on the feed-forward term */
     float32_t       out;        /*!< Controller output */
-    float32_t       sat;        /*!< Controller saturation */
+    float32_t*      p_sat;      /*!< Controller saturation */
 } pd_t;
 
 typedef struct __MOTOR_PARAMETERS_t__

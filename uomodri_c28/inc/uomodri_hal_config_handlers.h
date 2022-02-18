@@ -18,8 +18,6 @@
 //__attribute__((interrupt)) void ipc_isrMsgCmd(void);
 
 extern mst2slv_msg_t    cmd_msg[2];
-//extern cmd_msg_t*   p_crCmdMsgAddr;
-//extern cmd_msg_t*   p_nxCmdMsgAddr;
 extern slv2mst_msg_t    status_msg[2];
 extern uint16_t         led_msg[6];
 
@@ -310,7 +308,7 @@ static const dma_cfg_t  dmaCfgList[] =
   .config               = (DMA_CFG_ONESHOT_DISABLE | DMA_CFG_CONTINUOUS_ENABLE | DMA_CFG_SIZE_16BIT),
   .trigger              = DMA_COM_SPI_RX_TRIGGER_SRC,
   .intMode              = DMA_INT_AT_END,
-  .intEnable            = true,//false,//
+  .intEnable            = false,//false,//
  },
 #if (defined UOMODRI_CONFIG_ENABLE) && (!UOMODRI_CONFIG_ENABLE)
  {
@@ -606,7 +604,7 @@ static hal_cfg_t hal =
  .p_epwmHandle  = PwmCfgList,
  .p_eqepHandle  = QepCfgList,
  .p_dmaHandle   = dmaCfgList,//NULL,//
- .p_ipcHandle   = ipcCfgList,
+ .p_ipcHandle   = NULL,//ipcCfgList,
  .p_spiHandle   = spiCfgList,
  .p_timerHandle = timerCfgList,
 #if (defined CLA_CORE_ENABLE) && (CLA_CORE_ENABLE)

@@ -139,6 +139,7 @@ inline void FOC_resetPD(pd_t* p_pd)
     p_pd->errSpeed      = 0.0;
     p_pd->derivative    = 0.0;
     *p_pd->p_ff         = 0.0;
+    *p_pd->p_sat        = 0.0;
 //    p_pd->out           = 0.0;
 
     return;
@@ -151,8 +152,8 @@ inline void FOC_resetPD(pd_t* p_pd)
  */
 inline float32_t FOC_runPD(pd_t* p_pd)
 {
-    float32_t sat_max   = 1.0f  * p_pd->sat;
-    float32_t sat_min   = -1.0f * p_pd->sat;
+    float32_t sat_max   = 1.0f  * (*p_pd->p_sat);
+    float32_t sat_min   = -1.0f * (*p_pd->p_sat);
     p_pd->errTheta      = __mpy2pif32((*p_pd->p_setTheta) - (*p_pd->p_fbTheta));
     p_pd->errSpeed      = (*p_pd->p_setSpeed) - (*p_pd->p_fbSpeed);
     p_pd->derivative    = (*p_pd->p_kd) * p_pd->errSpeed;

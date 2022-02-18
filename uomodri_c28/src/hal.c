@@ -48,20 +48,17 @@ void HAL_ini(hal_cfg_t* p_hal)
         HAL_eQEP_ini(p_hal->p_eqepHandle);
         // Initialize IPC communication
         HAL_IPC_ini(p_hal->p_ipcHandle);
-
-//        // Memory address sharing CM to CPU1
-//        while(p_hal->p_ipcHandler->p_ipcIntHandler != NULL)
-//            p_hal->p_ipcHandler++;
-//        com_rx_cmd = (void *)HAL_IPC_addr_init(p_hal->p_ipcHandle, 0x1000);
-//        com_tx_msg = (void *)HAL_IPC_addr_init(p_hal->p_ipcHandle, 0x1001);
         // Initialize CPU TIMERS
         HAL_TIMER_ini(p_hal->p_timerHandle);
-        // Initialize SPI
-        HAL_SPI_ini(p_hal->p_spiHandle);
         // Initialize DMA
         HAL_DMA_ini(p_hal->p_dmaHandle);
+        // Initialize SPI
+        HAL_SPI_ini(p_hal->p_spiHandle);
         // enable DMA channels
-        HAL_DMA_sync();
+//        HAL_DMA_sync();
+        DMA_startChannel(DMA_COM_SPI_TX_BASE_ADDR);
+        DMA_startChannel(DMA_COM_SPI_RX_BASE_ADDR);
+
 #if (defined CLA_CORE_ENABLE) && (CLA_CORE_ENABLE)
         // Initialize CLA
         HAL_CLA_ini(p_hal->p_claHandle);

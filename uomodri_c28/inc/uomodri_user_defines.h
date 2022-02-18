@@ -21,7 +21,7 @@
  * @{
  */
 #define UOMODRI_CONFIG_ENABLE                   1
-//#define UOMODRI_USE_ENC_GET_REGISTERS_FCT
+#define UOMODRI_USE_ENCODER_GET_REG_FUNCTION    0
 #define CLA_CORE_ENABLE                         0
 #define CM_CORE_ENABLE                          1
 #define UOMODRI_VBUS_FLT(flt_coef, y, x)        LPF_FILTER_1(flt_coef, y, x)
@@ -64,8 +64,16 @@
 #define FM_1DIV3                                0.333333333333f     /* 1/3 */
 #endif
 
+#ifndef FM_RPM2RAD
+#define FM_RPM2RAD                              (2.0f * M_PI / 60.0f)
+#endif
+
 #ifndef FM_RPM2RADPS
-#define FM_RPM2RADPS                            (2.0f * M_PI / 60.0f)
+#define FM_RPM2RADPS                            (2.0 * FM_PI / 60.0)
+#endif
+
+#ifndef FM_RAD2RPM
+#define FM_RAD2RPM                              (60.0f / (2.0f * M_PI))
 #endif
 
 #define FM_ABS(x)                               ((x) >= 0.0f ? (x) : -(x))
@@ -177,8 +185,6 @@
 #define COM_SPI_BASE                            SPIB_BASE
 #define COM_SPI_TX_BASE_REG_ADDR                (COM_SPI_BASE + SPI_O_TXBUF)
 #define COM_SPI_RX_BASE_REG_ADDR                (COM_SPI_BASE + SPI_O_RXBUF)
-#define COM_SPI_TX_INT                          INT_SPIB_TX
-#define COM_SPI_RX_INT                          INT_SPIB_RX
 /**
  * @}
  */
@@ -737,24 +743,24 @@
  * @{
  */
 #define MOTOR1_ENC_RESOLUTION                   (5000)
-#define MOTOR1_ENC_RESOLUTION_SCALE             (4.0 * MOTOR1_ENC_RESOLUTION)
+#define MOTOR1_ENC_RESOLUTION_SCALE             (4.0f * MOTOR1_ENC_RESOLUTION)
 #define MOTOR1_ENC_SPEED_HIGH_SAMPLING_FREQ     (1000) // [Hz] Velocity computation frequency
 #define MOTOR1_ENC_SPEED_HIGH_SAMPLING_TICKS    (DEVICE_SYSCLK_FREQ / MOTOR1_ENC_SPEED_HIGH_SAMPLING_FREQ)
-#define MOTOR1_ENC_SPEED_HIGH_SCALE             (2.0 * M_PI * MOTOR1_ENC_SPEED_HIGH_SAMPLING_FREQ) // 2pi / dt
-#define MOTOR1_ENC_SPEED_LOW_SCALE              (2.0 * M_PI * DEVICE_SYSCLK_FREQ * (1 << QEP_UNIT_POS_EVENT_DIV) / (1 << (QEP_CAPTURE_CLOCK_DIV >> 4)) / MOTOR1_ENC_RESOLUTION_SCALE)
-#define MOTOR1_ENC_SPEED_CUTOFF_FREQ            (200.0)     // cutoff frequency for velocity estimation
-#define MOTOR1_ENC_SPEED_LPF_ALPHA              (1.0 / (1.0 + (1.0 / (2.0 * M_PI * MOTOR1_ENC_SPEED_CUTOFF_FREQ / PWM_FREQ))))
-#define MOTOR1_ENC_SPEED_LPF_ONE_M_ALPHA        (1.0 - MOTOR1_ENC_SPEED_LPF_ALPHA)
+#define MOTOR1_ENC_SPEED_HIGH_SCALE             (2.0f * M_PI * MOTOR1_ENC_SPEED_HIGH_SAMPLING_FREQ) // 2pi / dt
+#define MOTOR1_ENC_SPEED_LOW_SCALE              (2.0f * M_PI * DEVICE_SYSCLK_FREQ * (1 << QEP_UNIT_POS_EVENT_DIV) / (1 << (QEP_CAPTURE_CLOCK_DIV >> 4)) / MOTOR1_ENC_RESOLUTION_SCALE)
+#define MOTOR1_ENC_SPEED_CUTOFF_FREQ            (200.0f)     // cutoff frequency for velocity estimation
+#define MOTOR1_ENC_SPEED_LPF_ALPHA              (1.0f / (1.0f + (1.0f / (2.0f * M_PI * MOTOR1_ENC_SPEED_CUTOFF_FREQ / PWM_FREQ))))
+#define MOTOR1_ENC_SPEED_LPF_ONE_M_ALPHA        (1.0f - MOTOR1_ENC_SPEED_LPF_ALPHA)
 
 #define MOTOR2_ENC_RESOLUTION                   (5000)
-#define MOTOR2_ENC_RESOLUTION_SCALE             (4.0 * MOTOR2_ENC_RESOLUTION)
+#define MOTOR2_ENC_RESOLUTION_SCALE             (4.0f * MOTOR2_ENC_RESOLUTION)
 #define MOTOR2_ENC_SPEED_HIGH_SAMPLING_FREQ     (1000) // [Hz] Velocity computation frequency
 #define MOTOR2_ENC_SPEED_HIGH_SAMPLING_TICKS    (DEVICE_SYSCLK_FREQ / MOTOR2_ENC_SPEED_HIGH_SAMPLING_FREQ)
-#define MOTOR2_ENC_SPEED_HIGH_SCALE             (2.0 * M_PI * MOTOR2_ENC_SPEED_HIGH_SAMPLING_FREQ) // 2pi / dt
-#define MOTOR2_ENC_SPEED_LOW_SCALE              (2.0 * M_PI * DEVICE_SYSCLK_FREQ * (1 << QEP_UNIT_POS_EVENT_DIV) / (1 << (QEP_CAPTURE_CLOCK_DIV >> 4)) / MOTOR2_ENC_RESOLUTION_SCALE)
-#define MOTOR2_ENC_SPEED_CUTOFF_FREQ            (200.0)     // cutoff frequency for velocity estimation
-#define MOTOR2_ENC_SPEED_LPF_ALPHA              (1.0 / (1.0 + (1.0 / (2.0 * M_PI * MOTOR2_ENC_SPEED_CUTOFF_FREQ / PWM_FREQ))))
-#define MOTOR2_ENC_SPEED_LPF_ONE_M_ALPHA        (1.0 - MOTOR2_ENC_SPEED_LPF_ALPHA)
+#define MOTOR2_ENC_SPEED_HIGH_SCALE             (2.0f * M_PI * MOTOR2_ENC_SPEED_HIGH_SAMPLING_FREQ) // 2pi / dt
+#define MOTOR2_ENC_SPEED_LOW_SCALE              (2.0f * M_PI * DEVICE_SYSCLK_FREQ * (1 << QEP_UNIT_POS_EVENT_DIV) / (1 << (QEP_CAPTURE_CLOCK_DIV >> 4)) / MOTOR2_ENC_RESOLUTION_SCALE)
+#define MOTOR2_ENC_SPEED_CUTOFF_FREQ            (200.0f)     // cutoff frequency for velocity estimation
+#define MOTOR2_ENC_SPEED_LPF_ALPHA              (1.0f / (1.0f + (1.0f / (2.0f * M_PI * MOTOR2_ENC_SPEED_CUTOFF_FREQ / PWM_FREQ))))
+#define MOTOR2_ENC_SPEED_LPF_ONE_M_ALPHA        (1.0f - MOTOR2_ENC_SPEED_LPF_ALPHA)
 
 //#define MOTOR1_ENC_LOW_SPEED_SCALE      (2.0 * M_PI * MOTOR1_ENC_RESOLUTION_SCALE * DEVICE_SYSCLK_FREQ * (1 << QEP_UNIT_POS_EVENT_DIV) / (1 << (QEP_CAPTURE_CLOCK_DIV >> 4)))
 //#define MOTOR2_ENC_LOW_SPEED_SCALE      (2.0 * M_PI * MOTOR2_ENC_RESOLUTION_SCALE * DEVICE_SYSCLK_FREQ * (1 << QEP_UNIT_POS_EVENT_DIV) / (1 << (QEP_CAPTURE_CLOCK_DIV >> 4)))
@@ -790,7 +796,7 @@
 *******************************************************************************************************/
 /*** Motor 1 constants ***/
 #define MOTOR1_KV                               (300.0f)     // Motor constant (rpm/V)
-#define MOTOR1_KE                               (0.0017f)    //1.0 / (MOTOR1_KV * FM_RPM2RADPS * MOTOR1_POLES_PAIRS) // Motor back EMF constant (V/rad/s)
+#define MOTOR1_KE                               (0.0017f)    //1.0 / (MOTOR1_KV * FM_RPM2RAD * MOTOR1_POLES_PAIRS) // Motor back EMF constant (V/rad/s)
 #define MOTOR1_KI                               (0.1f)       // Motor torque constant (N.m/A)
 #define MOTOR1_RS                               (0.7f)       // Stator resistance (ohm)
 #define MOTOR1_LD                               (134e-6f)    // Stator d-axis inductance (H)
@@ -854,7 +860,8 @@
 *******************************************************************************************************/
 /*** Communication constants ***/
 #define POSITION_LSB                            (5.960464477539063e-08f)                 // 2**(-24)
-#define VELOCITY_LSB                            (0.00048828125f * FM_RPM2RADPS * 1.0e-3f)// 2**(-11) // Added rad/s to krpm conversion
+#define VELOCITY_LSB                            (0.00048828125f * FM_RPM2RAD  * 1.0e-3f)// 2**(-11) // Added rad/s to krpm conversion
+#define VELOCITY_LSB_NATAN                      (0.00048828125 * 1000.0 * FM_RPM2RADPS)
 #define IQ_LSB                                  (0.0009765625f)                          // 2**(-10)
 #define CURRENT_SAT_LSB                         (0.125f)                                 // 2**(-3)
 #define RESISTANCE_LSB                          (3.0517578125e-05f)                      // 2**(-15)
@@ -876,7 +883,7 @@ typedef enum
 {
     NEW = 0,    /*!< Current data */
     OLD = 1,    /*!< Previous data */
-} ArrayID;
+} array_id_e;
 
 /**
  * @enum    MotorID
@@ -886,8 +893,18 @@ typedef enum
 {
     MOTOR_1 = 0,    /*!< Select Motor_1 */
     MOTOR_2 = 1,    /*!< Select Motor_2 */
-    NO_MOT  = -1    /*!< No motor selected */
+    NO_MOT  = -1,   /*!< No motor selected */
 } motor_id_e;
+
+/**
+ * @enum    StateID
+ * @brief   Easier state management for history.
+ */
+typedef enum
+{
+    CURRENT = 0,    /*!< Current data */
+    NEXT    = 1,    /*!< Previous data */
+} state_id_e;
 
 /**
  * @enum    itID

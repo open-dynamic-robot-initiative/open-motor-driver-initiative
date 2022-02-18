@@ -67,7 +67,23 @@ mst2slv_msg_t   cmd_msg[2];
 #pragma DATA_SECTION(status_msg, "ramgs0");
 slv2mst_msg_t   status_msg[2];
 #pragma DATA_SECTION(cmd_uOmodri, "ramgs0");
-cmd_uomodri_t   cmd_uOmodri;
+cmd_uomodri_t   cmd_uOmodri =
+{
+ .mode.bit.TIMEOUT  = 0,
+ .mode.bit.EI2OC    = true,
+ .mode.bit.EI1OC    = true,
+ .mode.bit.EPRE     = true,
+ .mode.bit.EM2      = false,
+ .mode.bit.EM1      = false,
+ .mode.bit.ES       = true,
+ .position          = {0.0, 0.0},
+ .velocity          = {0.0, 0.0},
+ .current           = {0.0, 0.0},
+ .kpCoeff           = {1.0, 1.0},
+ .kdCoeff           = {0.02, 0.02},
+ .iSat              = {1.0, 1.0},
+ .index             = 0
+};
 #if (defined UOMODRI_DEBUG_MASTER_BOARD_ENABLE) && (!UOMODRI_DEBUG_MASTER_BOARD_ENABLE)
 #pragma DATA_SECTION(cmd_master_msg, "ramgs0");
 mst2slv_msg_t   cmd_master_msg;
