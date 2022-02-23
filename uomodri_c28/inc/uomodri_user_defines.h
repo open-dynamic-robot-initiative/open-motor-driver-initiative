@@ -13,14 +13,14 @@
 //#include "hal.h"
 #include "drv8353.h"
 
-/******************************************************************************************************
-*                                               GLOBAL macros
-******************************************************************************************************/
+/***********************************************************************
+ * GLOBAL MACROS
+ ***********************************************************************/
 /** @defgroup DEV_defines
  *  @brief    Special configurations definitions.
  * @{
  */
-#define UOMODRI_CONFIG_ENABLE                   1
+#define UOMODRI_USE_REV_1_0_CONFIG              1
 #define UOMODRI_USE_ENCODER_GET_REG_FUNCTION    0
 #define CLA_CORE_ENABLE                         0
 #define CM_CORE_ENABLE                          1
@@ -68,10 +68,6 @@
 #define FM_RPM2RAD                              (2.0f * M_PI / 60.0f)
 #endif
 
-#ifndef FM_RPM2RADPS
-#define FM_RPM2RADPS                            (2.0 * FM_PI / 60.0)
-#endif
-
 #ifndef FM_RAD2RPM
 #define FM_RAD2RPM                              (60.0f / (2.0f * M_PI))
 #endif
@@ -103,14 +99,14 @@
 
 //#define RGB(r, g, b)                            ((uint8_t)(g) << 16 | (uint8_t)(r) << 8 | (uint8_t)(b))
 
-/******************************************************************************************************
-*                                               DEBUG Defines
-******************************************************************************************************/
+/***********************************************************************
+ * DEBUG DEFINES
+ ***********************************************************************/
 /** @defgroup Debug pins configuration.
  *  @brief    Configure 2 pins (pin number and mux function) for debug.
  * @{
  */
-#if (defined UOMODRI_CONFIG_ENABLE) && (!UOMODRI_CONFIG_ENABLE)
+#if (defined UOMODRI_USE_REV_1_0_CONFIG) && (!UOMODRI_USE_REV_1_0_CONFIG)
 #define DEBUG_LED_PIN1                          31
 #define DEBUG_LED_PIN1_CFG                      GPIO_31_GPIO31
 #define DEBUG_LED_PIN2                          34
@@ -129,19 +125,23 @@
 #define USB_VBUS                                46
 #define USB_VBUS_CFG                            GPIO_46_GPIO46
 #else
-#define UART_DBG_TX                             42
+#define UART_DBG_TX                             (42)
 #define UART_DBG_TX_CFG                         GPIO_42_UARTA_TX
-#define UART_DBG_RX                             43
+#define UART_DBG_RX                             (43)
 #define UART_DBG_RX_CFG                         GPIO_43_UARTA_RX
 #endif
+#endif
+#if (defined UOMODRI_USE_REV_1_0_CONFIG) && (UOMODRI_USE_REV_1_0_CONFIG)
+#define DBG_PIN1                                (71)
+#define DBG_PIN1_CFG                            GPIO_71_GPIO71
 #endif
 /**
  * @}
  */
 
-/******************************************************************************************************
-*                                               CPU Timer Defines
-*******************************************************************************************************/
+/***********************************************************************
+ * CPU TIMER DEFINES
+ ***********************************************************************/
 /** @defgroup CPU Timer configuration.
  *  @brief    Configure CPU timer for system tick generation.
  * @{
@@ -155,18 +155,18 @@
  * @}
  */
 
-/******************************************************************************************************
-*                                               IPC Defines
-******************************************************************************************************/
+/***********************************************************************
+ * IPC DEFINES
+ ***********************************************************************/
 /** @defgroup Debug pins configuration.
  *  @brief    Configure 2 pins (pin number and mux function) for debug.
  * @{
  */
 #define IPC_SYNC_FLAG                           IPC_FLAG31
 
-/******************************************************************************************************
-*                                               SPI Defines
-*******************************************************************************************************/
+/***********************************************************************
+ * SPI DEFINES
+ ***********************************************************************/
 /** @defgroup SPI DRV configuration.
  *  @brief    Configure SPI module associated with DRV communication.
  * @{
@@ -245,7 +245,7 @@
  * @}
  */
 
-#if (defined UOMODRI_CONFIG_ENABLE) && (!UOMODRI_CONFIG_ENABLE)
+#if (defined UOMODRI_USE_REV_1_0_CONFIG) && (!UOMODRI_USE_REV_1_0_CONFIG)
 /** @defgroup SPI_MST_GPIO_pins - MST com configuration.
  *  @brief    Configure GPIO pins associated to master board communication.
  * @{
@@ -273,22 +273,24 @@
  * @}
  */
 
-/******************************************************************************************************
-*                                               DMA Defines
-*******************************************************************************************************/
+/***********************************************************************
+ * DMA DEFINES
+ ***********************************************************************/
 /** @defgroup DMA configuration.
  *  @brief    Configure DMA channels associated to SPI communication.
  * @{
  */
 #define DMA_NO_WRAP                             (0x10000)
+
 #define DMA_LED_SPI_TX_BASE_ADDR                DMA_CH4_BASE
 #define DMA_LED_SPI_TX_INT                      INT_DMA_CH4
 #define DMA_LED_SPI_TX_TRIGGER_SRC              DMA_TRIGGER_SPIDTX
+
 #define DMA_COM_SPI_TX_BASE_ADDR                DMA_CH5_BASE
 #define DMA_COM_SPI_TX_INT                      INT_DMA_CH5
-#define DMA_COM_SPI_TX_TRIGGER_SRC              DMA_TRIGGER_SPIBTX
 #define DMA_COM_SPI_RX_BASE_ADDR                DMA_CH6_BASE
 #define DMA_COM_SPI_RX_INT                      INT_DMA_CH6
+#define DMA_COM_SPI_TX_TRIGGER_SRC              DMA_TRIGGER_SPIBTX
 #define DMA_COM_SPI_RX_TRIGGER_SRC              DMA_TRIGGER_SPIBRX
 #define DMA_COM_SPI_RX_INT_ACK_GROUP            INTERRUPT_ACK_GROUP7
 
@@ -296,6 +298,7 @@
 #define DMA_LED_SPI_TX_16BIT_FULL_LENGTH        (DMA_LED_SPI_TX_8BIT_LENGTH / 2)
 #define DMA_LED_SPI_TX_16BIT_BURST_EVT          (3)
 #define DMA_LED_SPI_TX_16BIT_TRANSFER_EVT       (DMA_LED_SPI_TX_16BIT_FULL_LENGTH / DMA_LED_SPI_TX_16BIT_BURST_EVT)
+#define DMA_LED_SPI_TX_16BIT_CONFIG             (DMA_CFG_ONESHOT_DISABLE | DMA_CFG_CONTINUOUS_DISABLE | DMA_CFG_SIZE_16BIT)
 #if (defined UOMODRI_DEBUG_MASTER_BOARD_ENABLE) && (UOMODRI_DEBUG_MASTER_BOARD_ENABLE)
 #define DMA_MST_SPI_TX_BASE_ADDR                DMA_CH3_BASE
 #define DMA_MST_SPI_TX_INT                      INT_DMA_CH3
@@ -307,8 +310,22 @@
 #define DMA_COM_SPI_TX_RX_16BIT_FULL_LENGTH     (DMA_COM_SPI_TX_RX_8BIT_LENGTH / 2)
 #define DMA_COM_SPI_TX_RX_16BIT_CRC_LENGTH      (2)
 #define DMA_COM_SPI_TX_RX_16BIT_PAYLOAD_LENGTH  (DMA_COM_SPI_TX_RX_16BIT_FULL_LENGTH - DMA_COM_SPI_TX_RX_16BIT_CRC_LENGTH)
-#define DMA_COM_SPI_TX_RX_16BIT_BURST_EVT       (1)
-#define DMA_COM_SPI_TX_RX_16BIT_TRANSFER_EVT    (DMA_COM_SPI_TX_RX_16BIT_FULL_LENGTH / DMA_COM_SPI_TX_RX_16BIT_BURST_EVT)
+#define DMA_COM_SPI_TX_16BIT_BURST_EVT          (1)
+#define DMA_COM_SPI_TX_16BIT_TRANSFER_EVT       (DMA_COM_SPI_TX_RX_16BIT_FULL_LENGTH / DMA_COM_SPI_TX_16BIT_BURST_EVT)
+#define DMA_COM_SPI_RX_16BIT_BURST_EVT          (1)
+#define DMA_COM_SPI_RX_16BIT_TRANSFER_EVT       (DMA_COM_SPI_TX_RX_16BIT_FULL_LENGTH / DMA_COM_SPI_RX_16BIT_BURST_EVT)
+#define DMA_COM_SPI_TX_16BIT_CONFIG             (DMA_CFG_ONESHOT_DISABLE | DMA_CFG_CONTINUOUS_DISABLE | DMA_CFG_SIZE_16BIT)
+#define DMA_COM_SPI_RX_16BIT_CONFIG             (DMA_CFG_ONESHOT_DISABLE | DMA_CFG_CONTINUOUS_ENABLE | DMA_CFG_SIZE_16BIT)
+#if ((DMA_COM_SPI_TX_16BIT_CONFIG & DMA_MODE_DATASIZE) == DMA_CFG_SIZE_16BIT)
+#define DMA_COM_SPI_TX_16BIT_INC_STEP           (1)
+#else
+#define DMA_COM_SPI_TX_16BIT_INC_STEP           (2)
+#endif
+#if ((DMA_COM_SPI_RX_16BIT_CONFIG & DMA_MODE_DATASIZE) == DMA_CFG_SIZE_16BIT)
+#define DMA_COM_SPI_RX_16BIT_INC_STEP           (1)
+#else
+#define DMA_COM_SPI_RX_16BIT_INC_STEP           (2)
+#endif
 //#define DMA_COM_SPI_TX_RX_16BIT_TRANSFER_EVT    ((DMA_COM_SPI_TX_RX_16BIT_LENGTH / DMA_COM_SPI_TX_RX_16BIT_BURST_EVT) + \
 //                                                (((DMA_COM_SPI_TX_RX_16BIT_LENGTH % DMA_COM_SPI_TX_RX_16BIT_BURST_EVT) != 0) ? \
 //                                                (1) : (0)))
@@ -324,9 +341,9 @@
  * @}
  */
 
-/******************************************************************************************************
-*                                               DRV Defines
-*******************************************************************************************************/
+/***********************************************************************
+ * DRV DEFINES
+ ***********************************************************************/
 /** @defgroup DRV_GPIO_pins - DRV GPIO pins configuration.
  *  @brief    Configure the pins necessaries for DRV selection \& fault status.
  * @{
@@ -349,9 +366,9 @@
  * @}
  */
 
-/******************************************************************************************************
-*                                             ADC defines
-*******************************************************************************************************/
+/***********************************************************************
+ * ADC DEFINES
+ ***********************************************************************/
 /** @defgroup ADC_global_defines
  *  @brief    Configure ADC subsystems.
  * @{
@@ -373,7 +390,7 @@
 #define DRV_CSA_GAIN_REG                        DRV_CSA_GAIN_10_V_V  // [V/V] Possible values: 5, 10, 20, 40
 #define DRV_CSA_GAIN_VAL                        (5 << DRV_CSA_GAIN_REG) // base gain
 
-#if (defined UOMODRI_CONFIG_ENABLE) && (!UOMODRI_CONFIG_ENABLE)
+#if (defined UOMODRI_USE_REV_1_0_CONFIG) && (!UOMODRI_USE_REV_1_0_CONFIG)
 #define R_SHUNT                                 (0.007f) // [Ohm]
 #define BRIDGE_DIVIDER                          ((4.99f + 82.0f) / 4.99f)
 #else
@@ -608,9 +625,9 @@
  * @}
  */
 
-/******************************************************************************************************
-*                                             PWM defines
-*******************************************************************************************************/
+/***********************************************************************
+ * PWM DEFINES
+ ***********************************************************************/
 /** @defgroup ePWM_Module address configuration.
  *  @brief    Define the address of all the ePWM used (2 motors).
  * @{
@@ -715,9 +732,9 @@
  * @}
  */
 
-/******************************************************************************************************
-*                                               Encoders Defines
-*******************************************************************************************************/
+/***********************************************************************
+ * ENCODER DEFINES
+ ***********************************************************************/
 /** @defgroup encoders IOs configuration.
  *  @brief    Configure the IO channels to connect the encoders.
  * @{
@@ -791,9 +808,9 @@
  * @}
  */
 
-/******************************************************************************************************
-*                                               Motors Defines
-*******************************************************************************************************/
+/***********************************************************************
+ * MOTORS DEFINES
+ ***********************************************************************/
 /*** Motor 1 constants ***/
 #define MOTOR1_KV                               (300.0f)     // Motor constant (rpm/V)
 #define MOTOR1_KE                               (0.0017f)    //1.0 / (MOTOR1_KV * FM_RPM2RAD * MOTOR1_POLES_PAIRS) // Motor back EMF constant (V/rad/s)
@@ -855,19 +872,22 @@
 #define VEXT_LPF_ONE_M_ALPHA                    (1.0 - VEXT_LPF_ALPHA)
 #define MOTOR12_IMAX                            (20.0f)
 
-/******************************************************************************************************
-*                                               Communication Defines
-*******************************************************************************************************/
+/***********************************************************************
+ * COMMUNICATION DEFINES
+ ***********************************************************************/
 /*** Communication constants ***/
 #define POSITION_LSB                            (5.960464477539063e-08f)                 // 2**(-24)
-#define VELOCITY_LSB                            (0.00048828125f * FM_RPM2RAD  * 1.0e-3f)// 2**(-11) // Added rad/s to krpm conversion
-#define VELOCITY_LSB_NATAN                      (0.00048828125 * 1000.0 * FM_RPM2RADPS)
-#define IQ_LSB                                  (0.0009765625f)                          // 2**(-10)
-#define CURRENT_SAT_LSB                         (0.125f)                                 // 2**(-3)
-#define RESISTANCE_LSB                          (3.0517578125e-05f)                      // 2**(-15)
-#define VOLTAGE_LSB                             (6.103515625e-05f)                       // 2**(-14)
-#define KP_LSB                                  (0.00048828125f)                         // 2**(-11)
-#define KD_LSB                                  (0.0009765625f)                          // 2**(-10)
+#if(1)
+#define VELOCITY_LSB                            (4.8828125e-04f)// 2**(-11) // Added rad/s to krpm conversion
+#else
+#define VELOCITY_LSB                            (0.00048828125f * FM_RPM2RAD * 1000.0f)
+#endif
+#define IQ_LSB                                  (9.765625e-04f)                         // 2**(-10)
+#define CURRENT_SAT_LSB                         (1.25e-01f)                             // 2**(-3)
+#define RESISTANCE_LSB                          (3.0517578125e-05f)                     // 2**(-15)
+#define VOLTAGE_LSB                             (6.103515625e-05f)                      // 2**(-14)
+#define KP_LSB                                  (4.8828125e-04f)                        // 2**(-11)
+#define KD_LSB                                  (9.765625e-04f)                         // 2**(-10)
 
 typedef struct __LOWPASSFILTER_STRUCT__
 {

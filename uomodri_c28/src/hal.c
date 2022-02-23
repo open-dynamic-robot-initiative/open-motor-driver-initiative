@@ -55,9 +55,9 @@ void HAL_ini(hal_cfg_t* p_hal)
         // Initialize SPI
         HAL_SPI_ini(p_hal->p_spiHandle);
         // enable DMA channels
-//        HAL_DMA_sync();
-        DMA_startChannel(DMA_COM_SPI_TX_BASE_ADDR);
-        DMA_startChannel(DMA_COM_SPI_RX_BASE_ADDR);
+        HAL_DMA_sync();
+//        DMA_startChannel(DMA_COM_SPI_TX_BASE_ADDR1);
+//        DMA_startChannel(DMA_COM_SPI_RX_BASE_ADDR1);
 
 #if (defined CLA_CORE_ENABLE) && (CLA_CORE_ENABLE)
         // Initialize CLA

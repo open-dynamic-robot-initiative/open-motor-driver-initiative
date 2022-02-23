@@ -168,7 +168,7 @@ static drv_reg_t        DrvRegList[] =
   .ctrl_reg_02.bit.OTW_REP      = true,                 // Over Temperature Warning will raise nFault
   .ctrl_reg_02.bit.DIS_GDF      = false,
   .ctrl_reg_02.bit.DIS_GDUV     = false,
-#if (defined UOMODRI_CONFIG_ENABLE) && (UOMODRI_CONFIG_ENABLE)
+#if (defined UOMODRI_USE_REV_1_0_CONFIG) && (UOMODRI_USE_REV_1_0_CONFIG)
   .ctrl_reg_02.bit.OCP_ACT      = true,
 #endif
   // Gate Drive HS register initialization (Address: 0x3)
@@ -197,7 +197,7 @@ static drv_reg_t        DrvRegList[] =
   .ctrl_reg_06.bit.VREF_DIV     = true,
   .ctrl_reg_06.bit.CSA_FET      = false,
   // Amplifier calibration calibration routine (Address: 0x7)
-#if (defined UOMODRI_CONFIG_ENABLE) && (UOMODRI_CONFIG_ENABLE)
+#if (defined UOMODRI_USE_REV_1_0_CONFIG) && (UOMODRI_USE_REV_1_0_CONFIG)
   .ctrl_reg_07.bit.CAL_MODE     = false,
 #endif
  },
@@ -211,7 +211,7 @@ static drv_reg_t        DrvRegList[] =
   .ctrl_reg_02.bit.OTW_REP      = true,                 // Over Temperature Warning will raise nFault
   .ctrl_reg_02.bit.DIS_GDF      = false,
   .ctrl_reg_02.bit.DIS_GDUV     = false,
-#if (defined UOMODRI_CONFIG_ENABLE) && (UOMODRI_CONFIG_ENABLE)
+#if (defined UOMODRI_USE_REV_1_0_CONFIG) && (UOMODRI_USE_REV_1_0_CONFIG)
   .ctrl_reg_02.bit.OCP_ACT      = true,
 #endif
   // Gate Drive HS register initialization (Address: 0x3)
@@ -239,7 +239,7 @@ static drv_reg_t        DrvRegList[] =
   .ctrl_reg_06.bit.VREF_DIV     = true,
   .ctrl_reg_06.bit.CSA_FET      = false,
   // Amplifier calibration calibration routine (Address: 0x7)
-#if (defined UOMODRI_CONFIG_ENABLE) && (UOMODRI_CONFIG_ENABLE)
+#if (defined UOMODRI_USE_REV_1_0_CONFIG) && (UOMODRI_USE_REV_1_0_CONFIG)
   .ctrl_reg_07.bit.CAL_MODE     = false,
 #endif
  },
