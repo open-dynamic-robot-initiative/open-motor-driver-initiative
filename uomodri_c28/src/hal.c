@@ -589,10 +589,7 @@ void HAL_DMA_ini(const dma_cfg_t* p_dmaCfg)
 //            DMA_enableInterrupt(dmaChBase);
             (p_dmaCfg->intEnable) ? (DMA_enableInterrupt(dmaChBase)) : (DMA_disableInterrupt(dmaChBase));
             /* Enable Trigger source */
-//            DMA_clearTriggerFlag(dmaChBase);
             DMA_enableTrigger(dmaChBase);
-//            if(dmaChBase == DMA_COM_SPI_RX_BASE_ADDR)
-//                DMA_startChannel(dmaChBase);
             dmaChBase = (++p_dmaCfg)->dmaChBase;
         }
     }

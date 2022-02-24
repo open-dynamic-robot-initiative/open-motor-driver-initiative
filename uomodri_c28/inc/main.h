@@ -65,7 +65,7 @@ float   thetaElec; // [pu]
 #pragma DATA_SECTION(cmd_msg, "ramgs0");
 mst2slv_msg_t   cmd_msg[2];
 #pragma DATA_SECTION(status_msg, "ramgs0");
-slv2mst_msg_t   status_msg[2];// =
+slv2mst_msg_t   status_msg;// =
 //{
 // {
 //  .status.bit.SE            = true,

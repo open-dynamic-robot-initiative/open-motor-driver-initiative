@@ -105,11 +105,11 @@ static const int_cfg_t InterruptList[] =
 //  .handler          = &ipc_isrMsgCmd,
 // },
 
-// {
-//  .intNum           = DMA_COM_SPI_RX_INT,
-//  .intAckGroup      = DMA_COM_SPI_RX_INT_ACK_GROUP,
-//  .p_intHandler     = &dma_isrCmdMsg,
-// },
+ {
+  .intNum           = DMA_COM_SPI_RX_INT,
+  .intAckGroup      = DMA_COM_SPI_RX_INT_ACK_GROUP,
+  .p_intHandler     = &dma_isrCmdMsg,
+ },
 
 // {
 //  .intNum           = COM_SPI_RX_INT,

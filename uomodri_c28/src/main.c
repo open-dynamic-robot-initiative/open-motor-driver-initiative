@@ -12,7 +12,8 @@
  * VARIABLES
  ***********************************************************************/
 mst2slv_msg_t*  p_cmdMsg[2]     = {&cmd_msg[0],     &cmd_msg[1]};
-slv2mst_msg_t*  p_statusMsg[2]  = {&status_msg[0],  &status_msg[1]};
+bool_t  cmdAvailable = false;
+//slv2mst_msg_t*  p_statusMsg[2]  = {&status_msg[0],  &status_msg[1]};
 
 /***********************************************************************
  * FUNCTIONS DECLARATION
@@ -47,60 +48,73 @@ void main(void)
     {
 //        if(HWREGH(DMA_COM_SPI_RX_BASE_ADDR1 + DMA_O_TRANSFER_COUNT) == 0)
 //        if(GPIO_ReadPin(COM_SPI_CS))
-        if(!(HWREGH(DMA_COM_SPI_RX_BASE_ADDR + DMA_O_CONTROL) & DMA_CONTROL_TRANSFERSTS))
+//        if(!(HWREGH(DMA_COM_SPI_RX_BASE_ADDR + DMA_O_CONTROL) & DMA_CONTROL_TRANSFERSTS))
+
+//        if(SPI_getRxFIFOStatus(COM_SPI_BASE))
+//        {
+//            static uint16_t* p_cmd  = (uint16_t *)&cmd_msg[CURRENT];
+//            static uint16_t i       = 0;
+//            while(SPI_getRxFIFOStatus(COM_SPI_BASE) && (i < 17))
+//            {
+//                *p_cmd = SPI_readDataNonBlocking(COM_SPI_BASE);
+//                i++;
+//                p_cmd++;
+//            }
+//            //            SPI_resetRxFIFO(COM_SPI_BASE);
+//            if(i >= 17)
+//            {
+//                i = 0;
+//                SPI_resetRxFIFO(COM_SPI_BASE);
+//                GPIO_writePin(DBG_PIN1, 1);
+//                com_MsgExtract(&cmd_msg[CURRENT], &cmd_uOmodri);
+//                GPIO_writePin(DBG_PIN1, 0);
+//            }
+//        }
+
+//        if(HWREGH(PIECTRL_BASE + PIE_O_ACK + (2U * ((DMA_COM_SPI_RX_INT & 0xFF00) >> 8U))) & (DMA_COM_SPI_RX_INT & 0x00FF))
+        if(cmdAvailable == true)//HWREGH(PIECTRL_BASE + PIE_O_IFR7) & 0x20)
+
+//        if((SPI_getRxFIFOStatus(COM_SPI_BASE)) == SPI_FIFO_RXFULL)// && GPIO_ReadPin(COM_SPI_CS)) // == SPI_FIFO_RXFULL)
         {
-//            GPIO_writePin(DBG_PIN1, 1);
-            com_MsgExtract(p_cmdMsg[CURRENT], &cmd_uOmodri);
+//            uint16_t* p_cmd = (uint16_t *)&cmd_msg[CURRENT];//p_statusMsg[NEXT];
+//            uint16_t i      = 0;
+//            for(i = 0; i < 17; i++)
+//            {
+//                *p_cmd = SPI_readDataBlockingNonFIFO(COM_SPI_BASE);
+//                p_cmd++;
+//            }
+//            SPI_resetRxFIFO(COM_SPI_BASE);
+            GPIO_writePin(DBG_PIN1, 1);
+//            HWREGH(PIECTRL_BASE + PIE_O_IFR7) & ~(0x20);
+//            Interrupt_clearACKGroup(INTERRUPT_ACK_GROUP7);//DMA_COM_SPI_RX_INT_ACK_GROUP);
+            com_MsgExtract(&cmd_msg[CURRENT], &cmd_uOmodri);
 //            while(GPIO_ReadPin(COM_SPI_CS) == 0);
             //HWREGH(DMA_COM_SPI_RX_BASE_ADDR1 + DMA_O_CONTROL) |= DMA_CONTROL_SOFTRESET; /* Reset DMA associated with COM SPI Tx */
             DMA_configDestAddress(DMA_COM_SPI_RX_BASE_ADDR, (mst2slv_msg_t *)p_cmdMsg[NEXT]);
 //            HWREGH(DMA_COM_SPI_RX_BASE_ADDR1 + DMA_O_CONTROL) |= DMA_CONTROL_RUN;
             ptr_swap((int32_t**)&p_cmdMsg[CURRENT], (int32_t**)&p_cmdMsg[NEXT]);
-//            GPIO_writePin(DBG_PIN1, 0);
+            cmdAvailable = false;
+            GPIO_writePin(DBG_PIN1, 0);
         }
 
 //        if((motor[MOTOR_2].interruptDone))// && (!(HWREGH(DMA_COM_SPI_TX_BASE_ADDR1 + DMA_O_CONTROL) & DMA_CONTROL_TRANSFERSTS)))
 
-        if(motor[MOTOR_2].interruptDone)// && GPIO_readPin(COM_SPI_CS))// && (!(HWREGH(DMA_COM_SPI_TX_BASE_ADDR1 + DMA_O_CONTROL) & DMA_CONTROL_TRANSFERSTS)))
+        if(motor[MOTOR_2].interruptDone)
         {
-            uint16_t i = 0;
-            uint16_t* p_status = (uint16_t *)p_statusMsg[NEXT];
+            uint16_t* p_status  = (uint16_t *)&status_msg;//p_statusMsg[NEXT];
+            uint16_t i          = 0;
 
-
-
-            com_MsgCreate(&motor_foc[MOTOR_1], &cmd_uOmodri, p_statusMsg[NEXT]);
-            com_MsgCreate(&motor_foc[MOTOR_2], &cmd_uOmodri, p_statusMsg[NEXT]);
+            com_MsgCreate(&motor_foc[MOTOR_1], &cmd_uOmodri, &status_msg);//p_statusMsg[NEXT]);
+            com_MsgCreate(&motor_foc[MOTOR_2], &cmd_uOmodri, &status_msg);//p_statusMsg[NEXT]);
 
             if(GPIO_ReadPin(COM_SPI_CS))
             {
                 SPI_writeDataNonBlocking(COM_SPI_BASE, (uint16_t ) *p_status++);
-//                HWREGH(COM_SPI_BASE + SPI_O_DAT) = (uint16_t ) *p_status++;
                 SPI_resetTxFIFO(COM_SPI_BASE);
-//                HWREGH(COM_SPI_BASE + SPI_O_FFTX) &= ~SPI_FFTX_TXFIFO;         /* Force reset on SPI FIFO Tx pointer */
-//                HWREGH(COM_SPI_BASE + SPI_O_FFTX) |= SPI_FFTX_TXFIFO;          /* Enable SPI FIFO Tx pointer */
-//                HWREGH(COM_SPI_BASE + SPI_O_FFTX) &= ~SPI_FFTX_SPIRST;
-//                HWREGH(COM_SPI_BASE + SPI_O_FFTX) |= SPI_FFTX_SPIRST;
-//                GPIO_writePin(DBG_PIN1, (!(HWREGB(COM_SPI_BASE + SPI_O_FFTX) & SPI_FFTX_TXFFST_S)));
-
                 for(i = 0; i < 16; i++)
                     SPI_writeDataBlockingFIFO(COM_SPI_BASE, (uint16_t) *p_status++);
-//                    HWREGH(COM_SPI_BASE + SPI_O_TXBUF) = (uint16_t) *p_status++;
-
-//                GPIO_writePin(DBG_PIN1, 0);
             }
-
-//            while(GPIO_ReadPin(COM_SPI_CS) == 0);
-            //if(!(HWREGH(DMA_COM_SPI_TX_BASE_ADDR + DMA_O_CONTROL) & DMA_CONTROL_TRANSFERSTS))
-//            if(!(HWREGH(DMA_COM_SPI_TX_BASE_ADDR + DMA_O_CONTROL) & DMA_CONTROL_RUNSTS) && GPIO_ReadPin(COM_SPI_CS))
-//            {
-//                //HWREGH(DMA_COM_SPI_TX_BASE_ADDR1 + DMA_O_CONTROL) |= DMA_CONTROL_SOFTRESET; /* Reset DMA associated with COM SPI Tx */
-//                DMA_configSourceAddress(DMA_COM_SPI_TX_BASE_ADDR, (slv2mst_msg_t *)p_statusMsg[NEXT]);
-//                HWREGH(DMA_COM_SPI_TX_BASE_ADDR + DMA_O_CONTROL) |= DMA_CONTROL_RUN;
-//                ptr_swap((int32_t**)&p_statusMsg[CURRENT], (int32_t**)&p_statusMsg[NEXT]);
-//            }
-            GPIO_togglePin(DBG_PIN1);//writePin(DBG_PIN1, 0);
             motor[MOTOR_2].interruptDone = false;
-//            GPIO_writePin(DBG_PIN1, 0);
         }
     }
 }
@@ -228,7 +242,7 @@ __attribute__((interrupt)) void adc_isrMotor1(void)
     //-------------------------------------------------------------------//
     //                   Transmit structure functions                    //
     //-------------------------------------------------------------------//
-    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_FLAG0, IPC_ADDR_CORRECTION_ENABLE, IPC_CMD_M1, (uint32_t)(p_foc), 1);
+//    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_FLAG0, IPC_ADDR_CORRECTION_ENABLE, IPC_CMD_M1, (uint32_t)(p_foc), 1);
     motor[MOTOR_1].interruptDone = true;
     // Clear the interrupt overflow flag
     ADC_clearInterruptOverflowStatus(MOTOR12_IVA_ADC_ADDR, MOTOR1_IA_INT_NUM);
@@ -317,7 +331,7 @@ __attribute__((interrupt)) void adc_isrMotor2(void)
     //-------------------------------------------------------------------//
     //                   Transmit structure functions                    //
     //-------------------------------------------------------------------//
-    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_FLAG0, IPC_ADDR_CORRECTION_ENABLE, IPC_CMD_M2, (uint32_t)(p_foc), 1);
+//    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_FLAG0, IPC_ADDR_CORRECTION_ENABLE, IPC_CMD_M2, (uint32_t)(p_foc), 1);
     motor[MOTOR_2].interruptDone = true;
     // Clear the interrupt overflow flag
     ADC_clearInterruptOverflowStatus(MOTOR12_IVA_ADC_ADDR, MOTOR2_IA_INT_NUM);
@@ -338,7 +352,7 @@ __attribute__((interrupt)) void dma_isrCmdMsg(void)
 #if (defined UOMODRI_USE_REV_1_0_CONFIG) && (!UOMODRI_USE_REV_1_0_CONFIG)
     GPIO_writePin(DEBUG_INT_PIN2, 1);
 #endif
-    com_MsgExtract(p_cmdMsg[CURRENT], &cmd_uOmodri);
+//    com_MsgExtract(p_cmdMsg[CURRENT], &cmd_uOmodri);
 //    com_MsgCreate(&motor_foc[MOTOR_1], &cmd_uOmodri, p_statusMsg[CURRENT]);
 //    com_MsgCreate(&motor_foc[MOTOR_2], &cmd_uOmodri, p_statusMsg[CURRENT]);
 #if (defined UOMODRI_DEBUG_MASTER_BOARD_ENABLE) && (UOMODRI_DEBUG_MASTER_BOARD_ENABLE)
@@ -373,6 +387,7 @@ __attribute__((interrupt)) void dma_isrCmdMsg(void)
 //        DMA_configDestAddress(DMA_COM_SPI_RX_BASE_ADDR, p_cmdMsg[NEXT]);
 //        ptr_swap((int32_t**)&p_cmdMsg[CURRENT], (int32_t**)&p_cmdMsg[NEXT]);
 //    }
+    cmdAvailable = true;
     // Clear the interrupt flag
     Interrupt_clearACKGroup(DMA_COM_SPI_RX_INT_ACK_GROUP);
 

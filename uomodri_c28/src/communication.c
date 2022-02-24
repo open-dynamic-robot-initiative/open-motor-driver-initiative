@@ -7,10 +7,10 @@
  * FUNCTIONS DEFINITIONS
  ***********************************************************************/
 /**
- * @brief       Master to slave message extraction to be performed by motor_foc
- * @param[in]   p_msg   Pointer on the message received from Master board
- * @param[out]  p_cmd   Pointer on the command structure (actions to be realized by motor_foc)
- * @return      Is message received from Master board valid or not ?
+ * @brief           Master to slave message extraction to be performed by motor_foc
+ * @param[in]       p_msg   Pointer on the message received from Master board
+ * @param[out]      p_cmd   Pointer on the command structure (actions to be realized by motor_foc)
+ * @return          Is message received from Master board valid or not ?
  */
 bool_t com_MsgExtract(mst2slv_msg_t* p_msg, cmd_uomodri_t* p_cmd)
 {
@@ -48,10 +48,10 @@ bool_t com_MsgExtract(mst2slv_msg_t* p_msg, cmd_uomodri_t* p_cmd)
 }
 
 /**
- * @brief       Slave to Master message creation/update using motor_foc data structure.
- * @param[in]   p_foc   Pointer on data structure array used for motor control.
- * @param[in]   p_cmd   Pointer on the command structure (actions to be realized by motor_foc)
- * @param[out]  p_msg   Pointer on the message to transmit tothe Master board
+ * @brief           Slave to Master message creation/update using motor_foc data structure.
+ * @param[in]       p_foc   Pointer on data structure array used for motor control.
+ * @param[in]       p_cmd   Pointer on the command structure (actions to be realized by motor_foc)
+ * @param[inout]    p_msg   Pointer on the message to transmit to the Master board
  * @return      Is message fully created/updated using motor_1 \& motor_2 data structure.
  */
 bool_t com_MsgCreate(foc_t* p_foc, cmd_uomodri_t* p_cmd, slv2mst_msg_t* p_msg)
@@ -100,7 +100,21 @@ bool_t com_MsgCreate(foc_t* p_foc, cmd_uomodri_t* p_cmd, slv2mst_msg_t* p_msg)
 }
 
 /**
- * @brief       Software cyclic redundancy check (CRC)..
+ * @brief           Compute cyclic redundancy check (CRC) and add result to the Slave to Master message .
+ * @param[inout]    p_msg   Pointer on the message to transmit to the Master board
+ */
+//void com_MsgCrc32(slv2mst_msg_t* p_msg)
+//{
+//    // Compute CRC
+//    uint32_t crc = com_crc32((uint16_t *)p_msg, DMA_COM_SPI_TX_RX_16BIT_PAYLOAD_LENGTH);
+//    p_msg->crc.u16_msb  = LSB_32(crc);// required for Solo
+//    p_msg->crc.u16_lsb  = MSB_32(crc);
+//
+//    return;
+//}
+
+/**
+ * @brief       Software cyclic redundancy check (CRC).
  * @param[in]   p_buf   Pointer on the array to be CRCed.
  * @param[in]   len     Length of the array
  * @return

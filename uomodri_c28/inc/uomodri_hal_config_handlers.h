@@ -18,7 +18,7 @@
 //__attribute__((interrupt)) void ipc_isrMsgCmd(void);
 
 extern mst2slv_msg_t    cmd_msg[2];
-extern slv2mst_msg_t    status_msg[2];
+extern slv2mst_msg_t    status_msg;//[2];
 extern uint16_t         led_msg[6];
 
 //extern status_msg_t*    p_crStatusMsgAddr;
@@ -309,7 +309,7 @@ static const dma_cfg_t  dmaCfgList[] =
   .config               = DMA_COM_SPI_RX_16BIT_CONFIG,
   .trigger              = DMA_COM_SPI_RX_TRIGGER_SRC,
   .intMode              = DMA_INT_AT_END,
-  .intEnable            = false,//false,//
+  .intEnable            = true,//false,
  },
 #if (defined UOMODRI_USE_REV_1_0_CONFIG) && (!UOMODRI_USE_REV_1_0_CONFIG)
  {
