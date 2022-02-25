@@ -17,7 +17,7 @@
 //__attribute__((interrupt)) void ipc_isrStatusMsg(void);
 //__attribute__((interrupt)) void ipc_isrMsgCmd(void);
 
-extern mst2slv_msg_t    cmd_msg[2];
+extern mst2slv_msg_t    cmd_msg;//[2];
 extern slv2mst_msg_t    status_msg;//[2];
 extern uint16_t         led_msg[6];
 
@@ -294,23 +294,23 @@ static const dma_cfg_t  dmaCfgList[] =
 //  .intEnable            = false,
 // },
  // DMA for SPI communication Rx
- {
-  .dmaChBase            = DMA_COM_SPI_RX_BASE_ADDR,
-  .p_dstAddr            = (uint16_t *) &cmd_msg[0],//p_crCmdMsgAddr,//
-  .p_srcAddr            = (uint16_t *) COM_SPI_RX_BASE_REG_ADDR,
-  .burstSize            = DMA_COM_SPI_RX_16BIT_BURST_EVT,
-  .transferSize         = DMA_COM_SPI_RX_16BIT_TRANSFER_EVT,
-  .dstWrapSize          = DMA_NO_WRAP,
-  .srcWrapSize          = DMA_NO_WRAP,//DMA_COM_SPI_TX_RX_TRANSFER_EVT,//
-  .dstStep              = DMA_COM_SPI_RX_16BIT_INC_STEP,
-  .srcStep              = 0,
-  .dstWrapStep          = 0,//-(DMA_COM_SPI_TX_RX_TRANSFER_EVT - 1),//
-  .srcWrapStep          = 0,
-  .config               = DMA_COM_SPI_RX_16BIT_CONFIG,
-  .trigger              = DMA_COM_SPI_RX_TRIGGER_SRC,
-  .intMode              = DMA_INT_AT_END,
-  .intEnable            = true,//false,
- },
+// {
+//  .dmaChBase            = DMA_COM_SPI_RX_BASE_ADDR,
+//  .p_dstAddr            = (uint16_t *) &cmd_msg[0],//p_crCmdMsgAddr,//
+//  .p_srcAddr            = (uint16_t *) COM_SPI_RX_BASE_REG_ADDR,
+//  .burstSize            = DMA_COM_SPI_RX_16BIT_BURST_EVT,
+//  .transferSize         = DMA_COM_SPI_RX_16BIT_TRANSFER_EVT,
+//  .dstWrapSize          = DMA_NO_WRAP,
+//  .srcWrapSize          = DMA_NO_WRAP,//DMA_COM_SPI_TX_RX_TRANSFER_EVT,//
+//  .dstStep              = DMA_COM_SPI_RX_16BIT_INC_STEP,
+//  .srcStep              = 0,
+//  .dstWrapStep          = 0,//-(DMA_COM_SPI_TX_RX_TRANSFER_EVT - 1),//
+//  .srcWrapStep          = 0,
+//  .config               = DMA_COM_SPI_RX_16BIT_CONFIG,
+//  .trigger              = DMA_COM_SPI_RX_TRIGGER_SRC,
+//  .intMode              = DMA_INT_AT_END,
+//  .intEnable            = true,//false,
+// },
 #if (defined UOMODRI_USE_REV_1_0_CONFIG) && (!UOMODRI_USE_REV_1_0_CONFIG)
  {
   .dmaChBase            = DMA_MST_SPI_TX_BASE_ADDR,

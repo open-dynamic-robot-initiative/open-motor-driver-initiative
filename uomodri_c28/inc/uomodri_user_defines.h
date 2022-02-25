@@ -875,6 +875,10 @@
 /***********************************************************************
  * COMMUNICATION DEFINES
  ***********************************************************************/
+#define COM_MSG_TX_RX_8BIT_LENGTH               (34)
+#define COM_MSG_TX_RX_16BIT_FULL_LENGTH         (COM_MSG_TX_RX_8BIT_LENGTH / 2)
+#define COM_MSG_TX_RX_16BIT_CRC_LENGTH          (2)
+#define COM_MSG_TX_RX_16BIT_PAYLOAD_LENGTH      (COM_MSG_TX_RX_16BIT_FULL_LENGTH - COM_MSG_TX_RX_16BIT_CRC_LENGTH)
 /*** Communication constants ***/
 #define POSITION_LSB                            (5.960464477539063e-08f)                 // 2**(-24)
 #if(1)
