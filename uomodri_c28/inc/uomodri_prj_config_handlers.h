@@ -38,8 +38,8 @@ extern cmd_uomodri_t cmd_uOmodri;
 
 //__attribute__((interrupt)) void ipc_isrStatusMsg(void);
 //__attribute__((interrupt)) void ipc_isrMsgCmd(void);
-__attribute__((interrupt)) void dma_isrCmdMsg(void);
-__attribute__((interrupt)) void cpu_isrTimer0(void);
+//__attribute__((interrupt)) void dma_isrCmdMsg(void);
+//__attribute__((interrupt)) void cpu_isrTimer0(void);
 //__attribute__((interrupt)) void spi_isrRx(void);
 //__attribute__((interrupt)) void dma5_isr(void);
 __attribute__((interrupt)) void adc_isrMotor1(void);
@@ -126,11 +126,11 @@ static const int_cfg_t InterruptList[] =
   .intAckGroup      = MOTOR2_DRV_GPIO_NFAULT_INT_ACK_GROUP,
   .p_intHandler     = &gpio_isrFaultMotor2,
  },
- {
-  .intNum           = CPU_TIMER_0_INT,
-  .intAckGroup      = CPU_TIMER_0_INT_ACK_GROUP,
-  .p_intHandler     = &cpu_isrTimer0,
- },
+// {
+//  .intNum           = CPU_TIMER_0_INT,
+//  .intAckGroup      = CPU_TIMER_0_INT_ACK_GROUP,
+//  .p_intHandler     = &cpu_isrTimer0,
+// },
 #if (defined CLA_CORE_ENABLE) && (CLA_CORE_ENABLE)
  {
   .intNum           = INT_CLA1_1,

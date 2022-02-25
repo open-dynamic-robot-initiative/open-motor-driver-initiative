@@ -1,8 +1,9 @@
 #ifndef __UOMODRI_HAL_CONFIG_HANDLERS_H__
 #define __UOMODRI_HAL_CONFIG_HANDLERS_H__
 
-// drivers
-//#include "communication_interface.h"
+/***********************************************************************
+ * INCLUDE FILES
+ ***********************************************************************/
 #include "f2838x_device.h"
 #include "f2838x_examples.h"
 #include "driverlib.h"
@@ -11,24 +12,17 @@
 #include "hal.h"
 #include "communication.h"
 #include "uomodri_user_defines.h"
-//#include "uOmodriClaTasksShare.h"
 
-//__attribute__((interrupt)) void ipc_isrComInter(void);
-//__attribute__((interrupt)) void ipc_isrStatusMsg(void);
-//__attribute__((interrupt)) void ipc_isrMsgCmd(void);
-
-extern mst2slv_msg_t    cmd_msg;//[2];
-extern slv2mst_msg_t    status_msg;//[2];
+/***********************************************************************
+ * VARIABLE DECLARATION
+ ***********************************************************************/
+extern mst2slv_msg_t    cmd_msg;
+extern slv2mst_msg_t    status_msg;
 extern uint16_t         led_msg[6];
-
-//extern status_msg_t*    p_crStatusMsgAddr;
-//extern status_msg_t*    p_nxStatusMsgAddr;
 #if (defined UOMODRI_USE_REV_1_0_CONFIG) && (!UOMODRI_USE_REV_1_0_CONFIG)
-extern cmd_msg_t    cmd_Master_msg;
-extern status_msg_t status_Master_msg;
+extern mst2slv_msg_t    cmd_master_msg;
+extern slv2mst_msg_t    status_master_msg;
 #endif
-//extern rx_msg_t __attribute__((section (".ComRxCmdSection"))) com_rx_raw;
-//extern const void* p_msgComInter;
 
 /** @var    GPIO_TypeDef GpioPinsCfgList[]
  *  @brief  List all the GPIO definitions except the analog pins.
@@ -64,7 +58,7 @@ static const gpio_cfg_t GpioPinsCfgList[] =
 // {.pinNumber = COM_SPI_SOMI,            .fctMux = COM_SPI_SOMI_CFG,             .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_IN, .samplingInMode = GPIO_QUAL_3SAMPLE,  .setValue = 0,  .intEnable = false},
 // {.pinNumber = COM_SPI_CLK,             .fctMux = COM_SPI_CLK_CFG,              .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_OUT,  .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 1,  .intEnable = false},
 // {.pinNumber = COM_SPI_CS,              .fctMux = COM_SPI_CS_CFG,               .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_OUT,  .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 1,  .intEnable = false},
- #endif
+#endif
  {.pinNumber = DBG_PIN1,                .fctMux = DBG_PIN1_CFG,                 .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0,  .intEnable = false},
  // SPID pins : RGB LED CONTROL
  {.pinNumber = LED_SPI_SIMO,            .fctMux = LED_SPI_SIMO_CFG,             .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 1,  .intEnable = false},
@@ -85,10 +79,6 @@ static const gpio_cfg_t GpioPinsCfgList[] =
  {.pinNumber = COM_SPI_SOMI,            .fctMux = COM_SPI_SOMI_CFG,             .pinType = GPIO_PIN_TYPE_PULLUP,.coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 1,  .intEnable = false},
  {.pinNumber = COM_SPI_CLK,             .fctMux = COM_SPI_CLK_CFG,              .pinType = GPIO_PIN_TYPE_PULLUP,.coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_IN,  .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 1,  .intEnable = false},
  {.pinNumber = COM_SPI_CS,              .fctMux = COM_SPI_CS_CFG,               .pinType = GPIO_PIN_TYPE_PULLUP,.coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_IN,  .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 1,  .intEnable = false},
-// {.pinNumber = MST_SPI_SIMO,            .fctMux = MST_SPI_SIMO_CFG,             .pinType = GPIO_PIN_TYPE_PULLUP,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_IN, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 1,  .intEnable = false},
-// {.pinNumber = MST_SPI_SOMI,            .fctMux = MST_SPI_SOMI_CFG,             .pinType = GPIO_PIN_TYPE_PULLUP,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_OUT,  .samplingInMode = GPIO_QUAL_ASYNC,.setValue = 1,  .intEnable = false},
-// {.pinNumber = MST_SPI_CLK,             .fctMux = MST_SPI_CLK_CFG,              .pinType = GPIO_PIN_TYPE_PULLUP,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_IN, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 1,  .intEnable = false},
-// {.pinNumber = MST_SPI_CS,              .fctMux = MST_SPI_CS_CFG,               .pinType = GPIO_PIN_TYPE_PULLUP,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_IN, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 1,  .intEnable = false},
  // DRV1 pins
  {.pinNumber = MOTOR1_DRV_GPIO_EN,      .fctMux = MOTOR1_DRV_GPIO_EN_CFG,       .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0,  .intEnable = false},
  {.pinNumber = MOTOR1_PWM1_CHA,         .fctMux = MOTOR1_PWM1_CHA_CFG,          .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0,  .intEnable = false},
@@ -346,23 +336,23 @@ static const dma_cfg_t  dmaCfgList[] =
 //},
 #endif
  // DMA for the RGB LED
- {
-  .dmaChBase            = DMA_LED_SPI_TX_BASE_ADDR,
-  .p_dstAddr            = (uint16_t *) LED_SPI_TX_BASE_REG_ADDR,
-  .p_srcAddr            = (uint16_t *) &led_msg[0],
-  .burstSize            = DMA_LED_SPI_TX_16BIT_BURST_EVT,
-  .transferSize         = DMA_LED_SPI_TX_16BIT_TRANSFER_EVT,
-  .dstWrapSize          = DMA_NO_WRAP,//0,//
-  .srcWrapSize          = DMA_NO_WRAP,//DMA_COM_SPI_TX_RX_TRANSFER_EVT,//
-  .dstStep              = 0,
-  .srcStep              = DMA_COM_SPI_TX_16BIT_INC_STEP,
-  .dstWrapStep          = 0,
-  .srcWrapStep          = 0,//-(DMA_COM_SPI_TX_RX_TRANSFER_EVT - 1),//
-  .config               = DMA_LED_SPI_TX_16BIT_CONFIG,
-  .trigger              = DMA_LED_SPI_TX_TRIGGER_SRC,
-  .intMode              = DMA_INT_AT_END,
-  .intEnable            = false,
- },
+// {
+//  .dmaChBase            = DMA_LED_SPI_TX_BASE_ADDR,
+//  .p_dstAddr            = (uint16_t *) LED_SPI_TX_BASE_REG_ADDR,
+//  .p_srcAddr            = (uint16_t *) &led_msg[0],
+//  .burstSize            = DMA_LED_SPI_TX_16BIT_BURST_EVT,
+//  .transferSize         = DMA_LED_SPI_TX_16BIT_TRANSFER_EVT,
+//  .dstWrapSize          = DMA_NO_WRAP,//0,//
+//  .srcWrapSize          = DMA_NO_WRAP,//DMA_COM_SPI_TX_RX_TRANSFER_EVT,//
+//  .dstStep              = 0,
+//  .srcStep              = DMA_COM_SPI_TX_16BIT_INC_STEP,
+//  .dstWrapStep          = 0,
+//  .srcWrapStep          = 0,//-(DMA_COM_SPI_TX_RX_TRANSFER_EVT - 1),//
+//  .config               = DMA_LED_SPI_TX_16BIT_CONFIG,
+//  .trigger              = DMA_LED_SPI_TX_TRIGGER_SRC,
+//  .intMode              = DMA_INT_AT_END,
+//  .intEnable            = false,
+// },
  // END OF ARRAY
  {.dmaChBase            = UINT32_MAX},
 };
@@ -371,7 +361,6 @@ static const ipc_cfg_t  ipcCfgList[] =
 {
  {
   .ipcType              = IPC_CPU1_L_CM_R,
-//  .ipcBase              = IPC_CPUXTOCM_BASE,
   .ipcFlag              = IPC_FLAG0,
   .ipcMsgQEnable        = false,
   .ipcIntEnable         = false,
@@ -387,50 +376,11 @@ static const tmr_cfg_t  timerCfgList[] =
   .cpuTimerBase         = CPU_TIMER_0_BASE,
   .periodCount          = CPU_TIMER_0_PERIOD,
   .prescaler            = CPU_TIMER_0_PRESCALER,
-  .intEnable            = true,
+  .intEnable            = false,
  },
  // END OF ARRAY
  {.cpuTimerBase         = UINT32_MAX},
 };
-
-//static const IPC_TypeDef ipcCfgList[] =
-//{
-// {
-//  .ipcType          = IPC_CPU1_L_CM_R,
-//  .p_ipcMsgQ        = NULL,
-//  .ipcIntMsgQL      = 0,
-//  .ipcIntMsgQR      = 0,
-//  .ipcFlag          = IPC_FLAG0,
-//  .ipcInt           = IPC_INT0,
-//  .p_ipcIntHandler  = &ipc_isrStatusMsg,
-//  .ipcMsgQEnable    = false,
-//  .ipcIntEnable     = true,
-// },
-// {
-//  .ipcType          = IPC_CPU1_L_CM_R,
-//  .p_ipcMsgQ        = NULL,
-//  .ipcIntMsgQL      = 0,
-//  .ipcIntMsgQR      = 0,
-//  .ipcFlag          = IPC_FLAG1,
-//  .ipcInt           = IPC_INT1,
-//  .p_ipcIntHandler  = &ipc_isrMsgCmd,
-//  .ipcMsgQEnable    = false,
-//  .ipcIntEnable     = true,
-// },
-//// {
-////  .ipcType          = IPC_CPU1_L_CM_R,
-////  .p_ipcMsgQ        = NULL,
-////  .ipcIntMsgQL      = 0,
-////  .ipcIntMsgQR      = 0,
-////  .ipcFlag          = IPC_FLAG0,
-////  .ipcInt           = 0,
-////  .p_ipcIntHandler  = NULL,
-////  .ipcMsgQEnable    = false,
-////  .ipcIntEnable     = false,
-//// },
-//// {.ipcType  = IPC_CM_L_CPU1_R, .ipcbase = IPC_CPU1_L_CM_R, .ipcFlag   = IPC_FLAG31, .msgQueueEnable   = false},
-// {.ipcType = IPC_TOTAL_NUM},
-//};
 
 #if (defined CLA_CORE_ENABLE) && (CLA_CORE_ENABLE)
 static const CLA_TypeDef claCfgList[] =

@@ -159,65 +159,9 @@ static const uint16_t ws2812_color_table_r_justified[256][2] =
 // 0x00DB6D24, 0x00DB6D26, 0x00DB6D34, 0x00DB6D36, 0x00DB6DA4, 0x00DB6DA6, 0x00DB6DB4, 0x00DB6DB6,
 //};
 
-
-
-//#ifndef NUM_LEDS
-//#define NUM_LEDS 8
-//#endif
-
-// This structure is used for indicating what the colors of each LED should be set to.
-// There is a 32bit value for each LED. Only the lower 3 bytes are used and they hold the
-// Red (byte 2), Green (byte 1), and Blue (byte 0) values to be set.
-//struct led_state {
-//    uint32_t leds[NUM_LEDS];
-//};
-
-// Setup the hardware peripheral. Only call this once.
-//void ws2812_control_init(void);
-
-// Update the LEDs to the new state. Call as needed.
-// This function will block the current task until the RMT peripheral is finished sending
-// the entire sequence.
-//void ws2812_write_leds(struct led_state new_state);
-
-
-/***********************************************************************
- * COMMUNICATION FIELDS
- ***********************************************************************/
-/**
- * @struct  mst2slv_reg_t
- * @brief   Master to Slave command structure (bits definition) for uOmodri
- */
-//typedef struct __led_array_t__
-//{
-//    uint32_t    LSB_8BITS           : 8;
-//    uint32_t    WORD_16BITS         : 16;
-//    uint32_t    MSB_8BITS           : 8;
-//    uint16_t        TIMEOUT     : 8;    /*!< Bits 7-0   : R/W - Timeout disable system after no valid command in milliseconds           */
-//    uint16_t        CMD_RSV1    : 2;    /*!< Bits 9-8   : R/W - Reserved                                                                */
-//    uint16_t        EI2OC       : 1;    /*!< Bits 10    : R/W - Enable/Disable incremental encoder index offset compensation - MOTOR_2  */
-//    uint16_t        EI1OC       : 1;    /*!< Bits 11    : R/W - Enable/Disable incremental encoder index offset compensation - MOTOR_1  */
-//    uint16_t        EPRE        : 1;    /*!< Bits 12    : R/W - Enable/Disable position rollover error - position range : -128 to +128  */
-//    uint16_t        EM2         : 1;    /*!< Bits 13    : R/W - Enable(calibration procedure, alignment \& run)/Disable - MOTOR_2       */
-//    uint16_t        EM1         : 1;    /*!< Bits 14    : R/W - Enable(calibration procedure, alignment \& run)/Disable - MOTOR_1       */
-//    uint16_t        ES          : 1;    /*!< Bits 15    : R/W - Enable/Disable System                                                   */
-//} led_array_t;
-
-/**
- * @union   mst2slv_reg_u
- * @brief   Master to Slave command union (bits definition) for uOmodri. Access to bit field.
- */
-//typedef union __led_array_u__
-//{
-//    uint32_t        all;                /*!< Short (16bits) type access */
-//    led_array_t     bit;                /*!< @see command_mode_t        */
-//} led_array_u;
-
 /***********************************************************************
  * FUNCTIONS DECLARATION
  ***********************************************************************/
-//void ws2812b_writeLed(uint8_t, uint8_t, uint8_t, uint8_t*);
 void ws2812b_writeLed(uint16_t, uint16_t, uint16_t, uint16_t*);
-//void DRV_writeAll(drv8353_t*);
 
 #endif /* __WS2812B_H__ */

@@ -6,13 +6,7 @@
 /***********************************************************************
  * FUNCTIONS DECLARATION
  ***********************************************************************/
-//static bool DRV_Enable(drv8353_t*);
-//static bool DRV_SetConfig(drv8353_t*);
-//static void DRV_Calibration(drv8353_t*);
-//uint16_t    DRV_readOne(drv8353_t*, DRV_Address_e);
-//void        DRV_writeOne(drv8353_t*, DRV_Address_e, uint16_t);
 
-//struct led_state ws_led;
 /***********************************************************************
  * FUNCTIONS DEFINITIONS
  ***********************************************************************/
@@ -20,28 +14,6 @@
  * @brief       Start \& configure the DRV ICs.
  * @param[in]   *p_drv      Pointer on the DRV definition structure
  */
-//void LED_ini(void)
-//{
-//
-//
-//    if((p_drv != NULL) && (p_drv->p_drvCfgHandler != NULL) && (p_drv->p_drvRegHandler != NULL))
-//    {
-//        DRV_Enable(p_drv);
-//        if(DRV_SetConfig(p_drv))
-//            DRV_Calibration(p_drv);
-//    }
-//
-//    return;
-//}
-
-//void ws2812_control_init(void); //init the LEDs
-//void set_all_leds(0x0f0f0f);
-//
-//ws2812_write_leds(ws_led);
-//
-//#define BITS_PER_LED_CMD 24
-//#define LED_BUFFER_ITEMS ((NUM_LEDS * BITS_PER_LED_CMD))
-
 void ws2812b_writeLed(uint16_t red, uint16_t green, uint16_t blue, uint16_t* p_led_colors)
 {
     *p_led_colors++ = 0x0000;

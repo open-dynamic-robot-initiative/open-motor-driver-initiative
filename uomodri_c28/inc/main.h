@@ -163,7 +163,7 @@ extern hal_cfg_t    hal;
 /***********************************************************************
  * FUNCTIONS DECLARATION
  ***********************************************************************/
-__attribute__((interrupt)) void dma_isrCmdMsg(void);
+//__attribute__((interrupt)) void dma_isrCmdMsg(void);
 __attribute__((interrupt)) void adc_isrMotor1(void);
 __attribute__((interrupt)) void adc_isrMotor2(void);
 __attribute__((interrupt)) void gpio_isrFaultMotor1(void);

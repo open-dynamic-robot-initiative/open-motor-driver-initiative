@@ -21,7 +21,6 @@ void HAL_DMA_ini(const dma_cfg_t*);
 void HAL_DMA_sync(void);
 #if (defined CM_CORE_ENABLE) && (CM_CORE_ENABLE)
 void HAL_IPC_ini(const ipc_cfg_t*);
-void* HAL_IPC_addr_ini(const ipc_cfg_t*, uint32_t);
 #endif
 #if (defined CLA_CORE_ENABLE) && (CLA_CORE_ENABLE)
 void HAL_CLA_ini(const CLA_TypeDef*);
@@ -544,22 +543,6 @@ void HAL_SPI_ini(const spi_cfg_t* p_spiCfg)
     return;
 }
 
-//void HAL_SPI_start(const SPI_TypeDef* p_spiCfg)
-//{
-//    if(p_spiCfg != NULL)
-//    {
-//        uint32_t spiBase = p_spiCfg->spiBase;
-//        while(spiBase != UINT32_MAX)
-//        {
-//            /* Enable SPI module */
-//            SPI_enableModule(spiBase);
-//            spiBase = (++p_spiCfg)->spiBase;
-//        }
-//    }
-//
-//    return;
-//}
-
 /**
  * @brief       DMA initialization function.
  * @param[in]   *p_dmaCfg   Pointer on the DMA configuration structure
@@ -644,19 +627,6 @@ void HAL_IPC_ini(const ipc_cfg_t* p_ipcCfg)
     }
 
     return;
-}
-
-void* HAL_IPC_addr_ini(const ipc_cfg_t* p_ipcCfg, uint32_t cmd_valid)
-{
-    uint32_t cmd, data, addr;
-    bool_t addrCorr = ((p_ipcCfg->ipcType == IPC_CPU1_L_CM_R) || (p_ipcCfg->ipcType == IPC_CPU2_L_CM_R)) ?
-            (IPC_ADDR_CORRECTION_ENABLE) : (IPC_ADDR_CORRECTION_DISABLE);
-    // Memory address sharing CM to CPU1
-    IPC_waitForFlag(p_ipcCfg->ipcType, p_ipcCfg->ipcFlag);
-    IPC_readCommand(p_ipcCfg->ipcType, p_ipcCfg->ipcFlag, addrCorr, &cmd, &addr, &data);
-    IPC_ackFlagRtoL(p_ipcCfg->ipcType, p_ipcCfg->ipcFlag);
-
-    return((cmd == cmd_valid) ? ((void *)addr) : (NULL));
 }
 
 #if (defined CLA_CORE_ENABLE) && (CLA_CORE_ENABLE)

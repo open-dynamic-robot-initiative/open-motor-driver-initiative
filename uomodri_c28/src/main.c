@@ -11,10 +11,6 @@
 /***********************************************************************
  * VARIABLES
  ***********************************************************************/
-//mst2slv_msg_t*  p_cmdMsg[2]     = {&cmd_msg[0],     &cmd_msg[1]};
-
-//bool_t  cmdAvailable = false;
-//slv2mst_msg_t*  p_statusMsg[2]  = {&status_msg[0],  &status_msg[1]};
 
 /***********************************************************************
  * FUNCTIONS DECLARATION
@@ -30,10 +26,13 @@ inline void ptr_swap(int32_t**, int32_t**);
  */
 void main(void)
 {
-    uint16_t* p_cmdMsg      = (uint16_t *)&cmd_msg;
-    uint16_t* p_statusMsg   = (uint16_t *)&status_msg;
-    uint16_t spi_rx_loop    = 0;
-    uint16_t spi_tx_loop    = 0;
+    uint16_t* p_cmdMsg          = (uint16_t *)&cmd_msg;
+    uint16_t* p_statusMsg       = (uint16_t *)&status_msg;
+    uint16_t* p_ledMsg          = (uint16_t *)&led_msg;
+    uint16_t spi_com_rx_loop    = 0;
+    uint16_t spi_com_tx_loop    = 0;
+    uint16_t spi_led_tx_loop    = 0;
+    uint16_t timer_cpt_ms       = 0;
 
     // uOmodri low level device initialization
     MCU_ini();
@@ -54,14 +53,14 @@ void main(void)
         // SPI COM RX management - Receive & extract message
         if(SPI_getRxFIFOStatus(COM_SPI_BASE))
         {
-            while((SPI_getRxFIFOStatus(COM_SPI_BASE) != SPI_FIFO_RXEMPTY) && (spi_rx_loop++ < COM_MSG_TX_RX_16BIT_FULL_LENGTH))
-                *p_cmdMsg++ = SPI_readDataNonBlocking(COM_SPI_BASE);
-            if(spi_rx_loop >= COM_MSG_TX_RX_16BIT_FULL_LENGTH)
+            while((SPI_getRxFIFOStatus(COM_SPI_BASE) != SPI_FIFO_RXEMPTY) && (spi_com_rx_loop++ < COM_MSG_TX_RX_16BIT_FULL_LENGTH))
+                *p_cmdMsg++     = SPI_readDataNonBlocking(COM_SPI_BASE);
+            if(spi_com_rx_loop >= COM_MSG_TX_RX_16BIT_FULL_LENGTH)
                 com_MsgExtract(&cmd_msg, &cmd_uOmodri);
             if(GPIO_ReadPin(COM_SPI_CS))
             {
-                spi_rx_loop = 0;
-                p_cmdMsg    = (uint16_t *)&cmd_msg;
+                spi_com_rx_loop = 0;
+                p_cmdMsg        = (uint16_t *)&cmd_msg;
                 SPI_resetRxFIFO(COM_SPI_BASE);
             }
         }
@@ -70,19 +69,31 @@ void main(void)
         {
             com_MsgCreate(&motor_foc[MOTOR_1], &cmd_uOmodri, &status_msg);
             com_MsgCreate(&motor_foc[MOTOR_2], &cmd_uOmodri, &status_msg);
-            spi_tx_loop     = 0;
+            spi_com_tx_loop = 0;
             p_statusMsg     = (uint16_t *)&status_msg;
             if(GPIO_ReadPin(COM_SPI_CS))
             {
                 // Force first write in SPI_O_DAT
                 SPI_writeDataNonBlocking(COM_SPI_BASE, (uint16_t ) *p_statusMsg++);
-                spi_tx_loop++;
+                spi_com_tx_loop++;
                 SPI_resetTxFIFO(COM_SPI_BASE);
                 // Force sixteen writes in SPI_O_TXBUF
-                while((SPI_getTxFIFOStatus(COM_SPI_BASE) != SPI_FIFO_TXFULL) && (spi_tx_loop++ < COM_MSG_TX_RX_16BIT_FULL_LENGTH))
+                while((SPI_getTxFIFOStatus(COM_SPI_BASE) != SPI_FIFO_TXFULL) && (spi_com_tx_loop++ < COM_MSG_TX_RX_16BIT_FULL_LENGTH))
                     SPI_writeDataNonBlocking(COM_SPI_BASE, (uint16_t) *p_statusMsg++);
             }
             motor[MOTOR_2].interruptDone = false;
+        }
+        // SPI LED TX management - Create message & send it @ 1ms
+        if(CPUTimer_getTimerOverflowStatus(CPU_TIMER_0_BASE))
+        {
+            float32_t timer_fade_blink  = (float32_t)((timer_cpt_ms < 500) ? (timer_cpt_ms) : (1000.0 - timer_cpt_ms)) / 500.0f;
+            timer_cpt_ms                = (timer_cpt_ms < 1000) ? (timer_cpt_ms + 1) : (0);
+            spi_led_tx_loop             = 0;
+            p_ledMsg                    = (uint16_t *)&led_msg;
+            ws2812b_writeLed(0, (uint16_t)(0xff * timer_fade_blink), 0, p_ledMsg);
+            while((SPI_getTxFIFOStatus(LED_SPI_BASE) != SPI_FIFO_TXFULL) && (spi_led_tx_loop++ < 6))
+                SPI_writeDataNonBlocking(LED_SPI_BASE, (uint16_t) *p_ledMsg++);
+            CPUTimer_clearOverflowFlag(CPU_TIMER_0_BASE);
         }
     }
 }
@@ -224,7 +235,7 @@ __attribute__((interrupt)) void adc_isrMotor1(void)
 }
 
 /**
- * @brief   ADC interrupt. Read Va, Vb, Vc, Vbus, Ia, Ib \& Ic of MOTOR_2
+ * @brief           ADC interrupt for MOTOR_2. Read currents \& voltages and compute control.
  */
 __attribute__((interrupt)) void adc_isrMotor2(void)
 {
@@ -312,58 +323,6 @@ __attribute__((interrupt)) void adc_isrMotor2(void)
 #endif
 }
 
-/**
- * @brief   DMA interrupt. New command message has been received from master
- */
-__attribute__((interrupt)) void dma_isrCmdMsg(void)
-{
-#if (defined UOMODRI_USE_REV_1_0_CONFIG) && (!UOMODRI_USE_REV_1_0_CONFIG)
-    GPIO_writePin(DEBUG_INT_PIN2, 1);
-#endif
-//    com_MsgExtract(p_cmdMsg[CURRENT], &cmd_uOmodri);
-//    com_MsgCreate(&motor_foc[MOTOR_1], &cmd_uOmodri, p_statusMsg[CURRENT]);
-//    com_MsgCreate(&motor_foc[MOTOR_2], &cmd_uOmodri, p_statusMsg[CURRENT]);
-#if (defined UOMODRI_DEBUG_MASTER_BOARD_ENABLE) && (UOMODRI_DEBUG_MASTER_BOARD_ENABLE)
-    cmd_uOmodri.mode.bit.EI2OC      = false;
-    cmd_uOmodri.mode.bit.EI1OC      = false;
-    cmd_uOmodri.mode.bit.EPRE       = false;
-    cmd_uOmodri.mode.bit.EM2        = false;
-    cmd_uOmodri.mode.bit.EM1        = false;
-    cmd_uOmodri.position[MOTOR_1]   = __sinpuf32((float32_t)motor[MOTOR_1].interruptCnt / 1.0 / PWM_FREQ);
-    cmd_uOmodri.position[MOTOR_2]   = __sinpuf32((float32_t)motor[MOTOR_2].interruptCnt / 1.0 / PWM_FREQ);
-    cmd_uOmodri.velocity[MOTOR_1]   = 4.0f * M_PI * M_PI * __cospuf32((float32_t)motor[MOTOR_1].interruptCnt / 1.0 / PWM_FREQ);
-    cmd_uOmodri.velocity[MOTOR_2]   = 4.0f * M_PI * M_PI * __cospuf32((float32_t)motor[MOTOR_2].interruptCnt / 1.0 / PWM_FREQ);
-    cmd_uOmodri.current[MOTOR_1]    = 0.0f;
-    cmd_uOmodri.current[MOTOR_2]    = 0.0f;
-    cmd_uOmodri.kpCoeff[MOTOR_1]    = (float32_t)MOTOR1_SPEED_REGULATOR_KP_COEF;
-    cmd_uOmodri.kpCoeff[MOTOR_2]    = (float32_t)MOTOR2_SPEED_REGULATOR_KP_COEF;
-    cmd_uOmodri.kdCoeff[MOTOR_1]    = (float32_t)MOTOR1_SPEED_REGULATOR_KD_COEF;
-    cmd_uOmodri.kdCoeff[MOTOR_2]    = (float32_t)MOTOR2_SPEED_REGULATOR_KD_COEF;
-    cmd_uOmodri.iSat[MOTOR_1]       = (float32_t)MOTOR1_SPEED_REGULATOR_SATURATION;
-    cmd_uOmodri.iSat[MOTOR_2]       = (float32_t)MOTOR2_SPEED_REGULATOR_SATURATION;
-#endif
-//    while(GPIO_ReadPin(COM_SPI_CS) == 0);
-
-//    HWREGH(DMA_COM_SPI_RX_BASE_ADDR + DMA_O_CONTROL) |= DMA_CONTROL_SOFTRESET; /* Reset DMA associated with COM SPI Tx */
-//    DMA_configDestAddress(DMA_COM_SPI_RX_BASE_ADDR, (mst2slv_msg_t *)p_cmdMsg[NEXT]);
-//    HWREGH(DMA_COM_SPI_RX_BASE_ADDR + DMA_O_CONTROL) |= DMA_CONTROL_RUN;
-//    ptr_swap((int32_t**)&p_cmdMsg[CURRENT], (int32_t**)&p_cmdMsg[NEXT]);
-
-
-//    if(!(HWREGH(DMA_COM_SPI_RX_BASE_ADDR + DMA_O_CONTROL) & DMA_CONTROL_TRANSFERSTS))
-//    {
-//        DMA_configDestAddress(DMA_COM_SPI_RX_BASE_ADDR, p_cmdMsg[NEXT]);
-//        ptr_swap((int32_t**)&p_cmdMsg[CURRENT], (int32_t**)&p_cmdMsg[NEXT]);
-//    }
-//    cmdAvailable = true;
-    // Clear the interrupt flag
-    Interrupt_clearACKGroup(DMA_COM_SPI_RX_INT_ACK_GROUP);
-
-#if (defined UOMODRI_USE_REV_1_0_CONFIG) && (!UOMODRI_USE_REV_1_0_CONFIG)
-    GPIO_writePin(DEBUG_INT_PIN2, 0);
-#endif
-}
-
 __attribute__((interrupt)) void gpio_isrFaultMotor1(void)
 {
     foc_t* p_foc = motor[MOTOR_1].p_motorFOC;
@@ -413,19 +372,6 @@ __attribute__((interrupt)) void gpio_isrFaultMotor2(void)
 //#endif
     // Infinite loop
     while(1);
-}
-
-__attribute__((interrupt)) void cpu_isrTimer0(void)
-{
-    static uint16_t ms_cpt = 0;// = CPUTimer_getTimerCount(CPU_TIMER_0_BASE) % 1000;
-    ms_cpt = (ms_cpt < 1000) ? (ms_cpt + 1) : (0);
-//    ms_cpt = CPUTimer_getTimerCount(CPU_TIMER_0_BASE) % 1000;
-    float32_t fade_blink = (ms_cpt < 500) ? ((float32_t)ms_cpt / 500.0) : ((1000 - (float32_t)ms_cpt) / 500.0);
-//    bool_t  blink = ((ms_cpt % 1000) > 500) ? (true) : (false);
-    ws2812b_writeLed(0, (uint16_t)(0xff * fade_blink), 0, led_msg);
-    DMA_startChannel(DMA_LED_SPI_TX_BASE_ADDR);
-    DMA_forceTrigger(DMA_LED_SPI_TX_BASE_ADDR);
-    Interrupt_clearACKGroup(CPU_TIMER_0_INT_ACK_GROUP);
 }
 
 #if (defined CLA_CORE_ENABLE) && (CLA_CORE_ENABLE)
