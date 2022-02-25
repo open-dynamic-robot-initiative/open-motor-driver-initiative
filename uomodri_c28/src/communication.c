@@ -14,7 +14,7 @@
  */
 bool_t com_MsgExtract(mst2slv_msg_t* p_msg, cmd_uomodri_t* p_cmd)
 {
-    uint32_t crc = com_crc32((uint16_t *) p_msg, DMA_COM_SPI_TX_RX_16BIT_PAYLOAD_LENGTH);
+    uint32_t crc = com_crc32((uint16_t *) p_msg, COM_MSG_TX_RX_16BIT_PAYLOAD_LENGTH);
     if((MSB_32(crc) == p_msg->crc.u16_msb) && (LSB_32(crc) == p_msg->crc.u16_lsb))
     {
         U32toU16_reg_t pos_m1_u16   = p_msg->position[MOTOR_1];
@@ -38,8 +38,8 @@ bool_t com_MsgExtract(mst2slv_msg_t* p_msg, cmd_uomodri_t* p_cmd)
         p_cmd->kpCoeff[MOTOR_2]     = 0.0f;//(float32_t)(p_msg->kpCoeff[MOTOR_2]   * KP_LSB);
         p_cmd->kdCoeff[MOTOR_1]     = 0.0f;//(float32_t)(p_msg->kdCoeff[MOTOR_1]   * KD_LSB);
         p_cmd->kdCoeff[MOTOR_2]     = 0.0f;//(float32_t)(p_msg->kdCoeff[MOTOR_2]   * KD_LSB);
-        p_cmd->iSat[MOTOR_1]        = 1.0f;//(float32_t)(MSB_16(p_msg->iSat)       * CURRENT_SAT_LSB);
-        p_cmd->iSat[MOTOR_2]        = 1.0f;//(float32_t)(LSB_16(p_msg->iSat)       * CURRENT_SAT_LSB);
+        p_cmd->iSat[MOTOR_1]        = 2.0f;//(float32_t)(MSB_16(p_msg->iSat)       * CURRENT_SAT_LSB);
+        p_cmd->iSat[MOTOR_2]        = 2.0f;//(float32_t)(LSB_16(p_msg->iSat)       * CURRENT_SAT_LSB);
         p_cmd->index                = (uint16_t) p_msg->index;
         return (true);
     }
@@ -90,7 +90,7 @@ bool_t com_MsgCreate(foc_t* p_foc, cmd_uomodri_t* p_cmd, slv2mst_msg_t* p_msg)
         p_msg->coilRes[MOTOR_2]             = (uint16_t)(p_foc->resEst / RESISTANCE_LSB);
         p_msg->adcSamples[MOTOR_2]          = (uint16_t)(p_foc->motor_acq.vExt / VOLTAGE_LSB);
         // Compute CRC
-        uint32_t crc = com_crc32((uint16_t *)p_msg, DMA_COM_SPI_TX_RX_16BIT_PAYLOAD_LENGTH);
+        uint32_t crc = com_crc32((uint16_t *)p_msg, COM_MSG_TX_RX_16BIT_PAYLOAD_LENGTH);
         p_msg->crc.u16_msb                  = LSB_32(crc);// required for Solo
         p_msg->crc.u16_lsb                  = MSB_32(crc);
         return (true);

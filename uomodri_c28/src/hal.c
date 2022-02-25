@@ -54,10 +54,9 @@ void HAL_ini(hal_cfg_t* p_hal)
         // Initialize SPI
         HAL_SPI_ini(p_hal->p_spiHandle);
         // enable DMA channels
+#if (defined DMA_COM_SPI_RX_BASE_ADDR) && (defined DMA_COM_SPI_TX_BASE_ADDR) && (defined DMA_LED_SPI_TX_BASE_ADDR)
         HAL_DMA_sync();
-//        DMA_startChannel(DMA_COM_SPI_TX_BASE_ADDR1);
-//        DMA_startChannel(DMA_COM_SPI_RX_BASE_ADDR1);
-
+#endif
 #if (defined CLA_CORE_ENABLE) && (CLA_CORE_ENABLE)
         // Initialize CLA
         HAL_CLA_ini(p_hal->p_claHandle);
@@ -580,6 +579,7 @@ void HAL_DMA_ini(const dma_cfg_t* p_dmaCfg)
     return;
 }
 
+#if (defined DMA_COM_SPI_RX_BASE_ADDR) && (defined DMA_COM_SPI_TX_BASE_ADDR) && (defined DMA_LED_SPI_TX_BASE_ADDR)
 /**
  * @brief       DMA sync function.
  */
@@ -591,7 +591,10 @@ void HAL_DMA_sync(void)
     SPI_resetTxFIFO(COM_SPI_BASE);
     DMA_startChannel(DMA_COM_SPI_TX_BASE_ADDR);
     DMA_startChannel(DMA_LED_SPI_TX_BASE_ADDR);
+
+    return;
 }
+#endif
 
 /**
  * @brief       IPC initialization function.
@@ -762,6 +765,10 @@ void HAL_INT_ini(const int_cfg_t* p_intCfg)
     return;
 }
 
+/**
+ * @brief       CPU Timer initialization function.
+ * @param[in]   *p_TimerCfg Pointer on the CPU timer configuration structure
+ */
 void HAL_TIMER_ini(const tmr_cfg_t* p_TimerCfg)
 {
     if(p_TimerCfg != NULL)

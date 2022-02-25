@@ -31,15 +31,11 @@
 #define UOMODRI_SPEED_FLT(flt_coef, y, x)       LPF_FILTER_1(flt_coef, y, x)
 #define UOMODRI_HAL_ADC_CALIB(flt_coef, y, x)   LPF_FILTER_1(flt_coef, y, x)
 
-#define UOMODRI_DEBUG_MASTER_BOARD_ENABLE       0
+#define UOMODRI_DEBUG_MASTER_BOARD_ENABLE       1
 #define UOMODRI_DEBUG_ENABLE                    1
 #define UOMODRI_FEED_FORWARD_ENABLE             0
 
 #define OMODRI_PAL_SETUP                        0   // Set this to 1 to use the PAL pin affectation
-//#define UOMODRI_DEBUG_LOGGED_MOTOR              MOTOR_1
-//#define SPI_DEBUG_CONFIGURATION                 0   // Set this to 1 to use debug configuration
-// Word number in a full communication
-//#define SPI_COM_LENGTH              17
 /**
  * @}
  */
@@ -280,56 +276,53 @@
  *  @brief    Configure DMA channels associated to SPI communication.
  * @{
  */
-#define DMA_NO_WRAP                             (0x10000)
-
-#define DMA_LED_SPI_TX_BASE_ADDR                DMA_CH4_BASE
-#define DMA_LED_SPI_TX_INT                      INT_DMA_CH4
-#define DMA_LED_SPI_TX_TRIGGER_SRC              DMA_TRIGGER_SPIDTX
-
-#define DMA_COM_SPI_TX_BASE_ADDR                DMA_CH5_BASE
-#define DMA_COM_SPI_TX_INT                      INT_DMA_CH5
-#define DMA_COM_SPI_RX_BASE_ADDR                DMA_CH6_BASE
-#define DMA_COM_SPI_RX_INT                      INT_DMA_CH6
-#define DMA_COM_SPI_TX_TRIGGER_SRC              DMA_TRIGGER_SPIBTX
-#define DMA_COM_SPI_RX_TRIGGER_SRC              DMA_TRIGGER_SPIBRX
-#define DMA_COM_SPI_RX_INT_ACK_GROUP            INTERRUPT_ACK_GROUP7
-
-#define DMA_LED_SPI_TX_8BIT_LENGTH              (12)
-#define DMA_LED_SPI_TX_16BIT_FULL_LENGTH        (DMA_LED_SPI_TX_8BIT_LENGTH / 2)
-#define DMA_LED_SPI_TX_16BIT_BURST_EVT          (3)
-#define DMA_LED_SPI_TX_16BIT_TRANSFER_EVT       (DMA_LED_SPI_TX_16BIT_FULL_LENGTH / DMA_LED_SPI_TX_16BIT_BURST_EVT)
-#define DMA_LED_SPI_TX_16BIT_CONFIG             (DMA_CFG_ONESHOT_DISABLE | DMA_CFG_CONTINUOUS_DISABLE | DMA_CFG_SIZE_16BIT)
-#if (defined UOMODRI_DEBUG_MASTER_BOARD_ENABLE) && (UOMODRI_DEBUG_MASTER_BOARD_ENABLE)
-#define DMA_MST_SPI_TX_BASE_ADDR                DMA_CH3_BASE
-#define DMA_MST_SPI_TX_INT                      INT_DMA_CH3
-#define DMA_MST_SPI_TX_TRIGGER_SRC              DMA_TRIGGER_SPICTX
-#define DMA_MST_SPI_RX_BASE_ADDR                DMA_CH4_BASE
-#define DMA_MST_SPI_RX_INT                      INT_DMA_CH4
-#endif
-#define DMA_COM_SPI_TX_RX_8BIT_LENGTH           (34)
-#define DMA_COM_SPI_TX_RX_16BIT_FULL_LENGTH     (DMA_COM_SPI_TX_RX_8BIT_LENGTH / 2)
-#define DMA_COM_SPI_TX_RX_16BIT_CRC_LENGTH      (2)
-#define DMA_COM_SPI_TX_RX_16BIT_PAYLOAD_LENGTH  (DMA_COM_SPI_TX_RX_16BIT_FULL_LENGTH - DMA_COM_SPI_TX_RX_16BIT_CRC_LENGTH)
-#define DMA_COM_SPI_TX_16BIT_BURST_EVT          (1)
-#define DMA_COM_SPI_TX_16BIT_TRANSFER_EVT       (DMA_COM_SPI_TX_RX_16BIT_FULL_LENGTH / DMA_COM_SPI_TX_16BIT_BURST_EVT)
-#define DMA_COM_SPI_RX_16BIT_BURST_EVT          (1)
-#define DMA_COM_SPI_RX_16BIT_TRANSFER_EVT       (DMA_COM_SPI_TX_RX_16BIT_FULL_LENGTH / DMA_COM_SPI_RX_16BIT_BURST_EVT)
-#define DMA_COM_SPI_TX_16BIT_CONFIG             (DMA_CFG_ONESHOT_DISABLE | DMA_CFG_CONTINUOUS_DISABLE | DMA_CFG_SIZE_16BIT)
-#define DMA_COM_SPI_RX_16BIT_CONFIG             (DMA_CFG_ONESHOT_DISABLE | DMA_CFG_CONTINUOUS_ENABLE | DMA_CFG_SIZE_16BIT)
-#if ((DMA_COM_SPI_TX_16BIT_CONFIG & DMA_MODE_DATASIZE) == DMA_CFG_SIZE_16BIT)
-#define DMA_COM_SPI_TX_16BIT_INC_STEP           (1)
-#else
-#define DMA_COM_SPI_TX_16BIT_INC_STEP           (2)
-#endif
-#if ((DMA_COM_SPI_RX_16BIT_CONFIG & DMA_MODE_DATASIZE) == DMA_CFG_SIZE_16BIT)
-#define DMA_COM_SPI_RX_16BIT_INC_STEP           (1)
-#else
-#define DMA_COM_SPI_RX_16BIT_INC_STEP           (2)
-#endif
-//#define DMA_COM_SPI_TX_RX_16BIT_TRANSFER_EVT    ((DMA_COM_SPI_TX_RX_16BIT_LENGTH / DMA_COM_SPI_TX_RX_16BIT_BURST_EVT) + \
-//                                                (((DMA_COM_SPI_TX_RX_16BIT_LENGTH % DMA_COM_SPI_TX_RX_16BIT_BURST_EVT) != 0) ? \
-//                                                (1) : (0)))
-#if (defined UOMODRI_DEBUG_MASTER_BOARD_ENABLE) && (UOMODRI_DEBUG_MASTER_BOARD_ENABLE)
+//#define DMA_NO_WRAP                             (0x10000)
+//
+//#define DMA_LED_SPI_TX_BASE_ADDR                DMA_CH4_BASE
+//#define DMA_LED_SPI_TX_INT                      INT_DMA_CH4
+//#define DMA_LED_SPI_TX_TRIGGER_SRC              DMA_TRIGGER_SPIDTX
+//
+//#define DMA_COM_SPI_TX_BASE_ADDR                DMA_CH5_BASE
+//#define DMA_COM_SPI_TX_INT                      INT_DMA_CH5
+//#define DMA_COM_SPI_RX_BASE_ADDR                DMA_CH6_BASE
+//#define DMA_COM_SPI_RX_INT                      INT_DMA_CH6
+//#define DMA_COM_SPI_TX_TRIGGER_SRC              DMA_TRIGGER_SPIBTX
+//#define DMA_COM_SPI_RX_TRIGGER_SRC              DMA_TRIGGER_SPIBRX
+//#define DMA_COM_SPI_RX_INT_ACK_GROUP            INTERRUPT_ACK_GROUP7
+//
+//#define DMA_LED_SPI_TX_8BIT_LENGTH              (12)
+//#define DMA_LED_SPI_TX_16BIT_FULL_LENGTH        (DMA_LED_SPI_TX_8BIT_LENGTH / 2)
+//#define DMA_LED_SPI_TX_16BIT_BURST_EVT          (3)
+//#define DMA_LED_SPI_TX_16BIT_TRANSFER_EVT       (DMA_LED_SPI_TX_16BIT_FULL_LENGTH / DMA_LED_SPI_TX_16BIT_BURST_EVT)
+//#define DMA_LED_SPI_TX_16BIT_CONFIG             (DMA_CFG_ONESHOT_DISABLE | DMA_CFG_CONTINUOUS_DISABLE | DMA_CFG_SIZE_16BIT)
+//#if (defined UOMODRI_DEBUG_MASTER_BOARD_ENABLE) && (UOMODRI_DEBUG_MASTER_BOARD_ENABLE)
+//#define DMA_MST_SPI_TX_BASE_ADDR                DMA_CH3_BASE
+//#define DMA_MST_SPI_TX_INT                      INT_DMA_CH3
+//#define DMA_MST_SPI_TX_TRIGGER_SRC              DMA_TRIGGER_SPICTX
+//#define DMA_MST_SPI_RX_BASE_ADDR                DMA_CH4_BASE
+//#define DMA_MST_SPI_RX_INT                      INT_DMA_CH4
+//#endif
+//#define DMA_COM_SPI_TX_RX_8BIT_LENGTH           (34)
+//#define DMA_COM_SPI_TX_RX_16BIT_FULL_LENGTH     (DMA_COM_SPI_TX_RX_8BIT_LENGTH / 2)
+//#define DMA_COM_SPI_TX_RX_16BIT_CRC_LENGTH      (2)
+//#define DMA_COM_SPI_TX_RX_16BIT_PAYLOAD_LENGTH  (DMA_COM_SPI_TX_RX_16BIT_FULL_LENGTH - DMA_COM_SPI_TX_RX_16BIT_CRC_LENGTH)
+//#define DMA_COM_SPI_TX_16BIT_BURST_EVT          (1)
+//#define DMA_COM_SPI_TX_16BIT_TRANSFER_EVT       (DMA_COM_SPI_TX_RX_16BIT_FULL_LENGTH / DMA_COM_SPI_TX_16BIT_BURST_EVT)
+//#define DMA_COM_SPI_RX_16BIT_BURST_EVT          (1)
+//#define DMA_COM_SPI_RX_16BIT_TRANSFER_EVT       (DMA_COM_SPI_TX_RX_16BIT_FULL_LENGTH / DMA_COM_SPI_RX_16BIT_BURST_EVT)
+//#define DMA_COM_SPI_TX_16BIT_CONFIG             (DMA_CFG_ONESHOT_DISABLE | DMA_CFG_CONTINUOUS_DISABLE | DMA_CFG_SIZE_16BIT)
+//#define DMA_COM_SPI_RX_16BIT_CONFIG             (DMA_CFG_ONESHOT_DISABLE | DMA_CFG_CONTINUOUS_ENABLE | DMA_CFG_SIZE_16BIT)
+//#if ((DMA_COM_SPI_TX_16BIT_CONFIG & DMA_MODE_DATASIZE) == DMA_CFG_SIZE_16BIT)
+//#define DMA_COM_SPI_TX_16BIT_INC_STEP           (1)
+//#else
+//#define DMA_COM_SPI_TX_16BIT_INC_STEP           (2)
+//#endif
+//#if ((DMA_COM_SPI_RX_16BIT_CONFIG & DMA_MODE_DATASIZE) == DMA_CFG_SIZE_16BIT)
+//#define DMA_COM_SPI_RX_16BIT_INC_STEP           (1)
+//#else
+//#define DMA_COM_SPI_RX_16BIT_INC_STEP           (2)
+//#endif
+#if (defined UOMODRI_DEBUG_MASTER_BOARD_ENABLE) && (!UOMODRI_DEBUG_MASTER_BOARD_ENABLE)
 #define DMA_MST_SPI_TX_RX_8BIT_LENGTH           (34)
 #define DMA_MST_SPI_TX_RX_16BIT_FULL_LENGTH     (DMA_MST_SPI_TX_RX_8BIT_LENGTH / 2)
 #define DMA_MST_SPI_TX_RX_16BIT_CRC_LENGTH      (2)
@@ -879,6 +872,9 @@
 #define COM_MSG_TX_RX_16BIT_FULL_LENGTH         (COM_MSG_TX_RX_8BIT_LENGTH / 2)
 #define COM_MSG_TX_RX_16BIT_CRC_LENGTH          (2)
 #define COM_MSG_TX_RX_16BIT_PAYLOAD_LENGTH      (COM_MSG_TX_RX_16BIT_FULL_LENGTH - COM_MSG_TX_RX_16BIT_CRC_LENGTH)
+
+#define LED_MSG_TX_16BIT_LENGTH                 (6)
+
 /*** Communication constants ***/
 #define POSITION_LSB                            (5.960464477539063e-08f)                 // 2**(-24)
 #if(1)

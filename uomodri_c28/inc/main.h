@@ -61,67 +61,10 @@ float   thetaElec; // [pu]
 //#pragma DATA_SECTION(thetaMechCal, "Cla1ToCpuMsgRAM");
 //float32_t   thetaMechCal; // [pu]
 #endif
-
 #pragma DATA_SECTION(cmd_msg, "ramgs0");
 mst2slv_msg_t   cmd_msg;//[2];
 #pragma DATA_SECTION(status_msg, "ramgs0");
 slv2mst_msg_t   status_msg;// =
-//{
-// {
-//  .status.bit.SE            = true,
-//  .status.bit.M1E           = false,    // MOTOR_1 enabled
-//  .status.bit.M2E           = false,    // MOTOR_2 enabled
-//  .status.bit.M1R           = false,    // MOTOR_1 ready
-//  .status.bit.M2R           = false,    // MOTOR_2 ready
-//  .status.bit.IDX1T         = false,    // MOTOR_1 index toggle
-//  .status.bit.IDX2T         = false,    // MOTOR_2 index toggle
-//  .status.bit.IDX1D         = false,    // MOTOR_1 index detected
-//  .status.bit.IDX2D         = false,    // MOTOR_2 index detected
-//  .status.bit.ERROR_CODE    = STATUS_ERROR_NO_ERROR,
-//  .position                 = {{ 0, 0}, { 0, 0}},
-////  .position[MOTOR_1].u16_lsb    = 0,
-////  .position[MOTOR_2].u16_msb    = 0,
-////  .position[MOTOR_2].u16_lsb    = 0,
-//  .velocity                 = { 0, 0},
-////  .velocity[MOTOR_2]            = 0,
-//  .current                  = { 0, 0},
-////  .current[MOTOR_2]             = 0,
-//  .coilRes                  = { 0, 0},
-////  .coilRes[MOTOR_2]             = 0,
-//  .adcSamples               = { 0, 0},
-////  .adcSamples[MOTOR_2]          = 0,
-//  .crc                      = {0xD9C3, 0x4244},//{ 0xDFFF, 0x5283},
-// // required for Solo0x5283DFFF // 0x4244D9C3(ES true)
-////  .crc.u16_lsb                  = 0,
-// },
-// {
-//  .status.bit.SE                = true,
-//  .status.bit.M1E               = false,    // MOTOR_1 enabled
-//  .status.bit.M2E               = false,    // MOTOR_2 enabled
-//  .status.bit.M1R               = false,    // MOTOR_1 ready
-//  .status.bit.M2R               = false,    // MOTOR_2 ready
-//  .status.bit.IDX1T             = false,    // MOTOR_1 index toggle
-//  .status.bit.IDX2T             = false,    // MOTOR_2 index toggle
-//  .status.bit.IDX1D             = false,    // MOTOR_1 index detected
-//  .status.bit.IDX2D             = false,    // MOTOR_2 index detected
-//  .status.bit.ERROR_CODE        = STATUS_ERROR_NO_ERROR,
-//  .position[MOTOR_1].u16_msb    = 0,
-//  .position[MOTOR_1].u16_lsb    = 0,
-//  .position[MOTOR_2].u16_msb    = 0,
-//  .position[MOTOR_2].u16_lsb    = 0,
-//  .velocity[MOTOR_1]            = 0,
-//  .velocity[MOTOR_2]            = 0,
-//  .current[MOTOR_1]             = 0,
-//  .current[MOTOR_2]             = 0,
-//  .coilRes[MOTOR_1]             = 0,
-//  .coilRes[MOTOR_2]             = 0,
-//  .adcSamples[MOTOR_1]          = 0,
-//  .adcSamples[MOTOR_2]          = 0,
-//  .crc.u16_msb                  = 0xD9C3,//{ 0xDFFF, 0x5283},0xDFFF,// required for Solo
-//  .crc.u16_lsb                  = 0x4244,//{ 0xDFFF, 0x5283},0x5283,
-// }
-//};
-
 #pragma DATA_SECTION(cmd_uOmodri, "ramgs0");
 cmd_uomodri_t   cmd_uOmodri =
 {
@@ -131,7 +74,7 @@ cmd_uomodri_t   cmd_uOmodri =
  .mode.bit.EPRE     = true,
  .mode.bit.EM2      = false,
  .mode.bit.EM1      = false,
- .mode.bit.ES       = true,
+ .mode.bit.ES       = false,
  .position          = {0.0, 0.0},
  .velocity          = {0.0, 0.0},
  .current           = {0.0, 0.0},
@@ -145,7 +88,7 @@ cmd_uomodri_t   cmd_uOmodri =
 mst2slv_msg_t   cmd_master_msg;
 #endif
 #pragma DATA_SECTION(led_msg, "ramgs0");
-uint16_t        led_msg[6];//          = {0x0000, 0x9B6D, 0xA492, 0x4924, 0x9249, 0x2400}; // green
+uint16_t        led_msg[LED_MSG_TX_16BIT_LENGTH];//          = {0x0000, 0x9B6D, 0xA492, 0x4924, 0x9249, 0x2400}; // green
 //{0x0000, 0x9B6D, 0xA492, 0x4924, 0x9249, 0x2400}; // green
 //{0x0000, 0x9249, 0x24DB, 0x6DB6, 0x9249, 0x2400}; // red
 //{0x0000, 0x9249, 0x2492, 0x4924, 0xDB6D, 0xB600}; // blue

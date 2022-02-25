@@ -16,74 +16,15 @@
 #include "uomodri_user_defines.h"
 #include "uomodri_hal_config_handlers.h"
 
-
 extern cmd_uomodri_t cmd_uOmodri;
-//extern const GPIO_TypeDef GpioPinsCfgList[];
-//extern const ADC_INIT_TypeDef AdcInitList[];
-//extern const ADC_ACQ_TypeDef AdcAcqList[];
-//extern const ADC_IT_TypeDef AdcIntList[];
-//extern const ADC_TypeDef AdcCfgList[];
-//extern const eQEP_TypeDef QepCfgList[];
-//extern const SPI_TypeDef spiCfgList[];
-//extern const DMA_TypeDef dmaCfgList[];
-//extern const IPC_TypeDef ipcCfgList[];
-//extern const ePWM_TB_TypeDef PwmTimeBaseCfgList[];
-//extern const ePWM_CC_TypeDef PwmCounterCompareCfgList[];
-//extern const ePWM_AQ_TypeDef PwmActionQualifierCfgList[];
-//extern const ePWM_DB_TypeDef PwmDeadBandCfgList[];
-//extern const ePWM_ET_TypeDef PwmAdcSocEventTriggerCfgList[];
-//extern const ePWM_IT_TypeDef PwmInterruptsEventCfgList[];
-//extern const ePWM_TypeDef PwmCfgList[];
-//extern       HAL hal;
 
-//__attribute__((interrupt)) void ipc_isrStatusMsg(void);
-//__attribute__((interrupt)) void ipc_isrMsgCmd(void);
-//__attribute__((interrupt)) void dma_isrCmdMsg(void);
-//__attribute__((interrupt)) void cpu_isrTimer0(void);
-//__attribute__((interrupt)) void spi_isrRx(void);
-//__attribute__((interrupt)) void dma5_isr(void);
 __attribute__((interrupt)) void adc_isrMotor1(void);
 __attribute__((interrupt)) void adc_isrMotor2(void);
-//extern __interrupt void pwm_isrMotor1(void);
-//extern __interrupt void pwm_isrMotor2(void);
 __attribute__((interrupt)) void gpio_isrFaultMotor1(void);
 __attribute__((interrupt)) void gpio_isrFaultMotor2(void);
 
-//__attribute__((interrupt)) void cla1_isr1(void);
-//CLA C Tasks defined in Cla1Tasks_C.cla
-//__attribute__((interrupt)) void Cla1Task1(void);
-//__attribute__((interrupt)) void Cla1Task8(void);
-
-//static ComInterface comInterface =
-//{
-// .systemEnabled     = false,
-// .lastCommandIndex  = 0,
-// .time              = {0.0, 0.0},
-// .lastMessageMs     = 0,
-// .timeoutThreshold  = 0xFFFF,
-// .rolloverErrorFlag = false,
-// .canError          = SPI_SENSOR_STATUS_ERROR_NO_ERROR,
-// .positionRef       = {0.0, 0.0},
-// .velocityRef       = {0.0, 0.0},
-// .iqRef             = {0.0, 0.0},
-// .positionLsb       = CI_POSITION_LSB,
-// .velocityLsb       = CI_VELOCITY_LSB,
-// .iqLsb             = CI_IQ_LSB,
-// .currentSatLsb     = CI_CURRENT_SAT_LSB,
-// .resistanceLsb     = CI_LSBISTANCE_LSB,
-// .voltageLsb        = CI_VOLTAGE_LSB,
-// .kpLsb             = CI_KP_LSB,
-// .kdLsb             = CI_KD_LSB,
-//};
-
 static const int_cfg_t InterruptList[] =
 {
-// {.motorID = MOTOR_1,   .intNum = MOTOR1_IA_INT_CH, .intPeriphBase = MOTOR12_IVA_ADC_ADDR,  .intPeriphSrc = MOTOR1_IA_INT_NUM,  .intCpuGroup = INTERRUPT_CPU_INT10, .intAckGroup = INTERRUPT_ACK_GROUP10,   .handler = &adc_isrMotor1},
-// {.motorID = MOTOR_2,   .intNum = MOTOR2_IA_INT_CH, .intPeriphBase = MOTOR12_IVA_ADC_ADDR,  .intPeriphSrc = MOTOR2_IA_INT_NUM,  .intCpuGroup = INTERRUPT_CPU_INT10, .intAckGroup = INTERRUPT_ACK_GROUP10,   .handler = &adc_isrMotor2},
-//// {.motorID = MOTOR_1,   .intNum = INT_EPWM1,        .intPeriphBase = MOTOR1_PWM1_BASE,                                          .intCpuGroup = INTERRUPT_CPU_INT3,  .intAckGroup = INTERRUPT_ACK_GROUP3,    .handler = &pwm_isrMotor1},
-//// {.motorID = MOTOR_2,   .intNum = INT_EPWM4,        .intPeriphBase = MOTOR2_PWM1_BASE,                                          .intCpuGroup = INTERRUPT_CPU_INT3,  .intAckGroup = INTERRUPT_ACK_GROUP3,    .handler = &pwm_isrMotor2},
-// {.motorID = MOTOR_1,   .intNum = INT_XINT1,                                                                                    .intCpuGroup = INTERRUPT_CPU_INT1,  .intAckGroup = INTERRUPT_ACK_GROUP1,    .handler = &gpio_isrFault1},
-// {.motorID = MOTOR_2,   .intNum = INT_XINT2,                                                                                    .intCpuGroup = INTERRUPT_CPU_INT1,  .intAckGroup = INTERRUPT_ACK_GROUP1,    .handler = &gpio_isrFault2},
  {
   .intNum           = MOTOR1_IA_INT_CH,
   .intAckGroup      = MOTOR1_IA_INT_ACK_GROUP,
@@ -93,29 +34,7 @@ static const int_cfg_t InterruptList[] =
   .intNum           = MOTOR2_IA_INT_CH,
   .intAckGroup      = MOTOR2_IA_INT_ACK_GROUP,
   .p_intHandler     = &adc_isrMotor2,
- }, //
-// {
-//  .intNum           = INT_CMTOCPUXIPC0,
-//  .intAckGroup      = INTERRUPT_ACK_GROUP11,
-//  .handler          = &ipc_isrStatusMsg,
-// },
-// {
-//  .intNum           = INT_CMTOCPUXIPC1,
-//  .intAckGroup      = INTERRUPT_ACK_GROUP11,
-//  .handler          = &ipc_isrMsgCmd,
-// },
-
-// {
-//  .intNum           = DMA_COM_SPI_RX_INT,
-//  .intAckGroup      = DMA_COM_SPI_RX_INT_ACK_GROUP,
-//  .p_intHandler     = &dma_isrCmdMsg,
-// },
-
-// {
-//  .intNum           = COM_SPI_RX_INT,
-//  .intAckGroup      = INTERRUPT_ACK_GROUP6,
-//  .p_intHandler     = &spi_isrRx,
-// },
+ },
  {
   .intNum           = MOTOR1_DRV_GPIO_NFAULT_INT,
   .intAckGroup      = MOTOR1_DRV_GPIO_NFAULT_INT_ACK_GROUP,

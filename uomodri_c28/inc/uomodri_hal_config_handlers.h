@@ -18,7 +18,7 @@
  ***********************************************************************/
 extern mst2slv_msg_t    cmd_msg;
 extern slv2mst_msg_t    status_msg;
-extern uint16_t         led_msg[6];
+extern uint16_t         led_msg[LED_MSG_TX_16BIT_LENGTH];
 #if (defined UOMODRI_USE_REV_1_0_CONFIG) && (!UOMODRI_USE_REV_1_0_CONFIG)
 extern mst2slv_msg_t    cmd_master_msg;
 extern slv2mst_msg_t    status_master_msg;
@@ -554,7 +554,7 @@ static hal_cfg_t hal =
  .p_adcHandle   = AdcCfgList,
  .p_epwmHandle  = PwmCfgList,
  .p_eqepHandle  = QepCfgList,
- .p_dmaHandle   = dmaCfgList,//NULL,//
+ .p_dmaHandle   = NULL,//dmaCfgList,
  .p_ipcHandle   = NULL,//ipcCfgList,
  .p_spiHandle   = spiCfgList,
  .p_timerHandle = timerCfgList,
