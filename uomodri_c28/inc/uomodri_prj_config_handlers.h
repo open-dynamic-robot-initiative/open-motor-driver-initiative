@@ -1,7 +1,9 @@
 #ifndef __UOMODRI_PRJ_CONFIG_HANDLERS_H__
 #define __UOMODRI_PRJ_CONFIG_HANDLERS_H__
 
-// drivers
+/***********************************************************************
+ * INCLUDES
+ ***********************************************************************/
 #include "f2838x_device.h"
 #include "f2838x_examples.h"
 #include "driverlib.h"
@@ -16,13 +18,15 @@
 #include "uomodri_user_defines.h"
 #include "uomodri_hal_config_handlers.h"
 
-extern cmd_uomodri_t cmd_uOmodri;
 
 __attribute__((interrupt)) void adc_isrMotor1(void);
 __attribute__((interrupt)) void adc_isrMotor2(void);
 __attribute__((interrupt)) void gpio_isrFaultMotor1(void);
 __attribute__((interrupt)) void gpio_isrFaultMotor2(void);
 
+/** @var    int_cfg_t   InterruptList[]
+ *  @brief  List all required interrupts configurations.
+ */
 static const int_cfg_t InterruptList[] =
 {
  {
@@ -58,7 +62,7 @@ static const int_cfg_t InterruptList[] =
  },
 #endif
  // END OF ARRAY
- {.intNum = 0xFFFFFFFF},
+ {.intNum           = 0xFFFFFFFF},
 };
 
 /** @var    DRV_Cfg     DrvCfgList[]
@@ -68,8 +72,6 @@ static const drv_cfg_t  DrvCfgList[] =
 {
  {.spiHandle = DRV_SPI_BASE, .gpioNumber_CS = MOTOR1_DRV_SPI_CS, .gpioNumber_EN = MOTOR1_DRV_GPIO_EN},
  {.spiHandle = DRV_SPI_BASE, .gpioNumber_CS = MOTOR2_DRV_SPI_CS, .gpioNumber_EN = MOTOR2_DRV_GPIO_EN},
-// // END OF ARRAY
-// {.spiHandle = 0xFFFFFFFF},
 };
 
 /** @var    DRV_Reg     DrvRegList[]
@@ -164,7 +166,7 @@ static drv_reg_t        DrvRegList[] =
  },
 };
 
-/** @var    DRV8353     drv
+/** @var    drv8353_t   drv_cfg[]
  *  @brief  General DRV8353 configuration structure.
  */
 static drv8353_t drv_cfg[] =
@@ -213,7 +215,31 @@ static const hal_motor_cfg_t hal_motor_cfg[] =
  },
 };
 
-//#pragma DATA_SECTION(motor_foc,"CpuToCla1MsgRAM");
+#pragma DATA_SECTION(cmd_uOmodri, "ramgs0");
+static cmd_uomodri_t cmd_uOmodri =
+{
+ .mode.bit.TIMEOUT  = 0,
+ .mode.bit.EI2OC    = true,
+ .mode.bit.EI1OC    = true,
+ .mode.bit.EPRE     = true,
+ .mode.bit.EM2      = false,
+ .mode.bit.EM1      = false,
+ .mode.bit.ES       = false,
+ .position[MOTOR_1] = 0.0f,
+ .position[MOTOR_2] = 0.0f,
+ .velocity[MOTOR_1] = 0.0f,
+ .velocity[MOTOR_2] = 0.0f,
+ .current[MOTOR_1]  = 0.0f,
+ .current[MOTOR_2]  = 0.0f,
+ .kpCoeff[MOTOR_1]  = 0.0f,
+ .kpCoeff[MOTOR_2]  = 0.0f,
+ .kdCoeff[MOTOR_1]  = 0.0f,
+ .kdCoeff[MOTOR_2]  = 0.0f,
+ .iSat[MOTOR_1]     = 1.0f,
+ .iSat[MOTOR_2]     = 1.0f,
+ .index             = 0
+};
+
 #pragma DATA_SECTION(motor_foc, "MSGRAM_CPU_TO_CM");
 static foc_t motor_foc[] =
 {
@@ -292,6 +318,9 @@ static foc_t motor_foc[] =
   .motor_align.idAlignRef               = 0.5,// 500mA alignment current
   .motor_align.idAlign                  = 0.0,
   //---------------------------------------------------------------------------
+  .motor_state[NEW]                     = MOTOR_STOP,
+  .motor_state[OLD]                     = MOTOR_STOP,
+  //---------------------------------------------------------------------------
   .iParkFlt.a                           = MOTOR1_CURRENT_LPF_ALPHA,
   .iParkFlt.one_minus_a                 = MOTOR1_CURRENT_LPF_ONE_M_ALPHA,
   //--- FOC - Sine / Cosine computation of angular position -------------------
@@ -362,11 +391,10 @@ static foc_t motor_foc[] =
   //--- Resistance estimation low-pass filter ---------------------------------
   .resEstFlt.a                          = 0.0,
   .resEstFlt.one_minus_a                = 0.0,
+  //--- Error message ---------------------------------------------------------
+  .errorMsg                             = FOC_ERROR_NO_ERROR,
   //--- Anti-coagging structure -----------------------------------------------
   //acog;
-  //--- FOC controller enable to start? ---------------------------------------
-//  .motor_enable                         = false,
-//  .system_enable                        = false,
  },
  //---------------------------------------------------------------------------
  //---------------------------------------------------------------------------
@@ -444,6 +472,9 @@ static foc_t motor_foc[] =
   .motor_align.idAlignRef               = 0.5,// 500mA alignment current
   .motor_align.idAlign                  = 0.0,
   //---------------------------------------------------------------------------
+  .motor_state[NEW]                     = MOTOR_STOP,
+  .motor_state[OLD]                     = MOTOR_STOP,
+  //---------------------------------------------------------------------------
   .iParkFlt.a                           = MOTOR2_CURRENT_LPF_ALPHA,
   .iParkFlt.one_minus_a                 = MOTOR2_CURRENT_LPF_ONE_M_ALPHA,
   //--- FOC - Sine / Cosine computation of angular position -------------------
@@ -513,11 +544,10 @@ static foc_t motor_foc[] =
   //--- Resistance estimation low-pass filter ---------------------------------
   .resEstFlt.a                          = 0.0,
   .resEstFlt.one_minus_a                = 0.0,
+  //--- Error message ---------------------------------------------------------
+  .errorMsg                             = FOC_ERROR_NO_ERROR,
   //--- Anti-coagging structure -----------------------------------------------
   //acog;
-  //--- FOC controller enable to start? ---------------------------------------
-//  .motor_enable                         = false,
-//  .system_enable                        = false,
  },
 };
 
@@ -532,9 +562,9 @@ static motor_t motor[] =
   .p_motorDRV                   = &drv_cfg[MOTOR_1],
   .p_motorFOC                   = &motor_foc[MOTOR_1],
   .clCycleNb                    = 0,
-  .interruptCnt                 = 0,
+  .itCnt                        = 0,
   .statorResEst                 = 1.0,
-  .interruptDone                = false,
+  .itDone                       = false,
   .statorResEstFlt.a            = MOTOR1_STATOR_RESISTOR_LPF_ALPHA,
   .statorResEstFlt.one_minus_a  = MOTOR1_STATOR_RESISTOR_LPF_ONE_M_ALPHA,
 //  .enabled          = false,
@@ -555,9 +585,9 @@ static motor_t motor[] =
   .p_motorDRV                   = &drv_cfg[MOTOR_2],
   .p_motorFOC                   = &motor_foc[MOTOR_2],
   .clCycleNb                    = 0,
-  .interruptCnt                 = 0,
+  .itCnt                        = 0,
   .statorResEst                 = 1.0,
-  .interruptDone                = false,
+  .itDone                       = false,
   .statorResEstFlt.a            = MOTOR2_STATOR_RESISTOR_LPF_ALPHA,
   .statorResEstFlt.one_minus_a  = MOTOR2_STATOR_RESISTOR_LPF_ONE_M_ALPHA,
 //  .enabled          = false,

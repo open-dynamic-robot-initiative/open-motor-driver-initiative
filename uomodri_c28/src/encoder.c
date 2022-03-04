@@ -14,10 +14,10 @@ void ENC_resetStruct(encoder_t* p_enc)
 {
     speed_t* p_speed        = &p_enc->speed;
 
-    p_enc->thetaMech[NEW]   = 0.0;
-    p_enc->thetaMech[OLD]   = 0.0;
-    p_enc->thetaElec        = 0.0;
-    p_enc->thetaDir         = 0;
+    p_enc->thetaMech[NEW]   = 0.0f;
+    p_enc->thetaMech[OLD]   = 0.0f;
+    p_enc->thetaElec        = 0.0f;
+//    p_enc->thetaDir         = 0;
 
     p_enc->indexCompensated = false;
     p_enc->thetaIndex       = 0.0f;
@@ -45,7 +45,7 @@ void ENC_resetStruct(encoder_t* p_enc)
 inline void ENC_setPosition(encoder_t* p_enc, uint32_t pos)
 {
     // Reset encoder position
-    EQEP_setPosition(p_enc->p_qepHandle->eqepBase, pos);
+    p_enc->p_qepRegs->QPOSCNT = pos;
     // Reset encoder structure
     ENC_resetStruct(p_enc);
 }
@@ -169,7 +169,7 @@ inline void ENC_getTheta(encoder_t* p_enc)
     // If theta difference is high or low enough, we overflowed or underflowed
     bool_t maxRollOver          = (p_enc->turnNb > MAX_ROLLOVER)    ? (true) : (false);
     bool_t minRollOver          = (p_enc->turnNb < MIN_ROLLOVER)    ? (true) : (false);
-    p_enc->rollOverFlag         = (maxRollOver || minRollOver)      ? (true) : (false);//(p_enc->rollOverFlag);
+    p_enc->rollOverFlag         = (maxRollOver || minRollOver)      ? (true) : (p_enc->rollOverFlag);
     // Saturate turnNb between -128 and 127
     p_enc->turnNb               = (maxRollOver) ? (MIN_ROLLOVER) : (p_enc->turnNb);
     p_enc->turnNb               = (minRollOver) ? (MAX_ROLLOVER) : (p_enc->turnNb);

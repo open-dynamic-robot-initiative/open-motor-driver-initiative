@@ -2,6 +2,7 @@
  * INCLUDE FILES
  ***********************************************************************/
 #include "foc.h"
+#include "motor.h"
 
 /***********************************************************************
  * FUNCTIONS DEFINITIONS
@@ -25,6 +26,18 @@ inline void FOC_getMeasures(acq_t* p_acq)
     UOMODRI_VBUS_FLT(p_acq->vBusFlt, p_acq->vbus, vbus);
     float32_t vext  = (float32_t)(*p_acq->p_vExtMeasReg) * ADC_EXTERN_VOLTAGE_SCALE;
     UOMODRI_VEXT_FLT(p_acq->vExtFlt, p_acq->vExt, vext);
+
+    return;
+}
+
+inline void FOC_resetMeasuresStruct(acq_t* p_acq)
+{
+    // Get the latest current values in Amps
+    p_acq->ia   = 0.0f;
+    p_acq->ib   = 0.0f;
+    p_acq->ic   = 0.0f;
+    p_acq->vExt = 0.0f;
+
     return;
 }
 
@@ -97,12 +110,10 @@ inline void FOC_runControl(foc_t* p_foc)
  */
 inline void FOC_resetPI(pi_t* p_pi)
 {
-    *p_pi->p_fb         = 0.0;
-    *p_pi->p_set        = 0.0;
-    p_pi->err           = 0.0;
-    p_pi->integral      = 0.0;
-    p_pi->ff            = 0.0;
-    p_pi->out           = 0.0;
+    p_pi->err       = 0.0;
+    p_pi->integral  = 0.0;
+    p_pi->ff        = 0.0;
+    p_pi->out       = 0.0;
 
     return;
 }
@@ -131,16 +142,10 @@ inline float32_t FOC_runPI(pi_t* p_pi)
  */
 inline void FOC_resetPD(pd_t* p_pd)
 {
-    *p_pd->p_fbTheta    = 0.0;
-    *p_pd->p_setTheta   = 0.0;
-    p_pd->errTheta      = 0.0;
-    *p_pd->p_fbSpeed    = 0.0;
-    *p_pd->p_setSpeed   = 0.0;
-    p_pd->errSpeed      = 0.0;
-    p_pd->derivative    = 0.0;
-    *p_pd->p_ff         = 0.0;
-    *p_pd->p_sat        = 0.0;
-//    p_pd->out           = 0.0;
+    p_pd->errTheta      = 0.0f;
+    p_pd->errSpeed      = 0.0f;
+    p_pd->derivative    = 0.0f;
+    p_pd->out           = 0.0f;
 
     return;
 }
@@ -177,27 +182,32 @@ void FOC_resetStruct(foc_t* p_foc)
     FOC_resetPD(&p_foc->pdPos);
     // Reset encoder structure
     ENC_resetStruct(&p_foc->motor_enc);
+    // Reset align structure
+    MOT_resetAlignStruct(&p_foc->motor_align);
+    // Reset analog measures
+    FOC_resetMeasuresStruct(&p_foc->motor_acq);
     // Reset currents and voltages
-    p_foc->sinTheta     = 0.0;
-    p_foc->cosTheta     = 0.0;
-    p_foc->ialpha       = 0.0;
-    p_foc->ibeta        = 0.0;
-    p_foc->id           = 0.0;
-    p_foc->iq           = 0.0;
-    p_foc->ud           = 0.0;
-    p_foc->uq           = 0.0;
-    p_foc->ualpha       = 0.0;
-    p_foc->ubeta        = 0.0;
-    p_foc->ua           = 0.0;
-    p_foc->ub           = 0.0;
-    p_foc->uc           = 0.0;
-    p_foc->dtc_u        = 0.0;
-    p_foc->dtc_v        = 0.0;
-    p_foc->dtc_w        = 0.0;
-    p_foc->resEst       = 0.0;
-//    p_foc->motor_enable = false;
-//    p_foc->system_enable= false;
-
+//    p_foc->motor_state[NEW] = (p_foc->motor_state[NEW] != MOTOR_ERROR) ? (MOTOR_STOP) : (MOTOR_ERROR);
+//    p_foc->motor_state[OLD] = (p_foc->motor_state[NEW] != MOTOR_ERROR) ? (MOTOR_STOP) : (MOTOR_ERROR);
+    p_foc->sinTheta         = 0.0f;
+    p_foc->cosTheta         = 0.0f;
+    p_foc->ialpha           = 0.0f;
+    p_foc->ibeta            = 0.0f;
+    p_foc->id               = 0.0f;
+    p_foc->iq               = 0.0f;
+    p_foc->ud               = 0.0f;
+    p_foc->uq               = 0.0f;
+    p_foc->ualpha           = 0.0f;
+    p_foc->ubeta            = 0.0f;
+    p_foc->ua               = 0.0f;
+    p_foc->ub               = 0.0f;
+    p_foc->uc               = 0.0f;
+    p_foc->dtc_u            = 0.0f;
+    p_foc->dtc_v            = 0.0f;
+    p_foc->dtc_w            = 0.0f;
+//    p_foc->idRef            = 0.0f;
+//    p_foc->iqRef            = 0.0f;
+    p_foc->resEst           = 0.0f;
     return;
 }
 

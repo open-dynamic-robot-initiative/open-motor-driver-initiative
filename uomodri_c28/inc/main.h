@@ -61,34 +61,17 @@ float   thetaElec; // [pu]
 //#pragma DATA_SECTION(thetaMechCal, "Cla1ToCpuMsgRAM");
 //float32_t   thetaMechCal; // [pu]
 #endif
-#pragma DATA_SECTION(cmd_msg, "ramgs0");
-mst2slv_msg_t   cmd_msg;//[2];
-#pragma DATA_SECTION(status_msg, "ramgs0");
+#pragma DATA_ALIGN (cmd_msg, 16)
+#pragma DATA_SECTION(cmd_msg, "ramgs1");
+mst2slv_msg_t   cmd_msg;
+#pragma DATA_SECTION(status_msg, "ramgs1");
 slv2mst_msg_t   status_msg;// =
-#pragma DATA_SECTION(cmd_uOmodri, "ramgs0");
-cmd_uomodri_t   cmd_uOmodri =
-{
- .mode.bit.TIMEOUT  = 0,
- .mode.bit.EI2OC    = true,
- .mode.bit.EI1OC    = true,
- .mode.bit.EPRE     = true,
- .mode.bit.EM2      = false,
- .mode.bit.EM1      = false,
- .mode.bit.ES       = false,
- .position          = {0.0, 0.0},
- .velocity          = {0.0, 0.0},
- .current           = {0.0, 0.0},
- .kpCoeff           = {1.0, 1.0},
- .kdCoeff           = {0.02, 0.02},
- .iSat              = {1.0, 1.0},
- .index             = 0
-};
 #if (defined UOMODRI_DEBUG_MASTER_BOARD_ENABLE) && (!UOMODRI_DEBUG_MASTER_BOARD_ENABLE)
 #pragma DATA_SECTION(cmd_master_msg, "ramgs0");
 mst2slv_msg_t   cmd_master_msg;
 #endif
-#pragma DATA_SECTION(led_msg, "ramgs0");
-uint16_t        led_msg[LED_MSG_TX_16BIT_LENGTH];//          = {0x0000, 0x9B6D, 0xA492, 0x4924, 0x9249, 0x2400}; // green
+#pragma DATA_SECTION(led_msg, "ramgs1");
+uint16_t        led_msg[LED_MSG_TX_16BIT_LENGTH];
 //{0x0000, 0x9B6D, 0xA492, 0x4924, 0x9249, 0x2400}; // green
 //{0x0000, 0x9249, 0x24DB, 0x6DB6, 0x9249, 0x2400}; // red
 //{0x0000, 0x9249, 0x2492, 0x4924, 0xDB6D, 0xB600}; // blue
@@ -100,8 +83,9 @@ cmd_msg_t       cmd_Master_msg;
 status_msg_t    status_Master_msg;
 #endif
 
-extern motor_t      motor[];
-extern hal_cfg_t    hal;
+extern motor_t          motor[];
+extern hal_cfg_t        hal;
+extern cmd_uomodri_t    cmd_uOmodri;
 
 /***********************************************************************
  * FUNCTIONS DECLARATION

@@ -90,13 +90,13 @@ SECTIONS
    .econst          : >> FLASH4 | FLASH5, ALIGN(8)
 #endif
 
-   ramgs0 : > RAMGS0, type=NOINIT
+   ramgs0 : > RAMGS0//, type=NOINIT
    ramgs1 : > RAMGS1, type=NOINIT
    
    MSGRAM_CPU1_TO_CPU2 : > CPU1TOCPU2RAM, type=NOINIT
    MSGRAM_CPU2_TO_CPU1 : > CPU2TOCPU1RAM, type=NOINIT
    MSGRAM_CPU_TO_CM    : > CPUTOCMRAM//, type=NOINIT
-   MSGRAM_CM_TO_CPU    : > CMTOCPURAM, type=NOINIT
+   MSGRAM_CM_TO_CPU    : > CMTOCPURAM//, type=NOINIT
 
    /* The following section definition are for SDFM examples */
    Filter_RegsFile  : > RAMGS0

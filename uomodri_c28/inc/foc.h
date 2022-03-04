@@ -39,6 +39,17 @@ typedef enum
     ALIGN_DONE          = 3,    /*!< ALIGN_DONE */
 } align_state_e;
 
+typedef enum
+{
+    MOTOR_STOP          = 0x00,
+    MOTOR_ALIGN_UP      = 0x01,    /*!< ALIGN_COUNT_UP */
+    MOTOR_ALIGN_STAY    = 0x02,    /*!< ALIGN_STAY */
+    MOTOR_ALIGN_DOWN    = 0x04,    /*!< ALIGN_COUNT_DOWN */
+//    MOTOR_ALIGN_DONE    = 0x08,    /*!< ALIGN_DONE */
+    MOTOR_READY         = 0x10,
+    MOTOR_ERROR         = 0x20,
+} motor_state_e;
+
 /**
  * @enum    status_error_e
  * @brief   Error flags list.
@@ -174,6 +185,7 @@ typedef struct __MOTOR_FOC_CONTROL_t__
     acq_t               motor_acq;      /*!< Current \& voltage acquisitions */
     encoder_t           motor_enc;      /*!< Encoder position & speed */
     align_t             motor_align;    /*!< Alignment calibration procedure */
+    motor_state_e       motor_state[2];
     lpf_t               iParkFlt;       /*!< Low-pass filter parameters affected to park transform */
     float32_t           sinTheta;       /*!< Sinus of the electrical rotor angle */
     float32_t           cosTheta;       /*!< Cosine of the electrical rotor angle  */
@@ -221,6 +233,7 @@ typedef struct __MOTOR_FOC_CONTROL_t__
  * FUNCTIONS DECLARATION
  ***********************************************************************/
 inline void FOC_getMeasures(acq_t*);
+inline void FOC_resetMeasuresStruct(acq_t*);
 inline void FOC_resistanceEstimation(foc_t*);
 inline void FOC_runControl(foc_t*);
 inline void FOC_resetPI(pi_t*);

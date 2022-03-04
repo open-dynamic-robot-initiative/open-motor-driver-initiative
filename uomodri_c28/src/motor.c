@@ -40,7 +40,6 @@ void MOT_resetAlignStruct(align_t* p_align)
 {
     p_align->state          = ALIGN_COUNT_UP;
     p_align->cnt            = 0;
-    p_align->cntMax         = PWM_FREQ;
     p_align->idAlign        = 0.0f;
 
     return;

@@ -143,6 +143,7 @@
  * @{
  */
 #define CPU_TIMER_0_BASE                        CPUTIMER0_BASE
+#define CPU_TIMER_0_REGS                        (&CpuTimer0Regs)
 #define CPU_TIMER_0_PERIOD                      (1000U)                             // Period counter - 1ms
 #define CPU_TIMER_0_PRESCALER                   ((DEVICE_SYSCLK_FREQ / 1e6) - 1)    // Prescaler increment - 1us
 #define CPU_TIMER_0_INT                         INT_TIMER0
@@ -168,6 +169,7 @@
  * @{
  */
 #define DRV_SPI_BASE                            SPIA_BASE
+#define DRV_SPI_REGS                            (&SpiaRegs)
 #define DRV_SPI_TX_BASE_REG_ADDR                (DRV_SPI_BASE + SPI_O_TXBUF)
 #define DRV_SPI_RX_BASE_REG_ADDR                (DRV_SPI_BASE + SPI_O_RXBUF)
 /**
@@ -179,6 +181,7 @@
  * @{
  */
 #define COM_SPI_BASE                            SPIB_BASE
+#define COM_SPI_REGS                            (&SpibRegs)
 #define COM_SPI_TX_BASE_REG_ADDR                (COM_SPI_BASE + SPI_O_TXBUF)
 #define COM_SPI_RX_BASE_REG_ADDR                (COM_SPI_BASE + SPI_O_RXBUF)
 /**
@@ -190,6 +193,7 @@
  * @{
  */
 #define MST_SPI_BASE                            SPIC_BASE
+#define MST_SPI_REGS                            (&SpicRegs)
 #define MST_SPI_TX_BASE_REG_ADDR                (MST_SPI_BASE + SPI_O_TXBUF)
 #define MST_SPI_RX_BASE_REG_ADDR                (MST_SPI_BASE + SPI_O_RXBUF)
 /**
@@ -201,6 +205,7 @@
  * @{
  */
 #define LED_SPI_BASE                            SPID_BASE
+#define LED_SPI_REGS                            (&SpidRegs)
 #define LED_SPI_TX_BASE_REG_ADDR                (LED_SPI_BASE + SPI_O_TXBUF)
 #define LED_SPI_RX_BASE_REG_ADDR                (LED_SPI_BASE + SPI_O_RXBUF)
 /**
@@ -631,12 +636,12 @@
 #define MOTOR2_PWM1_BASE                        EPWM4_BASE
 #define MOTOR2_PWM2_BASE                        EPWM5_BASE
 #define MOTOR2_PWM3_BASE                        EPWM6_BASE
-#define MOTOR1_PWM1_VAR                         (&EPwm1Regs)
-#define MOTOR1_PWM2_VAR                         (&EPwm2Regs)
-#define MOTOR1_PWM3_VAR                         (&EPwm3Regs)
-#define MOTOR2_PWM1_VAR                         (&EPwm4Regs)
-#define MOTOR2_PWM2_VAR                         (&EPwm5Regs)
-#define MOTOR2_PWM3_VAR                         (&EPwm6Regs)
+#define MOTOR1_PWM1_REGS                        (&EPwm1Regs)
+#define MOTOR1_PWM2_REGS                        (&EPwm2Regs)
+#define MOTOR1_PWM3_REGS                        (&EPwm3Regs)
+#define MOTOR2_PWM1_REGS                        (&EPwm4Regs)
+#define MOTOR2_PWM2_REGS                        (&EPwm5Regs)
+#define MOTOR2_PWM3_REGS                        (&EPwm6Regs)
 #define MOTOR1_PWM1_CMD_ADDR                    (MOTOR1_PWM1_BASE + EPWM_O_CMPA + 1U)
 #define MOTOR1_PWM2_CMD_ADDR                    (MOTOR1_PWM2_BASE + EPWM_O_CMPA + 1U)
 #define MOTOR1_PWM3_CMD_ADDR                    (MOTOR1_PWM3_BASE + EPWM_O_CMPA + 1U)
@@ -805,16 +810,17 @@
  * MOTORS DEFINES
  ***********************************************************************/
 /*** Motor 1 constants ***/
-#define MOTOR1_KV                               (300.0f)     // Motor constant (rpm/V)
-#define MOTOR1_KE                               (0.0017f)    //1.0 / (MOTOR1_KV * FM_RPM2RAD * MOTOR1_POLES_PAIRS) // Motor back EMF constant (V/rad/s)
-#define MOTOR1_KI                               (0.1f)       // Motor torque constant (N.m/A)
-#define MOTOR1_RS                               (0.7f)       // Stator resistance (ohm)
-#define MOTOR1_LD                               (134e-6f)    // Stator d-axis inductance (H)
-#define MOTOR1_LQ                               (140e-6f)    // Stator q-axis inductance (H)
+#define MOTOR1_KV                               (300.0f)    // Motor constant (rpm/V)
+#define MOTOR1_KE                               (0.0017f)   //1.0 / (MOTOR1_KV * FM_RPM2RAD * MOTOR1_POLES_PAIRS) // Motor back EMF constant (V/rad/s)
+#define MOTOR1_KI                               (0.1f)      // Motor torque constant (N.m/A)
+#define MOTOR1_RS                               (0.7f)      // Stator resistance (ohm)
+#define MOTOR1_LD                               (134e-6f)   // Stator d-axis inductance (H)
+#define MOTOR1_LQ                               (140e-6f)   // Stator q-axis inductance (H)
 #define MOTOR1_POLES_PAIRS                      (12)        // Number of poles
-#define MOTOR1_CURRENT_CUTOFF_FREQ              (500.0f)     // Current loop bandwidth (Hz)
+#define MOTOR1_CURRENT_CUTOFF_FREQ              (500.0f)    // Current loop bandwidth (Hz)
 #define MOTOR1_CURRENT_LPF_ALPHA                (1.0f / (1.0f + (1.0f / (2.0f * M_PI * MOTOR1_CURRENT_CUTOFF_FREQ / PWM_FREQ))))
 #define MOTOR1_CURRENT_LPF_ONE_M_ALPHA          (1.0f - MOTOR1_CURRENT_LPF_ALPHA)
+#define MOTOR1_CURRENT_ALIGN_MAX                (0.5f)
 #define MOTOR1_ID_REGULATOR_KP_COEF             (MOTOR1_LD * 2.0f * M_PI * MOTOR1_CURRENT_CUTOFF_FREQ)
 #define MOTOR1_ID_REGULATOR_KI_COEF             (MOTOR1_RS * 2.0f * M_PI * MOTOR1_CURRENT_CUTOFF_FREQ / PWM_FREQ)
 #define MOTOR1_IQ_REGULATOR_KP_COEF             (MOTOR1_LQ * 2.0f * M_PI * MOTOR1_CURRENT_CUTOFF_FREQ)
@@ -831,16 +837,17 @@
 //#define MOTOR1_CUR_LOOP_ALPHA                   (1.0 - (MOTOR1_CUR_LOOP_ONE_M_ALPHA))
 
 /*** Motor 2 constants ***/
-#define MOTOR2_KV                               (300.0f)     // Motor constant (rpm/V)
-#define MOTOR2_KE                               (0.0017f)    // Motor back EMF constant (V/rad/s)
-#define MOTOR2_KI                               (0.1f)       // Motor torque constant (N.m/A)
-#define MOTOR2_RS                               (0.7f)       // Stator resistance (ohm)
+#define MOTOR2_KV                               (300.0f)    // Motor constant (rpm/V)
+#define MOTOR2_KE                               (0.0017f)   // Motor back EMF constant (V/rad/s)
+#define MOTOR2_KI                               (0.1f)      // Motor torque constant (N.m/A)
+#define MOTOR2_RS                               (0.7f)      // Stator resistance (ohm)
 #define MOTOR2_LD                               (134e-6)    // Stator d-axis inductance (H)
 #define MOTOR2_LQ                               (140e-6)    // Stator q-axis inductance (H)
 #define MOTOR2_POLES_PAIRS                      (12)        // Number of poles
-#define MOTOR2_CURRENT_CUTOFF_FREQ              (500.0f)     // Current loop bandwidth (Hz)
+#define MOTOR2_CURRENT_CUTOFF_FREQ              (500.0f)    // Current loop bandwidth (Hz)
 #define MOTOR2_CURRENT_LPF_ALPHA                (1.0f / (1.0f + (1.0f / (2.0f * M_PI * MOTOR2_CURRENT_CUTOFF_FREQ / PWM_FREQ))))
 #define MOTOR2_CURRENT_LPF_ONE_M_ALPHA          (1.0f - MOTOR2_CURRENT_LPF_ALPHA)
+#define MOTOR2_CURRENT_ALIGN_MAX                (0.5f)
 #define MOTOR2_ID_REGULATOR_KP_COEF             (MOTOR2_LD * 2.0f * M_PI * MOTOR2_CURRENT_CUTOFF_FREQ)
 #define MOTOR2_ID_REGULATOR_KI_COEF             (MOTOR2_RS * 2.0f * M_PI * MOTOR2_CURRENT_CUTOFF_FREQ / PWM_FREQ)
 #define MOTOR2_IQ_REGULATOR_KP_COEF             (MOTOR2_LQ * 2.0f * M_PI * MOTOR2_CURRENT_CUTOFF_FREQ)
@@ -848,8 +855,8 @@
 #define MOTOR2_SPEED_REGULATOR_KP_COEF          (1.0f)
 #define MOTOR2_SPEED_REGULATOR_KD_COEF          (0.02f)
 #define MOTOR2_SPEED_REGULATOR_SATURATION       (4.0f)
-#define MOTOR2_DTC_MAX                          (0.9f)     // Max duty cycle
-#define MOTOR2_DTC_MIN                          (0.1f)     // Min duty cycle
+#define MOTOR2_DTC_MAX                          (0.9f)      // Max duty cycle
+#define MOTOR2_DTC_MIN                          (0.1f)      // Min duty cycle
 #define MOTOR2_STATOR_RESISTOR_CUTOFF_FREQ      (0.2f)
 #define MOTOR2_STATOR_RESISTOR_LPF_ALPHA        (1.0f / (1.0f + (1.0f / (2.0f * M_PI * MOTOR2_STATOR_RESISTOR_CUTOFF_FREQ / PWM_FREQ))))
 #define MOTOR2_STATOR_RESISTOR_LPF_ONE_M_ALPHA  (1.0f - MOTOR2_STATOR_RESISTOR_LPF_ALPHA)
@@ -857,10 +864,10 @@
 //#define MOTOR2_CUR_LOOP_ALPHA                   (1.0 - (MOTOR2_CUR_LOOP_ONE_M_ALPHA))
 
 #define MOTOR12_OVERMODULATION                  (1.15f)
-#define VBUS_CUTOFF_FREQ                        (500.0f)     // vbus voltage loop bandwidth (Hz)
+#define VBUS_CUTOFF_FREQ                        (500.0f)    // vbus voltage loop bandwidth (Hz)
 #define VBUS_LPF_ALPHA                          (1.0 / (1.0 + (1.0 / (2.0 * M_PI * VBUS_CUTOFF_FREQ / PWM_FREQ))))
 #define VBUS_LPF_ONE_M_ALPHA                    (1.0 - VBUS_LPF_ALPHA)
-#define VEXT_CUTOFF_FREQ                        (4000.0f)     // vbus voltage loop bandwidth (Hz)
+#define VEXT_CUTOFF_FREQ                        (4000.0f)   // vbus voltage loop bandwidth (Hz)
 #define VEXT_LPF_ALPHA                          (1.0 / (1.0 + (1.0 / (2.0 * M_PI * VEXT_CUTOFF_FREQ / PWM_FREQ))))
 #define VEXT_LPF_ONE_M_ALPHA                    (1.0 - VEXT_LPF_ALPHA)
 #define MOTOR12_IMAX                            (20.0f)
@@ -868,26 +875,28 @@
 /***********************************************************************
  * COMMUNICATION DEFINES
  ***********************************************************************/
-#define COM_MSG_TX_RX_8BIT_LENGTH               (34)
-#define COM_MSG_TX_RX_16BIT_FULL_LENGTH         (COM_MSG_TX_RX_8BIT_LENGTH / 2)
-#define COM_MSG_TX_RX_16BIT_CRC_LENGTH          (2)
+#define COM_MSG_TX_RX_8BIT_FULL_LENGTH          (34)
+#define COM_MSG_TX_RX_16BIT_FULL_LENGTH         (COM_MSG_TX_RX_8BIT_FULL_LENGTH / 2)
+#define COM_MSG_TX_RX_8BIT_CRC_LENGTH           (4)
+#define COM_MSG_TX_RX_16BIT_CRC_LENGTH          (COM_MSG_TX_RX_8BIT_CRC_LENGTH / 2)
 #define COM_MSG_TX_RX_16BIT_PAYLOAD_LENGTH      (COM_MSG_TX_RX_16BIT_FULL_LENGTH - COM_MSG_TX_RX_16BIT_CRC_LENGTH)
+#define COM_MSG_TX_RX_8BIT_PAYLOAD_LENGTH       (COM_MSG_TX_RX_8BIT_FULL_LENGTH - COM_MSG_TX_RX_8BIT_CRC_LENGTH)
 
 #define LED_MSG_TX_16BIT_LENGTH                 (6)
 
 /*** Communication constants ***/
-#define POSITION_LSB                            (5.960464477539063e-08f)                 // 2**(-24)
+#define POSITION_LSB                            (5.960464477539063e-08f)    // 2**(-24)
 #if(1)
 #define VELOCITY_LSB                            (4.8828125e-04f)// 2**(-11) // Added rad/s to krpm conversion
 #else
 #define VELOCITY_LSB                            (0.00048828125f * FM_RPM2RAD * 1000.0f)
 #endif
-#define IQ_LSB                                  (9.765625e-04f)                         // 2**(-10)
-#define CURRENT_SAT_LSB                         (1.25e-01f)                             // 2**(-3)
-#define RESISTANCE_LSB                          (3.0517578125e-05f)                     // 2**(-15)
-#define VOLTAGE_LSB                             (6.103515625e-05f)                      // 2**(-14)
-#define KP_LSB                                  (4.8828125e-04f)                        // 2**(-11)
-#define KD_LSB                                  (9.765625e-04f)                         // 2**(-10)
+#define IQ_LSB                                  (9.765625e-04f)             // 2**(-10)
+#define CURRENT_SAT_LSB                         (1.25e-01f)                 // 2**(-3)
+#define RESISTANCE_LSB                          (3.0517578125e-05f)         // 2**(-15)
+#define VOLTAGE_LSB                             (6.103515625e-05f)          // 2**(-14)
+#define KP_LSB                                  (4.8828125e-04f)            // 2**(-11)
+#define KD_LSB                                  (9.765625e-04f)             // 2**(-10)
 
 typedef struct __LOWPASSFILTER_STRUCT__
 {

@@ -18,16 +18,16 @@
 #include "anticoagging.h"
 
 
-typedef enum
-{
-    MOTOR_ALIGN_COUNT_UP    = 0,/*!< No error */
-    MOTOR_ALIGN_STAY        = 1, /*!< Encoder_1 error too high */
-    MOTOR_ALIGN_COUNT_DOWN  = 2,/*!< Timeout for receiving current references exceeded */
-    MOTOR_ALIGN_DONE        = 3, /*!< Motor temperature reached critical valued */
-    MOTOR_RUN               = 4,/*!< Unused error */
-    MOTOR_TEMP              = 5,
-    MOTOR_ANTICOGGING       = 6,
-} motor_state;
+//typedef enum
+//{
+//    MOTOR_ALIGN_COUNT_UP    = 0,/*!< No error */
+//    MOTOR_ALIGN_STAY        = 1, /*!< Encoder_1 error too high */
+//    MOTOR_ALIGN_COUNT_DOWN  = 2,/*!< Timeout for receiving current references exceeded */
+//    MOTOR_ALIGN_DONE        = 3, /*!< Motor temperature reached critical valued */
+//    MOTOR_RUN               = 4,/*!< Unused error */
+//    MOTOR_TEMP              = 5,
+//    MOTOR_ANTICOGGING       = 6,
+//} motor_state;
 
 typedef struct __MOTORS_STRUCT__
 {
@@ -35,7 +35,7 @@ typedef struct __MOTORS_STRUCT__
     drv8353_t*              p_motorDRV;
     foc_t*                  p_motorFOC;
     // Cycle counter events
-    uint64_t                interruptCnt;
+    uint64_t                itCnt;
     uint32_t                clCycleNb;
     // Q-axis resistance estimation
     float32_t               statorResEst;    // [Ohm]
@@ -43,7 +43,7 @@ typedef struct __MOTORS_STRUCT__
     lpf_t                   statorResEstFlt;
     // Anti-coagging structure
     Anticoagging            acog;
-    bool_t                  interruptDone;
+    bool_t                  itDone;
     // PWM address register for FOC command
     volatile uint16_t*      p_motorChAReg;
     volatile uint16_t*      p_motorChBReg;

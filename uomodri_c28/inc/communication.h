@@ -2,13 +2,20 @@
 #define __COMMUNICATION_H__
 
 /***********************************************************************
- * INCLUDE FILES
+ * INCLUDES
  ***********************************************************************/
 #include <stdbool.h>
 #include <stdint.h>
 #include <math.h>
 
 #include "foc.h"
+
+//#include "crc_tbl.h"
+//#include "vcu2_types.h"
+//#include "vcu2_crc.h"
+//#include "vcrc_configpoly.h"
+//#include "dsp_examples_setup.h"
+
 #ifdef USE_CM_CORE
 #include "uomodri_cm_user_defines.h"
 #else
@@ -55,7 +62,7 @@ static const uint32_t crc32_table[] =
 };
 
 /***********************************************************************
- * COMMUNICATION FIELDS
+ * COMMUNICATION STRUCTURES \& UNIONS BIT FILEDS
  ***********************************************************************/
 /**
  * @struct  mst2slv_reg_t
@@ -123,7 +130,7 @@ typedef struct __U32toU16_reg_t__
 } U32toU16_reg_t;
 
 /***********************************************************************
- * COMMUNICATION STRUCTURES
+ * MAIN COMMUNICATION STRUCTURES
  ***********************************************************************/
 /**
  * @struct  mst2slv_msg_t_msg_t
@@ -212,11 +219,33 @@ typedef enum
 // DRV nFault error
 #define SPI_SENSOR_STATUS_ERROR_DRV_NFAULT          7
 
+#define POLYNOMIAL_32_P1                            0x04C11DB7
+#define CRC_INIT_CRC32                              0xFFFFFFFF
+
+//extern CRC_Obj vcrc;
+
+//{.seedValue     = CRC_INIT_CRC32,
+// .nMsgBytes     = 30,//len,
+// .parity        = CRC_parity_odd,   //!< the location, in a word, of the first byte of the CRC calculation
+// .crcResult     = 0,
+//// .pMsgBuffer    = (uint16_t *)&cmd_msg,//p_buf,            //!< Pointer to the message buffer
+// .pCrcTable     = NULL,             //!< Pointer to the CRC lookup table
+// .polynomial    = POLYNOMIAL_32_P1, //!<user polynomial
+// .polySize      = 0x1F,//SIZE_32_BITS,     //!<polynomial size
+// .dataSize      = 0x07,//SIZE_16_BITS,
+// .init          = (void (*)(void *))CRC_init32Bit,          //!< Function pointer to CRC initialization routine
+// .run           = (void (*)(void *))CRC_run32BitPoly1,            //!< Function pointer to CRC computation routine
+//};
+
 /***********************************************************************
  * FUNCTIONS DECLARATION
  ***********************************************************************/
-bool_t com_MsgExtract(mst2slv_msg_t*, cmd_uomodri_t*);
-bool_t com_MsgCreate(foc_t*, cmd_uomodri_t*, slv2mst_msg_t*);
-uint32_t com_crc32(uint16_t*, uint16_t);
+bool_t COM_msgExtract(mst2slv_msg_t*, cmd_uomodri_t*);
+bool_t COM_msgCreate(foc_t*, cmd_uomodri_t*, slv2mst_msg_t*);
+void COM_resetCmdStruct(cmd_uomodri_t*);
+void COM_resetCmdMotorStruct(cmd_uomodri_t*, motor_id_e);
+uint32_t COM_crc32(uint16_t*, uint16_t);
+//void com_vcrc_ini(uint16_t*, uint16_t);
+//uint32_t com_vcrc(uint16_t*, uint16_t);
 
 #endif

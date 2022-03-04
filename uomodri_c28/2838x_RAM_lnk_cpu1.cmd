@@ -98,7 +98,7 @@ SECTIONS
    //.esysmem         : > RAMLS5
 #endif
 
-   ramgs0 : > RAMGS0, type=NOINIT
+   ramgs0 : > RAMGS0//, type=NOINIT
    ramgs1 : > RAMGS1, type=NOINIT
 
    MSGRAM_CPU1_TO_CPU2 > CPU1TOCPU2RAM, type=NOINIT
