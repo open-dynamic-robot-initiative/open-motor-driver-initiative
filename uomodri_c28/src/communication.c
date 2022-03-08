@@ -44,21 +44,21 @@ bool_t COM_msgExtract(mst2slv_msg_t* p_msg, cmd_uomodri_t* p_cmd)
     uint32_t crc    = COM_crc32((uint16_t *) p_msg, COM_MSG_TX_RX_16BIT_PAYLOAD_LENGTH);
     if((MSB_32(crc) == p_msg->crc.u16_msb) && (LSB_32(crc) == p_msg->crc.u16_lsb))
     {
-        U32toU16_reg_t pos_m1_u16   = p_msg->position[MOTOR_1];
-        U32toU16_reg_t pos_m2_u16   = p_msg->position[MOTOR_2];
-        int32_t pos_m1              = (int32_t)FUS_16_TO_32(pos_m1_u16.u16_msb, pos_m1_u16.u16_lsb);
-        int32_t pos_m2              = (int32_t)FUS_16_TO_32(pos_m2_u16.u16_msb, pos_m2_u16.u16_lsb);
+//        U32toU16_reg_t pos_m1_u16   = p_msg->position[MOTOR_1];
+//        U32toU16_reg_t pos_m2_u16   = p_msg->position[MOTOR_2];
+//        int32_t pos_m1              = (int32_t)FUS_16_TO_32(pos_m1_u16.u16_msb, pos_m1_u16.u16_lsb);
+//        int32_t pos_m2              = (int32_t)FUS_16_TO_32(pos_m2_u16.u16_msb, pos_m2_u16.u16_lsb);
         p_cmd->mode.bit.TIMEOUT     = p_msg->mode.bit.TIMEOUT;
         p_cmd->mode.bit.EI2OC       = p_msg->mode.bit.EI2OC;
         p_cmd->mode.bit.EI1OC       = p_msg->mode.bit.EI1OC;
-        p_cmd->mode.bit.EPRE        = false;//p_msg->mode.bit.EPRE;
+        p_cmd->mode.bit.EPRE        = p_msg->mode.bit.EPRE;
         p_cmd->mode.bit.EM2         = p_msg->mode.bit.EM2;
         p_cmd->mode.bit.EM1         = p_msg->mode.bit.EM1;
         p_cmd->mode.bit.ES          = p_msg->mode.bit.ES;
-        p_cmd->position[MOTOR_1]    = (float32_t)(pos_m1                    * POSITION_LSB);
-        p_cmd->position[MOTOR_2]    = (float32_t)(pos_m2                    * POSITION_LSB);
-        p_cmd->velocity[MOTOR_1]    = (float32_t)(p_msg->velocity[MOTOR_1]  * VELOCITY_LSB);
-        p_cmd->velocity[MOTOR_2]    = (float32_t)(p_msg->velocity[MOTOR_2]  * VELOCITY_LSB);
+        p_cmd->position[MOTOR_1]    = 0.0f;//(float32_t)(pos_m1                    * POSITION_LSB);
+        p_cmd->position[MOTOR_2]    = 0.0f;//(float32_t)(pos_m2                    * POSITION_LSB);
+        p_cmd->velocity[MOTOR_1]    = 0.0f;//(float32_t)(p_msg->velocity[MOTOR_1]  * VELOCITY_LSB);
+        p_cmd->velocity[MOTOR_2]    = 0.0f;//(float32_t)(p_msg->velocity[MOTOR_2]  * VELOCITY_LSB);
         p_cmd->current[MOTOR_1]     = (float32_t)(p_msg->current[MOTOR_1]   * IQ_LSB);
         p_cmd->current[MOTOR_2]     = (float32_t)(p_msg->current[MOTOR_2]   * IQ_LSB);
         p_cmd->kpCoeff[MOTOR_1]     = 0.0f;//(float32_t)(p_msg->kpCoeff[MOTOR_1]   * KP_LSB);
@@ -81,23 +81,23 @@ bool_t COM_msgExtract(mst2slv_msg_t* p_msg, cmd_uomodri_t* p_cmd)
  * @param[inout]    p_msg   Pointer on the message to transmit to the Master board
  * @return      Is message fully created/updated using motor_1 \& motor_2 data structure.
  */
-bool_t COM_msgCreate(foc_t* p_foc, cmd_uomodri_t* p_cmd, slv2mst_msg_t* p_msg)
+void COM_msgCreate(foc_t* p_foc, cmd_uomodri_t* p_cmd, slv2mst_msg_t* p_msg)
 {
     int32_t pos                             = (int32_t)(p_foc->motor_enc.thetaAbsolute / POSITION_LSB);
     p_msg->status.bit.SE                    = p_cmd->mode.bit.ES;                                           // System enabled
 
-    if(p_msg->status.bit.ERROR_CODE != STATUS_ERROR_NO_ERROR)
-        p_msg->status.bit.ERROR_CODE    = p_msg->status.bit.ERROR_CODE;
-    else if(p_foc->motor_enc.rollOverFlag)
-        p_msg->status.bit.ERROR_CODE    = STATUS_ERROR_POS_ROLLOVER;
-    else
+//    if(p_msg->status.bit.ERROR_CODE != STATUS_ERROR_NO_ERROR)
+//        p_msg->status.bit.ERROR_CODE    = p_msg->status.bit.ERROR_CODE;
+//    else if(p_foc->motor_enc.rollOverFlag)
+//        p_msg->status.bit.ERROR_CODE    = STATUS_ERROR_POS_ROLLOVER;
+//    else
         p_msg->status.bit.ERROR_CODE    = STATUS_ERROR_NO_ERROR;
     p_msg->lastCmdIndex                     = p_cmd->index;
     if(p_foc->motor_id == MOTOR_1)
     {
         // Update status field - MOTOR_1
         p_msg->status.bit.M1E               = p_cmd->mode.bit.EM1;                                          // MOTOR_1 enabled
-        p_msg->status.bit.M1R               = (p_foc->motor_align.state == ALIGN_DONE) ? (true) : (false);  // MOTOR_1 ready
+        p_msg->status.bit.M1R               = (p_foc->motor_state[CURRENT] == MOTOR_READY) ? (true) : (false);//(p_foc->motor_align.state == ALIGN_DONE) ? (true) : (false);  // MOTOR_1 ready
         p_msg->status.bit.IDX1T             = p_foc->motor_enc.indexToggle;                                 // MOTOR_1 index toggle
         p_msg->status.bit.IDX1D             = p_foc->motor_enc.indexDetected;                               // MOTOR_1 index detected
 //        p_msg->status.bit.ERROR_CODE        = (p_foc->motor_enc.rollOverFlag) ? (STATUS_ERROR_POS_ROLLOVER) : (STATUS_ERROR_NO_ERROR);
@@ -112,7 +112,7 @@ bool_t COM_msgCreate(foc_t* p_foc, cmd_uomodri_t* p_cmd, slv2mst_msg_t* p_msg)
     {
         // Update status field - MOTOR_2
         p_msg->status.bit.M2E               = p_cmd->mode.bit.EM2;                                          // MOTOR_2 enabled
-        p_msg->status.bit.M2R               = (p_foc->motor_align.state == ALIGN_DONE) ? (true) : (false);  // MOTOR_2 ready
+        p_msg->status.bit.M2R               = (p_foc->motor_state[CURRENT] == MOTOR_READY) ? (true) : (false);//(p_foc->motor_align.state == ALIGN_DONE) ? (true) : (false);  // MOTOR_2 ready
         p_msg->status.bit.IDX2T             = p_foc->motor_enc.indexToggle;                                 // MOTOR_2 index toggle
         p_msg->status.bit.IDX2D             = p_foc->motor_enc.indexDetected;                               // MOTOR_2 index detected
 //        if(p_msg->status.bit.ERROR_CODE != STATUS_ERROR_NO_ERROR)
@@ -132,10 +132,9 @@ bool_t COM_msgCreate(foc_t* p_foc, cmd_uomodri_t* p_cmd, slv2mst_msg_t* p_msg)
         uint32_t crc = COM_crc32((uint16_t *)p_msg, COM_MSG_TX_RX_16BIT_PAYLOAD_LENGTH);
         p_msg->crc.u16_msb                  = LSB_32(crc);// required for Solo
         p_msg->crc.u16_lsb                  = MSB_32(crc);
-        return (true);
     }
 
-    return(false);
+    return;
 }
 
 /**

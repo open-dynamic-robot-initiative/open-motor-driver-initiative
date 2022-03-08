@@ -312,14 +312,14 @@ static foc_t motor_foc[] =
   .motor_enc.speed.speedFlt.a           = (float32_t)MOTOR1_ENC_SPEED_LPF_ALPHA,
   .motor_enc.speed.speedFlt.one_minus_a = (float32_t)MOTOR1_ENC_SPEED_LPF_ONE_M_ALPHA,
   //---------------------------------------------------------------------------
-  .motor_align.state                    = ALIGN_COUNT_UP,
-  .motor_align.cnt                      = 0,
-  .motor_align.cntMax                   = PWM_FREQ,
-  .motor_align.idAlignRef               = 0.5,// 500mA alignment current
-  .motor_align.idAlign                  = 0.0,
+//  .motor_align.state                    = ALIGN_COUNT_UP,
+//  .motor_align.cnt                      = 0,
+//  .motor_align.cntMax                   = PWM_FREQ,
+//  .motor_align.idAlignRef               = 0.5,// 500mA alignment current
+//  .motor_align.idAlign                  = 0.0,
   //---------------------------------------------------------------------------
-  .motor_state[NEW]                     = MOTOR_STOP,
-  .motor_state[OLD]                     = MOTOR_STOP,
+  .motor_state[CURRENT]                 = MOTOR_STOP,
+  .motor_state[NEXT]                    = MOTOR_STOP,
   //---------------------------------------------------------------------------
   .iParkFlt.a                           = MOTOR1_CURRENT_LPF_ALPHA,
   .iParkFlt.one_minus_a                 = MOTOR1_CURRENT_LPF_ONE_M_ALPHA,
@@ -382,7 +382,6 @@ static foc_t motor_foc[] =
   .pdPos.errSpeed                       = 0.0,
   .pdPos.p_kp                           = (float32_t *)(&cmd_uOmodri.kpCoeff[MOTOR_1]),//(float32_t)MOTOR1_SPEED_REGULATOR_KP_COEF,
   .pdPos.p_kd                           = (float32_t *)(&cmd_uOmodri.kdCoeff[MOTOR_1]),//(float32_t)MOTOR1_SPEED_REGULATOR_KD_COEF,
-
   .pdPos.derivative                     = 0.0,
   .pdPos.p_ff                           = (float32_t *)(&cmd_uOmodri.current[MOTOR_1]),
   .pdPos.p_sat                          = (float32_t *)(&cmd_uOmodri.iSat[MOTOR_1]),//MOTOR1_SPEED_REGULATOR_SATURATION,//((float32_t *)(&pdSat)),
@@ -392,7 +391,7 @@ static foc_t motor_foc[] =
   .resEstFlt.a                          = 0.0,
   .resEstFlt.one_minus_a                = 0.0,
   //--- Error message ---------------------------------------------------------
-  .errorMsg                             = FOC_ERROR_NO_ERROR,
+  .errorStatus                          = FOC_ERROR_NO_ERROR,
   //--- Anti-coagging structure -----------------------------------------------
   //acog;
  },
@@ -466,14 +465,14 @@ static foc_t motor_foc[] =
   .motor_enc.speed.speedFlt.a           = (float32_t)MOTOR2_ENC_SPEED_LPF_ALPHA,
   .motor_enc.speed.speedFlt.one_minus_a = (float32_t)MOTOR2_ENC_SPEED_LPF_ONE_M_ALPHA,
   //---------------------------------------------------------------------------
-  .motor_align.state                    = ALIGN_COUNT_UP,
-  .motor_align.cnt                      = 0,
-  .motor_align.cntMax                   = PWM_FREQ,
-  .motor_align.idAlignRef               = 0.5,// 500mA alignment current
-  .motor_align.idAlign                  = 0.0,
+//  .motor_align.state                    = ALIGN_COUNT_UP,
+//  .motor_align.cnt                      = 0,
+//  .motor_align.cntMax                   = PWM_FREQ,
+//  .motor_align.idAlignRef               = 0.5,// 500mA alignment current
+//  .motor_align.idAlign                  = 0.0,
   //---------------------------------------------------------------------------
-  .motor_state[NEW]                     = MOTOR_STOP,
-  .motor_state[OLD]                     = MOTOR_STOP,
+  .motor_state[CURRENT]                 = MOTOR_STOP,
+  .motor_state[NEXT]                    = MOTOR_STOP,
   //---------------------------------------------------------------------------
   .iParkFlt.a                           = MOTOR2_CURRENT_LPF_ALPHA,
   .iParkFlt.one_minus_a                 = MOTOR2_CURRENT_LPF_ONE_M_ALPHA,
@@ -545,7 +544,7 @@ static foc_t motor_foc[] =
   .resEstFlt.a                          = 0.0,
   .resEstFlt.one_minus_a                = 0.0,
   //--- Error message ---------------------------------------------------------
-  .errorMsg                             = FOC_ERROR_NO_ERROR,
+  .errorStatus                          = FOC_ERROR_NO_ERROR,
   //--- Anti-coagging structure -----------------------------------------------
   //acog;
  },

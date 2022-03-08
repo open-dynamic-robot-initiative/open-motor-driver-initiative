@@ -241,7 +241,7 @@ typedef enum
  * FUNCTIONS DECLARATION
  ***********************************************************************/
 bool_t COM_msgExtract(mst2slv_msg_t*, cmd_uomodri_t*);
-bool_t COM_msgCreate(foc_t*, cmd_uomodri_t*, slv2mst_msg_t*);
+void COM_msgCreate(foc_t*, cmd_uomodri_t*, slv2mst_msg_t*);
 void COM_resetCmdStruct(cmd_uomodri_t*);
 void COM_resetCmdMotorStruct(cmd_uomodri_t*, motor_id_e);
 uint32_t COM_crc32(uint16_t*, uint16_t);

@@ -183,7 +183,7 @@ void FOC_resetStruct(foc_t* p_foc)
     // Reset encoder structure
     ENC_resetStruct(&p_foc->motor_enc);
     // Reset align structure
-    MOT_resetAlignStruct(&p_foc->motor_align);
+//    MOT_resetAlignStruct(&p_foc->motor_align);
     // Reset analog measures
     FOC_resetMeasuresStruct(&p_foc->motor_acq);
     // Reset currents and voltages

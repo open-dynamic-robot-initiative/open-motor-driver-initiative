@@ -56,15 +56,29 @@ typedef enum
  */
 typedef enum
 {
-    FOC_ERROR_NO_ERROR          = 0,    /*!< No error */
-    FOC_ERROR_ENCODER1          = 1,    /*!< Encoder_1 error too high */
-    FOC_ERROR_SPI_RECV_TIMEOUT  = 2,    /*!< Timeout for receiving current references exceeded */
-    FOC_ERROR_CRIT_TEMP         = 3,    /*!< Motor temperature reached critical valued */
-    FOC_ERROR_POSCONV           = 4,    /*!< Unused error */
-    FOC_ERROR_POS_ROLLOVER      = 5,    /*!< Position roll-over occurred */
-    FOC_ERROR_ENCODER2          = 6,    /*!< Encoder_2 error too high */
-    FOC_ERROR_DRV_NFAULT        = 7,    /*!< Motor DRV nFault error */
-} foc_error_e;
+    COM_ERROR_NO_ERROR          = 0,    /*!< No error */
+    COM_ERROR_ENCODER1          = 1,    /*!< Encoder_1 error too high */
+    COM_ERROR_SPI_RECV_TIMEOUT  = 2,    /*!< Timeout for receiving current references exceeded */
+    COM_ERROR_CRIT_TEMP         = 3,    /*!< Motor temperature reached critical valued */
+    COM_ERROR_POSCONV           = 4,    /*!< Unused error */
+    COM_ERROR_POS_ROLLOVER      = 5,    /*!< Position roll-over occurred */
+    COM_ERROR_ENCODER2          = 6,    /*!< Encoder_2 error too high */
+    COM_ERROR_DRV_NFAULT        = 7,    /*!< Motor DRV nFault error */
+} com_error_e;
+
+//typedef enum
+//{
+//    FOC_ERROR_NO_ERROR          = 0x0000,    /*!< No error */
+//    FOC_ERROR_ENCODER           = 0x0001,    /*!< Encoder_1 error too high */
+//    FOC_ERROR_POS_ROLLOVER      = 0x0002,    /*!< Position roll-over occurred */
+//    FOC_ERROR_DRV_NFAULT        = 0x0004,    /*!< Motor DRV nFault error */
+////    FOC_ERROR_FAILURE_MOTOR1    = 0x0007,
+////    FOC_ERROR_ENCODER2          = 0x0010,    /*!< Encoder_2 error too high */
+////    FOC_ERROR_POS_ROLLOVER2     = 0x0020,    /*!< Position roll-over occurred */
+////    FOC_ERROR_DRV_NFAULT2       = 0x0040,    /*!< Motor DRV nFault error */
+////    FOC_ERROR_SPI_RECV_TIMEOUT  = 0x0100,    /*!< Timeout for receiving current references exceeded */
+////    FOC_ERROR_CRIT_TEMP         = 0x0200,    /*!< Motor temperature reached critical valued */
+//} foc_error_e;
 
 /***********************************************************************
  * CONTROL STRUCTURES
@@ -184,7 +198,7 @@ typedef struct __MOTOR_FOC_CONTROL_t__
     params_t            motor_cfg;      /*!< Motor configuration parameters */
     acq_t               motor_acq;      /*!< Current \& voltage acquisitions */
     encoder_t           motor_enc;      /*!< Encoder position & speed */
-    align_t             motor_align;    /*!< Alignment calibration procedure */
+//    align_t             motor_align;    /*!< Alignment calibration procedure */
     motor_state_e       motor_state[2];
     lpf_t               iParkFlt;       /*!< Low-pass filter parameters affected to park transform */
     float32_t           sinTheta;       /*!< Sinus of the electrical rotor angle */
@@ -219,12 +233,17 @@ typedef struct __MOTOR_FOC_CONTROL_t__
 #else
     Anticoagging        acog;           /*!< Anti-coagging structure */
 #endif
-    foc_error_e         errorMsg;       /*!< Error messages */
+    uint16_t            errorStatus;    /*!< Error messages */
+//    uint16_t            errorStatus;
 } foc_t;
 
 /***********************************************************************
  * DEFINES
  ***********************************************************************/
+#define FOC_ERROR_NO_ERROR          (0x0000)    /*!< No error */
+#define FOC_ERROR_ENCODER           (0x0001)    /*!< Encoder_1 error too high */
+#define FOC_ERROR_POS_ROLLOVER      (0x0002)    /*!< Position roll-over occurred */
+#define FOC_ERROR_DRV_NFAULT        (0x0004)    /*!< Motor DRV nFault error */
 // Resistance estimation uses Ohm's Law R = U/I so we have to ensure I != 0.
 // This threshold corresponds to the minimum current for the measure to be considered as correct.
 #define FOC_RE_CURRENT_THRESHOLD    0.1f
