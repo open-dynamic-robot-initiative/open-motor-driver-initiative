@@ -33,7 +33,7 @@
 
 #define UOMODRI_DEBUG_MASTER_BOARD_ENABLE       1
 #define UOMODRI_DEBUG_ENABLE                    1
-#define UOMODRI_FEED_FORWARD_ENABLE             0
+#define UOMODRI_FEED_FORWARD_ENABLE             1
 
 #define OMODRI_PAL_SETUP                        0   // Set this to 1 to use the PAL pin affectation
 /**
@@ -931,8 +931,8 @@ typedef enum
  */
 typedef enum
 {
-    CURRENT = 0,    /*!< Current data */
-    NEXT    = 1,    /*!< Previous data */
+    NEXT    = 0,    /*!< Next state */
+    CURRENT = 1,    /*!< Current state */
 } state_id_e;
 
 /**

@@ -36,18 +36,28 @@ void ENC_resetStruct(encoder_t* p_enc)
     p_speed->speedLow       = 0.0f;
     p_speed->speedMech      = 0.0f;
     p_speed->speedElec      = 0.0f;
+
+    return;
 }
 
 /**
- * @brief           Reset ENCODER structure and set EQEP position counter to a defined position (alignment routine)
- * @param[inout]    *p_enc  Pointer on the encoder structure to reset.
+ * @brief           Reset the quadrature encoder peripheral (eQEP)
+ * @param[inout]    *p_enc   Pointer on the ENCODER structure to reset.
  */
-inline void ENC_setPosition(encoder_t* p_enc, uint32_t pos)
+inline void ENC_resetPeriph(encoder_t* p_enc)
 {
+    uint32_t eqepBase       = p_enc->p_qepHandle->eqepBase;
     // Reset encoder position
-    p_enc->p_qepRegs->QPOSCNT = pos;
-    // Reset encoder structure
-    ENC_resetStruct(p_enc);
+    EQEP_setPosition(eqepBase, 0);
+    // Reset interrupts status flags
+    EQEP_clearInterruptStatus(eqepBase, (EQEP_INT_GLOBAL | EQEP_INT_POS_CNT_ERROR | EQEP_INT_PHASE_ERROR |
+            EQEP_INT_DIR_CHANGE | EQEP_INT_WATCHDOG | EQEP_INT_UNDERFLOW | EQEP_INT_OVERFLOW |
+            EQEP_INT_POS_COMP_READY | EQEP_INT_POS_COMP_MATCH | EQEP_INT_STROBE_EVNT_LATCH |
+            EQEP_INT_INDEX_EVNT_LATCH | EQEP_INT_UNIT_TIME_OUT | EQEP_INT_QMA_ERROR));
+    // Reset general status flags
+    EQEP_clearStatus(eqepBase, (EQEP_STS_UNIT_POS_EVNT | EQEP_STS_CAP_OVRFLW_ERROR | EQEP_STS_CAP_DIR_ERROR | EQEP_STS_1ST_IDX_FLAG));
+
+    return;
 }
 
 /**
@@ -56,12 +66,12 @@ inline void ENC_setPosition(encoder_t* p_enc, uint32_t pos)
  */
 inline void ENC_getPosition(encoder_t* p_enc)
 {
-    volatile struct EQEP_REGS* p_qepRegs = p_enc->p_qepRegs;
+    uint32_t eqepBase       = p_enc->p_qepHandle->eqepBase;
     p_enc->thetaMech[OLD]   = p_enc->thetaMech[NEW];
     // Compute mechanical angle normalized between 0 and 1
-    p_enc->thetaMech[NEW]   = (float32_t)(p_qepRegs->QPOSSLAT) / p_enc->thetaMechScaler;
+    p_enc->thetaMech[NEW]   = (float32_t)EQEP_getStrobePositionLatch(eqepBase) / p_enc->thetaMechScaler;
     // Get direction : -1 = CCW/reverse, 1 = CW/forward
-    p_enc->thetaDir         = (p_qepRegs->QEPSTS.all & EQEP_STS_DIR_FLAG) ? (1) : (-1);
+    p_enc->thetaDir         = EQEP_getDirection(eqepBase);
     // Compute electrical angle (each pole pair is normalized between 0 and 1)
     float32_t thetaElec     = p_enc->polePairs * p_enc->thetaMech[NEW];
 #ifdef CM_CORE
@@ -69,6 +79,8 @@ inline void ENC_getPosition(encoder_t* p_enc)
 #else
     p_enc->thetaElec        = __fracf32(thetaElec);
 #endif
+
+    return;
 }
 
 /**
@@ -77,16 +89,16 @@ inline void ENC_getPosition(encoder_t* p_enc)
  */
 inline void ENC_getSpeed(encoder_t* p_enc)
 {
-    volatile struct EQEP_REGS* p_qepRegs    = p_enc->p_qepRegs;
-    speed_t* p_speed                        = &p_enc->speed;
+    uint32_t eqepBase           = p_enc->p_qepHandle->eqepBase;//volatile struct EQEP_REGS* p_qepRegs    = p_enc->p_qepRegs;
+    speed_t* p_speed            = &p_enc->speed;
     //-------------------------------------------------------------------
     //     HIGH SPEED ESTIMATION
     //-------------------------------------------------------------------
-    if(p_qepRegs->QFLG.all & EQEP_INT_UNIT_TIME_OUT)
+    if(EQEP_getInterruptStatus(eqepBase) & EQEP_INT_UNIT_TIME_OUT)
     {
         p_speed->theta[OLD]     = p_speed->theta[NEW];
-        p_speed->theta[NEW]     = (float32_t)(p_qepRegs->QPOSLAT) / p_enc->thetaMechScaler;
-        p_qepRegs->QCLR.all     = EQEP_INT_UNIT_TIME_OUT | EQEP_INT_OVERFLOW | EQEP_INT_UNDERFLOW;
+        p_speed->theta[NEW]     = (float32_t)EQEP_getPositionLatch(eqepBase) / p_enc->thetaMechScaler;
+        EQEP_clearInterruptStatus(eqepBase, (EQEP_INT_UNIT_TIME_OUT | EQEP_INT_OVERFLOW | EQEP_INT_UNDERFLOW));
         // Compute angle difference & saturate it between -0.5 and 0.5
         float32_t deltaTheta    = p_speed->theta[NEW] - p_speed->theta[OLD];
         deltaTheta              = (deltaTheta > 0.5f)   ? (deltaTheta - 1.0f) : (deltaTheta);
@@ -113,13 +125,13 @@ inline void ENC_getSpeed(encoder_t* p_enc)
     //     LOW SPEED ESTIMATION
     //-------------------------------------------------------------------
     // Check if unit position event occurred for low speed calculation
-    if(p_qepRegs->QEPSTS.all & EQEP_STS_UNIT_POS_EVNT)
+    if(EQEP_getStatus(eqepBase) & EQEP_STS_UNIT_POS_EVNT)//if(p_qepRegs->QEPSTS.all & EQEP_STS_UNIT_POS_EVNT)
     {
-        p_speed->speedLow       = (float32_t)(p_enc->thetaDir) * p_speed->speedLowScaler / (float32_t)(p_qepRegs->QCPRDLAT);
+        p_speed->speedLow       = (float32_t)(p_enc->thetaDir) * p_speed->speedLowScaler / (float32_t)EQEP_getCapturePeriodLatch(eqepBase);
         // Speed is very close to zero because direction changed or the rotor doesn't move fast enough
-        p_speed->speedLow       = (p_qepRegs->QEPSTS.all & (EQEP_STS_CAP_OVRFLW_ERROR | EQEP_STS_CAP_DIR_ERROR)) ? (0.0) : (p_speed->speedLow);
+        p_speed->speedLow       = (EQEP_getStatus(eqepBase) & (EQEP_STS_CAP_OVRFLW_ERROR | EQEP_STS_CAP_DIR_ERROR)) ? (0.0) : (p_speed->speedLow);
         // Clear position event, direction change and timer overflow flags (even if direction and timer overflow are not set)
-        p_qepRegs->QEPSTS.all   = EQEP_STS_UNIT_POS_EVNT | EQEP_STS_CAP_OVRFLW_ERROR | EQEP_STS_CAP_DIR_ERROR;
+        EQEP_clearStatus(eqepBase, (EQEP_STS_UNIT_POS_EVNT | EQEP_STS_CAP_OVRFLW_ERROR | EQEP_STS_CAP_DIR_ERROR));
     }
     //-------------------------------------------------------------------
     //     SPEED ESTIMATION MERGE
@@ -159,6 +171,7 @@ inline void ENC_getSpeed(encoder_t* p_enc)
  */
 inline void ENC_getTheta(encoder_t* p_enc)
 {
+    uint32_t eqepBase           = p_enc->p_qepHandle->eqepBase;
     //-------------------------------------------------------------------
     //     TURN COMPUTATION
     //-------------------------------------------------------------------
@@ -176,18 +189,17 @@ inline void ENC_getTheta(encoder_t* p_enc)
     //-------------------------------------------------------------------
     //     INDEX HANDLING
     //-------------------------------------------------------------------
-    volatile struct EQEP_REGS* p_qepRegs = p_enc->p_qepRegs;
     // Check if index has been detected
-    p_enc->indexDetected        = (p_qepRegs->QEPSTS.all & EQEP_STS_1ST_IDX_FLAG) ? (true) : (false);
+    p_enc->indexDetected        = (EQEP_getStatus(eqepBase) & EQEP_STS_1ST_IDX_FLAG) ? (true) : (false);
     // Check if index has been detected
-    if (p_qepRegs->QFLG.all & EQEP_INT_INDEX_EVNT_LATCH)
+    if(EQEP_getInterruptStatus(eqepBase) & EQEP_INT_INDEX_EVNT_LATCH)
     {
         // Compute indexed mechanical angle normalized between 0 and 1
-        p_enc->thetaIndex       = (float32_t)(p_qepRegs->QPOSILAT) / p_enc->thetaMechScaler;
+        p_enc->thetaIndex       = (float32_t)EQEP_getIndexPositionLatch(eqepBase) / p_enc->thetaMechScaler;
         // Toggle index
         p_enc->indexToggle      = !p_enc->indexToggle;
         // Clear flag
-        p_qepRegs->QCLR.all     = EQEP_INT_INDEX_EVNT_LATCH;
+        EQEP_clearInterruptStatus(eqepBase, EQEP_INT_INDEX_EVNT_LATCH);
     }
     // Compute indexed angle
     p_enc->thetaMechIndexed     = p_enc->thetaMech[NEW] - p_enc->thetaIndex;

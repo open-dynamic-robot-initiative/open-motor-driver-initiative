@@ -14,33 +14,6 @@
  */
 bool_t COM_msgExtract(mst2slv_msg_t* p_msg, cmd_uomodri_t* p_cmd)
 {
-//    uint32_t crc = com_crc32((uint16_t *) p_msg, COM_MSG_TX_RX_16BIT_PAYLOAD_LENGTH);
-
-//    CRC_Obj vcrc;
-//    uint32_t crc_res;
-//    vcrc.seedValue  = 0xFFFFFFFF;//CRC_INIT_CRC32;
-//    vcrc.nMsgBytes  = COM_MSG_TX_RX_8BIT_PAYLOAD_LENGTH;
-//    vcrc.nMsgBits   = 8 * vcrc.nMsgBytes;
-//    vcrc.parity     = CRC_parity_even;   //!< the location, in a word, of the first byte of the CRC calculation
-//    vcrc.crcResult  = 0;
-//    vcrc.pMsgBuffer = (uint16_t *)p_msg;            //!< Pointer to the message buffer
-//    vcrc.pCrcTable  = NULL;//(uint16_t *)&crc32_table[0];
-//    vcrc.polySize   = 0;//SIZE_32_BITS,     //!<polynomial size
-//    vcrc.dataSize   = 0x07;
-//    vcrc.reflected  = 0;
-//    vcrc.init       = (void (*)(void *))CRC_init32Bit;          //!< Function pointer to CRC initialization routine
-////    vcrc.run        = (void (*)(void *))CRC_run32BitTableLookupC;            //!< Function pointer to CRC computation routine
-//    vcrc.run        = (void (*)(void *))CRC_run32BitPoly1;
-//    // Step 3: Initialize the handle
-//    CRC_Handle handleCRC = &vcrc;
-//    // Step 4: Run the 32-bit table look-up CRC routine and save the first result
-//    vcrc.init(handleCRC);
-//    vcrc.run(handleCRC);
-//    crc_res         =  CRC_bitReflect(vcrc.crcResult, 32);
-
-//    vcrc.init(handleCRC);
-//    vcrc.run(handleCRC);
-//    uint32_t crc3   = vcrc.crcResult;//com_vcrc((uint16_t *) p_msg, COM_MSG_TX_RX_8BIT_PAYLOAD_LENGTH);
     uint32_t crc    = COM_crc32((uint16_t *) p_msg, COM_MSG_TX_RX_16BIT_PAYLOAD_LENGTH);
     if((MSB_32(crc) == p_msg->crc.u16_msb) && (LSB_32(crc) == p_msg->crc.u16_lsb))
     {
@@ -85,13 +58,6 @@ void COM_msgCreate(foc_t* p_foc, cmd_uomodri_t* p_cmd, slv2mst_msg_t* p_msg)
 {
     int32_t pos                             = (int32_t)(p_foc->motor_enc.thetaAbsolute / POSITION_LSB);
     p_msg->status.bit.SE                    = p_cmd->mode.bit.ES;                                           // System enabled
-
-//    if(p_msg->status.bit.ERROR_CODE != STATUS_ERROR_NO_ERROR)
-//        p_msg->status.bit.ERROR_CODE    = p_msg->status.bit.ERROR_CODE;
-//    else if(p_foc->motor_enc.rollOverFlag)
-//        p_msg->status.bit.ERROR_CODE    = STATUS_ERROR_POS_ROLLOVER;
-//    else
-        p_msg->status.bit.ERROR_CODE    = STATUS_ERROR_NO_ERROR;
     p_msg->lastCmdIndex                     = p_cmd->index;
     if(p_foc->motor_id == MOTOR_1)
     {
@@ -100,7 +66,14 @@ void COM_msgCreate(foc_t* p_foc, cmd_uomodri_t* p_cmd, slv2mst_msg_t* p_msg)
         p_msg->status.bit.M1R               = (p_foc->motor_state[CURRENT] == MOTOR_READY) ? (true) : (false);//(p_foc->motor_align.state == ALIGN_DONE) ? (true) : (false);  // MOTOR_1 ready
         p_msg->status.bit.IDX1T             = p_foc->motor_enc.indexToggle;                                 // MOTOR_1 index toggle
         p_msg->status.bit.IDX1D             = p_foc->motor_enc.indexDetected;                               // MOTOR_1 index detected
-//        p_msg->status.bit.ERROR_CODE        = (p_foc->motor_enc.rollOverFlag) ? (STATUS_ERROR_POS_ROLLOVER) : (STATUS_ERROR_NO_ERROR);
+        if(!p_foc->errorStatus)
+            p_msg->status.bit.ERROR_CODE    = STATUS_ERROR_NO_ERROR;
+        else if(p_foc->errorStatus & FOC_ERROR_POS_ROLLOVER)
+            p_msg->status.bit.ERROR_CODE    = STATUS_ERROR_POS_ROLLOVER;
+        else if(p_foc->errorStatus & FOC_ERROR_DRV_NFAULT)
+            p_msg->status.bit.ERROR_CODE    = STATUS_ERROR_DRV_NFAULT;
+        else if(p_foc->errorStatus & FOC_ERROR_ENCODER)
+            p_msg->status.bit.ERROR_CODE    = STATUS_ERROR_ENCODER1;
         p_msg->position[MOTOR_1].u16_msb    = MSB_32(pos);
         p_msg->position[MOTOR_1].u16_lsb    = LSB_32(pos);
         p_msg->velocity[MOTOR_1]            = (int16_t)(p_foc->motor_enc.speed.speedMech / 10.0f / FM_RAD2RPM / VELOCITY_LSB);
@@ -115,13 +88,17 @@ void COM_msgCreate(foc_t* p_foc, cmd_uomodri_t* p_cmd, slv2mst_msg_t* p_msg)
         p_msg->status.bit.M2R               = (p_foc->motor_state[CURRENT] == MOTOR_READY) ? (true) : (false);//(p_foc->motor_align.state == ALIGN_DONE) ? (true) : (false);  // MOTOR_2 ready
         p_msg->status.bit.IDX2T             = p_foc->motor_enc.indexToggle;                                 // MOTOR_2 index toggle
         p_msg->status.bit.IDX2D             = p_foc->motor_enc.indexDetected;                               // MOTOR_2 index detected
-//        if(p_msg->status.bit.ERROR_CODE != STATUS_ERROR_NO_ERROR)
-//            p_msg->status.bit.ERROR_CODE    = p_msg->status.bit.ERROR_CODE;
-//        else if(p_foc->motor_enc.rollOverFlag)
-//            p_msg->status.bit.ERROR_CODE    = STATUS_ERROR_POS_ROLLOVER;
-//        else
-//            p_msg->status.bit.ERROR_CODE    = STATUS_ERROR_NO_ERROR;
-//        p_msg->status.bit.ERROR_CODE        = ((p_foc->motor_enc.rollOverFlag) || (p_msg->status.bit.ERROR_CODE != STATUS_ERROR_NO_ERROR))  ? (STATUS_ERROR_POS_ROLLOVER) : (STATUS_ERROR_NO_ERROR);
+        if(p_msg->status.bit.ERROR_CODE == STATUS_ERROR_NO_ERROR)
+        {
+            if(!p_foc->errorStatus)
+                p_msg->status.bit.ERROR_CODE= STATUS_ERROR_NO_ERROR;
+            else if(p_foc->errorStatus & FOC_ERROR_POS_ROLLOVER)
+                p_msg->status.bit.ERROR_CODE= STATUS_ERROR_POS_ROLLOVER;
+            else if(p_foc->errorStatus & FOC_ERROR_DRV_NFAULT)
+                p_msg->status.bit.ERROR_CODE= STATUS_ERROR_DRV_NFAULT;
+            else if(p_foc->errorStatus & FOC_ERROR_ENCODER)
+                p_msg->status.bit.ERROR_CODE= STATUS_ERROR_ENCODER2;
+        }
         p_msg->position[MOTOR_2].u16_msb    = MSB_32(pos);
         p_msg->position[MOTOR_2].u16_lsb    = LSB_32(pos);
         p_msg->velocity[MOTOR_2]            = (int16_t)(p_foc->motor_enc.speed.speedMech / 10.0f / FM_RAD2RPM / VELOCITY_LSB);

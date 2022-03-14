@@ -41,12 +41,13 @@ typedef enum
 
 typedef enum
 {
-    MOTOR_STOP          = 0x00,
+    MOTOR_INIT          = 0x00,
     MOTOR_ALIGN_UP      = 0x01,    /*!< ALIGN_COUNT_UP */
-    MOTOR_ALIGN_STAY    = 0x02,    /*!< ALIGN_STAY */
-    MOTOR_ALIGN_DOWN    = 0x04,    /*!< ALIGN_COUNT_DOWN */
-//    MOTOR_ALIGN_DONE    = 0x08,    /*!< ALIGN_DONE */
-    MOTOR_READY         = 0x10,
+    MOTOR_ALIGN_FIX     = 0x02,    /*!< ALIGN_FIX */
+//    MOTOR_ALIGN_DOWN    = 0x04,    /*!< ALIGN_COUNT_DOWN */
+    MOTOR_ALIGN_DONE    = 0x04,    /*!< ALIGN_DONE */
+    MOTOR_READY         = 0x08,
+    MOTOR_STOP          = 0x10,
     MOTOR_ERROR         = 0x20,
 } motor_state_e;
 
@@ -244,6 +245,7 @@ typedef struct __MOTOR_FOC_CONTROL_t__
 #define FOC_ERROR_ENCODER           (0x0001)    /*!< Encoder_1 error too high */
 #define FOC_ERROR_POS_ROLLOVER      (0x0002)    /*!< Position roll-over occurred */
 #define FOC_ERROR_DRV_NFAULT        (0x0004)    /*!< Motor DRV nFault error */
+#define FOC_ERROR_ALL_ERROR_FLAGS   (FOC_ERROR_ENCODER | FOC_ERROR_POS_ROLLOVER | FOC_ERROR_DRV_NFAULT)
 // Resistance estimation uses Ohm's Law R = U/I so we have to ensure I != 0.
 // This threshold corresponds to the minimum current for the measure to be considered as correct.
 #define FOC_RE_CURRENT_THRESHOLD    0.1f

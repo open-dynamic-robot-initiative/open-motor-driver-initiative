@@ -312,14 +312,8 @@ static foc_t motor_foc[] =
   .motor_enc.speed.speedFlt.a           = (float32_t)MOTOR1_ENC_SPEED_LPF_ALPHA,
   .motor_enc.speed.speedFlt.one_minus_a = (float32_t)MOTOR1_ENC_SPEED_LPF_ONE_M_ALPHA,
   //---------------------------------------------------------------------------
-//  .motor_align.state                    = ALIGN_COUNT_UP,
-//  .motor_align.cnt                      = 0,
-//  .motor_align.cntMax                   = PWM_FREQ,
-//  .motor_align.idAlignRef               = 0.5,// 500mA alignment current
-//  .motor_align.idAlign                  = 0.0,
-  //---------------------------------------------------------------------------
-  .motor_state[CURRENT]                 = MOTOR_STOP,
-  .motor_state[NEXT]                    = MOTOR_STOP,
+  .motor_state[NEXT]                    = MOTOR_INIT,
+  .motor_state[CURRENT]                 = MOTOR_INIT,
   //---------------------------------------------------------------------------
   .iParkFlt.a                           = MOTOR1_CURRENT_LPF_ALPHA,
   .iParkFlt.one_minus_a                 = MOTOR1_CURRENT_LPF_ONE_M_ALPHA,
@@ -465,14 +459,8 @@ static foc_t motor_foc[] =
   .motor_enc.speed.speedFlt.a           = (float32_t)MOTOR2_ENC_SPEED_LPF_ALPHA,
   .motor_enc.speed.speedFlt.one_minus_a = (float32_t)MOTOR2_ENC_SPEED_LPF_ONE_M_ALPHA,
   //---------------------------------------------------------------------------
-//  .motor_align.state                    = ALIGN_COUNT_UP,
-//  .motor_align.cnt                      = 0,
-//  .motor_align.cntMax                   = PWM_FREQ,
-//  .motor_align.idAlignRef               = 0.5,// 500mA alignment current
-//  .motor_align.idAlign                  = 0.0,
-  //---------------------------------------------------------------------------
-  .motor_state[CURRENT]                 = MOTOR_STOP,
-  .motor_state[NEXT]                    = MOTOR_STOP,
+  .motor_state[NEXT]                    = MOTOR_INIT,
+  .motor_state[CURRENT]                 = MOTOR_INIT,
   //---------------------------------------------------------------------------
   .iParkFlt.a                           = MOTOR2_CURRENT_LPF_ALPHA,
   .iParkFlt.one_minus_a                 = MOTOR2_CURRENT_LPF_ONE_M_ALPHA,

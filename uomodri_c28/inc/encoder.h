@@ -78,11 +78,8 @@ typedef struct __ENCODER_STRUCT__
 /***********************************************************************
  * FUNCTIONS DECLARATION
  ***********************************************************************/
-void ENC_resetStruct(encoder_t*);
-inline void ENC_setPosition(encoder_t*, uint32_t);
-#if (defined UOMODRI_USE_ENCODER_GET_REG_FUNCTION) && (UOMODRI_USE_ENCODER_GET_REG_FUNCTION)
-inline void ENC_getRegisters(encoder_t*);
-#endif
+inline void ENC_resetStruct(encoder_t*);
+inline void ENC_resetPeriph(encoder_t*);
 inline void ENC_getPosition(encoder_t*);
 inline void ENC_getSpeed(encoder_t*);
 inline void ENC_getTheta(encoder_t*);

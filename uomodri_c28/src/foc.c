@@ -182,13 +182,9 @@ void FOC_resetStruct(foc_t* p_foc)
     FOC_resetPD(&p_foc->pdPos);
     // Reset encoder structure
     ENC_resetStruct(&p_foc->motor_enc);
-    // Reset align structure
-//    MOT_resetAlignStruct(&p_foc->motor_align);
     // Reset analog measures
     FOC_resetMeasuresStruct(&p_foc->motor_acq);
     // Reset currents and voltages
-//    p_foc->motor_state[NEW] = (p_foc->motor_state[NEW] != MOTOR_ERROR) ? (MOTOR_STOP) : (MOTOR_ERROR);
-//    p_foc->motor_state[OLD] = (p_foc->motor_state[NEW] != MOTOR_ERROR) ? (MOTOR_STOP) : (MOTOR_ERROR);
     p_foc->sinTheta         = 0.0f;
     p_foc->cosTheta         = 0.0f;
     p_foc->ialpha           = 0.0f;
