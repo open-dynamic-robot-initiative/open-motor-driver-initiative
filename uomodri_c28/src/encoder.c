@@ -98,11 +98,18 @@ inline void ENC_getSpeed(encoder_t* p_enc)
     {
         p_speed->theta[OLD]     = p_speed->theta[NEW];
         p_speed->theta[NEW]     = (float32_t)EQEP_getPositionLatch(eqepBase) / p_enc->thetaMechScaler;
-        EQEP_clearInterruptStatus(eqepBase, (EQEP_INT_UNIT_TIME_OUT | EQEP_INT_OVERFLOW | EQEP_INT_UNDERFLOW));
+        EQEP_clearInterruptStatus(eqepBase, (EQEP_INT_UNIT_TIME_OUT));// | EQEP_INT_OVERFLOW | EQEP_INT_UNDERFLOW));
         // Compute angle difference & saturate it between -0.5 and 0.5
         float32_t deltaTheta    = p_speed->theta[NEW] - p_speed->theta[OLD];
+        // Saturate it between -0.5 and 0.5
+//        if (deltaTheta > 0.5f)
+//            deltaTheta -= 1.0f;
+//        else if (deltaTheta < -0.5f)
+//            deltaTheta += 1.0f;
+
         deltaTheta              = (deltaTheta > 0.5f)   ? (deltaTheta - 1.0f) : (deltaTheta);
         deltaTheta              = (deltaTheta < -0.5f)  ? (deltaTheta + 1.0f) : (deltaTheta);
+
 //        Calculates the number of position in unit time based on motor's direction of rotation
 //        if(p_enc->thetaDir > 0)
 //        {
@@ -127,9 +134,11 @@ inline void ENC_getSpeed(encoder_t* p_enc)
     // Check if unit position event occurred for low speed calculation
     if(EQEP_getStatus(eqepBase) & EQEP_STS_UNIT_POS_EVNT)//if(p_qepRegs->QEPSTS.all & EQEP_STS_UNIT_POS_EVNT)
     {
-        p_speed->speedLow       = (float32_t)(p_enc->thetaDir) * p_speed->speedLowScaler / (float32_t)EQEP_getCapturePeriodLatch(eqepBase);
+        uint16_t period         = EQEP_getCapturePeriodLatch(eqepBase);
+        p_speed->speedLow       = (period != 0xFFFF) ? ((float32_t)(p_enc->thetaDir) * p_speed->speedLowScaler / (float32_t)period) : (p_speed->speedLow);
+//        p_speed->speedLow       = (float32_t)(p_enc->thetaDir) * p_speed->speedLowScaler / (float32_t)EQEP_getCapturePeriodLatch(eqepBase);
         // Speed is very close to zero because direction changed or the rotor doesn't move fast enough
-        p_speed->speedLow       = (EQEP_getStatus(eqepBase) & (EQEP_STS_CAP_OVRFLW_ERROR | EQEP_STS_CAP_DIR_ERROR)) ? (0.0) : (p_speed->speedLow);
+        p_speed->speedLow       = (EQEP_getStatus(eqepBase) & (EQEP_STS_CAP_OVRFLW_ERROR | EQEP_STS_CAP_DIR_ERROR)) ? (0.0f) : (p_speed->speedLow);
         // Clear position event, direction change and timer overflow flags (even if direction and timer overflow are not set)
         EQEP_clearStatus(eqepBase, (EQEP_STS_UNIT_POS_EVNT | EQEP_STS_CAP_OVRFLW_ERROR | EQEP_STS_CAP_DIR_ERROR));
     }
@@ -182,7 +191,7 @@ inline void ENC_getTheta(encoder_t* p_enc)
     // If theta difference is high or low enough, we overflowed or underflowed
     bool_t maxRollOver          = (p_enc->turnNb > MAX_ROLLOVER)    ? (true) : (false);
     bool_t minRollOver          = (p_enc->turnNb < MIN_ROLLOVER)    ? (true) : (false);
-    p_enc->rollOverFlag         = (maxRollOver || minRollOver)      ? (true) : (p_enc->rollOverFlag);
+    p_enc->rollOverFlag         = (maxRollOver || minRollOver)      ? (true) : (false);//(p_enc->rollOverFlag);
     // Saturate turnNb between -128 and 127
     p_enc->turnNb               = (maxRollOver) ? (MIN_ROLLOVER) : (p_enc->turnNb);
     p_enc->turnNb               = (minRollOver) ? (MAX_ROLLOVER) : (p_enc->turnNb);

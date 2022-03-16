@@ -798,7 +798,7 @@
 #define QEP_EMUL_MODE                           EQEP_EMULATIONMODE_RUNFREE
 #define QEP_LATCH_MODE                          (EQEP_LATCH_RISING_INDEX | EQEP_LATCH_UNIT_TIME_OUT)
 #define QEP_RESET_POSITION_MODE                 EQEP_POSITION_RESET_MAX_POS
-#define QEP_CAPTURE_CLOCK_DIV                   EQEP_CAPTURE_CLK_DIV_128
+#define QEP_CAPTURE_CLOCK_DIV                   EQEP_CAPTURE_CLK_DIV_64
 #define QEP_UNIT_POS_EVENT_DIV                  EQEP_UNIT_POS_EVNT_DIV_4
 //#define PERxSYSCLK_TO_EQEPCLK_DIV               (1)
 //#define EQEPCLK_FREQ                            (DEVICE_SYSCLK_FREQ / pow(2.0, ((QEP_CAPTURE_CLOCK_DIV >> 4) & 0x07)))

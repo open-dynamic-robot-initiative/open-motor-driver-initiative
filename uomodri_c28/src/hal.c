@@ -486,9 +486,10 @@ void HAL_eQEP_ini(const eqep_cfg_t* p_qepCfg)
             EQEP_setPositionCounterConfig(qepBase, QEP_RESET_POSITION_MODE, p_qepCfg->eqepMaxResolution);
             // Set unit timer for speed measurement and enable it.
             EQEP_enableUnitTimer(qepBase, p_qepCfg->eqepUnitTimerPeriod);
-            // Disable Compare, watchdog and IT units.
+            // Disable Compare, watchdog , QMA and IT units.
             EQEP_disableCompare(qepBase);
             EQEP_disableWatchdog(qepBase);
+            EQEP_setQMAModuleMode(qepBase, EQEP_QMA_MODE_BYPASS);
             EQEP_disableInterrupt(qepBase, EQEP_INT_GLOBAL);
             // Configure the edge capture unit
             EQEP_setCaptureConfig(qepBase, QEP_CAPTURE_CLOCK_DIV, QEP_UNIT_POS_EVENT_DIV);

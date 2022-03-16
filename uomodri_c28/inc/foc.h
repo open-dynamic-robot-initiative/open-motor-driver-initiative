@@ -45,7 +45,7 @@ typedef enum
     MOTOR_ALIGN_UP      = 0x01,    /*!< ALIGN_COUNT_UP */
     MOTOR_ALIGN_FIX     = 0x02,    /*!< ALIGN_FIX */
 //    MOTOR_ALIGN_DOWN    = 0x04,    /*!< ALIGN_COUNT_DOWN */
-    MOTOR_ALIGN_DONE    = 0x04,    /*!< ALIGN_DONE */
+//    MOTOR_ALIGN_DONE    = 0x04,    /*!< ALIGN_DONE */
     MOTOR_READY         = 0x08,
     MOTOR_STOP          = 0x10,
     MOTOR_ERROR         = 0x20,

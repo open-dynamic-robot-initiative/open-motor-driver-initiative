@@ -57,13 +57,17 @@ bool_t COM_msgExtract(mst2slv_msg_t* p_msg, cmd_uomodri_t* p_cmd)
 void COM_msgCreate(foc_t* p_foc, cmd_uomodri_t* p_cmd, slv2mst_msg_t* p_msg)
 {
     int32_t pos                             = (int32_t)(p_foc->motor_enc.thetaAbsolute / POSITION_LSB);
-    p_msg->status.bit.SE                    = p_cmd->mode.bit.ES;                                           // System enabled
+    bool_t  align_done                      = (//(p_foc->motor_state[CURRENT] == MOTOR_ALIGN_DONE) ||
+                                               (p_foc->motor_state[CURRENT] == MOTOR_READY) ||
+                                               (p_foc->motor_state[CURRENT] == MOTOR_STOP)) ? (true) : (false);
+    p_msg->status.bit.SE                    = p_cmd->mode.bit.ES;     // System enabled
+    p_msg->status.bit.STATUS_RSV1           = 0;
     p_msg->lastCmdIndex                     = p_cmd->index;
     if(p_foc->motor_id == MOTOR_1)
     {
         // Update status field - MOTOR_1
         p_msg->status.bit.M1E               = p_cmd->mode.bit.EM1;                                          // MOTOR_1 enabled
-        p_msg->status.bit.M1R               = (p_foc->motor_state[CURRENT] == MOTOR_READY) ? (true) : (false);//(p_foc->motor_align.state == ALIGN_DONE) ? (true) : (false);  // MOTOR_1 ready
+        p_msg->status.bit.M1R               = align_done;//(p_foc->motor_align.state == ALIGN_DONE) ? (true) : (false);  // MOTOR_1 ready
         p_msg->status.bit.IDX1T             = p_foc->motor_enc.indexToggle;                                 // MOTOR_1 index toggle
         p_msg->status.bit.IDX1D             = p_foc->motor_enc.indexDetected;                               // MOTOR_1 index detected
         if(!p_foc->errorStatus)
@@ -85,7 +89,7 @@ void COM_msgCreate(foc_t* p_foc, cmd_uomodri_t* p_cmd, slv2mst_msg_t* p_msg)
     {
         // Update status field - MOTOR_2
         p_msg->status.bit.M2E               = p_cmd->mode.bit.EM2;                                          // MOTOR_2 enabled
-        p_msg->status.bit.M2R               = (p_foc->motor_state[CURRENT] == MOTOR_READY) ? (true) : (false);//(p_foc->motor_align.state == ALIGN_DONE) ? (true) : (false);  // MOTOR_2 ready
+        p_msg->status.bit.M2R               = align_done;//(p_foc->motor_align.state == ALIGN_DONE) ? (true) : (false);  // MOTOR_2 ready
         p_msg->status.bit.IDX2T             = p_foc->motor_enc.indexToggle;                                 // MOTOR_2 index toggle
         p_msg->status.bit.IDX2D             = p_foc->motor_enc.indexDetected;                               // MOTOR_2 index detected
         if(p_msg->status.bit.ERROR_CODE == STATUS_ERROR_NO_ERROR)
