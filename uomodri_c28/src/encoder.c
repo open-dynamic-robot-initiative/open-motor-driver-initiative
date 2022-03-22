@@ -198,11 +198,10 @@ inline void ENC_getTheta(encoder_t* p_enc)
     //-------------------------------------------------------------------
     //     INDEX HANDLING
     //-------------------------------------------------------------------
-    // Check if index has been detected
-    p_enc->indexDetected        = (EQEP_getStatus(eqepBase) & EQEP_STS_1ST_IDX_FLAG) ? (true) : (false);
-    // Check if index has been detected
     if(EQEP_getInterruptStatus(eqepBase) & EQEP_INT_INDEX_EVNT_LATCH)
     {
+        // Check if index has been detected (using FIMF is not legal with QEPCTL[PCRM] = 01 (position reset if max position is reached)
+        p_enc->indexDetected    = true;
         // Compute indexed mechanical angle normalized between 0 and 1
         p_enc->thetaIndex       = (float32_t)EQEP_getIndexPositionLatch(eqepBase) / p_enc->thetaMechScaler;
         // Toggle index

@@ -193,14 +193,14 @@ static const eqep_cfg_t QepCfgList[] =
   .eqepBase             = MOTOR1_QEP_BASE,
   .eqepMaxResolution    = (MOTOR1_ENC_RESOLUTION_SCALE - 1),
   .eqepUnitTimerPeriod  = (MOTOR1_ENC_SPEED_HIGH_SAMPLING_TICKS - 1),
-  .eqepConfig           = (EQEP_CONFIG_2X_RESOLUTION | EQEP_CONFIG_QUADRATURE | MOTOR1_QEP_SWAP),
+  .eqepConfig           = (EQEP_CONFIG_2X_RESOLUTION | EQEP_CONFIG_QUADRATURE | MOTOR1_QEP_SWAP | EQEP_CONFIG_IGATE_ENABLE),
   .eqepStrobeSrc        = EQEP_STROBE_OR_ADCSOCA,
  },
  {
   .eqepBase             = MOTOR2_QEP_BASE,
   .eqepMaxResolution    = (MOTOR2_ENC_RESOLUTION_SCALE - 1),
   .eqepUnitTimerPeriod  = (MOTOR2_ENC_SPEED_HIGH_SAMPLING_TICKS - 1),
-  .eqepConfig           = (EQEP_CONFIG_2X_RESOLUTION | EQEP_CONFIG_QUADRATURE | MOTOR2_QEP_SWAP),
+  .eqepConfig           = (EQEP_CONFIG_2X_RESOLUTION | EQEP_CONFIG_QUADRATURE | MOTOR2_QEP_SWAP | EQEP_CONFIG_IGATE_ENABLE),
   .eqepStrobeSrc        = EQEP_STROBE_OR_ADCSOCB,
  },
  // END OF ARRAY
@@ -554,7 +554,11 @@ static hal_cfg_t hal =
  .p_adcHandle   = AdcCfgList,
  .p_epwmHandle  = PwmCfgList,
  .p_eqepHandle  = QepCfgList,
+#if (defined DMA_CORE_ENABLE) && (!DMA_CORE_ENABLE)
+ .p_dmaHandle   = NULL,
+#else
  .p_dmaHandle   = dmaCfgList,
+#endif
  .p_ipcHandle   = NULL,//ipcCfgList,
  .p_spiHandle   = spiCfgList,
  .p_timerHandle = timerCfgList,

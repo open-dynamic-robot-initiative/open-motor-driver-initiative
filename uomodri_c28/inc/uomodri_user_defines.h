@@ -24,6 +24,7 @@
 #define UOMODRI_USE_ENCODER_GET_REG_FUNCTION    0
 #define CLA_CORE_ENABLE                         0
 #define CM_CORE_ENABLE                          1
+#define DMA_CORE_ENABLE                         1
 #define UOMODRI_VBUS_FLT(flt_coef, y, x)        LPF_FILTER_1(flt_coef, y, x)
 #define UOMODRI_VEXT_FLT(flt_coef, y, x)        LPF_FILTER_1(flt_coef, y, x)
 #define UOMODRI_IDQ_FLT(flt_coef, y, x)         LPF_FILTER_1(flt_coef, y, x)
@@ -796,7 +797,7 @@
 #define MOTOR1_QEP_SWAP                         EQEP_CONFIG_NO_SWAP // Set to EQEP_CONFIG_SWAP if increments in the wrong direction
 #define MOTOR2_QEP_SWAP                         EQEP_CONFIG_NO_SWAP
 #define QEP_EMUL_MODE                           EQEP_EMULATIONMODE_RUNFREE
-#define QEP_LATCH_MODE                          (EQEP_LATCH_RISING_INDEX | EQEP_LATCH_UNIT_TIME_OUT)
+#define QEP_LATCH_MODE                          (EQEP_LATCH_SW_INDEX_MARKER | EQEP_LATCH_UNIT_TIME_OUT)//(EQEP_LATCH_RISING_INDEX | EQEP_LATCH_UNIT_TIME_OUT)
 #define QEP_RESET_POSITION_MODE                 EQEP_POSITION_RESET_MAX_POS
 #define QEP_CAPTURE_CLOCK_DIV                   EQEP_CAPTURE_CLK_DIV_64
 #define QEP_UNIT_POS_EVENT_DIV                  EQEP_UNIT_POS_EVNT_DIV_4
