@@ -588,8 +588,8 @@ void HAL_DMA_sync(void)
 {
     // DMA_RX must be started before DMA_TX
     DMA_startChannel(DMA_COM_SPI_RX_BASE_ADDR);
-    while(!GPIO_ReadPin(COM_SPI_CS));
-    SPI_resetTxFIFO(COM_SPI_BASE);
+//    while(!GPIO_ReadPin(COM_SPI_CS));
+//    SPI_resetTxFIFO(COM_SPI_BASE);
     DMA_startChannel(DMA_COM_SPI_TX_BASE_ADDR);
     DMA_startChannel(DMA_LED_SPI_TX_BASE_ADDR);
 

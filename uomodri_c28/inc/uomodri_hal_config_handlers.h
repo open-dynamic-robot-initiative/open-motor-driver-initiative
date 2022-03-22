@@ -224,11 +224,11 @@ static const spi_cfg_t  spiCfgList[] =
   .intEnable            = false,
  },
  {.spiBase              = COM_SPI_BASE,
-  .bitRate              = 6000000U,
+  .bitRate              = 8000000U,
   .dataWidth            = 16U,
   .mode                 = SPI_MODE_SLAVE,
   .protocol             = SPI_PROT_POL0PHA1,
-  .txLevel              = SPI_FIFO_TX1,
+  .txLevel              = SPI_FIFO_TXFULL,
   .rxLevel              = SPI_FIFO_RX1,
   .intSrc               = 0,//SPI_INT_RXFF,
   .highSpeedMode        = false,
@@ -252,7 +252,7 @@ static const spi_cfg_t  spiCfgList[] =
   .dataWidth            = 16U,
   .mode                 = SPI_MODE_MASTER,
   .protocol             = SPI_PROT_POL0PHA0,
-  .txLevel              = SPI_FIFO_TXFULL,
+  .txLevel              = SPI_FIFO_TX6,
   .rxLevel              = SPI_FIFO_RXEMPTY,
   .intSrc               = 0,
   .highSpeedMode        = false,
@@ -266,41 +266,41 @@ static const dma_cfg_t  dmaCfgList[] =
 {
  // DMA base register initialization
  // DMA for SPI communication Tx
-// {
-//  .dmaChBase            = DMA_COM_SPI_TX_BASE_ADDR,
-//  .p_dstAddr            = (uint16_t *) COM_SPI_TX_BASE_REG_ADDR,
-//  .p_srcAddr            = (uint16_t *) &status_msg[0],//p_crStatusMsgAddr,//
-//  .burstSize            = DMA_COM_SPI_TX_16BIT_BURST_EVT,
-//  .transferSize         = DMA_COM_SPI_TX_16BIT_TRANSFER_EVT,
-//  .dstWrapSize          = DMA_NO_WRAP,
-//  .srcWrapSize          = DMA_NO_WRAP,
-//  .dstStep              = 0,
-//  .srcStep              = DMA_COM_SPI_TX_16BIT_INC_STEP,
-//  .dstWrapStep          = 0,
-//  .srcWrapStep          = 0,//-(DMA_COM_SPI_TX_RX_TRANSFER_EVT - 1),//
-//  .config               = DMA_COM_SPI_TX_16BIT_CONFIG,
-//  .trigger              = DMA_COM_SPI_TX_TRIGGER_SRC,
-//  .intMode              = DMA_INT_AT_END,
-//  .intEnable            = false,
-// },
+ {
+  .dmaChBase            = DMA_COM_SPI_TX_BASE_ADDR,
+  .p_dstAddr            = (uint16_t *) COM_SPI_TX_BASE_REG_ADDR,
+  .p_srcAddr            = (uint16_t *) &status_msg.timeStamp,
+  .burstSize            = DMA_COM_SPI_TX_16BIT_BURST_EVT,
+  .transferSize         = DMA_COM_SPI_TX_16BIT_TRANSFER_EVT,
+  .dstWrapSize          = DMA_NO_WRAP,
+  .srcWrapSize          = DMA_NO_WRAP,
+  .dstStep              = 0,
+  .srcStep              = DMA_COM_SPI_TX_16BIT_INC_STEP,
+  .dstWrapStep          = 0,
+  .srcWrapStep          = 0,//-(DMA_COM_SPI_TX_RX_TRANSFER_EVT - 1),//
+  .config               = DMA_COM_SPI_TX_16BIT_CONFIG,
+  .trigger              = DMA_COM_SPI_TX_TRIGGER_SRC,
+  .intMode              = DMA_INT_AT_END,
+  .intEnable            = false,
+ },
  // DMA for SPI communication Rx
-// {
-//  .dmaChBase            = DMA_COM_SPI_RX_BASE_ADDR,
-//  .p_dstAddr            = (uint16_t *) &cmd_msg[0],//p_crCmdMsgAddr,//
-//  .p_srcAddr            = (uint16_t *) COM_SPI_RX_BASE_REG_ADDR,
-//  .burstSize            = DMA_COM_SPI_RX_16BIT_BURST_EVT,
-//  .transferSize         = DMA_COM_SPI_RX_16BIT_TRANSFER_EVT,
-//  .dstWrapSize          = DMA_NO_WRAP,
-//  .srcWrapSize          = DMA_NO_WRAP,//DMA_COM_SPI_TX_RX_TRANSFER_EVT,//
-//  .dstStep              = DMA_COM_SPI_RX_16BIT_INC_STEP,
-//  .srcStep              = 0,
-//  .dstWrapStep          = 0,//-(DMA_COM_SPI_TX_RX_TRANSFER_EVT - 1),//
-//  .srcWrapStep          = 0,
-//  .config               = DMA_COM_SPI_RX_16BIT_CONFIG,
-//  .trigger              = DMA_COM_SPI_RX_TRIGGER_SRC,
-//  .intMode              = DMA_INT_AT_END,
-//  .intEnable            = true,//false,
-// },
+ {
+  .dmaChBase            = DMA_COM_SPI_RX_BASE_ADDR,
+  .p_dstAddr            = (uint16_t *) &cmd_msg,
+  .p_srcAddr            = (uint16_t *) COM_SPI_RX_BASE_REG_ADDR,
+  .burstSize            = DMA_COM_SPI_RX_16BIT_BURST_EVT,
+  .transferSize         = DMA_COM_SPI_RX_16BIT_TRANSFER_EVT,
+  .dstWrapSize          = DMA_NO_WRAP,
+  .srcWrapSize          = DMA_NO_WRAP,
+  .dstStep              = DMA_COM_SPI_RX_16BIT_INC_STEP,
+  .srcStep              = 0,
+  .dstWrapStep          = 0,//-(DMA_COM_SPI_TX_RX_TRANSFER_EVT - 1),//
+  .srcWrapStep          = 0,
+  .config               = DMA_COM_SPI_RX_16BIT_CONFIG,
+  .trigger              = DMA_COM_SPI_RX_TRIGGER_SRC,
+  .intMode              = DMA_INT_AT_END,
+  .intEnable            = false,
+ },
 #if (defined UOMODRI_USE_REV_1_0_CONFIG) && (!UOMODRI_USE_REV_1_0_CONFIG)
  {
   .dmaChBase            = DMA_MST_SPI_TX_BASE_ADDR,
@@ -336,23 +336,23 @@ static const dma_cfg_t  dmaCfgList[] =
 //},
 #endif
  // DMA for the RGB LED
-// {
-//  .dmaChBase            = DMA_LED_SPI_TX_BASE_ADDR,
-//  .p_dstAddr            = (uint16_t *) LED_SPI_TX_BASE_REG_ADDR,
-//  .p_srcAddr            = (uint16_t *) &led_msg[0],
-//  .burstSize            = DMA_LED_SPI_TX_16BIT_BURST_EVT,
-//  .transferSize         = DMA_LED_SPI_TX_16BIT_TRANSFER_EVT,
-//  .dstWrapSize          = DMA_NO_WRAP,//0,//
-//  .srcWrapSize          = DMA_NO_WRAP,//DMA_COM_SPI_TX_RX_TRANSFER_EVT,//
-//  .dstStep              = 0,
-//  .srcStep              = DMA_COM_SPI_TX_16BIT_INC_STEP,
-//  .dstWrapStep          = 0,
-//  .srcWrapStep          = 0,//-(DMA_COM_SPI_TX_RX_TRANSFER_EVT - 1),//
-//  .config               = DMA_LED_SPI_TX_16BIT_CONFIG,
-//  .trigger              = DMA_LED_SPI_TX_TRIGGER_SRC,
-//  .intMode              = DMA_INT_AT_END,
-//  .intEnable            = false,
-// },
+ {
+  .dmaChBase            = DMA_LED_SPI_TX_BASE_ADDR,
+  .p_dstAddr            = (uint16_t *) LED_SPI_TX_BASE_REG_ADDR,
+  .p_srcAddr            = (uint16_t *) &led_msg[0],
+  .burstSize            = DMA_LED_SPI_TX_16BIT_BURST_EVT,
+  .transferSize         = DMA_LED_SPI_TX_16BIT_TRANSFER_EVT,
+  .dstWrapSize          = DMA_NO_WRAP,//0,//
+  .srcWrapSize          = DMA_NO_WRAP,//DMA_COM_SPI_TX_RX_TRANSFER_EVT,//
+  .dstStep              = 0,
+  .srcStep              = DMA_COM_SPI_TX_16BIT_INC_STEP,
+  .dstWrapStep          = 0,
+  .srcWrapStep          = 0,//-(DMA_COM_SPI_TX_RX_TRANSFER_EVT - 1),//
+  .config               = DMA_LED_SPI_TX_16BIT_CONFIG,
+  .trigger              = DMA_LED_SPI_TX_TRIGGER_SRC,
+  .intMode              = DMA_INT_AT_END,
+  .intEnable            = false,
+ },
  // END OF ARRAY
  {.dmaChBase            = UINT32_MAX},
 };
@@ -554,7 +554,7 @@ static hal_cfg_t hal =
  .p_adcHandle   = AdcCfgList,
  .p_epwmHandle  = PwmCfgList,
  .p_eqepHandle  = QepCfgList,
- .p_dmaHandle   = NULL,//dmaCfgList,
+ .p_dmaHandle   = dmaCfgList,
  .p_ipcHandle   = NULL,//ipcCfgList,
  .p_spiHandle   = spiCfgList,
  .p_timerHandle = timerCfgList,
