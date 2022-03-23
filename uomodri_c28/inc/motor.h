@@ -17,18 +17,9 @@
 #include "uomodri_user_defines.h"
 #include "anticoagging.h"
 
-
-//typedef enum
-//{
-//    MOTOR_ALIGN_COUNT_UP    = 0,/*!< No error */
-//    MOTOR_ALIGN_STAY        = 1, /*!< Encoder_1 error too high */
-//    MOTOR_ALIGN_COUNT_DOWN  = 2,/*!< Timeout for receiving current references exceeded */
-//    MOTOR_ALIGN_DONE        = 3, /*!< Motor temperature reached critical valued */
-//    MOTOR_RUN               = 4,/*!< Unused error */
-//    MOTOR_TEMP              = 5,
-//    MOTOR_ANTICOGGING       = 6,
-//} motor_state;
-
+/***********************************************************************
+ * CONTROL STRUCTURES
+ ***********************************************************************/
 typedef struct __MOTORS_STRUCT__
 {
     const hal_motor_cfg_t*  p_motorHalCfg;
@@ -50,18 +41,11 @@ typedef struct __MOTORS_STRUCT__
     volatile uint16_t*      p_motorChCReg;
 } motor_t;
 
-//inline void MOTOR_getCurrent(MOTOR_STRUCT*);
-//inline void MOTOR_getCurrent(MOTOR_MEASURES*);
-//inline void MOTOR_getVoltage(MOTOR_MEASURES*);
+/***********************************************************************
+ * FUNCTIONS DECLARATION
+ ***********************************************************************/
 void MOT_runCommand(motor_t*, float32_t, float32_t, float32_t);
 void MOT_stopCommand(motor_t*);
-void MOT_resetAlignStruct(align_t*);
-void MOT_runAlign(align_t*);
-//void MOTOR_interruptClearFlags(IT_TypeDef*);
-//void ALIGN_run(AlignRoutine*);
-
-//void MOT_emergencyStop(void);
-//void MOT_emergencyStop(MOTOR_STRUCT*);
 void MOT_resistorEstimation(motor_t*);
 
 #endif /* __MOTOR_H__ */

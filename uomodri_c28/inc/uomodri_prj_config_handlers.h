@@ -18,11 +18,8 @@
 #include "uomodri_user_defines.h"
 #include "uomodri_hal_config_handlers.h"
 
-
 __attribute__((interrupt)) void adc_isrMotor1(void);
 __attribute__((interrupt)) void adc_isrMotor2(void);
-__attribute__((interrupt)) void gpio_isrFaultMotor1(void);
-__attribute__((interrupt)) void gpio_isrFaultMotor2(void);
 
 /** @var    int_cfg_t   InterruptList[]
  *  @brief  List all required interrupts configurations.
@@ -33,34 +30,12 @@ static const int_cfg_t InterruptList[] =
   .intNum           = MOTOR1_IA_INT_CH,
   .intAckGroup      = MOTOR1_IA_INT_ACK_GROUP,
   .p_intHandler     = &adc_isrMotor1,
- }, //
+ },
  {
   .intNum           = MOTOR2_IA_INT_CH,
   .intAckGroup      = MOTOR2_IA_INT_ACK_GROUP,
   .p_intHandler     = &adc_isrMotor2,
  },
- {
-  .intNum           = MOTOR1_DRV_GPIO_NFAULT_INT,
-  .intAckGroup      = MOTOR1_DRV_GPIO_NFAULT_INT_ACK_GROUP,
-  .p_intHandler     = &gpio_isrFaultMotor1,
- },
- {
-  .intNum           = MOTOR2_DRV_GPIO_NFAULT_INT,
-  .intAckGroup      = MOTOR2_DRV_GPIO_NFAULT_INT_ACK_GROUP,
-  .p_intHandler     = &gpio_isrFaultMotor2,
- },
-// {
-//  .intNum           = CPU_TIMER_0_INT,
-//  .intAckGroup      = CPU_TIMER_0_INT_ACK_GROUP,
-//  .p_intHandler     = &cpu_isrTimer0,
-// },
-#if (defined CLA_CORE_ENABLE) && (CLA_CORE_ENABLE)
- {
-  .intNum           = INT_CLA1_1,
-  .intAckGroup      = INTERRUPT_ACK_GROUP11,
-  .handler          = &cla1_isr1
- },
-#endif
  // END OF ARRAY
  {.intNum           = 0xFFFFFFFF},
 };
@@ -312,8 +287,8 @@ static foc_t motor_foc[] =
   .motor_enc.speed.speedFlt.a           = (float32_t)MOTOR1_ENC_SPEED_LPF_ALPHA,
   .motor_enc.speed.speedFlt.one_minus_a = (float32_t)MOTOR1_ENC_SPEED_LPF_ONE_M_ALPHA,
   //---------------------------------------------------------------------------
-  .motor_state[NEXT]                    = MOTOR_INIT,
-  .motor_state[CURRENT]                 = MOTOR_INIT,
+  .motor_state[NEXT]                    = MOTOR_STATE_INIT,
+  .motor_state[CURRENT]                 = MOTOR_STATE_INIT,
   //---------------------------------------------------------------------------
   .iParkFlt.a                           = MOTOR1_CURRENT_LPF_ALPHA,
   .iParkFlt.one_minus_a                 = MOTOR1_CURRENT_LPF_ONE_M_ALPHA,
@@ -459,8 +434,8 @@ static foc_t motor_foc[] =
   .motor_enc.speed.speedFlt.a           = (float32_t)MOTOR2_ENC_SPEED_LPF_ALPHA,
   .motor_enc.speed.speedFlt.one_minus_a = (float32_t)MOTOR2_ENC_SPEED_LPF_ONE_M_ALPHA,
   //---------------------------------------------------------------------------
-  .motor_state[NEXT]                    = MOTOR_INIT,
-  .motor_state[CURRENT]                 = MOTOR_INIT,
+  .motor_state[NEXT]                    = MOTOR_STATE_INIT,
+  .motor_state[CURRENT]                 = MOTOR_STATE_INIT,
   //---------------------------------------------------------------------------
   .iParkFlt.a                           = MOTOR2_CURRENT_LPF_ALPHA,
   .iParkFlt.one_minus_a                 = MOTOR2_CURRENT_LPF_ONE_M_ALPHA,

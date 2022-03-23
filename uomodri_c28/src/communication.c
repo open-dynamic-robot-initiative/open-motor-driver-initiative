@@ -57,12 +57,12 @@ bool_t COM_msgExtract(mst2slv_msg_t* p_msg, cmd_uomodri_t* p_cmd)
 void COM_msgCreate(foc_t* p_foc, cmd_uomodri_t* p_cmd, slv2mst_msg_t* p_msg)
 {
     int32_t pos                             = (int32_t)(p_foc->motor_enc.thetaAbsolute / POSITION_LSB);
-    bool_t  align_done                      = (//(p_foc->motor_state[CURRENT] == MOTOR_ALIGN_DONE) ||
-                                               (p_foc->motor_state[CURRENT] == MOTOR_READY) ||
-                                               (p_foc->motor_state[CURRENT] == MOTOR_STOP)) ? (true) : (false);
+    bool_t  align_done                      = ( (p_foc->motor_state[CURRENT] == MOTOR_STATE_READY) ||
+                                                (p_foc->motor_state[CURRENT] == MOTOR_STATE_STOP)) ? (true) : (false);
     p_msg->status.bit.SE                    = p_cmd->mode.bit.ES;     // System enabled
     p_msg->status.bit.STATUS_RSV1           = 0;
     p_msg->lastCmdIndex                     = p_cmd->index;
+    p_msg->timeStamp                        = (uint16_t)CPUTimer_getTimerCount(CPU_TIMER_0_BASE);
     if(p_foc->motor_id == MOTOR_1)
     {
         // Update status field - MOTOR_1

@@ -337,6 +337,10 @@ typedef struct __IPC_CFG_t__
     const bool_t                        ipcIntEnable;
 } ipc_cfg_t;
 
+/**
+ * @struct  __CPU_TIMER_CFG_t__
+ * @brief   Timer0/1/2 module configuration handler
+ */
 typedef struct __CPU_TIMER_CFG_t__
 {
     uint32_t                            cpuTimerBase;

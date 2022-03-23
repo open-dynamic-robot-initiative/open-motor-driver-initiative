@@ -28,27 +28,17 @@
  * TYPDEF ENUM
  ***********************************************************************/
 /**
- * @enum    align_state_e
- * @brief   Alignment procedure states.
+ * @enum    motor_state_e
+ * @brief   Motor states for the Finite State Machine (FSM).
  */
 typedef enum
 {
-    ALIGN_COUNT_UP      = 0,    /*!< ALIGN_COUNT_UP */
-    ALIGN_STAY          = 1,    /*!< ALIGN_STAY */
-    ALIGN_COUNT_DOWN    = 2,    /*!< ALIGN_COUNT_DOWN */
-    ALIGN_DONE          = 3,    /*!< ALIGN_DONE */
-} align_state_e;
-
-typedef enum
-{
-    MOTOR_INIT          = 0x00,
-    MOTOR_ALIGN_UP      = 0x01,    /*!< ALIGN_COUNT_UP */
-    MOTOR_ALIGN_FIX     = 0x02,    /*!< ALIGN_FIX */
-//    MOTOR_ALIGN_DOWN    = 0x04,    /*!< ALIGN_COUNT_DOWN */
-//    MOTOR_ALIGN_DONE    = 0x04,    /*!< ALIGN_DONE */
-    MOTOR_READY         = 0x08,
-    MOTOR_STOP          = 0x10,
-    MOTOR_ERROR         = 0x20,
+    MOTOR_STATE_INIT          = 0x00,
+    MOTOR_STATE_ALIGN_UP      = 0x01,    /*!< ALIGN_COUNT_UP */
+    MOTOR_STATE_ALIGN_FIX     = 0x02,    /*!< ALIGN_FIX */
+    MOTOR_STATE_READY         = 0x04,
+    MOTOR_STATE_STOP          = 0x08,
+    MOTOR_STATE_ERROR         = 0x10,
 } motor_state_e;
 
 /**
@@ -182,25 +172,13 @@ typedef struct __MOTOR_ACQUISITIONS_t__
     lpf_t                               vExtFlt;
 } acq_t;
 
-typedef struct __MOTOR_ALIGNEMENT_t__
-{
-    align_state_e   state;
-
-    uint32_t        cnt;
-    uint32_t        cntMax;
-
-    float32_t       idAlignRef;
-    float32_t       idAlign;
-} align_t;
-
 typedef struct __MOTOR_FOC_CONTROL_t__
 {
     const motor_id_e    motor_id;       /*!< Motor identification */
     params_t            motor_cfg;      /*!< Motor configuration parameters */
     acq_t               motor_acq;      /*!< Current \& voltage acquisitions */
     encoder_t           motor_enc;      /*!< Encoder position & speed */
-//    align_t             motor_align;    /*!< Alignment calibration procedure */
-    motor_state_e       motor_state[2];
+    uint16_t            motor_state[2]; /*!< Current \& next motor states for the FSM */
     lpf_t               iParkFlt;       /*!< Low-pass filter parameters affected to park transform */
     float32_t           sinTheta;       /*!< Sinus of the electrical rotor angle */
     float32_t           cosTheta;       /*!< Cosine of the electrical rotor angle  */
@@ -241,6 +219,13 @@ typedef struct __MOTOR_FOC_CONTROL_t__
 /***********************************************************************
  * DEFINES
  ***********************************************************************/
+#define MOTOR_STATE_INIT            (0x00)
+#define MOTOR_STATE_ALIGN_UP        (0x01)    /*!< ALIGN_COUNT_UP */
+#define MOTOR_STATE_ALIGN_FIX       (0x02)    /*!< ALIGN_FIX */
+#define MOTOR_STATE_READY           (0x04)
+#define MOTOR_STATE_STOP            (0x08)
+#define MOTOR_STATE_ERROR           (0x10)
+
 #define FOC_ERROR_NO_ERROR          (0x0000)    /*!< No error */
 #define FOC_ERROR_ENCODER           (0x0001)    /*!< Encoder_1 error too high */
 #define FOC_ERROR_POS_ROLLOVER      (0x0002)    /*!< Position roll-over occurred */

@@ -18,7 +18,6 @@ void HAL_eQEP_ini(const eqep_cfg_t*);
 void HAL_SPI_ini(const spi_cfg_t*);
 void HAL_TIMER_ini(const tmr_cfg_t*);
 void HAL_DMA_ini(const dma_cfg_t*);
-void HAL_DMA_sync(void);
 #if (defined CM_CORE_ENABLE) && (CM_CORE_ENABLE)
 void HAL_IPC_ini(const ipc_cfg_t*);
 #endif
@@ -53,10 +52,6 @@ void HAL_ini(hal_cfg_t* p_hal)
         HAL_DMA_ini(p_hal->p_dmaHandle);
         // Initialize SPI
         HAL_SPI_ini(p_hal->p_spiHandle);
-        // enable DMA channels
-#if (defined DMA_COM_SPI_RX_BASE_ADDR) && (defined DMA_COM_SPI_TX_BASE_ADDR) && (defined DMA_LED_SPI_TX_BASE_ADDR)
-        HAL_DMA_sync();
-#endif
 #if (defined CLA_CORE_ENABLE) && (CLA_CORE_ENABLE)
         // Initialize CLA
         HAL_CLA_ini(p_hal->p_claHandle);
@@ -571,31 +566,18 @@ void HAL_DMA_ini(const dma_cfg_t* p_dmaCfg)
             DMA_setInterruptMode(dmaChBase, p_dmaCfg->intMode);
 //            DMA_enableInterrupt(dmaChBase);
             (p_dmaCfg->intEnable) ? (DMA_enableInterrupt(dmaChBase)) : (DMA_disableInterrupt(dmaChBase));
-            /* Enable Trigger source */
+            /* Enable Trigger source & start DMA channel */
+            DMA_clearTriggerFlag(dmaChBase);
+            DMA_triggerSoftReset(dmaChBase);
+            asm(" nop");
             DMA_enableTrigger(dmaChBase);
+            DMA_startChannel(dmaChBase);
             dmaChBase = (++p_dmaCfg)->dmaChBase;
         }
     }
 
     return;
 }
-
-#if (defined DMA_COM_SPI_RX_BASE_ADDR) && (defined DMA_COM_SPI_TX_BASE_ADDR) && (defined DMA_LED_SPI_TX_BASE_ADDR)
-/**
- * @brief       DMA sync function.
- */
-void HAL_DMA_sync(void)
-{
-    // DMA_RX must be started before DMA_TX
-    DMA_startChannel(DMA_COM_SPI_RX_BASE_ADDR);
-//    while(!GPIO_ReadPin(COM_SPI_CS));
-//    SPI_resetTxFIFO(COM_SPI_BASE);
-    DMA_startChannel(DMA_COM_SPI_TX_BASE_ADDR);
-    DMA_startChannel(DMA_LED_SPI_TX_BASE_ADDR);
-
-    return;
-}
-#endif
 
 /**
  * @brief       IPC initialization function.
@@ -757,10 +739,8 @@ void HAL_INT_ini(const int_cfg_t* p_intCfg)
             Interrupt_enable(intNum);
             intNum = (++p_intCfg)->intNum;
         }
-        // enable global interrupt (INTM)
-        EINT;
-        // Enable realtime interrupt (DGBM)
-        ERTM;
+        EINT;   // enable global interrupt (INTM)
+        ERTM;   // Enable realtime interrupt (DGBM)
     }
 
     return;

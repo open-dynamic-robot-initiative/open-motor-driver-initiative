@@ -24,7 +24,6 @@
 #include "uomodri_user_defines.h"
 #include "uomodri_hal_config_handlers.h"
 #include "uomodri_prj_config_handlers.h"
-//#include "uOmodriClaTasksShare.h"
 
 /***********************************************************************
  * DEFINES
@@ -32,9 +31,9 @@
 #define IPC_CMD_M1      0x1001
 #define IPC_CMD_M2      0x2001
 
-/*****************************************************************************
- * globals
- *****************************************************************************/
+/***********************************************************************
+ * GLOBAL VARIABLES
+ ***********************************************************************/
 #if (defined CLA_CORE_ENABLE) && (CLA_CORE_ENABLE)
 // <Step 1>: Assign the CLA variables to their respective memory spaces
 //  - Input/Output variables should go into the Cla1ToCpuMsgRam/CpuToCla1MsgRam
@@ -65,11 +64,7 @@ float   thetaElec; // [pu]
 #pragma DATA_SECTION(cmd_msg, "ramgs1");
 mst2slv_msg_t   cmd_msg;
 #pragma DATA_SECTION(status_msg, "ramgs1");
-slv2mst_msg_t   status_msg;// =
-#if (defined UOMODRI_DEBUG_MASTER_BOARD_ENABLE) && (!UOMODRI_DEBUG_MASTER_BOARD_ENABLE)
-#pragma DATA_SECTION(cmd_master_msg, "ramgs0");
-mst2slv_msg_t   cmd_master_msg;
-#endif
+slv2mst_msg_t   status_msg;
 #pragma DATA_SECTION(led_msg, "ramgs1");
 uint16_t        led_msg[LED_MSG_TX_16BIT_LENGTH];
 //{0x0000, 0x9B6D, 0xA492, 0x4924, 0x9249, 0x2400}; // green
@@ -90,11 +85,8 @@ extern cmd_uomodri_t    cmd_uOmodri;
 /***********************************************************************
  * FUNCTIONS DECLARATION
  ***********************************************************************/
-//__attribute__((interrupt)) void dma_isrCmdMsg(void);
 __attribute__((interrupt)) void adc_isrMotor1(void);
 __attribute__((interrupt)) void adc_isrMotor2(void);
-__attribute__((interrupt)) void gpio_isrFaultMotor1(void);
-__attribute__((interrupt)) void gpio_isrFaultMotor2(void);
 #if (defined CLA_CORE_ENABLE) && (CLA_CORE_ENABLE)
 __attribute__((interrupt)) void cla1_isr1(void);
 #endif
