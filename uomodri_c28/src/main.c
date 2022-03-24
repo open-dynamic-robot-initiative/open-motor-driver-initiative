@@ -26,15 +26,7 @@ inline void ptr_swap(int32_t**, int32_t**);
  */
 void main(void)
 {
-#if (defined DMA_PERIPH_ENABLE) && (!DMA_PERIPH_ENABLE)
-    uint16_t* p_cmdMsg          = (uint16_t *)&cmd_msg;
-    uint16_t* p_statusMsg       = (uint16_t *)&status_msg;
-    uint16_t* p_ledMsg          = (uint16_t *)&led_msg[0];
-    uint16_t spi_com_rx_loop    = 0;
-    uint16_t spi_com_tx_loop    = 0;
-    uint16_t spi_led_tx_loop    = 0;
-#endif
-    uint16_t timer_cpt_ms       = 0;
+    uint16_t timer_cpt_ms = 0;
 
     // uOmodri low level device initialization
     MCU_ini();
@@ -57,21 +49,6 @@ void main(void)
     while(1)
     {
         // SPI COM RX management - Receive & extract message
-#if (defined DMA_PERIPH_ENABLE) && (!DMA_PERIPH_ENABLE)
-        if(SPI_getRxFIFOStatus(COM_SPI_BASE))
-        {
-            while((SPI_getRxFIFOStatus(COM_SPI_BASE) != SPI_FIFO_RXEMPTY) && (spi_com_rx_loop++ < COM_MSG_TX_RX_16BIT_FULL_LENGTH))
-                *p_cmdMsg++     = SPI_readDataNonBlocking(COM_SPI_BASE);
-            if(spi_com_rx_loop >= COM_MSG_TX_RX_16BIT_FULL_LENGTH)
-                COM_msgExtract(&cmd_msg, &cmd_uOmodri);
-            if(GPIO_ReadPin(COM_SPI_CS))
-            {
-                spi_com_rx_loop = 0;
-                p_cmdMsg        = (uint16_t *)&cmd_msg;
-                SPI_resetRxFIFO(COM_SPI_BASE);
-            }
-        }
-#else
         if(!DMA_getRunStatusFlag(DMA_COM_SPI_RX_BASE_ADDR) && GPIO_ReadPin(COM_SPI_CS))
         {
             COM_msgExtract(&cmd_msg, &cmd_uOmodri);
@@ -79,29 +56,7 @@ void main(void)
             SPI_resetRxFIFO(COM_SPI_BASE);
             DMA_startChannel(DMA_COM_SPI_RX_BASE_ADDR);
         }
-#endif
         // SPI COM TX management - Create message & send it
-#if (defined DMA_PERIPH_ENABLE) && (!DMA_PERIPH_ENABLE)
-        if(motor[MOTOR_1].itDone && motor[MOTOR_2].itDone)
-        {
-            COM_msgCreate(&motor_foc[MOTOR_1], &cmd_uOmodri, &status_msg);
-            COM_msgCreate(&motor_foc[MOTOR_2], &cmd_uOmodri, &status_msg);
-            spi_com_tx_loop = 0;
-            p_statusMsg     = (uint16_t *)&status_msg;
-            if(GPIO_ReadPin(COM_SPI_CS))
-            {
-                // Force first write in SPI_O_DAT
-                HWREGH(COM_SPI_BASE + SPI_O_DAT) = (uint16_t) *p_statusMsg++;//SPI_writeDataNonBlocking(COM_SPI_BASE, (uint16_t ) *p_statusMsg++);
-                spi_com_tx_loop++;
-                SPI_resetTxFIFO(COM_SPI_BASE);
-                // Force sixteen writes in SPI_O_TXBUF
-                while((SPI_getTxFIFOStatus(COM_SPI_BASE) != SPI_FIFO_TXFULL) && (spi_com_tx_loop++ < COM_MSG_TX_RX_16BIT_FULL_LENGTH))
-                    SPI_writeDataNonBlocking(COM_SPI_BASE, (uint16_t) *p_statusMsg++);
-            }
-            motor[MOTOR_1].itDone   = false;
-            motor[MOTOR_2].itDone   = false;
-        }
-#else
         if(!DMA_getRunStatusFlag(DMA_COM_SPI_TX_BASE_ADDR) && motor[MOTOR_2].itDone)// && motor[MOTOR_1].itDone)
         {
             COM_msgCreate(&motor_foc[MOTOR_1], &cmd_uOmodri, &status_msg);
@@ -117,40 +72,8 @@ void main(void)
             motor[MOTOR_1].itDone   = false;
             motor[MOTOR_2].itDone   = false;
         }
-#endif
         // SPI LED TX management - Create message & send it @ 1ms
         // SPI DRV TX/RX management - Read/Write to get DRV status in case of fault @ 1ms
-#if (defined DMA_PERIPH_ENABLE) && (!DMA_PERIPH_ENABLE)
-        if(CPUTimer_getTimerOverflowStatus(CPU_TIMER_0_BASE))
-        {
-            float32_t timer_fade_blink  = (float32_t)((timer_cpt_ms < 500)  ? (timer_cpt_ms)    : (1000.0 - timer_cpt_ms)) / 500.0f;
-            float32_t timer_blink       = (timer_cpt_ms < 500)              ? (0.0f)            : (1.0f);
-            timer_cpt_ms                = (timer_cpt_ms < 1000)             ? (timer_cpt_ms + 1): (0);
-            spi_led_tx_loop             = 0;
-            p_ledMsg                    = (uint16_t *)&led_msg[0];
-            switch(motor_foc[MOTOR_1].motor_state[CURRENT])
-            {
-            case MOTOR_STATE_ALIGN_UP:
-            case MOTOR_STATE_ALIGN_FIX:
-                ws2812b_writeLed((uint16_t)(0xff * timer_fade_blink), 0, (uint16_t)(0xff * timer_fade_blink), p_ledMsg); //Magenta fade,
-                break;
-            case MOTOR_STATE_READY:
-            case MOTOR_STATE_STOP:
-                ws2812b_writeLed(0, (uint16_t)(0xff * timer_fade_blink), 0, p_ledMsg);//Green fade, Active control
-                break;
-            case MOTOR_STATE_ERROR:
-                ws2812b_writeLed((uint16_t)(0xff * timer_blink), 0, 0, p_ledMsg);//red fade, error control
-                break;
-            case MOTOR_STATE_INIT:
-            default:
-                ws2812b_writeLed(0,  0, (uint16_t)(0xff * timer_fade_blink),p_ledMsg);//blue fade
-            }
-
-            while((SPI_getTxFIFOStatus(LED_SPI_BASE) != SPI_FIFO_TXFULL) && (spi_led_tx_loop++ < LED_MSG_TX_16BIT_LENGTH))
-                SPI_writeDataNonBlocking(LED_SPI_BASE, (uint16_t) *p_ledMsg++);
-            CPUTimer_clearOverflowFlag(CPU_TIMER_0_BASE);
-        }
-#else
         if(CPUTimer_getTimerOverflowStatus(CPU_TIMER_0_BASE))
         {
             if(!DMA_getRunStatusFlag(DMA_LED_SPI_TX_BASE_ADDR))
@@ -185,7 +108,6 @@ void main(void)
                 DRV_readStatus(motor[MOTOR_2].p_motorDRV);
             CPUTimer_clearOverflowFlag(CPU_TIMER_0_BASE);
         }
-#endif
     }
 }
 
@@ -305,7 +227,7 @@ __attribute__((interrupt)) void adc_isrMotor1(void)
         p_motor->itCnt         += 1U;
         p_foc->idRef            = MOTOR1_CURRENT_ALIGN_MAX; // Maintain alignment current
         p_foc->iqRef            = 0.0f;
-        *p_nxState              = (p_motor->itCnt < PWM_FREQ)                   ? (MOTOR_STATE_ALIGN_FIX)   : (MOTOR_STATE_READY);//(MOTOR_ALIGN_DONE); // wait 1s
+        *p_nxState              = (p_motor->itCnt < (2 * PWM_FREQ))             ? (MOTOR_STATE_ALIGN_FIX)   : (MOTOR_STATE_READY);//(MOTOR_ALIGN_DONE); // wait 1s
         *p_nxState              = (motor_disable_flag || system_disable_flag)   ? (MOTOR_STATE_INIT)        : (*p_nxState);
         ENC_resetStruct(p_enc);
         ENC_resetPeriph(p_enc);
@@ -344,8 +266,9 @@ __attribute__((interrupt)) void adc_isrMotor1(void)
         MOT_stopCommand(p_motor);
         break;
     }
-
-//    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_FLAG0, IPC_ADDR_CORRECTION_ENABLE, IPC_CMD_M1, (uint32_t)(p_foc), 1);
+#if (defined CM_CORE_ENABLE) && (CM_CORE_ENABLE)
+    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_FLAG0, IPC_ADDR_CORRECTION_ENABLE, IPC_CMD_M1, (uint32_t)(p_foc), 1);
+#endif
     p_motor->itDone = true;
     // Clear the interrupt overflow flag
     ADC_clearInterruptOverflowStatus(MOTOR12_IVA_ADC_ADDR, MOTOR1_IA_INT_NUM);
@@ -429,7 +352,7 @@ __attribute__((interrupt)) void adc_isrMotor2(void)
         p_motor->itCnt         += 1U;
         p_foc->idRef            = MOTOR2_CURRENT_ALIGN_MAX; // Maintain alignment current
         p_foc->iqRef            = 0.0f;
-        *p_nxState              = (p_motor->itCnt < PWM_FREQ)                   ? (MOTOR_STATE_ALIGN_FIX)   : (MOTOR_STATE_READY);//MOTOR_ALIGN_DONE); // wait 1s
+        *p_nxState              = (p_motor->itCnt < (2 * PWM_FREQ))             ? (MOTOR_STATE_ALIGN_FIX)   : (MOTOR_STATE_READY);//MOTOR_ALIGN_DONE); // wait 1s
         *p_nxState              = (motor_disable_flag || system_disable_flag)   ? (MOTOR_STATE_INIT)        : (*p_nxState);
         ENC_resetStruct(p_enc);
         ENC_resetPeriph(p_enc);

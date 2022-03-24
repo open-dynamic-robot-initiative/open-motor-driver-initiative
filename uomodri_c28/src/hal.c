@@ -44,8 +44,10 @@ void HAL_ini(hal_cfg_t* p_hal)
         HAL_ePWM_ini(p_hal->p_epwmHandle);
         // Initialize eQEP
         HAL_eQEP_ini(p_hal->p_eqepHandle);
+#if (defined CM_CORE_ENABLE) && (CM_CORE_ENABLE)
         // Initialize IPC communication
         HAL_IPC_ini(p_hal->p_ipcHandle);
+#endif
         // Initialize CPU TIMERS
         HAL_TIMER_ini(p_hal->p_timerHandle);
         // Initialize DMA
@@ -579,6 +581,7 @@ void HAL_DMA_ini(const dma_cfg_t* p_dmaCfg)
     return;
 }
 
+#if (defined CM_CORE_ENABLE) && (CM_CORE_ENABLE)
 /**
  * @brief       IPC initialization function.
  * @param[in]   *p_ipcCfg   Pointer on the IPC configuration structure
@@ -614,6 +617,7 @@ void HAL_IPC_ini(const ipc_cfg_t* p_ipcCfg)
 
     return;
 }
+#endif
 
 #if (defined CLA_CORE_ENABLE) && (CLA_CORE_ENABLE)
 /**
