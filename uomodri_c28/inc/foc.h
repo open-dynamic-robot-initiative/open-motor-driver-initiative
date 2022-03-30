@@ -143,33 +143,26 @@ typedef struct __MOTOR_PARAMETERS_t__
 
 typedef struct __MOTOR_ACQUISITIONS_t__
 {
-#ifdef USE_CM_CORE
-    uint32_t                            rsvd1[5];
-    uint32_t                            rsvd2[5];
-#else
-    volatile struct ADC_REGS*           const p_adcRegs[MAX_ADC];
-    volatile struct ADC_RESULT_REGS*    const p_adcResultRegs[MAX_ADC];
-#endif
     // ADC result registers
-    volatile uint16_t*                  const p_vaMeasReg;
-    volatile uint16_t*                  const p_vbMeasReg;
-    volatile uint16_t*                  const p_vcMeasReg;
-    volatile uint16_t*                  const p_vBusMeasReg;
-    volatile uint16_t*                  const p_vExtMeasReg;
-    volatile int16_t*                   const p_iaMeasReg;
-    volatile int16_t*                   const p_ibMeasReg;
-    volatile int16_t*                   const p_icMeasReg;
+    volatile uint16_t*  const p_vaMeasReg;
+    volatile uint16_t*  const p_vbMeasReg;
+    volatile uint16_t*  const p_vcMeasReg;
+    volatile uint16_t*  const p_vBusMeasReg;
+    volatile uint16_t*  const p_vExtMeasReg;
+    volatile int16_t*   const p_iaMeasReg;
+    volatile int16_t*   const p_ibMeasReg;
+    volatile int16_t*   const p_icMeasReg;
     // ADC values scaled
-    float32_t                           va;         // [V]
-    float32_t                           vb;         // [V]
-    float32_t                           vc;         // [V]
-    float32_t                           vbus;       // [V]
-    float32_t                           vExt;       // [V]
-    float32_t                           ia;         // [A]
-    float32_t                           ib;         // [A]
-    float32_t                           ic;         // [A]
-    lpf_t                               vBusFlt;
-    lpf_t                               vExtFlt;
+    float32_t           va;         // [V]
+    float32_t           vb;         // [V]
+    float32_t           vc;         // [V]
+    float32_t           vbus;       // [V]
+    float32_t           vExt;       // [V]
+    float32_t           ia;         // [A]
+    float32_t           ib;         // [A]
+    float32_t           ic;         // [A]
+    lpf_t               vBusFlt;
+    lpf_t               vExtFlt;
 } acq_t;
 
 typedef struct __MOTOR_FOC_CONTROL_t__

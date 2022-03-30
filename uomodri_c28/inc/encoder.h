@@ -42,28 +42,25 @@ typedef struct __SPEED_ESTIMATOR_STRUCT__
 typedef struct __ENCODER_STRUCT__
 {
 #ifdef USE_CM_CORE
-    uint32_t                    rsvd1;
-    uint32_t                    rsvd2;
+    uint32_t            rsvd1;
 #else
     // pointers on HAL structure, QEP registers and direct access to QEP counter register
-    const eqep_cfg_t*           p_qepHandle;        /*!< Pointer on HAL structure */
-    volatile struct EQEP_REGS*  p_qepRegs;          /*!< Pointer on the QEP registers */
+    const eqep_cfg_t*   p_qepHandle;        /*!< Pointer on HAL structure */
 #endif
-    const uint8_t               polePairs;          /*!< Number of motor pole pairs */
-    float32_t                   thetaElec;          /*!< Angular electrical position  - [pu] */
-    float32_t                   thetaMech[2];       /*!< Angular mechanical position  - [pu] */
-    float32_t                   thetaMechScaler;    /*!< Angular mechanical scaler - [pu/register] */
-    float32_t                   thetaIndex;         /*!< Index mechanical angle */
-    float32_t                   thetaMechIndexed;   /*!< Mechanical angle relative to the index - [pu] */
-    float32_t                   thetaAbsolute;      /*!< Absolute angular position - [turns] */
-    speed_t                     speed;              /*!< Speed estimation structure */
-    int16_t                     turnNb;             /*!< Number of full turns (signed) */
-    int16_t                     thetaDir;           /*!< Rotor direction - 0 (false) = CCW/reverse, 1(true) = CW/forward */
-    bool_t                      indexDetected;      /*!< Has index been detected */
-    bool_t                      indexCompensated;   /*!< Is index compensation activated */
-    bool_t                      indexToggle;        /*!< Flag that toggles every time index is seen */
-    bool_t                      rollOverFlag;       /*!< Roll-over error flag */
-//    bool                        rollOverFlagEn;     /*!< Enable roll-over error flag */
+    const uint8_t       polePairs;          /*!< Number of motor pole pairs */
+    float32_t           thetaElec;          /*!< Angular electrical position  - [pu] */
+    float32_t           thetaMech[2];       /*!< Angular mechanical position  - [pu] */
+    float32_t           thetaMechScaler;    /*!< Angular mechanical scaler - [pu/register] */
+    float32_t           thetaIndex;         /*!< Index mechanical angle */
+    float32_t           thetaMechIndexed;   /*!< Mechanical angle relative to the index - [pu] */
+    float32_t           thetaAbsolute;      /*!< Absolute angular position - [turns] */
+    speed_t             speed;              /*!< Speed estimation structure */
+    int16_t             turnNb;             /*!< Number of full turns (signed) */
+    int16_t             thetaDir;           /*!< Rotor direction - 0 (false) = CCW/reverse, 1(true) = CW/forward */
+    bool_t              indexDetected;      /*!< Has index been detected */
+    bool_t              indexCompensated;   /*!< Is index compensation activated */
+    bool_t              indexToggle;        /*!< Flag that toggles every time index is seen */
+    bool_t              rollOverFlag;       /*!< Roll-over error flag */
 } encoder_t;
 
 /***********************************************************************

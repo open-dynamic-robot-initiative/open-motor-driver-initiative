@@ -141,7 +141,6 @@
  * @{
  */
 #define CPU_TIMER_0_BASE                        CPUTIMER0_BASE
-#define CPU_TIMER_0_REGS                        (&CpuTimer0Regs)
 #define CPU_TIMER_0_PERIOD                      (1000U)                             // Period counter - 1ms
 #define CPU_TIMER_0_PRESCALER                   ((DEVICE_SYSCLK_FREQ / 1e6) - 1)    // Prescaler increment - 1us
 #define CPU_TIMER_0_INT                         INT_TIMER0
@@ -167,7 +166,6 @@
  * @{
  */
 #define DRV_SPI_BASE                            SPIA_BASE
-#define DRV_SPI_REGS                            (&SpiaRegs)
 #define DRV_SPI_TX_BASE_REG_ADDR                (DRV_SPI_BASE + SPI_O_TXBUF)
 #define DRV_SPI_RX_BASE_REG_ADDR                (DRV_SPI_BASE + SPI_O_RXBUF)
 /**
@@ -179,7 +177,6 @@
  * @{
  */
 #define COM_SPI_BASE                            SPIB_BASE
-#define COM_SPI_REGS                            (&SpibRegs)
 #define COM_SPI_TX_BASE_REG_ADDR                (COM_SPI_BASE + SPI_O_TXBUF)
 #define COM_SPI_RX_BASE_REG_ADDR                (COM_SPI_BASE + SPI_O_RXBUF)
 /**
@@ -191,7 +188,6 @@
  * @{
  */
 #define MST_SPI_BASE                            SPIC_BASE
-#define MST_SPI_REGS                            (&SpicRegs)
 #define MST_SPI_TX_BASE_REG_ADDR                (MST_SPI_BASE + SPI_O_TXBUF)
 #define MST_SPI_RX_BASE_REG_ADDR                (MST_SPI_BASE + SPI_O_RXBUF)
 /**
@@ -203,7 +199,6 @@
  * @{
  */
 #define LED_SPI_BASE                            SPID_BASE
-#define LED_SPI_REGS                            (&SpidRegs)
 #define LED_SPI_TX_BASE_REG_ADDR                (LED_SPI_BASE + SPI_O_TXBUF)
 #define LED_SPI_RX_BASE_REG_ADDR                (LED_SPI_BASE + SPI_O_RXBUF)
 /**
@@ -335,15 +330,11 @@
 #define MOTOR1_DRV_GPIO_EN_CFG                  GPIO_89_GPIO89
 #define MOTOR1_DRV_GPIO_NFAULT                  (90)
 #define MOTOR1_DRV_GPIO_NFAULT_CFG              GPIO_90_GPIO90
-#define MOTOR1_DRV_GPIO_NFAULT_INT              INT_XINT1
-#define MOTOR1_DRV_GPIO_NFAULT_INT_ACK_GROUP    INTERRUPT_ACK_GROUP1
 // DRV2 SPI defines
 #define MOTOR2_DRV_GPIO_EN                      (37)
 #define MOTOR2_DRV_GPIO_EN_CFG                  GPIO_37_GPIO37
 #define MOTOR2_DRV_GPIO_NFAULT                  (36)
 #define MOTOR2_DRV_GPIO_NFAULT_CFG              GPIO_36_GPIO36
-#define MOTOR2_DRV_GPIO_NFAULT_INT              INT_XINT2
-#define MOTOR2_DRV_GPIO_NFAULT_INT_ACK_GROUP    INTERRUPT_ACK_GROUP1
 /**
  * @}
  */
@@ -584,29 +575,6 @@
  * @}
  */
 
-/** @defgroup ADC base \& ADC result registers
- *  @brief    Define the ADC result registers for all the conversion to be performed.
- * @{
- */
-#define MOTOR12_IVA_ADC_REGS                    (&AdcaRegs)
-#define MOTOR12_IVB_ADC_REGS                    (&AdcbRegs)
-#define MOTOR12_IVC_ADC_REGS                    (&AdcdRegs)
-
-#define VBUS_ADC_REGS                           (&AdccRegs)
-#define EXTERN_V1_ADC_REGS                      (&AdccRegs)
-#define EXTERN_V2_ADC_REGS                      (&AdccRegs)
-
-#define MOTOR12_IVA_ADC_RESULT_REGS             (&AdcaResultRegs)
-#define MOTOR12_IVB_ADC_RESULT_REGS             (&AdcbResultRegs)
-#define MOTOR12_IVC_ADC_RESULT_REGS             (&AdcdResultRegs)
-
-#define VBUS_ADC_RESULT_REGS                    (&AdccResultRegs)
-#define EXTERN_V1_ADC_RESULT_REGS               (&AdccResultRegs)
-#define EXTERN_V2_ADC_RESULT_REGS               (&AdccResultRegs)
-/**
- * @}
- */
-
 /***********************************************************************
  * PWM DEFINES
  ***********************************************************************/
@@ -614,24 +582,20 @@
  *  @brief    Define the address of all the ePWM used (2 motors).
  * @{
  */
+#define MOTOR1_PWMx_CMD_ADDR_OFFSET             1U // bits 31-16 of CMPx registers
+#define MOTOR2_PWMx_CMD_ADDR_OFFSET             1U // bits 31-16 of CMPx registers
 #define MOTOR1_PWM1_BASE                        EPWM1_BASE
 #define MOTOR1_PWM2_BASE                        EPWM2_BASE
 #define MOTOR1_PWM3_BASE                        EPWM3_BASE
 #define MOTOR2_PWM1_BASE                        EPWM4_BASE
 #define MOTOR2_PWM2_BASE                        EPWM5_BASE
 #define MOTOR2_PWM3_BASE                        EPWM6_BASE
-#define MOTOR1_PWM1_REGS                        (&EPwm1Regs)
-#define MOTOR1_PWM2_REGS                        (&EPwm2Regs)
-#define MOTOR1_PWM3_REGS                        (&EPwm3Regs)
-#define MOTOR2_PWM1_REGS                        (&EPwm4Regs)
-#define MOTOR2_PWM2_REGS                        (&EPwm5Regs)
-#define MOTOR2_PWM3_REGS                        (&EPwm6Regs)
-#define MOTOR1_PWM1_CMD_ADDR                    (MOTOR1_PWM1_BASE + EPWM_O_CMPA + 1U)
-#define MOTOR1_PWM2_CMD_ADDR                    (MOTOR1_PWM2_BASE + EPWM_O_CMPA + 1U)
-#define MOTOR1_PWM3_CMD_ADDR                    (MOTOR1_PWM3_BASE + EPWM_O_CMPA + 1U)
-#define MOTOR2_PWM1_CMD_ADDR                    (MOTOR2_PWM1_BASE + EPWM_O_CMPA + 1U)
-#define MOTOR2_PWM2_CMD_ADDR                    (MOTOR2_PWM2_BASE + EPWM_O_CMPA + 1U)
-#define MOTOR2_PWM3_CMD_ADDR                    (MOTOR2_PWM3_BASE + EPWM_O_CMPA + 1U)
+#define MOTOR1_PWM1_CMD_ADDR                    (MOTOR1_PWM1_BASE + EPWM_O_CMPA + MOTOR1_PWMx_CMD_ADDR_OFFSET)
+#define MOTOR1_PWM2_CMD_ADDR                    (MOTOR1_PWM2_BASE + EPWM_O_CMPA + MOTOR1_PWMx_CMD_ADDR_OFFSET)
+#define MOTOR1_PWM3_CMD_ADDR                    (MOTOR1_PWM3_BASE + EPWM_O_CMPA + MOTOR1_PWMx_CMD_ADDR_OFFSET)
+#define MOTOR2_PWM1_CMD_ADDR                    (MOTOR2_PWM1_BASE + EPWM_O_CMPA + MOTOR2_PWMx_CMD_ADDR_OFFSET)
+#define MOTOR2_PWM2_CMD_ADDR                    (MOTOR2_PWM2_BASE + EPWM_O_CMPA + MOTOR2_PWMx_CMD_ADDR_OFFSET)
+#define MOTOR2_PWM3_CMD_ADDR                    (MOTOR2_PWM3_BASE + EPWM_O_CMPA + MOTOR2_PWMx_CMD_ADDR_OFFSET)
 /**
  * @}
  */
@@ -773,8 +737,8 @@
  */
 #define MOTOR1_QEP_BASE                         EQEP1_BASE
 #define MOTOR2_QEP_BASE                         EQEP2_BASE
-#define MOTOR1_QEP_REGS                         (&EQep1Regs)
-#define MOTOR2_QEP_REGS                         (&EQep2Regs)
+//#define MOTOR1_QEP_REGS                         (&EQep1Regs)
+//#define MOTOR2_QEP_REGS                         (&EQep2Regs)
 #define MOTOR1_QEP_COUNTER_ADDR                 (MOTOR1_QEP_BASE + EQEP_O_QPOSCNT)
 #define MOTOR2_QEP_COUNTER_ADDR                 (MOTOR2_QEP_BASE + EQEP_O_QPOSCNT)
 #define MOTOR1_QEP_SWAP                         EQEP_CONFIG_NO_SWAP // Set to EQEP_CONFIG_SWAP if increments in the wrong direction
@@ -804,7 +768,7 @@
 #define MOTOR1_CURRENT_CUTOFF_FREQ              (500.0f)    // Current loop bandwidth (Hz)
 #define MOTOR1_CURRENT_LPF_ALPHA                (1.0f / (1.0f + (1.0f / (2.0f * M_PI * MOTOR1_CURRENT_CUTOFF_FREQ / PWM_FREQ))))
 #define MOTOR1_CURRENT_LPF_ONE_M_ALPHA          (1.0f - MOTOR1_CURRENT_LPF_ALPHA)
-#define MOTOR1_CURRENT_ALIGN_MAX                (0.5f)
+#define MOTOR1_CURRENT_ALIGN_MAX                (0.5f)      // Current on d-axis for motor alignment (A)
 #define MOTOR1_ID_REGULATOR_KP_COEF             (MOTOR1_LD * 2.0f * M_PI * MOTOR1_CURRENT_CUTOFF_FREQ)
 #define MOTOR1_ID_REGULATOR_KI_COEF             (MOTOR1_RS * 2.0f * M_PI * MOTOR1_CURRENT_CUTOFF_FREQ / PWM_FREQ)
 #define MOTOR1_IQ_REGULATOR_KP_COEF             (MOTOR1_LQ * 2.0f * M_PI * MOTOR1_CURRENT_CUTOFF_FREQ)
@@ -831,7 +795,7 @@
 #define MOTOR2_CURRENT_CUTOFF_FREQ              (500.0f)    // Current loop bandwidth (Hz)
 #define MOTOR2_CURRENT_LPF_ALPHA                (1.0f / (1.0f + (1.0f / (2.0f * M_PI * MOTOR2_CURRENT_CUTOFF_FREQ / PWM_FREQ))))
 #define MOTOR2_CURRENT_LPF_ONE_M_ALPHA          (1.0f - MOTOR2_CURRENT_LPF_ALPHA)
-#define MOTOR2_CURRENT_ALIGN_MAX                (0.5f)
+#define MOTOR2_CURRENT_ALIGN_MAX                (0.5f)      // Current on d-axis for motor alignment (A)
 #define MOTOR2_ID_REGULATOR_KP_COEF             (MOTOR2_LD * 2.0f * M_PI * MOTOR2_CURRENT_CUTOFF_FREQ)
 #define MOTOR2_ID_REGULATOR_KI_COEF             (MOTOR2_RS * 2.0f * M_PI * MOTOR2_CURRENT_CUTOFF_FREQ / PWM_FREQ)
 #define MOTOR2_IQ_REGULATOR_KP_COEF             (MOTOR2_LQ * 2.0f * M_PI * MOTOR2_CURRENT_CUTOFF_FREQ)
@@ -848,7 +812,7 @@
 //#define MOTOR2_CUR_LOOP_ALPHA                   (1.0 - (MOTOR2_CUR_LOOP_ONE_M_ALPHA))
 
 #define MOTOR12_OVERMODULATION                  (1.15f)
-#define VBUS_CUTOFF_FREQ                        (500.0f)    // vbus voltage loop bandwidth (Hz)
+#define VBUS_CUTOFF_FREQ                        (400.0f)    // vbus voltage loop bandwidth (Hz)
 #define VBUS_LPF_ALPHA                          (1.0 / (1.0 + (1.0 / (2.0 * M_PI * VBUS_CUTOFF_FREQ / PWM_FREQ))))
 #define VBUS_LPF_ONE_M_ALPHA                    (1.0 - VBUS_LPF_ALPHA)
 #define VEXT_CUTOFF_FREQ                        (4000.0f)   // vbus voltage loop bandwidth (Hz)

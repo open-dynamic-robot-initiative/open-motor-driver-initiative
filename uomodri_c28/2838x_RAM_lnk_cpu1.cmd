@@ -14,26 +14,23 @@ MEMORY
    RAMLS3           : origin = 0x009800, length = 0x000800
    RAMLS4           : origin = 0x00A000, length = 0x000800
    RAMLS5           : origin = 0x00A800, length = 0x000800
-   RAMLS6_7         : origin = 0x00B000, length = 0x001000
-   //RAMLS6           : origin = 0x00B000, length = 0x000800
-   //RAMLS7           : origin = 0x00B800, length = 0x000800
+   RAMLS6           : origin = 0x00B000, length = 0x000800
+   RAMLS7           : origin = 0x00B800, length = 0x000800
    RAMGS0           : origin = 0x00D000, length = 0x001000
    RAMGS1           : origin = 0x00E000, length = 0x001000
    RAMGS2           : origin = 0x00F000, length = 0x001000
-   RAMGS3_4			: origin = 0x010000, length = 0x002000
-   //RAMGS3           : origin = 0x010000, length = 0x001000
-   //RAMGS4           : origin = 0x011000, length = 0x001000
+   RAMGS3           : origin = 0x010000, length = 0x001000
+   RAMGS4           : origin = 0x011000, length = 0x001000
    RAMGS5           : origin = 0x012000, length = 0x001000
    RAMGS6           : origin = 0x013000, length = 0x001000
    RAMGS7           : origin = 0x014000, length = 0x001000
    RAMGS8           : origin = 0x015000, length = 0x001000
    RAMGS9           : origin = 0x016000, length = 0x001000
-   RAMGS10_14       : origin = 0x017000, length = 0x005000
-   //RAMGS10          : origin = 0x017000, length = 0x001000
-   //RAMGS11          : origin = 0x018000, length = 0x004000
-   //RAMGS12          : origin = 0x019000, length = 0x004000
-   //RAMGS13          : origin = 0x01A000, length = 0x001000
-   //RAMGS14          : origin = 0x01B000, length = 0x001000
+   RAMGS10          : origin = 0x017000, length = 0x001000
+   RAMGS11          : origin = 0x018000, length = 0x001000
+   RAMGS12          : origin = 0x019000, length = 0x001000
+   RAMGS13          : origin = 0x01A000, length = 0x001000
+   RAMGS14          : origin = 0x01B000, length = 0x001000
    RAMGS15          : origin = 0x01C000, length = 0x000FF8
 //   RAMGS15_RSVD     : origin = 0x01CFF8, length = 0x000008     /* Reserve and do not use for code as per the errata advisory "Memory: Prefetching Beyond Valid Memory" */
 
@@ -67,11 +64,9 @@ MEMORY
 SECTIONS
 {
    codestart        : > BEGIN
-   .text            : > RAMGS10_14
-   //.text            : >> RAMD0 | RAMD1 | RAMLS0 | RAMLS1 | RAMLS2 | RAMLS3
-   .cinit           : > RAMLS3
-   //.cinit           : > RAMM0
-   .switch          : > RAMM0
+   .text            : >> RAMGS10 | RAMGS11 | RAMGS12 | RAMGS13 | RAMGS14, ALIGN(8)
+   .cinit           : > RAMM0, ALIGN(8)
+   .switch          : > RAMM0, ALIGN(8)
    .reset           : > RESET, TYPE = DSECT /* not used, */
 
    .stack           : > RAMM1
@@ -79,23 +74,17 @@ SECTIONS
     /* uomodri named section at given address: */
    //.ComRxCmdSection	: > 0x039000
 #if defined(__TI_EABI__)
-   .bss             : > RAMLS2
-   //.bss             : > RAMLS5
+   .bss             : > RAMLS5
    .bss:output      : > RAMLS3
    .init_array      : > RAMM0
-   .const           : > RAMGS3_4
-   //.const           : > RAMLS5 | RAMLS6
-   .data            : > RAMLS6_7
-   //.data            : > RAMLS5
+   .const           : >> RAMLS0 | RAMLS1 | RAMLS2, ALIGN(8)
+   .data            : >> RAMLS6 | RAMLS7, ALIGN(8)
    .sysmem          : > RAMLS4
 #else
    .pinit           : > RAMM0
-   .ebss            : > RAMLS4
-   //.ebss            : >> RAMLS5 | RAMLS6
-   .econst          : > RAMLS4
-   //.econst          : > RAMLS5
-   .esysmem         : > RAMLS4
-   //.esysmem         : > RAMLS5
+   .ebss            : >> RAMLS5 | RAMLS6
+   .econst          : > RAMLS5
+   .esysmem         : > RAMLS5
 #endif
 
    ramgs0 : > RAMGS0//, type=NOINIT

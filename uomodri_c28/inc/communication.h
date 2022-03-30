@@ -71,7 +71,8 @@ static const uint32_t crc32_table[] =
 typedef struct __mst2slv_reg_t__
 {
     uint16_t        TIMEOUT     : 8;    /*!< Bits 7-0   : R/W - Timeout disable system after no valid command in milliseconds           */
-    uint16_t        CMD_RSV1    : 2;    /*!< Bits 9-8   : R/W - Reserved                                                                */
+//    uint16_t        RST         : 2;    /*!< Bits 9-8   : R/W - Force a reset of CPU1, CPU1 periph, CPU2, CM, CM periph                 */
+    uint16_t        RST         : 1;    /*!< Bits 9     : R/W - Force a reset of CPU1, CPU1 periph, CPU2, CM, CM periph                 */
     uint16_t        EI2OC       : 1;    /*!< Bits 10    : R/W - Enable/Disable incremental encoder index offset compensation - MOTOR_2  */
     uint16_t        EI1OC       : 1;    /*!< Bits 11    : R/W - Enable/Disable incremental encoder index offset compensation - MOTOR_1  */
     uint16_t        EPRE        : 1;    /*!< Bits 12    : R/W - Enable/Disable position rollover error - position range : -128 to +128  */
@@ -202,6 +203,9 @@ typedef enum
     STATUS_ERROR_DRV_NFAULT         = 7, /*!< Motor DRV nFault error */
 } com_statusError;
 
+/***********************************************************************
+ * DEFINES
+ ***********************************************************************/
 // No error
 #define SPI_SENSOR_STATUS_ERROR_NO_ERROR            0
 // Encoder1 error too high
@@ -222,7 +226,6 @@ typedef enum
 #define POLYNOMIAL_32_P1                            0x04C11DB7
 #define CRC_INIT_CRC32                              0xFFFFFFFF
 
-//extern CRC_Obj vcrc;
 
 //{.seedValue     = CRC_INIT_CRC32,
 // .nMsgBytes     = 30,//len,

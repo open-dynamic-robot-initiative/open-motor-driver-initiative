@@ -102,29 +102,8 @@ inline void ENC_getSpeed(encoder_t* p_enc)
         // Compute angle difference & saturate it between -0.5 and 0.5
         float32_t deltaTheta    = p_speed->theta[NEW] - p_speed->theta[OLD];
         // Saturate it between -0.5 and 0.5
-//        if (deltaTheta > 0.5f)
-//            deltaTheta -= 1.0f;
-//        else if (deltaTheta < -0.5f)
-//            deltaTheta += 1.0f;
-
         deltaTheta              = (deltaTheta > 0.5f)   ? (deltaTheta - 1.0f) : (deltaTheta);
         deltaTheta              = (deltaTheta < -0.5f)  ? (deltaTheta + 1.0f) : (deltaTheta);
-
-//        Calculates the number of position in unit time based on motor's direction of rotation
-//        if(p_enc->thetaDir > 0)
-//        {
-//            if (p_speed->theta[NEW] >= p_speed->theta[NEW])
-//                deltaTheta      = p_speed->theta[NEW] - p_speed->theta[OLD];
-//             else
-//                 deltaTheta    = (1.0 - p_speed->theta[OLD]) + p_speed->theta[NEW]; //newcount = (0xFFFFFFFF - oldcount) + newcount;
-//        }
-//        else
-//        {
-//             if (p_speed->theta[NEW] <= p_speed->theta[NEW])
-//                 deltaTheta      = p_speed->theta[NEW] - p_speed->theta[OLD];
-//             else
-//                 deltaTheta    = (1.0 - p_speed->theta[NEW]) + p_speed->theta[OLD];//newcount = (0xFFFFFFFF - newcount) + oldcount;
-//             }
         // Compute high speed estimation
         p_speed->speedHigh      = deltaTheta * p_speed->speedHighScaler;
     }

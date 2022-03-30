@@ -28,6 +28,12 @@ bool_t COM_msgExtract(mst2slv_msg_t* p_msg, cmd_uomodri_t* p_cmd)
         p_cmd->mode.bit.EM2         = p_msg->mode.bit.EM2;
         p_cmd->mode.bit.EM1         = p_msg->mode.bit.EM1;
         p_cmd->mode.bit.ES          = p_msg->mode.bit.ES;
+        p_cmd->mode.bit.RST         = p_msg->mode.bit.RST;
+//        if(((p_msg->mode.bit.RST == 0b01) && (p_cmd->mode.bit.RST == 0b00)) ||
+//                ((p_msg->mode.bit.RST == 0b10) && (p_cmd->mode.bit.RST == 0b01)))
+//            p_cmd->mode.bit.RST    |= p_msg->mode.bit.RST;
+//        else
+//            p_cmd->mode.bit.RST     = 0b00;
         p_cmd->position[MOTOR_1]    = 0.0f;//(float32_t)(pos_m1                    * POSITION_LSB);
         p_cmd->position[MOTOR_2]    = 0.0f;//(float32_t)(pos_m2                    * POSITION_LSB);
         p_cmd->velocity[MOTOR_1]    = 0.0f;//(float32_t)(p_msg->velocity[MOTOR_1]  * VELOCITY_LSB);
@@ -41,7 +47,7 @@ bool_t COM_msgExtract(mst2slv_msg_t* p_msg, cmd_uomodri_t* p_cmd)
         p_cmd->iSat[MOTOR_1]        = 2.0f;//(float32_t)(MSB_16(p_msg->iSat)       * CURRENT_SAT_LSB);
         p_cmd->iSat[MOTOR_2]        = 2.0f;//(float32_t)(LSB_16(p_msg->iSat)       * CURRENT_SAT_LSB);
         p_cmd->index                = (uint16_t) p_msg->index;
-        return (true);
+        return(true);
     }
 
     return(false);
@@ -132,6 +138,10 @@ void COM_msgCreate(foc_t* p_foc, cmd_uomodri_t* p_cmd, slv2mst_msg_t* p_msg)
 //    return;
 //}
 
+/**
+ * @brief           Reset the full command for both motors
+ * @param[inout]    p_cmd   Pointer on the command structure (actions to be realized by motor_foc)
+ */
 void COM_resetCmdStruct(cmd_uomodri_t* p_cmd)
 {
     p_cmd->mode.all             = 0U;
@@ -152,6 +162,11 @@ void COM_resetCmdStruct(cmd_uomodri_t* p_cmd)
     return;
 }
 
+/**
+ * @brief           Reset the command associated to motor_id
+ * @param[inout]    p_cmd       Pointer on the command structure (actions to be realized by motor_foc)
+ * @param[in]       motor_id    Motor identification (MOTOR_1 or MOTOR_2)
+ */
 void COM_resetCmdMotorStruct(cmd_uomodri_t* p_cmd, motor_id_e motor_id)
 {
     (motor_id == MOTOR_1) ? (p_cmd->mode.bit.EM1 = false) : (p_cmd->mode.bit.EM2 = false);
@@ -161,6 +176,8 @@ void COM_resetCmdMotorStruct(cmd_uomodri_t* p_cmd, motor_id_e motor_id)
     p_cmd->kpCoeff[motor_id]    = 0.0f;
     p_cmd->kdCoeff[motor_id]    = 0.0f;
     p_cmd->iSat[motor_id]       = 1.0f;
+
+    return;
 }
 
 /**
@@ -178,7 +195,8 @@ uint32_t COM_crc32 (uint16_t* p_buf, uint16_t len)
       crc = (crc << 8) ^ crc32_table[((crc >> 24) ^ LSB_16(*p_buf)) & 0xFF];
       p_buf++;
     }
-  return crc;
+
+  return(crc);
 }
 
 //void com_vcrc_ini(uint16_t* p_buf, uint16_t len)
