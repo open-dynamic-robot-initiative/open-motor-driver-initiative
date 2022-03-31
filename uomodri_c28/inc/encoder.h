@@ -9,15 +9,8 @@
 #include <math.h>
 
 #ifdef USE_CM_CORE
-#include "driverlib_cm.h"
-#include "cm.h"
-
 #include "uomodri_cm_user_defines.h"
 #else
-#include "f2838x_device.h"
-#include "driverlib.h"
-#include "device.h"
-
 #include "hal.h"
 #include "uomodri_user_defines.h"
 #endif

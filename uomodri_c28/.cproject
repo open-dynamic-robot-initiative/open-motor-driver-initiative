@@ -294,7 +294,6 @@
 									<listOptionValue builtIn="false" value="${COM_TI_C2000WARE_SOFTWARE_PACKAGE_SYMBOLS}"/>
 									<listOptionValue builtIn="false" value="_FLASH"/>
 									<listOptionValue builtIn="false" value="CPU1"/>
-									<listOptionValue builtIn="false" value="C28_CORE"/>
 									<listOptionValue builtIn="false" value="F2838x_DEVICE"/>
 									<listOptionValue builtIn="false" value="_DUAL_HEADERS"/>
 									<listOptionValue builtIn="false" value="DEBUG"/>

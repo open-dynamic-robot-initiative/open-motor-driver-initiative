@@ -4,11 +4,10 @@
 /***********************************************************************
  * INCLUDES
  ***********************************************************************/
-#include "f2838x_device.h"
-#include "f2838x_examples.h"
+//#include "f2838x_device.h"
+//#include "f2838x_examples.h"
+
 #include "driverlib.h"
-#include "interrupt.h"
-#include "device.h"
 
 #include "hal.h"
 #include "drv8353.h"

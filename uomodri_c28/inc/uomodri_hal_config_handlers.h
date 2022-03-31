@@ -4,10 +4,10 @@
 /***********************************************************************
  * INCLUDE FILES
  ***********************************************************************/
-#include "f2838x_device.h"
-#include "f2838x_examples.h"
+//#include "f2838x_device.h"
+//#include "f2838x_examples.h"
 #include "driverlib.h"
-#include "device.h"
+//#include "device.h"
 
 #include "hal.h"
 #include "communication.h"

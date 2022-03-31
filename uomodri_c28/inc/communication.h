@@ -8,13 +8,8 @@
 #include <stdint.h>
 #include <math.h>
 
+#include "f2838x_device.h"
 #include "foc.h"
-
-//#include "crc_tbl.h"
-//#include "vcu2_types.h"
-//#include "vcu2_crc.h"
-//#include "vcrc_configpoly.h"
-//#include "dsp_examples_setup.h"
 
 #ifdef USE_CM_CORE
 #include "uomodri_cm_user_defines.h"
@@ -71,7 +66,7 @@ static const uint32_t crc32_table[] =
 typedef struct __mst2slv_reg_t__
 {
     uint16_t        TIMEOUT     : 8;    /*!< Bits 7-0   : R/W - Timeout disable system after no valid command in milliseconds           */
-//    uint16_t        RST         : 2;    /*!< Bits 9-8   : R/W - Force a reset of CPU1, CPU1 periph, CPU2, CM, CM periph                 */
+    uint16_t        CMD_RSV1    : 1;    /*!< Bits 8     : R/W - Reserved                                                                */
     uint16_t        RST         : 1;    /*!< Bits 9     : R/W - Force a reset of CPU1, CPU1 periph, CPU2, CM, CM periph                 */
     uint16_t        EI2OC       : 1;    /*!< Bits 10    : R/W - Enable/Disable incremental encoder index offset compensation - MOTOR_2  */
     uint16_t        EI1OC       : 1;    /*!< Bits 11    : R/W - Enable/Disable incremental encoder index offset compensation - MOTOR_1  */
@@ -226,20 +221,6 @@ typedef enum
 #define POLYNOMIAL_32_P1                            0x04C11DB7
 #define CRC_INIT_CRC32                              0xFFFFFFFF
 
-
-//{.seedValue     = CRC_INIT_CRC32,
-// .nMsgBytes     = 30,//len,
-// .parity        = CRC_parity_odd,   //!< the location, in a word, of the first byte of the CRC calculation
-// .crcResult     = 0,
-//// .pMsgBuffer    = (uint16_t *)&cmd_msg,//p_buf,            //!< Pointer to the message buffer
-// .pCrcTable     = NULL,             //!< Pointer to the CRC lookup table
-// .polynomial    = POLYNOMIAL_32_P1, //!<user polynomial
-// .polySize      = 0x1F,//SIZE_32_BITS,     //!<polynomial size
-// .dataSize      = 0x07,//SIZE_16_BITS,
-// .init          = (void (*)(void *))CRC_init32Bit,          //!< Function pointer to CRC initialization routine
-// .run           = (void (*)(void *))CRC_run32BitPoly1,            //!< Function pointer to CRC computation routine
-//};
-
 /***********************************************************************
  * FUNCTIONS DECLARATION
  ***********************************************************************/
@@ -248,7 +229,5 @@ void COM_msgCreate(foc_t*, cmd_uomodri_t*, slv2mst_msg_t*);
 void COM_resetCmdStruct(cmd_uomodri_t*);
 void COM_resetCmdMotorStruct(cmd_uomodri_t*, motor_id_e);
 uint32_t COM_crc32(uint16_t*, uint16_t);
-//void com_vcrc_ini(uint16_t*, uint16_t);
-//uint32_t com_vcrc(uint16_t*, uint16_t);
 
 #endif

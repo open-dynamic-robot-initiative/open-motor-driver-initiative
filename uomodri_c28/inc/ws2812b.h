@@ -8,9 +8,9 @@
 #include <stdint.h>
 #include <math.h>
 
-#include "f2838x_device.h"
-#include "driverlib.h"
-#include "device.h"
+//#include "f2838x_device.h"
+//#include "driverlib.h"
+//#include "device.h"
 
 /***********************************************************************
  * RGB LED CONTROL

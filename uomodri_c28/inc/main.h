@@ -4,11 +4,11 @@
 /***********************************************************************
  * INCLUDES
  ***********************************************************************/
-#include "f2838x_device.h"
+//#include "f2838x_device.h"
 #if (defined CLA_CORE_ENABLE) && (CLA_CORE_ENABLE)
 #include "f2838x_cla_defines.h"
 #endif
-#include "f2838x_examples.h"
+//#include "f2838x_examples.h"
 #include "driverlib.h"
 #include "device.h"
 #include "hw_types.h"

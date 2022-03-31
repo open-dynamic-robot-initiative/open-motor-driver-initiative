@@ -9,13 +9,11 @@
 #include <math.h>
 
 #include "f2838x_device.h"
-#include "driverlib.h"
-#include "device.h"
 
 #include "hal.h"
 #include "foc.h"
+#include "drv8353.h"
 #include "uomodri_user_defines.h"
-#include "anticoagging.h"
 
 /***********************************************************************
  * CONTROL STRUCTURES
@@ -33,7 +31,7 @@ typedef struct __MOTORS_STRUCT__
     // Resistance estimation low-pass filter
     lpf_t                   statorResEstFlt;
     // Anti-coagging structure
-    Anticoagging            acog;
+//    Anticoagging            acog;
     bool_t                  itDone;
     // PWM address register for FOC command
     volatile uint16_t*      p_motorChAReg;

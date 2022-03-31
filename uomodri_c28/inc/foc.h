@@ -13,14 +13,7 @@
 
 #include "uomodri_cm_user_defines.h"
 #else
-#include "f2838x_device.h"
-#include "f2838x_struct.h"
-#include "f2838x_examples.h"
-#include "driverlib.h"
-#include "device.h"
-
 #include "uomodri_user_defines.h"
-#include "anticoagging.h"
 #endif
 #include "encoder.h"
 
@@ -200,11 +193,11 @@ typedef struct __MOTOR_FOC_CONTROL_t__
     pd_t                pdPos;          /*!< PD controller structure for position/velocity control */
     float32_t           resEst;         /*!< Q-axis resistance estimation - [Ohm] */
     lpf_t               resEstFlt;      /*!< Q-axis resistance estimation filter structure */
-#ifdef USE_CM_CORE
-    uint8_t             rsvd[11];
-#else
-    Anticoagging        acog;           /*!< Anti-coagging structure */
-#endif
+//#ifdef USE_CM_CORE
+//    uint8_t             rsvd[11];
+//#else
+//    Anticoagging        acog;           /*!< Anti-coagging structure */
+//#endif
     uint16_t            errorStatus;    /*!< Error messages */
 //    uint16_t            errorStatus;
 } foc_t;

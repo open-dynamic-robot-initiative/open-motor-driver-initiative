@@ -13,9 +13,7 @@
 #include <stdint.h>
 
 #include "f2838x_device.h"
-#include "f2838x_examples.h"
 #include "driverlib.h"
-#include "device.h"
 
 #include "uomodri_user_defines.h"
 

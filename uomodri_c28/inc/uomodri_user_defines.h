@@ -30,9 +30,7 @@
 #define UOMODRI_RES_ESTIM_FLT(flt_coef, y, x)   LPF_FILTER_1(flt_coef, y, x)
 #define UOMODRI_SPEED_FLT(flt_coef, y, x)       LPF_FILTER_1(flt_coef, y, x)
 #define UOMODRI_HAL_ADC_CALIB(flt_coef, y, x)   LPF_FILTER_1(flt_coef, y, x)
-
 #define UOMODRI_FEED_FORWARD_ENABLE             1
-
 #define OMODRI_PAL_SETUP                        0   // Set this to 1 to use the PAL pin affectation
 /**
  * @}
