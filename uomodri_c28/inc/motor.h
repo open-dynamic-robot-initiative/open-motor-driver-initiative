@@ -20,23 +20,23 @@
  ***********************************************************************/
 typedef struct __MOTORS_STRUCT__
 {
-    const hal_motor_cfg_t*  p_motorHalCfg;
-    drv8353_t*              p_motorDRV;
-    foc_t*                  p_motorFOC;
+    const hal_motor_cfg_t*  const   p_motorHalCfg;
+    drv8353_t* const                p_motorDRV;
+    foc_t* const                    p_motorFOC;
     // Cycle counter events
-    uint64_t                itCnt;
-    uint32_t                clCycleNb;
+    uint64_t                        itCnt;
+    uint32_t                        clCycleNb;
     // Q-axis resistance estimation
-    float32_t               statorResEst;    // [Ohm]
+    float32_t                       statorResEst;    // [Ohm]
     // Resistance estimation low-pass filter
-    lpf_t                   statorResEstFlt;
+    lpf_t                           statorResEstFlt;
     // Anti-coagging structure
 //    Anticoagging            acog;
-    bool_t                  itDone;
+    bool_t                          itDone;
     // PWM address register for FOC command
-    volatile uint16_t*      p_motorChAReg;
-    volatile uint16_t*      p_motorChBReg;
-    volatile uint16_t*      p_motorChCReg;
+    volatile uint16_t* const        p_motorChAReg;
+    volatile uint16_t* const        p_motorChBReg;
+    volatile uint16_t* const        p_motorChCReg;
 } motor_t;
 
 /***********************************************************************

@@ -6,6 +6,7 @@
  ***********************************************************************/
 //#include "f2838x_device.h"
 //#include "f2838x_examples.h"
+#include <stdint.h>
 
 #include "driverlib.h"
 
@@ -36,7 +37,7 @@ static const int_cfg_t InterruptList[] =
   .p_intHandler     = &adc_isrMotor2,
  },
  // END OF ARRAY
- {.intNum           = 0xFFFFFFFF},
+ {.intNum           = UINT32_MAX},
 };
 
 /** @var    DRV_Cfg     DrvCfgList[]
@@ -178,7 +179,6 @@ static const hal_motor_cfg_t hal_motor_cfg[] =
   .p_iAcq[0]        = &AdcAcqList[2],
   .p_iAcq[1]        = &AdcAcqList[6],
   .p_iAcq[2]        = &AdcAcqList[10],
-  //.p_vbusAcq    = &AdcAcqList[8],
   .p_intAcq         = &AdcIntList[0],
  },
  {
@@ -191,7 +191,6 @@ static const hal_motor_cfg_t hal_motor_cfg[] =
   .p_iAcq[0]        = &AdcAcqList[3],
   .p_iAcq[1]        = &AdcAcqList[7],
   .p_iAcq[2]        = &AdcAcqList[11],
-  //.p_vbusAcq    = &AdcAcqList[8],
   .p_intAcq         = &AdcIntList[1],
  },
 };
@@ -219,10 +218,11 @@ static cmd_uomodri_t cmd_uOmodri =
  .kdCoeff[MOTOR_2]  = 0.0f,
  .iSat[MOTOR_1]     = 1.0f,
  .iSat[MOTOR_2]     = 1.0f,
+ .cptTimeout        = 0,
  .index             = 0
 };
 
-#pragma DATA_SECTION(motor_foc, "MSGRAM_CPU_TO_CM");
+//#pragma DATA_SECTION(motor_foc, "MSGRAM_CPU_TO_CM");
 static foc_t motor_foc[] =
 {
  {

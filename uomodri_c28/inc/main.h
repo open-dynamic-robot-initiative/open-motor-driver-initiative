@@ -79,7 +79,7 @@ status_msg_t    status_Master_msg;
 #endif
 
 extern motor_t          motor[];
-extern hal_cfg_t        hal;
+extern const hal_cfg_t  hal;
 extern cmd_uomodri_t    cmd_uOmodri;
 
 /***********************************************************************

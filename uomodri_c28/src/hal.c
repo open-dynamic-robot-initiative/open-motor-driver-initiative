@@ -33,7 +33,7 @@ void HAL_CLA_ini(const CLA_TypeDef*);
  * @brief       Initialize all peripherals necessaries.
  * @param[in]   *p_hal  Pointer on the general HAL structure definition
  */
-void HAL_ini(hal_cfg_t* p_hal)
+void HAL_ini(const hal_cfg_t* p_hal)
 {
     if(p_hal != NULL)
     {

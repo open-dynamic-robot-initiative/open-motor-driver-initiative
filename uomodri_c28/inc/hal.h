@@ -45,7 +45,6 @@ typedef struct __EPWM_TIME_BASE_t__
 {
     uint32_t                            epwmBase;                   /*!< ePWM peripheral address. */
     uint16_t                            phaseCount;                 /*!< Phase counter. Sets offset (min value). */
-    //EPWM_TimeBaseCountMode counterMode;             /*!< Counting direction (up-count, down-count or up and down count). \see EPWM_TimeBaseCountMode */
     uint16_t                            syncOutputMode;             /*!< Output sync signal generation. \see EPWM_SyncOutPulseMode */
 } epwm_tb_t;
 
@@ -248,7 +247,6 @@ typedef struct __GPIO_CFG_t__
     GPIO_IntType                        intType;                    /*!< GPIO interrupt event source */
     bool_t                              intEnable;                  /*!< GPIO can be configured as IT source */
     bool_t                              setValue;                   /*!< GPIO initial value if defined as output. */
-//    GPIO_ExternalIntNum extIntNum;
 } gpio_cfg_t;
 
 /**
@@ -270,10 +268,7 @@ typedef struct __ADC_INITIALIZATION_t__
 typedef struct __ADC_ACQUISITIONS_RESULTS_t__
 {
     uint32_t                            adcBase;                    /*!< ADC peripheral address. */
-    volatile uint16_t*                  adcResultReg;
-    //volatile uint16_t*  adcPPBResultReg;
-//    uint16_t adcCalib;
-//    uint16_t adcOffset;
+    volatile uint16_t* const            adcResultReg;
     ADC_SOCNumber                       adcSOCNumber;
     ADC_PPBNumber                       adcPPBNumber;
 } adc_acq_t;
@@ -295,8 +290,8 @@ typedef struct __ADC_INTERRUPT_EVENTS_t__
  */
 typedef struct __ADC_CFG_t__
 {
-    const uint32_t                      adcBase;                    /*!< ADC peripheral address. */
-    const uint32_t                      adcResultBase;              /*!< ADC results address. */
+    uint32_t                            adcBase;                    /*!< ADC peripheral address. */
+    uint32_t                            adcResultBase;              /*!< ADC results address. */
     const adc_ini_t*                    p_adcIni;                   /*!< Pointer on ADC start-of-conversion configuration handler */
     const adc_acq_t*                    p_adcAcq;                   /*!< Pointer on ADC result configuration handler */
     const adc_int_t*                    p_adcInt;                   /*!< Pointer on ADC Interrupt source configuration handler */
@@ -308,11 +303,7 @@ typedef struct __ADC_CFG_t__
  */
 typedef struct __INT_CFG_t__
 {
-//    const ID_ENUM   motorID;
     uint32_t                            intNum;
-//    uint32_t    intPeriphBase;
-//    uint16_t    intPeriphSrc;
-    //uint16_t    intCpuGroup;
     uint16_t                            intAckGroup;
     void                                (*p_intHandler)(void);
 } int_cfg_t;
@@ -323,16 +314,16 @@ typedef struct __INT_CFG_t__
  */
 typedef struct __IPC_CFG_t__
 {
-    const IPC_Type_t                    ipcType;
-    const uint32_t                      ipcBase;
+    IPC_Type_t                          ipcType;
+    uint32_t                            ipcBase;
     volatile IPC_MessageQueue_t*        p_ipcMsgQ;
-    const uint32_t                      ipcIntMsgQL;
-    const uint32_t                      ipcIntMsgQR;
-    const uint32_t                      ipcFlag;
-    const uint32_t                      ipcInt;
+    uint32_t                            ipcIntMsgQL;
+    uint32_t                            ipcIntMsgQR;
+    uint32_t                            ipcFlag;
+    uint32_t                            ipcInt;
     void                                (*p_ipcIntHandler)(void);
-    const bool_t                        ipcMsgQEnable;
-    const bool_t                        ipcIntEnable;
+    bool_t                              ipcMsgQEnable;
+    bool_t                              ipcIntEnable;
 } ipc_cfg_t;
 
 /**
@@ -353,16 +344,16 @@ typedef struct __CPU_TIMER_CFG_t__
  */
 typedef struct __HAL_CFG_t__
 {
-    const gpio_cfg_t*                   p_gpioHandle;
-    const adc_cfg_t*                    p_adcHandle;
-    const epwm_cfg_t*                   p_epwmHandle;
-    const eqep_cfg_t*                   p_eqepHandle;
-    const spi_cfg_t*                    p_spiHandle;
-    const ipc_cfg_t*                    p_ipcHandle;
-    const dma_cfg_t*                    p_dmaHandle;
-    const tmr_cfg_t*                    p_timerHandle;
+    const gpio_cfg_t*   const           p_gpioHandle;
+    const adc_cfg_t*    const           p_adcHandle;
+    const epwm_cfg_t*   const           p_epwmHandle;
+    const eqep_cfg_t*   const           p_eqepHandle;
+    const spi_cfg_t*    const           p_spiHandle;
+    const ipc_cfg_t*    const           p_ipcHandle;
+    const dma_cfg_t*    const           p_dmaHandle;
+    const tmr_cfg_t*    const           p_timerHandle;
 #if (defined CLA_CORE_ENABLE) && (CLA_CORE_ENABLE)
-    const cla_cfg_t*                    p_claHandle;
+    const cla_cfg_t*    const           p_claHandle;
 #endif
 } hal_cfg_t;
 
@@ -372,19 +363,16 @@ typedef struct __HAL_CFG_t__
  */
 typedef struct __HAL_MOTOR_CFG_t__
 {
-    const epwm_cc_t*                    p_pwmCntCmp[3];
-    const adc_acq_t*                    p_iAcq[3];
-    const adc_acq_t*                    p_vAcq[3];
-    const adc_int_t*                    p_intAcq;
-//    const ADC_ACQ_TypeDef*  p_vbusAcq;
-//    const eQEP_TypeDef*     p_qep;
-//    const ID_ENUM           motorID;
+    const epwm_cc_t*    const           p_pwmCntCmp[3];
+    const adc_acq_t*    const           p_iAcq[3];
+    const adc_acq_t*    const           p_vAcq[3];
+    const adc_int_t*    const           p_intAcq;
 } hal_motor_cfg_t;
 
 /***********************************************************************
  * FUNCTIONS DECLARATION
  ***********************************************************************/
-void HAL_ini(hal_cfg_t*);
+void HAL_ini(const hal_cfg_t*);
 void HAL_SPI_start(const spi_cfg_t*);
 void HAL_INT_ini(const int_cfg_t*);
 void HAL_ADC_offsetCalib(const hal_motor_cfg_t*);

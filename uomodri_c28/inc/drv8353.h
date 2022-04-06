@@ -557,10 +557,8 @@ typedef struct __drv_reg_t__
  */
 typedef struct __drv8353_t__
 {
-    const drv_cfg_t*    p_drvCfgHandler;
-    drv_reg_t*          p_drvRegHandler;
-//    bool                rxTimeOut;      /*!< timeout flag for the RX FIFO               */
-//    bool                enableTimeOut;  /*!< timeout flag for DRV8353 enable            */
+    const drv_cfg_t* const  p_drvCfgHandler;
+    drv_reg_t* const        p_drvRegHandler;
 } drv8353_t;
 
 /***********************************************************************

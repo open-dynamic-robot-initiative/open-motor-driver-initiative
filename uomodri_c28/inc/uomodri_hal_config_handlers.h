@@ -532,7 +532,7 @@ static const epwm_cfg_t PwmCfgList[] =
 /** @var    HAL     hal
  *  @brief  General configuration structure for the Hardware Abstraction Layer.
  */
-static hal_cfg_t hal =
+static const hal_cfg_t hal =
 {.p_gpioHandle  = GpioPinsCfgList,
  .p_adcHandle   = AdcCfgList,
  .p_epwmHandle  = PwmCfgList,

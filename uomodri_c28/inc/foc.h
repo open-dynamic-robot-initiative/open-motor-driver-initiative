@@ -91,15 +91,15 @@ typedef enum
  */
 typedef struct __PROPORTIONAL_INTEGRAL_t__
 {
-    float32_t*      p_fb;       /*!< Pointer on the feedback current */
-    float32_t*      p_set;      /*!< Pointer on the setpoint current */
-    float32_t       err;        /*!< Current error */
-    float32_t       kp;         /*!< Proportional gain */
-    float32_t       ki;         /*!< Integral gain */
-    float32_t       integral;   /*!< Integral term partial computation */
-    float32_t       ff;         /*!< Feed-forward term */
-    float32_t       out;        /*!< Controller output */
-    float32_t*      p_sat;      /*!< Pointer on the saturation value to use */
+    float32_t* const    p_fb;       /*!< Pointer on the feedback current */
+    float32_t* const    p_set;      /*!< Pointer on the setpoint current */
+    float32_t           err;        /*!< Current error */
+    float32_t           kp;         /*!< Proportional gain */
+    float32_t           ki;         /*!< Integral gain */
+    float32_t           integral;   /*!< Integral term partial computation */
+    float32_t           ff;         /*!< Feed-forward term */
+    float32_t           out;        /*!< Controller output */
+    float32_t* const    p_sat;      /*!< Pointer on the saturation value to use */
 } pi_t;
 
 /**
@@ -108,18 +108,18 @@ typedef struct __PROPORTIONAL_INTEGRAL_t__
  */
 typedef struct __PROPORTIONAL_DERIVATIVE_t__
 {
-    float32_t*      p_fbTheta;  /*!< Pointer on the feedback position */
-    float32_t*      p_setTheta; /*!< Pointer on the setpoint position */
-    float32_t       errTheta;   /*!< Error position */
-    float32_t*      p_fbSpeed;  /*!< Pointer on the feedback speed */
-    float32_t*      p_setSpeed; /*!< Pointer on the Set point speed */
-    float32_t       errSpeed;   /*!< Error speed */
-    float32_t*      p_kp;       /*!< Pointer on the Proportional gain */
-    float32_t*      p_kd;       /*!< Pointer on the Derivative gain */
-    float32_t       derivative; /*!< Derivative term partial computation */
-    float32_t*      p_ff;       /*!< Pointer on the feed-forward term */
-    float32_t       out;        /*!< Controller output */
-    float32_t*      p_sat;      /*!< Controller saturation */
+    float32_t* const    p_fbTheta;  /*!< Pointer on the feedback position */
+    float32_t* const    p_setTheta; /*!< Pointer on the setpoint position */
+    float32_t           errTheta;   /*!< Error position */
+    float32_t* const    p_fbSpeed;  /*!< Pointer on the feedback speed */
+    float32_t* const    p_setSpeed; /*!< Pointer on the Set point speed */
+    float32_t           errSpeed;   /*!< Error speed */
+    float32_t* const    p_kp;       /*!< Pointer on the Proportional gain */
+    float32_t* const    p_kd;       /*!< Pointer on the Derivative gain */
+    float32_t           derivative; /*!< Derivative term partial computation */
+    float32_t* const    p_ff;       /*!< Pointer on the feed-forward term */
+    float32_t           out;        /*!< Controller output */
+    float32_t* const    p_sat;      /*!< Controller saturation */
 } pd_t;
 
 typedef struct __MOTOR_PARAMETERS_t__
@@ -216,7 +216,8 @@ typedef struct __MOTOR_FOC_CONTROL_t__
 #define FOC_ERROR_ENCODER           (0x0001)    /*!< Encoder_1 error too high */
 #define FOC_ERROR_POS_ROLLOVER      (0x0002)    /*!< Position roll-over occurred */
 #define FOC_ERROR_DRV_NFAULT        (0x0004)    /*!< Motor DRV nFault error */
-#define FOC_ERROR_ALL_ERROR_FLAGS   (FOC_ERROR_ENCODER | FOC_ERROR_POS_ROLLOVER | FOC_ERROR_DRV_NFAULT)
+#define FOC_ERROR_COM_TIMEOUT       (0x0008)    /*!< Communication timeout error */
+#define FOC_ERROR_ALL_ERROR_FLAGS   (FOC_ERROR_ENCODER | FOC_ERROR_POS_ROLLOVER | FOC_ERROR_DRV_NFAULT | FOC_ERROR_COM_TIMEOUT)
 // Resistance estimation uses Ohm's Law R = U/I so we have to ensure I != 0.
 // This threshold corresponds to the minimum current for the measure to be considered as correct.
 #define FOC_RE_CURRENT_THRESHOLD    0.1f

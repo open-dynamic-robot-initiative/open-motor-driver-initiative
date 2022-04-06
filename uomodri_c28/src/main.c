@@ -76,6 +76,7 @@ void main(void)
          */
         if(CPUTimer_getTimerOverflowStatus(CPU_TIMER_0_BASE))
         {
+            // LED dimming control
             if(!DMA_getRunStatusFlag(DMA_LED_SPI_TX_BASE_ADDR))
             {
                 static uint16_t timer_cpt_ms    = 0;
@@ -107,12 +108,14 @@ void main(void)
             // Read DRV data to get status registers (MOTOR_2)
             if(motor_foc[MOTOR_2].errorStatus & FOC_ERROR_DRV_NFAULT)
                 DRV_readStatus(motor[MOTOR_2].p_motorDRV);
+            // Timeout management
+            cmd_uOmodri.cptTimeout++;
+            // Clear flag
             CPUTimer_clearOverflowFlag(CPU_TIMER_0_BASE);
         }
         // Force a general microcontroller RESET if requested
         if((motor_foc[MOTOR_1].motor_state[CURRENT] == MOTOR_STATE_ERROR) &&
-                (motor_foc[MOTOR_2].motor_state[CURRENT] == MOTOR_STATE_ERROR) && (cmd_uOmodri.mode.bit.RST))
-//                (cmd_uOmodri.mode.bit.RST == 0b11))
+           (motor_foc[MOTOR_2].motor_state[CURRENT] == MOTOR_STATE_ERROR) && (cmd_uOmodri.mode.bit.RST))// (cmd_uOmodri.mode.bit.RST == 0b11))
         {
             SysCtl_simulateReset(SYSCTL_CAUSE_CPU1RSN); //SysCtl_resetDevice();
             while(1);
@@ -184,6 +187,7 @@ __attribute__((interrupt)) void adc_isrMotor1(void)
     encoder_t*  p_enc           = &p_foc->motor_enc;
     uint16_t*   p_crState       = &p_foc->motor_state[CURRENT];
     uint16_t*   p_nxState       = &p_foc->motor_state[NEXT];
+    uint8_t     timeout         = (uint8_t)cmd_uOmodri.mode.bit.TIMEOUT;
     bool_t system_disable_flag  = !cmd_uOmodri.mode.bit.ES;
     bool_t motor_disable_flag   = !cmd_uOmodri.mode.bit.EM1;
     p_enc->indexCompensated     = cmd_uOmodri.mode.bit.EI1OC;
@@ -198,13 +202,14 @@ __attribute__((interrupt)) void adc_isrMotor1(void)
     ENC_getTheta(&p_foc->motor_enc);
 
     bool_t motor_rollover_flag  = p_foc->motor_enc.rollOverFlag && cmd_uOmodri.mode.bit.EPRE;
-    bool_t motor_drv_fault_flag = (!GPIO_readPin(MOTOR1_DRV_GPIO_NFAULT)) ? (true)  : (false);
+    bool_t motor_drv_fault_flag = (!GPIO_readPin(MOTOR1_DRV_GPIO_NFAULT))           ? (true)    : (false);
+    bool_t com_timeout_flag     = ((cmd_uOmodri.cptTimeout > timeout) && (timeout)) ? (true)    : (false);
     // Save number of cycles elapsed since control loop startup
     p_motor->clCycleNb          = EPWM_getTimeBaseCounterValue(p_motor->p_motorHalCfg->p_pwmCntCmp[0]->epwmBase);
     p_foc->errorStatus         |= (motor_rollover_flag)                             ? (FOC_ERROR_POS_ROLLOVER)  : (p_foc->errorStatus);
     p_foc->errorStatus         |= (motor_drv_fault_flag)                            ? (FOC_ERROR_DRV_NFAULT)    : (p_foc->errorStatus);
+    p_foc->errorStatus         |= (com_timeout_flag)                                ? (FOC_ERROR_COM_TIMEOUT)   : (p_foc->errorStatus);
     *p_crState                  = (p_foc->errorStatus || cmd_uOmodri.mode.bit.RST)  ? (MOTOR_STATE_ERROR)       : (*p_nxState);
-//    *p_crState                  = (p_foc->errorStatus || (cmd_uOmodri.mode.bit.RST == 0b11))? (MOTOR_STATE_ERROR)       : (*p_nxState);
 
     switch(*p_crState)
     {
@@ -269,7 +274,7 @@ __attribute__((interrupt)) void adc_isrMotor1(void)
         p_foc->idRef            = 0.0f;
         p_foc->iqRef            = 0.0f;
         *p_nxState              = MOTOR_STATE_ERROR;
-        COM_resetCmdMotorStruct(&cmd_uOmodri, p_foc->motor_id);
+        COM_resetCmdMotorStruct(p_foc, &cmd_uOmodri);
         ENC_resetPeriph(p_enc);
         FOC_resetStruct(p_foc);
         MOT_stopCommand(p_motor);
@@ -309,6 +314,7 @@ __attribute__((interrupt)) void adc_isrMotor2(void)
     encoder_t*  p_enc           = &p_foc->motor_enc;
     uint16_t*   p_crState       = &p_foc->motor_state[CURRENT];
     uint16_t*   p_nxState       = &p_foc->motor_state[NEXT];
+    uint8_t     timeout         = (uint8_t)cmd_uOmodri.mode.bit.TIMEOUT;
     bool_t system_disable_flag  = !cmd_uOmodri.mode.bit.ES;
     bool_t motor_disable_flag   = !cmd_uOmodri.mode.bit.EM2;
     p_enc->indexCompensated     = cmd_uOmodri.mode.bit.EI2OC;
@@ -323,13 +329,14 @@ __attribute__((interrupt)) void adc_isrMotor2(void)
     ENC_getTheta(&p_foc->motor_enc);
 
     bool_t motor_rollover_flag  = p_foc->motor_enc.rollOverFlag && cmd_uOmodri.mode.bit.EPRE;
-    bool_t motor_drv_fault_flag = (!GPIO_readPin(MOTOR2_DRV_GPIO_NFAULT)) ? (true)  : (false);
+    bool_t motor_drv_fault_flag = (!GPIO_readPin(MOTOR2_DRV_GPIO_NFAULT))           ? (true)    : (false);
+    bool_t com_timeout_flag     = ((cmd_uOmodri.cptTimeout > timeout) && (timeout)) ? (true)    : (false);
     // Save number of cycles elapsed since control loop startup
     p_motor->clCycleNb          = EPWM_getTimeBaseCounterValue(p_motor->p_motorHalCfg->p_pwmCntCmp[0]->epwmBase);
     p_foc->errorStatus         |= (motor_rollover_flag)                             ? (FOC_ERROR_POS_ROLLOVER)  : (p_foc->errorStatus);
     p_foc->errorStatus         |= (motor_drv_fault_flag)                            ? (FOC_ERROR_DRV_NFAULT)    : (p_foc->errorStatus);
+    p_foc->errorStatus         |= (com_timeout_flag)                                ? (FOC_ERROR_COM_TIMEOUT)   : (p_foc->errorStatus);
     *p_crState                  = (p_foc->errorStatus || cmd_uOmodri.mode.bit.RST)  ? (MOTOR_STATE_ERROR)       : (*p_nxState);
-//    *p_crState                  = (p_foc->errorStatus || (cmd_uOmodri.mode.bit.RST == 0b11))? (MOTOR_STATE_ERROR)       : (*p_nxState);
 
     switch(*p_crState)
     {
@@ -394,7 +401,7 @@ __attribute__((interrupt)) void adc_isrMotor2(void)
         p_foc->idRef            = 0.0f;
         p_foc->iqRef            = 0.0f;
         *p_nxState              = MOTOR_STATE_ERROR;
-        COM_resetCmdMotorStruct(&cmd_uOmodri, p_foc->motor_id);
+        COM_resetCmdMotorStruct(p_foc, &cmd_uOmodri);
         ENC_resetPeriph(p_enc);
         FOC_resetStruct(p_foc);
         MOT_stopCommand(p_motor);

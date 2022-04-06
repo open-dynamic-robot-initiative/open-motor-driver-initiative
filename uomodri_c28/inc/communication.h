@@ -176,6 +176,7 @@ typedef struct __cmd_uomodri_t__
     float32_t       kpCoeff[2];
     float32_t       kdCoeff[2];
     float32_t       iSat[2];
+    uint32_t        cptTimeout;
     uint16_t        index;
 } cmd_uomodri_t;
 
@@ -227,7 +228,7 @@ typedef enum
 bool_t COM_msgExtract(mst2slv_msg_t*, cmd_uomodri_t*);
 void COM_msgCreate(foc_t*, cmd_uomodri_t*, slv2mst_msg_t*);
 void COM_resetCmdStruct(cmd_uomodri_t*);
-void COM_resetCmdMotorStruct(cmd_uomodri_t*, motor_id_e);
+void COM_resetCmdMotorStruct(foc_t*, cmd_uomodri_t*);
 uint32_t COM_crc32(uint16_t*, uint16_t);
 
 #endif

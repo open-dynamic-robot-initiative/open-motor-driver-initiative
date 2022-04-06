@@ -47,6 +47,7 @@ bool_t COM_msgExtract(mst2slv_msg_t* p_msg, cmd_uomodri_t* p_cmd)
         p_cmd->iSat[MOTOR_1]        = 2.0f;//(float32_t)(MSB_16(p_msg->iSat)       * CURRENT_SAT_LSB);
         p_cmd->iSat[MOTOR_2]        = 2.0f;//(float32_t)(LSB_16(p_msg->iSat)       * CURRENT_SAT_LSB);
         p_cmd->index                = (uint16_t) p_msg->index;
+        p_cmd->cptTimeout           = 0;
         return(true);
     }
 
@@ -63,8 +64,8 @@ bool_t COM_msgExtract(mst2slv_msg_t* p_msg, cmd_uomodri_t* p_cmd)
 void COM_msgCreate(foc_t* p_foc, cmd_uomodri_t* p_cmd, slv2mst_msg_t* p_msg)
 {
     int32_t pos                             = (int32_t)(p_foc->motor_enc.thetaAbsolute / POSITION_LSB);
-    bool_t  align_done                      = ( (p_foc->motor_state[CURRENT] == MOTOR_STATE_READY) ||
-                                                (p_foc->motor_state[CURRENT] == MOTOR_STATE_STOP)) ? (true) : (false);
+    bool_t  align_done                      = ((p_foc->motor_state[CURRENT] == MOTOR_STATE_READY) ||
+                                               (p_foc->motor_state[CURRENT] == MOTOR_STATE_STOP)) ? (true) : (false);
     p_msg->status.bit.SE                    = p_cmd->mode.bit.ES;     // System enabled
     p_msg->status.bit.STATUS_RSV1           = 0;
     p_msg->lastCmdIndex                     = p_cmd->index;
@@ -72,10 +73,10 @@ void COM_msgCreate(foc_t* p_foc, cmd_uomodri_t* p_cmd, slv2mst_msg_t* p_msg)
     if(p_foc->motor_id == MOTOR_1)
     {
         // Update status field - MOTOR_1
-        p_msg->status.bit.M1E               = p_cmd->mode.bit.EM1;                                          // MOTOR_1 enabled
-        p_msg->status.bit.M1R               = align_done;//(p_foc->motor_align.state == ALIGN_DONE) ? (true) : (false);  // MOTOR_1 ready
-        p_msg->status.bit.IDX1T             = p_foc->motor_enc.indexToggle;                                 // MOTOR_1 index toggle
-        p_msg->status.bit.IDX1D             = p_foc->motor_enc.indexDetected;                               // MOTOR_1 index detected
+        p_msg->status.bit.M1E               = p_cmd->mode.bit.EM1;              // MOTOR_1 enabled
+        p_msg->status.bit.M1R               = align_done;                       // MOTOR_1 ready
+        p_msg->status.bit.IDX1T             = p_foc->motor_enc.indexToggle;     // MOTOR_1 index toggle
+        p_msg->status.bit.IDX1D             = p_foc->motor_enc.indexDetected;   // MOTOR_1 index detected
         if(!p_foc->errorStatus)
             p_msg->status.bit.ERROR_CODE    = STATUS_ERROR_NO_ERROR;
         else if(p_foc->errorStatus & FOC_ERROR_POS_ROLLOVER)
@@ -84,6 +85,8 @@ void COM_msgCreate(foc_t* p_foc, cmd_uomodri_t* p_cmd, slv2mst_msg_t* p_msg)
             p_msg->status.bit.ERROR_CODE    = STATUS_ERROR_DRV_NFAULT;
         else if(p_foc->errorStatus & FOC_ERROR_ENCODER)
             p_msg->status.bit.ERROR_CODE    = STATUS_ERROR_ENCODER1;
+        else if(p_foc->errorStatus & FOC_ERROR_COM_TIMEOUT)
+            p_msg->status.bit.ERROR_CODE    = STATUS_ERROR_SPI_RECV_TIMEOUT;
         p_msg->position[MOTOR_1].u16_msb    = MSB_32(pos);
         p_msg->position[MOTOR_1].u16_lsb    = LSB_32(pos);
         p_msg->velocity[MOTOR_1]            = (int16_t)(p_foc->motor_enc.speed.speedMech / 10.0f / FM_RAD2RPM / VELOCITY_LSB);
@@ -101,13 +104,15 @@ void COM_msgCreate(foc_t* p_foc, cmd_uomodri_t* p_cmd, slv2mst_msg_t* p_msg)
         if(p_msg->status.bit.ERROR_CODE == STATUS_ERROR_NO_ERROR)
         {
             if(!p_foc->errorStatus)
-                p_msg->status.bit.ERROR_CODE= STATUS_ERROR_NO_ERROR;
+                p_msg->status.bit.ERROR_CODE    = STATUS_ERROR_NO_ERROR;
             else if(p_foc->errorStatus & FOC_ERROR_POS_ROLLOVER)
-                p_msg->status.bit.ERROR_CODE= STATUS_ERROR_POS_ROLLOVER;
+                p_msg->status.bit.ERROR_CODE    = STATUS_ERROR_POS_ROLLOVER;
             else if(p_foc->errorStatus & FOC_ERROR_DRV_NFAULT)
-                p_msg->status.bit.ERROR_CODE= STATUS_ERROR_DRV_NFAULT;
+                p_msg->status.bit.ERROR_CODE    = STATUS_ERROR_DRV_NFAULT;
             else if(p_foc->errorStatus & FOC_ERROR_ENCODER)
-                p_msg->status.bit.ERROR_CODE= STATUS_ERROR_ENCODER2;
+                p_msg->status.bit.ERROR_CODE    = STATUS_ERROR_ENCODER2;
+            else if(p_foc->errorStatus & FOC_ERROR_COM_TIMEOUT)
+                p_msg->status.bit.ERROR_CODE    = STATUS_ERROR_SPI_RECV_TIMEOUT;
         }
         p_msg->position[MOTOR_2].u16_msb    = MSB_32(pos);
         p_msg->position[MOTOR_2].u16_lsb    = LSB_32(pos);
@@ -167,8 +172,9 @@ void COM_resetCmdStruct(cmd_uomodri_t* p_cmd)
  * @param[inout]    p_cmd       Pointer on the command structure (actions to be realized by motor_foc)
  * @param[in]       motor_id    Motor identification (MOTOR_1 or MOTOR_2)
  */
-void COM_resetCmdMotorStruct(cmd_uomodri_t* p_cmd, motor_id_e motor_id)
+void COM_resetCmdMotorStruct(foc_t* p_foc, cmd_uomodri_t* p_cmd)
 {
+    motor_id_e motor_id = p_foc->motor_id;
     (motor_id == MOTOR_1) ? (p_cmd->mode.bit.EM1 = false) : (p_cmd->mode.bit.EM2 = false);
     p_cmd->position[motor_id]   = 0.0f;
     p_cmd->velocity[motor_id]   = 0.0f;
