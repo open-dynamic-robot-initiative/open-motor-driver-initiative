@@ -6,13 +6,24 @@
 #ifndef __UOMODRI_CM_USER_DEFINES_H__
 #define __UOMODRI_CM_USER_DEFINES_H__
 
+/***********************************************************************
+ * INCLUDES
+ ***********************************************************************/
 #include "driverlib_cm.h"
 #include "cm.h"
 
-/************************************************************************
+/***********************************************************************
  * GENERAL DEFINES
- ************************************************************************/
+ ***********************************************************************/
 #define UOMODRI_CONFIG_ENABLE                   1
+
+#ifndef FM_RPM2RAD
+#define FM_RPM2RAD                              (2.0f * M_PI / 60.0f)
+#endif
+
+#ifndef FM_RAD2RPM
+#define FM_RAD2RPM                              (60.0f / (2.0f * M_PI))
+#endif
 
 /************************************************************************
  * IPC DEFINES
@@ -22,6 +33,7 @@
  * @{
  */
 #define IPC_SYNC_FLAG                           IPC_FLAG31
+#define IPC_CPU1_TO_CM_FLAG                     IPC_FLAG0
 /**
  * @}
  */
@@ -59,11 +71,22 @@
  */
 #define DBG_TX_MSG_HEADER_8BIT_SIZE             (4)
 #define DBG_TX_MSG_COUNTER_8BIT_SIZE            (4)
-#define DBG_TX_MSG_DATA_32BIT_SIZE              (4)
-#define DBG_TX_MSG_DATA_8BIT_SIZE               (4 * DBG_TX_MSG_DATA_32BIT_SIZE)
-#define DBG_TX_MSG_PAYLOAD_8BIT_SIZE            (DBG_TX_MSG_HEADER_8BIT_SIZE + DBG_TX_MSG_COUNTER_8BIT_SIZE + DBG_TX_MSG_DATA_8BIT_SIZE)
-#define DBG_TX_MSG_CRC_SIZE                     (4)
-#define DBG_TX_MSG_SIZE                         (DBG_TX_MSG_PAYLOAD_8BIT_SIZE + DBG_TX_MSG_CRC_SIZE)
+#define DBG_TX_MSG_STATUS_8BIT_SIZE             (2)
+#define DBG_TX_MSG_POSITION_32BIT_SIZE          (2)
+#define DBG_TX_MSG_POSITION_8BIT_SIZE           (4 * DBG_TX_MSG_POSITION_32BIT_SIZE)
+#define DBG_TX_MSG_CURRENT_16BIT_SIZE           (2)
+#define DBG_TX_MSG_CURRENT_8BIT_SIZE            (2 * DBG_TX_MSG_CURRENT_16BIT_SIZE)
+#define DBG_TX_MSG_STATE_MACHINE_16BIT_SIZE     (1)
+#define DBG_TX_MSG_STATE_MACHINE_8BIT_SIZE      (2 * DBG_TX_MSG_STATE_MACHINE_16BIT_SIZE)
+#define DBG_TX_MSG_PAYLOAD_8BIT_SIZE            (DBG_TX_MSG_HEADER_8BIT_SIZE + \
+                                                 DBG_TX_MSG_COUNTER_8BIT_SIZE + \
+                                                 DBG_TX_MSG_STATUS_8BIT_SIZE + \
+                                                 DBG_TX_MSG_POSITION_8BIT_SIZE + \
+                                                 DBG_TX_MSG_CURRENT_8BIT_SIZE +\
+                                                 DBG_TX_MSG_STATE_MACHINE_8BIT_SIZE)
+#define DBG_TX_MSG_PAYLOAD_16BIT_SIZE           (DBG_TX_MSG_PAYLOAD_8BIT_SIZE / 2)
+#define DBG_TX_MSG_CRC_8BIT_SIZE                (1)
+#define DBG_TX_MSG_8BIT_SIZE                    (DBG_TX_MSG_PAYLOAD_8BIT_SIZE + DBG_TX_MSG_CRC_8BIT_SIZE)
 /**
  * @}
  */
@@ -72,14 +95,14 @@
  * COMMUNICATION DEFINES
  ************************************************************************/
 /*** Communication constants ***/
-#define POSITION_LSB                            (5.960464477539063e-08)                 // 2**(-24)
-#define VELOCITY_LSB                            (0.00048828125 * 1000.0 * FM_RPM2RADPS) // 2**(-11) // Added rad/s to krpm conversion
-#define IQ_LSB                                  (0.0009765625)                          // 2**(-10)
-#define CURRENT_SAT_LSB                         (0.125)                                 // 2**(-3)
-#define RESISTANCE_LSB                          (3.0517578125e-05)                      // 2**(-15)
-#define VOLTAGE_LSB                             (6.103515625e-05)                       // 2**(-14)
-#define KP_LSB                                  (0.00048828125)                         // 2**(-11)
-#define KD_LSB                                  (0.0009765625)                          // 2**(-10)
+#define POSITION_LSB                            (5.960464477539063e-08f)    // 2**(-24)
+#define VELOCITY_LSB                            (4.8828125e-04f)// 2**(-11) // Added rad/s to krpm conversion
+#define IQ_LSB                                  (9.765625e-04f)             // 2**(-10)
+#define CURRENT_SAT_LSB                         (1.25e-01f)                 // 2**(-3)
+#define RESISTANCE_LSB                          (3.0517578125e-05f)         // 2**(-15)
+#define VOLTAGE_LSB                             (6.103515625e-05f)          // 2**(-14)
+#define KP_LSB                                  (4.8828125e-04f)            // 2**(-11)
+#define KD_LSB                                  (9.765625e-04f)             // 2**(-10)
 
 /************************************************************************
  * TYPDEF DEFINES
@@ -115,5 +138,15 @@ typedef enum
     MOTOR_2 = 1,    /*!< Select Motor_2 */
     NO_MOT  = -1    /*!< No motor selected */
 } motor_id_e;
+
+/**
+ * @enum    StateID
+ * @brief   Easier state management for history.
+ */
+typedef enum
+{
+    NEXT    = 0,    /*!< Next state */
+    CURRENT = 1,    /*!< Current state */
+} state_id_e;
 
 #endif /* __UOMODRI_CM_USER_DEFINES_H__ */

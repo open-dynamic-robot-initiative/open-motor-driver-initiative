@@ -42,6 +42,11 @@ void main(void)
     COM_resetCmdStruct(&cmd_uOmodri);
     // Interrupts initialization
     HAL_INT_ini(InterruptList);
+    // IPC address compensation computation
+    uint32_t foc_m1_addr    = (uint32_t)&motor_foc[MOTOR_1] - IPC_Instance[IPC_CPU1_L_CM_R].IPC_MsgRam_LtoR;
+    uint32_t foc_m2_addr    = (uint32_t)&motor_foc[MOTOR_2] - IPC_Instance[IPC_CPU1_L_CM_R].IPC_MsgRam_LtoR;
+    uint32_t status_msg_addr= (uint32_t)&status_msg         - IPC_Instance[IPC_CPU1_L_CM_R].IPC_MsgRam_LtoR;
+    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_DISABLE, foc_m1_addr, foc_m2_addr, status_msg_addr);
 
     // Infinite loop
     while(1)
@@ -69,6 +74,9 @@ void main(void)
             }
             motor[MOTOR_1].itDone   = false;
             motor[MOTOR_2].itDone   = false;
+            if(!IPC_isFlagBusyLtoR(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG))
+                IPC_setFlagLtoR(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG);
+//            IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_DISABLE, foc_m1_addr, foc_m2_addr, status_msg_addr);
         }
         /*
          * SPI LED TX management - Create message & send it @ 1ms
@@ -80,7 +88,7 @@ void main(void)
             if(!DMA_getRunStatusFlag(DMA_LED_SPI_TX_BASE_ADDR))
             {
                 static uint16_t timer_cpt_ms    = 0;
-                float32_t       timer_fade_blink= (float32_t)((timer_cpt_ms < 500)  ? (timer_cpt_ms)    : (1000.0 - timer_cpt_ms)) / 500.0f;
+                float32_t       timer_fade_blink= (float32_t)((timer_cpt_ms < 500)  ? (timer_cpt_ms)    : (1000 - timer_cpt_ms)) / 500.0f;
                 float32_t       timer_blink     = (timer_cpt_ms < 500)              ? (0.0f)            : (1.0f);
                 timer_cpt_ms                    = (timer_cpt_ms < 1000)             ? (timer_cpt_ms + 1): (0);
                 switch(motor_foc[MOTOR_1].motor_state[CURRENT])
@@ -103,10 +111,10 @@ void main(void)
                 DMA_startChannel(DMA_LED_SPI_TX_BASE_ADDR);
             }
             // Read DRV data to get status registers (MOTOR_1)
-            if(motor_foc[MOTOR_1].errorStatus & FOC_ERROR_DRV_NFAULT)
+            if(motor_foc[MOTOR_1].motor_error & MOTOR_ERROR_DRV_NFAULT)
                 DRV_readStatus(motor[MOTOR_1].p_motorDRV);
             // Read DRV data to get status registers (MOTOR_2)
-            if(motor_foc[MOTOR_2].errorStatus & FOC_ERROR_DRV_NFAULT)
+            if(motor_foc[MOTOR_2].motor_error & MOTOR_ERROR_DRV_NFAULT)
                 DRV_readStatus(motor[MOTOR_2].p_motorDRV);
             // Timeout management
             cmd_uOmodri.cptTimeout++;
@@ -133,17 +141,23 @@ void main(void)
  */
 static void MCU_ini(void)
 {
-    // Initialize clock and peripherals
+    /* Initialize clock and peripherals */
     Device_init();
     /* Set up the auxiliary PLL to 125MHz for CM use. */
-    SysCtl_setAuxClock(SYSCTL_AUXPLL_OSCSRC_XTAL | SYSCTL_AUXPLL_IMULT(50) | SYSCTL_REFDIV(2U) |
-                       SYSCTL_ODIV(5U) | SYSCTL_AUXPLL_DIV_2 | SYSCTL_AUXPLL_ENABLE | SYSCTL_DCC_BASE_0);
+//    SysCtl_setAuxClock(SYSCTL_AUXPLL_OSCSRC_XTAL | SYSCTL_AUXPLL_IMULT(50) | SYSCTL_REFDIV(2U) |
+//                       SYSCTL_ODIV(5U) | SYSCTL_AUXPLL_DIV_2 | SYSCTL_AUXPLL_ENABLE | SYSCTL_DCC_BASE_0);
     /* Set the CM Clock to run at 125MHz.
      * The CM Clock is a fractional multiple of the AUXPLL Clock (125 MHz). */
 #if (defined CM_CORE_ENABLE) && (CM_CORE_ENABLE)
-    SysCtl_setCMClk(SYSCTL_CMCLKOUT_DIV_1, SYSCTL_SOURCE_AUXPLL);
+//    SysCtl_setCMClk(SYSCTL_CMCLKOUT_DIV_1, SYSCTL_SOURCE_AUXPLL);
     /* Allocate Shared Peripheral USB to the CM Side. */
 //    SysCtl_allocateSharedPeripheral(SYSCTL_PALLOCATE_USBA, 1);
+    /* Boot CM core */
+#if (defined _FLASH)
+    Device_bootCM(BOOTMODE_BOOT_TO_FLASH_SECTOR0);
+#else
+    Device_bootCM(BOOTMODE_BOOT_TO_S0RAM);
+#endif
 #endif
     // Initialize GPIO
     Device_initGPIO();
@@ -151,12 +165,6 @@ static void MCU_ini(void)
     Interrupt_initModule();
     // Initialize the PIE vector table with pointers to the shell Interrupt Service Routines (ISR).
     Interrupt_initVectorTable();
-    // Boot CM core
-#if (defined CM_CORE_ENABLE) && (CM_CORE_ENABLE) && (defined _FLASH)
-    Device_bootCM(BOOTMODE_BOOT_TO_FLASH_SECTOR0);
-#elif (defined CM_CORE_ENABLE) && (CM_CORE_ENABLE) && !(defined _FLASH)
-    Device_bootCM(BOOTMODE_BOOT_TO_S0RAM);
-#endif
 }
 
 /**
@@ -206,10 +214,10 @@ __attribute__((interrupt)) void adc_isrMotor1(void)
     bool_t com_timeout_flag     = ((cmd_uOmodri.cptTimeout > timeout) && (timeout)) ? (true)    : (false);
     // Save number of cycles elapsed since control loop startup
     p_motor->clCycleNb          = EPWM_getTimeBaseCounterValue(p_motor->p_motorHalCfg->p_pwmCntCmp[0]->epwmBase);
-    p_foc->errorStatus         |= (motor_rollover_flag)                             ? (FOC_ERROR_POS_ROLLOVER)  : (p_foc->errorStatus);
-    p_foc->errorStatus         |= (motor_drv_fault_flag)                            ? (FOC_ERROR_DRV_NFAULT)    : (p_foc->errorStatus);
-    p_foc->errorStatus         |= (com_timeout_flag)                                ? (FOC_ERROR_COM_TIMEOUT)   : (p_foc->errorStatus);
-    *p_crState                  = (p_foc->errorStatus || cmd_uOmodri.mode.bit.RST)  ? (MOTOR_STATE_ERROR)       : (*p_nxState);
+    p_foc->motor_error         |= (motor_rollover_flag)                             ? (MOTOR_ERROR_POS_ROLLOVER): (p_foc->motor_error);
+    p_foc->motor_error         |= (motor_drv_fault_flag)                            ? (MOTOR_ERROR_DRV_NFAULT)  : (p_foc->motor_error);
+    p_foc->motor_error         |= (com_timeout_flag)                                ? (MOTOR_ERROR_COM_TIMEOUT) : (p_foc->motor_error);
+    *p_crState                  = (p_foc->motor_error || cmd_uOmodri.mode.bit.RST)  ? (MOTOR_STATE_ERROR)       : (*p_nxState);
 
     switch(*p_crState)
     {
@@ -219,7 +227,7 @@ __attribute__((interrupt)) void adc_isrMotor1(void)
         p_foc->idRef            = 0.0f;
         p_foc->iqRef            = 0.0f;
 //        p_foc->errorStatus     &= ~(FOC_ERROR_ENCODER | FOC_ERROR_POS_ROLLOVER);
-        *p_nxState              = (motor_disable_flag || system_disable_flag)   ? (MOTOR_STATE_INIT)    : (MOTOR_STATE_ALIGN_UP);
+        *p_nxState              = (motor_disable_flag || system_disable_flag)   ? (MOTOR_STATE_INIT)        : (MOTOR_STATE_ALIGN_UP);
         ENC_resetPeriph(p_enc);
         FOC_resetStruct(p_foc);
         MOT_stopCommand(p_motor);
@@ -280,9 +288,9 @@ __attribute__((interrupt)) void adc_isrMotor1(void)
         MOT_stopCommand(p_motor);
         break;
     }
-#if (defined CM_CORE_ENABLE) && (CM_CORE_ENABLE)
-    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_FLAG0, IPC_ADDR_CORRECTION_ENABLE, IPC_CMD_M1, (uint32_t)(p_foc), 1);
-#endif
+//#if (defined CM_CORE_ENABLE) && (CM_CORE_ENABLE)
+//    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_FLAG0, IPC_ADDR_CORRECTION_ENABLE, IPC_CMD_M1, (uint32_t)(p_foc), 1);
+//#endif
     p_motor->itDone = true;
     // Clear the interrupt overflow flag
     ADC_clearInterruptOverflowStatus(MOTOR12_IVA_ADC_ADDR, MOTOR1_IA_INT_NUM);
@@ -333,10 +341,10 @@ __attribute__((interrupt)) void adc_isrMotor2(void)
     bool_t com_timeout_flag     = ((cmd_uOmodri.cptTimeout > timeout) && (timeout)) ? (true)    : (false);
     // Save number of cycles elapsed since control loop startup
     p_motor->clCycleNb          = EPWM_getTimeBaseCounterValue(p_motor->p_motorHalCfg->p_pwmCntCmp[0]->epwmBase);
-    p_foc->errorStatus         |= (motor_rollover_flag)                             ? (FOC_ERROR_POS_ROLLOVER)  : (p_foc->errorStatus);
-    p_foc->errorStatus         |= (motor_drv_fault_flag)                            ? (FOC_ERROR_DRV_NFAULT)    : (p_foc->errorStatus);
-    p_foc->errorStatus         |= (com_timeout_flag)                                ? (FOC_ERROR_COM_TIMEOUT)   : (p_foc->errorStatus);
-    *p_crState                  = (p_foc->errorStatus || cmd_uOmodri.mode.bit.RST)  ? (MOTOR_STATE_ERROR)       : (*p_nxState);
+    p_foc->motor_error         |= (motor_rollover_flag)                             ? (MOTOR_ERROR_POS_ROLLOVER): (p_foc->motor_error);
+    p_foc->motor_error         |= (motor_drv_fault_flag)                            ? (MOTOR_ERROR_DRV_NFAULT)  : (p_foc->motor_error);
+    p_foc->motor_error         |= (com_timeout_flag)                                ? (MOTOR_ERROR_COM_TIMEOUT) : (p_foc->motor_error);
+    *p_crState                  = (p_foc->motor_error || cmd_uOmodri.mode.bit.RST)  ? (MOTOR_STATE_ERROR)       : (*p_nxState);
 
     switch(*p_crState)
     {
@@ -346,7 +354,7 @@ __attribute__((interrupt)) void adc_isrMotor2(void)
         p_foc->idRef            = 0.0f;
         p_foc->iqRef            = 0.0f;
 //        p_foc->errorStatus     &= ~(FOC_ERROR_ENCODER | FOC_ERROR_POS_ROLLOVER);
-        *p_nxState              = (motor_disable_flag || system_disable_flag)   ? (MOTOR_STATE_INIT)    : (MOTOR_STATE_ALIGN_UP);
+        *p_nxState              = (motor_disable_flag || system_disable_flag)   ? (MOTOR_STATE_INIT)        : (MOTOR_STATE_ALIGN_UP);
         ENC_resetPeriph(p_enc);
         FOC_resetStruct(p_foc);
         MOT_stopCommand(p_motor);
@@ -407,9 +415,9 @@ __attribute__((interrupt)) void adc_isrMotor2(void)
         MOT_stopCommand(p_motor);
         break;
     }
-#if (defined CM_CORE_ENABLE) && (CM_CORE_ENABLE)
-    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_FLAG0, IPC_ADDR_CORRECTION_ENABLE, IPC_CMD_M1, (uint32_t)(p_foc), 1);
-#endif
+//#if (defined CM_CORE_ENABLE) && (CM_CORE_ENABLE)
+//    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_FLAG0, IPC_ADDR_CORRECTION_ENABLE, IPC_CMD_M2, (uint32_t)(p_foc), 1);
+//#endif
     p_motor->itDone = true;
     // Clear the interrupt overflow flag
     ADC_clearInterruptOverflowStatus(MOTOR12_IVA_ADC_ADDR, MOTOR2_IA_INT_NUM);

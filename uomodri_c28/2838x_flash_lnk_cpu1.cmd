@@ -66,8 +66,8 @@ MEMORY
 SECTIONS
 {
    codestart           : > BEGIN, ALIGN(8)
-   .text               : >> FLASH1 | FLASH2 | FLASH3 | FLASH4, ALIGN(8)
-   .cinit              : > FLASH4, ALIGN(8)
+   .text               : >> FLASH0 | FLASH1, ALIGN(8)
+   .cinit              : > FLASH2, ALIGN(8)
    .switch             : > FLASH1, ALIGN(8)
    .reset              : > RESET, TYPE = DSECT /* not used, */
    .stack              : > RAMM1
@@ -80,14 +80,14 @@ SECTIONS
    .data            : > RAMLS5
    .sysmem          : > RAMLS5
    /* Initalized sections go in Flash */
-   .const           : > FLASH5, ALIGN(8)
+   .const           : > FLASH2, ALIGN(8)
 #else
    .pinit           : > FLASH1, ALIGN(8)
    .ebss            : > RAMLS5
    .esysmem         : > RAMLS5
    .cio             : > RAMLS5
    /* Initalized sections go in Flash */
-   .econst          : >> FLASH4 | FLASH5, ALIGN(8)
+   .econst          : > FLASH2, ALIGN(8)
 #endif
 
    ramgs0 : > RAMGS0//, type=NOINIT
@@ -107,7 +107,7 @@ SECTIONS
    Difference_RegsFile : >RAMGS5, fill=0x3333
 
    #if defined(__TI_EABI__)
-       .TI.ramfunc : {} LOAD = FLASH3,
+       .TI.ramfunc : {} LOAD = FLASH0,
                         RUN = RAMLS0 | RAMLS1 | RAMLS2 |RAMLS3,
                         LOAD_START(RamfuncsLoadStart),
                         LOAD_SIZE(RamfuncsLoadSize),
@@ -117,7 +117,7 @@ SECTIONS
                         RUN_END(RamfuncsRunEnd),
                         ALIGN(8)
    #else
-       .TI.ramfunc : {} LOAD = FLASH3,
+       .TI.ramfunc : {} LOAD = FLASH0,
                         RUN = RAMLS0 | RAMLS1 | RAMLS2 |RAMLS3,
                         LOAD_START(_RamfuncsLoadStart),
                         LOAD_SIZE(_RamfuncsLoadSize),

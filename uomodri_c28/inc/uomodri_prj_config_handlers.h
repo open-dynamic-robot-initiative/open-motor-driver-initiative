@@ -86,7 +86,7 @@ static drv_reg_t        DrvRegList[] =
   // Over Current Protection register initialization (Address: 0x5)
   .ctrl_reg_05.bit.VDS_LVL      = DRV_VDS_LVL_0P700_V,
   .ctrl_reg_05.bit.OCP_DEG      = DRV_OCPDEG_8_US,
-  .ctrl_reg_05.bit.OCP_MODE     = DRV_AUTOMATIC_RETRY,
+  .ctrl_reg_05.bit.OCP_MODE     = DRV_LATCHED_SHUTDOWN,
   .ctrl_reg_05.bit.DEAD_TIME    = DRV_DEADTIME_400_NS,
   .ctrl_reg_05.bit.TRETRY       = false,
   // Current Sense Amplifier register initialization (Address: 0x6)
@@ -128,7 +128,7 @@ static drv_reg_t        DrvRegList[] =
   // Over Current Protection register initialization (Address: 0x5)
   .ctrl_reg_05.bit.VDS_LVL      = DRV_VDS_LVL_0P700_V,
   .ctrl_reg_05.bit.OCP_DEG      = DRV_OCPDEG_8_US,
-  .ctrl_reg_05.bit.OCP_MODE     = DRV_AUTOMATIC_RETRY,
+  .ctrl_reg_05.bit.OCP_MODE     = DRV_LATCHED_SHUTDOWN,
   .ctrl_reg_05.bit.DEAD_TIME    = DRV_DEADTIME_400_NS,
   .ctrl_reg_05.bit.TRETRY       = false,
   // Current Sense Amplifier register initialization (Address: 0x6)
@@ -195,7 +195,7 @@ static const hal_motor_cfg_t hal_motor_cfg[] =
  },
 };
 
-#pragma DATA_SECTION(cmd_uOmodri, "ramgs0");
+#pragma DATA_SECTION(cmd_uOmodri, "ramgs0")
 static cmd_uomodri_t cmd_uOmodri =
 {
  .mode.bit.TIMEOUT  = 0,
@@ -222,7 +222,7 @@ static cmd_uomodri_t cmd_uOmodri =
  .index             = 0
 };
 
-//#pragma DATA_SECTION(motor_foc, "MSGRAM_CPU_TO_CM");
+#pragma DATA_SECTION(motor_foc, "MSGRAM_CPU_TO_CM");
 static foc_t motor_foc[] =
 {
  {
@@ -286,6 +286,8 @@ static foc_t motor_foc[] =
   //---------------------------------------------------------------------------
   .motor_state[NEXT]                    = MOTOR_STATE_INIT,
   .motor_state[CURRENT]                 = MOTOR_STATE_INIT,
+  //--- Error message ---------------------------------------------------------
+  .motor_error                          = MOTOR_ERROR_NO_ERROR,
   //---------------------------------------------------------------------------
   .iParkFlt.a                           = MOTOR1_CURRENT_LPF_ALPHA,
   .iParkFlt.one_minus_a                 = MOTOR1_CURRENT_LPF_ONE_M_ALPHA,
@@ -356,8 +358,6 @@ static foc_t motor_foc[] =
   //--- Resistance estimation low-pass filter ---------------------------------
   .resEstFlt.a                          = 0.0f,
   .resEstFlt.one_minus_a                = 0.0f,
-  //--- Error message ---------------------------------------------------------
-  .errorStatus                          = FOC_ERROR_NO_ERROR,
   //--- Anti-coagging structure -----------------------------------------------
   //acog;
  },
@@ -424,6 +424,8 @@ static foc_t motor_foc[] =
   //---------------------------------------------------------------------------
   .motor_state[NEXT]                    = MOTOR_STATE_INIT,
   .motor_state[CURRENT]                 = MOTOR_STATE_INIT,
+  //--- Error message ---------------------------------------------------------
+  .motor_error                          = MOTOR_ERROR_NO_ERROR,
   //---------------------------------------------------------------------------
   .iParkFlt.a                           = MOTOR2_CURRENT_LPF_ALPHA,
   .iParkFlt.one_minus_a                 = MOTOR2_CURRENT_LPF_ONE_M_ALPHA,
@@ -494,8 +496,6 @@ static foc_t motor_foc[] =
   //--- Resistance estimation low-pass filter ---------------------------------
   .resEstFlt.a                          = 0.0f,
   .resEstFlt.one_minus_a                = 0.0f,
-  //--- Error message ---------------------------------------------------------
-  .errorStatus                          = FOC_ERROR_NO_ERROR,
   //--- Anti-coagging structure -----------------------------------------------
   //acog;
  },

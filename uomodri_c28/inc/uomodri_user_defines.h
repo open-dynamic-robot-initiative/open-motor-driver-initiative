@@ -23,7 +23,7 @@
 #define UOMODRI_USE_REV_1_0_CONFIG              1
 #define UOMODRI_USE_ENCODER_GET_REG_FUNCTION    0
 #define CLA_CORE_ENABLE                         0
-#define CM_CORE_ENABLE                          0
+#define CM_CORE_ENABLE                          1
 #define UOMODRI_VBUS_FLT(flt_coef, y, x)        LPF_FILTER_1(flt_coef, y, x)
 #define UOMODRI_VEXT_FLT(flt_coef, y, x)        LPF_FILTER_1(flt_coef, y, x)
 #define UOMODRI_IDQ_FLT(flt_coef, y, x)         LPF_FILTER_1(flt_coef, y, x)
@@ -155,6 +155,7 @@
  * @{
  */
 #define IPC_SYNC_FLAG                           IPC_FLAG31
+#define IPC_CPU1_TO_CM_FLAG                     IPC_FLAG0
 
 /***********************************************************************
  * SPI DEFINES

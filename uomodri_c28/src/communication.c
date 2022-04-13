@@ -77,15 +77,15 @@ void COM_msgCreate(foc_t* p_foc, cmd_uomodri_t* p_cmd, slv2mst_msg_t* p_msg)
         p_msg->status.bit.M1R               = align_done;                       // MOTOR_1 ready
         p_msg->status.bit.IDX1T             = p_foc->motor_enc.indexToggle;     // MOTOR_1 index toggle
         p_msg->status.bit.IDX1D             = p_foc->motor_enc.indexDetected;   // MOTOR_1 index detected
-        if(!p_foc->errorStatus)
+        if(!p_foc->motor_error)
             p_msg->status.bit.ERROR_CODE    = STATUS_ERROR_NO_ERROR;
-        else if(p_foc->errorStatus & FOC_ERROR_POS_ROLLOVER)
+        else if(p_foc->motor_error & MOTOR_ERROR_POS_ROLLOVER)
             p_msg->status.bit.ERROR_CODE    = STATUS_ERROR_POS_ROLLOVER;
-        else if(p_foc->errorStatus & FOC_ERROR_DRV_NFAULT)
+        else if(p_foc->motor_error & MOTOR_ERROR_DRV_NFAULT)
             p_msg->status.bit.ERROR_CODE    = STATUS_ERROR_DRV_NFAULT;
-        else if(p_foc->errorStatus & FOC_ERROR_ENCODER)
+        else if(p_foc->motor_error & MOTOR_ERROR_ENCODER)
             p_msg->status.bit.ERROR_CODE    = STATUS_ERROR_ENCODER1;
-        else if(p_foc->errorStatus & FOC_ERROR_COM_TIMEOUT)
+        else if(p_foc->motor_error & MOTOR_ERROR_COM_TIMEOUT)
             p_msg->status.bit.ERROR_CODE    = STATUS_ERROR_SPI_RECV_TIMEOUT;
         p_msg->position[MOTOR_1].u16_msb    = MSB_32(pos);
         p_msg->position[MOTOR_1].u16_lsb    = LSB_32(pos);
@@ -101,18 +101,18 @@ void COM_msgCreate(foc_t* p_foc, cmd_uomodri_t* p_cmd, slv2mst_msg_t* p_msg)
         p_msg->status.bit.M2R               = align_done;//(p_foc->motor_align.state == ALIGN_DONE) ? (true) : (false);  // MOTOR_2 ready
         p_msg->status.bit.IDX2T             = p_foc->motor_enc.indexToggle;                                 // MOTOR_2 index toggle
         p_msg->status.bit.IDX2D             = p_foc->motor_enc.indexDetected;                               // MOTOR_2 index detected
-        if(p_msg->status.bit.ERROR_CODE == STATUS_ERROR_NO_ERROR)
+        if(!p_msg->status.bit.ERROR_CODE)
         {
-            if(!p_foc->errorStatus)
-                p_msg->status.bit.ERROR_CODE    = STATUS_ERROR_NO_ERROR;
-            else if(p_foc->errorStatus & FOC_ERROR_POS_ROLLOVER)
-                p_msg->status.bit.ERROR_CODE    = STATUS_ERROR_POS_ROLLOVER;
-            else if(p_foc->errorStatus & FOC_ERROR_DRV_NFAULT)
-                p_msg->status.bit.ERROR_CODE    = STATUS_ERROR_DRV_NFAULT;
-            else if(p_foc->errorStatus & FOC_ERROR_ENCODER)
-                p_msg->status.bit.ERROR_CODE    = STATUS_ERROR_ENCODER2;
-            else if(p_foc->errorStatus & FOC_ERROR_COM_TIMEOUT)
-                p_msg->status.bit.ERROR_CODE    = STATUS_ERROR_SPI_RECV_TIMEOUT;
+            if(!p_foc->motor_error)
+                p_msg->status.bit.ERROR_CODE= STATUS_ERROR_NO_ERROR;
+            else if(p_foc->motor_error & MOTOR_ERROR_POS_ROLLOVER)
+                p_msg->status.bit.ERROR_CODE= STATUS_ERROR_POS_ROLLOVER;
+            else if(p_foc->motor_error & MOTOR_ERROR_DRV_NFAULT)
+                p_msg->status.bit.ERROR_CODE= STATUS_ERROR_DRV_NFAULT;
+            else if(p_foc->motor_error & MOTOR_ERROR_ENCODER)
+                p_msg->status.bit.ERROR_CODE= STATUS_ERROR_ENCODER2;
+            else if(p_foc->motor_error & MOTOR_ERROR_COM_TIMEOUT)
+                p_msg->status.bit.ERROR_CODE= STATUS_ERROR_SPI_RECV_TIMEOUT;
         }
         p_msg->position[MOTOR_2].u16_msb    = MSB_32(pos);
         p_msg->position[MOTOR_2].u16_lsb    = LSB_32(pos);

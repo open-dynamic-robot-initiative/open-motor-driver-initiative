@@ -8,14 +8,14 @@
 #include <stdint.h>
 #include <math.h>
 
+#ifndef USE_CM_CORE
 #include "f2838x_device.h"
-#include "foc.h"
-
-#ifdef USE_CM_CORE
-#include "uomodri_cm_user_defines.h"
-#else
 #include "uomodri_user_defines.h"
+#else
+#include "uomodri_cm_user_defines.h"
 #endif
+
+#include "foc.h"
 
 /***********************************************************************
  * COMMUNICATION CRC TABLE
@@ -125,6 +125,28 @@ typedef struct __U32toU16_reg_t__
     uint16_t        u16_lsb;
 } U32toU16_reg_t;
 
+/**
+ * @struct  fsm_reg_t
+ * @brief   Finite state machine debug structure (bits definition) for uOmodri.
+ */
+typedef struct __fsm_reg_t__
+{
+    uint16_t        M1_CR_STATE : 4;    /*!< Bits 3-0   : MOTOR_1 current state of the state machine*/
+    uint16_t        M1_NX_STATE : 4;    /*!< Bits 7-4   : MOTOR_1 next state of the state machine   */
+    uint16_t        M2_CR_STATE : 4;    /*!< Bits 11-8  : MOTOR_2 current state of the state machine*/
+    uint16_t        M2_NX_STATE : 4;    /*!< Bits 15-12 : MOTOR_2 next state of the state machine   */
+} fsm_reg_t;
+
+/**
+ * @union   fsm_reg_u
+ * @brief   Finite state machine debug union (bits definition) for uOmodri. Access to bit field.
+ */
+typedef union __fsm_reg_u__
+{
+  uint16_t          all;                /*!< Short (16bits) type access */
+  fsm_reg_t         bit;                /*!< @see command_mode_t        */
+} fsm_reg_u;
+
 /***********************************************************************
  * MAIN COMMUNICATION STRUCTURES
  ***********************************************************************/
@@ -180,8 +202,20 @@ typedef struct __cmd_uomodri_t__
     uint16_t        index;
 } cmd_uomodri_t;
 
+typedef struct __dbg_uart_msg_t__
+{
+    uint8_t         header[4];
+    uint32_t        timeStamp;
+    slv2mst_reg_u   status;
+    U32toU16_reg_t  position[2];
+    int16_t         current[2];
+    fsm_reg_u       stateMachine;
+    uint8_t         crc;
+//    U32toU16_reg_t  crc;
+} dbg_uart_msg_t;
+
 /***********************************************************************
- * ERROR FLAGS
+ * COMMUNICATION ERROR FLAGS
  ***********************************************************************/
 /**
  * @enum    com_statusError
@@ -225,10 +259,17 @@ typedef enum
 /***********************************************************************
  * FUNCTIONS DECLARATION
  ***********************************************************************/
+#ifndef USE_CM_CORE
 bool_t COM_msgExtract(mst2slv_msg_t*, cmd_uomodri_t*);
 void COM_msgCreate(foc_t*, cmd_uomodri_t*, slv2mst_msg_t*);
 void COM_resetCmdStruct(cmd_uomodri_t*);
 void COM_resetCmdMotorStruct(foc_t*, cmd_uomodri_t*);
 uint32_t COM_crc32(uint16_t*, uint16_t);
+#else
+void com_msgDbgTx(foc_t*, foc_t*, slv2mst_msg_t*, dbg_uart_msg_t*);
+uint32_t com_crc32(uint16_t*, uint16_t);
+uint8_t com_crc8(uint8_t*, uint8_t);
+#endif
+
 
 #endif

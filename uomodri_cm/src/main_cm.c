@@ -7,20 +7,22 @@
 //#include <string.h>
 //#include <float.h>
 
-/***********************************************************************.
- * INCLUDE FILES
- ************************************************************************/
+/***********************************************************************
+ * INCLUDES
+ ***********************************************************************/
 #include "main_cm.h"
 
-/***********************************************************************.
+/***********************************************************************
  * DEFINES
- ************************************************************************/
+ ***********************************************************************/
 #define IPC_CMD_M1      0x1001
 #define IPC_CMD_M2      0x2001
+#define IPC_MSG_        0x3001
 
-/************************************************************************
+
+/***********************************************************************
  * FUNCTIONS DEFINITIONS
- ************************************************************************/
+ ***********************************************************************/
 /**
  * @brief   Main function running on CM processor. MCU init.
  */
@@ -30,41 +32,77 @@ void main(void)
     CM_init();
     // Hardware Abstraction Layer initialization
     HAL_CM_init(&hal_cm);
+
+    uint32_t   foc_m1_addr, foc_m2_addr, msg_status_addr;
+    while(!IPC_readCommand(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_DISABLE, &foc_m1_addr, &foc_m2_addr, &msg_status_addr));
+    foc_m1_addr     = IPC_Instance[IPC_CM_L_CPU1_R].IPC_MsgRam_RtoL + ((foc_m1_addr     * IPC_Instance[IPC_CM_L_CPU1_R].IPC_Offset_Corr) / 2U);
+    foc_m2_addr     = IPC_Instance[IPC_CM_L_CPU1_R].IPC_MsgRam_RtoL + ((foc_m2_addr     * IPC_Instance[IPC_CM_L_CPU1_R].IPC_Offset_Corr) / 2U);
+    msg_status_addr = IPC_Instance[IPC_CM_L_CPU1_R].IPC_MsgRam_RtoL + ((msg_status_addr * IPC_Instance[IPC_CM_L_CPU1_R].IPC_Offset_Corr) / 2U);
+
     // Loop forever. Wait for IPC interrupts
-    while(1);
+    while(1)
+    {
+        IPC_waitForFlag(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG);
+        // Create debug message
+//        com_msgDbgTx((foc_t *)foc_m1_addr, dbg_uart_tx_msg);
+        com_msgDbgTx((foc_t *)foc_m1_addr, (foc_t *)foc_m2_addr, (slv2mst_msg_t *)msg_status_addr, &dbg_uart_tx_msg);
+        // Acknowledge IT associated to input flag.
+        IPC_ackFlagRtoL(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG);
+        // Wait Tx buffer + UART Tx module are empty.
+        while(UART_isBusy(UART0_BASE));
+        // Force purge of Rx buffer.
+        while(UART_readCharNonBlocking(UART0_BASE) != -1);
+        // Get the index associated to uDMA UART0_TX configuration
+        //    while((cm_udmaCfgList[udmaCfgIdx].dmaChannel != UDMA_CHANNEL_UART0_TX) ? (udmaCfgIdx++) : (udmaCfgIdx));
+        // Enable the uDMA UART0 Tx channel
+        if(!UDMA_isChannelEnabled(UDMA_BASE, cm_udmaCfgList[0].dmaChannel))
+        {
+            ucControlTable[UDMA_CHANNEL_UART0_TX].chControlAttr &= ~(UDMA_DMACHCTL_XFERSIZE_M | UDMA_DMACHCTL_XFERMODE_M);
+            ucControlTable[UDMA_CHANNEL_UART0_TX].chControlAttr |= ((cm_udmaCfgList[0].transferMode) << UDMA_DMACHCTL_XFERMODE_S);//cm_udmaCfgList[udmaCfgIdx].transferMode;
+            ucControlTable[UDMA_CHANNEL_UART0_TX].chControlAttr |= ((cm_udmaCfgList[0].transferSize - 1) << UDMA_DMACHCTL_XFERSIZE_S);//((cm_udmaCfgList[udmaCfgIdx].transferSize - 1) << UDMA_DMACHCTL_XFERSIZE_S);
+            UDMA_enableChannel(UDMA_BASE, UDMA_CHANNEL_UART0_TX);
+        }
+    }
 }
 
 /**
- * @brief   IPC interrupt. When new foc structure is avaolable, create message and sned it by uart
+ * @brief   IPC interrupt. When new foc structure is available, create message and send it by uart
  */
-__attribute__((interrupt)) void ipc_isr0(void)
-{
-    uint32_t    cmd, data, addr;
-    uint8_t     ipcCfgIdx = 0;
-    uint8_t     udmaCfgIdx = 0;
-    // Get index associated to IPC structure configuration
-    while((cm_ipcCfgList[ipcCfgIdx].p_ipcIntHandler != &ipc_isr0) ? (ipcCfgIdx++) : (ipcCfgIdx));
-    // Get structure address
-    IPC_readCommand(cm_ipcCfgList[ipcCfgIdx].ipcType, cm_ipcCfgList[ipcCfgIdx].ipcFlag,
-                    IPC_ADDR_CORRECTION_ENABLE, &cmd, &addr, &data);
-    // Create debug message
-    com_msgDbgTx((foc_t *)addr, dbg_uart_tx_msg);
-    // Wait Tx buffer + UART Tx module are empty.
-    while((HWREG(UART0_BASE + UART_O_FR) & UART_FR_BUSY) == 1);
-    // Force purge of Rx buffer.
-    while(UART_readCharNonBlocking(UART0_BASE) != -1);
-    // Get the index associated to uDMA UART0_TX configuration
-    while((cm_udmaCfgList[udmaCfgIdx].dmaChannel != UDMA_CHANNEL_UART0_TX) ? (udmaCfgIdx++) : (udmaCfgIdx));
-    // Enable the uDMA UART0 Tx channel
-    if(!UDMA_isChannelEnabled(UDMA_BASE, UDMA_CHANNEL_UART0_TX))
-    {
-        ucControlTable[UDMA_CHANNEL_UART0_TX].chControlAttr |= cm_udmaCfgList[udmaCfgIdx].transferMode;
-        ucControlTable[UDMA_CHANNEL_UART0_TX].chControlAttr |= ((cm_udmaCfgList[udmaCfgIdx].transferSize - 1) << UDMA_DMACHCTL_XFERSIZE_S);
-        UDMA_enableChannel(UDMA_BASE, UDMA_CHANNEL_UART0_TX);
-    }
-    // Acknowledge IT associated to input flag.
-    IPC_ackFlagRtoL(cm_ipcCfgList[ipcCfgIdx].ipcType, cm_ipcCfgList[ipcCfgIdx].ipcFlag);
-}
+//__attribute__((interrupt)) void ipc_isr0(void)
+//{
+//    const ipc_cfg_t*        p_ipcCfg        = &cm_ipcCfgList[0];
+//    const udma_cfg_t*       p_udmaCfg       = &cm_udmaCfgList[0];
+////    const IPC_Instance_t*   p_ipcInstance   = &IPC_Instance[p_ipcCfg->ipcType];
+//    uint32_t*               p_foc_m1        = NULL;//, p_foc_m2 = NULL, p_msg_status = NULL;
+//    uint32_t*               p_foc_m2        = NULL;//, p_msg_status = NULL;
+//    uint32_t*               p_msg_status    = NULL;
+////    uint32_t    cmd, data, addr;
+//    // Get structure address
+////    *p_foc_m1       = p_ipcInstance->IPC_MsgRam_RtoL + IPC_ADDR_OFFSET_CORR(addrReg, p_ipcInstance->IPC_Offset_Corr);
+////    *p_foc_m2       = IPC_Instance[p_ipcCfg->ipcType].IPC_MsgRam_RtoL + IPC_ADDR_OFFSET_CORR(addrReg, IPC_Instance[p_ipcCfg->ipcType].IPC_Offset_Corr);
+////    *p_msg_status   = IPC_Instance[p_ipcCfg->ipcType].IPC_MsgRam_RtoL + IPC_ADDR_OFFSET_CORR(addrReg, IPC_Instance[p_ipcCfg->ipcType].IPC_Offset_Corr);
+//    IPC_readCommand(p_ipcCfg->ipcType, p_ipcCfg->ipcFlag, IPC_ADDR_CORRECTION_ENABLE, p_foc_m1, p_foc_m2, p_msg_status);
+//    // Create debug message
+//    com_msgDbgTx((foc_t *)p_foc_m1, dbg_uart_tx_msg);
+//
+//    // Wait Tx buffer + UART Tx module are empty.
+//    while(UART_isBusy(UART0_BASE));
+//    // Force purge of Rx buffer.
+//    while(UART_readCharNonBlocking(UART0_BASE) != -1);
+//    // Get the index associated to uDMA UART0_TX configuration
+//    //    while((cm_udmaCfgList[udmaCfgIdx].dmaChannel != UDMA_CHANNEL_UART0_TX) ? (udmaCfgIdx++) : (udmaCfgIdx));
+//    // Enable the uDMA UART0 Tx channel
+//    if(!UDMA_isChannelEnabled(UDMA_BASE, p_udmaCfg->dmaChannel))
+//    {
+//        ucControlTable[UDMA_CHANNEL_UART0_TX].chControlAttr &= ~(UDMA_DMACHCTL_XFERSIZE_M | UDMA_DMACHCTL_XFERMODE_M);
+//        ucControlTable[UDMA_CHANNEL_UART0_TX].chControlAttr |= ((p_udmaCfg->transferMode) << UDMA_DMACHCTL_XFERMODE_S);//cm_udmaCfgList[udmaCfgIdx].transferMode;
+//        ucControlTable[UDMA_CHANNEL_UART0_TX].chControlAttr |= ((p_udmaCfg->transferSize - 1) << UDMA_DMACHCTL_XFERSIZE_S);//((cm_udmaCfgList[udmaCfgIdx].transferSize - 1) << UDMA_DMACHCTL_XFERSIZE_S);
+//        UDMA_enableChannel(UDMA_BASE, UDMA_CHANNEL_UART0_TX);
+//    }
+//    // Acknowledge IT associated to input flag.
+//    IPC_ackFlagRtoL(p_ipcCfg->ipcType, p_ipcCfg->ipcFlag);
+//    //IPC_ackFlagRtoL(cm_ipcCfgList[ipcCfgIdx].ipcType, cm_ipcCfgList[ipcCfgIdx].ipcFlag);
+//}
 
 //
 // End of File

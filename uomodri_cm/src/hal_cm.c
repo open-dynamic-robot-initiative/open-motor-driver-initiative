@@ -57,7 +57,7 @@ void HAL_CM_uDMA_init(const udma_cfg_t* p_udmaCfg)
         // Point at the control table to use for channel control structures.
         UDMA_setControlBase(UDMA_BASE, ucControlTable);
 
-        while(dmaChannel != 0xFFFFFFFF)
+        while(dmaChannel != UINT32_MAX)
         {
             /* Put the attributes in a known state for the uDMA software channel.
              * These should already be disabled by default. */            //

@@ -13,12 +13,12 @@
 /************************************************************************
  * GLOBAL VARIABLES
  ************************************************************************/
-extern uint8_t dbg_uart_tx_msg[DBG_TX_MSG_SIZE];
+extern dbg_uart_msg_t dbg_uart_tx_msg;//uint8_t dbg_uart_tx_msg[DBG_TX_MSG_SIZE];
 
 /************************************************************************
  * FUNCTIONS DECLARATION
  ************************************************************************/
-extern __interrupt void ipc_isr0(void);
+//extern __interrupt void ipc_isr0(void);
 
 /************************************************************************
  * VARIABLES INITIALIZATION
@@ -35,10 +35,10 @@ static const udma_cfg_t cm_udmaCfgList[] =
 {
  {.dmaChannel       = UDMA_CHANNEL_UART0_TX,
   .dmaCfg           = (UDMA_SIZE_8 | UDMA_SRC_INC_8 | UDMA_DST_INC_NONE | UDMA_ARB_4 | UDMA_NEXT_USEBURST),
-  .srcAddr          = (void *)dbg_uart_tx_msg,
+  .srcAddr          = (void *)&dbg_uart_tx_msg,
   .dstAddr          = (void *)(UART0_BASE + UART_O_DR),
   .transferMode     = UDMA_MODE_BASIC,
-  .transferSize     = DBG_TX_MSG_SIZE,
+  .transferSize     = DBG_TX_MSG_8BIT_SIZE,
  },
  {.dmaChannel       = UINT32_MAX},
 };
@@ -46,26 +46,23 @@ static const udma_cfg_t cm_udmaCfgList[] =
 static const ipc_cfg_t  cm_ipcCfgList[] =
 {
  {.ipcType          = IPC_CM_L_CPU1_R,
-  .p_ipcMsgQ        = NULL,
-  .ipcIntMsgQL      = 0,
-  .ipcIntMsgQR      = 0,
-  .ipcFlag          = IPC_FLAG0,
-  .ipcInt           = IPC_INT0,
-  .p_ipcIntHandler  = &ipc_isr0,
+  .ipcFlag          = IPC_CPU1_TO_CM_FLAG,
+//  .ipcInt           = IPC_INT0,
+//  .p_ipcIntHandler  = &ipc_isr0,
   .ipcMsgQEnable    = false,
-  .ipcIntEnable     = true,
+  .ipcIntEnable     = false,
  },
  {.ipcType          = IPC_TOTAL_NUM},
 };
 
 static const gcrc_cfg_t cm_crcCfg =
-{.poly              = 0x04C11DB7,
- .polysize          = 32,
- .seed              = 0xffffffff,
+{.poly              = GCRC_FIXEDPATH_POLY,
+ .polysize          = GCRC_FIXEDPATH_POLYSIZE,
+ .seed              = UINT32_MAX,
  .endianness        = GCRC_ENDIANNESS_BIG,
  .dataType          = GCRC_DATATYPE_32BIT,
- .dataMask          = 0,
- .bitRev            = false,
+ .dataMask          = GCRC_FIXEDPATH_DATAMASK,
+ .bitRev            = GCRC_FIXEDPATH_BITREVERSE,
 };
 
 

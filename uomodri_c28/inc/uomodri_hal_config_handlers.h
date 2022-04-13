@@ -344,10 +344,22 @@ static const ipc_cfg_t  ipcCfgList[] =
 {
  {
   .ipcType              = IPC_CPU1_L_CM_R,
-  .ipcFlag              = IPC_FLAG0,
+  .ipcFlag              = IPC_CPU1_TO_CM_FLAG,
   .ipcMsgQEnable        = false,
   .ipcIntEnable         = false,
  },
+// {
+//  .ipcType              = IPC_CPU1_L_CM_R,
+//  .ipcFlag              = IPC_FLAG1,
+//  .ipcMsgQEnable        = false,
+//  .ipcIntEnable         = false,
+// },
+// {
+//  .ipcType              = IPC_CPU1_L_CM_R,
+//  .ipcFlag              = IPC_FLAG2,
+//  .ipcMsgQEnable        = false,
+//  .ipcIntEnable         = false,
+// },
   // END OF ARRAY
  {.ipcType              = IPC_TOTAL_NUM},
 };
