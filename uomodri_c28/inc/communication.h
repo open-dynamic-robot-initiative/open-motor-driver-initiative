@@ -131,21 +131,9 @@ typedef struct __U32toU16_reg_t__
  */
 typedef struct __fsm_reg_t__
 {
-    uint16_t        M1_CR_STATE : 4;    /*!< Bits 3-0   : MOTOR_1 current state of the state machine*/
-    uint16_t        M1_NX_STATE : 4;    /*!< Bits 7-4   : MOTOR_1 next state of the state machine   */
-    uint16_t        M2_CR_STATE : 4;    /*!< Bits 11-8  : MOTOR_2 current state of the state machine*/
-    uint16_t        M2_NX_STATE : 4;    /*!< Bits 15-12 : MOTOR_2 next state of the state machine   */
+    uint8_t         u8_m1_state;        /*!< Bits 7-0   : MOTOR_1 state of the state machine    */
+    uint8_t         u8_m2_state;        /*!< Bits 15-8  : MOTOR_2  state of the state machine   */
 } fsm_reg_t;
-
-/**
- * @union   fsm_reg_u
- * @brief   Finite state machine debug union (bits definition) for uOmodri. Access to bit field.
- */
-typedef union __fsm_reg_u__
-{
-  uint16_t          all;                /*!< Short (16bits) type access */
-  fsm_reg_t         bit;                /*!< @see command_mode_t        */
-} fsm_reg_u;
 
 /***********************************************************************
  * MAIN COMMUNICATION STRUCTURES
@@ -192,9 +180,9 @@ typedef struct __slv2mst_msg_t__
 typedef struct __cmd_uomodri_t__
 {
     mst2slv_reg_u   mode;
-    float32_t       position[2];
-    float32_t       velocity[2];
-    float32_t       current[2];
+    float32_t       posRef[2];
+    float32_t       velRef[2];
+    float32_t       iqRef[2];
     float32_t       kpCoeff[2];
     float32_t       kdCoeff[2];
     float32_t       iSat[2];
@@ -202,17 +190,35 @@ typedef struct __cmd_uomodri_t__
     uint16_t        index;
 } cmd_uomodri_t;
 
-typedef struct __dbg_uart_msg_t__
+#ifdef USE_CM_CORE
+typedef struct __attribute__((__packed__)) __dbg_uart_msg_t__
 {
-    uint8_t         header[4];
-    uint32_t        timeStamp;
-    slv2mst_reg_u   status;
-    U32toU16_reg_t  position[2];
-    int16_t         current[2];
-    fsm_reg_u       stateMachine;
+    uint8_t         header[2];
+    uint32_t        count;//    uint16_t        status;
+    U32toU16_reg_t  position;
+    int16_t         iqRef;
+    int16_t         iqMeas;
+    int16_t         idMeas;//    uint8_t         stateMachine;
+    int16_t         dtc_u;
+    int16_t         dtc_v;
+    int16_t         dtc_w;
     uint8_t         crc;
-//    U32toU16_reg_t  crc;
 } dbg_uart_msg_t;
+
+typedef struct __attribute__((__packed__)) __dbg_uart_addr_t__
+{
+//    uint16_t*       status;
+    uint16_t*       position_lsb;
+    uint16_t*       position_msb;
+    float32_t*      iqRef;
+    float32_t*      iqMeas;
+    float32_t*      idMeas;
+    float32_t*      dtc_u;
+    float32_t*      dtc_v;
+    float32_t*      dtc_w;
+//    uint8_t*        stateMachine;//[2];
+} dbg_uart_addr_t;
+#endif
 
 /***********************************************************************
  * COMMUNICATION ERROR FLAGS
@@ -266,7 +272,7 @@ void COM_resetCmdStruct(cmd_uomodri_t*);
 void COM_resetCmdMotorStruct(foc_t*, cmd_uomodri_t*);
 uint32_t COM_crc32(uint16_t*, uint16_t);
 #else
-void com_msgDbgTx(foc_t*, foc_t*, slv2mst_msg_t*, dbg_uart_msg_t*);
+void com_msgDbgTx(dbg_uart_addr_t*, dbg_uart_msg_t*);
 uint32_t com_crc32(uint16_t*, uint16_t);
 uint8_t com_crc8(uint8_t*, uint8_t);
 #endif

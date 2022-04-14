@@ -156,6 +156,7 @@
  */
 #define IPC_SYNC_FLAG                           IPC_FLAG31
 #define IPC_CPU1_TO_CM_FLAG                     IPC_FLAG0
+#define IPC_CM_TO_CPU1_FLAG                     IPC_FLAG0
 
 /***********************************************************************
  * SPI DEFINES
@@ -649,6 +650,7 @@
  * @{
  */
 #define PWM_FREQ                                (40000) //[Hz]
+#define PWM_PERIOD                              (1.0f / (float32_t)PWM_FREQ)
 #define PWM_COUNTER_MODE                        EPWM_COUNTER_MODE_UP_DOWN
 #define PWM_TIMEBASE_CNT                        (TBCLK_FREQ / PWM_FREQ / ((PWM_COUNTER_MODE == EPWM_COUNTER_MODE_UP_DOWN) ? (2) : (1))) // PWM Period register (max value)
 #define PWM_TIMEBASE_HALF_CNT                   (PWM_TIMEBASE_CNT / 2)
@@ -760,18 +762,18 @@
 #define MOTOR1_KV                               (300.0f)    // Motor constant (rpm/V)
 #define MOTOR1_KE                               (0.0017f)   //1.0 / (MOTOR1_KV * FM_RPM2RAD * MOTOR1_POLES_PAIRS) // Motor back EMF constant (V/rad/s)
 #define MOTOR1_KI                               (0.1f)      // Motor torque constant (N.m/A)
-#define MOTOR1_RS                               (0.7f)      // Stator resistance (ohm)
-#define MOTOR1_LD                               (134e-6f)   // Stator d-axis inductance (H)
-#define MOTOR1_LQ                               (140e-6f)   // Stator q-axis inductance (H)
+#define MOTOR1_RS                               (0.52f)//(0.7f)      // Stator resistance (ohm)
+#define MOTOR1_LD                               (260e-6)//(134e-6f)   // Stator d-axis inductance (H)
+#define MOTOR1_LQ                               (260e-6)//(140e-6f)   // Stator q-axis inductance (H)
 #define MOTOR1_POLES_PAIRS                      (12)        // Number of poles
-#define MOTOR1_CURRENT_CUTOFF_FREQ              (500.0f)    // Current loop bandwidth (Hz)
+#define MOTOR1_CURRENT_CUTOFF_FREQ              (2000.0f)    // Current loop bandwidth (Hz)
 #define MOTOR1_CURRENT_LPF_ALPHA                (1.0f / (1.0f + (1.0f / (2.0f * M_PI * MOTOR1_CURRENT_CUTOFF_FREQ / PWM_FREQ))))
 #define MOTOR1_CURRENT_LPF_ONE_M_ALPHA          (1.0f - MOTOR1_CURRENT_LPF_ALPHA)
-#define MOTOR1_CURRENT_ALIGN_MAX                (0.5f)      // Current on d-axis for motor alignment (A)
+#define MOTOR1_CURRENT_ALIGN_MAX                (2.0f)      // Current on d-axis for motor alignment (A)
 #define MOTOR1_ID_REGULATOR_KP_COEF             (MOTOR1_LD * 2.0f * M_PI * MOTOR1_CURRENT_CUTOFF_FREQ)
-#define MOTOR1_ID_REGULATOR_KI_COEF             (MOTOR1_RS * 2.0f * M_PI * MOTOR1_CURRENT_CUTOFF_FREQ / PWM_FREQ)
+#define MOTOR1_ID_REGULATOR_KI_COEF             (MOTOR1_RS * 2.0f * M_PI * MOTOR1_CURRENT_CUTOFF_FREQ)
 #define MOTOR1_IQ_REGULATOR_KP_COEF             (MOTOR1_LQ * 2.0f * M_PI * MOTOR1_CURRENT_CUTOFF_FREQ)
-#define MOTOR1_IQ_REGULATOR_KI_COEF             (MOTOR1_RS * 2.0f * M_PI * MOTOR1_CURRENT_CUTOFF_FREQ / PWM_FREQ)
+#define MOTOR1_IQ_REGULATOR_KI_COEF             (MOTOR1_RS * 2.0f * M_PI * MOTOR1_CURRENT_CUTOFF_FREQ)
 #define MOTOR1_SPEED_REGULATOR_KP_COEF          (1.0f)
 #define MOTOR1_SPEED_REGULATOR_KD_COEF          (0.02f)
 #define MOTOR1_SPEED_REGULATOR_SATURATION       (4.0f)
@@ -787,18 +789,18 @@
 #define MOTOR2_KV                               (300.0f)    // Motor constant (rpm/V)
 #define MOTOR2_KE                               (0.0017f)   // Motor back EMF constant (V/rad/s)
 #define MOTOR2_KI                               (0.1f)      // Motor torque constant (N.m/A)
-#define MOTOR2_RS                               (0.7f)      // Stator resistance (ohm)
-#define MOTOR2_LD                               (134e-6)    // Stator d-axis inductance (H)
-#define MOTOR2_LQ                               (140e-6)    // Stator q-axis inductance (H)
+#define MOTOR2_RS                               (0.52f)//(0.7f)      // Stator resistance (ohm)
+#define MOTOR2_LD                               (260e-6)//(134e-6)    // Stator d-axis inductance (H)
+#define MOTOR2_LQ                               (260e-6)//(140e-6)    // Stator q-axis inductance (H)
 #define MOTOR2_POLES_PAIRS                      (12)        // Number of poles
 #define MOTOR2_CURRENT_CUTOFF_FREQ              (500.0f)    // Current loop bandwidth (Hz)
 #define MOTOR2_CURRENT_LPF_ALPHA                (1.0f / (1.0f + (1.0f / (2.0f * M_PI * MOTOR2_CURRENT_CUTOFF_FREQ / PWM_FREQ))))
 #define MOTOR2_CURRENT_LPF_ONE_M_ALPHA          (1.0f - MOTOR2_CURRENT_LPF_ALPHA)
-#define MOTOR2_CURRENT_ALIGN_MAX                (0.5f)      // Current on d-axis for motor alignment (A)
+#define MOTOR2_CURRENT_ALIGN_MAX                (2.0f)      // Current on d-axis for motor alignment (A)
 #define MOTOR2_ID_REGULATOR_KP_COEF             (MOTOR2_LD * 2.0f * M_PI * MOTOR2_CURRENT_CUTOFF_FREQ)
-#define MOTOR2_ID_REGULATOR_KI_COEF             (MOTOR2_RS * 2.0f * M_PI * MOTOR2_CURRENT_CUTOFF_FREQ / PWM_FREQ)
+#define MOTOR2_ID_REGULATOR_KI_COEF             (MOTOR2_RS * 2.0f * M_PI * MOTOR2_CURRENT_CUTOFF_FREQ)
 #define MOTOR2_IQ_REGULATOR_KP_COEF             (MOTOR2_LQ * 2.0f * M_PI * MOTOR2_CURRENT_CUTOFF_FREQ)
-#define MOTOR2_IQ_REGULATOR_KI_COEF             (MOTOR2_RS * 2.0f * M_PI * MOTOR2_CURRENT_CUTOFF_FREQ / PWM_FREQ)
+#define MOTOR2_IQ_REGULATOR_KI_COEF             (MOTOR2_RS * 2.0f * M_PI * MOTOR2_CURRENT_CUTOFF_FREQ)
 #define MOTOR2_SPEED_REGULATOR_KP_COEF          (1.0f)
 #define MOTOR2_SPEED_REGULATOR_KD_COEF          (0.02f)
 #define MOTOR2_SPEED_REGULATOR_SATURATION       (4.0f)

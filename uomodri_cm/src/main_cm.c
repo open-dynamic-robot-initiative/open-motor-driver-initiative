@@ -15,10 +15,14 @@
 /***********************************************************************
  * DEFINES
  ***********************************************************************/
-#define IPC_CMD_M1      0x1001
-#define IPC_CMD_M2      0x2001
-#define IPC_MSG_        0x3001
-
+#define POS_M1_LSB      (0)
+#define POS_M1_MSB      (1)
+#define CMD_IQREF       (2)
+#define FOC_IQ_SENS     (3)
+#define FOC_ID_SENS     (4)
+#define FOC_DTC_U       (5)
+#define FOC_DTC_V       (6)
+#define FOC_DTC_W       (7)
 
 /***********************************************************************
  * FUNCTIONS DEFINITIONS
@@ -33,11 +37,32 @@ void main(void)
     // Hardware Abstraction Layer initialization
     HAL_CM_init(&hal_cm);
 
-    uint32_t   foc_m1_addr, foc_m2_addr, msg_status_addr;
-    while(!IPC_readCommand(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_DISABLE, &foc_m1_addr, &foc_m2_addr, &msg_status_addr));
-    foc_m1_addr     = IPC_Instance[IPC_CM_L_CPU1_R].IPC_MsgRam_RtoL + ((foc_m1_addr     * IPC_Instance[IPC_CM_L_CPU1_R].IPC_Offset_Corr) / 2U);
-    foc_m2_addr     = IPC_Instance[IPC_CM_L_CPU1_R].IPC_MsgRam_RtoL + ((foc_m2_addr     * IPC_Instance[IPC_CM_L_CPU1_R].IPC_Offset_Corr) / 2U);
-    msg_status_addr = IPC_Instance[IPC_CM_L_CPU1_R].IPC_MsgRam_RtoL + ((msg_status_addr * IPC_Instance[IPC_CM_L_CPU1_R].IPC_Offset_Corr) / 2U);
+    uint32_t    command = POS_M1_LSB, addr, data;
+
+    while(command < FOC_DTC_W)
+    {
+        while(!IPC_readCommand(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, &command, &addr, &data));
+        if(command == POS_M1_LSB)
+            dbg_uart_addr.position_lsb          = (uint16_t *)addr;
+        else if(command == POS_M1_MSB)
+            dbg_uart_addr.position_msb          = (uint16_t *)addr;
+        else if(command == CMD_IQREF)
+            dbg_uart_addr.iqRef                 = (float32_t *)addr;
+        else if(command == FOC_IQ_SENS)
+            dbg_uart_addr.iqMeas                = (float32_t *)addr;
+        else if(command == FOC_ID_SENS)
+            dbg_uart_addr.idMeas                = (float32_t *)addr;
+        else if(command == FOC_DTC_U)
+            dbg_uart_addr.dtc_u                 = (float32_t *)addr;
+        else if(command == FOC_DTC_V)
+            dbg_uart_addr.dtc_v                 = (float32_t *)addr;
+        else if(command == FOC_DTC_W)
+            dbg_uart_addr.dtc_w                 = (float32_t *)addr;
+//        else if(command == FOC_FSM_M2)
+//            dbg_uart_addr.stateMachine[MOTOR_2] = (fsm_reg_t *)addr;
+        // Acknowledge the flag
+        IPC_ackFlagRtoL(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG);
+    }
 
     // Loop forever. Wait for IPC interrupts
     while(1)
@@ -45,7 +70,7 @@ void main(void)
         IPC_waitForFlag(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG);
         // Create debug message
 //        com_msgDbgTx((foc_t *)foc_m1_addr, dbg_uart_tx_msg);
-        com_msgDbgTx((foc_t *)foc_m1_addr, (foc_t *)foc_m2_addr, (slv2mst_msg_t *)msg_status_addr, &dbg_uart_tx_msg);
+        com_msgDbgTx(&dbg_uart_addr, &dbg_uart_tx_msg);
         // Acknowledge IT associated to input flag.
         IPC_ackFlagRtoL(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG);
         // Wait Tx buffer + UART Tx module are empty.

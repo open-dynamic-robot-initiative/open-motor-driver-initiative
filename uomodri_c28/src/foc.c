@@ -63,10 +63,8 @@ inline void FOC_resistanceEstimation(foc_t* p_foc)
  */
 inline void FOC_runControl(foc_t* p_foc)
 {
-    const params_t* p_cfg   = &p_foc->motor_cfg;
     acq_t*          p_acq   = &p_foc->motor_acq;
     encoder_t*      p_enc   = &p_foc->motor_enc;
-    speed_t*        p_speed = &p_enc->speed;
     /* Compute sine and cosine from the electrical angle */
     p_foc->sinTheta         = __sinpuf32(p_enc->thetaElec);
     p_foc->cosTheta         = __cospuf32(p_enc->thetaElec);
@@ -74,13 +72,22 @@ inline void FOC_runControl(foc_t* p_foc)
     p_foc->ialpha           = ((2.0f * p_acq->ia) - p_acq->ib - p_acq->ic) * FM_1DIV3;
     p_foc->ibeta            = (p_acq->ib - p_acq->ic) * FM_1DIVSQRT3;
     // Park transform + filtering
-    float32_t id            = (p_foc->sinTheta * p_foc->ibeta) + (p_foc->cosTheta * p_foc->ialpha);
-    UOMODRI_IDQ_FLT(p_foc->iParkFlt, p_foc->id, id);
-    float32_t iq            = (p_foc->cosTheta * p_foc->ibeta) - (p_foc->sinTheta * p_foc->ialpha);
-    UOMODRI_IDQ_FLT(p_foc->iParkFlt, p_foc->iq, iq);
+//    float32_t id            = (p_foc->sinTheta * p_foc->ibeta) + (p_foc->cosTheta * p_foc->ialpha);
+    p_foc->id_noflt         = (p_foc->sinTheta * p_foc->ibeta) + (p_foc->cosTheta * p_foc->ialpha);
+    UOMODRI_IDQ_FLT(p_foc->iParkFlt, p_foc->id, p_foc->id_noflt);
+//    float32_t iq            = (p_foc->cosTheta * p_foc->ibeta) - (p_foc->sinTheta * p_foc->ialpha);
+    p_foc->iq_noflt         = (p_foc->cosTheta * p_foc->ibeta) - (p_foc->sinTheta * p_foc->ialpha);
+    UOMODRI_IDQ_FLT(p_foc->iParkFlt, p_foc->iq, p_foc->iq_noflt);
     // Compute decoupling feed-forward terms
-    p_foc->piId.ff          = UOMODRI_FEED_FORWARD_ENABLE ? (-1.0f * p_speed->speedElec * p_cfg->Lq * p_foc->iq)        : (0.0);
-    p_foc->piIq.ff          = UOMODRI_FEED_FORWARD_ENABLE ? (p_cfg->Rs * p_foc->iqRef + p_speed->speedElec * p_cfg->ke) : (0.0);
+#if((defined UOMODRI_FEED_FORWARD_ENABLE) && (UOMODRI_FEED_FORWARD_ENABLE))
+    const params_t* p_cfg   = &p_foc->motor_cfg;
+    speed_t*        p_speed = &p_enc->speed;
+    p_foc->piId.ff          = -1.0f * p_speed->speedElec * p_cfg->Lq * p_foc->iq;
+    p_foc->piIq.ff          = p_cfg->Rs * p_foc->iqRef + p_speed->speedElec * p_cfg->ke;
+#else
+    p_foc->piId.ff          = 0.0f;
+    p_foc->piIq.ff          = 0.0f;
+#endif
     // Compute Id(Flux Current) and Iq (Torque Current) PI controllers
     p_foc->ud               = FOC_runPI(&p_foc->piId);
     p_foc->uq               = FOC_runPI(&p_foc->piIq);
@@ -130,7 +137,7 @@ inline float32_t FOC_runPI(pi_t* p_pi)
     float32_t sat_max   = 0.5f  * (*p_pi->p_sat);
     float32_t sat_min   = -0.5f * (*p_pi->p_sat);
     p_pi->err           = (*p_pi->p_set) - (*p_pi->p_fb);
-    p_pi->integral     += p_pi->ki * p_pi->err;
+    p_pi->integral     += (p_pi->ki * p_pi->err * (float32_t)PWM_PERIOD);
     p_pi->integral      = __fsat(p_pi->integral, sat_max, sat_min);
     p_pi->out           = (p_pi->kp * p_pi->err) + p_pi->integral + p_pi->ff;
     p_pi->out           = __fsat(p_pi->out, sat_max, sat_min);

@@ -28,9 +28,15 @@
 /***********************************************************************
  * DEFINES
  ***********************************************************************/
-#define IPC_CMD_M1      0x1001
-#define IPC_CMD_M2      0x2001
-#define IPC_MSG_M12     0x3001
+//#define STATUS_MSG      (0)
+#define POS_M1_LSB      (0)
+#define POS_M1_MSB      (1)
+#define CMD_IQREF       (2)
+#define FOC_IQ_SENS     (3)
+#define FOC_ID_SENS     (4)
+#define FOC_DTC_U       (5)
+#define FOC_DTC_V       (6)
+#define FOC_DTC_W       (7)
 
 /***********************************************************************
  * GLOBAL VARIABLES

@@ -195,7 +195,8 @@ static const hal_motor_cfg_t hal_motor_cfg[] =
  },
 };
 
-#pragma DATA_SECTION(cmd_uOmodri, "ramgs0")
+//#pragma DATA_SECTION(cmd_uOmodri, "ramgs0")
+#pragma DATA_SECTION(cmd_uOmodri, "MSGRAM_CPU_TO_CM");
 static cmd_uomodri_t cmd_uOmodri =
 {
  .mode.bit.TIMEOUT  = 0,
@@ -206,18 +207,18 @@ static cmd_uomodri_t cmd_uOmodri =
  .mode.bit.EM2      = false,
  .mode.bit.EM1      = false,
  .mode.bit.ES       = false,
- .position[MOTOR_1] = 0.0f,
- .position[MOTOR_2] = 0.0f,
- .velocity[MOTOR_1] = 0.0f,
- .velocity[MOTOR_2] = 0.0f,
- .current[MOTOR_1]  = 0.0f,
- .current[MOTOR_2]  = 0.0f,
+ .posRef[MOTOR_1]   = 0.0f,
+ .posRef[MOTOR_2]   = 0.0f,
+ .velRef[MOTOR_1]   = 0.0f,
+ .velRef[MOTOR_2]   = 0.0f,
+ .iqRef[MOTOR_1]    = 0.0f,
+ .iqRef[MOTOR_2]    = 0.0f,
  .kpCoeff[MOTOR_1]  = 0.0f,
  .kpCoeff[MOTOR_2]  = 0.0f,
  .kdCoeff[MOTOR_1]  = 0.0f,
  .kdCoeff[MOTOR_2]  = 0.0f,
- .iSat[MOTOR_1]     = 1.0f,
- .iSat[MOTOR_2]     = 1.0f,
+ .iSat[MOTOR_1]     = 2.0f,
+ .iSat[MOTOR_2]     = 2.0f,
  .cptTimeout        = 0,
  .index             = 0
 };
@@ -283,9 +284,8 @@ static foc_t motor_foc[] =
   .motor_enc.speed.speedElec            = 0.0f,
   .motor_enc.speed.speedFlt.a           = (float32_t)MOTOR1_ENC_SPEED_LPF_ALPHA,
   .motor_enc.speed.speedFlt.one_minus_a = (float32_t)MOTOR1_ENC_SPEED_LPF_ONE_M_ALPHA,
-  //---------------------------------------------------------------------------
-  .motor_state[NEXT]                    = MOTOR_STATE_INIT,
-  .motor_state[CURRENT]                 = MOTOR_STATE_INIT,
+  //--- FSM motor initial state -----------------------------------------------
+  .motor_state                          = MOTOR_STATE_INIT,
   //--- Error message ---------------------------------------------------------
   .motor_error                          = MOTOR_ERROR_NO_ERROR,
   //---------------------------------------------------------------------------
@@ -297,6 +297,9 @@ static foc_t motor_foc[] =
   //--- FOC - Clarke transform results ----------------------------------------
   .ialpha                               = 0.0f,
   .ibeta                                = 0.0f,
+  //--- FOC - Park transform results ------------------------------------------
+  .id_noflt                                   = 0.0f,
+  .iq_noflt                                   = 0.0f,
   //--- FOC - Park transform results ------------------------------------------
   .id                                   = 0.0f,
   .iq                                   = 0.0f,
@@ -343,15 +346,15 @@ static foc_t motor_foc[] =
   .piIq.ff                              = 0.0f,
   //--- FOC - Initialize PD controller (Speed & position) ---------------------
   .pdPos.p_fbTheta                      = (float32_t *)(&motor_foc[MOTOR_1].motor_enc.thetaAbsolute),
-  .pdPos.p_setTheta                     = (float32_t *)(&cmd_uOmodri.position[MOTOR_1]),
+  .pdPos.p_setTheta                     = (float32_t *)(&cmd_uOmodri.posRef[MOTOR_1]),
   .pdPos.errTheta                       = 0.0f,
   .pdPos.p_fbSpeed                      = (float32_t *)(&motor_foc[MOTOR_1].motor_enc.speed.speedMech),
-  .pdPos.p_setSpeed                     = (float32_t *)(&cmd_uOmodri.velocity[MOTOR_1]),
+  .pdPos.p_setSpeed                     = (float32_t *)(&cmd_uOmodri.velRef[MOTOR_1]),
   .pdPos.errSpeed                       = 0.0f,
   .pdPos.p_kp                           = (float32_t *)(&cmd_uOmodri.kpCoeff[MOTOR_1]),//(float32_t)MOTOR1_SPEED_REGULATOR_KP_COEF,
   .pdPos.p_kd                           = (float32_t *)(&cmd_uOmodri.kdCoeff[MOTOR_1]),//(float32_t)MOTOR1_SPEED_REGULATOR_KD_COEF,
   .pdPos.derivative                     = 0.0f,
-  .pdPos.p_ff                           = (float32_t *)(&cmd_uOmodri.current[MOTOR_1]),
+  .pdPos.p_ff                           = (float32_t *)(&cmd_uOmodri.iqRef[MOTOR_1]),
   .pdPos.p_sat                          = (float32_t *)(&cmd_uOmodri.iSat[MOTOR_1]),//MOTOR1_SPEED_REGULATOR_SATURATION,//((float32_t *)(&pdSat)),
   //--- FOC - Q-axis resistance estimation ------------------------------------
   .resEst                               = 1.0f,
@@ -421,9 +424,8 @@ static foc_t motor_foc[] =
   .motor_enc.speed.speedElec            = 0.0f,
   .motor_enc.speed.speedFlt.a           = (float32_t)MOTOR2_ENC_SPEED_LPF_ALPHA,
   .motor_enc.speed.speedFlt.one_minus_a = (float32_t)MOTOR2_ENC_SPEED_LPF_ONE_M_ALPHA,
-  //---------------------------------------------------------------------------
-  .motor_state[NEXT]                    = MOTOR_STATE_INIT,
-  .motor_state[CURRENT]                 = MOTOR_STATE_INIT,
+  //--- FSM motor initial state -----------------------------------------------
+  .motor_state                          = MOTOR_STATE_INIT,
   //--- Error message ---------------------------------------------------------
   .motor_error                          = MOTOR_ERROR_NO_ERROR,
   //---------------------------------------------------------------------------
@@ -435,6 +437,9 @@ static foc_t motor_foc[] =
   //--- FOC - Clarke transform results ----------------------------------------
   .ialpha                               = 0.0f,
   .ibeta                                = 0.0f,
+  //--- FOC - Park transform results ------------------------------------------
+  .id_noflt                                   = 0.0f,
+  .iq_noflt                                   = 0.0f,
   //--- FOC - Park transform results ------------------------------------------
   .id                                   = 0.0f,
   .iq                                   = 0.0f,
@@ -481,15 +486,15 @@ static foc_t motor_foc[] =
   .piIq.ff                              = 0.0f,
   //--- FOC - Initialize PD controller (Speed & position) ---------------------
   .pdPos.p_fbTheta                      = (float32_t *)(&motor_foc[MOTOR_2].motor_enc.thetaAbsolute),
-  .pdPos.p_setTheta                     = (float32_t *)(&cmd_uOmodri.position[MOTOR_2]),
+  .pdPos.p_setTheta                     = (float32_t *)(&cmd_uOmodri.posRef[MOTOR_2]),
   .pdPos.errTheta                       = 0.0f,
   .pdPos.p_fbSpeed                      = (float32_t *)(&motor_foc[MOTOR_2].motor_enc.speed.speedMech),
-  .pdPos.p_setSpeed                     = (float32_t *)(&cmd_uOmodri.velocity[MOTOR_2]),
+  .pdPos.p_setSpeed                     = (float32_t *)(&cmd_uOmodri.velRef[MOTOR_2]),
   .pdPos.errSpeed                       = 0.0f,
   .pdPos.p_kp                           = (float32_t *)(&cmd_uOmodri.kpCoeff[MOTOR_2]),//(float32_t)MOTOR2_SPEED_REGULATOR_KP_COEF,
   .pdPos.p_kd                           = (float32_t *)(&cmd_uOmodri.kdCoeff[MOTOR_2]),//(float32_t)MOTOR2_SPEED_REGULATOR_KD_COEF,
   .pdPos.derivative                     = 0.0f,
-  .pdPos.p_ff                           = (float32_t *)(&cmd_uOmodri.current[MOTOR_2]),
+  .pdPos.p_ff                           = (float32_t *)(&cmd_uOmodri.iqRef[MOTOR_2]),
   .pdPos.p_sat                          = (float32_t *)(&cmd_uOmodri.iSat[MOTOR_2]),//(float32_t)MOTOR2_SPEED_REGULATOR_SATURATION,
   //--- FOC - Q-axis resistance estimation ------------------------------------
   .resEst                               = 0.0f,

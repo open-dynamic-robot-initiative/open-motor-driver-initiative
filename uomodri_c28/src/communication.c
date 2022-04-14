@@ -34,12 +34,12 @@ bool_t COM_msgExtract(mst2slv_msg_t* p_msg, cmd_uomodri_t* p_cmd)
 //            p_cmd->mode.bit.RST    |= p_msg->mode.bit.RST;
 //        else
 //            p_cmd->mode.bit.RST     = 0b00;
-        p_cmd->position[MOTOR_1]    = 0.0f;//(float32_t)(pos_m1                    * POSITION_LSB);
-        p_cmd->position[MOTOR_2]    = 0.0f;//(float32_t)(pos_m2                    * POSITION_LSB);
-        p_cmd->velocity[MOTOR_1]    = 0.0f;//(float32_t)(p_msg->velocity[MOTOR_1]  * VELOCITY_LSB);
-        p_cmd->velocity[MOTOR_2]    = 0.0f;//(float32_t)(p_msg->velocity[MOTOR_2]  * VELOCITY_LSB);
-        p_cmd->current[MOTOR_1]     = (float32_t)(p_msg->current[MOTOR_1]   * IQ_LSB);
-        p_cmd->current[MOTOR_2]     = (float32_t)(p_msg->current[MOTOR_2]   * IQ_LSB);
+        p_cmd->posRef[MOTOR_1]      = 0.0f;//(float32_t)(pos_m1                    * POSITION_LSB);
+        p_cmd->posRef[MOTOR_2]      = 0.0f;//(float32_t)(pos_m2                    * POSITION_LSB);
+        p_cmd->velRef[MOTOR_1]      = 0.0f;//(float32_t)(p_msg->velocity[MOTOR_1]  * VELOCITY_LSB);
+        p_cmd->velRef[MOTOR_2]      = 0.0f;//(float32_t)(p_msg->velocity[MOTOR_2]  * VELOCITY_LSB);
+        p_cmd->iqRef[MOTOR_1]       = (float32_t)(p_msg->current[MOTOR_1]   * IQ_LSB);
+        p_cmd->iqRef[MOTOR_2]       = (float32_t)(p_msg->current[MOTOR_2]   * IQ_LSB);
         p_cmd->kpCoeff[MOTOR_1]     = 0.0f;//(float32_t)(p_msg->kpCoeff[MOTOR_1]   * KP_LSB);
         p_cmd->kpCoeff[MOTOR_2]     = 0.0f;//(float32_t)(p_msg->kpCoeff[MOTOR_2]   * KP_LSB);
         p_cmd->kdCoeff[MOTOR_1]     = 0.0f;//(float32_t)(p_msg->kdCoeff[MOTOR_1]   * KD_LSB);
@@ -64,8 +64,8 @@ bool_t COM_msgExtract(mst2slv_msg_t* p_msg, cmd_uomodri_t* p_cmd)
 void COM_msgCreate(foc_t* p_foc, cmd_uomodri_t* p_cmd, slv2mst_msg_t* p_msg)
 {
     int32_t pos                             = (int32_t)(p_foc->motor_enc.thetaAbsolute / POSITION_LSB);
-    bool_t  align_done                      = ((p_foc->motor_state[CURRENT] == MOTOR_STATE_READY) ||
-                                               (p_foc->motor_state[CURRENT] == MOTOR_STATE_STOP)) ? (true) : (false);
+    bool_t  align_done                      = ((p_foc->motor_state == MOTOR_STATE_READY) ||
+                                               (p_foc->motor_state == MOTOR_STATE_STOP)) ? (true) : (false);
     p_msg->status.bit.SE                    = p_cmd->mode.bit.ES;     // System enabled
     p_msg->status.bit.STATUS_RSV1           = 0;
     p_msg->lastCmdIndex                     = p_cmd->index;
@@ -150,12 +150,12 @@ void COM_msgCreate(foc_t* p_foc, cmd_uomodri_t* p_cmd, slv2mst_msg_t* p_msg)
 void COM_resetCmdStruct(cmd_uomodri_t* p_cmd)
 {
     p_cmd->mode.all             = 0U;
-    p_cmd->position[MOTOR_1]    = 0.0f;
-    p_cmd->position[MOTOR_2]    = 0.0f;
-    p_cmd->velocity[MOTOR_1]    = 0.0f;
-    p_cmd->velocity[MOTOR_2]    = 0.0f;
-    p_cmd->current[MOTOR_1]     = 0.0f;
-    p_cmd->current[MOTOR_2]     = 0.0f;
+    p_cmd->posRef[MOTOR_1]      = 0.0f;
+    p_cmd->posRef[MOTOR_2]      = 0.0f;
+    p_cmd->velRef[MOTOR_1]      = 0.0f;
+    p_cmd->velRef[MOTOR_2]      = 0.0f;
+    p_cmd->iqRef[MOTOR_1]       = 0.0f;
+    p_cmd->iqRef[MOTOR_2]       = 0.0f;
     p_cmd->kpCoeff[MOTOR_1]     = 0.0f;
     p_cmd->kpCoeff[MOTOR_2]     = 0.0f;
     p_cmd->kdCoeff[MOTOR_1]     = 0.0f;
@@ -176,9 +176,9 @@ void COM_resetCmdMotorStruct(foc_t* p_foc, cmd_uomodri_t* p_cmd)
 {
     motor_id_e motor_id = p_foc->motor_id;
     (motor_id == MOTOR_1) ? (p_cmd->mode.bit.EM1 = false) : (p_cmd->mode.bit.EM2 = false);
-    p_cmd->position[motor_id]   = 0.0f;
-    p_cmd->velocity[motor_id]   = 0.0f;
-    p_cmd->current[motor_id]    = 0.0f;
+    p_cmd->posRef[motor_id]     = 0.0f;
+    p_cmd->velRef[motor_id]     = 0.0f;
+    p_cmd->iqRef[motor_id]      = 0.0f;
     p_cmd->kpCoeff[motor_id]    = 0.0f;
     p_cmd->kdCoeff[motor_id]    = 0.0f;
     p_cmd->iSat[motor_id]       = 1.0f;

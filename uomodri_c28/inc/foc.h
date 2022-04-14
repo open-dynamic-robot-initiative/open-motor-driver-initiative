@@ -147,13 +147,15 @@ typedef struct __MOTOR_FOC_CONTROL_t__
     params_t            motor_cfg;      /*!< Motor configuration parameters */
     acq_t               motor_acq;      /*!< Current \& voltage acquisitions */
     encoder_t           motor_enc;      /*!< Encoder position & speed */
-    motor_state_e       motor_state[2]; /*!< Current \& next motor states for the FSM */
+    motor_state_e       motor_state;    /*!< Current motor state for the FSM */
     motor_error_e       motor_error;    /*!< Error messages */
     lpf_t               iParkFlt;       /*!< Low-pass filter parameters affected to park transform */
     float32_t           sinTheta;       /*!< Sinus of the electrical rotor angle */
     float32_t           cosTheta;       /*!< Cosine of the electrical rotor angle  */
     float32_t           ialpha;         /*!< Direct Clarke transform result - [A] */
     float32_t           ibeta;          /*!< Direct Clarke transform result - [A] */
+    float32_t           id_noflt;       /*!< Direct Park transform result - [A] */
+    float32_t           iq_noflt;       /*!< Direct Park transform result - [A] */
     float32_t           id;             /*!< Direct Park transform result - [A] */
     float32_t           iq;             /*!< Direct Park transform result - [A] */
     float32_t           ud;             /*!< Inverse Park transform result - [V] */

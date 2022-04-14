@@ -22,6 +22,7 @@
 <stringAttribute key="com.ti.ccstudio.debug.debugModel.ATTR_PROJECT.TMS320F28388D.ccxml.Texas Instruments XDS110 USB Debug Probe_0/Cortex_M4_0" value="uomodri_cm"/>
 <stringAttribute key="com.ti.ccstudio.debug.debugModel.ATTR_TARGET_CONFIG" value="${target_config_active_default:uomodri_cm}"/>
 <stringAttribute key="com.ti.ccstudio.debug.debugModel.MRU_PROGRAM.TMS320F28388D.ccxml.Texas Instruments XDS100v2 USB Debug Probe/Cortex_M4_0" value="C:\Users\jmanhes\LAAS\workspace_ti\uomodri\uomodri_cm\Debug\uomodri_cm.out"/>
+<stringAttribute key="com.ti.ccstudio.debug.debugModel.MRU_PROGRAM.TMS320F28388D.ccxml.Texas Instruments XDS110 USB Debug Probe_0/Cortex_M4_0" value="C:\Users\jmanhes\LAAS\workspace_ti\uomodri\uomodri_cm\Debug_Flash\uomodri_cm.out"/>
 <listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_PATHS">
 <listEntry value="/uomodri_cm"/>
 </listAttribute>
