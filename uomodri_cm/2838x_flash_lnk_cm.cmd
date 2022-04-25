@@ -46,7 +46,7 @@ SECTIONS
    .cinit           : > CMBANK0_SECTOR0
    .pinit           : >> CMBANK0_SECTOR0 | CMBANK0_SECTOR1 | CMBANK0_SECTOR2 //>> CMBANK0_SECTOR0 | CMBANK0_SECTOR1
    .switch          : >> CMBANK0_SECTOR0 | CMBANK0_SECTOR1 | CMBANK0_SECTOR2 //>> CMBANK0_SECTOR0 | CMBANK0_SECTOR1
-   .sysmem          : >> S0RAM | S1RAM | S2RAM | S3RAM//> S2RAM
+   .sysmem          : > S2RAM
 
    .stack           : > C1RAM
    .ebss            : > C1RAM

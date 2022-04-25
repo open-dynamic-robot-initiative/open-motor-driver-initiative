@@ -77,17 +77,18 @@ inline void ENC_getPosition(encoder_t* p_enc)
     uint32_t eqepBase       = p_enc->p_qepHandle->eqepBase;
     p_enc->thetaMech[OLD]   = p_enc->thetaMech[NEW];
     // Compute mechanical angle normalized between 0 and 1
-    p_enc->thetaMech[NEW]   = (float32_t)EQEP_getStrobePositionLatch(eqepBase) / p_enc->thetaMechScaler;
+    p_enc->thetaMech[NEW]   = (float32_t)EQEP_getStrobePositionLatch(eqepBase) * p_enc->thetaMechScaler;
     // Get direction : -1 = CCW/reverse, 1 = CW/forward
     p_enc->thetaDir         = EQEP_getDirection(eqepBase);
     // Compute electrical angle (each pole pair is normalized between 0 and 1)
-    float32_t thetaElec     = p_enc->polePairs * p_enc->thetaMech[NEW];
+    float32_t thetaElec     = (float32_t)p_enc->polePairs * p_enc->thetaMech[NEW];
 #ifdef CM_CORE
     p_enc->thetaElec       -= (float32_t)((int32_t)thetaElec);
+//    p_enc->thetaElec        = (p_enc->thetaElec - (float32_t)((int32_t)thetaElec)) * 2.0f * M_PI;
 #else
+//    p_enc->thetaElec        = __fracf32(thetaElec) * 2.0f * M_PI;
     p_enc->thetaElec        = __fracf32(thetaElec);
 #endif
-
     return;
 }
 
@@ -105,7 +106,7 @@ inline void ENC_getSpeed(encoder_t* p_enc)
     if(EQEP_getInterruptStatus(eqepBase) & EQEP_INT_UNIT_TIME_OUT)
     {
         p_speed->theta[OLD]     = p_speed->theta[NEW];
-        p_speed->theta[NEW]     = (float32_t)EQEP_getPositionLatch(eqepBase) / p_enc->thetaMechScaler;
+        p_speed->theta[NEW]     = (float32_t)EQEP_getPositionLatch(eqepBase) * p_enc->thetaMechScaler;
         EQEP_clearInterruptStatus(eqepBase, (EQEP_INT_UNIT_TIME_OUT));// | EQEP_INT_OVERFLOW | EQEP_INT_UNDERFLOW));
         // Compute angle difference & saturate it between -0.5 and 0.5
         float32_t deltaTheta    = p_speed->theta[NEW] - p_speed->theta[OLD];
@@ -156,7 +157,8 @@ inline void ENC_getSpeed(encoder_t* p_enc)
 //    p_speed->alpha              = __fsat((float32_t)(0.05f * (fabs(p_speed->speedHigh) - SPEED_ESTIMATION_THRESHOLD)), 1.0f, 0.0f);
     float32_t speedFusion       = p_speed->speedHigh;//    p_enc->speedEst.speedRef = (1.0f - p_enc->speedEst.alpha) * p_enc->speedEst.lowMechSpeedEst + p_enc->speedEst.alpha * p_enc->speedEst.highMechSpeedEst;
     UOMODRI_SPEED_FLT(p_speed->speedFlt, p_speed->speedMech, speedFusion);
-    p_speed->speedElec          = p_enc->polePairs * p_speed->speedMech;
+//    p_speed->speedMech         = p_speed->speedHigh;//speedFusion;
+    p_speed->speedElec          = (float32_t)p_enc->polePairs * p_speed->speedMech;
 
     return;
 }
@@ -190,7 +192,7 @@ inline void ENC_getTheta(encoder_t* p_enc)
         // Check if index has been detected (using FIMF is not legal with QEPCTL[PCRM] = 01 (position reset if max position is reached)
         p_enc->indexDetected    = true;
         // Compute indexed mechanical angle normalized between 0 and 1
-        p_enc->thetaIndex       = (float32_t)EQEP_getIndexPositionLatch(eqepBase) / p_enc->thetaMechScaler;
+        p_enc->thetaIndex       = (float32_t)EQEP_getIndexPositionLatch(eqepBase) * p_enc->thetaMechScaler;
         // Toggle index
         p_enc->indexToggle      = !p_enc->indexToggle;
         // Clear flag

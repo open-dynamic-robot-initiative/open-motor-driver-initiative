@@ -109,12 +109,11 @@ typedef struct __MOTOR_PARAMETERS_t__
 {
     // Motor constants
     float32_t       Rs;         /*!< Stator resistance [Ohm] */
-    float32_t       Ld;         /*!< Direct axis inductance [H] */
-    float32_t       Lq;         /*!< Quadratic axis inductance [H] */
+    float32_t       Ls;         /*!< Stator inductance [H] */
     float32_t       kv;         /*!< Motor speed constant [RPM/V or rad/s/V] */
     float32_t       ke;         /*!< Motor back EMF constant [V/rad/s] (electrical radians) = 1/kv */
     float32_t       ki;         /*!< Motor torque constant [N.m/A] */
-    const uint8_t   polePairs;  /*!< Number of pole pairs */
+    const float32_t polePairs;  /*!< Number of pole pairs */
 } params_t;
 
 typedef struct __MOTOR_ACQUISITIONS_t__
@@ -154,10 +153,10 @@ typedef struct __MOTOR_FOC_CONTROL_t__
     float32_t           cosTheta;       /*!< Cosine of the electrical rotor angle  */
     float32_t           ialpha;         /*!< Direct Clarke transform result - [A] */
     float32_t           ibeta;          /*!< Direct Clarke transform result - [A] */
-    float32_t           id_noflt;       /*!< Direct Park transform result - [A] */
-    float32_t           iq_noflt;       /*!< Direct Park transform result - [A] */
-    float32_t           id;             /*!< Direct Park transform result - [A] */
-    float32_t           iq;             /*!< Direct Park transform result - [A] */
+    float32_t           id_raw;         /*!< Raw Direct Park transform result - [A] */
+    float32_t           iq_raw;         /*!< Raw Quadrature Park transform result - [A] */
+    float32_t           id;             /*!< Filtered Direct Park transform result - [A] */
+    float32_t           iq;             /*!< Filtered Quadrature Park transform result - [A] */
     float32_t           ud;             /*!< Inverse Park transform result - [V] */
     float32_t           uq;             /*!< Inverse Park transform result - [V] */
     float32_t           ualpha;         /*!< Inverse Clarke transform result - [V] */

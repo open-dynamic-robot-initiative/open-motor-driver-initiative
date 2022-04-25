@@ -15,14 +15,6 @@
 /***********************************************************************
  * DEFINES
  ***********************************************************************/
-#define POS_M1_LSB      (0)
-#define POS_M1_MSB      (1)
-#define CMD_IQREF       (2)
-#define FOC_IQ_SENS     (3)
-#define FOC_ID_SENS     (4)
-#define FOC_DTC_U       (5)
-#define FOC_DTC_V       (6)
-#define FOC_DTC_W       (7)
 
 /***********************************************************************
  * FUNCTIONS DEFINITIONS
@@ -37,29 +29,23 @@ void main(void)
     // Hardware Abstraction Layer initialization
     HAL_CM_init(&hal_cm);
 
-    uint32_t    command = POS_M1_LSB, addr, data;
+    uint32_t    command = 0, addr, data;
 
-    while(command < FOC_DTC_W)
+    while(command < 5)
     {
         while(!IPC_readCommand(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, &command, &addr, &data));
-        if(command == POS_M1_LSB)
-            dbg_uart_addr.position_lsb          = (uint16_t *)addr;
-        else if(command == POS_M1_MSB)
-            dbg_uart_addr.position_msb          = (uint16_t *)addr;
-        else if(command == CMD_IQREF)
-            dbg_uart_addr.iqRef                 = (float32_t *)addr;
-        else if(command == FOC_IQ_SENS)
-            dbg_uart_addr.iqMeas                = (float32_t *)addr;
-        else if(command == FOC_ID_SENS)
-            dbg_uart_addr.idMeas                = (float32_t *)addr;
-        else if(command == FOC_DTC_U)
-            dbg_uart_addr.dtc_u                 = (float32_t *)addr;
-        else if(command == FOC_DTC_V)
-            dbg_uart_addr.dtc_v                 = (float32_t *)addr;
-        else if(command == FOC_DTC_W)
-            dbg_uart_addr.dtc_w                 = (float32_t *)addr;
-//        else if(command == FOC_FSM_M2)
-//            dbg_uart_addr.stateMachine[MOTOR_2] = (fsm_reg_t *)addr;
+        if(command == 0)
+            dbg_uart_addr.p_position    = (float32_t*)addr;
+        else if(command == 1)
+            dbg_uart_addr.p_iqRef       = (float32_t *)addr;
+        else if(command == 2)
+            dbg_uart_addr.p_iq          = (float32_t *)addr;
+        else if(command == 3)
+            dbg_uart_addr.p_id          = (float32_t *)addr;
+        else if(command == 4)
+            dbg_uart_addr.p_speed       = (float32_t *)addr;
+        else if(command == 5)
+            dbg_uart_addr.p_speedMech   = (float32_t *)addr;
         // Acknowledge the flag
         IPC_ackFlagRtoL(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG);
     }
@@ -68,11 +54,12 @@ void main(void)
     while(1)
     {
         IPC_waitForFlag(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG);
+        GPIO_writePin(70, 1);
         // Create debug message
-//        com_msgDbgTx((foc_t *)foc_m1_addr, dbg_uart_tx_msg);
         com_msgDbgTx(&dbg_uart_addr, &dbg_uart_tx_msg);
         // Acknowledge IT associated to input flag.
         IPC_ackFlagRtoL(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG);
+        GPIO_writePin(70, 0);
         // Wait Tx buffer + UART Tx module are empty.
         while(UART_isBusy(UART0_BASE));
         // Force purge of Rx buffer.

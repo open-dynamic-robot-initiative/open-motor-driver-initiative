@@ -38,7 +38,7 @@ static const udma_cfg_t cm_udmaCfgList[] =
   .srcAddr          = (void *)&dbg_uart_tx_msg,
   .dstAddr          = (void *)(UART0_BASE + UART_O_DR),
   .transferMode     = UDMA_MODE_BASIC,
-  .transferSize     = DBG_TX_MSG_8BIT_SIZE,
+  .transferSize     = sizeof(dbg_uart_msg_t),//DBG_TX_MSG_8BIT_SIZE,
  },
  {.dmaChannel       = UINT32_MAX},
 };

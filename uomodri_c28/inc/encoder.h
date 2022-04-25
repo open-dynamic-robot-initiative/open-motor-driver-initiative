@@ -20,16 +20,16 @@
  ***********************************************************************/
 typedef struct __SPEED_ESTIMATOR_STRUCT__
 {
-    float32_t   speedHighScaler;    /*!< High speed estimation - [rad/s/pu] - diff_angular * scaler = velocity */
-    float32_t   speedHigh;          /*!< High speed estimation -  [rad/s] - diff_angular * scaler = velocity */
-    float32_t   speedLowScaler;     /*!< Low speed estimation - [rad.register] - scaler / dtRegister = velocity */
-    float32_t   speedLow;           /*!< Low speed estimation - [rad/s] - scaler / dtRegister = velocity */
-    float32_t   alpha;              /*!< Speed merge coefficient */
+    float32_t       speedHighScaler;        /*!< High speed estimation - [rad/s/pu] - diff_angular * scaler = velocity */
+    float32_t       speedHigh;              /*!< High speed estimation -  [rad/s] - diff_angular * scaler = velocity */
+    float32_t       speedLowScaler;         /*!< Low speed estimation - [rad.register] - scaler / dtRegister = velocity */
+    float32_t       speedLow;               /*!< Low speed estimation - [rad/s] - scaler / dtRegister = velocity */
+    float32_t       alpha;                  /*!< Speed merge coefficient */
 //    float32_t   speedRef;           /*!< Speed merge - [rad/s] - Low speed and high speed merge estimation */
-    lpf_t       speedFlt;           /*!< Filter structure for speed filtering */
-    float32_t   speedMech;          /*!< Mechanical output speed - [rad/s] */
-    float32_t   speedElec;          /*!< Electrical output speed (pole pairs integration) - [rad/s] */
-    float32_t   theta[2];           /*!< Angular position of rotor - [pu] */
+    lpf_t           speedFlt;               /*!< Filter structure for speed filtering */
+    float32_t       speedMech;              /*!< Mechanical output speed - [rad/s] */
+    float32_t       speedElec;              /*!< Electrical output speed (pole pairs integration) - [rad/s] */
+    float32_t       theta[2];               /*!< Angular position of rotor - [pu] */
 } speed_t;
 
 typedef struct __ENCODER_STRUCT__
@@ -40,7 +40,7 @@ typedef struct __ENCODER_STRUCT__
     // pointers on HAL structure, QEP registers and direct access to QEP counter register
     const eqep_cfg_t*   p_qepHandle;        /*!< Pointer on HAL structure */
 #endif
-    const uint8_t       polePairs;          /*!< Number of motor pole pairs */
+    const float32_t     polePairs;          /*!< Number of motor pole pairs */
     float32_t           thetaElec;          /*!< Angular electrical position  - [pu] */
     float32_t           thetaMech[2];       /*!< Angular mechanical position  - [pu] */
     float32_t           thetaMechScaler;    /*!< Angular mechanical scaler - [pu/register] */
@@ -49,7 +49,7 @@ typedef struct __ENCODER_STRUCT__
     float32_t           thetaAbsolute;      /*!< Absolute angular position - [turns] */
     speed_t             speed;              /*!< Speed estimation structure */
     int16_t             turnNb;             /*!< Number of full turns (signed) */
-    int16_t             thetaDir;           /*!< Rotor direction - 0 (false) = CCW/reverse, 1(true) = CW/forward */
+    int16_t             thetaDir;           /*!< Rotor direction - -1 = CCW/reverse, 1 = CW/forward */
     bool_t              indexDetected;      /*!< Has index been detected */
     bool_t              indexCompensated;   /*!< Is index compensation activated */
     bool_t              indexToggle;        /*!< Flag that toggles every time index is seen */

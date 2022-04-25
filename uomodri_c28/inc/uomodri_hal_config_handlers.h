@@ -39,10 +39,13 @@ static const gpio_cfg_t GpioPinsCfgList[] =
  // UART Pins
  {.pinNumber = UART_DBG_TX,             .fctMux = UART_DBG_TX_CFG,              .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CM,     .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0,  .intEnable = false},
  {.pinNumber = UART_DBG_RX,             .fctMux = UART_DBG_RX_CFG,              .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CM,     .direction = GPIO_DIR_MODE_IN,  .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0,  .intEnable = false},
+#ifdef DEBUG
+ {.pinNumber = DBG_PIN2,                .fctMux = DBG_PIN2_CFG,                 .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CM,     .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0,  .intEnable = false},
+#endif
 #endif
 #ifdef DEBUG
  {.pinNumber = DBG_PIN1,                .fctMux = DBG_PIN1_CFG,                 .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0,  .intEnable = false},
-#endif
+ #endif
  // Quadrature encoder #1
  {.pinNumber = MOTOR1_ENC_CHA,          .fctMux = MOTOR1_ENC_CHA_CFG,           .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_IN,  .samplingInMode = GPIO_QUAL_SYNC,   .setValue = 0,  .intEnable = false},
  {.pinNumber = MOTOR1_ENC_CHB,          .fctMux = MOTOR1_ENC_CHB_CFG,           .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_IN,  .samplingInMode = GPIO_QUAL_SYNC,   .setValue = 0,  .intEnable = false},
@@ -174,14 +177,14 @@ static const eqep_cfg_t QepCfgList[] =
 {
  {
   .eqepBase             = MOTOR1_QEP_BASE,
-  .eqepMaxResolution    = (MOTOR1_ENC_RESOLUTION_SCALE - 1),
+  .eqepMaxResolution    = (MOTOR1_ENC_QUADRATURE_SCALE - 1),
   .eqepUnitTimerPeriod  = (MOTOR1_ENC_SPEED_HIGH_SAMPLING_TICKS - 1),
   .eqepConfig           = (EQEP_CONFIG_2X_RESOLUTION | EQEP_CONFIG_QUADRATURE | MOTOR1_QEP_SWAP | EQEP_CONFIG_IGATE_ENABLE),
   .eqepStrobeSrc        = EQEP_STROBE_OR_ADCSOCA,
  },
  {
   .eqepBase             = MOTOR2_QEP_BASE,
-  .eqepMaxResolution    = (MOTOR2_ENC_RESOLUTION_SCALE - 1),
+  .eqepMaxResolution    = (MOTOR2_ENC_QUADRATURE_SCALE - 1),
   .eqepUnitTimerPeriod  = (MOTOR2_ENC_SPEED_HIGH_SAMPLING_TICKS - 1),
   .eqepConfig           = (EQEP_CONFIG_2X_RESOLUTION | EQEP_CONFIG_QUADRATURE | MOTOR2_QEP_SWAP | EQEP_CONFIG_IGATE_ENABLE),
   .eqepStrobeSrc        = EQEP_STROBE_OR_ADCSOCB,

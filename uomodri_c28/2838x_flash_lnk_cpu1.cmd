@@ -66,7 +66,7 @@ MEMORY
 SECTIONS
 {
    codestart           : > BEGIN, ALIGN(8)
-   .text               : >> FLASH0 | FLASH1, ALIGN(8)
+   .text               : >> FLASH0 | FLASH1 | FLASH2, ALIGN(8)
    .cinit              : > FLASH2, ALIGN(8)
    .switch             : > FLASH1, ALIGN(8)
    .reset              : > RESET, TYPE = DSECT /* not used, */

@@ -231,12 +231,11 @@ static foc_t motor_foc[] =
   .motor_id                             = MOTOR_1,
   //--- MOTOR PARAMS STRUCTURE ------------------------------------------------
   .motor_cfg.Rs                         = MOTOR1_RS,
-  .motor_cfg.Ld                         = MOTOR1_LD,
-  .motor_cfg.Lq                         = MOTOR1_LQ,
+  .motor_cfg.Ls                         = MOTOR1_LS,
   .motor_cfg.kv                         = MOTOR1_KV,
   .motor_cfg.ke                         = MOTOR1_KE,
   .motor_cfg.ki                         = MOTOR1_KI,
-  .motor_cfg.polePairs                  = (float32_t)MOTOR1_POLES_PAIRS,
+  .motor_cfg.polePairs                  = MOTOR1_POLES_PAIRS,
   //--- MOTOR ACQUISITION STRUCTURE -------------------------------------------
   .motor_acq.p_vaMeasReg                = (volatile uint16_t *)(MOTOR1_VA_ADC_PPB_RESULT_ADDR),
   .motor_acq.p_vbMeasReg                = (volatile uint16_t *)(MOTOR1_VB_ADC_PPB_RESULT_ADDR),
@@ -260,7 +259,7 @@ static foc_t motor_foc[] =
   .motor_acq.vExtFlt.a                  = VEXT_LPF_ALPHA,
   .motor_acq.vExtFlt.one_minus_a        = VEXT_LPF_ONE_M_ALPHA,
   //--- MOTOR ENCORDER STRUCTURE ----------------------------------------------
-  .motor_enc.p_qepHandle                = (&QepCfgList[MOTOR_1]),
+  .motor_enc.p_qepHandle                = &QepCfgList[MOTOR_1],
   .motor_enc.polePairs                  = MOTOR1_POLES_PAIRS,
   .motor_enc.thetaElec                  = 0.0f,
   .motor_enc.thetaMech[NEW]             = 0.0f,
@@ -279,9 +278,12 @@ static foc_t motor_foc[] =
   .motor_enc.speed.speedHigh            = 0.0f,
   .motor_enc.speed.speedLowScaler       = (float32_t)MOTOR1_ENC_SPEED_LOW_SCALE,
   .motor_enc.speed.speedLow             = 0.0f,
-//  .motor_enc.speed.speedRef             = 0.0f,
+  .motor_enc.speed.alpha                = 0.0f,
+  //  .motor_enc.speed.speedRef             = 0.0f,
   .motor_enc.speed.speedMech            = 0.0f,
   .motor_enc.speed.speedElec            = 0.0f,
+  .motor_enc.speed.theta[NEW]           = 0.0f,
+  .motor_enc.speed.theta[OLD]           = 0.0f,
   .motor_enc.speed.speedFlt.a           = (float32_t)MOTOR1_ENC_SPEED_LPF_ALPHA,
   .motor_enc.speed.speedFlt.one_minus_a = (float32_t)MOTOR1_ENC_SPEED_LPF_ONE_M_ALPHA,
   //--- FSM motor initial state -----------------------------------------------
@@ -298,8 +300,8 @@ static foc_t motor_foc[] =
   .ialpha                               = 0.0f,
   .ibeta                                = 0.0f,
   //--- FOC - Park transform results ------------------------------------------
-  .id_noflt                                   = 0.0f,
-  .iq_noflt                                   = 0.0f,
+  .id_raw                               = 0.0f,
+  .iq_raw                               = 0.0f,
   //--- FOC - Park transform results ------------------------------------------
   .id                                   = 0.0f,
   .iq                                   = 0.0f,
@@ -335,6 +337,7 @@ static foc_t motor_foc[] =
   .piId.ki                              = (float32_t)MOTOR1_ID_REGULATOR_KI_COEF,
   .piId.integral                        = 0.0f,
   .piId.ff                              = 0.0f,
+  .piId.out                             = 0.0f,
   //--- FOC - Initialize PI controller (Iq) -----------------------------------
   .piIq.p_fb                            = (float32_t *)(&motor_foc[MOTOR_1].iq),
   .piIq.p_set                           = (float32_t *)(&motor_foc[MOTOR_1].iqRef),
@@ -344,6 +347,7 @@ static foc_t motor_foc[] =
   .piIq.ki                              = (float32_t)MOTOR1_IQ_REGULATOR_KI_COEF,
   .piIq.integral                        = 0.0f,
   .piIq.ff                              = 0.0f,
+  .piIq.out                             = 0.0f,
   //--- FOC - Initialize PD controller (Speed & position) ---------------------
   .pdPos.p_fbTheta                      = (float32_t *)(&motor_foc[MOTOR_1].motor_enc.thetaAbsolute),
   .pdPos.p_setTheta                     = (float32_t *)(&cmd_uOmodri.posRef[MOTOR_1]),
@@ -356,6 +360,7 @@ static foc_t motor_foc[] =
   .pdPos.derivative                     = 0.0f,
   .pdPos.p_ff                           = (float32_t *)(&cmd_uOmodri.iqRef[MOTOR_1]),
   .pdPos.p_sat                          = (float32_t *)(&cmd_uOmodri.iSat[MOTOR_1]),//MOTOR1_SPEED_REGULATOR_SATURATION,//((float32_t *)(&pdSat)),
+  .pdPos.out                            = 0.0f,
   //--- FOC - Q-axis resistance estimation ------------------------------------
   .resEst                               = 1.0f,
   //--- Resistance estimation low-pass filter ---------------------------------
@@ -371,12 +376,11 @@ static foc_t motor_foc[] =
   .motor_id                             = MOTOR_2,
   //--- MOTOR PARAMS STRUCTURE ------------------------------------------------
   .motor_cfg.Rs                         = MOTOR2_RS,
-  .motor_cfg.Ld                         = MOTOR2_LD,
-  .motor_cfg.Lq                         = MOTOR2_LQ,
+  .motor_cfg.Ls                         = MOTOR2_LS,
   .motor_cfg.kv                         = MOTOR2_KV,
   .motor_cfg.ke                         = MOTOR2_KE,
   .motor_cfg.ki                         = MOTOR2_KI,
-  .motor_cfg.polePairs                  = (float32_t)MOTOR2_POLES_PAIRS,
+  .motor_cfg.polePairs                  = MOTOR2_POLES_PAIRS,
   //--- MOTOR ACQUISITION STRUCTURE -------------------------------------------
   .motor_acq.p_vaMeasReg                = (volatile uint16_t *)(MOTOR2_VA_ADC_PPB_RESULT_ADDR),
   .motor_acq.p_vbMeasReg                = (volatile uint16_t *)(MOTOR2_VB_ADC_PPB_RESULT_ADDR),
@@ -414,14 +418,16 @@ static foc_t motor_foc[] =
   .motor_enc.indexCompensated           = false,
   .motor_enc.indexToggle                = false,
   .motor_enc.rollOverFlag               = false,
-//  .motor_enc.rollOverFlagEn             = false,
   .motor_enc.speed.speedHighScaler      = (float32_t)MOTOR2_ENC_SPEED_HIGH_SCALE,
   .motor_enc.speed.speedHigh            = 0.0f,
   .motor_enc.speed.speedLowScaler       = (float32_t)MOTOR2_ENC_SPEED_LOW_SCALE,
   .motor_enc.speed.speedLow             = 0.0f,
-//  .motor_enc.speed.speedRef             = 0.0f,
+  .motor_enc.speed.alpha                = 0.0f,
+  //  .motor_enc.speed.speedRef             = 0.0f,
   .motor_enc.speed.speedMech            = 0.0f,
   .motor_enc.speed.speedElec            = 0.0f,
+  .motor_enc.speed.theta[NEW]           = 0.0f,
+  .motor_enc.speed.theta[OLD]           = 0.0f,
   .motor_enc.speed.speedFlt.a           = (float32_t)MOTOR2_ENC_SPEED_LPF_ALPHA,
   .motor_enc.speed.speedFlt.one_minus_a = (float32_t)MOTOR2_ENC_SPEED_LPF_ONE_M_ALPHA,
   //--- FSM motor initial state -----------------------------------------------
@@ -438,8 +444,8 @@ static foc_t motor_foc[] =
   .ialpha                               = 0.0f,
   .ibeta                                = 0.0f,
   //--- FOC - Park transform results ------------------------------------------
-  .id_noflt                                   = 0.0f,
-  .iq_noflt                                   = 0.0f,
+  .id_raw                               = 0.0f,
+  .iq_raw                               = 0.0f,
   //--- FOC - Park transform results ------------------------------------------
   .id                                   = 0.0f,
   .iq                                   = 0.0f,
@@ -475,6 +481,7 @@ static foc_t motor_foc[] =
   .piId.ki                              = (float32_t)MOTOR2_ID_REGULATOR_KI_COEF,
   .piId.integral                        = 0.0f,
   .piId.ff                              = 0.0f,
+  .piId.out                             = 0.0f,
   //--- FOC - Initialize PI controller (Iq) -----------------------------------
   .piIq.p_fb                            = (float32_t *)(&motor_foc[MOTOR_2].iq),
   .piIq.p_set                           = (float32_t *)(&motor_foc[MOTOR_2].iqRef),
@@ -484,6 +491,7 @@ static foc_t motor_foc[] =
   .piIq.ki                              = (float32_t)MOTOR2_IQ_REGULATOR_KI_COEF,
   .piIq.integral                        = 0.0f,
   .piIq.ff                              = 0.0f,
+  .piIq.out                             = 0.0f,
   //--- FOC - Initialize PD controller (Speed & position) ---------------------
   .pdPos.p_fbTheta                      = (float32_t *)(&motor_foc[MOTOR_2].motor_enc.thetaAbsolute),
   .pdPos.p_setTheta                     = (float32_t *)(&cmd_uOmodri.posRef[MOTOR_2]),
@@ -496,6 +504,7 @@ static foc_t motor_foc[] =
   .pdPos.derivative                     = 0.0f,
   .pdPos.p_ff                           = (float32_t *)(&cmd_uOmodri.iqRef[MOTOR_2]),
   .pdPos.p_sat                          = (float32_t *)(&cmd_uOmodri.iSat[MOTOR_2]),//(float32_t)MOTOR2_SPEED_REGULATOR_SATURATION,
+  .pdPos.out                            = 0.0f,
   //--- FOC - Q-axis resistance estimation ------------------------------------
   .resEst                               = 0.0f,
   //--- Resistance estimation low-pass filter ---------------------------------
@@ -554,6 +563,236 @@ static motor_t motor[] =
   .p_motorChBReg                = (volatile uint16_t *)(MOTOR2_PWM2_CMD_ADDR),
   .p_motorChCReg                = (volatile uint16_t *)(MOTOR2_PWM3_CMD_ADDR),
  },
+};
+
+static const com_cpu1_to_cm_t cpu1_to_cm_addr[] =
+{
+ //--- MOTOR PARAMS STRUCTURE ------------------------------------------------
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_1].motor_cfg.Rs,              .data_size = 4, .data_pos = 0x1001},
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_1].motor_cfg.Ls,              .data_size = 4, .data_pos = 0x1002},
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_1].motor_cfg.kv,              .data_size = 4, .data_pos = 0x1003},
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_1].motor_cfg.ke,              .data_size = 4, .data_pos = 0x1004},
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_1].motor_cfg.ki,              .data_size = 4, .data_pos = 0x1005},
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_1].motor_cfg.polePairs,       .data_size = 4, .data_pos = 0x1006},
+ //--- MOTOR ACQUISITION STRUCTURE -------------------------------------------
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_1].motor_acq.va,              .data_size = 4, .data_pos = 0x1011},
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_1].motor_acq.vb,              .data_size = 4, .data_pos = 0x1012},
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_1].motor_acq.vc,              .data_size = 4, .data_pos = 0x1013},
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_1].motor_acq.vbus,            .data_size = 4, .data_pos = 0x1014},
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_1].motor_acq.vExt,            .data_size = 4, .data_pos = 0x1015},
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_1].motor_acq.ia,              .data_size = 4, .data_pos = 0x1016},
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_1].motor_acq.ib,              .data_size = 4, .data_pos = 0x1017},
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_1].motor_acq.ic,              .data_size = 4, .data_pos = 0x1018},
+ //--- MOTOR ENCORDER STRUCTURE ----------------------------------------------
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_1].motor_enc.thetaElec,       .data_size = 4, .data_pos = 0x1021},
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_1].motor_enc.thetaMech[NEW],  .data_size = 4, .data_pos = 0x1022},
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_1].motor_enc.thetaMech[OLD],  .data_size = 4, .data_pos = 0x1023},
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_1].motor_enc.thetaIndex,      .data_size = 4, .data_pos = 0x1024},
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_1].motor_enc.thetaMechIndexed,.data_size = 4, .data_pos = 0x1025},
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_1].motor_enc.thetaAbsolute,   .data_size = 4, .data_pos = 0x1026},
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_1].motor_enc.turnNb,          .data_size = 2, .data_pos = 0x1027},
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_1].motor_enc.thetaDir,        .data_size = 2, .data_pos = 0x1028},
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_1].motor_enc.indexDetected,   .data_size = 2, .data_pos = 0x1029},
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_1].motor_enc.indexCompensated,.data_size = 2, .data_pos = 0x102A},
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_1].motor_enc.indexToggle,     .data_size = 2, .data_pos = 0x102B},
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_1].motor_enc.rollOverFlag,    .data_size = 2, .data_pos = 0x102C},
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_1].motor_enc.speed.speedHigh, .data_size = 4, .data_pos = 0x1031},
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_1].motor_enc.speed.speedLow,  .data_size = 4, .data_pos = 0x1032},
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_1].motor_enc.speed.speedMech, .data_size = 4, .data_pos = 0x1033},
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_1].motor_enc.speed.speedElec, .data_size = 4, .data_pos = 0x1034},
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_1].motor_enc.speed.theta[NEW],.data_size = 4, .data_pos = 0x1035},
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_1].motor_enc.speed.theta[OLD],.data_size = 4, .data_pos = 0x1036},
+ //--- FSM motor initial state -----------------------------------------------
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_1].motor_state,               .data_size = 2, .data_pos = 0x1041},
+ //--- Error message ---------------------------------------------------------
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_1].motor_error,               .data_size = 2, .data_pos = 0x1051},
+ //--- FOC - Sine / Cosine computation of angular position -------------------
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_1].sinTheta,                  .data_size = 4, .data_pos = 0x1061},
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_1].cosTheta,                  .data_size = 4, .data_pos = 0x1062},
+//    //--- FOC - Clarke transform results ----------------------------------------
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_1].ialpha,                    .data_size = 4, .data_pos = 0x1071},
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_1].ibeta,                     .data_size = 4, .data_pos = 0x1072},
+//    //--- FOC - Park transform results ------------------------------------------
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_1].id_raw,                    .data_size = 4, .data_pos = 0x1081},
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_1].iq_raw,                    .data_size = 4, .data_pos = 0x1082},
+ //--- FOC - Park transform results ------------------------------------------
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_1].id,                        .data_size = 4, .data_pos = 0x1091},
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_1].iq,                        .data_size = 4, .data_pos = 0x1092},
+ //--- FOC - Inverse Park transform results ----------------------------------
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_1].ud,                        .data_size = 4, .data_pos = 0x10A1},
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_1].uq,                        .data_size = 4, .data_pos = 0x10A2},
+ //--- FOC - Inverse Clarke transform results --------------------------------
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_1].ualpha,                    .data_size = 4, .data_pos = 0x10B1},
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_1].ubeta,                     .data_size = 4, .data_pos = 0x10B2},
+ //--- FOC - Phase commands --------------------------------------------------
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_1].ua,                        .data_size = 4, .data_pos = 0x10C1},
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_1].ub,                        .data_size = 4, .data_pos = 0x10C2},
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_1].uc,                        .data_size = 4, .data_pos = 0x10C3},
+ //--- FOC - Max current and voltage -----------------------------------------
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_1].vmax,                      .data_size = 4, .data_pos = 0x10D1},
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_1].imax,                      .data_size = 4, .data_pos = 0x10D2},
+ //--- FOC - Initialize duty cycle saturation --------------------------------
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_1].dtcMax,                    .data_size = 4, .data_pos = 0x10E1},
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_1].dtcMin,                    .data_size = 4, .data_pos = 0x10E2},
+ //--- FOC - Duty cycles -----------------------------------------------------
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_1].dtc_u,                     .data_size = 4, .data_pos = 0x10F1},
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_1].dtc_v,                     .data_size = 4, .data_pos = 0x10F2},
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_1].dtc_w,                     .data_size = 4, .data_pos = 0x10F3},
+ //--- FOC - PI setpoint values ----------------------------------------------
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_1].idRef,                     .data_size = 4, .data_pos = 0x1101},
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_1].iqRef,                     .data_size = 4, .data_pos = 0x1102},
+ //--- FOC - Initialize PI controller (Id) -----------------------------------
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_1].piId.err,                  .data_size = 4, .data_pos = 0x1111},
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_1].piId.kp,                   .data_size = 4, .data_pos = 0x1112},
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_1].piId.ki,                   .data_size = 4, .data_pos = 0x1113},
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_1].piId.integral,             .data_size = 4, .data_pos = 0x1114},
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_1].piId.ff,                   .data_size = 4, .data_pos = 0x1115},
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_1].piId.out,                  .data_size = 4, .data_pos = 0x1116},
+ //--- FOC - Initialize PI controller (Iq) -----------------------------------
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_1].piIq.err,                  .data_size = 4, .data_pos = 0x1121},
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_1].piIq.kp,                   .data_size = 4, .data_pos = 0x1122},
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_1].piIq.ki,                   .data_size = 4, .data_pos = 0x1123},
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_1].piIq.integral,             .data_size = 4, .data_pos = 0x1124},
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_1].piIq.ff,                   .data_size = 4, .data_pos = 0x1125},
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_1].piIq.out,                  .data_size = 4, .data_pos = 0x1126},
+ //--- FOC - Initialize PD controller (Speed & position) ---------------------
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_1].pdPos.errTheta,            .data_size = 4, .data_pos = 0x1131},
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_1].pdPos.errSpeed,            .data_size = 4, .data_pos = 0x1132},
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_1].pdPos.derivative,          .data_size = 4, .data_pos = 0x1133},
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_1].pdPos.out,                 .data_size = 4, .data_pos = 0x1134},
+
+
+ //--- MOTOR PARAMS STRUCTURE ------------------------------------------------
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_2].motor_cfg.Rs,              .data_size = 4, .data_pos = 0x2001},
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_2].motor_cfg.Ls,              .data_size = 4, .data_pos = 0x2002},
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_2].motor_cfg.kv,              .data_size = 4, .data_pos = 0x2003},
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_2].motor_cfg.ke,              .data_size = 4, .data_pos = 0x2004},
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_2].motor_cfg.ki,              .data_size = 4, .data_pos = 0x2005},
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_2].motor_cfg.polePairs,       .data_size = 4, .data_pos = 0x2006},
+ //--- MOTOR ACQUISITION STRUCTURE -------------------------------------------
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_2].motor_acq.va,              .data_size = 4, .data_pos = 0x2011},
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_2].motor_acq.vb,              .data_size = 4, .data_pos = 0x2012},
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_2].motor_acq.vc,              .data_size = 4, .data_pos = 0x2013},
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_2].motor_acq.vbus,            .data_size = 4, .data_pos = 0x2014},
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_2].motor_acq.vExt,            .data_size = 4, .data_pos = 0x2015},
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_2].motor_acq.ia,              .data_size = 4, .data_pos = 0x2016},
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_2].motor_acq.ib,              .data_size = 4, .data_pos = 0x2017},
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_2].motor_acq.ic,              .data_size = 4, .data_pos = 0x2018},
+ //--- MOTOR ENCORDER STRUCTURE ----------------------------------------------
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_2].motor_enc.thetaElec,       .data_size = 4, .data_pos = 0x2021},
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_2].motor_enc.thetaMech[NEW],  .data_size = 4, .data_pos = 0x2022},
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_2].motor_enc.thetaMech[OLD],  .data_size = 4, .data_pos = 0x2023},
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_2].motor_enc.thetaIndex,      .data_size = 4, .data_pos = 0x2024},
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_2].motor_enc.thetaMechIndexed,.data_size = 4, .data_pos = 0x2025},
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_2].motor_enc.thetaAbsolute,   .data_size = 4, .data_pos = 0x2026},
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_2].motor_enc.turnNb,          .data_size = 2, .data_pos = 0x2027},
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_2].motor_enc.thetaDir,        .data_size = 2, .data_pos = 0x2028},
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_2].motor_enc.indexDetected,   .data_size = 2, .data_pos = 0x2029},
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_2].motor_enc.indexCompensated,.data_size = 2, .data_pos = 0x202A},
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_2].motor_enc.indexToggle,     .data_size = 2, .data_pos = 0x202B},
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_2].motor_enc.rollOverFlag,    .data_size = 2, .data_pos = 0x202C},
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_2].motor_enc.speed.speedHigh, .data_size = 4, .data_pos = 0x2031},
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_2].motor_enc.speed.speedLow,  .data_size = 4, .data_pos = 0x2032},
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_2].motor_enc.speed.speedMech, .data_size = 4, .data_pos = 0x2033},
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_2].motor_enc.speed.speedElec, .data_size = 4, .data_pos = 0x2034},
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_2].motor_enc.speed.theta[NEW],.data_size = 4, .data_pos = 0x2035},
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_2].motor_enc.speed.theta[OLD],.data_size = 4, .data_pos = 0x2036},
+ //--- FSM motor initial state -----------------------------------------------
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_2].motor_state,               .data_size = 2, .data_pos = 0x2041},
+ //--- Error message ---------------------------------------------------------
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_2].motor_error,               .data_size = 2, .data_pos = 0x2051},
+ //--- FOC - Sine / Cosine computation of angular position -------------------
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_2].sinTheta,                  .data_size = 4, .data_pos = 0x2061},
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_2].cosTheta,                  .data_size = 4, .data_pos = 0x2062},
+//    //--- FOC - Clarke transform results ----------------------------------------
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_2].ialpha,                    .data_size = 4, .data_pos = 0x2071},
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_2].ibeta,                     .data_size = 4, .data_pos = 0x2072},
+//    //--- FOC - Park transform results ------------------------------------------
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_2].id_raw,                    .data_size = 4, .data_pos = 0x2081},
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_2].iq_raw,                    .data_size = 4, .data_pos = 0x2082},
+ //--- FOC - Park transform results ------------------------------------------
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_2].id,                        .data_size = 4, .data_pos = 0x2091},
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_2].iq,                        .data_size = 4, .data_pos = 0x2092},
+ //--- FOC - Inverse Park transform results ----------------------------------
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_2].ud,                        .data_size = 4, .data_pos = 0x20A1},
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_2].uq,                        .data_size = 4, .data_pos = 0x20A2},
+ //--- FOC - Inverse Clarke transform results --------------------------------
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_2].ualpha,                    .data_size = 4, .data_pos = 0x20B1},
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_2].ubeta,                     .data_size = 4, .data_pos = 0x20B2},
+ //--- FOC - Phase commands --------------------------------------------------
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_2].ua,                        .data_size = 4, .data_pos = 0x20C1},
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_2].ub,                        .data_size = 4, .data_pos = 0x20C2},
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_2].uc,                        .data_size = 4, .data_pos = 0x20C3},
+ //--- FOC - Max current and voltage -----------------------------------------
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_2].vmax,                      .data_size = 4, .data_pos = 0x20D1},
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_2].imax,                      .data_size = 4, .data_pos = 0x20D2},
+ //--- FOC - Initialize duty cycle saturation --------------------------------
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_2].dtcMax,                    .data_size = 4, .data_pos = 0x20E1},
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_2].dtcMin,                    .data_size = 4, .data_pos = 0x20E2},
+ //--- FOC - Duty cycles -----------------------------------------------------
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_2].dtc_u,                     .data_size = 4, .data_pos = 0x20F1},
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_2].dtc_v,                     .data_size = 4, .data_pos = 0x20F2},
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_2].dtc_w,                     .data_size = 4, .data_pos = 0x20F3},
+ //--- FOC - PI setpoint values ----------------------------------------------
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_2].idRef,                     .data_size = 4, .data_pos = 0x2101},
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_2].iqRef,                     .data_size = 4, .data_pos = 0x2102},
+ //--- FOC - Initialize PI controller (Id) -----------------------------------
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_2].piId.err,                  .data_size = 4, .data_pos = 0x2111},
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_2].piId.kp,                   .data_size = 4, .data_pos = 0x2112},
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_2].piId.ki,                   .data_size = 4, .data_pos = 0x2113},
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_2].piId.integral,             .data_size = 4, .data_pos = 0x2114},
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_2].piId.ff,                   .data_size = 4, .data_pos = 0x2115},
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_2].piId.out,                  .data_size = 4, .data_pos = 0x2116},
+ //--- FOC - Initialize PI controller (Iq) -----------------------------------
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_2].piIq.err,                  .data_size = 4, .data_pos = 0x2121},
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_2].piIq.kp,                   .data_size = 4, .data_pos = 0x2122},
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_2].piIq.ki,                   .data_size = 4, .data_pos = 0x2123},
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_2].piIq.integral,             .data_size = 4, .data_pos = 0x2124},
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_2].piIq.ff,                   .data_size = 4, .data_pos = 0x2125},
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_2].piIq.out,                  .data_size = 4, .data_pos = 0x2126},
+ //--- FOC - Initialize PD controller (Speed & position) ---------------------
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_2].pdPos.errTheta,            .data_size = 4, .data_pos = 0x2131},
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_2].pdPos.errSpeed,            .data_size = 4, .data_pos = 0x2132},
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_2].pdPos.derivative,          .data_size = 4, .data_pos = 0x2133},
+ {.data_addr = (uint32_t)&motor_foc[MOTOR_2].pdPos.out,                 .data_size = 4, .data_pos = 0x2134},
+
+
+ {.data_addr = (uint32_t)&status_msg.status.all,                        .data_size = 2, .data_pos = 0x4001},
+ {.data_addr = (uint32_t)&status_msg.timeStamp,                         .data_size = 2, .data_pos = 0x4002},
+ {.data_addr = (uint32_t)&status_msg.position[MOTOR_1].u16_lsb,         .data_size = 2, .data_pos = 0x4003},
+ {.data_addr = (uint32_t)&status_msg.position[MOTOR_1].u16_msb,         .data_size = 2, .data_pos = 0x4004},
+ {.data_addr = (uint32_t)&status_msg.position[MOTOR_2].u16_lsb,         .data_size = 2, .data_pos = 0x4005},
+ {.data_addr = (uint32_t)&status_msg.position[MOTOR_2].u16_msb,         .data_size = 2, .data_pos = 0x4006},
+ {.data_addr = (uint32_t)&status_msg.velocity[MOTOR_1],                 .data_size = 2, .data_pos = 0x4007},
+ {.data_addr = (uint32_t)&status_msg.velocity[MOTOR_2],                 .data_size = 2, .data_pos = 0x4008},
+ {.data_addr = (uint32_t)&status_msg.current[MOTOR_1],                  .data_size = 2, .data_pos = 0x4009},
+ {.data_addr = (uint32_t)&status_msg.current[MOTOR_2],                  .data_size = 2, .data_pos = 0x400A},
+ {.data_addr = (uint32_t)&status_msg.coilRes[MOTOR_1],                  .data_size = 2, .data_pos = 0x400B},
+ {.data_addr = (uint32_t)&status_msg.coilRes[MOTOR_2],                  .data_size = 2, .data_pos = 0x400C},
+ {.data_addr = (uint32_t)&status_msg.adcSamples[0],                     .data_size = 2, .data_pos = 0x400D},
+ {.data_addr = (uint32_t)&status_msg.adcSamples[1],                     .data_size = 2, .data_pos = 0x400E},
+ {.data_addr = (uint32_t)&status_msg.lastCmdIndex,                      .data_size = 2, .data_pos = 0x400F},
+ {.data_addr = (uint32_t)&status_msg.crc.u16_lsb,                       .data_size = 2, .data_pos = 0x4010},
+ {.data_addr = (uint32_t)&status_msg.crc.u16_msb,                       .data_size = 2, .data_pos = 0x4011},
+
+
+ {.data_addr = (uint32_t)&cmd_uOmodri.mode.all,                         .data_size = 2, .data_pos = 0x8001},
+ {.data_addr = (uint32_t)&cmd_uOmodri.posRef[MOTOR_1],                  .data_size = 4, .data_pos = 0x8002},
+ {.data_addr = (uint32_t)&cmd_uOmodri.posRef[MOTOR_2],                  .data_size = 4, .data_pos = 0x8003},
+ {.data_addr = (uint32_t)&cmd_uOmodri.velRef[MOTOR_1],                  .data_size = 4, .data_pos = 0x8004},
+ {.data_addr = (uint32_t)&cmd_uOmodri.velRef[MOTOR_2],                  .data_size = 4, .data_pos = 0x8005},
+ {.data_addr = (uint32_t)&cmd_uOmodri.iqRef[MOTOR_1],                   .data_size = 4, .data_pos = 0x8006},
+ {.data_addr = (uint32_t)&cmd_uOmodri.iqRef[MOTOR_2],                   .data_size = 4, .data_pos = 0x8007},
+ {.data_addr = (uint32_t)&cmd_uOmodri.kpCoeff[MOTOR_1],                 .data_size = 4, .data_pos = 0x8008},
+ {.data_addr = (uint32_t)&cmd_uOmodri.kpCoeff[MOTOR_2],                 .data_size = 4, .data_pos = 0x8009},
+ {.data_addr = (uint32_t)&cmd_uOmodri.kdCoeff[MOTOR_1],                 .data_size = 4, .data_pos = 0x800A},
+ {.data_addr = (uint32_t)&cmd_uOmodri.kdCoeff[MOTOR_2],                 .data_size = 4, .data_pos = 0x800B},
+ {.data_addr = (uint32_t)&cmd_uOmodri.iSat[MOTOR_1],                    .data_size = 4, .data_pos = 0x800C},
+ {.data_addr = (uint32_t)&cmd_uOmodri.iSat[MOTOR_2],                    .data_size = 4, .data_pos = 0x800D},
+ {.data_addr = (uint32_t)&cmd_uOmodri.cptTimeout,                       .data_size = 4, .data_pos = 0x800E},
+ {.data_addr = (uint32_t)&cmd_uOmodri.index,                            .data_size = 2, .data_pos = 0x800F},
+
+ {.data_addr = (uint32_t)UINT32_MAX,                                    .data_size = 4, .data_pos = 0x0000},
 };
 
 #endif  /*__UOMODRI_CONFIG_HANDLERS_H__*/

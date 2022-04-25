@@ -79,20 +79,20 @@
 #define DBG_TX_MSG_IQREF_CMD_8BIT_SIZE          (2 * DBG_TX_MSG_IQREF_CMD_16BIT_SIZE)
 //#define DBG_TX_MSG_IQREF_PD_OUT_16BIT_SIZE      (1)
 //#define DBG_TX_MSG_IQREF_PD_OUT_8BIT_SIZE       (2 * DBG_TX_MSG_IQREF_PD_OUT_16BIT_SIZE)
-#define DBG_TX_MSG_IQ_SENS_16BIT_SIZE           (1)
-#define DBG_TX_MSG_IQ_SENS_8BIT_SIZE            (2 * DBG_TX_MSG_IQ_SENS_16BIT_SIZE)
-#define DBG_TX_MSG_ID_SENS_16BIT_SIZE           (1)
-#define DBG_TX_MSG_ID_SENS_8BIT_SIZE            (2 * DBG_TX_MSG_ID_SENS_16BIT_SIZE)
-#define DBG_TX_MSG_DTC_16BIT_SIZE               (3)
-#define DBG_TX_MSG_DTC_8BIT_SIZE                (2 * DBG_TX_MSG_DTC_16BIT_SIZE)
+#define DBG_TX_MSG_IQ_MEAS_16BIT_SIZE           (1)
+#define DBG_TX_MSG_IQ_MEAS_8BIT_SIZE            (2 * DBG_TX_MSG_IQ_MEAS_16BIT_SIZE)
+#define DBG_TX_MSG_ID_MEAS_16BIT_SIZE           (1)
+#define DBG_TX_MSG_ID_MEAS_8BIT_SIZE            (2 * DBG_TX_MSG_ID_MEAS_16BIT_SIZE)
+#define DBG_TX_MSG_DTC_32BIT_SIZE               (2)
+#define DBG_TX_MSG_DTC_8BIT_SIZE                (4 * DBG_TX_MSG_DTC_32BIT_SIZE)
 //#define DBG_TX_MSG_STATE_MACHINE_16BIT_SIZE     (0)
 //#define DBG_TX_MSG_STATE_MACHINE_8BIT_SIZE      (1)
 #define DBG_TX_MSG_PAYLOAD_8BIT_SIZE            (DBG_TX_MSG_HEADER_8BIT_SIZE + \
                                                  DBG_TX_MSG_COUNTER_8BIT_SIZE + \
                                                  DBG_TX_MSG_POSITION_8BIT_SIZE + \
                                                  DBG_TX_MSG_IQREF_CMD_8BIT_SIZE + \
-                                                 DBG_TX_MSG_IQ_SENS_8BIT_SIZE + \
-                                                 DBG_TX_MSG_ID_SENS_8BIT_SIZE + \
+                                                 DBG_TX_MSG_IQ_MEAS_8BIT_SIZE + \
+                                                 DBG_TX_MSG_ID_MEAS_8BIT_SIZE + \
                                                  DBG_TX_MSG_DTC_8BIT_SIZE)
 #define DBG_TX_MSG_PAYLOAD_16BIT_SIZE           (DBG_TX_MSG_PAYLOAD_8BIT_SIZE / 2)
 #define DBG_TX_MSG_CRC_8BIT_SIZE                (1)

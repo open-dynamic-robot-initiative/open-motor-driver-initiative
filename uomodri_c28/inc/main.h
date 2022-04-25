@@ -28,56 +28,34 @@
 /***********************************************************************
  * DEFINES
  ***********************************************************************/
-//#define STATUS_MSG      (0)
-#define POS_M1_LSB      (0)
-#define POS_M1_MSB      (1)
-#define CMD_IQREF       (2)
-#define FOC_IQ_SENS     (3)
-#define FOC_ID_SENS     (4)
-#define FOC_DTC_U       (5)
-#define FOC_DTC_V       (6)
-#define FOC_DTC_W       (7)
 
 /***********************************************************************
  * GLOBAL VARIABLES
  ***********************************************************************/
-#if (defined CLA_CORE_ENABLE) && (CLA_CORE_ENABLE)
-// <Step 1>: Assign the CLA variables to their respective memory spaces
-//  - Input/Output variables should go into the Cla1ToCpuMsgRam/CpuToCla1MsgRam
-//  - Global variables in the .cla file are automatically placed in the ".bss_cla" so
-//    no manual placement is required.
-//  - The same goes for constants in the .cla file; they are placed in the
-//    ".const_cla" section but you will need to load it to FLASH and then copy
-//    to RAM at runtime
-//  - You can manually place shared variables in a user defined section, e.g. Cla1DataRam0,
-//     to allow the C28x to also access them
-//Task 1 (C) Variables
-//#pragma DATA_SECTION(polePairs, "CpuToCla1MsgRAM");
-//uint8_t     polePairs;    // Number of pole pairs of the motor
-//#pragma DATA_SECTION(thetaMechScaler, "CpuToCla1MsgRAM");
-//float   thetaMechScaler; // [pu/register]
-//#pragma DATA_SECTION(thetaMech, "CpuToCla1MsgRAM");
-//float32_t   thetaMech; // [pu]
-#pragma DATA_SECTION(thetaDir, "Cla1ToCpuMsgRAM");
-uint8_t thetaDir; //0 = CCW/reverse, 1 = CW/forward
-#pragma DATA_SECTION(thetaMech, "Cla1ToCpuMsgRAM");
-float   thetaMech[2]; // [pu]
-#pragma DATA_SECTION(thetaElec, "Cla1ToCpuMsgRAM");
-float   thetaElec; // [pu]
-//#pragma DATA_SECTION(thetaMechCal, "Cla1ToCpuMsgRAM");
-//float32_t   thetaMechCal; // [pu]
-#endif
 #pragma DATA_ALIGN (cmd_msg, 8)
 #pragma DATA_SECTION(cmd_msg, "ramgs1")
 mst2slv_msg_t   cmd_msg;
+
 #pragma DATA_ALIGN (cmd_msg, 8)
-#pragma DATA_SECTION(status_msg, "MSGRAM_CPU_TO_CM") //#pragma DATA_SECTION(status_msg, "ramgs1")
+#pragma DATA_SECTION(status_msg, "MSGRAM_CPU_TO_CM")
 slv2mst_msg_t   status_msg;
+
 #pragma DATA_SECTION(led_msg, "ramgs1")
 uint16_t        led_msg[LED_MSG_TX_16BIT_LENGTH];
 //{0x0000, 0x9B6D, 0xA492, 0x4924, 0x9249, 0x2400}; // green
 //{0x0000, 0x9249, 0x24DB, 0x6DB6, 0x9249, 0x2400}; // red
 //{0x0000, 0x9249, 0x2492, 0x4924, 0xDB6D, 0xB600}; // blue
+
+#pragma DATA_ALIGN (ipc_dbg_addr, 2)
+const uint32_t ipc_dbg_addr[] =
+{
+ (uint32_t)&motor_foc[MOTOR_1].motor_enc.thetaAbsolute,
+ (uint32_t)&cmd_uOmodri.iqRef[MOTOR_1],
+ (uint32_t)&motor_foc[MOTOR_1].iq,
+ (uint32_t)&motor_foc[MOTOR_1].id,
+ (uint32_t)&motor_foc[MOTOR_1].motor_enc.speed.speedHigh,
+ (uint32_t)&motor_foc[MOTOR_1].motor_enc.speed.speedMech,
+};
 #if (defined UOMODRI_USE_REV_1_0_CONFIG) && (!UOMODRI_USE_REV_1_0_CONFIG)
 //#pragma DATA_ALIGN ( cmd_Master_msg , 2 )
 #pragma DATA_SECTION(cmd_Master_msg, "ramgs0");

@@ -72,25 +72,34 @@ inline void FOC_runControl(foc_t* p_foc)
     p_foc->ialpha           = ((2.0f * p_acq->ia) - p_acq->ib - p_acq->ic) * FM_1DIV3;
     p_foc->ibeta            = (p_acq->ib - p_acq->ic) * FM_1DIVSQRT3;
     // Park transform + filtering
-//    float32_t id            = (p_foc->sinTheta * p_foc->ibeta) + (p_foc->cosTheta * p_foc->ialpha);
-    p_foc->id_noflt         = (p_foc->sinTheta * p_foc->ibeta) + (p_foc->cosTheta * p_foc->ialpha);
-    UOMODRI_IDQ_FLT(p_foc->iParkFlt, p_foc->id, p_foc->id_noflt);
-//    float32_t iq            = (p_foc->cosTheta * p_foc->ibeta) - (p_foc->sinTheta * p_foc->ialpha);
-    p_foc->iq_noflt         = (p_foc->cosTheta * p_foc->ibeta) - (p_foc->sinTheta * p_foc->ialpha);
-    UOMODRI_IDQ_FLT(p_foc->iParkFlt, p_foc->iq, p_foc->iq_noflt);
+    p_foc->id_raw           = (p_foc->sinTheta * p_foc->ibeta) + (p_foc->cosTheta * p_foc->ialpha);
+    UOMODRI_IDQ_FLT(p_foc->iParkFlt, p_foc->id, p_foc->id_raw);
+    p_foc->iq_raw           = (p_foc->cosTheta * p_foc->ibeta) - (p_foc->sinTheta * p_foc->ialpha);
+    UOMODRI_IDQ_FLT(p_foc->iParkFlt, p_foc->iq, p_foc->iq_raw);
     // Compute decoupling feed-forward terms
 #if((defined UOMODRI_FEED_FORWARD_ENABLE) && (UOMODRI_FEED_FORWARD_ENABLE))
     const params_t* p_cfg   = &p_foc->motor_cfg;
     speed_t*        p_speed = &p_enc->speed;
-    p_foc->piId.ff          = -1.0f * p_speed->speedElec * p_cfg->Lq * p_foc->iq;
-    p_foc->piIq.ff          = p_cfg->Rs * p_foc->iqRef + p_speed->speedElec * p_cfg->ke;
+    p_foc->piId.ff          = -1.0f * p_speed->speedMech* p_cfg->Ls * p_foc->iq;
+    p_foc->piIq.ff          = (p_speed->speedMech * p_cfg->ke) + (p_speed->speedMech * p_cfg->Ls * p_foc->id);//p_cfg->Rs * p_foc->iqRef + p_speed->speedElec * p_cfg->ke;
 #else
     p_foc->piId.ff          = 0.0f;
     p_foc->piIq.ff          = 0.0f;
 #endif
     // Compute Id(Flux Current) and Iq (Torque Current) PI controllers
-    p_foc->ud               = FOC_runPI(&p_foc->piId);
-    p_foc->uq               = FOC_runPI(&p_foc->piIq);
+//    p_foc->ud               = ((p_foc->motor_state == MOTOR_STATE_READY) || (p_foc->motor_state == MOTOR_STATE_STOP)) ? (0.0f) : (FOC_runPI(&p_foc->piId));
+//    p_foc->uq               = ((p_foc->motor_state == MOTOR_STATE_READY) || (p_foc->motor_state == MOTOR_STATE_STOP)) ? (p_foc->iqRef) : (FOC_runPI(&p_foc->piIq));
+    if((p_foc->motor_state == MOTOR_STATE_READY) || (p_foc->motor_state == MOTOR_STATE_STOP))
+    {
+        p_foc->ud               = 0.0f;//FOC_runPI(&p_foc->piId);
+        p_foc->uq               = p_foc->iqRef;//FOC_runPI(&p_foc->piIq);
+    }
+    else
+    {
+        p_foc->ud               = FOC_runPI(&p_foc->piId);
+        p_foc->uq               = FOC_runPI(&p_foc->piIq);
+    }
+
 //    TODO : check if uq_max and v_vref are necessaries
 //    float32_t uq_max    = __sqrt((p_foc->motor_acq.vmax * p_foc->motor_acq.vmax) - (p_foc->ud * p_foc->ud));
 //    float32_t v_ref     = __sqrt((p_foc->ud * p_foc->ud) + (p_foc->uq * p_foc->uq));
@@ -198,6 +207,8 @@ void FOC_resetStruct(foc_t* p_foc)
     p_foc->cosTheta         = 0.0f;
     p_foc->ialpha           = 0.0f;
     p_foc->ibeta            = 0.0f;
+    p_foc->id_raw           = 0.0f;
+    p_foc->iq_raw           = 0.0f;
     p_foc->id               = 0.0f;
     p_foc->iq               = 0.0f;
     p_foc->ud               = 0.0f;

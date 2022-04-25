@@ -12,6 +12,7 @@
  * VARIABLES
  ***********************************************************************/
 
+
 /***********************************************************************
  * FUNCTIONS DECLARATION
  ***********************************************************************/
@@ -42,36 +43,228 @@ void main(void)
     COM_resetCmdStruct(&cmd_uOmodri);
     // Interrupts initialization
     HAL_INT_ini(InterruptList);
+
+//    uint16_t cpu1_to_cm_loop = 0;
+//    while(cpu1_to_cm_addr[cpu1_to_cm_loop].data_addr != UINT32_MAX)
+//    {
+//        // Send translation address for status message structure
+//        IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE,
+//                        cpu1_to_cm_addr[cpu1_to_cm_loop].data_pos,
+//                        cpu1_to_cm_addr[cpu1_to_cm_loop].data_addr,
+//                        cpu1_to_cm_addr[cpu1_to_cm_loop].data_size);
+//        IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+//        cpu1_to_cm_loop++;
+//    }
+
+//    motor_t*    p_motor         = &motor[MOTOR_1];
+//    foc_t*      p_foc           = p_motor->p_motorFOC;
+//    params_t*   p_cfg           = &p_foc->motor_cfg;
+//    acq_t*      p_acq           = &p_foc->motor_acq;
+//    encoder_t*  p_enc           = &p_foc->motor_enc;
+//    pi_t*       p_piId          = &p_foc->piId;
+//    pi_t*       p_piIq          = &p_foc->piIq;
+//    pd_t*       p_pdPos         = &p_foc->pdPos;
+//
 //    // Send translation address for status message structure
-//    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, STATUS_MSG, (uint32_t)&status_msg.status, 1);
+//    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, POS_M1_LSB, (uint32_t)&p_foc->motor_id, 1);
 //    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+//
+//    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, POS_M1_LSB, (uint32_t)&p_cfg->Rs, 1);
+//    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+//    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, POS_M1_LSB, (uint32_t)&p_cfg->Ld, 1);
+//    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+//    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, POS_M1_LSB, (uint32_t)&p_cfg->Lq, 1);
+//    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+//    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, POS_M1_LSB, (uint32_t)&p_cfg->kv, 1);
+//    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+//    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, POS_M1_LSB, (uint32_t)&p_cfg->ke, 1);
+//    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+//    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, POS_M1_LSB, (uint32_t)&p_cfg->ki, 1);
+//    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+//    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, POS_M1_LSB, (uint32_t)&p_cfg->polePairs, 1);
+//    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+//    //--- MOTOR ACQUISITION STRUCTURE -------------------------------------------
+//    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, POS_M1_LSB, (uint32_t)&p_acq->va, 1);
+//    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+//    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, POS_M1_LSB, (uint32_t)&p_acq->vb, 1);
+//    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+//    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, POS_M1_LSB, (uint32_t)&p_acq->vc, 1);
+//    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+//    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, POS_M1_LSB, (uint32_t)&p_acq->vbus, 1);
+//    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+//    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, POS_M1_LSB, (uint32_t)&p_acq->vExt, 1);
+//    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+//    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, POS_M1_LSB, (uint32_t)&p_acq->ia, 1);
+//    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+//    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, POS_M1_LSB, (uint32_t)&p_acq->ib, 1);
+//    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+//    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, POS_M1_LSB, (uint32_t)&p_acq->ic, 1);
+//    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+//    //--- MOTOR ENCORDER STRUCTURE ----------------------------------------------
+//    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, POS_M1_LSB, (uint32_t)&p_enc->thetaElec, 1);
+//    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+//    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, POS_M1_LSB, (uint32_t)&p_enc->thetaMech[NEW], 1);
+//    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+//    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, POS_M1_LSB, (uint32_t)&p_enc->thetaMech[OLD], 1);
+//    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+//    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, POS_M1_LSB, (uint32_t)&p_enc->thetaIndex, 1);
+//    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+//    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, POS_M1_LSB, (uint32_t)&p_enc->thetaMechIndexed, 1);
+//    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+//    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, POS_M1_LSB, (uint32_t)&p_enc->thetaAbsolute, 1);
+//    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+//    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, POS_M1_LSB, (uint32_t)&p_enc->turnNb, 1);
+//    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+//    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, POS_M1_LSB, (uint32_t)&p_enc->thetaDir, 1);
+//    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+//    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, POS_M1_LSB, (uint32_t)&p_enc->indexDetected, 1);
+//    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+//    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, POS_M1_LSB, (uint32_t)&p_enc->indexCompensated, 1);
+//    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+//    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, POS_M1_LSB, (uint32_t)&p_enc->indexToggle, 1);
+//    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+//    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, POS_M1_LSB, (uint32_t)&p_enc->rollOverFlag, 1);
+//    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+//    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, POS_M1_LSB, (uint32_t)&p_enc->speed.speedHigh, 1);
+//    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+//    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, POS_M1_LSB, (uint32_t)&p_enc->speed.speedLow, 1);
+//    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+//    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, POS_M1_LSB, (uint32_t)&p_enc->speed.speedMech, 1);
+//    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+//    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, POS_M1_LSB, (uint32_t)&p_enc->speed.speedElec, 1);
+//    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+//    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, POS_M1_LSB, (uint32_t)&p_enc->speed.theta[NEW], 1);
+//    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+//    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, POS_M1_LSB, (uint32_t)&p_enc->speed.theta[OLD], 1);
+//    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+//    //--- FSM motor initial state -----------------------------------------------
+//    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, POS_M1_LSB, (uint32_t)&p_foc->motor_state, 1);
+//    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+//    //--- Error message ---------------------------------------------------------
+//    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, POS_M1_LSB, (uint32_t)&p_foc->motor_error, 1);
+//    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+//    //--- FOC - Sine / Cosine computation of angular position -------------------
+//    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, POS_M1_LSB, (uint32_t)&p_foc->sinTheta, 1);
+//    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+//    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, POS_M1_LSB, (uint32_t)&p_foc->cosTheta, 1);
+//    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+////    //--- FOC - Clarke transform results ----------------------------------------
+//    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, POS_M1_LSB, (uint32_t)&p_foc->ialpha, 1);
+//    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+//    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, POS_M1_LSB, (uint32_t)&p_foc->ibeta, 1);
+//    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+////    //--- FOC - Park transform results ------------------------------------------
+//    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, POS_M1_LSB, (uint32_t)&p_foc->id_raw, 1);
+//    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+//    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, POS_M1_LSB, (uint32_t)&p_foc->iq_raw, 1);
+//    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+//    //--- FOC - Park transform results ------------------------------------------
+//    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, POS_M1_LSB, (uint32_t)&p_foc->id_flt, 1);
+//    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+//    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, POS_M1_LSB, (uint32_t)&p_foc->iq_flt, 1);
+//    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+//    //--- FOC - Inverse Park transform results ----------------------------------
+//    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, POS_M1_LSB, (uint32_t)&p_foc->ud, 1);
+//    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+//    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, POS_M1_LSB, (uint32_t)&p_foc->uq, 1);
+//    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+//    //--- FOC - Inverse Clarke transform results --------------------------------
+//    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, POS_M1_LSB, (uint32_t)&p_foc->ualpha, 1);
+//    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+//    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, POS_M1_LSB, (uint32_t)&p_foc->ubeta, 1);
+//    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+//    //--- FOC - Phase commands --------------------------------------------------
+//    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, POS_M1_LSB, (uint32_t)&p_foc->ua, 1);
+//    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+//    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, POS_M1_LSB, (uint32_t)&p_foc->ub, 1);
+//    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+//    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, POS_M1_LSB, (uint32_t)&p_foc->uc, 1);
+//    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+//    //--- FOC - Max current and voltage -----------------------------------------
+//    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, POS_M1_LSB, (uint32_t)&p_foc->vmax, 1);
+//    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+//    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, POS_M1_LSB, (uint32_t)&p_foc->imax, 1);
+//    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+//    //--- FOC - Initialize duty cycle saturation --------------------------------
+//    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, POS_M1_LSB, (uint32_t)&p_foc->dtcMax, 1);
+//    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+//    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, POS_M1_LSB, (uint32_t)&p_foc->dtcMin, 1);
+//    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+//    //--- FOC - Duty cycles -----------------------------------------------------
+//    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, POS_M1_LSB, (uint32_t)&p_foc->dtc_u, 1);
+//    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+//    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, POS_M1_LSB, (uint32_t)&p_foc->dtc_v, 1);
+//    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+//    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, POS_M1_LSB, (uint32_t)&p_foc->dtc_w, 1);
+//    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+//    //--- FOC - PI setpoint values ----------------------------------------------
+//    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, POS_M1_LSB, (uint32_t)&p_foc->idRef, 1);
+//    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+//    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, POS_M1_LSB, (uint32_t)&p_foc->iqRef, 1);
+//    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+//    //--- FOC - Initialize PI controller (Id) -----------------------------------
+//    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, POS_M1_LSB, (uint32_t)&p_piId->err, 1);
+//    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+//    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, POS_M1_LSB, (uint32_t)&p_piId->kp, 1);
+//    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+//    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, POS_M1_LSB, (uint32_t)&p_piId->ki, 1);
+//    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+//    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, POS_M1_LSB, (uint32_t)&p_piId->integral, 1);
+//    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+//    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, POS_M1_LSB, (uint32_t)&p_piId->ff, 1);
+//    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+//    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, POS_M1_LSB, (uint32_t)&p_piId->out, 1);
+//    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+//    //--- FOC - Initialize PI controller (Iq) -----------------------------------
+//    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, POS_M1_LSB, (uint32_t)&p_piIq->err, 1);
+//    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+//    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, POS_M1_LSB, (uint32_t)&p_piIq->kp, 1);
+//    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+//    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, POS_M1_LSB, (uint32_t)&p_piIq->ki, 1);
+//    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+//    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, POS_M1_LSB, (uint32_t)&p_piIq->integral, 1);
+//    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+//    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, POS_M1_LSB, (uint32_t)&p_piIq->ff, 1);
+//    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+//    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, POS_M1_LSB, (uint32_t)&p_piIq->out, 1);
+//    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+//    //--- FOC - Initialize PD controller (Speed & position) ---------------------
+//    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, POS_M1_LSB, (uint32_t)&p_pdPos->errTheta, 1);
+//    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+//    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, POS_M1_LSB, (uint32_t)&p_pdPos->errSpeed, 1);
+//    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+//    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, POS_M1_LSB, (uint32_t)&p_pdPos->derivative, 1);
+//    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+//    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, POS_M1_LSB, (uint32_t)&p_pdPos->out, 1);
+//    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+
+
     // Send translation address for status message structure
-    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, POS_M1_LSB, (uint32_t)&status_msg.position[MOTOR_1].u16_lsb, 1);
-    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
-    // Send translation address for status message structure
-    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, POS_M1_MSB, (uint32_t)&status_msg.position[MOTOR_1].u16_msb, 1);
+    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, 0, (uint32_t)&motor_foc[MOTOR_1].motor_enc.thetaAbsolute, 1);
     IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
     // Send translation address for uOmodri command structure
-    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, CMD_IQREF, (uint32_t)&cmd_uOmodri.iqRef[MOTOR_1], 1);
+    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, 1, (uint32_t)&cmd_uOmodri.iqRef[MOTOR_1], 1);
     IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
     // Send translation address for M1 FOC motor structure
-    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, FOC_IQ_SENS, (uint32_t)&motor_foc[MOTOR_1].iq, 1);
+    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, 2, (uint32_t)&motor_foc[MOTOR_1].iq, 1);
     IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
     // Send translation address for M1 FOC motor structure
-    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, FOC_ID_SENS, (uint32_t)&motor_foc[MOTOR_1].id, 1);
+    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, 3, (uint32_t)&motor_foc[MOTOR_1].id, 1);
     IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
     // Send translation address for M1 FOC motor structure
-    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, FOC_DTC_U, (uint32_t)&motor_foc[MOTOR_1].dtc_u, 1);
+    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, 4, (uint32_t)&motor_foc[MOTOR_1].motor_enc.speed.speedHigh, 1);
     IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
     // Send translation address for M1 FOC motor structure
-    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, FOC_DTC_V, (uint32_t)&motor_foc[MOTOR_1].dtc_v, 1);
+    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, 5, (uint32_t)&motor_foc[MOTOR_1].motor_enc.speed.speedMech, 1);
     IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
-    // Send translation address for M1 FOC motor structure
-    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, FOC_DTC_W, (uint32_t)&motor_foc[MOTOR_1].dtc_w, 1);
-    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
-//    // Send translation address for M1 FOC motor structure
-//    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, FOC_FSM_M2, (uint32_t)&motor_foc[MOTOR_2].motor_state, 1);
-//    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+
+//
+//    int16_t i = 0;
+//    for(i = ((sizeof(ipc_dbg_addr) / sizeof(uint32_t *)) - 1); i > -1; i--)
+//    {
+//        IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, i, ipc_dbg_addr[i], 1);
+//        IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+//    }
 
     // Infinite loop
     while(1)
@@ -99,9 +292,6 @@ void main(void)
             }
             motor[MOTOR_1].itDone   = false;
             motor[MOTOR_2].itDone   = false;
-            if(!IPC_isFlagBusyLtoR(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG))
-                IPC_setFlagLtoR(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG);
-//            IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_DISABLE, foc_m1_addr, foc_m2_addr, status_msg_addr);
         }
         /*
          * SPI LED TX management - Create message & send it @ 1ms
@@ -218,7 +408,6 @@ __attribute__((interrupt)) void adc_isrMotor1(void)
     motor_t*    p_motor         = &motor[MOTOR_1];
     foc_t*      p_foc           = p_motor->p_motorFOC;
     encoder_t*  p_enc           = &p_foc->motor_enc;
-    uint16_t*   p_state         = &p_foc->motor_state;
     uint8_t     timeout         = (uint8_t)cmd_uOmodri.mode.bit.TIMEOUT;
     bool_t system_disable_flag  = !cmd_uOmodri.mode.bit.ES;
     bool_t motor_disable_flag   = !cmd_uOmodri.mode.bit.EM1;
@@ -241,9 +430,9 @@ __attribute__((interrupt)) void adc_isrMotor1(void)
     p_foc->motor_error         |= (motor_rollover_flag)                             ? (MOTOR_ERROR_POS_ROLLOVER): (p_foc->motor_error);
     p_foc->motor_error         |= (motor_drv_fault_flag)                            ? (MOTOR_ERROR_DRV_NFAULT)  : (p_foc->motor_error);
     p_foc->motor_error         |= (com_timeout_flag)                                ? (MOTOR_ERROR_COM_TIMEOUT) : (p_foc->motor_error);
-    *p_state                    = (p_foc->motor_error || cmd_uOmodri.mode.bit.RST)  ? (MOTOR_STATE_ERROR)       : (*p_state);
+    p_foc->motor_state          = (p_foc->motor_error || cmd_uOmodri.mode.bit.RST)  ? (MOTOR_STATE_ERROR)       : (p_foc->motor_state);
 
-    switch(*p_state)
+    switch(p_foc->motor_state)
     {
     case MOTOR_STATE_INIT:
     default:
@@ -251,7 +440,7 @@ __attribute__((interrupt)) void adc_isrMotor1(void)
         p_foc->idRef            = 0.0f;
         p_foc->iqRef            = 0.0f;
 //        p_foc->errorStatus     &= ~(FOC_ERROR_ENCODER | FOC_ERROR_POS_ROLLOVER);
-        *p_state                = (motor_disable_flag || system_disable_flag)   ? (MOTOR_STATE_INIT)        : (MOTOR_STATE_ALIGN_UP);
+        p_foc->motor_state      = (motor_disable_flag || system_disable_flag)   ? (MOTOR_STATE_INIT)        : (MOTOR_STATE_ALIGN_UP);
         ENC_resetPeriph(p_enc);
         FOC_resetStruct(p_foc);
         MOT_stopCommand(p_motor);
@@ -259,10 +448,10 @@ __attribute__((interrupt)) void adc_isrMotor1(void)
 
     case MOTOR_STATE_ALIGN_UP:
         p_motor->itCnt          = 0U;
-        p_foc->idRef           += 1e-5f;
+        p_foc->idRef           += 1e-4f;
         p_foc->iqRef            = 0.0f;
-        *p_state                = (p_foc->idRef < MOTOR1_CURRENT_ALIGN_MAX)     ? (MOTOR_STATE_ALIGN_UP)    : (MOTOR_STATE_ALIGN_FIX);
-        *p_state                = (motor_disable_flag || system_disable_flag)   ? (MOTOR_STATE_INIT)        : (*p_state);
+        p_foc->motor_state      = (p_foc->idRef < MOTOR1_CURRENT_ALIGN_MAX)     ? (MOTOR_STATE_ALIGN_UP)    : (MOTOR_STATE_ALIGN_FIX);
+        p_foc->motor_state      = (motor_disable_flag || system_disable_flag)   ? (MOTOR_STATE_INIT)        : (p_foc->motor_state);
         ENC_resetStruct(p_enc);
         ENC_resetPeriph(p_enc);
         FOC_runControl(p_foc);
@@ -273,8 +462,8 @@ __attribute__((interrupt)) void adc_isrMotor1(void)
         p_motor->itCnt         += 1U;
         p_foc->idRef            = MOTOR1_CURRENT_ALIGN_MAX; // Maintain alignment current
         p_foc->iqRef            = 0.0f;
-        *p_state                = (p_motor->itCnt < (2 * PWM_FREQ))             ? (MOTOR_STATE_ALIGN_FIX)   : (MOTOR_STATE_READY);//(MOTOR_ALIGN_DONE); // wait 1s
-        *p_state                = (motor_disable_flag || system_disable_flag)   ? (MOTOR_STATE_INIT)        : (*p_state);
+        p_foc->motor_state      = (p_motor->itCnt < (2 * PWM_FREQ))             ? (MOTOR_STATE_ALIGN_FIX)   : (MOTOR_STATE_READY);//(MOTOR_ALIGN_DONE); // wait 1s
+        p_foc->motor_state      = (motor_disable_flag || system_disable_flag)   ? (MOTOR_STATE_INIT)        : (p_foc->motor_state);
         ENC_resetStruct(p_enc);
         ENC_resetPeriph(p_enc);
         FOC_runControl(p_foc);
@@ -285,8 +474,8 @@ __attribute__((interrupt)) void adc_isrMotor1(void)
         p_motor->itCnt         += 1U;
         p_foc->idRef            = 0.0f;
         p_foc->iqRef            = FOC_runPD(&p_foc->pdPos);
-        *p_state                = (motor_disable_flag)  ? (MOTOR_STATE_STOP)    : (MOTOR_STATE_READY);
-        *p_state                = (system_disable_flag) ? (MOTOR_STATE_INIT)    : (*p_state);
+        p_foc->motor_state      = (motor_disable_flag)  ? (MOTOR_STATE_STOP)    : (MOTOR_STATE_READY);
+        p_foc->motor_state      = (system_disable_flag) ? (MOTOR_STATE_INIT)    : (p_foc->motor_state);
         FOC_runControl(p_foc);
         MOT_runCommand(p_motor, p_foc->dtc_u, p_foc->dtc_v, p_foc->dtc_w);
         break;
@@ -295,8 +484,8 @@ __attribute__((interrupt)) void adc_isrMotor1(void)
         p_motor->itCnt         += 1U;
         p_foc->idRef            = 0.0f;
         p_foc->iqRef            = 0.0f;
-        *p_state                = (motor_disable_flag)  ? (MOTOR_STATE_STOP)    : (MOTOR_STATE_READY);
-        *p_state                = (system_disable_flag) ? (MOTOR_STATE_INIT)    : (*p_state);
+        p_foc->motor_state      = (motor_disable_flag)  ? (MOTOR_STATE_STOP)    : (MOTOR_STATE_READY);
+        p_foc->motor_state      = (system_disable_flag) ? (MOTOR_STATE_INIT)    : (p_foc->motor_state);
         FOC_runControl(p_foc);
         MOT_runCommand(p_motor, p_foc->dtc_u, p_foc->dtc_v, p_foc->dtc_w);
         break;
@@ -305,7 +494,7 @@ __attribute__((interrupt)) void adc_isrMotor1(void)
         p_motor->itCnt          = 0U;
         p_foc->idRef            = 0.0f;
         p_foc->iqRef            = 0.0f;
-        *p_state                = MOTOR_STATE_ERROR;
+        p_foc->motor_state      = MOTOR_STATE_ERROR;
         COM_resetCmdMotorStruct(p_foc, &cmd_uOmodri);
         ENC_resetPeriph(p_enc);
         FOC_resetStruct(p_foc);
@@ -344,7 +533,6 @@ __attribute__((interrupt)) void adc_isrMotor2(void)
     motor_t*    p_motor         = &motor[MOTOR_2];
     foc_t*      p_foc           = p_motor->p_motorFOC;
     encoder_t*  p_enc           = &p_foc->motor_enc;
-    uint16_t*   p_state         = &p_foc->motor_state;
     uint8_t     timeout         = (uint8_t)cmd_uOmodri.mode.bit.TIMEOUT;
     bool_t system_disable_flag  = !cmd_uOmodri.mode.bit.ES;
     bool_t motor_disable_flag   = !cmd_uOmodri.mode.bit.EM2;
@@ -367,9 +555,9 @@ __attribute__((interrupt)) void adc_isrMotor2(void)
     p_foc->motor_error         |= (motor_rollover_flag)                             ? (MOTOR_ERROR_POS_ROLLOVER): (p_foc->motor_error);
     p_foc->motor_error         |= (motor_drv_fault_flag)                            ? (MOTOR_ERROR_DRV_NFAULT)  : (p_foc->motor_error);
     p_foc->motor_error         |= (com_timeout_flag)                                ? (MOTOR_ERROR_COM_TIMEOUT) : (p_foc->motor_error);
-    *p_state                    = (p_foc->motor_error || cmd_uOmodri.mode.bit.RST)  ? (MOTOR_STATE_ERROR)       : (*p_state);
+    p_foc->motor_state          = (p_foc->motor_error || cmd_uOmodri.mode.bit.RST)  ? (MOTOR_STATE_ERROR)       : (p_foc->motor_state);
 
-    switch(*p_state)
+    switch(p_foc->motor_state)
     {
     case MOTOR_STATE_INIT:
     default:
@@ -377,7 +565,7 @@ __attribute__((interrupt)) void adc_isrMotor2(void)
         p_foc->idRef            = 0.0f;
         p_foc->iqRef            = 0.0f;
 //        p_foc->errorStatus     &= ~(FOC_ERROR_ENCODER | FOC_ERROR_POS_ROLLOVER);
-        *p_state                = (motor_disable_flag || system_disable_flag)   ? (MOTOR_STATE_INIT)        : (MOTOR_STATE_ALIGN_UP);
+        p_foc->motor_state      = (motor_disable_flag || system_disable_flag)   ? (MOTOR_STATE_INIT)        : (MOTOR_STATE_ALIGN_UP);
         ENC_resetPeriph(p_enc);
         FOC_resetStruct(p_foc);
         MOT_stopCommand(p_motor);
@@ -387,8 +575,8 @@ __attribute__((interrupt)) void adc_isrMotor2(void)
         p_motor->itCnt          = 0U;
         p_foc->idRef           += 1e-5f;
         p_foc->iqRef            = 0.0f;
-        *p_state                = (p_foc->idRef < MOTOR2_CURRENT_ALIGN_MAX)     ? (MOTOR_STATE_ALIGN_UP)    : (MOTOR_STATE_ALIGN_FIX);
-        *p_state                = (motor_disable_flag || system_disable_flag)   ? (MOTOR_STATE_INIT)        : (*p_state);
+        p_foc->motor_state      = (p_foc->idRef < MOTOR2_CURRENT_ALIGN_MAX)     ? (MOTOR_STATE_ALIGN_UP)    : (MOTOR_STATE_ALIGN_FIX);
+        p_foc->motor_state      = (motor_disable_flag || system_disable_flag)   ? (MOTOR_STATE_INIT)        : (p_foc->motor_state);
         ENC_resetStruct(p_enc);
         ENC_resetPeriph(p_enc);
         FOC_runControl(p_foc);
@@ -399,8 +587,8 @@ __attribute__((interrupt)) void adc_isrMotor2(void)
         p_motor->itCnt         += 1U;
         p_foc->idRef            = MOTOR2_CURRENT_ALIGN_MAX; // Maintain alignment current
         p_foc->iqRef            = 0.0f;
-        *p_state                = (p_motor->itCnt < (2 * PWM_FREQ))             ? (MOTOR_STATE_ALIGN_FIX)   : (MOTOR_STATE_READY);//(MOTOR_ALIGN_DONE); // wait 1s
-        *p_state                = (motor_disable_flag || system_disable_flag)   ? (MOTOR_STATE_INIT)        : (*p_state);
+        p_foc->motor_state      = (p_motor->itCnt < (2 * PWM_FREQ))             ? (MOTOR_STATE_ALIGN_FIX)   : (MOTOR_STATE_READY);//(MOTOR_ALIGN_DONE); // wait 1s
+        p_foc->motor_state      = (motor_disable_flag || system_disable_flag)   ? (MOTOR_STATE_INIT)        : (p_foc->motor_state);
         ENC_resetStruct(p_enc);
         ENC_resetPeriph(p_enc);
         FOC_runControl(p_foc);
@@ -411,8 +599,8 @@ __attribute__((interrupt)) void adc_isrMotor2(void)
         p_motor->itCnt         += 1U;
         p_foc->idRef            = 0.0f;
         p_foc->iqRef            = FOC_runPD(&p_foc->pdPos);
-        *p_state                = (motor_disable_flag)  ? (MOTOR_STATE_STOP)    : (MOTOR_STATE_READY);
-        *p_state                = (system_disable_flag) ? (MOTOR_STATE_INIT)    : (*p_state);
+        p_foc->motor_state      = (motor_disable_flag)  ? (MOTOR_STATE_STOP)    : (MOTOR_STATE_READY);
+        p_foc->motor_state      = (system_disable_flag) ? (MOTOR_STATE_INIT)    : (p_foc->motor_state);
         FOC_runControl(p_foc);
         MOT_runCommand(p_motor, p_foc->dtc_u, p_foc->dtc_v, p_foc->dtc_w);
         break;
@@ -421,8 +609,8 @@ __attribute__((interrupt)) void adc_isrMotor2(void)
         p_motor->itCnt         += 1U;
         p_foc->idRef            = 0.0f;
         p_foc->iqRef            = 0.0f;
-        *p_state                = (motor_disable_flag)  ? (MOTOR_STATE_STOP)    : (MOTOR_STATE_READY);
-        *p_state                = (system_disable_flag) ? (MOTOR_STATE_INIT)    : (*p_state);
+        p_foc->motor_state      = (motor_disable_flag)  ? (MOTOR_STATE_STOP)    : (MOTOR_STATE_READY);
+        p_foc->motor_state      = (system_disable_flag) ? (MOTOR_STATE_INIT)    : (p_foc->motor_state);
         FOC_runControl(p_foc);
         MOT_runCommand(p_motor, p_foc->dtc_u, p_foc->dtc_v, p_foc->dtc_w);
         break;
@@ -431,16 +619,17 @@ __attribute__((interrupt)) void adc_isrMotor2(void)
         p_motor->itCnt          = 0U;
         p_foc->idRef            = 0.0f;
         p_foc->iqRef            = 0.0f;
-        *p_state                = MOTOR_STATE_ERROR;
+        p_foc->motor_state      = MOTOR_STATE_ERROR;
         COM_resetCmdMotorStruct(p_foc, &cmd_uOmodri);
         ENC_resetPeriph(p_enc);
         FOC_resetStruct(p_foc);
         MOT_stopCommand(p_motor);
         break;
     }
-//#if (defined CM_CORE_ENABLE) && (CM_CORE_ENABLE)
-//    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_FLAG0, IPC_ADDR_CORRECTION_ENABLE, IPC_CMD_M2, (uint32_t)(p_foc), 1);
-//#endif
+#if (defined CM_CORE_ENABLE) && (CM_CORE_ENABLE)
+    // Send info to CM
+    (!IPC_isFlagBusyLtoR(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG)) ? (IPC_setFlagLtoR(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG)) : (0);
+#endif
     p_motor->itDone = true;
     // Clear the interrupt overflow flag
     ADC_clearInterruptOverflowStatus(MOTOR12_IVA_ADC_ADDR, MOTOR2_IA_INT_NUM);
