@@ -11,10 +11,8 @@
  ***********************************************************************/
 #include <stdbool.h>
 #include <stdint.h>
-
 #include "f2838x_device.h"
 #include "driverlib.h"
-
 #include "uomodri_user_defines.h"
 
 /***********************************************************************

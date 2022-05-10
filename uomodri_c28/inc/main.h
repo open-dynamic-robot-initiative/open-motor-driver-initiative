@@ -12,18 +12,7 @@
 #include "driverlib.h"
 #include "device.h"
 #include "hw_types.h"
-
-#include "hal.h"
-#include "drv8353.h"
-#include "ws2812b.h"
-#include "encoder.h"
-#include "foc.h"
-#include "motor.h"
 #include "communication.h"
-
-#include "uomodri_user_defines.h"
-#include "uomodri_hal_config_handlers.h"
-#include "uomodri_prj_config_handlers.h"
 
 /***********************************************************************
  * DEFINES
@@ -46,16 +35,6 @@ uint16_t        led_msg[LED_MSG_TX_16BIT_LENGTH];
 //{0x0000, 0x9249, 0x24DB, 0x6DB6, 0x9249, 0x2400}; // red
 //{0x0000, 0x9249, 0x2492, 0x4924, 0xDB6D, 0xB600}; // blue
 
-#pragma DATA_ALIGN (ipc_dbg_addr, 2)
-const uint32_t ipc_dbg_addr[] =
-{
- (uint32_t)&motor_foc[MOTOR_1].motor_enc.thetaAbsolute,
- (uint32_t)&cmd_uOmodri.iqRef[MOTOR_1],
- (uint32_t)&motor_foc[MOTOR_1].iq,
- (uint32_t)&motor_foc[MOTOR_1].id,
- (uint32_t)&motor_foc[MOTOR_1].motor_enc.speed.speedHigh,
- (uint32_t)&motor_foc[MOTOR_1].motor_enc.speed.speedMech,
-};
 #if (defined UOMODRI_USE_REV_1_0_CONFIG) && (!UOMODRI_USE_REV_1_0_CONFIG)
 //#pragma DATA_ALIGN ( cmd_Master_msg , 2 )
 #pragma DATA_SECTION(cmd_Master_msg, "ramgs0");
@@ -63,10 +42,6 @@ cmd_msg_t       cmd_Master_msg;
 #pragma DATA_SECTION(status_Master_msg, "ramgs0");
 status_msg_t    status_Master_msg;
 #endif
-
-extern motor_t          motor[];
-extern const hal_cfg_t  hal;
-extern cmd_uomodri_t    cmd_uOmodri;
 
 /***********************************************************************
  * FUNCTIONS DECLARATION

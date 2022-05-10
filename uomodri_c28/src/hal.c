@@ -445,6 +445,7 @@ void HAL_ePWM_ini(const epwm_cfg_t* p_pwmCfg)
                     p_pwmInterruptsEvent++;
                 }
             }
+
             if(p_pwmCfg->epwmAdcSocSrcExtern)
                 SysCtl_enableExtADCSOCSource(p_pwmCfg->epwmAdcSocSrcExtern);
             // Configure synchronization

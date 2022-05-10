@@ -11,10 +11,48 @@
  * INCLUDES
  ***********************************************************************/
 #include "main_cm.h"
+//#include "foc.h"
+#include "communication.h"
+#include "uomodri_cm_user_defines.h"
+#include "uomodri_cm_hal_config_handlers.h"
 
+extern const hal_cm_t hal_cm;
 /***********************************************************************
  * DEFINES
  ***********************************************************************/
+
+/************************************************************************
+ * LOCAL VARIABLES
+ ************************************************************************/
+#pragma DATA_ALIGN(ucControlTable, 1024)
+UDMA_ControlTable ucControlTable[32];
+dbg_uart_msg_t dbg_uart_tx_msg =
+{
+ .header[0]         = 'a',
+ .header[1]         = 'b',
+ .count             = 0,
+ .position          = 0.0,
+ .iqRef             = 0,
+ .iq                = 0,
+ .id                = 0,
+ .ia                = 0,
+ .ib                = 0,
+ .ic                = 0,
+ .crc               = 0,
+};
+
+//dbg_uart_addr_t dbg_uart_addr =
+//{
+// .p_position        = NULL,
+// .p_iqRef           = NULL,
+// .p_iq              = NULL,
+// .p_id              = NULL,
+// .p_uq              = NULL,
+// .p_ud              = NULL,
+// .p_ia              = NULL,
+// .p_ib              = NULL,
+// .p_ic              = NULL,
+//};
 
 /***********************************************************************
  * FUNCTIONS DEFINITIONS
@@ -29,37 +67,50 @@ void main(void)
     // Hardware Abstraction Layer initialization
     HAL_CM_init(&hal_cm);
 
-    uint32_t    command = 0, addr, data;
+    uint32_t command, data;
+    com_cpu1_to_cm_t* p_cpu1_to_cm_addr = NULL;
+    while(!IPC_readCommand(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE,
+                           &command, (uint32_t *)&p_cpu1_to_cm_addr, &data));
+    IPC_ackFlagRtoL(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG);
 
-    while(command < 5)
+    dbg_uart_addr_t dbg_uart_addr =
     {
-        while(!IPC_readCommand(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, &command, &addr, &data));
-        if(command == 0)
-            dbg_uart_addr.p_position    = (float32_t*)addr;
-        else if(command == 1)
-            dbg_uart_addr.p_iqRef       = (float32_t *)addr;
-        else if(command == 2)
-            dbg_uart_addr.p_iq          = (float32_t *)addr;
-        else if(command == 3)
-            dbg_uart_addr.p_id          = (float32_t *)addr;
-        else if(command == 4)
-            dbg_uart_addr.p_speed       = (float32_t *)addr;
-        else if(command == 5)
-            dbg_uart_addr.p_speedMech   = (float32_t *)addr;
-        // Acknowledge the flag
-        IPC_ackFlagRtoL(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG);
-    }
+     .p_position    = (float*)p_cpu1_to_cm_addr[19].data_addr,
+     .p_iqRef       = (float*)p_cpu1_to_cm_addr[170].data_addr,
+     .p_iq          = (float*)p_cpu1_to_cm_addr[41].data_addr,
+     .p_id          = (float*)p_cpu1_to_cm_addr[40].data_addr,
+     .p_uq          = (float*)p_cpu1_to_cm_addr[43].data_addr,
+     .p_ud          = (float*)p_cpu1_to_cm_addr[42].data_addr,
+     .p_ia          = (float*)p_cpu1_to_cm_addr[11].data_addr,
+     .p_ib          = (float*)p_cpu1_to_cm_addr[12].data_addr,
+     .p_ic          = (float*)p_cpu1_to_cm_addr[13].data_addr,
+     //.p_speed       = (float*)p_cpu1_to_cm_addr[26].data_addr;
+     //.p_speedMech   = (float*)p_cpu1_to_cm_addr[28].data_addr;
+    };
+
+//    dbg_uart_addr.p_position    = (float32_t *)p_cpu1_to_cm_addr[19].data_addr;
+//    dbg_uart_addr.p_iqRef       = (float32_t *)p_cpu1_to_cm_addr[170].data_addr;
+//    dbg_uart_addr.p_iq          = (float32_t *)p_cpu1_to_cm_addr[41].data_addr;
+//    dbg_uart_addr.p_id          = (float32_t *)p_cpu1_to_cm_addr[40].data_addr;
+//    dbg_uart_addr.p_uq          = (float32_t *)p_cpu1_to_cm_addr[43].data_addr;
+//    dbg_uart_addr.p_ud          = (float32_t *)p_cpu1_to_cm_addr[42].data_addr;
+//    dbg_uart_addr.p_ia          = (float32_t *)p_cpu1_to_cm_addr[11].data_addr;
+//    dbg_uart_addr.p_ib          = (float32_t *)p_cpu1_to_cm_addr[12].data_addr;
+//    dbg_uart_addr.p_ic          = (float32_t *)p_cpu1_to_cm_addr[13].data_addr;
+
+//    dbg_uart_addr.p_speed       = (float32_t *)p_cpu1_to_cm_addr[26].data_addr;
+//    dbg_uart_addr.p_speedMech   = (float32_t *)p_cpu1_to_cm_addr[28].data_addr;
 
     // Loop forever. Wait for IPC interrupts
     while(1)
     {
         IPC_waitForFlag(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG);
-        GPIO_writePin(70, 1);
+        GPIO_writePin(DBG_PIN2, 1);
         // Create debug message
         com_msgDbgTx(&dbg_uart_addr, &dbg_uart_tx_msg);
         // Acknowledge IT associated to input flag.
         IPC_ackFlagRtoL(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG);
-        GPIO_writePin(70, 0);
+        GPIO_writePin(DBG_PIN2, 0);
         // Wait Tx buffer + UART Tx module are empty.
         while(UART_isBusy(UART0_BASE));
         // Force purge of Rx buffer.

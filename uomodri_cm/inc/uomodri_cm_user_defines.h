@@ -16,6 +16,7 @@
  * GENERAL DEFINES
  ***********************************************************************/
 #define UOMODRI_CONFIG_ENABLE                   1
+#define UOMODRI_USE_REV_1_0_CONFIG              1
 
 #ifndef FM_RPM2RAD
 #define FM_RPM2RAD                              (2.0f * M_PI / 60.0f)
@@ -62,6 +63,23 @@
 #define USB_VBUS                                46
 #define USB_VBUS_CFG                            GPIO_46_GPIO46
 #endif
+#ifdef  USB
+#define USB_M                                   42
+#define USB_M_CFG                               GPIO_42_GPIO42
+#define USB_P                                   43
+#define USB_P_CFG                               GPIO_43_GPIO43
+#define USB_VBUS                                46
+#define USB_VBUS_CFG                            GPIO_46_GPIO46
+#else
+#define UART_DBG_TX                             (42)
+#define UART_DBG_TX_CFG                         GPIO_42_UARTA_TX
+#define UART_DBG_RX                             (43)
+#define UART_DBG_RX_CFG                         GPIO_43_UARTA_RX
+#endif
+#if (defined UOMODRI_USE_REV_1_0_CONFIG) && (UOMODRI_USE_REV_1_0_CONFIG) && (defined DEBUG)
+#define DBG_PIN2                                (70)
+#define DBG_PIN2_CFG                            GPIO_70_GPIO70
+#endif
 /**
  * @}
  */
@@ -70,33 +88,33 @@
  *  @brief    Configure the message send by DMA channel.
  * @{
  */
-#define DBG_TX_MSG_HEADER_8BIT_SIZE             (2)
-#define DBG_TX_MSG_COUNTER_8BIT_SIZE            (4)
-//#define DBG_TX_MSG_STATUS_8BIT_SIZE             (2)
-#define DBG_TX_MSG_POSITION_32BIT_SIZE          (1)
-#define DBG_TX_MSG_POSITION_8BIT_SIZE           (4 * DBG_TX_MSG_POSITION_32BIT_SIZE)
-#define DBG_TX_MSG_IQREF_CMD_16BIT_SIZE         (1)
-#define DBG_TX_MSG_IQREF_CMD_8BIT_SIZE          (2 * DBG_TX_MSG_IQREF_CMD_16BIT_SIZE)
-//#define DBG_TX_MSG_IQREF_PD_OUT_16BIT_SIZE      (1)
-//#define DBG_TX_MSG_IQREF_PD_OUT_8BIT_SIZE       (2 * DBG_TX_MSG_IQREF_PD_OUT_16BIT_SIZE)
-#define DBG_TX_MSG_IQ_MEAS_16BIT_SIZE           (1)
-#define DBG_TX_MSG_IQ_MEAS_8BIT_SIZE            (2 * DBG_TX_MSG_IQ_MEAS_16BIT_SIZE)
-#define DBG_TX_MSG_ID_MEAS_16BIT_SIZE           (1)
-#define DBG_TX_MSG_ID_MEAS_8BIT_SIZE            (2 * DBG_TX_MSG_ID_MEAS_16BIT_SIZE)
-#define DBG_TX_MSG_DTC_32BIT_SIZE               (2)
-#define DBG_TX_MSG_DTC_8BIT_SIZE                (4 * DBG_TX_MSG_DTC_32BIT_SIZE)
-//#define DBG_TX_MSG_STATE_MACHINE_16BIT_SIZE     (0)
-//#define DBG_TX_MSG_STATE_MACHINE_8BIT_SIZE      (1)
-#define DBG_TX_MSG_PAYLOAD_8BIT_SIZE            (DBG_TX_MSG_HEADER_8BIT_SIZE + \
-                                                 DBG_TX_MSG_COUNTER_8BIT_SIZE + \
-                                                 DBG_TX_MSG_POSITION_8BIT_SIZE + \
-                                                 DBG_TX_MSG_IQREF_CMD_8BIT_SIZE + \
-                                                 DBG_TX_MSG_IQ_MEAS_8BIT_SIZE + \
-                                                 DBG_TX_MSG_ID_MEAS_8BIT_SIZE + \
-                                                 DBG_TX_MSG_DTC_8BIT_SIZE)
-#define DBG_TX_MSG_PAYLOAD_16BIT_SIZE           (DBG_TX_MSG_PAYLOAD_8BIT_SIZE / 2)
-#define DBG_TX_MSG_CRC_8BIT_SIZE                (1)
-#define DBG_TX_MSG_8BIT_SIZE                    (DBG_TX_MSG_PAYLOAD_8BIT_SIZE + DBG_TX_MSG_CRC_8BIT_SIZE)
+//#define DBG_TX_MSG_HEADER_8BIT_SIZE             (2)
+//#define DBG_TX_MSG_COUNTER_8BIT_SIZE            (4)
+////#define DBG_TX_MSG_STATUS_8BIT_SIZE             (2)
+//#define DBG_TX_MSG_POSITION_32BIT_SIZE          (1)
+//#define DBG_TX_MSG_POSITION_8BIT_SIZE           (4 * DBG_TX_MSG_POSITION_32BIT_SIZE)
+//#define DBG_TX_MSG_IQREF_CMD_16BIT_SIZE         (1)
+//#define DBG_TX_MSG_IQREF_CMD_8BIT_SIZE          (2 * DBG_TX_MSG_IQREF_CMD_16BIT_SIZE)
+////#define DBG_TX_MSG_IQREF_PD_OUT_16BIT_SIZE      (1)
+////#define DBG_TX_MSG_IQREF_PD_OUT_8BIT_SIZE       (2 * DBG_TX_MSG_IQREF_PD_OUT_16BIT_SIZE)
+//#define DBG_TX_MSG_IQ_MEAS_16BIT_SIZE           (1)
+//#define DBG_TX_MSG_IQ_MEAS_8BIT_SIZE            (2 * DBG_TX_MSG_IQ_MEAS_16BIT_SIZE)
+//#define DBG_TX_MSG_ID_MEAS_16BIT_SIZE           (1)
+//#define DBG_TX_MSG_ID_MEAS_8BIT_SIZE            (2 * DBG_TX_MSG_ID_MEAS_16BIT_SIZE)
+//#define DBG_TX_MSG_DTC_32BIT_SIZE               (2)
+//#define DBG_TX_MSG_DTC_8BIT_SIZE                (4 * DBG_TX_MSG_DTC_32BIT_SIZE)
+////#define DBG_TX_MSG_STATE_MACHINE_16BIT_SIZE     (0)
+////#define DBG_TX_MSG_STATE_MACHINE_8BIT_SIZE      (1)
+//#define DBG_TX_MSG_PAYLOAD_8BIT_SIZE            (DBG_TX_MSG_HEADER_8BIT_SIZE + \
+//                                                 DBG_TX_MSG_COUNTER_8BIT_SIZE + \
+//                                                 DBG_TX_MSG_POSITION_8BIT_SIZE + \
+//                                                 DBG_TX_MSG_IQREF_CMD_8BIT_SIZE + \
+//                                                 DBG_TX_MSG_IQ_MEAS_8BIT_SIZE + \
+//                                                 DBG_TX_MSG_ID_MEAS_8BIT_SIZE + \
+//                                                 DBG_TX_MSG_DTC_8BIT_SIZE)
+//#define DBG_TX_MSG_PAYLOAD_16BIT_SIZE           (DBG_TX_MSG_PAYLOAD_8BIT_SIZE / 2)
+//#define DBG_TX_MSG_CRC_8BIT_SIZE                (1)
+//#define DBG_TX_MSG_8BIT_SIZE                    (DBG_TX_MSG_PAYLOAD_8BIT_SIZE + DBG_TX_MSG_CRC_8BIT_SIZE)
 /**
  * @}
  */
@@ -117,12 +135,13 @@
 /************************************************************************
  * TYPDEF DEFINES
  ************************************************************************/
-typedef _Bool   bool_t;
-typedef  float  float32_t;
+//typedef _Bool   bool_t;
+//typedef  float  float32_t;
+
 typedef struct __LOWPASSFILTER_STRUCT__
 {
-    float32_t a;
-    float32_t one_minus_a;
+    float   a;
+    float   one_minus_a;
 } lpf_t;
 
 /************************************************************************

@@ -41,11 +41,6 @@
 			<locationURI>PARENT-1-PROJECT_LOC/uomodri_c28/inc/communication.h</locationURI>
 		</link>
 		<link>
-			<name>inc/foc.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/uomodri_c28/inc/foc.h</locationURI>
-		</link>
-		<link>
 			<name>device/driverlib_cm/aes.c</name>
 			<type>1</type>
 			<locationURI>C2000WARE_ROOT/driverlib/f2838x/driverlib_cm/aes.c</locationURI>

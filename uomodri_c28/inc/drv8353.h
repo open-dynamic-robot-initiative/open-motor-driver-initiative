@@ -533,6 +533,7 @@ typedef struct __drv_cfg_t__
     uint32_t  spiHandle;            /*!< handle for the serial peripheral interface */
     uint32_t  gpioNumber_CS;        /*!< GPIO connected to the DRV8353 CS pin       */
     uint32_t  gpioNumber_EN;        /*!< GPIO connected to the DRV8353 enable pin   */
+    uint32_t  gpioNumber_FAULT;     /*!< GPIO connected to the DRV8353 fault pin    */
 } drv_cfg_t;
 
 /**

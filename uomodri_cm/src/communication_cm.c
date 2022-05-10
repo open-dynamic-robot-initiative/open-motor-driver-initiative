@@ -7,6 +7,7 @@
  * INCLUDE FILES
  ***********************************************************************/
 #include "communication.h"
+#include "uomodri_cm_user_defines.h"
 
 /***********************************************************************
  * DEFINES
@@ -28,12 +29,17 @@ void com_msgDbgTx(dbg_uart_addr_t* p_addr, dbg_uart_msg_t* p_msg)
 {
     static uint32_t cntMsg  = 0;
     p_msg->count            = cntMsg++;
-    p_msg->position         = (float32_t)(*p_addr->p_position);
-    p_msg->iqRef            = (float32_t)(*p_addr->p_iqRef);
-    p_msg->iq               = (float32_t)(*p_addr->p_iq);
-    p_msg->id               = (float32_t)(*p_addr->p_id);
-    p_msg->speed            = (float32_t)(*p_addr->p_speed);
-    p_msg->speedMech        = (float32_t)(*p_addr->p_speedMech);
+    p_msg->position         = (float)(*p_addr->p_position);
+    p_msg->iqRef            = (int16_t)(*p_addr->p_iqRef / IQ_LSB);
+    p_msg->iq               = (int16_t)(*p_addr->p_iq / IQ_LSB);
+    p_msg->id               = (int16_t)(*p_addr->p_id / IQ_LSB);
+    p_msg->uq               = (int16_t)(*p_addr->p_uq / IQ_LSB);
+    p_msg->ud               = (int16_t)(*p_addr->p_ud / IQ_LSB);
+    p_msg->ia               = (int16_t)(*p_addr->p_ia / IQ_LSB);
+    p_msg->ib               = (int16_t)(*p_addr->p_ib / IQ_LSB);
+    p_msg->ic               = (int16_t)(*p_addr->p_ic / IQ_LSB);
+//    p_msg->speed            = (float32_t)(*p_addr->p_speed);
+//    p_msg->speedMech        = (float32_t)(*p_addr->p_speedMech);
     p_msg->crc              = com_crc8_fast(0, (uint8_t *)p_msg, (sizeof(dbg_uart_msg_t) - 1));
     return;
 }

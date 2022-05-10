@@ -40,23 +40,23 @@ MEMORY
 SECTIONS
 {
    .resetisr        : > CMBANK0_RESETISR
-   .vftable         : >> CMBANK0_SECTOR0 | CMBANK0_SECTOR1 | CMBANK0_SECTOR2 //> CMBANK0_SECTOR0   /* Application placed vector table in Flash*/
-   .vtable          : >> S0RAM | S1RAM | S2RAM | S3RAM//> S0RAM             /* Application placed vector table in RAM*/
-   .text            : >> CMBANK0_SECTOR0 | CMBANK0_SECTOR1 | CMBANK0_SECTOR2 //>> CMBANK0_SECTOR0 | CMBANK0_SECTOR1
+   .vftable         : > CMBANK0_SECTOR0   /* Application placed vector table in Flash*/
+   .vtable          : > S0RAM             /* Application placed vector table in RAM*/
+   .text            : >> CMBANK0_SECTOR0 | CMBANK0_SECTOR1
    .cinit           : > CMBANK0_SECTOR0
-   .pinit           : >> CMBANK0_SECTOR0 | CMBANK0_SECTOR1 | CMBANK0_SECTOR2 //>> CMBANK0_SECTOR0 | CMBANK0_SECTOR1
-   .switch          : >> CMBANK0_SECTOR0 | CMBANK0_SECTOR1 | CMBANK0_SECTOR2 //>> CMBANK0_SECTOR0 | CMBANK0_SECTOR1
+   .pinit           : >> CMBANK0_SECTOR0 | CMBANK0_SECTOR1
+   .switch          : >> CMBANK0_SECTOR0 | CMBANK0_SECTOR1
    .sysmem          : > S2RAM
 
    .stack           : > C1RAM
    .ebss            : > C1RAM
-   .econst          : >> CMBANK0_SECTOR0 | CMBANK0_SECTOR1 | CMBANK0_SECTOR2 //>> CMBANK0_SECTOR0 | CMBANK0_SECTOR1
+   .econst          : >> CMBANK0_SECTOR0 | CMBANK0_SECTOR1
    .esysmem         : > C1RAM
    .data            : > S3RAM
    .bss             : > S3RAM
-   .const           : >> CMBANK0_SECTOR0 | CMBANK0_SECTOR1 | CMBANK0_SECTOR2 //>> CMBANK0_SECTOR0 | CMBANK0_SECTOR1
+   .const           : >> CMBANK0_SECTOR0 | CMBANK0_SECTOR1
 
-    MSGRAM_CM_TO_CPU1 : >> CMTOCPU1MSGRAM0 | CMTOCPU1MSGRAM1 //> CMTOCPU1MSGRAM0, type=NOINIT
+    MSGRAM_CM_TO_CPU1 : >> CMTOCPU1MSGRAM0 | CMTOCPU1MSGRAM1, type=NOINIT //> CMTOCPU1MSGRAM0, type=NOINIT
     MSGRAM_CM_TO_CPU2 : >> CMTOCPU2MSGRAM0 | CMTOCPU2MSGRAM1, type=NOINIT// > CMTOCPU2MSGRAM0, type=NOINIT
     MSGRAM_CPU1_TO_CM : >> CPU1TOCMMSGRAM0 | CPU1TOCMMSGRAM1, type=NOINIT//> CPU1TOCMMSGRAM0, type=NOINIT
     MSGRAM_CPU2_TO_CM : >> CPU2TOCMMSGRAM0 | CPU2TOCMMSGRAM1, type=NOINIT //> CPU2TOCMMSGRAM0, type=NOINIT

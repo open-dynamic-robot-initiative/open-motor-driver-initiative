@@ -487,7 +487,7 @@ static const epwm_cfg_t PwmCfgList[] =
   .p_epwmDeadband           = &PwmDeadBandCfgList[0],
   .p_epwmProgChopper        = NULL,
   .p_epwmAdcSocEventTrigger = &PwmAdcSocEventTriggerCfgList[0],
-  .p_epwmInterruptsEvent    = &PwmInterruptsEventCfgList[0],
+  .p_epwmInterruptsEvent    = NULL,//&PwmInterruptsEventCfgList[0],
   .epwmAdcSocSrcExtern      = SYSCTL_ADCSOC_SRC_PWM1SOCA,
  },
  {.epwmBase                 = MOTOR1_PWM2_BASE,

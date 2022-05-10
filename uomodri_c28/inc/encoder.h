@@ -18,7 +18,7 @@
 /***********************************************************************
  * CONTROL STRUCTURES
  ***********************************************************************/
-typedef struct __SPEED_ESTIMATOR_STRUCT__
+typedef struct __SPEED_ESTIMATOR_STRUCT_t__
 {
     float32_t       speedHighScaler;        /*!< High speed estimation - [rad/s/pu] - diff_angular * scaler = velocity */
     float32_t       speedHigh;              /*!< High speed estimation -  [rad/s] - diff_angular * scaler = velocity */
@@ -32,7 +32,7 @@ typedef struct __SPEED_ESTIMATOR_STRUCT__
     float32_t       theta[2];               /*!< Angular position of rotor - [pu] */
 } speed_t;
 
-typedef struct __ENCODER_STRUCT__
+typedef struct __ENCODER_STRUCT_t__
 {
 #ifdef USE_CM_CORE
     uint32_t            rsvd1;
@@ -55,15 +55,6 @@ typedef struct __ENCODER_STRUCT__
     bool_t              indexToggle;        /*!< Flag that toggles every time index is seen */
     bool_t              rollOverFlag;       /*!< Roll-over error flag */
 } encoder_t;
-
-/***********************************************************************
- * DEFINES
- ***********************************************************************/
-// This threshold corresponds to the middle speed for low/high speed estimation merge
-// See the ENC_update function for more details
-#define SPEED_ESTIMATION_THRESHOLD      80.4f // [rad/s]
-#define MAX_ROLLOVER                    (127)
-#define MIN_ROLLOVER                    (-128)
 
 /***********************************************************************
  * FUNCTIONS DECLARATION

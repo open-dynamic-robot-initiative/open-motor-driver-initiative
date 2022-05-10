@@ -7,15 +7,12 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <math.h>
-
 #ifndef USE_CM_CORE
 #include "f2838x_device.h"
-#include "uomodri_user_defines.h"
+#include "motor.h"
 #else
-#include "uomodri_cm_user_defines.h"
+#include <stddef.h>
 #endif
-
-#include "foc.h"
 
 /***********************************************************************
  * COMMUNICATION CRC TABLE
@@ -86,8 +83,8 @@ static unsigned char const crc8_table[] =
 typedef struct __mst2slv_reg_t__
 {
     uint16_t        TIMEOUT     : 8;    /*!< Bits 7-0   : R/W - Timeout disable system after no valid command in milliseconds           */
-    uint16_t        CMD_RSV1    : 1;    /*!< Bits 8     : R/W - Reserved                                                                */
-    uint16_t        RST         : 1;    /*!< Bits 9     : R/W - Force a reset of CPU1, CPU1 periph, CPU2, CM, CM periph                 */
+    uint16_t        CMD_RSV1    : 2;    /*!< Bits 9-8   : R/W - Reserved                                                                */
+//    uint16_t        RST         : 1;    /*!< Bits 9     : R/W - Force a reset of CPU1, CPU1 periph, CPU2, CM, CM periph                 */
     uint16_t        EI2OC       : 1;    /*!< Bits 10    : R/W - Enable/Disable incremental encoder index offset compensation - MOTOR_2  */
     uint16_t        EI1OC       : 1;    /*!< Bits 11    : R/W - Enable/Disable incremental encoder index offset compensation - MOTOR_1  */
     uint16_t        EPRE        : 1;    /*!< Bits 12    : R/W - Enable/Disable position rollover error - position range : -128 to +128  */
@@ -190,7 +187,6 @@ typedef struct __slv2mst_msg_t__
     uint16_t        adcSamples[2];
     uint16_t        lastCmdIndex;
     U32toU16_reg_t  crc;
-//    float32_t       time[2];             // Time in seconds since startup
 } slv2mst_msg_t;
 
 /**
@@ -200,75 +196,55 @@ typedef struct __slv2mst_msg_t__
 typedef struct __cmd_uomodri_t__
 {
     mst2slv_reg_u   mode;
-    float32_t       posRef[2];
-    float32_t       velRef[2];
-    float32_t       iqRef[2];
-    float32_t       kpCoeff[2];
-    float32_t       kdCoeff[2];
-    float32_t       iSat[2];
+    float           posRef[2];
+    float           velRef[2];
+    float           iqRef[2];
+    float           kpCoeff[2];
+    float           kdCoeff[2];
+    float           iSat[2];
     uint32_t        cptTimeout;
     uint16_t        index;
+    bool            cmdAccesValid;
 } cmd_uomodri_t;
+
+typedef struct __com_cpu1_to_cm_t__
+{
+    uint32_t    data_addr;
+    uint32_t    data_pos;
+    uint16_t    data_size;
+    uint16_t    index;
+} com_cpu1_to_cm_t;
 
 #ifdef USE_CM_CORE
 typedef struct __attribute__((__packed__)) __dbg_uart_msg_t__
 {
     uint8_t         header[2];
     uint32_t        count;
-    float32_t       position;
-    float32_t       iqRef;
-    float32_t       iq;
-    float32_t       id;
-    float32_t       speed;
-    float32_t       speedMech;
+    float           position;
+    int16_t         iqRef;
+    int16_t         iq;
+    int16_t         id;
+    int16_t         uq;
+    int16_t         ud;
+    int16_t         ia;
+    int16_t         ib;
+    int16_t         ic;
     uint8_t         crc;
 } dbg_uart_msg_t;
 
 typedef struct __attribute__((__packed__)) __dbg_uart_addr_t__
 {
-    float32_t*      p_position;
-    float32_t*      p_iqRef;
-    float32_t*      p_iq;
-    float32_t*      p_id;
-    float32_t*      p_speed;
-    float32_t*      p_speedMech;
+    float*          p_position;
+    float*          p_iqRef;
+    float*          p_iq;
+    float*          p_id;
+    float*          p_uq;
+    float*          p_ud;
+    float*          p_ia;
+    float*          p_ib;
+    float*          p_ic;
 } dbg_uart_addr_t;
 #endif
-
-typedef struct __com_cpu1_to_cm_t__
-{
-    uint32_t    data_addr;
-    uint16_t    data_size;
-    uint16_t    data_pos;
-} com_cpu1_to_cm_t;
-
-//#ifdef USE_CM_CORE
-//typedef struct __attribute__((__packed__)) __dbg_uart_msg_t__
-//{
-//    uint8_t         header[2];
-//    uint32_t        count;//    uint16_t        status;
-//    U32toU16_reg_t  position;
-//    int16_t         iqRef;
-//    int16_t         iqMeas;
-//    int16_t         idMeas;//    uint8_t         stateMachine;
-//    int16_t         dtc_u;
-//    int16_t         dtc_v;
-//    int16_t         dtc_w;
-//    uint8_t         crc;
-//} dbg_uart_msg_t;
-//
-//typedef struct __attribute__((__packed__)) __dbg_uart_addr_t__
-//{
-//    uint16_t*       position_lsb;
-//    uint16_t*       position_msb;
-//    float32_t*      iqRef;
-//    float32_t*      iqMeas;
-//    float32_t*      idMeas;
-//    float32_t*      dtc_u;
-//    float32_t*      dtc_v;
-//    float32_t*      dtc_w;
-//} dbg_uart_addr_t;
-//#endif
 
 /***********************************************************************
  * COMMUNICATION ERROR FLAGS
@@ -317,9 +293,9 @@ typedef enum
  ***********************************************************************/
 #ifndef USE_CM_CORE
 bool_t COM_msgExtract(mst2slv_msg_t*, cmd_uomodri_t*);
-void COM_msgCreate(foc_t*, cmd_uomodri_t*, slv2mst_msg_t*);
+void COM_msgCreate(motor_t*, cmd_uomodri_t*, slv2mst_msg_t*);
 void COM_resetCmdStruct(cmd_uomodri_t*);
-void COM_resetCmdMotorStruct(foc_t*, cmd_uomodri_t*);
+void COM_resetCmdMotorStruct(motor_t*, cmd_uomodri_t*);
 uint32_t COM_crc32(uint16_t*, uint16_t);
 #else
 void com_msgDbgTx(dbg_uart_addr_t*, dbg_uart_msg_t*);
@@ -327,13 +303,4 @@ uint32_t com_crc32(uint16_t*, size_t);
 uint8_t com_crc8(uint8_t*, size_t);
 uint8_t com_crc8_fast(uint8_t, void const*, size_t);
 #endif
-
-
-//#else
-//void com_msgDbgTx(uint32_t*, dbg_uart_msg_t*);//void com_msgDbgTx(dbg_uart_addr_t*, dbg_uart_msg_t*);
-//uint32_t com_crc32(uint16_t*, uint16_t);
-//uint8_t com_crc8(uint8_t*, uint8_t);
-//#endif
-
-
 #endif

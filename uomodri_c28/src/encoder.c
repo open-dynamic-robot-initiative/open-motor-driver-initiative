@@ -1,5 +1,5 @@
 /***********************************************************************
- * INCLUDE FILES
+ * INCLUDE
  ***********************************************************************/
 #ifdef USE_CM_CORE
 #include "driverlib_cm.h"
@@ -10,6 +10,15 @@
 #include "device.h"
 #endif
 #include "encoder.h"
+
+/***********************************************************************
+ * DEFINES
+ ***********************************************************************/
+// This threshold corresponds to the middle speed for low/high speed estimation merge
+// See the ENC_update function for more details
+#define SPEED_ESTIMATION_THRESHOLD      80.4f // [rad/s]
+#define MAX_ROLLOVER                    (127)
+#define MIN_ROLLOVER                    (-128)
 
 /***********************************************************************
  * FUNCTIONS DEFINITIONS
@@ -34,7 +43,7 @@ void ENC_resetStruct(encoder_t* p_enc)
     p_enc->turnNb           = 0;
     p_enc->indexDetected    = false;
     p_enc->indexToggle      = false;
-    p_enc->rollOverFlag     = false;//p_enc->rollOverFlag;
+    p_enc->rollOverFlag     = false;
 
     p_speed->alpha          = 0.0f;
 //    p_speed->speedRef       = 0.0f;
@@ -83,11 +92,17 @@ inline void ENC_getPosition(encoder_t* p_enc)
     // Compute electrical angle (each pole pair is normalized between 0 and 1)
     float32_t thetaElec     = (float32_t)p_enc->polePairs * p_enc->thetaMech[NEW];
 #ifdef CM_CORE
-    p_enc->thetaElec       -= (float32_t)((int32_t)thetaElec);
-//    p_enc->thetaElec        = (p_enc->thetaElec - (float32_t)((int32_t)thetaElec)) * 2.0f * M_PI;
+#if (defined UOMODRI_USE_RADIAN) && (UOMODRI_USE_RADIAN)
+    p_enc->thetaElec        = __mpy2pif32(p_enc->thetaElec - (float32_t)((int32_t)thetaElec));
 #else
-//    p_enc->thetaElec        = __fracf32(thetaElec) * 2.0f * M_PI;
+    p_enc->thetaElec       -= (float32_t)((int32_t)thetaElec);
+#endif
+#else
+#if (defined UOMODRI_USE_RADIAN) && (UOMODRI_USE_RADIAN)
+    p_enc->thetaElec        = __mpy2pif32(__fracf32(thetaElec));
+#else
     p_enc->thetaElec        = __fracf32(thetaElec);
+#endif
 #endif
     return;
 }
@@ -98,7 +113,7 @@ inline void ENC_getPosition(encoder_t* p_enc)
  */
 inline void ENC_getSpeed(encoder_t* p_enc)
 {
-    uint32_t eqepBase           = p_enc->p_qepHandle->eqepBase;//volatile struct EQEP_REGS* p_qepRegs    = p_enc->p_qepRegs;
+    uint32_t eqepBase           = p_enc->p_qepHandle->eqepBase;
     speed_t* p_speed            = &p_enc->speed;
     //-------------------------------------------------------------------
     //     HIGH SPEED ESTIMATION
@@ -106,13 +121,23 @@ inline void ENC_getSpeed(encoder_t* p_enc)
     if(EQEP_getInterruptStatus(eqepBase) & EQEP_INT_UNIT_TIME_OUT)
     {
         p_speed->theta[OLD]     = p_speed->theta[NEW];
+#if (defined UOMODRI_USE_RADIAN) && (UOMODRI_USE_RADIAN)
+        p_speed->theta[NEW]     = __mpy2pif32((float32_t)EQEP_getPositionLatch(eqepBase) * p_enc->thetaMechScaler);
+#else
         p_speed->theta[NEW]     = (float32_t)EQEP_getPositionLatch(eqepBase) * p_enc->thetaMechScaler;
+#endif
         EQEP_clearInterruptStatus(eqepBase, (EQEP_INT_UNIT_TIME_OUT));// | EQEP_INT_OVERFLOW | EQEP_INT_UNDERFLOW));
         // Compute angle difference & saturate it between -0.5 and 0.5
         float32_t deltaTheta    = p_speed->theta[NEW] - p_speed->theta[OLD];
+#if (defined UOMODRI_USE_RADIAN) && (UOMODRI_USE_RADIAN)
+        // Saturate it between -pi and pi
+        deltaTheta              = (deltaTheta > M_PI)   ? (deltaTheta - (2.0f * M_PI)) : (deltaTheta);
+        deltaTheta              = (deltaTheta < -M_PI)  ? (deltaTheta + (2.0f * M_PI)) : (deltaTheta);
+#else
         // Saturate it between -0.5 and 0.5
         deltaTheta              = (deltaTheta > 0.5f)   ? (deltaTheta - 1.0f) : (deltaTheta);
         deltaTheta              = (deltaTheta < -0.5f)  ? (deltaTheta + 1.0f) : (deltaTheta);
+#endif
         // Compute high speed estimation
         p_speed->speedHigh      = deltaTheta * p_speed->speedHighScaler;
     }
@@ -175,8 +200,13 @@ inline void ENC_getTheta(encoder_t* p_enc)
     //-------------------------------------------------------------------
     float32_t deltaThetaMech    = p_enc->thetaMech[NEW] - p_enc->thetaMech[OLD];
     // Update turnNb
+#if (defined UOMODRI_USE_RADIAN) && (UOMODRI_USE_RADIAN)
+    p_enc->turnNb               = (deltaThetaMech > M_PI)   ? (p_enc->turnNb - 1) : (p_enc->turnNb);
+    p_enc->turnNb               = (deltaThetaMech < -M_PI)  ? (p_enc->turnNb + 1) : (p_enc->turnNb);
+#else
     p_enc->turnNb               = (deltaThetaMech > 0.5f)   ? (p_enc->turnNb - 1) : (p_enc->turnNb);
     p_enc->turnNb               = (deltaThetaMech < -0.5f)  ? (p_enc->turnNb + 1) : (p_enc->turnNb);
+#endif
     // If theta difference is high or low enough, we overflowed or underflowed
     bool_t maxRollOver          = (p_enc->turnNb > MAX_ROLLOVER)    ? (true) : (false);
     bool_t minRollOver          = (p_enc->turnNb < MIN_ROLLOVER)    ? (true) : (false);
@@ -191,8 +221,13 @@ inline void ENC_getTheta(encoder_t* p_enc)
     {
         // Check if index has been detected (using FIMF is not legal with QEPCTL[PCRM] = 01 (position reset if max position is reached)
         p_enc->indexDetected    = true;
+#if (defined UOMODRI_USE_RADIAN) && (UOMODRI_USE_RADIAN)
+        // Compute indexed mechanical angle normalized between 0 and 2 x PI
+        p_enc->thetaIndex       = __mpy2pif32((float32_t)EQEP_getIndexPositionLatch(eqepBase) * p_enc->thetaMechScaler);
+#else
         // Compute indexed mechanical angle normalized between 0 and 1
         p_enc->thetaIndex       = (float32_t)EQEP_getIndexPositionLatch(eqepBase) * p_enc->thetaMechScaler;
+#endif
         // Toggle index
         p_enc->indexToggle      = !p_enc->indexToggle;
         // Clear flag
@@ -202,7 +237,7 @@ inline void ENC_getTheta(encoder_t* p_enc)
     p_enc->thetaMechIndexed     = p_enc->thetaMech[NEW] - p_enc->thetaIndex;
     p_enc->thetaMechIndexed     = (p_enc->thetaMechIndexed < 0.0f) ? (p_enc->thetaMechIndexed + 1.0f) : (p_enc->thetaMechIndexed);
     // Compute new absolute angle
-    p_enc->thetaAbsolute        = ((p_enc->indexCompensated) ? (p_enc->thetaMechIndexed) : (p_enc->thetaMech[NEW]));
+    p_enc->thetaAbsolute        = (p_enc->indexCompensated) ? (p_enc->thetaMechIndexed) : (p_enc->thetaMech[NEW]);
     p_enc->thetaAbsolute       += (float32_t)p_enc->turnNb;
 
     return;
