@@ -15,6 +15,8 @@ inline float32_t FOC_runPI(pi_t*);
 inline void FOC_resetPD(pd_t*);
 inline void FOC_resetCommand(cmd_t*);
 void limit_norm(float32_t*, float32_t*, float32_t);
+void FOC_svpwm1(foc_t*);
+void FOC_svpwm2(foc_t*);
 
 /***********************************************************************
  * FUNCTIONS DEFINITIONS
@@ -97,7 +99,8 @@ inline void FOC_runControl(foc_t* p_foc)
     speed_t*        p_speed = &p_enc->speed;
     p_foc->piId.ff          = -1.0f * p_speed->speedMech * p_cfg->Ls * p_foc->iq;
     p_foc->piIq.ff          = (p_speed->speedMech * p_cfg->Ls * p_foc->id) + (p_speed->speedMech * p_cfg->ke);
-    //p_foc->piIq.ff          = p_cfg->Rs * p_foc->iqRef + p_speed->speedElec * p_cfg->ke;
+//    p_foc->piIq.ff         += (p_foc->iqRef > 0.0f) ? (0.1f / 12.5f * p_acq->vbus) : (-0.1f / 12.5f * p_acq->vbus);
+//    p_foc->piIq.ff          = p_cfg->Rs * p_foc->iqRef + p_speed->speedElec * p_cfg->ke;
 #else
     p_foc->piId.ff          = 0.0f;
     p_foc->piIq.ff          = 0.0f;
@@ -108,29 +111,20 @@ inline void FOC_runControl(foc_t* p_foc)
     p_foc->uq               = ((p_foc->motor_state == MOTOR_STATE_READY) || (p_foc->motor_state == MOTOR_STATE_STOP)) ? (p_foc->iqRef)  : (FOC_runPI(&p_foc->piIq));
 #else
     p_foc->ud               = FOC_runPI(&p_foc->piId);
+//    p_foc->ud              += (p_foc->ud > 0.0f) ? (0.1f / 12.5f * p_acq->vbus) : (-0.1f / 12.5f * p_acq->vbus);
     p_foc->uq               = FOC_runPI(&p_foc->piIq);
+//    p_foc->uq              += (p_foc->iqRef > 0.0f) ? (0.1f / 12.5f * p_acq->vbus) : (-0.1f / 12.5f * p_acq->vbus);
 #endif
-//    TODO : check if uq_max and v_vref are necessaries
-//    float32_t uq_max    = __sqrt((p_foc->motor_acq.vmax * p_foc->motor_acq.vmax) - (p_foc->ud * p_foc->ud));
-//    float32_t v_ref     = __sqrt((p_foc->ud * p_foc->ud) + (p_foc->uq * p_foc->uq));
-//    limit_norm(&p_foc->ud, &p_foc->uq, p_foc->motor_acq.vmax);
+    p_foc->vmax             = p_acq->vbus * FM_1DIVSQRT3;
+//    p_foc->udMax            = p_foc->vmax;
+//    p_foc->uqMax            = __sqrt((p_foc->vmax * p_foc->vmax) - (p_foc->ud * p_foc->ud));
+//    float32_t v_ref         = __sqrt((p_foc->ud * p_foc->ud) + (p_foc->uq * p_foc->uq));
+//    limit_norm(&p_foc->ud, &p_foc->uq, p_foc->vmax);
     // Inverse Park transform
     p_foc->ualpha           = (p_foc->cosTheta * p_foc->ud) - (p_foc->sinTheta * p_foc->uq);
     p_foc->ubeta            = (p_foc->sinTheta * p_foc->ud) + (p_foc->cosTheta * p_foc->uq);
-    // Inverse Clarke transform
-    p_foc->ua               = p_foc->ualpha;
-    p_foc->ub               =  0.5f * ((FM_SQRT3 * p_foc->ubeta) - p_foc->ualpha);
-    p_foc->uc               = -0.5f * ((FM_SQRT3 * p_foc->ubeta) + p_foc->ualpha);
-    // Compute middle voltage to center PWM duty cycles around it
-    float32_t uOffset       = 0.5f * (FMIN3(p_foc->ua, p_foc->ub, p_foc->uc) + FMAX3(p_foc->ua, p_foc->ub, p_foc->uc));
-//    float32_t uMidPoint     = 0.5f * (p_foc->dtcMax + p_foc->dtcMin);
-    // Compute duty cycles
-    p_foc->dtc_u            = __fsat((((p_foc->ua - uOffset) / p_acq->vbus) + 0.5f), p_foc->dtcMax, p_foc->dtcMin);
-    p_foc->dtc_v            = __fsat((((p_foc->ub - uOffset) / p_acq->vbus) + 0.5f), p_foc->dtcMax, p_foc->dtcMin);
-    p_foc->dtc_w            = __fsat((((p_foc->uc - uOffset) / p_acq->vbus) + 0.5f), p_foc->dtcMax, p_foc->dtcMin);
-//    p_foc->dtc_u            = __fsat(((0.5f * (p_foc->ua - uOffset) / p_acq->vbus) + uMidPoint), p_foc->dtcMax, p_foc->dtcMin);
-//    p_foc->dtc_v            = __fsat(((0.5f * (p_foc->ub - uOffset) / p_acq->vbus) + uMidPoint), p_foc->dtcMax, p_foc->dtcMin);
-//    p_foc->dtc_w            = __fsat(((0.5f * (p_foc->uc - uOffset) / p_acq->vbus) + uMidPoint), p_foc->dtcMax, p_foc->dtcMin);
+
+    FOC_svpwm1(p_foc);
 
     return;
 }
@@ -159,17 +153,9 @@ inline float32_t FOC_runPI(pi_t* p_pi)
     float32_t sat_max   = 0.5f  * (*p_pi->p_sat);
     float32_t sat_min   = -1.0f * sat_max;
     p_pi->err           = (*p_pi->p_set) - (*p_pi->p_fb);
-#if 0
-    p_pi->integral     += (p_pi->err * PWM_PERIOD);
-#else
     p_pi->integral     += (p_pi->ki * p_pi->err * (float32_t)PWM_PERIOD);
-#endif
     p_pi->integral      = __fsat(p_pi->integral, sat_max, sat_min);
-#if 0
-    p_pi->out           = (p_pi->kp * p_pi->err) + (p_pi->ki * p_pi->integral) + p_pi->ff;
-#else
     p_pi->out           = (p_pi->kp * p_pi->err) + p_pi->integral + p_pi->ff;
-#endif
     p_pi->out           = __fsat(p_pi->out, sat_max, sat_min);
 
     return(p_pi->out);
@@ -219,13 +205,10 @@ inline void FOC_resetCommand(cmd_t* p_cmd)
     p_cmd->iqRef                = 0.0f;
     p_cmd->kpCoeff              = 0.0f;
     p_cmd->kdCoeff              = 0.0f;
-    p_cmd->iSat                 = (p_cmd->motor_id == MOTOR_1) ? (MOTOR1_IQ_REGULATOR_SATURATION) : (MOTOR2_IQ_REGULATOR_SATURATION);
+    p_cmd->iSat                 = (p_cmd->motor_id == MOTOR_1) ? (MOTOR1_CURRENT_REGULATOR_SAT_MAX) : (MOTOR2_CURRENT_REGULATOR_SAT_MAX);
     p_cmd->timeoutRef           = 0;
     p_cmd->cptTimeout           = 0;
-    p_cmd->encOffsetCompEnable  = false;
-    p_cmd->rollOverEnable       = false;
-    p_cmd->motorEnable          = false;
-    p_cmd->systemEnable         = false;
+    p_cmd->enableBits.all       = 0;
 }
 
 /**
@@ -259,6 +242,7 @@ void FOC_resetStruct(foc_t* p_foc)
     p_foc->ua               = 0.0f;
     p_foc->ub               = 0.0f;
     p_foc->uc               = 0.0f;
+    p_foc->vmax             = 0.0f;
     p_foc->dtc_u            = 0.0f;
     p_foc->dtc_v            = 0.0f;
     p_foc->dtc_w            = 0.0f;
@@ -268,26 +252,98 @@ void FOC_resetStruct(foc_t* p_foc)
     return;
 }
 
-void limit_norm(float32_t *x, float32_t *y, float32_t limit)
+/**
+ * @brief           Scale the length of vector (x, y) to be <= limit
+ * @param[out]      *p_x    Pointer on the first element to normalize.
+ * @param[out]      *p_y    Pointer on the second element to normalize.
+ * @param[in]       limit   Limit value.
+ */
+void limit_norm(float32_t *p_x, float32_t *p_y, float32_t limit)
 {
-    /// Scales the length of vector (x, y) to be <= limit ///
-    float32_t norm = __sqrtf((*x) * (*x) + (*y) * (*y));
+    float32_t norm = __sqrtf((*p_x) * (*p_x) + (*p_y) * (*p_y));
     if(norm > limit)
     {
-        *x *= limit / norm;
-        *y *= limit / norm;
+        *p_x *= limit / norm;
+        *p_y *= limit / norm;
     }
 }
 
+/**
+ * @brief           First implementation of the Space Vector Modulation (SVM)
+ * @param[inout]    *p_foc   Pointer on the FOC structure.
+ */
+void FOC_svpwm1(foc_t* p_foc)
+{
+    // Inverse Clarke transform
+    p_foc->ua               = p_foc->ualpha;
+    p_foc->ub               = (-0.5f * p_foc->ualpha) + (FM_SQRT3DIV2 * p_foc->ubeta);
+    p_foc->uc               = (-0.5f * p_foc->ualpha) - (FM_SQRT3DIV2 * p_foc->ubeta);
+    // Compute middle voltage to center PWM duty cycles around it
+    float32_t   uOffset     = 0.5f * (FMIN3(p_foc->ua, p_foc->ub, p_foc->uc) + FMAX3(p_foc->ua, p_foc->ub, p_foc->uc));
+    float32_t   uMidPoint   = 0.5f * (p_foc->dtcMax + p_foc->dtcMin);
+    // Compute duty cycles
+    p_foc->dtc_u            = __fsat((((p_foc->ua - uOffset) / p_foc->motor_acq.vbus) + uMidPoint), p_foc->dtcMax, p_foc->dtcMin);
+    p_foc->dtc_v            = __fsat((((p_foc->ub - uOffset) / p_foc->motor_acq.vbus) + uMidPoint), p_foc->dtcMax, p_foc->dtcMin);
+    p_foc->dtc_w            = __fsat((((p_foc->uc - uOffset) / p_foc->motor_acq.vbus) + uMidPoint), p_foc->dtcMax, p_foc->dtcMin);
+}
 
-//static inline void FOC_PID(PID_CONTROLLER* p_pid)
-//{
-//    p_pid->integral    += p_pid->ki * p_pid->err;
-//    p_pid->derivative   = p_pid->kd * (p_pid->err - p_pid->errPrev) / p_pid->deltaT;
-//    // Compute PID and clamp output.
-//    p_pid->out          = (p_pid->kp * p_pid->err) + p_pid->integral + p_pid->derivative + p_pid->ff;
-//    p_pid->out          = fminf(fmaxf(p_pid->out, -p_pid->sat), p_pid->sat);
-//    // Save current error
-//    p_pid->errPrev      = p_pid->err;
-//}
+/**
+ * @brief           Second implementation of the Space Vector Modulation (SVM)
+ * @param[inout]    *p_foc   Pointer on the FOC structure.
+ */
+void FOC_svpwm2(foc_t* p_foc)
+{
+    p_foc->ualpha          /= p_foc->vmax;
+    p_foc->ubeta           /= p_foc->vmax;
 
+    p_foc->ua               =  p_foc->ubeta;
+    p_foc->ub               = (-0.5f * p_foc->ubeta) + (FM_SQRT3DIV2 * p_foc->ualpha);
+    p_foc->uc               = (-0.5f * p_foc->ubeta) - (FM_SQRT3DIV2 * p_foc->ualpha);
+
+//    svm_test_reg_u  svm_test;
+//    svm_test.bit.A_TEST     = (p_foc->ua > 0.0f) ? (1) : (0);   /* Ubeta > 0.0 */
+//    svm_test.bit.B_TEST     = (p_foc->ub > 0.0f) ? (1) : (0);   /* (- 1 / 2 x Ubeta) + (sqrt(3) / 2 x Ualpha) > 0.0 */
+//    svm_test.bit.C_TEST     = (p_foc->uc > 0.0f) ? (1) : (0);   /* (- 1 / 2 x Ubeta) - (sqrt(3) / 2 x Ualpha) > 0.0 */
+//    svm_test.bit.TEST_RSV1  = 0;
+    svm_sector_e svm_test   = (svm_sector_e)(((p_foc->ua > 0.0f) * 4) + ((p_foc->ub > 0.0f) * 2) + (p_foc->uc > 0.0f));
+
+    switch(svm_test)
+    {
+    case MOTOR_SVM_SECTOR_0:
+    case MOTOR_SVM_SECTOR_7:
+        // Sector 0: this is special case for (Ualpha,Ubeta) = (0,0)
+        p_foc->dtc_u        = 0.5f;
+        p_foc->dtc_v        = 0.5f;
+        p_foc->dtc_w        = 0.5f;
+        break;
+
+    case MOTOR_SVM_SECTOR_1:
+    case MOTOR_SVM_SECTOR_4:
+        // Sector 1: t1=y   and t2=x    (abc ---> Ta,Tb,Tc)
+        // Sector 4: t1=-x  and t2=-y   (abc ---> Tc,Tb,Ta)
+        p_foc->dtc_u        = 0.5f * (1.0f + p_foc->uc);
+        p_foc->dtc_v        = 0.5f * (1.0f + p_foc->ub - p_foc->ua);
+        p_foc->dtc_w        = 0.5f * (1.0f - p_foc->uc);
+        break;
+
+    case MOTOR_SVM_SECTOR_2:
+    case MOTOR_SVM_SECTOR_5:
+        // Sector 2: t1=-y  and t2=-z   (abc ---> Tb,Ta,Tc)
+        // Sector 5: t1=z   and t2=y    (abc ---> Tb,Tc,Ta)
+        p_foc->dtc_u        = 0.5f * (1.0f + p_foc->uc - p_foc->ub);
+        p_foc->dtc_v        = 0.5f * (1.0f - p_foc->ua);
+        p_foc->dtc_w        = 0.5f * (1.0f + p_foc->ua);
+        break;
+
+    case MOTOR_SVM_SECTOR_3:
+    case MOTOR_SVM_SECTOR_6:
+        // Sector 3: t1=x   and t2=z    (abc ---> Tc,Ta,Tb)
+        // Sector 6: t1=-z   and t2=-x  (abc ---> Ta,Tc,Tb)
+        p_foc->dtc_u        = 0.5f * (1.0f - p_foc->ub);
+        p_foc->dtc_v        = 0.5f * (1.0f + p_foc->ub);
+        p_foc->dtc_w        = 0.5f * (1.0f + p_foc->ua - p_foc->uc);
+        break;
+    }
+
+    return;
+}

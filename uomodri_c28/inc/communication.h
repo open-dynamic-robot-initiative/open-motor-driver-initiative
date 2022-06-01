@@ -149,7 +149,7 @@ typedef struct __U32toU16_reg_t__
 typedef struct __fsm_reg_t__
 {
     uint8_t         u8_m1_state;        /*!< Bits 7-0   : MOTOR_1 state of the state machine    */
-    uint8_t         u8_m2_state;        /*!< Bits 15-8  : MOTOR_2  state of the state machine   */
+    uint8_t         u8_m2_state;        /*!< Bits 15-8  : MOTOR_2 state of the state machine    */
 } fsm_reg_t;
 
 /***********************************************************************
@@ -210,9 +210,9 @@ typedef struct __cmd_uomodri_t__
 typedef struct __com_cpu1_to_cm_t__
 {
     uint32_t    data_addr;
-    uint32_t    data_pos;
+    uint16_t    data_pos;
     uint16_t    data_size;
-    uint16_t    index;
+//    uint16_t    index;
 } com_cpu1_to_cm_t;
 
 #ifdef USE_CM_CORE
@@ -229,6 +229,8 @@ typedef struct __attribute__((__packed__)) __dbg_uart_msg_t__
     int16_t         ia;
     int16_t         ib;
     int16_t         ic;
+    int16_t         uqff;
+    int16_t         udff;
     uint8_t         crc;
 } dbg_uart_msg_t;
 
@@ -243,6 +245,8 @@ typedef struct __attribute__((__packed__)) __dbg_uart_addr_t__
     float*          p_ia;
     float*          p_ib;
     float*          p_ic;
+    float*          p_uqff;
+    float*          p_udff;
 } dbg_uart_addr_t;
 #endif
 

@@ -20,10 +20,62 @@
 /***********************************************************************
  * TYPDEF ENUM
  ***********************************************************************/
+/**
+ * @enum    svm_sector_e
+ * @brief   Space Vector Modulation (SVM) - Sectors definitions
+ */
+typedef enum
+{
+    MOTOR_SVM_SECTOR_0  = 0x00, /*!< SECTOR_\#0 : Default sector state */
+    MOTOR_SVM_SECTOR_1  = 0x06, /*!< SECTOR_\#1 : Ubeta > 0.0 && ((sqrt(3) x Ualpha) - Ubeta) > 0.0 && ((-sqrt(3) x Ualpha) - Ubeta) < 0.0 */
+    MOTOR_SVM_SECTOR_2  = 0x04, /*!< SECTOR_\#2 : Ubeta > 0.0 && ((sqrt(3) x Ualpha) - Ubeta) < 0.0 && ((-sqrt(3) x Ualpha) - Ubeta) < 0.0 */
+    MOTOR_SVM_SECTOR_3  = 0x05, /*!< SECTOR_\#3 : Ubeta > 0.0 && ((sqrt(3) x Ualpha) - Ubeta) < 0.0 && ((-sqrt(3) x Ualpha) - Ubeta) > 0.0 */
+    MOTOR_SVM_SECTOR_4  = 0x01, /*!< SECTOR_\#4 : Ubeta < 0.0 && ((sqrt(3) x Ualpha) - Ubeta) < 0.0 && ((-sqrt(3) x Ualpha) - Ubeta) > 0.0 */
+    MOTOR_SVM_SECTOR_5  = 0x03, /*!< SECTOR_\#5 : Ubeta < 0.0 && ((sqrt(3) x Ualpha) - Ubeta) > 0.0 && ((-sqrt(3) x Ualpha) - Ubeta) > 0.0 */
+    MOTOR_SVM_SECTOR_6  = 0x02, /*!< SECTOR_\#6 : Ubeta < 0.0 && ((sqrt(3) x Ualpha) - Ubeta) > 0.0 && ((-sqrt(3) x Ualpha) - Ubeta) < 0.0 */
+    MOTOR_SVM_SECTOR_7  = 0x07, /*!< SECTOR_\#7 : Default sector state */
+} svm_sector_e;
 
 /***********************************************************************
  * CONTROL STRUCTURES
  ***********************************************************************/
+/**
+ * @struct  mst2slv_reg_t
+ * @brief   Master to Slave command structure (bits definition) for uOmodri
+ */
+typedef struct __svm_test_reg_t__
+{
+    uint16_t        C_TEST      : 1;    /*!< Bit 0      : -sqrt(3) / 2 x Ualpha -1 / 2 x Ubeta  > 0 */
+    uint16_t        B_TEST      : 1;    /*!< Bit 1      : sqrt(3) / 2 x Ualpha  -1 / 2 x Ubeta  > 0 */
+    uint16_t        A_TEST      : 1;    /*!< Bit 2      : Ubeta                                 > 0 */
+    uint16_t        TEST_RSV1   : 13;   /*!< Bits 3-15  : R/W - Reserved    */
+} svm_test_reg_t;
+
+/**
+ * @union   mst2slv_reg_u
+ * @brief   Master to Slave command union (bits definition) for uOmodri. Access to bit field.
+ */
+typedef union __svm_test_reg_u__
+{
+  uint16_t          all;                /*!< Short (16bits) type access */
+  svm_test_reg_t    bit;                /*!< @see command_mode_t        */
+} svm_test_reg_u;
+
+typedef struct __cmd_bit_reg_t__
+{
+    uint16_t        systemEnable        : 1;    /*!< Bit 0      : R/W - Enable system to start. No power on motors. */
+    uint16_t        motorEnable         : 1;    /*!< Bit 1      : R/W - Enable power on motor.                      */
+    uint16_t        rollOverEnable      : 1;    /*!< Bit 2      : R/W - Limit the rotations to +/- 128 rounds.      */
+    uint16_t        encOffsetCompEnable : 1;    /*!< Bit 3      : R/W - Use encoder index in position computation.  */
+    uint16_t        CMD_RSV1            : 12;   /*!< Bit 4-15   : R/W - Reserved                                    */
+} cmd_bit_reg_t;
+
+typedef struct __cmd_bit_reg_u__
+{
+    uint16_t        all;
+    cmd_bit_reg_t   bit;
+} cmd_bit_reg_u;
+
 /**
  * @struct  pi_t
  * @brief   Proportional-Integral controller structure for FOC algorithm.
@@ -107,10 +159,11 @@ typedef struct __MOTOR_COMMAND_t__
     float32_t           iSat;
     uint16_t            timeoutRef;
     uint16_t            cptTimeout;
-    bool_t              encOffsetCompEnable;
-    bool_t              rollOverEnable;
-    bool_t              motorEnable;
-    bool_t              systemEnable;
+    cmd_bit_reg_u       enableBits;
+//    bool_t              encOffsetCompEnable;
+//    bool_t              rollOverEnable;
+//    bool_t              motorEnable;
+//    bool_t              systemEnable;
 } cmd_t;
 
 typedef struct __MOTOR_FOC_CONTROL_t__
@@ -134,7 +187,9 @@ typedef struct __MOTOR_FOC_CONTROL_t__
     float32_t           ub;             /*!< Phase commands - Channel b - [V] */
     float32_t           uc;             /*!< Phase commands - Channel c - [V] */
     float32_t           vmax;           /*!< Bus voltage saturation - [V] */
-    float32_t           imax;           /*!< Max current - [A] */
+//    float32_t           udMax;
+//    float32_t           uqMax;
+//    float32_t           imax;           /*!< Max current - [A] */
     float32_t           dtcMax;         /*!< Max saturation duty-cycle */
     float32_t           dtcMin;         /*!< Min saturation duty-cycle */
     float32_t           dtc_u;          /*!< Duty cycles on channel u - [pu] between -0.5 and 0.5 */
@@ -158,6 +213,11 @@ typedef struct __MOTOR_FOC_CONTROL_t__
 /***********************************************************************
  * DEFINES
  ***********************************************************************/
+#define FOC_CMD_SYSTEM_ENABLE       0x0001U
+#define FOC_CMD_MOTOR_ENABLE        0x0002U
+#define FOC_CMD_ROLLOVER_ENABLE     0x0004U
+#define FOC_CMD_OFFSET_COMP_ENABLE  0x0008U
+#define FOC_CMD_MOTOR_START         (FOC_CMD_SYSTEM_ENABLE | FOC_CMD_MOTOR_ENABLE)
 // Resistance estimation uses Ohm's Law R = U/I so we have to ensure I != 0.
 // This threshold corresponds to the minimum current for the measure to be considered as correct.
 #define FOC_RE_CURRENT_THRESHOLD    0.1f
@@ -169,6 +229,6 @@ inline void FOC_getMeasures(acq_t*);
 inline void FOC_runControl(foc_t*);
 inline float32_t FOC_runPD(pd_t*);
 void FOC_resetStruct(foc_t*);
-void limit_norm(float32_t*, float32_t*, float32_t);
+//void limit_norm(float32_t*, float32_t*, float32_t);
 
 #endif

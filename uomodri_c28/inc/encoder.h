@@ -18,7 +18,7 @@
 /***********************************************************************
  * CONTROL STRUCTURES
  ***********************************************************************/
-typedef struct __SPEED_ESTIMATOR_STRUCT_t__
+typedef struct __SPEED_STRUCT_t__
 {
     float32_t       speedHighScaler;        /*!< High speed estimation - [rad/s/pu] - diff_angular * scaler = velocity */
     float32_t       speedHigh;              /*!< High speed estimation -  [rad/s] - diff_angular * scaler = velocity */

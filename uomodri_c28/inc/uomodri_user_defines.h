@@ -48,19 +48,19 @@
 //#endif
 
 #ifndef FM_SQRT3
-#define FM_SQRT3                                1.7320508075689f    /* sqrt(3) */
+#define FM_SQRT3                                1.7320508075688772935274463415059f  /* sqrt(3) */
 #endif
 
 #ifndef FM_1DIVSQRT3
-#define FM_1DIVSQRT3                            0.57735026919f      /* 1/sqrt(3) */
+#define FM_1DIVSQRT3                            0.57735026918962576450914878050196f /* 1/sqrt(3) */
 #endif
 
 #ifndef FM_SQRT3DIV2
-#define FM_SQRT3DIV2                            0.866025403784f     /* sqrt(3)/2 */
+#define FM_SQRT3DIV2                            0.86602540378443864676372317075294f /* sqrt(3)/2 */
 #endif
 
 #ifndef FM_1DIV3
-#define FM_1DIV3                                0.333333333333f     /* 1/3 */
+#define FM_1DIV3                                0.33333333333333333333333333333333f /* 1/3 */
 #endif
 
 #ifndef FM_RPM2RAD
@@ -790,7 +790,7 @@
  ***********************************************************************/
 /*** Motor 1 constants ***/
 #define MOTOR1_KV                               (300.0f)    // Motor constant (rpm/V)
-#define MOTOR1_KE                               (0.032f)   //1.0 / (MOTOR1_KV * FM_RPM2RAD * MOTOR1_POLES_PAIRS) // Motor back EMF constant (V/rad/s)
+#define MOTOR1_KE                               (FM_SQRT3 / (MOTOR1_KV * FM_RPM2RAD))   //1.0 / (MOTOR1_KV * FM_RPM2RAD * MOTOR1_POLES_PAIRS) // Motor back EMF constant (V/rad/s)
 #define MOTOR1_KI                               (0.1f)      // Motor torque constant (N.m/A)
 #define MOTOR1_RS                               (0.52f)//(0.7f)      // Stator resistance (ohm)
 #define MOTOR1_LS                               (260e-6)//(134e-6f)   // Stator d-axis inductance (H)
@@ -804,7 +804,7 @@
 #define MOTOR1_ID_REGULATOR_KI_COEF             (MOTOR1_RS * 2.0f * M_PI * MOTOR1_CURRENT_CUTOFF_FREQ)
 #define MOTOR1_IQ_REGULATOR_KP_COEF             (MOTOR1_LS * 2.0f * M_PI * MOTOR1_CURRENT_CUTOFF_FREQ)
 #define MOTOR1_IQ_REGULATOR_KI_COEF             (MOTOR1_RS * 2.0f * M_PI * MOTOR1_CURRENT_CUTOFF_FREQ)
-#define MOTOR1_IQ_REGULATOR_SATURATION          (8.0f)
+#define MOTOR1_CURRENT_REGULATOR_SAT_MAX        (2.0f)
 #define MOTOR1_SPEED_REGULATOR_KP_COEF          (1.0f)
 #define MOTOR1_SPEED_REGULATOR_KD_COEF          (0.02f)
 #define MOTOR1_DTC_MAX                          (0.9f)     // Max duty cycle
@@ -830,7 +830,7 @@
 #define MOTOR2_ID_REGULATOR_KI_COEF             MOTOR1_ID_REGULATOR_KI_COEF
 #define MOTOR2_IQ_REGULATOR_KP_COEF             MOTOR1_IQ_REGULATOR_KP_COEF
 #define MOTOR2_IQ_REGULATOR_KI_COEF             MOTOR1_IQ_REGULATOR_KI_COEF
-#define MOTOR2_IQ_REGULATOR_SATURATION          MOTOR1_IQ_REGULATOR_SATURATION
+#define MOTOR2_CURRENT_REGULATOR_SAT_MAX        MOTOR1_CURRENT_REGULATOR_SAT_MAX
 #define MOTOR2_SPEED_REGULATOR_KP_COEF          MOTOR1_SPEED_REGULATOR_KP_COEF
 #define MOTOR2_SPEED_REGULATOR_KD_COEF          MOTOR1_SPEED_REGULATOR_KD_COEF
 #define MOTOR2_DTC_MAX                          MOTOR1_DTC_MAX              // Max duty cycle
@@ -873,7 +873,7 @@
 #define VEXT_CUTOFF_TIME_CONST                  (2.0f * M_PI * VEXT_CUTOFF_FREQ * PWM_PERIOD)
 #define VEXT_LPF_ALPHA                          (VEXT_CUTOFF_TIME_CONST / (1.0f + VEXT_CUTOFF_TIME_CONST))
 #define VEXT_LPF_ONE_M_ALPHA                    (1.0f - VEXT_LPF_ALPHA)
-#define MOTOR12_IMAX                            (20.0f)
+//#define MOTOR12_IMAX                            (20.0f)
 
 /***********************************************************************
  * COMMUNICATION DEFINES

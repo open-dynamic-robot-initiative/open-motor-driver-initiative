@@ -58,7 +58,7 @@ void main(void)
 
     // Compute translation addresses for each element we want to share.
     uint16_t    cpu1_to_cm_loop = 0;
-    for(cpu1_to_cm_loop = 0; cpu1_to_cm_loop < 176; cpu1_to_cm_loop++)
+    for(cpu1_to_cm_loop = 0; cpu1_to_cm_loop < (sizeof(cpu1_to_cm_addr) / sizeof(cpu1_to_cm_addr[0])); cpu1_to_cm_loop++)
         cpu1_to_cm_addr[cpu1_to_cm_loop].data_addr =  IPC_CPU1_TO_CM_ADDR_TRANSLATE(cpu1_to_cm_addr[cpu1_to_cm_loop].data_addr);
     // Send translation address for status message structure
     IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, 0, (uint32_t)&cpu1_to_cm_addr[0], sizeof(cpu1_to_cm_addr));
@@ -222,7 +222,8 @@ __attribute__((interrupt)) void adc_isrMotor1(void)
     // copy data if access is granted else use previous ones
     if(cmd_uOmodri.cmdAccesValid)
     {
-        cmd_t* p_cmd                = &motor[MOTOR_1].p_motorFOC->motor_cmd;
+        cmd_t*          p_cmd       = &motor[MOTOR_1].p_motorFOC->motor_cmd;
+        cmd_bit_reg_t*  p_bit       = &p_cmd->enableBits.bit;
         p_cmd->posRef               = cmd_uOmodri.posRef[MOTOR_1];
         p_cmd->velRef               = cmd_uOmodri.velRef[MOTOR_1];
         p_cmd->iqRef                = cmd_uOmodri.iqRef[MOTOR_1];
@@ -231,10 +232,10 @@ __attribute__((interrupt)) void adc_isrMotor1(void)
         p_cmd->iSat                 = cmd_uOmodri.iSat[MOTOR_1];
         p_cmd->cptTimeout           = cmd_uOmodri.cptTimeout;
         p_cmd->timeoutRef           = (uint16_t)cmd_uOmodri.mode.bit.TIMEOUT;
-        p_cmd->encOffsetCompEnable  = cmd_uOmodri.mode.bit.EI1OC;
-        p_cmd->rollOverEnable       = cmd_uOmodri.mode.bit.EPRE;
-        p_cmd->motorEnable          = cmd_uOmodri.mode.bit.EM1;
-        p_cmd->systemEnable         = cmd_uOmodri.mode.bit.ES;
+        p_bit->encOffsetCompEnable  = cmd_uOmodri.mode.bit.EI1OC;
+        p_bit->rollOverEnable       = cmd_uOmodri.mode.bit.EPRE;
+        p_bit->motorEnable          = cmd_uOmodri.mode.bit.EM1;
+        p_bit->systemEnable         = cmd_uOmodri.mode.bit.ES;
     }
     // Motor control
     motor[MOTOR_1].itDone = MOT_runControl(&motor[MOTOR_1]);
@@ -266,7 +267,8 @@ __attribute__((interrupt)) void adc_isrMotor2(void)
     // copy data if access is granted else use previous ones
     if(cmd_uOmodri.cmdAccesValid)
     {
-        cmd_t* p_cmd                = &motor[MOTOR_2].p_motorFOC->motor_cmd;
+        cmd_t*          p_cmd       = &motor[MOTOR_2].p_motorFOC->motor_cmd;
+        cmd_bit_reg_t*  p_bit       = &p_cmd->enableBits.bit;
         p_cmd->posRef               = cmd_uOmodri.posRef[MOTOR_2];
         p_cmd->velRef               = cmd_uOmodri.velRef[MOTOR_2];
         p_cmd->iqRef                = cmd_uOmodri.iqRef[MOTOR_2];
@@ -275,10 +277,10 @@ __attribute__((interrupt)) void adc_isrMotor2(void)
         p_cmd->iSat                 = cmd_uOmodri.iSat[MOTOR_2];
         p_cmd->cptTimeout           = cmd_uOmodri.cptTimeout;
         p_cmd->timeoutRef           = (uint16_t)cmd_uOmodri.mode.bit.TIMEOUT;
-        p_cmd->encOffsetCompEnable  = cmd_uOmodri.mode.bit.EI2OC;
-        p_cmd->rollOverEnable       = cmd_uOmodri.mode.bit.EPRE;
-        p_cmd->motorEnable          = cmd_uOmodri.mode.bit.EM2;
-        p_cmd->systemEnable         = cmd_uOmodri.mode.bit.ES;
+        p_bit->encOffsetCompEnable  = cmd_uOmodri.mode.bit.EI2OC;
+        p_bit->rollOverEnable       = cmd_uOmodri.mode.bit.EPRE;
+        p_bit->motorEnable          = cmd_uOmodri.mode.bit.EM2;
+        p_bit->systemEnable         = cmd_uOmodri.mode.bit.ES;
     }
     // Motor control
     motor[MOTOR_2].itDone = MOT_runControl(&motor[MOTOR_2]);

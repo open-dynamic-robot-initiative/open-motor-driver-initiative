@@ -25,8 +25,9 @@
 #pragma DATA_SECTION(cmd_msg, "ramgs1")
 mst2slv_msg_t   cmd_msg;
 
-#pragma DATA_ALIGN (cmd_msg, 8)
-#pragma DATA_SECTION(status_msg, "MSGRAM_CPU_TO_CM")
+#pragma DATA_ALIGN (status_msg, 8)
+#pragma DATA_SECTION(status_msg, "ramgs1")
+//#pragma DATA_SECTION(status_msg, "MSGRAM_CPU_TO_CM")
 slv2mst_msg_t   status_msg;
 
 #pragma DATA_SECTION(led_msg, "ramgs1")

@@ -35,9 +35,13 @@ dbg_uart_msg_t dbg_uart_tx_msg =
  .iqRef             = 0,
  .iq                = 0,
  .id                = 0,
+ .uq                = 0,
+ .ud                = 0,
  .ia                = 0,
  .ib                = 0,
  .ic                = 0,
+ .uqff              = 0,
+ .udff              = 0,
  .crc               = 0,
 };
 
@@ -76,14 +80,16 @@ void main(void)
     dbg_uart_addr_t dbg_uart_addr =
     {
      .p_position    = (float*)p_cpu1_to_cm_addr[19].data_addr,
-     .p_iqRef       = (float*)p_cpu1_to_cm_addr[170].data_addr,
-     .p_iq          = (float*)p_cpu1_to_cm_addr[41].data_addr,
-     .p_id          = (float*)p_cpu1_to_cm_addr[40].data_addr,
-     .p_uq          = (float*)p_cpu1_to_cm_addr[43].data_addr,
-     .p_ud          = (float*)p_cpu1_to_cm_addr[42].data_addr,
+     .p_iqRef       = (float*)p_cpu1_to_cm_addr[34].data_addr,
+     .p_iq          = (float*)p_cpu1_to_cm_addr[48].data_addr,
+     .p_id          = (float*)p_cpu1_to_cm_addr[47].data_addr,
+     .p_uq          = (float*)p_cpu1_to_cm_addr[50].data_addr,
+     .p_ud          = (float*)p_cpu1_to_cm_addr[49].data_addr,
      .p_ia          = (float*)p_cpu1_to_cm_addr[11].data_addr,
      .p_ib          = (float*)p_cpu1_to_cm_addr[12].data_addr,
      .p_ic          = (float*)p_cpu1_to_cm_addr[13].data_addr,
+     .p_uqff        = (float*)p_cpu1_to_cm_addr[77].data_addr,
+     .p_udff        = (float*)p_cpu1_to_cm_addr[71].data_addr,
      //.p_speed       = (float*)p_cpu1_to_cm_addr[26].data_addr;
      //.p_speedMech   = (float*)p_cpu1_to_cm_addr[28].data_addr;
     };

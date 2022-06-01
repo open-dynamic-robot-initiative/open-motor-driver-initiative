@@ -38,6 +38,8 @@ void com_msgDbgTx(dbg_uart_addr_t* p_addr, dbg_uart_msg_t* p_msg)
     p_msg->ia               = (int16_t)(*p_addr->p_ia / IQ_LSB);
     p_msg->ib               = (int16_t)(*p_addr->p_ib / IQ_LSB);
     p_msg->ic               = (int16_t)(*p_addr->p_ic / IQ_LSB);
+    p_msg->uqff             = (int16_t)(*p_addr->p_uqff / IQ_LSB);
+    p_msg->udff             = (int16_t)(*p_addr->p_udff / IQ_LSB);
 //    p_msg->speed            = (float32_t)(*p_addr->p_speed);
 //    p_msg->speedMech        = (float32_t)(*p_addr->p_speedMech);
     p_msg->crc              = com_crc8_fast(0, (uint8_t *)p_msg, (sizeof(dbg_uart_msg_t) - 1));

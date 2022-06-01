@@ -16,21 +16,21 @@
 /***********************************************************************
  * TYPDEF ENUM
  ***********************************************************************/
-/**
- * @enum    motor_svm_sector_e
- * @brief   Space Vector Modulation (SVM) - Sectors definitions
- */
-typedef enum
-{
-    MOTOR_SVM_SECTOR_0          = 0x00,  /*!< SECTOR_\#0 : Default sector state */
-    MOTOR_SVM_SECTOR_1          = 0x06,  /*!< SECTOR_\#1 : Ubeta >= 0.0 && ((sqrt(3) x Ualpha) - Ubeta) >= 0.0 */
-    MOTOR_SVM_SECTOR_2          = 0x04,  /*!< SECTOR_\#2 : Ubeta >= 0.0 && (((sqrt(3) x Ualpha) - Ubeta) < 0.0 || (-(sqrt(3) x Ualpha) - Ubeta) < 0.0) */
-    MOTOR_SVM_SECTOR_3          = 0x05,  /*!< SECTOR_\#3 : Ubeta >= 0.0 && (-(sqrt(3) x Ualpha) - Ubeta) >= 0.0 */
-    MOTOR_SVM_SECTOR_4          = 0x01,  /*!< SECTOR_\#4 : Ubeta < 0.0 && ((sqrt(3) x Ualpha) - Ubeta) < 0.0 */
-    MOTOR_SVM_SECTOR_5          = 0x03,  /*!< SECTOR_\#5 : Ubeta < 0.0 && (((sqrt(3) x Ualpha) - Ubeta) >= 0.0 || (-(sqrt(3) x Ualpha) - Ubeta) >= 0.0) */
-    MOTOR_SVM_SECTOR_6          = 0x02,  /*!< SECTOR_\#6 : Ubeta < 0.0 && (-(sqrt(3) x Ualpha) - Ubeta) < 0.0 */
-    MOTOR_SVM_SECTOR_7          = 0x07,   /*!< SECTOR_\#6 : ERROR */
-} motor_svm_sector_e;
+///**
+// * @enum    motor_svm_sector_e
+// * @brief   Space Vector Modulation (SVM) - Sectors definitions
+// */
+//typedef enum
+//{
+//    MOTOR_SVM_SECTOR_0          = 0x00, /*!< SECTOR_\#0 : Default sector state */
+//    MOTOR_SVM_SECTOR_1          = 0x06, /*!< SECTOR_\#1 : Ubeta > 0.0 && ((sqrt(3) x Ualpha) - Ubeta) > 0.0 && ((-sqrt(3) x Ualpha) - Ubeta) < 0.0 */
+//    MOTOR_SVM_SECTOR_2          = 0x04, /*!< SECTOR_\#2 : Ubeta > 0.0 && ((sqrt(3) x Ualpha) - Ubeta) < 0.0 && ((-sqrt(3) x Ualpha) - Ubeta) < 0.0 */
+//    MOTOR_SVM_SECTOR_3          = 0x05, /*!< SECTOR_\#3 : Ubeta > 0.0 && ((sqrt(3) x Ualpha) - Ubeta) < 0.0 && ((-sqrt(3) x Ualpha) - Ubeta) > 0.0 */
+//    MOTOR_SVM_SECTOR_4          = 0x01, /*!< SECTOR_\#4 : Ubeta < 0.0 && ((sqrt(3) x Ualpha) - Ubeta) < 0.0 && ((-sqrt(3) x Ualpha) - Ubeta) > 0.0 */
+//    MOTOR_SVM_SECTOR_5          = 0x03, /*!< SECTOR_\#5 : Ubeta < 0.0 && ((sqrt(3) x Ualpha) - Ubeta) > 0.0 && ((-sqrt(3) x Ualpha) - Ubeta) > 0.0 */
+//    MOTOR_SVM_SECTOR_6          = 0x02, /*!< SECTOR_\#6 : Ubeta < 0.0 && ((sqrt(3) x Ualpha) - Ubeta) > 0.0 && ((-sqrt(3) x Ualpha) - Ubeta) < 0.0 */
+//    MOTOR_SVM_SECTOR_7          = 0x07, /*!< SECTOR_\#7 : Default sector state */
+//} motor_svm_sector_e;
 
 /**
  * @enum    motor_state_e
@@ -62,27 +62,27 @@ typedef enum
 /***********************************************************************
  * CONTROL STRUCTURES
  ***********************************************************************/
-/**
- * @struct  mst2slv_reg_t
- * @brief   Master to Slave command structure (bits definition) for uOmodri
- */
-typedef struct __svm_test_reg_t__
-{
-    uint16_t        NEG_UALPHA_UBETA_SIGN_TEST  : 1;    /*!< Bits 0     : R/W - */
-    uint16_t        UALPHA_UBETA_SIGN_TEST      : 1;    /*!< Bits 1     : R/W - */
-    uint16_t        UBETA_SIGN_TEST             : 1;    /*!< Bits 2     : R/W - */
-    uint16_t        SVM_TEST_RSV1               : 13;   /*!< Bits 3-15  : R/W - Reserved    */
-} svm_test_reg_t;
-
-/**
- * @union   mst2slv_reg_u
- * @brief   Master to Slave command union (bits definition) for uOmodri. Access to bit field.
- */
-typedef union __svm_test_reg_u__
-{
-  uint16_t          all;                /*!< Short (16bits) type access */
-  svm_test_reg_t    bit;                /*!< @see command_mode_t        */
-} svm_test_reg_u;
+///**
+// * @struct  mst2slv_reg_t
+// * @brief   Master to Slave command structure (bits definition) for uOmodri
+// */
+//typedef struct __svm_test_reg_t__
+//{
+//    uint16_t        C_TEST      : 1;    /*!< Bits 0     : -sqrt(3) / 2 x Ualpha -1 / 2 x Ubeta  > 0 */
+//    uint16_t        B_TEST      : 1;    /*!< Bits 1     : sqrt(3) / 2 x Ualpha  -1 / 2 x Ubeta  > 0 */
+//    uint16_t        A_TEST      : 1;    /*!< Bits 2     : Ubeta                                 > 0 */
+//    uint16_t        TEST_RSV1   : 13;   /*!< Bits 3-15  : R/W - Reserved    */
+//} svm_test_reg_t;
+//
+///**
+// * @union   mst2slv_reg_u
+// * @brief   Master to Slave command union (bits definition) for uOmodri. Access to bit field.
+// */
+//typedef union __svm_test_reg_u__
+//{
+//  uint16_t          all;                /*!< Short (16bits) type access */
+//  svm_test_reg_t    bit;                /*!< @see command_mode_t        */
+//} svm_test_reg_u;
 
 //typedef struct
 //{
@@ -141,5 +141,7 @@ inline void MOT_runCommand(motor_t*, float32_t, float32_t, float32_t);
 inline void MOT_stopCommand(motor_t*);
 inline bool_t MOT_runControl(motor_t*);
 void MOT_resistorEstimation(motor_t*);
+//void MOT_spwm(motor_t*);
+//void MOT_svpwm(motor_t*);
 
 #endif /* __MOTOR_H__ */
