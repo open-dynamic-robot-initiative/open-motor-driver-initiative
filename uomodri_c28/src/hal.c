@@ -18,7 +18,7 @@ void HAL_ePWM_ini(const epwm_cfg_t*);
 void HAL_eQEP_ini(const eqep_cfg_t*);
 void HAL_SPI_ini(const spi_cfg_t*);
 void HAL_TIMER_ini(const tmr_cfg_t*);
-void HAL_DMA_ini(const dma_cfg_t*);
+void HAL_DMA_rst(void);
 #if (defined CM_CORE_ENABLE) && (CM_CORE_ENABLE)
 void HAL_IPC_ini(const ipc_cfg_t*);
 #endif
@@ -52,6 +52,7 @@ void HAL_ini(const hal_cfg_t* p_hal)
         // Initialize CPU TIMERS
         HAL_TIMER_ini(p_hal->p_timerHandle);
         // Initialize DMA
+        HAL_DMA_rst();
         HAL_DMA_ini(p_hal->p_dmaHandle);
         // Initialize SPI
         HAL_SPI_ini(p_hal->p_spiHandle);
@@ -227,7 +228,7 @@ void HAL_ADC_offsetCalib(const hal_motor_cfg_t* p_halMotorCfg)
         for(loop = 0; loop < 3; loop++)
         {
             // Sets the post processing block reference offset for tensions
-            ADC_setPPBReferenceOffset(p_halMotorCfg->p_vAcq[loop]->adcBase, p_halMotorCfg->p_vAcq[loop]->adcPPBNumber, (uint16_t)v[loop]);
+//            ADC_setPPBReferenceOffset(p_halMotorCfg->p_vAcq[loop]->adcBase, p_halMotorCfg->p_vAcq[loop]->adcPPBNumber, (uint16_t)v[loop]);
             // Sets the post processing block reference offset for tensions
             ADC_setPPBReferenceOffset(p_halMotorCfg->p_iAcq[loop]->adcBase, p_halMotorCfg->p_iAcq[loop]->adcPPBNumber, (uint16_t)i[loop]);
             // Enables two's complement capability
@@ -543,6 +544,18 @@ void HAL_SPI_ini(const spi_cfg_t* p_spiCfg)
 }
 
 /**
+ * @brief       Force a hard reset of all DMA peripherals
+ */
+void HAL_DMA_rst(void)
+{
+    /* Global hardware reset of the DMA controller. */
+    DMA_initController();
+    DMA_setEmulationMode(DMA_EMULATION_FREE_RUN);
+
+    return;
+}
+
+/**
  * @brief       DMA initialization function.
  * @param[in]   *p_dmaCfg   Pointer on the DMA configuration structure
  */
@@ -552,9 +565,6 @@ void HAL_DMA_ini(const dma_cfg_t* p_dmaCfg)
     {
         uint32_t dmaChBase = p_dmaCfg->dmaChBase;
 
-        /* Global hardware reset of the DMA controller. */
-        DMA_initController();
-        DMA_setEmulationMode(DMA_EMULATION_FREE_RUN);
         while(dmaChBase != UINT32_MAX)
         {
             /* DMA channel initialization
@@ -568,7 +578,6 @@ void HAL_DMA_ini(const dma_cfg_t* p_dmaCfg)
             /* Clear flags & set or disable interrupts */
             DMA_disableOverrunInterrupt(dmaChBase);
             DMA_setInterruptMode(dmaChBase, p_dmaCfg->intMode);
-//            DMA_enableInterrupt(dmaChBase);
             (p_dmaCfg->intEnable) ? (DMA_enableInterrupt(dmaChBase)) : (DMA_disableInterrupt(dmaChBase));
             /* Enable Trigger source & start DMA channel */
             DMA_clearTriggerFlag(dmaChBase);

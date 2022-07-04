@@ -22,7 +22,8 @@
  ***********************************************************************/
 extern motor_t          motor[];
 extern const hal_cfg_t  hal;
-extern cmd_uomodri_t    cmd_uOmodri;
+//extern cmd_uomodri_t    cmd_uOmodri;
+extern cmd_t            cmd_uOmodri[];
 
 /***********************************************************************
  * FUNCTIONS DECLARATION
@@ -38,7 +39,7 @@ inline void LED_dimming(motor_t*, uint16_t*);
  * @brief   Main function running on CPU1/C28. MCU init, DRV init, ADC init \& calibration, IT init.
  */
 void main(void)
-{
+     {
     // uOmodri low level device initialization
     MCU_ini();
     // Hardware Abstraction Layer initialization
@@ -52,7 +53,14 @@ void main(void)
     // Force a reset of FOC structures
     FOC_resetStruct(motor[MOTOR_1].p_motorFOC);
     FOC_resetStruct(motor[MOTOR_2].p_motorFOC);
-    COM_resetCmdStruct(&cmd_uOmodri);
+    // Force a reset of the intermediate command structures. Working structures are embedded in FOC structures.
+    COM_resetCmdStruct(&cmd_uOmodri[MOTOR_1]);
+    COM_resetCmdStruct(&cmd_uOmodri[MOTOR_2]);
+    // DMA initialization for memory to memory transfer
+    HAL_DMA_ini(dmaMem2MemCfList);
+//    DMA_forceTrigger(DMA_MEM_TO_MEM_M1_BASE_ADDR);
+//    DMA_forceTrigger(DMA_MEM_TO_MEM_M1_BASE_ADDR);
+//    DMA_forceTrigger(DMA_MEM_TO_MEM_M2_BASE_ADDR);
     // Interrupts initialization
     HAL_INT_ini(InterruptList);
 
@@ -68,23 +76,26 @@ void main(void)
     while(1)
     {
         // SPI COM RX management - Receive & extract message
-        if(!DMA_getRunStatusFlag(DMA_COM_SPI_RX_BASE_ADDR) && GPIO_readPin(COM_SPI_CS))
+        if(!DMA_getRunStatusFlag(DMA_COM_SPI_RX_BASE_ADDR) && GPIO_readPin(COM_SPI_CS) &&
+                !DMA_getTransferStatusFlag(DMA_CMD_2_STRUCT_BASE_ADDR))
         {
-            COM_msgExtract(&cmd_msg, &cmd_uOmodri);
-            DMA_clearTriggerFlag(DMA_COM_SPI_RX_BASE_ADDR);// DMA_triggerSoftReset(DMA_COM_SPI_RX_BASE_ADDR);
+            // Extract received message & send new commands to FOC structures if valid
+            if(COM_msgExtract(&cmd_msg, &cmd_uOmodri[MOTOR_1], &cmd_uOmodri[MOTOR_2]))
+                DMA_forceTrigger(DMA_CMD_2_STRUCT_BASE_ADDR);
+            // Prepare SPI and associated DMA for a new receive
+            DMA_clearTriggerFlag(DMA_COM_SPI_RX_BASE_ADDR);
             SPI_resetRxFIFO(COM_SPI_BASE);
             DMA_startChannel(DMA_COM_SPI_RX_BASE_ADDR);
         }
         // SPI COM TX management - Create message & send it
         if(!DMA_getRunStatusFlag(DMA_COM_SPI_TX_BASE_ADDR) && motor[MOTOR_2].itDone && motor[MOTOR_1].itDone)
         {
-            COM_msgCreate(&motor[MOTOR_1], &cmd_uOmodri, &status_msg);
-            COM_msgCreate(&motor[MOTOR_2], &cmd_uOmodri, &status_msg);
+            COM_msgCreate(&motor[MOTOR_1], &motor[MOTOR_2], &status_msg);
             DMA_clearTriggerFlag(DMA_COM_SPI_TX_BASE_ADDR);
             if(GPIO_readPin(COM_SPI_CS))
             {
                 // Force first write in SPI_O_DAT
-                HWREGH(COM_SPI_BASE + SPI_O_DAT) = (uint16_t) status_msg.status.all;// DMA_triggerSoftReset(DMA_COM_SPI_TX_BASE_ADDR);
+                HWREGH(COM_SPI_BASE + SPI_O_DAT) = (uint16_t) status_msg.status.all;
                 SPI_resetTxFIFO(COM_SPI_BASE);
                 DMA_startChannel(DMA_COM_SPI_TX_BASE_ADDR);
             }
@@ -110,7 +121,8 @@ void main(void)
             if(motor[MOTOR_2].motor_error & MOTOR_ERROR_DRV_NFAULT)
                 DRV_readStatus(motor[MOTOR_2].p_motorDRV);
             // Timeout management
-            cmd_uOmodri.cptTimeout++;
+            cmd_uOmodri[MOTOR_1].cptTimeout++;
+            cmd_uOmodri[MOTOR_2].cptTimeout++;
             // Clear flag
             CPUTimer_clearOverflowFlag(CPU_TIMER_0_BASE);
         }
@@ -178,7 +190,7 @@ inline void PTR_swap(int32_t** p_a, int32_t** p_b)
 
 /**
  * @brief           Control the led dimming
- * @param[in]       p_foc   Pointer on data structure array used for motor control.
+ * @param[in]       p_motor Pointer on data structure array used for motor control.
  * @param[out]      p_msg   Pointer on the message to be sent to led via SPI.
  */
 inline void LED_dimming(motor_t* p_motor, uint16_t* p_msg)
@@ -220,25 +232,33 @@ __attribute__((interrupt)) void adc_isrMotor1(void)
     GPIO_writePin(DBG_PIN1, 1);
 #endif
     // copy data if access is granted else use previous ones
-    if(cmd_uOmodri.cmdAccesValid)
-    {
-        cmd_t*          p_cmd       = &motor[MOTOR_1].p_motorFOC->motor_cmd;
-        cmd_bit_reg_t*  p_bit       = &p_cmd->enableBits.bit;
-        p_cmd->posRef               = cmd_uOmodri.posRef[MOTOR_1];
-        p_cmd->velRef               = cmd_uOmodri.velRef[MOTOR_1];
-        p_cmd->iqRef                = cmd_uOmodri.iqRef[MOTOR_1];
-        p_cmd->kpCoeff              = cmd_uOmodri.kpCoeff[MOTOR_1];
-        p_cmd->kdCoeff              = cmd_uOmodri.kdCoeff[MOTOR_1];
-        p_cmd->iSat                 = cmd_uOmodri.iSat[MOTOR_1];
-        p_cmd->cptTimeout           = cmd_uOmodri.cptTimeout;
-        p_cmd->timeoutRef           = (uint16_t)cmd_uOmodri.mode.bit.TIMEOUT;
-        p_bit->encOffsetCompEnable  = cmd_uOmodri.mode.bit.EI1OC;
-        p_bit->rollOverEnable       = cmd_uOmodri.mode.bit.EPRE;
-        p_bit->motorEnable          = cmd_uOmodri.mode.bit.EM1;
-        p_bit->systemEnable         = cmd_uOmodri.mode.bit.ES;
-    }
+//    if(cmd_uOmodri[MOTOR_1].cmdAccesValid)
+//    {
+//        cmd_t*          p_cmd       = &motor[MOTOR_1].p_motorFOC->motor_cmd;
+//        cmd_bit_reg_t*  p_bit       = &p_cmd->enableBits.bit;
+//        p_cmd->posRef               = cmd_uOmodri[MOTOR_1].posRef;
+//        p_cmd->velRef               = cmd_uOmodri[MOTOR_1].velRef;
+//        p_cmd->iqRef                = cmd_uOmodri[MOTOR_1].iqRef;
+//        p_cmd->kpCoeff              = cmd_uOmodri[MOTOR_1].kpCoeff;
+//        p_cmd->kdCoeff              = cmd_uOmodri[MOTOR_1].kdCoeff;
+//        p_cmd->iSat                 = cmd_uOmodri[MOTOR_1].iSat;
+//        p_cmd->timeoutRef           = cmd_uOmodri[MOTOR_1].timeoutRef;
+//        p_cmd->cptTimeout           = cmd_uOmodri[MOTOR_1].cptTimeout;
+//        p_cmd->index                = cmd_uOmodri[MOTOR_1].index;
+//        p_bit->encOffsetCompEnable  = cmd_uOmodri[MOTOR_1].enableBits.bit.encOffsetCompEnable;
+//        p_bit->rollOverEnable       = cmd_uOmodri[MOTOR_1].enableBits.bit.rollOverEnable;
+//        p_bit->motorEnable          = cmd_uOmodri[MOTOR_1].enableBits.bit.motorEnable;
+//        p_bit->systemEnable         = cmd_uOmodri[MOTOR_1].enableBits.bit.systemEnable;
+//        p_cmd->encOffsetCompEnable  = cmd_uOmodri[MOTOR_1].encOffsetCompEnable;
+//        p_cmd->rollOverEnable       = cmd_uOmodri[MOTOR_1].rollOverEnable;
+//        p_cmd->motorEnable          = cmd_uOmodri[MOTOR_1].motorEnable;
+//        p_cmd->systemEnable         = cmd_uOmodri[MOTOR_1].systemEnable;
+//        p_cmd->cmdAccesValid        = cmd_uOmodri[MOTOR_1].cmdAccesValid;
+//    }
+    while(DMA_getTransferStatusFlag(DMA_CMD_2_STRUCT_BASE_ADDR));
     // Motor control
     motor[MOTOR_1].itDone = MOT_runControl(&motor[MOTOR_1]);
+//    motor[MOTOR_1].itDone = true;
     // Clear the interrupt overflow flag
     ADC_clearInterruptOverflowStatus(MOTOR12_IVA_ADC_ADDR, MOTOR1_IA_INT_NUM);
     // Clear the interrupt flag
@@ -265,25 +285,34 @@ __attribute__((interrupt)) void adc_isrMotor2(void)
     GPIO_writePin(DBG_PIN1, 1);
 #endif
     // copy data if access is granted else use previous ones
-    if(cmd_uOmodri.cmdAccesValid)
-    {
-        cmd_t*          p_cmd       = &motor[MOTOR_2].p_motorFOC->motor_cmd;
-        cmd_bit_reg_t*  p_bit       = &p_cmd->enableBits.bit;
-        p_cmd->posRef               = cmd_uOmodri.posRef[MOTOR_2];
-        p_cmd->velRef               = cmd_uOmodri.velRef[MOTOR_2];
-        p_cmd->iqRef                = cmd_uOmodri.iqRef[MOTOR_2];
-        p_cmd->kpCoeff              = cmd_uOmodri.kpCoeff[MOTOR_2];
-        p_cmd->kdCoeff              = cmd_uOmodri.kdCoeff[MOTOR_2];
-        p_cmd->iSat                 = cmd_uOmodri.iSat[MOTOR_2];
-        p_cmd->cptTimeout           = cmd_uOmodri.cptTimeout;
-        p_cmd->timeoutRef           = (uint16_t)cmd_uOmodri.mode.bit.TIMEOUT;
-        p_bit->encOffsetCompEnable  = cmd_uOmodri.mode.bit.EI2OC;
-        p_bit->rollOverEnable       = cmd_uOmodri.mode.bit.EPRE;
-        p_bit->motorEnable          = cmd_uOmodri.mode.bit.EM2;
-        p_bit->systemEnable         = cmd_uOmodri.mode.bit.ES;
-    }
+//    if(cmd_uOmodri[MOTOR_2].cmdAccesValid)
+//    {
+//        cmd_t*          p_cmd       = &motor[MOTOR_2].p_motorFOC->motor_cmd;
+//        cmd_bit_reg_t*  p_bit       = &p_cmd->enableBits.bit;
+//        p_cmd->posRef               = cmd_uOmodri[MOTOR_2].posRef;
+//        p_cmd->velRef               = cmd_uOmodri[MOTOR_2].velRef;
+//        p_cmd->iqRef                = cmd_uOmodri[MOTOR_2].iqRef;
+//        p_cmd->kpCoeff              = cmd_uOmodri[MOTOR_2].kpCoeff;
+//        p_cmd->kdCoeff              = cmd_uOmodri[MOTOR_2].kdCoeff;
+//        p_cmd->iSat                 = cmd_uOmodri[MOTOR_2].iSat;
+//        p_cmd->timeoutRef           = cmd_uOmodri[MOTOR_2].timeoutRef;
+//        p_cmd->cptTimeout           = cmd_uOmodri[MOTOR_2].cptTimeout;
+//        p_cmd->index                = cmd_uOmodri[MOTOR_2].index;
+//        p_bit->encOffsetCompEnable  = cmd_uOmodri[MOTOR_2].enableBits.bit.encOffsetCompEnable;
+//        p_bit->rollOverEnable       = cmd_uOmodri[MOTOR_2].enableBits.bit.rollOverEnable;
+//        p_bit->motorEnable          = cmd_uOmodri[MOTOR_2].enableBits.bit.motorEnable;
+//        p_bit->systemEnable         = cmd_uOmodri[MOTOR_2].enableBits.bit.systemEnable;
+//        p_cmd->encOffsetCompEnable  = cmd_uOmodri[MOTOR_2].encOffsetCompEnable;
+//        p_cmd->rollOverEnable       = cmd_uOmodri[MOTOR_2].rollOverEnable;
+//        p_cmd->motorEnable          = cmd_uOmodri[MOTOR_2].motorEnable;
+//        p_cmd->systemEnable         = cmd_uOmodri[MOTOR_2].systemEnable;
+//        p_cmd->cmdAccesValid        = cmd_uOmodri[MOTOR_2].cmdAccesValid;
+//    }
+    while(DMA_getTransferStatusFlag(DMA_CMD_2_STRUCT_BASE_ADDR));
+//    while(DMA_getRunStatusFlag(DMA_MEM_TO_MEM_M2_BASE_ADDR));
     // Motor control
     motor[MOTOR_2].itDone = MOT_runControl(&motor[MOTOR_2]);
+//    motor[MOTOR_2].itDone = true;
 #if (defined CM_CORE_ENABLE) && (CM_CORE_ENABLE)
     // Send info to CM
     (!IPC_isFlagBusyLtoR(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG)) ? (IPC_setFlagLtoR(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG)) : (0);

@@ -373,6 +373,7 @@ typedef struct __HAL_MOTOR_CFG_t__
 void HAL_ini(const hal_cfg_t*);
 void HAL_SPI_start(const spi_cfg_t*);
 void HAL_INT_ini(const int_cfg_t*);
+void HAL_DMA_ini(const dma_cfg_t*);
 void HAL_ADC_offsetCalib(const hal_motor_cfg_t*);
 
 #endif

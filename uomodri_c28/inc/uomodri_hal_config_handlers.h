@@ -339,6 +339,7 @@ static const dma_cfg_t  dmaCfgList[] =
   .intMode              = DMA_INT_AT_END,
   .intEnable            = false,
  },
+
  // END OF ARRAY
  {.dmaChBase            = UINT32_MAX},
 };

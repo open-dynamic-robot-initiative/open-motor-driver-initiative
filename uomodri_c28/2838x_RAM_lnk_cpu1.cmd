@@ -65,23 +65,23 @@ SECTIONS
 {
    codestart        : > BEGIN
    .text            : >> RAMGS10 | RAMGS11 | RAMGS12 | RAMGS13 | RAMGS14, ALIGN(8)
-   .cinit           : > RAMM0, ALIGN(8)
-   .switch          : > RAMM0, ALIGN(8)
+   .cinit           : > RAMM1, ALIGN(8)/*.cinit           : > RAMM0, ALIGN(8)*/
+   .switch          : > RAMM1, ALIGN(8)/*.switch          : > RAMM0, ALIGN(8)*/
    .reset           : > RESET, TYPE = DSECT /* not used, */
 
-   .stack           : > RAMM1
+   .stack           : > RAMM0/*.stack           : > RAMM1*/
 
     /* uomodri named section at given address: */
    //.ComRxCmdSection	: > 0x039000
 #if defined(__TI_EABI__)
    .bss             : > RAMLS5
    .bss:output      : > RAMLS3
-   .init_array      : > RAMM0
-   .const           : >> RAMLS0 | RAMLS1 | RAMLS2, ALIGN(8)
+   .init_array      : > RAMM1/*.init_array      : > RAMM0*/
+   .const           : >> RAMLS0 | RAMLS1 | RAMLS2 | RAMLS3, ALIGN(8)/*   .const           : >> RAMLS0 | RAMLS1 | RAMLS2, ALIGN(8)*/
    .data            : >> RAMLS6 | RAMLS7, ALIGN(8)
    .sysmem          : > RAMLS4
 #else
-   .pinit           : > RAMM0
+   .pinit           : > RAMM1/*   .pinit           : > RAMM0*/
    .ebss            : >> RAMLS5 | RAMLS6
    .econst          : > RAMLS5
    .esysmem         : > RAMLS5

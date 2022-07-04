@@ -13,7 +13,7 @@ inline void FOC_resistanceEstimation(foc_t*);
 inline void FOC_resetPI(pi_t*);
 inline float32_t FOC_runPI(pi_t*);
 inline void FOC_resetPD(pd_t*);
-inline void FOC_resetCommand(cmd_t*);
+inline void FOC_resetCmdStruct(cmd_t*);
 void limit_norm(float32_t*, float32_t*, float32_t);
 void FOC_svpwm1(foc_t*);
 void FOC_svpwm2(foc_t*);
@@ -198,17 +198,22 @@ inline float32_t FOC_runPD(pd_t* p_pd)
  * @brief           Reset the command structure associated to motor control
  * @param[inout]    p_cmd   Pointer on the local command associated to motor control
  */
-inline void FOC_resetCommand(cmd_t* p_cmd)
+inline void FOC_resetCmdStruct(cmd_t* p_cmd)
 {
     p_cmd->posRef               = 0.0f;
     p_cmd->velRef               = 0.0f;
     p_cmd->iqRef                = 0.0f;
     p_cmd->kpCoeff              = 0.0f;
     p_cmd->kdCoeff              = 0.0f;
-    p_cmd->iSat                 = (p_cmd->motor_id == MOTOR_1) ? (MOTOR1_CURRENT_REGULATOR_SAT_MAX) : (MOTOR2_CURRENT_REGULATOR_SAT_MAX);
+    p_cmd->iSat                 = 0.0f;//(p_cmd->motor_id == MOTOR_1) ? (MOTOR1_CURRENT_REGULATOR_SAT_MAX) : (MOTOR2_CURRENT_REGULATOR_SAT_MAX);
     p_cmd->timeoutRef           = 0;
     p_cmd->cptTimeout           = 0;
     p_cmd->enableBits.all       = 0;
+    p_cmd->encOffsetCompEnable  = false;
+    p_cmd->rollOverEnable       = false;
+    p_cmd->motorEnable          = false;
+    p_cmd->systemEnable         = false;
+//    p_cmd->cmdAccesValid        = false;
 }
 
 /**
@@ -227,7 +232,7 @@ void FOC_resetStruct(foc_t* p_foc)
     // Reset analog measures
     FOC_resetMeasuresStruct(&p_foc->motor_acq);
     // Reset the commands associated to motor control
-    FOC_resetCommand(&p_foc->motor_cmd);
+    FOC_resetCmdStruct(&p_foc->motor_cmd);
     // Reset currents and voltages
     p_foc->sinTheta         = 0.0f;
     p_foc->cosTheta         = 0.0f;

@@ -39,42 +39,22 @@ typedef enum
 /***********************************************************************
  * CONTROL STRUCTURES
  ***********************************************************************/
-/**
- * @struct  mst2slv_reg_t
- * @brief   Master to Slave command structure (bits definition) for uOmodri
- */
-typedef struct __svm_test_reg_t__
-{
-    uint16_t        C_TEST      : 1;    /*!< Bit 0      : -sqrt(3) / 2 x Ualpha -1 / 2 x Ubeta  > 0 */
-    uint16_t        B_TEST      : 1;    /*!< Bit 1      : sqrt(3) / 2 x Ualpha  -1 / 2 x Ubeta  > 0 */
-    uint16_t        A_TEST      : 1;    /*!< Bit 2      : Ubeta                                 > 0 */
-    uint16_t        TEST_RSV1   : 13;   /*!< Bits 3-15  : R/W - Reserved    */
-} svm_test_reg_t;
-
-/**
- * @union   mst2slv_reg_u
- * @brief   Master to Slave command union (bits definition) for uOmodri. Access to bit field.
- */
-typedef union __svm_test_reg_u__
-{
-  uint16_t          all;                /*!< Short (16bits) type access */
-  svm_test_reg_t    bit;                /*!< @see command_mode_t        */
-} svm_test_reg_u;
-
 typedef struct __cmd_bit_reg_t__
 {
-    uint16_t        systemEnable        : 1;    /*!< Bit 0      : R/W - Enable system to start. No power on motors. */
-    uint16_t        motorEnable         : 1;    /*!< Bit 1      : R/W - Enable power on motor.                      */
-    uint16_t        rollOverEnable      : 1;    /*!< Bit 2      : R/W - Limit the rotations to +/- 128 rounds.      */
-    uint16_t        encOffsetCompEnable : 1;    /*!< Bit 3      : R/W - Use encoder index in position computation.  */
-    uint16_t        CMD_RSV1            : 12;   /*!< Bit 4-15   : R/W - Reserved                                    */
-} cmd_bit_reg_t;
+    uint16_t        systemEnable        : 1;    /*!< Bit 0      : R/W - Enable system to start. No power on motors.         */
+    uint16_t        motorEnable         : 1;    /*!< Bit 1      : R/W - Enable power on motor.                              */
+    uint16_t        rollOverEnable      : 1;    /*!< Bit 2      : R/W - Limit the rotations to +/- 128 rounds.              */
+    uint16_t        encOffsetCompEnable : 1;    /*!< Bit 3      : R/W - Use encoder index in position computation.          */
+//    uint16_t        timeOut             : 8;    /*!< Bit 4-11   : R/W - Timeout (ms) disable system after no valid command  */
+//    uint16_t        CMD_RSV1            : 4;    /*!< Bit 12-15  : R/W - Reserved                                            */
+    uint16_t        CMD_RSV1            : 12;   /*!< Bit 4-15   : R/W - Reserved                                            */
+} cmd_reg_t;
 
 typedef struct __cmd_bit_reg_u__
 {
     uint16_t        all;
-    cmd_bit_reg_t   bit;
-} cmd_bit_reg_u;
+    cmd_reg_t       bit;
+} cmd_reg_u;
 
 /**
  * @struct  pi_t
@@ -150,20 +130,22 @@ typedef struct __MOTOR_ACQUISITIONS_t__
 
 typedef struct __MOTOR_COMMAND_t__
 {
-    const motor_id_e    motor_id;
-    float32_t           posRef;
-    float32_t           velRef;
-    float32_t           iqRef;
-    float32_t           kpCoeff;
-    float32_t           kdCoeff;
-    float32_t           iSat;
-    uint16_t            timeoutRef;
-    uint16_t            cptTimeout;
-    cmd_bit_reg_u       enableBits;
-//    bool_t              encOffsetCompEnable;
-//    bool_t              rollOverEnable;
-//    bool_t              motorEnable;
-//    bool_t              systemEnable;
+//    const motor_id_e    motor_id;
+    float32_t   posRef;
+    float32_t   velRef;
+    float32_t   iqRef;
+    float32_t   kpCoeff;
+    float32_t   kdCoeff;
+    float32_t   iSat;
+    uint16_t    timeoutRef;
+    uint16_t    cptTimeout;
+    uint16_t    index;
+    cmd_reg_u   enableBits;
+    bool_t      encOffsetCompEnable;
+    bool_t      rollOverEnable;
+    bool_t      motorEnable;
+    bool_t      systemEnable;
+//    bool_t      cmdAccesValid;
 } cmd_t;
 
 typedef struct __MOTOR_FOC_CONTROL_t__

@@ -142,16 +142,6 @@ typedef struct __U32toU16_reg_t__
     uint16_t        u16_lsb;
 } U32toU16_reg_t;
 
-/**
- * @struct  fsm_reg_t
- * @brief   Finite state machine debug structure (bits definition) for uOmodri.
- */
-typedef struct __fsm_reg_t__
-{
-    uint8_t         u8_m1_state;        /*!< Bits 7-0   : MOTOR_1 state of the state machine    */
-    uint8_t         u8_m2_state;        /*!< Bits 15-8  : MOTOR_2 state of the state machine    */
-} fsm_reg_t;
-
 /***********************************************************************
  * MAIN COMMUNICATION STRUCTURES
  ***********************************************************************/
@@ -212,7 +202,6 @@ typedef struct __com_cpu1_to_cm_t__
     uint32_t    data_addr;
     uint16_t    data_pos;
     uint16_t    data_size;
-//    uint16_t    index;
 } com_cpu1_to_cm_t;
 
 #ifdef USE_CM_CORE
@@ -296,10 +285,13 @@ typedef enum
  * FUNCTIONS DECLARATION
  ***********************************************************************/
 #ifndef USE_CM_CORE
-bool_t COM_msgExtract(mst2slv_msg_t*, cmd_uomodri_t*);
-void COM_msgCreate(motor_t*, cmd_uomodri_t*, slv2mst_msg_t*);
-void COM_resetCmdStruct(cmd_uomodri_t*);
-void COM_resetCmdMotorStruct(motor_t*, cmd_uomodri_t*);
+//bool_t COM_msgExtract(mst2slv_msg_t*, cmd_uomodri_t*);
+bool_t COM_msgExtract(mst2slv_msg_t*,  cmd_t*, cmd_t*);
+//void COM_msgCreate(motor_t*, cmd_uomodri_t*, slv2mst_msg_t*);
+void COM_msgCreate(motor_t*, motor_t*, slv2mst_msg_t*);
+//void COM_resetCmdStruct(cmd_uomodri_t*);
+void COM_resetCmdStruct(cmd_t*);
+//void COM_resetCmdMotorStruct(motor_t*, cmd_uomodri_t*);
 uint32_t COM_crc32(uint16_t*, uint16_t);
 #else
 void com_msgDbgTx(dbg_uart_addr_t*, dbg_uart_msg_t*);

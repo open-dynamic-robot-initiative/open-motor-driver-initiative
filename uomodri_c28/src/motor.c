@@ -47,11 +47,11 @@ inline void MOT_stopCommand(motor_t* p_motor)
  */
 inline bool_t MOT_runControl(motor_t* p_motor)
 {
-    foc_t*          p_foc   = p_motor->p_motorFOC;
-    encoder_t*      p_enc   = &p_foc->motor_enc;
-    cmd_t*          p_cmd   = &p_foc->motor_cmd;
-    cmd_bit_reg_t   en_bit  = p_cmd->enableBits.bit;
-    p_enc->indexCompensated = en_bit.encOffsetCompEnable;
+    foc_t*      p_foc           = p_motor->p_motorFOC;
+    encoder_t*  p_enc           = &p_foc->motor_enc;
+    cmd_t*      p_cmd           = &p_foc->motor_cmd;
+    cmd_reg_t   en_bit          = p_cmd->enableBits.bit;
+    p_enc->indexCompensated     = en_bit.encOffsetCompEnable;
 
     // Read the phases current, voltage & Vbus
     FOC_getMeasures(&p_foc->motor_acq);
