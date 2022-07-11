@@ -39,7 +39,7 @@ inline void LED_dimming(motor_t*, uint16_t*);
  * @brief   Main function running on CPU1/C28. MCU init, DRV init, ADC init \& calibration, IT init.
  */
 void main(void)
-     {
+{
     // uOmodri low level device initialization
     MCU_ini();
     // Hardware Abstraction Layer initialization
@@ -58,14 +58,11 @@ void main(void)
     COM_resetCmdStruct(&cmd_uOmodri[MOTOR_2]);
     // DMA initialization for memory to memory transfer
     HAL_DMA_ini(dmaMem2MemCfList);
-//    DMA_forceTrigger(DMA_MEM_TO_MEM_M1_BASE_ADDR);
-//    DMA_forceTrigger(DMA_MEM_TO_MEM_M1_BASE_ADDR);
-//    DMA_forceTrigger(DMA_MEM_TO_MEM_M2_BASE_ADDR);
     // Interrupts initialization
     HAL_INT_ini(InterruptList);
 
     // Compute translation addresses for each element we want to share.
-    uint16_t    cpu1_to_cm_loop = 0;
+    uint16_t cpu1_to_cm_loop = 0;
     for(cpu1_to_cm_loop = 0; cpu1_to_cm_loop < (sizeof(cpu1_to_cm_addr) / sizeof(cpu1_to_cm_addr[0])); cpu1_to_cm_loop++)
         cpu1_to_cm_addr[cpu1_to_cm_loop].data_addr =  IPC_CPU1_TO_CM_ADDR_TRANSLATE(cpu1_to_cm_addr[cpu1_to_cm_loop].data_addr);
     // Send translation address for status message structure
@@ -75,19 +72,29 @@ void main(void)
     // Infinite loop
     while(1)
     {
-        // SPI COM RX management - Receive & extract message
-        if(!DMA_getRunStatusFlag(DMA_COM_SPI_RX_BASE_ADDR) && GPIO_readPin(COM_SPI_CS) &&
-                !DMA_getTransferStatusFlag(DMA_CMD_2_STRUCT_BASE_ADDR))
+        static bool_t cmd_new = false;
+        /*
+         * SPI COM RX management - Receive & extract message if valid
+         * DMA CMD TO FOC struct - Propagate new commands (message extract or timeout inc)
+         */
+        if(!DMA_getTransferStatusFlag(DMA_CMD_2_FOC_BASE_ADDR))
         {
-            // Extract received message & send new commands to FOC structures if valid
-            if(COM_msgExtract(&cmd_msg, &cmd_uOmodri[MOTOR_1], &cmd_uOmodri[MOTOR_2]))
-                DMA_forceTrigger(DMA_CMD_2_STRUCT_BASE_ADDR);
-            // Prepare SPI and associated DMA for a new receive
-            DMA_clearTriggerFlag(DMA_COM_SPI_RX_BASE_ADDR);
-            SPI_resetRxFIFO(COM_SPI_BASE);
-            DMA_startChannel(DMA_COM_SPI_RX_BASE_ADDR);
+            if(!DMA_getRunStatusFlag(DMA_COM_SPI_RX_BASE_ADDR) && GPIO_readPin(COM_SPI_CS))
+            {
+                // Extract received message & send new commands to FOC structures if valid
+                cmd_new = COM_msgExtract(&cmd_msg, &cmd_uOmodri[MOTOR_1], &cmd_uOmodri[MOTOR_2]);
+                // Prepare SPI and associated DMA for a new receive
+                DMA_clearTriggerFlag(DMA_COM_SPI_RX_BASE_ADDR);
+                SPI_resetRxFIFO(COM_SPI_BASE);
+                DMA_startChannel(DMA_COM_SPI_RX_BASE_ADDR);
+            }
+            if(cmd_new)
+                DMA_forceTrigger(DMA_CMD_2_FOC_BASE_ADDR);
+            cmd_new = false;
         }
-        // SPI COM TX management - Create message & send it
+        /*
+         * SPI COM TX management - Create message & send it
+         */
         if(!DMA_getRunStatusFlag(DMA_COM_SPI_TX_BASE_ADDR) && motor[MOTOR_2].itDone && motor[MOTOR_1].itDone)
         {
             COM_msgCreate(&motor[MOTOR_1], &motor[MOTOR_2], &status_msg);
@@ -99,8 +106,8 @@ void main(void)
                 SPI_resetTxFIFO(COM_SPI_BASE);
                 DMA_startChannel(DMA_COM_SPI_TX_BASE_ADDR);
             }
-            motor[MOTOR_1].itDone   = false;
-            motor[MOTOR_2].itDone   = false;
+            motor[MOTOR_1].itDone = false;
+            motor[MOTOR_2].itDone = false;
         }
         /*
          * SPI LED TX management - Create message & send it @ 1ms
@@ -123,16 +130,10 @@ void main(void)
             // Timeout management
             cmd_uOmodri[MOTOR_1].cptTimeout++;
             cmd_uOmodri[MOTOR_2].cptTimeout++;
-            // Clear flag
+            cmd_new = true;
+            // Clear CPU timer flag
             CPUTimer_clearOverflowFlag(CPU_TIMER_0_BASE);
         }
-        // Force a general microcontroller RESET if requested
-//        if((motor_foc[MOTOR_1].motor_state == MOTOR_STATE_ERROR) &&
-//           (motor_foc[MOTOR_2].motor_state == MOTOR_STATE_ERROR) && (cmd_uOmodri.mode.bit.RST))// (cmd_uOmodri.mode.bit.RST == 0b11))
-//        {
-//            SysCtl_simulateReset(SYSCTL_CAUSE_CPU1RSN); //SysCtl_resetDevice();
-//            while(1);
-//        }
     }
 }
 
@@ -255,7 +256,7 @@ __attribute__((interrupt)) void adc_isrMotor1(void)
 //        p_cmd->systemEnable         = cmd_uOmodri[MOTOR_1].systemEnable;
 //        p_cmd->cmdAccesValid        = cmd_uOmodri[MOTOR_1].cmdAccesValid;
 //    }
-    while(DMA_getTransferStatusFlag(DMA_CMD_2_STRUCT_BASE_ADDR));
+    while(DMA_getTransferStatusFlag(DMA_CMD_2_FOC_BASE_ADDR));
     // Motor control
     motor[MOTOR_1].itDone = MOT_runControl(&motor[MOTOR_1]);
 //    motor[MOTOR_1].itDone = true;
@@ -308,7 +309,7 @@ __attribute__((interrupt)) void adc_isrMotor2(void)
 //        p_cmd->systemEnable         = cmd_uOmodri[MOTOR_2].systemEnable;
 //        p_cmd->cmdAccesValid        = cmd_uOmodri[MOTOR_2].cmdAccesValid;
 //    }
-    while(DMA_getTransferStatusFlag(DMA_CMD_2_STRUCT_BASE_ADDR));
+    while(DMA_getTransferStatusFlag(DMA_CMD_2_FOC_BASE_ADDR));
 //    while(DMA_getRunStatusFlag(DMA_MEM_TO_MEM_M2_BASE_ADDR));
     // Motor control
     motor[MOTOR_2].itDone = MOT_runControl(&motor[MOTOR_2]);

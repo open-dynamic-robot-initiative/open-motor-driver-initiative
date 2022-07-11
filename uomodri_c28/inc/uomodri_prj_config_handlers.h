@@ -634,14 +634,14 @@ static motor_t motor[] =
 static const dma_cfg_t  dmaMem2MemCfList[] =
 {
  // DMA base register initialization
- // DMA for SPI communication Tx
+ // DMA to duplicate message from uOmodri command struct to foc struct.
  {
-  .dmaChBase        = DMA_CMD_2_STRUCT_BASE_ADDR,
+  .dmaChBase        = DMA_CMD_2_FOC_BASE_ADDR,
   .p_dstAddr        = (cmd_t *)&motor_foc[MOTOR_1].motor_cmd,
   .dstStep          = 1,
   .p_srcAddr        = (cmd_t *)&cmd_uOmodri[MOTOR_1],
   .srcStep          = 1,
-  .burstSize        = 20,//sizeof(cmd_t),//DMA_CMD_2_STRUCT_16BIT_BURST_EVT,
+  .burstSize        = sizeof(cmd_t),
   .transferSize     = 2,//DMA_MEM_TO_MEM_M1_16BIT_TRANSFER_EVT,
   .dstWrapStep      = sizeof(foc_t),
   .dstWrapSize      = 1,
@@ -652,26 +652,8 @@ static const dma_cfg_t  dmaMem2MemCfList[] =
   .intMode          = DMA_INT_AT_END,
   .intEnable        = false,
  },
- // DMA for SPI communication Rx
-// {
-//  .dmaChBase        = DMA_MEM_TO_MEM_M2_BASE_ADDR,
-//  .p_dstAddr        = (cmd_t *)&motor_foc[MOTOR_2].motor_cmd,
-//  .p_srcAddr        = (cmd_t *)&cmd_uOmodri[MOTOR_2],
-//  .burstSize        = DMA_MEM_TO_MEM_M2_16BIT_BURST_EVT,
-//  .transferSize     = DMA_MEM_TO_MEM_M2_16BIT_TRANSFER_EVT,
-//  .dstWrapSize      = DMA_NO_WRAP,
-//  .srcWrapSize      = DMA_NO_WRAP,
-//  .dstStep          = DMA_MEM_TO_MEM_M2_16BIT_INC_STEP,
-//  .srcStep          = DMA_MEM_TO_MEM_M2_16BIT_INC_STEP,
-//  .dstWrapStep      = 0,//-(DMA_COM_SPI_TX_RX_TRANSFER_EVT - 1),//
-//  .srcWrapStep      = 0,
-//  .config           = DMA_MEM_TO_MEM_M2_16BIT_CONFIG,
-//  .trigger          = DMA_MEM_TO_MEM_M2_TRIGGER_SRC,
-//  .intMode          = DMA_INT_AT_END,
-//  .intEnable        = false,
-// },
  // END OF ARRAY
- {.dmaChBase            = UINT32_MAX},
+ {.dmaChBase        = UINT32_MAX},
 };
 
 #pragma DATA_SECTION(cpu1_to_cm_addr, "MSGRAM_CPU_TO_CM");
