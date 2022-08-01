@@ -209,10 +209,10 @@ inline void FOC_resetCmdStruct(cmd_t* p_cmd)
     p_cmd->timeoutRef           = 0;
     p_cmd->cptTimeout           = 0;
     p_cmd->enableBits.all       = 0;
-    p_cmd->encOffsetCompEnable  = false;
-    p_cmd->rollOverEnable       = false;
-    p_cmd->motorEnable          = false;
-    p_cmd->systemEnable         = false;
+//    p_cmd->encOffsetCompEnable  = false;
+//    p_cmd->rollOverEnable       = false;
+//    p_cmd->motorEnable          = false;
+//    p_cmd->systemEnable         = false;
 //    p_cmd->cmdAccesValid        = false;
 }
 

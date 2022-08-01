@@ -40,11 +40,22 @@ static const gpio_cfg_t GpioPinsCfgList[] =
  {.pinNumber = UART_DBG_TX,             .fctMux = UART_DBG_TX_CFG,              .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CM,     .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0,  .intEnable = false},
  {.pinNumber = UART_DBG_RX,             .fctMux = UART_DBG_RX_CFG,              .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CM,     .direction = GPIO_DIR_MODE_IN,  .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0,  .intEnable = false},
 #ifdef DEBUG
- {.pinNumber = DBG_PIN2,                .fctMux = DBG_PIN2_CFG,                 .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CM,     .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0,  .intEnable = false},
+// {.pinNumber = DBG_PIN2,                .fctMux = DBG_PIN2_CFG,                 .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CM,     .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0,  .intEnable = false},
 #endif
 #endif
 #ifdef DEBUG
+// {.pinNumber = DBG_PIN1,                .fctMux = DBG_PIN1_CFG,                 .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0,  .intEnable = false},
+// {.pinNumber = DBG_PIN2,                .fctMux = DBG_PIN2_CFG,                 .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0,  .intEnable = false},
+// {.pinNumber = DBG_PIN3,                .fctMux = DBG_PIN3_CFG,                 .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0,  .intEnable = false},
+// {.pinNumber = MST_SPI_SIMO,            .fctMux = MST_SPI_SIMO_CFG,             .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 1,  .intEnable = false},
+// {.pinNumber = MST_SPI_CLK,             .fctMux = MST_SPI_CLK_CFG,              .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 1,  .intEnable = false},
+// {.pinNumber = MST_SPI_CS,              .fctMux = MST_SPI_CS_CFG,               .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 1,  .intEnable = false},
+ {.pinNumber = DBG_SCI_TX,              .fctMux = DBG_SCI_TX_CFG,               .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0,  .intEnable = false},
+ {.pinNumber = DBG_PIN0,                .fctMux = DBG_PIN0_CFG,                 .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0,  .intEnable = false},
  {.pinNumber = DBG_PIN1,                .fctMux = DBG_PIN1_CFG,                 .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0,  .intEnable = false},
+ {.pinNumber = DBG_PIN2,                .fctMux = DBG_PIN2_CFG,                 .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0,  .intEnable = false},
+ {.pinNumber = DBG_PIN3,                .fctMux = DBG_PIN3_CFG,                 .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0,  .intEnable = false},
+ {.pinNumber = DBG_PIN4,                .fctMux = DBG_PIN4_CFG,                 .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0,  .intEnable = false},
  #endif
  // Quadrature encoder #1
  {.pinNumber = MOTOR1_ENC_CHA,          .fctMux = MOTOR1_ENC_CHA_CFG,           .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_IN,  .samplingInMode = GPIO_QUAL_SYNC,   .setValue = 0,  .intEnable = false},
@@ -59,10 +70,10 @@ static const gpio_cfg_t GpioPinsCfgList[] =
  {.pinNumber = DRV_SPI_SOMI,            .fctMux = DRV_SPI_SOMI_CFG,             .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_IN,  .samplingInMode = GPIO_QUAL_SYNC,   .setValue = 0,  .intEnable = false},
  {.pinNumber = DRV_SPI_CLK,             .fctMux = DRV_SPI_CLK_CFG,              .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 1,  .intEnable = false},
  // SPIB pins : EXTERNAL COM
- {.pinNumber = COM_SPI_SIMO,            .fctMux = COM_SPI_SIMO_CFG,             .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_IN,  .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 1,  .intEnable = false},
- {.pinNumber = COM_SPI_SOMI,            .fctMux = COM_SPI_SOMI_CFG,             .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 1,  .intEnable = false},
- {.pinNumber = COM_SPI_CLK,             .fctMux = COM_SPI_CLK_CFG,              .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_IN,  .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 1,  .intEnable = false},
- {.pinNumber = COM_SPI_CS,              .fctMux = COM_SPI_CS_CFG,               .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_IN,  .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 1,  .intEnable = false},
+ {.pinNumber = COM_SPI_SIMO,            .fctMux = COM_SPI_SIMO_CFG,             .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_IN,  .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0,  .intEnable = false},
+ {.pinNumber = COM_SPI_SOMI,            .fctMux = COM_SPI_SOMI_CFG,             .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0,  .intEnable = false},
+ {.pinNumber = COM_SPI_CLK,             .fctMux = COM_SPI_CLK_CFG,              .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_IN,  .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0,  .intEnable = false},
+ {.pinNumber = COM_SPI_CS,              .fctMux = COM_SPI_CS_CFG,               .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_IN,  .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0,  .intEnable = false},
  // SPID pins : RGB LED CONTROL
  {.pinNumber = LED_SPI_SIMO,            .fctMux = LED_SPI_SIMO_CFG,             .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 1,  .intEnable = false},
  // DRV1 pins
@@ -193,6 +204,20 @@ static const eqep_cfg_t QepCfgList[] =
  {.eqepBase = UINT32_MAX},
 };
 
+static const sci_cfg_t sciCfgList[] =
+{
+ {
+  .sciBase              = DBG_SCI_BASE,
+  .bitRate              = 3125000U,
+  .mode                 = SCI_CONFIG_WLEN_8 | SCI_CONFIG_STOP_ONE | (uint16_t)SCI_CONFIG_PAR_NONE,
+  .txLevel              = SCI_FIFO_TX16,
+  .rxLevel              = SCI_FIFO_RX16,
+  .intEnable            = false,
+ },
+ // END OF ARRAY
+ {.sciBase              = UINT32_MAX},
+};
+
 /** @var    SPI_TypeDef spiCfgList[]
  *  @brief  List all the configurations defined for each SPI communication modules.
  */
@@ -210,29 +235,29 @@ static const spi_cfg_t  spiCfgList[] =
   .intEnable            = false,
  },
  {.spiBase              = COM_SPI_BASE,
-  .bitRate              = 8000000U,
+  .bitRate              = 6000000U,
   .dataWidth            = 16U,
   .mode                 = SPI_MODE_SLAVE,
   .protocol             = SPI_PROT_POL0PHA1,
   .txLevel              = SPI_FIFO_TXFULL,
   .rxLevel              = SPI_FIFO_RX1,
-  .intSrc               = 0,//SPI_INT_RXFF,
-  .highSpeedMode        = false,
-  .intEnable            = false,//true,
- },
-#if (defined UOMODRI_USE_REV_1_0_CONFIG) && (!UOMODRI_USE_REV_1_0_CONFIG)
- {.spiBase              = MST_SPI_BASE,
-  .bitRate              = 8000000U,
-  .dataWidth            = 16U,
-  .mode                 = SPI_MODE_MASTER,
-  .protocol             = SPI_PROT_POL0PHA1,
-  .txLevel              = SPI_FIFO_TX4,
-  .rxLevel              = SPI_FIFO_RX1,
   .intSrc               = 0,
   .highSpeedMode        = false,
   .intEnable            = false,
  },
-#endif
+//#if (defined UOMODRI_USE_REV_1_0_CONFIG) && (!UOMODRI_USE_REV_1_0_CONFIG)
+// {.spiBase              = MST_SPI_BASE,
+//  .bitRate              = 6000000U,
+//  .dataWidth            = 16U,
+//  .mode                 = SPI_MODE_MASTER,
+//  .protocol             = SPI_PROT_POL0PHA0,
+//  .txLevel              = SPI_FIFO_TXFULL,
+//  .rxLevel              = SPI_FIFO_RX1,
+//  .intSrc               = 0,
+//  .highSpeedMode        = false,
+//  .intEnable            = false,
+// },
+//#endif
  {.spiBase              = LED_SPI_BASE,
   .bitRate              = 2380000U,
   .dataWidth            = 16U,
@@ -263,7 +288,7 @@ static const dma_cfg_t  dmaCfgList[] =
   .dstStep              = 0,
   .srcStep              = DMA_COM_SPI_TX_16BIT_INC_STEP,
   .dstWrapStep          = 0,
-  .srcWrapStep          = 0,//-(DMA_COM_SPI_TX_RX_TRANSFER_EVT - 1),//
+  .srcWrapStep          = 0,
   .config               = DMA_COM_SPI_TX_16BIT_CONFIG,
   .trigger              = DMA_COM_SPI_TX_TRIGGER_SRC,
   .intMode              = DMA_INT_AT_END,
@@ -280,31 +305,31 @@ static const dma_cfg_t  dmaCfgList[] =
   .srcWrapSize          = DMA_NO_WRAP,
   .dstStep              = DMA_COM_SPI_RX_16BIT_INC_STEP,
   .srcStep              = 0,
-  .dstWrapStep          = 0,//-(DMA_COM_SPI_TX_RX_TRANSFER_EVT - 1),//
+  .dstWrapStep          = 0,
   .srcWrapStep          = 0,
   .config               = DMA_COM_SPI_RX_16BIT_CONFIG,
   .trigger              = DMA_COM_SPI_RX_TRIGGER_SRC,
   .intMode              = DMA_INT_AT_END,
   .intEnable            = false,
  },
-#if (defined UOMODRI_USE_REV_1_0_CONFIG) && (!UOMODRI_USE_REV_1_0_CONFIG)
- {
-  .dmaChBase            = DMA_MST_SPI_TX_BASE_ADDR,
-  .p_dstAddr            = (uint16_t *) MST_SPI_TX_BASE_REG_ADDR,
-  .p_srcAddr            = (uint16_t *) &cmd_Master_msg,
-  .burstSize            = DMA_MST_SPI_TX_RX_16BIT_BURST_EVT,
-  .transferSize         = DMA_MST_SPI_TX_RX_16BIT_TRANSFER_EVT,
-  .dstWrapSize          = DMA_NO_WRAP,
-  .srcWrapSize          = DMA_NO_WRAP,
-  .dstStep              = 0,
-  .srcStep              = DMA_MST_SPI_TX_RX_16BIT_BURST_EVT,
-  .dstWrapStep          = 0,
-  .srcWrapStep          = 0,
-  .config               = (DMA_CFG_ONESHOT_DISABLE | DMA_CFG_CONTINUOUS_DISABLE | DMA_CFG_SIZE_16BIT),
-  .trigger              = DMA_MST_SPI_TX_TRIGGER_SRC,
-  .intMode              = DMA_INT_AT_BEGINNING,
-  .intEnable            = false,
- },
+//#if (defined UOMODRI_USE_REV_1_0_CONFIG) && (!UOMODRI_USE_REV_1_0_CONFIG)
+// {
+//  .dmaChBase            = DMA_MST_SPI_TX_BASE_ADDR,
+//  .p_dstAddr            = (uint16_t *) MST_SPI_TX_BASE_REG_ADDR,
+//  .p_srcAddr            = (uint16_t *) &cmd_msg,
+//  .burstSize            = 17,
+//  .transferSize         = 1,
+//  .dstWrapSize          = DMA_NO_WRAP,
+//  .srcWrapSize          = DMA_NO_WRAP,
+//  .dstStep              = 0,
+//  .srcStep              = 1,
+//  .dstWrapStep          = 0,
+//  .srcWrapStep          = 0,
+//  .config               = (DMA_CFG_ONESHOT_DISABLE | DMA_CFG_CONTINUOUS_ENABLE | DMA_CFG_SIZE_16BIT),
+//  .trigger              = DMA_MST_SPI_TX_TRIGGER_SRC,
+//  .intMode              = DMA_INT_AT_BEGINNING,
+//  .intEnable            = false,
+// },
 //{
 // .dmaChBase        = DMA_MST_SPI_RX_BASE_ADDR,
 // .burstSize        = DMA_MST_SPI_TX_RX_16BIT_BURST_EVT, // an object of type uint32_t or float32_t
@@ -320,7 +345,7 @@ static const dma_cfg_t  dmaCfgList[] =
 // .ITMode           = DMA_INT_AT_END,
 // .ITEnable         = false,
 //},
-#endif
+//#endif
  // DMA for the RGB LED
  {
   .dmaChBase            = DMA_LED_SPI_TX_BASE_ADDR,
@@ -339,7 +364,6 @@ static const dma_cfg_t  dmaCfgList[] =
   .intMode              = DMA_INT_AT_END,
   .intEnable            = false,
  },
-
  // END OF ARRAY
  {.dmaChBase            = UINT32_MAX},
 };
@@ -557,6 +581,7 @@ static const hal_cfg_t hal =
 #if (defined CM_CORE_ENABLE) && (CM_CORE_ENABLE)
  .p_ipcHandle   = ipcCfgList,
 #endif
+ .p_sciHandle   = sciCfgList,
  .p_spiHandle   = spiCfgList,
  .p_timerHandle = timerCfgList,
 #if (defined CLA_CORE_ENABLE) && (CLA_CORE_ENABLE)

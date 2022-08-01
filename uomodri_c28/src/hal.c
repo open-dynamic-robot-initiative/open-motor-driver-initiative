@@ -17,6 +17,7 @@ void HAL_ADC_ini(const adc_cfg_t*);
 void HAL_ePWM_ini(const epwm_cfg_t*);
 void HAL_eQEP_ini(const eqep_cfg_t*);
 void HAL_SPI_ini(const spi_cfg_t*);
+void HAL_SCI_ini(const sci_cfg_t*);
 void HAL_TIMER_ini(const tmr_cfg_t*);
 void HAL_DMA_rst(void);
 #if (defined CM_CORE_ENABLE) && (CM_CORE_ENABLE)
@@ -51,6 +52,8 @@ void HAL_ini(const hal_cfg_t* p_hal)
 #endif
         // Initialize CPU TIMERS
         HAL_TIMER_ini(p_hal->p_timerHandle);
+        // Initialize SCI/UART debug
+        HAL_SCI_ini(p_hal->p_sciHandle);
         // Initialize DMA
         HAL_DMA_rst();
         HAL_DMA_ini(p_hal->p_dmaHandle);
@@ -530,13 +533,57 @@ void HAL_SPI_ini(const spi_cfg_t* p_spiCfg)
             SPI_setConfig(spiBase, DEVICE_LSPCLK_FREQ, p_spiCfg->protocol, p_spiCfg->mode, p_spiCfg->bitRate, p_spiCfg->dataWidth);
             SPI_setEmulationMode(spiBase, SPI_EMULATION_FREE_RUN);
             SPI_disableLoopback(spiBase);
+            SPI_disableHighSpeedMode(spiBase);
+            SPI_disableTriWire(spiBase);
+            if(p_spiCfg->mode == SPI_MODE_SLAVE)
+                SPI_setSTESignalPolarity(spiBase, SPI_STE_ACTIVE_LOW);
             /* Clear flags & enable or disable interrupts */
             SPI_clearInterruptStatus(spiBase, SPI_INT_RX_DATA_TX_EMPTY | SPI_INT_RX_OVERRUN | SPI_INT_TXFF | SPI_INT_RXFF | SPI_INT_RXFF_OVERFLOW);
             SPI_disableInterrupt(spiBase, SPI_INT_RX_DATA_TX_EMPTY | SPI_INT_RX_OVERRUN | SPI_INT_TXFF | SPI_INT_RXFF | SPI_INT_RXFF_OVERFLOW);
-            (p_spiCfg->intEnable == true) ? (SPI_enableInterrupt(spiBase, p_spiCfg->intSrc)) : (1);
+            if(p_spiCfg->intEnable)
+                SPI_enableInterrupt(spiBase, p_spiCfg->intSrc);
             /* Enable SPI module */
             SPI_enableModule(spiBase);
             spiBase = (++p_spiCfg)->spiBase;
+        }
+    }
+
+    return;
+}
+
+/**
+ * @brief       UART bus initialization function.
+ * @param[in]   *p_uartCfg   Pointer on the UART configuration structure
+ */
+void HAL_SCI_ini(const sci_cfg_t* p_sciCfg)
+{
+    if(p_sciCfg != NULL)
+    {
+        uint32_t sciBase = p_sciCfg->sciBase;
+        while(sciBase != UINT32_MAX)
+        {
+            /* Set SPI configuration, disable loopback */
+            SCI_setConfig(sciBase, DEVICE_LSPCLK_FREQ, p_sciCfg->bitRate, p_sciCfg->mode);
+            /* Stop the SCI during configuration */
+//            SCI_disableModule(sciBase);
+            SCI_disableLoopback(sciBase);
+            /* Configure FIFO if required. */
+            SCI_disableFIFO(sciBase);
+            if((p_sciCfg->rxLevel != SCI_FIFO_RX0) || (p_sciCfg->txLevel != SCI_FIFO_TX0))
+            {
+                SCI_enableFIFO(sciBase);
+                SCI_resetTxFIFO(sciBase);
+                SCI_resetRxFIFO(sciBase);
+                SCI_setFIFOInterruptLevel(sciBase, p_sciCfg->txLevel, p_sciCfg->rxLevel);
+            }
+            /* Clear flags & enable or disable interrupts */
+            SCI_clearInterruptStatus(sciBase, SCI_INT_RXERR | SCI_INT_RXRDY_BRKDT | SCI_INT_FE | SCI_INT_OE | SCI_INT_PE |SCI_INT_TXFF | SCI_INT_RXFF);
+            SCI_disableInterrupt(sciBase, SCI_INT_RXERR | SCI_INT_RXRDY_BRKDT | SCI_INT_TXRDY | SCI_INT_TXFF | SCI_INT_RXFF);
+            if(p_sciCfg->intEnable)
+                SCI_enableInterrupt(sciBase, p_sciCfg->intSrc);
+            /* Restart SCI after configuration */
+            SCI_enableModule(sciBase);
+            sciBase = (++p_sciCfg)->sciBase;
         }
     }
 

@@ -26,7 +26,7 @@
 #define UOMODRI_USE_ENCODER_GET_REG_FUNCTION    0
 #define UOMODRI_USE_RADIAN                      0
 #define CLA_CORE_ENABLE                         0
-#define CM_CORE_ENABLE                          1
+#define CM_CORE_ENABLE                          0
 #define UOMODRI_VBUS_FLT(flt_coef, y, x)        LPF_FILTER_1(flt_coef, y, x)
 #define UOMODRI_VEXT_FLT(flt_coef, y, x)        LPF_FILTER_1(flt_coef, y, x)
 #define UOMODRI_IDQ_FLT(flt_coef, y, x)         LPF_FILTER_1(flt_coef, y, x)
@@ -131,16 +131,47 @@
 #endif
 #endif
 #if (defined UOMODRI_USE_REV_1_0_CONFIG) && (UOMODRI_USE_REV_1_0_CONFIG)
-#define DBG_PIN1                                (71)
-#define DBG_PIN1_CFG                            GPIO_71_GPIO71
-#if (defined CM_CORE_ENABLE) && (CM_CORE_ENABLE) && (defined DEBUG)
-#define DBG_PIN2                                (70)
-#define DBG_PIN2_CFG                            GPIO_70_GPIO70
-#endif
+#define DBG_PIN4                                (149)
+#define DBG_PIN4_CFG                            GPIO_149_GPIO149
+#define DBG_PIN4_SET                            (HWREG(GPIODATA_BASE + GPIO_O_GPESET)   = GPIO_GPESET_GPIO149)
+#define DBG_PIN4_CLEAR                          (HWREG(GPIODATA_BASE + GPIO_O_GPECLEAR) = GPIO_GPECLEAR_GPIO149)
+#define DBG_PIN4_TOGGLE                         (HWREG(GPIODATA_BASE + GPIO_O_GPETOGGLE)= GPIO_GPETOGGLE_GPIO149)
+//#if (defined CM_CORE_ENABLE) && (CM_CORE_ENABLE) && (defined DEBUG)
+#define DBG_PIN3                                (81)
+#define DBG_PIN3_CFG                            GPIO_81_GPIO81
+#define DBG_PIN3_SET                            (HWREG(GPIODATA_BASE + GPIO_O_GPCSET)   = GPIO_GPCSET_GPIO81)
+#define DBG_PIN3_CLEAR                          (HWREG(GPIODATA_BASE + GPIO_O_GPCCLEAR) = GPIO_GPCCLEAR_GPIO81)
+#define DBG_PIN3_TOGGLE                         (HWREG(GPIODATA_BASE + GPIO_O_GPCTOGGLE)= GPIO_GPCTOGGLE_GPIO81)
+#define DBG_PIN2                                (82)
+#define DBG_PIN2_CFG                            GPIO_82_GPIO82
+#define DBG_PIN2_SET                            (HWREG(GPIODATA_BASE + GPIO_O_GPCSET)   = GPIO_GPCSET_GPIO82)
+#define DBG_PIN2_CLEAR                          (HWREG(GPIODATA_BASE + GPIO_O_GPCCLEAR) = GPIO_GPCCLEAR_GPIO82)
+#define DBG_PIN2_TOGGLE                         (HWREG(GPIODATA_BASE + GPIO_O_GPCTOGGLE)= GPIO_GPCTOGGLE_GPIO82)
+#define DBG_PIN1                                (77)
+#define DBG_PIN1_CFG                            GPIO_77_GPIO77
+#define DBG_PIN1_SET                            (HWREG(GPIODATA_BASE + GPIO_O_GPCSET)   = GPIO_GPCSET_GPIO77)
+#define DBG_PIN1_CLEAR                          (HWREG(GPIODATA_BASE + GPIO_O_GPCCLEAR) = GPIO_GPCCLEAR_GPIO77)
+#define DBG_PIN1_TOGGLE                         (HWREG(GPIODATA_BASE + GPIO_O_GPCTOGGLE)= GPIO_GPCTOGGLE_GPIO77)
+#define DBG_PIN0                                (78)
+#define DBG_PIN0_CFG                            GPIO_78_GPIO78
+#define DBG_PIN0_SET                            (HWREG(GPIODATA_BASE + GPIO_O_GPCSET)   = GPIO_GPCSET_GPIO78)
+#define DBG_PIN0_CLEAR                          (HWREG(GPIODATA_BASE + GPIO_O_GPCCLEAR) = GPIO_GPCCLEAR_GPIO78)
+#define DBG_PIN0_TOGGLE                         (HWREG(GPIODATA_BASE + GPIO_O_GPCTOGGLE)= GPIO_GPCTOGGLE_GPIO78)
+//#endif
 #endif
 /**
  * @}
  */
+
+/***********************************************************************
+ * UART DEFINES
+ ***********************************************************************/
+#define DBG_SCI_TX                              (70)
+#define DBG_SCI_TX_CFG                          GPIO_70_SCIB_TX
+
+#define DBG_SCI_BASE                            SCIB_BASE
+#define DBG_SCI_TX_BASE_REG_ADDR                (DBG_SCI_BASE + SCI_O_TXBUF)
+
 
 /***********************************************************************
  * CPU TIMER DEFINES
@@ -188,6 +219,8 @@
  * @{
  */
 #define COM_SPI_BASE                            SPIB_BASE
+#define COM_SPI_DAT_REG_ADDR                    (COM_SPI_BASE + SPI_O_DAT)
+#define COM_SPI_DAT(x)                          (HWREGH(COM_SPI_DAT_REG_ADDR) = (uint16_t)(x))
 #define COM_SPI_TX_BASE_REG_ADDR                (COM_SPI_BASE + SPI_O_TXBUF)
 #define COM_SPI_RX_BASE_REG_ADDR                (COM_SPI_BASE + SPI_O_RXBUF)
 /**
@@ -246,19 +279,18 @@
 #define COM_SPI_CLK_CFG                         GPIO_65_SPIB_CLK
 #define COM_SPI_CS                              (59)
 #define COM_SPI_CS_CFG                          GPIO_59_SPIB_STEN
+#define COM_SPI_CS_READ                         (HWREG(GPIODATA_BASE + GPIO_O_GPBDAT) & GPIO_GPBDAT_GPIO59)
 /**
  * @}
  */
 
-#if (defined UOMODRI_USE_REV_1_0_CONFIG) && (!UOMODRI_USE_REV_1_0_CONFIG)
+//#if (defined UOMODRI_USE_REV_1_0_CONFIG) && (!UOMODRI_USE_REV_1_0_CONFIG)
 /** @defgroup SPI_MST_GPIO_pins - MST com configuration.
  *  @brief    Configure GPIO pins associated to master board communication.
  * @{
  */
 #define MST_SPI_SIMO                            (69)
 #define MST_SPI_SIMO_CFG                        GPIO_69_SPIC_SIMO
-#define MST_SPI_SOMI                            (70)
-#define MST_SPI_SOMI_CFG                        GPIO_70_SPIC_SOMI
 #define MST_SPI_CLK                             (71)
 #define MST_SPI_CLK_CFG                         GPIO_71_SPIC_CLK
 #define MST_SPI_CS                              (72)
@@ -266,7 +298,7 @@
 /**
  * @}
  */
-#endif
+//#endif
 
 /** @defgroup SPI_LED_GPIO_pins - RGB LED configuration.
  *  @brief    Configure GPIO pins associated with RGB LED.
@@ -299,6 +331,10 @@
 #define DMA_CMD_2_FOC_16BIT_INC_STEP            (1)
 #define DMA_CMD_2_FOC_16BIT_CONFIG              (DMA_CFG_ONESHOT_DISABLE | DMA_CFG_CONTINUOUS_ENABLE | DMA_CFG_SIZE_16BIT)
 #define DMA_CMD_2_FOC_16BIT_WRAP                (1)
+
+#define DMA_MST_SPI_TX_BASE_ADDR                DMA_CH3_BASE
+#define DMA_MST_SPI_TX_INT                      INT_DMA_CH3
+#define DMA_MST_SPI_TX_TRIGGER_SRC              DMA_TRIGGER_SOFTWARE
 
 #define DMA_LED_SPI_TX_BASE_ADDR                DMA_CH4_BASE
 #define DMA_LED_SPI_TX_INT                      INT_DMA_CH4
@@ -338,6 +374,8 @@
 #else
 #define DMA_COM_SPI_RX_16BIT_INC_STEP           (2)
 #endif
+
+
 /**
  * @}
  */

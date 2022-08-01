@@ -163,6 +163,20 @@ typedef struct __SPI_CFG_t__
     bool_t                              intEnable;                  /*!< GPIO can be configured as IT source */
 } spi_cfg_t;
 
+typedef struct __SCI_CFG_t__
+{
+    uint32_t                            sciBase;                    /*!< ADC peripheral address. */
+    uint32_t                            bitRate;
+    uint16_t                            dataWidth;
+    SPI_Mode                            mode;
+    SPI_TransferProtocol                protocol;
+    SCI_TxFIFOLevel                     txLevel;
+    SCI_RxFIFOLevel                     rxLevel;
+    uint16_t                            intSrc;
+    bool_t                              highSpeedMode;
+    bool_t                              intEnable;                  /*!< GPIO can be configured as IT source */
+} sci_cfg_t;
+
 /**
  * @struct  __DMA_CFG_t__
  * @brief   DMA global Hardware Abstraction Layer structure
@@ -346,6 +360,7 @@ typedef struct __HAL_CFG_t__
     const adc_cfg_t*    const           p_adcHandle;
     const epwm_cfg_t*   const           p_epwmHandle;
     const eqep_cfg_t*   const           p_eqepHandle;
+    const sci_cfg_t*    const           p_sciHandle;
     const spi_cfg_t*    const           p_spiHandle;
     const ipc_cfg_t*    const           p_ipcHandle;
     const dma_cfg_t*    const           p_dmaHandle;

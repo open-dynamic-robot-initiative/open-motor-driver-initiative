@@ -27,8 +27,24 @@ mst2slv_msg_t   cmd_msg;
 
 #pragma DATA_ALIGN (status_msg, 8)
 #pragma DATA_SECTION(status_msg, "ramgs1")
-//#pragma DATA_SECTION(status_msg, "MSGRAM_CPU_TO_CM")
 slv2mst_msg_t   status_msg;
+// = {  .status.all                  = 0x0000,
+//                                .timeStamp                   = 0x1111,
+//                                .position[MOTOR_1].u16_lsb   = 0x2222,
+//                                .position[MOTOR_1].u16_msb   = 0x3333,
+//                                .position[MOTOR_2].u16_lsb   = 0x4444,
+//                                .position[MOTOR_2].u16_msb   = 0x5555,
+//                                .velocity[MOTOR_1]           = 0x6666,
+//                                .velocity[MOTOR_2]           = 0x7777,
+//                                .current[MOTOR_1]            = 0x8888,
+//                                .current[MOTOR_2]            = 0x9999,
+//                                .coilRes[MOTOR_1]            = 0xAAAA,
+//                                .coilRes[MOTOR_2]            = 0xBBBB,
+//                                .adcSamples[MOTOR_1]         = 0xCCCC,
+//                                .adcSamples[MOTOR_2]         = 0xDDDD,
+//                                .lastCmdIndex                = 0xEEEE,
+//                                .crc.u16_msb                 = 0xFFFF,
+//                                .crc.u16_lsb                 = 0x0000};
 
 #pragma DATA_SECTION(led_msg, "ramgs1")
 uint16_t        led_msg[LED_MSG_TX_16BIT_LENGTH];
