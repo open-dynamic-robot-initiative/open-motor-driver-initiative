@@ -73,18 +73,14 @@ inline void FOC_resistanceEstimation(foc_t* p_foc)
  * @brief           Compute the Field Oriented Control (FOC) algorithm
  * @param[inout]    *p_foc  Pointer on the FOC motor control structure.
  */
+#if (defined UOMODRI_USE_RADIAN) && (UOMODRI_USE_RADIAN)
 inline void FOC_runControl(foc_t* p_foc)
 {
     acq_t*          p_acq   = &p_foc->motor_acq;
     encoder_t*      p_enc   = &p_foc->motor_enc;
     /* Compute sine and cosine from the electrical angle */
-#if (defined UOMODRI_USE_RADIAN) && (UOMODRI_USE_RADIAN)
     p_foc->sinTheta         = __sin(p_enc->thetaElec);
     p_foc->cosTheta         = __cos(p_enc->thetaElec);
-#else
-    p_foc->sinTheta         = __sinpuf32(p_enc->thetaElec);
-    p_foc->cosTheta         = __cospuf32(p_enc->thetaElec);
-#endif
     // Clarke transform
     p_foc->ialpha           = ((2.0f * p_acq->ia) - p_acq->ib - p_acq->ic) * FM_1DIV3;
     p_foc->ibeta            = (p_acq->ib - p_acq->ic) * FM_1DIVSQRT3;
@@ -111,9 +107,7 @@ inline void FOC_runControl(foc_t* p_foc)
     p_foc->uq               = ((p_foc->motor_state == MOTOR_STATE_READY) || (p_foc->motor_state == MOTOR_STATE_STOP)) ? (p_foc->iqRef)  : (FOC_runPI(&p_foc->piIq));
 #else
     p_foc->ud               = FOC_runPI(&p_foc->piId);
-//    p_foc->ud              += (p_foc->ud > 0.0f) ? (0.1f / 12.5f * p_acq->vbus) : (-0.1f / 12.5f * p_acq->vbus);
     p_foc->uq               = FOC_runPI(&p_foc->piIq);
-//    p_foc->uq              += (p_foc->iqRef > 0.0f) ? (0.1f / 12.5f * p_acq->vbus) : (-0.1f / 12.5f * p_acq->vbus);
 #endif
     p_foc->vmax             = p_acq->vbus * FM_1DIVSQRT3;
 //    p_foc->udMax            = p_foc->vmax;
@@ -128,6 +122,56 @@ inline void FOC_runControl(foc_t* p_foc)
 
     return;
 }
+#else
+inline void FOC_runControl(foc_t* p_foc)
+{
+    acq_t*          p_acq   = &p_foc->motor_acq;
+    encoder_t*      p_enc   = &p_foc->motor_enc;
+    /* Compute sine and cosine from the electrical angle */
+    p_foc->sinTheta         = __sinpuf32(p_enc->thetaElec);
+    p_foc->cosTheta         = __cospuf32(p_enc->thetaElec);
+    // Clarke transform
+    p_foc->ialpha           = ((2.0f * p_acq->ia) - p_acq->ib - p_acq->ic) * FM_1DIV3;
+    p_foc->ibeta            = (p_acq->ib - p_acq->ic) * FM_1DIVSQRT3;
+    // Park transform + filtering
+    float32_t id            = (p_foc->sinTheta * p_foc->ibeta) + (p_foc->cosTheta * p_foc->ialpha);
+    UOMODRI_IDQ_FLT(p_foc->iParkFlt, p_foc->id, id);
+    float32_t iq            = (p_foc->cosTheta * p_foc->ibeta) - (p_foc->sinTheta * p_foc->ialpha);
+    UOMODRI_IDQ_FLT(p_foc->iParkFlt, p_foc->iq, iq);
+    // Compute decoupling feed-forward terms
+#if((defined UOMODRI_FEED_FORWARD_ENABLE) && (UOMODRI_FEED_FORWARD_ENABLE))
+    const params_t* p_cfg   = &p_foc->motor_cfg;
+    speed_t*        p_speed = &p_enc->speed;
+    p_foc->piId.ff          = -1.0f * p_speed->speedMech * p_cfg->Ls * p_foc->iq;
+    p_foc->piIq.ff          = (p_speed->speedMech * p_cfg->Ls * p_foc->id) + (p_speed->speedMech * p_cfg->ke);
+//    p_foc->piIq.ff         += (p_foc->iqRef > 0.0f) ? (0.1f / 12.5f * p_acq->vbus) : (-0.1f / 12.5f * p_acq->vbus);
+//    p_foc->piIq.ff          = p_cfg->Rs * p_foc->iqRef + p_speed->speedElec * p_cfg->ke;
+#else
+    p_foc->piId.ff          = 0.0f;
+    p_foc->piIq.ff          = 0.0f;
+#endif
+    // Compute Id(Flux Current) and Iq (Torque Current) PI controllers
+#if (0)//(defined DEBUG)
+    p_foc->ud               = ((p_foc->motor_state == MOTOR_STATE_READY) || (p_foc->motor_state == MOTOR_STATE_STOP)) ? (0.0f)          : (FOC_runPI(&p_foc->piId));
+    p_foc->uq               = ((p_foc->motor_state == MOTOR_STATE_READY) || (p_foc->motor_state == MOTOR_STATE_STOP)) ? (p_foc->iqRef)  : (FOC_runPI(&p_foc->piIq));
+#else
+    p_foc->ud               = FOC_runPI(&p_foc->piId);
+    p_foc->uq               = FOC_runPI(&p_foc->piIq);
+#endif
+    p_foc->vmax             = p_acq->vbus * FM_1DIVSQRT3;
+//    p_foc->udMax            = p_foc->vmax;
+//    p_foc->uqMax            = __sqrt((p_foc->vmax * p_foc->vmax) - (p_foc->ud * p_foc->ud));
+//    float32_t v_ref         = __sqrt((p_foc->ud * p_foc->ud) + (p_foc->uq * p_foc->uq));
+//    limit_norm(&p_foc->ud, &p_foc->uq, p_foc->vmax);
+    // Inverse Park transform
+    p_foc->ualpha           = (p_foc->cosTheta * p_foc->ud) - (p_foc->sinTheta * p_foc->uq);
+    p_foc->ubeta            = (p_foc->sinTheta * p_foc->ud) + (p_foc->cosTheta * p_foc->uq);
+
+    FOC_svpwm1(p_foc);
+
+    return;
+}
+#endif
 
 /**
  * @brief           Reset the Proportional Integral (PI) Controller structure
@@ -180,6 +224,21 @@ inline void FOC_resetPD(pd_t* p_pd)
  * @param[inout]    *p_pd   Pointer on the PD control structure.
  * @return          out     Command of PD controller
  */
+#if (defined UOMODRI_USE_RADIAN) && (UOMODRI_USE_RADIAN)
+inline float32_t FOC_runPD(pd_t* p_pd)
+{
+    float32_t sat_max   = 1.0f  * (*p_pd->p_sat);
+    float32_t sat_min   = -1.0f * sat_max;
+    p_pd->errTheta      = (*p_pd->p_setTheta) - (*p_pd->p_fbTheta);
+    p_pd->errSpeed      = (*p_pd->p_setSpeed) - (*p_pd->p_fbSpeed);
+    p_pd->derivative    = (*p_pd->p_kd) * p_pd->errSpeed;
+    // Compute PID and clamp output.
+    p_pd->out           = ((*p_pd->p_kp) * p_pd->errTheta) + p_pd->derivative + (*p_pd->p_ff);
+    p_pd->out           = __fsat(p_pd->out, sat_max, sat_min);
+
+    return(p_pd->out);
+}
+#else
 inline float32_t FOC_runPD(pd_t* p_pd)
 {
     float32_t sat_max   = 1.0f  * (*p_pd->p_sat);
@@ -193,6 +252,7 @@ inline float32_t FOC_runPD(pd_t* p_pd)
 
     return(p_pd->out);
 }
+#endif
 
 /**
  * @brief           Reset the command structure associated to motor control
@@ -208,7 +268,7 @@ inline void FOC_resetCmdStruct(cmd_t* p_cmd)
     p_cmd->iSat                 = 0.0f;//(p_cmd->motor_id == MOTOR_1) ? (MOTOR1_CURRENT_REGULATOR_SAT_MAX) : (MOTOR2_CURRENT_REGULATOR_SAT_MAX);
     p_cmd->timeoutRef           = 0;
     p_cmd->cptTimeout           = 0;
-    p_cmd->enableBits.all       = 0;
+    p_cmd->enableReg.all        = 0;
 //    p_cmd->encOffsetCompEnable  = false;
 //    p_cmd->rollOverEnable       = false;
 //    p_cmd->motorEnable          = false;

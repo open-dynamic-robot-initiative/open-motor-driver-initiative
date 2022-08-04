@@ -68,124 +68,60 @@ void main(void)
 //    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, 0, (uint32_t)&cpu1_to_cm_addr[0], sizeof(cpu1_to_cm_addr));
 //    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
 
-    uint16_t cmd_msg_err[DMA_COM_SPI_TX_RX_8BIT_LENGTH];//2 * sizeof(mst2slv_msg_t)];
-    uint16_t cmd_msg_cnt = DMA_COM_SPI_TX_RX_8BIT_LENGTH;//2 * sizeof(mst2slv_msg_t);
-    bool_t cmd_msg_valid[2] = {true, true};
-    uint8_t     i           = 0;
-    uint16_t*   p_cmd_msg   = (uint16_t*)&cmd_msg;
+//    uint16_t cmd_msg_err[DMA_COM_SPI_TX_RX_8BIT_LENGTH];//2 * sizeof(mst2slv_msg_t)];
+//    uint16_t cmd_msg_cnt = DMA_COM_SPI_TX_RX_8BIT_LENGTH;//2 * sizeof(mst2slv_msg_t);
+//    bool_t cmd_msg_valid[2] = {true, true};
+//    uint8_t     i           = 0;
+//    uint16_t*   p_cmd_msg   = (uint16_t*)&cmd_msg;
+    bool_t cmd_msg_valid    = false;
+    bool_t timeout_flag     = false;
+
     // Infinite loop
     while(1)
     {
-#if 0
         /*
          * SPI COM RX management - Receive & extract message if valid
          * DMA CMD TO FOC struct - Propagate new commands (message extract or timeout inc)
          */
-        if(!GPIO_readPin(COM_SPI_CS))
+        if(!DMA_getTransferStatusFlag(DMA_CMD_2_FOC_BASE_ADDR))
         {
-            if(SPI_getRxFIFOStatus(COM_SPI_BASE) != SPI_FIFO_RXEMPTY)
-                while(SPI_getRxFIFOStatus(COM_SPI_BASE) != SPI_FIFO_RXEMPTY)
-                {
-                    GPIO_writePin(DBG_PIN2, 1);
-                    *p_cmd_msg++ = HWREGH(COM_SPI_BASE + SPI_O_RXBUF);
-                    spi_rx_index++;
-                    GPIO_writePin(DBG_PIN2, 0);
-                }
-        }
-        else
-        {
-            if(SPI_getRxFIFOStatus(COM_SPI_BASE) != SPI_FIFO_RXEMPTY)
-                while(SPI_getRxFIFOStatus(COM_SPI_BASE) != SPI_FIFO_RXEMPTY)
-                {
-                    GPIO_writePin(DBG_PIN2, 1);
-                    *p_cmd_msg++ = HWREGH(COM_SPI_BASE + SPI_O_RXBUF);
-                    spi_rx_index++;
-                    GPIO_writePin(DBG_PIN2, 0);
-                }
-            if(spi_rx_index)
+            if(timeout_flag)
             {
-                DMA_forceTrigger((DMA_MST_SPI_TX_BASE_ADDR));
-                GPIO_writePin(DBG_PIN4, COM_msgExtract(&cmd_msg, &cmd_uOmodri[MOTOR_1], &cmd_uOmodri[MOTOR_2]));
+                cmd_uOmodri[MOTOR_1].cptTimeout++;
+                cmd_uOmodri[MOTOR_2].cptTimeout++;
             }
-
-            spi_rx_index= 0;
-            p_cmd_msg   = (uint16_t*)&cmd_msg;
-        }
-        /*
-         * SPI COM TX management - Create message & send it
-         */
-        if(motor[MOTOR_2].itDone && motor[MOTOR_1].itDone)
-        {
-
-            COM_msgCreate(&motor[MOTOR_1], &motor[MOTOR_2], &status_msg);
-            if(GPIO_readPin(COM_SPI_CS))
+            if(!DMA_getRunStatusFlag(DMA_COM_SPI_RX_BASE_ADDR) && GPIO_readPin(COM_SPI_CS))
             {
-                GPIO_writePin(DBG_PIN3, 1);
-                SPI_resetTxFIFO(COM_SPI_BASE);
-                HWREGH(COM_SPI_BASE + SPI_O_DAT)    = status_msg.status.all;
-                HWREGH(COM_SPI_BASE + SPI_O_TXBUF)  = status_msg.timeStamp;
-                HWREGH(COM_SPI_BASE + SPI_O_TXBUF)  = status_msg.position[MOTOR_1].u16_lsb;
-                HWREGH(COM_SPI_BASE + SPI_O_TXBUF)  = status_msg.position[MOTOR_1].u16_msb;
-                HWREGH(COM_SPI_BASE + SPI_O_TXBUF)  = status_msg.position[MOTOR_2].u16_lsb;
-                HWREGH(COM_SPI_BASE + SPI_O_TXBUF)  = status_msg.position[MOTOR_2].u16_msb;
-                HWREGH(COM_SPI_BASE + SPI_O_TXBUF)  = status_msg.velocity[MOTOR_1];
-                HWREGH(COM_SPI_BASE + SPI_O_TXBUF)  = status_msg.velocity[MOTOR_2];
-                HWREGH(COM_SPI_BASE + SPI_O_TXBUF)  = status_msg.current[MOTOR_1];
-                HWREGH(COM_SPI_BASE + SPI_O_TXBUF)  = status_msg.current[MOTOR_2];
-                HWREGH(COM_SPI_BASE + SPI_O_TXBUF)  = status_msg.coilRes[MOTOR_1];
-                HWREGH(COM_SPI_BASE + SPI_O_TXBUF)  = status_msg.coilRes[MOTOR_2];
-                HWREGH(COM_SPI_BASE + SPI_O_TXBUF)  = status_msg.adcSamples[MOTOR_1];
-                HWREGH(COM_SPI_BASE + SPI_O_TXBUF)  = status_msg.adcSamples[MOTOR_2];
-                HWREGH(COM_SPI_BASE + SPI_O_TXBUF)  = status_msg.lastCmdIndex;
-                HWREGH(COM_SPI_BASE + SPI_O_TXBUF)  = status_msg.crc.u16_lsb;
-                HWREGH(COM_SPI_BASE + SPI_O_TXBUF)  = status_msg.crc.u16_msb;
-                motor[MOTOR_1].itDone = false;
-                motor[MOTOR_2].itDone = false;
-                GPIO_writePin(DBG_PIN3, 0);
+                // Prepare SPI and associated DMA for a new receive
+                SPI_resetRxFIFO(COM_SPI_BASE);
+                DMA_clearTriggerFlag(DMA_COM_SPI_RX_BASE_ADDR);
+                // Extract received message & send new commands to FOC structures if valid
+                cmd_msg_valid = COM_msgExtract(&cmd_msg, &cmd_uOmodri[MOTOR_1], &cmd_uOmodri[MOTOR_2]);
+                // Restart DMA reception
+                DMA_startChannel(DMA_COM_SPI_RX_BASE_ADDR);
             }
-        }
-
-#else
-        /*
-         * SPI COM RX management - Receive & extract message if valid
-         * DMA CMD TO FOC struct - Propagate new commands (message extract or timeout inc)
-         */
-        if(!DMA_getTransferStatusFlag(DMA_CMD_2_FOC_BASE_ADDR) && !DMA_getRunStatusFlag(DMA_COM_SPI_RX_BASE_ADDR) && GPIO_readPin(COM_SPI_CS))
-        {
-            // Prepare SPI and associated DMA for a new receive
-            SPI_resetRxFIFO(COM_SPI_BASE);
-            DMA_clearTriggerFlag(DMA_COM_SPI_RX_BASE_ADDR);
-            // Extract received message & send new commands to FOC structures if valid
-            cmd_msg_valid[NEW] = COM_msgExtract(&cmd_msg, &cmd_uOmodri[MOTOR_1], &cmd_uOmodri[MOTOR_2]);
-            // Restart DMA reception
-            DMA_startChannel(DMA_COM_SPI_RX_BASE_ADDR);
-            if(cmd_msg_valid[NEW])
+            // Send new commands to FOC structures if extract valid
+            if(cmd_msg_valid || timeout_flag)
             {
-                DBG_PIN3_SET;
+//                if(cmd_msg_valid && ((cmd_uOmodri[MOTOR_1].enableReg.all & 0x000B) == 0x000B))
+//                    cmd_uOmodri[MOTOR_1].posRef += motor_foc[MOTOR_1].motor_enc.thetaIndex;
+//                if(cmd_msg_valid && ((cmd_uOmodri[MOTOR_2].enableReg.all  & 0x000B) == 0x000B))
+//                    cmd_uOmodri[MOTOR_2].posRef += motor_foc[MOTOR_2].motor_enc.thetaIndex;
                 DMA_forceTrigger(DMA_CMD_2_FOC_BASE_ADDR);
             }
-            else
-                DBG_PIN3_CLEAR;//GPIO_writePin(DBG_PIN4, cmd_msg_valid[NEW]);
-            // Prepare the message if necessary (error on the reception or message correct after a wrong message)
-            if(!(cmd_msg_valid[NEW] && cmd_msg_valid[OLD]))
-            {
-                p_cmd_msg   = (uint16_t*)&cmd_msg;
-                cmd_msg_cnt = 0;
-
-                for(i = 0; i < DMA_COM_SPI_TX_RX_16BIT_FULL_LENGTH; i++)
-                {
-                    cmd_msg_err[(2 * i) + 0] = MSB_16(*p_cmd_msg);
-                    cmd_msg_err[(2 * i) + 1] = LSB_16(*p_cmd_msg);
-                    p_cmd_msg++;
-                }
-            }
-            cmd_msg_valid[OLD] = cmd_msg_valid[NEW];
+            timeout_flag = false;
         }
-        /*
-         * Serial debug communication
-         */
-        while(SCI_getTxFIFOStatus(DBG_SCI_BASE) < SCI_FIFO_TX16 && cmd_msg_cnt < DMA_COM_SPI_TX_RX_8BIT_LENGTH)//(2 * sizeof(mst2slv_msg_t)))
-            SCI_writeCharNonBlocking(DBG_SCI_BASE, cmd_msg_err[cmd_msg_cnt++]);
+//        if(!DMA_getTransferStatusFlag(DMA_CMD_2_FOC_BASE_ADDR) && !DMA_getRunStatusFlag(DMA_COM_SPI_RX_BASE_ADDR) && GPIO_readPin(COM_SPI_CS))
+//        {
+//            // Prepare SPI and associated DMA for a new receive
+//            SPI_resetRxFIFO(COM_SPI_BASE);
+//            DMA_clearTriggerFlag(DMA_COM_SPI_RX_BASE_ADDR);
+//            // Extract received message & send new commands to FOC structures if valid
+//            if(COM_msgExtract(&cmd_msg, &cmd_uOmodri[MOTOR_1], &cmd_uOmodri[MOTOR_2]))
+//                DMA_forceTrigger(DMA_CMD_2_FOC_BASE_ADDR);
+//            // Restart DMA reception
+//            DMA_startChannel(DMA_COM_SPI_RX_BASE_ADDR);
+//        }
         /*
          * SPI COM TX management - Create message & send it
          */
@@ -194,34 +130,16 @@ void main(void)
             COM_msgCreate(&motor[MOTOR_1], &motor[MOTOR_2], &status_msg);
             if(COM_SPI_CS_READ)//GPIO_readPin(COM_SPI_CS))
             {
-                DBG_PIN2_SET;//GPIO_writePin(DBG_PIN3, 1);
+                DBG_PIN2_SET;
                 // Force first write in SPI_O_DAT
-                COM_SPI_DAT(status_msg.status.all);//HWREGH(COM_SPI_BASE + SPI_O_DAT) = (uint16_t) status_msg.status.all;
+                COM_SPI_DAT(status_msg.status.all);
                 SPI_resetTxFIFO(COM_SPI_BASE);
-//                HWREGH(COM_SPI_BASE + SPI_O_DAT) = (uint16_t) status_msg.status.all;
-//                HWREGH(COM_SPI_BASE + SPI_O_TXBUF)  = status_msg.timeStamp;
-//                HWREGH(COM_SPI_BASE + SPI_O_TXBUF)  = status_msg.position[MOTOR_1].u16_lsb;
-//                HWREGH(COM_SPI_BASE + SPI_O_TXBUF)  = status_msg.position[MOTOR_1].u16_msb;
-//                HWREGH(COM_SPI_BASE + SPI_O_TXBUF)  = status_msg.position[MOTOR_2].u16_lsb;
-//                HWREGH(COM_SPI_BASE + SPI_O_TXBUF)  = status_msg.position[MOTOR_2].u16_msb;
-//                HWREGH(COM_SPI_BASE + SPI_O_TXBUF)  = status_msg.velocity[MOTOR_1];
-//                HWREGH(COM_SPI_BASE + SPI_O_TXBUF)  = status_msg.velocity[MOTOR_2];
-//                HWREGH(COM_SPI_BASE + SPI_O_TXBUF)  = status_msg.current[MOTOR_1];
-//                HWREGH(COM_SPI_BASE + SPI_O_TXBUF)  = status_msg.current[MOTOR_2];
-//                HWREGH(COM_SPI_BASE + SPI_O_TXBUF)  = status_msg.coilRes[MOTOR_1];
-//                HWREGH(COM_SPI_BASE + SPI_O_TXBUF)  = status_msg.coilRes[MOTOR_2];
-//                HWREGH(COM_SPI_BASE + SPI_O_TXBUF)  = status_msg.adcSamples[MOTOR_1];
-//                HWREGH(COM_SPI_BASE + SPI_O_TXBUF)  = status_msg.adcSamples[MOTOR_2];
-//                HWREGH(COM_SPI_BASE + SPI_O_TXBUF)  = status_msg.lastCmdIndex;
-//                HWREGH(COM_SPI_BASE + SPI_O_TXBUF)  = status_msg.crc.u16_msb;
-//                HWREGH(COM_SPI_BASE + SPI_O_TXBUF)  = status_msg.crc.u16_lsb;
                 DMA_startChannel(DMA_COM_SPI_TX_BASE_ADDR);
             }
             motor[MOTOR_1].itDone = false;
             motor[MOTOR_2].itDone = false;
-            DBG_PIN2_CLEAR;//GPIO_writePin(DBG_PIN3, 0);
+            DBG_PIN2_CLEAR;
         }
-#endif
         /*
          * SPI LED TX management - Create message & send it @ 1ms
          * SPI DRV TX/RX management - Read/Write to get DRV status in case of fault @ 1ms
@@ -241,9 +159,7 @@ void main(void)
             if(motor[MOTOR_2].motor_error & MOTOR_ERROR_DRV_NFAULT)
                 DRV_readStatus(motor[MOTOR_2].p_motorDRV);
             // Timeout management
-            cmd_uOmodri[MOTOR_1].cptTimeout++;
-            cmd_uOmodri[MOTOR_2].cptTimeout++;
-            DMA_forceTrigger(DMA_CMD_2_FOC_BASE_ADDR);
+            timeout_flag = true;
             // Clear CPU timer flag
             CPUTimer_clearOverflowFlag(CPU_TIMER_0_BASE);
         }
@@ -345,34 +261,9 @@ __attribute__((interrupt)) void adc_isrMotor1(void)
 #ifdef DEBUG
     DBG_PIN4_SET;
 #endif
-    // copy data if access is granted else use previous ones
-//    if(cmd_uOmodri[MOTOR_1].cmdAccesValid)
-//    {
-//        cmd_t*          p_cmd       = &motor[MOTOR_1].p_motorFOC->motor_cmd;
-//        cmd_bit_reg_t*  p_bit       = &p_cmd->enableBits.bit;
-//        p_cmd->posRef               = cmd_uOmodri[MOTOR_1].posRef;
-//        p_cmd->velRef               = cmd_uOmodri[MOTOR_1].velRef;
-//        p_cmd->iqRef                = cmd_uOmodri[MOTOR_1].iqRef;
-//        p_cmd->kpCoeff              = cmd_uOmodri[MOTOR_1].kpCoeff;
-//        p_cmd->kdCoeff              = cmd_uOmodri[MOTOR_1].kdCoeff;
-//        p_cmd->iSat                 = cmd_uOmodri[MOTOR_1].iSat;
-//        p_cmd->timeoutRef           = cmd_uOmodri[MOTOR_1].timeoutRef;
-//        p_cmd->cptTimeout           = cmd_uOmodri[MOTOR_1].cptTimeout;
-//        p_cmd->index                = cmd_uOmodri[MOTOR_1].index;
-//        p_bit->encOffsetCompEnable  = cmd_uOmodri[MOTOR_1].enableBits.bit.encOffsetCompEnable;
-//        p_bit->rollOverEnable       = cmd_uOmodri[MOTOR_1].enableBits.bit.rollOverEnable;
-//        p_bit->motorEnable          = cmd_uOmodri[MOTOR_1].enableBits.bit.motorEnable;
-//        p_bit->systemEnable         = cmd_uOmodri[MOTOR_1].enableBits.bit.systemEnable;
-//        p_cmd->encOffsetCompEnable  = cmd_uOmodri[MOTOR_1].encOffsetCompEnable;
-//        p_cmd->rollOverEnable       = cmd_uOmodri[MOTOR_1].rollOverEnable;
-//        p_cmd->motorEnable          = cmd_uOmodri[MOTOR_1].motorEnable;
-//        p_cmd->systemEnable         = cmd_uOmodri[MOTOR_1].systemEnable;
-//        p_cmd->cmdAccesValid        = cmd_uOmodri[MOTOR_1].cmdAccesValid;
-//    }
     while(DMA_getTransferStatusFlag(DMA_CMD_2_FOC_BASE_ADDR));
     // Motor control
     motor[MOTOR_1].itDone = MOT_runControl(&motor[MOTOR_1]);
-//    motor[MOTOR_1].itDone = true;
     // Clear the interrupt overflow flag
     ADC_clearInterruptOverflowStatus(MOTOR12_IVA_ADC_ADDR, MOTOR1_IA_INT_NUM);
     // Clear the interrupt flag
@@ -398,35 +289,9 @@ __attribute__((interrupt)) void adc_isrMotor2(void)
 #ifdef DEBUG
     DBG_PIN4_SET;
 #endif
-    // copy data if access is granted else use previous ones
-//    if(cmd_uOmodri[MOTOR_2].cmdAccesValid)
-//    {
-//        cmd_t*          p_cmd       = &motor[MOTOR_2].p_motorFOC->motor_cmd;
-//        cmd_bit_reg_t*  p_bit       = &p_cmd->enableBits.bit;
-//        p_cmd->posRef               = cmd_uOmodri[MOTOR_2].posRef;
-//        p_cmd->velRef               = cmd_uOmodri[MOTOR_2].velRef;
-//        p_cmd->iqRef                = cmd_uOmodri[MOTOR_2].iqRef;
-//        p_cmd->kpCoeff              = cmd_uOmodri[MOTOR_2].kpCoeff;
-//        p_cmd->kdCoeff              = cmd_uOmodri[MOTOR_2].kdCoeff;
-//        p_cmd->iSat                 = cmd_uOmodri[MOTOR_2].iSat;
-//        p_cmd->timeoutRef           = cmd_uOmodri[MOTOR_2].timeoutRef;
-//        p_cmd->cptTimeout           = cmd_uOmodri[MOTOR_2].cptTimeout;
-//        p_cmd->index                = cmd_uOmodri[MOTOR_2].index;
-//        p_bit->encOffsetCompEnable  = cmd_uOmodri[MOTOR_2].enableBits.bit.encOffsetCompEnable;
-//        p_bit->rollOverEnable       = cmd_uOmodri[MOTOR_2].enableBits.bit.rollOverEnable;
-//        p_bit->motorEnable          = cmd_uOmodri[MOTOR_2].enableBits.bit.motorEnable;
-//        p_bit->systemEnable         = cmd_uOmodri[MOTOR_2].enableBits.bit.systemEnable;
-//        p_cmd->encOffsetCompEnable  = cmd_uOmodri[MOTOR_2].encOffsetCompEnable;
-//        p_cmd->rollOverEnable       = cmd_uOmodri[MOTOR_2].rollOverEnable;
-//        p_cmd->motorEnable          = cmd_uOmodri[MOTOR_2].motorEnable;
-//        p_cmd->systemEnable         = cmd_uOmodri[MOTOR_2].systemEnable;
-//        p_cmd->cmdAccesValid        = cmd_uOmodri[MOTOR_2].cmdAccesValid;
-//    }
     while(DMA_getTransferStatusFlag(DMA_CMD_2_FOC_BASE_ADDR));
-//    while(DMA_getRunStatusFlag(DMA_MEM_TO_MEM_M2_BASE_ADDR));
     // Motor control
     motor[MOTOR_2].itDone = MOT_runControl(&motor[MOTOR_2]);
-//    motor[MOTOR_2].itDone = true;
 #if (defined CM_CORE_ENABLE) && (CM_CORE_ENABLE)
     // Send info to CM
     (!IPC_isFlagBusyLtoR(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG)) ? (IPC_setFlagLtoR(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG)) : (0);

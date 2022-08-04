@@ -21,11 +21,11 @@
 /***********************************************************************
  * GLOBAL VARIABLES
  ***********************************************************************/
-#pragma DATA_ALIGN (cmd_msg, 8)
+#pragma DATA_ALIGN(cmd_msg, 8)
 #pragma DATA_SECTION(cmd_msg, "ramgs1")
 mst2slv_msg_t   cmd_msg;
 
-#pragma DATA_ALIGN (status_msg, 8)
+#pragma DATA_ALIGN(status_msg, 8)
 #pragma DATA_SECTION(status_msg, "ramgs1")
 slv2mst_msg_t   status_msg;
 // = {  .status.all                  = 0x0000,

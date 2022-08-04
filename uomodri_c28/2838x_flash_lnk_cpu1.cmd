@@ -73,7 +73,7 @@ SECTIONS
    .stack              : > RAMM1
 
 #if defined(__TI_EABI__)
-   .init_array      : > FLASH1, ALIGN(8)
+   .init_array      : > FLASH2, ALIGN(8)
    .bss             : > RAMLS5
    .bss:output      : > RAMLS3
    .bss:cio         : > RAMLS5

@@ -58,13 +58,13 @@ static const gpio_cfg_t GpioPinsCfgList[] =
  {.pinNumber = DBG_PIN4,                .fctMux = DBG_PIN4_CFG,                 .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0,  .intEnable = false},
  #endif
  // Quadrature encoder #1
- {.pinNumber = MOTOR1_ENC_CHA,          .fctMux = MOTOR1_ENC_CHA_CFG,           .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_IN,  .samplingInMode = GPIO_QUAL_SYNC,   .setValue = 0,  .intEnable = false},
- {.pinNumber = MOTOR1_ENC_CHB,          .fctMux = MOTOR1_ENC_CHB_CFG,           .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_IN,  .samplingInMode = GPIO_QUAL_SYNC,   .setValue = 0,  .intEnable = false},
- {.pinNumber = MOTOR1_ENC_CHI,          .fctMux = MOTOR1_ENC_CHI_CFG,           .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_IN,  .samplingInMode = GPIO_QUAL_SYNC,   .setValue = 0,  .intEnable = false},
+ {.pinNumber = MOTOR1_ENC_CHA,          .fctMux = MOTOR1_ENC_CHA_CFG,           .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_IN,  .samplingInMode = GPIO_QUAL_6SAMPLE,.setValue = 0,  .intEnable = false},
+ {.pinNumber = MOTOR1_ENC_CHB,          .fctMux = MOTOR1_ENC_CHB_CFG,           .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_IN,  .samplingInMode = GPIO_QUAL_6SAMPLE,.setValue = 0,  .intEnable = false},
+ {.pinNumber = MOTOR1_ENC_CHI,          .fctMux = MOTOR1_ENC_CHI_CFG,           .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_IN,  .samplingInMode = GPIO_QUAL_6SAMPLE,.setValue = 0,  .intEnable = false},
  // Quadrature encoder #2
- {.pinNumber = MOTOR2_ENC_CHA,          .fctMux = MOTOR2_ENC_CHA_CFG,           .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_IN,  .samplingInMode = GPIO_QUAL_SYNC,   .setValue = 0,  .intEnable = false},
- {.pinNumber = MOTOR2_ENC_CHB,          .fctMux = MOTOR2_ENC_CHB_CFG,           .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_IN,  .samplingInMode = GPIO_QUAL_SYNC,   .setValue = 0,  .intEnable = false},
- {.pinNumber = MOTOR2_ENC_CHI,          .fctMux = MOTOR2_ENC_CHI_CFG,           .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_IN,  .samplingInMode = GPIO_QUAL_SYNC,   .setValue = 0,  .intEnable = false},
+ {.pinNumber = MOTOR2_ENC_CHA,          .fctMux = MOTOR2_ENC_CHA_CFG,           .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_IN,  .samplingInMode = GPIO_QUAL_6SAMPLE,.setValue = 0,  .intEnable = false},
+ {.pinNumber = MOTOR2_ENC_CHB,          .fctMux = MOTOR2_ENC_CHB_CFG,           .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_IN,  .samplingInMode = GPIO_QUAL_6SAMPLE,.setValue = 0,  .intEnable = false},
+ {.pinNumber = MOTOR2_ENC_CHI,          .fctMux = MOTOR2_ENC_CHI_CFG,           .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_IN,  .samplingInMode = GPIO_QUAL_6SAMPLE,.setValue = 0,  .intEnable = false},
  // SPIA pins : DRV COM
  {.pinNumber = DRV_SPI_SIMO,            .fctMux = DRV_SPI_SIMO_CFG,             .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 1,  .intEnable = false},
  {.pinNumber = DRV_SPI_SOMI,            .fctMux = DRV_SPI_SOMI_CFG,             .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_IN,  .samplingInMode = GPIO_QUAL_SYNC,   .setValue = 0,  .intEnable = false},
@@ -201,7 +201,7 @@ static const eqep_cfg_t QepCfgList[] =
   .eqepStrobeSrc        = EQEP_STROBE_OR_ADCSOCB,
  },
  // END OF ARRAY
- {.eqepBase = UINT32_MAX},
+ {.eqepBase             = UINT32_MAX},
 };
 
 static const sci_cfg_t sciCfgList[] =
@@ -580,8 +580,10 @@ static const hal_cfg_t hal =
  .p_dmaHandle   = dmaCfgList,
 #if (defined CM_CORE_ENABLE) && (CM_CORE_ENABLE)
  .p_ipcHandle   = ipcCfgList,
+#else
+ .p_ipcHandle   = NULL,
 #endif
- .p_sciHandle   = sciCfgList,
+ .p_sciHandle   = NULL,//sciCfgList,
  .p_spiHandle   = spiCfgList,
  .p_timerHandle = timerCfgList,
 #if (defined CLA_CORE_ENABLE) && (CLA_CORE_ENABLE)

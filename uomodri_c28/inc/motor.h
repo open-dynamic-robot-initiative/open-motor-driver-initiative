@@ -53,7 +53,7 @@ typedef enum
 typedef enum
 {
     MOTOR_ERROR_NO_ERROR        = 0,    /*!< No error */
-    MOTOR_ERROR_ENCODER         = 1,    /*!< Encoder_1 error too high */
+    MOTOR_ERROR_ENCODER         = 1,    /*!< Encoder error too high */
     MOTOR_ERROR_POS_ROLLOVER    = 2,    /*!< Position roll-over occurred */
     MOTOR_ERROR_DRV_NFAULT      = 4,    /*!< Motor DRV nFault error */
     MOTOR_ERROR_COM_TIMEOUT     = 8,    /*!< Communication timeout error */

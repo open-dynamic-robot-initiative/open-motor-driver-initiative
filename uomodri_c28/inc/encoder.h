@@ -45,15 +45,17 @@ typedef struct __ENCODER_STRUCT_t__
     float32_t           thetaMech[2];       /*!< Angular mechanical position  - [pu] */
     float32_t           thetaMechScaler;    /*!< Angular mechanical scaler - [pu/register] */
     float32_t           thetaIndex;         /*!< Index mechanical angle */
-    float32_t           thetaMechIndexed;   /*!< Mechanical angle relative to the index - [pu] */
+//    float32_t           thetaMechIndex;     /*!< Mechanical angle relative to the index - [pu] */
     float32_t           thetaAbsolute;      /*!< Absolute angular position - [turns] */
+//    float32_t           thetaAbsIndex;      /*!< Absolute angular position with index compensation - [turns] */
     speed_t             speed;              /*!< Speed estimation structure */
     int16_t             turnNb;             /*!< Number of full turns (signed) */
     int16_t             thetaDir;           /*!< Rotor direction - -1 = CCW/reverse, 1 = CW/forward */
-    bool_t              indexDetected;      /*!< Has index been detected */
-    bool_t              indexCompensated;   /*!< Is index compensation activated */
+    bool_t              indexDetect;        /*!< Has index been detected */
+    bool_t              indexOffset;        /*!< Is index compensation activated */
     bool_t              indexToggle;        /*!< Flag that toggles every time index is seen */
-    bool_t              rollOverFlag;       /*!< Roll-over error flag */
+    bool_t              indexError;         /*!< Mismatch error between consecutive index mechanical angle capture */
+    bool_t              rollOverError;       /*!< Roll-over error flag */
 } encoder_t;
 
 /***********************************************************************

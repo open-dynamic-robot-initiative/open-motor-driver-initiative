@@ -50,8 +50,8 @@ inline bool_t MOT_runControl(motor_t* p_motor)
     foc_t*      p_foc           = p_motor->p_motorFOC;
     encoder_t*  p_enc           = &p_foc->motor_enc;
     cmd_t*      p_cmd           = &p_foc->motor_cmd;
-    cmd_reg_t   en_bit          = p_cmd->enableBits.bit;
-    p_enc->indexCompensated     = en_bit.encOffsetCompEnable;
+    cmd_reg_t   en_bit          = p_cmd->enableReg.bit;
+    p_enc->indexOffset          = en_bit.encOffsetEnable;
 
     // Read the phases current, voltage & Vbus
     FOC_getMeasures(&p_foc->motor_acq);
@@ -62,14 +62,16 @@ inline bool_t MOT_runControl(motor_t* p_motor)
     // Rollover test & index
     ENC_getTheta(p_enc);
 
-    bool_t motor_rollover_flag  = p_enc->rollOverFlag && en_bit.rollOverEnable;
+    bool_t motor_rollover_flag  = p_enc->rollOverError && en_bit.rollOverEnable;
     bool_t motor_drv_fault_flag = !GPIO_readPin(p_motor->p_motorDRV->p_drvCfgHandler->gpioNumber_FAULT);
     bool_t com_timeout_flag     = (p_cmd->cptTimeout > p_cmd->timeoutRef) && p_cmd->timeoutRef;
+    bool_t encoder_fault_flag   = p_enc->indexDetect && p_enc->indexError;
     // Save number of cycles elapsed since control loop startup
     p_motor->clCycleNb          = EPWM_getTimeBaseCounterValue(p_motor->p_motorHalCfg->p_pwmCntCmp[0]->epwmBase);
     p_motor->motor_error       |= (motor_rollover_flag)             ? (MOTOR_ERROR_POS_ROLLOVER): (p_motor->motor_error);
     p_motor->motor_error       |= (motor_drv_fault_flag)            ? (MOTOR_ERROR_DRV_NFAULT)  : (p_motor->motor_error);
     p_motor->motor_error       |= (com_timeout_flag)                ? (MOTOR_ERROR_COM_TIMEOUT) : (p_motor->motor_error);
+    p_motor->motor_error       |= (encoder_fault_flag)              ? (MOTOR_ERROR_ENCODER)     : (p_motor->motor_error);
     p_motor->motor_state        = (p_motor->motor_error)            ? (MOTOR_STATE_ERROR)       : (p_motor->motor_state);
 
     switch(p_motor->motor_state)

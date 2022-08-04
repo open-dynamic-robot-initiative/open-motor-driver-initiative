@@ -24,7 +24,7 @@
  */
 #define UOMODRI_USE_REV_1_0_CONFIG              1
 #define UOMODRI_USE_ENCODER_GET_REG_FUNCTION    0
-#define UOMODRI_USE_RADIAN                      0
+#define UOMODRI_USE_RADIAN                      1
 #define CLA_CORE_ENABLE                         0
 #define CM_CORE_ENABLE                          0
 #define UOMODRI_VBUS_FLT(flt_coef, y, x)        LPF_FILTER_1(flt_coef, y, x)
@@ -63,12 +63,28 @@
 #define FM_1DIV3                                0.33333333333333333333333333333333f /* 1/3 */
 #endif
 
-#ifndef FM_RPM2RAD
-#define FM_RPM2RAD                              (2.0f * M_PI / 60.0f)
+#ifndef FM_RPM2RADPS
+#define FM_RPM2RADPS                            (2.0f * M_PI / 60.0f)
 #endif
 
-#ifndef FM_RAD2RPM
-#define FM_RAD2RPM                              (60.0f / (2.0f * M_PI))
+#ifndef FM_RADPS2RPM
+#define FM_RADPS2RPM                            (1.0f / FM_RPM2RADPS)
+#endif
+
+#ifndef FM_ROUND2RAD
+#define FM_ROUND2RAD                            (2.0f * M_PI)
+#endif
+
+#ifndef FM_RAD2ROUND
+#define FM_RAD2ROUND                            (1.0f / FM_ROUND2RAD)
+#endif
+
+#ifndef FM_KRPM2RADPS
+#define FM_KRPM2RADPS                           (1000.0f * FM_RPM2RADPS)
+#endif
+
+#ifndef FM_RADPS2KRPM
+#define FM_RADPS2KRPM                           (1.0f / FM_KRPM2RADPS)
 #endif
 
 #define FM_ABS(x)                               ((x) >= 0.0f ? (x) : -(x))
@@ -261,8 +277,14 @@
 #define DRV_SPI_CLK_CFG                         GPIO_18_SPIA_CLK
 #define MOTOR1_DRV_SPI_CS                       (19)
 #define MOTOR1_DRV_SPI_CS_CFG                   GPIO_19_GPIO19
+#define MOTOR1_DRV_SPI_CS_SET                   (HWREG(GPIODATA_BASE + GPIO_O_GPASET)   = GPIO_GPASET_GPIO19)
+#define MOTOR1_DRV_SPI_CS_CLEAR                 (HWREG(GPIODATA_BASE + GPIO_O_GPACLEAR) = GPIO_GPACLEAR_GPIO19)
+#define MOTOR1_DRV_SPI_CS_TOGGLE                (HWREG(GPIODATA_BASE + GPIO_O_GPATOGGLE)= GPIO_GPATOGGLE_GPIO19)
 #define MOTOR2_DRV_SPI_CS                       (35)
 #define MOTOR2_DRV_SPI_CS_CFG                   GPIO_35_GPIO35
+#define MOTOR2_DRV_SPI_CS_SET                   (HWREG(GPIODATA_BASE + GPIO_O_GPBSET)   = GPIO_GPBSET_GPIO35)
+#define MOTOR2_DRV_SPI_CS_CLEAR                 (HWREG(GPIODATA_BASE + GPIO_O_GPBCLEAR) = GPIO_GPBCLEAR_GPIO35)
+#define MOTOR2_DRV_SPI_CS_TOGGLE                (HWREG(GPIODATA_BASE + GPIO_O_GPVTOGGLE)= GPIO_GPBTOGGLE_GPIO35)
 /**
  * @}
  */
@@ -841,7 +863,7 @@
  ***********************************************************************/
 /*** Motor 1 constants ***/
 #define MOTOR1_KV                               (300.0f)    // Motor constant (rpm/V)
-#define MOTOR1_KE                               (FM_SQRT3 / (MOTOR1_KV * FM_RPM2RAD))   //1.0 / (MOTOR1_KV * FM_RPM2RAD * MOTOR1_POLES_PAIRS) // Motor back EMF constant (V/rad/s)
+#define MOTOR1_KE                               (FM_SQRT3 / (MOTOR1_KV * FM_RPM2RADPS))   //1.0 / (MOTOR1_KV * FM_RPM2RAD * MOTOR1_POLES_PAIRS) // Motor back EMF constant (V/rad/s)
 #define MOTOR1_KI                               (0.1f)      // Motor torque constant (N.m/A)
 #define MOTOR1_RS                               (0.52f)//(0.7f)      // Stator resistance (ohm)
 #define MOTOR1_LS                               (260e-6)//(134e-6f)   // Stator d-axis inductance (H)
@@ -850,12 +872,12 @@
 #define MOTOR1_CURRENT_TIME_CONST               (2.0f * M_PI * MOTOR1_CURRENT_CUTOFF_FREQ * PWM_PERIOD)
 #define MOTOR1_CURRENT_LPF_ALPHA                (MOTOR1_CURRENT_TIME_CONST / (1.0f + MOTOR1_CURRENT_TIME_CONST))
 #define MOTOR1_CURRENT_LPF_ONE_M_ALPHA          (1.0f - MOTOR1_CURRENT_LPF_ALPHA)
-#define MOTOR1_CURRENT_ALIGN_MAX                (2.0f)      // Current on d-axis for motor alignment (A)
+#define MOTOR1_CURRENT_ALIGN_MAX                (4.0f)      // Current on d-axis for motor alignment (A)
 #define MOTOR1_ID_REGULATOR_KP_COEF             (MOTOR1_LS * 2.0f * M_PI * MOTOR1_CURRENT_CUTOFF_FREQ)
 #define MOTOR1_ID_REGULATOR_KI_COEF             (MOTOR1_RS * 2.0f * M_PI * MOTOR1_CURRENT_CUTOFF_FREQ)
 #define MOTOR1_IQ_REGULATOR_KP_COEF             (MOTOR1_LS * 2.0f * M_PI * MOTOR1_CURRENT_CUTOFF_FREQ)
 #define MOTOR1_IQ_REGULATOR_KI_COEF             (MOTOR1_RS * 2.0f * M_PI * MOTOR1_CURRENT_CUTOFF_FREQ)
-#define MOTOR1_CURRENT_REGULATOR_SAT_MAX        (2.0f)
+#define MOTOR1_CURRENT_REGULATOR_SAT_MAX        (10.0f)
 #define MOTOR1_SPEED_REGULATOR_KP_COEF          (1.0f)
 #define MOTOR1_SPEED_REGULATOR_KD_COEF          (0.02f)
 #define MOTOR1_DTC_MAX                          (0.9f)     // Max duty cycle

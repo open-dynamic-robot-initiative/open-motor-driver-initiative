@@ -44,7 +44,7 @@ typedef struct __cmd_bit_reg_t__
     uint16_t        systemEnable        : 1;    /*!< Bit 0      : R/W - Enable system to start. No power on motors.         */
     uint16_t        motorEnable         : 1;    /*!< Bit 1      : R/W - Enable power on motor.                              */
     uint16_t        rollOverEnable      : 1;    /*!< Bit 2      : R/W - Limit the rotations to +/- 128 rounds.              */
-    uint16_t        encOffsetCompEnable : 1;    /*!< Bit 3      : R/W - Use encoder index in position computation.          */
+    uint16_t        encOffsetEnable     : 1;    /*!< Bit 3      : R/W - Use encoder index in position computation.          */
     uint16_t        CMD_RSV1            : 12;   /*!< Bit 4-15   : R/W - Reserved                                            */
 } cmd_reg_t;
 
@@ -128,7 +128,6 @@ typedef struct __MOTOR_ACQUISITIONS_t__
 
 typedef struct __MOTOR_COMMAND_t__
 {
-//    const motor_id_e    motor_id;
     float32_t   posRef;
     float32_t   velRef;
     float32_t   iqRef;
@@ -138,11 +137,7 @@ typedef struct __MOTOR_COMMAND_t__
     uint16_t    timeoutRef;
     uint16_t    cptTimeout;
     uint16_t    index;
-    cmd_reg_u   enableBits;
-//    bool_t      encOffsetCompEnable;
-//    bool_t      rollOverEnable;
-//    bool_t      motorEnable;
-//    bool_t      systemEnable;
+    cmd_reg_u   enableReg;
 } cmd_t;
 
 typedef struct __MOTOR_FOC_CONTROL_t__
