@@ -201,13 +201,12 @@ inline void ENC_getTheta(encoder_t* p_enc)
     //-------------------------------------------------------------------
     if(EQEP_getInterruptStatus(eqepBase) & EQEP_INT_INDEX_EVNT_LATCH)
     {
-        if(!p_enc->indexDetect)
-            // Compute first indexed mechanical angle normalized between 0 and 2 x PI
-            p_enc->thetaIndex   = __mpy2pif32((float32_t)EQEP_getIndexPositionLatch(eqepBase) * p_enc->thetaMechScaler);
-        // Check if index has been detected (using FIMF is not legal with QEPCTL[PCRM] = 01 (position reset if max position is reached)
-        p_enc->indexDetect      = true;
         // Compute indexed mechanical angle normalized between 0 and 2 x PI
         float32_t thetaIndex    = __mpy2pif32((float32_t)EQEP_getIndexPositionLatch(eqepBase) * p_enc->thetaMechScaler);
+        // Save first indexed mechanical angle normalized between 0 and 2 x PI
+        p_enc->thetaIndex       = (!p_enc->indexDetect) ? (thetaIndex) : (p_enc->thetaIndex);
+        // Set index detection flag.
+        p_enc->indexDetect      = true;
         // Check if current index capture match the first index capture
         p_enc->indexError       = (fabsf(p_enc->thetaIndex - thetaIndex) < __mpy2pif32(4.0f / p_enc->thetaMechScaler)) ? (false) : (true);
         // Toggle index

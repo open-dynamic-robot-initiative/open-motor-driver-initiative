@@ -103,12 +103,17 @@ void main(void)
             // Send new commands to FOC structures if extract valid
             if(cmd_msg_valid || timeout_flag)
             {
-//                if(cmd_msg_valid && ((cmd_uOmodri[MOTOR_1].enableReg.all & 0x000B) == 0x000B))
-//                    cmd_uOmodri[MOTOR_1].posRef += motor_foc[MOTOR_1].motor_enc.thetaIndex;
-//                if(cmd_msg_valid && ((cmd_uOmodri[MOTOR_2].enableReg.all  & 0x000B) == 0x000B))
-//                    cmd_uOmodri[MOTOR_2].posRef += motor_foc[MOTOR_2].motor_enc.thetaIndex;
+                if(cmd_msg_valid && cmd_uOmodri[MOTOR_1].enableReg.bit.systemEnable &&
+                        cmd_uOmodri[MOTOR_1].enableReg.bit.motorEnable && cmd_uOmodri[MOTOR_1].enableReg.bit.encOffsetEnable)
+                    //((cmd_uOmodri[MOTOR_1].enableReg..all & 0xB000) == 0xB000))
+                    cmd_uOmodri[MOTOR_1].posRef += motor[MOTOR_1].p_motorFOC->motor_enc.thetaIndex;
+                //                if(cmd_msg_valid && ((cmd_uOmodri[MOTOR_2].enableReg.all & 0x000B) == 0x000B))
+                if(cmd_msg_valid && cmd_uOmodri[MOTOR_2].enableReg.bit.systemEnable &&
+                        cmd_uOmodri[MOTOR_2].enableReg.bit.motorEnable && cmd_uOmodri[MOTOR_2].enableReg.bit.encOffsetEnable)
+                    cmd_uOmodri[MOTOR_2].posRef += motor[MOTOR_2].p_motorFOC->motor_enc.thetaIndex;
                 DMA_forceTrigger(DMA_CMD_2_FOC_BASE_ADDR);
             }
+            cmd_msg_valid = false;
             timeout_flag = false;
         }
 //        if(!DMA_getTransferStatusFlag(DMA_CMD_2_FOC_BASE_ADDR) && !DMA_getRunStatusFlag(DMA_COM_SPI_RX_BASE_ADDR) && GPIO_readPin(COM_SPI_CS))

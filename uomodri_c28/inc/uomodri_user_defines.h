@@ -63,16 +63,16 @@
 #define FM_1DIV3                                0.33333333333333333333333333333333f /* 1/3 */
 #endif
 
+#ifndef FM_ROUND2RAD
+#define FM_ROUND2RAD                            (2.0f * M_PI)
+#endif
+
 #ifndef FM_RPM2RADPS
-#define FM_RPM2RADPS                            (2.0f * M_PI / 60.0f)
+#define FM_RPM2RADPS                            (FM_ROUND2RAD / 60.0f)
 #endif
 
 #ifndef FM_RADPS2RPM
 #define FM_RADPS2RPM                            (1.0f / FM_RPM2RADPS)
-#endif
-
-#ifndef FM_ROUND2RAD
-#define FM_ROUND2RAD                            (2.0f * M_PI)
 #endif
 
 #ifndef FM_RAD2ROUND
@@ -873,13 +873,13 @@
 #define MOTOR1_CURRENT_LPF_ALPHA                (MOTOR1_CURRENT_TIME_CONST / (1.0f + MOTOR1_CURRENT_TIME_CONST))
 #define MOTOR1_CURRENT_LPF_ONE_M_ALPHA          (1.0f - MOTOR1_CURRENT_LPF_ALPHA)
 #define MOTOR1_CURRENT_ALIGN_MAX                (4.0f)      // Current on d-axis for motor alignment (A)
-#define MOTOR1_ID_REGULATOR_KP_COEF             (MOTOR1_LS * 2.0f * M_PI * MOTOR1_CURRENT_CUTOFF_FREQ)
-#define MOTOR1_ID_REGULATOR_KI_COEF             (MOTOR1_RS * 2.0f * M_PI * MOTOR1_CURRENT_CUTOFF_FREQ)
-#define MOTOR1_IQ_REGULATOR_KP_COEF             (MOTOR1_LS * 2.0f * M_PI * MOTOR1_CURRENT_CUTOFF_FREQ)
-#define MOTOR1_IQ_REGULATOR_KI_COEF             (MOTOR1_RS * 2.0f * M_PI * MOTOR1_CURRENT_CUTOFF_FREQ)
-#define MOTOR1_CURRENT_REGULATOR_SAT_MAX        (10.0f)
-#define MOTOR1_SPEED_REGULATOR_KP_COEF          (1.0f)
-#define MOTOR1_SPEED_REGULATOR_KD_COEF          (0.02f)
+#define MOTOR1_PI_ID_KP_COEF                    (MOTOR1_LS * 2.0f * M_PI * MOTOR1_CURRENT_CUTOFF_FREQ)
+#define MOTOR1_PI_ID_KI_COEF                    (MOTOR1_RS * 2.0f * M_PI * MOTOR1_CURRENT_CUTOFF_FREQ)
+#define MOTOR1_PI_IQ_KP_COEF                    (MOTOR1_LS * 2.0f * M_PI * MOTOR1_CURRENT_CUTOFF_FREQ)
+#define MOTOR1_PI_IQ_KI_COEF                    (MOTOR1_RS * 2.0f * M_PI * MOTOR1_CURRENT_CUTOFF_FREQ)
+#define MOTOR1_CURRENT_CMD_SAT_MAX              (10.0f)
+//#define MOTOR1_SPEED_REGULATOR_KP_COEF          (1.0f)
+//#define MOTOR1_SPEED_REGULATOR_KD_COEF          (0.02f)
 #define MOTOR1_DTC_MAX                          (0.9f)     // Max duty cycle
 #define MOTOR1_DTC_MIN                          (0.1f)     // Min duty cycle
 #define MOTOR1_STATOR_RESISTOR_CUTOFF_FREQ      (0.2f)
@@ -899,43 +899,19 @@
 #define MOTOR2_CURRENT_LPF_ALPHA                MOTOR1_CURRENT_LPF_ALPHA
 #define MOTOR2_CURRENT_LPF_ONE_M_ALPHA          MOTOR1_CURRENT_LPF_ONE_M_ALPHA
 #define MOTOR2_CURRENT_ALIGN_MAX                MOTOR1_CURRENT_ALIGN_MAX     // Current on d-axis for motor alignment (A)
-#define MOTOR2_ID_REGULATOR_KP_COEF             MOTOR1_ID_REGULATOR_KP_COEF
-#define MOTOR2_ID_REGULATOR_KI_COEF             MOTOR1_ID_REGULATOR_KI_COEF
-#define MOTOR2_IQ_REGULATOR_KP_COEF             MOTOR1_IQ_REGULATOR_KP_COEF
-#define MOTOR2_IQ_REGULATOR_KI_COEF             MOTOR1_IQ_REGULATOR_KI_COEF
-#define MOTOR2_CURRENT_REGULATOR_SAT_MAX        MOTOR1_CURRENT_REGULATOR_SAT_MAX
-#define MOTOR2_SPEED_REGULATOR_KP_COEF          MOTOR1_SPEED_REGULATOR_KP_COEF
-#define MOTOR2_SPEED_REGULATOR_KD_COEF          MOTOR1_SPEED_REGULATOR_KD_COEF
+#define MOTOR2_PI_ID_KP_COEF                    MOTOR1_PI_ID_KP_COEF
+#define MOTOR2_PI_ID_KI_COEF                    MOTOR1_PI_ID_KI_COEF
+#define MOTOR2_PI_IQ_KP_COEF                    MOTOR1_PI_IQ_KP_COEF
+#define MOTOR2_PI_IQ_KI_COEF                    MOTOR1_PI_IQ_KI_COEF
+#define MOTOR2_CURRENT_CMD_SAT_MAX              MOTOR1_CURRENT_CMD_SAT_MAX
+//#define MOTOR2_SPEED_REGULATOR_KP_COEF          MOTOR1_SPEED_REGULATOR_KP_COEF
+//#define MOTOR2_SPEED_REGULATOR_KD_COEF          MOTOR1_SPEED_REGULATOR_KD_COEF
 #define MOTOR2_DTC_MAX                          MOTOR1_DTC_MAX              // Max duty cycle
 #define MOTOR2_DTC_MIN                          MOTOR1_DTC_MIN              // Min duty cycle
 #define MOTOR2_STATOR_RESISTOR_CUTOFF_FREQ      MOTOR1_STATOR_RESISTOR_CUTOFF_FREQ
 #define MOTOR2_STATOR_RESISTOR_TIME_CONST       MOTOR1_STATOR_RESISTOR_TIME_CONST
 #define MOTOR2_STATOR_RESISTOR_LPF_ALPHA        MOTOR1_STATOR_RESISTOR_LPF_ALPHA
 #define MOTOR2_STATOR_RESISTOR_LPF_ONE_M_ALPHA  MOTOR1_STATOR_RESISTOR_LPF_ONE_M_ALPHA
-//#define MOTOR2_KV                               (300.0f)    // Motor constant (rpm/V)
-//#define MOTOR2_KE                               (0.032f)   // Motor back EMF constant (V/rad/s)
-//#define MOTOR2_KI                               (0.1f)      // Motor torque constant (N.m/A)
-//#define MOTOR2_RS                               (0.52f)//(0.7f)      // Stator resistance (ohm)
-//#define MOTOR2_LS                               (260e-6)//(134e-6)    // Stator d-axis inductance (H)
-//#define MOTOR2_POLES_PAIRS                      (12.0f)        // Number of poles
-//#define MOTOR2_CURRENT_CUTOFF_FREQ              (500.0f)    // Current loop bandwidth (Hz)
-//#define MOTOR2_CURRENT_TIME_CONST               (2.0f * M_PI * MOTOR2_CURRENT_CUTOFF_FREQ * PWM_PERIOD)
-//#define MOTOR2_CURRENT_LPF_ALPHA                (MOTOR2_CURRENT_TIME_CONST / (1.0f + MOTOR2_CURRENT_TIME_CONST))
-//#define MOTOR2_CURRENT_LPF_ONE_M_ALPHA          (1.0f - MOTOR2_CURRENT_LPF_ALPHA)
-//#define MOTOR2_CURRENT_ALIGN_MAX                (2.0f)      // Current on d-axis for motor alignment (A)
-//#define MOTOR2_ID_REGULATOR_KP_COEF             (MOTOR2_LS * 2.0f * M_PI * MOTOR2_CURRENT_CUTOFF_FREQ)
-//#define MOTOR2_ID_REGULATOR_KI_COEF             (MOTOR2_RS * 2.0f * M_PI * MOTOR2_CURRENT_CUTOFF_FREQ)
-//#define MOTOR2_IQ_REGULATOR_KP_COEF             (MOTOR2_LS * 2.0f * M_PI * MOTOR2_CURRENT_CUTOFF_FREQ)
-//#define MOTOR2_IQ_REGULATOR_KI_COEF             (MOTOR2_RS * 2.0f * M_PI * MOTOR2_CURRENT_CUTOFF_FREQ)
-//#define MOTOR2_IQ_REGULATOR_SATURATION          (8.0f)
-//#define MOTOR2_SPEED_REGULATOR_KP_COEF          (1.0f)
-//#define MOTOR2_SPEED_REGULATOR_KD_COEF          (0.02f)
-//#define MOTOR2_DTC_MAX                          (0.9f)      // Max duty cycle
-//#define MOTOR2_DTC_MIN                          (0.1f)      // Min duty cycle
-//#define MOTOR2_STATOR_RESISTOR_CUTOFF_FREQ      (0.2f)
-//#define MOTOR2_STATOR_RESISTOR_TIME_CONST       (2.0f * M_PI * MOTOR2_STATOR_RESISTOR_CUTOFF_FREQ * PWM_PERIOD)
-//#define MOTOR2_STATOR_RESISTOR_LPF_ALPHA        (MOTOR2_STATOR_RESISTOR_TIME_CONST / (1.0f + MOTOR2_STATOR_RESISTOR_TIME_CONST))
-//#define MOTOR2_STATOR_RESISTOR_LPF_ONE_M_ALPHA  (1.0f - MOTOR2_STATOR_RESISTOR_LPF_ALPHA)
 
 #define MOTOR12_OVERMODULATION                  (1.15f)
 #define VBUS_CUTOFF_FREQ                        (400.0f)    // vbus voltage loop bandwidth (Hz)

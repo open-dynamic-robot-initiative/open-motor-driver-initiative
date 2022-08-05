@@ -55,7 +55,7 @@ typedef struct __ENCODER_STRUCT_t__
     bool_t              indexOffset;        /*!< Is index compensation activated */
     bool_t              indexToggle;        /*!< Flag that toggles every time index is seen */
     bool_t              indexError;         /*!< Mismatch error between consecutive index mechanical angle capture */
-    bool_t              rollOverError;       /*!< Roll-over error flag */
+    bool_t              rollOverError;      /*!< Roll-over error flag */
 } encoder_t;
 
 /***********************************************************************

@@ -29,8 +29,8 @@ bool_t COM_msgExtract(mst2slv_msg_t* p_msg,  cmd_t* p_cmd_m1,  cmd_t* p_cmd_m2)
         p_cmd_m1->kpCoeff               = (float32_t)(p_msg->kpCoeff[MOTOR_1]   * FM_RAD2ROUND * KP_LSB);
         p_cmd_m1->kdCoeff               = (float32_t)(p_msg->kdCoeff[MOTOR_1]   * FM_RADPS2KRPM * KD_LSB);
         float32_t isat                  = (float32_t)(MSB_16(p_msg->iSat)       * CURRENT_SAT_LSB);
-//        p_cmd_m1->iSat                  = __fsat(isat, MOTOR1_CURRENT_REGULATOR_SAT_MAX, 0.0f);
-        p_cmd_m1->iSat                  = ((isat > 0.0f) && (isat < MOTOR1_CURRENT_REGULATOR_SAT_MAX)) ? (isat) : (MOTOR1_CURRENT_REGULATOR_SAT_MAX);
+        p_cmd_m1->iSat                  = (isat < MOTOR1_CURRENT_CMD_SAT_MAX)   ? (isat)            : (MOTOR1_CURRENT_CMD_SAT_MAX);
+        p_cmd_m1->iSat                  = (p_cmd_m1->iSat > 0.0f)               ? (p_cmd_m1->iSat)  : (MOTOR1_CURRENT_CMD_SAT_MAX);
         p_cmd_m1->timeoutRef            = (uint16_t)p_msg->mode.bit.TIMEOUT;
         p_cmd_m1->cptTimeout            = 0U;
         p_cmd_m1->index                 = p_msg->index;
@@ -48,8 +48,8 @@ bool_t COM_msgExtract(mst2slv_msg_t* p_msg,  cmd_t* p_cmd_m1,  cmd_t* p_cmd_m2)
         p_cmd_m2->kpCoeff               = (float32_t)(p_msg->kpCoeff[MOTOR_2]   * FM_RAD2ROUND * KP_LSB);
         p_cmd_m2->kdCoeff               = (float32_t)(p_msg->kdCoeff[MOTOR_2]   * FM_RADPS2KRPM * KD_LSB);
         isat                            = (float32_t)(LSB_16(p_msg->iSat)       * CURRENT_SAT_LSB);
-//        p_cmd_m2->iSat                  = __fsat(isat, MOTOR2_CURRENT_REGULATOR_SAT_MAX, 0.0f);
-        p_cmd_m2->iSat                  = ((isat > 0.0f) && (isat < MOTOR2_CURRENT_REGULATOR_SAT_MAX)) ? (isat) : (MOTOR2_CURRENT_REGULATOR_SAT_MAX);
+        p_cmd_m2->iSat                  = (isat < MOTOR2_CURRENT_CMD_SAT_MAX)   ? (isat)            : (MOTOR2_CURRENT_CMD_SAT_MAX);
+        p_cmd_m2->iSat                  = (p_cmd_m2->iSat > 0.0f)               ? (p_cmd_m2->iSat)  : (MOTOR2_CURRENT_CMD_SAT_MAX);
         p_cmd_m2->timeoutRef            = (uint16_t)p_msg->mode.bit.TIMEOUT;
         p_cmd_m2->cptTimeout            = 0U;
         p_cmd_m2->index                 = p_msg->index;
@@ -130,9 +130,11 @@ void COM_msgCreate(motor_t* p_motor_m1, motor_t* p_motor_m2, slv2mst_msg_t* p_ms
     motor_error_e error_m2              = p_motor_m2->motor_error;
     encoder_t* p_enc                    = &p_foc->motor_enc;
     cmd_reg_t* p_cmd_reg                = &p_foc->motor_cmd.enableReg.bit;
-    float32_t pos_abs                   = p_enc->thetaAbsolute  * FM_RAD2ROUND / POSITION_LSB;
-    float32_t pos_index                 = p_enc->thetaIndex     * FM_RAD2ROUND / POSITION_LSB;
-    int32_t pos                         = (int32_t)(pos_abs - ((p_cmd_reg->encOffsetEnable) ? (pos_index) : (0.0f)));
+//    float32_t pos_abs                   = p_enc->thetaAbsolute  * FM_RAD2ROUND / POSITION_LSB;
+//    float32_t pos_index                 = p_enc->thetaIndex     * FM_RAD2ROUND / POSITION_LSB;
+//    int32_t pos                         = (int32_t)(pos_abs - ((p_cmd_reg->encOffsetEnable) ? (pos_index) : (0.0f)));
+    float32_t pos_offset                = p_enc->thetaAbsolute - ((p_cmd_reg->encOffsetEnable) ? (p_enc->thetaIndex) : (0.0f));
+    int32_t pos                         = (int32_t)(pos_offset * FM_RAD2ROUND / POSITION_LSB);
     bool_t align_done                   = (state == MOTOR_STATE_READY) || (state == MOTOR_STATE_STOP);
     // Update status field - MOTOR_1
     p_msg->status.bit.M1E               = p_cmd_reg->motorEnable;   // MOTOR_1 enabled
@@ -155,9 +157,11 @@ void COM_msgCreate(motor_t* p_motor_m1, motor_t* p_motor_m2, slv2mst_msg_t* p_ms
     state                               = p_motor_m2->motor_state;
     p_enc                               = &p_foc->motor_enc;
     p_cmd_reg                           = &p_foc->motor_cmd.enableReg.bit;
-    pos_abs                             = p_enc->thetaAbsolute  * FM_RAD2ROUND / POSITION_LSB;
-    pos_index                           = p_enc->thetaIndex     * FM_RAD2ROUND / POSITION_LSB;
-    pos                                 = (int32_t)(pos_abs - ((p_cmd_reg->encOffsetEnable) ? (pos_index) : (0.0f)));
+//    pos_abs                             = p_enc->thetaAbsolute  * FM_RAD2ROUND / POSITION_LSB;
+//    pos_index                           = p_enc->thetaIndex     * FM_RAD2ROUND / POSITION_LSB;
+//    pos                                 = (int32_t)(pos_abs - ((p_cmd_reg->encOffsetEnable) ? (pos_index) : (0.0f)));
+    pos_offset                          = p_enc->thetaAbsolute - ((p_cmd_reg->encOffsetEnable) ? (p_enc->thetaIndex) : (0.0f));
+    pos                                 = (int32_t)(pos_offset * FM_RAD2ROUND / POSITION_LSB);
     align_done                          = (state == MOTOR_STATE_READY) || (state == MOTOR_STATE_STOP);
     // Update status field - MOTOR_2
     p_msg->status.bit.M2E               = p_cmd_reg->motorEnable;   // MOTOR_2 enabled
@@ -185,8 +189,8 @@ void COM_msgCreate(motor_t* p_motor_m1, motor_t* p_motor_m2, slv2mst_msg_t* p_ms
         p_msg->status.bit.ERROR_CODE    = STATUS_ERROR_SPI_RECV_TIMEOUT;
     // Compute CRC
     uint32_t crc = COM_crc32((uint16_t *)p_msg, COM_MSG_TX_RX_16BIT_PAYLOAD_LENGTH);
-    p_msg->crc.u16_msb                  = LSB_32(crc);              // required for Solo
-    p_msg->crc.u16_lsb                  = MSB_32(crc);
+    p_msg->crc.u16_msb              = LSB_32(crc);              // required for Solo
+    p_msg->crc.u16_lsb              = MSB_32(crc);
 
     return;
 }
