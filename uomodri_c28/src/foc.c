@@ -4,6 +4,7 @@
 #include "driverlib.h"
 #include "device.h"
 #include "foc.h"
+#include "communication.h"
 
 /***********************************************************************
  * FUNCTIONS DECLARATION
@@ -73,7 +74,6 @@ inline void FOC_resistanceEstimation(foc_t* p_foc)
  * @brief           Compute the Field Oriented Control (FOC) algorithm
  * @param[inout]    *p_foc  Pointer on the FOC motor control structure.
  */
-#if (defined UOMODRI_USE_RADIAN) && (UOMODRI_USE_RADIAN)
 inline void FOC_runControl(foc_t* p_foc)
 {
     acq_t*          p_acq   = &p_foc->motor_acq;
@@ -122,56 +122,6 @@ inline void FOC_runControl(foc_t* p_foc)
 
     return;
 }
-#else
-inline void FOC_runControl(foc_t* p_foc)
-{
-    acq_t*          p_acq   = &p_foc->motor_acq;
-    encoder_t*      p_enc   = &p_foc->motor_enc;
-    /* Compute sine and cosine from the electrical angle */
-    p_foc->sinTheta         = __sinpuf32(p_enc->thetaElec);
-    p_foc->cosTheta         = __cospuf32(p_enc->thetaElec);
-    // Clarke transform
-    p_foc->ialpha           = ((2.0f * p_acq->ia) - p_acq->ib - p_acq->ic) * FM_1DIV3;
-    p_foc->ibeta            = (p_acq->ib - p_acq->ic) * FM_1DIVSQRT3;
-    // Park transform + filtering
-    float32_t id            = (p_foc->sinTheta * p_foc->ibeta) + (p_foc->cosTheta * p_foc->ialpha);
-    UOMODRI_IDQ_FLT(p_foc->iParkFlt, p_foc->id, id);
-    float32_t iq            = (p_foc->cosTheta * p_foc->ibeta) - (p_foc->sinTheta * p_foc->ialpha);
-    UOMODRI_IDQ_FLT(p_foc->iParkFlt, p_foc->iq, iq);
-    // Compute decoupling feed-forward terms
-#if((defined UOMODRI_FEED_FORWARD_ENABLE) && (UOMODRI_FEED_FORWARD_ENABLE))
-    const params_t* p_cfg   = &p_foc->motor_cfg;
-    speed_t*        p_speed = &p_enc->speed;
-    p_foc->piId.ff          = -1.0f * p_speed->speedMech * p_cfg->Ls * p_foc->iq;
-    p_foc->piIq.ff          = (p_speed->speedMech * p_cfg->Ls * p_foc->id) + (p_speed->speedMech * p_cfg->ke);
-//    p_foc->piIq.ff         += (p_foc->iqRef > 0.0f) ? (0.1f / 12.5f * p_acq->vbus) : (-0.1f / 12.5f * p_acq->vbus);
-//    p_foc->piIq.ff          = p_cfg->Rs * p_foc->iqRef + p_speed->speedElec * p_cfg->ke;
-#else
-    p_foc->piId.ff          = 0.0f;
-    p_foc->piIq.ff          = 0.0f;
-#endif
-    // Compute Id(Flux Current) and Iq (Torque Current) PI controllers
-#if (0)//(defined DEBUG)
-    p_foc->ud               = ((p_foc->motor_state == MOTOR_STATE_READY) || (p_foc->motor_state == MOTOR_STATE_STOP)) ? (0.0f)          : (FOC_runPI(&p_foc->piId));
-    p_foc->uq               = ((p_foc->motor_state == MOTOR_STATE_READY) || (p_foc->motor_state == MOTOR_STATE_STOP)) ? (p_foc->iqRef)  : (FOC_runPI(&p_foc->piIq));
-#else
-    p_foc->ud               = FOC_runPI(&p_foc->piId);
-    p_foc->uq               = FOC_runPI(&p_foc->piIq);
-#endif
-    p_foc->vmax             = p_acq->vbus * FM_1DIVSQRT3;
-//    p_foc->udMax            = p_foc->vmax;
-//    p_foc->uqMax            = __sqrt((p_foc->vmax * p_foc->vmax) - (p_foc->ud * p_foc->ud));
-//    float32_t v_ref         = __sqrt((p_foc->ud * p_foc->ud) + (p_foc->uq * p_foc->uq));
-//    limit_norm(&p_foc->ud, &p_foc->uq, p_foc->vmax);
-    // Inverse Park transform
-    p_foc->ualpha           = (p_foc->cosTheta * p_foc->ud) - (p_foc->sinTheta * p_foc->uq);
-    p_foc->ubeta            = (p_foc->sinTheta * p_foc->ud) + (p_foc->cosTheta * p_foc->uq);
-
-    FOC_svpwm1(p_foc);
-
-    return;
-}
-#endif
 
 /**
  * @brief           Reset the Proportional Integral (PI) Controller structure
@@ -211,10 +161,21 @@ inline float32_t FOC_runPI(pi_t* p_pi)
  */
 inline void FOC_resetPD(pd_t* p_pd)
 {
+    p_pd->setTheta      = 0.0f;
     p_pd->errTheta      = 0.0f;
+    p_pd->setSpeed      = 0.0f;
     p_pd->errSpeed      = 0.0f;
+    p_pd->kp            = 0.0f;
+    p_pd->kd            = 0.0f;
     p_pd->derivative    = 0.0f;
+    p_pd->ff            = 0.0f;
     p_pd->out           = 0.0f;
+    p_pd->sat           = 0.0f;
+
+//    p_pd->errTheta      = 0.0f;
+//    p_pd->errSpeed      = 0.0f;
+//    p_pd->derivative    = 0.0f;
+//    p_pd->out           = 0.0f;
 
     return;
 }
@@ -224,35 +185,42 @@ inline void FOC_resetPD(pd_t* p_pd)
  * @param[inout]    *p_pd   Pointer on the PD control structure.
  * @return          out     Command of PD controller
  */
-#if (defined UOMODRI_USE_RADIAN) && (UOMODRI_USE_RADIAN)
+//inline float32_t FOC_runPD(pd_t* p_pd)
+//{
+//    float32_t sat_max   = 1.0f  * (*p_pd->p_sat);
+//    float32_t sat_min   = -1.0f * sat_max;
+//    p_pd->errTheta      = (*p_pd->p_setTheta) - (*p_pd->p_fbTheta);
+//    p_pd->errSpeed      = (*p_pd->p_setSpeed) - (*p_pd->p_fbSpeed);
+//    p_pd->derivative    = (*p_pd->p_kd) * p_pd->errSpeed;
+//    // Compute PID and clamp output.
+//    p_pd->out           = ((*p_pd->p_kp) * p_pd->errTheta) + p_pd->derivative + (*p_pd->p_ff);
+//    p_pd->out           = __fsat(p_pd->out, sat_max, sat_min);
+//
+//    return(p_pd->out);
+//}
 inline float32_t FOC_runPD(pd_t* p_pd)
 {
-    float32_t sat_max   = 1.0f  * (*p_pd->p_sat);
+    float32_t sat_max   = 1.0f  * p_pd->sat;
     float32_t sat_min   = -1.0f * sat_max;
-    p_pd->errTheta      = (*p_pd->p_setTheta) - (*p_pd->p_fbTheta);
-    p_pd->errSpeed      = (*p_pd->p_setSpeed) - (*p_pd->p_fbSpeed);
-    p_pd->derivative    = (*p_pd->p_kd) * p_pd->errSpeed;
+    p_pd->errTheta      = p_pd->setTheta - (*p_pd->p_fbTheta);
+    p_pd->errSpeed      = p_pd->setSpeed - (*p_pd->p_fbSpeed);
+    p_pd->derivative    = p_pd->kd * p_pd->errSpeed;
     // Compute PID and clamp output.
-    p_pd->out           = ((*p_pd->p_kp) * p_pd->errTheta) + p_pd->derivative + (*p_pd->p_ff);
+    p_pd->out           = (p_pd->kp * p_pd->errTheta) + p_pd->derivative + p_pd->ff;
     p_pd->out           = __fsat(p_pd->out, sat_max, sat_min);
 
     return(p_pd->out);
 }
-#else
-inline float32_t FOC_runPD(pd_t* p_pd)
-{
-    float32_t sat_max   = 1.0f  * (*p_pd->p_sat);
-    float32_t sat_min   = -1.0f * sat_max;
-    p_pd->errTheta      = __mpy2pif32((*p_pd->p_setTheta) - (*p_pd->p_fbTheta));
-    p_pd->errSpeed      = (*p_pd->p_setSpeed) - (*p_pd->p_fbSpeed);
-    p_pd->derivative    = (*p_pd->p_kd) * p_pd->errSpeed;
-    // Compute PID and clamp output.
-    p_pd->out           = ((*p_pd->p_kp) * p_pd->errTheta) + p_pd->derivative + (*p_pd->p_ff);
-    p_pd->out           = __fsat(p_pd->out, sat_max, sat_min);
 
-    return(p_pd->out);
+inline void FOC_cmdPD(pd_t* p_pd, cmd_t* p_cmd)
+{
+    p_pd->setTheta              = p_cmd->posRef;
+    p_pd->setSpeed              = p_cmd->velRef;
+    p_pd->kp                    = p_cmd->kpCoeff;
+    p_pd->kd                    = p_cmd->kdCoeff;
+    p_pd->ff                    = p_cmd->iqRef;
+    p_pd->sat                   = p_cmd->iSat;
 }
-#endif
 
 /**
  * @brief           Reset the command structure associated to motor control
@@ -286,13 +254,15 @@ void FOC_resetStruct(foc_t* p_foc)
     FOC_resetPI(&p_foc->piId);
     FOC_resetPI(&p_foc->piIq);
     // Reset position PD controller
-    FOC_resetPD(&p_foc->pdPos);
+    FOC_resetPD(&p_foc->pdPosVel);
+//    FOC_resetPD(&p_foc->pdPosVel[EVEN]);
     // Reset encoder structure
     ENC_resetStruct(&p_foc->motor_enc);
     // Reset analog measures
     FOC_resetMeasuresStruct(&p_foc->motor_acq);
     // Reset the commands associated to motor control
-    FOC_resetCmdStruct(&p_foc->motor_cmd);
+    FOC_resetCmdStruct(&p_foc->motor_cmd[ODD]);
+    FOC_resetCmdStruct(&p_foc->motor_cmd[ODD]);
     // Reset currents and voltages
     p_foc->sinTheta         = 0.0f;
     p_foc->cosTheta         = 0.0f;
@@ -314,6 +284,9 @@ void FOC_resetStruct(foc_t* p_foc)
 //    p_foc->idRef            = 0.0f;
 //    p_foc->iqRef            = 0.0f;
     p_foc->resEst           = 0.0f;
+    p_foc->cmd_cr_active    = ODD;
+    p_foc->cmd_nx_active    = ODD;
+
     return;
 }
 

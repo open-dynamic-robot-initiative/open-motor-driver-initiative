@@ -39,9 +39,6 @@ static const gpio_cfg_t GpioPinsCfgList[] =
  // UART Pins
  {.pinNumber = UART_DBG_TX,             .fctMux = UART_DBG_TX_CFG,              .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CM,     .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0,  .intEnable = false},
  {.pinNumber = UART_DBG_RX,             .fctMux = UART_DBG_RX_CFG,              .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CM,     .direction = GPIO_DIR_MODE_IN,  .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0,  .intEnable = false},
-#ifdef DEBUG
-// {.pinNumber = DBG_PIN2,                .fctMux = DBG_PIN2_CFG,                 .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CM,     .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0,  .intEnable = false},
-#endif
 #endif
 #ifdef DEBUG
 // {.pinNumber = DBG_PIN1,                .fctMux = DBG_PIN1_CFG,                 .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0,  .intEnable = false},
@@ -50,7 +47,7 @@ static const gpio_cfg_t GpioPinsCfgList[] =
 // {.pinNumber = MST_SPI_SIMO,            .fctMux = MST_SPI_SIMO_CFG,             .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 1,  .intEnable = false},
 // {.pinNumber = MST_SPI_CLK,             .fctMux = MST_SPI_CLK_CFG,              .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 1,  .intEnable = false},
 // {.pinNumber = MST_SPI_CS,              .fctMux = MST_SPI_CS_CFG,               .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 1,  .intEnable = false},
- {.pinNumber = DBG_SCI_TX,              .fctMux = DBG_SCI_TX_CFG,               .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0,  .intEnable = false},
+// {.pinNumber = DBG_SCI_TX,              .fctMux = DBG_SCI_TX_CFG,               .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0,  .intEnable = false},
  {.pinNumber = DBG_PIN0,                .fctMux = DBG_PIN0_CFG,                 .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0,  .intEnable = false},
  {.pinNumber = DBG_PIN1,                .fctMux = DBG_PIN1_CFG,                 .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0,  .intEnable = false},
  {.pinNumber = DBG_PIN2,                .fctMux = DBG_PIN2_CFG,                 .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0,  .intEnable = false},
@@ -74,6 +71,11 @@ static const gpio_cfg_t GpioPinsCfgList[] =
  {.pinNumber = COM_SPI_SOMI,            .fctMux = COM_SPI_SOMI_CFG,             .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0,  .intEnable = false},
  {.pinNumber = COM_SPI_CLK,             .fctMux = COM_SPI_CLK_CFG,              .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_IN,  .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0,  .intEnable = false},
  {.pinNumber = COM_SPI_CS,              .fctMux = COM_SPI_CS_CFG,               .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_IN,  .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0,  .intEnable = false},
+ // SPIC pins : MASTER SPI COM
+ {.pinNumber = MST_SPI_SIMO,            .fctMux = MST_SPI_SIMO_CFG,             .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_OUT,  .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 1,  .intEnable = false},
+ {.pinNumber = MST_SPI_SOMI,            .fctMux = MST_SPI_SOMI_CFG,             .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_IN,   .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 1,  .intEnable = false},
+ {.pinNumber = MST_SPI_CLK,             .fctMux = MST_SPI_CLK_CFG,              .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_OUT,  .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 1,  .intEnable = false},
+ {.pinNumber = MST_SPI_CS,              .fctMux = MST_SPI_CS_CFG,               .pinType = GPIO_PIN_TYPE_STD,  .coreSelect = GPIO_CORE_CPU1_CLA1,.direction = GPIO_DIR_MODE_OUT,  .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 1,  .intEnable = false},
  // SPID pins : RGB LED CONTROL
  {.pinNumber = LED_SPI_SIMO,            .fctMux = LED_SPI_SIMO_CFG,             .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 1,  .intEnable = false},
  // DRV1 pins
@@ -204,19 +206,19 @@ static const eqep_cfg_t QepCfgList[] =
  {.eqepBase             = UINT32_MAX},
 };
 
-static const sci_cfg_t sciCfgList[] =
-{
- {
-  .sciBase              = DBG_SCI_BASE,
-  .bitRate              = 3125000U,
-  .mode                 = SCI_CONFIG_WLEN_8 | SCI_CONFIG_STOP_ONE | (uint16_t)SCI_CONFIG_PAR_NONE,
-  .txLevel              = SCI_FIFO_TX16,
-  .rxLevel              = SCI_FIFO_RX16,
-  .intEnable            = false,
- },
- // END OF ARRAY
- {.sciBase              = UINT32_MAX},
-};
+//static const sci_cfg_t sciCfgList[] =
+//{
+// {
+//  .sciBase              = DBG_SCI_BASE,
+//  .bitRate              = 3125000U,
+//  .mode                 = SCI_CONFIG_WLEN_8 | SCI_CONFIG_STOP_ONE | (uint16_t)SCI_CONFIG_PAR_NONE,
+//  .txLevel              = SCI_FIFO_TX16,
+//  .rxLevel              = SCI_FIFO_RX16,
+//  .intEnable            = false,
+// },
+// // END OF ARRAY
+// {.sciBase              = UINT32_MAX},
+//};
 
 /** @var    SPI_TypeDef spiCfgList[]
  *  @brief  List all the configurations defined for each SPI communication modules.
@@ -245,19 +247,17 @@ static const spi_cfg_t  spiCfgList[] =
   .highSpeedMode        = false,
   .intEnable            = false,
  },
-//#if (defined UOMODRI_USE_REV_1_0_CONFIG) && (!UOMODRI_USE_REV_1_0_CONFIG)
-// {.spiBase              = MST_SPI_BASE,
-//  .bitRate              = 6000000U,
-//  .dataWidth            = 16U,
-//  .mode                 = SPI_MODE_MASTER,
-//  .protocol             = SPI_PROT_POL0PHA0,
-//  .txLevel              = SPI_FIFO_TXFULL,
-//  .rxLevel              = SPI_FIFO_RX1,
-//  .intSrc               = 0,
-//  .highSpeedMode        = false,
-//  .intEnable            = false,
-// },
-//#endif
+ {.spiBase              = MST_SPI_BASE,
+  .bitRate              = 10000000U,
+  .dataWidth            = 16U,
+  .mode                 = SPI_MODE_MASTER,
+  .protocol             = SPI_PROT_POL0PHA0,
+  .txLevel              = SPI_FIFO_TX8,
+  .rxLevel              = SPI_FIFO_RX8,
+  .intSrc               = 0,
+  .highSpeedMode        = false,
+  .intEnable            = false,
+ },
  {.spiBase              = LED_SPI_BASE,
   .bitRate              = 2380000U,
   .dataWidth            = 16U,
@@ -376,18 +376,6 @@ static const ipc_cfg_t  ipcCfgList[] =
   .ipcMsgQEnable        = false,
   .ipcIntEnable         = false,
  },
-// {
-//  .ipcType              = IPC_CPU1_L_CM_R,
-//  .ipcFlag              = IPC_FLAG1,
-//  .ipcMsgQEnable        = false,
-//  .ipcIntEnable         = false,
-// },
-// {
-//  .ipcType              = IPC_CPU1_L_CM_R,
-//  .ipcFlag              = IPC_FLAG2,
-//  .ipcMsgQEnable        = false,
-//  .ipcIntEnable         = false,
-// },
   // END OF ARRAY
  {.ipcType              = IPC_TOTAL_NUM},
 };
@@ -406,7 +394,7 @@ static const tmr_cfg_t  timerCfgList[] =
 };
 
 #if (defined CLA_CORE_ENABLE) && (CLA_CORE_ENABLE)
-static const CLA_TypeDef claCfgList[] =
+static const cla_cfg_t  claCfgList[] =
 {
  {.progRAM = MEMCFG_SECT_LS5,
   .dataRAM = (MEMCFG_SECT_LS0 | MEMCFG_SECT_LS1),
@@ -587,7 +575,9 @@ static const hal_cfg_t hal =
  .p_spiHandle   = spiCfgList,
  .p_timerHandle = timerCfgList,
 #if (defined CLA_CORE_ENABLE) && (CLA_CORE_ENABLE)
- .p_claHandle  = claCfgList,
+ .p_claHandle   = claCfgList,
+#else
+ .p_claHandle   = NULL,
 #endif
 };
 

@@ -34,11 +34,11 @@ static const uart_cfg_t cm_uartCfg =
 static const udma_cfg_t cm_udmaCfgList[] =
 {
  {.dmaChannel       = UDMA_CHANNEL_UART0_TX,
-  .dmaCfg           = (UDMA_SIZE_8 | UDMA_SRC_INC_8 | UDMA_DST_INC_NONE | UDMA_ARB_4 | UDMA_NEXT_USEBURST),
+  .dmaCfg           = (UDMA_SIZE_8 | UDMA_SRC_INC_8 | UDMA_DST_INC_NONE | UDMA_ARB_8 | UDMA_NEXT_USEBURST),
   .srcAddr          = (void *)&dbg_uart_tx_msg,
   .dstAddr          = (void *)(UART0_BASE + UART_O_DR),
   .transferMode     = UDMA_MODE_BASIC,
-  .transferSize     = sizeof(dbg_uart_msg_t),//DBG_TX_MSG_8BIT_SIZE,
+  .transferSize     = sizeof(dbg_uart_msg_t),
  },
  {.dmaChannel       = UINT32_MAX},
 };
@@ -73,7 +73,7 @@ static const hal_cm_t   hal_cm =
 {.p_uartHandle      = &cm_uartCfg,
  .p_udmaHandle      = cm_udmaCfgList,
  .p_ipcHandle       = cm_ipcCfgList,
- .p_crcHandle       = &cm_crcCfg,
+ .p_crcHandle       = NULL,//&cm_crcCfg,
 };
 
 #endif  /*__UOMODRI_CM_HAL_CONFIG_HANDLERS_H__*/

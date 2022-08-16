@@ -24,9 +24,8 @@
  */
 #define UOMODRI_USE_REV_1_0_CONFIG              1
 #define UOMODRI_USE_ENCODER_GET_REG_FUNCTION    0
-#define UOMODRI_USE_RADIAN                      1
-#define CLA_CORE_ENABLE                         0
-#define CM_CORE_ENABLE                          0
+#define CLA_CORE_ENABLE                         1
+#define CM_CORE_ENABLE                          1
 #define UOMODRI_VBUS_FLT(flt_coef, y, x)        LPF_FILTER_1(flt_coef, y, x)
 #define UOMODRI_VEXT_FLT(flt_coef, y, x)        LPF_FILTER_1(flt_coef, y, x)
 #define UOMODRI_IDQ_FLT(flt_coef, y, x)         LPF_FILTER_1(flt_coef, y, x)
@@ -182,11 +181,11 @@
 /***********************************************************************
  * UART DEFINES
  ***********************************************************************/
-#define DBG_SCI_TX                              (70)
-#define DBG_SCI_TX_CFG                          GPIO_70_SCIB_TX
-
-#define DBG_SCI_BASE                            SCIB_BASE
-#define DBG_SCI_TX_BASE_REG_ADDR                (DBG_SCI_BASE + SCI_O_TXBUF)
+//#define DBG_SCI_TX                              (70)
+//#define DBG_SCI_TX_CFG                          GPIO_70_SCIB_TX
+//
+//#define DBG_SCI_BASE                            SCIB_BASE
+//#define DBG_SCI_TX_BASE_REG_ADDR                (DBG_SCI_BASE + SCI_O_TXBUF)
 
 
 /***********************************************************************
@@ -284,7 +283,7 @@
 #define MOTOR2_DRV_SPI_CS_CFG                   GPIO_35_GPIO35
 #define MOTOR2_DRV_SPI_CS_SET                   (HWREG(GPIODATA_BASE + GPIO_O_GPBSET)   = GPIO_GPBSET_GPIO35)
 #define MOTOR2_DRV_SPI_CS_CLEAR                 (HWREG(GPIODATA_BASE + GPIO_O_GPBCLEAR) = GPIO_GPBCLEAR_GPIO35)
-#define MOTOR2_DRV_SPI_CS_TOGGLE                (HWREG(GPIODATA_BASE + GPIO_O_GPVTOGGLE)= GPIO_GPBTOGGLE_GPIO35)
+#define MOTOR2_DRV_SPI_CS_TOGGLE                (HWREG(GPIODATA_BASE + GPIO_O_GPBTOGGLE)= GPIO_GPBTOGGLE_GPIO35)
 /**
  * @}
  */
@@ -313,6 +312,8 @@
  */
 #define MST_SPI_SIMO                            (69)
 #define MST_SPI_SIMO_CFG                        GPIO_69_SPIC_SIMO
+#define MST_SPI_SOMI                            (70)
+#define MST_SPI_SOMI_CFG                        GPIO_70_SPIC_SOMI
 #define MST_SPI_CLK                             (71)
 #define MST_SPI_CLK_CFG                         GPIO_71_SPIC_CLK
 #define MST_SPI_CS                              (72)
@@ -341,22 +342,22 @@
  */
 #define DMA_NO_WRAP                             (0x10000)
 
-#define DMA_CMD_2_FOC_BASE_ADDR                 DMA_CH1_BASE
-#define DMA_CMD_2_FOC_INT                       INT_DMA_CH1
-#define DMA_CMD_2_FOC_TRIGGER_SRC               DMA_TRIGGER_SOFTWARE
-
-#define DMA_CMD_2_FOC_16BIT_FULL_LENGTH         (20)
-#define DMA_CMD_2_FOC_16BIT_BURST_EVT           DMA_CMD_2_FOC_16BIT_FULL_LENGTH
-#define DMA_CMD_2_FOC_16BIT_USE_WRAP            (1)
-#define DMA_CMD_2_FOC_16BIT_WRAP                (1)
-#define DMA_CMD_2_FOC_16BIT_TRANSFER_EVT        (DMA_CMD_2_FOC_16BIT_FULL_LENGTH * DMA_CMD_2_FOC_16BIT_WRAP / DMA_CMD_2_FOC_16BIT_BURST_EVT)
-#define DMA_CMD_2_FOC_16BIT_INC_STEP            (1)
-#define DMA_CMD_2_FOC_16BIT_CONFIG              (DMA_CFG_ONESHOT_DISABLE | DMA_CFG_CONTINUOUS_ENABLE | DMA_CFG_SIZE_16BIT)
-#define DMA_CMD_2_FOC_16BIT_WRAP                (1)
-
-#define DMA_MST_SPI_TX_BASE_ADDR                DMA_CH3_BASE
-#define DMA_MST_SPI_TX_INT                      INT_DMA_CH3
-#define DMA_MST_SPI_TX_TRIGGER_SRC              DMA_TRIGGER_SOFTWARE
+//#define DMA_CMD_2_FOC_BASE_ADDR                 DMA_CH1_BASE
+//#define DMA_CMD_2_FOC_INT                       INT_DMA_CH1
+//#define DMA_CMD_2_FOC_TRIGGER_SRC               DMA_TRIGGER_SOFTWARE
+//
+//#define DMA_CMD_2_FOC_16BIT_FULL_LENGTH         (20)
+//#define DMA_CMD_2_FOC_16BIT_BURST_EVT           DMA_CMD_2_FOC_16BIT_FULL_LENGTH
+//#define DMA_CMD_2_FOC_16BIT_USE_WRAP            (1)
+//#define DMA_CMD_2_FOC_16BIT_WRAP                (1)
+//#define DMA_CMD_2_FOC_16BIT_TRANSFER_EVT        (DMA_CMD_2_FOC_16BIT_FULL_LENGTH * DMA_CMD_2_FOC_16BIT_WRAP / DMA_CMD_2_FOC_16BIT_BURST_EVT)
+//#define DMA_CMD_2_FOC_16BIT_INC_STEP            (1)
+//#define DMA_CMD_2_FOC_16BIT_CONFIG              (DMA_CFG_ONESHOT_DISABLE | DMA_CFG_CONTINUOUS_ENABLE | DMA_CFG_SIZE_16BIT)
+//#define DMA_CMD_2_FOC_16BIT_WRAP                (1)
+//
+//#define DMA_MST_SPI_TX_BASE_ADDR                DMA_CH3_BASE
+//#define DMA_MST_SPI_TX_INT                      INT_DMA_CH3
+//#define DMA_MST_SPI_TX_TRIGGER_SRC              DMA_TRIGGER_SOFTWARE
 
 #define DMA_LED_SPI_TX_BASE_ADDR                DMA_CH4_BASE
 #define DMA_LED_SPI_TX_INT                      INT_DMA_CH4
@@ -396,8 +397,6 @@
 #else
 #define DMA_COM_SPI_RX_16BIT_INC_STEP           (2)
 #endif
-
-
 /**
  * @}
  */
@@ -412,13 +411,25 @@
 // DRV1 SPI defines
 #define MOTOR1_DRV_GPIO_EN                      (89)
 #define MOTOR1_DRV_GPIO_EN_CFG                  GPIO_89_GPIO89
+#define MOTOR1_DRV_GPIO_EN_SET                  (HWREG(GPIODATA_BASE + GPIO_O_GPCSET)   = GPIO_GPCSET_GPIO89)
+#define MOTOR1_DRV_GPIO_EN_CLEAR                (HWREG(GPIODATA_BASE + GPIO_O_GPCCLEAR) = GPIO_GPCCLEAR_GPIO89)
+#define MOTOR1_DRV_GPIO_EN_TOGGLE               (HWREG(GPIODATA_BASE + GPIO_O_GPCTOGGLE)= GPIO_GPCTOGGLE_GPIO89)
 #define MOTOR1_DRV_GPIO_NFAULT                  (90)
 #define MOTOR1_DRV_GPIO_NFAULT_CFG              GPIO_90_GPIO90
+#define MOTOR1_DRV_GPIO_NFAULT_SET              (HWREG(GPIODATA_BASE + GPIO_O_GPCSET)   = GPIO_GPCSET_GPIO90)
+#define MOTOR1_DRV_GPIO_NFAULT_CLEAR            (HWREG(GPIODATA_BASE + GPIO_O_GPCCLEAR) = GPIO_GPCCLEAR_GPIO90)
+#define MOTOR1_DRV_GPIO_NFAULT_TOGGLE           (HWREG(GPIODATA_BASE + GPIO_O_GPCTOGGLE)= GPIO_GPCTOGGLE_GPIO90)
 // DRV2 SPI defines
 #define MOTOR2_DRV_GPIO_EN                      (37)
 #define MOTOR2_DRV_GPIO_EN_CFG                  GPIO_37_GPIO37
+#define MOTOR2_DRV_GPIO_EN_SET                  (HWREG(GPIODATA_BASE + GPIO_O_GPBSET)   = GPIO_GPBSET_GPIO37)
+#define MOTOR2_DRV_GPIO_EN_CLEAR                (HWREG(GPIODATA_BASE + GPIO_O_GPBCLEAR) = GPIO_GPBCLEAR_GPIO37)
+#define MOTOR2_DRV_GPIO_EN_TOGGLE               (HWREG(GPIODATA_BASE + GPIO_O_GPBTOGGLE)= GPIO_GPBTOGGLE_GPIO37)
 #define MOTOR2_DRV_GPIO_NFAULT                  (36)
 #define MOTOR2_DRV_GPIO_NFAULT_CFG              GPIO_36_GPIO36
+#define MOTOR2_DRV_GPIO_NFAULT_SET              (HWREG(GPIODATA_BASE + GPIO_O_GPBSET)   = GPIO_GPBSET_GPIO36)
+#define MOTOR2_DRV_GPIO_NFAULT_CLEAR            (HWREG(GPIODATA_BASE + GPIO_O_GPBCLEAR) = GPIO_GPBCLEAR_GPIO36)
+#define MOTOR2_DRV_GPIO_NFAULT_TOGGLE           (HWREG(GPIODATA_BASE + GPIO_O_GPBTOGGLE)= GPIO_GPBTOGGLE_GPIO36)
 /**
  * @}
  */
@@ -791,7 +802,7 @@
  * @{
  */
 #define MOTOR1_ENC_RESOLUTION                   (5000.0f)
-#define MOTOR1_ENC_QUADRATURE_SCALE             (4.0f * 5000.0f)
+#define MOTOR1_ENC_QUADRATURE_SCALE             (4.0f * MOTOR1_ENC_RESOLUTION)
 #define MOTOR1_ENC_RESOLUTION_SCALE             (1.0f / MOTOR1_ENC_QUADRATURE_SCALE)
 //#define MOTOR1_ENC_RESOLUTION_SCALE_PU          (4.0f * MOTOR1_ENC_RESOLUTION)
 //#define MOTOR1_ENC_RESOLUTION_SCALE_RAD         (2.0f * M_PI / MOTOR1_ENC_RESOLUTION_SCALE_PU) // [rad]
@@ -804,30 +815,18 @@
 #define MOTOR1_ENC_SPEED_LPF_ALPHA              (MOTOR1_ENC_SPEED_TIME_CONST / (1.0f + MOTOR1_ENC_SPEED_TIME_CONST))
 #define MOTOR1_ENC_SPEED_LPF_ONE_M_ALPHA        (1.0f - MOTOR1_ENC_SPEED_LPF_ALPHA)
 
-#define MOTOR2_ENC_RESOLUTION                   MOTOR1_ENC_RESOLUTION
-#define MOTOR2_ENC_QUADRATURE_SCALE             MOTOR1_ENC_QUADRATURE_SCALE
-#define MOTOR2_ENC_RESOLUTION_SCALE             MOTOR1_ENC_RESOLUTION_SCALE
+#define MOTOR2_ENC_RESOLUTION                   (1024.0f)
+#define MOTOR2_ENC_QUADRATURE_SCALE             (4.0f * MOTOR2_ENC_RESOLUTION)
+#define MOTOR2_ENC_RESOLUTION_SCALE             (1.0f / MOTOR2_ENC_QUADRATURE_SCALE)
 //#define MOTOR2_ENC_RESOLUTION_SCALE             (M_PI / 2.0f / MOTOR2_ENC_RESOLUTION)
-#define MOTOR2_ENC_SPEED_HIGH_SAMPLING_FREQ     MOTOR1_ENC_SPEED_HIGH_SAMPLING_FREQ // [Hz] Velocity computation frequency
-#define MOTOR2_ENC_SPEED_HIGH_SAMPLING_TICKS    MOTOR1_ENC_SPEED_HIGH_SAMPLING_TICKS
-#define MOTOR2_ENC_SPEED_HIGH_SCALE             MOTOR1_ENC_SPEED_HIGH_SCALE // 2pi / dt
-#define MOTOR2_ENC_SPEED_LOW_SCALE              MOTOR1_ENC_SPEED_LOW_SCALE
-#define MOTOR2_ENC_SPEED_CUTOFF_FREQ            MOTOR1_ENC_SPEED_CUTOFF_FREQ     // cutoff frequency for velocity estimation
-#define MOTOR2_ENC_SPEED_TIME_CONST             MOTOR1_ENC_SPEED_TIME_CONST
-#define MOTOR2_ENC_SPEED_LPF_ALPHA              MOTOR1_ENC_SPEED_LPF_ALPHA
-#define MOTOR2_ENC_SPEED_LPF_ONE_M_ALPHA        MOTOR1_ENC_SPEED_LPF_ONE_M_ALPHA
-//#define MOTOR2_ENC_RESOLUTION                   (5000.0f)
-//#define MOTOR2_ENC_QUADRATURE_SCALE             (4.0f * 5000.0f)
-//#define MOTOR2_ENC_RESOLUTION_SCALE             (1.0f / MOTOR2_ENC_QUADRATURE_SCALE)
-////#define MOTOR2_ENC_RESOLUTION_SCALE             (M_PI / 2.0f / MOTOR2_ENC_RESOLUTION)
-//#define MOTOR2_ENC_SPEED_HIGH_SAMPLING_FREQ     (1000) // [Hz] Velocity computation frequency
-//#define MOTOR2_ENC_SPEED_HIGH_SAMPLING_TICKS    (DEVICE_SYSCLK_FREQ / MOTOR2_ENC_SPEED_HIGH_SAMPLING_FREQ)
-//#define MOTOR2_ENC_SPEED_HIGH_SCALE             (2.0f * M_PI * MOTOR2_ENC_SPEED_HIGH_SAMPLING_FREQ) // 2pi / dt
-//#define MOTOR2_ENC_SPEED_LOW_SCALE              (2.0f * M_PI * DEVICE_SYSCLK_FREQ * (1 << QEP_UNIT_POS_EVENT_DIV) / (1 << (QEP_CAPTURE_CLOCK_DIV >> 4)) / MOTOR2_ENC_RESOLUTION_SCALE)
-//#define MOTOR2_ENC_SPEED_CUTOFF_FREQ            (200.0f)     // cutoff frequency for velocity estimation
-//#define MOTOR2_ENC_SPEED_TIME_CONST             (2.0f * M_PI * MOTOR2_ENC_SPEED_CUTOFF_FREQ * PWM_PERIOD)
-//#define MOTOR2_ENC_SPEED_LPF_ALPHA              (MOTOR2_ENC_SPEED_TIME_CONST / (1.0f + MOTOR2_ENC_SPEED_TIME_CONST))
-//#define MOTOR2_ENC_SPEED_LPF_ONE_M_ALPHA        (1.0f - MOTOR2_ENC_SPEED_LPF_ALPHA)
+#define MOTOR2_ENC_SPEED_HIGH_SAMPLING_FREQ     (1000) // [Hz] Velocity computation frequency
+#define MOTOR2_ENC_SPEED_HIGH_SAMPLING_TICKS    (DEVICE_SYSCLK_FREQ / MOTOR2_ENC_SPEED_HIGH_SAMPLING_FREQ)
+#define MOTOR2_ENC_SPEED_HIGH_SCALE             (MOTOR2_ENC_SPEED_HIGH_SAMPLING_FREQ) // 2pi / dt
+#define MOTOR2_ENC_SPEED_LOW_SCALE              (2.0f * M_PI * DEVICE_SYSCLK_FREQ * (1 << QEP_UNIT_POS_EVENT_DIV) / (1 << (QEP_CAPTURE_CLOCK_DIV >> 4)) / MOTOR2_ENC_RESOLUTION_SCALE)
+#define MOTOR2_ENC_SPEED_CUTOFF_FREQ            (200.0f)     // cutoff frequency for velocity estimation
+#define MOTOR2_ENC_SPEED_TIME_CONST             (2.0f * M_PI * MOTOR2_ENC_SPEED_CUTOFF_FREQ * PWM_PERIOD)
+#define MOTOR2_ENC_SPEED_LPF_ALPHA              (MOTOR2_ENC_SPEED_TIME_CONST / (1.0f + MOTOR2_ENC_SPEED_TIME_CONST))
+#define MOTOR2_ENC_SPEED_LPF_ONE_M_ALPHA        (1.0f - MOTOR2_ENC_SPEED_LPF_ALPHA)
 
 //#define MOTOR1_ENC_LOW_SPEED_SCALE      (2.0 * M_PI * MOTOR1_ENC_RESOLUTION_SCALE * DEVICE_SYSCLK_FREQ * (1 << QEP_UNIT_POS_EVENT_DIV) / (1 << (QEP_CAPTURE_CLOCK_DIV >> 4)))
 //#define MOTOR2_ENC_LOW_SPEED_SCALE      (2.0 * M_PI * MOTOR2_ENC_RESOLUTION_SCALE * DEVICE_SYSCLK_FREQ * (1 << QEP_UNIT_POS_EVENT_DIV) / (1 << (QEP_CAPTURE_CLOCK_DIV >> 4)))
@@ -872,7 +871,7 @@
 #define MOTOR1_CURRENT_TIME_CONST               (2.0f * M_PI * MOTOR1_CURRENT_CUTOFF_FREQ * PWM_PERIOD)
 #define MOTOR1_CURRENT_LPF_ALPHA                (MOTOR1_CURRENT_TIME_CONST / (1.0f + MOTOR1_CURRENT_TIME_CONST))
 #define MOTOR1_CURRENT_LPF_ONE_M_ALPHA          (1.0f - MOTOR1_CURRENT_LPF_ALPHA)
-#define MOTOR1_CURRENT_ALIGN_MAX                (4.0f)      // Current on d-axis for motor alignment (A)
+#define MOTOR1_CURRENT_ALIGN_MAX                (2.0f)      // Current on d-axis for motor alignment (A)
 #define MOTOR1_PI_ID_KP_COEF                    (MOTOR1_LS * 2.0f * M_PI * MOTOR1_CURRENT_CUTOFF_FREQ)
 #define MOTOR1_PI_ID_KI_COEF                    (MOTOR1_RS * 2.0f * M_PI * MOTOR1_CURRENT_CUTOFF_FREQ)
 #define MOTOR1_PI_IQ_KP_COEF                    (MOTOR1_LS * 2.0f * M_PI * MOTOR1_CURRENT_CUTOFF_FREQ)
@@ -977,15 +976,21 @@ typedef enum
     NO_MOT  = -1,   /*!< No motor selected */
 } motor_id_e;
 
+typedef enum
+{
+    ODD     = 0,    /*!< Select */
+    EVEN    = 1,
+} parity_id_e;
+
 /**
  * @enum    StateID
  * @brief   Easier state management for history.
  */
-typedef enum
-{
-    NEXT    = 0,    /*!< Next state */
-    CURRENT = 1,    /*!< Current state */
-} state_id_e;
+//typedef enum
+//{
+//    NEXT    = 0,    /*!< Next state */
+//    CURRENT = 1,    /*!< Current state */
+//} state_id_e;
 
 /**
  * @enum    itID

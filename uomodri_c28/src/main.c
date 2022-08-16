@@ -6,9 +6,11 @@
 /***********************************************************************
  * INCLUDES
  ***********************************************************************/
+#include "cla_shared.h"
 #include "main.h"
 #include "hal.h"
 #include "drv8353.h"
+#include "AS5047U.h"
 #include "ws2812b.h"
 #include "encoder.h"
 #include "foc.h"
@@ -21,8 +23,23 @@
  * VARIABLES
  ***********************************************************************/
 extern motor_t          motor[];
+extern as_enc_t         asenc_cfg[0];
 extern const hal_cfg_t  hal;
-extern cmd_t            cmd_uOmodri[];
+//extern cmd_t            cmd_uOmodri[];
+
+extern uint32_t Cla1funcsRunStart, Cla1funcsLoadStart, Cla1funcsLoadSize;
+extern uint32_t Cla1ConstRunStart, Cla1ConstLoadStart, Cla1ConstLoadSize;
+
+#pragma SET_DATA_SECTION("cla_shared")
+bool_t              flag = false;
+#pragma DATA_SECTION(angle,"Cla1ToCpuMsgRAM");
+BitDataFrame32_u    angle = {.all = 0};
+#pragma DATA_SECTION(velocity,"Cla1ToCpuMsgRAM");
+BitDataFrame32_u    velocity = {.all = 0};
+#pragma DATA_SECTION(pos_as5047u, "MSGRAM_CPU_TO_CM");
+float32_t           pos_as5047u;
+#pragma DATA_SECTION(vel_as5047u, "MSGRAM_CPU_TO_CM");
+float32_t           vel_as5047u;
 
 /***********************************************************************
  * FUNCTIONS DECLARATION
@@ -43,7 +60,7 @@ void main(void)
     MCU_ini();
     // Hardware Abstraction Layer initialization
     HAL_ini(&hal);
-    // DRV8323 initialization
+    // DRV8353 initialization
     DRV_ini(motor[MOTOR_1].p_motorDRV);
     DRV_ini(motor[MOTOR_2].p_motorDRV);
     // ADC offset calibration for debug
@@ -53,12 +70,13 @@ void main(void)
     FOC_resetStruct(motor[MOTOR_1].p_motorFOC);
     FOC_resetStruct(motor[MOTOR_2].p_motorFOC);
     // Force a reset of the intermediate command structures. Working structures are embedded in FOC structures.
-    COM_resetCmdStruct(&cmd_uOmodri[MOTOR_1]);
-    COM_resetCmdStruct(&cmd_uOmodri[MOTOR_2]);
+//    COM_resetCmdStruct(&cmd_uOmodri[MOTOR_1]);
+//    COM_resetCmdStruct(&cmd_uOmodri[MOTOR_2]);
     // DMA initialization for memory to memory transfer
-    HAL_DMA_ini(dmaMem2MemCfList);
+//    HAL_DMA_ini(dmaMem2MemCfList);
     // Interrupts initialization
     HAL_INT_ini(InterruptList);
+
 
 //    // Compute translation addresses for each element we want to share.
 //    uint16_t cpu1_to_cm_loop = 0;
@@ -68,65 +86,42 @@ void main(void)
 //    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, 0, (uint32_t)&cpu1_to_cm_addr[0], sizeof(cpu1_to_cm_addr));
 //    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
 
+    // Send address of encoder position variable of MOTOR_1
+    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, 0,
+                    (uint32_t)&motor[MOTOR_1].p_motorFOC->motor_enc.thetaAbsolute, sizeof(float32_t));
+    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+    // Send address of encoder speed variable of MOTOR_1
+    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, 0,
+                    (uint32_t)&motor[MOTOR_1].p_motorFOC->motor_enc.speed.speedMech, sizeof(float32_t));
+    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+    // Send address of encoder position variable of MOTOR_2
+    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, 0,
+                    (uint32_t)&motor[MOTOR_2].p_motorFOC->motor_enc.thetaAbsolute, sizeof(float32_t));
+    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+    // Send address of encoder speed variable of MOTOR_2
+    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, 0,
+                    (uint32_t)&motor[MOTOR_2].p_motorFOC->motor_enc.speed.speedMech, sizeof(float32_t));
+
+    // Send address of absolute encoder position
+    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, 0,
+                    (uint32_t)&pos_as5047u, sizeof(float32_t));
+    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+    // Send address of computed speed from encoder
+    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, 0,
+                    (uint32_t)&vel_as5047u, sizeof(float32_t));
+    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+
 //    uint16_t cmd_msg_err[DMA_COM_SPI_TX_RX_8BIT_LENGTH];//2 * sizeof(mst2slv_msg_t)];
 //    uint16_t cmd_msg_cnt = DMA_COM_SPI_TX_RX_8BIT_LENGTH;//2 * sizeof(mst2slv_msg_t);
 //    bool_t cmd_msg_valid[2] = {true, true};
 //    uint8_t     i           = 0;
 //    uint16_t*   p_cmd_msg   = (uint16_t*)&cmd_msg;
-    bool_t cmd_msg_valid    = false;
+//    bool_t cmd_msg_valid    = false;
     bool_t timeout_flag     = false;
 
     // Infinite loop
     while(1)
     {
-        /*
-         * SPI COM RX management - Receive & extract message if valid
-         * DMA CMD TO FOC struct - Propagate new commands (message extract or timeout inc)
-         */
-        if(!DMA_getTransferStatusFlag(DMA_CMD_2_FOC_BASE_ADDR))
-        {
-            if(timeout_flag)
-            {
-                cmd_uOmodri[MOTOR_1].cptTimeout++;
-                cmd_uOmodri[MOTOR_2].cptTimeout++;
-            }
-            if(!DMA_getRunStatusFlag(DMA_COM_SPI_RX_BASE_ADDR) && GPIO_readPin(COM_SPI_CS))
-            {
-                // Prepare SPI and associated DMA for a new receive
-                SPI_resetRxFIFO(COM_SPI_BASE);
-                DMA_clearTriggerFlag(DMA_COM_SPI_RX_BASE_ADDR);
-                // Extract received message & send new commands to FOC structures if valid
-                cmd_msg_valid = COM_msgExtract(&cmd_msg, &cmd_uOmodri[MOTOR_1], &cmd_uOmodri[MOTOR_2]);
-                // Restart DMA reception
-                DMA_startChannel(DMA_COM_SPI_RX_BASE_ADDR);
-            }
-            // Send new commands to FOC structures if extract valid
-            if(cmd_msg_valid || timeout_flag)
-            {
-                if(cmd_msg_valid && cmd_uOmodri[MOTOR_1].enableReg.bit.systemEnable &&
-                        cmd_uOmodri[MOTOR_1].enableReg.bit.motorEnable && cmd_uOmodri[MOTOR_1].enableReg.bit.encOffsetEnable)
-                    //((cmd_uOmodri[MOTOR_1].enableReg..all & 0xB000) == 0xB000))
-                    cmd_uOmodri[MOTOR_1].posRef += motor[MOTOR_1].p_motorFOC->motor_enc.thetaIndex;
-                //                if(cmd_msg_valid && ((cmd_uOmodri[MOTOR_2].enableReg.all & 0x000B) == 0x000B))
-                if(cmd_msg_valid && cmd_uOmodri[MOTOR_2].enableReg.bit.systemEnable &&
-                        cmd_uOmodri[MOTOR_2].enableReg.bit.motorEnable && cmd_uOmodri[MOTOR_2].enableReg.bit.encOffsetEnable)
-                    cmd_uOmodri[MOTOR_2].posRef += motor[MOTOR_2].p_motorFOC->motor_enc.thetaIndex;
-                DMA_forceTrigger(DMA_CMD_2_FOC_BASE_ADDR);
-            }
-            cmd_msg_valid = false;
-            timeout_flag = false;
-        }
-//        if(!DMA_getTransferStatusFlag(DMA_CMD_2_FOC_BASE_ADDR) && !DMA_getRunStatusFlag(DMA_COM_SPI_RX_BASE_ADDR) && GPIO_readPin(COM_SPI_CS))
-//        {
-//            // Prepare SPI and associated DMA for a new receive
-//            SPI_resetRxFIFO(COM_SPI_BASE);
-//            DMA_clearTriggerFlag(DMA_COM_SPI_RX_BASE_ADDR);
-//            // Extract received message & send new commands to FOC structures if valid
-//            if(COM_msgExtract(&cmd_msg, &cmd_uOmodri[MOTOR_1], &cmd_uOmodri[MOTOR_2]))
-//                DMA_forceTrigger(DMA_CMD_2_FOC_BASE_ADDR);
-//            // Restart DMA reception
-//            DMA_startChannel(DMA_COM_SPI_RX_BASE_ADDR);
-//        }
         /*
          * SPI COM TX management - Create message & send it
          */
@@ -146,6 +141,39 @@ void main(void)
             DBG_PIN2_CLEAR;
         }
         /*
+         * SPI COM RX management - Receive & extract message if valid
+         * DMA CMD TO FOC struct - Propagate new commands (message extract or timeout inc)
+         */
+        if(!DMA_getTransferStatusFlag(DMA_COM_SPI_RX_BASE_ADDR) && GPIO_readPin(COM_SPI_CS))
+        {
+            // Prepare SPI and associated DMA for a new receive
+            SPI_resetRxFIFO(COM_SPI_BASE);
+            DMA_clearTriggerFlag(DMA_COM_SPI_RX_BASE_ADDR);
+            // Extract received message & send new commands to FOC structures if valid
+            COM_msgExtract(&cmd_msg, &motor[MOTOR_1], &motor[MOTOR_2]);
+            // Restart DMA reception
+            DMA_startChannel(DMA_COM_SPI_RX_BASE_ADDR);
+        }
+        if(timeout_flag)
+        {
+            motor[MOTOR_1].p_motorFOC->motor_cmd[motor[MOTOR_1].p_motorFOC->cmd_cr_active].cptTimeout++;
+            motor[MOTOR_2].p_motorFOC->motor_cmd[motor[MOTOR_2].p_motorFOC->cmd_cr_active].cptTimeout++;
+            timeout_flag = false;
+        }
+
+//        if(!DMA_getTransferStatusFlag(DMA_CMD_2_FOC_BASE_ADDR) && !DMA_getRunStatusFlag(DMA_COM_SPI_RX_BASE_ADDR) && GPIO_readPin(COM_SPI_CS))
+//        {
+//            // Prepare SPI and associated DMA for a new receive
+//            SPI_resetRxFIFO(COM_SPI_BASE);
+//            DMA_clearTriggerFlag(DMA_COM_SPI_RX_BASE_ADDR);
+//            // Extract received message & send new commands to FOC structures if valid
+//            if(COM_msgExtract(&cmd_msg, &cmd_uOmodri[MOTOR_1], &cmd_uOmodri[MOTOR_2]))
+//                DMA_forceTrigger(DMA_CMD_2_FOC_BASE_ADDR);
+//            // Restart DMA reception
+//            DMA_startChannel(DMA_COM_SPI_RX_BASE_ADDR);
+//        }
+
+        /*
          * SPI LED TX management - Create message & send it @ 1ms
          * SPI DRV TX/RX management - Read/Write to get DRV status in case of fault @ 1ms
          */
@@ -158,10 +186,10 @@ void main(void)
                 DMA_startChannel(DMA_LED_SPI_TX_BASE_ADDR);
             }
             // Read DRV data to get status registers (MOTOR_1)
-            if(motor[MOTOR_1].motor_error & MOTOR_ERROR_DRV_NFAULT)
+            if(motor[MOTOR_1].motor_error.bit.drv_fault)
                 DRV_readStatus(motor[MOTOR_1].p_motorDRV);
             // Read DRV data to get status registers (MOTOR_2)
-            if(motor[MOTOR_2].motor_error & MOTOR_ERROR_DRV_NFAULT)
+            if(motor[MOTOR_2].motor_error.bit.drv_fault)
                 DRV_readStatus(motor[MOTOR_2].p_motorDRV);
             // Timeout management
             timeout_flag = true;
@@ -169,6 +197,102 @@ void main(void)
             CPUTimer_clearOverflowFlag(CPU_TIMER_0_BASE);
         }
     }
+
+//    while(1)
+//    {
+//        /*
+//         * SPI COM RX management - Receive & extract message if valid
+//         * DMA CMD TO FOC struct - Propagate new commands (message extract or timeout inc)
+//         */
+//        if(!DMA_getTransferStatusFlag(DMA_CMD_2_FOC_BASE_ADDR))
+//        {
+//            if(timeout_flag)
+//            {
+//                cmd_uOmodri[MOTOR_1].cptTimeout++;
+//                cmd_uOmodri[MOTOR_2].cptTimeout++;
+//            }
+//            if(!DMA_getTransferStatusFlag(DMA_COM_SPI_RX_BASE_ADDR) && GPIO_readPin(COM_SPI_CS))
+//            {
+//                // Prepare SPI and associated DMA for a new receive
+//                SPI_resetRxFIFO(COM_SPI_BASE);
+//                DMA_clearTriggerFlag(DMA_COM_SPI_RX_BASE_ADDR);
+//                // Extract received message & send new commands to FOC structures if valid
+////                cmd_msg_valid = COM_msgExtract(&cmd_msg, &cmd_uOmodri[MOTOR_1], &cmd_uOmodri[MOTOR_2]);
+//                cmd_msg_valid = COM_msgExtract(&cmd_msg, &motor[MOTOR_1], &motor[MOTOR_2]);
+//                // Restart DMA reception
+//                DMA_startChannel(DMA_COM_SPI_RX_BASE_ADDR);
+//            }
+//            // Send new commands to FOC structures if extract valid
+//            if(cmd_msg_valid || timeout_flag)
+//            {
+//                if(cmd_msg_valid && ((cmd_uOmodri[MOTOR_1].enableReg.all & FOC_CMD_OFFSET_RUN) == FOC_CMD_OFFSET_RUN))
+////                        cmd_uOmodri[MOTOR_1].enableReg.bit.systemEnable &&
+////                        cmd_uOmodri[MOTOR_1].enableReg.bit.motorEnable && cmd_uOmodri[MOTOR_1].enableReg.bit.encOffsetEnable)
+////                    ((cmd_uOmodri[MOTOR_1].enableReg.all & 0xB000) == 0xB000))
+//                    cmd_uOmodri[MOTOR_1].posRef += motor[MOTOR_1].p_motorFOC->motor_enc.thetaIndex;
+//                //                if(cmd_msg_valid && ((cmd_uOmodri[MOTOR_2].enableReg.all & 0x000B) == 0x000B))
+//                if(cmd_msg_valid && ((cmd_uOmodri[MOTOR_2].enableReg.all & FOC_CMD_OFFSET_RUN) == FOC_CMD_OFFSET_RUN))
+////                    cmd_uOmodri[MOTOR_2].enableReg.bit.systemEnable &&
+////                        cmd_uOmodri[MOTOR_2].enableReg.bit.motorEnable && cmd_uOmodri[MOTOR_2].enableReg.bit.encOffsetEnable)
+//                    cmd_uOmodri[MOTOR_2].posRef += motor[MOTOR_2].p_motorFOC->motor_enc.thetaIndex;
+//                DMA_forceTrigger(DMA_CMD_2_FOC_BASE_ADDR);
+//            }
+//            cmd_msg_valid   = false;
+//            timeout_flag    = false;
+//        }
+////        if(!DMA_getTransferStatusFlag(DMA_CMD_2_FOC_BASE_ADDR) && !DMA_getRunStatusFlag(DMA_COM_SPI_RX_BASE_ADDR) && GPIO_readPin(COM_SPI_CS))
+////        {
+////            // Prepare SPI and associated DMA for a new receive
+////            SPI_resetRxFIFO(COM_SPI_BASE);
+////            DMA_clearTriggerFlag(DMA_COM_SPI_RX_BASE_ADDR);
+////            // Extract received message & send new commands to FOC structures if valid
+////            if(COM_msgExtract(&cmd_msg, &cmd_uOmodri[MOTOR_1], &cmd_uOmodri[MOTOR_2]))
+////                DMA_forceTrigger(DMA_CMD_2_FOC_BASE_ADDR);
+////            // Restart DMA reception
+////            DMA_startChannel(DMA_COM_SPI_RX_BASE_ADDR);
+////        }
+//        /*
+//         * SPI COM TX management - Create message & send it
+//         */
+//        if(!DMA_getRunStatusFlag(DMA_COM_SPI_TX_BASE_ADDR) && motor[MOTOR_2].itDone && motor[MOTOR_1].itDone)
+//        {
+//            COM_msgCreate(&motor[MOTOR_1], &motor[MOTOR_2], &status_msg);
+//            if(COM_SPI_CS_READ)//GPIO_readPin(COM_SPI_CS))
+//            {
+//                DBG_PIN2_SET;
+//                // Force first write in SPI_O_DAT
+//                COM_SPI_DAT(status_msg.status.all);
+//                SPI_resetTxFIFO(COM_SPI_BASE);
+//                DMA_startChannel(DMA_COM_SPI_TX_BASE_ADDR);
+//            }
+//            motor[MOTOR_1].itDone = false;
+//            motor[MOTOR_2].itDone = false;
+//            DBG_PIN2_CLEAR;
+//        }
+//        /*
+//         * SPI LED TX management - Create message & send it @ 1ms
+//         * SPI DRV TX/RX management - Read/Write to get DRV status in case of fault @ 1ms
+//         */
+//        if(CPUTimer_getTimerOverflowStatus(CPU_TIMER_0_BASE))
+//        {
+//            // LED dimming control
+//            if(!DMA_getRunStatusFlag(DMA_LED_SPI_TX_BASE_ADDR))
+//            {
+//                LED_dimming(&motor[MOTOR_1], &led_msg[0]);
+//                DMA_startChannel(DMA_LED_SPI_TX_BASE_ADDR);
+//            }
+//            // Read DRV data to get status registers (MOTOR_1)
+//            if(motor[MOTOR_1].motor_error & MOTOR_ERROR_DRV_NFAULT)
+//                DRV_readStatus(motor[MOTOR_1].p_motorDRV);
+//            // Read DRV data to get status registers (MOTOR_2)
+//            if(motor[MOTOR_2].motor_error & MOTOR_ERROR_DRV_NFAULT)
+//                DRV_readStatus(motor[MOTOR_2].p_motorDRV);
+//            // Timeout management
+//            timeout_flag = true;
+//            // Clear CPU timer flag
+//            CPUTimer_clearOverflowFlag(CPU_TIMER_0_BASE);
+//        }
+//    }
 }
 
 /**
@@ -266,7 +390,7 @@ __attribute__((interrupt)) void adc_isrMotor1(void)
 #ifdef DEBUG
     DBG_PIN4_SET;
 #endif
-    while(DMA_getTransferStatusFlag(DMA_CMD_2_FOC_BASE_ADDR));
+//    while(DMA_getTransferStatusFlag(DMA_CMD_2_FOC_BASE_ADDR));
     // Motor control
     motor[MOTOR_1].itDone = MOT_runControl(&motor[MOTOR_1]);
     // Clear the interrupt overflow flag
@@ -294,9 +418,17 @@ __attribute__((interrupt)) void adc_isrMotor2(void)
 #ifdef DEBUG
     DBG_PIN4_SET;
 #endif
-    while(DMA_getTransferStatusFlag(DMA_CMD_2_FOC_BASE_ADDR));
+//    while(DMA_getTransferStatusFlag(DMA_CMD_2_FOC_BASE_ADDR));
     // Motor control
     motor[MOTOR_2].itDone = MOT_runControl(&motor[MOTOR_2]);
+    // AS5047 debug
+    if(flag)
+    {
+        pos_as5047u = (float32_t)angle.bit.data;
+        vel_as5047u = (float32_t)velocity.bit.data;
+        flag        = false;
+    }
+
 #if (defined CM_CORE_ENABLE) && (CM_CORE_ENABLE)
     // Send info to CM
     (!IPC_isFlagBusyLtoR(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG)) ? (IPC_setFlagLtoR(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG)) : (0);

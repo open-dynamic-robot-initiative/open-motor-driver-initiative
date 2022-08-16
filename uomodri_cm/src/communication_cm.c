@@ -29,19 +29,12 @@ void com_msgDbgTx(dbg_uart_addr_t* p_addr, dbg_uart_msg_t* p_msg)
 {
     static uint32_t cntMsg  = 0;
     p_msg->count            = cntMsg++;
-    p_msg->position         = (float)(*p_addr->p_position);
-    p_msg->iqRef            = (int16_t)(*p_addr->p_iqRef / IQ_LSB);
-    p_msg->iq               = (int16_t)(*p_addr->p_iq / IQ_LSB);
-    p_msg->id               = (int16_t)(*p_addr->p_id / IQ_LSB);
-    p_msg->uq               = (int16_t)(*p_addr->p_uq / IQ_LSB);
-    p_msg->ud               = (int16_t)(*p_addr->p_ud / IQ_LSB);
-    p_msg->ia               = (int16_t)(*p_addr->p_ia / IQ_LSB);
-    p_msg->ib               = (int16_t)(*p_addr->p_ib / IQ_LSB);
-    p_msg->ic               = (int16_t)(*p_addr->p_ic / IQ_LSB);
-    p_msg->uqff             = (int16_t)(*p_addr->p_uqff / IQ_LSB);
-    p_msg->udff             = (int16_t)(*p_addr->p_udff / IQ_LSB);
-//    p_msg->speed            = (float32_t)(*p_addr->p_speed);
-//    p_msg->speedMech        = (float32_t)(*p_addr->p_speedMech);
+    p_msg->pos_m1           = (float_t)(*p_addr->p_pos_m1);
+    p_msg->vel_m1           = (float_t)(*p_addr->p_vel_m1);
+    p_msg->pos_m2           = (float_t)(*p_addr->p_pos_m2);
+    p_msg->vel_m2           = (float_t)(*p_addr->p_vel_m2);
+    p_msg->pos_as5047u      = (float_t)(*p_addr->p_pos_as5047u);
+    p_msg->vel_as5047u      = (float_t)(*p_addr->p_vel_as5047u);
     p_msg->crc              = com_crc8_fast(0, (uint8_t *)p_msg, (sizeof(dbg_uart_msg_t) - 1));
     return;
 }

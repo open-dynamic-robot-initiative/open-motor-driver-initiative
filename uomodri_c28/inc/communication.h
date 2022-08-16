@@ -224,35 +224,25 @@ typedef struct __com_cpu1_to_cm_t__
 #ifdef USE_CM_CORE
 typedef struct __attribute__((__packed__)) __dbg_uart_msg_t__
 {
-    uint8_t         header[2];
+    uint8_t         header[3];
     uint32_t        count;
-    float           position;
-    int16_t         iqRef;
-    int16_t         iq;
-    int16_t         id;
-    int16_t         uq;
-    int16_t         ud;
-    int16_t         ia;
-    int16_t         ib;
-    int16_t         ic;
-    int16_t         uqff;
-    int16_t         udff;
+    float_t         pos_m1;
+    float_t         vel_m1;
+    float_t         pos_m2;
+    float_t         vel_m2;
+    float_t         pos_as5047u;
+    float_t         vel_as5047u;
     uint8_t         crc;
 } dbg_uart_msg_t;
 
 typedef struct __attribute__((__packed__)) __dbg_uart_addr_t__
 {
-    float*          p_position;
-    float*          p_iqRef;
-    float*          p_iq;
-    float*          p_id;
-    float*          p_uq;
-    float*          p_ud;
-    float*          p_ia;
-    float*          p_ib;
-    float*          p_ic;
-    float*          p_uqff;
-    float*          p_udff;
+    float_t*        p_pos_m1;
+    float_t*        p_vel_m1;
+    float_t*        p_pos_m2;
+    float_t*        p_vel_m2;
+    float_t*        p_pos_as5047u;
+    float_t*        p_vel_as5047u;
 } dbg_uart_addr_t;
 #endif
 
@@ -286,7 +276,8 @@ typedef enum
  ***********************************************************************/
 #ifndef USE_CM_CORE
 //bool_t COM_msgExtract(mst2slv_msg_t*, cmd_uomodri_t*);
-bool_t COM_msgExtract(mst2slv_msg_t*,  cmd_t*, cmd_t*);
+//bool_t COM_msgExtract(mst2slv_msg_t*,  cmd_t*, cmd_t*);
+bool_t COM_msgExtract(mst2slv_msg_t*, motor_t*, motor_t*);
 //void COM_msgCreate(motor_t*, cmd_uomodri_t*, slv2mst_msg_t*);
 void COM_msgCreate(motor_t*, motor_t*, slv2mst_msg_t*);
 //void COM_resetCmdStruct(cmd_uomodri_t*);

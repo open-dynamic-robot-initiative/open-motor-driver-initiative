@@ -8,6 +8,7 @@
  ***********************************************************************/
 #include "device.h"
 #include "hal.h"
+#include "cla_shared.h"
 
 /***********************************************************************
  * FUNCTIONS DECLARATION
@@ -20,12 +21,8 @@ void HAL_SPI_ini(const spi_cfg_t*);
 void HAL_SCI_ini(const sci_cfg_t*);
 void HAL_TIMER_ini(const tmr_cfg_t*);
 void HAL_DMA_rst(void);
-#if (defined CM_CORE_ENABLE) && (CM_CORE_ENABLE)
 void HAL_IPC_ini(const ipc_cfg_t*);
-#endif
-#if (defined CLA_CORE_ENABLE) && (CLA_CORE_ENABLE)
-void HAL_CLA_ini(const CLA_TypeDef*);
-#endif
+void HAL_CLA_ini(const cla_cfg_t*);
 
 /***********************************************************************
  * FUNCTIONS DEFINITIONS
@@ -46,10 +43,8 @@ void HAL_ini(const hal_cfg_t* p_hal)
         HAL_ePWM_ini(p_hal->p_epwmHandle);
         // Initialize eQEP
         HAL_eQEP_ini(p_hal->p_eqepHandle);
-#if (defined CM_CORE_ENABLE) && (CM_CORE_ENABLE)
         // Initialize IPC communication
         HAL_IPC_ini(p_hal->p_ipcHandle);
-#endif
         // Initialize CPU TIMERS
         HAL_TIMER_ini(p_hal->p_timerHandle);
         // Initialize SCI/UART debug
@@ -59,10 +54,8 @@ void HAL_ini(const hal_cfg_t* p_hal)
         HAL_DMA_ini(p_hal->p_dmaHandle);
         // Initialize SPI
         HAL_SPI_ini(p_hal->p_spiHandle);
-#if (defined CLA_CORE_ENABLE) && (CLA_CORE_ENABLE)
         // Initialize CLA
         HAL_CLA_ini(p_hal->p_claHandle);
-#endif
     }
 
     return;
@@ -639,7 +632,6 @@ void HAL_DMA_ini(const dma_cfg_t* p_dmaCfg)
     return;
 }
 
-#if (defined CM_CORE_ENABLE) && (CM_CORE_ENABLE)
 /**
  * @brief       IPC initialization function.
  * @param[in]   *p_ipcCfg   Pointer on the IPC configuration structure
@@ -675,22 +667,22 @@ void HAL_IPC_ini(const ipc_cfg_t* p_ipcCfg)
 
     return;
 }
-#endif
 
-#if (defined CLA_CORE_ENABLE) && (CLA_CORE_ENABLE)
 /**
  * @brief       CLA initialization function.
  * @param[in]   *p_claCfg   Pointer on the CLA configuration structure
  */
-void HAL_CLA_init(const CLA_TypeDef* p_clacCfg)
+void HAL_CLA_ini(const cla_cfg_t* p_clacCfg)
 {
     if(p_clacCfg != NULL)
     {
+        EALLOW;
+
 #ifdef _FLASH
         extern uint32_t Cla1funcsRunStart, Cla1funcsLoadStart, Cla1funcsLoadSize;
         extern uint32_t Cla1ConstRunStart, Cla1ConstLoadStart, Cla1ConstLoadSize;
         // Copy over code from FLASH to RAM
-        memcpy((uint32_t *)&Cla1ProgRunStart,   (uint32_t *)&Cla1ProgLoadStart,     (uint32_t)&Cla1ProgLoadSize);
+        memcpy((uint32_t *)&Cla1funcsRunStart,  (uint32_t *)&Cla1funcsLoadStart,    (uint32_t)&Cla1funcsLoadSize);
         memcpy((uint32_t *)&Cla1ConstRunStart,  (uint32_t *)&Cla1ConstLoadStart,    (uint32_t)&Cla1ConstLoadSize);
 #endif //_FLASH
 
@@ -719,10 +711,27 @@ void HAL_CLA_init(const CLA_TypeDef* p_clacCfg)
              * set the spaces to be code blocks */
             if(p_clacCfg->dataRAM & memcfg_sect_lsx)
             {
-                MemCfg_setLSRAMMasterSel(memcfg_sect_lsx,MEMCFG_LSRAMMASTER_CPU_CLA1);
+                MemCfg_setLSRAMMasterSel(memcfg_sect_lsx, MEMCFG_LSRAMMASTER_CPU_CLA1);
                 MemCfg_setCLAMemType(memcfg_sect_lsx, MEMCFG_CLA_MEM_DATA);
             }
         }
+
+    /* Suppressing #770-D conversion from pointer to smaller integer
+     * The CLA address range is 16 bits so the addresses passed to the MVECT
+     * registers will be in the lower 64KW address space. Turn the warning
+     * back on after the MVECTs are assigned addresses */
+        EDIS;
+        EALLOW;
+
+#pragma diag_suppress=770
+    // Assign the task vectors and set the triggers for task 1
+    CLA_mapTaskVector(CLA1_BASE, CLA_MVECT_1, (uint16_t)&Cla1Task1);
+#pragma diag_warning=770
+    // Enable Tasks 1 and 8
+    CLA_enableIACK(CLA1_BASE);
+    CLA_enableTasks(CLA1_BASE, CLA_TASKFLAG_1 | CLA_TASKFLAG_8);
+    CLA_forceTasks(CLA1_BASE,CLA_TASKFLAG_1);
+
         // TODO : CLA Task config
 //        void CLA_initCpu1Cla1(void)
 //        {
@@ -740,9 +749,9 @@ void HAL_CLA_init(const CLA_TypeDef* p_clacCfg)
 //            * subset of tasks) by writing to their respective bits in the
 //            * MIER register */
 //        //    CLA_enableIACK(CLA1_BASE);
-            CLA_setTriggerSource(CLA_TASK_1, CLA_TRIGGER_EPWM1INT);//CLA_TRIGGER_ADCA3);
-            CLA_setTriggerSource(CLA_TASK_8, CLA_TRIGGER_SOFTWARE);
-            CLA_enableTasks(CLA1_BASE, CLA_TASKFLAG_1 | CLA_TASKFLAG_8);//CLA_TASKFLAG_ALL);
+//            CLA_setTriggerSource(CLA_TASK_1, CLA_TRIGGER_EPWM1INT);//CLA_TRIGGER_ADCA3);
+//            CLA_setTriggerSource(CLA_TASK_8, CLA_TRIGGER_SOFTWARE);
+//            CLA_enableTasks(CLA1_BASE, CLA_TASKFLAG_1 | CLA_TASKFLAG_8);//CLA_TASKFLAG_ALL);
 //
 //            /* <Step 6>: Enable software forcing and run task 8 once
 //             *    - The MCTL register allows for a task to be triggered by software
@@ -780,7 +789,6 @@ void HAL_CLA_init(const CLA_TypeDef* p_clacCfg)
 
     return;
 }
-#endif
 
 /**
  * @brief       Interrupts initialization function.

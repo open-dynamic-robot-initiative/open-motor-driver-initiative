@@ -12,6 +12,7 @@
 
 #include "hal.h"
 #include "drv8353.h"
+#include "AS5047U.h"
 #include "foc.h"
 #include "motor.h"
 #include "communication.h"
@@ -50,6 +51,32 @@ static const int_cfg_t InterruptList[] =
  },
  // END OF ARRAY
  {.intNum           = UINT32_MAX},
+};
+
+static const asenc_cfg_t  ASencCfgList[] =
+{
+ {
+  .spiHandle        = MST_SPI_BASE,
+  .gpioNumber_CS    = MST_SPI_CS,
+ }
+};
+
+static as_enc_t asenc_cfg[] =
+{
+ {
+  .asencHandle      = &ASencCfgList[MOTOR_1],
+  .angleData.all    = 0U,
+  .velData.all      = 0U,
+  .degAngle         = 0.0f,
+  .prevAngle        = 0.0f,
+  .startAngle       = 0.0f,
+  .totalAngle       = 0.0f,
+  .turnNum          = 0.0f,
+  .rndCount         = 0.0f,
+  .vel              = 0.0f,
+  .quadNum          = 0.0f,
+  .prevQuadNum      = 0.0f,
+ },
 };
 
 /** @var    DRV_Cfg     DrvCfgList[]
@@ -210,35 +237,35 @@ static const hal_motor_cfg_t hal_motor_cfg[] =
  },
 };
 
-#pragma DATA_ALIGN(cmd_uOmodri, 8)
-#pragma DATA_SECTION(cmd_uOmodri, "ramgs1")
-static cmd_t cmd_uOmodri[] =
-{
- {
-  .posRef               = 0.0f,
-  .velRef               = 0.0f,
-  .iqRef                = 0.0f,
-  .kpCoeff              = 0.0f,
-  .kdCoeff              = 0.0f,
-  .iSat                 = 0.0f,
-  .timeoutRef           = 0U,
-  .cptTimeout           = 0U,
-  .index                = 0U,
-  .enableReg.all        = 0U,
- },
- {
-  .posRef               = 0.0f,
-  .velRef               = 0.0f,
-  .iqRef                = 0.0f,
-  .kpCoeff              = 0.0f,
-  .kdCoeff              = 0.0f,
-  .iSat                 = 0.0f,
-  .timeoutRef           = 0U,
-  .cptTimeout           = 0U,
-  .index                = 0U,
-  .enableReg.all        = 0U,
- },
-};
+//#pragma DATA_ALIGN(cmd_uOmodri, 8)
+//#pragma DATA_SECTION(cmd_uOmodri, "ramgs1")
+//static cmd_t cmd_uOmodri[] =
+//{
+// {
+//  .posRef               = 0.0f,
+//  .velRef               = 0.0f,
+//  .iqRef                = 0.0f,
+//  .kpCoeff              = 0.0f,
+//  .kdCoeff              = 0.0f,
+//  .iSat                 = 0.0f,
+//  .timeoutRef           = 0U,
+//  .cptTimeout           = 0U,
+//  .index                = 0U,
+//  .enableReg.all        = 0U,
+// },
+// {
+//  .posRef               = 0.0f,
+//  .velRef               = 0.0f,
+//  .iqRef                = 0.0f,
+//  .kpCoeff              = 0.0f,
+//  .kdCoeff              = 0.0f,
+//  .iSat                 = 0.0f,
+//  .timeoutRef           = 0U,
+//  .cptTimeout           = 0U,
+//  .index                = 0U,
+//  .enableReg.all        = 0U,
+// },
+//};
 
 #pragma DATA_ALIGN(motor_foc, 8)
 #pragma DATA_SECTION(motor_foc, "MSGRAM_CPU_TO_CM");
@@ -304,16 +331,26 @@ static foc_t motor_foc[] =
   .motor_enc.speed.speedFlt.a           = (float32_t)MOTOR1_ENC_SPEED_LPF_ALPHA,
   .motor_enc.speed.speedFlt.one_minus_a = (float32_t)MOTOR1_ENC_SPEED_LPF_ONE_M_ALPHA,
   //--- MOTOR COMMAND STRUCTURE -----------------------------------------------
-  .motor_cmd.posRef                     = 0.0f,
-  .motor_cmd.velRef                     = 0.0f,
-  .motor_cmd.iqRef                      = 0.0f,
-  .motor_cmd.kpCoeff                    = 0.0f,
-  .motor_cmd.kdCoeff                    = 0.0f,
-  .motor_cmd.iSat                       = MOTOR1_CURRENT_CMD_SAT_MAX,
-  .motor_cmd.timeoutRef                 = 0U,
-  .motor_cmd.cptTimeout                 = 0U,
-  .motor_cmd.index                      = 0U,
-  .motor_cmd.enableReg.all              = 0U,
+  .motor_cmd[ODD].posRef                = 0.0f,
+  .motor_cmd[ODD].velRef                = 0.0f,
+  .motor_cmd[ODD].iqRef                 = 0.0f,
+  .motor_cmd[ODD].kpCoeff               = 0.0f,
+  .motor_cmd[ODD].kdCoeff               = 0.0f,
+  .motor_cmd[ODD].iSat                  = MOTOR1_CURRENT_CMD_SAT_MAX,
+  .motor_cmd[ODD].timeoutRef            = 0U,
+  .motor_cmd[ODD].cptTimeout            = 0U,
+  .motor_cmd[ODD].index                 = 0U,
+  .motor_cmd[ODD].enableReg.all         = 0U,
+  .motor_cmd[EVEN].posRef               = 0.0f,
+  .motor_cmd[EVEN].velRef               = 0.0f,
+  .motor_cmd[EVEN].iqRef                = 0.0f,
+  .motor_cmd[EVEN].kpCoeff              = 0.0f,
+  .motor_cmd[EVEN].kdCoeff              = 0.0f,
+  .motor_cmd[EVEN].iSat                 = MOTOR1_CURRENT_CMD_SAT_MAX,
+  .motor_cmd[EVEN].timeoutRef           = 0U,
+  .motor_cmd[EVEN].cptTimeout           = 0U,
+  .motor_cmd[EVEN].index                = 0U,
+  .motor_cmd[EVEN].enableReg.all        = 0U,
   //--- Maximum current alignment value ---------------------------------------
   .iAlignMax                            = MOTOR1_CURRENT_ALIGN_MAX,
   //---------------------------------------------------------------------------
@@ -372,23 +409,63 @@ static foc_t motor_foc[] =
   .piIq.ff                              = 0.0f,
   .piIq.out                             = 0.0f,
   //--- FOC - Initialize PD controller (Speed & position) ---------------------
-  .pdPos.p_fbTheta                      = (float32_t *)(&motor_foc[MOTOR_1].motor_enc.thetaAbsolute),
-  .pdPos.p_setTheta                     = (float32_t *)(&motor_foc[MOTOR_1].motor_cmd.posRef),
-  .pdPos.errTheta                       = 0.0f,
-  .pdPos.p_fbSpeed                      = (float32_t *)(&motor_foc[MOTOR_1].motor_enc.speed.speedMech),
-  .pdPos.p_setSpeed                     = (float32_t *)(&motor_foc[MOTOR_1].motor_cmd.velRef),
-  .pdPos.errSpeed                       = 0.0f,
-  .pdPos.p_kp                           = (float32_t *)(&motor_foc[MOTOR_1].motor_cmd.kpCoeff),
-  .pdPos.p_kd                           = (float32_t *)(&motor_foc[MOTOR_1].motor_cmd.kdCoeff),
-  .pdPos.derivative                     = 0.0f,
-  .pdPos.p_ff                           = (float32_t *)(&motor_foc[MOTOR_1].motor_cmd.iqRef),
-  .pdPos.p_sat                          = (float32_t *)(&motor_foc[MOTOR_1].motor_cmd.iSat),
-  .pdPos.out                            = 0.0f,
+//  .pdPos[ODD].p_fbTheta                 = (float32_t *)(&motor_foc[MOTOR_1].motor_enc.thetaAbsolute),
+//  .pdPos[ODD].p_setTheta                = (float32_t *)(&motor_foc[MOTOR_1].motor_cmd[ODD].posRef),
+//  .pdPos[ODD].errTheta                  = 0.0f,
+//  .pdPos[ODD].p_fbSpeed                 = (float32_t *)(&motor_foc[MOTOR_1].motor_enc.speed.speedMech),
+//  .pdPos[ODD].p_setSpeed                = (float32_t *)(&motor_foc[MOTOR_1].motor_cmd[ODD].velRef),
+//  .pdPos[ODD].errSpeed                  = 0.0f,
+//  .pdPos[ODD].p_kp                      = (float32_t *)(&motor_foc[MOTOR_1].motor_cmd[ODD].kpCoeff),
+//  .pdPos[ODD].p_kd                      = (float32_t *)(&motor_foc[MOTOR_1].motor_cmd[ODD].kdCoeff),
+//  .pdPos[ODD].derivative                = 0.0f,
+//  .pdPos[ODD].p_ff                      = (float32_t *)(&motor_foc[MOTOR_1].motor_cmd[ODD].iqRef),
+//  .pdPos[ODD].p_sat                     = (float32_t *)(&motor_foc[MOTOR_1].motor_cmd[ODD].iSat),
+//  .pdPos[ODD].out                       = 0.0f,
+//  .pdPos[EVEN].p_fbTheta                = (float32_t *)(&motor_foc[MOTOR_1].motor_enc.thetaAbsolute),
+//  .pdPos[EVEN].p_setTheta               = (float32_t *)(&motor_foc[MOTOR_1].motor_cmd[EVEN].posRef),
+//  .pdPos[EVEN].errTheta                 = 0.0f,
+//  .pdPos[EVEN].p_fbSpeed                = (float32_t *)(&motor_foc[MOTOR_1].motor_enc.speed.speedMech),
+//  .pdPos[EVEN].p_setSpeed               = (float32_t *)(&motor_foc[MOTOR_1].motor_cmd[EVEN].velRef),
+//  .pdPos[EVEN].errSpeed                 = 0.0f,
+//  .pdPos[EVEN].p_kp                     = (float32_t *)(&motor_foc[MOTOR_1].motor_cmd[EVEN].kpCoeff),
+//  .pdPos[EVEN].p_kd                     = (float32_t *)(&motor_foc[MOTOR_1].motor_cmd[EVEN].kdCoeff),
+//  .pdPos[EVEN].derivative               = 0.0f,
+//  .pdPos[EVEN].p_ff                     = (float32_t *)(&motor_foc[MOTOR_1].motor_cmd[EVEN].iqRef),
+//  .pdPos[EVEN].p_sat                    = (float32_t *)(&motor_foc[MOTOR_1].motor_cmd[EVEN].iSat),
+//  .pdPos[EVEN].out                      = 0.0f,
+
+//  .pdPos.p_fbTheta                      = (float32_t *)(&motor_foc[MOTOR_1].motor_enc.thetaAbsolute),
+//  .pdPos.p_setTheta                     = (float32_t *)(&motor_foc[MOTOR_1].motor_cmd[ODD].posRef),
+//  .pdPos.errTheta                       = 0.0f,
+//  .pdPos.p_fbSpeed                      = (float32_t *)(&motor_foc[MOTOR_1].motor_enc.speed.speedMech),
+//  .pdPos.p_setSpeed                     = (float32_t *)(&motor_foc[MOTOR_1].motor_cmd[ODD].velRef),
+//  .pdPos.errSpeed                       = 0.0f,
+//  .pdPos.p_kp                           = (float32_t *)(&motor_foc[MOTOR_1].motor_cmd[ODD].kpCoeff),
+//  .pdPos.p_kd                           = (float32_t *)(&motor_foc[MOTOR_1].motor_cmd[ODD].kdCoeff),
+//  .pdPos.derivative                     = 0.0f,
+//  .pdPos.p_ff                           = (float32_t *)(&motor_foc[MOTOR_1].motor_cmd[ODD].iqRef),
+//  .pdPos.p_sat                          = (float32_t *)(&motor_foc[MOTOR_1].motor_cmd[ODD].iSat),
+//  .pdPos.out                            = 0.0f,
+  .pdPosVel.p_fbTheta                   = (float32_t *)(&motor_foc[MOTOR_1].motor_enc.thetaAbsolute),
+  .pdPosVel.setTheta                    = 0.0f,
+  .pdPosVel.errTheta                    = 0.0f,
+  .pdPosVel.p_fbSpeed                   = (float32_t *)(&motor_foc[MOTOR_1].motor_enc.speed.speedMech),
+  .pdPosVel.setSpeed                    = 0.0f,
+  .pdPosVel.errSpeed                    = 0.0f,
+  .pdPosVel.kp                          = 0.0f,
+  .pdPosVel.kd                          = 0.0f,
+  .pdPosVel.derivative                  = 0.0f,
+  .pdPosVel.ff                          = 0.0f,
+  .pdPosVel.sat                         = 0.0f,
+  .pdPosVel.out                         = 0.0f,
   //--- FOC - Q-axis resistance estimation ------------------------------------
   .resEst                               = 1.0f,
   //--- Resistance estimation low-pass filter ---------------------------------
   .resEstFlt.a                          = MOTOR1_STATOR_RESISTOR_LPF_ALPHA,
   .resEstFlt.one_minus_a                = MOTOR1_STATOR_RESISTOR_LPF_ONE_M_ALPHA,
+  //--- Which command set is currently active ? -------------------------------
+  .cmd_cr_active                        = ODD,
+  .cmd_nx_active                        = ODD,
   //--- Anti-coagging structure -----------------------------------------------
   //acog;
  },
@@ -454,16 +531,26 @@ static foc_t motor_foc[] =
   .motor_enc.speed.speedFlt.a           = (float32_t)MOTOR2_ENC_SPEED_LPF_ALPHA,
   .motor_enc.speed.speedFlt.one_minus_a = (float32_t)MOTOR2_ENC_SPEED_LPF_ONE_M_ALPHA,
   //--- MOTOR COMMAND STRUCTURE -----------------------------------------------
-  .motor_cmd.posRef                     = 0.0f,
-  .motor_cmd.velRef                     = 0.0f,
-  .motor_cmd.iqRef                      = 0.0f,
-  .motor_cmd.kpCoeff                    = 0.0f,
-  .motor_cmd.kdCoeff                    = 0.0f,
-  .motor_cmd.iSat                       = MOTOR2_CURRENT_CMD_SAT_MAX,
-  .motor_cmd.timeoutRef                 = 0U,
-  .motor_cmd.cptTimeout                 = 0U,
-  .motor_cmd.index                      = 0U,
-  .motor_cmd.enableReg.all              = 0U,
+  .motor_cmd[ODD].posRef                = 0.0f,
+  .motor_cmd[ODD].velRef                = 0.0f,
+  .motor_cmd[ODD].iqRef                 = 0.0f,
+  .motor_cmd[ODD].kpCoeff               = 0.0f,
+  .motor_cmd[ODD].kdCoeff               = 0.0f,
+  .motor_cmd[ODD].iSat                  = MOTOR2_CURRENT_CMD_SAT_MAX,
+  .motor_cmd[ODD].timeoutRef            = 0U,
+  .motor_cmd[ODD].cptTimeout            = 0U,
+  .motor_cmd[ODD].index                 = 0U,
+  .motor_cmd[ODD].enableReg.all         = 0U,
+  .motor_cmd[EVEN].posRef               = 0.0f,
+  .motor_cmd[EVEN].velRef               = 0.0f,
+  .motor_cmd[EVEN].iqRef                = 0.0f,
+  .motor_cmd[EVEN].kpCoeff              = 0.0f,
+  .motor_cmd[EVEN].kdCoeff              = 0.0f,
+  .motor_cmd[EVEN].iSat                 = MOTOR2_CURRENT_CMD_SAT_MAX,
+  .motor_cmd[EVEN].timeoutRef           = 0U,
+  .motor_cmd[EVEN].cptTimeout           = 0U,
+  .motor_cmd[EVEN].index                = 0U,
+  .motor_cmd[EVEN].enableReg.all        = 0U,
   //--- Maximum current alignment value ---------------------------------------
   .iAlignMax                            = MOTOR2_CURRENT_ALIGN_MAX,
   //---------------------------------------------------------------------------
@@ -522,23 +609,38 @@ static foc_t motor_foc[] =
   .piIq.ff                              = 0.0f,
   .piIq.out                             = 0.0f,
   //--- FOC - Initialize PD controller (Speed & position) ---------------------
-  .pdPos.p_fbTheta                      = (float32_t *)(&motor_foc[MOTOR_2].motor_enc.thetaAbsolute),
-  .pdPos.p_setTheta                     = (float32_t *)(&motor_foc[MOTOR_2].motor_cmd.posRef),
-  .pdPos.errTheta                       = 0.0f,
-  .pdPos.p_fbSpeed                      = (float32_t *)(&motor_foc[MOTOR_2].motor_enc.speed.speedMech),
-  .pdPos.p_setSpeed                     = (float32_t *)(&motor_foc[MOTOR_2].motor_cmd.velRef),
-  .pdPos.errSpeed                       = 0.0f,
-  .pdPos.p_kp                           = (float32_t *)(&motor_foc[MOTOR_2].motor_cmd.kpCoeff),
-  .pdPos.p_kd                           = (float32_t *)(&motor_foc[MOTOR_2].motor_cmd.kdCoeff),
-  .pdPos.derivative                     = 0.0f,
-  .pdPos.p_ff                           = (float32_t *)(&motor_foc[MOTOR_2].motor_cmd.iqRef),
-  .pdPos.p_sat                          = (float32_t *)(&motor_foc[MOTOR_2].motor_cmd.iSat),
-  .pdPos.out                            = 0.0f,
+//  .pdPos.p_fbTheta                      = (float32_t *)(&motor_foc[MOTOR_2].motor_enc.thetaAbsolute),
+//  .pdPos.p_setTheta                     = (float32_t *)(&motor_foc[MOTOR_2].motor_cmd[ODD].posRef),
+//  .pdPos.errTheta                       = 0.0f,
+//  .pdPos.p_fbSpeed                      = (float32_t *)(&motor_foc[MOTOR_2].motor_enc.speed.speedMech),
+//  .pdPos.p_setSpeed                     = (float32_t *)(&motor_foc[MOTOR_2].motor_cmd[ODD].velRef),
+//  .pdPos.errSpeed                       = 0.0f,
+//  .pdPos.p_kp                           = (float32_t *)(&motor_foc[MOTOR_2].motor_cmd[ODD].kpCoeff),
+//  .pdPos.p_kd                           = (float32_t *)(&motor_foc[MOTOR_2].motor_cmd[ODD].kdCoeff),
+//  .pdPos.derivative                     = 0.0f,
+//  .pdPos.p_ff                           = (float32_t *)(&motor_foc[MOTOR_2].motor_cmd[ODD].iqRef),
+//  .pdPos.p_sat                          = (float32_t *)(&motor_foc[MOTOR_2].motor_cmd[ODD].iSat),
+//  .pdPos.out                            = 0.0f,
+  .pdPosVel.p_fbTheta                   = (float32_t *)(&motor_foc[MOTOR_2].motor_enc.thetaAbsolute),
+  .pdPosVel.setTheta                    = 0.0f,
+  .pdPosVel.errTheta                    = 0.0f,
+  .pdPosVel.p_fbSpeed                   = (float32_t *)(&motor_foc[MOTOR_2].motor_enc.speed.speedMech),
+  .pdPosVel.setSpeed                    = 0.0f,
+  .pdPosVel.errSpeed                    = 0.0f,
+  .pdPosVel.kp                          = 0.0f,
+  .pdPosVel.kd                          = 0.0f,
+  .pdPosVel.derivative                  = 0.0f,
+  .pdPosVel.ff                          = 0.0f,
+  .pdPosVel.sat                         = 0.0f,
+  .pdPosVel.out                            = 0.0f,
   //--- FOC - Q-axis resistance estimation ------------------------------------
   .resEst                               = 0.0f,
   //--- Resistance estimation low-pass filter ---------------------------------
   .resEstFlt.a                          = MOTOR2_STATOR_RESISTOR_LPF_ALPHA,
   .resEstFlt.one_minus_a                = MOTOR2_STATOR_RESISTOR_LPF_ONE_M_ALPHA,
+  //--- Which command set is currently active ? -------------------------------
+  .cmd_cr_active                        = ODD,
+  .cmd_nx_active                        = ODD,
   //--- Anti-coagging structure -----------------------------------------------
   //acog;
  },
@@ -559,7 +661,7 @@ static motor_t motor[] =
   //--- FSM motor initial state -----------------------------------------------
   .motor_state      = MOTOR_STATE_INIT,
   //--- Error message ---------------------------------------------------------
-  .motor_error      = MOTOR_ERROR_NO_ERROR,
+  .motor_error.all  = MOTOR_ERROR_NO_ERROR,
   .clCycleNb        = 0,
   .itCnt            = 0,
   .itDone           = false,
@@ -576,7 +678,7 @@ static motor_t motor[] =
   //--- FSM motor initial state -----------------------------------------------
   .motor_state      = MOTOR_STATE_INIT,
   //--- Error message ---------------------------------------------------------
-  .motor_error      = MOTOR_ERROR_NO_ERROR,
+  .motor_error.all  = MOTOR_ERROR_NO_ERROR,
   .clCycleNb        = 0,
   .itCnt            = 0,
   .itDone           = false,
@@ -586,30 +688,30 @@ static motor_t motor[] =
  },
 };
 
-static const dma_cfg_t  dmaMem2MemCfList[] =
-{
- // DMA base register initialization
- // DMA to duplicate message from uOmodri command struct to foc struct.
- {
-  .dmaChBase        = DMA_CMD_2_FOC_BASE_ADDR,
-  .p_dstAddr        = (uint16_t *)&motor_foc[MOTOR_1].motor_cmd,
-  .dstStep          = 1,
-  .p_srcAddr        = (uint16_t *)&cmd_uOmodri[MOTOR_1],
-  .srcStep          = 1,
-  .burstSize        = sizeof(cmd_t),
-  .transferSize     = 2,//DMA_MEM_TO_MEM_M1_16BIT_TRANSFER_EVT,
-  .dstWrapStep      = sizeof(foc_t),
-  .dstWrapSize      = 1,
-  .srcWrapStep      = sizeof(cmd_t),
-  .srcWrapSize      = 1,
-  .config           = DMA_CFG_ONESHOT_ENABLE | DMA_CFG_CONTINUOUS_ENABLE | DMA_CFG_SIZE_16BIT,
-  .trigger          = DMA_TRIGGER_SOFTWARE,
-  .intMode          = DMA_INT_AT_END,
-  .intEnable        = false,
- },
- // END OF ARRAY
- {.dmaChBase        = UINT32_MAX},
-};
+//static const dma_cfg_t  dmaMem2MemCfList[] =
+//{
+// // DMA base register initialization
+// // DMA to duplicate message from uOmodri command struct to foc struct.
+// {
+//  .dmaChBase        = DMA_CMD_2_FOC_BASE_ADDR,
+//  .p_dstAddr        = (uint16_t *)&motor_foc[MOTOR_1].motor_cmd,
+//  .dstStep          = 1,
+//  .p_srcAddr        = (uint16_t *)&cmd_uOmodri[MOTOR_1],
+//  .srcStep          = 1,
+//  .burstSize        = sizeof(cmd_t),
+//  .transferSize     = 2,//DMA_MEM_TO_MEM_M1_16BIT_TRANSFER_EVT,
+//  .dstWrapStep      = sizeof(foc_t),
+//  .dstWrapSize      = 1,
+//  .srcWrapStep      = sizeof(cmd_t),
+//  .srcWrapSize      = 1,
+//  .config           = DMA_CFG_ONESHOT_ENABLE | DMA_CFG_CONTINUOUS_ENABLE | DMA_CFG_SIZE_16BIT,
+//  .trigger          = DMA_TRIGGER_SOFTWARE,
+//  .intMode          = DMA_INT_AT_END,
+//  .intEnable        = false,
+// },
+// // END OF ARRAY
+// {.dmaChBase        = UINT32_MAX},
+//};
 
 //#pragma DATA_SECTION(cpu1_to_cm_addr, "MSGRAM_CPU_TO_CM");
 //static com_cpu1_to_cm_t cpu1_to_cm_addr[] =

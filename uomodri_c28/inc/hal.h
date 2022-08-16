@@ -204,7 +204,6 @@ typedef struct __DMA_CFG_t__
     bool_t                              intEnable;
 } dma_cfg_t;
 
-#if (defined CLA_CORE_ENABLE) && (CLA_CORE_ENABLE)
 /**
  * @struct  CLA_TASK_TypeDef
  * @brief   CLA TASK global Hardware Abstraction Layer structure - To be updated
@@ -225,8 +224,7 @@ typedef struct __CLA_CFG_t__
     uint32_t                progRAM;
     uint32_t                dataRAM;
 //    CLA_TASK_TypeDef        claTaskCfg;
-} CLA_t;
-#endif
+} cla_cfg_t;
 
 /**
  * @struct  __GPIO_CFG_t__
@@ -365,9 +363,7 @@ typedef struct __HAL_CFG_t__
     const ipc_cfg_t*    const           p_ipcHandle;
     const dma_cfg_t*    const           p_dmaHandle;
     const tmr_cfg_t*    const           p_timerHandle;
-#if (defined CLA_CORE_ENABLE) && (CLA_CORE_ENABLE)
     const cla_cfg_t*    const           p_claHandle;
-#endif
 } hal_cfg_t;
 
 /**
