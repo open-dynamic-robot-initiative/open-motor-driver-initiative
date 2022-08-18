@@ -125,24 +125,24 @@ SECTIONS
 //#endif
 
     /* CLA specific sections */
-#if defined(__TI_EABI__)
+//#if defined(__TI_EABI__)
    Cla1Prog         :   LOAD = FLASH4,
-                        RUN = RAMLS5,
+                        RUN = RAMLS2,
                         LOAD_START(Cla1funcsLoadStart),
                         LOAD_END(Cla1funcsLoadEnd),
                         RUN_START(Cla1funcsRunStart),
                         LOAD_SIZE(Cla1funcsLoadSize),
                         ALIGN(8)
-#else
-   Cla1Prog         :   LOAD = FLASH4,
-                        RUN = RAMLS5,
-                        LOAD_START(_Cla1funcsLoadStart),
-                        LOAD_END(_Cla1funcsLoadEnd),
-                        RUN_START(_Cla1funcsRunStart),
-                        LOAD_SIZE(_Cla1funcsLoadSize),
-                        ALIGN(8)
-#endif
-
+//#else
+//   Cla1Prog         :   LOAD = FLASH4,
+//                        RUN = RAMLS2,
+//                        LOAD_START(_Cla1funcsLoadStart),
+//                        LOAD_END(_Cla1funcsLoadEnd),
+//                        RUN_START(_Cla1funcsRunStart),
+//                        LOAD_SIZE(_Cla1funcsLoadSize),
+//                        ALIGN(8)
+//#endif
+//   Cla1Prog         : > RAMLS2
    CLADataLS0       : > RAMLS0
    CLADataLS1       : > RAMLS1
 

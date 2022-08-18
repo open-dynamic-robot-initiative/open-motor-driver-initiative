@@ -17,21 +17,17 @@ extern "C" {
 #include "hal.h"
 #include <stdint.h>
 
-
-
-
-
 ///{all=0x007FFC9A,bit={crc=0x9A,commandFrame=0x3FFC,rw=0x1,dnc=0x0,pad=0x00}
 
 
 
-#define ANGLE_COMMAND  0x007FFEA0  //bit struct _CommandFrame32_t    {crc=160,commandFrame=16382,rw=1,dnc=0,pad=0} all unsigned long   0x007FFEA0 (Hex)
-#define VELOCITY_COMMAND  0x007FFC9A  //{all=0x007FFC9A,bit={crc=0x9A,commandFrame=0x3FFC,rw=0x1,dnc=0x0,pad=0x00}
+#define ANGLE_COMMAND       (0x007FFEA0)  //bit struct _CommandFrame32_t    {crc=160,commandFrame=16382,rw=1,dnc=0,pad=0} all unsigned long   0x007FFEA0 (Hex)
+#define VELOCITY_COMMAND    (0x007FFC9A)  //{all=0x007FFC9A,bit={crc=0x9A,commandFrame=0x3FFC,rw=0x1,dnc=0x0,pad=0x00}
 
-extern BitDataFrame32_u angle;
-extern BitDataFrame32_u velocity;
-extern bool flag;
-
+extern float32_t    thetaAbs;
+extern float32_t    velocity;
+extern bool_t       cla_new_flag;
+extern bool_t       cpu1_ready_flag;
 
 uint32_t send32CLA(uint32_t command);
 uint16_t send16CLA(uint16_t command);

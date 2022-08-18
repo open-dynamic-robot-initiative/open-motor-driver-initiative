@@ -100,6 +100,7 @@ inline void ENC_getPosition(encoder_t* p_enc)
     p_enc->thetaElec        = __mpy2pif32(__fracf32(thetaElec));
     p_enc->thetaMech[NEW]   = __mpy2pif32(p_enc->thetaMech[NEW]);
 #endif
+
     return;
 }
 

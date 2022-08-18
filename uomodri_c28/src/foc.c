@@ -161,21 +161,21 @@ inline float32_t FOC_runPI(pi_t* p_pi)
  */
 inline void FOC_resetPD(pd_t* p_pd)
 {
-    p_pd->setTheta      = 0.0f;
-    p_pd->errTheta      = 0.0f;
-    p_pd->setSpeed      = 0.0f;
-    p_pd->errSpeed      = 0.0f;
-    p_pd->kp            = 0.0f;
-    p_pd->kd            = 0.0f;
-    p_pd->derivative    = 0.0f;
-    p_pd->ff            = 0.0f;
-    p_pd->out           = 0.0f;
-    p_pd->sat           = 0.0f;
-
+//    p_pd->setTheta      = 0.0f;
 //    p_pd->errTheta      = 0.0f;
+//    p_pd->setSpeed      = 0.0f;
 //    p_pd->errSpeed      = 0.0f;
+//    p_pd->kp            = 0.0f;
+//    p_pd->kd            = 0.0f;
 //    p_pd->derivative    = 0.0f;
+//    p_pd->ff            = 0.0f;
 //    p_pd->out           = 0.0f;
+//    p_pd->sat           = 0.0f;
+
+    p_pd->errTheta      = 0.0f;
+    p_pd->errSpeed      = 0.0f;
+    p_pd->derivative    = 0.0f;
+    p_pd->out           = 0.0f;
 
     return;
 }
@@ -185,42 +185,42 @@ inline void FOC_resetPD(pd_t* p_pd)
  * @param[inout]    *p_pd   Pointer on the PD control structure.
  * @return          out     Command of PD controller
  */
-//inline float32_t FOC_runPD(pd_t* p_pd)
-//{
-//    float32_t sat_max   = 1.0f  * (*p_pd->p_sat);
-//    float32_t sat_min   = -1.0f * sat_max;
-//    p_pd->errTheta      = (*p_pd->p_setTheta) - (*p_pd->p_fbTheta);
-//    p_pd->errSpeed      = (*p_pd->p_setSpeed) - (*p_pd->p_fbSpeed);
-//    p_pd->derivative    = (*p_pd->p_kd) * p_pd->errSpeed;
-//    // Compute PID and clamp output.
-//    p_pd->out           = ((*p_pd->p_kp) * p_pd->errTheta) + p_pd->derivative + (*p_pd->p_ff);
-//    p_pd->out           = __fsat(p_pd->out, sat_max, sat_min);
-//
-//    return(p_pd->out);
-//}
 inline float32_t FOC_runPD(pd_t* p_pd)
 {
-    float32_t sat_max   = 1.0f  * p_pd->sat;
+    float32_t sat_max   = 1.0f  * (*p_pd->p_sat);
     float32_t sat_min   = -1.0f * sat_max;
-    p_pd->errTheta      = p_pd->setTheta - (*p_pd->p_fbTheta);
-    p_pd->errSpeed      = p_pd->setSpeed - (*p_pd->p_fbSpeed);
-    p_pd->derivative    = p_pd->kd * p_pd->errSpeed;
+    p_pd->errTheta      = (*p_pd->p_setTheta) - (*p_pd->p_fbTheta);
+    p_pd->errSpeed      = (*p_pd->p_setSpeed) - (*p_pd->p_fbSpeed);
+    p_pd->derivative    = (*p_pd->p_kd) * p_pd->errSpeed;
     // Compute PID and clamp output.
-    p_pd->out           = (p_pd->kp * p_pd->errTheta) + p_pd->derivative + p_pd->ff;
+    p_pd->out           = ((*p_pd->p_kp) * p_pd->errTheta) + p_pd->derivative + (*p_pd->p_ff);
     p_pd->out           = __fsat(p_pd->out, sat_max, sat_min);
 
     return(p_pd->out);
 }
+//inline float32_t FOC_runPD(pd_t* p_pd)
+//{
+//    float32_t sat_max   = 1.0f  * p_pd->sat;
+//    float32_t sat_min   = -1.0f * sat_max;
+//    p_pd->errTheta      = p_pd->setTheta - (*p_pd->p_fbTheta);
+//    p_pd->errSpeed      = p_pd->setSpeed - (*p_pd->p_fbSpeed);
+//    p_pd->derivative    = p_pd->kd * p_pd->errSpeed;
+//    // Compute PID and clamp output.
+//    p_pd->out           = (p_pd->kp * p_pd->errTheta) + p_pd->derivative + p_pd->ff;
+//    p_pd->out           = __fsat(p_pd->out, sat_max, sat_min);
+//
+//    return(p_pd->out);
+//}
 
-inline void FOC_cmdPD(pd_t* p_pd, cmd_t* p_cmd)
-{
-    p_pd->setTheta              = p_cmd->posRef;
-    p_pd->setSpeed              = p_cmd->velRef;
-    p_pd->kp                    = p_cmd->kpCoeff;
-    p_pd->kd                    = p_cmd->kdCoeff;
-    p_pd->ff                    = p_cmd->iqRef;
-    p_pd->sat                   = p_cmd->iSat;
-}
+//inline void FOC_cmdPD(pd_t* p_pd, cmd_t* p_cmd)
+//{
+//    p_pd->setTheta              = p_cmd->posRef;
+//    p_pd->setSpeed              = p_cmd->velRef;
+//    p_pd->kp                    = p_cmd->kpCoeff;
+//    p_pd->kd                    = p_cmd->kdCoeff;
+//    p_pd->ff                    = p_cmd->iqRef;
+//    p_pd->sat                   = p_cmd->iSat;
+//}
 
 /**
  * @brief           Reset the command structure associated to motor control
@@ -261,8 +261,7 @@ void FOC_resetStruct(foc_t* p_foc)
     // Reset analog measures
     FOC_resetMeasuresStruct(&p_foc->motor_acq);
     // Reset the commands associated to motor control
-    FOC_resetCmdStruct(&p_foc->motor_cmd[ODD]);
-    FOC_resetCmdStruct(&p_foc->motor_cmd[ODD]);
+    FOC_resetCmdStruct(&p_foc->motor_cmd);
     // Reset currents and voltages
     p_foc->sinTheta         = 0.0f;
     p_foc->cosTheta         = 0.0f;
@@ -284,8 +283,8 @@ void FOC_resetStruct(foc_t* p_foc)
 //    p_foc->idRef            = 0.0f;
 //    p_foc->iqRef            = 0.0f;
     p_foc->resEst           = 0.0f;
-    p_foc->cmd_cr_active    = ODD;
-    p_foc->cmd_nx_active    = ODD;
+//    p_foc->cmd_cr_active    = ODD;
+//    p_foc->cmd_nx_active    = ODD;
 
     return;
 }

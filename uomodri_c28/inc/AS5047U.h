@@ -55,38 +55,40 @@ typedef struct __asenc_cfg_t__
 
 // ERRFL Register Definition________________________________________________________________
 
-typedef struct _Errfl_t {
-    uint16_t agcw:1;            /* Agc-warning */
-    uint16_t maghalf:1;
-    uint16_t p2ramw:1;          /* P2ram_warning */
-    uint16_t p2ramer:1;         /* P2ram_error */
-    uint16_t framer:1;          /* Framing_error */
-    uint16_t comerr:1;          /* Command_error */
-    uint16_t crcerr:1;          /* CRC error */
-    uint16_t wdtst:1;           /* Watchdog Information */
-    uint16_t unused:1;
-    uint16_t ofnf:1;            /* OffCompNotFinished */
-    uint16_t cordov:1;          /* Cordic overflow */
-    uint16_t unused2:5;
+typedef struct _Errfl_t
+{
+    uint16_t    agcw    : 1;    /* Agc-warning */
+    uint16_t    maghalf : 1;
+    uint16_t    p2ramw  : 1;    /* P2ram_warning */
+    uint16_t    p2ramer : 1;    /* P2ram_error */
+    uint16_t    framer  : 1;    /* Framing_error */
+    uint16_t    comerr  : 1;    /* Command_error */
+    uint16_t    crcerr  : 1;    /* CRC error */
+    uint16_t    wdtst   : 1;    /* Watchdog Information */
+    uint16_t    unused  : 1;
+    uint16_t    ofnf    : 1;    /* OffCompNotFinished */
+    uint16_t    cordov  : 1;    /* Cordic overflow */
+    uint16_t    unused2 : 5;
 } Errfl_t;
 
-
-typedef union _Errfl_u{
-    uint16_t all;
-    Errfl_t bit;
+typedef union _Errfl_u
+{
+    uint16_t    all;
+    Errfl_t     bit;
 } Errfl_u;
 
 
 // PROG Register Definition________________________________________________________________
 
-typedef struct _Prog_t {
-    uint16_t progen:1;
-    uint16_t unused:1;
-    uint16_t otpref:1;
-    uint16_t progotp:1;
-    uint16_t unused1:2;
-    uint16_t progver:1;
-    uint16_t unused2:9;
+typedef struct _Prog_t
+{
+    uint16_t    progen  : 1;
+    uint16_t    unused  : 1;
+    uint16_t    otpref  : 1;
+    uint16_t    progotp : 1;
+    uint16_t    unused1 : 2;
+    uint16_t    progver : 1;
+    uint16_t    unused2 : 9;
 } Prog_t;
 
 
@@ -370,9 +372,22 @@ typedef struct _BitDataFrame32_t {
     uint32_t er:2;
 } BitDataFrame32_t;
 
+typedef struct _ByteDataFrame32_t {
+    uint32_t byte_0 : 8;
+    uint32_t byte_1 : 8;
+    uint32_t byte_2 : 8;
+    uint32_t byte_3 : 8;
+} ByteDataFrame32_t;
+
+typedef struct _ShortDataFrame32_t {
+    uint32_t short_0    : 16;
+    uint32_t short_1    : 16;
+} ShortDataFrame32_t;
 
 typedef union _BitDataFrame32_u{
     uint32_t all;
+    ShortDataFrame32_t byte_16;
+    ByteDataFrame32_t byte_8;
     BitDataFrame32_t bit;
 } BitDataFrame32_u;
 

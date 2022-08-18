@@ -187,7 +187,6 @@
 //#define DBG_SCI_BASE                            SCIB_BASE
 //#define DBG_SCI_TX_BASE_REG_ADDR                (DBG_SCI_BASE + SCI_O_TXBUF)
 
-
 /***********************************************************************
  * CPU TIMER DEFINES
  ***********************************************************************/
@@ -317,7 +316,10 @@
 #define MST_SPI_CLK                             (71)
 #define MST_SPI_CLK_CFG                         GPIO_71_SPIC_CLK
 #define MST_SPI_CS                              (72)
-#define MST_SPI_CS_CFG                          GPIO_72_SPIC_STEN
+#define MST_SPI_CS_CFG                          GPIO_72_GPIO72//SPIC_STEN
+#define MST_SPI_CS_SET                          (HWREG(GPIODATA_BASE + GPIO_O_GPCSET)   = GPIO_GPCSET_GPIO72)
+#define MST_SPI_CS_CLEAR                        (HWREG(GPIODATA_BASE + GPIO_O_GPCCLEAR) = GPIO_GPCCLEAR_GPIO72)
+#define MST_SPI_CS_TOGGLE                       (HWREG(GPIODATA_BASE + GPIO_O_GPCTOGGLE)= GPIO_GPCTOGGLE_GPIO72)
 /**
  * @}
  */
@@ -342,19 +344,19 @@
  */
 #define DMA_NO_WRAP                             (0x10000)
 
-//#define DMA_CMD_2_FOC_BASE_ADDR                 DMA_CH1_BASE
-//#define DMA_CMD_2_FOC_INT                       INT_DMA_CH1
-//#define DMA_CMD_2_FOC_TRIGGER_SRC               DMA_TRIGGER_SOFTWARE
-//
-//#define DMA_CMD_2_FOC_16BIT_FULL_LENGTH         (20)
-//#define DMA_CMD_2_FOC_16BIT_BURST_EVT           DMA_CMD_2_FOC_16BIT_FULL_LENGTH
-//#define DMA_CMD_2_FOC_16BIT_USE_WRAP            (1)
-//#define DMA_CMD_2_FOC_16BIT_WRAP                (1)
-//#define DMA_CMD_2_FOC_16BIT_TRANSFER_EVT        (DMA_CMD_2_FOC_16BIT_FULL_LENGTH * DMA_CMD_2_FOC_16BIT_WRAP / DMA_CMD_2_FOC_16BIT_BURST_EVT)
-//#define DMA_CMD_2_FOC_16BIT_INC_STEP            (1)
-//#define DMA_CMD_2_FOC_16BIT_CONFIG              (DMA_CFG_ONESHOT_DISABLE | DMA_CFG_CONTINUOUS_ENABLE | DMA_CFG_SIZE_16BIT)
-//#define DMA_CMD_2_FOC_16BIT_WRAP                (1)
-//
+#define DMA_CMD_2_FOC_BASE_ADDR                 DMA_CH1_BASE
+#define DMA_CMD_2_FOC_INT                       INT_DMA_CH1
+#define DMA_CMD_2_FOC_TRIGGER_SRC               DMA_TRIGGER_SOFTWARE
+
+#define DMA_CMD_2_FOC_16BIT_FULL_LENGTH         (20)
+#define DMA_CMD_2_FOC_16BIT_BURST_EVT           DMA_CMD_2_FOC_16BIT_FULL_LENGTH
+#define DMA_CMD_2_FOC_16BIT_USE_WRAP            (1)
+#define DMA_CMD_2_FOC_16BIT_WRAP                (1)
+#define DMA_CMD_2_FOC_16BIT_TRANSFER_EVT        (DMA_CMD_2_FOC_16BIT_FULL_LENGTH * DMA_CMD_2_FOC_16BIT_WRAP / DMA_CMD_2_FOC_16BIT_BURST_EVT)
+#define DMA_CMD_2_FOC_16BIT_INC_STEP            (1)
+#define DMA_CMD_2_FOC_16BIT_CONFIG              (DMA_CFG_ONESHOT_DISABLE | DMA_CFG_CONTINUOUS_ENABLE | DMA_CFG_SIZE_16BIT)
+#define DMA_CMD_2_FOC_16BIT_WRAP                (1)
+
 //#define DMA_MST_SPI_TX_BASE_ADDR                DMA_CH3_BASE
 //#define DMA_MST_SPI_TX_INT                      INT_DMA_CH3
 //#define DMA_MST_SPI_TX_TRIGGER_SRC              DMA_TRIGGER_SOFTWARE
@@ -976,11 +978,11 @@ typedef enum
     NO_MOT  = -1,   /*!< No motor selected */
 } motor_id_e;
 
-typedef enum
-{
-    ODD     = 0,    /*!< Select */
-    EVEN    = 1,
-} parity_id_e;
+//typedef enum
+//{
+//    ODD     = 0,    /*!< Select */
+//    EVEN    = 1,
+//} parity_id_e;
 
 /**
  * @enum    StateID

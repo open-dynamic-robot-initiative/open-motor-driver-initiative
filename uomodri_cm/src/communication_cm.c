@@ -30,12 +30,13 @@ void com_msgDbgTx(dbg_uart_addr_t* p_addr, dbg_uart_msg_t* p_msg)
     static uint32_t cntMsg  = 0;
     p_msg->count            = cntMsg++;
     p_msg->pos_m1           = (float_t)(*p_addr->p_pos_m1);
-    p_msg->vel_m1           = (float_t)(*p_addr->p_vel_m1);
+//    p_msg->vel_m1           = (float_t)(*p_addr->p_vel_m1);
     p_msg->pos_m2           = (float_t)(*p_addr->p_pos_m2);
-    p_msg->vel_m2           = (float_t)(*p_addr->p_vel_m2);
+//    p_msg->vel_m2           = (float_t)(*p_addr->p_vel_m2);
     p_msg->pos_as5047u      = (float_t)(*p_addr->p_pos_as5047u);
     p_msg->vel_as5047u      = (float_t)(*p_addr->p_vel_as5047u);
-    p_msg->crc              = com_crc8_fast(0, (uint8_t *)p_msg, (sizeof(dbg_uart_msg_t) - 1));
+//    p_msg->crc              = com_crc8_fast(0, (uint8_t *)p_msg, (sizeof(dbg_uart_msg_t) - 1));
+    p_msg->crc              = com_crc8((uint8_t *)p_msg, (sizeof(dbg_uart_msg_t) - 1));
     return;
 }
 
@@ -55,14 +56,14 @@ uint32_t com_crc32(uint16_t* p_buf, size_t len)
 uint8_t com_crc8(uint8_t *p_buf, size_t len)
 {
     uint8_t crc = 0, i = 0, j = 0;
-    for (i = 0; i < len; i++)
+    for(i = 0; i < len; i++)
     {
         uint8_t inbyte = p_buf[i];
-        for (j = 0; j < 8; j++)
+        for(j = 0; j < 8; j++)
         {
             uint8_t mix = (crc ^ inbyte) & 0x01;
             crc >>= 1;
-            if (mix)
+            if(mix)
                 crc ^= 0x8C;
             inbyte >>= 1;
         }
@@ -70,13 +71,22 @@ uint8_t com_crc8(uint8_t *p_buf, size_t len)
     return(crc);
 }
 
-uint8_t com_crc8_fast(uint8_t crc, void const *p_buf, size_t len)
+//uint8_t com_crc8_fast(uint8_t crc, void const *p_buf, size_t len)
+//{
+//    uint8_t const *data = p_buf;
+//    if (data == NULL)
+//        return 0xff;
+//    crc &= 0xff;
+//    while (len--)
+//        crc = crc8_table[crc ^ *data++];
+//    return crc;
+//}
+
+uint8_t com_crc8_fast(uint8_t crc, uint8_t* p_buf, size_t len)
 {
-    uint8_t const *data = p_buf;
-    if (data == NULL)
-        return 0xff;
-    crc &= 0xff;
-    while (len--)
-        crc = crc8_table[crc ^ *data++];
+    crc = 0xff;
+    size_t i = 0;
+    for(i = 0; i < len; i++)
+        crc = crc8_table[p_buf[i] ^ crc];
     return crc;
 }

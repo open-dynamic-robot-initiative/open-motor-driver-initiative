@@ -48,10 +48,9 @@ inline void MOT_stopCommand(motor_t* p_motor)
 inline bool_t MOT_runControl(motor_t* p_motor)
 {
     foc_t*      p_foc           = p_motor->p_motorFOC;
-    p_foc->cmd_cr_active        = p_foc->cmd_nx_active;
-    error_reg_u error_reg       = p_motor->motor_error;
+    error_reg_u error           = p_motor->motor_error;
     encoder_t*  p_enc           = &p_foc->motor_enc;
-    cmd_t*      p_cmd           = &p_foc->motor_cmd[p_foc->cmd_cr_active];
+    cmd_t*      p_cmd           = &p_foc->motor_cmd;
     cmd_reg_t   en_bit          = p_cmd->enableReg.bit;
     p_enc->indexOffset          = en_bit.encOffsetEnable;
 
@@ -66,11 +65,11 @@ inline bool_t MOT_runControl(motor_t* p_motor)
 
     // Save number of cycles elapsed since control loop startup
     p_motor->clCycleNb          = EPWM_getTimeBaseCounterValue(p_motor->p_motorHalCfg->p_pwmCntCmp[0]->epwmBase);
-    error_reg.bit.drv_fault     = !GPIO_readPin(p_motor->p_motorDRV->p_drvCfgHandler->gpioNumber_FAULT);
-    error_reg.bit.pos_rollover  = p_enc->rollOverError && en_bit.rollOverEnable;
-    error_reg.bit.com_timeout   = (p_cmd->cptTimeout > p_cmd->timeoutRef) && p_cmd->timeoutRef;
-    error_reg.bit.enc_mismatch  = p_enc->indexDetect && p_enc->indexError;
-    p_motor->motor_state        = (error_reg.all)                   ? (MOTOR_STATE_ERROR)       : (p_motor->motor_state);
+    error.bit.drv_fault         = !GPIO_readPin(p_motor->p_motorDRV->p_drvCfgHandler->gpioNumber_FAULT);
+    error.bit.pos_rollover      = p_enc->rollOverError && en_bit.rollOverEnable;
+    error.bit.com_timeout       = (p_cmd->cptTimeout > p_cmd->timeoutRef) && p_cmd->timeoutRef;
+    error.bit.enc_mismatch      = p_enc->indexDetect && p_enc->indexError;
+    p_motor->motor_state        = (error.all)                       ? (MOTOR_STATE_ERROR)       : (p_motor->motor_state);
 
     switch(p_motor->motor_state)
     {
@@ -115,20 +114,6 @@ inline bool_t MOT_runControl(motor_t* p_motor)
     case MOTOR_STATE_READY:
         p_motor->itCnt         += 1U;
         p_foc->idRef            = 0.0f;
-//        p_foc->pdPosVel.p_setTheta = (float32_t *)(&p_foc->motor_cmd[p_foc->cmd_cr_active].posRef);
-//        p_foc->pdPosVel.p_setSpeed = (float32_t *)(&p_foc->motor_cmd[p_foc->cmd_cr_active].velRef);
-//        p_foc->pdPosVel.p_kp       = (float32_t *)(&p_foc->motor_cmd[p_foc->cmd_cr_active].kpCoeff);
-//        p_foc->pdPosVel.p_kd       = (float32_t *)(&p_foc->motor_cmd[p_foc->cmd_cr_active].kdCoeff);
-//        p_foc->pdPosVel.p_ff       = (float32_t *)(&p_foc->motor_cmd[p_foc->cmd_cr_active].iqRef);
-//        p_foc->pdPosVel.p_sat      = (float32_t *)(&p_foc->motor_cmd[p_foc->cmd_cr_active].iSat);
-
-//        p_foc->pdPosVel.setTheta= p_foc->motor_cmd[p_foc->cmd_cr_active].posRef;
-//        p_foc->pdPosVel.setSpeed= p_foc->motor_cmd[p_foc->cmd_cr_active].velRef;
-//        p_foc->pdPosVel.kp      = p_foc->motor_cmd[p_foc->cmd_cr_active].kpCoeff;
-//        p_foc->pdPosVel.kd      = p_foc->motor_cmd[p_foc->cmd_cr_active].kdCoeff;
-//        p_foc->pdPosVel.ff      = p_foc->motor_cmd[p_foc->cmd_cr_active].iqRef;
-//        p_foc->pdPosVel.sat     = p_foc->motor_cmd[p_foc->cmd_cr_active].iSat;
-        FOC_cmdPD(&p_foc->pdPosVel, &p_foc->motor_cmd[p_foc->cmd_cr_active]);
         p_foc->iqRef            = FOC_runPD(&p_foc->pdPosVel);
         p_motor->motor_state    = (en_bit.motorEnable)              ? (MOTOR_STATE_READY)       : (MOTOR_STATE_STOP);
         p_motor->motor_state    = (en_bit.systemEnable)             ? (p_motor->motor_state)    : (MOTOR_STATE_INIT);

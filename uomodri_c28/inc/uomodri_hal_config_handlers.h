@@ -396,8 +396,8 @@ static const tmr_cfg_t  timerCfgList[] =
 #if (defined CLA_CORE_ENABLE) && (CLA_CORE_ENABLE)
 static const cla_cfg_t  claCfgList[] =
 {
- {.progRAM = MEMCFG_SECT_LS5,
-  .dataRAM = (MEMCFG_SECT_LS0 | MEMCFG_SECT_LS1),
+ {.progRAM              = MEMCFG_SECT_LS2,
+  .dataRAM              = (MEMCFG_SECT_LS0 | MEMCFG_SECT_LS1),
 //  .ClaTaskCfg = {.claTaskAddr = (uint16_t)(&Cla1Task1),
 //                 .claIntVect = CLA_MVECT_1},
  },

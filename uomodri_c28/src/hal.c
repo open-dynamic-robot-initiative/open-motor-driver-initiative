@@ -701,7 +701,7 @@ void HAL_CLA_ini(const cla_cfg_t* p_clacCfg)
             /* Select LSxRAM to be the programming space for the CLA
              * First configure the CLA to be the master for LSx and then
              * set the space to be a program block */
-            if(p_clacCfg->progRAM & memcfg_sect_lsx)
+            if((p_clacCfg->progRAM & memcfg_sect_lsx) == memcfg_sect_lsx)
             {
                 MemCfg_setLSRAMMasterSel(memcfg_sect_lsx, MEMCFG_LSRAMMASTER_CPU_CLA1);
                 MemCfg_setCLAMemType(memcfg_sect_lsx, MEMCFG_CLA_MEM_PROGRAM);
@@ -709,7 +709,7 @@ void HAL_CLA_ini(const cla_cfg_t* p_clacCfg)
             /* Configure LSxRAM as data spaces for the CLA
              * First configure the CLA to be the master for LSx and then
              * set the spaces to be code blocks */
-            if(p_clacCfg->dataRAM & memcfg_sect_lsx)
+            if((p_clacCfg->dataRAM & memcfg_sect_lsx) == memcfg_sect_lsx)
             {
                 MemCfg_setLSRAMMasterSel(memcfg_sect_lsx, MEMCFG_LSRAMMASTER_CPU_CLA1);
                 MemCfg_setCLAMemType(memcfg_sect_lsx, MEMCFG_CLA_MEM_DATA);
@@ -729,8 +729,8 @@ void HAL_CLA_ini(const cla_cfg_t* p_clacCfg)
 #pragma diag_warning=770
     // Enable Tasks 1 and 8
     CLA_enableIACK(CLA1_BASE);
-    CLA_enableTasks(CLA1_BASE, CLA_TASKFLAG_1 | CLA_TASKFLAG_8);
-    CLA_forceTasks(CLA1_BASE,CLA_TASKFLAG_1);
+    CLA_enableTasks(CLA1_BASE, CLA_TASKFLAG_1);// | CLA_TASKFLAG_8);
+    CLA_forceTasks(CLA1_BASE, CLA_TASKFLAG_1);
 
         // TODO : CLA Task config
 //        void CLA_initCpu1Cla1(void)

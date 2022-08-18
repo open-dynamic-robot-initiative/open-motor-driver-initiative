@@ -75,36 +75,36 @@ typedef struct __PROPORTIONAL_INTEGRAL_t__
  * @struct  pd_t
  * @brief   Proportional-Derivative controller structure for FOC algorithm.
  */
-//typedef struct __PROPORTIONAL_DERIVATIVE_t__
-//{
-//    float32_t* const    p_fbTheta;      /*!< Pointer on the feedback position */
-//    float32_t*          p_setTheta;     /*!< Pointer on the setpoint position */
-//    float32_t           errTheta;       /*!< Error position */
-//    float32_t* const    p_fbSpeed;      /*!< Pointer on the feedback speed */
-//    float32_t*          p_setSpeed;     /*!< Pointer on the Set point speed */
-//    float32_t           errSpeed;       /*!< Error speed */
-//    float32_t*          p_kp;           /*!< Pointer on the Proportional gain */
-//    float32_t*          p_kd;           /*!< Pointer on the Derivative gain */
-//    float32_t           derivative;     /*!< Derivative term partial computation */
-//    float32_t*          p_ff;           /*!< Pointer on the feed-forward term */
-//    float32_t           out;            /*!< Controller output */
-//    float32_t*          p_sat;          /*!< Controller saturation */
-//} pd_t;
 typedef struct __PROPORTIONAL_DERIVATIVE_t__
 {
     float32_t* const    p_fbTheta;      /*!< Pointer on the feedback position */
-    float32_t           setTheta;       /*!< Pointer on the setpoint position */
+    float32_t* const    p_setTheta;     /*!< Pointer on the setpoint position */
     float32_t           errTheta;       /*!< Error position */
     float32_t* const    p_fbSpeed;      /*!< Pointer on the feedback speed */
-    float32_t           setSpeed;       /*!< Pointer on the Set point speed */
+    float32_t* const    p_setSpeed;     /*!< Pointer on the Set point speed */
     float32_t           errSpeed;       /*!< Error speed */
-    float32_t           kp;             /*!< Pointer on the Proportional gain */
-    float32_t           kd;             /*!< Pointer on the Derivative gain */
+    float32_t* const    p_kp;           /*!< Pointer on the Proportional gain */
+    float32_t* const    p_kd;           /*!< Pointer on the Derivative gain */
     float32_t           derivative;     /*!< Derivative term partial computation */
-    float32_t           ff;             /*!< Pointer on the feed-forward term */
+    float32_t* const    p_ff;           /*!< Pointer on the feed-forward term */
     float32_t           out;            /*!< Controller output */
-    float32_t           sat;            /*!< Controller saturation */
+    float32_t* const    p_sat;          /*!< Controller saturation */
 } pd_t;
+//typedef struct __PROPORTIONAL_DERIVATIVE_t__
+//{
+//    float32_t* const    p_fbTheta;      /*!< Pointer on the feedback position */
+//    float32_t           setTheta;       /*!< Pointer on the setpoint position */
+//    float32_t           errTheta;       /*!< Error position */
+//    float32_t* const    p_fbSpeed;      /*!< Pointer on the feedback speed */
+//    float32_t           setSpeed;       /*!< Pointer on the Set point speed */
+//    float32_t           errSpeed;       /*!< Error speed */
+//    float32_t           kp;             /*!< Pointer on the Proportional gain */
+//    float32_t           kd;             /*!< Pointer on the Derivative gain */
+//    float32_t           derivative;     /*!< Derivative term partial computation */
+//    float32_t           ff;             /*!< Pointer on the feed-forward term */
+//    float32_t           out;            /*!< Controller output */
+//    float32_t           sat;            /*!< Controller saturation */
+//} pd_t;
 
 typedef struct __MOTOR_PARAMETERS_t__
 {
@@ -160,7 +160,7 @@ typedef struct __MOTOR_FOC_CONTROL_t__
     params_t            motor_cfg;      /*!< Motor configuration parameters */
     acq_t               motor_acq;      /*!< Current \& voltage acquisitions */
     encoder_t           motor_enc;      /*!< Encoder position & speed */
-    cmd_t               motor_cmd[2];   /*!< Motor commands */
+    cmd_t               motor_cmd;      /*!< Motor commands */
     lpf_t               iParkFlt;       /*!< Low-pass filter parameters affected to park transform */
     float32_t           sinTheta;       /*!< Sinus of the electrical rotor angle */
     float32_t           cosTheta;       /*!< Cosine of the electrical rotor angle  */
@@ -192,8 +192,8 @@ typedef struct __MOTOR_FOC_CONTROL_t__
     pd_t                pdPosVel;       /*!< PD controller structure for position/velocity control */
     float32_t           resEst;         /*!< Q-axis resistance estimation - [Ohm] */
     lpf_t               resEstFlt;      /*!< Q-axis resistance estimation filter structure */
-    parity_id_e         cmd_cr_active;  /*!< Which channel is currently active for command interpretation */
-    parity_id_e         cmd_nx_active;  /*!< Which channel will be active next for command interpretation */
+//    parity_id_e         cmd_cr_active;  /*!< Which channel is currently active for command interpretation */
+//    parity_id_e         cmd_nx_active;  /*!< Which channel will be active next for command interpretation */
 //#ifdef USE_CM_CORE
 //    uint8_t             rsvd[11];
 //#else
@@ -222,7 +222,7 @@ typedef struct __MOTOR_FOC_CONTROL_t__
 inline void FOC_getMeasures(acq_t*);
 inline void FOC_runControl(foc_t*);
 inline float32_t FOC_runPD(pd_t*);
-inline void FOC_cmdPD(pd_t*, cmd_t*);
+//inline void FOC_cmdPD(pd_t*, cmd_t*);
 void FOC_resetStruct(foc_t*);
 //void limit_norm(float32_t*, float32_t*, float32_t);
 
