@@ -7,12 +7,11 @@
 //#include "f2838x_device.h"
 //#include "f2838x_examples.h"
 #include <stdint.h>
-
 #include "driverlib.h"
 
 #include "hal.h"
 #include "drv8353.h"
-#include "AS5047U.h"
+#include "as5047u.h"
 #include "foc.h"
 #include "motor.h"
 #include "communication.h"

@@ -1,4 +1,4 @@
-#include "AS5047U.h"
+#include <as5047u.h>
 #include "cla_shared.h"
 #include "f2838x_device.h"
 #include "driverlib.h"
@@ -25,8 +25,9 @@ __interrupt void Cla1Task1 ( void )
     float32_t           deltaTheta  = 0.0f;
     BitDataFrame32_u    msg[2];
     int16_t             turnNb = 0U;
-    uint8_t             com[2], i;
-    bool_t              crccheck;
+    uint8_t             i;
+//    uint8_t             com[2], i;
+//    bool_t              crccheck;
     bool_t              test[2] = {false, false};
 
     while(1)
@@ -34,7 +35,7 @@ __interrupt void Cla1Task1 ( void )
 //        if(prev_flag != cpu1_ready_flag)
 //        {
 //            prev_flag       = cpu1_ready_flag;
-            crccheck        = true;
+//            crccheck        = true;
             cla_new_flag    = false;
 
             HWREG(GPIODATA_BASE + GPIO_O_GPCCLEAR) = 0x100; //MST_SPI_CS_CLEAR; //Clear CS
@@ -105,36 +106,38 @@ __interrupt void Cla1Task1 ( void )
 
 /**************************CRC PROTECTION************************************/
 
-            for(i = 0; i < 2; i++)
-            {
-                com[0]  = msg[i].byte_8.byte_3;
-                com[1]  = msg[i].byte_8.byte_2;
-
-                uint32_t    crc;
-                int8_t      j = 0, bit = 0;
-
-                crc = 0xC4;
-                for(j = 0; j < 2; j++)
-                {
-                    crc ^= com[j];
-                    for(bit = 0; bit < 8; bit++)
-                    {
-                        if ( (crc & 0x80)!=0 )
-                        {
-                            crc <<= 1;
-                            crc ^= 0x1D;
-                        }
-                        else
-                        {
-                            crc <<= 1;
-                        }
-                    }
-                }
-                crc         = (crc^0xFF)&0xFF;
-                crccheck    = (msg[i].bit.crc == crc)   ? (true) : (false);
-                test[0]     = (crccheck && (i == 0))    ? (true) : (test[0]);
-                test[1]     = (crccheck && (i == 1))    ? (true) : (test[1]);
-            }
+            test[0]     = (as5047u_crc8check(msg[0]))   ? (true) : (test[0]);
+            test[1]     = (as5047u_crc8check(msg[1]))   ? (true) : (test[1]);
+//            for(i = 0; i < 2; i++)
+//            {
+//                com[0]  = msg[i].byte_8.byte_3;
+//                com[1]  = msg[i].byte_8.byte_2;
+//
+//                uint32_t    crc;
+//                int8_t      j = 0, bit = 0;
+//
+//                crc = 0xC4;
+//                for(j = 0; j < 2; j++)
+//                {
+//                    crc ^= com[j];
+//                    for(bit = 0; bit < 8; bit++)
+//                    {
+//                        if ( (crc & 0x80)!=0 )
+//                        {
+//                            crc <<= 1;
+//                            crc ^= 0x1D;
+//                        }
+//                        else
+//                        {
+//                            crc <<= 1;
+//                        }
+//                    }
+//                }
+//                crc         = (crc^0xFF)&0xFF;
+//                crccheck    = (msg[i].bit.crc == crc)   ? (true) : (false);
+//                test[0]     = (crccheck && (i == 0))    ? (true) : (test[0]);
+//                test[1]     = (crccheck && (i == 1))    ? (true) : (test[1]);
+//            }
 
             if(test[0])
             {
@@ -189,6 +192,33 @@ interrupt void Cla1Task7 ( void )
 interrupt void Cla1Task8 ( void )
 {
 
+}
+
+bool_t as5047u_crc8check(BitDataFrame32_u data)
+{
+    uint32_t    crc = 0xC4;
+    int8_t      i = 0, bit = 0;
+    uint8_t     com[2];
+
+    com[0]  = data.byte_8.byte_3;
+    com[1]  = data.byte_8.byte_2;
+
+    for(i = 0; i < 2; i++)
+    {
+        crc ^= com[i];
+        for(bit = 0; bit < 8; bit++)
+        {
+            if(crc & 0x80)
+            {
+                crc <<= 1;
+                crc  ^= 0x1D;
+            }
+            else
+                crc <<= 1;
+        }
+    }
+
+    return((data.bit.crc == (crc^0xFF)) ? (true) : (false));
 }
 
 //

@@ -10,7 +10,7 @@
 #include "main.h"
 #include "hal.h"
 #include "drv8353.h"
-#include "AS5047U.h"
+#include "as5047u.h"
 #include "ws2812b.h"
 #include "encoder.h"
 #include "foc.h"

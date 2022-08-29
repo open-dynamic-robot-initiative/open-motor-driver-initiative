@@ -13,7 +13,7 @@
 extern "C" {
 #endif
 
-#include "AS5047U.h"
+#include "as5047u.h"
 #include "hal.h"
 #include <stdint.h>
 
@@ -47,6 +47,7 @@ __interrupt void Cla1Task5();
 __interrupt void Cla1Task6();
 __interrupt void Cla1Task7();
 __interrupt void Cla1Task8();
+bool_t as5047u_crc8check(BitDataFrame32_u);
 
 //void initCLA(void);
 

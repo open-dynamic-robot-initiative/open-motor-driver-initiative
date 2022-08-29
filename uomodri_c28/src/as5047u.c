@@ -8,7 +8,7 @@
 #include "device.h"
 #endif
 
-#include "AS5047U.h"
+#include <as5047u.h>
 
 void AS5047UReset(as_enc_t* p_enc){
 
