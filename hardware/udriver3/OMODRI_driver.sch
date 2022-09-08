@@ -1,0 +1,1617 @@
+EESchema Schematic File Version 4
+EELAYER 30 0
+EELAYER END
+$Descr A3 16535 11693
+encoding utf-8
+Sheet 9 12
+Title "Open MOtor DRiver Initiative (OMODRI)"
+Date ""
+Rev "1.0"
+Comp "LAAS/CNRS"
+Comment1 ""
+Comment2 ""
+Comment3 ""
+Comment4 ""
+$EndDescr
+Wire Wire Line
+	4575 4600 4575 4650
+Text HLabel 5475 4550 0    50   Input ~ 0
+INHA
+Text HLabel 5475 4650 0    50   Input ~ 0
+INLA
+Text HLabel 5475 4800 0    50   Input ~ 0
+INHB
+Text HLabel 5475 4900 0    50   Input ~ 0
+INLB
+Text HLabel 5475 5050 0    50   Input ~ 0
+INHC
+Text HLabel 5475 5150 0    50   Input ~ 0
+INLC
+Text HLabel 5475 4400 0    50   Input ~ 0
+DRV_EN
+Text HLabel 4075 5350 0    50   Output ~ 0
+SOC
+Text HLabel 4075 5450 0    50   Output ~ 0
+SOB
+Text HLabel 4075 5550 0    50   Output ~ 0
+SOA
+$Comp
+L power:GND #PWR?
+U 1 1 5F3791D1
+P 6925 6200
+AR Path="/5F310311/5F3791D1" Ref="#PWR?"  Part="1" 
+AR Path="/5F3255E8/5F3791D1" Ref="#PWR?"  Part="1" 
+AR Path="/5F387075/5F3791D1" Ref="#PWR029"  Part="1" 
+AR Path="/5F5FCCBB/5F3791D1" Ref="#PWR0130"  Part="1" 
+F 0 "#PWR0130" H 6925 5950 50  0001 C CNN
+F 1 "GND" H 6930 6027 50  0000 C CNN
+F 2 "" H 6925 6200 50  0001 C CNN
+F 3 "" H 6925 6200 50  0001 C CNN
+	1    6925 6200
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	6825 6150 6925 6150
+Wire Wire Line
+	6925 6150 6925 6200
+Wire Wire Line
+	6825 6050 6925 6050
+Wire Wire Line
+	6925 6050 6925 6150
+Connection ~ 6925 6150
+Wire Wire Line
+	6825 5950 6925 5950
+Wire Wire Line
+	6925 5950 6925 6050
+Connection ~ 6925 6050
+Text HLabel 5475 5900 0    50   Input ~ 0
+SCLK
+Text HLabel 5475 5800 0    50   Input ~ 0
+SDI
+Text HLabel 5475 5700 0    50   Output ~ 0
+SDO
+Wire Wire Line
+	4875 5600 4875 5550
+Wire Wire Line
+	4525 5600 4525 5450
+Wire Wire Line
+	4875 5950 4875 5900
+Wire Wire Line
+	4525 5950 4525 5900
+Wire Wire Line
+	4175 5950 4175 5900
+Wire Wire Line
+	4075 5350 4175 5350
+Wire Wire Line
+	4175 5600 4175 5350
+Connection ~ 4175 5350
+Wire Wire Line
+	4875 5550 5025 5550
+Text Label 6925 3250 0    50   ~ 0
+GHA
+Wire Wire Line
+	6825 3400 7125 3400
+Wire Wire Line
+	6825 3550 7125 3550
+Wire Wire Line
+	6825 3850 7125 3850
+Wire Wire Line
+	6825 4000 7125 4000
+Wire Wire Line
+	6825 4150 7125 4150
+Wire Wire Line
+	6825 4450 7125 4450
+Wire Wire Line
+	6825 4600 7125 4600
+Wire Wire Line
+	6825 4750 7125 4750
+Wire Wire Line
+	6825 5050 7125 5050
+Wire Wire Line
+	6825 5150 7125 5150
+Wire Wire Line
+	6825 5250 7125 5250
+Text Label 6925 3400 0    50   ~ 0
+SHA
+Text Label 6925 3550 0    50   ~ 0
+GLA
+Text Label 6925 3850 0    50   ~ 0
+GHB
+Text Label 6925 4450 0    50   ~ 0
+GHC
+Text Label 6925 4000 0    50   ~ 0
+SHB
+Text Label 6925 4600 0    50   ~ 0
+SHC
+Text Label 6925 4150 0    50   ~ 0
+GLB
+Text Label 6925 4750 0    50   ~ 0
+GLC
+Text Label 6925 5050 0    50   ~ 0
+SPC
+Text Label 6925 5150 0    50   ~ 0
+SPB
+Text Label 6925 5250 0    50   ~ 0
+SPA
+Wire Wire Line
+	6825 5500 7125 5500
+Wire Wire Line
+	6825 5600 7125 5600
+Wire Wire Line
+	6825 5700 7125 5700
+Text Label 6925 5500 0    50   ~ 0
+SNC
+Text Label 6925 5600 0    50   ~ 0
+SNB
+Text Label 6925 5700 0    50   ~ 0
+SNA
+Wire Wire Line
+	5325 5350 5925 5350
+Wire Wire Line
+	5325 5450 5925 5450
+Wire Wire Line
+	5325 5550 5925 5550
+Wire Wire Line
+	5575 6150 5575 6350
+Wire Wire Line
+	5575 6750 5575 6650
+Wire Wire Line
+	5875 6350 5875 6150
+Wire Wire Line
+	5475 6150 5575 6150
+Connection ~ 5575 6150
+Connection ~ 5875 6150
+Wire Wire Line
+	5875 6150 5925 6150
+Wire Wire Line
+	5575 6150 5875 6150
+Wire Wire Line
+	5475 5700 5925 5700
+Wire Wire Line
+	5475 5800 5925 5800
+Wire Wire Line
+	5475 5900 5925 5900
+Wire Wire Line
+	5475 6000 5925 6000
+Wire Wire Line
+	5925 2950 5875 2950
+Wire Wire Line
+	6825 2950 6875 2950
+Wire Wire Line
+	6225 2550 5875 2550
+Wire Wire Line
+	6525 2550 6875 2550
+Wire Wire Line
+	6875 2550 6875 2950
+Wire Wire Line
+	5875 2550 5875 2950
+Text GLabel 6975 2950 2    50   Input ~ 0
+VPOWER
+Wire Wire Line
+	6975 2950 6875 2950
+Connection ~ 6875 2950
+Wire Wire Line
+	4175 3900 4175 3850
+$Comp
+L power:GND #PWR?
+U 1 1 5F37938F
+P 4175 3900
+AR Path="/5F310311/5F37938F" Ref="#PWR?"  Part="1" 
+AR Path="/5F3255E8/5F37938F" Ref="#PWR?"  Part="1" 
+AR Path="/5F387075/5F37938F" Ref="#PWR018"  Part="1" 
+AR Path="/5F5FCCBB/5F37938F" Ref="#PWR0119"  Part="1" 
+F 0 "#PWR0119" H 4175 3650 50  0001 C CNN
+F 1 "GND" H 4180 3727 50  0000 C CNN
+F 2 "" H 4175 3900 50  0001 C CNN
+F 3 "" H 4175 3900 50  0001 C CNN
+	1    4175 3900
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	4575 3900 4575 3850
+$Comp
+L power:GND #PWR?
+U 1 1 5F379399
+P 4575 3900
+AR Path="/5F310311/5F379399" Ref="#PWR?"  Part="1" 
+AR Path="/5F3255E8/5F379399" Ref="#PWR?"  Part="1" 
+AR Path="/5F387075/5F379399" Ref="#PWR019"  Part="1" 
+AR Path="/5F5FCCBB/5F379399" Ref="#PWR0120"  Part="1" 
+F 0 "#PWR0120" H 4575 3650 50  0001 C CNN
+F 1 "GND" H 4580 3727 50  0000 C CNN
+F 2 "" H 4575 3900 50  0001 C CNN
+F 3 "" H 4575 3900 50  0001 C CNN
+	1    4575 3900
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	5925 3250 5025 3250
+Wire Wire Line
+	5025 3250 5025 3550
+Wire Wire Line
+	5025 3900 5025 3850
+$Comp
+L power:GND #PWR?
+U 1 1 5F3793A2
+P 5025 3900
+AR Path="/5F310311/5F3793A2" Ref="#PWR?"  Part="1" 
+AR Path="/5F3255E8/5F3793A2" Ref="#PWR?"  Part="1" 
+AR Path="/5F387075/5F3793A2" Ref="#PWR020"  Part="1" 
+AR Path="/5F5FCCBB/5F3793A2" Ref="#PWR0121"  Part="1" 
+F 0 "#PWR0121" H 5025 3650 50  0001 C CNN
+F 1 "GND" H 5030 3727 50  0000 C CNN
+F 2 "" H 5025 3900 50  0001 C CNN
+F 3 "" H 5025 3900 50  0001 C CNN
+	1    5025 3900
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR?
+U 1 1 5F3793AA
+P 5375 3900
+AR Path="/5F310311/5F3793AA" Ref="#PWR?"  Part="1" 
+AR Path="/5F3255E8/5F3793AA" Ref="#PWR?"  Part="1" 
+AR Path="/5F387075/5F3793AA" Ref="#PWR021"  Part="1" 
+AR Path="/5F5FCCBB/5F3793AA" Ref="#PWR0122"  Part="1" 
+F 0 "#PWR0122" H 5375 3650 50  0001 C CNN
+F 1 "GND" H 5380 3727 50  0000 C CNN
+F 2 "" H 5375 3900 50  0001 C CNN
+F 3 "" H 5375 3900 50  0001 C CNN
+	1    5375 3900
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	5375 3900 5375 3850
+Wire Wire Line
+	4475 4200 4575 4200
+Wire Wire Line
+	4575 4300 4575 4200
+Connection ~ 4575 4200
+Text Label 5525 3250 0    50   ~ 0
+VGLS
+Text Label 5525 3400 0    50   ~ 0
+DVDD
+Text GLabel 4075 3100 0    50   Input ~ 0
+VPOWER
+Wire Wire Line
+	5475 5150 5925 5150
+Wire Wire Line
+	5475 5050 5925 5050
+Wire Wire Line
+	5475 4900 5925 4900
+Wire Wire Line
+	5475 4800 5925 4800
+Wire Wire Line
+	5475 4650 5925 4650
+Wire Wire Line
+	5475 4550 5925 4550
+Text HLabel 5475 6150 0    50   Output ~ 0
+~nFAULT
+Text HLabel 5475 6000 0    50   Input ~ 0
+~nSCS
+Wire Wire Line
+	5875 6650 5875 7050
+Wire Wire Line
+	5575 7050 5875 7050
+Connection ~ 5575 7050
+Wire Wire Line
+	5425 7050 5575 7050
+Text GLabel 5425 7050 0    50   Input ~ 0
+VDD_3V3
+Wire Wire Line
+	6825 3250 7125 3250
+Connection ~ 5875 2550
+Wire Wire Line
+	5925 4400 5475 4400
+Wire Wire Line
+	4575 4200 5925 4200
+Text Label 5200 7875 0    50   ~ 0
+MOTOR_CH1
+Wire Wire Line
+	5200 7875 5650 7875
+Text Label 5200 7975 0    50   ~ 0
+MOTOR_CH2
+Wire Wire Line
+	5200 7975 5650 7975
+Text Label 5200 8075 0    50   ~ 0
+MOTOR_CH3
+Wire Wire Line
+	5200 8075 5650 8075
+Text GLabel 4475 4200 0    50   Input ~ 0
+REF_3V0_BUF
+$Comp
+L Device:C C?
+U 1 1 61FF4ECC
+P 4575 4450
+AR Path="/5F3A3F16/61FF4ECC" Ref="C?"  Part="1" 
+AR Path="/5F3255E8/61FF4ECC" Ref="C?"  Part="1" 
+AR Path="/5F387075/61FF4ECC" Ref="C19"  Part="1" 
+AR Path="/5F5FCCBB/61FF4ECC" Ref="C106"  Part="1" 
+F 0 "C106" H 4690 4496 50  0000 L CNN
+F 1 "100nF" H 4690 4405 50  0000 L CNN
+F 2 "Capacitor_SMD:C_0201_0603Metric" H 4613 4300 50  0001 C CNN
+F 3 "https://www.murata.com/en-eu/products/productdetail?partno=GRM033C71A104KE14%23" H 4575 4450 50  0001 C CNN
+F 4 "GRM033C71A104KE14D" H 4575 4450 50  0001 C CNN "Part No"
+F 5 "10V" H 4575 4450 50  0001 C CNN "Rated Voltage"
+F 6 "2990681" H 4575 4450 50  0001 C CNN "Farnell"
+F 7 "185-1751" H 4575 4450 50  0001 C CNN "RS"
+F 8 "81-GRM033C71A104KE4D" H 4575 4450 50  0001 C CNN "Mouser"
+F 9 "490-14450-1-ND" H 4575 4450 50  0001 C CNN "DigiKey"
+	1    4575 4450
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:C C?
+U 1 1 61FE8A24
+P 4175 3700
+AR Path="/5F3A3F16/61FE8A24" Ref="C?"  Part="1" 
+AR Path="/5F3255E8/61FE8A24" Ref="C?"  Part="1" 
+AR Path="/5F387075/61FE8A24" Ref="C12"  Part="1" 
+AR Path="/5F5FCCBB/61FE8A24" Ref="C99"  Part="1" 
+F 0 "C99" H 4290 3746 50  0000 L CNN
+F 1 "10uF" H 4290 3655 50  0000 L CNN
+F 2 "Capacitor_SMD:C_1210_3225Metric" H 4213 3550 50  0001 C CNN
+F 3 "https://product.tdk.com/info/en/catalog/datasheets/mlcc_commercial_general_en.pdf" H 4175 3700 50  0001 C CNN
+F 4 "" H 4175 3700 50  0001 C CNN "RS"
+F 5 "3416259" H 4175 3700 50  0001 C CNN "Farnell"
+F 6 "810-C3225X7R1N106K25" H 4175 3700 50  0001 C CNN "Mouser"
+F 7 "445-C3225X7R1N106K250ACCT-ND " H 4175 3700 50  0001 C CNN "DigiKey"
+F 8 "75V" H 4175 3700 50  0001 C CNN "Rated Voltage"
+F 9 "C3225X7R1N106K250AC" H 4175 3700 50  0001 C CNN "Part No"
+	1    4175 3700
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:C C?
+U 1 1 61FE8A18
+P 4575 3700
+AR Path="/5F3A3F16/61FE8A18" Ref="C?"  Part="1" 
+AR Path="/5F3255E8/61FE8A18" Ref="C?"  Part="1" 
+AR Path="/5F387075/61FE8A18" Ref="C13"  Part="1" 
+AR Path="/5F5FCCBB/61FE8A18" Ref="C100"  Part="1" 
+F 0 "C100" H 4690 3746 50  0000 L CNN
+F 1 "100nF" H 4690 3655 50  0000 L CNN
+F 2 "Capacitor_SMD:C_0805_2012Metric" H 4613 3550 50  0001 C CNN
+F 3 "https://www.murata.com/en-eu/products/productdetail?partno=GRM188R72A104KA35%23" H 4575 3700 50  0001 C CNN
+F 4 "" H 4575 3700 50  0001 C CNN "RS"
+F 5 "1828921" H 4575 3700 50  0001 C CNN "Farnell"
+F 6 "81-GRM188R72A104KA35" H 4575 3700 50  0001 C CNN "Mouser"
+F 7 "490-3285-1-ND" H 4575 3700 50  0001 C CNN "DigiKey"
+F 8 "100V" H 4575 3700 50  0001 C CNN "Rated Voltage"
+F 9 "GRM188R72A104KA35D" H 4575 3700 50  0001 C CNN "Part No"
+	1    4575 3700
+	1    0    0    -1  
+$EndComp
+$Comp
+L omodri_lib:DRV8353S U?
+U 1 1 5F336800
+P 6375 4550
+AR Path="/5F3255E8/5F336800" Ref="U?"  Part="1" 
+AR Path="/5F387075/5F336800" Ref="U1"  Part="1" 
+AR Path="/5F5FCCBB/5F336800" Ref="U16"  Part="1" 
+F 0 "U16" H 6075 6400 50  0000 C CNN
+F 1 "DRV8353S" H 6225 6300 50  0000 C CNN
+F 2 "Package_DFN_QFN:QFN-40-1EP_6x6mm_P0.5mm_EP4.6x4.6mm" H 6375 4550 50  0001 C CNN
+F 3 "https://www.ti.com/lit/ds/symlink/drv8353.pdf" H 6375 4550 50  0001 C CNN
+F 4 "296-DRV8353SRTATCT-ND" H 6375 4550 50  0001 C CNN "DigiKey"
+F 5 "595-DRV8353SRTAT" H 6375 4550 50  0001 C CNN "Mouser"
+F 6 "DRV8353SRTAT" H 6375 4550 50  0001 C CNN "Part No"
+	1    6375 4550
+	1    0    0    -1  
+$EndComp
+$Comp
+L Connector:TestPoint TP?
+U 1 1 5F3793F1
+P 5875 2550
+AR Path="/5F310311/5F3793F1" Ref="TP?"  Part="1" 
+AR Path="/5F3255E8/5F3793F1" Ref="TP?"  Part="1" 
+AR Path="/5F387075/5F3793F1" Ref="TP8"  Part="1" 
+AR Path="/5F5FCCBB/5F3793F1" Ref="TP23"  Part="1" 
+F 0 "TP23" H 5925 2750 50  0000 L CNN
+F 1 "TestPoint" H 5925 2650 50  0000 L CNN
+F 2 "TestPoint:TestPoint_Pad_D1.0mm" H 6075 2550 50  0001 C CNN
+F 3 "~" H 6075 2550 50  0001 C CNN
+	1    5875 2550
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:C C?
+U 1 1 5F3793B1
+P 5725 3700
+AR Path="/5F310311/5F3793B1" Ref="C?"  Part="1" 
+AR Path="/5F3255E8/5F3793B1" Ref="C?"  Part="1" 
+AR Path="/5F387075/5F3793B1" Ref="C16"  Part="1" 
+AR Path="/5F5FCCBB/5F3793B1" Ref="C103"  Part="1" 
+F 0 "C103" H 5840 3746 50  0000 L CNN
+F 1 "47nF" H 5840 3655 50  0000 L CNN
+F 2 "Capacitor_SMD:C_0603_1608Metric" H 5763 3550 50  0001 C CNN
+F 3 "https://product.tdk.com/info/en/catalog/datasheets/mlcc_commercial_midvoltage_en.pdf" H 5725 3700 50  0001 C CNN
+F 4 "" H 5725 3700 50  0001 C CNN "Rated voltage"
+F 5 "445-6032-1-ND" H 5725 3700 50  0001 C CNN "DigiKey"
+F 6 "2906791" H 5725 3700 50  0001 C CNN "Farnell"
+F 7 "810-C1608X7S2A473K" H 5725 3700 50  0001 C CNN "Mouser"
+F 8 "C1608X7S2A473K080AB" H 5725 3700 50  0001 C CNN "Part No"
+F 9 "100V" H 5725 3700 50  0001 C CNN "Rated Voltage"
+	1    5725 3700
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:LED D?
+U 1 1 5F379368
+P 5575 6900
+AR Path="/5F310311/5F379368" Ref="D?"  Part="1" 
+AR Path="/5F3255E8/5F379368" Ref="D?"  Part="1" 
+AR Path="/5F387075/5F379368" Ref="D2"  Part="1" 
+AR Path="/5F5FCCBB/5F379368" Ref="D5"  Part="1" 
+F 0 "D5" V 5522 6980 50  0000 L CNN
+F 1 "LED RED" V 5613 6980 50  0000 L CNN
+F 2 "LED_SMD:LED_0402_1005Metric" H 5575 6900 50  0001 C CNN
+F 3 "https://docs.broadcom.com/doc/AV02-0602EN" H 5575 6900 50  0001 C CNN
+F 4 "516-3060-1-ND" H 5575 6900 50  0001 C CNN "DigiKey"
+F 5 "630-HSMC-C280" H 5575 6900 50  0001 C CNN "Mouser"
+F 6 "2494321" H 5575 6900 50  0001 C CNN "Farnell"
+F 7 "HSMC-C280" H 5575 6900 50  0001 C CNN "Part No"
+	1    5575 6900
+	0    1    1    0   
+$EndComp
+$Comp
+L Device:R R?
+U 1 1 5F37935C
+P 5875 6500
+AR Path="/5F310311/5F37935C" Ref="R?"  Part="1" 
+AR Path="/5F3255E8/5F37935C" Ref="R?"  Part="1" 
+AR Path="/5F387075/5F37935C" Ref="R15"  Part="1" 
+AR Path="/5F5FCCBB/5F37935C" Ref="R60"  Part="1" 
+F 0 "R60" H 5945 6546 50  0000 L CNN
+F 1 "10k" H 5945 6455 50  0000 L CNN
+F 2 "Resistor_SMD:R_0201_0603Metric" V 5805 6500 50  0001 C CNN
+F 3 "https://industrial.panasonic.com/cdbs/www-data/pdf/RDA0000/AOA0000C304.pdf" H 5875 6500 50  0001 C CNN
+F 4 "P122414CT-ND" H 5875 6500 50  0001 C CNN "DigiKey"
+F 5 "2302362" H 5875 6500 50  0001 C CNN "Farnell"
+F 6 "667-ERJ-1GNF1002C" H 5875 6500 50  0001 C CNN "Mouser"
+F 7 "ERJ-1GNF1002C" H 5875 6500 50  0001 C CNN "Part No"
+F 8 "176-3597" H 5875 6500 50  0001 C CNN "RS"
+	1    5875 6500
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:C C?
+U 1 1 5F3791A8
+P 6375 2550
+AR Path="/5F310311/5F3791A8" Ref="C?"  Part="1" 
+AR Path="/5F3255E8/5F3791A8" Ref="C?"  Part="1" 
+AR Path="/5F387075/5F3791A8" Ref="C11"  Part="1" 
+AR Path="/5F5FCCBB/5F3791A8" Ref="C98"  Part="1" 
+F 0 "C98" V 6125 2500 50  0000 L CNN
+F 1 "1uF" V 6225 2500 50  0000 L CNN
+F 2 "Capacitor_SMD:C_0402_1005Metric" H 6413 2400 50  0001 C CNN
+F 3 "https://product.tdk.com/info/en/catalog/datasheets/mlcc_commercial_soft_en.pdf" H 6375 2550 50  0001 C CNN
+F 4 "445-175218-1-ND" H 6375 2550 50  0001 C CNN "DigiKey"
+F 5 "3416060" H 6375 2550 50  0001 C CNN "Farnell"
+F 6 "810-C1005X5R1V105KE" H 6375 2550 50  0001 C CNN "Mouser"
+F 7 "C1005X5R1V105K050BE" H 6375 2550 50  0001 C CNN "Part No"
+F 8 "35V" H 6375 2550 50  0001 C CNN "Rated Voltage"
+	1    6375 2550
+	0    1    1    0   
+$EndComp
+$Comp
+L Device:C C?
+U 1 1 61FFEE3E
+P 5375 3700
+AR Path="/5F3A3F16/61FFEE3E" Ref="C?"  Part="1" 
+AR Path="/5F3255E8/61FFEE3E" Ref="C?"  Part="1" 
+AR Path="/5F387075/61FFEE3E" Ref="C15"  Part="1" 
+AR Path="/5F5FCCBB/61FFEE3E" Ref="C102"  Part="1" 
+F 0 "C102" H 5490 3746 50  0000 L CNN
+F 1 "1uF" H 5490 3655 50  0000 L CNN
+F 2 "Capacitor_SMD:C_0201_0603Metric" H 5413 3550 50  0001 C CNN
+F 3 "https://www.murata.com/en-eu/products/productdetail?partno=GRM033C81A105ME05%23" H 5375 3700 50  0001 C CNN
+F 4 "490-13219-1-ND" H 5375 3700 50  0001 C CNN "DigiKey"
+F 5 "3238032" H 5375 3700 50  0001 C CNN "Farnell"
+F 6 "81-GRM033C81A105ME5D" H 5375 3700 50  0001 C CNN "Mouser"
+F 7 "GRM033C81A105ME05D" H 5375 3700 50  0001 C CNN "Part No"
+F 8 "" H 5375 3700 50  0001 C CNN "RS"
+F 9 "10V" H 5375 3700 50  0001 C CNN "Rated Voltage"
+	1    5375 3700
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:C C?
+U 1 1 5F671894
+P 5025 3700
+AR Path="/5F310311/5F671894" Ref="C?"  Part="1" 
+AR Path="/5F3255E8/5F671894" Ref="C?"  Part="1" 
+AR Path="/5F387075/5F671894" Ref="C14"  Part="1" 
+AR Path="/5F5FCCBB/5F671894" Ref="C101"  Part="1" 
+F 0 "C101" H 4825 3650 50  0000 L CNN
+F 1 "1uF" H 4775 3750 50  0000 L CNN
+F 2 "Capacitor_SMD:C_0402_1005Metric" H 5063 3550 50  0001 C CNN
+F 3 "https://product.tdk.com/info/en/catalog/datasheets/mlcc_commercial_soft_en.pdf" H 5025 3700 50  0001 C CNN
+F 4 "445-175218-1-ND" H 5025 3700 50  0001 C CNN "DigiKey"
+F 5 "3416060" H 5025 3700 50  0001 C CNN "Farnell"
+F 6 "810-C1005X5R1V105KE" H 5025 3700 50  0001 C CNN "Mouser"
+F 7 "C1005X5R1V105K050BE" H 5025 3700 50  0001 C CNN "Part No"
+F 8 "35V" H 5025 3700 50  0001 C CNN "Rated Voltage"
+	1    5025 3700
+	-1   0    0    1   
+$EndComp
+Text GLabel 9125 2350 2    50   Input ~ 0
+VPOWER
+$Comp
+L power:GND #PWR?
+U 1 1 60D6D7BD
+P 9025 4000
+AR Path="/5F310311/60D6D7BD" Ref="#PWR?"  Part="1" 
+AR Path="/5F3255E8/60D6D7BD" Ref="#PWR?"  Part="1" 
+AR Path="/5F387075/60D6D7BD" Ref="#PWR022"  Part="1" 
+AR Path="/5F5FCCBB/60D6D7BD" Ref="#PWR0123"  Part="1" 
+F 0 "#PWR0123" H 9025 3750 50  0001 C CNN
+F 1 "GND" H 9030 3827 50  0000 C CNN
+F 2 "" H 9025 4000 50  0001 C CNN
+F 3 "" H 9025 4000 50  0001 C CNN
+	1    9025 4000
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	9025 3950 9025 4000
+Wire Wire Line
+	7525 3100 7875 3100
+Wire Wire Line
+	7525 2500 7875 2500
+Text Label 7625 2500 0    50   ~ 0
+GHA
+Text Label 7625 2800 0    50   ~ 0
+SHA
+Text Label 7625 3100 0    50   ~ 0
+GLA
+Text Label 8525 3600 0    50   ~ 0
+SPA
+Text Label 8525 3900 0    50   ~ 0
+SNA
+Wire Wire Line
+	8375 3600 8875 3600
+Wire Wire Line
+	8875 3600 8875 3650
+Wire Wire Line
+	8375 3900 8875 3900
+Wire Wire Line
+	8875 3900 8875 3850
+$Comp
+L power:GND #PWR?
+U 1 1 60D6D7D3
+P 9375 4000
+AR Path="/5F310311/60D6D7D3" Ref="#PWR?"  Part="1" 
+AR Path="/5F3255E8/60D6D7D3" Ref="#PWR?"  Part="1" 
+AR Path="/5F387075/60D6D7D3" Ref="#PWR023"  Part="1" 
+AR Path="/5F5FCCBB/60D6D7D3" Ref="#PWR0124"  Part="1" 
+F 0 "#PWR0124" H 9375 3750 50  0001 C CNN
+F 1 "GND" H 9380 3827 50  0000 C CNN
+F 2 "" H 9375 4000 50  0001 C CNN
+F 3 "" H 9375 4000 50  0001 C CNN
+	1    9375 4000
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	9375 4000 9375 3900
+$Comp
+L power:GND #PWR?
+U 1 1 60D6D7DA
+P 9775 4000
+AR Path="/5F310311/60D6D7DA" Ref="#PWR?"  Part="1" 
+AR Path="/5F3255E8/60D6D7DA" Ref="#PWR?"  Part="1" 
+AR Path="/5F387075/60D6D7DA" Ref="#PWR024"  Part="1" 
+AR Path="/5F5FCCBB/60D6D7DA" Ref="#PWR0125"  Part="1" 
+F 0 "#PWR0125" H 9775 3750 50  0001 C CNN
+F 1 "GND" H 9780 3827 50  0000 C CNN
+F 2 "" H 9775 4000 50  0001 C CNN
+F 3 "" H 9775 4000 50  0001 C CNN
+	1    9775 4000
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	9775 4000 9775 3950
+Text HLabel 9875 3450 2    50   Output ~ 0
+VSENSA
+Wire Wire Line
+	9375 3050 9375 2800
+Wire Wire Line
+	9375 3350 9375 3450
+Connection ~ 9375 3450
+Wire Wire Line
+	9375 3450 9375 3600
+Wire Wire Line
+	9375 3450 9775 3450
+Connection ~ 9775 3450
+Wire Wire Line
+	9775 3450 9875 3450
+Wire Wire Line
+	9775 3450 9775 3650
+Wire Wire Line
+	9025 2800 9375 2800
+Text Label 7625 4700 0    50   ~ 0
+GHB
+Text Label 7625 5000 0    50   ~ 0
+SHB
+Text Label 7625 5300 0    50   ~ 0
+GLB
+Text Label 8525 5800 0    50   ~ 0
+SPB
+Text Label 8525 6100 0    50   ~ 0
+SNB
+Text HLabel 9875 5650 2    50   Output ~ 0
+VSENSB
+Text Label 7625 6900 0    50   ~ 0
+GHC
+Text Label 7625 7200 0    50   ~ 0
+SHC
+Text Label 7625 7500 0    50   ~ 0
+GLC
+Text Label 8525 8000 0    50   ~ 0
+SPC
+Text Label 8525 8300 0    50   ~ 0
+SNC
+Text HLabel 9875 7850 2    50   Output ~ 0
+VSENSC
+Text Label 9025 2800 0    50   ~ 0
+MOTOR_CH1
+Text Label 9025 5000 0    50   ~ 0
+MOTOR_CH2
+Text Label 9025 7200 0    50   ~ 0
+MOTOR_CH3
+$Comp
+L Connector:TestPoint TP?
+U 1 1 60D6D8E5
+P 9775 3450
+AR Path="/5F310311/60D6D8E5" Ref="TP?"  Part="1" 
+AR Path="/5F3255E8/60D6D8E5" Ref="TP?"  Part="1" 
+AR Path="/5F387075/60D6D8E5" Ref="TP10"  Part="1" 
+AR Path="/5F5FCCBB/60D6D8E5" Ref="TP25"  Part="1" 
+F 0 "TP25" H 9725 3750 50  0000 L CNN
+F 1 "TestPoint" H 9725 3650 50  0000 L CNN
+F 2 "TestPoint:TestPoint_Pad_D1.0mm" H 9975 3450 50  0001 C CNN
+F 3 "~" H 9975 3450 50  0001 C CNN
+	1    9775 3450
+	1    0    0    -1  
+$EndComp
+$Comp
+L Connector:TestPoint TP?
+U 1 1 60D6D8EB
+P 7525 3100
+AR Path="/5F310311/60D6D8EB" Ref="TP?"  Part="1" 
+AR Path="/5F3255E8/60D6D8EB" Ref="TP?"  Part="1" 
+AR Path="/5F387075/60D6D8EB" Ref="TP9"  Part="1" 
+AR Path="/5F5FCCBB/60D6D8EB" Ref="TP24"  Part="1" 
+F 0 "TP24" H 7575 3350 50  0000 L CNN
+F 1 "TestPoint" H 7575 3250 50  0000 L CNN
+F 2 "TestPoint:TestPoint_Pad_D1.0mm" H 7725 3100 50  0001 C CNN
+F 3 "~" H 7725 3100 50  0001 C CNN
+	1    7525 3100
+	1    0    0    -1  
+$EndComp
+$Comp
+L Connector:TestPoint TP?
+U 1 1 60D6D8F7
+P 7525 2500
+AR Path="/5F310311/60D6D8F7" Ref="TP?"  Part="1" 
+AR Path="/5F3255E8/60D6D8F7" Ref="TP?"  Part="1" 
+AR Path="/5F387075/60D6D8F7" Ref="TP7"  Part="1" 
+AR Path="/5F5FCCBB/60D6D8F7" Ref="TP22"  Part="1" 
+F 0 "TP22" H 7575 2750 50  0000 L CNN
+F 1 "TestPoint" H 7575 2650 50  0000 L CNN
+F 2 "TestPoint:TestPoint_Pad_D1.0mm" H 7725 2500 50  0001 C CNN
+F 3 "~" H 7725 2500 50  0001 C CNN
+	1    7525 2500
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:C C?
+U 1 1 60D6D976
+P 9775 3800
+AR Path="/5F310311/60D6D976" Ref="C?"  Part="1" 
+AR Path="/5F3255E8/60D6D976" Ref="C?"  Part="1" 
+AR Path="/5F387075/60D6D976" Ref="C18"  Part="1" 
+AR Path="/5F5FCCBB/60D6D976" Ref="C105"  Part="1" 
+F 0 "C105" H 9875 3900 50  0000 L CNN
+F 1 "10nF" H 9875 3800 50  0000 L CNN
+F 2 "Capacitor_SMD:C_0201_0603Metric" H 9813 3650 50  0001 C CNN
+F 3 "https://www.murata.com/en-eu/products/productdetail?partno=GRM033R71E103KE14%23" H 9775 3800 50  0001 C CNN
+F 4 "" H 9775 3800 50  0001 C CNN "Rated voltage"
+F 5 "490-14454-1-ND" H 9775 3800 50  0001 C CNN "DigiKey"
+F 6 "2990696" H 9775 3800 50  0001 C CNN "Farnell"
+F 7 "81-GRM033R71E103KE4D" H 9775 3800 50  0001 C CNN "Mouser"
+F 8 "GRM033R71E103KE14D" H 9775 3800 50  0001 C CNN "Part No"
+F 9 "185-2059" H 9775 3800 50  0001 C CNN "RS"
+F 10 "25V" H 9775 3800 50  0001 C CNN "Rated Voltage"
+	1    9775 3800
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:R R?
+U 1 1 60D6D97C
+P 9375 3750
+AR Path="/5F310311/60D6D97C" Ref="R?"  Part="1" 
+AR Path="/5F3255E8/60D6D97C" Ref="R?"  Part="1" 
+AR Path="/5F387075/60D6D97C" Ref="R7"  Part="1" 
+AR Path="/5F5FCCBB/60D6D97C" Ref="R52"  Part="1" 
+F 0 "R52" H 9445 3796 50  0000 L CNN
+F 1 "5.1k" H 9445 3705 50  0000 L CNN
+F 2 "Resistor_SMD:R_0402_1005Metric" V 9305 3750 50  0001 C CNN
+F 3 "https://industrial.panasonic.com/cdbs/www-data/pdf/RDA0000/AOA0000C304.pdf" H 9375 3750 50  0001 C CNN
+F 4 "P5.10KLCT-ND" H 9375 3750 50  0001 C CNN "DigiKey"
+F 5 "2302709" H 9375 3750 50  0001 C CNN "Farnell"
+F 6 "667-ERJ-2RKF5101X" H 9375 3750 50  0001 C CNN "Mouser"
+F 7 "ERJ-2RKF5101X" H 9375 3750 50  0001 C CNN "Part No"
+F 8 "732-5536" H 9375 3750 50  0001 C CNN "RS"
+F 9 "50" H 9375 3750 50  0001 C CNN "Rated Voltage"
+	1    9375 3750
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:R R?
+U 1 1 60D6D982
+P 9375 3200
+AR Path="/5F310311/60D6D982" Ref="R?"  Part="1" 
+AR Path="/5F3255E8/60D6D982" Ref="R?"  Part="1" 
+AR Path="/5F387075/60D6D982" Ref="R5"  Part="1" 
+AR Path="/5F5FCCBB/60D6D982" Ref="R50"  Part="1" 
+F 0 "R50" H 9445 3246 50  0000 L CNN
+F 1 "100k" H 9445 3155 50  0000 L CNN
+F 2 "Resistor_SMD:R_0402_1005Metric" V 9305 3200 50  0001 C CNN
+F 3 "https://industrial.panasonic.com/cdbs/www-data/pdf/RDA0000/AOA0000C304.pdf" H 9375 3200 50  0001 C CNN
+F 4 "P100KLCT-ND" H 9375 3200 50  0001 C CNN "DigiKey"
+F 5 "2302839" H 9375 3200 50  0001 C CNN "Farnell"
+F 6 "667-ERJ-2RKF1003X" H 9375 3200 50  0001 C CNN "Mouser"
+F 7 "ERJ-2RKF1003X" H 9375 3200 50  0001 C CNN "Part No"
+F 8 "50" H 9375 3200 50  0001 C CNN "Rated Voltage"
+F 9 "732-5255" H 9375 3200 50  0001 C CNN "RS"
+	1    9375 3200
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:R_Shunt R?
+U 1 1 60D6D98D
+P 9025 3750
+AR Path="/5F310311/60D6D98D" Ref="R?"  Part="1" 
+AR Path="/5F3255E8/60D6D98D" Ref="R?"  Part="1" 
+AR Path="/5F387075/60D6D98D" Ref="R6"  Part="1" 
+AR Path="/5F5FCCBB/60D6D98D" Ref="R51"  Part="1" 
+F 0 "R51" H 8937 3704 50  0000 R CNN
+F 1 "0.005" H 8937 3795 50  0000 R CNN
+F 2 "udriver3:FC4L64" V 8955 3750 50  0001 C CNN
+F 3 "https://www.ohmite.com/assets/docs/res_fc4l.pdf?r=false" H 9025 3750 50  0001 C CNN
+F 4 "FC4L64R005FERCT-ND" H 9025 3750 50  0001 C CNN "DigiKey"
+F 5 "2363991" H 9025 3750 50  0001 C CNN "Farnell"
+F 6 "588-FC4L64R005FER" H 9025 3750 50  0001 C CNN "Mouser"
+F 7 "FC4L64R005FER" H 9025 3750 50  0001 C CNN "Part No"
+F 8 "126-0365" H 9025 3750 50  0001 C CNN "RS"
+	1    9025 3750
+	-1   0    0    1   
+$EndComp
+$Comp
+L Device:C C?
+U 1 1 60D6D999
+P 8375 3750
+AR Path="/5F310311/60D6D999" Ref="C?"  Part="1" 
+AR Path="/5F3255E8/60D6D999" Ref="C?"  Part="1" 
+AR Path="/5F387075/60D6D999" Ref="C17"  Part="1" 
+AR Path="/5F5FCCBB/60D6D999" Ref="C104"  Part="1" 
+F 0 "C104" H 8475 3850 50  0000 L CNN
+F 1 "1nF" H 8475 3750 50  0000 L CNN
+F 2 "Capacitor_SMD:C_0201_0603Metric" H 8413 3600 50  0001 C CNN
+F 3 "https://www.murata.com/en-eu/products/productdetail?partno=GRM033R71H102KA12%23" H 8375 3750 50  0001 C CNN
+F 4 "490-10682-1-ND" H 8375 3750 50  0001 C CNN "DigiKey"
+F 5 "2990701" H 8375 3750 50  0001 C CNN "Farnell"
+F 6 "81-GRM033R71H102KA2D" H 8375 3750 50  0001 C CNN "Mouser"
+F 7 "GRM033R71H102KA12D" H 8375 3750 50  0001 C CNN "Part No"
+F 8 "50V" H 8375 3750 50  0001 C CNN "Rated Voltage"
+F 9 "185-2113" H 8375 3750 50  0001 C CNN "RS"
+	1    8375 3750
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	7875 2800 7525 2800
+$Comp
+L power:GND #PWR?
+U 1 1 60EB7F8F
+P 9025 6200
+AR Path="/5F310311/60EB7F8F" Ref="#PWR?"  Part="1" 
+AR Path="/5F3255E8/60EB7F8F" Ref="#PWR?"  Part="1" 
+AR Path="/5F387075/60EB7F8F" Ref="#PWR030"  Part="1" 
+AR Path="/5F5FCCBB/60EB7F8F" Ref="#PWR0131"  Part="1" 
+F 0 "#PWR0131" H 9025 5950 50  0001 C CNN
+F 1 "GND" H 9030 6027 50  0000 C CNN
+F 2 "" H 9025 6200 50  0001 C CNN
+F 3 "" H 9025 6200 50  0001 C CNN
+	1    9025 6200
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	9025 6150 9025 6200
+Wire Wire Line
+	7525 5300 7875 5300
+Wire Wire Line
+	7525 4700 7875 4700
+Wire Wire Line
+	8375 5800 8875 5800
+Wire Wire Line
+	8875 5800 8875 5850
+Wire Wire Line
+	8375 6100 8875 6100
+Wire Wire Line
+	8875 6100 8875 6050
+$Comp
+L power:GND #PWR?
+U 1 1 60EB7FA1
+P 9375 6200
+AR Path="/5F310311/60EB7FA1" Ref="#PWR?"  Part="1" 
+AR Path="/5F3255E8/60EB7FA1" Ref="#PWR?"  Part="1" 
+AR Path="/5F387075/60EB7FA1" Ref="#PWR031"  Part="1" 
+AR Path="/5F5FCCBB/60EB7FA1" Ref="#PWR0132"  Part="1" 
+F 0 "#PWR0132" H 9375 5950 50  0001 C CNN
+F 1 "GND" H 9380 6027 50  0000 C CNN
+F 2 "" H 9375 6200 50  0001 C CNN
+F 3 "" H 9375 6200 50  0001 C CNN
+	1    9375 6200
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	9375 6200 9375 6100
+$Comp
+L power:GND #PWR?
+U 1 1 60EB7FA8
+P 9775 6200
+AR Path="/5F310311/60EB7FA8" Ref="#PWR?"  Part="1" 
+AR Path="/5F3255E8/60EB7FA8" Ref="#PWR?"  Part="1" 
+AR Path="/5F387075/60EB7FA8" Ref="#PWR032"  Part="1" 
+AR Path="/5F5FCCBB/60EB7FA8" Ref="#PWR0133"  Part="1" 
+F 0 "#PWR0133" H 9775 5950 50  0001 C CNN
+F 1 "GND" H 9780 6027 50  0000 C CNN
+F 2 "" H 9775 6200 50  0001 C CNN
+F 3 "" H 9775 6200 50  0001 C CNN
+	1    9775 6200
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	9775 6200 9775 6150
+Wire Wire Line
+	9375 5250 9375 5000
+Wire Wire Line
+	9375 5550 9375 5650
+Connection ~ 9375 5650
+Wire Wire Line
+	9375 5650 9375 5800
+Wire Wire Line
+	9375 5650 9775 5650
+Connection ~ 9775 5650
+Wire Wire Line
+	9775 5650 9875 5650
+Wire Wire Line
+	9775 5650 9775 5850
+Wire Wire Line
+	9025 5000 9375 5000
+$Comp
+L Connector:TestPoint TP?
+U 1 1 60EB7FBD
+P 9775 5650
+AR Path="/5F310311/60EB7FBD" Ref="TP?"  Part="1" 
+AR Path="/5F3255E8/60EB7FBD" Ref="TP?"  Part="1" 
+AR Path="/5F387075/60EB7FBD" Ref="TP13"  Part="1" 
+AR Path="/5F5FCCBB/60EB7FBD" Ref="TP28"  Part="1" 
+F 0 "TP28" H 9725 5950 50  0000 L CNN
+F 1 "TestPoint" H 9725 5850 50  0000 L CNN
+F 2 "TestPoint:TestPoint_Pad_D1.0mm" H 9975 5650 50  0001 C CNN
+F 3 "~" H 9975 5650 50  0001 C CNN
+	1    9775 5650
+	1    0    0    -1  
+$EndComp
+$Comp
+L Connector:TestPoint TP?
+U 1 1 60EB7FC3
+P 7525 5300
+AR Path="/5F310311/60EB7FC3" Ref="TP?"  Part="1" 
+AR Path="/5F3255E8/60EB7FC3" Ref="TP?"  Part="1" 
+AR Path="/5F387075/60EB7FC3" Ref="TP12"  Part="1" 
+AR Path="/5F5FCCBB/60EB7FC3" Ref="TP27"  Part="1" 
+F 0 "TP27" H 7575 5550 50  0000 L CNN
+F 1 "TestPoint" H 7575 5450 50  0000 L CNN
+F 2 "TestPoint:TestPoint_Pad_D1.0mm" H 7725 5300 50  0001 C CNN
+F 3 "~" H 7725 5300 50  0001 C CNN
+	1    7525 5300
+	1    0    0    -1  
+$EndComp
+$Comp
+L Connector:TestPoint TP?
+U 1 1 60EB7FCF
+P 7525 4700
+AR Path="/5F310311/60EB7FCF" Ref="TP?"  Part="1" 
+AR Path="/5F3255E8/60EB7FCF" Ref="TP?"  Part="1" 
+AR Path="/5F387075/60EB7FCF" Ref="TP11"  Part="1" 
+AR Path="/5F5FCCBB/60EB7FCF" Ref="TP26"  Part="1" 
+F 0 "TP26" H 7575 4950 50  0000 L CNN
+F 1 "TestPoint" H 7575 4850 50  0000 L CNN
+F 2 "TestPoint:TestPoint_Pad_D1.0mm" H 7725 4700 50  0001 C CNN
+F 3 "~" H 7725 4700 50  0001 C CNN
+	1    7525 4700
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:C C?
+U 1 1 60EB7FDC
+P 9775 6000
+AR Path="/5F310311/60EB7FDC" Ref="C?"  Part="1" 
+AR Path="/5F3255E8/60EB7FDC" Ref="C?"  Part="1" 
+AR Path="/5F387075/60EB7FDC" Ref="C24"  Part="1" 
+AR Path="/5F5FCCBB/60EB7FDC" Ref="C111"  Part="1" 
+F 0 "C111" H 9875 6100 50  0000 L CNN
+F 1 "10nF" H 9875 6000 50  0000 L CNN
+F 2 "Capacitor_SMD:C_0201_0603Metric" H 9813 5850 50  0001 C CNN
+F 3 "https://www.murata.com/en-eu/products/productdetail?partno=GRM033R71E103KE14%23" H 9775 6000 50  0001 C CNN
+F 4 "" H 9775 6000 50  0001 C CNN "Rated voltage"
+F 5 "490-14454-1-ND" H 9775 6000 50  0001 C CNN "DigiKey"
+F 6 "2990696" H 9775 6000 50  0001 C CNN "Farnell"
+F 7 "81-GRM033R71E103KE4D" H 9775 6000 50  0001 C CNN "Mouser"
+F 8 "GRM033R71E103KE14D" H 9775 6000 50  0001 C CNN "Part No"
+F 9 "185-2059" H 9775 6000 50  0001 C CNN "RS"
+F 10 "25V" H 9775 6000 50  0001 C CNN "Rated Voltage"
+	1    9775 6000
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:C C?
+U 1 1 60EB7FFF
+P 8375 5950
+AR Path="/5F310311/60EB7FFF" Ref="C?"  Part="1" 
+AR Path="/5F3255E8/60EB7FFF" Ref="C?"  Part="1" 
+AR Path="/5F387075/60EB7FFF" Ref="C23"  Part="1" 
+AR Path="/5F5FCCBB/60EB7FFF" Ref="C110"  Part="1" 
+F 0 "C110" H 8475 6050 50  0000 L CNN
+F 1 "1nF" H 8475 5950 50  0000 L CNN
+F 2 "Capacitor_SMD:C_0201_0603Metric" H 8413 5800 50  0001 C CNN
+F 3 "https://www.murata.com/en-eu/products/productdetail?partno=GRM033R71H102KA12%23" H 8375 5950 50  0001 C CNN
+F 4 "490-10682-1-ND" H 8375 5950 50  0001 C CNN "DigiKey"
+F 5 "2990701" H 8375 5950 50  0001 C CNN "Farnell"
+F 6 "81-GRM033R71H102KA2D" H 8375 5950 50  0001 C CNN "Mouser"
+F 7 "GRM033R71H102KA12D" H 8375 5950 50  0001 C CNN "Part No"
+F 8 "50V" H 8375 5950 50  0001 C CNN "Rated Voltage"
+F 9 "185-2113" H 8375 5950 50  0001 C CNN "RS"
+	1    8375 5950
+	1    0    0    -1  
+$EndComp
+$Comp
+L omodri_lib:CSD88599Q5DC Q?
+U 1 1 60EB801B
+P 8475 5450
+AR Path="/5F3255E8/60EB801B" Ref="Q?"  Part="1" 
+AR Path="/5F387075/60EB801B" Ref="Q2"  Part="1" 
+AR Path="/5F5FCCBB/60EB801B" Ref="Q5"  Part="1" 
+F 0 "Q5" H 8125 5350 60  0000 C CNN
+F 1 "CSD88599Q5DC" H 8425 6500 60  0000 C CNN
+F 2 "udriver3:VSON_CLIP_22" H 8725 6600 60  0001 C CNN
+F 3 "https://www.ti.com/lit/ds/symlink/csd88599q5dc.pdf" H 8475 5450 60  0001 C CNN
+F 4 "296-48289-1-ND" H 8475 5450 50  0001 C CNN "DigiKey"
+F 5 "2766880" H 8475 5450 50  0001 C CNN "Farnell"
+F 6 "595-CSD88599Q5DC" H 8475 5450 50  0001 C CNN "Mouser"
+F 7 "CSD88599Q5DC" H 8475 5450 50  0001 C CNN "Part No"
+	1    8475 5450
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	7875 5000 7525 5000
+$Comp
+L power:GND #PWR?
+U 1 1 60ECD3E7
+P 9025 8400
+AR Path="/5F310311/60ECD3E7" Ref="#PWR?"  Part="1" 
+AR Path="/5F3255E8/60ECD3E7" Ref="#PWR?"  Part="1" 
+AR Path="/5F387075/60ECD3E7" Ref="#PWR033"  Part="1" 
+AR Path="/5F5FCCBB/60ECD3E7" Ref="#PWR0134"  Part="1" 
+F 0 "#PWR0134" H 9025 8150 50  0001 C CNN
+F 1 "GND" H 9030 8227 50  0000 C CNN
+F 2 "" H 9025 8400 50  0001 C CNN
+F 3 "" H 9025 8400 50  0001 C CNN
+	1    9025 8400
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	9025 8350 9025 8400
+Wire Wire Line
+	7525 7500 7875 7500
+Wire Wire Line
+	7525 6900 7875 6900
+Wire Wire Line
+	8375 8000 8875 8000
+Wire Wire Line
+	8875 8000 8875 8050
+Wire Wire Line
+	8375 8300 8875 8300
+Wire Wire Line
+	8875 8300 8875 8250
+$Comp
+L power:GND #PWR?
+U 1 1 60ECD3F9
+P 9375 8400
+AR Path="/5F310311/60ECD3F9" Ref="#PWR?"  Part="1" 
+AR Path="/5F3255E8/60ECD3F9" Ref="#PWR?"  Part="1" 
+AR Path="/5F387075/60ECD3F9" Ref="#PWR034"  Part="1" 
+AR Path="/5F5FCCBB/60ECD3F9" Ref="#PWR0135"  Part="1" 
+F 0 "#PWR0135" H 9375 8150 50  0001 C CNN
+F 1 "GND" H 9380 8227 50  0000 C CNN
+F 2 "" H 9375 8400 50  0001 C CNN
+F 3 "" H 9375 8400 50  0001 C CNN
+	1    9375 8400
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	9375 8400 9375 8300
+$Comp
+L power:GND #PWR?
+U 1 1 60ECD400
+P 9775 8400
+AR Path="/5F310311/60ECD400" Ref="#PWR?"  Part="1" 
+AR Path="/5F3255E8/60ECD400" Ref="#PWR?"  Part="1" 
+AR Path="/5F387075/60ECD400" Ref="#PWR035"  Part="1" 
+AR Path="/5F5FCCBB/60ECD400" Ref="#PWR0136"  Part="1" 
+F 0 "#PWR0136" H 9775 8150 50  0001 C CNN
+F 1 "GND" H 9780 8227 50  0000 C CNN
+F 2 "" H 9775 8400 50  0001 C CNN
+F 3 "" H 9775 8400 50  0001 C CNN
+	1    9775 8400
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	9775 8400 9775 8350
+Wire Wire Line
+	9375 7450 9375 7200
+Wire Wire Line
+	9375 7750 9375 7850
+Connection ~ 9375 7850
+Wire Wire Line
+	9375 7850 9375 8000
+Wire Wire Line
+	9375 7850 9775 7850
+Connection ~ 9775 7850
+Wire Wire Line
+	9775 7850 9875 7850
+Wire Wire Line
+	9775 7850 9775 8050
+Wire Wire Line
+	9025 7200 9375 7200
+$Comp
+L Connector:TestPoint TP?
+U 1 1 60ECD415
+P 9775 7850
+AR Path="/5F310311/60ECD415" Ref="TP?"  Part="1" 
+AR Path="/5F3255E8/60ECD415" Ref="TP?"  Part="1" 
+AR Path="/5F387075/60ECD415" Ref="TP16"  Part="1" 
+AR Path="/5F5FCCBB/60ECD415" Ref="TP31"  Part="1" 
+F 0 "TP31" H 9725 8150 50  0000 L CNN
+F 1 "TestPoint" H 9725 8050 50  0000 L CNN
+F 2 "TestPoint:TestPoint_Pad_D1.0mm" H 9975 7850 50  0001 C CNN
+F 3 "~" H 9975 7850 50  0001 C CNN
+	1    9775 7850
+	1    0    0    -1  
+$EndComp
+$Comp
+L Connector:TestPoint TP?
+U 1 1 60ECD41B
+P 7525 7500
+AR Path="/5F310311/60ECD41B" Ref="TP?"  Part="1" 
+AR Path="/5F3255E8/60ECD41B" Ref="TP?"  Part="1" 
+AR Path="/5F387075/60ECD41B" Ref="TP15"  Part="1" 
+AR Path="/5F5FCCBB/60ECD41B" Ref="TP30"  Part="1" 
+F 0 "TP30" H 7575 7750 50  0000 L CNN
+F 1 "TestPoint" H 7575 7650 50  0000 L CNN
+F 2 "TestPoint:TestPoint_Pad_D1.0mm" H 7725 7500 50  0001 C CNN
+F 3 "~" H 7725 7500 50  0001 C CNN
+	1    7525 7500
+	1    0    0    -1  
+$EndComp
+$Comp
+L Connector:TestPoint TP?
+U 1 1 60ECD427
+P 7525 6900
+AR Path="/5F310311/60ECD427" Ref="TP?"  Part="1" 
+AR Path="/5F3255E8/60ECD427" Ref="TP?"  Part="1" 
+AR Path="/5F387075/60ECD427" Ref="TP14"  Part="1" 
+AR Path="/5F5FCCBB/60ECD427" Ref="TP29"  Part="1" 
+F 0 "TP29" H 7575 7150 50  0000 L CNN
+F 1 "TestPoint" H 7575 7050 50  0000 L CNN
+F 2 "TestPoint:TestPoint_Pad_D1.0mm" H 7725 6900 50  0001 C CNN
+F 3 "~" H 7725 6900 50  0001 C CNN
+	1    7525 6900
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:C C?
+U 1 1 60ECD434
+P 9775 8200
+AR Path="/5F310311/60ECD434" Ref="C?"  Part="1" 
+AR Path="/5F3255E8/60ECD434" Ref="C?"  Part="1" 
+AR Path="/5F387075/60ECD434" Ref="C26"  Part="1" 
+AR Path="/5F5FCCBB/60ECD434" Ref="C113"  Part="1" 
+F 0 "C113" H 9875 8300 50  0000 L CNN
+F 1 "10nF" H 9875 8200 50  0000 L CNN
+F 2 "Capacitor_SMD:C_0201_0603Metric" H 9813 8050 50  0001 C CNN
+F 3 "https://www.murata.com/en-eu/products/productdetail?partno=GRM033R71E103KE14%23" H 9775 8200 50  0001 C CNN
+F 4 "" H 9775 8200 50  0001 C CNN "Rated voltage"
+F 5 "490-14454-1-ND" H 9775 8200 50  0001 C CNN "DigiKey"
+F 6 "2990696" H 9775 8200 50  0001 C CNN "Farnell"
+F 7 "81-GRM033R71E103KE4D" H 9775 8200 50  0001 C CNN "Mouser"
+F 8 "GRM033R71E103KE14D" H 9775 8200 50  0001 C CNN "Part No"
+F 9 "185-2059" H 9775 8200 50  0001 C CNN "RS"
+F 10 "25V" H 9775 8200 50  0001 C CNN "Rated Voltage"
+	1    9775 8200
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:C C?
+U 1 1 60ECD457
+P 8375 8150
+AR Path="/5F310311/60ECD457" Ref="C?"  Part="1" 
+AR Path="/5F3255E8/60ECD457" Ref="C?"  Part="1" 
+AR Path="/5F387075/60ECD457" Ref="C25"  Part="1" 
+AR Path="/5F5FCCBB/60ECD457" Ref="C112"  Part="1" 
+F 0 "C112" H 8475 8250 50  0000 L CNN
+F 1 "1nF" H 8475 8150 50  0000 L CNN
+F 2 "Capacitor_SMD:C_0201_0603Metric" H 8413 8000 50  0001 C CNN
+F 3 "https://www.murata.com/en-eu/products/productdetail?partno=GRM033R71H102KA12%23" H 8375 8150 50  0001 C CNN
+F 4 "490-10682-1-ND" H 8375 8150 50  0001 C CNN "DigiKey"
+F 5 "2990701" H 8375 8150 50  0001 C CNN "Farnell"
+F 6 "81-GRM033R71H102KA2D" H 8375 8150 50  0001 C CNN "Mouser"
+F 7 "GRM033R71H102KA12D" H 8375 8150 50  0001 C CNN "Part No"
+F 8 "50V" H 8375 8150 50  0001 C CNN "Rated Voltage"
+F 9 "185-2113" H 8375 8150 50  0001 C CNN "RS"
+	1    8375 8150
+	1    0    0    -1  
+$EndComp
+$Comp
+L omodri_lib:CSD88599Q5DC Q?
+U 1 1 60ECD473
+P 8475 7650
+AR Path="/5F3255E8/60ECD473" Ref="Q?"  Part="1" 
+AR Path="/5F387075/60ECD473" Ref="Q3"  Part="1" 
+AR Path="/5F5FCCBB/60ECD473" Ref="Q6"  Part="1" 
+F 0 "Q6" H 8125 7550 60  0000 C CNN
+F 1 "CSD88599Q5DC" H 8425 8700 60  0000 C CNN
+F 2 "udriver3:VSON_CLIP_22" H 8725 8800 60  0001 C CNN
+F 3 "https://www.ti.com/lit/ds/symlink/csd88599q5dc.pdf" H 8475 7650 60  0001 C CNN
+F 4 "296-48289-1-ND" H 8475 7650 50  0001 C CNN "DigiKey"
+F 5 "2766880" H 8475 7650 50  0001 C CNN "Farnell"
+F 6 "595-CSD88599Q5DC" H 8475 7650 50  0001 C CNN "Mouser"
+F 7 "CSD88599Q5DC" H 8475 7650 50  0001 C CNN "Part No"
+	1    8475 7650
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	7875 7200 7525 7200
+$Comp
+L Device:R R?
+U 1 1 60F33D82
+P 9375 5400
+AR Path="/5F310311/60F33D82" Ref="R?"  Part="1" 
+AR Path="/5F3255E8/60F33D82" Ref="R?"  Part="1" 
+AR Path="/5F387075/60F33D82" Ref="R9"  Part="1" 
+AR Path="/5F5FCCBB/60F33D82" Ref="R54"  Part="1" 
+F 0 "R54" H 9445 5446 50  0000 L CNN
+F 1 "100k" H 9445 5355 50  0000 L CNN
+F 2 "Resistor_SMD:R_0402_1005Metric" V 9305 5400 50  0001 C CNN
+F 3 "https://industrial.panasonic.com/cdbs/www-data/pdf/RDA0000/AOA0000C304.pdf" H 9375 5400 50  0001 C CNN
+F 4 "P100KLCT-ND" H 9375 5400 50  0001 C CNN "DigiKey"
+F 5 "2302839" H 9375 5400 50  0001 C CNN "Farnell"
+F 6 "667-ERJ-2RKF1003X" H 9375 5400 50  0001 C CNN "Mouser"
+F 7 "ERJ-2RKF1003X" H 9375 5400 50  0001 C CNN "Part No"
+F 8 "50" H 9375 5400 50  0001 C CNN "Rated Voltage"
+F 9 "732-5255" H 9375 5400 50  0001 C CNN "RS"
+	1    9375 5400
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:R R?
+U 1 1 60F341BB
+P 9375 7600
+AR Path="/5F310311/60F341BB" Ref="R?"  Part="1" 
+AR Path="/5F3255E8/60F341BB" Ref="R?"  Part="1" 
+AR Path="/5F387075/60F341BB" Ref="R16"  Part="1" 
+AR Path="/5F5FCCBB/60F341BB" Ref="R61"  Part="1" 
+F 0 "R61" H 9445 7646 50  0000 L CNN
+F 1 "100k" H 9445 7555 50  0000 L CNN
+F 2 "Resistor_SMD:R_0402_1005Metric" V 9305 7600 50  0001 C CNN
+F 3 "https://industrial.panasonic.com/cdbs/www-data/pdf/RDA0000/AOA0000C304.pdf" H 9375 7600 50  0001 C CNN
+F 4 "P100KLCT-ND" H 9375 7600 50  0001 C CNN "DigiKey"
+F 5 "2302839" H 9375 7600 50  0001 C CNN "Farnell"
+F 6 "667-ERJ-2RKF1003X" H 9375 7600 50  0001 C CNN "Mouser"
+F 7 "ERJ-2RKF1003X" H 9375 7600 50  0001 C CNN "Part No"
+F 8 "50" H 9375 7600 50  0001 C CNN "Rated Voltage"
+F 9 "732-5255" H 9375 7600 50  0001 C CNN "RS"
+	1    9375 7600
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:R R?
+U 1 1 60F3498A
+P 9375 5950
+AR Path="/5F310311/60F3498A" Ref="R?"  Part="1" 
+AR Path="/5F3255E8/60F3498A" Ref="R?"  Part="1" 
+AR Path="/5F387075/60F3498A" Ref="R13"  Part="1" 
+AR Path="/5F5FCCBB/60F3498A" Ref="R58"  Part="1" 
+F 0 "R58" H 9445 5996 50  0000 L CNN
+F 1 "5.1k" H 9445 5905 50  0000 L CNN
+F 2 "Resistor_SMD:R_0402_1005Metric" V 9305 5950 50  0001 C CNN
+F 3 "https://industrial.panasonic.com/cdbs/www-data/pdf/RDA0000/AOA0000C304.pdf" H 9375 5950 50  0001 C CNN
+F 4 "P5.10KLCT-ND" H 9375 5950 50  0001 C CNN "DigiKey"
+F 5 "2302709" H 9375 5950 50  0001 C CNN "Farnell"
+F 6 "667-ERJ-2RKF5101X" H 9375 5950 50  0001 C CNN "Mouser"
+F 7 "ERJ-2RKF5101X" H 9375 5950 50  0001 C CNN "Part No"
+F 8 "732-5536" H 9375 5950 50  0001 C CNN "RS"
+F 9 "50" H 9375 5950 50  0001 C CNN "Rated Voltage"
+	1    9375 5950
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:R R?
+U 1 1 60F34E38
+P 9375 8150
+AR Path="/5F310311/60F34E38" Ref="R?"  Part="1" 
+AR Path="/5F3255E8/60F34E38" Ref="R?"  Part="1" 
+AR Path="/5F387075/60F34E38" Ref="R18"  Part="1" 
+AR Path="/5F5FCCBB/60F34E38" Ref="R63"  Part="1" 
+F 0 "R63" H 9445 8196 50  0000 L CNN
+F 1 "5.1k" H 9445 8105 50  0000 L CNN
+F 2 "Resistor_SMD:R_0402_1005Metric" V 9305 8150 50  0001 C CNN
+F 3 "https://industrial.panasonic.com/cdbs/www-data/pdf/RDA0000/AOA0000C304.pdf" H 9375 8150 50  0001 C CNN
+F 4 "P5.10KLCT-ND" H 9375 8150 50  0001 C CNN "DigiKey"
+F 5 "2302709" H 9375 8150 50  0001 C CNN "Farnell"
+F 6 "667-ERJ-2RKF5101X" H 9375 8150 50  0001 C CNN "Mouser"
+F 7 "ERJ-2RKF5101X" H 9375 8150 50  0001 C CNN "Part No"
+F 8 "732-5536" H 9375 8150 50  0001 C CNN "RS"
+F 9 "50" H 9375 8150 50  0001 C CNN "Rated Voltage"
+	1    9375 8150
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:R_Shunt R?
+U 1 1 60F7BF04
+P 9025 5950
+AR Path="/5F310311/60F7BF04" Ref="R?"  Part="1" 
+AR Path="/5F3255E8/60F7BF04" Ref="R?"  Part="1" 
+AR Path="/5F387075/60F7BF04" Ref="R12"  Part="1" 
+AR Path="/5F5FCCBB/60F7BF04" Ref="R57"  Part="1" 
+F 0 "R57" H 8937 5904 50  0000 R CNN
+F 1 "0.005" H 8937 5995 50  0000 R CNN
+F 2 "udriver3:FC4L64" V 8955 5950 50  0001 C CNN
+F 3 "https://www.ohmite.com/assets/docs/res_fc4l.pdf?r=false" H 9025 5950 50  0001 C CNN
+F 4 "FC4L64R005FERCT-ND" H 9025 5950 50  0001 C CNN "DigiKey"
+F 5 "2363991" H 9025 5950 50  0001 C CNN "Farnell"
+F 6 "588-FC4L64R005FER" H 9025 5950 50  0001 C CNN "Mouser"
+F 7 "FC4L64R005FER" H 9025 5950 50  0001 C CNN "Part No"
+F 8 "126-0365" H 9025 5950 50  0001 C CNN "RS"
+	1    9025 5950
+	-1   0    0    1   
+$EndComp
+$Comp
+L Device:R_Shunt R?
+U 1 1 60F7C417
+P 9025 8150
+AR Path="/5F310311/60F7C417" Ref="R?"  Part="1" 
+AR Path="/5F3255E8/60F7C417" Ref="R?"  Part="1" 
+AR Path="/5F387075/60F7C417" Ref="R17"  Part="1" 
+AR Path="/5F5FCCBB/60F7C417" Ref="R62"  Part="1" 
+F 0 "R62" H 8937 8104 50  0000 R CNN
+F 1 "0.005" H 8937 8195 50  0000 R CNN
+F 2 "udriver3:FC4L64" V 8955 8150 50  0001 C CNN
+F 3 "https://www.ohmite.com/assets/docs/res_fc4l.pdf?r=false" H 9025 8150 50  0001 C CNN
+F 4 "FC4L64R005FERCT-ND" H 9025 8150 50  0001 C CNN "DigiKey"
+F 5 "2363991" H 9025 8150 50  0001 C CNN "Farnell"
+F 6 "588-FC4L64R005FER" H 9025 8150 50  0001 C CNN "Mouser"
+F 7 "FC4L64R005FER" H 9025 8150 50  0001 C CNN "Part No"
+F 8 "126-0365" H 9025 8150 50  0001 C CNN "RS"
+	1    9025 8150
+	-1   0    0    1   
+$EndComp
+Wire Wire Line
+	9125 2350 9025 2350
+Text GLabel 9125 4550 2    50   Input ~ 0
+VPOWER
+Text GLabel 9125 6750 2    50   Input ~ 0
+VPOWER
+Wire Wire Line
+	9125 6750 9025 6750
+Wire Wire Line
+	4075 5550 4875 5550
+Connection ~ 4875 5550
+Wire Wire Line
+	4075 5450 4525 5450
+Connection ~ 4525 5450
+Wire Wire Line
+	4175 5350 5025 5350
+Wire Wire Line
+	4525 5450 5025 5450
+$Comp
+L Device:R R?
+U 1 1 5F5B4195
+P 5175 5350
+AR Path="/5F310311/5F5B4195" Ref="R?"  Part="1" 
+AR Path="/5F3255E8/5F5B4195" Ref="R?"  Part="1" 
+AR Path="/5F387075/5F5B4195" Ref="R8"  Part="1" 
+AR Path="/60E4937F/5F5B4195" Ref="R?"  Part="1" 
+AR Path="/5F5FCCBB/5F5B4195" Ref="R53"  Part="1" 
+F 0 "R53" V 5225 5500 50  0000 L CNN
+F 1 "120" V 5225 5050 50  0000 L CNN
+F 2 "Resistor_SMD:R_0201_0603Metric" V 5105 5350 50  0001 C CNN
+F 3 "https://industrial.panasonic.com/cdbs/www-data/pdf/RDA0000/AOA0000C304.pdf" H 5175 5350 50  0001 C CNN
+F 4 "P122692CT-ND" H 5175 5350 50  0001 C CNN "DigiKey"
+F 5 "2396857" H 5175 5350 50  0001 C CNN "Farnell"
+F 6 "667-ERJ-1GNF1200C" H 5175 5350 50  0001 C CNN "Mouser"
+F 7 "ERJ-1GNF1200C" H 5175 5350 50  0001 C CNN "Part No"
+F 8 "" H 5175 5350 50  0001 C CNN "RS"
+	1    5175 5350
+	0    -1   -1   0   
+$EndComp
+$Comp
+L Device:R R?
+U 1 1 5F5D8BB4
+P 5175 5450
+AR Path="/5F310311/5F5D8BB4" Ref="R?"  Part="1" 
+AR Path="/5F3255E8/5F5D8BB4" Ref="R?"  Part="1" 
+AR Path="/5F387075/5F5D8BB4" Ref="R10"  Part="1" 
+AR Path="/60E4937F/5F5D8BB4" Ref="R?"  Part="1" 
+AR Path="/5F5FCCBB/5F5D8BB4" Ref="R55"  Part="1" 
+F 0 "R55" V 5225 5600 50  0000 L CNN
+F 1 "120" V 5225 5150 50  0000 L CNN
+F 2 "Resistor_SMD:R_0201_0603Metric" V 5105 5450 50  0001 C CNN
+F 3 "https://industrial.panasonic.com/cdbs/www-data/pdf/RDA0000/AOA0000C304.pdf" H 5175 5450 50  0001 C CNN
+F 4 "P122692CT-ND" H 5175 5450 50  0001 C CNN "DigiKey"
+F 5 "2396857" H 5175 5450 50  0001 C CNN "Farnell"
+F 6 "667-ERJ-1GNF1200C" H 5175 5450 50  0001 C CNN "Mouser"
+F 7 "ERJ-1GNF1200C" H 5175 5450 50  0001 C CNN "Part No"
+F 8 "" H 5175 5450 50  0001 C CNN "RS"
+	1    5175 5450
+	0    -1   -1   0   
+$EndComp
+$Comp
+L Device:R R?
+U 1 1 5F5D901B
+P 5175 5550
+AR Path="/5F310311/5F5D901B" Ref="R?"  Part="1" 
+AR Path="/5F3255E8/5F5D901B" Ref="R?"  Part="1" 
+AR Path="/5F387075/5F5D901B" Ref="R11"  Part="1" 
+AR Path="/60E4937F/5F5D901B" Ref="R?"  Part="1" 
+AR Path="/5F5FCCBB/5F5D901B" Ref="R56"  Part="1" 
+F 0 "R56" V 5225 5700 50  0000 L CNN
+F 1 "120" V 5225 5250 50  0000 L CNN
+F 2 "Resistor_SMD:R_0201_0603Metric" V 5105 5550 50  0001 C CNN
+F 3 "https://industrial.panasonic.com/cdbs/www-data/pdf/RDA0000/AOA0000C304.pdf" H 5175 5550 50  0001 C CNN
+F 4 "P122692CT-ND" H 5175 5550 50  0001 C CNN "DigiKey"
+F 5 "2396857" H 5175 5550 50  0001 C CNN "Farnell"
+F 6 "667-ERJ-1GNF1200C" H 5175 5550 50  0001 C CNN "Mouser"
+F 7 "ERJ-1GNF1200C" H 5175 5550 50  0001 C CNN "Part No"
+F 8 "" H 5175 5550 50  0001 C CNN "RS"
+	1    5175 5550
+	0    -1   -1   0   
+$EndComp
+$Comp
+L Device:C C?
+U 1 1 5F66CA78
+P 4175 5750
+AR Path="/5F310311/5F66CA78" Ref="C?"  Part="1" 
+AR Path="/5F3255E8/5F66CA78" Ref="C?"  Part="1" 
+AR Path="/5F387075/5F66CA78" Ref="C20"  Part="1" 
+AR Path="/5F5FCCBB/5F66CA78" Ref="C107"  Part="1" 
+F 0 "C107" H 4200 5850 50  0000 L CNN
+F 1 "10nF" H 4200 5650 50  0000 L CNN
+F 2 "Capacitor_SMD:C_0201_0603Metric" H 4213 5600 50  0001 C CNN
+F 3 "https://www.murata.com/en-eu/products/productdetail?partno=GRM033R71E103KE14%23" H 4175 5750 50  0001 C CNN
+F 4 "" H 4175 5750 50  0001 C CNN "Rated voltage"
+F 5 "490-14454-1-ND" H 4175 5750 50  0001 C CNN "DigiKey"
+F 6 "2990696" H 4175 5750 50  0001 C CNN "Farnell"
+F 7 "81-GRM033R71E103KE4D" H 4175 5750 50  0001 C CNN "Mouser"
+F 8 "GRM033R71E103KE14D" H 4175 5750 50  0001 C CNN "Part No"
+F 9 "185-2059" H 4175 5750 50  0001 C CNN "RS"
+F 10 "25V" H 4175 5750 50  0001 C CNN "Rated Voltage"
+	1    4175 5750
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:C C?
+U 1 1 5F66D031
+P 4525 5750
+AR Path="/5F310311/5F66D031" Ref="C?"  Part="1" 
+AR Path="/5F3255E8/5F66D031" Ref="C?"  Part="1" 
+AR Path="/5F387075/5F66D031" Ref="C21"  Part="1" 
+AR Path="/5F5FCCBB/5F66D031" Ref="C108"  Part="1" 
+F 0 "C108" H 4575 5850 50  0000 L CNN
+F 1 "10nF" H 4575 5650 50  0000 L CNN
+F 2 "Capacitor_SMD:C_0201_0603Metric" H 4563 5600 50  0001 C CNN
+F 3 "https://www.murata.com/en-eu/products/productdetail?partno=GRM033R71E103KE14%23" H 4525 5750 50  0001 C CNN
+F 4 "" H 4525 5750 50  0001 C CNN "Rated voltage"
+F 5 "490-14454-1-ND" H 4525 5750 50  0001 C CNN "DigiKey"
+F 6 "2990696" H 4525 5750 50  0001 C CNN "Farnell"
+F 7 "81-GRM033R71E103KE4D" H 4525 5750 50  0001 C CNN "Mouser"
+F 8 "GRM033R71E103KE14D" H 4525 5750 50  0001 C CNN "Part No"
+F 9 "185-2059" H 4525 5750 50  0001 C CNN "RS"
+F 10 "25V" H 4525 5750 50  0001 C CNN "Rated Voltage"
+	1    4525 5750
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:C C?
+U 1 1 5F66D45E
+P 4875 5750
+AR Path="/5F310311/5F66D45E" Ref="C?"  Part="1" 
+AR Path="/5F3255E8/5F66D45E" Ref="C?"  Part="1" 
+AR Path="/5F387075/5F66D45E" Ref="C22"  Part="1" 
+AR Path="/5F5FCCBB/5F66D45E" Ref="C109"  Part="1" 
+F 0 "C109" H 4925 5850 50  0000 L CNN
+F 1 "10nF" H 4925 5650 50  0000 L CNN
+F 2 "Capacitor_SMD:C_0201_0603Metric" H 4913 5600 50  0001 C CNN
+F 3 "https://www.murata.com/en-eu/products/productdetail?partno=GRM033R71E103KE14%23" H 4875 5750 50  0001 C CNN
+F 4 "" H 4875 5750 50  0001 C CNN "Rated voltage"
+F 5 "490-14454-1-ND" H 4875 5750 50  0001 C CNN "DigiKey"
+F 6 "2990696" H 4875 5750 50  0001 C CNN "Farnell"
+F 7 "81-GRM033R71E103KE4D" H 4875 5750 50  0001 C CNN "Mouser"
+F 8 "GRM033R71E103KE14D" H 4875 5750 50  0001 C CNN "Part No"
+F 9 "185-2059" H 4875 5750 50  0001 C CNN "RS"
+F 10 "25V" H 4875 5750 50  0001 C CNN "Rated Voltage"
+	1    4875 5750
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	9025 4550 9125 4550
+$Comp
+L Connector_Generic:Conn_01x03 J?
+U 1 1 5F69C9A0
+P 5850 7975
+AR Path="/5F3255E8/5F69C9A0" Ref="J?"  Part="1" 
+AR Path="/5F387075/5F69C9A0" Ref="J6"  Part="1" 
+AR Path="/5F5FCCBB/5F69C9A0" Ref="J13"  Part="1" 
+F 0 "J13" H 5930 8017 50  0000 L CNN
+F 1 "Conn_01x03" H 5930 7926 50  0000 L CNN
+F 2 "Connector_AMASS:AMASS_MR30PW-FB_1x03_P3.50mm_Horizontal" H 5850 7975 50  0001 C CNN
+F 3 "https://www.tme.eu/en/Document/5e47640ba39fa492dbd4c0f4c8ae7b93/MR30PW%20SPEC.pdf" H 5850 7975 50  0001 C CNN
+	1    5850 7975
+	1    0    0    -1  
+$EndComp
+$Comp
+L omodri_lib:CSD88599Q5DC Q?
+U 1 1 60D7A53D
+P 8475 3250
+AR Path="/5F3255E8/60D7A53D" Ref="Q?"  Part="1" 
+AR Path="/5F387075/60D7A53D" Ref="Q1"  Part="1" 
+AR Path="/5F5FCCBB/60D7A53D" Ref="Q4"  Part="1" 
+F 0 "Q4" H 8125 3150 60  0000 C CNN
+F 1 "CSD88599Q5DC" H 8425 4300 60  0000 C CNN
+F 2 "udriver3:VSON_CLIP_22" H 8725 4400 60  0001 C CNN
+F 3 "https://www.ti.com/lit/ds/symlink/csd88599q5dc.pdf" H 8475 3250 60  0001 C CNN
+F 4 "296-48289-1-ND" H 8475 3250 50  0001 C CNN "DigiKey"
+F 5 "2766880" H 8475 3250 50  0001 C CNN "Farnell"
+F 6 "595-CSD88599Q5DC" H 8475 3250 50  0001 C CNN "Mouser"
+F 7 "CSD88599Q5DC" H 8475 3250 50  0001 C CNN "Part No"
+	1    8475 3250
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GNDA #PWR?
+U 1 1 5F6B4B23
+P 4175 5950
+AR Path="/5F3A3F16/5F6B4B23" Ref="#PWR?"  Part="1" 
+AR Path="/5F6B4B23" Ref="#PWR?"  Part="1" 
+AR Path="/5F387075/5F6B4B23" Ref="#PWR026"  Part="1" 
+AR Path="/5F3255E8/5F6B4B23" Ref="#PWR?"  Part="1" 
+AR Path="/5F5FCCBB/5F6B4B23" Ref="#PWR0127"  Part="1" 
+F 0 "#PWR0127" H 4175 5700 50  0001 C CNN
+F 1 "GNDA" H 4175 5800 50  0000 C CNN
+F 2 "" H 4175 5950 50  0001 C CNN
+F 3 "" H 4175 5950 50  0001 C CNN
+	1    4175 5950
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GNDA #PWR?
+U 1 1 5F6C1395
+P 4525 5950
+AR Path="/5F3A3F16/5F6C1395" Ref="#PWR?"  Part="1" 
+AR Path="/5F6C1395" Ref="#PWR?"  Part="1" 
+AR Path="/5F387075/5F6C1395" Ref="#PWR027"  Part="1" 
+AR Path="/5F3255E8/5F6C1395" Ref="#PWR?"  Part="1" 
+AR Path="/5F5FCCBB/5F6C1395" Ref="#PWR0128"  Part="1" 
+F 0 "#PWR0128" H 4525 5700 50  0001 C CNN
+F 1 "GNDA" H 4525 5800 50  0000 C CNN
+F 2 "" H 4525 5950 50  0001 C CNN
+F 3 "" H 4525 5950 50  0001 C CNN
+	1    4525 5950
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GNDA #PWR?
+U 1 1 5F6C15F1
+P 4875 5950
+AR Path="/5F3A3F16/5F6C15F1" Ref="#PWR?"  Part="1" 
+AR Path="/5F6C15F1" Ref="#PWR?"  Part="1" 
+AR Path="/5F387075/5F6C15F1" Ref="#PWR028"  Part="1" 
+AR Path="/5F3255E8/5F6C15F1" Ref="#PWR?"  Part="1" 
+AR Path="/5F5FCCBB/5F6C15F1" Ref="#PWR0129"  Part="1" 
+F 0 "#PWR0129" H 4875 5700 50  0001 C CNN
+F 1 "GNDA" H 4875 5800 50  0000 C CNN
+F 2 "" H 4875 5950 50  0001 C CNN
+F 3 "" H 4875 5950 50  0001 C CNN
+	1    4875 5950
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GNDA #PWR?
+U 1 1 5F6C180B
+P 4575 4650
+AR Path="/5F3A3F16/5F6C180B" Ref="#PWR?"  Part="1" 
+AR Path="/5F6C180B" Ref="#PWR?"  Part="1" 
+AR Path="/5F387075/5F6C180B" Ref="#PWR025"  Part="1" 
+AR Path="/5F3255E8/5F6C180B" Ref="#PWR?"  Part="1" 
+AR Path="/5F5FCCBB/5F6C180B" Ref="#PWR0126"  Part="1" 
+F 0 "#PWR0126" H 4575 4400 50  0001 C CNN
+F 1 "GNDA" H 4575 4500 50  0000 C CNN
+F 2 "" H 4575 4650 50  0001 C CNN
+F 3 "" H 4575 4650 50  0001 C CNN
+	1    4575 4650
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	9025 3300 9025 3550
+Wire Wire Line
+	9025 5500 9025 5750
+Wire Wire Line
+	9025 7700 9025 7950
+Wire Notes Line width 20
+	7425 6500 10300 6500
+Wire Notes Line width 20
+	10300 4300 7425 4300
+Wire Notes Line width 20
+	10300 2100 10300 8675
+Wire Notes Line width 20
+	7425 2100 7425 8675
+Wire Notes Line width 20
+	3650 7350 7425 7350
+Wire Notes Line width 20
+	3650 2100 10300 2100
+Wire Notes Line width 20
+	3650 8675 10300 8675
+Wire Notes Line width 20
+	3650 2100 3650 8675
+Wire Wire Line
+	4075 3100 4175 3100
+Connection ~ 4575 3100
+Wire Wire Line
+	4575 3100 5925 3100
+Wire Wire Line
+	4575 3100 4575 3550
+Wire Wire Line
+	4175 3550 4175 3100
+Connection ~ 4175 3100
+Wire Wire Line
+	4175 3100 4575 3100
+Wire Wire Line
+	5925 3850 5725 3850
+Wire Wire Line
+	5925 3550 5725 3550
+Wire Wire Line
+	5925 3400 5375 3400
+Wire Wire Line
+	5375 3400 5375 3550
+$Comp
+L Device:R R?
+U 1 1 5FE3CC6B
+P 5575 6500
+AR Path="/5F3A3F16/5FE3CC6B" Ref="R?"  Part="1" 
+AR Path="/5F5FCCBB/5FE3CC6B" Ref="R59"  Part="1" 
+AR Path="/5F387075/5FE3CC6B" Ref="R14"  Part="1" 
+F 0 "R59" H 5645 6546 50  0000 L CNN
+F 1 "470" H 5645 6455 50  0000 L CNN
+F 2 "Resistor_SMD:R_0201_0603Metric" V 5505 6500 50  0001 C CNN
+F 3 "https://industrial.panasonic.com/cdbs/www-data/pdf/RDA0000/AOA0000C304.pdf" H 5575 6500 50  0001 C CNN
+F 4 "P123031CT-ND" H 5575 6500 50  0001 C CNN "DigiKey"
+F 5 "2302353" H 5575 6500 50  0001 C CNN "Farnell"
+F 6 "667-ERJ-1GNF4701C" H 5575 6500 50  0001 C CNN "Mouser"
+F 7 "ERJ-1GNF4701C" H 5575 6500 50  0001 C CNN "Part No"
+F 8 "179-7160" H 5575 6500 50  0001 C CNN "RS"
+	1    5575 6500
+	1    0    0    -1  
+$EndComp
+$EndSCHEMATC

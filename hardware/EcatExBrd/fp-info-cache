@@ -1,0 +1,141 @@
+32287901676788
+EcatExBrd
+ADM6-10-XX.X-XXX-4-X-A-XR
+ 0.635mm pitch, High-Density, 4-Row Terminal, low profile, ultra-slim surface mount header
+
+0
+40
+40
+EcatExBrd
+Diodes_DFN1006D-2_0.6x0.4mm_P0.65mm
+leadless ultra small plastic package with side-wettable flanks (SWF); 2 terminals; 0.65 mm pitch; 1 mm x0.6 mm x 0.4 mm body
+
+0
+2
+2
+EcatExBrd
+Diodes_DFN2510A-10_1.0x2.5mm_P0.5mm
+U-DFN2510-10 package used by Diodes Incorporated (https://www.diodes.com/assets/Package-Files/U-DFN2510-10-Type-CJ.pdf)
+UDFN-10 U-DFN2510-10 Diodes
+0
+10
+10
+EcatExBrd
+Diodes_DSN0603-2_0.6x0.3mm_P0.4mm
+silicon, leadless ultra small package; 2 terminals; 0.4 mm pitch; 0.6 mm x 0.3 mm x 0.3 mm body
+
+0
+2
+2
+EcatExBrd
+Harwin_M50_04_P1.27mm_cross_Vertical
+
+
+0
+4
+4
+EcatExBrd
+Hirose_DF13-03P-1.25DSA_1x03_P1.25mm_Vertical
+Hirose DF13 through hole, DF13-03P-1.25DSA, 3 Pins per row
+connector Hirose DF13 vertical
+0
+3
+3
+EcatExBrd
+Hirose_DF13-04P-1.25DSA_1x04_P1.25mm_Vertical
+Hirose DF13 through hole, DF13-04P-1.25DSA, 4 Pins per row
+connector Hirose DF13 vertical
+0
+4
+4
+EcatExBrd
+Hirose_DF13-06P-1.25DSA_1x06_P1.25mm_Vertical
+Hirose DF13 through hole, DF13-06P-1.25DSA, 6 Pins per row
+connector Hirose DF13 vertical
+0
+6
+6
+EcatExBrd
+Hirose_DF13-08P-1.25DSA_1x08_P1.25mm_Vertical
+Hirose DF13 through hole, DF13-08P-1.25DSA, 8 Pins per row
+connector Hirose DF13 vertical
+0
+8
+8
+EcatExBrd
+RJ45_Molex_48074-9101_Horizontal
+RJ45 LAN Transformer 10/100BaseT (https://www.molex.com/pdm_docs/sd/480749101_sd.pdf)
+lan magnetics transformer
+0
+14
+14
+EcatExBrd
+SolderJumper-3_0201_0603Metric_Open_Pad
+SMD Solder 3-pad Jumper, 0201, 0603 Metric, open
+solder jumper open
+0
+3
+3
+EcatExBrd
+TDFN-8-1EP_3.0x3.0mm_P0.65mm
+
+
+0
+9
+9
+EcatExBrd
+TQFN-24-1EP_3.5x3.5mm_P0.4mm_EP2.4x2.4mm
+
+
+0
+25
+25
+EcatExBrd
+TQFN-28-1EP_5x5mm_P0.5mm_EP3.1x3.1mm
+TQFN, 28 Pin (https://pdfserv.maximintegrated.com/package_dwgs/21-0140.PDF (T2855-4)), generated with kicad-footprint-generator ipc_noLead_generator.py
+TQFN NoLead
+0
+33
+29
+EcatExBrd
+USON-6_P0.5mm_1x1.5mm
+
+
+0
+6
+6
+EcatExBrd
+VQFN-32-1EP_5x5mm_P0.5mm_EP2.2x2.2mm
+
+
+0
+33
+33
+EcatExBrd
+VSON-8-1EP_3.0x3.0mm_P0.65mm
+
+
+0
+9
+9
+EcatExBrd
+logo_OpenHardware
+
+
+0
+0
+0
+EcatExBrd
+logo_laas
+
+
+0
+0
+0
+EcatExBrd
+uOmodri_laas
+
+
+0
+0
+0

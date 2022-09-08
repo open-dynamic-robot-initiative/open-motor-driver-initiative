@@ -1,0 +1,243 @@
+EESchema-DOCLIB  Version 2.0
+#
+$CMP 24LC00
+D I2C Serial EEPROM, 128 Bits, DIP-8/SOIC-8/TSSOP-8/DFN-8
+K I2C Serial EEPROM
+F http://ww1.microchip.com/downloads/en/DeviceDoc/21178G.pdf
+$ENDCMP
+#
+$CMP 24LC01
+D I2C Serial EEPROM, 1Kb, DIP-8/SOIC-8/TSSOP-8/DFN-8
+K I2C Serial EEPROM
+F http://ww1.microchip.com/downloads/en/DeviceDoc/21711J.pdf
+$ENDCMP
+#
+$CMP 24LC02
+D I2C Serial EEPROM, 2Kb, DIP-8/SOIC-8/TSSOP-8/DFN-8
+K I2C Serial EEPROM
+F http://ww1.microchip.com/downloads/en/DeviceDoc/21709c.pdf
+$ENDCMP
+#
+$CMP 24LC04
+D I2C Serial EEPROM, 4Kb, DIP-8/SOIC-8/TSSOP-8/DFN-8
+K I2C Serial EEPROM
+F http://ww1.microchip.com/downloads/en/DeviceDoc/21708K.pdf
+$ENDCMP
+#
+$CMP 24LC08
+D I2C Serial EEPROM, 8Kb, DIP-8/SOIC-8/TSSOP-8/DFN-8
+K I2C Serial EEPROM
+F http://ww1.microchip.com/downloads/en/DeviceDoc/21710J.pdf
+$ENDCMP
+#
+$CMP 24LC1025
+D I2C Serial EEPROM, 1024Kb, DIP-8/SOIC-8/TSSOP-8/DFN-8
+K I2C Serial EEPROM
+F http://ww1.microchip.com/downloads/en/DeviceDoc/21941B.pdf
+$ENDCMP
+#
+$CMP 24LC128
+D I2C Serial EEPROM, 128Kb, DIP-8/SOIC-8/TSSOP-8/DFN-8
+K I2C Serial EEPROM
+F http://ww1.microchip.com/downloads/en/DeviceDoc/21191s.pdf
+$ENDCMP
+#
+$CMP 24LC16
+D I2C Serial EEPROM, 16Kb, DFN-8
+K I2C Serial EEPROM
+F http://ww1.microchip.com/downloads/en/DeviceDoc/21703d.pdf
+$ENDCMP
+#
+$CMP 24LC256
+D I2C Serial EEPROM, 256Kb, DIP-8/SOIC-8/TSSOP-8/DFN-8
+K I2C Serial EEPROM
+F http://ww1.microchip.com/downloads/en/devicedoc/21203m.pdf
+$ENDCMP
+#
+$CMP 24LC32
+D I2C Serial EEPROM, 32Kb, DIP-8/SOIC-8/TSSOP-8/DFN-8
+K I2C Serial EEPROM
+F http://ww1.microchip.com/downloads/en/DeviceDoc/21072G.pdf
+$ENDCMP
+#
+$CMP 24LC512
+D I2C Serial EEPROM, 512Kb, DIP-8/SOIC-8/TSSOP-8/DFN-8
+K I2C Serial EEPROM
+F http://ww1.microchip.com/downloads/en/DeviceDoc/21754M.pdf
+$ENDCMP
+#
+$CMP 24LC64
+D I2C Serial EEPROM, 64Kb, DIP-8/SOIC-8/TSSOP-8/DFN-8
+K I2C Serial EEPROM
+F http://ww1.microchip.com/downloads/en/DeviceDoc/21189f.pdf
+$ENDCMP
+#
+$CMP 74AHC1G125
+D Single Buffer Gate Tri-State, Low-Voltage CMOS
+K Single Gate Buff Tri-State LVC CMOS
+F http://www.ti.com/lit/sg/scyt129e/scyt129e.pdf
+$ENDCMP
+#
+$CMP 74AHCT1G125
+D Single Buffer Gate Tri-State, Low-Voltage CMOS
+K Single Gate Buff Tri-State LVC CMOS
+F http://www.ti.com/lit/sg/scyt129e/scyt129e.pdf
+$ENDCMP
+#
+$CMP 74AUC1G125
+D Single Buffer Gate Tri-State, Low-Voltage CMOS
+K Single Gate Buff Tri-State LVC CMOS
+F http://www.ti.com/lit/sg/scyt129e/scyt129e.pdf
+$ENDCMP
+#
+$CMP 74AUP1G125
+D Single Buffer Gate Tri-State, Low-Voltage CMOS
+K Single Gate Buff Tri-State LVC CMOS
+F http://www.ti.com/lit/sg/scyt129e/scyt129e.pdf
+$ENDCMP
+#
+$CMP 74LVC1G06
+D Single NOT Gate w/ Open Drain, Low-Voltage CMOS
+K Single Gate NOT LVC CMOS Open Drain
+F https://www.ti.com/lit/ds/symlink/sn74lvc1g06.pdf
+$ENDCMP
+#
+$CMP 74LVC1G07
+D Single Buffer Gate w/ Open Drain, Low-Voltage CMOS
+K Single Gate Buff LVC CMOS Open Drain
+F https://www.ti.com/lit/ds/symlink/sn74lvc1g07.pdf
+$ENDCMP
+#
+$CMP 74LVC1G125
+D Single Buffer Gate Tri-State, Low-Voltage CMOS
+K Single Gate Buff Tri-State LVC CMOS
+F https://www.ti.com/lit/ds/symlink/sn74lvc1g125.pdf
+$ENDCMP
+#
+$CMP 74LVC2G06
+D Dual NOT Gate w/ Open Drain, Low-Voltage CMOS
+K Dual Gate NOT LVC CMOS Open Drain
+F https://www.ti.com/lit/ds/symlink/sn74lvc2g06.pdf
+$ENDCMP
+#
+$CMP CAT24C128
+D 128 kb CMOS Serial EEPROM, SOIC-8/TSSOP-8/DFN-8
+K I2C EEPROM Serial 128kb
+F https://www.onsemi.com/pub/Collateral/CAT24C128-D.PDF
+$ENDCMP
+#
+$CMP CAT24C256
+D 256 kb CMOS Serial EEPROM, DIP-8/SOIC-8/TSSOP-8/DFN-8
+K I2C EEPROM Serial 256kb
+F https://www.onsemi.cn/PowerSolutions/document/CAT24C256-D.PDF
+$ENDCMP
+#
+$CMP CDCLVC1102
+D Two-LVCMOS Output, High-Performance Clock Buffer,TSSOP-8
+K Clock Buffer LVCMOS
+F https://www.ti.com/lit/ds/symlink/cdclvc1102.pdf
+$ENDCMP
+#
+$CMP CDCLVC1103
+D Three-LVCMOS Output, High-Performance Clock Buffer,TSSOP-8
+K Clock Buffer LVCMOS
+F https://www.ti.com/lit/ds/symlink/cdclvc1103.pdf
+$ENDCMP
+#
+$CMP CDCLVC1104
+D Four-LVCMOS Output, High-Performance Clock Buffer,TSSOP-8
+K Clock Buffer LVCMOS
+F https://www.ti.com/lit/ds/symlink/cdclvc1104.pdf
+$ENDCMP
+#
+$CMP CDCLVC1106
+D Six-LVCMOS Output, High-Performance Clock Buffer,TSSOP-14
+K Clock Buffer LVCMOS
+F https://www.ti.com/lit/ds/symlink/cdclvc1106.pdf
+$ENDCMP
+#
+$CMP CDCLVC1108
+D Eight-LVCMOS Output, High-Performance Clock Buffer,TSSOP-16
+K Clock Buffer LVCMOS
+F https://www.ti.com/lit/ds/symlink/cdclvc1108.pdf
+$ENDCMP
+#
+$CMP DP83826I
+D Deterministic, Low-Latency, Low-Power, 10/100 Mbps, Industrial Ethernet PHY
+F https://www.ti.com/lit/ds/symlink/dp83826i.pdf
+$ENDCMP
+#
+$CMP IP4283CZ10
+D 4-Channel ESD-Protection for High-Speed Data Interfaces /w Low-Capacitance
+F https://assets.nexperia.com/documents/data-sheet/IP4283CZ10_SER.pdf
+$ENDCMP
+#
+$CMP Jumper_4
+D Jumper, 4-pole, All open
+K Jumper SPDT
+F ~
+$ENDCMP
+#
+$CMP LSF0204RUT
+D 4-Bit Bidirectional Voltage-Level Translatorwith Auto Direction Sensing
+F https://www.ti.com/lit/ds/symlink/lsf0204.pdf
+$ENDCMP
+#
+$CMP MAX14775EATA
+D ±65V Fault Protected 500kpbs/20Mbps Half-Duplex RS-485/RS-422 Transceivers, 8-pin TDFN-EP
+F https://datasheets.maximintegrated.com/en/ds/MAX14783E.pdf
+$ENDCMP
+#
+$CMP MAX3107
+D SPI/I2C to UART bridge with 128-Word FIFOs
+F https://datasheets.maximintegrated.com/en/ds/MAX3107.pdf
+$ENDCMP
+#
+$CMP Molex_480749101
+D LAN Transformer Jack, RJ45, 10/100 BaseT, Right-Angle, Surface Mount, with Integrated Magnetics and LED,8P8C
+K lan jack transformer
+F https://www.molex.com/molex/products/part-detail/modular_jacks_plug/0480749101
+$ENDCMP
+#
+$CMP NX7002BKM
+D 60 V, N-channel MOSFET in DFN1006-3 SMD package.
+F https://assets.nexperia.com/documents/data-sheet/NX7002BKM.pdf
+$ENDCMP
+#
+$CMP OPA392
+D Precision, Low-Offset-Voltage, Low-Noise, Low-Input-Bias-Current, Rail-to-Rail I/O, e-trim Operational Amplifiers
+F https://www.ti.com/lit/ds/symlink/opa392.pdf
+$ENDCMP
+#
+$CMP PESD12VA-SF
+D 1-Channel bidirectional ESD-Protection /w Low-Capacitance
+F https://assets.nexperia.com/documents/data-sheet/PESD12VA-SF.pdf
+$ENDCMP
+#
+$CMP PESD5V0S1ULD
+D 1-Channel unidirectional ESD-Protection
+F https://assets.nexperia.com/documents/data-sheet/PESD5V0S1ULD.pdf
+$ENDCMP
+#
+$CMP PESDxL2BT
+D 2-Channel bidirectional ESD-Protection /w Low-Capacitance
+F https://assets.nexperia.com/documents/data-sheet/PESDXL2BT_SER.pdf
+$ENDCMP
+#
+$CMP THVD24x0
+D Half-Duplex RS-485/RS-422 Transceivers, 3.3-V to 5-V, ±70V Fault Protected, 500kpbs/50Mbps, 8-pin VSON-EP
+F https://www.ti.com/lit/ds/symlink/thvd2450.pdf
+$ENDCMP
+#
+$CMP Wurth_74980111211
+D LAN Transformer Jack, RJ45, 10/100 BaseT, Right-Angle, Surface Mount, with Integrated Magnetics and LED, 8P8C
+K lan jack transformer
+F https://www.we-online.fr/catalog/datasheet/74980111211.pdf
+$ENDCMP
+#
+$CMP iC-MB4
+D Bidirectional BiSS interface master with SSI protocol supports
+F https://www.ichaus.de/upload/pdf/MB4_datasheet_C1en.pdf
+$ENDCMP
+#
+#End Doc Library

@@ -1,0 +1,210 @@
+EESchema-DOCLIB  Version 2.0
+#
+$CMP ADM6_ADF6
+D 0.635 mm pitch, High-Density, 4-Row Terminal, low profile, ultra-slim surface mount header & socket.
+K https://www.samtec.com/products/adm6#technicalSeries
+$ENDCMP
+#
+$CMP ASTX-H12
+D TCXO Oscillators 25MHz, 3.3V, HCMOS, 2.5ppm, in 2.5 x 2.0 x 0.9mm ceramic package
+F https://abracon.com/Oscillators/ASTX-H12.pdf
+$ENDCMP
+#
+$CMP CSD88599Q5DC
+D 60V, 40A Half-Bridge FET Power Block
+F https://www.ti.com/lit/ds/symlink/csd88599q5dc.pdf
+$ENDCMP
+#
+$CMP DRV8353S
+D Three-Phase Smart Gate Driver
+F https://www.ti.com/lit/ds/symlink/drv8353.pdf
+$ENDCMP
+#
+$CMP DSLVDS1047PWR
+D 3.3V LVDS Quad Channel High-Speed Differential Line Driver
+F https://www.ti.com/lit/ds/symlink/dslvds1047.pdf
+$ENDCMP
+#
+$CMP DSLVDS1048PWR
+D 3.3V LVDS Quad Channel High-Speed Differential Line Receiver
+F https://www.ti.com/lit/ds/symlink/dslvds1048.pdf
+$ENDCMP
+#
+$CMP ECS-TXO-2016
+D TCXO Oscillators 20MHz, 3.3V, 2.5ppm, in 2.0 x 1.6 x 0.8mm ceramic package
+F https://ecsxtal.com/store/pdf/ECS-TXO-2016.pdf
+$ENDCMP
+#
+$CMP ESD321
+D 1-Channel, 30 kV ESD Protection Diode with Low Capacitance (< 1pF), 4.5V DC Breakdown Voltage, 0402 package
+K ESD protection suppression transient
+F https://www.ti.com/lit/ds/symlink/esd321.pdf
+$ENDCMP
+#
+$CMP LMR36015
+D 4.2V to 60V, 1.5A ultra-small synchronous step-down converter
+F https://www.ti.com/lit/ds/symlink/lmr36015.pdf
+$ENDCMP
+#
+$CMP LMZ36002
+D 4.5V to 60V, 2A Step-Down Power Module in QFN Package
+F https://www.ti.com/lit/ds/symlink/lmz36002.pdf
+$ENDCMP
+#
+$CMP LSF0204RUT
+D 4-Bit Bidirectional Voltage-Level Translatorwith Auto Direction Sensing
+F https://www.ti.com/lit/ds/symlink/lsf0204.pdf
+$ENDCMP
+#
+$CMP LT6654AIS6-3
+D Precision voltage reference, 10mA output, 3.5V to 36V input, 10ppm/C drift, 3.0V output, SOT23-6
+K voltage reference vref
+F https://www.analog.com/media/en/technical-documentation/data-sheets/lt6654.pdf
+$ENDCMP
+#
+$CMP LT6657AHMS8-2.5
+D Precision voltage reference, 40V input, 10mA output, 1.5ppm/C drift, 2.5V output, MSOP-8
+K voltage reference vref
+F https://www.analog.com/media/en/technical-documentation/data-sheets/6657fd.pdf
+$ENDCMP
+#
+$CMP LT6657AHMS8-3
+D Precision voltage reference, 40V input, 10mA output, 1.5ppm/C drift, 3.0V output, MSOP-8
+K voltage reference vref
+F https://www.analog.com/media/en/technical-documentation/data-sheets/6657fd.pdf
+$ENDCMP
+#
+$CMP LT6657AHMS8-4.096
+D Precision voltage reference, 40V input, 10mA output, 1.5ppm/C drift, 4.096V output, MSOP-8
+K voltage reference vref
+F https://www.analog.com/media/en/technical-documentation/data-sheets/6657fd.pdf
+$ENDCMP
+#
+$CMP LT6657AHMS8-5
+D Precision voltage reference, 40V input, 10mA output, 1.5ppm/C drift, 5.0V output, MSOP-8
+K voltage reference vref
+F https://www.analog.com/media/en/technical-documentation/data-sheets/6657fd.pdf
+$ENDCMP
+#
+$CMP LT6657BHMS8-2.5
+D Precision voltage reference, 40V input, 10mA output, 3.0ppm/C drift, 2.5V output, MSOP-8
+K voltage reference vref
+F https://www.analog.com/media/en/technical-documentation/data-sheets/6657fd.pdf
+$ENDCMP
+#
+$CMP LT6657BHMS8-3
+D Precision voltage reference, 40V input, 10mA output, 3.0ppm/C drift, 3.0V output, MSOP-8
+K voltage reference vref
+F https://www.analog.com/media/en/technical-documentation/data-sheets/6657fd.pdf
+$ENDCMP
+#
+$CMP LT6657BHMS8-4.096
+D Precision voltage reference, 40V input, 10mA output, 3ppm/C drift, 4.096V output, MSOP-8
+K voltage reference vref
+F https://www.analog.com/media/en/technical-documentation/data-sheets/6657fd.pdf
+$ENDCMP
+#
+$CMP LT6657BHMS8-5
+D Precision voltage reference, 40V input, 10mA output, 3.0ppm/C drift, 5.0V output, MSOP-8
+K voltage reference vref
+F https://www.analog.com/media/en/technical-documentation/data-sheets/6657fd.pdf
+$ENDCMP
+#
+$CMP MAXM17623
+D 2.9V to 5.5V, 1A High Efficiency Step-Down Converter /w Integrated Inductor in MicroSiP package - MAXIM
+F https://datasheets.maximintegrated.com/en/ds/MAXM17623-MAXM17624.pdf
+$ENDCMP
+#
+$CMP MPM3804GG
+D 2.3V to 5.5V, 0.6A, Step-Down Converter /w Integrated Inductor in Ultra-Small 2x2x0.9mm QFN Package
+F https://www.monolithicpower.com/en/documentview/productdocument/index/version/2/document_type/Datasheet/lang/en/sku/MPM3804GG/document_id/2122/
+$ENDCMP
+#
+$CMP NX7002BKM
+D 60 V, N-channel MOSFET in DFN1006-3 SMD package.
+F https://assets.nexperia.com/documents/data-sheet/NX7002BKM.pdf
+$ENDCMP
+#
+$CMP OPA388
+D Precision, Zero-Drift, Zero-Crossover, True RRIO, Operational Amplifiers
+F https://www.ti.com/lit/ds/symlink/opa388.pdf
+$ENDCMP
+#
+$CMP REF4132
+D Low-Drift ,Low-Power, Small-Footprint Series Voltage Reference
+F https://www.ti.com/lit/ds/symlink/ref4132.pdf
+$ENDCMP
+#
+$CMP REF6230
+D High-Precision Voltage Reference With Integrated ADC Drive Buffer
+F https://www.ti.com/lit/ds/symlink/ref6230.pdf
+$ENDCMP
+#
+$CMP TMS320F28388D
+D C2000™ 32-bit MCU with connectivity manager, 2x C28x+CLA CPU, 1.5-MB flash, FPU64, CLB, ENET, EtherCAT
+F https://www.ti.com/lit/ds/symlink/tms320f28388d.pdf
+$ENDCMP
+#
+$CMP TPD1E04U04
+D 1-Channel ESD-Protection for High-Speed Data Interfaces /w Low-Capacitance
+F https://www.ti.com/lit/ds/symlink/tpd1e04u04.pdf
+$ENDCMP
+#
+$CMP TPD2E001
+D 2-Channel ESD-Protection for High-Speed Data Interfaces /w Low-Capacitance
+F https://www.ti.com/lit/ds/symlink/tpd2e001.pdf
+$ENDCMP
+#
+$CMP TPD3E001
+D 3-Channel ESD-Protection for High-Speed Data Interfaces /w Low-Capacitance
+F https://www.ti.com/lit/ds/symlink/tpd3e001.pdf
+$ENDCMP
+#
+$CMP TPD4E001
+D 4-Channel ESD-Protection for High-Speed Data Interfaces /w Low-Capacitance
+F https://www.ti.com/lit/ds/symlink/tpd4e001.pdf
+$ENDCMP
+#
+$CMP TPD6E05U06
+D 6-channel Ultra-low-capacitance IEC ESD protection diodes for Super-Speed (Up to 6 Gbps) Interface
+F https://www.ti.com/lit/ds/symlink/tpd6e05u06.pdf
+$ENDCMP
+#
+$CMP TPS3703
+D High Accuracy Overvoltage and Undervoltage Reset IC With Time Delay and Manual Reset
+F https://www.ti.com/lit/ds/symlink/tps3703.pdf
+$ENDCMP
+#
+$CMP TPS6208812
+D 2.4V to 5.5V, 1.2V / 3A tiny 6-pin synchronous step-down converter
+F https://www.ti.com/lit/ds/symlink/tps62088.pdf
+$ENDCMP
+#
+$CMP TPS6208833
+D 2.4V to 5.5V, 3.3V / 3A tiny 6-pin synchronous step-down converter
+F https://www.ti.com/lit/ds/symlink/tps62088.pdf
+$ENDCMP
+#
+$CMP TPSM82821
+D 2.4V to 5.5V, 1A High Efficiency Step-Down Converter /w Integrated Inductor in MicroSiP package
+F https://www.ti.com/lit/ds/symlink/tpsm82821.pdf
+$ENDCMP
+#
+$CMP TXB0106RGYR
+D 6-Bit Bidirectional Voltage-Level Translator with Auto Direction Sensing and +/-15-kV ESD Protect
+F https://www.ti.com/lit/ds/symlink/txb0106.pdf
+$ENDCMP
+#
+$CMP USB_B_Micro
+D USB Micro Type B connector
+K connector USB micro
+F ~
+$ENDCMP
+#
+$CMP USB_B_Mini
+D USB Mini Type B connector
+K connector USB mini
+F ~
+$ENDCMP
+#
+#End Doc Library

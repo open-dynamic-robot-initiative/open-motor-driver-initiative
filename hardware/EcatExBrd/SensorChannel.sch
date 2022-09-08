@@ -1,0 +1,1910 @@
+EESchema Schematic File Version 4
+EELAYER 30 0
+EELAYER END
+$Descr A3 16535 11693
+encoding utf-8
+Sheet 5 6
+Title "µOmodri Expansion Board"
+Date "2021-02-11"
+Rev "1.0"
+Comp "LAAS/CNRS"
+Comment1 ""
+Comment2 ""
+Comment3 ""
+Comment4 ""
+$EndDescr
+Text GLabel 10425 2200 2    50   Input ~ 0
+VDD_3V3
+$Comp
+L Device:C C?
+U 1 1 6000BE14
+P 10325 2350
+AR Path="/5FA2DDAB/6000BE14" Ref="C?"  Part="1" 
+AR Path="/5FD4324B/6000BE14" Ref="C?"  Part="1" 
+AR Path="/5FE2E867/6000BE14" Ref="C?"  Part="1" 
+AR Path="/6004B5DB/6000BE14" Ref="C?"  Part="1" 
+AR Path="/600728EB/6000BE14" Ref="C?"  Part="1" 
+AR Path="/5FD3AEFC/6000BE14" Ref="C?"  Part="1" 
+AR Path="/5FD43722/6000BE14" Ref="C?"  Part="1" 
+AR Path="/5FD915CA/6000BE14" Ref="C?"  Part="1" 
+AR Path="/5FD738CA/6000BE14" Ref="C?"  Part="1" 
+AR Path="/5FFC5CB5/6000BE14" Ref="C43"  Part="1" 
+AR Path="/60235E6B/6000BE14" Ref="C?"  Part="1" 
+AR Path="/60A11B09/6000BE14" Ref="C35"  Part="1" 
+F 0 "C43" H 10100 2300 50  0000 L CNN
+F 1 "100n" H 10000 2400 50  0000 L CNN
+F 2 "Capacitor_SMD:C_0201_0603Metric" H 10363 2200 50  0001 C CNN
+F 3 "~" H 10325 2350 50  0001 C CNN
+F 4 "490-9985-1-ND" H 10325 2350 50  0001 C CNN "DigiKey"
+F 5 "2611884" H 10325 2350 50  0001 C CNN "Farnell"
+F 6 "81-GRM33R61C104KE84D" H 10325 2350 50  0001 C CNN "Mouser"
+F 7 "GRM033R61C104KE84D" H 10325 2350 50  0001 C CNN "Part No"
+F 8 "113-8716" H 10325 2350 50  0001 C CNN "RS"
+	1    10325 2350
+	-1   0    0    1   
+$EndComp
+$Comp
+L power:GND #PWR?
+U 1 1 6000BE09
+P 10325 2675
+AR Path="/5FA2DDAB/6000BE09" Ref="#PWR?"  Part="1" 
+AR Path="/5FD4324B/6000BE09" Ref="#PWR?"  Part="1" 
+AR Path="/5FE2E867/6000BE09" Ref="#PWR?"  Part="1" 
+AR Path="/6004B5DB/6000BE09" Ref="#PWR?"  Part="1" 
+AR Path="/600728EB/6000BE09" Ref="#PWR?"  Part="1" 
+AR Path="/5FD3AEFC/6000BE09" Ref="#PWR?"  Part="1" 
+AR Path="/5FD43722/6000BE09" Ref="#PWR?"  Part="1" 
+AR Path="/5FD915CA/6000BE09" Ref="#PWR?"  Part="1" 
+AR Path="/5FD738CA/6000BE09" Ref="#PWR?"  Part="1" 
+AR Path="/5FFC5CB5/6000BE09" Ref="#PWR056"  Part="1" 
+AR Path="/60235E6B/6000BE09" Ref="#PWR?"  Part="1" 
+AR Path="/60A11B09/6000BE09" Ref="#PWR039"  Part="1" 
+F 0 "#PWR056" H 10325 2425 50  0001 C CNN
+F 1 "GND" H 10330 2502 50  0000 C CNN
+F 2 "" H 10325 2675 50  0001 C CNN
+F 3 "" H 10325 2675 50  0001 C CNN
+	1    10325 2675
+	1    0    0    -1  
+$EndComp
+Text Notes 7500 6350 0    50   ~ 0
+SPI1 active -> CFGSPI = '1'\nSPI2 inactive -> NWR_E = open or '1'\nStart ACQ inactive -> GETSENS = open or '0'\nExternal error inactive -> NER = open or '1'
+NoConn ~ 7250 6850
+NoConn ~ 7250 6950
+NoConn ~ 7250 7050
+NoConn ~ 7250 7150
+NoConn ~ 7250 7250
+NoConn ~ 7250 7350
+NoConn ~ 9500 6650
+Text Label 9675 7300 0    50   ~ 0
+MA_P
+Text Label 9675 7400 0    50   ~ 0
+MA_N
+Text Label 9675 7600 0    50   ~ 0
+SL_P
+Text Label 9675 7700 0    50   ~ 0
+SL_N
+$Comp
+L ecatextbrd_lib:iC-MB4 U16
+U 1 1 600B16AA
+P 8400 7650
+AR Path="/5FFC5CB5/600B16AA" Ref="U16"  Part="1" 
+AR Path="/60235E6B/600B16AA" Ref="U?"  Part="1" 
+AR Path="/60A11B09/600B16AA" Ref="U12"  Part="1" 
+F 0 "U16" H 7525 8850 50  0000 C CNN
+F 1 "iC-MB4" H 9150 8850 50  0000 C CNN
+F 2 "EcatExBrd:TQFN-28-1EP_5x5mm_P0.5mm_EP3.1x3.1mm" H 8150 4800 50  0001 C CNN
+F 3 "https://www.ichaus.de/upload/pdf/MB4_datasheet_C1en.pdf" H 8400 7650 50  0001 C CNN
+F 4 "iC-MB4" H 8400 7650 50  0001 C CNN "Part No"
+	1    8400 7650
+	1    0    0    -1  
+$EndComp
+NoConn ~ 9500 6850
+NoConn ~ 9500 7050
+Text HLabel 3750 3300 0    50   Output ~ 0
+MISO
+Text HLabel 3750 3400 0    50   Input ~ 0
+SCLK
+Text HLabel 3750 3200 0    50   Input ~ 0
+MOSI
+Text Label 6700 6700 0    50   ~ 0
+SSI_MISO
+Text Label 6650 4450 0    50   ~ 0
+SPI_~CS_n~
+Text Label 5650 5250 0    50   ~ 0
+MOSI
+Text Label 6650 4650 0    50   ~ 0
+SPI_MISO
+$Comp
+L Device:R R?
+U 1 1 6005AA30
+P 10325 1950
+AR Path="/5FA2DDAB/6005AA30" Ref="R?"  Part="1" 
+AR Path="/5FD4324B/6005AA30" Ref="R?"  Part="1" 
+AR Path="/5FE2E867/6005AA30" Ref="R?"  Part="1" 
+AR Path="/6004B5DB/6005AA30" Ref="R?"  Part="1" 
+AR Path="/600728EB/6005AA30" Ref="R?"  Part="1" 
+AR Path="/5FD3AEFC/6005AA30" Ref="R?"  Part="1" 
+AR Path="/5FD43722/6005AA30" Ref="R?"  Part="1" 
+AR Path="/5FD915CA/6005AA30" Ref="R?"  Part="1" 
+AR Path="/5FD738CA/6005AA30" Ref="R?"  Part="1" 
+AR Path="/5FDE3DFA/6005AA30" Ref="R?"  Part="1" 
+AR Path="/5FFC5CB5/6005AA30" Ref="R46"  Part="1" 
+AR Path="/60235E6B/6005AA30" Ref="R?"  Part="1" 
+AR Path="/60A11B09/6005AA30" Ref="R38"  Part="1" 
+F 0 "R46" H 10255 1904 50  0000 R CNN
+F 1 "120" H 10255 1995 50  0000 R CNN
+F 2 "Resistor_SMD:R_0201_0603Metric" V 10255 1950 50  0001 C CNN
+F 3 "~" H 10325 1950 50  0001 C CNN
+F 4 "P122692CT-ND" H 10325 1950 50  0001 C CNN "DigiKey"
+F 5 "2396857" H 10325 1950 50  0001 C CNN "Farnell"
+F 6 "667-ERJ-1GNF1200C" H 10325 1950 50  0001 C CNN "Mouser"
+F 7 "ERJ-1GNF1200C" H 10325 1950 50  0001 C CNN "Part No"
+F 8 "" H 10325 1950 50  0001 C CNN "RS"
+	1    10325 1950
+	-1   0    0    1   
+$EndComp
+Wire Wire Line
+	7225 4850 7275 4850
+Wire Wire Line
+	7275 4850 7275 4800
+Wire Wire Line
+	7275 4850 7275 4900
+Connection ~ 7275 4850
+$Comp
+L Connector_Generic:Conn_01x06 J10
+U 1 1 60216426
+P 8925 4700
+AR Path="/5FFC5CB5/60216426" Ref="J10"  Part="1" 
+AR Path="/60235E6B/60216426" Ref="J?"  Part="1" 
+AR Path="/60A11B09/60216426" Ref="J7"  Part="1" 
+F 0 "J10" H 9005 4692 50  0000 L CNN
+F 1 "Conn_01x06" H 9005 4601 50  0000 L CNN
+F 2 "EcatExBrd:Hirose_DF13-06P-1.25DSA_1x06_P1.25mm_Vertical" H 8925 4700 50  0001 C CNN
+F 3 "~" H 8925 4700 50  0001 C CNN
+F 4 "DF13-6P-1.25DSA" H 8925 4700 50  0001 C CNN "Part No"
+F 5 "H2195-ND" H 8925 4700 50  0001 C CNN "DigiKey"
+F 6 "2427590" H 8925 4700 50  0001 C CNN "Farnell"
+F 7 "798-DF13-6P-1.25DSA" H 8925 4700 50  0001 C CNN "Mouser"
+F 8 "503-7928" H 8925 4700 50  0001 C CNN "RS"
+	1    8925 4700
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR?
+U 1 1 60234A79
+P 8625 4500
+AR Path="/5FA2DDAB/60234A79" Ref="#PWR?"  Part="1" 
+AR Path="/5FD4324B/60234A79" Ref="#PWR?"  Part="1" 
+AR Path="/5FE2E867/60234A79" Ref="#PWR?"  Part="1" 
+AR Path="/6004B5DB/60234A79" Ref="#PWR?"  Part="1" 
+AR Path="/600728EB/60234A79" Ref="#PWR?"  Part="1" 
+AR Path="/5FD3AEFC/60234A79" Ref="#PWR?"  Part="1" 
+AR Path="/5FD43722/60234A79" Ref="#PWR?"  Part="1" 
+AR Path="/5FD915CA/60234A79" Ref="#PWR?"  Part="1" 
+AR Path="/5FD738CA/60234A79" Ref="#PWR?"  Part="1" 
+AR Path="/5FFC5CB5/60234A79" Ref="#PWR060"  Part="1" 
+AR Path="/60235E6B/60234A79" Ref="#PWR?"  Part="1" 
+AR Path="/60A11B09/60234A79" Ref="#PWR043"  Part="1" 
+F 0 "#PWR060" H 8625 4250 50  0001 C CNN
+F 1 "GND" V 8625 4300 50  0000 C CNN
+F 2 "" H 8625 4500 50  0001 C CNN
+F 3 "" H 8625 4500 50  0001 C CNN
+	1    8625 4500
+	0    1    -1   0   
+$EndComp
+$Comp
+L power:GND #PWR?
+U 1 1 6025CE7E
+P 6150 4750
+AR Path="/5FA2DDAB/6025CE7E" Ref="#PWR?"  Part="1" 
+AR Path="/5FD4324B/6025CE7E" Ref="#PWR?"  Part="1" 
+AR Path="/5FE2E867/6025CE7E" Ref="#PWR?"  Part="1" 
+AR Path="/6004B5DB/6025CE7E" Ref="#PWR?"  Part="1" 
+AR Path="/600728EB/6025CE7E" Ref="#PWR?"  Part="1" 
+AR Path="/5FD3AEFC/6025CE7E" Ref="#PWR?"  Part="1" 
+AR Path="/5FD43722/6025CE7E" Ref="#PWR?"  Part="1" 
+AR Path="/5FD915CA/6025CE7E" Ref="#PWR?"  Part="1" 
+AR Path="/5FD738CA/6025CE7E" Ref="#PWR?"  Part="1" 
+AR Path="/5FFC5CB5/6025CE7E" Ref="#PWR061"  Part="1" 
+AR Path="/60235E6B/6025CE7E" Ref="#PWR?"  Part="1" 
+AR Path="/60A11B09/6025CE7E" Ref="#PWR044"  Part="1" 
+F 0 "#PWR061" H 6150 4500 50  0001 C CNN
+F 1 "GND" H 6155 4577 50  0000 C CNN
+F 2 "" H 6150 4750 50  0001 C CNN
+F 3 "" H 6150 4750 50  0001 C CNN
+	1    6150 4750
+	-1   0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR?
+U 1 1 60287289
+P 6150 6850
+AR Path="/5FA2DDAB/60287289" Ref="#PWR?"  Part="1" 
+AR Path="/5FD4324B/60287289" Ref="#PWR?"  Part="1" 
+AR Path="/5FE2E867/60287289" Ref="#PWR?"  Part="1" 
+AR Path="/6004B5DB/60287289" Ref="#PWR?"  Part="1" 
+AR Path="/600728EB/60287289" Ref="#PWR?"  Part="1" 
+AR Path="/5FD3AEFC/60287289" Ref="#PWR?"  Part="1" 
+AR Path="/5FD43722/60287289" Ref="#PWR?"  Part="1" 
+AR Path="/5FD915CA/60287289" Ref="#PWR?"  Part="1" 
+AR Path="/5FD738CA/60287289" Ref="#PWR?"  Part="1" 
+AR Path="/5FFC5CB5/60287289" Ref="#PWR063"  Part="1" 
+AR Path="/60235E6B/60287289" Ref="#PWR?"  Part="1" 
+AR Path="/60A11B09/60287289" Ref="#PWR046"  Part="1" 
+F 0 "#PWR063" H 6150 6600 50  0001 C CNN
+F 1 "GND" H 6155 6677 50  0000 C CNN
+F 2 "" H 6150 6850 50  0001 C CNN
+F 3 "" H 6150 6850 50  0001 C CNN
+	1    6150 6850
+	-1   0    0    -1  
+$EndComp
+Text Label 5650 6500 0    50   ~ 0
+SSI_~CS_n~
+Text Label 5650 3300 0    50   ~ 0
+MISO
+Text Label 5650 3200 0    50   ~ 0
+MOSI
+Text Label 8450 2000 0    50   ~ 0
+RS485_Tx_En
+Text Label 8450 2100 0    50   ~ 0
+RS485_Tx
+Text Label 8450 1800 0    50   ~ 0
+RS485_Rx
+$Comp
+L Device:C C?
+U 1 1 5FFF7E60
+P 10000 3200
+AR Path="/5FA2DDAB/5FFF7E60" Ref="C?"  Part="1" 
+AR Path="/5FD4324B/5FFF7E60" Ref="C?"  Part="1" 
+AR Path="/5FE2E867/5FFF7E60" Ref="C?"  Part="1" 
+AR Path="/6004B5DB/5FFF7E60" Ref="C?"  Part="1" 
+AR Path="/600728EB/5FFF7E60" Ref="C?"  Part="1" 
+AR Path="/5FD3AEFC/5FFF7E60" Ref="C?"  Part="1" 
+AR Path="/5FD43722/5FFF7E60" Ref="C?"  Part="1" 
+AR Path="/5FD915CA/5FFF7E60" Ref="C?"  Part="1" 
+AR Path="/5FD738CA/5FFF7E60" Ref="C?"  Part="1" 
+AR Path="/5FFC5CB5/5FFF7E60" Ref="C47"  Part="1" 
+AR Path="/60235E6B/5FFF7E60" Ref="C?"  Part="1" 
+AR Path="/60A11B09/5FFF7E60" Ref="C39"  Part="1" 
+F 0 "C47" H 10115 3246 50  0000 L CNN
+F 1 "100n" H 10115 3155 50  0000 L CNN
+F 2 "Capacitor_SMD:C_0201_0603Metric" H 10038 3050 50  0001 C CNN
+F 3 "~" H 10000 3200 50  0001 C CNN
+F 4 "490-9985-1-ND" H 10000 3200 50  0001 C CNN "DigiKey"
+F 5 "2611884" H 10000 3200 50  0001 C CNN "Farnell"
+F 6 "81-GRM33R61C104KE84D" H 10000 3200 50  0001 C CNN "Mouser"
+F 7 "GRM033R61C104KE84D" H 10000 3200 50  0001 C CNN "Part No"
+F 8 "113-8716" H 10000 3200 50  0001 C CNN "RS"
+	1    10000 3200
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	9150 2975 9575 2975
+Wire Wire Line
+	9575 2975 10000 2975
+$Comp
+L ecatextbrd_lib:MAX3107 U14
+U 1 1 5FFDA443
+P 7850 2600
+AR Path="/5FFC5CB5/5FFDA443" Ref="U14"  Part="1" 
+AR Path="/60235E6B/5FFDA443" Ref="U?"  Part="1" 
+AR Path="/60A11B09/5FFDA443" Ref="U10"  Part="1" 
+F 0 "U14" H 7500 3550 50  0000 C CNN
+F 1 "MAX3107" H 8100 3550 50  0000 C CNN
+F 2 "EcatExBrd:TQFN-24-1EP_3.5x3.5mm_P0.4mm_EP2.4x2.4mm" H 7850 1850 50  0001 C CNN
+F 3 "https://datasheets.maximintegrated.com/en/ds/MAX3107.pdf" H 7850 2850 50  0001 C CNN
+F 4 "MAX3107ETG+-ND" H 7850 2600 50  0001 C CNN "DigiKey"
+F 5 "2517397" H 7850 2600 50  0001 C CNN "Farnell"
+F 6 "700-MAX3107ETG+" H 7850 2600 50  0001 C CNN "Mouser"
+F 7 "MAX3107ETG+" H 7850 2600 50  0001 C CNN "Part No"
+F 8 "190-1351" H 7850 2600 50  0001 C CNN "RS"
+	1    7850 2600
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR?
+U 1 1 5FFE3E2D
+P 10000 3450
+AR Path="/5FA2DDAB/5FFE3E2D" Ref="#PWR?"  Part="1" 
+AR Path="/5FD4324B/5FFE3E2D" Ref="#PWR?"  Part="1" 
+AR Path="/5FE2E867/5FFE3E2D" Ref="#PWR?"  Part="1" 
+AR Path="/6004B5DB/5FFE3E2D" Ref="#PWR?"  Part="1" 
+AR Path="/600728EB/5FFE3E2D" Ref="#PWR?"  Part="1" 
+AR Path="/5FD3AEFC/5FFE3E2D" Ref="#PWR?"  Part="1" 
+AR Path="/5FD43722/5FFE3E2D" Ref="#PWR?"  Part="1" 
+AR Path="/5FD915CA/5FFE3E2D" Ref="#PWR?"  Part="1" 
+AR Path="/5FD738CA/5FFE3E2D" Ref="#PWR?"  Part="1" 
+AR Path="/5FFC5CB5/5FFE3E2D" Ref="#PWR058"  Part="1" 
+AR Path="/60235E6B/5FFE3E2D" Ref="#PWR?"  Part="1" 
+AR Path="/60A11B09/5FFE3E2D" Ref="#PWR041"  Part="1" 
+F 0 "#PWR058" H 10000 3200 50  0001 C CNN
+F 1 "GND" H 10005 3277 50  0000 C CNN
+F 2 "" H 10000 3450 50  0001 C CNN
+F 3 "" H 10000 3450 50  0001 C CNN
+	1    10000 3450
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:C C?
+U 1 1 5FFE3E45
+P 9150 3200
+AR Path="/5FA2DDAB/5FFE3E45" Ref="C?"  Part="1" 
+AR Path="/5FD4324B/5FFE3E45" Ref="C?"  Part="1" 
+AR Path="/5FE2E867/5FFE3E45" Ref="C?"  Part="1" 
+AR Path="/6004B5DB/5FFE3E45" Ref="C?"  Part="1" 
+AR Path="/600728EB/5FFE3E45" Ref="C?"  Part="1" 
+AR Path="/5FD3AEFC/5FFE3E45" Ref="C?"  Part="1" 
+AR Path="/5FD43722/5FFE3E45" Ref="C?"  Part="1" 
+AR Path="/5FD915CA/5FFE3E45" Ref="C?"  Part="1" 
+AR Path="/5FD738CA/5FFE3E45" Ref="C?"  Part="1" 
+AR Path="/5FFC5CB5/5FFE3E45" Ref="C45"  Part="1" 
+AR Path="/60235E6B/5FFE3E45" Ref="C?"  Part="1" 
+AR Path="/60A11B09/5FFE3E45" Ref="C37"  Part="1" 
+F 0 "C45" H 9265 3246 50  0000 L CNN
+F 1 "100n" H 9265 3155 50  0000 L CNN
+F 2 "Capacitor_SMD:C_0201_0603Metric" H 9188 3050 50  0001 C CNN
+F 3 "~" H 9150 3200 50  0001 C CNN
+F 4 "490-9985-1-ND" H 9150 3200 50  0001 C CNN "DigiKey"
+F 5 "2611884" H 9150 3200 50  0001 C CNN "Farnell"
+F 6 "81-GRM33R61C104KE84D" H 9150 3200 50  0001 C CNN "Mouser"
+F 7 "GRM033R61C104KE84D" H 9150 3200 50  0001 C CNN "Part No"
+F 8 "113-8716" H 9150 3200 50  0001 C CNN "RS"
+	1    9150 3200
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	9150 3350 9150 3400
+$Comp
+L Device:C C?
+U 1 1 5FFEE954
+P 9575 3200
+AR Path="/5FA2DDAB/5FFEE954" Ref="C?"  Part="1" 
+AR Path="/5FD4324B/5FFEE954" Ref="C?"  Part="1" 
+AR Path="/5FE2E867/5FFEE954" Ref="C?"  Part="1" 
+AR Path="/6004B5DB/5FFEE954" Ref="C?"  Part="1" 
+AR Path="/600728EB/5FFEE954" Ref="C?"  Part="1" 
+AR Path="/5FD3AEFC/5FFEE954" Ref="C?"  Part="1" 
+AR Path="/5FD43722/5FFEE954" Ref="C?"  Part="1" 
+AR Path="/5FD915CA/5FFEE954" Ref="C?"  Part="1" 
+AR Path="/5FD738CA/5FFEE954" Ref="C?"  Part="1" 
+AR Path="/5FFC5CB5/5FFEE954" Ref="C46"  Part="1" 
+AR Path="/60235E6B/5FFEE954" Ref="C?"  Part="1" 
+AR Path="/60A11B09/5FFEE954" Ref="C38"  Part="1" 
+F 0 "C46" H 9690 3246 50  0000 L CNN
+F 1 "100n" H 9690 3155 50  0000 L CNN
+F 2 "Capacitor_SMD:C_0201_0603Metric" H 9613 3050 50  0001 C CNN
+F 3 "~" H 9575 3200 50  0001 C CNN
+F 4 "490-9985-1-ND" H 9575 3200 50  0001 C CNN "DigiKey"
+F 5 "2611884" H 9575 3200 50  0001 C CNN "Farnell"
+F 6 "81-GRM33R61C104KE84D" H 9575 3200 50  0001 C CNN "Mouser"
+F 7 "GRM033R61C104KE84D" H 9575 3200 50  0001 C CNN "Part No"
+F 8 "113-8716" H 9575 3200 50  0001 C CNN "RS"
+	1    9575 3200
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	8775 3400 8775 3350
+Text Label 8475 3000 0    50   ~ 0
+LDO_OUT
+Wire Wire Line
+	8775 3050 8775 3000
+Wire Wire Line
+	8450 3000 8775 3000
+Connection ~ 9150 3400
+Wire Wire Line
+	9150 3400 9575 3400
+Wire Wire Line
+	9575 3350 9575 3400
+Connection ~ 9575 3400
+Wire Wire Line
+	9575 3400 10000 3400
+Wire Wire Line
+	10000 3350 10000 3400
+Wire Wire Line
+	10000 3400 10000 3450
+Wire Wire Line
+	8775 3400 9150 3400
+Wire Wire Line
+	10000 2975 10000 3050
+Wire Wire Line
+	9575 2975 9575 3050
+Wire Wire Line
+	8450 3200 8500 3200
+Wire Wire Line
+	8500 3200 8500 3300
+Wire Wire Line
+	8450 3400 8500 3400
+Connection ~ 8500 3400
+Wire Wire Line
+	8500 3400 8775 3400
+Wire Wire Line
+	8450 3300 8500 3300
+Connection ~ 8500 3300
+Wire Wire Line
+	8500 3300 8500 3400
+Connection ~ 10000 3400
+Connection ~ 9575 2975
+$Comp
+L power:GND #PWR?
+U 1 1 60056D88
+P 9125 2200
+AR Path="/5FA2DDAB/60056D88" Ref="#PWR?"  Part="1" 
+AR Path="/5FD4324B/60056D88" Ref="#PWR?"  Part="1" 
+AR Path="/5FE2E867/60056D88" Ref="#PWR?"  Part="1" 
+AR Path="/6004B5DB/60056D88" Ref="#PWR?"  Part="1" 
+AR Path="/600728EB/60056D88" Ref="#PWR?"  Part="1" 
+AR Path="/5FD3AEFC/60056D88" Ref="#PWR?"  Part="1" 
+AR Path="/5FD43722/60056D88" Ref="#PWR?"  Part="1" 
+AR Path="/5FD915CA/60056D88" Ref="#PWR?"  Part="1" 
+AR Path="/5FD738CA/60056D88" Ref="#PWR?"  Part="1" 
+AR Path="/5FFC5CB5/60056D88" Ref="#PWR055"  Part="1" 
+AR Path="/60235E6B/60056D88" Ref="#PWR?"  Part="1" 
+AR Path="/60A11B09/60056D88" Ref="#PWR038"  Part="1" 
+F 0 "#PWR055" H 9125 1950 50  0001 C CNN
+F 1 "GND" H 9130 2027 50  0000 C CNN
+F 2 "" H 9125 2200 50  0001 C CNN
+F 3 "" H 9125 2200 50  0001 C CNN
+	1    9125 2200
+	1    0    0    -1  
+$EndComp
+Text GLabel 10100 2975 2    50   Input ~ 0
+VDD_3V3
+Connection ~ 10000 2975
+Connection ~ 9125 1900
+Wire Wire Line
+	9125 1900 9175 1900
+Wire Wire Line
+	9125 1900 9125 2200
+Connection ~ 8775 3400
+$Comp
+L ecatextbrd_lib:THVD24x0 U13
+U 1 1 60052F3F
+P 9675 2100
+AR Path="/5FFC5CB5/60052F3F" Ref="U13"  Part="1" 
+AR Path="/60235E6B/60052F3F" Ref="U?"  Part="1" 
+AR Path="/60A11B09/60052F3F" Ref="U9"  Part="1" 
+F 0 "U13" H 9750 2625 50  0000 C CNN
+F 1 "THVD2450" H 9875 2550 50  0000 C CNN
+F 2 "EcatExBrd:TDFN-8-1EP_3.0x3.0mm_P0.65mm" H 9675 1200 50  0001 C CNN
+F 3 "https://www.ti.com/lit/ds/symlink/thvd2450.pdf" H 9675 2150 50  0001 C CNN
+F 4 "296-THVD2450DRBRCT-ND" H 9675 2100 50  0001 C CNN "DigiKey"
+F 5 "595-THVD2450DRBR" H 9675 2100 50  0001 C CNN "Mouser"
+F 6 "THVD2450DRBR" H 9675 2100 50  0001 C CNN "Part No"
+	1    9675 2100
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	8450 2100 9175 2100
+Wire Wire Line
+	8450 1800 9175 1800
+Wire Wire Line
+	8625 4500 8725 4500
+$Comp
+L Jumper:SolderJumper_3_Open JP8
+U 1 1 6050DB22
+P 8275 4125
+AR Path="/5FFC5CB5/6050DB22" Ref="JP8"  Part="1" 
+AR Path="/60235E6B/6050DB22" Ref="JP?"  Part="1" 
+AR Path="/60A11B09/6050DB22" Ref="JP4"  Part="1" 
+F 0 "JP8" H 8275 4330 50  0000 C CNN
+F 1 "SolderJumper_3_Open" H 8275 4239 50  0000 C CNN
+F 2 "EcatExBrd:SolderJumper-3_0201_0603Metric_Open_Pad" H 8275 4125 50  0001 C CNN
+F 3 "~" H 8275 4125 50  0001 C CNN
+F 4 "P15979CT-ND" H 8275 4125 50  0001 C CNN "DigiKey"
+F 5 "2797350" H 8275 4125 50  0001 C CNN "Farnell"
+F 6 "667-ERJ-1GN0R00C" H 8275 4125 50  0001 C CNN "Mouser"
+F 7 "ERJ-1GN0R00C" H 8275 4125 50  0001 C CNN "Part No"
+F 8 "175-5716" H 8275 4125 50  0001 C CNN "RS"
+	1    8275 4125
+	1    0    0    -1  
+$EndComp
+Text GLabel 7975 4125 0    50   Input ~ 0
+VDD_3V3
+Wire Wire Line
+	7975 4125 8075 4125
+Text GLabel 8575 4125 2    50   Input ~ 0
+5V0
+Wire Wire Line
+	8575 4125 8475 4125
+Wire Wire Line
+	8175 4700 8725 4700
+Wire Wire Line
+	8075 4800 8725 4800
+Wire Wire Line
+	8075 4900 8725 4900
+Wire Wire Line
+	8175 5000 8725 5000
+$Comp
+L power:GND #PWR?
+U 1 1 605EE26C
+P 7225 4850
+AR Path="/5FA2DDAB/605EE26C" Ref="#PWR?"  Part="1" 
+AR Path="/5FD4324B/605EE26C" Ref="#PWR?"  Part="1" 
+AR Path="/5FE2E867/605EE26C" Ref="#PWR?"  Part="1" 
+AR Path="/6004B5DB/605EE26C" Ref="#PWR?"  Part="1" 
+AR Path="/600728EB/605EE26C" Ref="#PWR?"  Part="1" 
+AR Path="/5FD3AEFC/605EE26C" Ref="#PWR?"  Part="1" 
+AR Path="/5FD43722/605EE26C" Ref="#PWR?"  Part="1" 
+AR Path="/5FD915CA/605EE26C" Ref="#PWR?"  Part="1" 
+AR Path="/5FD738CA/605EE26C" Ref="#PWR?"  Part="1" 
+AR Path="/5FFC5CB5/605EE26C" Ref="#PWR062"  Part="1" 
+AR Path="/60235E6B/605EE26C" Ref="#PWR?"  Part="1" 
+AR Path="/60A11B09/605EE26C" Ref="#PWR045"  Part="1" 
+F 0 "#PWR062" H 7225 4600 50  0001 C CNN
+F 1 "GND" V 7225 4650 50  0000 C CNN
+F 2 "" H 7225 4850 50  0001 C CNN
+F 3 "" H 7225 4850 50  0001 C CNN
+	1    7225 4850
+	0    1    -1   0   
+$EndComp
+Wire Wire Line
+	6150 4700 6150 4750
+$Comp
+L Device:C C?
+U 1 1 606E4D38
+P 5900 4225
+AR Path="/5FA2DDAB/606E4D38" Ref="C?"  Part="1" 
+AR Path="/5FD4324B/606E4D38" Ref="C?"  Part="1" 
+AR Path="/5FE2E867/606E4D38" Ref="C?"  Part="1" 
+AR Path="/6004B5DB/606E4D38" Ref="C?"  Part="1" 
+AR Path="/600728EB/606E4D38" Ref="C?"  Part="1" 
+AR Path="/5FD3AEFC/606E4D38" Ref="C?"  Part="1" 
+AR Path="/5FD43722/606E4D38" Ref="C?"  Part="1" 
+AR Path="/5FD915CA/606E4D38" Ref="C?"  Part="1" 
+AR Path="/5FD738CA/606E4D38" Ref="C?"  Part="1" 
+AR Path="/5FFC5CB5/606E4D38" Ref="C48"  Part="1" 
+AR Path="/60235E6B/606E4D38" Ref="C?"  Part="1" 
+AR Path="/60A11B09/606E4D38" Ref="C40"  Part="1" 
+F 0 "C48" V 6125 4175 50  0000 L CNN
+F 1 "100n" V 6050 4125 50  0000 L CNN
+F 2 "Capacitor_SMD:C_0201_0603Metric" H 5938 4075 50  0001 C CNN
+F 3 "~" H 5900 4225 50  0001 C CNN
+F 4 "490-9985-1-ND" H 5900 4225 50  0001 C CNN "DigiKey"
+F 5 "2611884" H 5900 4225 50  0001 C CNN "Farnell"
+F 6 "81-GRM33R61C104KE84D" H 5900 4225 50  0001 C CNN "Mouser"
+F 7 "GRM033R61C104KE84D" H 5900 4225 50  0001 C CNN "Part No"
+F 8 "113-8716" H 5900 4225 50  0001 C CNN "RS"
+	1    5900 4225
+	0    -1   -1   0   
+$EndComp
+$Comp
+L power:GND #PWR?
+U 1 1 606E4D3E
+P 5700 4225
+AR Path="/5FA2DDAB/606E4D3E" Ref="#PWR?"  Part="1" 
+AR Path="/5FD4324B/606E4D3E" Ref="#PWR?"  Part="1" 
+AR Path="/5FE2E867/606E4D3E" Ref="#PWR?"  Part="1" 
+AR Path="/6004B5DB/606E4D3E" Ref="#PWR?"  Part="1" 
+AR Path="/600728EB/606E4D3E" Ref="#PWR?"  Part="1" 
+AR Path="/5FD3AEFC/606E4D3E" Ref="#PWR?"  Part="1" 
+AR Path="/5FD43722/606E4D3E" Ref="#PWR?"  Part="1" 
+AR Path="/5FD915CA/606E4D3E" Ref="#PWR?"  Part="1" 
+AR Path="/5FD738CA/606E4D3E" Ref="#PWR?"  Part="1" 
+AR Path="/5FFC5CB5/606E4D3E" Ref="#PWR059"  Part="1" 
+AR Path="/60235E6B/606E4D3E" Ref="#PWR?"  Part="1" 
+AR Path="/60A11B09/606E4D3E" Ref="#PWR042"  Part="1" 
+F 0 "#PWR059" H 5700 3975 50  0001 C CNN
+F 1 "GND" H 5705 4052 50  0000 C CNN
+F 2 "" H 5700 4225 50  0001 C CNN
+F 3 "" H 5700 4225 50  0001 C CNN
+	1    5700 4225
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	5700 4225 5750 4225
+$Comp
+L power:GND #PWR?
+U 1 1 607EC7CA
+P 7150 8950
+AR Path="/5FA2DDAB/607EC7CA" Ref="#PWR?"  Part="1" 
+AR Path="/5FD4324B/607EC7CA" Ref="#PWR?"  Part="1" 
+AR Path="/5FE2E867/607EC7CA" Ref="#PWR?"  Part="1" 
+AR Path="/6004B5DB/607EC7CA" Ref="#PWR?"  Part="1" 
+AR Path="/600728EB/607EC7CA" Ref="#PWR?"  Part="1" 
+AR Path="/5FD3AEFC/607EC7CA" Ref="#PWR?"  Part="1" 
+AR Path="/5FD43722/607EC7CA" Ref="#PWR?"  Part="1" 
+AR Path="/5FD915CA/607EC7CA" Ref="#PWR?"  Part="1" 
+AR Path="/5FD738CA/607EC7CA" Ref="#PWR?"  Part="1" 
+AR Path="/5FFC5CB5/607EC7CA" Ref="#PWR070"  Part="1" 
+AR Path="/60235E6B/607EC7CA" Ref="#PWR?"  Part="1" 
+AR Path="/60A11B09/607EC7CA" Ref="#PWR053"  Part="1" 
+F 0 "#PWR070" H 7150 8700 50  0001 C CNN
+F 1 "GND" H 7155 8777 50  0000 C CNN
+F 2 "" H 7150 8950 50  0001 C CNN
+F 3 "" H 7150 8950 50  0001 C CNN
+	1    7150 8950
+	1    0    0    -1  
+$EndComp
+NoConn ~ 7250 8050
+NoConn ~ 7250 7550
+NoConn ~ 7250 7650
+Wire Wire Line
+	7250 8600 7150 8600
+Wire Wire Line
+	7150 8600 7150 8950
+Wire Wire Line
+	7250 8500 7150 8500
+Wire Wire Line
+	7150 8500 7150 8600
+Connection ~ 7150 8600
+Text Label 5650 3400 0    50   ~ 0
+SCLK
+Text Label 5650 5050 0    50   ~ 0
+SCLK
+Text Label 5650 7950 0    50   ~ 0
+SCLK
+Text Label 5650 4650 0    50   ~ 0
+MISO
+$Comp
+L power:GND #PWR?
+U 1 1 609A67D9
+P 11800 1700
+AR Path="/5FA2DDAB/609A67D9" Ref="#PWR?"  Part="1" 
+AR Path="/5FD4324B/609A67D9" Ref="#PWR?"  Part="1" 
+AR Path="/5FE2E867/609A67D9" Ref="#PWR?"  Part="1" 
+AR Path="/6004B5DB/609A67D9" Ref="#PWR?"  Part="1" 
+AR Path="/600728EB/609A67D9" Ref="#PWR?"  Part="1" 
+AR Path="/5FD3AEFC/609A67D9" Ref="#PWR?"  Part="1" 
+AR Path="/5FD43722/609A67D9" Ref="#PWR?"  Part="1" 
+AR Path="/5FD915CA/609A67D9" Ref="#PWR?"  Part="1" 
+AR Path="/5FD738CA/609A67D9" Ref="#PWR?"  Part="1" 
+AR Path="/5FFC5CB5/609A67D9" Ref="#PWR054"  Part="1" 
+AR Path="/60235E6B/609A67D9" Ref="#PWR?"  Part="1" 
+AR Path="/60A11B09/609A67D9" Ref="#PWR037"  Part="1" 
+F 0 "#PWR054" H 11800 1450 50  0001 C CNN
+F 1 "GND" V 11800 1500 50  0000 C CNN
+F 2 "" H 11800 1700 50  0001 C CNN
+F 3 "" H 11800 1700 50  0001 C CNN
+	1    11800 1700
+	0    1    -1   0   
+$EndComp
+Wire Wire Line
+	11800 1700 12050 1700
+$Comp
+L Jumper:SolderJumper_3_Open JP6
+U 1 1 609A67E0
+P 11450 1500
+AR Path="/5FFC5CB5/609A67E0" Ref="JP6"  Part="1" 
+AR Path="/60235E6B/609A67E0" Ref="JP?"  Part="1" 
+AR Path="/60A11B09/609A67E0" Ref="JP2"  Part="1" 
+F 0 "JP6" H 11450 1705 50  0000 C CNN
+F 1 "SolderJumper_3_Open" H 11450 1614 50  0000 C CNN
+F 2 "EcatExBrd:SolderJumper-3_0201_0603Metric_Open_Pad" H 11450 1500 50  0001 C CNN
+F 3 "~" H 11450 1500 50  0001 C CNN
+F 4 "P15979CT-ND" H 11450 1500 50  0001 C CNN "DigiKey"
+F 5 "2797350" H 11450 1500 50  0001 C CNN "Farnell"
+F 6 "667-ERJ-1GN0R00C" H 11450 1500 50  0001 C CNN "Mouser"
+F 7 "ERJ-1GN0R00C" H 11450 1500 50  0001 C CNN "Part No"
+F 8 "175-5716" H 11450 1500 50  0001 C CNN "RS"
+	1    11450 1500
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	12050 1800 11450 1800
+Text GLabel 11150 1500 0    50   Input ~ 0
+VDD_3V3
+Wire Wire Line
+	11150 1500 11250 1500
+Text GLabel 11750 1500 2    50   Input ~ 0
+5V0
+Wire Wire Line
+	11750 1500 11650 1500
+Text Label 10550 1800 0    50   ~ 0
+RS485_N
+Text Label 10550 2100 0    50   ~ 0
+RS485_P
+$Comp
+L Connector_Generic:Conn_01x04 J9
+U 1 1 60A2487E
+P 12250 1800
+AR Path="/5FFC5CB5/60A2487E" Ref="J9"  Part="1" 
+AR Path="/60235E6B/60A2487E" Ref="J?"  Part="1" 
+AR Path="/60A11B09/60A2487E" Ref="J6"  Part="1" 
+F 0 "J9" H 12330 1792 50  0000 L CNN
+F 1 "Conn_01x04" H 12330 1701 50  0000 L CNN
+F 2 "EcatExBrd:Hirose_DF13-04P-1.25DSA_1x04_P1.25mm_Vertical" H 12250 1800 50  0001 C CNN
+F 3 "~" H 12250 1800 50  0001 C CNN
+F 4 "DF13-4P-1.25DSA" H 12250 1800 50  0001 C CNN "Part No"
+F 5 "H2193-ND" H 12250 1800 50  0001 C CNN "DigiKey"
+F 6 "2427588" H 12250 1800 50  0001 C CNN "Farnell"
+F 7 "798-DF13-4P-1.25DSA" H 12250 1800 50  0001 C CNN "Mouser"
+F 8 "175-0647" H 12250 1800 50  0001 C CNN "RS"
+	1    12250 1800
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	11450 1650 11450 1800
+Wire Wire Line
+	6500 6700 7250 6700
+Text Label 5650 3100 0    50   ~ 0
+RS485_~CS_n~
+Wire Wire Line
+	8725 4600 8275 4600
+Text Label 5650 6600 0    50   ~ 0
+MOSI
+Text Label 5650 6700 0    50   ~ 0
+MISO
+Wire Wire Line
+	6150 6850 6150 6750
+Wire Wire Line
+	6900 8150 7250 8150
+Wire Wire Line
+	6350 8950 6350 8850
+$Comp
+L power:GND #PWR?
+U 1 1 60D3B1FD
+P 6350 8950
+AR Path="/5FA2DDAB/60D3B1FD" Ref="#PWR?"  Part="1" 
+AR Path="/5FD4324B/60D3B1FD" Ref="#PWR?"  Part="1" 
+AR Path="/5FE2E867/60D3B1FD" Ref="#PWR?"  Part="1" 
+AR Path="/6004B5DB/60D3B1FD" Ref="#PWR?"  Part="1" 
+AR Path="/600728EB/60D3B1FD" Ref="#PWR?"  Part="1" 
+AR Path="/5FD3AEFC/60D3B1FD" Ref="#PWR?"  Part="1" 
+AR Path="/5FD43722/60D3B1FD" Ref="#PWR?"  Part="1" 
+AR Path="/5FD915CA/60D3B1FD" Ref="#PWR?"  Part="1" 
+AR Path="/5FD738CA/60D3B1FD" Ref="#PWR?"  Part="1" 
+AR Path="/5FFC5CB5/60D3B1FD" Ref="#PWR068"  Part="1" 
+AR Path="/60235E6B/60D3B1FD" Ref="#PWR?"  Part="1" 
+AR Path="/60A11B09/60D3B1FD" Ref="#PWR051"  Part="1" 
+F 0 "#PWR068" H 6350 8700 50  0001 C CNN
+F 1 "GND" H 6355 8777 50  0000 C CNN
+F 2 "" H 6350 8950 50  0001 C CNN
+F 3 "" H 6350 8950 50  0001 C CNN
+	1    6350 8950
+	1    0    0    -1  
+$EndComp
+Connection ~ 6350 8350
+Wire Wire Line
+	6250 8350 6350 8350
+Wire Wire Line
+	6350 8350 6750 8350
+Wire Wire Line
+	6350 8550 6350 8350
+Connection ~ 6750 8350
+Wire Wire Line
+	6750 8350 7250 8350
+Wire Wire Line
+	6750 8350 6750 8550
+Text GLabel 6250 8350 0    50   Input ~ 0
+5V0
+Wire Wire Line
+	6750 8950 6750 8850
+$Comp
+L power:GND #PWR?
+U 1 1 607E22EC
+P 6750 8950
+AR Path="/5FA2DDAB/607E22EC" Ref="#PWR?"  Part="1" 
+AR Path="/5FD4324B/607E22EC" Ref="#PWR?"  Part="1" 
+AR Path="/5FE2E867/607E22EC" Ref="#PWR?"  Part="1" 
+AR Path="/6004B5DB/607E22EC" Ref="#PWR?"  Part="1" 
+AR Path="/600728EB/607E22EC" Ref="#PWR?"  Part="1" 
+AR Path="/5FD3AEFC/607E22EC" Ref="#PWR?"  Part="1" 
+AR Path="/5FD43722/607E22EC" Ref="#PWR?"  Part="1" 
+AR Path="/5FD915CA/607E22EC" Ref="#PWR?"  Part="1" 
+AR Path="/5FD738CA/607E22EC" Ref="#PWR?"  Part="1" 
+AR Path="/5FFC5CB5/607E22EC" Ref="#PWR069"  Part="1" 
+AR Path="/60235E6B/607E22EC" Ref="#PWR?"  Part="1" 
+AR Path="/60A11B09/607E22EC" Ref="#PWR052"  Part="1" 
+F 0 "#PWR069" H 6750 8700 50  0001 C CNN
+F 1 "GND" H 6755 8777 50  0000 C CNN
+F 2 "" H 6750 8950 50  0001 C CNN
+F 3 "" H 6750 8950 50  0001 C CNN
+	1    6750 8950
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:C C?
+U 1 1 607E22E6
+P 6750 8700
+AR Path="/5FA2DDAB/607E22E6" Ref="C?"  Part="1" 
+AR Path="/5FD4324B/607E22E6" Ref="C?"  Part="1" 
+AR Path="/5FE2E867/607E22E6" Ref="C?"  Part="1" 
+AR Path="/6004B5DB/607E22E6" Ref="C?"  Part="1" 
+AR Path="/600728EB/607E22E6" Ref="C?"  Part="1" 
+AR Path="/5FD3AEFC/607E22E6" Ref="C?"  Part="1" 
+AR Path="/5FD43722/607E22E6" Ref="C?"  Part="1" 
+AR Path="/5FD915CA/607E22E6" Ref="C?"  Part="1" 
+AR Path="/5FD738CA/607E22E6" Ref="C?"  Part="1" 
+AR Path="/5FFC5CB5/607E22E6" Ref="C50"  Part="1" 
+AR Path="/60235E6B/607E22E6" Ref="C?"  Part="1" 
+AR Path="/60A11B09/607E22E6" Ref="C42"  Part="1" 
+F 0 "C50" H 6450 8750 50  0000 L CNN
+F 1 "100n" H 6450 8650 50  0000 L CNN
+F 2 "Capacitor_SMD:C_0201_0603Metric" H 6788 8550 50  0001 C CNN
+F 3 "~" H 6750 8700 50  0001 C CNN
+F 4 "490-9985-1-ND" H 6750 8700 50  0001 C CNN "DigiKey"
+F 5 "2611884" H 6750 8700 50  0001 C CNN "Farnell"
+F 6 "81-GRM33R61C104KE84D" H 6750 8700 50  0001 C CNN "Mouser"
+F 7 "GRM033R61C104KE84D" H 6750 8700 50  0001 C CNN "Part No"
+F 8 "113-8716" H 6750 8700 50  0001 C CNN "RS"
+	1    6750 8700
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:C C?
+U 1 1 5FFE3E50
+P 6350 8700
+AR Path="/5FA2DDAB/5FFE3E50" Ref="C?"  Part="1" 
+AR Path="/5FD4324B/5FFE3E50" Ref="C?"  Part="1" 
+AR Path="/5FE2E867/5FFE3E50" Ref="C?"  Part="1" 
+AR Path="/6004B5DB/5FFE3E50" Ref="C?"  Part="1" 
+AR Path="/600728EB/5FFE3E50" Ref="C?"  Part="1" 
+AR Path="/5FD3AEFC/5FFE3E50" Ref="C?"  Part="1" 
+AR Path="/5FD43722/5FFE3E50" Ref="C?"  Part="1" 
+AR Path="/5FD915CA/5FFE3E50" Ref="C?"  Part="1" 
+AR Path="/5FD738CA/5FFE3E50" Ref="C?"  Part="1" 
+AR Path="/5FFC5CB5/5FFE3E50" Ref="C49"  Part="1" 
+AR Path="/60235E6B/5FFE3E50" Ref="C?"  Part="1" 
+AR Path="/60A11B09/5FFE3E50" Ref="C41"  Part="1" 
+F 0 "C49" H 6500 8650 50  0000 L CNN
+F 1 "1u" H 6500 8750 50  0000 L CNN
+F 2 "Capacitor_SMD:C_0201_0603Metric" H 6388 8550 50  0001 C CNN
+F 3 "~" H 6350 8700 50  0001 C CNN
+F 4 "490-13226-1-ND" H 6350 8700 50  0001 C CNN "DigiKey"
+F 5 "3581638" H 6350 8700 50  0001 C CNN "Farnell"
+F 6 "81-GRM033R61A105ME5D" H 6350 8700 50  0001 C CNN "Mouser"
+F 7 "GRM033R61A105ME15D" H 6350 8700 50  0001 C CNN "Part No"
+F 8 "185-1849" H 6350 8700 50  0001 C CNN "RS"
+	1    6350 8700
+	-1   0    0    1   
+$EndComp
+$Comp
+L Device:R R?
+U 1 1 600B167C
+P 6750 8150
+AR Path="/5FA2DDAB/600B167C" Ref="R?"  Part="1" 
+AR Path="/5FD4324B/600B167C" Ref="R?"  Part="1" 
+AR Path="/5FE2E867/600B167C" Ref="R?"  Part="1" 
+AR Path="/6004B5DB/600B167C" Ref="R?"  Part="1" 
+AR Path="/600728EB/600B167C" Ref="R?"  Part="1" 
+AR Path="/5FD3AEFC/600B167C" Ref="R?"  Part="1" 
+AR Path="/5FD43722/600B167C" Ref="R?"  Part="1" 
+AR Path="/5FD915CA/600B167C" Ref="R?"  Part="1" 
+AR Path="/5FD738CA/600B167C" Ref="R?"  Part="1" 
+AR Path="/5FDE3DFA/600B167C" Ref="R?"  Part="1" 
+AR Path="/5FFC5CB5/600B167C" Ref="R52"  Part="1" 
+AR Path="/60235E6B/600B167C" Ref="R?"  Part="1" 
+AR Path="/60A11B09/600B167C" Ref="R44"  Part="1" 
+F 0 "R52" V 6575 8225 50  0000 R CNN
+F 1 "10k" V 6650 8225 50  0000 R CNN
+F 2 "Resistor_SMD:R_0201_0603Metric" V 6680 8150 50  0001 C CNN
+F 3 "~" H 6750 8150 50  0001 C CNN
+F 4 "P122414CT-ND" H 6750 8150 50  0001 C CNN "DigiKey"
+F 5 "2302362" H 6750 8150 50  0001 C CNN "Farnell"
+F 6 "667-ERJ-1GNF1002C" H 6750 8150 50  0001 C CNN "Mouser"
+F 7 "ERJ-1GNF1002C" H 6750 8150 50  0001 C CNN "Part No"
+F 8 "176-3597" H 6750 8150 50  0001 C CNN "RS"
+	1    6750 8150
+	0    1    1    0   
+$EndComp
+$Comp
+L power:GND #PWR?
+U 1 1 60D637FC
+P 10600 7200
+AR Path="/5FA2DDAB/60D637FC" Ref="#PWR?"  Part="1" 
+AR Path="/5FD4324B/60D637FC" Ref="#PWR?"  Part="1" 
+AR Path="/5FE2E867/60D637FC" Ref="#PWR?"  Part="1" 
+AR Path="/6004B5DB/60D637FC" Ref="#PWR?"  Part="1" 
+AR Path="/600728EB/60D637FC" Ref="#PWR?"  Part="1" 
+AR Path="/5FD3AEFC/60D637FC" Ref="#PWR?"  Part="1" 
+AR Path="/5FD43722/60D637FC" Ref="#PWR?"  Part="1" 
+AR Path="/5FD915CA/60D637FC" Ref="#PWR?"  Part="1" 
+AR Path="/5FD738CA/60D637FC" Ref="#PWR?"  Part="1" 
+AR Path="/5FFC5CB5/60D637FC" Ref="#PWR064"  Part="1" 
+AR Path="/60235E6B/60D637FC" Ref="#PWR?"  Part="1" 
+AR Path="/60A11B09/60D637FC" Ref="#PWR047"  Part="1" 
+F 0 "#PWR064" H 10600 6950 50  0001 C CNN
+F 1 "GND" V 10600 7000 50  0000 C CNN
+F 2 "" H 10600 7200 50  0001 C CNN
+F 3 "" H 10600 7200 50  0001 C CNN
+	1    10600 7200
+	0    1    -1   0   
+$EndComp
+$Comp
+L Jumper:SolderJumper_3_Open JP9
+U 1 1 60D63803
+P 10250 7000
+AR Path="/5FFC5CB5/60D63803" Ref="JP9"  Part="1" 
+AR Path="/60235E6B/60D63803" Ref="JP?"  Part="1" 
+AR Path="/60A11B09/60D63803" Ref="JP5"  Part="1" 
+F 0 "JP9" H 10250 7205 50  0000 C CNN
+F 1 "SolderJumper_3_Open" H 10250 7114 50  0000 C CNN
+F 2 "EcatExBrd:SolderJumper-3_0201_0603Metric_Open_Pad" H 10250 7000 50  0001 C CNN
+F 3 "~" H 10250 7000 50  0001 C CNN
+F 4 "P15979CT-ND" H 10250 7000 50  0001 C CNN "DigiKey"
+F 5 "2797350" H 10250 7000 50  0001 C CNN "Farnell"
+F 6 "667-ERJ-1GN0R00C" H 10250 7000 50  0001 C CNN "Mouser"
+F 7 "ERJ-1GN0R00C" H 10250 7000 50  0001 C CNN "Part No"
+F 8 "175-5716" H 10250 7000 50  0001 C CNN "RS"
+	1    10250 7000
+	1    0    0    -1  
+$EndComp
+Text GLabel 9950 7000 0    50   Input ~ 0
+VDD_3V3
+Wire Wire Line
+	9950 7000 10050 7000
+Text GLabel 10550 7000 2    50   Input ~ 0
+5V0
+Wire Wire Line
+	10550 7000 10450 7000
+Wire Wire Line
+	10100 7400 10100 7300
+Wire Wire Line
+	10250 7150 10250 7300
+Wire Wire Line
+	9500 7300 10100 7300
+Wire Wire Line
+	10000 7400 10000 7500
+Wire Wire Line
+	9500 7400 10000 7400
+Wire Wire Line
+	10600 7200 11900 7200
+Wire Wire Line
+	10250 7300 11900 7300
+Wire Wire Line
+	10100 7400 10450 7400
+Wire Wire Line
+	10000 7500 10650 7500
+Connection ~ 10650 7500
+Wire Wire Line
+	10650 7500 11900 7500
+Connection ~ 10450 7400
+Wire Wire Line
+	10450 7400 11900 7400
+$Comp
+L power:GND #PWR?
+U 1 1 603091FA
+P 11000 2900
+AR Path="/5FA2DDAB/603091FA" Ref="#PWR?"  Part="1" 
+AR Path="/5FD4324B/603091FA" Ref="#PWR?"  Part="1" 
+AR Path="/5FE2E867/603091FA" Ref="#PWR?"  Part="1" 
+AR Path="/6004B5DB/603091FA" Ref="#PWR?"  Part="1" 
+AR Path="/600728EB/603091FA" Ref="#PWR?"  Part="1" 
+AR Path="/5FD3AEFC/603091FA" Ref="#PWR?"  Part="1" 
+AR Path="/5FD43722/603091FA" Ref="#PWR?"  Part="1" 
+AR Path="/5FD915CA/603091FA" Ref="#PWR?"  Part="1" 
+AR Path="/5FD738CA/603091FA" Ref="#PWR?"  Part="1" 
+AR Path="/5FFC5CB5/603091FA" Ref="#PWR057"  Part="1" 
+AR Path="/60235E6B/603091FA" Ref="#PWR?"  Part="1" 
+AR Path="/60A11B09/603091FA" Ref="#PWR040"  Part="1" 
+F 0 "#PWR057" H 11000 2650 50  0001 C CNN
+F 1 "GND" H 11005 2727 50  0000 C CNN
+F 2 "" H 11000 2900 50  0001 C CNN
+F 3 "" H 11000 2900 50  0001 C CNN
+	1    11000 2900
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	11000 2850 11000 2900
+Wire Wire Line
+	11000 2250 11000 1800
+Connection ~ 11000 1800
+Wire Wire Line
+	11000 1800 11300 1800
+Wire Wire Line
+	11200 2250 11200 2100
+Connection ~ 11200 2100
+$Comp
+L Device:C C?
+U 1 1 603A4DBA
+P 8775 3200
+AR Path="/5FA2DDAB/603A4DBA" Ref="C?"  Part="1" 
+AR Path="/5FD4324B/603A4DBA" Ref="C?"  Part="1" 
+AR Path="/5FE2E867/603A4DBA" Ref="C?"  Part="1" 
+AR Path="/6004B5DB/603A4DBA" Ref="C?"  Part="1" 
+AR Path="/600728EB/603A4DBA" Ref="C?"  Part="1" 
+AR Path="/5FD3AEFC/603A4DBA" Ref="C?"  Part="1" 
+AR Path="/5FD43722/603A4DBA" Ref="C?"  Part="1" 
+AR Path="/5FD915CA/603A4DBA" Ref="C?"  Part="1" 
+AR Path="/5FD738CA/603A4DBA" Ref="C?"  Part="1" 
+AR Path="/5FFC5CB5/603A4DBA" Ref="C44"  Part="1" 
+AR Path="/60235E6B/603A4DBA" Ref="C?"  Part="1" 
+AR Path="/60A11B09/603A4DBA" Ref="C36"  Part="1" 
+F 0 "C44" H 8900 3250 50  0000 L CNN
+F 1 "1u" H 8900 3150 50  0000 L CNN
+F 2 "Capacitor_SMD:C_0201_0603Metric" H 8813 3050 50  0001 C CNN
+F 3 "~" H 8775 3200 50  0001 C CNN
+F 4 "490-13226-1-ND" H 8775 3200 50  0001 C CNN "DigiKey"
+F 5 "3581638" H 8775 3200 50  0001 C CNN "Farnell"
+F 6 "81-GRM033R61A105ME5D" H 8775 3200 50  0001 C CNN "Mouser"
+F 7 "GRM033R61A105ME15D" H 8775 3200 50  0001 C CNN "Part No"
+F 8 "185-1849" H 8775 3200 50  0001 C CNN "RS"
+	1    8775 3200
+	1    0    0    -1  
+$EndComp
+$Comp
+L ecatextbrd_lib:IP4283CZ10 D11
+U 1 1 604F57F3
+P 7650 4850
+AR Path="/5FFC5CB5/604F57F3" Ref="D11"  Part="1" 
+AR Path="/60235E6B/604F57F3" Ref="D?"  Part="1" 
+AR Path="/60A11B09/604F57F3" Ref="D6"  Part="1" 
+F 0 "D11" H 7475 5400 50  0000 C CNN
+F 1 "IP4283CZ10" H 7650 4325 50  0000 C CNN
+F 2 "EcatExBrd:Diodes_DFN2510A-10_1.0x2.5mm_P0.5mm" H 7650 4875 50  0001 C CNN
+F 3 "https://assets.nexperia.com/documents/data-sheet/IP4283CZ10_SER.pdf" H 7650 4875 50  0001 C CNN
+F 4 "1727-1272-1-ND" H 7650 4850 50  0001 C CNN "DigiKey"
+F 5 "3439875" H 7650 4850 50  0001 C CNN "Farnell"
+F 6 "771-IP4283CZ10TBR115" H 7650 4850 50  0001 C CNN "Mouser"
+F 7 "IP4283CZ10-TBR" H 7650 4850 50  0001 C CNN "Part No"
+	1    7650 4850
+	1    0    0    -1  
+$EndComp
+Text GLabel 6250 1900 0    50   Input ~ 0
+VDD_3V3
+Text HLabel 3750 2700 0    50   Input ~ 0
+25MHz_OSC_in_1
+Text HLabel 3750 2300 0    50   Input ~ 0
+~RST_n~
+Wire Wire Line
+	3750 3200 4200 3200
+Wire Wire Line
+	3750 3300 4400 3300
+Wire Wire Line
+	3750 3400 4300 3400
+Connection ~ 4400 3300
+Wire Wire Line
+	4400 3300 7250 3300
+Connection ~ 4300 3400
+Wire Wire Line
+	4300 3400 7250 3400
+Connection ~ 4200 3200
+Wire Wire Line
+	4200 3200 7250 3200
+Wire Wire Line
+	4300 7950 7250 7950
+Wire Wire Line
+	4400 6700 4400 4650
+Wire Wire Line
+	4400 4650 5950 4650
+Wire Wire Line
+	4400 6700 5950 6700
+Wire Wire Line
+	4200 6600 7250 6600
+Wire Wire Line
+	9550 9250 9550 8450
+Wire Wire Line
+	9550 8450 9500 8450
+Wire Wire Line
+	3750 2300 4100 2300
+Wire Wire Line
+	4100 1800 7250 1800
+Wire Wire Line
+	4100 1800 4100 2300
+NoConn ~ 7250 2800
+Text HLabel 3750 2800 0    50   Input ~ 0
+25MHz_OSC_in_2
+Wire Wire Line
+	3750 2800 4000 2800
+Wire Wire Line
+	8450 2000 9175 2000
+Wire Wire Line
+	8450 1900 9125 1900
+Connection ~ 5050 6500
+Wire Wire Line
+	5050 6500 5050 7750
+Wire Wire Line
+	5050 7750 7250 7750
+Wire Wire Line
+	5050 6500 6200 6500
+Connection ~ 6200 6500
+Wire Wire Line
+	6200 6500 6350 6500
+Wire Wire Line
+	4300 3400 4300 5050
+Wire Wire Line
+	8075 4900 8075 5050
+Wire Wire Line
+	8275 4275 8275 4600
+Wire Wire Line
+	7350 4700 7275 4700
+Wire Wire Line
+	7275 4700 7275 4650
+Wire Wire Line
+	7275 4600 7350 4600
+Wire Wire Line
+	7350 5000 7275 5000
+Wire Wire Line
+	7275 5000 7275 5050
+Wire Wire Line
+	7275 5100 7350 5100
+Wire Wire Line
+	7350 5200 7275 5200
+Wire Wire Line
+	7275 5200 7275 5250
+Wire Wire Line
+	7275 5300 7350 5300
+Wire Wire Line
+	8175 4450 8175 4700
+Connection ~ 7275 4650
+Wire Wire Line
+	7275 4650 7275 4600
+Wire Wire Line
+	7275 4650 8075 4650
+Wire Wire Line
+	8075 4650 8075 4800
+Wire Wire Line
+	7350 4500 7275 4500
+Wire Wire Line
+	7275 4500 7275 4450
+Connection ~ 7275 4450
+Wire Wire Line
+	7275 4450 7275 4400
+Wire Wire Line
+	7275 4400 7350 4400
+Wire Wire Line
+	7275 4450 8175 4450
+Connection ~ 7275 5050
+Wire Wire Line
+	7275 5050 7275 5100
+Wire Wire Line
+	7275 5050 8075 5050
+Connection ~ 7275 5250
+Wire Wire Line
+	7275 5250 7275 5300
+Wire Wire Line
+	7275 5250 8175 5250
+Wire Wire Line
+	8175 5000 8175 5250
+Wire Wire Line
+	4200 3200 4200 5250
+Wire Wire Line
+	4200 5250 7275 5250
+Connection ~ 4200 5250
+Wire Wire Line
+	4200 5250 4200 6600
+Wire Wire Line
+	4300 5050 7275 5050
+Connection ~ 4300 5050
+Wire Wire Line
+	4300 5050 4300 7950
+Connection ~ 4400 4650
+Wire Wire Line
+	4400 3300 4400 4650
+Wire Wire Line
+	6050 4225 6150 4225
+Wire Wire Line
+	6500 4650 7275 4650
+Connection ~ 6200 4450
+Wire Wire Line
+	6200 4450 6350 4450
+Connection ~ 6350 4450
+Wire Wire Line
+	6350 4450 7275 4450
+Wire Wire Line
+	7275 4900 7350 4900
+Wire Wire Line
+	7275 4800 7350 4800
+Connection ~ 6350 1900
+Wire Wire Line
+	6250 1900 6350 1900
+$Comp
+L Device:R R?
+U 1 1 600C0752
+P 6350 2200
+AR Path="/5FA2DDAB/600C0752" Ref="R?"  Part="1" 
+AR Path="/5FD4324B/600C0752" Ref="R?"  Part="1" 
+AR Path="/5FE2E867/600C0752" Ref="R?"  Part="1" 
+AR Path="/6004B5DB/600C0752" Ref="R?"  Part="1" 
+AR Path="/600728EB/600C0752" Ref="R?"  Part="1" 
+AR Path="/5FD3AEFC/600C0752" Ref="R?"  Part="1" 
+AR Path="/5FD43722/600C0752" Ref="R?"  Part="1" 
+AR Path="/5FD915CA/600C0752" Ref="R?"  Part="1" 
+AR Path="/5FD738CA/600C0752" Ref="R?"  Part="1" 
+AR Path="/5FDE3DFA/600C0752" Ref="R?"  Part="1" 
+AR Path="/5FFC5CB5/600C0752" Ref="R47"  Part="1" 
+AR Path="/60235E6B/600C0752" Ref="R?"  Part="1" 
+AR Path="/60A11B09/600C0752" Ref="R39"  Part="1" 
+F 0 "R47" H 6280 2154 50  0000 R CNN
+F 1 "10k" H 6280 2245 50  0000 R CNN
+F 2 "Resistor_SMD:R_0201_0603Metric" V 6280 2200 50  0001 C CNN
+F 3 "~" H 6350 2200 50  0001 C CNN
+F 4 "P122414CT-ND" H 6350 2200 50  0001 C CNN "DigiKey"
+F 5 "2302362" H 6350 2200 50  0001 C CNN "Farnell"
+F 6 "667-ERJ-1GNF1002C" H 6350 2200 50  0001 C CNN "Mouser"
+F 7 "ERJ-1GNF1002C" H 6350 2200 50  0001 C CNN "Part No"
+F 8 "176-3597" H 6350 2200 50  0001 C CNN "RS"
+	1    6350 2200
+	-1   0    0    1   
+$EndComp
+$Comp
+L Device:R R?
+U 1 1 6055EC47
+P 5250 2700
+AR Path="/5FA2DDAB/6055EC47" Ref="R?"  Part="1" 
+AR Path="/5FD4324B/6055EC47" Ref="R?"  Part="1" 
+AR Path="/5FE2E867/6055EC47" Ref="R?"  Part="1" 
+AR Path="/6004B5DB/6055EC47" Ref="R?"  Part="1" 
+AR Path="/600728EB/6055EC47" Ref="R?"  Part="1" 
+AR Path="/5FD3AEFC/6055EC47" Ref="R?"  Part="1" 
+AR Path="/5FD43722/6055EC47" Ref="R?"  Part="1" 
+AR Path="/5FD915CA/6055EC47" Ref="R?"  Part="1" 
+AR Path="/5FD738CA/6055EC47" Ref="R?"  Part="1" 
+AR Path="/5FDE3DFA/6055EC47" Ref="R?"  Part="1" 
+AR Path="/5FFC5CB5/6055EC47" Ref="R49"  Part="1" 
+AR Path="/60235E6B/6055EC47" Ref="R?"  Part="1" 
+AR Path="/60A11B09/6055EC47" Ref="R41"  Part="1" 
+F 0 "R49" V 5150 2750 50  0000 R CNN
+F 1 "10" V 5075 2750 50  0000 R CNN
+F 2 "Resistor_SMD:R_0201_0603Metric" V 5180 2700 50  0001 C CNN
+F 3 "~" H 5250 2700 50  0001 C CNN
+F 4 "P122669CT-ND" H 5250 2700 50  0001 C CNN "DigiKey"
+F 5 "2302282" H 5250 2700 50  0001 C CNN "Farnell"
+F 6 "667-ERJ-1GNF10R0C" H 5250 2700 50  0001 C CNN "Mouser"
+F 7 "ERJ-1GNF10R0C" H 5250 2700 50  0001 C CNN "Part No"
+F 8 "179-7137" H 5250 2700 50  0001 C CNN "RS"
+	1    5250 2700
+	0    -1   -1   0   
+$EndComp
+Wire Wire Line
+	3750 2700 5100 2700
+$Comp
+L Device:R R?
+U 1 1 6057CCAC
+P 5250 9375
+AR Path="/5FA2DDAB/6057CCAC" Ref="R?"  Part="1" 
+AR Path="/5FD4324B/6057CCAC" Ref="R?"  Part="1" 
+AR Path="/5FE2E867/6057CCAC" Ref="R?"  Part="1" 
+AR Path="/6004B5DB/6057CCAC" Ref="R?"  Part="1" 
+AR Path="/600728EB/6057CCAC" Ref="R?"  Part="1" 
+AR Path="/5FD3AEFC/6057CCAC" Ref="R?"  Part="1" 
+AR Path="/5FD43722/6057CCAC" Ref="R?"  Part="1" 
+AR Path="/5FD915CA/6057CCAC" Ref="R?"  Part="1" 
+AR Path="/5FD738CA/6057CCAC" Ref="R?"  Part="1" 
+AR Path="/5FDE3DFA/6057CCAC" Ref="R?"  Part="1" 
+AR Path="/5FFC5CB5/6057CCAC" Ref="R53"  Part="1" 
+AR Path="/60235E6B/6057CCAC" Ref="R?"  Part="1" 
+AR Path="/60A11B09/6057CCAC" Ref="R45"  Part="1" 
+F 0 "R53" V 5150 9425 50  0000 R CNN
+F 1 "10" V 5075 9425 50  0000 R CNN
+F 2 "Resistor_SMD:R_0201_0603Metric" V 5180 9375 50  0001 C CNN
+F 3 "~" H 5250 9375 50  0001 C CNN
+F 4 "P122669CT-ND" H 5250 9375 50  0001 C CNN "DigiKey"
+F 5 "2302282" H 5250 9375 50  0001 C CNN "Farnell"
+F 6 "667-ERJ-1GNF10R0C" H 5250 9375 50  0001 C CNN "Mouser"
+F 7 "ERJ-1GNF10R0C" H 5250 9375 50  0001 C CNN "Part No"
+F 8 "179-7137" H 5250 9375 50  0001 C CNN "RS"
+	1    5250 9375
+	0    -1   -1   0   
+$EndComp
+Connection ~ 6350 2000
+Wire Wire Line
+	6350 2000 6350 1900
+Connection ~ 6350 3100
+Wire Wire Line
+	6350 3100 7250 3100
+Wire Wire Line
+	6350 2000 6675 2000
+Wire Wire Line
+	6350 1900 7250 1900
+Wire Wire Line
+	5400 2700 7250 2700
+Text Label 5650 2700 0    50   ~ 0
+RS485_OSC_in
+Wire Wire Line
+	9500 8200 9700 8200
+Wire Wire Line
+	4000 9375 5100 9375
+Text Label 5650 9375 0    50   ~ 0
+SSI_OSC_in
+Wire Wire Line
+	5400 9375 9700 9375
+Wire Wire Line
+	4100 9250 9550 9250
+Text GLabel 6250 8150 0    50   Input ~ 0
+5V0
+Wire Wire Line
+	6250 8150 6600 8150
+Wire Wire Line
+	10175 2100 10325 2100
+Wire Wire Line
+	10175 1800 10325 1800
+Connection ~ 10325 1800
+Connection ~ 10325 2100
+Wire Wire Line
+	10325 2100 11200 2100
+Wire Wire Line
+	10325 1800 11000 1800
+Wire Wire Line
+	9150 2975 9150 3050
+Wire Wire Line
+	9150 2800 9150 2700
+Connection ~ 9150 2800
+Wire Wire Line
+	9150 2600 9150 2700
+Connection ~ 9150 2700
+Wire Wire Line
+	8450 2600 9150 2600
+Wire Wire Line
+	8450 2700 9150 2700
+Wire Wire Line
+	8450 2800 9150 2800
+Wire Wire Line
+	9150 2800 9150 2975
+Connection ~ 9150 2975
+Wire Wire Line
+	10425 2200 10325 2200
+Wire Wire Line
+	10000 2975 10100 2975
+Wire Wire Line
+	10325 2500 10325 2600
+Connection ~ 10325 2600
+Wire Wire Line
+	10325 2600 10325 2675
+Connection ~ 10325 2500
+Wire Wire Line
+	10075 2200 10325 2200
+Connection ~ 10325 2200
+Wire Wire Line
+	10075 2500 10325 2500
+Wire Wire Line
+	10075 2600 10325 2600
+Connection ~ 4100 2300
+Wire Wire Line
+	4100 2300 4100 9250
+Text GLabel 6150 4025 1    50   Input ~ 0
+VDD_3V3
+$Comp
+L Device:R R?
+U 1 1 60C443C6
+P 6350 4225
+AR Path="/5FA2DDAB/60C443C6" Ref="R?"  Part="1" 
+AR Path="/5FD4324B/60C443C6" Ref="R?"  Part="1" 
+AR Path="/5FE2E867/60C443C6" Ref="R?"  Part="1" 
+AR Path="/6004B5DB/60C443C6" Ref="R?"  Part="1" 
+AR Path="/600728EB/60C443C6" Ref="R?"  Part="1" 
+AR Path="/5FD3AEFC/60C443C6" Ref="R?"  Part="1" 
+AR Path="/5FD43722/60C443C6" Ref="R?"  Part="1" 
+AR Path="/5FD915CA/60C443C6" Ref="R?"  Part="1" 
+AR Path="/5FD738CA/60C443C6" Ref="R?"  Part="1" 
+AR Path="/5FDE3DFA/60C443C6" Ref="R?"  Part="1" 
+AR Path="/5FFC5CB5/60C443C6" Ref="R50"  Part="1" 
+AR Path="/60235E6B/60C443C6" Ref="R?"  Part="1" 
+AR Path="/60A11B09/60C443C6" Ref="R42"  Part="1" 
+F 0 "R50" H 6280 4179 50  0000 R CNN
+F 1 "10k" H 6280 4270 50  0000 R CNN
+F 2 "Resistor_SMD:R_0201_0603Metric" V 6280 4225 50  0001 C CNN
+F 3 "~" H 6350 4225 50  0001 C CNN
+F 4 "P122414CT-ND" H 6350 4225 50  0001 C CNN "DigiKey"
+F 5 "2302362" H 6350 4225 50  0001 C CNN "Farnell"
+F 6 "667-ERJ-1GNF1002C" H 6350 4225 50  0001 C CNN "Mouser"
+F 7 "ERJ-1GNF1002C" H 6350 4225 50  0001 C CNN "Part No"
+F 8 "176-3597" H 6350 4225 50  0001 C CNN "RS"
+	1    6350 4225
+	-1   0    0    1   
+$EndComp
+Wire Wire Line
+	6350 4375 6350 4450
+Text GLabel 6350 4025 1    50   Input ~ 0
+VDD_3V3
+Wire Wire Line
+	6350 4025 6350 4075
+Wire Wire Line
+	6150 4025 6150 4225
+Connection ~ 6150 4225
+Wire Wire Line
+	6150 4225 6150 4600
+$Comp
+L Device:R R?
+U 1 1 60977FCA
+P 6350 6275
+AR Path="/5FA2DDAB/60977FCA" Ref="R?"  Part="1" 
+AR Path="/5FD4324B/60977FCA" Ref="R?"  Part="1" 
+AR Path="/5FE2E867/60977FCA" Ref="R?"  Part="1" 
+AR Path="/6004B5DB/60977FCA" Ref="R?"  Part="1" 
+AR Path="/600728EB/60977FCA" Ref="R?"  Part="1" 
+AR Path="/5FD3AEFC/60977FCA" Ref="R?"  Part="1" 
+AR Path="/5FD43722/60977FCA" Ref="R?"  Part="1" 
+AR Path="/5FD915CA/60977FCA" Ref="R?"  Part="1" 
+AR Path="/5FD738CA/60977FCA" Ref="R?"  Part="1" 
+AR Path="/5FDE3DFA/60977FCA" Ref="R?"  Part="1" 
+AR Path="/5FFC5CB5/60977FCA" Ref="R51"  Part="1" 
+AR Path="/60235E6B/60977FCA" Ref="R?"  Part="1" 
+AR Path="/60A11B09/60977FCA" Ref="R43"  Part="1" 
+F 0 "R51" H 6280 6229 50  0000 R CNN
+F 1 "10k" H 6280 6320 50  0000 R CNN
+F 2 "Resistor_SMD:R_0201_0603Metric" V 6280 6275 50  0001 C CNN
+F 3 "~" H 6350 6275 50  0001 C CNN
+F 4 "P122414CT-ND" H 6350 6275 50  0001 C CNN "DigiKey"
+F 5 "2302362" H 6350 6275 50  0001 C CNN "Farnell"
+F 6 "667-ERJ-1GNF1002C" H 6350 6275 50  0001 C CNN "Mouser"
+F 7 "ERJ-1GNF1002C" H 6350 6275 50  0001 C CNN "Part No"
+F 8 "176-3597" H 6350 6275 50  0001 C CNN "RS"
+	1    6350 6275
+	-1   0    0    1   
+$EndComp
+Text GLabel 6350 6075 1    50   Input ~ 0
+VDD_3V3
+Wire Wire Line
+	6350 6075 6350 6125
+Wire Wire Line
+	6350 6425 6350 6500
+Wire Wire Line
+	6350 2000 6350 2050
+Wire Wire Line
+	9700 8200 9700 9375
+Wire Wire Line
+	4000 2800 4000 9375
+$Comp
+L Device:R R?
+U 1 1 609D543E
+P 6675 2200
+AR Path="/5FA2DDAB/609D543E" Ref="R?"  Part="1" 
+AR Path="/5FD4324B/609D543E" Ref="R?"  Part="1" 
+AR Path="/609D543E" Ref="R?"  Part="1" 
+AR Path="/5FFC5CB5/609D543E" Ref="R48"  Part="1" 
+AR Path="/60A11B09/609D543E" Ref="R40"  Part="1" 
+F 0 "R48" H 6600 2250 50  0000 R CNN
+F 1 "10k" H 6600 2175 50  0000 R CNN
+F 2 "Resistor_SMD:R_0201_0603Metric" V 6605 2200 50  0001 C CNN
+F 3 "~" H 6675 2200 50  0001 C CNN
+F 4 "P122414CT-ND" H 6675 2200 50  0001 C CNN "DigiKey"
+F 5 "2302362" H 6675 2200 50  0001 C CNN "Farnell"
+F 6 "667-ERJ-1GNF1002C" H 6675 2200 50  0001 C CNN "Mouser"
+F 7 "ERJ-1GNF1002C" H 6675 2200 50  0001 C CNN "Part No"
+F 8 "176-3597" H 6675 2200 50  0001 C CNN "RS"
+	1    6675 2200
+	-1   0    0    -1  
+$EndComp
+Wire Wire Line
+	6675 2350 6675 2400
+Wire Wire Line
+	6675 2400 7250 2400
+Wire Wire Line
+	6675 2050 6675 2000
+Connection ~ 6675 2000
+Wire Wire Line
+	6675 2000 7250 2000
+Wire Wire Line
+	6350 2350 6350 3100
+Text Label 6800 2400 0    50   ~ 0
+~IRQ_n~
+Wire Wire Line
+	12050 2000 11300 2000
+Wire Wire Line
+	11300 1800 11300 2000
+Wire Wire Line
+	11500 2100 11500 1900
+Wire Wire Line
+	11500 1900 12050 1900
+Wire Wire Line
+	11200 2100 11500 2100
+$Comp
+L Device:R R?
+U 1 1 6049F02B
+P 12375 7700
+AR Path="/5FA2DDAB/6049F02B" Ref="R?"  Part="1" 
+AR Path="/5FD4324B/6049F02B" Ref="R?"  Part="1" 
+AR Path="/5FE2E867/6049F02B" Ref="R?"  Part="1" 
+AR Path="/6004B5DB/6049F02B" Ref="R?"  Part="1" 
+AR Path="/600728EB/6049F02B" Ref="R?"  Part="1" 
+AR Path="/5FD3AEFC/6049F02B" Ref="R?"  Part="1" 
+AR Path="/5FD43722/6049F02B" Ref="R?"  Part="1" 
+AR Path="/5FD915CA/6049F02B" Ref="R?"  Part="1" 
+AR Path="/5FD738CA/6049F02B" Ref="R?"  Part="1" 
+AR Path="/5FDE3DFA/6049F02B" Ref="R?"  Part="1" 
+AR Path="/5FFC5CB5/6049F02B" Ref="R58"  Part="1" 
+AR Path="/60235E6B/6049F02B" Ref="R?"  Part="1" 
+AR Path="/60A11B09/6049F02B" Ref="R55"  Part="1" 
+F 0 "R58" V 12275 7625 50  0000 R CNN
+F 1 "TBD" V 12275 7850 50  0000 R CNN
+F 2 "Resistor_SMD:R_0201_0603Metric" V 12305 7700 50  0001 C CNN
+F 3 "~" H 12375 7700 50  0001 C CNN
+F 4 "" H 12375 7700 50  0001 C CNN "DigiKey"
+F 5 "" H 12375 7700 50  0001 C CNN "Farnell"
+F 6 "" H 12375 7700 50  0001 C CNN "Mouser"
+F 7 "" H 12375 7700 50  0001 C CNN "Part No"
+F 8 "" H 12375 7700 50  0001 C CNN "RS"
+	1    12375 7700
+	0    1    1    0   
+$EndComp
+$Comp
+L Device:R R?
+U 1 1 6049F3FE
+P 12375 7500
+AR Path="/5FA2DDAB/6049F3FE" Ref="R?"  Part="1" 
+AR Path="/5FD4324B/6049F3FE" Ref="R?"  Part="1" 
+AR Path="/5FE2E867/6049F3FE" Ref="R?"  Part="1" 
+AR Path="/6004B5DB/6049F3FE" Ref="R?"  Part="1" 
+AR Path="/600728EB/6049F3FE" Ref="R?"  Part="1" 
+AR Path="/5FD3AEFC/6049F3FE" Ref="R?"  Part="1" 
+AR Path="/5FD43722/6049F3FE" Ref="R?"  Part="1" 
+AR Path="/5FD915CA/6049F3FE" Ref="R?"  Part="1" 
+AR Path="/5FD738CA/6049F3FE" Ref="R?"  Part="1" 
+AR Path="/5FDE3DFA/6049F3FE" Ref="R?"  Part="1" 
+AR Path="/5FFC5CB5/6049F3FE" Ref="R57"  Part="1" 
+AR Path="/60235E6B/6049F3FE" Ref="R?"  Part="1" 
+AR Path="/60A11B09/6049F3FE" Ref="R54"  Part="1" 
+F 0 "R57" V 12275 7425 50  0000 R CNN
+F 1 "TBD" V 12275 7650 50  0000 R CNN
+F 2 "Resistor_SMD:R_0201_0603Metric" V 12305 7500 50  0001 C CNN
+F 3 "~" H 12375 7500 50  0001 C CNN
+F 4 "" H 12375 7500 50  0001 C CNN "DigiKey"
+F 5 "" H 12375 7500 50  0001 C CNN "Farnell"
+F 6 "" H 12375 7500 50  0001 C CNN "Mouser"
+F 7 "" H 12375 7500 50  0001 C CNN "Part No"
+F 8 "" H 12375 7500 50  0001 C CNN "RS"
+	1    12375 7500
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	12225 7500 11900 7500
+Connection ~ 11900 7500
+Wire Wire Line
+	11900 7400 12750 7400
+Wire Wire Line
+	12750 7400 12750 7500
+Wire Wire Line
+	12750 7500 12525 7500
+Connection ~ 11900 7400
+Wire Wire Line
+	12525 7700 12750 7700
+Wire Wire Line
+	12750 7700 12750 7600
+Wire Wire Line
+	12750 7600 11900 7600
+Connection ~ 11900 7600
+Wire Wire Line
+	11900 7700 12225 7700
+Connection ~ 11900 7700
+$Comp
+L Connector_Generic:Conn_01x06 J11
+U 1 1 605549B3
+P 12100 7400
+AR Path="/5FFC5CB5/605549B3" Ref="J11"  Part="1" 
+AR Path="/60235E6B/605549B3" Ref="J?"  Part="1" 
+AR Path="/60A11B09/605549B3" Ref="J8"  Part="1" 
+F 0 "J11" H 12050 7775 50  0000 L CNN
+F 1 "Conn_01x06" H 11875 7700 50  0000 L CNN
+F 2 "EcatExBrd:Hirose_DF13-06P-1.25DSA_1x06_P1.25mm_Vertical" H 12100 7400 50  0001 C CNN
+F 3 "~" H 12100 7400 50  0001 C CNN
+F 4 "DF13-6P-1.25DSA" H 12100 7400 50  0001 C CNN "Part No"
+F 5 "H2195-ND" H 12100 7400 50  0001 C CNN "DigiKey"
+F 6 "2427590" H 12100 7400 50  0001 C CNN "Farnell"
+F 7 "798-DF13-6P-1.25DSA" H 12100 7400 50  0001 C CNN "Mouser"
+F 8 "503-7928" H 12100 7400 50  0001 C CNN "RS"
+	1    12100 7400
+	1    0    0    -1  
+$EndComp
+NoConn ~ 9500 8000
+NoConn ~ 9500 7900
+$Comp
+L Device:C C?
+U 1 1 60491D95
+P 5900 6275
+AR Path="/5FA2DDAB/60491D95" Ref="C?"  Part="1" 
+AR Path="/5FD4324B/60491D95" Ref="C?"  Part="1" 
+AR Path="/5FE2E867/60491D95" Ref="C?"  Part="1" 
+AR Path="/6004B5DB/60491D95" Ref="C?"  Part="1" 
+AR Path="/600728EB/60491D95" Ref="C?"  Part="1" 
+AR Path="/5FD3AEFC/60491D95" Ref="C?"  Part="1" 
+AR Path="/5FD43722/60491D95" Ref="C?"  Part="1" 
+AR Path="/5FD915CA/60491D95" Ref="C?"  Part="1" 
+AR Path="/5FD738CA/60491D95" Ref="C?"  Part="1" 
+AR Path="/5FFC5CB5/60491D95" Ref="C52"  Part="1" 
+AR Path="/60235E6B/60491D95" Ref="C?"  Part="1" 
+AR Path="/60A11B09/60491D95" Ref="C51"  Part="1" 
+F 0 "C52" V 6125 6225 50  0000 L CNN
+F 1 "100n" V 6050 6175 50  0000 L CNN
+F 2 "Capacitor_SMD:C_0201_0603Metric" H 5938 6125 50  0001 C CNN
+F 3 "~" H 5900 6275 50  0001 C CNN
+F 4 "490-9985-1-ND" H 5900 6275 50  0001 C CNN "DigiKey"
+F 5 "2611884" H 5900 6275 50  0001 C CNN "Farnell"
+F 6 "81-GRM33R61C104KE84D" H 5900 6275 50  0001 C CNN "Mouser"
+F 7 "GRM033R61C104KE84D" H 5900 6275 50  0001 C CNN "Part No"
+F 8 "113-8716" H 5900 6275 50  0001 C CNN "RS"
+	1    5900 6275
+	0    -1   -1   0   
+$EndComp
+$Comp
+L power:GND #PWR?
+U 1 1 60491D9B
+P 5700 6275
+AR Path="/5FA2DDAB/60491D9B" Ref="#PWR?"  Part="1" 
+AR Path="/5FD4324B/60491D9B" Ref="#PWR?"  Part="1" 
+AR Path="/5FE2E867/60491D9B" Ref="#PWR?"  Part="1" 
+AR Path="/6004B5DB/60491D9B" Ref="#PWR?"  Part="1" 
+AR Path="/600728EB/60491D9B" Ref="#PWR?"  Part="1" 
+AR Path="/5FD3AEFC/60491D9B" Ref="#PWR?"  Part="1" 
+AR Path="/5FD43722/60491D9B" Ref="#PWR?"  Part="1" 
+AR Path="/5FD915CA/60491D9B" Ref="#PWR?"  Part="1" 
+AR Path="/5FD738CA/60491D9B" Ref="#PWR?"  Part="1" 
+AR Path="/5FFC5CB5/60491D9B" Ref="#PWR067"  Part="1" 
+AR Path="/60235E6B/60491D9B" Ref="#PWR?"  Part="1" 
+AR Path="/60A11B09/60491D9B" Ref="#PWR050"  Part="1" 
+F 0 "#PWR067" H 5700 6025 50  0001 C CNN
+F 1 "GND" H 5705 6102 50  0000 C CNN
+F 2 "" H 5700 6275 50  0001 C CNN
+F 3 "" H 5700 6275 50  0001 C CNN
+	1    5700 6275
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	5700 6275 5750 6275
+Wire Wire Line
+	6050 6275 6150 6275
+Text GLabel 6150 6075 1    50   Input ~ 0
+VDD_3V3
+Wire Wire Line
+	6150 6075 6150 6275
+Connection ~ 6150 6275
+Wire Wire Line
+	6150 6275 6150 6650
+$Comp
+L ecatextbrd_lib:74LVC1G125 U20
+U 1 1 6049F940
+P 6200 6700
+AR Path="/5FFC5CB5/6049F940" Ref="U20"  Part="1" 
+AR Path="/60A11B09/6049F940" Ref="U18"  Part="1" 
+F 0 "U20" H 5975 6625 50  0000 C CNN
+F 1 "74LVC1G125" H 5875 6525 50  0000 C CNN
+F 2 "EcatExBrd:USON-6_P0.5mm_1x1.5mm" H 6200 6450 50  0001 C CNN
+F 3 "https://www.ti.com/lit/ds/symlink/sn74lvc1g125.pdf" H 6200 6700 50  0001 C CNN
+	1    6200 6700
+	-1   0    0    -1  
+$EndComp
+$Comp
+L ecatextbrd_lib:74LVC1G125 U19
+U 1 1 604A1A6D
+P 6200 4650
+AR Path="/5FFC5CB5/604A1A6D" Ref="U19"  Part="1" 
+AR Path="/60A11B09/604A1A6D" Ref="U17"  Part="1" 
+F 0 "U19" H 5975 4575 50  0000 C CNN
+F 1 "74LVC1G125" H 5875 4475 50  0000 C CNN
+F 2 "EcatExBrd:USON-6_P0.5mm_1x1.5mm" H 6200 4400 50  0001 C CNN
+F 3 "https://www.ti.com/lit/ds/symlink/sn74lvc1g125.pdf" H 6200 4650 50  0001 C CNN
+	1    6200 4650
+	-1   0    0    -1  
+$EndComp
+$Comp
+L ecatextbrd_lib:PESD12VA-SF D12
+U 1 1 6069E068
+P 11000 2550
+AR Path="/5FFC5CB5/6069E068" Ref="D12"  Part="1" 
+AR Path="/60A11B09/6069E068" Ref="D4"  Part="1" 
+F 0 "D12" H 11000 2800 50  0000 L CNN
+F 1 "PESD12VA-SF" V 10850 2300 50  0000 L CNN
+F 2 "EcatExBrd:Diodes_DSN0603-2_0.6x0.3mm_P0.4mm" H 11000 2030 50  0001 C CNN
+F 3 "https://assets.nexperia.com/documents/data-sheet/PESD12VA-SF.pdf" H 11000 2650 50  0001 C CNN
+F 4 "1727-8648-1-ND" H 11000 2550 50  0001 C CNN "DigiKey"
+F 5 "771-PESD12VA-SFYL" H 11000 2550 50  0001 C CNN "Mouser"
+F 6 "PESD12VA-SFYL" H 11000 2550 50  0001 C CNN "Part No"
+	1    11000 2550
+	1    0    0    -1  
+$EndComp
+$Comp
+L ecatextbrd_lib:PESD12VA-SF D13
+U 1 1 6069EA77
+P 11200 2550
+AR Path="/5FFC5CB5/6069EA77" Ref="D13"  Part="1" 
+AR Path="/60A11B09/6069EA77" Ref="D5"  Part="1" 
+F 0 "D13" H 11200 2800 50  0000 L CNN
+F 1 "PESD12VA-SF" V 11350 2300 50  0000 L CNN
+F 2 "EcatExBrd:Diodes_DSN0603-2_0.6x0.3mm_P0.4mm" H 11200 2030 50  0001 C CNN
+F 3 "https://assets.nexperia.com/documents/data-sheet/PESD12VA-SF.pdf" H 11200 2650 50  0001 C CNN
+F 4 "1727-8648-1-ND" H 11200 2550 50  0001 C CNN "DigiKey"
+F 5 "771-PESD12VA-SFYL" H 11200 2550 50  0001 C CNN "Mouser"
+F 6 "PESD12VA-SFYL" H 11200 2550 50  0001 C CNN "Part No"
+	1    11200 2550
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR?
+U 1 1 606ACDE9
+P 11200 2900
+AR Path="/5FA2DDAB/606ACDE9" Ref="#PWR?"  Part="1" 
+AR Path="/5FD4324B/606ACDE9" Ref="#PWR?"  Part="1" 
+AR Path="/5FE2E867/606ACDE9" Ref="#PWR?"  Part="1" 
+AR Path="/6004B5DB/606ACDE9" Ref="#PWR?"  Part="1" 
+AR Path="/600728EB/606ACDE9" Ref="#PWR?"  Part="1" 
+AR Path="/5FD3AEFC/606ACDE9" Ref="#PWR?"  Part="1" 
+AR Path="/5FD43722/606ACDE9" Ref="#PWR?"  Part="1" 
+AR Path="/5FD915CA/606ACDE9" Ref="#PWR?"  Part="1" 
+AR Path="/5FD738CA/606ACDE9" Ref="#PWR?"  Part="1" 
+AR Path="/5FFC5CB5/606ACDE9" Ref="#PWR071"  Part="1" 
+AR Path="/60235E6B/606ACDE9" Ref="#PWR?"  Part="1" 
+AR Path="/60A11B09/606ACDE9" Ref="#PWR015"  Part="1" 
+F 0 "#PWR071" H 11200 2650 50  0001 C CNN
+F 1 "GND" H 11205 2727 50  0000 C CNN
+F 2 "" H 11200 2900 50  0001 C CNN
+F 3 "" H 11200 2900 50  0001 C CNN
+	1    11200 2900
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	11200 2850 11200 2900
+$Comp
+L power:GND #PWR?
+U 1 1 606BB984
+P 10450 8500
+AR Path="/5FA2DDAB/606BB984" Ref="#PWR?"  Part="1" 
+AR Path="/5FD4324B/606BB984" Ref="#PWR?"  Part="1" 
+AR Path="/5FE2E867/606BB984" Ref="#PWR?"  Part="1" 
+AR Path="/6004B5DB/606BB984" Ref="#PWR?"  Part="1" 
+AR Path="/600728EB/606BB984" Ref="#PWR?"  Part="1" 
+AR Path="/5FD3AEFC/606BB984" Ref="#PWR?"  Part="1" 
+AR Path="/5FD43722/606BB984" Ref="#PWR?"  Part="1" 
+AR Path="/5FD915CA/606BB984" Ref="#PWR?"  Part="1" 
+AR Path="/5FD738CA/606BB984" Ref="#PWR?"  Part="1" 
+AR Path="/5FFC5CB5/606BB984" Ref="#PWR072"  Part="1" 
+AR Path="/60235E6B/606BB984" Ref="#PWR?"  Part="1" 
+AR Path="/60A11B09/606BB984" Ref="#PWR048"  Part="1" 
+F 0 "#PWR072" H 10450 8250 50  0001 C CNN
+F 1 "GND" H 10455 8327 50  0000 C CNN
+F 2 "" H 10450 8500 50  0001 C CNN
+F 3 "" H 10450 8500 50  0001 C CNN
+	1    10450 8500
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	10450 8450 10450 8500
+$Comp
+L ecatextbrd_lib:PESD12VA-SF D14
+U 1 1 606BB98B
+P 10450 8150
+AR Path="/5FFC5CB5/606BB98B" Ref="D14"  Part="1" 
+AR Path="/60A11B09/606BB98B" Ref="D7"  Part="1" 
+F 0 "D14" H 10450 8400 50  0000 L CNN
+F 1 "PESD12VA-SF" V 10300 7900 50  0000 L CNN
+F 2 "EcatExBrd:Diodes_DSN0603-2_0.6x0.3mm_P0.4mm" H 10450 7630 50  0001 C CNN
+F 3 "https://assets.nexperia.com/documents/data-sheet/PESD12VA-SF.pdf" H 10450 8250 50  0001 C CNN
+F 4 "1727-8648-1-ND" H 10450 8150 50  0001 C CNN "DigiKey"
+F 5 "771-PESD12VA-SFYL" H 10450 8150 50  0001 C CNN "Mouser"
+F 6 "PESD12VA-SFYL" H 10450 8150 50  0001 C CNN "Part No"
+	1    10450 8150
+	1    0    0    -1  
+$EndComp
+$Comp
+L ecatextbrd_lib:PESD12VA-SF D15
+U 1 1 606BB991
+P 10650 8150
+AR Path="/5FFC5CB5/606BB991" Ref="D15"  Part="1" 
+AR Path="/60A11B09/606BB991" Ref="D8"  Part="1" 
+F 0 "D15" H 10650 8400 50  0000 L CNN
+F 1 "PESD12VA-SF" V 10800 7900 50  0000 L CNN
+F 2 "EcatExBrd:Diodes_DSN0603-2_0.6x0.3mm_P0.4mm" H 10650 7630 50  0001 C CNN
+F 3 "https://assets.nexperia.com/documents/data-sheet/PESD12VA-SF.pdf" H 10650 8250 50  0001 C CNN
+F 4 "1727-8648-1-ND" H 10650 8150 50  0001 C CNN "DigiKey"
+F 5 "771-PESD12VA-SFYL" H 10650 8150 50  0001 C CNN "Mouser"
+F 6 "PESD12VA-SFYL" H 10650 8150 50  0001 C CNN "Part No"
+	1    10650 8150
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR?
+U 1 1 606BB997
+P 10650 8500
+AR Path="/5FA2DDAB/606BB997" Ref="#PWR?"  Part="1" 
+AR Path="/5FD4324B/606BB997" Ref="#PWR?"  Part="1" 
+AR Path="/5FE2E867/606BB997" Ref="#PWR?"  Part="1" 
+AR Path="/6004B5DB/606BB997" Ref="#PWR?"  Part="1" 
+AR Path="/600728EB/606BB997" Ref="#PWR?"  Part="1" 
+AR Path="/5FD3AEFC/606BB997" Ref="#PWR?"  Part="1" 
+AR Path="/5FD43722/606BB997" Ref="#PWR?"  Part="1" 
+AR Path="/5FD915CA/606BB997" Ref="#PWR?"  Part="1" 
+AR Path="/5FD738CA/606BB997" Ref="#PWR?"  Part="1" 
+AR Path="/5FFC5CB5/606BB997" Ref="#PWR073"  Part="1" 
+AR Path="/60235E6B/606BB997" Ref="#PWR?"  Part="1" 
+AR Path="/60A11B09/606BB997" Ref="#PWR049"  Part="1" 
+F 0 "#PWR073" H 10650 8250 50  0001 C CNN
+F 1 "GND" H 10655 8327 50  0000 C CNN
+F 2 "" H 10650 8500 50  0001 C CNN
+F 3 "" H 10650 8500 50  0001 C CNN
+	1    10650 8500
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	10650 8450 10650 8500
+Wire Wire Line
+	10450 7400 10450 7850
+Wire Wire Line
+	10650 7500 10650 7850
+$Comp
+L power:GND #PWR?
+U 1 1 60711FFE
+P 11050 8500
+AR Path="/5FA2DDAB/60711FFE" Ref="#PWR?"  Part="1" 
+AR Path="/5FD4324B/60711FFE" Ref="#PWR?"  Part="1" 
+AR Path="/5FE2E867/60711FFE" Ref="#PWR?"  Part="1" 
+AR Path="/6004B5DB/60711FFE" Ref="#PWR?"  Part="1" 
+AR Path="/600728EB/60711FFE" Ref="#PWR?"  Part="1" 
+AR Path="/5FD3AEFC/60711FFE" Ref="#PWR?"  Part="1" 
+AR Path="/5FD43722/60711FFE" Ref="#PWR?"  Part="1" 
+AR Path="/5FD915CA/60711FFE" Ref="#PWR?"  Part="1" 
+AR Path="/5FD738CA/60711FFE" Ref="#PWR?"  Part="1" 
+AR Path="/5FFC5CB5/60711FFE" Ref="#PWR074"  Part="1" 
+AR Path="/60235E6B/60711FFE" Ref="#PWR?"  Part="1" 
+AR Path="/60A11B09/60711FFE" Ref="#PWR065"  Part="1" 
+F 0 "#PWR074" H 11050 8250 50  0001 C CNN
+F 1 "GND" H 11055 8327 50  0000 C CNN
+F 2 "" H 11050 8500 50  0001 C CNN
+F 3 "" H 11050 8500 50  0001 C CNN
+	1    11050 8500
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	11050 8450 11050 8500
+$Comp
+L ecatextbrd_lib:PESD12VA-SF D16
+U 1 1 60712005
+P 11050 8150
+AR Path="/5FFC5CB5/60712005" Ref="D16"  Part="1" 
+AR Path="/60A11B09/60712005" Ref="D9"  Part="1" 
+F 0 "D16" H 11050 8400 50  0000 L CNN
+F 1 "PESD12VA-SF" V 10900 7900 50  0000 L CNN
+F 2 "EcatExBrd:Diodes_DSN0603-2_0.6x0.3mm_P0.4mm" H 11050 7630 50  0001 C CNN
+F 3 "https://assets.nexperia.com/documents/data-sheet/PESD12VA-SF.pdf" H 11050 8250 50  0001 C CNN
+F 4 "1727-8648-1-ND" H 11050 8150 50  0001 C CNN "DigiKey"
+F 5 "771-PESD12VA-SFYL" H 11050 8150 50  0001 C CNN "Mouser"
+F 6 "PESD12VA-SFYL" H 11050 8150 50  0001 C CNN "Part No"
+	1    11050 8150
+	1    0    0    -1  
+$EndComp
+$Comp
+L ecatextbrd_lib:PESD12VA-SF D17
+U 1 1 6071200B
+P 11250 8150
+AR Path="/5FFC5CB5/6071200B" Ref="D17"  Part="1" 
+AR Path="/60A11B09/6071200B" Ref="D10"  Part="1" 
+F 0 "D17" H 11250 8400 50  0000 L CNN
+F 1 "PESD12VA-SF" V 11400 7900 50  0000 L CNN
+F 2 "EcatExBrd:Diodes_DSN0603-2_0.6x0.3mm_P0.4mm" H 11250 7630 50  0001 C CNN
+F 3 "https://assets.nexperia.com/documents/data-sheet/PESD12VA-SF.pdf" H 11250 8250 50  0001 C CNN
+F 4 "1727-8648-1-ND" H 11250 8150 50  0001 C CNN "DigiKey"
+F 5 "771-PESD12VA-SFYL" H 11250 8150 50  0001 C CNN "Mouser"
+F 6 "PESD12VA-SFYL" H 11250 8150 50  0001 C CNN "Part No"
+	1    11250 8150
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR?
+U 1 1 60712011
+P 11250 8500
+AR Path="/5FA2DDAB/60712011" Ref="#PWR?"  Part="1" 
+AR Path="/5FD4324B/60712011" Ref="#PWR?"  Part="1" 
+AR Path="/5FE2E867/60712011" Ref="#PWR?"  Part="1" 
+AR Path="/6004B5DB/60712011" Ref="#PWR?"  Part="1" 
+AR Path="/600728EB/60712011" Ref="#PWR?"  Part="1" 
+AR Path="/5FD3AEFC/60712011" Ref="#PWR?"  Part="1" 
+AR Path="/5FD43722/60712011" Ref="#PWR?"  Part="1" 
+AR Path="/5FD915CA/60712011" Ref="#PWR?"  Part="1" 
+AR Path="/5FD738CA/60712011" Ref="#PWR?"  Part="1" 
+AR Path="/5FFC5CB5/60712011" Ref="#PWR075"  Part="1" 
+AR Path="/60235E6B/60712011" Ref="#PWR?"  Part="1" 
+AR Path="/60A11B09/60712011" Ref="#PWR066"  Part="1" 
+F 0 "#PWR075" H 11250 8250 50  0001 C CNN
+F 1 "GND" H 11255 8327 50  0000 C CNN
+F 2 "" H 11250 8500 50  0001 C CNN
+F 3 "" H 11250 8500 50  0001 C CNN
+	1    11250 8500
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	11250 8450 11250 8500
+Wire Wire Line
+	9500 7600 11050 7600
+Wire Wire Line
+	11050 7850 11050 7600
+Connection ~ 11050 7600
+Wire Wire Line
+	11050 7600 11900 7600
+Wire Wire Line
+	9500 7700 11250 7700
+Wire Wire Line
+	11250 7850 11250 7700
+Connection ~ 11250 7700
+Wire Wire Line
+	11250 7700 11900 7700
+Text HLabel 3750 3100 0    50   Input ~ 0
+RS485_~CS_n~
+Wire Wire Line
+	3750 3100 6350 3100
+Text HLabel 3750 4450 0    50   Input ~ 0
+SPI_~CS_n~
+Wire Wire Line
+	3750 4450 6200 4450
+Text HLabel 3750 6500 0    50   Input ~ 0
+SSI_~CS_n~
+Wire Wire Line
+	3750 6500 5050 6500
+$EndSCHEMATC

@@ -1,0 +1,3 @@
+(sym_lib_table
+  (lib (name omodri_lib)(type Legacy)(uri ${KIPRJMOD}/omodri_lib.lib)(options "")(descr "Component list for udrive3 project"))
+)

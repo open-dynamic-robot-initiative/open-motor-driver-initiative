@@ -1,0 +1,450 @@
+EESchema Schematic File Version 4
+EELAYER 30 0
+EELAYER END
+$Descr A4 11693 8268
+encoding utf-8
+Sheet 18 19
+Title "Open MOtor DRiver Initiative (OMODRI)"
+Date "2020-12-16"
+Rev "1.1"
+Comp "LAAS/CNRS"
+Comment1 ""
+Comment2 ""
+Comment3 ""
+Comment4 ""
+$EndDescr
+Text HLabel 4375 2500 2    50   Input ~ 0
+M1_Ia
+Text HLabel 4375 3200 2    50   Input ~ 0
+M1_Ib
+Text HLabel 4375 4400 2    50   Input ~ 0
+M1_Ic
+Text HLabel 4375 2600 2    50   Input ~ 0
+M2_Ia
+Text HLabel 4375 3300 2    50   Input ~ 0
+M2_Ib
+Text HLabel 4375 4500 2    50   Input ~ 0
+M2_Ic
+Text HLabel 4375 2700 2    50   Input ~ 0
+M1_Va
+Text HLabel 4375 3400 2    50   Input ~ 0
+M1_Vb
+Text HLabel 4375 4600 2    50   Input ~ 0
+M1_Vc
+Text HLabel 4375 2800 2    50   Input ~ 0
+M2_Va
+Text HLabel 4375 3500 2    50   Input ~ 0
+M2_Vb
+Text HLabel 4375 4700 2    50   Input ~ 0
+M2_Vc
+Wire Wire Line
+	4325 2500 4375 2500
+Wire Wire Line
+	4375 2600 4325 2600
+Wire Wire Line
+	4325 2700 4375 2700
+Wire Wire Line
+	4325 2800 4375 2800
+Wire Wire Line
+	4325 3200 4375 3200
+Wire Wire Line
+	4325 3300 4375 3300
+Wire Wire Line
+	4325 3400 4375 3400
+Wire Wire Line
+	4325 3500 4375 3500
+Text GLabel 2450 2500 0    50   Input ~ 0
+REF_3V0_BUF
+Wire Wire Line
+	2575 2800 2575 2700
+Wire Wire Line
+	2825 2700 2575 2700
+Connection ~ 2575 2700
+Wire Wire Line
+	2575 2700 2575 2600
+Wire Wire Line
+	2825 2600 2575 2600
+Connection ~ 2575 2600
+$Comp
+L power:GND #PWR?
+U 1 1 5F93601F
+P 2575 4300
+AR Path="/5F3A3F16/5F93601F" Ref="#PWR?"  Part="1" 
+AR Path="/5F3A5338/5F93601F" Ref="#PWR?"  Part="1" 
+AR Path="/5F5975A7/5F93601F" Ref="#PWR?"  Part="1" 
+AR Path="/5F5975A7/5F91076F/5F93601F" Ref="#PWR0144"  Part="1" 
+F 0 "#PWR0144" H 2575 4050 50  0001 C CNN
+F 1 "GND" H 2580 4127 50  0000 C CNN
+F 2 "" H 2575 4300 50  0001 C CNN
+F 3 "" H 2575 4300 50  0001 C CNN
+	1    2575 4300
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	2575 4200 2575 4300
+Wire Wire Line
+	2825 4100 2575 4100
+Wire Wire Line
+	2575 4100 2575 4200
+Connection ~ 2575 4200
+Wire Wire Line
+	2825 4000 2575 4000
+Wire Wire Line
+	2575 4000 2575 4100
+Connection ~ 2575 4100
+Wire Wire Line
+	2825 3900 2575 3900
+Wire Wire Line
+	2575 3900 2575 4000
+Connection ~ 2575 4000
+Wire Wire Line
+	2575 4200 2825 4200
+Wire Wire Line
+	4375 3900 4325 3900
+Wire Wire Line
+	4325 4400 4375 4400
+Wire Wire Line
+	4325 4500 4375 4500
+Wire Wire Line
+	4325 4600 4375 4600
+Wire Wire Line
+	4325 4700 4375 4700
+NoConn ~ 4325 4900
+NoConn ~ 4325 4800
+NoConn ~ 4325 4000
+NoConn ~ 4325 3700
+NoConn ~ 4325 3600
+NoConn ~ 4325 3000
+NoConn ~ 4325 2900
+Wire Wire Line
+	2575 2500 2825 2500
+Wire Wire Line
+	2825 2800 2575 2800
+Text HLabel 4375 5100 2    50   Input ~ 0
+ANALOG_IN1
+Text HLabel 4375 5200 2    50   Input ~ 0
+ANALOG_IN2
+Wire Wire Line
+	4375 5100 4325 5100
+Wire Wire Line
+	4375 5200 4325 5200
+NoConn ~ 4325 4100
+NoConn ~ 4325 4200
+Wire Wire Line
+	5975 4150 6025 4150
+$Comp
+L power:GND #PWR?
+U 1 1 5F936045
+P 6425 4450
+AR Path="/5F3A3F16/5F936045" Ref="#PWR?"  Part="1" 
+AR Path="/5F3A5338/5F936045" Ref="#PWR?"  Part="1" 
+AR Path="/5F5975A7/5F936045" Ref="#PWR?"  Part="1" 
+AR Path="/5F5975A7/5F91076F/5F936045" Ref="#PWR0145"  Part="1" 
+F 0 "#PWR0145" H 6425 4200 50  0001 C CNN
+F 1 "GND" H 6430 4277 50  0000 C CNN
+F 2 "" H 6425 4450 50  0001 C CNN
+F 3 "" H 6425 4450 50  0001 C CNN
+	1    6425 4450
+	1    0    0    -1  
+$EndComp
+Text HLabel 5975 4150 0    50   Input ~ 0
+ANALOG_IN1
+Text HLabel 8100 4125 0    50   Input ~ 0
+ANALOG_IN2
+Wire Wire Line
+	2450 2500 2575 2500
+Connection ~ 2575 2500
+Wire Wire Line
+	2575 2500 2575 2600
+Text HLabel 4375 3900 2    50   Input ~ 0
+M1_Vbus
+Text HLabel 5950 3125 0    50   Input ~ 0
+M1_Va
+Wire Wire Line
+	5950 3125 6000 3125
+$Comp
+L power:GND #PWR?
+U 1 1 5F936053
+P 6400 3500
+AR Path="/5F3A3F16/5F936053" Ref="#PWR?"  Part="1" 
+AR Path="/5F3A5338/5F936053" Ref="#PWR?"  Part="1" 
+AR Path="/5F5975A7/5F936053" Ref="#PWR?"  Part="1" 
+AR Path="/5F5975A7/5F91076F/5F936053" Ref="#PWR0146"  Part="1" 
+F 0 "#PWR0146" H 6400 3250 50  0001 C CNN
+F 1 "GND" H 6405 3327 50  0000 C CNN
+F 2 "" H 6400 3500 50  0001 C CNN
+F 3 "" H 6400 3500 50  0001 C CNN
+	1    6400 3500
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	6400 3500 6400 3425
+Text HLabel 7050 3125 0    50   Input ~ 0
+M1_Vb
+Wire Wire Line
+	7050 3125 7100 3125
+$Comp
+L power:GND #PWR?
+U 1 1 5F93605C
+P 7500 3500
+AR Path="/5F3A3F16/5F93605C" Ref="#PWR?"  Part="1" 
+AR Path="/5F3A5338/5F93605C" Ref="#PWR?"  Part="1" 
+AR Path="/5F5975A7/5F93605C" Ref="#PWR?"  Part="1" 
+AR Path="/5F5975A7/5F91076F/5F93605C" Ref="#PWR0147"  Part="1" 
+F 0 "#PWR0147" H 7500 3250 50  0001 C CNN
+F 1 "GND" H 7505 3327 50  0000 C CNN
+F 2 "" H 7500 3500 50  0001 C CNN
+F 3 "" H 7500 3500 50  0001 C CNN
+	1    7500 3500
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	7500 3500 7500 3425
+Text HLabel 8100 3125 0    50   Input ~ 0
+M1_Vc
+Wire Wire Line
+	8100 3125 8150 3125
+$Comp
+L power:GND #PWR?
+U 1 1 5F936065
+P 8550 3500
+AR Path="/5F3A3F16/5F936065" Ref="#PWR?"  Part="1" 
+AR Path="/5F3A5338/5F936065" Ref="#PWR?"  Part="1" 
+AR Path="/5F5975A7/5F936065" Ref="#PWR?"  Part="1" 
+AR Path="/5F5975A7/5F91076F/5F936065" Ref="#PWR0148"  Part="1" 
+F 0 "#PWR0148" H 8550 3250 50  0001 C CNN
+F 1 "GND" H 8555 3327 50  0000 C CNN
+F 2 "" H 8550 3500 50  0001 C CNN
+F 3 "" H 8550 3500 50  0001 C CNN
+	1    8550 3500
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	8550 3500 8550 3425
+$Comp
+L omodri_lib:TPD1E04U04 D?
+U 1 1 5F93606F
+P 6400 3125
+AR Path="/5F5975A7/5F93606F" Ref="D?"  Part="1" 
+AR Path="/5F5975A7/5F91076F/5F93606F" Ref="D9"  Part="1" 
+F 0 "D9" H 6100 3450 50  0000 L CNN
+F 1 "TPD1E04U04" H 6100 3375 50  0000 L CNN
+F 2 "udriver3:D_0201_0603Metric" H 6500 3125 50  0001 C CNN
+F 3 "https://www.ti.com/lit/ds/symlink/tpd1e04u04.pdf" H 6500 3125 50  0001 C CNN
+F 4 "296-47862-1-ND" H 6400 3125 50  0001 C CNN "DigiKey"
+F 5 "595-TPD1E04U04DPLT" H 6400 3125 50  0001 C CNN "Mouser"
+F 6 "TPD1E04U04DPLT" H 6400 3125 50  0001 C CNN "Part No"
+	1    6400 3125
+	1    0    0    -1  
+$EndComp
+$Comp
+L omodri_lib:TPD1E04U04 D?
+U 1 1 5F936078
+P 7500 3125
+AR Path="/5F5975A7/5F936078" Ref="D?"  Part="1" 
+AR Path="/5F5975A7/5F91076F/5F936078" Ref="D10"  Part="1" 
+F 0 "D10" H 7200 3450 50  0000 L CNN
+F 1 "TPD1E04U04" H 7200 3375 50  0000 L CNN
+F 2 "udriver3:D_0201_0603Metric" H 7600 3125 50  0001 C CNN
+F 3 "https://www.ti.com/lit/ds/symlink/tpd1e04u04.pdf" H 7600 3125 50  0001 C CNN
+F 4 "296-47862-1-ND" H 7500 3125 50  0001 C CNN "DigiKey"
+F 5 "595-TPD1E04U04DPLT" H 7500 3125 50  0001 C CNN "Mouser"
+F 6 "TPD1E04U04DPLT" H 7500 3125 50  0001 C CNN "Part No"
+	1    7500 3125
+	1    0    0    -1  
+$EndComp
+$Comp
+L omodri_lib:TPD1E04U04 D?
+U 1 1 5F936081
+P 8550 3125
+AR Path="/5F5975A7/5F936081" Ref="D?"  Part="1" 
+AR Path="/5F5975A7/5F91076F/5F936081" Ref="D8"  Part="1" 
+F 0 "D8" H 8250 3450 50  0000 L CNN
+F 1 "TPD1E04U04" H 8250 3375 50  0000 L CNN
+F 2 "udriver3:D_0201_0603Metric" H 8650 3125 50  0001 C CNN
+F 3 "https://www.ti.com/lit/ds/symlink/tpd1e04u04.pdf" H 8650 3125 50  0001 C CNN
+F 4 "296-47862-1-ND" H 8550 3125 50  0001 C CNN "DigiKey"
+F 5 "595-TPD1E04U04DPLT" H 8550 3125 50  0001 C CNN "Mouser"
+F 6 "TPD1E04U04DPLT" H 8550 3125 50  0001 C CNN "Part No"
+	1    8550 3125
+	1    0    0    -1  
+$EndComp
+$Comp
+L omodri_lib:TPD1E04U04 D?
+U 1 1 5F93608A
+P 8525 2150
+AR Path="/5F5975A7/5F93608A" Ref="D?"  Part="1" 
+AR Path="/5F5975A7/5F91076F/5F93608A" Ref="D2"  Part="1" 
+F 0 "D2" H 8225 2475 50  0000 L CNN
+F 1 "TPD1E04U04" H 8225 2400 50  0000 L CNN
+F 2 "udriver3:D_0201_0603Metric" H 8625 2150 50  0001 C CNN
+F 3 "https://www.ti.com/lit/ds/symlink/tpd1e04u04.pdf" H 8625 2150 50  0001 C CNN
+F 4 "296-47862-1-ND" H 8525 2150 50  0001 C CNN "DigiKey"
+F 5 "595-TPD1E04U04DPLT" H 8525 2150 50  0001 C CNN "Mouser"
+F 6 "TPD1E04U04DPLT" H 8525 2150 50  0001 C CNN "Part No"
+	1    8525 2150
+	1    0    0    -1  
+$EndComp
+$Comp
+L omodri_lib:TPD1E04U04 D?
+U 1 1 5F936093
+P 7475 2150
+AR Path="/5F5975A7/5F936093" Ref="D?"  Part="1" 
+AR Path="/5F5975A7/5F91076F/5F936093" Ref="D7"  Part="1" 
+F 0 "D7" H 7175 2475 50  0000 L CNN
+F 1 "TPD1E04U04" H 7175 2400 50  0000 L CNN
+F 2 "udriver3:D_0201_0603Metric" H 7575 2150 50  0001 C CNN
+F 3 "https://www.ti.com/lit/ds/symlink/tpd1e04u04.pdf" H 7575 2150 50  0001 C CNN
+F 4 "296-47862-1-ND" H 7475 2150 50  0001 C CNN "DigiKey"
+F 5 "595-TPD1E04U04DPLT" H 7475 2150 50  0001 C CNN "Mouser"
+F 6 "TPD1E04U04DPLT" H 7475 2150 50  0001 C CNN "Part No"
+	1    7475 2150
+	1    0    0    -1  
+$EndComp
+$Comp
+L omodri_lib:TPD1E04U04 D?
+U 1 1 5F93609C
+P 6400 2150
+AR Path="/5F5975A7/5F93609C" Ref="D?"  Part="1" 
+AR Path="/5F5975A7/5F91076F/5F93609C" Ref="D6"  Part="1" 
+F 0 "D6" H 6100 2475 50  0000 L CNN
+F 1 "TPD1E04U04" H 6100 2400 50  0000 L CNN
+F 2 "udriver3:D_0201_0603Metric" H 6500 2150 50  0001 C CNN
+F 3 "https://www.ti.com/lit/ds/symlink/tpd1e04u04.pdf" H 6500 2150 50  0001 C CNN
+F 4 "296-47862-1-ND" H 6400 2150 50  0001 C CNN "DigiKey"
+F 5 "595-TPD1E04U04DPLT" H 6400 2150 50  0001 C CNN "Mouser"
+F 6 "TPD1E04U04DPLT" H 6400 2150 50  0001 C CNN "Part No"
+	1    6400 2150
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	8525 2525 8525 2450
+$Comp
+L power:GND #PWR?
+U 1 1 5F9360A3
+P 8525 2525
+AR Path="/5F3A3F16/5F9360A3" Ref="#PWR?"  Part="1" 
+AR Path="/5F3A5338/5F9360A3" Ref="#PWR?"  Part="1" 
+AR Path="/5F5975A7/5F9360A3" Ref="#PWR?"  Part="1" 
+AR Path="/5F5975A7/5F91076F/5F9360A3" Ref="#PWR0149"  Part="1" 
+F 0 "#PWR0149" H 8525 2275 50  0001 C CNN
+F 1 "GND" H 8530 2352 50  0000 C CNN
+F 2 "" H 8525 2525 50  0001 C CNN
+F 3 "" H 8525 2525 50  0001 C CNN
+	1    8525 2525
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	8075 2150 8125 2150
+Text HLabel 8075 2150 0    50   Input ~ 0
+M2_Vc
+Wire Wire Line
+	7475 2525 7475 2450
+$Comp
+L power:GND #PWR?
+U 1 1 5F9360AC
+P 7475 2525
+AR Path="/5F3A3F16/5F9360AC" Ref="#PWR?"  Part="1" 
+AR Path="/5F3A5338/5F9360AC" Ref="#PWR?"  Part="1" 
+AR Path="/5F5975A7/5F9360AC" Ref="#PWR?"  Part="1" 
+AR Path="/5F5975A7/5F91076F/5F9360AC" Ref="#PWR0151"  Part="1" 
+F 0 "#PWR0151" H 7475 2275 50  0001 C CNN
+F 1 "GND" H 7480 2352 50  0000 C CNN
+F 2 "" H 7475 2525 50  0001 C CNN
+F 3 "" H 7475 2525 50  0001 C CNN
+	1    7475 2525
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	7025 2150 7075 2150
+Text HLabel 7025 2150 0    50   Input ~ 0
+M2_Vb
+Wire Wire Line
+	6400 2525 6400 2450
+$Comp
+L power:GND #PWR?
+U 1 1 5F9360B5
+P 6400 2525
+AR Path="/5F3A3F16/5F9360B5" Ref="#PWR?"  Part="1" 
+AR Path="/5F3A5338/5F9360B5" Ref="#PWR?"  Part="1" 
+AR Path="/5F5975A7/5F9360B5" Ref="#PWR?"  Part="1" 
+AR Path="/5F5975A7/5F91076F/5F9360B5" Ref="#PWR0152"  Part="1" 
+F 0 "#PWR0152" H 6400 2275 50  0001 C CNN
+F 1 "GND" H 6405 2352 50  0000 C CNN
+F 2 "" H 6400 2525 50  0001 C CNN
+F 3 "" H 6400 2525 50  0001 C CNN
+	1    6400 2525
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	5950 2150 6000 2150
+Text HLabel 5950 2150 0    50   Input ~ 0
+M2_Va
+$Comp
+L omodri_lib:TPD1E04U04 D?
+U 1 1 5F9360C0
+P 6425 4150
+AR Path="/5F5975A7/5F9360C0" Ref="D?"  Part="1" 
+AR Path="/5F5975A7/5F91076F/5F9360C0" Ref="D12"  Part="1" 
+F 0 "D12" H 6125 4475 50  0000 L CNN
+F 1 "TPD1E04U04" H 6125 4400 50  0000 L CNN
+F 2 "udriver3:D_0201_0603Metric" H 6525 4150 50  0001 C CNN
+F 3 "https://www.ti.com/lit/ds/symlink/tpd1e04u04.pdf" H 6525 4150 50  0001 C CNN
+F 4 "296-47862-1-ND" H 6425 4150 50  0001 C CNN "DigiKey"
+F 5 "595-TPD1E04U04DPLT" H 6425 4150 50  0001 C CNN "Mouser"
+F 6 "TPD1E04U04DPLT" H 6425 4150 50  0001 C CNN "Part No"
+	1    6425 4150
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR?
+U 1 1 5F9360C6
+P 8550 4425
+AR Path="/5F3A3F16/5F9360C6" Ref="#PWR?"  Part="1" 
+AR Path="/5F3A5338/5F9360C6" Ref="#PWR?"  Part="1" 
+AR Path="/5F5975A7/5F9360C6" Ref="#PWR?"  Part="1" 
+AR Path="/5F5975A7/5F91076F/5F9360C6" Ref="#PWR0153"  Part="1" 
+F 0 "#PWR0153" H 8550 4175 50  0001 C CNN
+F 1 "GND" H 8555 4252 50  0000 C CNN
+F 2 "" H 8550 4425 50  0001 C CNN
+F 3 "" H 8550 4425 50  0001 C CNN
+	1    8550 4425
+	1    0    0    -1  
+$EndComp
+$Comp
+L omodri_lib:TPD1E04U04 D?
+U 1 1 5F9360CF
+P 8550 4125
+AR Path="/5F5975A7/5F9360CF" Ref="D?"  Part="1" 
+AR Path="/5F5975A7/5F91076F/5F9360CF" Ref="D13"  Part="1" 
+F 0 "D13" H 8250 4450 50  0000 L CNN
+F 1 "TPD1E04U04" H 8250 4375 50  0000 L CNN
+F 2 "udriver3:D_0201_0603Metric" H 8650 4125 50  0001 C CNN
+F 3 "https://www.ti.com/lit/ds/symlink/tpd1e04u04.pdf" H 8650 4125 50  0001 C CNN
+F 4 "296-47862-1-ND" H 8550 4125 50  0001 C CNN "DigiKey"
+F 5 "595-TPD1E04U04DPLT" H 8550 4125 50  0001 C CNN "Mouser"
+F 6 "TPD1E04U04DPLT" H 8550 4125 50  0001 C CNN "Part No"
+	1    8550 4125
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	8100 4125 8150 4125
+$Comp
+L omodri_lib:TMS320F28388D U?
+U 3 1 5F935FFE
+P 3575 4400
+AR Path="/5F3A5338/5F935FFE" Ref="U?"  Part="3" 
+AR Path="/5F5975A7/5F935FFE" Ref="U?"  Part="3" 
+AR Path="/5F5975A7/5F91076F/5F935FFE" Ref="U1"  Part="3" 
+AR Path="/5F935FFE" Ref="U1"  Part="3" 
+F 0 "U1" H 3175 6500 60  0000 C CNN
+F 1 "TMS320F28388D" H 3475 6400 60  0000 C CNN
+F 2 "udriver3:NFBGA_337" H 3575 6400 60  0001 C CNN
+F 3 "https://www.ti.com/lit/ds/symlink/tms320f28388d.pdf" H 3575 6451 60  0001 C CNN
+F 4 " 	296-F28388DZWTS-ND" H 3575 4400 50  0001 C CNN "DigiKey"
+F 5 "595-F28388DZWTS" H 3575 4400 50  0001 C CNN "Mouser"
+F 6 "F28388DZWTS" H 3575 4400 50  0001 C CNN "Part No"
+	3    3575 4400
+	1    0    0    -1  
+$EndComp
+$EndSCHEMATC
