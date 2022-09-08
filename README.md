@@ -22,7 +22,7 @@ See below an overview of the baords
 This setup used TI dev board and was used for first development, It's not a very practical design
 ![TI dev boars](doc/dev-board-setup/images/Dual_axis_setup.jpg)
 ### uOmodri (or udriverv3)
-
+![TI dev boars](doc/doc/uomodri/uomodri1.jpg)
 ### uOmodri signle axis
 
 ### PAL MC 
