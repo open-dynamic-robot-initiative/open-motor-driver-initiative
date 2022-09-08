@@ -25,5 +25,5 @@ This setup used TI dev board and was used for first development, It's not a very
 This board was design with to be backward compatible with the udriverv2 used in odri robots.
 ![uomodri](doc/uomodri/uomodri1.jpg)
 ### uOmodri signle axis
-
+This board is a project not designed yet. It will be a signe axis version to be attached directly to motors from myactuator.com
 ### PAL MC 
