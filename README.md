@@ -22,7 +22,9 @@ See below an overview of the baords
 This setup used TI dev board and was used for first development, It's not a very practical design
 ![TI dev boars](doc/dev-board-setup/images/Dual_axis_setup.jpg)
 ### uOmodri (or udriverv3)
-![TI dev boars](doc/doc/uomodri/uomodri1.jpg)
+This board was design with to be backward compatible with the udriverv2 used in odri robots.
+![uomodri](doc/uomodri/uomodri1.jpg)
 ### uOmodri signle axis
-
-### PAL MC 
+This board is a project not designed yet. It will be a signe axis version to be attached directly to motors from myactuator.com
+### PAL Robotics MC21R01 
+[to do]
