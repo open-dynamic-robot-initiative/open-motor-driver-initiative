@@ -19,7 +19,6 @@ bool_t COM_msgExtract(mst2slv_msg_t* p_msg,  cmd_t* p_cmd_m1,  cmd_t* p_cmd_m2)
     uint32_t crc                        = COM_crc32((uint16_t *) p_msg, COM_MSG_TX_RX_16BIT_PAYLOAD_LENGTH);
     if((MSB_32(crc) == p_msg->crc.u16_msb) && (LSB_32(crc) == p_msg->crc.u16_lsb))
     {
-
         int32_t pos_s32                 = (int32_t)FUS_16_TO_32(p_msg->position[MOTOR_1].u16_msb, p_msg->position[MOTOR_1].u16_lsb);
         cmd_reg_t* p_cmd_reg            = &p_cmd_m1->enableReg.bit;
         p_cmd_m1->posRef                = (float32_t)(pos_s32                   * POSITION_LSB      * FM_ROUND2RAD);
@@ -60,6 +59,111 @@ bool_t COM_msgExtract(mst2slv_msg_t* p_msg,  cmd_t* p_cmd_m1,  cmd_t* p_cmd_m2)
     }
 
     return(false);
+}
+
+bool_t COM_msgExtract_cla(mst2slv_msg_cla_t* p_msg, cmd_t* p_cmd_m1, cmd_t* p_cmd_m2)
+{
+    float32_t   isat            = 0.0f;
+    bool_t      msg_rx_valid    = false;
+
+    switch(p_msg->msg_rx_state)
+    {
+    case COM_RX_STATE_MODE:
+        p_cmd_m1->enableReg.bit.encOffsetEnable = (bool_t)((p_msg->msg_rx & MSG_RX_EI1OC)   ? (true): (false));
+        p_cmd_m1->enableReg.bit.rollOverEnable  = (bool_t)((p_msg->msg_rx & MSG_RX_EPRE)    ? (true): (false));
+        p_cmd_m1->enableReg.bit.motorEnable     = (bool_t)((p_msg->msg_rx & MSG_RX_EM1)     ? (true): (false));
+        p_cmd_m1->enableReg.bit.systemEnable    = (bool_t)((p_msg->msg_rx & MSG_RX_ES)      ? (true): (false));
+        p_cmd_m1->timeoutRef                    = (uint16_t)p_msg->msg_rx & MSG_RX_TIMEOUT;
+        p_cmd_m2->enableReg.bit.encOffsetEnable = (bool_t)((p_msg->msg_rx & MSG_RX_EI2OC)   ? (true): (false));
+        p_cmd_m2->enableReg.bit.rollOverEnable  = (bool_t)((p_msg->msg_rx & MSG_RX_EPRE)    ? (true): (false));
+        p_cmd_m2->enableReg.bit.motorEnable     = (bool_t)((p_msg->msg_rx & MSG_RX_EM2)     ? (true): (false));
+        p_cmd_m2->enableReg.bit.systemEnable    = (bool_t)((p_msg->msg_rx & MSG_RX_ES)      ? (true): (false));
+        p_cmd_m2->timeoutRef                    = (uint16_t)p_msg->msg_rx & MSG_RX_TIMEOUT;
+        p_msg->msg_crc32                        = COM_crc32_cla(p_msg->msg_rx, UINT32_MAX);
+        break;
+
+    case COM_RX_STATE_POS_MSB_MOT1:
+    case COM_RX_STATE_POS_MSB_MOT2:
+        p_msg->msg_tmp      = p_msg->msg_rx;
+        p_msg->msg_crc32    = COM_crc32_cla(p_msg->msg_rx, p_msg->msg_crc32);
+        break;
+
+    case COM_RX_STATE_POS_LSB_MOT1:
+        p_cmd_m1->posRef    = (float32_t)((int32_t)FUS_16_TO_32(p_msg->msg_tmp, p_msg->msg_rx) * POSITION_LSB * FM_ROUND2RAD);
+        p_msg->msg_crc32    = COM_crc32_cla(p_msg->msg_rx, p_msg->msg_crc32);
+        break;
+
+    case COM_RX_STATE_POS_LSB_MOT2:
+        p_cmd_m2->posRef    = (float32_t)((int32_t)FUS_16_TO_32(p_msg->msg_tmp, p_msg->msg_rx) * POSITION_LSB * FM_ROUND2RAD);
+        p_msg->msg_crc32    = COM_crc32_cla(p_msg->msg_rx, p_msg->msg_crc32);
+        break;
+
+    case COM_RX_STATE_VEL_MOT1:
+        p_cmd_m1->velRef    = (float32_t)(p_msg->msg_rx * VELOCITY_LSB * FM_KRPM2RADPS);
+        p_msg->msg_crc32    = COM_crc32_cla(p_msg->msg_rx, p_msg->msg_crc32);
+        break;
+
+    case COM_RX_STATE_VEL_MOT2:
+        p_cmd_m2->velRef    = (float32_t)(p_msg->msg_rx * VELOCITY_LSB * FM_KRPM2RADPS);
+        p_msg->msg_crc32    = COM_crc32_cla(p_msg->msg_rx, p_msg->msg_crc32);
+        break;
+
+    case COM_RX_STATE_IQ_MOT1:
+        p_cmd_m1->iqRef     = (float32_t)(p_msg->msg_rx * IQ_LSB);
+        p_msg->msg_crc32    = COM_crc32_cla(p_msg->msg_rx, p_msg->msg_crc32);
+        break;
+
+    case COM_RX_STATE_IQ_MOT2:
+        p_cmd_m2->iqRef     = (float32_t)(p_msg->msg_rx * IQ_LSB);
+        p_msg->msg_crc32    = COM_crc32_cla(p_msg->msg_rx, p_msg->msg_crc32);
+        break;
+
+    case COM_RX_STATE_KP_MOT1:
+        p_cmd_m1->kpCoeff   = (float32_t)(p_msg->msg_rx * KP_LSB * FM_RAD2ROUND);
+        p_msg->msg_crc32    = COM_crc32_cla(p_msg->msg_rx, p_msg->msg_crc32);
+        break;
+
+    case COM_RX_STATE_KP_MOT2:
+        p_cmd_m2->kpCoeff   = (float32_t)(p_msg->msg_rx * KP_LSB * FM_RAD2ROUND);
+        p_msg->msg_crc32    = COM_crc32_cla(p_msg->msg_rx, p_msg->msg_crc32);
+        break;
+
+    case COM_RX_STATE_KD_MOT1:
+        p_cmd_m1->kdCoeff   = (float32_t)(p_msg->msg_rx * KD_LSB * FM_RADPS2KRPM);
+        p_msg->msg_crc32    = COM_crc32_cla(p_msg->msg_rx, p_msg->msg_crc32);
+        break;
+
+    case COM_RX_STATE_KD_MOT2:
+        p_cmd_m2->kdCoeff   = (float32_t)(p_msg->msg_rx * KD_LSB * FM_RADPS2KRPM);
+        p_msg->msg_crc32    = COM_crc32_cla(p_msg->msg_rx, p_msg->msg_crc32);
+        break;
+
+    case COM_RX_STATE_ISAT_MOT12:
+        isat                = (float32_t)(MSB_16(p_msg->msg_rx) * CURRENT_SAT_LSB);
+        p_cmd_m1->iSat      = (isat < MOTOR1_CURRENT_CMD_SAT_MAX)   ? (isat)            : (MOTOR1_CURRENT_CMD_SAT_MAX);
+        p_cmd_m1->iSat      = (p_cmd_m1->iSat > 0.0f)               ? (p_cmd_m1->iSat)  : (MOTOR1_CURRENT_CMD_SAT_MAX);
+        isat                = (float32_t)(LSB_16(p_msg->msg_rx) * CURRENT_SAT_LSB);
+        p_cmd_m2->iSat      = (isat < MOTOR2_CURRENT_CMD_SAT_MAX)   ? (isat)            : (MOTOR2_CURRENT_CMD_SAT_MAX);
+        p_cmd_m2->iSat      = (p_cmd_m2->iSat > 0.0f)               ? (p_cmd_m2->iSat)  : (MOTOR2_CURRENT_CMD_SAT_MAX);
+        p_msg->msg_crc32    = COM_crc32_cla(p_msg->msg_rx, p_msg->msg_crc32);
+        break;
+
+    case COM_RX_STATE_INDEX:
+        p_cmd_m1->index     = p_msg->msg_rx;
+        p_cmd_m2->index     = p_msg->msg_rx;
+        p_msg->msg_crc32    = COM_crc32_cla(p_msg->msg_rx, p_msg->msg_crc32);
+        break;
+
+    case COM_RX_STATE_CRC_LSB:
+        p_msg->msg_tmp      = p_msg->msg_rx;
+        break;
+
+    case COM_RX_STATE_CRC_MSB:
+        msg_rx_valid        = (p_msg->msg_crc32 == FUS_16_TO_32(p_msg->msg_tmp, p_msg->msg_rx)) ? (true) : (false);
+        break;
+    }
+
+    return (msg_rx_valid);
 }
 
 /**
@@ -169,6 +273,16 @@ void COM_resetCmdStruct(cmd_t* p_cmd)
     return;
 }
 
+void COM_resetMsgExtractStruct(mst2slv_msg_cla_t* p_msg)
+{
+    p_msg->msg_rx_state = COM_RX_STATE_MODE;
+    p_msg->msg_crc32    = UINT32_MAX;
+    p_msg->msg_rx       = 0U;
+    p_msg->msg_tmp      = 0U;
+
+    return;
+}
+
 /**
  * @brief           Reset the command associated to motor_id
  * @param[in]       p_motor     Pointer on the motor structure to get motor ID.
@@ -206,7 +320,7 @@ void COM_resetCmdStruct(cmd_t* p_cmd)
  * @param[in]   len     Length of the array
  * @return
  */
-uint32_t COM_crc32 (uint16_t* p_buf, uint16_t len)
+uint32_t COM_crc32(uint16_t* p_buf, uint16_t len)
 {
   uint32_t crc = 0xFFFFFFFF;
   while (len--)
@@ -217,6 +331,14 @@ uint32_t COM_crc32 (uint16_t* p_buf, uint16_t len)
     }
 
   return(crc);
+}
+
+uint32_t COM_crc32_cla(uint16_t data, uint32_t crc)
+{
+    crc = (crc << 8) ^ crc32_table[((crc >> 24) ^ MSB_16(data)) & 0xFF];
+    crc = (crc << 8) ^ crc32_table[((crc >> 24) ^ LSB_16(data)) & 0xFF];
+
+    return(crc);
 }
 
 //void com_vcrc_ini(uint16_t* p_buf, uint16_t len)

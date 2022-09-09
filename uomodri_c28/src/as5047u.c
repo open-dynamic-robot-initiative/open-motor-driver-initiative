@@ -86,7 +86,7 @@ uint32_t readData32(as_enc_t* p_enc , uint32_t command){
 
 }
 void getAngleandVelocity(as_enc_t* p_enc){
-    CommandFrame32_u command;
+    CmdFrame32_u command;
     uint8_t com[2];
 
 
@@ -94,14 +94,14 @@ void getAngleandVelocity(as_enc_t* p_enc){
     command.bit.dnc=0;
     command.bit.pad=0x00;
     command.bit.crc=0;
-    command.bit.commandFrame = ANGLE_REG;
+    command.bit.cmdFrame = ANGLE_REG;
     com[0]=(command.all&0x00FFFF00)>>16;
     com[1]=(command.all&0x00FFFF00)>>8;
     command.bit.crc= calcCRC(com);
 
     send32(p_enc,command.all);
 
-    command.bit.commandFrame = VEL_REG;
+    command.bit.cmdFrame = VEL_REG;
     com[0]=(command.all&0x00FFFF00)>>16;
     com[1]=(command.all&0x00FFFF00)>>8;
     command.bit.crc= calcCRC(com);
@@ -114,11 +114,11 @@ void getAngleandVelocity(as_enc_t* p_enc){
 
 BitDataFrame16_u readRegister(as_enc_t* p_enc, uint16_t registerAddress){
 
-    CommandFrame16_u command;
+    CmdFrame16_u command;
     BitDataFrame16_u receivedFrame;
 
     command.bit.rw= READ;
-    command.bit.commandFrame = registerAddress;
+    command.bit.cmdFrame = registerAddress;
     command.bit.dnc = 0;
 
     receivedFrame.all=readData(p_enc,command.all);
@@ -128,7 +128,7 @@ BitDataFrame16_u readRegister(as_enc_t* p_enc, uint16_t registerAddress){
 
 BitDataFrame32_u readRegister32(as_enc_t* p_enc, uint16_t registerAddress){
 
-    CommandFrame32_u command;
+    CmdFrame32_u command;
     BitDataFrame32_u receivedFrame;
     uint8_t com[2];
 
@@ -137,7 +137,7 @@ BitDataFrame32_u readRegister32(as_enc_t* p_enc, uint16_t registerAddress){
     command.bit.dnc=0;
     command.bit.pad=0x00;
     command.bit.crc=0;
-    command.bit.commandFrame = registerAddress;
+    command.bit.cmdFrame = registerAddress;
 
     com[0]=(command.all&0x00FFFF00)>>16;
     com[1]=(command.all&0x00FFFF00)>>8;

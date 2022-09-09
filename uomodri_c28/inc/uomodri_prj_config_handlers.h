@@ -55,8 +55,8 @@ static const int_cfg_t InterruptList[] =
 static const asenc_cfg_t  ASencCfgList[] =
 {
  {
-  .spiHandle        = MST_SPI_BASE,
-  .gpioNumber_CS    = MST_SPI_CS,
+  .spiHandle        = ENC_SPI_BASE,
+  .gpioNumber_CS    = ENC_SPI_CS,
  }
 };
 

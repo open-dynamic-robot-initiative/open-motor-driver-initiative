@@ -24,8 +24,8 @@
  */
 #define UOMODRI_USE_REV_1_0_CONFIG              1
 #define UOMODRI_USE_ENCODER_GET_REG_FUNCTION    0
-#define CLA_CORE_ENABLE                         1
-#define CM_CORE_ENABLE                          1
+#define CLA_CORE_ENABLE                         0
+#define CM_CORE_ENABLE                          0
 #define UOMODRI_VBUS_FLT(flt_coef, y, x)        LPF_FILTER_1(flt_coef, y, x)
 #define UOMODRI_VEXT_FLT(flt_coef, y, x)        LPF_FILTER_1(flt_coef, y, x)
 #define UOMODRI_IDQ_FLT(flt_coef, y, x)         LPF_FILTER_1(flt_coef, y, x)
@@ -245,9 +245,9 @@
  *  @brief    Configure master SPI module (simulating master board).
  * @{
  */
-#define MST_SPI_BASE                            SPIC_BASE
-#define MST_SPI_TX_BASE_REG_ADDR                (MST_SPI_BASE + SPI_O_TXBUF)
-#define MST_SPI_RX_BASE_REG_ADDR                (MST_SPI_BASE + SPI_O_RXBUF)
+#define ENC_SPI_BASE                            SPIC_BASE
+#define ENC_SPI_TX_BASE_REG_ADDR                (ENC_SPI_BASE + SPI_O_TXBUF)
+#define ENC_SPI_RX_BASE_REG_ADDR                (ENC_SPI_BASE + SPI_O_RXBUF)
 /**
  * @}
  */
@@ -309,17 +309,17 @@
  *  @brief    Configure GPIO pins associated to master board communication.
  * @{
  */
-#define MST_SPI_SIMO                            (69)
-#define MST_SPI_SIMO_CFG                        GPIO_69_SPIC_SIMO
-#define MST_SPI_SOMI                            (70)
-#define MST_SPI_SOMI_CFG                        GPIO_70_SPIC_SOMI
-#define MST_SPI_CLK                             (71)
-#define MST_SPI_CLK_CFG                         GPIO_71_SPIC_CLK
-#define MST_SPI_CS                              (72)
-#define MST_SPI_CS_CFG                          GPIO_72_GPIO72//SPIC_STEN
-#define MST_SPI_CS_SET                          (HWREG(GPIODATA_BASE + GPIO_O_GPCSET)   = GPIO_GPCSET_GPIO72)
-#define MST_SPI_CS_CLEAR                        (HWREG(GPIODATA_BASE + GPIO_O_GPCCLEAR) = GPIO_GPCCLEAR_GPIO72)
-#define MST_SPI_CS_TOGGLE                       (HWREG(GPIODATA_BASE + GPIO_O_GPCTOGGLE)= GPIO_GPCTOGGLE_GPIO72)
+#define ENC_SPI_SIMO                            (69)
+#define ENC_SPI_SIMO_CFG                        GPIO_69_SPIC_SIMO
+#define ENC_SPI_SOMI                            (70)
+#define ENC_SPI_SOMI_CFG                        GPIO_70_SPIC_SOMI
+#define ENC_SPI_CLK                             (71)
+#define ENC_SPI_CLK_CFG                         GPIO_71_SPIC_CLK
+#define ENC_SPI_CS                              (72)
+#define ENC_SPI_CS_CFG                          GPIO_72_GPIO72//SPIC_STEN
+#define ENC_SPI_CS_SET                          (HWREG(GPIODATA_BASE + GPIO_O_GPCSET)   = GPIO_GPCSET_GPIO72)
+#define ENC_SPI_CS_CLEAR                        (HWREG(GPIODATA_BASE + GPIO_O_GPCCLEAR) = GPIO_GPCCLEAR_GPIO72)
+#define ENC_SPI_CS_TOGGLE                       (HWREG(GPIODATA_BASE + GPIO_O_GPCTOGGLE)= GPIO_GPCTOGGLE_GPIO72)
 /**
  * @}
  */
@@ -357,9 +357,9 @@
 #define DMA_CMD_2_FOC_16BIT_CONFIG              (DMA_CFG_ONESHOT_DISABLE | DMA_CFG_CONTINUOUS_ENABLE | DMA_CFG_SIZE_16BIT)
 #define DMA_CMD_2_FOC_16BIT_WRAP                (1)
 
-//#define DMA_MST_SPI_TX_BASE_ADDR                DMA_CH3_BASE
-//#define DMA_MST_SPI_TX_INT                      INT_DMA_CH3
-//#define DMA_MST_SPI_TX_TRIGGER_SRC              DMA_TRIGGER_SOFTWARE
+//#define DMA_ENC_SPI_TX_BASE_ADDR                DMA_CH3_BASE
+//#define DMA_ENC_SPI_TX_INT                      INT_DMA_CH3
+//#define DMA_ENC_SPI_TX_TRIGGER_SRC              DMA_TRIGGER_SOFTWARE
 
 #define DMA_LED_SPI_TX_BASE_ADDR                DMA_CH4_BASE
 #define DMA_LED_SPI_TX_INT                      INT_DMA_CH4

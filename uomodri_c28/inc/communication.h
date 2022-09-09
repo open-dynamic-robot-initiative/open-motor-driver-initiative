@@ -73,6 +73,45 @@ static unsigned char const crc8_table[] =
  0x74, 0x2A, 0xC8, 0x96, 0x15, 0x4B, 0xA9, 0xF7, 0xB6, 0xE8, 0x0A, 0x54, 0xD7, 0x89, 0x6B, 0x35
 };
 
+/***********************************************************************
+ * COMMUNICATION ERROR FLAGS
+ ***********************************************************************/
+/**
+ * @enum    com_statusError
+ * @brief   Error flags list.
+ */
+typedef enum
+{
+    STATUS_ERROR_NO_ERROR           = 0, /*!< No error */
+    STATUS_ERROR_ENCODER1           = 1, /*!< Encoder_1 error too high */
+    STATUS_ERROR_SPI_RECV_TIMEOUT   = 2, /*!< Timeout for receiving current references exceeded */
+    STATUS_ERROR_CRIT_TEMP          = 3, /*!< Motor temperature reached critical valued */
+    STATUS_ERROR_POSCONV            = 4, /*!< Unused error */
+    STATUS_ERROR_POS_ROLLOVER       = 5, /*!< Position roll-over occurred */
+    STATUS_ERROR_ENCODER2           = 6, /*!< Encoder_2 error too high */
+    STATUS_ERROR_DRV_NFAULT         = 7, /*!< Motor DRV nFault error */
+} com_statusError;
+
+typedef enum
+{
+    COM_RX_STATE_MODE               = 0,
+    COM_RX_STATE_POS_MSB_MOT1       = 1,
+    COM_RX_STATE_POS_LSB_MOT1       = 2,
+    COM_RX_STATE_POS_MSB_MOT2       = 3,
+    COM_RX_STATE_POS_LSB_MOT2       = 4,
+    COM_RX_STATE_VEL_MOT1           = 5,
+    COM_RX_STATE_VEL_MOT2           = 6,
+    COM_RX_STATE_IQ_MOT1            = 7,
+    COM_RX_STATE_IQ_MOT2            = 8,
+    COM_RX_STATE_KP_MOT1            = 9,
+    COM_RX_STATE_KP_MOT2            = 10,
+    COM_RX_STATE_KD_MOT1            = 11,
+    COM_RX_STATE_KD_MOT2            = 12,
+    COM_RX_STATE_ISAT_MOT12         = 13,
+    COM_RX_STATE_INDEX              = 14,
+    COM_RX_STATE_CRC_MSB            = 15,
+    COM_RX_STATE_CRC_LSB            = 16,
+} com_rx_state_e;
 
 /***********************************************************************
  * COMMUNICATION STRUCTURES \& UNIONS BIT FILEDS
@@ -163,6 +202,14 @@ typedef struct __mst2slv_msg_t__
     U32toU16_reg_t  crc;
 } mst2slv_msg_t;
 
+typedef struct __mst_2slv_msg_cla_t__
+{
+    com_rx_state_e  msg_rx_state;
+    uint32_t        msg_crc32;
+    uint16_t        msg_rx;
+    uint16_t        msg_tmp;
+} mst2slv_msg_cla_t;
+
 /**
  * @struct  slv2mst_msg_t
  * @brief   Slave to master full status message including CRC from uOmodri
@@ -231,42 +278,50 @@ typedef struct __attribute__((__packed__)) __dbg_uart_addr_t__
 #endif
 
 /***********************************************************************
- * COMMUNICATION ERROR FLAGS
- ***********************************************************************/
-/**
- * @enum    com_statusError
- * @brief   Error flags list.
- */
-typedef enum
-{
-    STATUS_ERROR_NO_ERROR           = 0, /*!< No error */
-    STATUS_ERROR_ENCODER1           = 1, /*!< Encoder_1 error too high */
-    STATUS_ERROR_SPI_RECV_TIMEOUT   = 2, /*!< Timeout for receiving current references exceeded */
-    STATUS_ERROR_CRIT_TEMP          = 3, /*!< Motor temperature reached critical valued */
-    STATUS_ERROR_POSCONV            = 4, /*!< Unused error */
-    STATUS_ERROR_POS_ROLLOVER       = 5, /*!< Position roll-over occurred */
-    STATUS_ERROR_ENCODER2           = 6, /*!< Encoder_2 error too high */
-    STATUS_ERROR_DRV_NFAULT         = 7, /*!< Motor DRV nFault error */
-} com_statusError;
-
-/***********************************************************************
  * DEFINES
  ***********************************************************************/
 #define POLYNOMIAL_32_P1                            0x04C11DB7
 #define CRC_INIT_CRC32                              0xFFFFFFFF
+
+#define MSG_RX_ES_POS                               (15)
+#define MSG_RX_ES_MASK                              (1 << MSG_RX_ES_POS)
+#define MSG_RX_EM1_POS                              (14)
+#define MSG_RX_EM1_MASK                             (1 << MSG_RX_EM1_POS)
+#define MSG_RX_EM2_POS                              (13)
+#define MSG_RX_EM2_MASK                             (1 << MSG_RX_EM2_POS)
+#define MSG_RX_EPRE_POS                             (12)
+#define MSG_RX_EPRE_MASK                            (1 << MSG_RX_EPRE_POS)
+#define MSG_RX_EI1OC_POS                            (11)
+#define MSG_RX_EI1OC_MASK                           (1 << MSG_RX_EI1OC_POS)
+#define MSG_RX_EI2OC_POS                            (10)
+#define MSG_RX_EI2OC_MASK                           (1 << MSG_RX_EI2OC_POS)
+#define MSG_RX_TIMEOUT_POS                          (0)
+#define MSG_RX_TIMEOUT_MASK                         (0xFF << MSG_RX_TIMEOUT_POS)
+
+#define MSG_RX_ES                                   (0x8000)
+#define MSG_RX_EM1                                  (0x4000)
+#define MSG_RX_EM2                                  (0x2000)
+#define MSG_RX_EPRE                                 (0x1000)
+#define MSG_RX_EI1OC                                (0x0800)
+#define MSG_RX_EI2OC                                (0x0400)
+#define MSG_RX_TIMEOUT                              (0x00FF)
+
 
 /***********************************************************************
  * FUNCTIONS DECLARATION
  ***********************************************************************/
 #ifndef USE_CM_CORE
 bool_t COM_msgExtract(mst2slv_msg_t*,  cmd_t*, cmd_t*);
+bool_t COM_msgExtract_cla(mst2slv_msg_cla_t*, cmd_t*, cmd_t*);
 //bool_t COM_msgExtract(mst2slv_msg_t*, motor_t*, motor_t*);
 //void COM_msgCreate(motor_t*, cmd_uomodri_t*, slv2mst_msg_t*);
 void COM_msgCreate(motor_t*, motor_t*, slv2mst_msg_t*);
 //void COM_resetCmdStruct(cmd_uomodri_t*);
 void COM_resetCmdStruct(cmd_t*);
+void COM_resetMsgExtractStruct(mst2slv_msg_cla_t*);
 //void COM_resetCmdMotorStruct(motor_t*, cmd_uomodri_t*);
 uint32_t COM_crc32(uint16_t*, uint16_t);
+uint32_t COM_crc32_cla(uint16_t, uint32_t);
 #else
 void com_msgDbgTx(dbg_uart_addr_t*, dbg_uart_msg_t*);
 uint32_t com_crc32(uint16_t*, size_t);

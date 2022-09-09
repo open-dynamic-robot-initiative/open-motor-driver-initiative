@@ -1,69 +1,73 @@
-#include <as5047u.h>
-#include "cla_shared.h"
+/***********************************************************************
+ * INCLUDES
+ ***********************************************************************/
 #include "f2838x_device.h"
 #include "driverlib.h"
+#include "as5047u.h"
+#include "cla_shared.h"
 #include "uomodri_user_defines.h"
-//#include "hal.h"
 
-//extern float32_t    angle[2];
+/***********************************************************************
+ * DEFINES
+ ***********************************************************************/
+#define CLA_2PI     (6.283185307179586476925286766559f)
+#define ENC_RES     (16384.0f)
+
+/***********************************************************************
+ * VARIABLES
+ ***********************************************************************/
 extern float32_t    thetaAbs;
 extern float32_t    velocity;
 extern bool_t       cla_new_flag;
 extern bool_t       cpu1_ready_flag;
 
-#define CLA_2PI     (6.283185307179586476925286766559f)
-#define ENC_RES     (16384.0f)
-
+/***********************************************************************
+ * FUNCTIONS DEFINITION
+ ***********************************************************************/
 __interrupt void Cla1Task1 ( void )
 {
-    HWREG(GPIODATA_BASE + GPIO_O_GPCCLEAR) = 0x100; //MST_SPI_CS_CLEAR; //Clear CS
-    SPI_writeDataBlockingFIFO(MST_SPI_BASE, ERRFL_REG); //Clear the error register by reading it
-    SPI_readDataBlockingFIFO(MST_SPI_BASE);
-    HWREG(GPIODATA_BASE + GPIO_O_GPCSET) = 0x100; //MST_SPI_CS_SET; //Set CS
+    HWREG(GPIODATA_BASE + GPIO_O_GPCCLEAR) = 0x100; //ENC_SPI_CS_CLEAR; //Clear CS
+    SPI_writeDataBlockingFIFO(ENC_SPI_BASE, ERRFL_REG); //Clear the error register by reading it
+    SPI_readDataBlockingFIFO(ENC_SPI_BASE);
+    HWREG(GPIODATA_BASE + GPIO_O_GPCSET) = 0x100; //ENC_SPI_CS_SET; //Set CS
 
     float32_t           angle[2]    = {0.0f, 0.0f};
     float32_t           deltaTheta  = 0.0f;
-    BitDataFrame32_u    msg[2];
-    int16_t             turnNb = 0U;
-    uint8_t             i;
-//    uint8_t             com[2], i;
-//    bool_t              crccheck;
-    bool_t              test[2] = {false, false};
+    BitDataFrame32_u    msg[2]      = {0U, 0U};
+    int16_t             turnNb      = 0U;
+    uint8_t             i           = 0U;
+    bool_t              test[2]     = {false, false};
 
     while(1)
     {
-//        if(prev_flag != cpu1_ready_flag)
-//        {
-//            prev_flag       = cpu1_ready_flag;
-//            crccheck        = true;
             cla_new_flag    = false;
 
-            HWREG(GPIODATA_BASE + GPIO_O_GPCCLEAR) = 0x100; //MST_SPI_CS_CLEAR; //Clear CS
-            SPI_writeDataNonBlocking(MST_SPI_BASE, MSB_32(ANGLE_COMMAND));
-            SPI_writeDataNonBlocking(MST_SPI_BASE, LSB_32(ANGLE_COMMAND));
-            SPI_readDataBlockingFIFO(MST_SPI_BASE);
-            SPI_readDataBlockingFIFO(MST_SPI_BASE);
-            HWREG(GPIODATA_BASE + GPIO_O_GPCSET) = 0x100; //MST_SPI_CS_SET; //Set CS
+            HWREG(GPIODATA_BASE + GPIO_O_GPCCLEAR) = 0x100; //ENC_SPI_CS_CLEAR; //Clear CS
+            SPI_writeDataNonBlocking(ENC_SPI_BASE, MSB_32(ANGLE_COMMAND));
+            SPI_writeDataNonBlocking(ENC_SPI_BASE, LSB_32(ANGLE_COMMAND));
+            SPI_readDataBlockingFIFO(ENC_SPI_BASE);
+            SPI_readDataBlockingFIFO(ENC_SPI_BASE);
+            HWREG(GPIODATA_BASE + GPIO_O_GPCSET) = 0x100; //ENC_SPI_CS_SET; //Set CS
 
             for (i = 0; i < 8; i++)    /*Minimum High time of SS/ between two transmissions is 350ns(According to the AS5047u datasheet) */
                 __mnop();
 
-            HWREG(GPIODATA_BASE + GPIO_O_GPCCLEAR) = 0x100; //MST_SPI_CS_CLEAR; //Clear CS
-            SPI_writeDataNonBlocking(MST_SPI_BASE, MSB_32(VELOCITY_COMMAND));
-            SPI_writeDataNonBlocking(MST_SPI_BASE, LSB_32(VELOCITY_COMMAND));
-            msg[0].byte_16.short_1  = SPI_readDataBlockingFIFO(MST_SPI_BASE);
-            msg[0].byte_16.short_0  = SPI_readDataBlockingFIFO(MST_SPI_BASE);
-            HWREG(GPIODATA_BASE + GPIO_O_GPCSET) = 0x100; // MST_SPI_CS_SET;  //Set CS
+            HWREG(GPIODATA_BASE + GPIO_O_GPCCLEAR) = 0x100; //ENC_SPI_CS_CLEAR; //Clear CS
+            SPI_writeDataNonBlocking(ENC_SPI_BASE, MSB_32(VELOCITY_COMMAND));
+            SPI_writeDataNonBlocking(ENC_SPI_BASE, LSB_32(VELOCITY_COMMAND));
+            msg[0].byte_16.short_1  = SPI_readDataBlockingFIFO(ENC_SPI_BASE);
+            msg[0].byte_16.short_0  = SPI_readDataBlockingFIFO(ENC_SPI_BASE);
+            HWREG(GPIODATA_BASE + GPIO_O_GPCSET) = 0x100; // ENC_SPI_CS_SET;  //Set CS
 
             for (i = 1; i < 8; i++)    /*Minimum High time of SS/ between two transmissions is 350ns(According to the AS5047u datasheet) */
                 __mnop();
 
-            HWREG(GPIODATA_BASE + GPIO_O_GPCCLEAR) = 0x100; //MST_SPI_CS_CLEAR; //Clear CS
-            SPI_writeDataNonBlocking(MST_SPI_BASE, MSB_32(0x0040001B));
-            SPI_writeDataNonBlocking(MST_SPI_BASE, LSB_32(0x0040001B));
-            msg[1].byte_16.short_1  = SPI_readDataBlockingFIFO(MST_SPI_BASE);
-            msg[1].byte_16.short_0  = SPI_readDataBlockingFIFO(MST_SPI_BASE);
-            HWREG(GPIODATA_BASE + GPIO_O_GPCSET) = 0x100; //MST_SPI_CS_SET;  //Set CS
+            HWREG(GPIODATA_BASE + GPIO_O_GPCCLEAR) = 0x100; //ENC_SPI_CS_CLEAR; //Clear CS
+            SPI_writeDataNonBlocking(ENC_SPI_BASE, MSB_32(0x0040001B));
+            SPI_writeDataNonBlocking(ENC_SPI_BASE, LSB_32(0x0040001B));
+            msg[1].byte_16.short_1  = SPI_readDataBlockingFIFO(ENC_SPI_BASE);
+            msg[1].byte_16.short_0  = SPI_readDataBlockingFIFO(ENC_SPI_BASE);
+            HWREG(GPIODATA_BASE + GPIO_O_GPCSET) = 0x100; //ENC_SPI_CS_SET;  //Set CS
 
 /**********************************SECOND MOTOR*****************************************/
 //            for (i = 1; i < 3; i++)    /*Minimum High time of SS/ between two transmissions is 350ns(According to the AS5047u datasheet) */
@@ -72,22 +76,22 @@ __interrupt void Cla1Task1 ( void )
 //                __mnop();
 //            }
 //
-//            HWREG(GPIODATA_BASE + GPIO_O_GPCCLEAR) = 0x100; //MST_SPI_CS_CLEAR; //Clear CS
-//            SPI_writeDataNonBlocking(MST_SPI_BASE, MSB_32(ANGLE_COMMAND));
-//            SPI_writeDataNonBlocking(MST_SPI_BASE, LSB_32(ANGLE_COMMAND));
-//            SPI_readDataBlockingFIFO(MST_SPI_BASE);
-//            SPI_readDataBlockingFIFO(MST_SPI_BASE);
-//            HWREG(GPIODATA_BASE + GPIO_O_GPCSET) = 0x100; //MST_SPI_CS_SET; //Set CS
+//            HWREG(GPIODATA_BASE + GPIO_O_GPCCLEAR) = 0x100; //ENC_SPI_CS_CLEAR; //Clear CS
+//            SPI_writeDataNonBlocking(ENC_SPI_BASE, MSB_32(ANGLE_COMMAND));
+//            SPI_writeDataNonBlocking(ENC_SPI_BASE, LSB_32(ANGLE_COMMAND));
+//            SPI_readDataBlockingFIFO(ENC_SPI_BASE);
+//            SPI_readDataBlockingFIFO(ENC_SPI_BASE);
+//            HWREG(GPIODATA_BASE + GPIO_O_GPCSET) = 0x100; //ENC_SPI_CS_SET; //Set CS
 //
 //            for (i = 0; i < 4; i++)    /*Minimum High time of SS/ between two transmissions is 350ns(According to the AS5047u datasheet) */
 //                __mnop();
 //
-//            HWREG(GPIODATA_BASE + GPIO_O_GPCCLEAR) = 0x100; //MST_SPI_CS_CLEAR; //Clear CS
-//            SPI_writeDataNonBlocking(MST_SPI_BASE, MSB_32(VELOCITY_COMMAND));
-//            SPI_writeDataNonBlocking(MST_SPI_BASE, LSB_32(VELOCITY_COMMAND));
-//            rData[0]    = SPI_readDataBlockingFIFO(MST_SPI_BASE);
-//            rData[1]    = SPI_readDataBlockingFIFO(MST_SPI_BASE);
-//            HWREG(GPIODATA_BASE + GPIO_O_GPCSET) = 0x100; //MST_SPI_CS_SET;  //Set CS
+//            HWREG(GPIODATA_BASE + GPIO_O_GPCCLEAR) = 0x100; //ENC_SPI_CS_CLEAR; //Clear CS
+//            SPI_writeDataNonBlocking(ENC_SPI_BASE, MSB_32(VELOCITY_COMMAND));
+//            SPI_writeDataNonBlocking(ENC_SPI_BASE, LSB_32(VELOCITY_COMMAND));
+//            rData[0]    = SPI_readDataBlockingFIFO(ENC_SPI_BASE);
+//            rData[1]    = SPI_readDataBlockingFIFO(ENC_SPI_BASE);
+//            HWREG(GPIODATA_BASE + GPIO_O_GPCSET) = 0x100; //ENC_SPI_CS_SET;  //Set CS
 //            msg[2]      = FUS_16_TO_32(rData[0], rData[1]);
 //
 //            for (i = 1; i < 3; i++)    /*Minimum High time of SS/ between two transmissions is 350ns(According to the AS5047u datasheet) */
@@ -96,12 +100,12 @@ __interrupt void Cla1Task1 ( void )
 //                __mnop();
 //            }
 //
-//            HWREG(GPIODATA_BASE + GPIO_O_GPCCLEAR) = 0x100; //MST_SPI_CS_CLEAR; //Clear CS
-//            SPI_writeDataNonBlocking(MST_SPI_BASE, MSB_32(0x0040001B));
-//            SPI_writeDataNonBlocking(MST_SPI_BASE, LSB_32(0x0040001B));
-//            rData[0]    = SPI_readDataBlockingFIFO(MST_SPI_BASE);
-//            rData[1]    = SPI_readDataBlockingFIFO(MST_SPI_BASE);
-//            HWREG(GPIODATA_BASE + GPIO_O_GPCSET) = 0x100; //MST_SPI_CS_SET;  //Set CS
+//            HWREG(GPIODATA_BASE + GPIO_O_GPCCLEAR) = 0x100; //ENC_SPI_CS_CLEAR; //Clear CS
+//            SPI_writeDataNonBlocking(ENC_SPI_BASE, MSB_32(0x0040001B));
+//            SPI_writeDataNonBlocking(ENC_SPI_BASE, LSB_32(0x0040001B));
+//            rData[0]    = SPI_readDataBlockingFIFO(ENC_SPI_BASE);
+//            rData[1]    = SPI_readDataBlockingFIFO(ENC_SPI_BASE);
+//            HWREG(GPIODATA_BASE + GPIO_O_GPCSET) = 0x100; //ENC_SPI_CS_SET;  //Set CS
 //            msg[3]      = FUS_16_TO_32(rData[0], rData[1]);
 
 /**************************CRC PROTECTION************************************/
@@ -159,9 +163,35 @@ __interrupt void Cla1Task1 ( void )
     }
 }
 
-interrupt void Cla1Task2 ( void )
+__interrupt void Cla1Task2 ( void )
 {
-
+//    mst2slv_msg_cla_t   msg = {.msg_rx_state = COM_RX_STATE_MODE, .msg_crc32 = UINT32_MAX};
+//
+//    while(1)
+//    {
+//        if(!DMA_getTransferStatusFlag(DMA_CMD_2_FOC_BASE_ADDR))
+//        {
+//            if(timeout_flag)
+//            {
+//                cmd_uOmodri[MOTOR_1].cptTimeout++;
+//                cmd_uOmodri[MOTOR_2].cptTimeout++;
+//            }
+//
+//            msg.msg_rx = SPI_readDataBlockingFIFO(COM_SPI_BASE);
+//            COM_msgExtract_cla(&msg, &cmd_uOmodri[MOTOR_1], &cmd_uOmodri[MOTOR_2]);
+//            // Send new commands to FOC structures if extract valid
+//            if(cmd_msg_valid || timeout_flag)
+//            {
+//                if(cmd_msg_valid && ((cmd_uOmodri[MOTOR_1].enableReg.all & 0xB000) == 0xB000))
+//                    cmd_uOmodri[MOTOR_1].posRef += motor[MOTOR_1].p_motorFOC->motor_enc.thetaIndex;
+//                if(cmd_msg_valid && ((cmd_uOmodri[MOTOR_2].enableReg.all & 0x000B) == 0x000B))
+//                    cmd_uOmodri[MOTOR_2].posRef += motor[MOTOR_2].p_motorFOC->motor_enc.thetaIndex;
+//                DMA_forceTrigger(DMA_CMD_2_FOC_BASE_ADDR);
+//            }
+//            cmd_msg_valid           = false;
+//            timeout_flag            = false;
+//        }
+//    }
 }
 
 interrupt void Cla1Task3 ( void )

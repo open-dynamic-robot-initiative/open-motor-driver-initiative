@@ -222,7 +222,6 @@ typedef struct __MOTOR_FOC_CONTROL_t__
 inline void FOC_getMeasures(acq_t*);
 inline void FOC_runControl(foc_t*);
 inline float32_t FOC_runPD(pd_t*);
-//inline void FOC_cmdPD(pd_t*, cmd_t*);
 void FOC_resetStruct(foc_t*);
 //void limit_norm(float32_t*, float32_t*, float32_t);
 

@@ -19,7 +19,7 @@ void HAL_ePWM_ini(const epwm_cfg_t*);
 void HAL_eQEP_ini(const eqep_cfg_t*);
 void HAL_SPI_ini(const spi_cfg_t*);
 void HAL_SCI_ini(const sci_cfg_t*);
-void HAL_TIMER_ini(const tmr_cfg_t*);
+void HAL_TMR_ini(const tmr_cfg_t*);
 void HAL_DMA_rst(void);
 void HAL_IPC_ini(const ipc_cfg_t*);
 void HAL_CLA_ini(const cla_cfg_t*);
@@ -46,7 +46,7 @@ void HAL_ini(const hal_cfg_t* p_hal)
         // Initialize IPC communication
         HAL_IPC_ini(p_hal->p_ipcHandle);
         // Initialize CPU TIMERS
-        HAL_TIMER_ini(p_hal->p_timerHandle);
+        HAL_TMR_ini(p_hal->p_timerHandle);
         // Initialize SCI/UART debug
         HAL_SCI_ini(p_hal->p_sciHandle);
         // Initialize DMA
@@ -725,12 +725,13 @@ void HAL_CLA_ini(const cla_cfg_t* p_clacCfg)
 
 #pragma diag_suppress=770
     // Assign the task vectors and set the triggers for task 1
-    CLA_mapTaskVector(CLA1_BASE, CLA_MVECT_1, (uint16_t)&Cla1Task1);
+//    CLA_mapTaskVector(CLA1_BASE, p_clacCfg->claITVector, (uint16_t)&Cla1Task1);
+    CLA_mapTaskVector(CLA1_BASE, CLA_MVECT_1, (uint16_t)&(p_clacCfg->fun_ptr));
 #pragma diag_warning=770
     // Enable Tasks 1 and 8
     CLA_enableIACK(CLA1_BASE);
-    CLA_enableTasks(CLA1_BASE, CLA_TASKFLAG_1);// | CLA_TASKFLAG_8);
-    CLA_forceTasks(CLA1_BASE, CLA_TASKFLAG_1);
+    CLA_enableTasks(CLA1_BASE, (1 << p_clacCfg->claTaskNum));//CLA_TASKFLAG_1);// | CLA_TASKFLAG_8);
+    CLA_forceTasks(CLA1_BASE, (1 << p_clacCfg->claTaskNum));
 
         // TODO : CLA Task config
 //        void CLA_initCpu1Cla1(void)
@@ -820,7 +821,7 @@ void HAL_INT_ini(const int_cfg_t* p_intCfg)
  * @brief       CPU Timer initialization function.
  * @param[in]   *p_TimerCfg Pointer on the CPU timer configuration structure
  */
-void HAL_TIMER_ini(const tmr_cfg_t* p_TimerCfg)
+void HAL_TMR_ini(const tmr_cfg_t* p_TimerCfg)
 {
     if(p_TimerCfg != NULL)
     {

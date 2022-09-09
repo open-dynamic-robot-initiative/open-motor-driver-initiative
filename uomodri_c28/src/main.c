@@ -27,30 +27,21 @@ extern as_enc_t         asenc_cfg[0];
 extern const hal_cfg_t  hal;
 extern cmd_t            cmd_uOmodri[2];
 
-extern uint32_t Cla1funcsRunStart, Cla1funcsLoadStart, Cla1funcsLoadSize;
-extern uint32_t Cla1ConstRunStart, Cla1ConstLoadStart, Cla1ConstLoadSize;
+extern uint32_t         Cla1funcsRunStart, Cla1funcsLoadStart, Cla1funcsLoadSize;
+extern uint32_t         Cla1ConstRunStart, Cla1ConstLoadStart, Cla1ConstLoadSize;
 
-//#pragma SET_DATA_SECTION("cla_shared")
-//bool_t              flag;// = false;
-//#pragma SET_DATA_SECTION()
-
-//#pragma DATA_SECTION(angle,"Cla1ToCpuMsgRAM");
-//float32_t           angle[2];
 #pragma DATA_SECTION(thetaAbs,"Cla1ToCpuMsgRAM");
-float32_t           thetaAbs;
+float32_t               thetaAbs        = 0.0f;
 #pragma DATA_SECTION(velocity,"Cla1ToCpuMsgRAM");
-float32_t           velocity;
+float32_t               velocity        = 0.0f;
 #pragma DATA_SECTION(cla_new_flag,"Cla1ToCpuMsgRAM");
-bool_t              cla_new_flag;
+bool_t                  cla_new_flag    = false;
 #pragma DATA_SECTION(cpu1_ready_flag,"CpuToCla1MsgRAM");
-bool_t              cpu1_ready_flag;
-
-//#pragma DATA_SECTION(pos_as5047u, "MSGRAM_CPU_TO_CM");
-//BitDataFrame32_u    pos_as5047u;
-//#pragma DATA_SECTION(vel_as5047u, "MSGRAM_CPU_TO_CM");
-//BitDataFrame32_u    vel_as5047u;
+bool_t                  cpu1_ready_flag = false;
+#if (defined DEBUG) && (defined CM_CORE_ENABLE) && (CM_CORE_ENABLE)
 #pragma DATA_SECTION(transfer_array, "MSGRAM_CPU_TO_CM");
-float32_t           transfer_array[6];
+float32_t               transfer_array[6];
+#endif
 
 /***********************************************************************
  * FUNCTIONS DECLARATION
@@ -90,14 +81,7 @@ void main(void)
     // Interrupts initialization
     HAL_INT_ini(InterruptList);
 
-//    // Compute translation addresses for each element we want to share.
-//    uint16_t cpu1_to_cm_loop = 0;
-//    for(cpu1_to_cm_loop = 0; cpu1_to_cm_loop < (sizeof(cpu1_to_cm_addr) / sizeof(cpu1_to_cm_addr[0])); cpu1_to_cm_loop++)
-//        cpu1_to_cm_addr[cpu1_to_cm_loop].data_addr =  IPC_CPU1_TO_CM_ADDR_TRANSLATE(cpu1_to_cm_addr[cpu1_to_cm_loop].data_addr);
-//    // Send translation address for status message structure
-//    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, 0, (uint32_t)&cpu1_to_cm_addr[0], sizeof(cpu1_to_cm_addr));
-//    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
-
+#if (defined CM_CORE_ENABLE) && (CM_CORE_ENABLE)
     // Send address of encoder position variable of MOTOR_1
     IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, 0, (uint32_t)&transfer_array[0], sizeof(float32_t));
     IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
@@ -116,13 +100,9 @@ void main(void)
     // Send address of computed speed from encoder
     IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, 0, (uint32_t)&transfer_array[5], sizeof(float32_t));
     IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
-    cpu1_ready_flag         = true;//(cpu1_ready_flag == true) ? (false) : (true);
+#endif
 
-//    uint16_t cmd_msg_err[DMA_COM_SPI_TX_RX_8BIT_LENGTH];//2 * sizeof(mst2slv_msg_t)];
-//    uint16_t cmd_msg_cnt = DMA_COM_SPI_TX_RX_8BIT_LENGTH;//2 * sizeof(mst2slv_msg_t);
-//    bool_t cmd_msg_valid[2] = {true, true};
-//    uint8_t     i           = 0;
-//    uint16_t*   p_cmd_msg   = (uint16_t*)&cmd_msg;
+    cpu1_ready_flag         = true;//(cpu1_ready_flag == true) ? (false) : (true);
     bool_t cmd_msg_valid    = false;
     bool_t timeout_flag     = false;
 
@@ -133,22 +113,6 @@ void main(void)
          * SPI COM RX management - Receive & extract message if valid
          * DMA CMD TO FOC struct - Propagate new commands (message extract or timeout inc)
          */
-//        if(!DMA_getTransferStatusFlag(DMA_COM_SPI_RX_BASE_ADDR) && GPIO_readPin(COM_SPI_CS))
-//        {
-//            // Prepare SPI and associated DMA for a new receive
-//            SPI_resetRxFIFO(COM_SPI_BASE);
-//            DMA_clearTriggerFlag(DMA_COM_SPI_RX_BASE_ADDR);
-//            // Extract received message & send new commands to FOC structures if valid
-//            COM_msgExtract(&cmd_msg, &motor[MOTOR_1], &motor[MOTOR_2]);
-//            // Restart DMA reception
-//            DMA_startChannel(DMA_COM_SPI_RX_BASE_ADDR);
-//        }
-//        if(timeout_flag)
-//        {
-//            motor[MOTOR_1].p_motorFOC->motor_cmd[motor[MOTOR_1].p_motorFOC->cmd_cr_active].cptTimeout++;
-//            motor[MOTOR_2].p_motorFOC->motor_cmd[motor[MOTOR_2].p_motorFOC->cmd_cr_active].cptTimeout++;
-//            timeout_flag = false;
-//        }
         if(!DMA_getTransferStatusFlag(DMA_CMD_2_FOC_BASE_ADDR))
         {
             if(timeout_flag)
@@ -162,7 +126,7 @@ void main(void)
                 SPI_resetRxFIFO(COM_SPI_BASE);
                 DMA_clearTriggerFlag(DMA_COM_SPI_RX_BASE_ADDR);
                 // Extract received message & send new commands to FOC structures if valid
-                cmd_msg_valid = COM_msgExtract(&cmd_msg, &cmd_uOmodri[MOTOR_1], &cmd_uOmodri[MOTOR_2]);
+                cmd_msg_valid       = COM_msgExtract(&cmd_msg, &cmd_uOmodri[MOTOR_1], &cmd_uOmodri[MOTOR_2]);
                 // Restart DMA reception
                 DMA_startChannel(DMA_COM_SPI_RX_BASE_ADDR);
             }
@@ -175,8 +139,8 @@ void main(void)
                     cmd_uOmodri[MOTOR_2].posRef += motor[MOTOR_2].p_motorFOC->motor_enc.thetaIndex;
                 DMA_forceTrigger(DMA_CMD_2_FOC_BASE_ADDR);
             }
-            cmd_msg_valid   = false;
-            timeout_flag    = false;
+            cmd_msg_valid           = false;
+            timeout_flag            = false;
         }
         /*
          * SPI COM TX management - Create message & send it
@@ -188,45 +152,28 @@ void main(void)
                 COM_msgCreate(&motor[MOTOR_1], &motor[MOTOR_2], &status_msg);
                 if(COM_SPI_CS_READ)//GPIO_readPin(COM_SPI_CS))
                 {
-                    DBG_PIN2_SET;
                     // Force first write in SPI_O_DAT
                     COM_SPI_DAT(status_msg.status.all);
                     SPI_resetTxFIFO(COM_SPI_BASE);
                     DMA_startChannel(DMA_COM_SPI_TX_BASE_ADDR);
                 }
             }
-#if (defined CM_CORE_ENABLE) && (CM_CORE_ENABLE)
+#if (defined DEBUG) && (defined CM_CORE_ENABLE) && (CM_CORE_ENABLE)
             if(!IPC_isFlagBusyLtoR(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG))
             {
-                transfer_array[0]       = motor[MOTOR_1].p_motorFOC->motor_enc.thetaAbsolute;
-                transfer_array[1]       = motor[MOTOR_1].p_motorFOC->motor_enc.speed.speedMech;
-                transfer_array[2]       = motor[MOTOR_2].p_motorFOC->motor_enc.thetaAbsolute;
-                transfer_array[3]       = motor[MOTOR_2].p_motorFOC->motor_enc.speed.speedMech;
-                transfer_array[4]       = thetaAbs;
-                transfer_array[5]       = velocity;
-                cpu1_ready_flag         = (cpu1_ready_flag) ? (false) : (true);
+                transfer_array[0]   = motor[MOTOR_1].p_motorFOC->motor_enc.thetaAbsolute;
+                transfer_array[1]   = motor[MOTOR_1].p_motorFOC->motor_enc.speed.speedMech;
+                transfer_array[2]   = motor[MOTOR_2].p_motorFOC->motor_enc.thetaAbsolute;
+                transfer_array[3]   = motor[MOTOR_2].p_motorFOC->motor_enc.speed.speedMech;
+                transfer_array[4]   = thetaAbs;
+                transfer_array[5]   = velocity;
+                cpu1_ready_flag     = (cpu1_ready_flag) ? (false) : (true);
                 IPC_setFlagLtoR(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG);
             }
 #endif
-            motor[MOTOR_1].itDone       = false;
-            motor[MOTOR_2].itDone       = false;
-            DBG_PIN2_CLEAR;
+            motor[MOTOR_1].itDone   = false;
+            motor[MOTOR_2].itDone   = false;
         }
-//        if(!DMA_getRunStatusFlag(DMA_COM_SPI_TX_BASE_ADDR) && motor[MOTOR_2].itDone && motor[MOTOR_1].itDone)
-//        {
-//            COM_msgCreate(&motor[MOTOR_1], &motor[MOTOR_2], &status_msg);
-//            if(COM_SPI_CS_READ)//GPIO_readPin(COM_SPI_CS))
-//            {
-//                DBG_PIN2_SET;
-//                // Force first write in SPI_O_DAT
-//                COM_SPI_DAT(status_msg.status.all);
-//                SPI_resetTxFIFO(COM_SPI_BASE);
-//                DMA_startChannel(DMA_COM_SPI_TX_BASE_ADDR);
-//            }
-//            motor[MOTOR_1].itDone = false;
-//            motor[MOTOR_2].itDone = false;
-//            DBG_PIN2_CLEAR;
-//        }
         /*
          * SPI LED TX management - Create message & send it @ 1ms
          * SPI DRV TX/RX management - Read/Write to get DRV status in case of fault @ 1ms
@@ -246,7 +193,7 @@ void main(void)
             if(motor[MOTOR_2].motor_error.bit.drv_fault)
                 DRV_readStatus(motor[MOTOR_2].p_motorDRV);
             // Timeout management
-            timeout_flag = true;
+            timeout_flag            = true;
             // Clear CPU timer flag
             CPUTimer_clearOverflowFlag(CPU_TIMER_0_BASE);
         }
@@ -270,16 +217,14 @@ static void MCU_ini(void)
 //                       SYSCTL_ODIV(5U) | SYSCTL_AUXPLL_DIV_2 | SYSCTL_AUXPLL_ENABLE | SYSCTL_DCC_BASE_0);
     /* Set the CM Clock to run at 125MHz.
      * The CM Clock is a fractional multiple of the AUXPLL Clock (125 MHz). */
-#if (defined CM_CORE_ENABLE) && (CM_CORE_ENABLE)
 //    SysCtl_setCMClk(SYSCTL_CMCLKOUT_DIV_1, SYSCTL_SOURCE_AUXPLL);
     /* Allocate Shared Peripheral USB to the CM Side. */
 //    SysCtl_allocateSharedPeripheral(SYSCTL_PALLOCATE_USBA, 1);
     /* Boot CM core */
-#if (defined _FLASH)
+#if (defined _FLASH) && (defined CM_CORE_ENABLE) && (CM_CORE_ENABLE)
     Device_bootCM(BOOTMODE_BOOT_TO_FLASH_SECTOR0);
-#else
+#elif (defined CM_CORE_ENABLE) && (CM_CORE_ENABLE)
     Device_bootCM(BOOTMODE_BOOT_TO_S0RAM);
-#endif
 #endif
     // Initialize GPIO
     Device_initGPIO();

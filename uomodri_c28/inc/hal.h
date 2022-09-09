@@ -220,10 +220,13 @@ typedef struct __DMA_CFG_t__
  */
 typedef struct __CLA_CFG_t__
 {
-//    uint32_t claBase;
     uint32_t                progRAM;
     uint32_t                dataRAM;
-//    CLA_TASK_TypeDef        claTaskCfg;
+    uint16_t                claTaskFlg;
+    CLA_TaskNumber          claTaskNum;
+//    CLA_MVECTNumber         claIntVector;
+//    CLA_MVECTNumber         claIntVect;
+    void(*fun_ptr)(void);
 } cla_cfg_t;
 
 /**
@@ -337,10 +340,10 @@ typedef struct __IPC_CFG_t__
 } ipc_cfg_t;
 
 /**
- * @struct  __CPU_TIMER_CFG_t__
+ * @struct  __CPU_TMR_CFG_t__
  * @brief   Timer0/1/2 module configuration handler
  */
-typedef struct __CPU_TIMER_CFG_t__
+typedef struct __CPU_TMR_CFG_t__
 {
     uint32_t                            cpuTimerBase;
     uint32_t                            periodCount;                /*!< in uSeconds */

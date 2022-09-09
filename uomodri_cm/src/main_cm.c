@@ -16,7 +16,6 @@
 #include "uomodri_cm_user_defines.h"
 #include "uomodri_cm_hal_config_handlers.h"
 
-extern const hal_cm_t hal_cm;
 /***********************************************************************
  * DEFINES
  ***********************************************************************/
@@ -30,12 +29,9 @@ dbg_uart_msg_t dbg_uart_tx_msg =
 {
  .header[0]         = 'a',
  .header[1]         = 'b',
-// .header[2]         = 'c',
  .count             = 0U,
  .pos_m1            = 0.0f,
-// .vel_m1            = 0.0f,
  .pos_m2            = 0.0f,
-// .vel_m2            = 0.0f,
  .pos_as5047u       = 0.0f,
  .vel_as5047u       = 0.0f,
  .crc               = 0,
@@ -51,6 +47,11 @@ dbg_uart_addr_t dbg_uart_addr =
  .p_vel_as5047u     = NULL,
 };
 
+/************************************************************************
+ * GLOBAL VARIABLES
+ ************************************************************************/
+extern const hal_cm_t hal_cm;
+
 /***********************************************************************
  * FUNCTIONS DEFINITIONS
  ***********************************************************************/
@@ -65,7 +66,6 @@ void main(void)
     HAL_CM_init(&hal_cm);
 
     uint32_t command, data;
-
     // Get address of optical encoder position variable of MOTOR_1
     while(!IPC_readCommand(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE,
                            &command, (uint32_t *)&dbg_uart_addr.p_pos_m1, &data));
