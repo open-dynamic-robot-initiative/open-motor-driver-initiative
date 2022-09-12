@@ -917,6 +917,12 @@
     (uuid fc769416-2013-422c-8374-5a6861c4b985)
   )
 
+  (text "TODO replace the bidirectional traiceiver with unidirectional 5v tolerant buffer\n"
+    (at 90.17 29.21 0)
+    (effects (font (size 1.27 1.27)) (justify left bottom))
+    (uuid b5c2bc7a-091f-48fe-8a5e-000fa745705c)
+  )
+
   (label "ENC2_I" (at 210.82 102.87 0)
     (effects (font (size 1.27 1.27)) (justify left bottom))
     (uuid 0e23d941-5b01-43db-a918-7469d175e3cb)
