@@ -1,5 +1,3 @@
 (sym_lib_table
   (lib (name "omodri_lib")(type "KiCad")(uri "${KIPRJMOD}/omodri_lib.kicad_sym")(options "")(descr "Component list for udrive3 project"))
-  (lib (name "omodri_laas-rescue")(type "KiCad")(uri "${KIPRJMOD}/omodri_laas-rescue.kicad_sym")(options "")(descr "")(disabled))
-  (lib (name "MP4572GQB")(type "KiCad")(uri "${KIPRJMOD}/2022-09-10_07-45-07.kicad_sym")(options "")(descr ""))
 )
