@@ -1,5 +1,5 @@
 # open-motor-driver-initiative
-Open-source drive for brushless motors, following the open dynamic robot initiative 
+Open-source driver for brushless motors, following the open dynamic robot initiative 
 
 This contains hardware and firmware for several open source motor control boards all based around TMS320F2838x MCU from Texas Instrument. The boards are designed to perform sensored FOC control of PMSM and BMDC motors.
 The goal of this is to provide an alternative to close-sourced industrial grade motor controller that doesn't allow custom control design low, custom communication buses and sensor integration, as well as an alternative to open source low-cost projects that make many compromises and limit their performance.
