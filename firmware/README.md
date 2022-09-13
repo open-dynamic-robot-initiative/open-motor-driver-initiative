@@ -1,19 +1,16 @@
-# uOmodri Firmware
+#Software for the Open Motor Driver Initiative project - uOmodri board
 
-Software for the Open Motor Driver Initiative project - uOmodri board
-
-
-Required installs
+##Required installs
 In order to use the UOMODRI projects, you must install Code Composer Studio (CCS) and from Texas Instruments. C2000Ware Motor Control SDK is not necessary anymore. 
 
-To download use this link [Code Composer Studio](https://software-dl.ti.com/ccs/esd/documents/ccs_downloads.html)
-The installation procedure is available here [Installation](https://software-dl.ti.com/ccs/esd/documents/users_guide/index_installation.html)
+To download use this link [Code Composer Studio](https://software-dl.ti.com/ccs/esd/documents/ccs_downloads.html).
+The installation procedure is available here [Installation](https://software-dl.ti.com/ccs/esd/documents/users_guide/index_installation.html).
 For Linux users, don't forget to install USB drivers (everything is explained on Texas Instrument website).
 When installing CCS, prefer a custom installation and check "C2000 real-time MCUs" installation.
-Here is the dowload link for [C2000Ware](https://www.ti.com/tool/C2000WARE#downloads)
+Here is the dowload link for [C2000Ware](https://www.ti.com/tool/C2000WARE#downloads).
 
 
-Repository description
+##Repository description
 This repository contains One project:
 uOmodri_c28 : Main project. Implements current, speed and position control for PMSM along with a SPI communication for commands or debug.
 3 Files are mainly used for configuration:
@@ -22,7 +19,7 @@ uOmodri_c28 : Main project. Implements current, speed and position control for P
 - inc\uomodri_prj_config_handlers.h : Structures used in the running phase of the project.
 
 
-How to import these project
+##How to import these project
 After cloning the repository, you can import the projects by doing Project > Import CCS project.
 The last thing you must do before being able to compile the projects is to define the path to your C2000Ware library.
 To do so, right click on the  project, and then Properties > Resource > Linked Resources.
