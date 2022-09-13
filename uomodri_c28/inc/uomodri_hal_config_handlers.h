@@ -19,10 +19,6 @@
 extern mst2slv_msg_t    cmd_msg;
 extern slv2mst_msg_t    status_msg;
 extern uint16_t         led_msg[LED_MSG_TX_16BIT_LENGTH];
-#if (defined UOMODRI_USE_REV_1_0_CONFIG) && (!UOMODRI_USE_REV_1_0_CONFIG)
-extern mst2slv_msg_t    cmd_master_msg;
-extern slv2mst_msg_t    status_master_msg;
-#endif
 
 /** @var    GPIO_TypeDef GpioPinsCfgList[]
  *  @brief  List all the GPIO definitions except the analog pins.
@@ -30,7 +26,6 @@ extern slv2mst_msg_t    status_master_msg;
 static const gpio_cfg_t GpioPinsCfgList[] =
 {
 #if (defined CM_CORE_ENABLE) && (CM_CORE_ENABLE) && (defined USB)
-
  // USB Pins
  {.pinNumber = USB_M,                   .fctMux = USB_M_CFG,                    .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CM,     .direction = GPIO_DIR_MODE_OUT,  .samplingInMode = GPIO_QUAL_SYNC,  .setValue = 0,  .intEnable = false, .analogModeEnable = GPIO_ANALOG_ENABLED},
  {.pinNumber = USB_P,                   .fctMux = USB_P_CFG,                    .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CM,     .direction = GPIO_DIR_MODE_OUT,  .samplingInMode = GPIO_QUAL_SYNC,  .setValue = 0,  .intEnable = false, .analogModeEnable = GPIO_ANALOG_ENABLED},
@@ -390,17 +385,17 @@ static const tmr_cfg_t  timerCfgList[] =
  {.cpuTimerBase         = UINT32_MAX},
 };
 
-static const cla_cfg_t  claCfgList[] =
-{
- {
-  .progRAM              = MEMCFG_SECT_LS2,
-  .dataRAM              = (MEMCFG_SECT_LS0 | MEMCFG_SECT_LS1),
-  .claTaskFlg           = CLA_TASKFLAG_1,
-  .claTaskNum           = CLA_TASK_1,
-//  .claIntVect           = CLA_MVECT_1,
-  .fun_ptr              = &Cla1Task1,
- },
-};
+//static const cla_cfg_t  claCfgList[] =
+//{
+// {
+//  .progRAM              = MEMCFG_SECT_LS2,
+//  .dataRAM              = (MEMCFG_SECT_LS0 | MEMCFG_SECT_LS1),
+//  .claTaskFlg           = CLA_TASKFLAG_1,
+//  .claTaskNum           = CLA_TASK_1,
+////  .claIntVect           = CLA_MVECT_1,
+//  .fun_ptr              = &Cla1Task1,
+// },
+//};
 
 /** @var    ePWM_TB_TypeDef PwmTimeBaseCfgList[]
  *  @brief  List all the configurations necessaries for ePWM Time Base submodule.

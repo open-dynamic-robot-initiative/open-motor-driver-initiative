@@ -11,7 +11,7 @@
 
 #include "hal.h"
 #include "drv8353.h"
-#include "as5047u.h"
+//#include "as5047u.h"
 #include "foc.h"
 #include "motor.h"
 #include "communication.h"
@@ -51,32 +51,32 @@ static const int_cfg_t InterruptList[] =
  // END OF ARRAY
  {.intNum           = UINT32_MAX},
 };
+//
+//static const asenc_cfg_t  ASencCfgList[] =
+//{
+// {
+//  .spiHandle        = ENC_SPI_BASE,
+//  .gpioNumber_CS    = ENC_SPI_CS,
+// }
+//};
 
-static const asenc_cfg_t  ASencCfgList[] =
-{
- {
-  .spiHandle        = ENC_SPI_BASE,
-  .gpioNumber_CS    = ENC_SPI_CS,
- }
-};
-
-static as_enc_t asenc_cfg[] =
-{
- {
-  .asencHandle      = &ASencCfgList[MOTOR_1],
-  .angleData.all    = 0U,
-  .velData.all      = 0U,
-  .degAngle         = 0.0f,
-  .prevAngle        = 0.0f,
-  .startAngle       = 0.0f,
-  .totalAngle       = 0.0f,
-  .turnNum          = 0.0f,
-  .rndCount         = 0.0f,
-  .vel              = 0.0f,
-  .quadNum          = 0.0f,
-  .prevQuadNum      = 0.0f,
- },
-};
+//static as_enc_t asenc_cfg[] =
+//{
+// {
+//  .asencHandle      = &ASencCfgList[MOTOR_1],
+//  .angleData.all    = 0U,
+//  .velData.all      = 0U,
+//  .degAngle         = 0.0f,
+//  .prevAngle        = 0.0f,
+//  .startAngle       = 0.0f,
+//  .totalAngle       = 0.0f,
+//  .turnNum          = 0.0f,
+//  .rndCount         = 0.0f,
+//  .vel              = 0.0f,
+//  .quadNum          = 0.0f,
+//  .prevQuadNum      = 0.0f,
+// },
+//};
 
 /** @var    DRV_Cfg     DrvCfgList[]
  *  @brief  List all IOs \& SPI peripherals used for DRV communication.
@@ -112,9 +112,7 @@ static drv_reg_t        DrvRegList[] =
   .ctrl_reg_02.bit.OTW_REP      = true,                 // Over Temperature Warning will raise nFault
   .ctrl_reg_02.bit.DIS_GDF      = false,
   .ctrl_reg_02.bit.DIS_GDUV     = false,
-#if (defined UOMODRI_USE_REV_1_0_CONFIG) && (UOMODRI_USE_REV_1_0_CONFIG)
   .ctrl_reg_02.bit.OCP_ACT      = true,
-#endif
   // Gate Drive HS register initialization (Address: 0x3)
   .ctrl_reg_03.bit.IDRIVEN_HS   = DRV_ISINK_HS_0P300_A,
   .ctrl_reg_03.bit.IDRIVEP_HS   = DRV_ISOUR_HS_0P150_A,
@@ -141,9 +139,7 @@ static drv_reg_t        DrvRegList[] =
   .ctrl_reg_06.bit.VREF_DIV     = true,
   .ctrl_reg_06.bit.CSA_FET      = false,
   // Amplifier calibration calibration routine (Address: 0x7)
-#if (defined UOMODRI_USE_REV_1_0_CONFIG) && (UOMODRI_USE_REV_1_0_CONFIG)
   .ctrl_reg_07.bit.CAL_MODE     = false,
-#endif
  },
  {
   .ctrl_reg_02.bit.CLR_FLT      = false,
@@ -155,9 +151,7 @@ static drv_reg_t        DrvRegList[] =
   .ctrl_reg_02.bit.OTW_REP      = true,                 // Over Temperature Warning will raise nFault
   .ctrl_reg_02.bit.DIS_GDF      = false,
   .ctrl_reg_02.bit.DIS_GDUV     = false,
-#if (defined UOMODRI_USE_REV_1_0_CONFIG) && (UOMODRI_USE_REV_1_0_CONFIG)
   .ctrl_reg_02.bit.OCP_ACT      = true,
-#endif
   // Gate Drive HS register initialization (Address: 0x3)
   .ctrl_reg_03.bit.IDRIVEN_HS   = DRV_ISINK_HS_0P300_A,
   .ctrl_reg_03.bit.IDRIVEP_HS   = DRV_ISOUR_HS_0P150_A,
@@ -183,9 +177,7 @@ static drv_reg_t        DrvRegList[] =
   .ctrl_reg_06.bit.VREF_DIV     = true,
   .ctrl_reg_06.bit.CSA_FET      = false,
   // Amplifier calibration calibration routine (Address: 0x7)
-#if (defined UOMODRI_USE_REV_1_0_CONFIG) && (UOMODRI_USE_REV_1_0_CONFIG)
   .ctrl_reg_07.bit.CAL_MODE     = false,
-#endif
  },
 };
 

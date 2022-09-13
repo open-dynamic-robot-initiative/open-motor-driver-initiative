@@ -6,11 +6,9 @@
 /***********************************************************************
  * INCLUDES
  ***********************************************************************/
-#include "cla_shared.h"
 #include "main.h"
 #include "hal.h"
 #include "drv8353.h"
-#include "as5047u.h"
 #include "ws2812b.h"
 #include "encoder.h"
 #include "foc.h"
@@ -23,25 +21,8 @@
  * VARIABLES
  ***********************************************************************/
 extern motor_t          motor[2];
-extern as_enc_t         asenc_cfg[0];
 extern const hal_cfg_t  hal;
 extern cmd_t            cmd_uOmodri[2];
-
-extern uint32_t         Cla1funcsRunStart, Cla1funcsLoadStart, Cla1funcsLoadSize;
-extern uint32_t         Cla1ConstRunStart, Cla1ConstLoadStart, Cla1ConstLoadSize;
-
-#pragma DATA_SECTION(thetaAbs,"Cla1ToCpuMsgRAM");
-float32_t               thetaAbs        = 0.0f;
-#pragma DATA_SECTION(velocity,"Cla1ToCpuMsgRAM");
-float32_t               velocity        = 0.0f;
-#pragma DATA_SECTION(cla_new_flag,"Cla1ToCpuMsgRAM");
-bool_t                  cla_new_flag    = false;
-#pragma DATA_SECTION(cpu1_ready_flag,"CpuToCla1MsgRAM");
-bool_t                  cpu1_ready_flag = false;
-#if (defined DEBUG) && (defined CM_CORE_ENABLE) && (CM_CORE_ENABLE)
-#pragma DATA_SECTION(transfer_array, "MSGRAM_CPU_TO_CM");
-float32_t               transfer_array[6];
-#endif
 
 /***********************************************************************
  * FUNCTIONS DECLARATION
@@ -58,8 +39,6 @@ inline void LED_dimming(motor_t*, uint16_t*);
  */
 void main(void)
 {
-    cla_new_flag    = false;
-    cpu1_ready_flag = false;
     // uOmodri low level device initialization
     MCU_ini();
     // Hardware Abstraction Layer initialization
@@ -81,28 +60,6 @@ void main(void)
     // Interrupts initialization
     HAL_INT_ini(InterruptList);
 
-#if (defined CM_CORE_ENABLE) && (CM_CORE_ENABLE)
-    // Send address of encoder position variable of MOTOR_1
-    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, 0, (uint32_t)&transfer_array[0], sizeof(float32_t));
-    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
-    // Send address of encoder speed variable of MOTOR_1
-    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, 0, (uint32_t)&transfer_array[1], sizeof(float32_t));
-    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
-    // Send address of encoder position variable of MOTOR_2
-    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, 0, (uint32_t)&transfer_array[2], sizeof(float32_t));
-    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
-    // Send address of encoder speed variable of MOTOR_2
-    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, 0, (uint32_t)&transfer_array[3], sizeof(float32_t));
-    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
-    // Send address of absolute encoder position
-    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, 0, (uint32_t)&transfer_array[4], sizeof(float32_t));
-    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
-    // Send address of computed speed from encoder
-    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, 0, (uint32_t)&transfer_array[5], sizeof(float32_t));
-    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
-#endif
-
-    cpu1_ready_flag         = true;//(cpu1_ready_flag == true) ? (false) : (true);
     bool_t cmd_msg_valid    = false;
     bool_t timeout_flag     = false;
 
@@ -158,19 +115,6 @@ void main(void)
                     DMA_startChannel(DMA_COM_SPI_TX_BASE_ADDR);
                 }
             }
-#if (defined DEBUG) && (defined CM_CORE_ENABLE) && (CM_CORE_ENABLE)
-            if(!IPC_isFlagBusyLtoR(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG))
-            {
-                transfer_array[0]   = motor[MOTOR_1].p_motorFOC->motor_enc.thetaAbsolute;
-                transfer_array[1]   = motor[MOTOR_1].p_motorFOC->motor_enc.speed.speedMech;
-                transfer_array[2]   = motor[MOTOR_2].p_motorFOC->motor_enc.thetaAbsolute;
-                transfer_array[3]   = motor[MOTOR_2].p_motorFOC->motor_enc.speed.speedMech;
-                transfer_array[4]   = thetaAbs;
-                transfer_array[5]   = velocity;
-                cpu1_ready_flag     = (cpu1_ready_flag) ? (false) : (true);
-                IPC_setFlagLtoR(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG);
-            }
-#endif
             motor[MOTOR_1].itDone   = false;
             motor[MOTOR_2].itDone   = false;
         }
@@ -265,18 +209,18 @@ inline void LED_dimming(motor_t* p_motor, uint16_t* p_msg)
     {
     case MOTOR_STATE_ALIGN_UP:
     case MOTOR_STATE_ALIGN_FIX:
-        ws2812b_writeLed((uint16_t)(0xff * timer_fade_blink), 0, (uint16_t)(0xff * timer_fade_blink), p_msg);//&led_msg[0]); //Magenta fade,
+        ws2812b_writeLed((uint16_t)(0xff * timer_fade_blink), 0, (uint16_t)(0xff * timer_fade_blink), p_msg); //Magenta fade,
         break;
     case MOTOR_STATE_READY:
     case MOTOR_STATE_STOP:
-        ws2812b_writeLed(0, (uint16_t)(0xff * timer_fade_blink), 0, p_msg);//, &led_msg[0]);//Green fade, Active control
+        ws2812b_writeLed(0, (uint16_t)(0xff * timer_fade_blink), 0, p_msg);//Green fade, Active control
         break;
     case MOTOR_STATE_ERROR:
-        ws2812b_writeLed((uint16_t)(0xff * timer_blink), 0, 0, p_msg);//, &led_msg[0]);//red fade, error control
+        ws2812b_writeLed((uint16_t)(0xff * timer_blink), 0, 0, p_msg);//red fade, error control
         break;
     case MOTOR_STATE_INIT:
     default:
-        ws2812b_writeLed(0,  0, (uint16_t)(0xff * timer_fade_blink), p_msg);//, &led_msg[0]);//blue fade
+        ws2812b_writeLed(0,  0, (uint16_t)(0xff * timer_fade_blink), p_msg);//blue fade
     }
 
     return;
@@ -287,9 +231,6 @@ inline void LED_dimming(motor_t* p_motor, uint16_t* p_msg)
  */
 __attribute__((interrupt)) void adc_isrMotor1(void)
 {
-#if (defined UOMODRI_USE_REV_1_0_CONFIG) && (!UOMODRI_USE_REV_1_0_CONFIG)
-    GPIO_writePin(DEBUG_INT_PIN1, 1);
-#endif
 #ifdef DEBUG
     DBG_PIN4_SET;
 #endif
@@ -305,9 +246,6 @@ __attribute__((interrupt)) void adc_isrMotor1(void)
 #ifdef DEBUG
     DBG_PIN4_CLEAR;
 #endif
-#if (defined UOMODRI_USE_REV_1_0_CONFIG) && (!UOMODRI_USE_REV_1_0_CONFIG)
-    GPIO_writePin(DEBUG_INT_PIN1, 0);
-#endif
 }
 
 /**
@@ -315,9 +253,6 @@ __attribute__((interrupt)) void adc_isrMotor1(void)
  */
 __attribute__((interrupt)) void adc_isrMotor2(void)
 {
-#if (defined UOMODRI_USE_REV_1_0_CONFIG) && (!UOMODRI_USE_REV_1_0_CONFIG)
-    GPIO_writePin(DEBUG_INT_PIN1, 1);
-#endif
 #ifdef DEBUG
     DBG_PIN4_SET;
 #endif
@@ -332,9 +267,6 @@ __attribute__((interrupt)) void adc_isrMotor2(void)
     Interrupt_clearACKGroup(MOTOR2_IA_INT_ACK_GROUP);
 #ifdef DEBUG
     DBG_PIN4_CLEAR;
-#endif
-#if (defined UOMODRI_USE_REV_1_0_CONFIG) && (!UOMODRI_USE_REV_1_0_CONFIG)
-    GPIO_writePin(DEBUG_INT_PIN1, 0);
 #endif
 }
 

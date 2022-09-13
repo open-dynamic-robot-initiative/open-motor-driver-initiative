@@ -45,6 +45,10 @@ inline void FOC_getMeasures(acq_t* p_acq)
     return;
 }
 
+/**
+ * @brief           Reset the acquisition structure - Only I & Vext
+ * @param[inout]    *p_acq  Pointer on the motor acquisition structure.
+ */
 inline void FOC_resetMeasuresStruct(acq_t* p_acq)
 {
     // Get the latest current values in Amps
@@ -60,14 +64,14 @@ inline void FOC_resetMeasuresStruct(acq_t* p_acq)
  * @brief       Compute sine and cosine from the electrical angle
  * @param[in]   *p_foc  Pointer on the FOC motor control structure.
  */
-// Q-axis resistance estimation
-// TODO Use VSEN results instead of Iq controller output
 inline void FOC_resistanceEstimation(foc_t* p_foc)
 {
     // Compute resistance
     // Only compute if measured current is over a threshold
     if (FM_ABS(p_foc->iq) > FOC_RE_CURRENT_THRESHOLD)
         UOMODRI_RES_ESTIM_FLT(p_foc->resEstFlt, p_foc->resEst, (p_foc->uq - p_foc->motor_enc.speed.speedElec * p_foc->motor_cfg.ke) / p_foc->iq);
+
+    return;
 }
 
 /**
@@ -161,17 +165,6 @@ inline float32_t FOC_runPI(pi_t* p_pi)
  */
 inline void FOC_resetPD(pd_t* p_pd)
 {
-//    p_pd->setTheta      = 0.0f;
-//    p_pd->errTheta      = 0.0f;
-//    p_pd->setSpeed      = 0.0f;
-//    p_pd->errSpeed      = 0.0f;
-//    p_pd->kp            = 0.0f;
-//    p_pd->kd            = 0.0f;
-//    p_pd->derivative    = 0.0f;
-//    p_pd->ff            = 0.0f;
-//    p_pd->out           = 0.0f;
-//    p_pd->sat           = 0.0f;
-
     p_pd->errTheta      = 0.0f;
     p_pd->errSpeed      = 0.0f;
     p_pd->derivative    = 0.0f;
@@ -198,29 +191,6 @@ inline float32_t FOC_runPD(pd_t* p_pd)
 
     return(p_pd->out);
 }
-//inline float32_t FOC_runPD(pd_t* p_pd)
-//{
-//    float32_t sat_max   = 1.0f  * p_pd->sat;
-//    float32_t sat_min   = -1.0f * sat_max;
-//    p_pd->errTheta      = p_pd->setTheta - (*p_pd->p_fbTheta);
-//    p_pd->errSpeed      = p_pd->setSpeed - (*p_pd->p_fbSpeed);
-//    p_pd->derivative    = p_pd->kd * p_pd->errSpeed;
-//    // Compute PID and clamp output.
-//    p_pd->out           = (p_pd->kp * p_pd->errTheta) + p_pd->derivative + p_pd->ff;
-//    p_pd->out           = __fsat(p_pd->out, sat_max, sat_min);
-//
-//    return(p_pd->out);
-//}
-
-//inline void FOC_cmdPD(pd_t* p_pd, cmd_t* p_cmd)
-//{
-//    p_pd->setTheta              = p_cmd->posRef;
-//    p_pd->setSpeed              = p_cmd->velRef;
-//    p_pd->kp                    = p_cmd->kpCoeff;
-//    p_pd->kd                    = p_cmd->kdCoeff;
-//    p_pd->ff                    = p_cmd->iqRef;
-//    p_pd->sat                   = p_cmd->iSat;
-//}
 
 /**
  * @brief           Reset the command structure associated to motor control

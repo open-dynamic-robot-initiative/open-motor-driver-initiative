@@ -92,25 +92,29 @@ typedef enum
     STATUS_ERROR_DRV_NFAULT         = 7, /*!< Motor DRV nFault error */
 } com_statusError;
 
+/**
+ * @enum    com_rx_state_e
+ * @brief   States of the state machine in COM_msgExtract_cla for message extraction.
+ */
 typedef enum
 {
-    COM_RX_STATE_MODE               = 0,
-    COM_RX_STATE_POS_MSB_MOT1       = 1,
-    COM_RX_STATE_POS_LSB_MOT1       = 2,
-    COM_RX_STATE_POS_MSB_MOT2       = 3,
-    COM_RX_STATE_POS_LSB_MOT2       = 4,
-    COM_RX_STATE_VEL_MOT1           = 5,
-    COM_RX_STATE_VEL_MOT2           = 6,
-    COM_RX_STATE_IQ_MOT1            = 7,
-    COM_RX_STATE_IQ_MOT2            = 8,
-    COM_RX_STATE_KP_MOT1            = 9,
-    COM_RX_STATE_KP_MOT2            = 10,
-    COM_RX_STATE_KD_MOT1            = 11,
-    COM_RX_STATE_KD_MOT2            = 12,
-    COM_RX_STATE_ISAT_MOT12         = 13,
-    COM_RX_STATE_INDEX              = 14,
-    COM_RX_STATE_CRC_MSB            = 15,
-    COM_RX_STATE_CRC_LSB            = 16,
+    COM_RX_STATE_MODE               = 0, //!< COM_RX_STATE_MODE
+    COM_RX_STATE_POS_MSB_MOT1       = 1, //!< COM_RX_STATE_POS_MSB_MOT1
+    COM_RX_STATE_POS_LSB_MOT1       = 2, //!< COM_RX_STATE_POS_LSB_MOT1
+    COM_RX_STATE_POS_MSB_MOT2       = 3, //!< COM_RX_STATE_POS_MSB_MOT2
+    COM_RX_STATE_POS_LSB_MOT2       = 4, //!< COM_RX_STATE_POS_LSB_MOT2
+    COM_RX_STATE_VEL_MOT1           = 5, //!< COM_RX_STATE_VEL_MOT1
+    COM_RX_STATE_VEL_MOT2           = 6, //!< COM_RX_STATE_VEL_MOT2
+    COM_RX_STATE_IQ_MOT1            = 7, //!< COM_RX_STATE_IQ_MOT1
+    COM_RX_STATE_IQ_MOT2            = 8, //!< COM_RX_STATE_IQ_MOT2
+    COM_RX_STATE_KP_MOT1            = 9, //!< COM_RX_STATE_KP_MOT1
+    COM_RX_STATE_KP_MOT2            = 10,//!< COM_RX_STATE_KP_MOT2
+    COM_RX_STATE_KD_MOT1            = 11,//!< COM_RX_STATE_KD_MOT1
+    COM_RX_STATE_KD_MOT2            = 12,//!< COM_RX_STATE_KD_MOT2
+    COM_RX_STATE_ISAT_MOT12         = 13,//!< COM_RX_STATE_ISAT_MOT12
+    COM_RX_STATE_INDEX              = 14,//!< COM_RX_STATE_INDEX
+    COM_RX_STATE_CRC_MSB            = 15,//!< COM_RX_STATE_CRC_MSB
+    COM_RX_STATE_CRC_LSB            = 16,//!< COM_RX_STATE_CRC_LSB
 } com_rx_state_e;
 
 /***********************************************************************
@@ -186,7 +190,7 @@ typedef struct __U32toU16_reg_t__
  * MAIN COMMUNICATION STRUCTURES
  ***********************************************************************/
 /**
- * @struct  mst2slv_msg_t_msg_t
+ * @struct  mst2slv_msg_t
  * @brief   Master 2 Slave full command message including CRC for uOmodri
  */
 typedef struct __mst2slv_msg_t__
@@ -202,6 +206,10 @@ typedef struct __mst2slv_msg_t__
     U32toU16_reg_t  crc;
 } mst2slv_msg_t;
 
+/**
+ * @struct  mst2slv_msg_cla_t
+ * @brief   Master 2 Slave structure associated with COM_msgExtract_cla (state machine)
+ */
 typedef struct __mst_2slv_msg_cla_t__
 {
     com_rx_state_e  msg_rx_state;
@@ -245,6 +253,10 @@ typedef struct __cmd_uomodri_t__
     bool            cmdAccesValid;
 } cmd_uomodri_t;
 
+/**
+ * @struct  com_cpu1_to_cm_t
+ * @brief   Structure for address transfer between CPU (16bits) and CM(8bits)
+ */
 typedef struct __com_cpu1_to_cm_t__
 {
     uint32_t    data_addr;
@@ -306,28 +318,22 @@ typedef struct __attribute__((__packed__)) __dbg_uart_addr_t__
 #define MSG_RX_EI2OC                                (0x0400)
 #define MSG_RX_TIMEOUT                              (0x00FF)
 
-
 /***********************************************************************
  * FUNCTIONS DECLARATION
  ***********************************************************************/
 #ifndef USE_CM_CORE
 bool_t COM_msgExtract(mst2slv_msg_t*,  cmd_t*, cmd_t*);
 bool_t COM_msgExtract_cla(mst2slv_msg_cla_t*, cmd_t*, cmd_t*);
-//bool_t COM_msgExtract(mst2slv_msg_t*, motor_t*, motor_t*);
-//void COM_msgCreate(motor_t*, cmd_uomodri_t*, slv2mst_msg_t*);
 void COM_msgCreate(motor_t*, motor_t*, slv2mst_msg_t*);
-//void COM_resetCmdStruct(cmd_uomodri_t*);
 void COM_resetCmdStruct(cmd_t*);
 void COM_resetMsgExtractStruct(mst2slv_msg_cla_t*);
-//void COM_resetCmdMotorStruct(motor_t*, cmd_uomodri_t*);
 uint32_t COM_crc32(uint16_t*, uint16_t);
-uint32_t COM_crc32_cla(uint16_t, uint32_t);
+uint32_t COM_crc32_cla(mst2slv_msg_cla_t*);
 #else
 void com_msgDbgTx(dbg_uart_addr_t*, dbg_uart_msg_t*);
 uint32_t com_crc32(uint16_t*, size_t);
 uint8_t com_crc8(uint8_t*, size_t);
 uint8_t com_crc8_fast(uint8_t, uint8_t*, size_t);
-//uint8_t com_crc8_fast(uint8_t, void const*, size_t);
-
 #endif
+
 #endif

@@ -1,9 +1,3 @@
-//! \file   solutions/boostxl_DRV8353rs/f28004x/drivers/source/DRV8353.c
-//! \brief  Contains the various functions related to the DRV8353 object.
-//!         This file is based on the DRV8353.c file and modified for the
-//!         DRV8353 device.
-//!
-
 /***********************************************************************
  * INCLUDE FILES
  ***********************************************************************/
@@ -96,11 +90,9 @@ static bool_t DRV_SetConfig(drv8353_t* p_drv)
  */
 static void DRV_Calibration(drv8353_t* p_drv)
 {
-#if (defined UOMODRI_USE_REV_1_0_CONFIG) && (UOMODRI_USE_REV_1_0_CONFIG)
     // Set auto calibration
     drv_ctrl07_u auto_calib = {.bit.CAL_MODE = true};
     DRV_writeOne(p_drv, DRV_ADDRESS_CONTROL_7, auto_calib.all); // Write Control Register 7
-#endif
     // Enable channels calibration
     drv_ctrl06_u calib      = p_drv->p_drvRegHandler->ctrl_reg_06;
     calib.bit.CSA_CAL_A     = true;
@@ -109,11 +101,9 @@ static void DRV_Calibration(drv8353_t* p_drv)
     DRV_writeOne(p_drv, DRV_ADDRESS_CONTROL_6, calib.all);// Write Control Register 6
     // Wait for 1ms
     DEVICE_DELAY_US(1000U);
-#if (defined UOMODRI_USE_REV_1_0_CONFIG) && (UOMODRI_USE_REV_1_0_CONFIG)
     // stop auto calibration
     auto_calib.bit.CAL_MODE = false;
     DRV_writeOne(p_drv, DRV_ADDRESS_CONTROL_7, auto_calib.all); // Write Control Register 7
-#endif
     // stop channels calibration
     calib.bit.CSA_CAL_A     = false;
     calib.bit.CSA_CAL_B     = false;
@@ -156,9 +146,7 @@ void DRV_readAll(drv8353_t* p_drv)
         p_reg->ctrl_reg_04.all = DRV_readOne(p_drv, DRV_ADDRESS_CONTROL_4); // Read Control Register 4
         p_reg->ctrl_reg_05.all = DRV_readOne(p_drv, DRV_ADDRESS_CONTROL_5); // Read Control Register 5
         p_reg->ctrl_reg_06.all = DRV_readOne(p_drv, DRV_ADDRESS_CONTROL_6); // Read Control Register 6
-#if (defined UOMODRI_USE_REV_1_0_CONFIG) && (UOMODRI_USE_REV_1_0_CONFIG)
         p_reg->ctrl_reg_07.all = DRV_readOne(p_drv, DRV_ADDRESS_CONTROL_7); // Read Control Register 7
-#endif
     }
 
     return;
@@ -180,9 +168,7 @@ void DRV_writeAll(drv8353_t* p_drv)
         DRV_writeOne(p_drv, DRV_ADDRESS_CONTROL_4, p_reg->ctrl_reg_04.all); // Write Control Register 4
         DRV_writeOne(p_drv, DRV_ADDRESS_CONTROL_5, p_reg->ctrl_reg_05.all); // Write Control Register 5
         DRV_writeOne(p_drv, DRV_ADDRESS_CONTROL_6, p_reg->ctrl_reg_06.all); // Write Control Register 6
-#if (defined UOMODRI_USE_REV_1_0_CONFIG) && (UOMODRI_USE_REV_1_0_CONFIG)
         DRV_writeOne(p_drv, DRV_ADDRESS_CONTROL_7, p_reg->ctrl_reg_07.all); // Write Control Register 7
-#endif
     }
 
     return;

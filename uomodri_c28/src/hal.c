@@ -8,7 +8,6 @@
  ***********************************************************************/
 #include "device.h"
 #include "hal.h"
-#include "cla_shared.h"
 
 /***********************************************************************
  * FUNCTIONS DECLARATION
@@ -222,14 +221,8 @@ void HAL_ADC_offsetCalib(const hal_motor_cfg_t* p_halMotorCfg)
 
         // Set offsets in PPBs
         for(loop = 0; loop < 3; loop++)
-        {
-            // Sets the post processing block reference offset for tensions
-//            ADC_setPPBReferenceOffset(p_halMotorCfg->p_vAcq[loop]->adcBase, p_halMotorCfg->p_vAcq[loop]->adcPPBNumber, (uint16_t)v[loop]);
             // Sets the post processing block reference offset for tensions
             ADC_setPPBReferenceOffset(p_halMotorCfg->p_iAcq[loop]->adcBase, p_halMotorCfg->p_iAcq[loop]->adcPPBNumber, (uint16_t)i[loop]);
-            // Enables two's complement capability
-//            ADC_enablePPBTwosComplement(p_halMotorCfg->p_iAcq[loop]->adcBase, p_halMotorCfg->p_iAcq[loop]->adcPPBNumber);
-        }
     }
 
     return;
@@ -724,68 +717,12 @@ void HAL_CLA_ini(const cla_cfg_t* p_clacCfg)
         EALLOW;
 
 #pragma diag_suppress=770
-    // Assign the task vectors and set the triggers for task 1
-//    CLA_mapTaskVector(CLA1_BASE, p_clacCfg->claITVector, (uint16_t)&Cla1Task1);
     CLA_mapTaskVector(CLA1_BASE, CLA_MVECT_1, (uint16_t)&(p_clacCfg->fun_ptr));
 #pragma diag_warning=770
     // Enable Tasks 1 and 8
     CLA_enableIACK(CLA1_BASE);
-    CLA_enableTasks(CLA1_BASE, (1 << p_clacCfg->claTaskNum));//CLA_TASKFLAG_1);// | CLA_TASKFLAG_8);
+    CLA_enableTasks(CLA1_BASE, (1 << p_clacCfg->claTaskNum));
     CLA_forceTasks(CLA1_BASE, (1 << p_clacCfg->claTaskNum));
-
-        // TODO : CLA Task config
-//        void CLA_initCpu1Cla1(void)
-//        {
-//            /* Compute all CLA task vectors
-//             * On Type-1 CLAs the MVECT registers accept full 16-bit task addresses as
-//             * opposed to offsets used on older Type-0 CLAs */
-//
-//        #pragma diag_suppress=770
-//            CLA_mapTaskVector(CLA1_BASE, CLA_MVECT_1, (uint16_t)(&Cla1Task1));
-//            CLA_mapTaskVector(CLA1_BASE, CLA_MVECT_8, (uint16_t)(&Cla1Task8));
-//        #pragma diag_warning=770
-//
-//            /* Enable the IACK instruction to start a task on CLA in software
-//            * for all  8 CLA tasks. Also, globally enable all 8 tasks (or a
-//            * subset of tasks) by writing to their respective bits in the
-//            * MIER register */
-//        //    CLA_enableIACK(CLA1_BASE);
-//            CLA_setTriggerSource(CLA_TASK_1, CLA_TRIGGER_EPWM1INT);//CLA_TRIGGER_ADCA3);
-//            CLA_setTriggerSource(CLA_TASK_8, CLA_TRIGGER_SOFTWARE);
-//            CLA_enableTasks(CLA1_BASE, CLA_TASKFLAG_1 | CLA_TASKFLAG_8);//CLA_TASKFLAG_ALL);
-//
-//            /* <Step 6>: Enable software forcing and run task 8 once
-//             *    - The MCTL register allows for a task to be triggered by software
-//             *      see TRM 5.7.2.9
-//             *    - Run any one-time tasks by using the software force. "F2806x_Cla_defines.h"
-//             *      has some useful macro functions to force each task */
-//            CLA_enableIACK(CLA1_BASE);//    Cla1Regs.MCTL.bit.IACKE    = 1;
-//        //    Cla1ForceTask8andWait();
-//        //    EALLOW;
-//        //    Cla1Regs.MCTL.bit.IACKE    = 1;
-//        //    Cla1Regs.MIFRC.bit.INT8 = 1;
-//        //    EDIS;
-//            Cla1ForceTask8();
-//            /* Configure the vectors for the end-of-task interrupt for all 8 tasks */
-//        //    Interrupt_register(INT_CLA1_1, &cla1_isr1);
-//        //    Interrupt_register(INT_CLA1_2, &cla1Isr2);
-//        //    Interrupt_register(INT_CLA1_3, &cla1Isr3);
-//        //    Interrupt_register(INT_CLA1_4, &cla1Isr4);
-//        //    Interrupt_register(INT_CLA1_5, &cla1Isr5);
-//        //    Interrupt_register(INT_CLA1_6, &cla1Isr6);
-//        //    Interrupt_register(INT_CLA1_7, &cla1Isr7);
-//        //    Interrupt_register(INT_CLA1_8, &cla1Isr8);
-//            /* Enable CLA interrupts at the group and subgroup levels */
-//        //    Interrupt_enable(INT_CLA1_1);
-//        //    Interrupt_enable(INT_CLA1_2);
-//        //    Interrupt_enable(INT_CLA1_3);
-//        //    Interrupt_enable(INT_CLA1_4);
-//        //    Interrupt_enable(INT_CLA1_5);
-//        //    Interrupt_enable(INT_CLA1_6);
-//        //    Interrupt_enable(INT_CLA1_7);
-//        //    Interrupt_enable(INT_CLA1_8);
-//        }
-
     }
 
     return;

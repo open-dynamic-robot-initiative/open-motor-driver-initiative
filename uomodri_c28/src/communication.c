@@ -8,11 +8,11 @@
  * FUNCTIONS DEFINITIONS
  ***********************************************************************/
 /**
- * @brief       Master to slave message extraction to be performed by motor_foc
- * @param[in]   p_msg       Pointer on the message received from Master board
- * @param[out]  p_motor_m1  Pointer on the command structure used for MOTOR_1 control(actions to be realized by motor_foc).
- * @param[out]  p_motor_m2  Pointer on the command structure used for MOTOR_2 control(actions to be realized by motor_foc).
- * @return      Is message received from Master board valid or not ?
+ * @brief           Master to slave message extraction function
+ * @param[in]       p_msg       Pointer on the message received from Master board
+ * @param[out]      p_cmd_m1    Pointer on the command structure used for MOTOR_1 control(actions to be realized by motor_foc).
+ * @param[out]      p_cmd_m2    Pointer on the command structure used for MOTOR_2 control(actions to be realized by motor_foc).
+ * @return          Is message received from Master board valid or not ?
  */
 bool_t COM_msgExtract(mst2slv_msg_t* p_msg,  cmd_t* p_cmd_m1,  cmd_t* p_cmd_m2)
 {
@@ -61,6 +61,13 @@ bool_t COM_msgExtract(mst2slv_msg_t* p_msg,  cmd_t* p_cmd_m1,  cmd_t* p_cmd_m2)
     return(false);
 }
 
+/**
+ * @brief       	Master to slave message extraction function to be performed by CLA - TO BE TESTED
+ * @param[in]       p_msg       Pointer on the extraction structure
+ * @param[out]      p_cmd_m1    Pointer on the command structure used for MOTOR_1 control(actions to be realized by motor_foc).
+ * @param[out]      p_cmd_m2    Pointer on the command structure used for MOTOR_2 control(actions to be realized by motor_foc).
+ * @return          Is message received from Master board valid or not ?
+ */
 bool_t COM_msgExtract_cla(mst2slv_msg_cla_t* p_msg, cmd_t* p_cmd_m1, cmd_t* p_cmd_m2)
 {
     float32_t   isat            = 0.0f;
@@ -79,63 +86,64 @@ bool_t COM_msgExtract_cla(mst2slv_msg_cla_t* p_msg, cmd_t* p_cmd_m1, cmd_t* p_cm
         p_cmd_m2->enableReg.bit.motorEnable     = (bool_t)((p_msg->msg_rx & MSG_RX_EM2)     ? (true): (false));
         p_cmd_m2->enableReg.bit.systemEnable    = (bool_t)((p_msg->msg_rx & MSG_RX_ES)      ? (true): (false));
         p_cmd_m2->timeoutRef                    = (uint16_t)p_msg->msg_rx & MSG_RX_TIMEOUT;
-        p_msg->msg_crc32                        = COM_crc32_cla(p_msg->msg_rx, UINT32_MAX);
+        p_msg->msg_crc32                        = UINT32_MAX;
+        COM_crc32_cla(p_msg);
         break;
 
     case COM_RX_STATE_POS_MSB_MOT1:
     case COM_RX_STATE_POS_MSB_MOT2:
         p_msg->msg_tmp      = p_msg->msg_rx;
-        p_msg->msg_crc32    = COM_crc32_cla(p_msg->msg_rx, p_msg->msg_crc32);
+        COM_crc32_cla(p_msg);
         break;
 
     case COM_RX_STATE_POS_LSB_MOT1:
         p_cmd_m1->posRef    = (float32_t)((int32_t)FUS_16_TO_32(p_msg->msg_tmp, p_msg->msg_rx) * POSITION_LSB * FM_ROUND2RAD);
-        p_msg->msg_crc32    = COM_crc32_cla(p_msg->msg_rx, p_msg->msg_crc32);
+        COM_crc32_cla(p_msg);
         break;
 
     case COM_RX_STATE_POS_LSB_MOT2:
         p_cmd_m2->posRef    = (float32_t)((int32_t)FUS_16_TO_32(p_msg->msg_tmp, p_msg->msg_rx) * POSITION_LSB * FM_ROUND2RAD);
-        p_msg->msg_crc32    = COM_crc32_cla(p_msg->msg_rx, p_msg->msg_crc32);
+        COM_crc32_cla(p_msg);
         break;
 
     case COM_RX_STATE_VEL_MOT1:
         p_cmd_m1->velRef    = (float32_t)(p_msg->msg_rx * VELOCITY_LSB * FM_KRPM2RADPS);
-        p_msg->msg_crc32    = COM_crc32_cla(p_msg->msg_rx, p_msg->msg_crc32);
+        COM_crc32_cla(p_msg);
         break;
 
     case COM_RX_STATE_VEL_MOT2:
         p_cmd_m2->velRef    = (float32_t)(p_msg->msg_rx * VELOCITY_LSB * FM_KRPM2RADPS);
-        p_msg->msg_crc32    = COM_crc32_cla(p_msg->msg_rx, p_msg->msg_crc32);
+        COM_crc32_cla(p_msg);
         break;
 
     case COM_RX_STATE_IQ_MOT1:
         p_cmd_m1->iqRef     = (float32_t)(p_msg->msg_rx * IQ_LSB);
-        p_msg->msg_crc32    = COM_crc32_cla(p_msg->msg_rx, p_msg->msg_crc32);
+        COM_crc32_cla(p_msg);
         break;
 
     case COM_RX_STATE_IQ_MOT2:
         p_cmd_m2->iqRef     = (float32_t)(p_msg->msg_rx * IQ_LSB);
-        p_msg->msg_crc32    = COM_crc32_cla(p_msg->msg_rx, p_msg->msg_crc32);
+        COM_crc32_cla(p_msg);
         break;
 
     case COM_RX_STATE_KP_MOT1:
         p_cmd_m1->kpCoeff   = (float32_t)(p_msg->msg_rx * KP_LSB * FM_RAD2ROUND);
-        p_msg->msg_crc32    = COM_crc32_cla(p_msg->msg_rx, p_msg->msg_crc32);
+        COM_crc32_cla(p_msg);
         break;
 
     case COM_RX_STATE_KP_MOT2:
         p_cmd_m2->kpCoeff   = (float32_t)(p_msg->msg_rx * KP_LSB * FM_RAD2ROUND);
-        p_msg->msg_crc32    = COM_crc32_cla(p_msg->msg_rx, p_msg->msg_crc32);
+        COM_crc32_cla(p_msg);
         break;
 
     case COM_RX_STATE_KD_MOT1:
         p_cmd_m1->kdCoeff   = (float32_t)(p_msg->msg_rx * KD_LSB * FM_RADPS2KRPM);
-        p_msg->msg_crc32    = COM_crc32_cla(p_msg->msg_rx, p_msg->msg_crc32);
+        COM_crc32_cla(p_msg);
         break;
 
     case COM_RX_STATE_KD_MOT2:
         p_cmd_m2->kdCoeff   = (float32_t)(p_msg->msg_rx * KD_LSB * FM_RADPS2KRPM);
-        p_msg->msg_crc32    = COM_crc32_cla(p_msg->msg_rx, p_msg->msg_crc32);
+        COM_crc32_cla(p_msg);
         break;
 
     case COM_RX_STATE_ISAT_MOT12:
@@ -145,13 +153,13 @@ bool_t COM_msgExtract_cla(mst2slv_msg_cla_t* p_msg, cmd_t* p_cmd_m1, cmd_t* p_cm
         isat                = (float32_t)(LSB_16(p_msg->msg_rx) * CURRENT_SAT_LSB);
         p_cmd_m2->iSat      = (isat < MOTOR2_CURRENT_CMD_SAT_MAX)   ? (isat)            : (MOTOR2_CURRENT_CMD_SAT_MAX);
         p_cmd_m2->iSat      = (p_cmd_m2->iSat > 0.0f)               ? (p_cmd_m2->iSat)  : (MOTOR2_CURRENT_CMD_SAT_MAX);
-        p_msg->msg_crc32    = COM_crc32_cla(p_msg->msg_rx, p_msg->msg_crc32);
+        COM_crc32_cla(p_msg);
         break;
 
     case COM_RX_STATE_INDEX:
         p_cmd_m1->index     = p_msg->msg_rx;
         p_cmd_m2->index     = p_msg->msg_rx;
-        p_msg->msg_crc32    = COM_crc32_cla(p_msg->msg_rx, p_msg->msg_crc32);
+        COM_crc32_cla(p_msg);
         break;
 
     case COM_RX_STATE_CRC_LSB:
@@ -167,11 +175,10 @@ bool_t COM_msgExtract_cla(mst2slv_msg_cla_t* p_msg, cmd_t* p_cmd_m1, cmd_t* p_cm
 }
 
 /**
- * @brief           Slave to Master message creation/update using motor_foc data structure.
+ * @brief	        Slave to Master message creation/update using motor_foc data structure.
  * @param[in]       p_motor_m1  Pointer on data structure used for MOTOR_1 control.
  * @param[in]       p_motor_m2  Pointer on data structure used for MOTOR_1 control.
  * @param[inout]    p_msg       Pointer on the message to transmit to the Master board
- * @return          Is message fully created/updated using motor_1 \& motor_2 data structure.
  */
 void COM_msgCreate(motor_t* p_motor_m1, motor_t* p_motor_m2, slv2mst_msg_t* p_msg)
 {
@@ -240,22 +247,8 @@ void COM_msgCreate(motor_t* p_motor_m1, motor_t* p_motor_m2, slv2mst_msg_t* p_ms
 }
 
 /**
- * @brief           Compute cyclic redundancy check (CRC) and add result to the Slave to Master message .
- * @param[inout]    p_msg   Pointer on the message to transmit to the Master board
- */
-//void com_MsgCrc32(slv2mst_msg_t* p_msg)
-//{
-//    // Compute CRC
-//    uint32_t crc = com_crc32((uint16_t *)p_msg, DMA_COM_SPI_TX_RX_16BIT_PAYLOAD_LENGTH);
-//    p_msg->crc.u16_msb  = LSB_32(crc);// required for Solo
-//    p_msg->crc.u16_lsb  = MSB_32(crc);
-//
-//    return;
-//}
-
-/**
  * @brief           Reset the command structure for a motor
- * @param[inout]    p_cmd   Pointer on the command structure (actions to be realized by motor_foc)
+ * @param[in]       p_cmd   Pointer on the command structure (actions to be realized by motor_foc)
  */
 void COM_resetCmdStruct(cmd_t* p_cmd)
 {
@@ -273,6 +266,10 @@ void COM_resetCmdStruct(cmd_t* p_cmd)
     return;
 }
 
+/**
+ * @brief           Reset the extraction structure associated with COM_msgExtract_cla
+ * @param[in]       p_msg       Pointer on the extraction structure
+ */
 void COM_resetMsgExtractStruct(mst2slv_msg_cla_t* p_msg)
 {
     p_msg->msg_rx_state = COM_RX_STATE_MODE;
@@ -284,40 +281,9 @@ void COM_resetMsgExtractStruct(mst2slv_msg_cla_t* p_msg)
 }
 
 /**
- * @brief           Reset the command associated to motor_id
- * @param[in]       p_motor     Pointer on the motor structure to get motor ID.
- * @param[out]      p_cmd       Pointer on the command structure (actions to be realized by motor_foc)
- */
-//void COM_resetCmdMotorStruct(motor_t* p_motor, cmd_uomodri_t* p_cmd)
-//{
-//    if(p_motor->motor_id == MOTOR_1)
-//    {
-//        p_cmd->mode.bit.EM1     = false;
-//        p_cmd->posRef[MOTOR_1]  = 0.0f;
-//        p_cmd->velRef[MOTOR_1]  = 0.0f;
-//        p_cmd->iqRef[MOTOR_1]   = 0.0f;
-//        p_cmd->kpCoeff[MOTOR_1] = 0.0f;
-//        p_cmd->kdCoeff[MOTOR_1] = 0.0f;
-//        p_cmd->iSat[MOTOR_1]    = MOTOR1_CURRENT_REGULATOR_SAT_MAX;
-//    }
-//    else
-//    {
-//        p_cmd->mode.bit.EM2     = false;
-//        p_cmd->posRef[MOTOR_2]  = 0.0f;
-//        p_cmd->velRef[MOTOR_2]  = 0.0f;
-//        p_cmd->iqRef[MOTOR_2]   = 0.0f;
-//        p_cmd->kpCoeff[MOTOR_2] = 0.0f;
-//        p_cmd->kdCoeff[MOTOR_2] = 0.0f;
-//        p_cmd->iSat[MOTOR_2]    = MOTOR2_CURRENT_REGULATOR_SAT_MAX;
-//    }
-//
-//    return;
-//}
-
-/**
- * @brief       Software cyclic redundancy check (CRC).
- * @param[in]   p_buf   Pointer on the array to be CRCed.
- * @param[in]   len     Length of the array
+ * @brief       	Software cyclic redundancy check (CRC) using predefined array.
+ * @param[in]       p_buf   Pointer on the array to be CRCed.
+ * @param[in]       len     Length of the array
  * @return
  */
 uint32_t COM_crc32(uint16_t* p_buf, uint16_t len)
@@ -333,98 +299,17 @@ uint32_t COM_crc32(uint16_t* p_buf, uint16_t len)
   return(crc);
 }
 
-uint32_t COM_crc32_cla(uint16_t data, uint32_t crc)
+/**
+ * @brief           Software cyclic redundancy check (CRC) using predefined array. Used with COM_msgExtract_cla.
+ *                  CRC computed at each new state
+ * @param[in]       data    Value to be added into CRC.
+ * @param[inout]    crc     Current state of CRC.
+ * @return          New computed value of CRC.
+ */
+uint32_t COM_crc32_cla(mst2slv_msg_cla_t* p_msg)
 {
-    crc = (crc << 8) ^ crc32_table[((crc >> 24) ^ MSB_16(data)) & 0xFF];
-    crc = (crc << 8) ^ crc32_table[((crc >> 24) ^ LSB_16(data)) & 0xFF];
+    p_msg->msg_crc32    = (p_msg->msg_crc32 << 8) ^ crc32_table[((p_msg->msg_crc32 >> 24) ^ MSB_16(p_msg->msg_rx)) & 0xFF];
+    p_msg->msg_crc32    = (p_msg->msg_crc32 << 8) ^ crc32_table[((p_msg->msg_crc32 >> 24) ^ LSB_16(p_msg->msg_rx)) & 0xFF];
 
-    return(crc);
+    return(p_msg->msg_crc32);
 }
-
-//void com_vcrc_ini(uint16_t* p_buf, uint16_t len)
-//{
-//
-//    vcrc.seedValue   = 0xFFFFFFFF;//CRC_INIT_CRC32;
-//    vcrc.nMsgBytes   = len;
-//    vcrc.nMsgBits    = len * 8;
-//    vcrc.parity      = CRC_parity_odd;   //!< the location, in a word, of the first byte of the CRC calculation
-//    vcrc.reflected   = 1;
-//    vcrc.crcResult   = 0;
-//    vcrc.pMsgBuffer  = (uint16_t *)p_buf;            //!< Pointer to the message buffer
-//    vcrc.pCrcTable   = (uint16_t *)&crc32_table[0];             //!< Pointer to the CRC lookup table
-//    vcrc.polynomial  = POLYNOMIAL_32_P1; //!<user polynomial
-//    vcrc.polySize    = 0x1F;//SIZE_32_BITS,     //!<polynomial size
-//    vcrc.dataSize    = 0x07;//SIZE_8_BITS,
-//    vcrc.init        = (void (*)(void *))CRC_init32Bit;          //!< Function pointer to CRC initialization routine
-//    vcrc.run         = (void (*)(void *))CRC_run32BitPoly1Reflected;            //!< Function pointer to CRC computation routine
-//
-//    // Step 3: Initialize the handle
-//    CRC_Handle handleCRC = &vcrc;
-//
-//    // Step 4: Run the 32-bit table look-up CRC routine and save the first result
-//    vcrc.init(handleCRC);
-////    vcrc.run(handleCRC);
-////    return (crc.crcResult);
-//    return;
-//}
-//
-//uint32_t com_vcrc (uint16_t* p_buf, uint16_t len)
-//{
-//    vcrc.seedValue   = 0xFFFFFFFF;//CRC_INIT_CRC32;
-//    vcrc.nMsgBytes   = len;
-////    vcrc.nMsgBits    = len * 8;
-//    vcrc.parity      = CRC_parity_even;   //!< the location, in a word, of the first byte of the CRC calculation
-////    vcrc.reflected   = 0;
-//    vcrc.crcResult   = 0;
-//    vcrc.pMsgBuffer  = (uint16_t *)p_buf;            //!< Pointer to the message buffer
-////    vcrc.pCrcTable   = NULL;//(uint16_t *)&crc32_table[0];             //!< Pointer to the CRC lookup table
-////    vcrc.polynomial  = POLYNOMIAL_32_P1; //!<user polynomial
-//    vcrc.polySize    = 0x1F;//SIZE_32_BITS,     //!<polynomial size
-////    vcrc.dataSize    = 0x07;//SIZE_8_BITS,
-//    vcrc.init        = (void (*)(void *))CRC_init32Bit;          //!< Function pointer to CRC initialization routine
-//    vcrc.run         = (void (*)(void *))CRC_run32BitPoly1;            //!< Function pointer to CRC computation routine
-//
-//    // Step 3: Initialize the handle
-//    CRC_Handle handleCRC = &vcrc;
-//
-//    // Step 4: Run the 32-bit table look-up CRC routine and save the first result
-//    vcrc.init(handleCRC);
-//    vcrc.run(handleCRC);
-//    return (vcrc.crcResult);
-//}
-
-//void com_bgcrc(void)
-//{
-//    void bgcrcInit()
-//    {
-//        // Unlock the BGCRC configuration in case it is locked CFG-1
-//        BGCRC_unlockRegister(BGCRC_CPU_BASE, BGCRC_REG_CTRL1 | BGCRC_REG_WD_CFG | BGCRC_REG_INTEN | BGCRC_REG_SEED);
-//        // Unlock the BGCRC configuration in case it is locked CFG-2
-//        BGCRC_unlockRegister(BGCRC_CPU_BASE, BGCRC_REG_EN | BGCRC_REG_CTRL2 | BGCRC_REG_START_ADDR | BGCRC_REG_GOLDEN | BGCRC_REG_WD_MIN | BGCRC_REG_WD_MAX);
-//        // Enable NMI and set the emulation mode as soft.
-//        // The CRC module and the watchdog stops immediately on debug suspend
-//        BGCRC_setConfig(BGCRC_CPU_BASE, BGCRC_NMI_ENABLE, BGCRC_EMUCTRL_SOFT);
-//        // Configure the CRC Watchdog
-//        // Watchdog window - Min : DATA_SIZE, Max : DATA_SIZE + 1
-//        BGCRC_enableWatchdog(BGCRC_CPU_BASE);
-//        BGCRC_setWatchdogWindow(BGCRC_CPU_BASE, DATA_SIZE, DATA_SIZE + 1);
-//        // Configure the region
-//        BGCRC_setRegion(BGCRC_CPU_BASE, (uint32_t)data, BGCRC_SIZE_KBYTES(1), BGCRC_CRC_MODE);
-//        // Set the seed value same as used in SW computation
-//        BGCRC_setSeedValue(BGCRC_CPU_BASE, seed);
-//        // Initialize the golden value with previously computed CRC using software
-//        BGCRC_setGoldenCRCValue(BGCRC_CPU_BASE, crc32);
-//        // Enable interrupts
-//        // No need to enable the NMIs as all the NMIs are enabled by default
-//        BGCRC_enableInterrupt(BGCRC_CPU_BASE, BGCRC_TEST_DONE | BGCRC_CRC_FAIL | BGCRC_UNCORR_ERR | BGCRC_CORR_ERR | BGCRC_WD_UNDERFLOW | BGCRC_WD_OVERFLOW);
-//        // Lock Register configuration for CFG1
-//        BGCRC_lockRegister(BGCRC_CPU_BASE, BGCRC_REG_CTRL1 | BGCRC_REG_WD_CFG | BGCRC_REG_INTEN | BGCRC_REG_SEED);
-//        // Commit Register Lock for CFG1
-//        BGCRC_commitRegisterLock(BGCRC_CPU_BASE, BGCRC_REG_CTRL1 | BGCRC_REG_WD_CFG | BGCRC_REG_INTEN | BGCRC_REG_SEED);
-//        BGCRC_start(BGCRC_CPU_BASE);
-//        // Lock Register configuration for CFG2
-//        BGCRC_lockRegister(BGCRC_CPU_BASE, BGCRC_REG_EN | BGCRC_REG_CTRL2 | BGCRC_REG_START_ADDR | BGCRC_REG_GOLDEN | BGCRC_REG_WD_MIN | BGCRC_REG_WD_MAX);
-//    }
-//}
-
-

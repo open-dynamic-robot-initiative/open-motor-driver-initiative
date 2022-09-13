@@ -44,10 +44,10 @@ typedef enum
  ***********************************************************************/
 typedef struct __error_reg_t__
 {
-    uint16_t    enc_mismatch    : 1;        /*!< Bits 0   : R/W - Encoder error too high */
-    uint16_t    pos_rollover    : 1;        /*!< Bits 1   : R/W - Position roll-over occurred */
-    uint16_t    drv_fault       : 1;        /*!< Bits 2   : R/W - Motor DRV nFault error */
-    uint16_t    com_timeout     : 1;        /*!< Bits 3   : R/W - Communication timeout error */
+    uint16_t    enc_mismatch    : 1;                /*!< Bits 0   : R/W - Encoder error too high */
+    uint16_t    pos_rollover    : 1;                /*!< Bits 1   : R/W - Position roll-over occurred */
+    uint16_t    drv_fault       : 1;                /*!< Bits 2   : R/W - Motor DRV nFault error */
+    uint16_t    com_timeout     : 1;                /*!< Bits 3   : R/W - Communication timeout error */
 } error_reg_t;
 
 typedef union __error_reg_u__
@@ -72,8 +72,6 @@ typedef struct __MOTOR_STRUCT_t__
     motor_state_e                   motor_state;    /*!< Current motor state for the FSM */
     // Error messages
     error_reg_u                     motor_error;    /*!< Error messages */
-    // Anti-coagging structure
-//    Anticoagging            acog;
     // PWM address register for FOC command
     volatile uint16_t* const        p_motorChAReg;
     volatile uint16_t* const        p_motorChBReg;
@@ -82,17 +80,10 @@ typedef struct __MOTOR_STRUCT_t__
 } motor_t;
 
 /***********************************************************************
- * GLOBAL VARIABLES
- ***********************************************************************/
-
-/***********************************************************************
  * FUNCTIONS DECLARATION
  ***********************************************************************/
 inline void MOT_runCommand(motor_t*, float32_t, float32_t, float32_t);
 inline void MOT_stopCommand(motor_t*);
 inline bool_t MOT_runControl(motor_t*);
-void MOT_resistorEstimation(motor_t*);
-//void MOT_spwm(motor_t*);
-//void MOT_svpwm(motor_t*);
 
 #endif /* __MOTOR_H__ */

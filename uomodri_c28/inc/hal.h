@@ -205,17 +205,7 @@ typedef struct __DMA_CFG_t__
 } dma_cfg_t;
 
 /**
- * @struct  CLA_TASK_TypeDef
- * @brief   CLA TASK global Hardware Abstraction Layer structure - To be updated
- */
-//typedef struct __CLA_TASK_CFG_t__
-//{
-//    uint16_t                claTaskAddr;
-//    CLA_MVECTNumber         claIntVect;
-//} CLA_TASK_t;
-
-/**
- * @struct  CLA_TypeDef
+ * @struct  __CLA_TypeDef__
  * @brief   CLA global Hardware Abstraction Layer structure - To be updated
  */
 typedef struct __CLA_CFG_t__
@@ -226,7 +216,7 @@ typedef struct __CLA_CFG_t__
     CLA_TaskNumber          claTaskNum;
 //    CLA_MVECTNumber         claIntVector;
 //    CLA_MVECTNumber         claIntVect;
-    void(*fun_ptr)(void);
+    void                    (*fun_ptr)(void);
 } cla_cfg_t;
 
 /**

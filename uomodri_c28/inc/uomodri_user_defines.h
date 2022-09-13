@@ -22,7 +22,6 @@
  *  @brief    Special configurations definitions.
  * @{
  */
-#define UOMODRI_USE_REV_1_0_CONFIG              1
 #define UOMODRI_USE_ENCODER_GET_REG_FUNCTION    0
 #define CLA_CORE_ENABLE                         0
 #define CM_CORE_ENABLE                          0
@@ -111,8 +110,6 @@
 #define LSB_32(x)                               ((x) & 0xFFFF)
 #define MSB_32(x)                               (((x) >> 16) & 0xFFFF)
 
-//#define RGB(r, g, b)                            ((uint8_t)(g) << 16 | (uint8_t)(r) << 8 | (uint8_t)(b))
-
 /***********************************************************************
  * DEBUG DEFINES
  ***********************************************************************/
@@ -120,38 +117,24 @@
  *  @brief    Configure 2 pins (pin number and mux function) for debug.
  * @{
  */
-#if (defined UOMODRI_USE_REV_1_0_CONFIG) && (!UOMODRI_USE_REV_1_0_CONFIG)
-#define DEBUG_LED_PIN1                          31
-#define DEBUG_LED_PIN1_CFG                      GPIO_31_GPIO31
-#define DEBUG_LED_PIN2                          34
-#define DEBUG_LED_PIN2_CFG                      GPIO_34_GPIO34
-#define DEBUG_INT_PIN1                          40
-#define DEBUG_INT_PIN1_CFG                      GPIO_40_GPIO40
-#define DEBUG_INT_PIN2                          41
-#define DEBUG_INT_PIN2_CFG                      GPIO_41_GPIO41
-#endif
-#if (defined CM_CORE_ENABLE) && (CM_CORE_ENABLE)
-#ifdef  USB
+#if (defined CM_CORE_ENABLE) && (CM_CORE_ENABLE) && (defined USB)
 #define USB_M                                   42
 #define USB_M_CFG                               GPIO_42_GPIO42
 #define USB_P                                   43
 #define USB_P_CFG                               GPIO_43_GPIO43
 #define USB_VBUS                                46
 #define USB_VBUS_CFG                            GPIO_46_GPIO46
-#else
+#elif (defined CM_CORE_ENABLE) && (CM_CORE_ENABLE)
 #define UART_DBG_TX                             (42)
 #define UART_DBG_TX_CFG                         GPIO_42_UARTA_TX
 #define UART_DBG_RX                             (43)
 #define UART_DBG_RX_CFG                         GPIO_43_UARTA_RX
 #endif
-#endif
-#if (defined UOMODRI_USE_REV_1_0_CONFIG) && (UOMODRI_USE_REV_1_0_CONFIG)
 #define DBG_PIN4                                (149)
 #define DBG_PIN4_CFG                            GPIO_149_GPIO149
 #define DBG_PIN4_SET                            (HWREG(GPIODATA_BASE + GPIO_O_GPESET)   = GPIO_GPESET_GPIO149)
 #define DBG_PIN4_CLEAR                          (HWREG(GPIODATA_BASE + GPIO_O_GPECLEAR) = GPIO_GPECLEAR_GPIO149)
 #define DBG_PIN4_TOGGLE                         (HWREG(GPIODATA_BASE + GPIO_O_GPETOGGLE)= GPIO_GPETOGGLE_GPIO149)
-//#if (defined CM_CORE_ENABLE) && (CM_CORE_ENABLE) && (defined DEBUG)
 #define DBG_PIN3                                (81)
 #define DBG_PIN3_CFG                            GPIO_81_GPIO81
 #define DBG_PIN3_SET                            (HWREG(GPIODATA_BASE + GPIO_O_GPCSET)   = GPIO_GPCSET_GPIO81)
@@ -172,8 +155,6 @@
 #define DBG_PIN0_SET                            (HWREG(GPIODATA_BASE + GPIO_O_GPCSET)   = GPIO_GPCSET_GPIO78)
 #define DBG_PIN0_CLEAR                          (HWREG(GPIODATA_BASE + GPIO_O_GPCCLEAR) = GPIO_GPCCLEAR_GPIO78)
 #define DBG_PIN0_TOGGLE                         (HWREG(GPIODATA_BASE + GPIO_O_GPCTOGGLE)= GPIO_GPCTOGGLE_GPIO78)
-//#endif
-#endif
 /**
  * @}
  */
@@ -304,8 +285,7 @@
  * @}
  */
 
-//#if (defined UOMODRI_USE_REV_1_0_CONFIG) && (!UOMODRI_USE_REV_1_0_CONFIG)
-/** @defgroup SPI_MST_GPIO_pins - MST com configuration.
+/** @defgroup SPI_ENC_GPIO_pins - ENC communication associated with as5047u configuration.
  *  @brief    Configure GPIO pins associated to master board communication.
  * @{
  */
@@ -450,7 +430,6 @@
 #define ADC_SAMPLING_WINDOW                     119   // From data sheet Table 20-12
 #define ADC_RESOLUTION_BIT						ADC_RESOLUTION_16BIT
 #define ADC_RESOLUTION_MAX                      ((ADC_RESOLUTION_BIT == ADC_RESOLUTION_16BIT) ? (65536) : (4096))
-//#define ADC_RESOLUTION_MID                      (ADC_RESOLUTION_MAX / 2)
 #define ADC_SIGNAL_MODE                         ADC_MODE_SINGLE_ENDED
 #define ADC_PULSE_END_MODE                      ADC_PULSE_END_OF_CONV
 #define ADC_SOC_PRIORITY                        ADC_PRI_THRU_SOC3_HIPRI  //ADC_PRI_ALL_ROUND_ROBIN
@@ -460,13 +439,8 @@
 #define DRV_CSA_GAIN_REG                        DRV_CSA_GAIN_10_V_V  // [V/V] Possible values: 5, 10, 20, 40
 #define DRV_CSA_GAIN_VAL                        (5 << DRV_CSA_GAIN_REG) // base gain
 
-#if (defined UOMODRI_USE_REV_1_0_CONFIG) && (!UOMODRI_USE_REV_1_0_CONFIG)
-#define R_SHUNT                                 (0.007f) // [Ohm]
-#define BRIDGE_DIVIDER                          ((4.99f + 82.0f) / 4.99f)
-#else
 #define R_SHUNT                                 (0.005f) // [Ohm]
 #define BRIDGE_DIVIDER                          ((5.1f + 100.0f) / 5.1f)
-#endif
 #define ADC_EXTERN_VOLTAGE_SCALE                (ADC_VREF / ADC_RESOLUTION_MAX)
 #define ADC_VBUS_VOLTAGE_SCALE                  (ADC_VREF * BRIDGE_DIVIDER / ADC_RESOLUTION_MAX)
 #define ADC_MOTOR_VOLTAGE_SCALE                 (ADC_VREF * BRIDGE_DIVIDER / ADC_RESOLUTION_MAX)
@@ -923,7 +897,6 @@
 #define VEXT_CUTOFF_TIME_CONST                  (2.0f * M_PI * VEXT_CUTOFF_FREQ * PWM_PERIOD)
 #define VEXT_LPF_ALPHA                          (VEXT_CUTOFF_TIME_CONST / (1.0f + VEXT_CUTOFF_TIME_CONST))
 #define VEXT_LPF_ONE_M_ALPHA                    (1.0f - VEXT_LPF_ALPHA)
-//#define MOTOR12_IMAX                            (20.0f)
 
 /***********************************************************************
  * COMMUNICATION DEFINES
@@ -939,11 +912,7 @@
 
 /*** Communication constants ***/
 #define POSITION_LSB                            (5.960464477539063e-08f)    // 2**(-24)
-#if(1)
-#define VELOCITY_LSB                            (4.8828125e-04f)// 2**(-11) // Added rad/s to krpm conversion
-#else
-#define VELOCITY_LSB                            (0.00048828125f * FM_RPM2RAD * 1000.0f)
-#endif
+#define VELOCITY_LSB                            (4.8828125e-04f)            // 2**(-11)
 #define IQ_LSB                                  (9.765625e-04f)             // 2**(-10)
 #define CURRENT_SAT_LSB                         (1.25e-01f)                 // 2**(-3)
 #define RESISTANCE_LSB                          (3.0517578125e-05f)         // 2**(-15)
@@ -951,7 +920,7 @@
 #define KP_LSB                                  (4.8828125e-04f)            // 2**(-11)
 #define KD_LSB                                  (9.765625e-04f)             // 2**(-10)
 
-typedef struct __LOWPASSFILTER_STRUCT__
+typedef struct __lowPassFilter_t__
 {
     float32_t a;
     float32_t one_minus_a;
@@ -977,39 +946,5 @@ typedef enum
     MOTOR_2 = 1,    /*!< Select Motor_2 */
     NO_MOT  = -1,   /*!< No motor selected */
 } motor_id_e;
-
-//typedef enum
-//{
-//    ODD     = 0,    /*!< Select */
-//    EVEN    = 1,
-//} parity_id_e;
-
-/**
- * @enum    StateID
- * @brief   Easier state management for history.
- */
-//typedef enum
-//{
-//    NEXT    = 0,    /*!< Next state */
-//    CURRENT = 1,    /*!< Current state */
-//} state_id_e;
-
-/**
- * @enum    itID
- * @brief   Easier interrupts identification
- */
-//typedef enum
-//{
-//    ADC_IT_MOTOR_1  = 0,    /*!< Select the ADC interrupt source of Motor_1 */
-//    ADC_IT_MOTOR_2  = 1,    /*!< Select the ADC interrupt source of Motor_2 */
-////    PWM_IT_MOTOR_1  = 2,    /*!< Select the PWM interrupt source of Motor_1 */
-////    PWM_IT_MOTOR_2  = 3,    /*!< Select the PWM interrupt source of Motor_2 */
-//    IPC_IT_STATUS   = 2,
-//    IPC_IT_MSG_CMD  = 3,
-//    DMA_IT_MSG_RX   = 4,
-//    DRV_IT_MOTOR_1  = 5,    /*!< Select the GPIO (DRV fault) interrupt source of Motor_1 */
-//    DRV_IT_MOTOR_2  = 6,    /*!< Select the GPIO (DRV fault) interrupt source of Motor_2 */
-//    CLA_IT_MOTOR_1  = 7,    /*!< Select the PWM interrupt source of Motor_1 */
-//} IT_ENUM;
 
 #endif

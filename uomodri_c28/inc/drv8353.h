@@ -598,6 +598,4 @@ void DRV_writeAll(drv8353_t*);
 }
 #endif // extern "C"
 
-//@}  // ingroup
-
 #endif // end of DRV_H definition

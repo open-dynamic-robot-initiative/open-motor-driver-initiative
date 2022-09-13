@@ -7,13 +7,13 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <math.h>
-#ifdef USE_CM_CORE
+#ifndef USE_CM_CORE
+#include "uomodri_user_defines.h"
+#else
 #include "driverlib_cm.h"
 #include "cm.h"
 
 #include "uomodri_cm_user_defines.h"
-#else
-#include "uomodri_user_defines.h"
 #endif
 #include "encoder.h"
 
@@ -58,7 +58,7 @@ typedef union __cmd_bit_reg_u__
  * @struct  pi_t
  * @brief   Proportional-Integral controller structure for FOC algorithm.
  */
-typedef struct __PROPORTIONAL_INTEGRAL_t__
+typedef struct __pi_t__
 {
     float32_t* const    p_fb;           /*!< Pointer on the feedback current */
     float32_t* const    p_set;          /*!< Pointer on the setpoint current */
@@ -75,7 +75,7 @@ typedef struct __PROPORTIONAL_INTEGRAL_t__
  * @struct  pd_t
  * @brief   Proportional-Derivative controller structure for FOC algorithm.
  */
-typedef struct __PROPORTIONAL_DERIVATIVE_t__
+typedef struct __pd_t__
 {
     float32_t* const    p_fbTheta;      /*!< Pointer on the feedback position */
     float32_t* const    p_setTheta;     /*!< Pointer on the setpoint position */
@@ -90,23 +90,8 @@ typedef struct __PROPORTIONAL_DERIVATIVE_t__
     float32_t           out;            /*!< Controller output */
     float32_t* const    p_sat;          /*!< Controller saturation */
 } pd_t;
-//typedef struct __PROPORTIONAL_DERIVATIVE_t__
-//{
-//    float32_t* const    p_fbTheta;      /*!< Pointer on the feedback position */
-//    float32_t           setTheta;       /*!< Pointer on the setpoint position */
-//    float32_t           errTheta;       /*!< Error position */
-//    float32_t* const    p_fbSpeed;      /*!< Pointer on the feedback speed */
-//    float32_t           setSpeed;       /*!< Pointer on the Set point speed */
-//    float32_t           errSpeed;       /*!< Error speed */
-//    float32_t           kp;             /*!< Pointer on the Proportional gain */
-//    float32_t           kd;             /*!< Pointer on the Derivative gain */
-//    float32_t           derivative;     /*!< Derivative term partial computation */
-//    float32_t           ff;             /*!< Pointer on the feed-forward term */
-//    float32_t           out;            /*!< Controller output */
-//    float32_t           sat;            /*!< Controller saturation */
-//} pd_t;
 
-typedef struct __MOTOR_PARAMETERS_t__
+typedef struct __params_t__
 {
     // Motor constants
     float32_t       Rs;                 /*!< Stator resistance [Ohm] */
@@ -117,7 +102,7 @@ typedef struct __MOTOR_PARAMETERS_t__
     const float32_t polePairs;          /*!< Number of pole pairs */
 } params_t;
 
-typedef struct __MOTOR_ACQUISITIONS_t__
+typedef struct __acquisitions_t__
 {
     // ADC result registers
     volatile uint16_t*  const p_vaMeasReg;
@@ -141,7 +126,7 @@ typedef struct __MOTOR_ACQUISITIONS_t__
     lpf_t               vExtFlt;
 } acq_t;
 
-typedef struct __MOTOR_COMMAND_t__
+typedef struct __cmd_t__
 {
     float32_t   posRef;
     float32_t   velRef;
@@ -155,7 +140,7 @@ typedef struct __MOTOR_COMMAND_t__
     cmd_reg_u   enableReg;
 } cmd_t;
 
-typedef struct __MOTOR_FOC_CONTROL_t__
+typedef struct __foc_control_t__
 {
     params_t            motor_cfg;      /*!< Motor configuration parameters */
     acq_t               motor_acq;      /*!< Current \& voltage acquisitions */
@@ -176,9 +161,6 @@ typedef struct __MOTOR_FOC_CONTROL_t__
     float32_t           ub;             /*!< Phase commands - Channel b - [V] */
     float32_t           uc;             /*!< Phase commands - Channel c - [V] */
     float32_t           vmax;           /*!< Bus voltage saturation - [V] */
-//    float32_t           udMax;
-//    float32_t           uqMax;
-//    float32_t           imax;           /*!< Max current - [A] */
     float32_t           dtcMax;         /*!< Max saturation duty-cycle */
     float32_t           dtcMin;         /*!< Min saturation duty-cycle */
     float32_t           dtc_u;          /*!< Duty cycles on channel u - [pu] between -0.5 and 0.5 */
@@ -192,13 +174,6 @@ typedef struct __MOTOR_FOC_CONTROL_t__
     pd_t                pdPosVel;       /*!< PD controller structure for position/velocity control */
     float32_t           resEst;         /*!< Q-axis resistance estimation - [Ohm] */
     lpf_t               resEstFlt;      /*!< Q-axis resistance estimation filter structure */
-//    parity_id_e         cmd_cr_active;  /*!< Which channel is currently active for command interpretation */
-//    parity_id_e         cmd_nx_active;  /*!< Which channel will be active next for command interpretation */
-//#ifdef USE_CM_CORE
-//    uint8_t             rsvd[11];
-//#else
-//    Anticoagging        acog;           /*!< Anti-coagging structure */
-//#endif
 } foc_t;
 
 /***********************************************************************
@@ -223,6 +198,5 @@ inline void FOC_getMeasures(acq_t*);
 inline void FOC_runControl(foc_t*);
 inline float32_t FOC_runPD(pd_t*);
 void FOC_resetStruct(foc_t*);
-//void limit_norm(float32_t*, float32_t*, float32_t);
 
 #endif

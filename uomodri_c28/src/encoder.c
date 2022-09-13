@@ -1,13 +1,13 @@
 /***********************************************************************
  * INCLUDE
  ***********************************************************************/
-#ifdef USE_CM_CORE
-#include "driverlib_cm.h"
-#include "cm.h"
-#else
+#ifndef USE_CM_CORE
 #include "f2838x_device.h"
 #include "driverlib.h"
 #include "device.h"
+#else
+#include "driverlib_cm.h"
+#include "cm.h"
 #endif
 #include "encoder.h"
 
