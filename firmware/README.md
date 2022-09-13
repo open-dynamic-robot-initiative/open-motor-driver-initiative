@@ -1,15 +1,15 @@
 # Software for the Open Motor Driver Initiative project - uOmodri board
 
 ## Required installs
-In order to use the UOMODRI projects, you must install [Code Composer Studio (CCS)](https://software-dl.ti.com/ccs/esd/documents/ccs_downloads.html) and [C2000Ware library](https://www.ti.com/tool/C2000WARE#downloads)from Texas Instruments. C2000Ware Motor Control SDK is not necessary anymore. 
+In order to use the UOMODRI projects, you must install [Code Composer Studio (CCS)](https://software-dl.ti.com/ccs/esd/documents/ccs_downloads.html) and [C2000Ware library](https://www.ti.com/tool/C2000WARE#downloads) from Texas Instruments. C2000Ware Motor Control SDK is not necessary anymore. 
 The [installation](https://software-dl.ti.com/ccs/esd/documents/users_guide/index_installation.html) procedure is available on TI website.
 For Linux users, don't forget to install USB drivers (everything is explained on Texas Instrument website).
 When installing CCS, prefer a custom installation and check "C2000 real-time MCUs" installation.
 
 
 ## Repository description
-This repository contains One project:
-uOmodri_c28 : Main project. Implements current, speed and position control for PMSM along with a SPI communication for commands or debug.
+This repository contains one project:
+	**uOmodri_c28** : Main project. Implements current, speed and position control for PMSM along with a SPI communication for commands or debug. 
 3 Files are mainly used for configuration:
 - inc\uomodri_user_defines.h : Saves all the defines used in the project.
 - inc\uomodri_hal_config_handlers.h : Structures necessaries during initialization phase.
