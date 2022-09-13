@@ -7,7 +7,7 @@
     (effects (font (size 1 1) (thickness 0.15)))
     (tstamp f34f7652-4af1-4a2f-99aa-81812c229ee5)
   )
-  (fp_text value "REF**" (at 0 2.2 unlocked) (layer "F.Fab") hide
+  (fp_text value "REF**" (at 0 0 unlocked) (layer "F.Fab") hide
     (effects (font (size 1 1) (thickness 0.15)))
     (tstamp 4cdfc76e-9789-469a-920d-27c121ddb70d)
   )
