@@ -4153,7 +4153,7 @@
       (reference "R34") (unit 1) (value "100k") (footprint "Resistor_SMD:R_0402_1005Metric")
     )
     (path "/00000000-0000-0000-0000-00005f71c5af/00000000-0000-0000-0000-00005f864edf"
-      (reference "R35") (unit 1) (value "0.005") (footprint "udriver3:FC4L64")
+      (reference "R35") (unit 1) (value "0.005") (footprint "udriver3:FC4L32R005FER")
     )
     (path "/00000000-0000-0000-0000-00005f71c5af/00000000-0000-0000-0000-00005f864ec8"
       (reference "R36") (unit 1) (value "5.1k") (footprint "Resistor_SMD:R_0402_1005Metric")
@@ -4174,13 +4174,13 @@
       (reference "R41") (unit 1) (value "120") (footprint "Resistor_SMD:R_0201_0603Metric")
     )
     (path "/00000000-0000-0000-0000-00005f71c5af/00000000-0000-0000-0000-00005f864fdb"
-      (reference "R42") (unit 1) (value "0.005") (footprint "udriver3:FC4L64")
+      (reference "R42") (unit 1) (value "0.005") (footprint "udriver3:FC4L32R005FER")
     )
     (path "/00000000-0000-0000-0000-00005f71c5af/00000000-0000-0000-0000-00005f864fc4"
       (reference "R43") (unit 1) (value "5.1k") (footprint "Resistor_SMD:R_0402_1005Metric")
     )
     (path "/00000000-0000-0000-0000-00005f71c5af/00000000-0000-0000-0000-00005f864fe6"
-      (reference "R44") (unit 1) (value "0.005") (footprint "udriver3:FC4L64")
+      (reference "R44") (unit 1) (value "0.005") (footprint "udriver3:FC4L32R005FER")
     )
     (path "/00000000-0000-0000-0000-00005f71c5af/00000000-0000-0000-0000-00005f864fd0"
       (reference "R45") (unit 1) (value "5.1k") (footprint "Resistor_SMD:R_0402_1005Metric")
@@ -4195,7 +4195,7 @@
       (reference "R48") (unit 1) (value "100k") (footprint "Resistor_SMD:R_0402_1005Metric")
     )
     (path "/00000000-0000-0000-0000-00005f71c92e/00000000-0000-0000-0000-00005f80ef8f"
-      (reference "R49") (unit 1) (value "0.005") (footprint "udriver3:FC4L64")
+      (reference "R49") (unit 1) (value "0.005") (footprint "udriver3:FC4L32R005FER")
     )
     (path "/00000000-0000-0000-0000-00005f71c92e/00000000-0000-0000-0000-00005f80ef78"
       (reference "R50") (unit 1) (value "5.1k") (footprint "Resistor_SMD:R_0402_1005Metric")
@@ -4216,13 +4216,13 @@
       (reference "R55") (unit 1) (value "120") (footprint "Resistor_SMD:R_0201_0603Metric")
     )
     (path "/00000000-0000-0000-0000-00005f71c92e/00000000-0000-0000-0000-00005f80f08b"
-      (reference "R56") (unit 1) (value "0.005") (footprint "udriver3:FC4L64")
+      (reference "R56") (unit 1) (value "0.005") (footprint "udriver3:FC4L32R005FER")
     )
     (path "/00000000-0000-0000-0000-00005f71c92e/00000000-0000-0000-0000-00005f80f074"
       (reference "R57") (unit 1) (value "5.1k") (footprint "Resistor_SMD:R_0402_1005Metric")
     )
     (path "/00000000-0000-0000-0000-00005f71c92e/00000000-0000-0000-0000-00005f80f096"
-      (reference "R58") (unit 1) (value "0.005") (footprint "udriver3:FC4L64")
+      (reference "R58") (unit 1) (value "0.005") (footprint "udriver3:FC4L32R005FER")
     )
     (path "/00000000-0000-0000-0000-00005f71c92e/00000000-0000-0000-0000-00005f80f080"
       (reference "R59") (unit 1) (value "5.1k") (footprint "Resistor_SMD:R_0402_1005Metric")
