@@ -515,6 +515,10 @@
     [
       "00000000-0000-0000-0000-00005f5c1cf9",
       "TMS320_Bypass_Cap"
+    ],
+    [
+      "f2e4b637-b410-4c88-a5bd-ca173e5a2c6b",
+      "OMODRI_Alim_12V"
     ]
   ],
   "text_variables": {}
