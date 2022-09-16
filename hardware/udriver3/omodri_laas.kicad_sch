@@ -1290,6 +1290,11 @@
     (uuid fd1b1e02-6693-4908-811e-d73976df7030)
   )
 
+  (text "6.028 kHz anti aliasing" (at 144.78 167.64 0)
+    (effects (font (size 1.27 1.27)) (justify left bottom))
+    (uuid 75ec3c53-6859-4b0b-8048-971f24b0ac41)
+  )
+
   (label "VBus" (at 31.75 121.285 90)
     (effects (font (size 1.27 1.27)) (justify left bottom))
     (uuid b2696a7f-a7fc-413c-8d71-323f0352dd44)
