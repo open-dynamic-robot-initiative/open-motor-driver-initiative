@@ -1451,7 +1451,7 @@
     (uuid 00000000-0000-0000-0000-00005f58128e)
     (property "Reference" "J2" (id 0) (at 71.12 111.125 0))
     (property "Value" "Conn_01x05" (id 1) (at 71.12 126.365 0))
-    (property "Footprint" "udriver3:Hirose_DF13-05P-1.25DSA_1x05_P1.25mm_Vertical" (id 2) (at 71.12 118.745 0)
+    (property "Footprint" "udriver3:DF135P125H76" (id 2) (at 71.12 118.745 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "~" (id 3) (at 71.12 118.745 0)
@@ -3946,7 +3946,7 @@
       (reference "J1") (unit 1) (value "Conn_01x11") (footprint "udriver3:Hirose_DF13-11P-1.25DSA_1x11_P1.25mm_Vertical")
     )
     (path "/00000000-0000-0000-0000-00005f58128e"
-      (reference "J2") (unit 1) (value "Conn_01x05") (footprint "udriver3:Hirose_DF13-05P-1.25DSA_1x05_P1.25mm_Vertical")
+      (reference "J2") (unit 1) (value "Conn_01x05") (footprint "udriver3:DF135P125H76")
     )
     (path "/00000000-0000-0000-0000-00005f62d90d"
       (reference "J3") (unit 1) (value "Conn_01x03") (footprint "udriver3:Hirose_DF13-03P-1.25DSA_1x03_P1.25mm_Vertical")
@@ -3955,13 +3955,13 @@
       (reference "J4") (unit 1) (value "Conn_01x03") (footprint "udriver3:Hirose_DF13-03P-1.25DSA_1x03_P1.25mm_Vertical")
     )
     (path "/00000000-0000-0000-0000-00005f5a1016/00000000-0000-0000-0000-00005f7035f5"
-      (reference "J5") (unit 1) (value "Conn_01x05") (footprint "Connector_Hirose:Hirose_DF13C_CL535-0405-0-51_1x05-1MP_P1.25mm_Vertical")
+      (reference "J5") (unit 1) (value "Conn_01x05") (footprint "udriver3:DF135P125H76")
     )
     (path "/00000000-0000-0000-0000-00005f5a1016/00000000-0000-0000-0000-00005f704b6b"
-      (reference "J6") (unit 1) (value "Conn_01x05") (footprint "Connector_Hirose:Hirose_DF13C_CL535-0405-0-51_1x05-1MP_P1.25mm_Vertical")
+      (reference "J6") (unit 1) (value "Conn_01x05") (footprint "udriver3:DF135P125H76")
     )
     (path "/00000000-0000-0000-0000-00005f5b575b/00000000-0000-0000-0000-000060edae2f"
-      (reference "J7") (unit 1) (value "Conn_01x02") (footprint "Connector_Hirose:Hirose_DF13C_CL535-0402-2-51_1x02-1MP_P1.25mm_Vertical")
+      (reference "J7") (unit 1) (value "Conn_01x02") (footprint "udriver3:DF13A2P125H21")
     )
     (path "/00000000-0000-0000-0000-00005f5b5760/00000000-0000-0000-0000-00005f6e30fc"
       (reference "J8") (unit 1) (value "Conn_01x07") (footprint "udriver3:Hirose_DF13-07P-1.25DSA_1x07_P1.25mm_Vertical")

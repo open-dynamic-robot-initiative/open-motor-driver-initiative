@@ -396,7 +396,7 @@
       "idf": "",
       "netlist": "omodri_laas.net",
       "specctra_dsn": "",
-      "step": "",
+      "step": "omodri_laas.step",
       "vrml": ""
     },
     "page_layout_descr_file": ""
