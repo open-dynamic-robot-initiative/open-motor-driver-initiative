@@ -1556,7 +1556,7 @@
     (property "Value" "Conn_01x07" (id 1) (at 240.665 90.805 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
-    (property "Footprint" "udriver3:Hirose_DF13-07P-1.25DSA_1x07_P1.25mm_Vertical" (id 2) (at 241.935 80.645 0)
+    (property "Footprint" "udriver3:DF137P125H75" (id 2) (at 241.935 80.645 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "~" (id 3) (at 241.935 80.645 0)

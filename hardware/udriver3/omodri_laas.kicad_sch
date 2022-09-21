@@ -3964,13 +3964,13 @@
       (reference "J7") (unit 1) (value "Conn_01x02") (footprint "udriver3:DF13A2P125H21")
     )
     (path "/00000000-0000-0000-0000-00005f5b5760/00000000-0000-0000-0000-00005f6e30fc"
-      (reference "J8") (unit 1) (value "Conn_01x07") (footprint "udriver3:Hirose_DF13-07P-1.25DSA_1x07_P1.25mm_Vertical")
+      (reference "J8") (unit 1) (value "Conn_01x07") (footprint "udriver3:DF137P125H75")
     )
     (path "/00000000-0000-0000-0000-00005f5caa29/00000000-0000-0000-0000-00005f6e7161"
       (reference "J9") (unit 1) (value "Conn_02x04_Odd_Even") (footprint "udriver3:PinSocket_2x04_P1.27mm_Vertical")
     )
     (path "/00000000-0000-0000-0000-00005f5da2eb/00000000-0000-0000-0000-00005f6fbf4b"
-      (reference "J10") (unit 1) (value "Conn_01x07") (footprint "udriver3:Hirose_DF13-07P-1.25DSA_1x07_P1.25mm_Vertical")
+      (reference "J10") (unit 1) (value "Conn_01x07") (footprint "udriver3:DF137P125H75")
     )
     (path "/00000000-0000-0000-0000-00005f71c5af/00000000-0000-0000-0000-00005f86503f"
       (reference "J11") (unit 1) (value "Conn_01x03") (footprint "udriver3:AMASS_MR30PW-FB_1x03_P3.50mm_Horizontal")
