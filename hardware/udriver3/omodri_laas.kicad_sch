@@ -3961,7 +3961,7 @@
       (reference "J6") (unit 1) (value "Conn_01x05") (footprint "udriver3:DF135P125H76")
     )
     (path "/00000000-0000-0000-0000-00005f5b575b/00000000-0000-0000-0000-000060edae2f"
-      (reference "J7") (unit 1) (value "Conn_01x02") (footprint "udriver3:DF13A2P125H21")
+      (reference "J7") (unit 1) (value "Conn_01x02") (footprint "udriver3:DF132P125H75")
     )
     (path "/00000000-0000-0000-0000-00005f5b5760/00000000-0000-0000-0000-00005f6e30fc"
       (reference "J8") (unit 1) (value "Conn_01x07") (footprint "udriver3:DF137P125H75")

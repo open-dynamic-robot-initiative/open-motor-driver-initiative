@@ -502,7 +502,7 @@
     (property "Value" "Conn_01x02" (id 1) (at 174.752 93.9546 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
-    (property "Footprint" "udriver3:DF13A2P125H21" (id 2) (at 172.72 91.44 0)
+    (property "Footprint" "udriver3:DF132P125H75" (id 2) (at 172.72 91.44 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "~" (id 3) (at 172.72 91.44 0)
