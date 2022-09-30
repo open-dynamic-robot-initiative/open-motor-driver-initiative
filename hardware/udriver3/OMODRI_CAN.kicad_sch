@@ -7,7 +7,7 @@
   (title_block
     (title "Open MOtor DRiver Initiative (OMODRI)")
     (date "2020-12-16")
-    (rev "1.1")
+    (rev "2.0")
     (company "LAAS/CNRS")
   )
 
@@ -423,7 +423,7 @@
     (property "RS" "185-2066" (id 9) (at 125.73 73.66 0)
       (effects (font (size 1.27 1.27)) hide)
     )
-    (property "Rated Voltage" "10V" (id 10) (at 125.73 73.66 0)
+    (property "Rated Voltage" "25V" (id 10) (at 125.73 73.66 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (pin "1" (uuid e0904e91-821a-49e1-b9cd-fcf415633d95))

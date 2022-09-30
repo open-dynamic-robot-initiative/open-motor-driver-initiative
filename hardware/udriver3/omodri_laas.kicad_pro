@@ -521,6 +521,10 @@
     [
       "f2e4b637-b410-4c88-a5bd-ca173e5a2c6b",
       "OMODRI_Alim_12V"
+    ],
+    [
+      "44769e0c-79a8-4b08-8369-3ab334b3414b",
+      "OMODRI_RS485"
     ]
   ],
   "text_variables": {}
