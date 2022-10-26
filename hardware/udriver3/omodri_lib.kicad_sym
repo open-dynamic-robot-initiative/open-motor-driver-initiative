@@ -2663,7 +2663,7 @@
         (name "CCM/SYNCO" (effects (font (size 1.4986 1.4986))))
         (number "11" (effects (font (size 1.4986 1.4986))))
       )
-      (pin input line (at -16.51 7.62 0) (length 7.62)
+      (pin input line (at -16.51 5.08 0) (length 7.62)
         (name "EN" (effects (font (size 1.4986 1.4986))))
         (number "12" (effects (font (size 1.4986 1.4986))))
       )

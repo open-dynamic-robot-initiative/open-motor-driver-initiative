@@ -455,9 +455,7 @@
         "name": "Gnd_Vdd",
         "nets": [
           "12V0",
-          "12V0_1",
           "5V0",
-          "5V0_1",
           "GND",
           "REF_3V0_BUF",
           "VDDA_3V3",

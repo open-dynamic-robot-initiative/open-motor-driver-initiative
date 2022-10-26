@@ -1544,7 +1544,7 @@
     (uuid 00000000-0000-0000-0000-00005f5f778e)
     (property "Reference" "D2" (id 0) (at 175.26 63.5 0))
     (property "Value" "TPD6E05U06" (id 1) (at 179.07 66.04 0))
-    (property "Footprint" "udrive3:USON_14" (id 2) (at 182.88 81.28 90)
+    (property "Footprint" "udriver3:USON_14" (id 2) (at 182.88 81.28 90)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "https://www.ti.com/lit/ds/symlink/tpd6e05u06.pdf" (id 3) (at 182.88 81.28 90)
