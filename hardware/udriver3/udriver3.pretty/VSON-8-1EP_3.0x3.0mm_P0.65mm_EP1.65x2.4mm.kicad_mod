@@ -2,7 +2,7 @@
   (layer "F.Cu")
   (tedit 0)
   (attr smd)
-  (fp_text reference "REF**" (at 0 -4.2 unlocked) (layer "F.SilkS")
+  (fp_text reference "REF**" (at 0 -2.2 unlocked) (layer "F.SilkS")
     (effects (font (size 1 1) (thickness 0.15)))
     (tstamp 8af99790-d192-4eab-9026-0972d71b7a52)
   )
@@ -26,4 +26,9 @@
   (pad "7" smd rect (at 1.4 -0.325) (size 0.6 0.3) (layers "F.Cu" "F.Paste" "F.Mask") (tstamp 18bd5ffc-9241-4a31-8123-99fbcb44a603))
   (pad "8" smd rect (at 1.4 -0.975) (size 0.6 0.3) (layers "F.Cu" "F.Paste" "F.Mask") (tstamp bd2603b1-8df9-42b7-9508-0637d7186a70))
   (pad "9" smd rect (at 0 0) (size 1.65 2.4) (layers "F.Cu" "F.Paste" "F.Mask") (tstamp c876791c-1066-434d-aaf5-c6cd709edcf9))
+  (model "${KIPRJMOD}/3D/THVD24x0DRB.stp"
+    (offset (xyz 0 0 0))
+    (scale (xyz 1 1 1))
+    (rotate (xyz 0 0 0))
+  )
 )
