@@ -1,12 +1,12 @@
 (footprint "USON_14" (version 20211014) (generator pcbnew)
   (layer "F.Cu")
   (tedit 5F9C558B)
-  (attr through_hole)
+  (attr smd)
   (fp_text reference "REF**" (at 0 -2.5) (layer "F.SilkS")
     (effects (font (size 1 1) (thickness 0.15)))
     (tstamp fb790fcb-24fc-41f0-bf9b-a3dcf5904ca4)
   )
-  (fp_text value "USON_14" (at 0 -3) (layer "F.Fab") hide
+  (fp_text value "USON_14" (at 0 2.6) (layer "F.Fab") hide
     (effects (font (size 1 1) (thickness 0.15)))
     (tstamp c30c389d-1002-4941-928c-f96adf633ff7)
   )

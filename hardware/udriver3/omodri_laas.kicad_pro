@@ -45,7 +45,7 @@
         "silk_text_upright": true,
         "zones": {
           "45_degree_only": false,
-          "min_clearance": 0.102
+          "min_clearance": 0.125
         }
       },
       "diff_pair_dimensions": [
@@ -138,7 +138,7 @@
           "drill": 0.35
         }
       ],
-      "zones_allow_external_fillets": false,
+      "zones_allow_external_fillets": true,
       "zones_use_no_outline": true
     },
     "layer_presets": []
@@ -491,6 +491,7 @@
           "/OMODRI_driver_M2/OUT_M1_CH1",
           "/OMODRI_driver_M2/OUT_M1_CH2",
           "/OMODRI_driver_M2/OUT_M1_CH3",
+          "/Power distribution/OMODRI_Alim_5V/V5V_5V0",
           "Net-(D3-Pad1)",
           "VPOWER"
         ],
@@ -512,8 +513,6 @@
         "microvia_drill": 0.1,
         "name": "Power_sig",
         "nets": [
-          "/OMODRI_CAN_RS485/CAN_H",
-          "/OMODRI_CAN_RS485/CAN_L",
           "/OMODRI_driver_M1/CPH",
           "/OMODRI_driver_M1/CPL",
           "/OMODRI_driver_M1/DVDD",
