@@ -492,7 +492,6 @@
           "/OMODRI_driver_M2/OUT_M1_CH2",
           "/OMODRI_driver_M2/OUT_M1_CH3",
           "/Power distribution/OMODRI_Alim_5V/V5V_5V0",
-          "Net-(D3-Pad1)",
           "VPOWER"
         ],
         "pcb_color": "rgba(0, 0, 0, 0.000)",
