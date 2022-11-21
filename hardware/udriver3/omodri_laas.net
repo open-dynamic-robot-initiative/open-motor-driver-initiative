@@ -1,7 +1,7 @@
 (export (version "E")
   (design
     (source "C:\\Users\\jmanhes\\LAAS\\Actionneur\\github\\open-motor-driver-initiative\\hardware\\udriver3\\omodri_laas.kicad_sch")
-    (date "19/11/2022 22:26:29")
+    (date "21/11/2022 09:54:00")
     (tool "Eeschema (6.0.5)")
     (sheet (number "1") (name "/") (tstamps "/")
       (title_block
