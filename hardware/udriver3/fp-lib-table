@@ -1,3 +1,3 @@
 (fp_lib_table
-  (lib (name "udriver3")(type "KiCad")(uri "${KIPRJMOD}/udriver3.pretty")(options "")(descr ""))
+  (lib (name "udriver3")(type "KiCad")(uri "${KIPRJMOD}/udriver3.pretty")(options "")(descr "Components footprint list for udrive3 project"))
 )

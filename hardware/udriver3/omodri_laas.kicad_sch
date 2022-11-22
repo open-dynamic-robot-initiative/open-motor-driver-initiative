@@ -2638,7 +2638,7 @@
     (uuid 4054f8e0-d83e-4cce-a9de-2175e7967449)
     (property "Reference" "U1" (id 0) (at 34.29 121.92 0))
     (property "Value" "74LVC2G17" (id 1) (at 36.83 124.46 0))
-    (property "Footprint" "udriver3:USON-6_1.45x1.0mm_P0.5mm" (id 2) (at 30.48 120.65 0)
+    (property "Footprint" "udriver3:SOT886_USON_6_1.45x1.0mm_P0.5mm" (id 2) (at 30.48 120.65 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "http://www.ti.com/lit/sg/scyt129e/scyt129e.pdf" (id 3) (at 30.48 120.65 0)
@@ -2728,7 +2728,7 @@
   )
 
   (symbol (lib_id "Jumper:SolderJumper_2_Bridged") (at 184.15 133.35 0) (unit 1)
-    (in_bom yes) (on_board yes)
+    (in_bom no) (on_board yes)
     (uuid 4e4d54cc-1ce8-46bb-b5a6-8bd0c395d59c)
     (property "Reference" "JP4" (id 0) (at 184.15 129.54 0))
     (property "Value" "SolderJumper_2_Bridged" (id 1) (at 184.15 131.2981 0)
@@ -2745,7 +2745,7 @@
   )
 
   (symbol (lib_id "Jumper:SolderJumper_2_Bridged") (at 177.8 138.43 0) (unit 1)
-    (in_bom yes) (on_board yes)
+    (in_bom no) (on_board yes)
     (uuid 5444c26d-e017-4101-a0ba-5fd23f76d4dd)
     (property "Reference" "JP5" (id 0) (at 177.8 134.62 0))
     (property "Value" "SolderJumper_2_Bridged" (id 1) (at 177.8 136.3781 0)
@@ -2797,7 +2797,7 @@
   )
 
   (symbol (lib_id "Jumper:SolderJumper_2_Bridged") (at 184.15 143.51 0) (unit 1)
-    (in_bom yes) (on_board yes)
+    (in_bom no) (on_board yes)
     (uuid 57a4b535-d7a7-4468-aced-159369ea06ec)
     (property "Reference" "JP6" (id 0) (at 184.15 139.7 0))
     (property "Value" "SolderJumper_2_Bridged" (id 1) (at 184.15 141.4581 0)
@@ -2981,7 +2981,7 @@
     (uuid a535b453-f857-4a14-b8fb-7c0c3a9192f8)
     (property "Reference" "U1" (id 0) (at 78.74 152.4 0))
     (property "Value" "74LVC2G17" (id 1) (at 82.55 154.94 0))
-    (property "Footprint" "udriver3:USON-6_1.45x1.0mm_P0.5mm" (id 2) (at 73.66 149.86 0)
+    (property "Footprint" "udriver3:SOT886_USON_6_1.45x1.0mm_P0.5mm" (id 2) (at 73.66 149.86 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "http://www.ti.com/lit/sg/scyt129e/scyt129e.pdf" (id 3) (at 73.66 149.86 0)
@@ -3041,7 +3041,7 @@
   )
 
   (symbol (lib_id "Jumper:SolderJumper_2_Bridged") (at 177.8 128.27 0) (unit 1)
-    (in_bom yes) (on_board yes)
+    (in_bom no) (on_board yes)
     (uuid c8084a98-cd87-497c-bd36-ff9848ee2011)
     (property "Reference" "JP3" (id 0) (at 177.8 124.46 0))
     (property "Value" "SolderJumper_2_Bridged" (id 1) (at 177.8 126.2181 0)
@@ -3267,7 +3267,7 @@
       (effects (font (size 1.27 1.27)) (justify left bottom))
     )
     (property "Sheet file" "OMODRI_power.kicad_sch" (id 1) (at 227.965 114.2496 0)
-      (effects (font (size 1.27 1.27)) (justify left top))
+      (effects (font (size 1.27 1.27)) (justify left top) hide)
     )
   )
 
@@ -3279,7 +3279,7 @@
       (effects (font (size 1.27 1.27)) (justify left bottom))
     )
     (property "Sheet file" "OMODRI_GPIO.kicad_sch" (id 1) (at 104.14 182.88 0)
-      (effects (font (size 1.27 1.27)) (justify left top))
+      (effects (font (size 1.27 1.27)) (justify left top) hide)
     )
     (pin "ENC1_CHA" input (at 91.44 20.32 180)
       (effects (font (size 1.27 1.27)) (justify left))
@@ -3559,15 +3559,15 @@
     )
   )
 
-  (sheet (at 58.42 19.05) (size 13.97 17.78)
+  (sheet (at 58.42 19.05) (size 13.97 16.51)
     (stroke (width 0) (type solid) (color 0 0 0 0))
     (fill (color 0 0 0 0.0000))
     (uuid 00000000-0000-0000-0000-00005f5a1016)
     (property "Sheet name" "OMODRI_QuadEncod" (id 0) (at 58.42 19.05 0)
       (effects (font (size 1.27 1.27)) (justify left bottom))
     )
-    (property "Sheet file" "OMODRI_QuadEncod.kicad_sch" (id 1) (at 58.42 37.4146 0)
-      (effects (font (size 1.27 1.27)) (justify left top))
+    (property "Sheet file" "OMODRI_QuadEncod.kicad_sch" (id 1) (at 58.42 35.56 0)
+      (effects (font (size 1.27 1.27)) (justify left top) hide)
     )
     (pin "ENC1_CHB" output (at 72.39 22.86 0)
       (effects (font (size 1.27 1.27)) (justify right))
@@ -3603,7 +3603,7 @@
       (effects (font (size 1.27 1.27)) (justify left bottom))
     )
     (property "Sheet file" "OMODRI_FSI_RX.kicad_sch" (id 1) (at 58.42 62.23 0)
-      (effects (font (size 1.27 1.27)) (justify left top))
+      (effects (font (size 1.27 1.27)) (justify left top) hide)
     )
     (pin "FSI_RX_D0" output (at 72.39 58.42 0)
       (effects (font (size 1.27 1.27)) (justify right))
@@ -3627,7 +3627,7 @@
       (effects (font (size 1.27 1.27)) (justify left bottom))
     )
     (property "Sheet file" "OMODRI_JTAG_OSC_RST.kicad_sch" (id 1) (at 54.61 182.88 0)
-      (effects (font (size 1.27 1.27)) (justify left top))
+      (effects (font (size 1.27 1.27)) (justify left top) hide)
     )
     (pin "25MHz_OSC_SRC" output (at 82.55 180.34 0)
       (effects (font (size 1.27 1.27)) (justify right))
@@ -3643,7 +3643,7 @@
       (effects (font (size 1.27 1.27)) (justify left bottom))
     )
     (property "Sheet file" "OMODRI_FSI_TX.kicad_sch" (id 1) (at 58.42 49.53 0)
-      (effects (font (size 1.27 1.27)) (justify left top))
+      (effects (font (size 1.27 1.27)) (justify left top) hide)
     )
     (pin "FSI_TX_D0" input (at 72.39 45.72 0)
       (effects (font (size 1.27 1.27)) (justify right))
@@ -3667,7 +3667,7 @@
       (effects (font (size 1.27 1.27)) (justify left bottom))
     )
     (property "Sheet file" "OMODRI_driver_M1.kicad_sch" (id 1) (at 151.13 63.5 0)
-      (effects (font (size 1.27 1.27)) (justify left top))
+      (effects (font (size 1.27 1.27)) (justify left top) hide)
     )
     (pin "INHA" input (at 151.13 24.13 180)
       (effects (font (size 1.27 1.27)) (justify left))
@@ -3739,7 +3739,7 @@
       (effects (font (size 1.27 1.27)) (justify left bottom))
     )
     (property "Sheet file" "OMODRI_driver_M2.kicad_sch" (id 1) (at 151.13 111.76 0)
-      (effects (font (size 1.27 1.27)) (justify left top))
+      (effects (font (size 1.27 1.27)) (justify left top) hide)
     )
     (pin "INHA" input (at 151.13 72.39 180)
       (effects (font (size 1.27 1.27)) (justify left))
@@ -3811,7 +3811,7 @@
       (effects (font (size 1.27 1.27)) (justify left bottom))
     )
     (property "Sheet file" "OMODRI_POWER_CAP.kicad_sch" (id 1) (at 54.61 175.26 0)
-      (effects (font (size 1.27 1.27)) (justify left top))
+      (effects (font (size 1.27 1.27)) (justify left top) hide)
     )
     (pin "V_Bus" output (at 82.55 172.72 0)
       (effects (font (size 1.27 1.27)) (justify right))
@@ -3827,7 +3827,7 @@
       (effects (font (size 1.27 1.27)) (justify left bottom))
     )
     (property "Sheet file" "OMODRI_LED_dbg.kicad_sch" (id 1) (at 54.61 167.64 0)
-      (effects (font (size 1.27 1.27)) (justify left top))
+      (effects (font (size 1.27 1.27)) (justify left top) hide)
     )
     (pin "WS2812B_CMD" input (at 82.55 165.1 0)
       (effects (font (size 1.27 1.27)) (justify right))
@@ -3843,7 +3843,7 @@
       (effects (font (size 1.27 1.27)) (justify left bottom))
     )
     (property "Sheet file" "OMODRI_CAN_RS845.kicad_sch" (id 1) (at 55.88 81.28 0)
-      (effects (font (size 1.27 1.27)) (justify left top))
+      (effects (font (size 1.27 1.27)) (justify left top) hide)
     )
     (pin "CAN_RX_SCI_RX" output (at 72.39 71.12 0)
       (effects (font (size 1.27 1.27)) (justify right))
@@ -4593,14 +4593,14 @@
     (path "/00000000-0000-0000-0000-00005f3a3f16/00000000-0000-0000-0000-00005f5be68b/00000000-0000-0000-0000-00005f6ec37d"
       (reference "C62") (unit 1) (value "1uF") (footprint "Capacitor_SMD:C_0201_0603Metric")
     )
-    (path "/00000000-0000-0000-0000-00005f3a3f16/00000000-0000-0000-0000-00005f5be68b/00000000-0000-0000-0000-00005f6ec39c"
+    (path "/00000000-0000-0000-0000-00005f3a3f16/00000000-0000-0000-0000-00005f5be68b/00000000-0000-0000-0000-00005f6ec35a"
       (reference "C63") (unit 1) (value "10uF") (footprint "Capacitor_SMD:C_0402_1005Metric")
     )
-    (path "/00000000-0000-0000-0000-00005f3a3f16/00000000-0000-0000-0000-00005f5be68b/00000000-0000-0000-0000-00005f6ec3a8"
-      (reference "C64") (unit 1) (value "1uF") (footprint "Capacitor_SMD:C_0201_0603Metric")
+    (path "/00000000-0000-0000-0000-00005f3a3f16/00000000-0000-0000-0000-00005f5be68b/00000000-0000-0000-0000-00005f6ec39c"
+      (reference "C64") (unit 1) (value "10uF") (footprint "Capacitor_SMD:C_0402_1005Metric")
     )
-    (path "/00000000-0000-0000-0000-00005f3a3f16/00000000-0000-0000-0000-00005f5be68b/00000000-0000-0000-0000-00005f6ec35a"
-      (reference "C65") (unit 1) (value "10uF") (footprint "Capacitor_SMD:C_0402_1005Metric")
+    (path "/00000000-0000-0000-0000-00005f3a3f16/00000000-0000-0000-0000-00005f5be68b/00000000-0000-0000-0000-00005f6ec3a8"
+      (reference "C65") (unit 1) (value "1uF") (footprint "Capacitor_SMD:C_0201_0603Metric")
     )
     (path "/00000000-0000-0000-0000-00005f3a3f16/00000000-0000-0000-0000-00005f5bf412/00000000-0000-0000-0000-00005f75eaa2"
       (reference "C66") (unit 1) (value "10uF") (footprint "Capacitor_SMD:C_0402_1005Metric")
@@ -4851,6 +4851,9 @@
     (path "/57a4b535-d7a7-4468-aced-159369ea06ec"
       (reference "JP6") (unit 1) (value "SolderJumper_2_Bridged") (footprint "Jumper:SolderJumper-2_P1.3mm_Bridged_Pad1.0x1.5mm")
     )
+    (path "/0e6ff59e-7792-4e05-911e-0611053fd35a/187d5e00-6fe2-410d-827b-71e7e8faead6"
+      (reference "JP7") (unit 1) (value "SolderJumper_2_Open") (footprint "Jumper:SolderJumper-2_P1.3mm_Open_Pad1.0x1.5mm")
+    )
     (path "/00000000-0000-0000-0000-00005f5caa29/00000000-0000-0000-0000-00005f7b91ae"
       (reference "Q1") (unit 1) (value "NX7002BKM") (footprint "Package_DFN_QFN:Diodes_DFN1006-3")
     )
@@ -5017,7 +5020,7 @@
       (reference "R48") (unit 1) (value "0.005") (footprint "udriver3:FC4L32")
     )
     (path "/00000000-0000-0000-0000-00005f3a3f16/00000000-0000-0000-0000-00005f5bd908/f3cc1329-1770-47d6-a790-e413a6ec4039"
-      (reference "R49") (unit 1) (value "100k") (footprint "Resistor_SMD:R_0201_0603Metric")
+      (reference "R49") (unit 1) (value "10k") (footprint "Resistor_SMD:R_0201_0603Metric")
     )
     (path "/00000000-0000-0000-0000-00005f3a3f16/00000000-0000-0000-0000-00005f5bd908/fd18ce16-2d63-430e-9ff8-8b96820e77ce"
       (reference "R50") (unit 1) (value "100k") (footprint "Resistor_SMD:R_0201_0603Metric")
@@ -5044,58 +5047,55 @@
       (reference "R57") (unit 1) (value "120") (footprint "Resistor_SMD:R_0201_0603Metric")
     )
     (path "/00000000-0000-0000-0000-00005f3a3f16/f2e4b637-b410-4c88-a5bd-ca173e5a2c6b/ab8de159-d044-44d1-bfa7-9071a09d0617"
-      (reference "R58") (unit 1) (value "100k") (footprint "Resistor_SMD:R_0201_0603Metric")
+      (reference "R58") (unit 1) (value "10k") (footprint "Resistor_SMD:R_0201_0603Metric")
     )
     (path "/00000000-0000-0000-0000-00005f3a3f16/f2e4b637-b410-4c88-a5bd-ca173e5a2c6b/6efb9ccf-a0d7-47fb-965d-059241af7fb1"
-      (reference "R59") (unit 1) (value "9.09k") (footprint "Resistor_SMD:R_0201_0603Metric")
-    )
-    (path "/0e6ff59e-7792-4e05-911e-0611053fd35a/6bd884cc-ec55-4397-9ae6-7f64eee15a10"
-      (reference "R60") (unit 1) (value "10k") (footprint "Resistor_SMD:R_0201_0603Metric")
+      (reference "R59") (unit 1) (value "909") (footprint "Resistor_SMD:R_0201_0603Metric")
     )
     (path "/0e6ff59e-7792-4e05-911e-0611053fd35a/b8c6cb5e-5adb-4cbf-81e1-fc8f6568c3d0"
-      (reference "R61") (unit 1) (value "10k") (footprint "Resistor_SMD:R_0201_0603Metric")
+      (reference "R60") (unit 1) (value "10k") (footprint "Resistor_SMD:R_0201_0603Metric")
     )
     (path "/0e6ff59e-7792-4e05-911e-0611053fd35a/98b1f899-ead6-402f-8e9f-94cbf1e71afb"
-      (reference "R62") (unit 1) (value "10") (footprint "Resistor_SMD:R_0201_0603Metric")
+      (reference "R61") (unit 1) (value "10") (footprint "Resistor_SMD:R_0201_0603Metric")
     )
     (path "/0e6ff59e-7792-4e05-911e-0611053fd35a/e38ada0a-72d9-476f-b45d-5f3330e7b481"
-      (reference "R63") (unit 1) (value "120") (footprint "Resistor_SMD:R_0603_1608Metric")
+      (reference "R62") (unit 1) (value "120") (footprint "Resistor_THT:R_Axial_DIN0204_L3.6mm_D1.6mm_P5.08mm_Horizontal")
     )
     (path "/0e6ff59e-7792-4e05-911e-0611053fd35a/fba9dacb-dc0e-4923-94cf-54541460530c"
-      (reference "R64") (unit 1) (value "10") (footprint "Resistor_SMD:R_0201_0603Metric")
+      (reference "R63") (unit 1) (value "10") (footprint "Resistor_SMD:R_0201_0603Metric")
     )
     (path "/0e6ff59e-7792-4e05-911e-0611053fd35a/92913c14-ca3e-4e06-9fcf-ee5c8ea44cb6"
-      (reference "R65") (unit 1) (value "10k") (footprint "Resistor_SMD:R_0201_0603Metric")
+      (reference "R64") (unit 1) (value "10k") (footprint "Resistor_SMD:R_0201_0603Metric")
     )
     (path "/0e6ff59e-7792-4e05-911e-0611053fd35a/23493b46-b278-48a4-98e2-23c921be0ac1"
-      (reference "R66") (unit 1) (value "10k") (footprint "Resistor_SMD:R_0201_0603Metric")
+      (reference "R65") (unit 1) (value "10k") (footprint "Resistor_SMD:R_0201_0603Metric")
     )
     (path "/00000000-0000-0000-0000-00005f5caa29/00000000-0000-0000-0000-000060f05130"
       (reference "SW1") (unit 1) (value "B3U-3100P-B") (footprint "Button_Switch_SMD:SW_SPST_B3U-1000P-B")
     )
     (path "/a535b453-f857-4a14-b8fb-7c0c3a9192f8"
-      (reference "U1") (unit 1) (value "74LVC2G17") (footprint "udriver3:USON-6_1.45x1.0mm_P0.5mm")
+      (reference "U1") (unit 1) (value "74LVC2G17") (footprint "udriver3:SOT886_USON_6_1.45x1.0mm_P0.5mm")
     )
     (path "/4054f8e0-d83e-4cce-a9de-2175e7967449"
-      (reference "U1") (unit 2) (value "74LVC2G17") (footprint "udriver3:USON-6_1.45x1.0mm_P0.5mm")
+      (reference "U1") (unit 2) (value "74LVC2G17") (footprint "udriver3:SOT886_USON_6_1.45x1.0mm_P0.5mm")
     )
     (path "/00000000-0000-0000-0000-00005f5a1016/3edf8d17-d880-4de3-b67b-a6b26a23282f"
-      (reference "U2") (unit 1) (value "74LVC2G17") (footprint "udriver3:USON-6_1.45x1.0mm_P0.5mm")
+      (reference "U2") (unit 1) (value "74LVC2G17") (footprint "udriver3:SOT886_USON_6_1.45x1.0mm_P0.5mm")
     )
     (path "/00000000-0000-0000-0000-00005f5a1016/6e549809-970b-4e2f-ab9b-77434f0dc039"
-      (reference "U2") (unit 2) (value "74LVC2G17") (footprint "udriver3:USON-6_1.45x1.0mm_P0.5mm")
+      (reference "U2") (unit 2) (value "74LVC2G17") (footprint "udriver3:SOT886_USON_6_1.45x1.0mm_P0.5mm")
     )
     (path "/00000000-0000-0000-0000-00005f5a1016/cefb5996-0a82-422d-a041-f9433568096a"
-      (reference "U3") (unit 1) (value "74LVC2G17") (footprint "udriver3:USON-6_1.45x1.0mm_P0.5mm")
+      (reference "U3") (unit 1) (value "74LVC2G17") (footprint "udriver3:SOT886_USON_6_1.45x1.0mm_P0.5mm")
     )
     (path "/00000000-0000-0000-0000-00005f5a1016/dc8cd74b-61ec-4261-95fc-e3b1a839fa01"
-      (reference "U3") (unit 2) (value "74LVC2G17") (footprint "udriver3:USON-6_1.45x1.0mm_P0.5mm")
+      (reference "U3") (unit 2) (value "74LVC2G17") (footprint "udriver3:SOT886_USON_6_1.45x1.0mm_P0.5mm")
     )
     (path "/00000000-0000-0000-0000-00005f5a1016/77948bb0-c98e-44be-a96f-5a1b0dabca16"
-      (reference "U4") (unit 1) (value "74LVC2G17") (footprint "udriver3:USON-6_1.45x1.0mm_P0.5mm")
+      (reference "U4") (unit 1) (value "74LVC2G17") (footprint "udriver3:SOT886_USON_6_1.45x1.0mm_P0.5mm")
     )
     (path "/00000000-0000-0000-0000-00005f5a1016/064e9f88-41ce-4489-a447-c97c39682057"
-      (reference "U4") (unit 2) (value "74LVC2G17") (footprint "udriver3:USON-6_1.45x1.0mm_P0.5mm")
+      (reference "U4") (unit 2) (value "74LVC2G17") (footprint "udriver3:SOT886_USON_6_1.45x1.0mm_P0.5mm")
     )
     (path "/00000000-0000-0000-0000-00005f5da2eb/00000000-0000-0000-0000-00005f7ac1d4"
       (reference "U5") (unit 1) (value "DSLVDS1047") (footprint "Package_SO:TSSOP-16_4.4x5mm_P0.65mm")
