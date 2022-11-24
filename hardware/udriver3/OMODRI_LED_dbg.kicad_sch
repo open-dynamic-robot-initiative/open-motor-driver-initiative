@@ -6,7 +6,7 @@
 
   (title_block
     (title "Open MOtor DRiver Initiative (OMODRI)")
-    (date "2022-10-05")
+    (date "2022-11-24")
     (rev "2.0")
     (company "LAAS/CNRS")
   )
@@ -203,7 +203,7 @@
   (symbol (lib_id "power:GND") (at 154.305 114.3 0) (unit 1)
     (in_bom yes) (on_board yes)
     (uuid 00000000-0000-0000-0000-00005fa05e5d)
-    (property "Reference" "#PWR067" (id 0) (at 154.305 120.65 0)
+    (property "Reference" "#PWR068" (id 0) (at 154.305 120.65 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (id 1) (at 154.432 118.6942 0))
@@ -219,7 +219,7 @@
   (symbol (lib_id "LED:WS2812B") (at 154.305 104.14 0) (mirror y) (unit 1)
     (in_bom yes) (on_board yes)
     (uuid 00000000-0000-0000-0000-00005fa05e75)
-    (property "Reference" "D5" (id 0) (at 159.385 110.49 0)
+    (property "Reference" "D6" (id 0) (at 159.385 110.49 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Value" "WS2812B" (id 1) (at 164.465 97.79 0)
