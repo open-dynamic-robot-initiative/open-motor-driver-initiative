@@ -686,12 +686,12 @@
       "OMODRI_IMU_DBG"
     ],
     [
-      "c53e2d2b-e3ea-4ea7-9c8d-a18dc2ab02ee",
-      "OMODRI_COM_SPI_USB"
-    ],
-    [
       "0e6ff59e-7792-4e05-911e-0611053fd35a",
       "OMODRI_CAN_RS485"
+    ],
+    [
+      "c53e2d2b-e3ea-4ea7-9c8d-a18dc2ab02ee",
+      "OMODRI_COM_SPI_USB"
     ]
   ],
   "text_variables": {}
