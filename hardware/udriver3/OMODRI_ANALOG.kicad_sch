@@ -1848,7 +1848,7 @@
     (property "Datasheet" "https://www.ti.com/lit/ds/symlink/tms320f28388d.pdf" (id 3) (at 91.44 59.6646 0)
       (effects (font (size 1.524 1.524)) hide)
     )
-    (property "DigiKey" " 	296-F28388DZWTS-ND" (id 4) (at 91.44 111.76 0)
+    (property "DigiKey" "296-F28388DZWTS-ND" (id 4) (at 91.44 111.76 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Mouser" "595-F28388DZWTS" (id 5) (at 91.44 111.76 0)
