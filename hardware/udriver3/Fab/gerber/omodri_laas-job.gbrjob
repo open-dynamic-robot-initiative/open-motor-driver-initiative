@@ -5,7 +5,7 @@
       "Application": "Pcbnew",
       "Version": "(6.0.5)"
     },
-    "CreationDate": "2022-11-25T17:39:44+01:00"
+    "CreationDate": "2022-11-28T14:04:54+01:00"
   },
   "GeneralSpecs": {
     "ProjectId": {
@@ -95,6 +95,16 @@
     {
       "Path": "omodri_laas-Edge_Cuts.gm1",
       "FileFunction": "Profile",
+      "FilePolarity": "Positive"
+    },
+    {
+      "Path": "omodri_laas-F_Fab.gbr",
+      "FileFunction": "AssemblyDrawing,Top",
+      "FilePolarity": "Positive"
+    },
+    {
+      "Path": "omodri_laas-B_Fab.gbr",
+      "FileFunction": "AssemblyDrawing,Bot",
       "FilePolarity": "Positive"
     }
   ],
