@@ -3912,7 +3912,7 @@
       (reference "U10") (unit 1) (value "DRV8353S") (footprint "Package_DFN_QFN:QFN-40-1EP_6x6mm_P0.5mm_EP4.6x4.6mm_ThermalVias")
     )
     (path "/00000000-0000-0000-0000-00005f3a3f16/00000000-0000-0000-0000-00005f5bd908/a4d82513-9b2d-4e88-bd07-39c1b9d76786"
-      (reference "U11") (unit 1) (value "TPSM561R5") (footprint "udriver3:B3QFN_15")
+      (reference "U11") (unit 1) (value "TPSM5601R5") (footprint "udriver3:B3QFN_15")
     )
     (path "/00000000-0000-0000-0000-00005f3a3f16/00000000-0000-0000-0000-00005f5be68b/00000000-0000-0000-0000-00005f6ec32c"
       (reference "U12") (unit 1) (value "MPM3804GG") (footprint "udriver3:QFN-10_2x2mm_P0.5mm")
