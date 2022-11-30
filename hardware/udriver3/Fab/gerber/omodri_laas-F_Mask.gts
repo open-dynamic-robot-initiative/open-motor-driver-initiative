@@ -1,12 +1,12 @@
 %TF.GenerationSoftware,KiCad,Pcbnew,(6.0.5)*%
-%TF.CreationDate,2022-11-30T13:27:14+01:00*%
+%TF.CreationDate,2022-11-30T15:37:05+01:00*%
 %TF.ProjectId,omodri_laas,6f6d6f64-7269-45f6-9c61-61732e6b6963,2.0*%
 %TF.SameCoordinates,Original*%
 %TF.FileFunction,Soldermask,Top*%
 %TF.FilePolarity,Negative*%
 %FSLAX46Y46*%
 G04 Gerber Fmt 4.6, Leading zero omitted, Abs format (unit mm)*
-G04 Created by KiCad (PCBNEW (6.0.5)) date 2022-11-30 13:27:14*
+G04 Created by KiCad (PCBNEW (6.0.5)) date 2022-11-30 15:37:05*
 %MOMM*%
 %LPD*%
 G01*
