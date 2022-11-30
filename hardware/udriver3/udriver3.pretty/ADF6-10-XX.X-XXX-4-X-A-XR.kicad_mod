@@ -85,7 +85,12 @@
   (pad "D09" smd circle (at -2.2225 -1.75) (size 0.4 0.4) (layers "F.Cu" "F.Paste" "F.Mask") (tstamp 342d4147-7baa-4395-8889-f0f710aa30f1))
   (pad "D10" smd circle (at -2.8575 -1.75) (size 0.4 0.4) (layers "F.Cu" "F.Paste" "F.Mask") (tstamp b90fcb8b-e922-4763-935c-ae5f73e540f2))
   (model "${KIPRJMOD}/3D/ADF6-10-03.5-L-4-2-A-TR.stp"
-    (offset (xyz 0 0 0))
+    (offset (xyz 0 0 0.3))
+    (scale (xyz 1 1 1))
+    (rotate (xyz -90 0 0))
+  )
+  (model "${KIPRJMOD}/3D/ADF6-10-07.5-L-4-2-A-TR.stp" hide
+    (offset (xyz 0 0 0.35))
     (scale (xyz 1 1 1))
     (rotate (xyz -90 0 0))
   )
