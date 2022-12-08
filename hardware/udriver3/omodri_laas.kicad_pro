@@ -391,7 +391,13 @@
         "name": "Analog_sig",
         "nets": [
           "/JTAG + CLOCK + RESET/25MHz_OSC_SRC",
+          "/JTAG + CLOCK + RESET/ERRORSTS",
           "/JTAG + CLOCK + RESET/F2838x_CLK_25MHz",
+          "/JTAG + CLOCK + RESET/TCK",
+          "/JTAG + CLOCK + RESET/TDI",
+          "/JTAG + CLOCK + RESET/TDO",
+          "/JTAG + CLOCK + RESET/TMS",
+          "/JTAG + CLOCK + RESET/~{TRSTn}",
           "/JTAG + CLOCK + RESET/~{XRSn}",
           "/OMODRI_FSI_RX/RX_CLK_LVDS_N",
           "/OMODRI_FSI_RX/RX_CLK_LVDS_P",
