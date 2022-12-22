@@ -106,7 +106,7 @@
         "allow_microvias": false,
         "max_error": 0.005,
         "min_clearance": 0.102,
-        "min_copper_edge_clearance": 0.01,
+        "min_copper_edge_clearance": 0.15,
         "min_hole_clearance": 0.25,
         "min_hole_to_hole": 0.3,
         "min_microvia_diameter": 0.19999999999999998,
