@@ -28,6 +28,7 @@ void FOC_svpwm2(foc_t*);
  */
 inline void FOC_getMeasures(acq_t* p_acq)
 {
+#ifdef UOMODRI_V1_ENABLE
     // Get the latest current values in Amps
     p_acq->ia       = (float32_t)(*p_acq->p_iaMeasReg) * ADC_MOTOR_CURRENT_SCALE;
     p_acq->ib       = (float32_t)(*p_acq->p_ibMeasReg) * ADC_MOTOR_CURRENT_SCALE;
@@ -43,6 +44,19 @@ inline void FOC_getMeasures(acq_t* p_acq)
     UOMODRI_VEXT_FLT(p_acq->vExtFlt, p_acq->vExt, vext);
 
     return;
+#elif (defined UOMODRI_V2_ENABLE)
+    // Get the latest current values in Amps
+    p_acq->ia       = (float32_t)(*p_acq->p_iaMeasReg) * ADC_MOTOR_CURRENT_SCALE;
+    p_acq->ib       = (float32_t)(*p_acq->p_ibMeasReg) * ADC_MOTOR_CURRENT_SCALE;
+    p_acq->ic       = (float32_t)(*p_acq->p_icMeasReg) * ADC_MOTOR_CURRENT_SCALE;
+    // Get the latest Voltage supply value in Volt (minimum is one to avoid dividing by zero later)
+    float32_t vbus  = __fmax(((float32_t)(*p_acq->p_vBusMeasReg) * ADC_VBUS_VOLTAGE_SCALE), 1.0f);
+    UOMODRI_VBUS_FLT(p_acq->vBusFlt, p_acq->vbus, vbus);
+    float32_t vext  = (float32_t)(*p_acq->p_vExtMeasReg) * ADC_VEXT12_VOLTAGE_SCALE;
+    UOMODRI_VEXT_FLT(p_acq->vExtFlt, p_acq->vExt, vext);
+
+    return;
+#endif
 }
 
 /**

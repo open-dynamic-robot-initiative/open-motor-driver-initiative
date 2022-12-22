@@ -44,6 +44,7 @@ typedef struct __EPWM_TIME_BASE_t__
     uint32_t                            epwmBase;                   /*!< ePWM peripheral address. */
     uint16_t                            phaseCount;                 /*!< Phase counter. Sets offset (min value). */
     uint16_t                            syncOutputMode;             /*!< Output sync signal generation. \see EPWM_SyncOutPulseMode */
+    EPWM_SyncInPulseSource              syncInputSrc;               /*!< Select the sync input signal.*/
 } epwm_tb_t;
 
 /**
@@ -294,7 +295,6 @@ typedef struct __ADC_INTERRUPT_EVENTS_t__
 typedef struct __ADC_CFG_t__
 {
     uint32_t                            adcBase;                    /*!< ADC peripheral address. */
-    uint32_t                            adcResultBase;              /*!< ADC results address. */
     const adc_ini_t*                    p_adcIni;                   /*!< Pointer on ADC start-of-conversion configuration handler */
     const adc_acq_t*                    p_adcAcq;                   /*!< Pointer on ADC result configuration handler */
     const adc_int_t*                    p_adcInt;                   /*!< Pointer on ADC Interrupt source configuration handler */
@@ -365,10 +365,16 @@ typedef struct __HAL_CFG_t__
  */
 typedef struct __HAL_MOTOR_CFG_t__
 {
+#ifdef UOMODRI_V1_ENABLE
     const epwm_cc_t*    const           p_pwmCntCmp[3];
     const adc_acq_t*    const           p_iAcq[3];
     const adc_acq_t*    const           p_vAcq[3];
     const adc_int_t*    const           p_intAcq;
+#elif (defined UOMODRI_V2_ENABLE)
+    const epwm_cc_t*    const           p_pwmCntCmp[3];
+    const adc_acq_t*    const           p_iAcq[3];
+    const adc_int_t*    const           p_intAcq;
+#endif
 } hal_motor_cfg_t;
 
 /***********************************************************************

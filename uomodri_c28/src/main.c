@@ -231,6 +231,7 @@ inline void LED_dimming(motor_t* p_motor, uint16_t* p_msg)
  */
 __attribute__((interrupt)) void adc_isrMotor1(void)
 {
+#ifdef UOMODRI_V1_ENABLE
 #ifdef DEBUG
     DBG_PIN4_SET;
 #endif
@@ -246,6 +247,19 @@ __attribute__((interrupt)) void adc_isrMotor1(void)
 #ifdef DEBUG
     DBG_PIN4_CLEAR;
 #endif
+#elif (defined UOMODRI_V2_ENABLE)
+    DBG_PIN3_SET;
+    while(DMA_getTransferStatusFlag(DMA_CMD_2_FOC_BASE_ADDR));
+    // Motor control
+    motor[MOTOR_1].itDone = MOT_runControl(&motor[MOTOR_1]);
+    // Clear the interrupt overflow flag
+    ADC_clearInterruptOverflowStatus(MOTOR12_IA_ADC_ADDR, MOTOR1_IA_INT_NUM);
+    // Clear the interrupt flag
+    ADC_clearInterruptStatus(MOTOR12_IA_ADC_ADDR, MOTOR1_IA_INT_NUM);
+    // Acknowledge PWM and CLA interrupt flag
+    Interrupt_clearACKGroup(MOTOR1_IA_INT_ACK_GROUP);
+    DBG_PIN3_CLEAR;
+#endif
 }
 
 /**
@@ -253,6 +267,7 @@ __attribute__((interrupt)) void adc_isrMotor1(void)
  */
 __attribute__((interrupt)) void adc_isrMotor2(void)
 {
+#ifdef UOMODRI_V1_ENABLE
 #ifdef DEBUG
     DBG_PIN4_SET;
 #endif
@@ -267,6 +282,19 @@ __attribute__((interrupt)) void adc_isrMotor2(void)
     Interrupt_clearACKGroup(MOTOR2_IA_INT_ACK_GROUP);
 #ifdef DEBUG
     DBG_PIN4_CLEAR;
+#endif
+#elif (defined UOMODRI_V2_ENABLE)
+    DBG_PIN2_SET;
+    while(DMA_getTransferStatusFlag(DMA_CMD_2_FOC_BASE_ADDR));
+    // Motor control
+    motor[MOTOR_2].itDone = MOT_runControl(&motor[MOTOR_2]);
+    // Clear the interrupt overflow flag
+    ADC_clearInterruptOverflowStatus(MOTOR12_IA_ADC_ADDR, MOTOR2_IA_INT_NUM);
+    // Clear the interrupt flag
+    ADC_clearInterruptStatus(MOTOR12_IA_ADC_ADDR, MOTOR2_IA_INT_NUM);
+    // Acknowledge PWM and CLA interrupt flag
+    Interrupt_clearACKGroup(MOTOR2_IA_INT_ACK_GROUP);
+    DBG_PIN2_CLEAR;
 #endif
 }
 

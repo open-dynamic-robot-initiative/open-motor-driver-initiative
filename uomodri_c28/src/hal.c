@@ -104,6 +104,7 @@ void HAL_GPIO_ini(const gpio_cfg_t* p_gpio)
  */
 void HAL_ADC_ini(const adc_cfg_t* p_adcCfg)
 {
+#ifdef UOMODRI_V1_ENABLE
     if((p_adcCfg != NULL) && (p_adcCfg->p_adcIni != NULL) && (p_adcCfg->p_adcAcq != NULL))
     {
         const adc_ini_t*    p_adcIni    = p_adcCfg->p_adcIni;
@@ -162,7 +163,56 @@ void HAL_ADC_ini(const adc_cfg_t* p_adcCfg)
             adcBase = (++p_adcCfg)->adcBase;
         }
     }
+#elif (defined UOMODRI_V2_ENABLE)
+    if((p_adcCfg != NULL) && (p_adcCfg->p_adcIni != NULL) && (p_adcCfg->p_adcAcq != NULL))
+    {
+        const adc_ini_t*    p_adcIni    = p_adcCfg->p_adcIni;
+        const adc_int_t*    p_adcInt    = p_adcCfg->p_adcInt;
+        uint32_t            adcBase     = p_adcCfg->adcBase;
 
+        while(adcBase != UINT32_MAX)
+        {
+            /* Sets ADC clock to 50MHz (ADCCLK (derived from PERx.SYSCLK))
+             * Set converting input mode : "ADC_MODE_SINGLE_ENDED" or "ADC_MODE_DIFFERENTIAL"
+             * Set converting resolution : "ADC_RESOLUTION_12BIT" or "ADC_RESOLUTION_16BIT"
+             * Set IT raising  : "ADC_PULSE_END_OF_ACQ_WIN" or "ADC_PULSE_END_OF_CONV"
+             * Enables ADC converter
+             */
+            ADC_setPrescaler(adcBase, PERxSYSCLK_TO_ADCCLK_DIV);
+            ADC_setMode(adcBase, ADC_RESOLUTION_BIT, ADC_SIGNAL_MODE);
+            ADC_setInterruptPulseMode(adcBase, ADC_PULSE_END_MODE);
+            ADC_enableConverter(adcBase);
+
+            // Let some time to power up ADCs
+            DEVICE_DELAY_US(1500U);
+
+            while(p_adcIni->adcBase == adcBase)
+            {
+                /* Set priorities according round-robin
+                 * Set the input channel, SOC number, trigger source & S/H window
+                 * SOC source will be PWM, no IT.
+                 */
+                ADC_setSOCPriority(adcBase, ADC_SOC_PRIORITY);
+                ADC_setupSOC(adcBase, p_adcIni->adcSOCNumber, p_adcIni->adcTriggerSrc, p_adcIni->adcChannel, ADC_SAMPLING_WINDOW);
+                ADC_setInterruptSOCTrigger(adcBase, p_adcIni->adcSOCNumber, ADC_INT_SOC_TRIGGER);
+                p_adcIni++;
+            }
+
+            if(p_adcCfg->p_adcInt != NULL)
+            {
+                while(p_adcInt->adcBase == adcBase)
+                {
+                    ADC_setInterruptSource(adcBase, p_adcInt->adcIntNumber, p_adcInt->adcEOCNumber);
+                    ADC_enableContinuousMode(adcBase, p_adcInt->adcIntNumber);
+                    ADC_enableInterrupt(adcBase, p_adcInt->adcIntNumber);
+                    ADC_clearInterruptStatus(adcBase, p_adcInt->adcIntNumber);
+                    p_adcInt++;
+                }
+            }
+            adcBase = (++p_adcCfg)->adcBase;
+        }
+    }
+#endif
     return;
 }
 
@@ -172,6 +222,7 @@ void HAL_ADC_ini(const adc_cfg_t* p_adcCfg)
  */
 void HAL_ADC_offsetCalib(const hal_motor_cfg_t* p_halMotorCfg)
 {
+#ifdef UOMODRI_V1_ENABLE
     if(p_halMotorCfg != NULL)
     {
         const epwm_cc_t*    p_pwmCC     = NULL;
@@ -189,14 +240,14 @@ void HAL_ADC_offsetCalib(const hal_motor_cfg_t* p_halMotorCfg)
             EPWM_setCounterCompareValue(p_pwmCC->epwmBase, p_pwmCC->compModule, p_pwmCC->compCount);
         }
 
-        for (calibCnt = 0; calibCnt < 10000; calibCnt++)
+        for(calibCnt = 0; calibCnt < 10000; calibCnt++)
         {
             /* Wait data acquisition for Ia, Ib, Ic . Blocking.
              Va, Vb, Vc & Vbus will be also available. */
             p_ITConv = p_halMotorCfg->p_intAcq;
             // Wait IT flag event
             while(ADC_getInterruptStatus(p_ITConv->adcBase, p_ITConv->adcIntNumber) == false);
-            if (calibCnt > 1000)
+            if(calibCnt > 1000)
                 for(loop = 0; loop < 3; loop++)
                 {
                    UOMODRI_HAL_ADC_CALIB(fltCoef, i[loop], (float32_t) *p_halMotorCfg->p_iAcq[loop]->adcResultReg);
@@ -224,6 +275,55 @@ void HAL_ADC_offsetCalib(const hal_motor_cfg_t* p_halMotorCfg)
             // Sets the post processing block reference offset for tensions
             ADC_setPPBReferenceOffset(p_halMotorCfg->p_iAcq[loop]->adcBase, p_halMotorCfg->p_iAcq[loop]->adcPPBNumber, (uint16_t)i[loop]);
     }
+#elif (defined UOMODRI_V2_ENABLE)
+    if(p_halMotorCfg != NULL)
+    {
+        const epwm_cc_t*    p_pwmCC     = NULL;
+        const adc_int_t*    p_ITConv    = NULL;
+        lpf_t               fltCoef     = {.a = 0.998f, .one_minus_a = 0.002f};
+        float32_t           i[3]        = {0.0f, 0.0f, 0.0f};
+        uint16_t            calibCnt    = 0;
+        uint8_t             loop        = 0;
+
+        // force no switching with low side transistors closed
+        for(loop = 0; loop < 3; loop++)
+        {
+            p_pwmCC = p_halMotorCfg->p_pwmCntCmp[loop];
+            EPWM_setCounterCompareValue(p_pwmCC->epwmBase, p_pwmCC->compModule, p_pwmCC->compCount);
+        }
+
+        for(calibCnt = 0; calibCnt < 10000; calibCnt++)
+        {
+            /* Wait data acquisition for Ia, Ib, Ic . Blocking.
+             Va, Vb, Vc & Vbus will be also available. */
+            p_ITConv = p_halMotorCfg->p_intAcq;
+            // Wait IT flag event
+            while(ADC_getInterruptStatus(p_ITConv->adcBase, p_ITConv->adcIntNumber) == false);
+            if(calibCnt > 1000)
+                for(loop = 0; loop < 3; loop++)
+                    UOMODRI_HAL_ADC_CALIB(fltCoef, i[loop], (float32_t) *p_halMotorCfg->p_iAcq[loop]->adcResultReg);
+            else
+                for(loop = 0; loop < 3; loop++)
+                    i[loop] = (float32_t) *(p_halMotorCfg->p_iAcq[loop]->adcResultReg);
+
+            // clear flags
+            for(loop = 0; loop < 3; loop++)
+            {
+                // Clear the interrupt overflow flag
+                ADC_clearInterruptOverflowStatus(p_halMotorCfg->p_iAcq[loop]->adcBase, p_ITConv->adcIntNumber);
+                // Clear the interrupt flag
+                ADC_clearInterruptStatus(p_halMotorCfg->p_iAcq[loop]->adcBase, p_ITConv->adcIntNumber);
+            }
+        }
+
+        // Set offsets in PPBs
+        for(loop = 0; loop < 3; loop++)
+            // Sets the post processing block reference offset for tensions
+            ADC_setPPBReferenceOffset(p_halMotorCfg->p_iAcq[loop]->adcBase,
+                                      p_halMotorCfg->p_iAcq[loop]->adcPPBNumber,
+                                      (uint16_t)i[loop]);
+    }
+#endif
 
     return;
 }
@@ -243,8 +343,10 @@ void HAL_ePWM_ini(const epwm_cfg_t* p_pwmCfg)
         const epwm_db_t* p_pwmDeadBand          = p_pwmCfg->p_epwmDeadband;
         uint32_t         pwmBase                = p_pwmCfg->epwmBase;
 
-        // Disable global PWM clock during initialization
-        SysCtl_disablePeripheral(SYSCTL_PERIPH_CLK_GTBCLKSYNC);
+        /* Disable sync(Freeze clock to PWM as well). GTBCLKSYNC is applicable
+         * only for multiple core devices.
+         */
+        SysCtl_disablePeripheral(SYSCTL_PERIPH_CLK_TBCLKSYNC);
         // Set correct frequency for EPWMCLK (max = PLLSYSCLK / 2)
         SysCtl_setEPWMClockDivider(SYSCTL_EPWMCLK_DIV_2);
 
@@ -277,6 +379,10 @@ void HAL_ePWM_ini(const epwm_cfg_t* p_pwmCfg)
                 EPWM_setTimeBaseCounterMode(pwmBase, PWM_COUNTER_MODE);
                 EPWM_setTimeBaseCounter(pwmBase, PWM_INITIAL_CNT_VAL);
                 EPWM_enableSyncOutPulseSource(pwmBase, p_pwmTimeBase->syncOutputMode);
+//                EPWM_setOneShotSyncOutTrigger(pwmBase, EPWM_OSHT_SYNC_OUT_TRIG_SYNC);
+//                EPWM_enableOneShotSync(pwmBase);
+//                EPWM_startOneShotSync(pwmBase);
+                EPWM_setSyncInPulseSource(pwmBase, p_pwmTimeBase->syncInputSrc);
                 p_pwmTimeBase++;
             }
 
@@ -444,7 +550,8 @@ void HAL_ePWM_ini(const epwm_cfg_t* p_pwmCfg)
             pwmBase = (++p_pwmCfg)->epwmBase;
         }
         // End of PWM initialization. Enable global PWM clock.
-        SysCtl_enablePeripheral(SYSCTL_PERIPH_CLK_GTBCLKSYNC);
+//        SysCtl_enablePeripheral(SYSCTL_PERIPH_CLK_GTBCLKSYNC);
+        SysCtl_enablePeripheral(SYSCTL_PERIPH_CLK_TBCLKSYNC);
         EPWM_forceSyncPulse(MOTOR1_PWM1_BASE);
     }
 
