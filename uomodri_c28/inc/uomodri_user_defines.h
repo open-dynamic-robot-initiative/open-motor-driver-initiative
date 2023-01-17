@@ -24,12 +24,30 @@
  */
 //#define UOMODRI_V1_ENABLE
 #define UOMODRI_V2_ENABLE
-#define CLA_CORE_ENABLE                         0
-#define CM_CORE_ENABLE                          0
-#define USB_BUS_ENABLE
+#if (defined UOMODRI_V1_ENABLE) && (defined UOMODRI_V2_ENABLE)
+#error "Only one config must be set @ a time."
+#elif (!defined UOMODRI_V1_ENABLE) && (!defined UOMODRI_V2_ENABLE)
+#error "@ least one config must be set @ a time."
+#endif
+//#define CLA_CORE_ENABLE
+//#define CM_CORE_ENABLE
+//#define USB_BUS_ENABLE_ON_CPU1
+//#define USB_BUS_ENABLE_ON_CM
+#if (defined USB_BUS_ENABLE_ON_CPU1) && (defined USB_BUS_ENABLE_ON_CM)
+#error "USB cannot run on CPU1 & CM @ the same time"
+#endif
+#if (!defined CM_CORE_ENABLE) && (defined USB_BUS_ENABLE_ON_CM)
+#error "If USB run on CM, CM must be active."
+#endif
 //#define UART_BUS_ENABLE
+#if ((defined USB_BUS_ENABLE_ON_CPU1) || (defined USB_BUS_ENABLE_ON_CM)) && (defined UART_BUS_ENABLE)
+#error "USB & UART share the same pins. They cannot run @ the same time"
+#endif
 //#define CAN_BUS_ENABLE
 #define RS485_BUS_ENABLE
+#if (defined CAN_BUS_ENABLE) && (defined RS485_BUS_ENABLE)
+#error "CAN & RS-485 share the same pins. They cannot run @ the same time"
+#endif
 #define UOMODRI_IABC_FLT(flt_coef, y, x)        LPF_FILTER_1(flt_coef, y, x)
 #define UOMODRI_VBUS_FLT(flt_coef, y, x)        LPF_FILTER_1(flt_coef, y, x)
 #define UOMODRI_VEXT_FLT(flt_coef, y, x)        LPF_FILTER_1(flt_coef, y, x)
@@ -116,6 +134,12 @@
 #define MSB_32(x)                               (((x) >> 16) & 0xFFFF)
 
 /***********************************************************************
+ *  DEVICE INITIALIZATION DEFINES
+ ***********************************************************************/
+// Redefine LSPCLK to run at 200MHz (for SPI & SCI bit clocks)
+#define UOMODRI_LSPCLK_FREQ                     (DEVICE_SYSCLK_FREQ / 1)
+
+/***********************************************************************
  * GPIO DEBUG DEFINES
  ***********************************************************************/
 /** @defgroup GPIO debug pins configuration.
@@ -181,12 +205,12 @@
 /***********************************************************************
  * USB / UART ON USB connector
  ***********************************************************************/
-#if (defined USB_BUS_ENABLE) && (!defined UART_BUS_ENABLE)
+#if ((defined USB_BUS_ENABLE_ON_CPU1) || (defined USB_BUS_ENABLE_ON_CM)) && (!defined UART_BUS_ENABLE)
 #define USB_M                                   (42)
 #define USB_M_CFG                               GPIO_42_GPIO42
 #define USB_P                                   (43)
 #define USB_P_CFG                               GPIO_43_GPIO43
-#elif (!defined USB_BUS_ENABLE) && (defined UART_BUS_ENABLE)
+#elif (!defined USB_BUS_ENABLE_ON_CPU1) && (!defined USB_BUS_ENABLE_ON_CM) && (defined UART_BUS_ENABLE)
 #define UART_ON_USB_TX                          (42)
 #define UART_ON_USB_TX_CFG                      GPIO_42_SCIA_TX
 #define UART_ON_USB_RX                          (43)
@@ -281,6 +305,11 @@
 #define IPC_SYNC_FLAG                           IPC_FLAG31
 #define IPC_CPU1_TO_CM_FLAG                     IPC_FLAG0
 #define IPC_CM_TO_CPU1_FLAG                     IPC_FLAG0
+
+/***********************************************************************
+ * SCI DEFINES
+ ***********************************************************************/
+#define COM_SCI_BASE                            SCIB_BASE
 
 /***********************************************************************
  * SPI DEFINES

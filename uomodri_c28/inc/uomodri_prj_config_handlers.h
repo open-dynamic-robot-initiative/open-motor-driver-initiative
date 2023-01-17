@@ -273,7 +273,11 @@ static cmd_t cmd_uOmodri[2] =
 };
 
 #pragma DATA_ALIGN(motor_foc, 8)
+#ifdef CM_CORE_ENABLE
 #pragma DATA_SECTION(motor_foc, "MSGRAM_CPU_TO_CM");
+#else
+#pragma DATA_SECTION(motor_foc, "ramgs1");
+#endif
 static foc_t motor_foc[] =
 {
 #ifdef UOMODRI_V1_ENABLE
@@ -1025,9 +1029,49 @@ static foc_t motor_foc[] =
 /** @var    MOTOR_STRUCT    motor[]
  *  @brief  General structure array configuration structure for the Hardware Abstraction Layer.
  */
+#ifdef CM_CORE_ENABLE
 #pragma DATA_SECTION(motor, "MSGRAM_CPU_TO_CM");
+#else
+#pragma DATA_SECTION(motor, "ramgs1");
+#endif
 static motor_t motor[2] =
 {
+#ifdef CLA_CORE_ENABLE
+ {
+  //--- MOTOR_1 ---------------------------------------------------------------
+  .motor_id         = MOTOR_1,
+  .motorHalCfg_u.ptr= &hal_motor_cfg[MOTOR_1],
+  .motorDRV_u.ptr   = &drv_cfg[MOTOR_1],
+  .motorFOC_u.ptr   = &motor_foc[MOTOR_1],
+  //--- FSM motor initial state -----------------------------------------------
+  .motor_state      = MOTOR_STATE_INIT,
+  //--- Error message ---------------------------------------------------------
+  .motor_error.all  = MOTOR_ERROR_NO_ERROR,
+  .clCycleNb        = 0,
+  .itCnt            = 0,
+  .itDone           = false,
+  .p_motorChAReg    = (volatile uint16_t *)(MOTOR1_PWM1_CMD_ADDR),
+  .p_motorChBReg    = (volatile uint16_t *)(MOTOR1_PWM2_CMD_ADDR),
+  .p_motorChCReg    = (volatile uint16_t *)(MOTOR1_PWM3_CMD_ADDR),
+ },
+ {
+  //--- MOTOR_1 ---------------------------------------------------------------
+  .motor_id         = MOTOR_2,
+  .motorHalCfg_u    = {.ptr = &hal_motor_cfg[MOTOR_2]},
+  .motorDRV_u.ptr   = &drv_cfg[MOTOR_2],
+  .motorFOC_u.ptr   = &motor_foc[MOTOR_2],
+  //--- FSM motor initial state -----------------------------------------------
+  .motor_state      = MOTOR_STATE_INIT,
+  //--- Error message ---------------------------------------------------------
+  .motor_error.all  = MOTOR_ERROR_NO_ERROR,
+  .clCycleNb        = 0,
+  .itCnt            = 0,
+  .itDone           = false,
+  .p_motorChAReg    = (volatile uint16_t *)(MOTOR2_PWM1_CMD_ADDR),
+  .p_motorChBReg    = (volatile uint16_t *)(MOTOR2_PWM2_CMD_ADDR),
+  .p_motorChCReg    = (volatile uint16_t *)(MOTOR2_PWM3_CMD_ADDR),
+ },
+#else
  {
   //--- MOTOR_1 ---------------------------------------------------------------
   .motor_id         = MOTOR_1,
@@ -1062,9 +1106,10 @@ static motor_t motor[2] =
   .p_motorChBReg    = (volatile uint16_t *)(MOTOR2_PWM2_CMD_ADDR),
   .p_motorChCReg    = (volatile uint16_t *)(MOTOR2_PWM3_CMD_ADDR),
  },
+#endif
 };
 
-static const dma_cfg_t  dmaMem2MemCfList[] =
+static const dma_cfg_t  dmaMem2MemCfgList[] =
 {
  // DMA base register initialization
  // DMA to duplicate message from uOmodri command struct to foc struct.

@@ -27,6 +27,11 @@
 	</natures>
 	<linkedResources>
 		<link>
+			<name>usblib.lib</name>
+			<type>1</type>
+			<locationURI>C2000WARE_ROOT/libraries/communications/usb/f2838x/lib/usblib.lib</locationURI>
+		</link>
+		<link>
 			<name>device/f2838x_globalvariabledefs.c</name>
 			<type>1</type>
 			<locationURI>C2000WARE_ROOT/device_support/f2838x/headers/source/f2838x_globalvariabledefs.c</locationURI>

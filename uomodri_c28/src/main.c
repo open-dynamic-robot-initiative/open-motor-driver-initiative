@@ -16,6 +16,9 @@
 #include "uomodri_user_defines.h"
 #include "uomodri_hal_config_handlers.h"
 #include "uomodri_prj_config_handlers.h"
+#ifdef CLA_CORE_ENABLE
+#include "cla_shared.h"
+#endif
 
 /***********************************************************************
  * VARIABLES
@@ -23,6 +26,32 @@
 extern motor_t          motor[2];
 extern const hal_cfg_t  hal;
 extern cmd_t            cmd_uOmodri[2];
+
+#ifdef CLA_CORE_ENABLE
+extern uint32_t Cla1funcsRunStart, Cla1funcsLoadStart, Cla1funcsLoadSize;
+extern uint32_t Cla1ConstRunStart, Cla1ConstLoadStart, Cla1ConstLoadSize;
+//#pragma SET_DATA_SECTION("cla_shared")
+//bool_t              flag;// = false;
+//#pragma SET_DATA_SECTION()
+
+//#pragma DATA_SECTION(angle,"Cla1ToCpuMsgRAM");
+//float32_t           angle[2];
+#pragma DATA_SECTION(thetaAbs,"Cla1ToCpuMsgRAM");
+float32_t           thetaAbs;
+#pragma DATA_SECTION(velocity,"Cla1ToCpuMsgRAM");
+float32_t           velocity;
+#pragma DATA_SECTION(cla_new_flag,"Cla1ToCpuMsgRAM");
+bool_t              cla_new_flag;
+#pragma DATA_SECTION(cpu1_ready_flag,"CpuToCla1MsgRAM");
+bool_t              cpu1_ready_flag;
+
+//#pragma DATA_SECTION(pos_as5047u, "MSGRAM_CPU_TO_CM");
+//BitDataFrame32_u    pos_as5047u;
+//#pragma DATA_SECTION(vel_as5047u, "MSGRAM_CPU_TO_CM");
+//BitDataFrame32_u    vel_as5047u;
+#pragma DATA_SECTION(transfer_array, "MSGRAM_CPU_TO_CM");
+float32_t           transfer_array[6];
+#endif
 
 /***********************************************************************
  * FUNCTIONS DECLARATION
@@ -41,8 +70,21 @@ void main(void)
 {
     // uOmodri low level device initialization
     MCU_ini();
+#undef DEVICE_LSPCLK_FREQ
+#define DEVICE_LSPCLK_FREQ          (DEVICE_SYSCLK_FREQ / 1)
     // Hardware Abstraction Layer initialization
     HAL_ini(&hal);
+#ifdef CLA_CORE_ENABLE
+    // DRV8353 initialization
+    DRV_ini(motor[MOTOR_1].motorDRV_u.ptr);
+    DRV_ini(motor[MOTOR_2].motorDRV_u.ptr);
+    // ADC offset calibration for debug
+    HAL_ADC_offsetCalib(motor[MOTOR_1].motorHalCfg_u.ptr);
+    HAL_ADC_offsetCalib(motor[MOTOR_2].motorHalCfg_u.ptr);
+    // Force a reset of FOC structures
+    FOC_resetStruct(motor[MOTOR_1].motorFOC_u.ptr);
+    FOC_resetStruct(motor[MOTOR_2].motorFOC_u.ptr);
+#else
     // DRV8353 initialization
     DRV_ini(motor[MOTOR_1].p_motorDRV);
     DRV_ini(motor[MOTOR_2].p_motorDRV);
@@ -52,13 +94,17 @@ void main(void)
     // Force a reset of FOC structures
     FOC_resetStruct(motor[MOTOR_1].p_motorFOC);
     FOC_resetStruct(motor[MOTOR_2].p_motorFOC);
+#endif
     // Force a reset of the intermediate command structures. Working structures are embedded in FOC structures.
     COM_resetCmdStruct(&cmd_uOmodri[MOTOR_1]);
     COM_resetCmdStruct(&cmd_uOmodri[MOTOR_2]);
     // DMA initialization for memory to memory transfer
-    HAL_DMA_ini(dmaMem2MemCfList);
+    HAL_DMA_ini(dmaMem2MemCfgList);
     // Interrupts initialization
     HAL_INT_ini(InterruptList);
+//    // USB administration
+//    USBBufferInit(&g_sTxBuffer);
+//    USBBufferInit(&g_sRxBuffer);
 
     bool_t cmd_msg_valid    = false;
     bool_t timeout_flag     = false;
@@ -90,11 +136,19 @@ void main(void)
             // Send new commands to FOC structures if extract valid
             if(cmd_msg_valid || timeout_flag)
             {
+#ifdef CLA_CORE_ENABLE
+                if(cmd_msg_valid && ((cmd_uOmodri[MOTOR_1].enableReg.all & 0xB000) == 0xB000))
+                    cmd_uOmodri[MOTOR_1].posRef += motor[MOTOR_1].motorFOC_u.ptr->motor_enc.thetaIndex;
+                if(cmd_msg_valid && ((cmd_uOmodri[MOTOR_2].enableReg.all & 0x000B) == 0x000B))
+                    cmd_uOmodri[MOTOR_2].posRef += motor[MOTOR_2].motorFOC_u.ptr->motor_enc.thetaIndex;
+                DMA_forceTrigger(DMA_CMD_2_FOC_BASE_ADDR);
+#else
                 if(cmd_msg_valid && ((cmd_uOmodri[MOTOR_1].enableReg.all & 0xB000) == 0xB000))
                     cmd_uOmodri[MOTOR_1].posRef += motor[MOTOR_1].p_motorFOC->motor_enc.thetaIndex;
                 if(cmd_msg_valid && ((cmd_uOmodri[MOTOR_2].enableReg.all & 0x000B) == 0x000B))
                     cmd_uOmodri[MOTOR_2].posRef += motor[MOTOR_2].p_motorFOC->motor_enc.thetaIndex;
                 DMA_forceTrigger(DMA_CMD_2_FOC_BASE_ADDR);
+#endif
             }
             cmd_msg_valid           = false;
             timeout_flag            = false;
@@ -130,12 +184,21 @@ void main(void)
                 LED_dimming(&motor[MOTOR_1], &led_msg[0]);
                 DMA_startChannel(DMA_LED_SPI_TX_BASE_ADDR);
             }
+#ifdef CLA_CORE_ENABLE
+            // Read DRV data to get status registers (MOTOR_1)
+            if(motor[MOTOR_1].motor_error.bit.drv_fault)
+                DRV_readStatus(motor[MOTOR_1].motorDRV_u.ptr);
+            // Read DRV data to get status registers (MOTOR_2)
+            if(motor[MOTOR_2].motor_error.bit.drv_fault)
+                DRV_readStatus(motor[MOTOR_2].motorDRV_u.ptr);
+#else
             // Read DRV data to get status registers (MOTOR_1)
             if(motor[MOTOR_1].motor_error.bit.drv_fault)
                 DRV_readStatus(motor[MOTOR_1].p_motorDRV);
             // Read DRV data to get status registers (MOTOR_2)
             if(motor[MOTOR_2].motor_error.bit.drv_fault)
                 DRV_readStatus(motor[MOTOR_2].p_motorDRV);
+#endif
             // Timeout management
             timeout_flag            = true;
             // Clear CPU timer flag
@@ -154,20 +217,37 @@ void main(void)
  */
 static void MCU_ini(void)
 {
+#if (defined USB_BUS_ENABLE_ON_CPU1) || ((defined USB_BUS_ENABLE_ON_CM) && (defined CM_CORE_ENABLE))
+    /* Redefined to pass to SysCtl_setAuxClock(). Will configure the clock as follows:
+     * AUXPLLCLK = 25MHz (XTAL_OSC) * 48 (IMULT) / (2 (REFDIV) * 5 (ODIV) * 2(AUXPLLDIV) )
+     * AUXPLLCLK require a 60MHz clock for USB. AUPLLRAWCLK require a 120MHz clock for CM. */
+#undef DEVICE_AUXSETCLOCK_CFG
+#define DEVICE_AUXSETCLOCK_CFG      (SYSCTL_AUXPLL_OSCSRC_XTAL  | \
+                                     SYSCTL_AUXPLL_IMULT(48)    | \
+                                     SYSCTL_AUXPLL_REFDIV(2U)   | \
+                                     SYSCTL_AUXPLL_ODIV(5U)     | \
+                                     SYSCTL_AUXPLL_DIV_2        | \
+                                     SYSCTL_AUXPLL_ENABLE       | \
+                                     SYSCTL_DCC_BASE_0)
+#undef DEVICE_AUXCLK_FREQ
+#define DEVICE_AUXCLK_FREQ          ((DEVICE_OSCSRC_FREQ * 48) / (2 * 5 * 2))
+#endif
     /* Initialize clock and peripherals */
     Device_init();
-    /* Set up the auxiliary PLL to 125MHz for CM use. */
-//    SysCtl_setAuxClock(SYSCTL_AUXPLL_OSCSRC_XTAL | SYSCTL_AUXPLL_IMULT(50) | SYSCTL_REFDIV(2U) |
-//                       SYSCTL_ODIV(5U) | SYSCTL_AUXPLL_DIV_2 | SYSCTL_AUXPLL_ENABLE | SYSCTL_DCC_BASE_0);
-    /* Set the CM Clock to run at 125MHz.
-     * The CM Clock is a fractional multiple of the AUXPLL Clock (125 MHz). */
-//    SysCtl_setCMClk(SYSCTL_CMCLKOUT_DIV_1, SYSCTL_SOURCE_AUXPLL);
+    /* Redefine LSPCLK to run at 200MHz (for SPI & SCI bit clocks) */
+#undef DEVICE_LSPCLK_FREQ
+#define DEVICE_LSPCLK_FREQ          (DEVICE_SYSCLK_FREQ / 1)
+    /* Set LSPCLK divider */
+    SysCtl_setLowSpeedClock(SYSCTL_LSPCLK_PRESCALE_1);
+    ASSERT(SysCtl_getLowSpeedClock(DEVICE_OSCSRC_FREQ) == DEVICE_LSPCLK_FREQ);
+#if ((defined USB_BUS_ENABLE_ON_CM) && (defined CM_CORE_ENABLE))
     /* Allocate Shared Peripheral USB to the CM Side. */
-//    SysCtl_allocateSharedPeripheral(SYSCTL_PALLOCATE_USBA, 1);
+    SysCtl_allocateSharedPeripheral(SYSCTL_PALLOCATE_USBA, 1);
+#endif
     /* Boot CM core */
-#if (defined _FLASH) && (defined CM_CORE_ENABLE) && (CM_CORE_ENABLE)
+#if (defined _FLASH) && (defined CM_CORE_ENABLE)
     Device_bootCM(BOOTMODE_BOOT_TO_FLASH_SECTOR0);
-#elif (defined CM_CORE_ENABLE) && (CM_CORE_ENABLE)
+#elif (defined CM_CORE_ENABLE)
     Device_bootCM(BOOTMODE_BOOT_TO_S0RAM);
 #endif
     // Initialize GPIO

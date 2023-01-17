@@ -623,7 +623,7 @@ void HAL_SPI_ini(const spi_cfg_t* p_spiCfg)
                 SPI_setFIFOInterruptLevel(spiBase, p_spiCfg->txLevel, p_spiCfg->rxLevel);
             }
             /* Set SPI configuration, disable loopback, enable free run (debug mode) */
-            SPI_setConfig(spiBase, DEVICE_LSPCLK_FREQ, p_spiCfg->protocol, p_spiCfg->mode, p_spiCfg->bitRate, p_spiCfg->dataWidth);
+            SPI_setConfig(spiBase, UOMODRI_LSPCLK_FREQ, p_spiCfg->protocol, p_spiCfg->mode, p_spiCfg->bitRate, p_spiCfg->dataWidth);
             SPI_setEmulationMode(spiBase, SPI_EMULATION_FREE_RUN);
             SPI_disableLoopback(spiBase);
             SPI_disableHighSpeedMode(spiBase);
@@ -656,10 +656,15 @@ void HAL_SCI_ini(const sci_cfg_t* p_sciCfg)
         while(sciBase != UINT32_MAX)
         {
             /* Set SPI configuration, disable loopback */
-            SCI_setConfig(sciBase, DEVICE_LSPCLK_FREQ, p_sciCfg->bitRate, p_sciCfg->mode);
+            SCI_setConfig(sciBase, UOMODRI_LSPCLK_FREQ, p_sciCfg->bitRate, p_sciCfg->sciMode);
             /* Stop the SCI during configuration */
 //            SCI_disableModule(sciBase);
             SCI_disableLoopback(sciBase);
+            /* Multiprocessor mode */
+            if(p_sciCfg->multiProcMode == SCI_MULTI_PROC_ADDR)
+                SCI_setAddrMultiProcessorMode(sciBase);
+            else if(p_sciCfg->multiProcMode == SCI_MULTI_PROC_IDLE)
+                SCI_setIdleMultiProcessorMode(sciBase);
             /* Configure FIFO if required. */
             SCI_disableFIFO(sciBase);
             if((p_sciCfg->rxLevel != SCI_FIFO_RX0) || (p_sciCfg->txLevel != SCI_FIFO_TX0))
@@ -670,7 +675,7 @@ void HAL_SCI_ini(const sci_cfg_t* p_sciCfg)
                 SCI_setFIFOInterruptLevel(sciBase, p_sciCfg->txLevel, p_sciCfg->rxLevel);
             }
             /* Clear flags & enable or disable interrupts */
-            SCI_clearInterruptStatus(sciBase, SCI_INT_RXERR | SCI_INT_RXRDY_BRKDT | SCI_INT_FE | SCI_INT_OE | SCI_INT_PE |SCI_INT_TXFF | SCI_INT_RXFF);
+            SCI_clearInterruptStatus(sciBase, SCI_INT_RXERR | SCI_INT_RXRDY_BRKDT | SCI_INT_FE | SCI_INT_OE | SCI_INT_PE | SCI_INT_TXFF | SCI_INT_RXFF);
             SCI_disableInterrupt(sciBase, SCI_INT_RXERR | SCI_INT_RXRDY_BRKDT | SCI_INT_TXRDY | SCI_INT_TXFF | SCI_INT_RXFF);
             if(p_sciCfg->intEnable)
                 SCI_enableInterrupt(sciBase, p_sciCfg->intSrc);

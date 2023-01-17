@@ -32,6 +32,13 @@ typedef enum
     EPWM_DELAY_ENABLE   = 1                                         /*!< Enable Deadband delay mode. */
 } EPWM_DelayModeEnable_e;
 
+typedef enum
+{
+    SCI_MULTI_PROC_NONE = 0,
+    SCI_MULTI_PROC_ADDR = 1,
+    SCI_MULTI_PROC_IDLE = 2
+} SCI_MultiPrcessorCtrl_e;
+
 /***********************************************************************
  * HARDWARE ABSTRACTION LAYER (HAL) CONTROL STRUCTURES
  ***********************************************************************/
@@ -168,14 +175,12 @@ typedef struct __SCI_CFG_t__
 {
     uint32_t                            sciBase;                    /*!< ADC peripheral address. */
     uint32_t                            bitRate;
-    uint16_t                            dataWidth;
-    SPI_Mode                            mode;
-    SPI_TransferProtocol                protocol;
+    uint32_t                            sciMode;
     SCI_TxFIFOLevel                     txLevel;
     SCI_RxFIFOLevel                     rxLevel;
     uint16_t                            intSrc;
-    bool_t                              highSpeedMode;
     bool_t                              intEnable;                  /*!< GPIO can be configured as IT source */
+    SCI_MultiPrcessorCtrl_e             multiProcMode;
 } sci_cfg_t;
 
 /**

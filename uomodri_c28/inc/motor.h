@@ -56,6 +56,52 @@ typedef union __error_reg_u__
     error_reg_t bit;
 } error_reg_u;
 
+/**
+ * @union   hal_motor_cfg_u
+ * @brief   Force a 32b address pointer to be allocated on all processors (CLA, CM \& CPUx).
+ */
+typedef union __hal_motor_cfg_u__
+{
+  const hal_motor_cfg_t* const  ptr;                /*!< Constant pointer on a constant hal_motor_cfg_t structure declaration. */
+  const uint32_t                align;              /*!< Force a 32bits allocation. Address is constant. */
+} hal_motor_cfg_u;
+
+typedef union __drv8353_u__
+{
+    drv8353_t* const    ptr;
+    const uint32_t      align;
+} drv8353_u;
+
+typedef union __foc_control_u__
+{
+    foc_t* const        ptr;
+    const uint32_t      align;
+} foc_u;
+
+#ifdef CLA_CORE_ENABLE
+typedef struct __MOTOR_STRUCT_t__
+{
+    const motor_id_e                motor_id;       /*!< Motor identification */
+    hal_motor_cfg_u                 motorHalCfg_u;  /*!< Pointer on the HAL structure (PWM, ADC , IT) associated to the motor */
+    drv8353_u                       motorDRV_u;     /*!< Pointer on the DRV structure associated to the motor */
+    foc_u                           motorFOC_u;     /*!< Pointer on the FOC structure associated to the motor */
+    uint64_t                        itCnt;          /*!< Event counter incrementing on every IT call */
+    uint32_t                        clCycleNb;
+    // Q-axis resistance estimation
+    float32_t                       statorResEst;    // [Ohm]
+    // Resistance estimation low-pass filter
+    lpf_t                           statorResEstFlt;
+    // Current motor state for the FSM
+    motor_state_e                   motor_state;    /*!< Current motor state for the FSM */
+    // Error messages
+    error_reg_u                     motor_error;    /*!< Error messages */
+    // PWM address register for FOC command
+    volatile uint16_t* const        p_motorChAReg;
+    volatile uint16_t* const        p_motorChBReg;
+    volatile uint16_t* const        p_motorChCReg;
+    bool_t                          itDone;
+} motor_t;
+#else
 typedef struct __MOTOR_STRUCT_t__
 {
     const motor_id_e                motor_id;       /*!< Motor identification */
@@ -78,6 +124,7 @@ typedef struct __MOTOR_STRUCT_t__
     volatile uint16_t* const        p_motorChCReg;
     bool_t                          itDone;
 } motor_t;
+#endif
 
 /***********************************************************************
  * FUNCTIONS DECLARATION

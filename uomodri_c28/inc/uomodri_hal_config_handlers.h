@@ -92,16 +92,20 @@ static const gpio_cfg_t GpioPinsCfgList[] =
  {.pinNumber = MOTOR2_DRV_SPI_CS,       .fctMux = MOTOR2_DRV_SPI_CS_CFG,        .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,       .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 1,  .intEnable = false},
  {.pinNumber = MOTOR2_DRV_GPIO_NFAULT,  .fctMux = MOTOR2_DRV_GPIO_NFAULT_CFG,   .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,       .direction = GPIO_DIR_MODE_IN,  .samplingInMode = GPIO_QUAL_3SAMPLE,.setValue = 0,  .intEnable = false},
 #elif (defined UOMODRI_V2_ENABLE)
-#if (defined USB_BUS_ENABLE) && (!defined UART_BUS_ENABLE)
+#if (defined USB_BUS_ENABLE_ON_CPU1) && (!defined USB_BUS_ENABLE_ON_CM) && (!defined UART_BUS_ENABLE)
  // USB Pins
- {.pinNumber = USB_M,                   .fctMux = USB_M_CFG,                    .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,       .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_SYNC,   .setValue = 0,  .intEnable = false, .analogModeEnable = GPIO_ANALOG_ENABLED},
- {.pinNumber = USB_P,                   .fctMux = USB_P_CFG,                    .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,       .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_SYNC,   .setValue = 0,  .intEnable = false, .analogModeEnable = GPIO_ANALOG_ENABLED},
-#elif (!defined USB_BUS_ENABLE) && (defined UART_BUS_ENABLE)
+ {.pinNumber = USB_M,                   .fctMux = USB_M_CFG,                                                    .coreSelect = GPIO_CORE_CPU1,       .analogModeEnable = GPIO_ANALOG_ENABLED},
+ {.pinNumber = USB_P,                   .fctMux = USB_P_CFG,                                                    .coreSelect = GPIO_CORE_CPU1,       .analogModeEnable = GPIO_ANALOG_ENABLED},
+#elif (!defined USB_BUS_ENABLE_ON_CPU1) && (defined USB_BUS_ENABLE_ON_CM) && (!defined UART_BUS_ENABLE)
+ // USB Pins
+ {.pinNumber = USB_M,                   .fctMux = USB_M_CFG,                    .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CM,         .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_SYNC,   .setValue = 0,  .intEnable = false, .analogModeEnable = GPIO_ANALOG_ENABLED},
+ {.pinNumber = USB_P,                   .fctMux = USB_P_CFG,                    .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CM,         .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_SYNC,   .setValue = 0,  .intEnable = false, .analogModeEnable = GPIO_ANALOG_ENABLED},
+#elif (!defined USB_BUS_ENABLE_ON_CPU1) && (!defined USB_BUS_ENABLE_ON_CM) && (defined UART_BUS_ENABLE)
  // UART Pins
  {.pinNumber = UART_ON_USB_TX,          .fctMux = UART_ON_USB_TX_CFG,           .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,       .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0,  .intEnable = false},
  {.pinNumber = UART_ON_USB_RX,          .fctMux = UART_ON_USB_RX_CFG,           .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,       .direction = GPIO_DIR_MODE_IN,  .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0,  .intEnable = false},
 #endif
- {.pinNumber = USB_VBUS_DETECT,         .fctMux = USB_VBUS_DETECT_CFG,          .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,       .direction = GPIO_DIR_MODE_IN,  .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0,  .intEnable = false},
+ {.pinNumber = USB_VBUS_DETECT,         .fctMux = USB_VBUS_DETECT_CFG,          .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,       .direction = GPIO_DIR_MODE_IN,  .samplingInMode = GPIO_QUAL_3SAMPLE,.setValue = 0,  .intEnable = false},
  // GPIO Debug pins
  {.pinNumber = DBG_PIN0,                .fctMux = DBG_PIN0_CFG,                 .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,       .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0,  .intEnable = false},
  {.pinNumber = DBG_PIN1,                .fctMux = DBG_PIN1_CFG,                 .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,       .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0,  .intEnable = false},
@@ -119,14 +123,13 @@ static const gpio_cfg_t GpioPinsCfgList[] =
 #elif (!defined CAN_BUS_ENABLE) && (defined RS485_BUS_ENABLE)
  // RS485 BUS IO pins
  {.pinNumber = RS485_RX,                .fctMux = RS485_RX_CFG,                 .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,       .direction = GPIO_DIR_MODE_IN,  .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0,  .intEnable = false},
- {.pinNumber = RS485_TX,                .fctMux = RS485_TX_CFG,                 .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,       .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_SYNC,   .setValue = 0,  .intEnable = false},
+ {.pinNumber = RS485_TX,                .fctMux = RS485_TX_CFG,                 .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,       .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0,  .intEnable = false},
 #endif
  // RS-485 BUS IO pins
  {.pinNumber = CAN_SHDN_EN,             .fctMux = CAN_SHDN_EN_CFG,              .pinType = GPIO_PIN_TYPE_OD,    .coreSelect = GPIO_CORE_CPU1,       .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 1,  .intEnable = false},
  {.pinNumber = RS485_RX_EN,             .fctMux = RS485_RX_EN_CFG,              .pinType = GPIO_PIN_TYPE_OD,    .coreSelect = GPIO_CORE_CPU1,       .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 1,  .intEnable = false},
  {.pinNumber = RS485_TX_EN,             .fctMux = RS485_TX_EN_CFG,              .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,       .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0,  .intEnable = false},
  // Quadrature encoder #1
-//#if (defined UOMODRI_V2_ENABLE) && (UOMODRI_V2_ENABLE)
  {.pinNumber = MOTOR1_ENC_CHA,          .fctMux = MOTOR1_ENC_CHA_CFG,           .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,       .direction = GPIO_DIR_MODE_IN,  .samplingInMode = GPIO_QUAL_6SAMPLE,.setValue = 0,  .intEnable = false},
  {.pinNumber = MOTOR1_ENC_CHB,          .fctMux = MOTOR1_ENC_CHB_CFG,           .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,       .direction = GPIO_DIR_MODE_IN,  .samplingInMode = GPIO_QUAL_6SAMPLE,.setValue = 0,  .intEnable = false},
  {.pinNumber = MOTOR1_ENC_CHI,          .fctMux = MOTOR1_ENC_CHI_CFG,           .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,       .direction = GPIO_DIR_MODE_IN,  .samplingInMode = GPIO_QUAL_6SAMPLE,.setValue = 0,  .intEnable = false},
@@ -460,17 +463,21 @@ static const tmr_cfg_t  timerCfgList[] =
  {.cpuTimerBase         = UINT32_MAX},
 };
 
-//static const cla_cfg_t  claCfgList[] =
-//{
-// {
-//  .progRAM              = MEMCFG_SECT_LS2,
-//  .dataRAM              = (MEMCFG_SECT_LS0 | MEMCFG_SECT_LS1),
-//  .claTaskFlg           = CLA_TASKFLAG_1,
-//  .claTaskNum           = CLA_TASK_1,
-////  .claIntVect           = CLA_MVECT_1,
-//  .fun_ptr              = &Cla1Task1,
-// },
-//};
+static const sci_cfg_t  sciCfgList[] =
+{
+ {
+ .sciBase               = COM_SCI_BASE,
+ .bitRate               = 3125000U,
+ .sciMode               = SCI_CONFIG_WLEN_8 | SCI_CONFIG_PAR_NONE | SCI_CONFIG_STOP_ONE,
+ .multiProcMode         = SCI_MULTI_PROC_ADDR,
+ }
+};
+
+static const cla_cfg_t  claCfgList[] =
+{
+ {.progRAM = MEMCFG_SECT_LS2,   .dataRAM = (MEMCFG_SECT_LS0 | MEMCFG_SECT_LS1), .claTaskFlg = CLA_TASKFLAG_1,   .claTaskNum = CLA_TASK_1,   //.fun_ptr = &Cla1Task1
+ },
+};
 
 /** @var    ePWM_TB_TypeDef PwmTimeBaseCfgList[]
  *  @brief  List all the configurations necessaries for ePWM Time Base submodule.
@@ -711,7 +718,7 @@ static const hal_cfg_t hal =
  .p_epwmHandle              = PwmCfgList,
  .p_eqepHandle              = QepCfgList,
  .p_dmaHandle               = dmaCfgList,
-#if (defined CM_CORE_ENABLE) && (CM_CORE_ENABLE)
+#ifdef CM_CORE_ENABLE
  .p_ipcHandle               = ipcCfgList,
 #else
  .p_ipcHandle               = NULL,
@@ -719,8 +726,8 @@ static const hal_cfg_t hal =
  .p_sciHandle               = NULL,
  .p_spiHandle               = spiCfgList,
  .p_timerHandle             = timerCfgList,
-#if (defined CLA_CORE_ENABLE) && (CLA_CORE_ENABLE)
- .p_claHandle               = claCfgList,
+#ifdef CLA_CORE_ENABLE
+ .p_claHandle               = NULL,//claCfgList,
 #else
  .p_claHandle               = NULL,
 #endif
