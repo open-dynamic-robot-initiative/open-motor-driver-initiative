@@ -70,8 +70,6 @@ void main(void)
 {
     // uOmodri low level device initialization
     MCU_ini();
-#undef DEVICE_LSPCLK_FREQ
-#define DEVICE_LSPCLK_FREQ          (DEVICE_SYSCLK_FREQ / 1)
     // Hardware Abstraction Layer initialization
     HAL_ini(&hal);
 #ifdef CLA_CORE_ENABLE
@@ -235,11 +233,11 @@ static void MCU_ini(void)
     /* Initialize clock and peripherals */
     Device_init();
     /* Redefine LSPCLK to run at 200MHz (for SPI & SCI bit clocks) */
-#undef DEVICE_LSPCLK_FREQ
-#define DEVICE_LSPCLK_FREQ          (DEVICE_SYSCLK_FREQ / 1)
+//#undef DEVICE_LSPCLK_FREQ
+//#define DEVICE_LSPCLK_FREQ          (DEVICE_SYSCLK_FREQ / 1)
     /* Set LSPCLK divider */
     SysCtl_setLowSpeedClock(SYSCTL_LSPCLK_PRESCALE_1);
-    ASSERT(SysCtl_getLowSpeedClock(DEVICE_OSCSRC_FREQ) == DEVICE_LSPCLK_FREQ);
+    ASSERT(SysCtl_getLowSpeedClock(DEVICE_OSCSRC_FREQ) == UOMODRI_LSPCLK_FREQ);
 #if ((defined USB_BUS_ENABLE_ON_CM) && (defined CM_CORE_ENABLE))
     /* Allocate Shared Peripheral USB to the CM Side. */
     SysCtl_allocateSharedPeripheral(SYSCTL_PALLOCATE_USBA, 1);

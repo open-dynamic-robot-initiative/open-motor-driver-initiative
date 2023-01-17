@@ -44,7 +44,7 @@
 #error "USB & UART share the same pins. They cannot run @ the same time"
 #endif
 //#define CAN_BUS_ENABLE
-#define RS485_BUS_ENABLE
+//#define RS485_BUS_ENABLE
 #if (defined CAN_BUS_ENABLE) && (defined RS485_BUS_ENABLE)
 #error "CAN & RS-485 share the same pins. They cannot run @ the same time"
 #endif
