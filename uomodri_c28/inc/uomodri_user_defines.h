@@ -22,15 +22,15 @@
  *  @brief    Special configurations definitions.
  * @{
  */
-//#define UOMODRI_V1_ENABLE
+#define UOMODRI_V1_ENABLE
 #define UOMODRI_V2_ENABLE
 #if (defined UOMODRI_V1_ENABLE) && (defined UOMODRI_V2_ENABLE)
-#error "Only one config must be set @ a time."
+#warning "Only one config must be set @ a time."
 #elif (!defined UOMODRI_V1_ENABLE) && (!defined UOMODRI_V2_ENABLE)
 #error "@ least one config must be set @ a time."
 #endif
 //#define CLA_CORE_ENABLE
-//#define CM_CORE_ENABLE
+#define CM_CORE_ENABLE
 //#define USB_BUS_ENABLE_ON_CPU1
 //#define USB_BUS_ENABLE_ON_CM
 #if (defined USB_BUS_ENABLE_ON_CPU1) && (defined USB_BUS_ENABLE_ON_CM)
@@ -216,7 +216,7 @@
 #define UART_ON_USB_RX                          (43)
 #define UART_ON_USB_RX_CFG                      GPIO_43_SCIA_RX
 #endif
-#ifdef UOMODRI_V2_ENABLE
+#if (!defined UOMODRI_V1_ENABLE) && (defined  UOMODRI_V2_ENABLE)
 #define USB_VBUS_DETECT                         (67)
 #define USB_VBUS_DETECT_CFG                     GPIO_67_GPIO67
 #define USB_VBUS_DETECT_READ                    (HWREG(GPIODATA_BASE + GPIO_O_GPCDAT) & GPIO_GPCDAT_GPIO67)
@@ -229,7 +229,7 @@
  *  @brief    Configure 2 pins (pin number and mux function) for debug.
  * @{
  */
-#ifdef UOMODRI_V2_ENABLE
+#if (!defined UOMODRI_V1_ENABLE) && (defined  UOMODRI_V2_ENABLE)
 #define SELECT_PIN_3                            (47)
 #define SELECT_PIN_3_CFG                        GPIO_47_GPIO47
 #define SELECT_PIN_3_READ                       (HWREG(GPIODATA_BASE + GPIO_O_GPBDAT) & GPIO_GPBDAT_GPIO47)
@@ -261,7 +261,7 @@
 #define RS485_TX                                (12)
 #define RS485_TX_CFG                            GPIO_12_SCIC_TX
 #endif
-#ifdef UOMODRI_V2_ENABLE
+#if (!defined UOMODRI_V1_ENABLE) && (defined  UOMODRI_V2_ENABLE)
 #define CAN_SHDN_EN                             (14)
 #define CAN_SHDN_EN_CFG                         GPIO_14_GPIO14
 #define CAN_SHDN_EN_SET                         (HWREG(GPIODATA_BASE + GPIO_O_GPASET)   = GPIO_GPASET_GPIO14)
@@ -607,7 +607,7 @@
  *  @brief    Configure ADC subsystems.
  * @{
  */
-#ifdef UOMODRI_V1_ENABLE
+
 // ADC clock config
 #define PERxSYSCLK_TO_ADCCLK_DIV                ADC_CLK_DIV_4_0
 #define ADCCLK_FREQ                             (DEVICE_SYSCLK_FREQ / ((PERxSYSCLK_TO_ADCCLK_DIV / 2) + 1))
@@ -617,30 +617,11 @@
 #define ADC_RESOLUTION_MAX                      ((ADC_RESOLUTION_BIT == ADC_RESOLUTION_16BIT) ? (65536) : (4096))
 #define ADC_SIGNAL_MODE                         ADC_MODE_SINGLE_ENDED
 #define ADC_PULSE_END_MODE                      ADC_PULSE_END_OF_CONV
+#if (defined UOMODRI_V1_ENABLE) && (!defined  UOMODRI_V2_ENABLE)
 #define ADC_SOC_PRIORITY                        ADC_PRI_THRU_SOC3_HIPRI  //ADC_PRI_ALL_ROUND_ROBIN
-#define ADC_INT_SOC_TRIGGER                     ADC_INT_SOC_TRIGGER_NONE
-
-#define ADC_VREF                                (3.0f)   // [V]
-#define DRV_CSA_GAIN_REG                        DRV_CSA_GAIN_10_V_V  // [V/V] Possible values: 5, 10, 20, 40
-#define DRV_CSA_GAIN_VAL                        (5 << DRV_CSA_GAIN_REG) // base gain
-
-#define R_SHUNT                                 (0.005f) // [Ohm]
-#define BRIDGE_DIVIDER                          ((5.1f + 100.0f) / 5.1f)
-#define ADC_EXTERN_VOLTAGE_SCALE                (ADC_VREF / ADC_RESOLUTION_MAX)
-#define ADC_VBUS_VOLTAGE_SCALE                  (ADC_VREF * BRIDGE_DIVIDER / ADC_RESOLUTION_MAX)
-#define ADC_MOTOR_VOLTAGE_SCALE                 (ADC_VREF * BRIDGE_DIVIDER / ADC_RESOLUTION_MAX)
-#define ADC_MOTOR_CURRENT_SCALE                 (ADC_VREF * (-1.0f) / DRV_CSA_GAIN_VAL / R_SHUNT / ADC_RESOLUTION_MAX)
 #elif (defined UOMODRI_V2_ENABLE)
-// ADC clock config
-#define PERxSYSCLK_TO_ADCCLK_DIV                ADC_CLK_DIV_4_0
-#define ADCCLK_FREQ                             (DEVICE_SYSCLK_FREQ / ((PERxSYSCLK_TO_ADCCLK_DIV / 2) + 1))
-// ADC defines
-#define ADC_SAMPLING_WINDOW                     119   // From data sheet Table 20-12
-#define ADC_RESOLUTION_BIT                      ADC_RESOLUTION_16BIT
-#define ADC_RESOLUTION_MAX                      ((ADC_RESOLUTION_BIT == ADC_RESOLUTION_16BIT) ? (65536) : (4096))
-#define ADC_SIGNAL_MODE                         ADC_MODE_SINGLE_ENDED
-#define ADC_PULSE_END_MODE                      ADC_PULSE_END_OF_CONV
 #define ADC_SOC_PRIORITY                        ADC_PRI_ALL_ROUND_ROBIN
+#endif
 #define ADC_INT_SOC_TRIGGER                     ADC_INT_SOC_TRIGGER_NONE
 #define ADC_OVERSAMPLING                        (4)
 
@@ -654,7 +635,6 @@
 #define ADC_VBUS_VOLTAGE_SCALE                  (ADC_VREF * BRIDGE_DIVIDER / ADC_RESOLUTION_MAX)
 #define ADC_MOTOR_VOLTAGE_SCALE                 (ADC_VREF * BRIDGE_DIVIDER / ADC_RESOLUTION_MAX)
 #define ADC_MOTOR_CURRENT_SCALE                 (ADC_VREF * (-1.0f) / DRV_CSA_GAIN_VAL / R_SHUNT / ADC_RESOLUTION_MAX)
-#endif
 /**
  * @}
  */
@@ -663,20 +643,19 @@
  *  @brief    Associate the trigger event source to start conversions.
  * @{
  */
-#ifdef UOMODRI_V1_ENABLE
 #define MOTOR1_ADC_SOC_TRIGGER_EVT1             ADC_TRIGGER_EPWM1_SOCB
 #define MOTOR1_ADC_SOC_TRIGGER_EVT3             ADC_TRIGGER_EPWM1_SOCA
+#define MOTOR1_ADC_SOC_TRIGGER_EVT              ADC_TRIGGER_EPWM1_SOCA
 
 #define MOTOR2_ADC_SOC_TRIGGER_EVT2             ADC_TRIGGER_EPWM4_SOCA
 #define MOTOR2_ADC_SOC_TRIGGER_EVT4             ADC_TRIGGER_EPWM4_SOCB
-
-#define VBUS_ADC_SOC_TRIGGER_EVT                ADC_TRIGGER_EPWM1_SOCB
-#define EXTERN_ADC_SOC_TRIGGER_EVT1             ADC_TRIGGER_EPWM1_SOCA
-#define EXTERN_ADC_SOC_TRIGGER_EVT2             ADC_TRIGGER_EPWM4_SOCB
-#elif (defined UOMODRI_V2_ENABLE)
-#define MOTOR1_ADC_SOC_TRIGGER_EVT              ADC_TRIGGER_EPWM1_SOCA
 #define MOTOR2_ADC_SOC_TRIGGER_EVT              ADC_TRIGGER_EPWM4_SOCB
 
+#if (defined UOMODRI_V1_ENABLE) && (!defined  UOMODRI_V2_ENABLE)
+#define VBUS_ADC_SOC_TRIGGER_EVT                ADC_TRIGGER_EPWM1_SOCB
+#define VEXT1_ADC_SOC_TRIGGER_EVT1              ADC_TRIGGER_EPWM1_SOCA
+#define VEXT2_ADC_SOC_TRIGGER_EVT2              ADC_TRIGGER_EPWM4_SOCB
+#elif (defined UOMODRI_V2_ENABLE)
 #define VBUS_ADC_SOC_TRIGGER_EVT                ADC_TRIGGER_EPWM1_SOCA
 #define VEXT1_ADC_SOC_TRIGGER_EVT               ADC_TRIGGER_EPWM4_SOCB
 #define VEXT2_ADC_SOC_TRIGGER_EVT               ADC_TRIGGER_EPWM4_SOCB
@@ -690,41 +669,37 @@
  * @{
  */
 #ifdef UOMODRI_V1_ENABLE
-#define MOTOR1_VA_CH                            ADC_CH_ADCIN2
-#define MOTOR1_VB_CH                            ADC_CH_ADCIN2
-#define MOTOR1_VC_CH                            ADC_CH_ADCIN2
-#define VBUS_CH                                 ADC_CH_ADCIN2
-
 #define MOTOR1_IA_CH                            ADC_CH_ADCIN0
 #define MOTOR1_IB_CH                            ADC_CH_ADCIN0
 #define MOTOR1_IC_CH                            ADC_CH_ADCIN0
-
-#define MOTOR2_VA_CH                            ADC_CH_ADCIN3
-#define MOTOR2_VB_CH                            ADC_CH_ADCIN3
-#define MOTOR2_VC_CH                            ADC_CH_ADCIN3
 
 #define MOTOR2_IA_CH                            ADC_CH_ADCIN1
 #define MOTOR2_IB_CH                            ADC_CH_ADCIN1
 #define MOTOR2_IC_CH                            ADC_CH_ADCIN1
 
-#define EXTERN_V1_CH                            ADC_CH_ADCIN14
-#define EXTERN_V2_CH                            ADC_CH_ADCIN15
+#define MOTOR1_VA_CH                            ADC_CH_ADCIN2
+#define MOTOR1_VB_CH                            ADC_CH_ADCIN2
+#define MOTOR1_VC_CH                            ADC_CH_ADCIN2
+
+#define MOTOR2_VA_CH                            ADC_CH_ADCIN3
+#define MOTOR2_VB_CH                            ADC_CH_ADCIN3
+#define MOTOR2_VC_CH                            ADC_CH_ADCIN3
+
+#define VBUS_CH                                 ADC_CH_ADCIN2
 #elif (defined UOMODRI_V2_ENABLE)
-//ADCIN_A
 #define MOTOR1_IA_CH                            ADC_CH_ADCIN1
-#define MOTOR2_IA_CH                            ADC_CH_ADCIN0
-//ADCIN_B
 #define MOTOR1_IB_CH                            ADC_CH_ADCIN1
-#define MOTOR2_IB_CH                            ADC_CH_ADCIN0
-//ADCIN_C
 #define MOTOR1_IC_CH                            ADC_CH_ADCIN3
+
+#define MOTOR2_IA_CH                            ADC_CH_ADCIN0
+#define MOTOR2_IB_CH                            ADC_CH_ADCIN0
 #define MOTOR2_IC_CH                            ADC_CH_ADCIN2
-//ADCIN_D
+
 #define VBUS_CH                                 ADC_CH_ADCIN0
-//ADCIN_ALL
+#endif
+
 #define VEXT1_CH                                ADC_CH_ADCIN14
 #define VEXT2_CH                                ADC_CH_ADCIN15
-#endif
 /**
  * @}
  */
@@ -733,45 +708,32 @@
  *  @brief    Associate the SOC for each measure to perform.
  * @{
  */
-#ifdef UOMODRI_V1_ENABLE
+#if (defined UOMODRI_V1_ENABLE) && (!defined  UOMODRI_V2_ENABLE)
 #define MOTOR1_VA_SOC_NUM                       ADC_SOC_NUMBER0
 #define MOTOR1_VB_SOC_NUM                       ADC_SOC_NUMBER0
 #define MOTOR1_VC_SOC_NUM                       ADC_SOC_NUMBER0
-#define VBUS_SOC_NUM                            ADC_SOC_NUMBER0
-
-#define MOTOR1_IA_SOC_NUM                       ADC_SOC_NUMBER2
-#define MOTOR1_IB_SOC_NUM                       ADC_SOC_NUMBER2
-#define MOTOR1_IC_SOC_NUM                       ADC_SOC_NUMBER2
-#define EXTERN_V1_SOC_NUM                       ADC_SOC_NUMBER2
 
 #define MOTOR2_VA_SOC_NUM                       ADC_SOC_NUMBER1
 #define MOTOR2_VB_SOC_NUM                       ADC_SOC_NUMBER1
 #define MOTOR2_VC_SOC_NUM                       ADC_SOC_NUMBER1
 
+#define MOTOR1_IA_SOC_NUM                       ADC_SOC_NUMBER2
+#define MOTOR1_IB_SOC_NUM                       ADC_SOC_NUMBER2
+#define MOTOR1_IC_SOC_NUM                       ADC_SOC_NUMBER2
+
 #define MOTOR2_IA_SOC_NUM                       ADC_SOC_NUMBER3
 #define MOTOR2_IB_SOC_NUM                       ADC_SOC_NUMBER3
 #define MOTOR2_IC_SOC_NUM                       ADC_SOC_NUMBER3
-#define EXTERN_V2_SOC_NUM                       ADC_SOC_NUMBER3
+
+#define VBUS_SOC_NUM                            ADC_SOC_NUMBER0
+#define VEXT1_SOC_NUM                           ADC_SOC_NUMBER2
+#define VEXT2_SOC_NUM                           ADC_SOC_NUMBER3
 #elif (defined UOMODRI_V2_ENABLE)
 #define MOTOR1_Iabc_SOC0_NUM                    ADC_SOC_NUMBER0
-#define MOTOR1_Iabc_SOC1_NUM                    ADC_SOC_NUMBER1
-#define MOTOR1_Iabc_SOC2_NUM                    ADC_SOC_NUMBER2
-#define MOTOR1_Iabc_SOC3_NUM                    ADC_SOC_NUMBER3
-
 #define MOTOR2_Iabc_SOC0_NUM                    ADC_SOC_NUMBER4
-#define MOTOR2_Iabc_SOC1_NUM                    ADC_SOC_NUMBER5
-#define MOTOR2_Iabc_SOC2_NUM                    ADC_SOC_NUMBER6
-#define MOTOR2_Iabc_SOC3_NUM                    ADC_SOC_NUMBER7
-
 #define VBUS_SOC0_NUM                           ADC_SOC_NUMBER0
-#define VBUS_SOC1_NUM                           ADC_SOC_NUMBER1
-#define VBUS_SOC2_NUM                           ADC_SOC_NUMBER2
-#define VBUS_SOC3_NUM                           ADC_SOC_NUMBER3
-
 #define VEXT1_SOC0_NUM                          ADC_SOC_NUMBER4
-#define VEXT1_SOC1_NUM                          ADC_SOC_NUMBER5
 #define VEXT2_SOC0_NUM                          ADC_SOC_NUMBER6
-#define VEXT2_SOC1_NUM                          ADC_SOC_NUMBER7
 #endif
 /**
  * @}
@@ -781,32 +743,32 @@
  *  @brief    Associate the PPB for each measure to perform.
  * @{
  */
-#ifdef UOMODRI_V1_ENABLE
+#if (defined UOMODRI_V1_ENABLE) && (!defined  UOMODRI_V2_ENABLE)
 #define MOTOR1_VA_PPB_NUM                       ADC_PPB_NUMBER1
 #define MOTOR1_VB_PPB_NUM                       ADC_PPB_NUMBER1
 #define MOTOR1_VC_PPB_NUM                       ADC_PPB_NUMBER1
-#define VBUS_PPB_NUM                            ADC_PPB_NUMBER1
-
-#define MOTOR1_IA_PPB_NUM                       ADC_PPB_NUMBER3
-#define MOTOR1_IB_PPB_NUM                       ADC_PPB_NUMBER3
-#define MOTOR1_IC_PPB_NUM                       ADC_PPB_NUMBER3
-#define EXTERN_V1_PPB_NUM                       ADC_PPB_NUMBER3
 
 #define MOTOR2_VA_PPB_NUM                       ADC_PPB_NUMBER2
 #define MOTOR2_VB_PPB_NUM                       ADC_PPB_NUMBER2
 #define MOTOR2_VC_PPB_NUM                       ADC_PPB_NUMBER2
 
+#define MOTOR1_IA_PPB_NUM                       ADC_PPB_NUMBER3
+#define MOTOR1_IB_PPB_NUM                       ADC_PPB_NUMBER3
+#define MOTOR1_IC_PPB_NUM                       ADC_PPB_NUMBER3
+
 #define MOTOR2_IA_PPB_NUM                       ADC_PPB_NUMBER4
 #define MOTOR2_IB_PPB_NUM                       ADC_PPB_NUMBER4
 #define MOTOR2_IC_PPB_NUM                       ADC_PPB_NUMBER4
-#define EXTERN_V2_PPB_NUM                       ADC_PPB_NUMBER4
+
+#define VBUS_PPB_NUM                            ADC_PPB_NUMBER1
 #elif (defined UOMODRI_V2_ENABLE)
 #define MOTOR1_Iabc_PPB1_NUM                    ADC_PPB_NUMBER1
 #define MOTOR2_Iabc_PPB1_NUM                    ADC_PPB_NUMBER3
 #define VBUS_PPB1_NUM                           ADC_PPB_NUMBER1
+#endif
+
 #define VEXT1_PPB_NUM                           ADC_PPB_NUMBER3
 #define VEXT2_PPB_NUM                           ADC_PPB_NUMBER4
-#endif
 /**
  * @}
  */
@@ -831,43 +793,40 @@
  *  @brief    Define the ADC base address for all the conversion to be performed.
  * @{
  */
-#ifdef UOMODRI_V1_ENABLE
 // ADC Base Address
 #define MOTOR1_VA_ADC_ADDR                      ADCA_BASE
 #define MOTOR1_IA_ADC_ADDR                      ADCA_BASE
 #define MOTOR2_VA_ADC_ADDR                      ADCA_BASE
 #define MOTOR2_IA_ADC_ADDR                      ADCA_BASE
 #define MOTOR12_IVA_ADC_ADDR                    ADCA_BASE
+#define MOTOR12_IA_ADC_ADDR                     ADCA_BASE
 
 #define MOTOR1_VB_ADC_ADDR                      ADCB_BASE
 #define MOTOR1_IB_ADC_ADDR                      ADCB_BASE
 #define MOTOR2_VB_ADC_ADDR                      ADCB_BASE
 #define MOTOR2_IB_ADC_ADDR                      ADCB_BASE
 #define MOTOR12_IVB_ADC_ADDR                    ADCB_BASE
+#define MOTOR12_IB_ADC_ADDR                     ADCB_BASE
 
+#ifdef UOMODRI_V1_ENABLE
 #define VBUS_ADC_ADDR                           ADCC_BASE
-#define EXTERN_V1_ADC_ADDR                      ADCC_BASE
-#define EXTERN_V2_ADC_ADDR                      ADCC_BASE
+#define VEXT1_ADC_ADDR                          ADCC_BASE
+#define VEXT2_ADC_ADDR                          ADCC_BASE
+#define VBUS_VEXT12_ADC_ADDR                    ADCC_BASE
+#elif (defined UOMODRI_V2_ENABLE)
+#define MOTOR1_IC_ADC_ADDR                      ADCC_BASE
+#define MOTOR2_IC_ADC_ADDR                      ADCC_BASE
+#define MOTOR12_IC_ADC_ADDR                     ADCC_BASE
+#endif
 
+#ifdef UOMODRI_V1_ENABLE
 #define MOTOR1_VC_ADC_ADDR                      ADCD_BASE
 #define MOTOR1_IC_ADC_ADDR                      ADCD_BASE
 #define MOTOR2_VC_ADC_ADDR                      ADCD_BASE
 #define MOTOR2_IC_ADC_ADDR                      ADCD_BASE
 #define MOTOR12_IVC_ADC_ADDR                    ADCD_BASE
+#define MOTOR12_IC_ADC_ADDR                     ADCD_BASE
 #elif (defined UOMODRI_V2_ENABLE)
-// ADC Base Address
-#define MOTOR1_IA_ADC_ADDR                      ADCA_BASE
-#define MOTOR2_IA_ADC_ADDR                      ADCA_BASE
-#define MOTOR12_IA_ADC_ADDR                     ADCA_BASE
-
-#define MOTOR1_IB_ADC_ADDR                      ADCB_BASE
-#define MOTOR2_IB_ADC_ADDR                      ADCB_BASE
-#define MOTOR12_IB_ADC_ADDR                     ADCB_BASE
-
-#define MOTOR1_IC_ADC_ADDR                      ADCC_BASE
-#define MOTOR2_IC_ADC_ADDR                      ADCC_BASE
-#define MOTOR12_IC_ADC_ADDR                     ADCC_BASE
-
 #define VBUS_ADC_ADDR                           ADCD_BASE
 #define VEXT1_ADC_ADDR                          ADCD_BASE
 #define VEXT2_ADC_ADDR                          ADCD_BASE
@@ -881,67 +840,58 @@
  *  @brief    Define the ADC results base address for all the conversion to be performed.
  * @{
  */
-#ifdef UOMODRI_V1_ENABLE
+#if (defined UOMODRI_V1_ENABLE) && (!defined  UOMODRI_V2_ENABLE)
 #define MOTOR1_VA_ADC_RESULT_ADDR               (ADCARESULT_BASE + ADC_RESULTx_OFFSET_BASE + (1U * MOTOR1_VA_SOC_NUM))
 #define MOTOR1_IA_ADC_RESULT_ADDR               (ADCARESULT_BASE + ADC_RESULTx_OFFSET_BASE + (1U * MOTOR1_IA_SOC_NUM))
 #define MOTOR2_VA_ADC_RESULT_ADDR               (ADCARESULT_BASE + ADC_RESULTx_OFFSET_BASE + (1U * MOTOR2_VA_SOC_NUM))
 #define MOTOR2_IA_ADC_RESULT_ADDR               (ADCARESULT_BASE + ADC_RESULTx_OFFSET_BASE + (1U * MOTOR2_IA_SOC_NUM))
 #define MOTOR12_IVA_ADC_RESULT_ADDR             ADCARESULT_BASE
+#elif (defined UOMODRI_V2_ENABLE)
+#define MOTOR1_IA_ADC_RESULT0_ADDR              (ADCARESULT_BASE + ADC_RESULTx_OFFSET_BASE + (1U * MOTOR1_Iabc_SOC0_NUM))
+#define MOTOR2_IA_ADC_RESULT0_ADDR              (ADCARESULT_BASE + ADC_RESULTx_OFFSET_BASE + (1U * MOTOR2_Iabc_SOC0_NUM))
+#define MOTOR12_IA_ADC_RESULT_ADDR              ADCARESULT_BASE
+#endif
 
+#if (defined UOMODRI_V1_ENABLE) && (!defined  UOMODRI_V2_ENABLE)
 #define MOTOR1_VB_ADC_RESULT_ADDR               (ADCBRESULT_BASE + ADC_RESULTx_OFFSET_BASE + (1U * MOTOR1_VB_SOC_NUM))
 #define MOTOR1_IB_ADC_RESULT_ADDR               (ADCBRESULT_BASE + ADC_RESULTx_OFFSET_BASE + (1U * MOTOR1_IB_SOC_NUM))
 #define MOTOR2_VB_ADC_RESULT_ADDR               (ADCBRESULT_BASE + ADC_RESULTx_OFFSET_BASE + (1U * MOTOR2_VB_SOC_NUM))
 #define MOTOR2_IB_ADC_RESULT_ADDR               (ADCBRESULT_BASE + ADC_RESULTx_OFFSET_BASE + (1U * MOTOR2_IB_SOC_NUM))
 #define MOTOR12_IVB_ADC_RESULT_ADDR             ADCBRESULT_BASE
+#elif (defined UOMODRI_V2_ENABLE)
+#define MOTOR1_IB_ADC_RESULT0_ADDR              (ADCBRESULT_BASE + ADC_RESULTx_OFFSET_BASE + (1U * MOTOR1_Iabc_SOC0_NUM))
+#define MOTOR2_IB_ADC_RESULT0_ADDR              (ADCBRESULT_BASE + ADC_RESULTx_OFFSET_BASE + (1U * MOTOR2_Iabc_SOC0_NUM))
+#define MOTOR12_IB_ADC_RESULT_ADDR              ADCBRESULT_BASE
+#endif
 
+#if (defined UOMODRI_V1_ENABLE) && (!defined  UOMODRI_V2_ENABLE)
 #define VBUS_ADC_RESULT_ADDR                    (ADCCRESULT_BASE + ADC_RESULTx_OFFSET_BASE + (1U * VBUS_SOC_NUM))
-#define EXTERN_V1_ADC_RESULT_ADDR               (ADCCRESULT_BASE + ADC_RESULTx_OFFSET_BASE + (1U * EXTERN_V1_SOC_NUM))
-#define EXTERN_V2_ADC_RESULT_ADDR               (ADCCRESULT_BASE + ADC_RESULTx_OFFSET_BASE + (1U * EXTERN_V2_SOC_NUM))
+#define VEXT1_ADC_RESULT_ADDR                   (ADCCRESULT_BASE + ADC_RESULTx_OFFSET_BASE + (1U * VEXT1_SOC_NUM))
+#define VEXT2_ADC_RESULT_ADDR                   (ADCCRESULT_BASE + ADC_RESULTx_OFFSET_BASE + (1U * VEXT2_SOC_NUM))
+#elif (defined UOMODRI_V1_ENABLE) && (defined  UOMODRI_V2_ENABLE)
+#define VBUS_ADC_RESULT0_ADDR                   (ADCCRESULT_BASE + ADC_RESULTx_OFFSET_BASE + (1U * VBUS_SOC0_NUM))
+#define VEXT1_ADC_RESULT0_ADDR                  (ADCCRESULT_BASE + ADC_RESULTx_OFFSET_BASE + (1U * VEXT1_SOC0_NUM))
+#define VEXT2_ADC_RESULT0_ADDR                  (ADCCRESULT_BASE + ADC_RESULTx_OFFSET_BASE + (1U * VEXT2_SOC0_NUM))
+#elif (defined UOMODRI_V2_ENABLE)
+#define MOTOR1_IC_ADC_RESULT0_ADDR              (ADCCRESULT_BASE + ADC_RESULTx_OFFSET_BASE + (1U * MOTOR1_Iabc_SOC0_NUM))
+#define MOTOR2_IC_ADC_RESULT0_ADDR              (ADCCRESULT_BASE + ADC_RESULTx_OFFSET_BASE + (1U * MOTOR2_Iabc_SOC0_NUM))
+#define MOTOR12_IC_ADC_RESULT_ADDR              ADCCRESULT_BASE
+#endif
 
+#if (defined UOMODRI_V1_ENABLE) && (!defined  UOMODRI_V2_ENABLE)
 #define MOTOR1_VC_ADC_RESULT_ADDR               (ADCDRESULT_BASE + ADC_RESULTx_OFFSET_BASE + (1U * MOTOR1_VC_SOC_NUM))
 #define MOTOR1_IC_ADC_RESULT_ADDR               (ADCDRESULT_BASE + ADC_RESULTx_OFFSET_BASE + (1U * MOTOR1_IC_SOC_NUM))
 #define MOTOR2_VC_ADC_RESULT_ADDR               (ADCDRESULT_BASE + ADC_RESULTx_OFFSET_BASE + (1U * MOTOR2_VC_SOC_NUM))
 #define MOTOR2_IC_ADC_RESULT_ADDR               (ADCDRESULT_BASE + ADC_RESULTx_OFFSET_BASE + (1U * MOTOR2_IC_SOC_NUM))
 #define MOTOR12_IVC_ADC_RESULT_ADDR             ADCDRESULT_BASE
+#elif (defined UOMODRI_V1_ENABLE) && (defined  UOMODRI_V2_ENABLE)
+#define MOTOR1_IC_ADC_RESULT0_ADDR              (ADCDRESULT_BASE + ADC_RESULTx_OFFSET_BASE + (1U * MOTOR1_Iabc_SOC0_NUM))
+#define MOTOR2_IC_ADC_RESULT0_ADDR              (ADCDRESULT_BASE + ADC_RESULTx_OFFSET_BASE + (1U * MOTOR2_Iabc_SOC0_NUM))
+#define MOTOR12_IC_ADC_RESULT_ADDR              ADCDRESULT_BASE
 #elif (defined UOMODRI_V2_ENABLE)
-#define MOTOR1_IA_ADC_RESULT0_ADDR              (ADCARESULT_BASE + ADC_RESULTx_OFFSET_BASE + (1U * MOTOR1_Iabc_SOC0_NUM))
-#define MOTOR1_IA_ADC_RESULT1_ADDR              (ADCARESULT_BASE + ADC_RESULTx_OFFSET_BASE + (1U * MOTOR1_Iabc_SOC1_NUM))
-#define MOTOR1_IA_ADC_RESULT2_ADDR              (ADCARESULT_BASE + ADC_RESULTx_OFFSET_BASE + (1U * MOTOR1_Iabc_SOC2_NUM))
-#define MOTOR1_IA_ADC_RESULT3_ADDR              (ADCARESULT_BASE + ADC_RESULTx_OFFSET_BASE + (1U * MOTOR1_Iabc_SOC3_NUM))
-#define MOTOR2_IA_ADC_RESULT0_ADDR              (ADCARESULT_BASE + ADC_RESULTx_OFFSET_BASE + (1U * MOTOR2_Iabc_SOC0_NUM))
-#define MOTOR2_IA_ADC_RESULT1_ADDR              (ADCARESULT_BASE + ADC_RESULTx_OFFSET_BASE + (1U * MOTOR2_Iabc_SOC1_NUM))
-#define MOTOR2_IA_ADC_RESULT2_ADDR              (ADCARESULT_BASE + ADC_RESULTx_OFFSET_BASE + (1U * MOTOR2_Iabc_SOC2_NUM))
-#define MOTOR2_IA_ADC_RESULT3_ADDR              (ADCARESULT_BASE + ADC_RESULTx_OFFSET_BASE + (1U * MOTOR2_Iabc_SOC3_NUM))
-#define MOTOR12_IA_ADC_RESULT_ADDR              ADCARESULT_BASE
-
-#define MOTOR1_IB_ADC_RESULT0_ADDR              (ADCBRESULT_BASE + ADC_RESULTx_OFFSET_BASE + (1U * MOTOR1_Iabc_SOC0_NUM))
-#define MOTOR1_IB_ADC_RESULT1_ADDR              (ADCBRESULT_BASE + ADC_RESULTx_OFFSET_BASE + (1U * MOTOR1_Iabc_SOC1_NUM))
-#define MOTOR1_IB_ADC_RESULT2_ADDR              (ADCBRESULT_BASE + ADC_RESULTx_OFFSET_BASE + (1U * MOTOR1_Iabc_SOC2_NUM))
-#define MOTOR1_IB_ADC_RESULT3_ADDR              (ADCBRESULT_BASE + ADC_RESULTx_OFFSET_BASE + (1U * MOTOR1_Iabc_SOC3_NUM))
-#define MOTOR2_IB_ADC_RESULT0_ADDR              (ADCBRESULT_BASE + ADC_RESULTx_OFFSET_BASE + (1U * MOTOR2_Iabc_SOC0_NUM))
-#define MOTOR2_IB_ADC_RESULT1_ADDR              (ADCBRESULT_BASE + ADC_RESULTx_OFFSET_BASE + (1U * MOTOR2_Iabc_SOC1_NUM))
-#define MOTOR2_IB_ADC_RESULT2_ADDR              (ADCBRESULT_BASE + ADC_RESULTx_OFFSET_BASE + (1U * MOTOR2_Iabc_SOC2_NUM))
-#define MOTOR2_IB_ADC_RESULT3_ADDR              (ADCBRESULT_BASE + ADC_RESULTx_OFFSET_BASE + (1U * MOTOR2_Iabc_SOC3_NUM))
-#define MOTOR12_IB_ADC_RESULT_ADDR              ADCBRESULT_BASE
-
-#define MOTOR1_IC_ADC_RESULT0_ADDR              (ADCCRESULT_BASE + ADC_RESULTx_OFFSET_BASE + (1U * MOTOR1_Iabc_SOC0_NUM))
-#define MOTOR1_IC_ADC_RESULT1_ADDR              (ADCCRESULT_BASE + ADC_RESULTx_OFFSET_BASE + (1U * MOTOR1_Iabc_SOC1_NUM))
-#define MOTOR1_IC_ADC_RESULT2_ADDR              (ADCCRESULT_BASE + ADC_RESULTx_OFFSET_BASE + (1U * MOTOR1_Iabc_SOC2_NUM))
-#define MOTOR1_IC_ADC_RESULT3_ADDR              (ADCCRESULT_BASE + ADC_RESULTx_OFFSET_BASE + (1U * MOTOR1_Iabc_SOC3_NUM))
-#define MOTOR2_IC_ADC_RESULT0_ADDR              (ADCCRESULT_BASE + ADC_RESULTx_OFFSET_BASE + (1U * MOTOR2_Iabc_SOC0_NUM))
-#define MOTOR2_IC_ADC_RESULT1_ADDR              (ADCCRESULT_BASE + ADC_RESULTx_OFFSET_BASE + (1U * MOTOR2_Iabc_SOC1_NUM))
-#define MOTOR2_IC_ADC_RESULT2_ADDR              (ADCCRESULT_BASE + ADC_RESULTx_OFFSET_BASE + (1U * MOTOR2_Iabc_SOC2_NUM))
-#define MOTOR2_IC_ADC_RESULT3_ADDR              (ADCCRESULT_BASE + ADC_RESULTx_OFFSET_BASE + (1U * MOTOR2_Iabc_SOC3_NUM))
-#define MOTOR12_IC_ADC_RESULT_ADDR              ADCCRESULT_BASE
-
 #define VBUS_ADC_RESULT0_ADDR                   (ADCDRESULT_BASE + ADC_RESULTx_OFFSET_BASE + (1U * VBUS_SOC0_NUM))
-#define VBUS_ADC_RESULT1_ADDR                   (ADCDRESULT_BASE + ADC_RESULTx_OFFSET_BASE + (1U * VBUS_SOC1_NUM))
-#define VBUS_ADC_RESULT2_ADDR                   (ADCDRESULT_BASE + ADC_RESULTx_OFFSET_BASE + (1U * VBUS_SOC2_NUM))
-#define VBUS_ADC_RESULT3_ADDR                   (ADCDRESULT_BASE + ADC_RESULTx_OFFSET_BASE + (1U * VBUS_SOC3_NUM))
 #define VEXT1_ADC_RESULT0_ADDR                  (ADCDRESULT_BASE + ADC_RESULTx_OFFSET_BASE + (1U * VEXT1_SOC0_NUM))
-#define VEXT1_ADC_RESULT1_ADDR                  (ADCDRESULT_BASE + ADC_RESULTx_OFFSET_BASE + (1U * VEXT1_SOC1_NUM))
 #define VEXT2_ADC_RESULT0_ADDR                  (ADCDRESULT_BASE + ADC_RESULTx_OFFSET_BASE + (1U * VEXT2_SOC0_NUM))
-#define VEXT2_ADC_RESULT1_ADDR                  (ADCDRESULT_BASE + ADC_RESULTx_OFFSET_BASE + (1U * VEXT2_SOC1_NUM))
 #define VBUS_VEXT12_ADC_RESULT_ADDR             ADCDRESULT_BASE
 #endif
 /**
@@ -952,35 +902,48 @@
  *  @brief    Define the ADC PPB results base address for all the conversion to be performed.
  * @{
  */
-#ifdef UOMODRI_V1_ENABLE
+#if (defined UOMODRI_V1_ENABLE) && (!defined  UOMODRI_V2_ENABLE)
 #define MOTOR1_VA_ADC_PPB_RESULT_ADDR           (ADCARESULT_BASE + ADC_PPBxRESULT_OFFSET_BASE + (2U * MOTOR1_VA_PPB_NUM))
 #define MOTOR1_IA_ADC_PPB_RESULT_ADDR           (ADCARESULT_BASE + ADC_PPBxRESULT_OFFSET_BASE + (2U * MOTOR1_IA_PPB_NUM))
 #define MOTOR2_VA_ADC_PPB_RESULT_ADDR           (ADCARESULT_BASE + ADC_PPBxRESULT_OFFSET_BASE + (2U * MOTOR2_VA_PPB_NUM))
 #define MOTOR2_IA_ADC_PPB_RESULT_ADDR           (ADCARESULT_BASE + ADC_PPBxRESULT_OFFSET_BASE + (2U * MOTOR2_IA_PPB_NUM))
+#elif (defined UOMODRI_V2_ENABLE)
+#define MOTOR1_IA_ADC_PPB1_RESULT_ADDR          (ADCARESULT_BASE + ADC_PPBxRESULT_OFFSET_BASE + (2U * MOTOR1_Iabc_PPB1_NUM))
+#define MOTOR2_IA_ADC_PPB1_RESULT_ADDR          (ADCARESULT_BASE + ADC_PPBxRESULT_OFFSET_BASE + (2U * MOTOR2_Iabc_PPB1_NUM))
+#endif
 
+#if (defined UOMODRI_V1_ENABLE) && (!defined  UOMODRI_V2_ENABLE)
 #define MOTOR1_VB_ADC_PPB_RESULT_ADDR           (ADCBRESULT_BASE + ADC_PPBxRESULT_OFFSET_BASE + (2U * MOTOR1_VB_PPB_NUM))
 #define MOTOR1_IB_ADC_PPB_RESULT_ADDR           (ADCBRESULT_BASE + ADC_PPBxRESULT_OFFSET_BASE + (2U * MOTOR1_IB_PPB_NUM))
 #define MOTOR2_VB_ADC_PPB_RESULT_ADDR           (ADCBRESULT_BASE + ADC_PPBxRESULT_OFFSET_BASE + (2U * MOTOR2_VB_PPB_NUM))
 #define MOTOR2_IB_ADC_PPB_RESULT_ADDR           (ADCBRESULT_BASE + ADC_PPBxRESULT_OFFSET_BASE + (2U * MOTOR2_IB_PPB_NUM))
+#elif (defined UOMODRI_V2_ENABLE)
+#define MOTOR1_IB_ADC_PPB1_RESULT_ADDR          (ADCBRESULT_BASE + ADC_PPBxRESULT_OFFSET_BASE + (2U * MOTOR1_Iabc_PPB1_NUM))
+#define MOTOR2_IB_ADC_PPB1_RESULT_ADDR          (ADCBRESULT_BASE + ADC_PPBxRESULT_OFFSET_BASE + (2U * MOTOR2_Iabc_PPB1_NUM))
+#endif
 
+#if (defined UOMODRI_V1_ENABLE) && (!defined  UOMODRI_V2_ENABLE)
 #define VBUS_ADC_PPB_RESULT_ADDR                (ADCCRESULT_BASE + ADC_PPBxRESULT_OFFSET_BASE + (2U * VBUS_PPB_NUM))
-#define EXTERN_V1_ADC_PPB_RESULT_ADDR           (ADCCRESULT_BASE + ADC_PPBxRESULT_OFFSET_BASE + (2U * EXTERN_V1_PPB_NUM))
-#define EXTERN_V2_ADC_PPB_RESULT_ADDR           (ADCCRESULT_BASE + ADC_PPBxRESULT_OFFSET_BASE + (2U * EXTERN_V2_PPB_NUM))
+#define EXTERN_V1_ADC_PPB_RESULT_ADDR           (ADCCRESULT_BASE + ADC_PPBxRESULT_OFFSET_BASE + (2U * VEXT1_PPB_NUM))
+#define EXTERN_V2_ADC_PPB_RESULT_ADDR           (ADCCRESULT_BASE + ADC_PPBxRESULT_OFFSET_BASE + (2U * VEXT2_PPB_NUM))
+#elif (defined UOMODRI_V1_ENABLE) && (defined  UOMODRI_V2_ENABLE)
+#define VBUS_ADC_PPB1_RESULT_ADDR               (ADCCRESULT_BASE + ADC_PPBxRESULT_OFFSET_BASE + (2U * VBUS_PPB1_NUM))
+#define VEXT1_ADC_PPB_RESULT_ADDR               (ADCCRESULT_BASE + ADC_PPBxRESULT_OFFSET_BASE + (2U * VEXT1_PPB_NUM))
+#define VEXT2_ADC_PPB_RESULT_ADDR               (ADCCRESULT_BASE + ADC_PPBxRESULT_OFFSET_BASE + (2U * VEXT2_PPB_NUM))
+#elif (defined UOMODRI_V2_ENABLE)
+#define MOTOR1_IC_ADC_PPB1_RESULT_ADDR          (ADCCRESULT_BASE + ADC_PPBxRESULT_OFFSET_BASE + (2U * MOTOR1_Iabc_PPB1_NUM))
+#define MOTOR2_IC_ADC_PPB1_RESULT_ADDR          (ADCCRESULT_BASE + ADC_PPBxRESULT_OFFSET_BASE + (2U * MOTOR2_Iabc_PPB1_NUM))
+#endif
 
+#if (defined UOMODRI_V1_ENABLE) && (!defined  UOMODRI_V2_ENABLE)
 #define MOTOR1_VC_ADC_PPB_RESULT_ADDR           (ADCDRESULT_BASE + ADC_PPBxRESULT_OFFSET_BASE + (2U * MOTOR1_VC_PPB_NUM))
 #define MOTOR1_IC_ADC_PPB_RESULT_ADDR           (ADCDRESULT_BASE + ADC_PPBxRESULT_OFFSET_BASE + (2U * MOTOR1_IC_PPB_NUM))
 #define MOTOR2_VC_ADC_PPB_RESULT_ADDR           (ADCDRESULT_BASE + ADC_PPBxRESULT_OFFSET_BASE + (2U * MOTOR2_VC_PPB_NUM))
 #define MOTOR2_IC_ADC_PPB_RESULT_ADDR           (ADCDRESULT_BASE + ADC_PPBxRESULT_OFFSET_BASE + (2U * MOTOR2_IC_PPB_NUM))
+#elif (defined UOMODRI_V1_ENABLE) && (defined  UOMODRI_V2_ENABLE)
+#define MOTOR1_IC_ADC_PPB1_RESULT_ADDR          (ADCDRESULT_BASE + ADC_PPBxRESULT_OFFSET_BASE + (2U * MOTOR1_Iabc_PPB1_NUM))
+#define MOTOR2_IC_ADC_PPB1_RESULT_ADDR          (ADCDRESULT_BASE + ADC_PPBxRESULT_OFFSET_BASE + (2U * MOTOR2_Iabc_PPB1_NUM))
 #elif (defined UOMODRI_V2_ENABLE)
-#define MOTOR1_IA_ADC_PPB1_RESULT_ADDR          (ADCARESULT_BASE + ADC_PPBxRESULT_OFFSET_BASE + (2U * MOTOR1_Iabc_PPB1_NUM))
-#define MOTOR2_IA_ADC_PPB1_RESULT_ADDR          (ADCARESULT_BASE + ADC_PPBxRESULT_OFFSET_BASE + (2U * MOTOR2_Iabc_PPB1_NUM))
-
-#define MOTOR1_IB_ADC_PPB1_RESULT_ADDR          (ADCBRESULT_BASE + ADC_PPBxRESULT_OFFSET_BASE + (2U * MOTOR1_Iabc_PPB1_NUM))
-#define MOTOR2_IB_ADC_PPB1_RESULT_ADDR          (ADCBRESULT_BASE + ADC_PPBxRESULT_OFFSET_BASE + (2U * MOTOR2_Iabc_PPB1_NUM))
-
-#define MOTOR1_IC_ADC_PPB1_RESULT_ADDR          (ADCCRESULT_BASE + ADC_PPBxRESULT_OFFSET_BASE + (2U * MOTOR1_Iabc_PPB1_NUM))
-#define MOTOR2_IC_ADC_PPB1_RESULT_ADDR          (ADCCRESULT_BASE + ADC_PPBxRESULT_OFFSET_BASE + (2U * MOTOR2_Iabc_PPB1_NUM))
-
 #define VBUS_ADC_PPB1_RESULT_ADDR               (ADCCRESULT_BASE + ADC_PPBxRESULT_OFFSET_BASE + (2U * VBUS_PPB1_NUM))
 #define VEXT1_ADC_PPB_RESULT_ADDR               (ADCCRESULT_BASE + ADC_PPBxRESULT_OFFSET_BASE + (2U * VEXT1_PPB_NUM))
 #define VEXT2_ADC_PPB_RESULT_ADDR               (ADCCRESULT_BASE + ADC_PPBxRESULT_OFFSET_BASE + (2U * VEXT2_PPB_NUM))
@@ -1151,7 +1114,7 @@
 #define MOTOR1_ENC_SPEED_LPF_ALPHA              (MOTOR1_ENC_SPEED_TIME_CONST / (1.0f + MOTOR1_ENC_SPEED_TIME_CONST))
 #define MOTOR1_ENC_SPEED_LPF_ONE_M_ALPHA        (1.0f - MOTOR1_ENC_SPEED_LPF_ALPHA)
 
-#define MOTOR2_ENC_RESOLUTION                   (1024.0f)
+#define MOTOR2_ENC_RESOLUTION                   (5000.0f)
 #define MOTOR2_ENC_QUADRATURE_SCALE             (4.0f * MOTOR2_ENC_RESOLUTION)
 #define MOTOR2_ENC_RESOLUTION_SCALE             (1.0f / MOTOR2_ENC_QUADRATURE_SCALE)
 #define MOTOR2_ENC_CONFIG                       (EQEP_CONFIG_2X_RESOLUTION | EQEP_CONFIG_QUADRATURE | MOTOR2_QEP_SWAP | EQEP_CONFIG_IGATE_ENABLE)

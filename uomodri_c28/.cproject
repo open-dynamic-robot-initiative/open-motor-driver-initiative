@@ -506,7 +506,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="src/spi_cla.c|2838x_flash_lnk_cpu1.cmd|2838x_RAM_lnk_cpu1.cmd|src/usb_hal.c|src/PID.c|src/usb_ex1_serial_structs.c|src/usb_ex1_dev_serial.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="spi_cla.cla|src/spi_cla.c|2838x_flash_lnk_cpu1.cmd|2838x_RAM_lnk_cpu1.cmd|src/usb_hal.c|src/PID.c|src/usb_ex1_serial_structs.c|src/usb_ex1_dev_serial.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>

@@ -62,21 +62,27 @@ typedef union __error_reg_u__
  */
 typedef union __hal_motor_cfg_u__
 {
-  const hal_motor_cfg_t* const  ptr;                /*!< Constant pointer on a constant hal_motor_cfg_t structure declaration. */
-  const uint32_t                align;              /*!< Force a 32bits allocation. Address is constant. */
+  const hal_motor_cfg_t* const      ptr;            /*!< Constant pointer on a constant hal_motor_cfg_t structure declaration. */
+  const uint32_t                    align;          /*!< Force a 32bits allocation. Address is constant. */
 } hal_motor_cfg_u;
 
 typedef union __drv8353_u__
 {
-    drv8353_t* const    ptr;
-    const uint32_t      align;
+    drv8353_t* const                ptr;
+    const uint32_t                  align;
 } drv8353_u;
 
 typedef union __foc_control_u__
 {
-    foc_t* const        ptr;
-    const uint32_t      align;
+    foc_t* const                    ptr;
+    const uint32_t                  align;
 } foc_u;
+
+typedef union __uint16_u__
+{
+    volatile uint16_t* const        ptr;
+    volatile const uint32_t         align;
+} uint16_u;
 
 #ifdef CLA_CORE_ENABLE
 typedef struct __MOTOR_STRUCT_t__
@@ -96,9 +102,9 @@ typedef struct __MOTOR_STRUCT_t__
     // Error messages
     error_reg_u                     motor_error;    /*!< Error messages */
     // PWM address register for FOC command
-    volatile uint16_t* const        p_motorChAReg;
-    volatile uint16_t* const        p_motorChBReg;
-    volatile uint16_t* const        p_motorChCReg;
+    uint16_u                        motorChAReg_u;
+    uint16_u                        motorChBReg_u;
+    uint16_u                        motorChCReg_u;
     bool_t                          itDone;
 } motor_t;
 #else

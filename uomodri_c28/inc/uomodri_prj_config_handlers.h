@@ -202,7 +202,7 @@ static drv8353_t drv_cfg[] =
 
 static const hal_motor_cfg_t hal_motor_cfg[] =
 {
-#ifdef UOMODRI_V1_ENABLE
+#if (defined UOMODRI_V1_ENABLE) && (!defined  UOMODRI_V2_ENABLE)
  {
   .p_pwmCntCmp[0]   = &PwmCounterCompareCfgList[0],
   .p_pwmCntCmp[1]   = &PwmCounterCompareCfgList[1],
@@ -280,7 +280,7 @@ static cmd_t cmd_uOmodri[2] =
 #endif
 static foc_t motor_foc[] =
 {
-#ifdef UOMODRI_V1_ENABLE
+#if (defined UOMODRI_V1_ENABLE) && (!defined  UOMODRI_V2_ENABLE)
  {
   //--- MOTOR PARAMS STRUCTURE ------------------------------------------------
   .motor_cfg.Rs                         = MOTOR1_RS,
@@ -1050,9 +1050,9 @@ static motor_t motor[2] =
   .clCycleNb        = 0,
   .itCnt            = 0,
   .itDone           = false,
-  .p_motorChAReg    = (volatile uint16_t *)(MOTOR1_PWM1_CMD_ADDR),
-  .p_motorChBReg    = (volatile uint16_t *)(MOTOR1_PWM2_CMD_ADDR),
-  .p_motorChCReg    = (volatile uint16_t *)(MOTOR1_PWM3_CMD_ADDR),
+  .motorChAReg_u.ptr= (volatile uint16_t *)(MOTOR1_PWM1_CMD_ADDR),
+  .motorChBReg_u.ptr= (volatile uint16_t *)(MOTOR1_PWM2_CMD_ADDR),
+  .motorChCReg_u.ptr= (volatile uint16_t *)(MOTOR1_PWM3_CMD_ADDR),
  },
  {
   //--- MOTOR_1 ---------------------------------------------------------------
@@ -1067,9 +1067,9 @@ static motor_t motor[2] =
   .clCycleNb        = 0,
   .itCnt            = 0,
   .itDone           = false,
-  .p_motorChAReg    = (volatile uint16_t *)(MOTOR2_PWM1_CMD_ADDR),
-  .p_motorChBReg    = (volatile uint16_t *)(MOTOR2_PWM2_CMD_ADDR),
-  .p_motorChCReg    = (volatile uint16_t *)(MOTOR2_PWM3_CMD_ADDR),
+  .motorChAReg_u.ptr= (volatile uint16_t *)(MOTOR2_PWM1_CMD_ADDR),
+  .motorChBReg_u.ptr= (volatile uint16_t *)(MOTOR2_PWM2_CMD_ADDR),
+  .motorChCReg_u.ptr= (volatile uint16_t *)(MOTOR2_PWM3_CMD_ADDR),
  },
 #else
  {

@@ -16,10 +16,15 @@
  */
 inline void MOT_runCommand(motor_t* p_motor, float32_t cmd_a, float32_t cmd_b, float32_t cmd_c)
 {
+#ifdef CLA_CORE_ENABLE
+    *(p_motor->motorChAReg_u.ptr) = (uint16_t)((cmd_a) * PWM_TIMEBASE_CNT);
+    *(p_motor->motorChBReg_u.ptr) = (uint16_t)((cmd_b) * PWM_TIMEBASE_CNT);
+    *(p_motor->motorChCReg_u.ptr) = (uint16_t)((cmd_c) * PWM_TIMEBASE_CNT);
+#else
     *(p_motor->p_motorChAReg) = (uint16_t)((cmd_a) * PWM_TIMEBASE_CNT);
     *(p_motor->p_motorChBReg) = (uint16_t)((cmd_b) * PWM_TIMEBASE_CNT);
     *(p_motor->p_motorChCReg) = (uint16_t)((cmd_c) * PWM_TIMEBASE_CNT);
-
+#endif
     return;
 }
 
@@ -29,10 +34,15 @@ inline void MOT_runCommand(motor_t* p_motor, float32_t cmd_a, float32_t cmd_b, f
  */
 inline void MOT_stopCommand(motor_t* p_motor)
 {
+#ifdef CLA_CORE_ENABLE
+    *(p_motor->motorChAReg_u.ptr) = (uint16_t)PWM_TIMEBASE_CNT;
+    *(p_motor->motorChBReg_u.ptr) = (uint16_t)PWM_TIMEBASE_CNT;
+    *(p_motor->motorChCReg_u.ptr) = (uint16_t)PWM_TIMEBASE_CNT;
+#else
     *(p_motor->p_motorChAReg) = (uint16_t)PWM_TIMEBASE_CNT;
     *(p_motor->p_motorChBReg) = (uint16_t)PWM_TIMEBASE_CNT;
     *(p_motor->p_motorChCReg) = (uint16_t)PWM_TIMEBASE_CNT;
-
+#endif
     return;
 }
 

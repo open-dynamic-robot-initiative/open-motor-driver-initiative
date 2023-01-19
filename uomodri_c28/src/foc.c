@@ -40,7 +40,7 @@ inline void FOC_getMeasures(acq_t* p_acq)
     // Get the latest Voltage supply value in Volt (minimum is one to avoid dividing by zero later)
     float32_t vbus  = __fmax(((float32_t)(*p_acq->p_vBusMeasReg) * ADC_VBUS_VOLTAGE_SCALE), 1.0f);
     UOMODRI_VBUS_FLT(p_acq->vBusFlt, p_acq->vbus, vbus);
-    float32_t vext  = (float32_t)(*p_acq->p_vExtMeasReg) * ADC_EXTERN_VOLTAGE_SCALE;
+    float32_t vext  = (float32_t)(*p_acq->p_vExtMeasReg) * ADC_VEXT12_VOLTAGE_SCALE;
     UOMODRI_VEXT_FLT(p_acq->vExtFlt, p_acq->vExt, vext);
 
     return;

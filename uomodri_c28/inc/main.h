@@ -8,11 +8,11 @@
 #include "device.h"
 #include "hw_types.h"
 #include "communication.h"
-#include "usblib.h"
-#include "usbcdc.h"
-#include "usb_ids.h"
-#include "device/usbdevice.h"
-#include "device/usbdcdc.h"
+//#include "usblib.h"
+//#include "usbcdc.h"
+//#include "usb_ids.h"
+//#include "device/usbdevice.h"
+//#include "device/usbdcdc.h"
 
 /***********************************************************************
  * DEFINES
