@@ -104,7 +104,6 @@ void HAL_GPIO_ini(const gpio_cfg_t* p_gpio)
  */
 void HAL_ADC_ini(const adc_cfg_t* p_adcCfg)
 {
-#ifdef UOMODRI_V1_ENABLE
     if((p_adcCfg != NULL) && (p_adcCfg->p_adcIni != NULL) && (p_adcCfg->p_adcAcq != NULL))
     {
         const adc_ini_t*    p_adcIni    = p_adcCfg->p_adcIni;
@@ -163,56 +162,7 @@ void HAL_ADC_ini(const adc_cfg_t* p_adcCfg)
             adcBase = (++p_adcCfg)->adcBase;
         }
     }
-#elif (defined UOMODRI_V2_ENABLE)
-    if((p_adcCfg != NULL) && (p_adcCfg->p_adcIni != NULL) && (p_adcCfg->p_adcAcq != NULL))
-    {
-        const adc_ini_t*    p_adcIni    = p_adcCfg->p_adcIni;
-        const adc_int_t*    p_adcInt    = p_adcCfg->p_adcInt;
-        uint32_t            adcBase     = p_adcCfg->adcBase;
 
-        while(adcBase != UINT32_MAX)
-        {
-            /* Sets ADC clock to 50MHz (ADCCLK (derived from PERx.SYSCLK))
-             * Set converting input mode : "ADC_MODE_SINGLE_ENDED" or "ADC_MODE_DIFFERENTIAL"
-             * Set converting resolution : "ADC_RESOLUTION_12BIT" or "ADC_RESOLUTION_16BIT"
-             * Set IT raising  : "ADC_PULSE_END_OF_ACQ_WIN" or "ADC_PULSE_END_OF_CONV"
-             * Enables ADC converter
-             */
-            ADC_setPrescaler(adcBase, PERxSYSCLK_TO_ADCCLK_DIV);
-            ADC_setMode(adcBase, ADC_RESOLUTION_BIT, ADC_SIGNAL_MODE);
-            ADC_setInterruptPulseMode(adcBase, ADC_PULSE_END_MODE);
-            ADC_enableConverter(adcBase);
-
-            // Let some time to power up ADCs
-            DEVICE_DELAY_US(1500U);
-
-            while(p_adcIni->adcBase == adcBase)
-            {
-                /* Set priorities according round-robin
-                 * Set the input channel, SOC number, trigger source & S/H window
-                 * SOC source will be PWM, no IT.
-                 */
-                ADC_setSOCPriority(adcBase, ADC_SOC_PRIORITY);
-                ADC_setupSOC(adcBase, p_adcIni->adcSOCNumber, p_adcIni->adcTriggerSrc, p_adcIni->adcChannel, ADC_SAMPLING_WINDOW);
-                ADC_setInterruptSOCTrigger(adcBase, p_adcIni->adcSOCNumber, ADC_INT_SOC_TRIGGER);
-                p_adcIni++;
-            }
-
-            if(p_adcCfg->p_adcInt != NULL)
-            {
-                while(p_adcInt->adcBase == adcBase)
-                {
-                    ADC_setInterruptSource(adcBase, p_adcInt->adcIntNumber, p_adcInt->adcEOCNumber);
-                    ADC_enableContinuousMode(adcBase, p_adcInt->adcIntNumber);
-                    ADC_enableInterrupt(adcBase, p_adcInt->adcIntNumber);
-                    ADC_clearInterruptStatus(adcBase, p_adcInt->adcIntNumber);
-                    p_adcInt++;
-                }
-            }
-            adcBase = (++p_adcCfg)->adcBase;
-        }
-    }
-#endif
     return;
 }
 
@@ -222,7 +172,7 @@ void HAL_ADC_ini(const adc_cfg_t* p_adcCfg)
  */
 void HAL_ADC_offsetCalib(const hal_motor_cfg_t* p_halMotorCfg)
 {
-#ifdef UOMODRI_V1_ENABLE
+#if (defined UOMODRI_V1_ENABLE) && (!defined  UOMODRI_V2_ENABLE)
     if(p_halMotorCfg != NULL)
     {
         const epwm_cc_t*    p_pwmCC     = NULL;
@@ -334,7 +284,7 @@ void HAL_ADC_offsetCalib(const hal_motor_cfg_t* p_halMotorCfg)
  */
 void HAL_ePWM_ini(const epwm_cfg_t* p_pwmCfg)
 {
-    if((p_pwmCfg != NULL) && ( p_pwmCfg->p_epwmTimeBase != NULL) && (p_pwmCfg->p_epwmCaptureCompare) &&
+    if((p_pwmCfg != NULL) && (p_pwmCfg->p_epwmTimeBase != NULL) && (p_pwmCfg->p_epwmCaptureCompare) &&
             (p_pwmCfg->p_epwmActionQualifier != NULL) && (p_pwmCfg->p_epwmDeadband != NULL))
     {
         const epwm_tb_t* p_pwmTimeBase          = p_pwmCfg->p_epwmTimeBase;
@@ -375,6 +325,7 @@ void HAL_ePWM_ini(const epwm_cfg_t* p_pwmCfg)
 #endif
                 EPWM_setTimeBasePeriod(pwmBase, PWM_TIMEBASE_CNT);
                 (pwmBase == MOTOR1_PWM1_BASE) ? (EPWM_disablePhaseShiftLoad(pwmBase)) : (EPWM_enablePhaseShiftLoad(pwmBase));
+//                EPWM_enablePhaseShiftLoad(pwmBase);
                 EPWM_setPhaseShift(pwmBase, p_pwmTimeBase->phaseCount);
                 EPWM_setTimeBaseCounterMode(pwmBase, PWM_COUNTER_MODE);
                 EPWM_setTimeBaseCounter(pwmBase, PWM_INITIAL_CNT_VAL);

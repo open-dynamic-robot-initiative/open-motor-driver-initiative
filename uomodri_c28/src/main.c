@@ -110,6 +110,9 @@ void main(void)
     // Infinite loop
     while(1)
     {
+//        volatile uint16_t cpt_m1 = EPWM_getTimeBaseCounterValue(MOTOR1_PWM1_BASE);
+//        volatile uint16_t cpt_m2 = EPWM_getTimeBaseCounterValue(MOTOR2_PWM1_BASE);
+//        volatile int32_t diff_cpt = cpt_m1 - cpt_m2;
         /*
          * SPI COM RX management - Receive & extract message if valid
          * DMA CMD TO FOC struct - Propagate new commands (message extract or timeout inc)

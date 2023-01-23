@@ -229,13 +229,21 @@ static const hal_motor_cfg_t hal_motor_cfg[] =
  },
 #elif (defined UOMODRI_V2_ENABLE)
  {
-  .p_pwmCntCmp      = {&PwmCounterCompareCfgList[0],    &PwmCounterCompareCfgList[1],   &PwmCounterCompareCfgList[2]},
-  .p_iAcq           = {&AdcAcqList[0],                  &AdcAcqList[2],                 &AdcAcqList[4]},
+  .p_pwmCntCmp[0]   = &PwmCounterCompareCfgList[0],
+  .p_pwmCntCmp[1]   = &PwmCounterCompareCfgList[1],
+  .p_pwmCntCmp[2]   = &PwmCounterCompareCfgList[2],
+  .p_iAcq[0]        = &AdcAcqList[0],
+  .p_iAcq[1]        = &AdcAcqList[2],
+  .p_iAcq[2]        = &AdcAcqList[4],
   .p_intAcq         = &AdcIntList[0],
  },
  {
-  .p_pwmCntCmp      = {&PwmCounterCompareCfgList[3],    &PwmCounterCompareCfgList[4],   &PwmCounterCompareCfgList[5]},
-  .p_iAcq           = {&AdcAcqList[1],                  &AdcAcqList[3],                 &AdcAcqList[5]},
+  .p_pwmCntCmp[0]   = &PwmCounterCompareCfgList[3],
+  .p_pwmCntCmp[1]   = &PwmCounterCompareCfgList[4],
+  .p_pwmCntCmp[2]   = &PwmCounterCompareCfgList[5],
+  .p_iAcq[0]        = &AdcAcqList[1],
+  .p_iAcq[1]        = &AdcAcqList[3],
+  .p_iAcq[2]        = &AdcAcqList[5],
   .p_intAcq         = &AdcIntList[1],
  },
 #endif

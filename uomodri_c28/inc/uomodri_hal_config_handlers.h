@@ -314,10 +314,10 @@ static const adc_cfg_t  AdcCfgList[] =
  {.adcBase = MOTOR12_IVC_ADC_ADDR,  .p_adcIni = &AdcInitList[8],    .p_adcAcq = &AdcAcqList[8], .p_adcInt = NULL},
  {.adcBase = VBUS_ADC_ADDR,         .p_adcIni = &AdcInitList[12],   .p_adcAcq = &AdcAcqList[12],.p_adcInt = NULL},
 #elif (defined UOMODRI_V2_ENABLE)
- {.adcBase = MOTOR12_IA_ADC_ADDR,   .p_adcIni = &AdcInitList[0],.p_adcAcq = &AdcAcqList[0], .p_adcInt = &AdcIntList[0]},
- {.adcBase = MOTOR12_IB_ADC_ADDR,   .p_adcIni = &AdcInitList[2],.p_adcAcq = &AdcAcqList[2], .p_adcInt = NULL},
- {.adcBase = MOTOR12_IC_ADC_ADDR,   .p_adcIni = &AdcInitList[4],.p_adcAcq = &AdcAcqList[4], .p_adcInt = NULL},
- {.adcBase = VBUS_VEXT12_ADC_ADDR,  .p_adcIni = &AdcInitList[6],.p_adcAcq = &AdcAcqList[6], .p_adcInt = NULL},
+ {.adcBase = MOTOR12_IA_ADC_ADDR,   .p_adcIni = &AdcInitList[0],    .p_adcAcq = &AdcAcqList[0], .p_adcInt = &AdcIntList[0]},
+ {.adcBase = MOTOR12_IB_ADC_ADDR,   .p_adcIni = &AdcInitList[2],    .p_adcAcq = &AdcAcqList[2], .p_adcInt = NULL},
+ {.adcBase = MOTOR12_IC_ADC_ADDR,   .p_adcIni = &AdcInitList[4],    .p_adcAcq = &AdcAcqList[4], .p_adcInt = NULL},
+ {.adcBase = VBUS_VEXT12_ADC_ADDR,  .p_adcIni = &AdcInitList[6],    .p_adcAcq = &AdcAcqList[6], .p_adcInt = NULL},
 #endif
  // END OF ARRAY
  {.adcBase = UINT32_MAX},
@@ -510,12 +510,18 @@ static const epwm_tb_t  PwmTimeBaseCfgList[] =
  {.epwmBase = MOTOR2_PWM2_BASE, .phaseCount = PWM_INITIAL_PHASE_90, .syncOutputMode = EPWM_SYNC_OUT_PULSE_ON_SOFTWARE},
  {.epwmBase = MOTOR2_PWM3_BASE, .phaseCount = PWM_INITIAL_PHASE_90, .syncOutputMode = EPWM_SYNC_OUT_PULSE_ON_SOFTWARE},
 #elif (defined UOMODRI_V2_ENABLE)
- {.epwmBase = MOTOR1_PWM1_BASE, .phaseCount = PWM_INITIAL_PHASE_180,.syncOutputMode = EPWM_SYNC_OUT_PULSE_ON_CNTR_ZERO, .syncInputSrc = EPWM_SYNC_IN_PULSE_SRC_DISABLE},
- {.epwmBase = MOTOR1_PWM2_BASE, .phaseCount = PWM_INITIAL_PHASE_180,.syncOutputMode = EPWM_SYNC_OUT_PULSE_ON_SOFTWARE,  .syncInputSrc = EPWM_SYNC_IN_PULSE_SRC_SYNCOUT_EPWM1},
- {.epwmBase = MOTOR1_PWM3_BASE, .phaseCount = PWM_INITIAL_PHASE_180,.syncOutputMode = EPWM_SYNC_OUT_PULSE_ON_SOFTWARE,  .syncInputSrc = EPWM_SYNC_IN_PULSE_SRC_SYNCOUT_EPWM1},
- {.epwmBase = MOTOR2_PWM1_BASE, .phaseCount = PWM_INITIAL_PHASE_0,  .syncOutputMode = EPWM_SYNC_OUT_PULSE_ON_SOFTWARE,  .syncInputSrc = EPWM_SYNC_IN_PULSE_SRC_SYNCOUT_EPWM1},
- {.epwmBase = MOTOR2_PWM2_BASE, .phaseCount = PWM_INITIAL_PHASE_0,  .syncOutputMode = EPWM_SYNC_OUT_PULSE_ON_SOFTWARE,  .syncInputSrc = EPWM_SYNC_IN_PULSE_SRC_SYNCOUT_EPWM1},
- {.epwmBase = MOTOR2_PWM3_BASE, .phaseCount = PWM_INITIAL_PHASE_0,  .syncOutputMode = EPWM_SYNC_OUT_PULSE_ON_SOFTWARE,  .syncInputSrc = EPWM_SYNC_IN_PULSE_SRC_SYNCOUT_EPWM1},
+ {.epwmBase = MOTOR1_PWM1_BASE, .phaseCount = PWM_INITIAL_PHASE_0,  .syncOutputMode = EPWM_SYNC_OUT_PULSE_ON_CNTR_ZERO, .syncInputSrc = EPWM_SYNC_IN_PULSE_SRC_DISABLE},
+ {.epwmBase = MOTOR1_PWM2_BASE, .phaseCount = PWM_INITIAL_PHASE_0,  .syncOutputMode = EPWM_SYNC_OUT_PULSE_ON_SOFTWARE,  .syncInputSrc = EPWM_SYNC_IN_PULSE_SRC_SYNCOUT_EPWM1},
+ {.epwmBase = MOTOR1_PWM3_BASE, .phaseCount = PWM_INITIAL_PHASE_0,  .syncOutputMode = EPWM_SYNC_OUT_PULSE_ON_SOFTWARE,  .syncInputSrc = EPWM_SYNC_IN_PULSE_SRC_SYNCOUT_EPWM1},
+ {.epwmBase = MOTOR2_PWM1_BASE, .phaseCount = PWM_INITIAL_PHASE_180,.syncOutputMode = EPWM_SYNC_OUT_PULSE_ON_SOFTWARE,  .syncInputSrc = EPWM_SYNC_IN_PULSE_SRC_SYNCOUT_EPWM1},
+ {.epwmBase = MOTOR2_PWM2_BASE, .phaseCount = PWM_INITIAL_PHASE_180,.syncOutputMode = EPWM_SYNC_OUT_PULSE_ON_SOFTWARE,  .syncInputSrc = EPWM_SYNC_IN_PULSE_SRC_SYNCOUT_EPWM1},
+ {.epwmBase = MOTOR2_PWM3_BASE, .phaseCount = PWM_INITIAL_PHASE_180,.syncOutputMode = EPWM_SYNC_OUT_PULSE_ON_SOFTWARE,  .syncInputSrc = EPWM_SYNC_IN_PULSE_SRC_SYNCOUT_EPWM1},
+// {.epwmBase = MOTOR1_PWM1_BASE, .phaseCount = PWM_INITIAL_PHASE_180,.syncOutputMode = EPWM_SYNC_OUT_PULSE_ON_CNTR_ZERO, .syncInputSrc = EPWM_SYNC_IN_PULSE_SRC_DISABLE},
+// {.epwmBase = MOTOR1_PWM2_BASE, .phaseCount = PWM_INITIAL_PHASE_180,.syncOutputMode = EPWM_SYNC_OUT_PULSE_ON_SOFTWARE,  .syncInputSrc = EPWM_SYNC_IN_PULSE_SRC_SYNCOUT_EPWM1},
+// {.epwmBase = MOTOR1_PWM3_BASE, .phaseCount = PWM_INITIAL_PHASE_180,.syncOutputMode = EPWM_SYNC_OUT_PULSE_ON_SOFTWARE,  .syncInputSrc = EPWM_SYNC_IN_PULSE_SRC_SYNCOUT_EPWM1},
+// {.epwmBase = MOTOR2_PWM1_BASE, .phaseCount = PWM_INITIAL_PHASE_0,  .syncOutputMode = EPWM_SYNC_OUT_PULSE_ON_SOFTWARE,  .syncInputSrc = EPWM_SYNC_IN_PULSE_SRC_SYNCOUT_EPWM1},
+// {.epwmBase = MOTOR2_PWM2_BASE, .phaseCount = PWM_INITIAL_PHASE_0,  .syncOutputMode = EPWM_SYNC_OUT_PULSE_ON_SOFTWARE,  .syncInputSrc = EPWM_SYNC_IN_PULSE_SRC_SYNCOUT_EPWM1},
+// {.epwmBase = MOTOR2_PWM3_BASE, .phaseCount = PWM_INITIAL_PHASE_0,  .syncOutputMode = EPWM_SYNC_OUT_PULSE_ON_SOFTWARE,  .syncInputSrc = EPWM_SYNC_IN_PULSE_SRC_SYNCOUT_EPWM1},
 #endif
  // END OF ARRAY
  {.epwmBase = UINT32_MAX},
@@ -573,13 +579,12 @@ static const epwm_et_t  PwmAdcSocEventTriggerCfgList[] =
 {
 #if (defined UOMODRI_V1_ENABLE) && (!defined  UOMODRI_V2_ENABLE)
  {.epwmBase = MOTOR1_PWM1_BASE, .adcSOCEvtCount = 1, .adcSOCType = EPWM_SOC_B, .adcSOCSource = EPWM_SOC_TBCTR_PERIOD},
- {.epwmBase = MOTOR1_PWM1_BASE, .adcSOCEvtCount = 1, .adcSOCType = EPWM_SOC_A, .adcSOCSource = EPWM_SOC_TBCTR_ZERO},
- {.epwmBase = MOTOR2_PWM1_BASE, .adcSOCEvtCount = 1, .adcSOCType = EPWM_SOC_A, .adcSOCSource = EPWM_SOC_TBCTR_PERIOD},
- {.epwmBase = MOTOR2_PWM1_BASE, .adcSOCEvtCount = 1, .adcSOCType = EPWM_SOC_B, .adcSOCSource = EPWM_SOC_TBCTR_ZERO},
-#elif (defined UOMODRI_V2_ENABLE)
- {.epwmBase = MOTOR1_PWM1_BASE, .adcSOCEvtCount = 1, .adcSOCType = EPWM_SOC_A, .adcSOCSource = EPWM_SOC_TBCTR_ZERO},
- {.epwmBase = MOTOR2_PWM1_BASE, .adcSOCEvtCount = 1, .adcSOCType = EPWM_SOC_B, .adcSOCSource = EPWM_SOC_TBCTR_ZERO},
 #endif
+ {.epwmBase = MOTOR1_PWM1_BASE, .adcSOCEvtCount = 1, .adcSOCType = EPWM_SOC_A, .adcSOCSource = EPWM_SOC_TBCTR_ZERO},
+#if (defined UOMODRI_V1_ENABLE) && (!defined  UOMODRI_V2_ENABLE)
+ {.epwmBase = MOTOR2_PWM1_BASE, .adcSOCEvtCount = 1, .adcSOCType = EPWM_SOC_A, .adcSOCSource = EPWM_SOC_TBCTR_PERIOD},
+#endif
+ {.epwmBase = MOTOR2_PWM1_BASE, .adcSOCEvtCount = 1, .adcSOCType = EPWM_SOC_B, .adcSOCSource = EPWM_SOC_TBCTR_ZERO},
  // END OF ARRAY
  {.epwmBase = UINT32_MAX},
 };
@@ -587,118 +592,60 @@ static const epwm_et_t  PwmAdcSocEventTriggerCfgList[] =
 /** @var    ePWM_IT_TypeDef PwmInterruptsEventCfgList[]
  *  @brief  List all the configurations necessaries for ePWM IT Event submodule.
  */
-static const epwm_it_t  PwmInterruptsEventCfgList[] =
-{
- {.epwmBase = MOTOR1_PWM1_BASE, .intEvtCount = 1, .intSource = EPWM_INT_TBCTR_ZERO},
- {.epwmBase = MOTOR2_PWM1_BASE, .intEvtCount = 1, .intSource = EPWM_INT_TBCTR_ZERO},
- // END OF ARRAY
- {.epwmBase = UINT32_MAX},
-};
+//static const epwm_it_t  PwmInterruptsEventCfgList[] =
+//{
+// {.epwmBase = MOTOR1_PWM1_BASE, .intEvtCount = 1, .intSource = EPWM_INT_TBCTR_ZERO},
+// {.epwmBase = MOTOR2_PWM1_BASE, .intEvtCount = 1, .intSource = EPWM_INT_TBCTR_ZERO},
+// // END OF ARRAY
+// {.epwmBase = UINT32_MAX},
+//};
 
 /** @var    ePWM_TypeDef PwmCfgList[]
  *  @brief  List all the configurations necessaries for PWM module.
  */
 static const epwm_cfg_t PwmCfgList[] =
 {
+ {.epwmBase                 = MOTOR1_PWM1_BASE,
+  .p_epwmTimeBase           = &PwmTimeBaseCfgList[0],
+  .p_epwmCaptureCompare     = &PwmCounterCompareCfgList[0],
+  .p_epwmActionQualifier    = &PwmActionQualifierCfgList[0],
+  .p_epwmDeadband           = &PwmDeadBandCfgList[0],
+  .p_epwmProgChopper        = NULL,
+  .p_epwmAdcSocEventTrigger = &PwmAdcSocEventTriggerCfgList[0],
+  .p_epwmInterruptsEvent    = NULL,//&PwmInterruptsEventCfgList[0],
+  .epwmAdcSocSrcExtern      = SYSCTL_ADCSOC_SRC_PWM1SOCA,
+ },
+ {.epwmBase                 = MOTOR1_PWM2_BASE,
+  .p_epwmTimeBase           = &PwmTimeBaseCfgList[1],
+  .p_epwmCaptureCompare     = &PwmCounterCompareCfgList[1],
+  .p_epwmActionQualifier    = &PwmActionQualifierCfgList[1],
+  .p_epwmDeadband           = &PwmDeadBandCfgList[1],
+  .p_epwmProgChopper        = NULL,
+  .p_epwmAdcSocEventTrigger = NULL,
+  .p_epwmInterruptsEvent    = NULL,
+  .epwmAdcSocSrcExtern      = 0,
+ },
+ {.epwmBase                 = MOTOR1_PWM3_BASE,
+  .p_epwmTimeBase           = &PwmTimeBaseCfgList[2],
+  .p_epwmCaptureCompare     = &PwmCounterCompareCfgList[2],
+  .p_epwmActionQualifier    = &PwmActionQualifierCfgList[2],
+  .p_epwmDeadband           = &PwmDeadBandCfgList[2],
+  .p_epwmProgChopper        = NULL,
+  .p_epwmAdcSocEventTrigger = NULL,
+  .p_epwmInterruptsEvent    = NULL,
+  .epwmAdcSocSrcExtern      = 0,
+ },
+ {.epwmBase                 = MOTOR2_PWM1_BASE,
+  .p_epwmTimeBase           = &PwmTimeBaseCfgList[3],
+  .p_epwmCaptureCompare     = &PwmCounterCompareCfgList[3],
+  .p_epwmActionQualifier    = &PwmActionQualifierCfgList[3],
+  .p_epwmDeadband           = &PwmDeadBandCfgList[3],
+  .p_epwmProgChopper        = NULL,
 #if (defined UOMODRI_V1_ENABLE) && (!defined  UOMODRI_V2_ENABLE)
- {.epwmBase                 = MOTOR1_PWM1_BASE,
-  .p_epwmTimeBase           = &PwmTimeBaseCfgList[0],
-  .p_epwmCaptureCompare     = &PwmCounterCompareCfgList[0],
-  .p_epwmActionQualifier    = &PwmActionQualifierCfgList[0],
-  .p_epwmDeadband           = &PwmDeadBandCfgList[0],
-  .p_epwmProgChopper        = NULL,
-  .p_epwmAdcSocEventTrigger = &PwmAdcSocEventTriggerCfgList[0],
-  .p_epwmInterruptsEvent    = NULL,//&PwmInterruptsEventCfgList[0],
-  .epwmAdcSocSrcExtern      = SYSCTL_ADCSOC_SRC_PWM1SOCA,
- },
- {.epwmBase                 = MOTOR1_PWM2_BASE,
-  .p_epwmTimeBase           = &PwmTimeBaseCfgList[1],
-  .p_epwmCaptureCompare     = &PwmCounterCompareCfgList[1],
-  .p_epwmActionQualifier    = &PwmActionQualifierCfgList[1],
-  .p_epwmDeadband           = &PwmDeadBandCfgList[1],
-  .p_epwmProgChopper        = NULL,
-  .p_epwmAdcSocEventTrigger = NULL,
-  .p_epwmInterruptsEvent    = NULL,
-  .epwmAdcSocSrcExtern      = 0,
- },
- {.epwmBase                 = MOTOR1_PWM3_BASE,
-  .p_epwmTimeBase           = &PwmTimeBaseCfgList[2],
-  .p_epwmCaptureCompare     = &PwmCounterCompareCfgList[2],
-  .p_epwmActionQualifier    = &PwmActionQualifierCfgList[2],
-  .p_epwmDeadband           = &PwmDeadBandCfgList[2],
-  .p_epwmProgChopper        = NULL,
-  .p_epwmAdcSocEventTrigger = NULL,
-  .p_epwmInterruptsEvent    = NULL,
-  .epwmAdcSocSrcExtern      = 0,
- },
- {.epwmBase                 = MOTOR2_PWM1_BASE,
-  .p_epwmTimeBase           = &PwmTimeBaseCfgList[3],
-  .p_epwmCaptureCompare     = &PwmCounterCompareCfgList[3],
-  .p_epwmActionQualifier    = &PwmActionQualifierCfgList[3],
-  .p_epwmDeadband           = &PwmDeadBandCfgList[3],
-  .p_epwmProgChopper        = NULL,
   .p_epwmAdcSocEventTrigger = &PwmAdcSocEventTriggerCfgList[2],
-  .p_epwmInterruptsEvent    = NULL,//&PwmInterruptsEventCfgList[1],
-  .epwmAdcSocSrcExtern      = SYSCTL_ADCSOC_SRC_PWM4SOCB,
- },
- {.epwmBase                 = MOTOR2_PWM2_BASE,
-  .p_epwmTimeBase           = &PwmTimeBaseCfgList[4],
-  .p_epwmCaptureCompare     = &PwmCounterCompareCfgList[4],
-  .p_epwmActionQualifier    = &PwmActionQualifierCfgList[4],
-  .p_epwmDeadband           = &PwmDeadBandCfgList[4],
-  .p_epwmProgChopper        = NULL,
-  .p_epwmAdcSocEventTrigger = NULL,
-  .p_epwmInterruptsEvent    = NULL,
-  .epwmAdcSocSrcExtern      = 0,
- },
- {.epwmBase                 = MOTOR2_PWM3_BASE,
-  .p_epwmTimeBase           = &PwmTimeBaseCfgList[5],
-  .p_epwmCaptureCompare     = &PwmCounterCompareCfgList[5],
-  .p_epwmActionQualifier    = &PwmActionQualifierCfgList[5],
-  .p_epwmDeadband           = &PwmDeadBandCfgList[5],
-  .p_epwmProgChopper        = NULL,
-  .p_epwmAdcSocEventTrigger = NULL,
-  .p_epwmInterruptsEvent    = NULL,
-  .epwmAdcSocSrcExtern      = 0,
- },
 #elif (defined UOMODRI_V2_ENABLE)
- {.epwmBase                 = MOTOR1_PWM1_BASE,
-  .p_epwmTimeBase           = &PwmTimeBaseCfgList[0],
-  .p_epwmCaptureCompare     = &PwmCounterCompareCfgList[0],
-  .p_epwmActionQualifier    = &PwmActionQualifierCfgList[0],
-  .p_epwmDeadband           = &PwmDeadBandCfgList[0],
-  .p_epwmProgChopper        = NULL,
-  .p_epwmAdcSocEventTrigger = &PwmAdcSocEventTriggerCfgList[0],
-  .p_epwmInterruptsEvent    = NULL,//&PwmInterruptsEventCfgList[0],
-  .epwmAdcSocSrcExtern      = SYSCTL_ADCSOC_SRC_PWM1SOCA,
- },
- {.epwmBase                 = MOTOR1_PWM2_BASE,
-  .p_epwmTimeBase           = &PwmTimeBaseCfgList[1],
-  .p_epwmCaptureCompare     = &PwmCounterCompareCfgList[1],
-  .p_epwmActionQualifier    = &PwmActionQualifierCfgList[1],
-  .p_epwmDeadband           = &PwmDeadBandCfgList[1],
-  .p_epwmProgChopper        = NULL,
-  .p_epwmAdcSocEventTrigger = NULL,
-  .p_epwmInterruptsEvent    = NULL,
-  .epwmAdcSocSrcExtern      = 0,
- },
- {.epwmBase                 = MOTOR1_PWM3_BASE,
-  .p_epwmTimeBase           = &PwmTimeBaseCfgList[2],
-  .p_epwmCaptureCompare     = &PwmCounterCompareCfgList[2],
-  .p_epwmActionQualifier    = &PwmActionQualifierCfgList[2],
-  .p_epwmDeadband           = &PwmDeadBandCfgList[2],
-  .p_epwmProgChopper        = NULL,
-  .p_epwmAdcSocEventTrigger = NULL,
-  .p_epwmInterruptsEvent    = NULL,
-  .epwmAdcSocSrcExtern      = 0,
- },
- {.epwmBase                 = MOTOR2_PWM1_BASE,
-  .p_epwmTimeBase           = &PwmTimeBaseCfgList[3],
-  .p_epwmCaptureCompare     = &PwmCounterCompareCfgList[3],
-  .p_epwmActionQualifier    = &PwmActionQualifierCfgList[3],
-  .p_epwmDeadband           = &PwmDeadBandCfgList[3],
-  .p_epwmProgChopper        = NULL,
-  .p_epwmAdcSocEventTrigger = &PwmAdcSocEventTriggerCfgList[2],
+  .p_epwmAdcSocEventTrigger = &PwmAdcSocEventTriggerCfgList[1],
+#endif
   .p_epwmInterruptsEvent    = NULL,//&PwmInterruptsEventCfgList[1],
   .epwmAdcSocSrcExtern      = SYSCTL_ADCSOC_SRC_PWM4SOCB,
  },
@@ -722,7 +669,6 @@ static const epwm_cfg_t PwmCfgList[] =
   .p_epwmInterruptsEvent    = NULL,
   .epwmAdcSocSrcExtern      = 0,
  },
-#endif
  // END OF ARRAY
  {.epwmBase                 = UINT32_MAX},
 };
@@ -736,8 +682,6 @@ static const hal_cfg_t hal =
  .p_epwmHandle              = PwmCfgList,
  .p_eqepHandle              = QepCfgList,
  .p_dmaHandle               = dmaCfgList,
- .p_spiHandle               = spiCfgList,
- .p_timerHandle             = timerCfgList,
 #ifdef CM_CORE_ENABLE
  .p_ipcHandle               = ipcCfgList,
 #else
@@ -747,6 +691,8 @@ static const hal_cfg_t hal =
  .p_sciHandle               = NULL,
 #else
  .p_sciHandle               = NULL,
+ .p_spiHandle               = spiCfgList,
+ .p_timerHandle             = timerCfgList,
 #endif
 #ifdef CLA_CORE_ENABLE
  .p_claHandle               = NULL,//claCfgList,

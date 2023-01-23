@@ -643,19 +643,19 @@
  *  @brief    Associate the trigger event source to start conversions.
  * @{
  */
+#if (defined UOMODRI_V1_ENABLE) && (!defined  UOMODRI_V2_ENABLE)
 #define MOTOR1_ADC_SOC_TRIGGER_EVT1             ADC_TRIGGER_EPWM1_SOCB
 #define MOTOR1_ADC_SOC_TRIGGER_EVT3             ADC_TRIGGER_EPWM1_SOCA
-#define MOTOR1_ADC_SOC_TRIGGER_EVT              ADC_TRIGGER_EPWM1_SOCA
 
 #define MOTOR2_ADC_SOC_TRIGGER_EVT2             ADC_TRIGGER_EPWM4_SOCA
 #define MOTOR2_ADC_SOC_TRIGGER_EVT4             ADC_TRIGGER_EPWM4_SOCB
-#define MOTOR2_ADC_SOC_TRIGGER_EVT              ADC_TRIGGER_EPWM4_SOCB
 
-#if (defined UOMODRI_V1_ENABLE) && (!defined  UOMODRI_V2_ENABLE)
 #define VBUS_ADC_SOC_TRIGGER_EVT                ADC_TRIGGER_EPWM1_SOCB
 #define VEXT1_ADC_SOC_TRIGGER_EVT1              ADC_TRIGGER_EPWM1_SOCA
 #define VEXT2_ADC_SOC_TRIGGER_EVT2              ADC_TRIGGER_EPWM4_SOCB
 #elif (defined UOMODRI_V2_ENABLE)
+#define MOTOR1_ADC_SOC_TRIGGER_EVT              ADC_TRIGGER_EPWM1_SOCA
+#define MOTOR2_ADC_SOC_TRIGGER_EVT              ADC_TRIGGER_EPWM4_SOCB
 #define VBUS_ADC_SOC_TRIGGER_EVT                ADC_TRIGGER_EPWM1_SOCA
 #define VEXT1_ADC_SOC_TRIGGER_EVT               ADC_TRIGGER_EPWM4_SOCB
 #define VEXT2_ADC_SOC_TRIGGER_EVT               ADC_TRIGGER_EPWM4_SOCB
@@ -777,13 +777,13 @@
  *  @brief    Define the interrupt source \& the PIE Interrupt Number associated
  * @{
  */
-#define MOTOR1_IA_INT_CH                        INT_ADCA3
-#define MOTOR2_IA_INT_CH                        INT_ADCA4
+#define MOTOR1_IA_INT_CH                        INT_ADCA1//INT_ADCA3
+#define MOTOR2_IA_INT_CH                        INT_ADCA2//INT_ADCA4
 
-#define MOTOR1_IA_INT_NUM                       ADC_INT_NUMBER3
-#define MOTOR2_IA_INT_NUM                       ADC_INT_NUMBER4
+#define MOTOR1_IA_INT_NUM                       ADC_INT_NUMBER1//ADC_INT_NUMBER3
+#define MOTOR2_IA_INT_NUM                       ADC_INT_NUMBER2//ADC_INT_NUMBER4
 
-#define MOTOR1_IA_INT_ACK_GROUP                 INTERRUPT_ACK_GROUP10
+#define MOTOR1_IA_INT_ACK_GROUP                 INTERRUPT_ACK_GROUP1//INTERRUPT_ACK_GROUP10
 #define MOTOR2_IA_INT_ACK_GROUP                 INTERRUPT_ACK_GROUP10
 /**
  * @}
@@ -1029,7 +1029,11 @@
 #define PWM_FREQ                                (40000) //[Hz]
 #define PWM_PERIOD                              (1.0f / (float32_t)PWM_FREQ)
 #define PWM_COUNTER_MODE                        EPWM_COUNTER_MODE_UP_DOWN
-#define PWM_TIMEBASE_CNT                        (TBCLK_FREQ / PWM_FREQ / ((PWM_COUNTER_MODE == EPWM_COUNTER_MODE_UP_DOWN) ? (2) : (1))) // PWM Period register (max value)
+#if (PWM_COUNTER_MODE == EPWM_COUNTER_MODE_UP_DOWN)
+#define PWM_TIMEBASE_CNT                        (TBCLK_FREQ / PWM_FREQ / (2)) // PWM Period register (max value)
+#else
+#define PWM_TIMEBASE_CNT                        (TBCLK_FREQ / PWM_FREQ / (1)) // PWM Period register (max value)
+#endif
 #define PWM_TIMEBASE_HALF_CNT                   (PWM_TIMEBASE_CNT / 2)
 #define PWM_INITIAL_PHASE_0                     (0)                     // PWM initial phase offset (MOTOR_1)
 #define PWM_INITIAL_PHASE_90                    PWM_TIMEBASE_HALF_CNT   // PWM initial phase offset (MOTOR_2)
