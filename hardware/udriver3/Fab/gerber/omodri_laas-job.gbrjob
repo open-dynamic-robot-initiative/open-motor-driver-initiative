@@ -5,7 +5,7 @@
       "Application": "Pcbnew",
       "Version": "(6.0.5)"
     },
-    "CreationDate": "2022-12-08T12:45:56+01:00"
+    "CreationDate": "2023-01-23T23:57:38+01:00"
   },
   "GeneralSpecs": {
     "ProjectId": {
@@ -43,58 +43,13 @@
   ],
   "FilesAttributes": [
     {
-      "Path": "omodri_laas-F_Cu.gtl",
-      "FileFunction": "Copper,L1,Top",
+      "Path": "omodri_laas-F_Paste.gtp",
+      "FileFunction": "SolderPaste,Top",
       "FilePolarity": "Positive"
     },
     {
-      "Path": "omodri_laas-In1_GND_Cu.g2",
-      "FileFunction": "Copper,L2,Inr",
-      "FilePolarity": "Positive"
-    },
-    {
-      "Path": "omodri_laas-In2_sig_Cu.g3",
-      "FileFunction": "Copper,L3,Inr",
-      "FilePolarity": "Positive"
-    },
-    {
-      "Path": "omodri_laas-In3_sig_Cu.g4",
-      "FileFunction": "Copper,L4,Inr",
-      "FilePolarity": "Positive"
-    },
-    {
-      "Path": "omodri_laas-In4_PWR_Cu.g5",
-      "FileFunction": "Copper,L5,Inr",
-      "FilePolarity": "Positive"
-    },
-    {
-      "Path": "omodri_laas-B_Cu.gbl",
-      "FileFunction": "Copper,L6,Bot",
-      "FilePolarity": "Positive"
-    },
-    {
-      "Path": "omodri_laas-F_Silkscreen.gto",
-      "FileFunction": "Legend,Top",
-      "FilePolarity": "Positive"
-    },
-    {
-      "Path": "omodri_laas-B_Silkscreen.gbo",
-      "FileFunction": "Legend,Bot",
-      "FilePolarity": "Positive"
-    },
-    {
-      "Path": "omodri_laas-F_Mask.gts",
-      "FileFunction": "SolderMask,Top",
-      "FilePolarity": "Negative"
-    },
-    {
-      "Path": "omodri_laas-B_Mask.gbs",
-      "FileFunction": "SolderMask,Bot",
-      "FilePolarity": "Negative"
-    },
-    {
-      "Path": "omodri_laas-Edge_Cuts.gm1",
-      "FileFunction": "Profile",
+      "Path": "omodri_laas-B_Paste.gbp",
+      "FileFunction": "SolderPaste,Bot",
       "FilePolarity": "Positive"
     }
   ],
