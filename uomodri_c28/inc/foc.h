@@ -104,28 +104,12 @@ typedef struct __params_t__
 
 typedef struct __acquisitions_t__
 {
-#ifdef UOMODRI_V1_ENABLE
+#if (defined UOMODRI_V1_ENABLE) && (!defined  UOMODRI_V2_ENABLE)
     // ADC result registers
     volatile uint16_t*  const p_vaMeasReg;
     volatile uint16_t*  const p_vbMeasReg;
     volatile uint16_t*  const p_vcMeasReg;
-    volatile uint16_t*  const p_vBusMeasReg;
-    volatile uint16_t*  const p_vExtMeasReg;
-    volatile int16_t*   const p_iaMeasReg;
-    volatile int16_t*   const p_ibMeasReg;
-    volatile int16_t*   const p_icMeasReg;
-    // ADC values scaled
-    float32_t           va;         // [V]
-    float32_t           vb;         // [V]
-    float32_t           vc;         // [V]
-    float32_t           vbus;       // [V]
-    float32_t           vExt;       // [V]
-    float32_t           ia;         // [A]
-    float32_t           ib;         // [A]
-    float32_t           ic;         // [A]
-    lpf_t               vBusFlt;
-    lpf_t               vExtFlt;
-#elif (defined UOMODRI_V2_ENABLE)
+#endif
     // ADC result registers
     volatile uint16_t*  const p_vBusMeasReg;
     volatile uint16_t*  const p_vExtMeasReg;
@@ -133,6 +117,11 @@ typedef struct __acquisitions_t__
     volatile int16_t*   const p_ibMeasReg;
     volatile int16_t*   const p_icMeasReg;
     // ADC values scaled
+#if (defined UOMODRI_V1_ENABLE) && (!defined  UOMODRI_V2_ENABLE)
+    float32_t           va;         // [V]
+    float32_t           vb;         // [V]
+    float32_t           vc;         // [V]
+#endif
     float32_t           vbus;       // [V]
     float32_t           vExt;       // [V]
     float32_t           ia;         // [A]
@@ -140,15 +129,13 @@ typedef struct __acquisitions_t__
     float32_t           ic;         // [A]
     lpf_t               vBusFlt;
     lpf_t               vExtFlt;
-    lpf_t               iabcFlt;
-#endif
 } acq_t;
 
 typedef struct __cmd_t__
 {
     float32_t   posRef;
     float32_t   velRef;
-    float32_t   iqRef;
+    float32_t   iqff;
     float32_t   kpCoeff;
     float32_t   kdCoeff;
     float32_t   iSat;

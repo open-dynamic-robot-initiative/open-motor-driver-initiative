@@ -27,16 +27,31 @@
  */
 void com_msgDbgTx(dbg_uart_addr_t* p_addr, dbg_uart_msg_t* p_msg)
 {
-    static uint32_t cntMsg  = 0;
-    p_msg->count            = cntMsg++;
-    p_msg->pos_m1           = (float_t)(*p_addr->p_pos_m1);
-//    p_msg->vel_m1           = (float_t)(*p_addr->p_vel_m1);
-    p_msg->pos_m2           = (float_t)(*p_addr->p_pos_m2);
-//    p_msg->vel_m2           = (float_t)(*p_addr->p_vel_m2);
-    p_msg->pos_as5047u      = (float_t)(*p_addr->p_pos_as5047u);
-    p_msg->vel_as5047u      = (float_t)(*p_addr->p_vel_as5047u);
-//    p_msg->crc              = com_crc8_fast(0, (uint8_t *)p_msg, (sizeof(dbg_uart_msg_t) - 1));
-    p_msg->crc              = com_crc8((uint8_t *)p_msg, (sizeof(dbg_uart_msg_t) - 1));
+//    static uint32_t cntMsg  = 0;
+//    p_msg->count            = cntMsg++;
+//    p_msg->ia               = (float_t)(*p_addr->p_ia);
+//    p_msg->ib               = (float_t)(*p_addr->p_ib);
+//    p_msg->ic               = (float_t)(*p_addr->p_ic);
+//    p_msg->vbus             = (float_t)(*p_addr->p_vbus);
+//    p_msg->ialpha           = (float_t)(*p_addr->p_ialpha);
+//    p_msg->ibeta            = (float_t)(*p_addr->p_ibeta);
+//    p_msg->id               = (float_t)(*p_addr->p_id);
+    p_msg->iq               = (float_t)(*p_addr->p_iq);
+    p_msg->iqref            = (float_t)(*p_addr->p_iqref);
+//    p_msg->ud               = (float_t)(*p_addr->p_ud);
+//    p_msg->uq               = (float_t)(*p_addr->p_uq);
+//    p_msg->ualpha           = (float_t)(*p_addr->p_ualpha);
+//    p_msg->ubeta            = (float_t)(*p_addr->p_ubeta);
+//    p_msg->ua               = (float_t)(*p_addr->p_ua);
+//    p_msg->ub               = (float_t)(*p_addr->p_ub);
+//    p_msg->uc               = (float_t)(*p_addr->p_uc);
+    p_msg->pos              = (float_t)(*p_addr->p_pos);
+    p_msg->posref           = (float_t)(*p_addr->p_posref);
+    p_msg->vel              = (float_t)(*p_addr->p_vel);
+    p_msg->velref           = (float_t)(*p_addr->p_velref);
+//    p_msg->itcnt            = (uint32_t)(*p_addr->p_itcnt);
+    p_msg->crc              = com_crc8_fast((uint8_t *)p_msg, (sizeof(dbg_uart_msg_t) - 1));
+//    p_msg->crc              = com_crc8((uint8_t *)p_msg, (sizeof(dbg_uart_msg_t) - 1));
     return;
 }
 
@@ -82,9 +97,9 @@ uint8_t com_crc8(uint8_t *p_buf, size_t len)
 //    return crc;
 //}
 
-uint8_t com_crc8_fast(uint8_t crc, uint8_t* p_buf, size_t len)
+uint8_t com_crc8_fast(uint8_t* p_buf, size_t len)
 {
-    crc = 0xff;
+    uint8_t crc = 0;
     size_t i = 0;
     for(i = 0; i < len; i++)
         crc = crc8_table[p_buf[i] ^ crc];

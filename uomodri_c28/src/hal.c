@@ -325,7 +325,6 @@ void HAL_ePWM_ini(const epwm_cfg_t* p_pwmCfg)
 #endif
                 EPWM_setTimeBasePeriod(pwmBase, PWM_TIMEBASE_CNT);
                 (pwmBase == MOTOR1_PWM1_BASE) ? (EPWM_disablePhaseShiftLoad(pwmBase)) : (EPWM_enablePhaseShiftLoad(pwmBase));
-//                EPWM_enablePhaseShiftLoad(pwmBase);
                 EPWM_setPhaseShift(pwmBase, p_pwmTimeBase->phaseCount);
                 EPWM_setTimeBaseCounterMode(pwmBase, PWM_COUNTER_MODE);
                 EPWM_setTimeBaseCounter(pwmBase, PWM_INITIAL_CNT_VAL);

@@ -242,6 +242,7 @@ inline bool_t MOT_runControl(motor_t* p_motor)
         p_motor->motor_state    = MOTOR_STATE_ERROR;
         ENC_resetPeriph(p_enc);
         FOC_resetStruct(p_foc);
+//        FOC_runControl(p_foc);
         MOT_stopCommand(p_motor);
         break;
     }

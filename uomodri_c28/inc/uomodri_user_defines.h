@@ -39,7 +39,7 @@
 #if (!defined CM_CORE_ENABLE) && (defined USB_BUS_ENABLE_ON_CM)
 #error "If USB run on CM, CM must be active."
 #endif
-//#define UART_BUS_ENABLE
+#define UART_BUS_ENABLE
 #if ((defined USB_BUS_ENABLE_ON_CPU1) || (defined USB_BUS_ENABLE_ON_CM)) && (defined UART_BUS_ENABLE)
 #error "USB & UART share the same pins. They cannot run @ the same time"
 #endif
@@ -55,7 +55,7 @@
 #define UOMODRI_RES_ESTIM_FLT(flt_coef, y, x)   LPF_FILTER_1(flt_coef, y, x)
 #define UOMODRI_SPEED_FLT(flt_coef, y, x)       LPF_FILTER_1(flt_coef, y, x)
 #define UOMODRI_HAL_ADC_CALIB(flt_coef, y, x)   LPF_FILTER_1(flt_coef, y, x)
-#define UOMODRI_FEED_FORWARD_ENABLE             1
+#define UOMODRI_FEED_FORWARD_ENABLE             0
 /**
  * @}
  */
@@ -212,9 +212,9 @@
 #define USB_P_CFG                               GPIO_43_GPIO43
 #elif (!defined USB_BUS_ENABLE_ON_CPU1) && (!defined USB_BUS_ENABLE_ON_CM) && (defined UART_BUS_ENABLE)
 #define UART_ON_USB_TX                          (42)
-#define UART_ON_USB_TX_CFG                      GPIO_42_SCIA_TX
+#define UART_ON_USB_TX_CFG                      GPIO_42_UARTA_TX//GPIO_42_SCIA_TX
 #define UART_ON_USB_RX                          (43)
-#define UART_ON_USB_RX_CFG                      GPIO_43_SCIA_RX
+#define UART_ON_USB_RX_CFG                      GPIO_43_UARTA_RX//GPIO_43_SCIA_RX
 #endif
 #if (!defined UOMODRI_V1_ENABLE) && (defined  UOMODRI_V2_ENABLE)
 #define USB_VBUS_DETECT                         (67)
@@ -425,11 +425,20 @@
  */
 #ifdef UOMODRI_V1_ENABLE
 #define EXT_DBG_SPI_SIMO                        (69)
-#define EXT_DBG_SPI_SIMO_CFG                    GPIO_69_SPIC_SIMO
+#define EXT_DBG_SPI_SIMO_CFG                    GPIO_69_GPIO69//GPIO_69_SPIC_SIMO
+//#define EXT_DBG_SPI_SIMO_SET                    (HWREG(GPIODATA_BASE + GPIO_O_GPCSET)   = GPIO_GPCSET_GPIO69)
+//#define EXT_DBG_SPI_SIMO_CLEAR                  (HWREG(GPIODATA_BASE + GPIO_O_GPCCLEAR) = GPIO_GPCCLEAR_GPIO69)
+//#define EXT_DBG_SPI_SIMO_TOGGLE                 (HWREG(GPIODATA_BASE + GPIO_O_GPCTOGGLE)= GPIO_GPCTOGGLE_GPIO69)
 #define EXT_DBG_SPI_SOMI                        (70)
-#define EXT_DBG_SPI_SOMI_CFG                    GPIO_70_SPIC_SOMI
+#define EXT_DBG_SPI_SOMI_CFG                    GPIO_70_GPIO70//GPIO_70_SPIC_SOMI
+#define EXT_DBG_SPI_SOMI_SET                    (HWREG(GPIODATA_BASE + GPIO_O_GPCSET)   = GPIO_GPCSET_GPIO70)
+#define EXT_DBG_SPI_SOMI_CLEAR                  (HWREG(GPIODATA_BASE + GPIO_O_GPCCLEAR) = GPIO_GPCCLEAR_GPIO70)
+#define EXT_DBG_SPI_SOMI_TOGGLE                 (HWREG(GPIODATA_BASE + GPIO_O_GPCTOGGLE)= GPIO_GPCTOGGLE_GPIO70)
 #define EXT_DBG_SPI_CLK                         (71)
-#define EXT_DBG_SPI_CLK_CFG                     GPIO_71_SPIC_CLK
+#define EXT_DBG_SPI_CLK_CFG                     GPIO_71_GPIO71//GPIO_71_SPIC_CLK
+#define EXT_DBG_SPI_CLK_SET                     (HWREG(GPIODATA_BASE + GPIO_O_GPCSET)   = GPIO_GPCSET_GPIO71)
+#define EXT_DBG_SPI_CLK_CLEAR                   (HWREG(GPIODATA_BASE + GPIO_O_GPCCLEAR) = GPIO_GPCCLEAR_GPIO71)
+#define EXT_DBG_SPI_CLK_TOGGLE                  (HWREG(GPIODATA_BASE + GPIO_O_GPCTOGGLE)= GPIO_GPCTOGGLE_GPIO71)
 #define EXT_DBG_SPI_CS1                         (72)
 #define EXT_DBG_SPI_CS1_CFG                     GPIO_72_GPIO72//SPIC_STEN
 #define EXT_DBG_SPI_CS1_SET                     (HWREG(GPIODATA_BASE + GPIO_O_GPCSET)   = GPIO_GPCSET_GPIO72)
@@ -1109,7 +1118,7 @@
 #define MOTOR1_ENC_CONFIG                       (EQEP_CONFIG_2X_RESOLUTION | EQEP_CONFIG_QUADRATURE | MOTOR1_QEP_SWAP | EQEP_CONFIG_IGATE_ENABLE)
 //#define MOTOR1_ENC_RESOLUTION_SCALE_PU          (4.0f * MOTOR1_ENC_RESOLUTION)
 //#define MOTOR1_ENC_RESOLUTION_SCALE_RAD         (2.0f * M_PI / MOTOR1_ENC_RESOLUTION_SCALE_PU) // [rad]
-#define MOTOR1_ENC_SPEED_HIGH_SAMPLING_FREQ     (1000) // [Hz] Velocity computation frequency
+#define MOTOR1_ENC_SPEED_HIGH_SAMPLING_FREQ     (500) // [Hz] Velocity computation frequency
 #define MOTOR1_ENC_SPEED_HIGH_SAMPLING_TICKS    (DEVICE_SYSCLK_FREQ / MOTOR1_ENC_SPEED_HIGH_SAMPLING_FREQ)
 #define MOTOR1_ENC_SPEED_HIGH_SCALE             (MOTOR1_ENC_SPEED_HIGH_SAMPLING_FREQ) // 2pi / dt
 #define MOTOR1_ENC_SPEED_LOW_SCALE              (2.0f * M_PI * DEVICE_SYSCLK_FREQ * (1 << QEP_UNIT_POS_EVENT_DIV) / (1 << (QEP_CAPTURE_CLOCK_DIV >> 4)) / MOTOR1_ENC_RESOLUTION_SCALE)
@@ -1176,7 +1185,7 @@
 #define MOTOR1_RS                               (0.52f)//(0.7f)      // Stator resistance (ohm)
 #define MOTOR1_LS                               (260e-6)//(134e-6f)   // Stator d-axis inductance (H)
 #define MOTOR1_POLES_PAIRS                      (12.0f)        // Number of poles
-#define MOTOR1_CURRENT_CUTOFF_FREQ              (500.0f)    // Current loop bandwidth (Hz)
+#define MOTOR1_CURRENT_CUTOFF_FREQ              (1000.0f)    // Current loop bandwidth (Hz)
 #define MOTOR1_CURRENT_TIME_CONST               (2.0f * M_PI * MOTOR1_CURRENT_CUTOFF_FREQ * PWM_PERIOD)
 #define MOTOR1_CURRENT_LPF_ALPHA                (MOTOR1_CURRENT_TIME_CONST / (1.0f + MOTOR1_CURRENT_TIME_CONST))
 #define MOTOR1_CURRENT_LPF_ONE_M_ALPHA          (1.0f - MOTOR1_CURRENT_LPF_ALPHA)

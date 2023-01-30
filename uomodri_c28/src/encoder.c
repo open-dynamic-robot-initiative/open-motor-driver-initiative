@@ -68,6 +68,10 @@ inline void ENC_resetPeriph(encoder_t* p_enc)
     uint32_t eqepBase       = p_enc->p_qepHandle->eqepBase;
     // Reset encoder position
     EQEP_setPosition(eqepBase, 0);
+    /* Reset the time base for edge capture unit */
+    HWREGH(eqepBase + EQEP_O_QCPRD) = 0;
+    /* Reset the Period count */
+    HWREGH(eqepBase + EQEP_O_QCTMR) = 0;
     // Reset interrupts status flags
     EQEP_clearInterruptStatus(eqepBase, (EQEP_INT_GLOBAL | EQEP_INT_POS_CNT_ERROR | EQEP_INT_PHASE_ERROR |
             EQEP_INT_DIR_CHANGE | EQEP_INT_WATCHDOG | EQEP_INT_UNDERFLOW | EQEP_INT_OVERFLOW |

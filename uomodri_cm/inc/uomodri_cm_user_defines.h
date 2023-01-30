@@ -26,6 +26,40 @@
 #define FM_RAD2RPM                              (60.0f / (2.0f * M_PI))
 #endif
 
+/***********************************************************************
+ * GPIO DEBUG DEFINES
+ ***********************************************************************/
+#define DBG_PIN0                                (78)
+#define DBG_PIN0_CFG                            GPIO_78_GPIO78
+#define DBG_PIN0_SET                            (HWREG(GPIODATA_BASE + GPIO_O_GPCSET)   = GPIO_GPCSET_GPIO78)
+#define DBG_PIN0_CLEAR                          (HWREG(GPIODATA_BASE + GPIO_O_GPCCLEAR) = GPIO_GPCCLEAR_GPIO78)
+#define DBG_PIN0_TOGGLE                         (HWREG(GPIODATA_BASE + GPIO_O_GPCTOGGLE)= GPIO_GPCTOGGLE_GPIO78)
+
+#define DBG_PIN1                                (81)
+#define DBG_PIN1_CFG                            GPIO_81_GPIO81
+#define DBG_PIN1_SET                            (HWREG(GPIODATA_BASE + GPIO_O_GPCSET)   = GPIO_GPCSET_GPIO81)
+#define DBG_PIN1_CLEAR                          (HWREG(GPIODATA_BASE + GPIO_O_GPCCLEAR) = GPIO_GPCCLEAR_GPIO81)
+#define DBG_PIN1_TOGGLE                         (HWREG(GPIODATA_BASE + GPIO_O_GPCTOGGLE)= GPIO_GPCTOGGLE_GPIO81)
+#define DBG_PIN1_READ                           (HWREG(GPIODATA_BASE + GPIO_O_GPCDAT) & GPIO_GPCDAT_GPIO81)
+
+#define EXT_DBG_SPI_SIMO                        (69)
+#define EXT_DBG_SPI_SIMO_CFG                    GPIO_69_GPIO69//GPIO_69_SPIC_SIMO
+#define EXT_DBG_SPI_SIMO_SET                    (HWREG(GPIODATA_BASE + GPIO_O_GPCSET)   = GPIO_GPCSET_GPIO69)
+#define EXT_DBG_SPI_SIMO_CLEAR                  (HWREG(GPIODATA_BASE + GPIO_O_GPCCLEAR) = GPIO_GPCCLEAR_GPIO69)
+#define EXT_DBG_SPI_SIMO_TOGGLE                 (HWREG(GPIODATA_BASE + GPIO_O_GPCTOGGLE)= GPIO_GPCTOGGLE_GPIO69)
+
+#define EXT_DBG_SPI_SOMI                        (70)
+#define EXT_DBG_SPI_SOMI_CFG                    GPIO_70_GPIO70//GPIO_70_SPIC_SOMI
+#define EXT_DBG_SPI_SOMI_SET                    (HWREG(GPIODATA_BASE + GPIO_O_GPCSET)   = GPIO_GPCSET_GPIO70)
+#define EXT_DBG_SPI_SOMI_CLEAR                  (HWREG(GPIODATA_BASE + GPIO_O_GPCCLEAR) = GPIO_GPCCLEAR_GPIO70)
+#define EXT_DBG_SPI_SOMI_TOGGLE                 (HWREG(GPIODATA_BASE + GPIO_O_GPCTOGGLE)= GPIO_GPCTOGGLE_GPIO70)
+
+#define EXT_DBG_SPI_CS1                         (72)
+#define EXT_DBG_SPI_CS1_CFG                     GPIO_72_GPIO72//SPIC_STEN
+#define EXT_DBG_SPI_CS1_SET                     (HWREG(GPIODATA_BASE + GPIO_O_GPCSET)   = GPIO_GPCSET_GPIO72)
+#define EXT_DBG_SPI_CS1_CLEAR                   (HWREG(GPIODATA_BASE + GPIO_O_GPCCLEAR) = GPIO_GPCCLEAR_GPIO72)
+#define EXT_DBG_SPI_CS1_TOGGLE                  (HWREG(GPIODATA_BASE + GPIO_O_GPCTOGGLE)= GPIO_GPCTOGGLE_GPIO72)
+
 /************************************************************************
  * IPC DEFINES
  ************************************************************************/

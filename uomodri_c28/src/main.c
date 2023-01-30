@@ -53,12 +53,17 @@ bool_t              cpu1_ready_flag;
 float32_t           transfer_array[6];
 #endif
 
+#if (defined DEBUG) && (defined CM_CORE_ENABLE)
+#pragma DATA_SECTION(transfer_array, "MSGRAM_CPU_TO_CM");
+float32_t               transfer_array[20];
+#endif
+
 /***********************************************************************
  * FUNCTIONS DECLARATION
  ***********************************************************************/
 static void MCU_ini(void);
 inline void PTR_swap(int32_t**, int32_t**);
-inline void LED_dimming(motor_t*, uint16_t*);
+inline void LED_dimming(motor_t*, motor_t*, uint16_t*);
 
 /***********************************************************************
  * FUNCTIONS DEFINITION
@@ -100,9 +105,77 @@ void main(void)
     HAL_DMA_ini(dmaMem2MemCfgList);
     // Interrupts initialization
     HAL_INT_ini(InterruptList);
-//    // USB administration
-//    USBBufferInit(&g_sTxBuffer);
-//    USBBufferInit(&g_sRxBuffer);
+
+#ifdef CM_CORE_ENABLE
+    // Send address of ia of MOTOR_1
+    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, 0, (uint32_t)&transfer_array[0], sizeof(float32_t));
+    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+    // Send address of ib of MOTOR_1
+    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, 0, (uint32_t)&transfer_array[1], sizeof(float32_t));
+    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+    // Send address of ic of MOTOR_1
+    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, 0, (uint32_t)&transfer_array[2], sizeof(float32_t));
+    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+
+    // Send address of vbus of MOTOR_1
+    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, 0, (uint32_t)&transfer_array[3], sizeof(float32_t));
+    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+
+    // Send address of ialpha of MOTOR_1
+    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, 0, (uint32_t)&transfer_array[4], sizeof(float32_t));
+    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+    // Send address of ibeta of MOTOR_1
+    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, 0, (uint32_t)&transfer_array[5], sizeof(float32_t));
+    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+
+    // Send address of id of MOTOR_1
+    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, 0, (uint32_t)&transfer_array[6], sizeof(float32_t));
+    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+    // Send address of iq of MOTOR_1
+    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, 0, (uint32_t)&transfer_array[7], sizeof(float32_t));
+    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+
+    // Send address of ud of MOTOR_1
+    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, 0, (uint32_t)&transfer_array[8], sizeof(float32_t));
+    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+    // Send address of uq of MOTOR_1
+    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, 0, (uint32_t)&transfer_array[9], sizeof(float32_t));
+    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+
+    // Send address of ualpha of MOTOR_1
+    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, 0, (uint32_t)&transfer_array[10], sizeof(float32_t));
+    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+    // Send address of ubeta of MOTOR_1
+    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, 0, (uint32_t)&transfer_array[11], sizeof(float32_t));
+    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+
+    // Send address of ua of MOTOR_1
+    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, 0, (uint32_t)&transfer_array[12], sizeof(float32_t));
+    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+    // Send address of ub of MOTOR_1
+    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, 0, (uint32_t)&transfer_array[13], sizeof(float32_t));
+    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+    // Send address of uc of MOTOR_1
+    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, 0, (uint32_t)&transfer_array[14], sizeof(float32_t));
+    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+
+    // Send address of absolute encoder position of MOTOR_1
+    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, 0, (uint32_t)&transfer_array[15], sizeof(float32_t));
+    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+    // Send address of reference position of MOTOR_1
+    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, 0, (uint32_t)&transfer_array[16], sizeof(float32_t));
+    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+
+    // Send address of encoder speed variable of MOTOR_1
+    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, 0, (uint32_t)&transfer_array[17], sizeof(float32_t));
+    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+    // Send address of reference speed of MOTOR_1
+    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, 0, (uint32_t)&transfer_array[18], sizeof(float32_t));
+    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+
+    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, 0, (uint32_t)&transfer_array[19], sizeof(float32_t));
+    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+#endif
 
     bool_t cmd_msg_valid    = false;
     bool_t timeout_flag     = false;
@@ -110,9 +183,6 @@ void main(void)
     // Infinite loop
     while(1)
     {
-//        volatile uint16_t cpt_m1 = EPWM_getTimeBaseCounterValue(MOTOR1_PWM1_BASE);
-//        volatile uint16_t cpt_m2 = EPWM_getTimeBaseCounterValue(MOTOR2_PWM1_BASE);
-//        volatile int32_t diff_cpt = cpt_m1 - cpt_m2;
         /*
          * SPI COM RX management - Receive & extract message if valid
          * DMA CMD TO FOC struct - Propagate new commands (message extract or timeout inc)
@@ -170,6 +240,45 @@ void main(void)
                     DMA_startChannel(DMA_COM_SPI_TX_BASE_ADDR);
                 }
             }
+#if (defined DEBUG) && (defined CM_CORE_ENABLE)
+            EXT_DBG_SPI_SOMI_SET;
+            if(!IPC_isFlagBusyLtoR(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG))
+            {
+                transfer_array[0]   = motor[MOTOR_1].p_motorFOC->motor_acq.ia;
+                transfer_array[1]   = motor[MOTOR_1].p_motorFOC->motor_acq.ib;
+                transfer_array[2]   = motor[MOTOR_1].p_motorFOC->motor_acq.ic;
+
+                transfer_array[3]   = motor[MOTOR_1].p_motorFOC->motor_acq.vbus;
+
+                transfer_array[4]   = motor[MOTOR_1].p_motorFOC->ialpha;
+                transfer_array[5]   = motor[MOTOR_1].p_motorFOC->ibeta;
+
+                transfer_array[6]   = motor[MOTOR_1].p_motorFOC->id;
+                transfer_array[7]   = motor[MOTOR_1].p_motorFOC->iq;
+
+                transfer_array[8]   = motor[MOTOR_1].p_motorFOC->ud;
+                transfer_array[9]   = motor[MOTOR_1].p_motorFOC->uq;
+
+                transfer_array[10]  = motor[MOTOR_1].p_motorFOC->ualpha;
+                transfer_array[11]  = motor[MOTOR_1].p_motorFOC->ubeta;
+
+                transfer_array[12]  = motor[MOTOR_1].p_motorFOC->ua;
+                transfer_array[13]  = motor[MOTOR_1].p_motorFOC->ub;
+                transfer_array[14]  = motor[MOTOR_1].p_motorFOC->uc;
+
+                transfer_array[15]  = motor[MOTOR_1].p_motorFOC->motor_enc.thetaAbsolute;
+                transfer_array[16]  = motor[MOTOR_1].p_motorFOC->motor_cmd.posRef;
+
+                transfer_array[17]  = motor[MOTOR_1].p_motorFOC->motor_enc.speed.speedMech;
+                transfer_array[18]  = motor[MOTOR_1].p_motorFOC->motor_cmd.velRef;
+
+//                transfer_array[19]  = *motor[MOTOR_1].p_motorFOC->piIq.p_set;
+                transfer_array[19]  = motor[MOTOR_1].p_motorFOC->iqRef;
+
+                IPC_setFlagLtoR(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG);
+                EXT_DBG_SPI_SOMI_CLEAR;
+            }
+#endif
             motor[MOTOR_1].itDone   = false;
             motor[MOTOR_2].itDone   = false;
         }
@@ -182,7 +291,7 @@ void main(void)
             // LED dimming control
             if(!DMA_getRunStatusFlag(DMA_LED_SPI_TX_BASE_ADDR))
             {
-                LED_dimming(&motor[MOTOR_1], &led_msg[0]);
+                LED_dimming(&motor[MOTOR_1], &motor[MOTOR_2], &led_msg[0]);
                 DMA_startChannel(DMA_LED_SPI_TX_BASE_ADDR);
             }
 #ifdef CLA_CORE_ENABLE
@@ -280,13 +389,26 @@ inline void PTR_swap(int32_t** p_a, int32_t** p_b)
  * @param[in]       p_motor Pointer on data structure array used for motor control.
  * @param[out]      p_msg   Pointer on the message to be sent to led via SPI.
  */
-inline void LED_dimming(motor_t* p_motor, uint16_t* p_msg)
+inline void LED_dimming(motor_t* p_motor1, motor_t* p_motor2, uint16_t* p_msg)
 {
     static uint16_t timer_cpt_ms    = 0;
     float32_t       timer_fade_blink= (float32_t)((timer_cpt_ms < 500)  ? (timer_cpt_ms)    : (1000 - timer_cpt_ms)) / 500.0f;
     float32_t       timer_blink     = (timer_cpt_ms < 500)              ? (0.0f)            : (1.0f);
     timer_cpt_ms                    = (timer_cpt_ms < 1000)             ? (timer_cpt_ms + 1): (0);
-    switch(p_motor->motor_state)
+    motor_state_e   motor_state     = MOTOR_STATE_INIT;
+
+    if((p_motor1->motor_state == MOTOR_STATE_INIT) || (p_motor2->motor_state == MOTOR_STATE_INIT))
+        motor_state = MOTOR_STATE_INIT;
+    else if(((p_motor1->motor_state == MOTOR_STATE_ALIGN_UP) || (p_motor1->motor_state == MOTOR_STATE_ALIGN_FIX)) &&
+            ((p_motor2->motor_state == MOTOR_STATE_ALIGN_UP) || (p_motor2->motor_state == MOTOR_STATE_ALIGN_FIX)))
+        motor_state = MOTOR_STATE_ALIGN_UP;
+    else if(((p_motor1->motor_state == MOTOR_STATE_READY) || (p_motor1->motor_state == MOTOR_STATE_STOP)) &&
+            ((p_motor2->motor_state == MOTOR_STATE_READY) || (p_motor2->motor_state == MOTOR_STATE_STOP)))
+        motor_state = MOTOR_STATE_READY;
+    if((p_motor1->motor_state == MOTOR_STATE_ERROR) || (p_motor2->motor_state == MOTOR_STATE_ERROR))
+        motor_state = MOTOR_STATE_ERROR;
+
+    switch(motor_state)
     {
     case MOTOR_STATE_ALIGN_UP:
     case MOTOR_STATE_ALIGN_FIX:
@@ -313,33 +435,56 @@ inline void LED_dimming(motor_t* p_motor, uint16_t* p_msg)
 __attribute__((interrupt)) void adc_isrMotor1(void)
 {
 #ifdef UOMODRI_V1_ENABLE
-#ifdef DEBUG
-    DBG_PIN4_SET;
+    EXT_DBG_SPI_CLK_SET;
+#elif (defined UOMODRI_V2_ENABLE)
+    DBG_PIN0_SET;
 #endif
     while(DMA_getTransferStatusFlag(DMA_CMD_2_FOC_BASE_ADDR));
     // Motor control
     motor[MOTOR_1].itDone = MOT_runControl(&motor[MOTOR_1]);
+
+//    if(!IPC_isFlagBusyLtoR(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG))
+//    {
+//        transfer_array[0]   = motor[MOTOR_1].p_motorFOC->motor_acq.ia;
+//        transfer_array[1]   = motor[MOTOR_1].p_motorFOC->motor_acq.ib;
+//        transfer_array[2]   = motor[MOTOR_1].p_motorFOC->motor_acq.ic;
+//        transfer_array[3]   = motor[MOTOR_1].p_motorFOC->motor_acq.vbus;
+//        transfer_array[4]   = motor[MOTOR_1].p_motorFOC->ialpha;
+//        transfer_array[5]   = motor[MOTOR_1].p_motorFOC->ibeta;
+//        transfer_array[6]   = motor[MOTOR_1].p_motorFOC->id;
+//        transfer_array[7]   = motor[MOTOR_1].p_motorFOC->iq;
+//        transfer_array[8]   = motor[MOTOR_1].p_motorFOC->ud;
+//        transfer_array[9]   = motor[MOTOR_1].p_motorFOC->uq;
+//        transfer_array[10]  = motor[MOTOR_1].p_motorFOC->ualpha;
+//        transfer_array[11]  = motor[MOTOR_1].p_motorFOC->ubeta;
+//        transfer_array[12]  = motor[MOTOR_1].p_motorFOC->ua;
+//        transfer_array[13]  = motor[MOTOR_1].p_motorFOC->ub;
+//        transfer_array[14]  = motor[MOTOR_1].p_motorFOC->uc;
+//        transfer_array[15]  = motor[MOTOR_1].p_motorFOC->motor_enc.thetaAbsolute;
+//        transfer_array[16]  = motor[MOTOR_1].p_motorFOC->motor_cmd.posRef;
+//        transfer_array[17]  = motor[MOTOR_1].p_motorFOC->motor_enc.speed.speedMech;
+//        transfer_array[18]  = motor[MOTOR_1].p_motorFOC->motor_cmd.velRef;
+//        transfer_array[19]  = motor[MOTOR_1].p_motorFOC->iqRef;
+//
+//        IPC_setFlagLtoR(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG);
+//    }
+#ifdef UOMODRI_V1_ENABLE
     // Clear the interrupt overflow flag
     ADC_clearInterruptOverflowStatus(MOTOR12_IVA_ADC_ADDR, MOTOR1_IA_INT_NUM);
     // Clear the interrupt flag
     ADC_clearInterruptStatus(MOTOR12_IVA_ADC_ADDR, MOTOR1_IA_INT_NUM);
-    // Acknowledge PWM and CLA interrupt flag
-    Interrupt_clearACKGroup(MOTOR1_IA_INT_ACK_GROUP);
-#ifdef DEBUG
-    DBG_PIN4_CLEAR;
-#endif
 #elif (defined UOMODRI_V2_ENABLE)
-    DBG_PIN3_SET;
-    while(DMA_getTransferStatusFlag(DMA_CMD_2_FOC_BASE_ADDR));
-    // Motor control
-    motor[MOTOR_1].itDone = MOT_runControl(&motor[MOTOR_1]);
     // Clear the interrupt overflow flag
     ADC_clearInterruptOverflowStatus(MOTOR12_IA_ADC_ADDR, MOTOR1_IA_INT_NUM);
     // Clear the interrupt flag
     ADC_clearInterruptStatus(MOTOR12_IA_ADC_ADDR, MOTOR1_IA_INT_NUM);
+#endif
     // Acknowledge PWM and CLA interrupt flag
     Interrupt_clearACKGroup(MOTOR1_IA_INT_ACK_GROUP);
-    DBG_PIN3_CLEAR;
+#ifdef UOMODRI_V1_ENABLE
+    EXT_DBG_SPI_CLK_CLEAR;
+#elif (defined UOMODRI_V2_ENABLE)
+    DBG_PIN0_CLEAR;
 #endif
 }
 
@@ -349,33 +494,30 @@ __attribute__((interrupt)) void adc_isrMotor1(void)
 __attribute__((interrupt)) void adc_isrMotor2(void)
 {
 #ifdef UOMODRI_V1_ENABLE
-#ifdef DEBUG
-    DBG_PIN4_SET;
+    EXT_DBG_SPI_CLK_SET;
+#elif (defined UOMODRI_V2_ENABLE)
+    DBG_PIN0_SET;
 #endif
     while(DMA_getTransferStatusFlag(DMA_CMD_2_FOC_BASE_ADDR));
     // Motor control
     motor[MOTOR_2].itDone = MOT_runControl(&motor[MOTOR_2]);
+#ifdef UOMODRI_V1_ENABLE
     // Clear the interrupt overflow flag
     ADC_clearInterruptOverflowStatus(MOTOR12_IVA_ADC_ADDR, MOTOR2_IA_INT_NUM);
     // Clear the interrupt flag
     ADC_clearInterruptStatus(MOTOR12_IVA_ADC_ADDR, MOTOR2_IA_INT_NUM);
-    // Acknowledge PWM and CLA interrupt flag
-    Interrupt_clearACKGroup(MOTOR2_IA_INT_ACK_GROUP);
-#ifdef DEBUG
-    DBG_PIN4_CLEAR;
-#endif
 #elif (defined UOMODRI_V2_ENABLE)
-    DBG_PIN2_SET;
-    while(DMA_getTransferStatusFlag(DMA_CMD_2_FOC_BASE_ADDR));
-    // Motor control
-    motor[MOTOR_2].itDone = MOT_runControl(&motor[MOTOR_2]);
     // Clear the interrupt overflow flag
     ADC_clearInterruptOverflowStatus(MOTOR12_IA_ADC_ADDR, MOTOR2_IA_INT_NUM);
     // Clear the interrupt flag
     ADC_clearInterruptStatus(MOTOR12_IA_ADC_ADDR, MOTOR2_IA_INT_NUM);
+#endif
     // Acknowledge PWM and CLA interrupt flag
     Interrupt_clearACKGroup(MOTOR2_IA_INT_ACK_GROUP);
-    DBG_PIN2_CLEAR;
+#ifdef UOMODRI_V1_ENABLE
+    EXT_DBG_SPI_CLK_CLEAR;
+#elif (defined UOMODRI_V2_ENABLE)
+    DBG_PIN0_CLEAR;
 #endif
 }
 
