@@ -7,7 +7,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <math.h>
-#ifndef USE_CM_CORE
+#ifdef CPU1
 #include "uomodri_user_defines.h"
 #else
 #include "driverlib_cm.h"
@@ -104,12 +104,6 @@ typedef struct __params_t__
 
 typedef struct __acquisitions_t__
 {
-#if (defined UOMODRI_V1_ENABLE) && (!defined  UOMODRI_V2_ENABLE)
-    // ADC result registers
-    volatile uint16_t*  const p_vaMeasReg;
-    volatile uint16_t*  const p_vbMeasReg;
-    volatile uint16_t*  const p_vcMeasReg;
-#endif
     // ADC result registers
     volatile uint16_t*  const p_vBusMeasReg;
     volatile uint16_t*  const p_vExtMeasReg;
@@ -117,11 +111,6 @@ typedef struct __acquisitions_t__
     volatile int16_t*   const p_ibMeasReg;
     volatile int16_t*   const p_icMeasReg;
     // ADC values scaled
-#if (defined UOMODRI_V1_ENABLE) && (!defined  UOMODRI_V2_ENABLE)
-    float32_t           va;         // [V]
-    float32_t           vb;         // [V]
-    float32_t           vc;         // [V]
-#endif
     float32_t           vbus;       // [V]
     float32_t           vExt;       // [V]
     float32_t           ia;         // [A]

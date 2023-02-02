@@ -7,7 +7,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <math.h>
-#ifndef USE_CM_CORE
+#ifdef CPU1
 #include "f2838x_device.h"
 #include "motor.h"
 #else
@@ -264,7 +264,7 @@ typedef struct __com_cpu1_to_cm_t__
     uint16_t    data_size;
 } com_cpu1_to_cm_t;
 
-#ifdef USE_CM_CORE
+#ifndef CPU1
 typedef struct __attribute__((__packed__)) __dbg_uart_msg_t__
 {
     uint8_t         header[2];
@@ -351,7 +351,7 @@ typedef struct __attribute__((__packed__)) __dbg_uart_addr_t__
 /***********************************************************************
  * FUNCTIONS DECLARATION
  ***********************************************************************/
-#ifndef USE_CM_CORE
+#ifdef CPU1
 bool_t COM_msgExtract(mst2slv_msg_t*,  cmd_t*, cmd_t*);
 bool_t COM_msgExtract_cla(mst2slv_msg_cla_t*, cmd_t*, cmd_t*);
 void COM_msgCreate(motor_t*, motor_t*, slv2mst_msg_t*);

@@ -16,7 +16,7 @@
 #include "uomodri_user_defines.h"
 #include "uomodri_hal_config_handlers.h"
 #include "uomodri_prj_config_handlers.h"
-#ifdef CLA_CORE_ENABLE
+#if (CLA_CORE_ENABLE)
 #include "cla_shared.h"
 #endif
 
@@ -27,7 +27,7 @@ extern motor_t          motor[2];
 extern const hal_cfg_t  hal;
 extern cmd_t            cmd_uOmodri[2];
 
-#ifdef CLA_CORE_ENABLE
+#if (CLA_CORE_ENABLE)
 extern uint32_t Cla1funcsRunStart, Cla1funcsLoadStart, Cla1funcsLoadSize;
 extern uint32_t Cla1ConstRunStart, Cla1ConstLoadStart, Cla1ConstLoadSize;
 //#pragma SET_DATA_SECTION("cla_shared")
@@ -53,7 +53,7 @@ bool_t              cpu1_ready_flag;
 float32_t           transfer_array[6];
 #endif
 
-#if (defined DEBUG) && (defined CM_CORE_ENABLE)
+#if (defined DEBUG) && (CM_CORE_ENABLE)
 #pragma DATA_SECTION(transfer_array, "MSGRAM_CPU_TO_CM");
 float32_t               transfer_array[20];
 #endif
@@ -64,6 +64,7 @@ float32_t               transfer_array[20];
 static void MCU_ini(void);
 inline void PTR_swap(int32_t**, int32_t**);
 inline void LED_dimming(motor_t*, motor_t*, uint16_t*);
+inline void IPC_CpuToCmAddrSync(void);
 
 /***********************************************************************
  * FUNCTIONS DEFINITION
@@ -77,7 +78,7 @@ void main(void)
     MCU_ini();
     // Hardware Abstraction Layer initialization
     HAL_ini(&hal);
-#ifdef CLA_CORE_ENABLE
+#if (CLA_CORE_ENABLE)
     // DRV8353 initialization
     DRV_ini(motor[MOTOR_1].motorDRV_u.ptr);
     DRV_ini(motor[MOTOR_2].motorDRV_u.ptr);
@@ -105,76 +106,8 @@ void main(void)
     HAL_DMA_ini(dmaMem2MemCfgList);
     // Interrupts initialization
     HAL_INT_ini(InterruptList);
-
-#ifdef CM_CORE_ENABLE
-    // Send address of ia of MOTOR_1
-    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, 0, (uint32_t)&transfer_array[0], sizeof(float32_t));
-    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
-    // Send address of ib of MOTOR_1
-    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, 0, (uint32_t)&transfer_array[1], sizeof(float32_t));
-    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
-    // Send address of ic of MOTOR_1
-    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, 0, (uint32_t)&transfer_array[2], sizeof(float32_t));
-    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
-
-    // Send address of vbus of MOTOR_1
-    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, 0, (uint32_t)&transfer_array[3], sizeof(float32_t));
-    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
-
-    // Send address of ialpha of MOTOR_1
-    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, 0, (uint32_t)&transfer_array[4], sizeof(float32_t));
-    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
-    // Send address of ibeta of MOTOR_1
-    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, 0, (uint32_t)&transfer_array[5], sizeof(float32_t));
-    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
-
-    // Send address of id of MOTOR_1
-    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, 0, (uint32_t)&transfer_array[6], sizeof(float32_t));
-    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
-    // Send address of iq of MOTOR_1
-    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, 0, (uint32_t)&transfer_array[7], sizeof(float32_t));
-    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
-
-    // Send address of ud of MOTOR_1
-    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, 0, (uint32_t)&transfer_array[8], sizeof(float32_t));
-    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
-    // Send address of uq of MOTOR_1
-    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, 0, (uint32_t)&transfer_array[9], sizeof(float32_t));
-    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
-
-    // Send address of ualpha of MOTOR_1
-    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, 0, (uint32_t)&transfer_array[10], sizeof(float32_t));
-    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
-    // Send address of ubeta of MOTOR_1
-    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, 0, (uint32_t)&transfer_array[11], sizeof(float32_t));
-    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
-
-    // Send address of ua of MOTOR_1
-    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, 0, (uint32_t)&transfer_array[12], sizeof(float32_t));
-    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
-    // Send address of ub of MOTOR_1
-    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, 0, (uint32_t)&transfer_array[13], sizeof(float32_t));
-    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
-    // Send address of uc of MOTOR_1
-    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, 0, (uint32_t)&transfer_array[14], sizeof(float32_t));
-    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
-
-    // Send address of absolute encoder position of MOTOR_1
-    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, 0, (uint32_t)&transfer_array[15], sizeof(float32_t));
-    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
-    // Send address of reference position of MOTOR_1
-    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, 0, (uint32_t)&transfer_array[16], sizeof(float32_t));
-    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
-
-    // Send address of encoder speed variable of MOTOR_1
-    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, 0, (uint32_t)&transfer_array[17], sizeof(float32_t));
-    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
-    // Send address of reference speed of MOTOR_1
-    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, 0, (uint32_t)&transfer_array[18], sizeof(float32_t));
-    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
-
-    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, 0, (uint32_t)&transfer_array[19], sizeof(float32_t));
-    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+#if (CM_CORE_ENABLE)
+    IPC_CpuToCmAddrSync();
 #endif
 
     bool_t cmd_msg_valid    = false;
@@ -207,7 +140,7 @@ void main(void)
             // Send new commands to FOC structures if extract valid
             if(cmd_msg_valid || timeout_flag)
             {
-#ifdef CLA_CORE_ENABLE
+#if (CLA_CORE_ENABLE)
                 if(cmd_msg_valid && ((cmd_uOmodri[MOTOR_1].enableReg.all & 0xB000) == 0xB000))
                     cmd_uOmodri[MOTOR_1].posRef += motor[MOTOR_1].motorFOC_u.ptr->motor_enc.thetaIndex;
                 if(cmd_msg_valid && ((cmd_uOmodri[MOTOR_2].enableReg.all & 0x000B) == 0x000B))
@@ -240,8 +173,10 @@ void main(void)
                     DMA_startChannel(DMA_COM_SPI_TX_BASE_ADDR);
                 }
             }
-#if (defined DEBUG) && (defined CM_CORE_ENABLE)
-            EXT_DBG_SPI_SOMI_SET;
+#if (defined DEBUG) && (CM_CORE_ENABLE)
+#if (UOMODRI_V2_0_ENABLE)
+            DBG_PIN1_SET;
+#endif
             if(!IPC_isFlagBusyLtoR(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG))
             {
                 transfer_array[0]   = motor[MOTOR_1].p_motorFOC->motor_acq.ia;
@@ -276,7 +211,9 @@ void main(void)
                 transfer_array[19]  = motor[MOTOR_1].p_motorFOC->iqRef;
 
                 IPC_setFlagLtoR(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG);
-                EXT_DBG_SPI_SOMI_CLEAR;
+#if (UOMODRI_V2_0_ENABLE)
+                DBG_PIN1_CLEAR;
+#endif
             }
 #endif
             motor[MOTOR_1].itDone   = false;
@@ -294,7 +231,7 @@ void main(void)
                 LED_dimming(&motor[MOTOR_1], &motor[MOTOR_2], &led_msg[0]);
                 DMA_startChannel(DMA_LED_SPI_TX_BASE_ADDR);
             }
-#ifdef CLA_CORE_ENABLE
+#if (CLA_CORE_ENABLE)
             // Read DRV data to get status registers (MOTOR_1)
             if(motor[MOTOR_1].motor_error.bit.drv_fault)
                 DRV_readStatus(motor[MOTOR_1].motorDRV_u.ptr);
@@ -430,13 +367,90 @@ inline void LED_dimming(motor_t* p_motor1, motor_t* p_motor2, uint16_t* p_msg)
 }
 
 /**
+ * @brief       Transmit the data address to be broadcast by CM.
+ */
+inline void IPC_CpuToCmAddrSync(void)
+{
+    // Send address of ia of MOTOR_1
+    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, 0, (uint32_t)&transfer_array[0], sizeof(float32_t));
+    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+    // Send address of ib of MOTOR_1
+    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, 0, (uint32_t)&transfer_array[1], sizeof(float32_t));
+    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+    // Send address of ic of MOTOR_1
+    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, 0, (uint32_t)&transfer_array[2], sizeof(float32_t));
+    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+
+    // Send address of vbus of MOTOR_1
+    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, 0, (uint32_t)&transfer_array[3], sizeof(float32_t));
+    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+
+    // Send address of ialpha of MOTOR_1
+    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, 0, (uint32_t)&transfer_array[4], sizeof(float32_t));
+    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+    // Send address of ibeta of MOTOR_1
+    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, 0, (uint32_t)&transfer_array[5], sizeof(float32_t));
+    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+
+    // Send address of id of MOTOR_1
+    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, 0, (uint32_t)&transfer_array[6], sizeof(float32_t));
+    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+    // Send address of iq of MOTOR_1
+    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, 0, (uint32_t)&transfer_array[7], sizeof(float32_t));
+    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+
+    // Send address of ud of MOTOR_1
+    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, 0, (uint32_t)&transfer_array[8], sizeof(float32_t));
+    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+    // Send address of uq of MOTOR_1
+    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, 0, (uint32_t)&transfer_array[9], sizeof(float32_t));
+    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+
+    // Send address of ualpha of MOTOR_1
+    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, 0, (uint32_t)&transfer_array[10], sizeof(float32_t));
+    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+    // Send address of ubeta of MOTOR_1
+    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, 0, (uint32_t)&transfer_array[11], sizeof(float32_t));
+    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+
+    // Send address of ua of MOTOR_1
+    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, 0, (uint32_t)&transfer_array[12], sizeof(float32_t));
+    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+    // Send address of ub of MOTOR_1
+    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, 0, (uint32_t)&transfer_array[13], sizeof(float32_t));
+    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+    // Send address of uc of MOTOR_1
+    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, 0, (uint32_t)&transfer_array[14], sizeof(float32_t));
+    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+
+    // Send address of absolute encoder position of MOTOR_1
+    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, 0, (uint32_t)&transfer_array[15], sizeof(float32_t));
+    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+    // Send address of reference position of MOTOR_1
+    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, 0, (uint32_t)&transfer_array[16], sizeof(float32_t));
+    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+
+    // Send address of encoder speed variable of MOTOR_1
+    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, 0, (uint32_t)&transfer_array[17], sizeof(float32_t));
+    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+    // Send address of reference speed of MOTOR_1
+    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, 0, (uint32_t)&transfer_array[18], sizeof(float32_t));
+    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+
+    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, 0, (uint32_t)&transfer_array[19], sizeof(float32_t));
+    IPC_waitForAck(IPC_CPU1_L_CM_R, IPC_CM_TO_CPU1_FLAG);
+
+    return;
+}
+
+/**
  * @brief           ADC interrupt for MOTOR_1. Read currents \& voltages and compute control.
  */
 __attribute__((interrupt)) void adc_isrMotor1(void)
 {
-#ifdef UOMODRI_V1_ENABLE
+#if (UOMODRI_V1_0_ENABLE)
     EXT_DBG_SPI_CLK_SET;
-#elif (defined UOMODRI_V2_ENABLE)
+#elif (UOMODRI_V2_0_ENABLE)
     DBG_PIN0_SET;
 #endif
     while(DMA_getTransferStatusFlag(DMA_CMD_2_FOC_BASE_ADDR));
@@ -468,22 +482,15 @@ __attribute__((interrupt)) void adc_isrMotor1(void)
 //
 //        IPC_setFlagLtoR(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG);
 //    }
-#ifdef UOMODRI_V1_ENABLE
-    // Clear the interrupt overflow flag
-    ADC_clearInterruptOverflowStatus(MOTOR12_IVA_ADC_ADDR, MOTOR1_IA_INT_NUM);
-    // Clear the interrupt flag
-    ADC_clearInterruptStatus(MOTOR12_IVA_ADC_ADDR, MOTOR1_IA_INT_NUM);
-#elif (defined UOMODRI_V2_ENABLE)
     // Clear the interrupt overflow flag
     ADC_clearInterruptOverflowStatus(MOTOR12_IA_ADC_ADDR, MOTOR1_IA_INT_NUM);
     // Clear the interrupt flag
     ADC_clearInterruptStatus(MOTOR12_IA_ADC_ADDR, MOTOR1_IA_INT_NUM);
-#endif
     // Acknowledge PWM and CLA interrupt flag
     Interrupt_clearACKGroup(MOTOR1_IA_INT_ACK_GROUP);
-#ifdef UOMODRI_V1_ENABLE
+#if (UOMODRI_V1_0_ENABLE)
     EXT_DBG_SPI_CLK_CLEAR;
-#elif (defined UOMODRI_V2_ENABLE)
+#elif ( UOMODRI_V2_0_ENABLE)
     DBG_PIN0_CLEAR;
 #endif
 }
@@ -493,30 +500,23 @@ __attribute__((interrupt)) void adc_isrMotor1(void)
  */
 __attribute__((interrupt)) void adc_isrMotor2(void)
 {
-#ifdef UOMODRI_V1_ENABLE
+#if (UOMODRI_V1_0_ENABLE)
     EXT_DBG_SPI_CLK_SET;
-#elif (defined UOMODRI_V2_ENABLE)
+#elif (UOMODRI_V2_0_ENABLE)
     DBG_PIN0_SET;
 #endif
     while(DMA_getTransferStatusFlag(DMA_CMD_2_FOC_BASE_ADDR));
     // Motor control
     motor[MOTOR_2].itDone = MOT_runControl(&motor[MOTOR_2]);
-#ifdef UOMODRI_V1_ENABLE
-    // Clear the interrupt overflow flag
-    ADC_clearInterruptOverflowStatus(MOTOR12_IVA_ADC_ADDR, MOTOR2_IA_INT_NUM);
-    // Clear the interrupt flag
-    ADC_clearInterruptStatus(MOTOR12_IVA_ADC_ADDR, MOTOR2_IA_INT_NUM);
-#elif (defined UOMODRI_V2_ENABLE)
     // Clear the interrupt overflow flag
     ADC_clearInterruptOverflowStatus(MOTOR12_IA_ADC_ADDR, MOTOR2_IA_INT_NUM);
     // Clear the interrupt flag
     ADC_clearInterruptStatus(MOTOR12_IA_ADC_ADDR, MOTOR2_IA_INT_NUM);
-#endif
     // Acknowledge PWM and CLA interrupt flag
     Interrupt_clearACKGroup(MOTOR2_IA_INT_ACK_GROUP);
-#ifdef UOMODRI_V1_ENABLE
+#if (UOMODRI_V1_0_ENABLE)
     EXT_DBG_SPI_CLK_CLEAR;
-#elif (defined UOMODRI_V2_ENABLE)
+#elif (UOMODRI_V2_0_ENABLE)
     DBG_PIN0_CLEAR;
 #endif
 }

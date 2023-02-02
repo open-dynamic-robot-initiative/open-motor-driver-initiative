@@ -106,13 +106,12 @@ void HAL_ADC_ini(const adc_cfg_t* p_adcCfg)
 {
     if((p_adcCfg != NULL) && (p_adcCfg->p_adcIni != NULL) && (p_adcCfg->p_adcAcq != NULL))
     {
-        const adc_ini_t*    p_adcIni    = p_adcCfg->p_adcIni;
-        const adc_acq_t*    p_adcAcq    = p_adcCfg->p_adcAcq;
-        const adc_int_t*    p_adcInt    = p_adcCfg->p_adcInt;
-        uint32_t            adcBase     = p_adcCfg->adcBase;
-
+        uint32_t adcBase    = p_adcCfg->adcBase;
         while(adcBase != UINT32_MAX)
         {
+            const adc_ini_t* p_adcIni   = p_adcCfg->p_adcIni;
+            const adc_acq_t* p_adcAcq   = p_adcCfg->p_adcAcq;
+            const adc_int_t* p_adcInt   = p_adcCfg->p_adcInt;
             /* Sets ADC clock to 50MHz (ADCCLK (derived from PERx.SYSCLK))
              * Set converting input mode : "ADC_MODE_SINGLE_ENDED" or "ADC_MODE_DIFFERENTIAL"
              * Set converting resolution : "ADC_RESOLUTION_12BIT" or "ADC_RESOLUTION_16BIT"
@@ -172,60 +171,6 @@ void HAL_ADC_ini(const adc_cfg_t* p_adcCfg)
  */
 void HAL_ADC_offsetCalib(const hal_motor_cfg_t* p_halMotorCfg)
 {
-#if (defined UOMODRI_V1_ENABLE) && (!defined  UOMODRI_V2_ENABLE)
-    if(p_halMotorCfg != NULL)
-    {
-        const epwm_cc_t*    p_pwmCC     = NULL;
-        const adc_int_t*    p_ITConv    = NULL;
-        lpf_t               fltCoef     = {.a = 0.998f, .one_minus_a = 0.002f};
-        float32_t           i[3]        = {0.0f, 0.0f, 0.0f};
-        float32_t           v[3]        = {0.0f, 0.0f, 0.0f};
-        uint16_t            calibCnt    = 0;
-        uint8_t             loop        = 0;
-
-        // force no switching with low side transistors closed
-        for(loop = 0; loop < 3; loop++)
-        {
-            p_pwmCC = p_halMotorCfg->p_pwmCntCmp[loop];
-            EPWM_setCounterCompareValue(p_pwmCC->epwmBase, p_pwmCC->compModule, p_pwmCC->compCount);
-        }
-
-        for(calibCnt = 0; calibCnt < 10000; calibCnt++)
-        {
-            /* Wait data acquisition for Ia, Ib, Ic . Blocking.
-             Va, Vb, Vc & Vbus will be also available. */
-            p_ITConv = p_halMotorCfg->p_intAcq;
-            // Wait IT flag event
-            while(ADC_getInterruptStatus(p_ITConv->adcBase, p_ITConv->adcIntNumber) == false);
-            if(calibCnt > 1000)
-                for(loop = 0; loop < 3; loop++)
-                {
-                   UOMODRI_HAL_ADC_CALIB(fltCoef, i[loop], (float32_t) *p_halMotorCfg->p_iAcq[loop]->adcResultReg);
-                   UOMODRI_HAL_ADC_CALIB(fltCoef, v[loop], (float32_t) *p_halMotorCfg->p_vAcq[loop]->adcResultReg);
-                }
-            else
-                for(loop = 0; loop < 3; loop++)
-                {
-                    i[loop] = (float32_t) *(p_halMotorCfg->p_iAcq[loop]->adcResultReg);
-                    v[loop] = (float32_t) *(p_halMotorCfg->p_vAcq[loop]->adcResultReg);
-                }
-
-            // clear flags
-            for(loop = 0; loop < 3; loop++)
-            {
-                // Clear the interrupt overflow flag
-                ADC_clearInterruptOverflowStatus(p_halMotorCfg->p_iAcq[loop]->adcBase, p_ITConv->adcIntNumber);
-                // Clear the interrupt flag
-                ADC_clearInterruptStatus(p_halMotorCfg->p_iAcq[loop]->adcBase, p_ITConv->adcIntNumber);
-            }
-        }
-
-        // Set offsets in PPBs
-        for(loop = 0; loop < 3; loop++)
-            // Sets the post processing block reference offset for tensions
-            ADC_setPPBReferenceOffset(p_halMotorCfg->p_iAcq[loop]->adcBase, p_halMotorCfg->p_iAcq[loop]->adcPPBNumber, (uint16_t)i[loop]);
-    }
-#elif (defined UOMODRI_V2_ENABLE)
     if(p_halMotorCfg != NULL)
     {
         const epwm_cc_t*    p_pwmCC     = NULL;
@@ -244,14 +189,13 @@ void HAL_ADC_offsetCalib(const hal_motor_cfg_t* p_halMotorCfg)
 
         for(calibCnt = 0; calibCnt < 10000; calibCnt++)
         {
-            /* Wait data acquisition for Ia, Ib, Ic . Blocking.
-             Va, Vb, Vc & Vbus will be also available. */
+            /* Wait data acquisition for Ia, Ib, Ic . Blocking. */
             p_ITConv = p_halMotorCfg->p_intAcq;
             // Wait IT flag event
             while(ADC_getInterruptStatus(p_ITConv->adcBase, p_ITConv->adcIntNumber) == false);
             if(calibCnt > 1000)
                 for(loop = 0; loop < 3; loop++)
-                    UOMODRI_HAL_ADC_CALIB(fltCoef, i[loop], (float32_t) *p_halMotorCfg->p_iAcq[loop]->adcResultReg);
+                    UOMODRI_HAL_ADC_CALIB(fltCoef, i[loop], (float32_t) *(p_halMotorCfg->p_iAcq[loop]->adcResultReg));
             else
                 for(loop = 0; loop < 3; loop++)
                     i[loop] = (float32_t) *(p_halMotorCfg->p_iAcq[loop]->adcResultReg);
@@ -273,7 +217,6 @@ void HAL_ADC_offsetCalib(const hal_motor_cfg_t* p_halMotorCfg)
                                       p_halMotorCfg->p_iAcq[loop]->adcPPBNumber,
                                       (uint16_t)i[loop]);
     }
-#endif
 
     return;
 }
@@ -284,15 +227,10 @@ void HAL_ADC_offsetCalib(const hal_motor_cfg_t* p_halMotorCfg)
  */
 void HAL_ePWM_ini(const epwm_cfg_t* p_pwmCfg)
 {
-    if((p_pwmCfg != NULL) && (p_pwmCfg->p_epwmTimeBase != NULL) && (p_pwmCfg->p_epwmCaptureCompare) &&
+    if((p_pwmCfg != NULL) && (p_pwmCfg->p_epwmTimeBase != NULL) && (p_pwmCfg->p_epwmCounterCompare) &&
             (p_pwmCfg->p_epwmActionQualifier != NULL) && (p_pwmCfg->p_epwmDeadband != NULL))
     {
-        const epwm_tb_t* p_pwmTimeBase          = p_pwmCfg->p_epwmTimeBase;
-        const epwm_cc_t* p_pwmCounterCompare    = p_pwmCfg->p_epwmCaptureCompare;
-        const epwm_aq_t* p_pwmActionQualifier   = p_pwmCfg->p_epwmActionQualifier;
-        const epwm_db_t* p_pwmDeadBand          = p_pwmCfg->p_epwmDeadband;
-        uint32_t         pwmBase                = p_pwmCfg->epwmBase;
-
+        uint32_t pwmBase    = p_pwmCfg->epwmBase;
         /* Disable sync(Freeze clock to PWM as well). GTBCLKSYNC is applicable
          * only for multiple core devices.
          */
@@ -302,6 +240,10 @@ void HAL_ePWM_ini(const epwm_cfg_t* p_pwmCfg)
 
         while(pwmBase != UINT32_MAX)
         {
+            const epwm_tb_t* p_pwmTimeBase          = p_pwmCfg->p_epwmTimeBase;
+            const epwm_cc_t* p_pwmCounterCompare    = p_pwmCfg->p_epwmCounterCompare;
+            const epwm_aq_t* p_pwmActionQualifier   = p_pwmCfg->p_epwmActionQualifier;
+            const epwm_db_t* p_pwmDeadBand          = p_pwmCfg->p_epwmDeadband;
             /* Time-Base (TB) Submodule Registers
              * Set the time base clock and the high speed time base clock count prescaler
              * Defines Shadow load mode : "SHADOW_LOAD" or "DIRECT_LOAD"
@@ -517,7 +459,6 @@ void HAL_eQEP_ini(const eqep_cfg_t* p_qepCfg)
     if(p_qepCfg != NULL)
     {
         uint32_t qepBase = p_qepCfg->eqepBase;
-
         while(qepBase != UINT32_MAX)
         {
             // Configure the decoder for up-count mode, counting both on rising & falling edges (quadrature encoders)
@@ -581,8 +522,10 @@ void HAL_SPI_ini(const spi_cfg_t* p_spiCfg)
             if(p_spiCfg->mode == SPI_MODE_SLAVE)
                 SPI_setSTESignalPolarity(spiBase, SPI_STE_ACTIVE_LOW);
             /* Clear flags & enable or disable interrupts */
-            SPI_clearInterruptStatus(spiBase, SPI_INT_RX_DATA_TX_EMPTY | SPI_INT_RX_OVERRUN | SPI_INT_TXFF | SPI_INT_RXFF | SPI_INT_RXFF_OVERFLOW);
-            SPI_disableInterrupt(spiBase, SPI_INT_RX_DATA_TX_EMPTY | SPI_INT_RX_OVERRUN | SPI_INT_TXFF | SPI_INT_RXFF | SPI_INT_RXFF_OVERFLOW);
+            SPI_clearInterruptStatus(spiBase, SPI_INT_RX_DATA_TX_EMPTY | SPI_INT_RX_OVERRUN |
+                                     SPI_INT_TXFF | SPI_INT_RXFF | SPI_INT_RXFF_OVERFLOW);
+            SPI_disableInterrupt(spiBase, SPI_INT_RX_DATA_TX_EMPTY | SPI_INT_RX_OVERRUN |
+                                 SPI_INT_TXFF | SPI_INT_RXFF | SPI_INT_RXFF_OVERFLOW);
             if(p_spiCfg->intEnable)
                 SPI_enableInterrupt(spiBase, p_spiCfg->intSrc);
             /* Enable SPI module */
@@ -659,7 +602,6 @@ void HAL_DMA_ini(const dma_cfg_t* p_dmaCfg)
     if(p_dmaCfg != NULL)
     {
         uint32_t dmaChBase = p_dmaCfg->dmaChBase;
-
         while(dmaChBase != UINT32_MAX)
         {
             /* DMA channel initialization
@@ -698,7 +640,6 @@ void HAL_IPC_ini(const ipc_cfg_t* p_ipcCfg)
         IPC_Type_t  ipcType     = p_ipcCfg->ipcType;
         /* (0) - C_CPU1_L_CPU2_R, (1) - IPC_CPU1_L_CM_R, (2) - IPC_CPU2_L_CPU1_R, (3) - IPC_CPU2_L_CM_R*/
         uint8_t     ipcSyncDone = 0;
-
         while(ipcType != IPC_TOTAL_NUM)
         {
             // Enable IPC interrupts
@@ -825,7 +766,6 @@ void HAL_TMR_ini(const tmr_cfg_t* p_TimerCfg)
     if(p_TimerCfg != NULL)
     {
         uint32_t cpuTimerBase = p_TimerCfg->cpuTimerBase;
-
         while(cpuTimerBase != UINT32_MAX)
         {
             /* Make sure timer is stopped */

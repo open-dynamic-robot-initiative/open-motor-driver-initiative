@@ -31,12 +31,12 @@
  */
 typedef enum
 {
-    MOTOR_STATE_INIT            = 1,
-    MOTOR_STATE_ALIGN_UP        = 2,    /*!< ALIGN_COUNT_UP */
-    MOTOR_STATE_ALIGN_FIX       = 3,    /*!< ALIGN_FIX */
-    MOTOR_STATE_READY           = 4,
-    MOTOR_STATE_STOP            = 5,
-    MOTOR_STATE_ERROR           = 15,
+    MOTOR_STATE_INIT            = 0x00,
+    MOTOR_STATE_ALIGN_UP        = 0x01,
+    MOTOR_STATE_ALIGN_FIX       = 0x02,
+    MOTOR_STATE_READY           = 0x04,
+    MOTOR_STATE_STOP            = 0x08,
+    MOTOR_STATE_ERROR           = 0xFF,
 } motor_state_e;
 
 /***********************************************************************
@@ -84,7 +84,7 @@ typedef union __uint16_u__
     volatile const uint32_t         align;
 } uint16_u;
 
-#ifdef CLA_CORE_ENABLE
+#if (CLA_CORE_ENABLE)
 typedef struct __MOTOR_STRUCT_t__
 {
     const motor_id_e                motor_id;       /*!< Motor identification */
@@ -116,13 +116,9 @@ typedef struct __MOTOR_STRUCT_t__
     foc_t* const                    p_motorFOC;     /*!< Pointer on the FOC structure associated to the motor */
     uint64_t                        itCnt;          /*!< Event counter incrementing on every IT call */
     uint32_t                        clCycleNb;
-    // Q-axis resistance estimation
-    float32_t                       statorResEst;    // [Ohm]
-    // Resistance estimation low-pass filter
-    lpf_t                           statorResEstFlt;
-    // Current motor state for the FSM
-    motor_state_e                   motor_state;    /*!< Current motor state for the FSM */
-    // Error messages
+    float32_t                       statorResEst;   /*!< Q-axis resistance estimation. [Ohm] */
+    lpf_t                           statorResEstFlt;/*!< Resistance estimation low-pass filter */
+    motor_state_e                   motor_state;    /*!< Current motor state for the FSM. */
     error_reg_u                     motor_error;    /*!< Error messages */
     // PWM address register for FOC command
     volatile uint16_t* const        p_motorChAReg;

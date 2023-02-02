@@ -11,7 +11,6 @@
 
 #include "hal.h"
 #include "drv8353.h"
-//#include "as5047u.h"
 #include "foc.h"
 #include "motor.h"
 #include "communication.h"
@@ -41,42 +40,16 @@ static const int_cfg_t InterruptList[] =
  {
   .intNum           = MOTOR1_IA_INT_CH,
   .intAckGroup      = MOTOR1_IA_INT_ACK_GROUP,
-  .p_intHandler     = &adc_isrMotor1,
+.p_intHandler       = &adc_isrMotor1
  },
  {
   .intNum           = MOTOR2_IA_INT_CH,
-  .intAckGroup      = MOTOR2_IA_INT_ACK_GROUP,
-  .p_intHandler     = &adc_isrMotor2,
+.intAckGroup        = MOTOR2_IA_INT_ACK_GROUP,
+.p_intHandler       = &adc_isrMotor2
  },
  // END OF ARRAY
  {.intNum           = UINT32_MAX},
 };
-//
-//static const asenc_cfg_t  ASencCfgList[] =
-//{
-// {
-//  .spiHandle        = ENC_SPI_BASE,
-//  .gpioNumber_CS    = ENC_SPI_CS,
-// }
-//};
-
-//static as_enc_t asenc_cfg[] =
-//{
-// {
-//  .asencHandle      = &ASencCfgList[MOTOR_1],
-//  .angleData.all    = 0U,
-//  .velData.all      = 0U,
-//  .degAngle         = 0.0f,
-//  .prevAngle        = 0.0f,
-//  .startAngle       = 0.0f,
-//  .totalAngle       = 0.0f,
-//  .turnNum          = 0.0f,
-//  .rndCount         = 0.0f,
-//  .vel              = 0.0f,
-//  .quadNum          = 0.0f,
-//  .prevQuadNum      = 0.0f,
-// },
-//};
 
 /** @var    DRV_Cfg     DrvCfgList[]
  *  @brief  List all IOs \& SPI peripherals used for DRV communication.
@@ -109,7 +82,7 @@ static drv_reg_t        DrvRegList[] =
   .ctrl_reg_02.bit.PWM1_DIR     = false,
   .ctrl_reg_02.bit.PWM1_COM     = false,
   .ctrl_reg_02.bit.PWM_MODE     = DRV_PWMMODE_6,
-  .ctrl_reg_02.bit.OTW_REP      = true,                 // Over Temperature Warning will raise nFault
+  .ctrl_reg_02.bit.OTW_REP      = true, // Over Temperature Warning will raise nFault
   .ctrl_reg_02.bit.DIS_GDF      = false,
   .ctrl_reg_02.bit.DIS_GDUV     = false,
   .ctrl_reg_02.bit.OCP_ACT      = true,
@@ -148,7 +121,7 @@ static drv_reg_t        DrvRegList[] =
   .ctrl_reg_02.bit.PWM1_DIR     = false,
   .ctrl_reg_02.bit.PWM1_COM     = false,
   .ctrl_reg_02.bit.PWM_MODE     = DRV_PWMMODE_6,
-  .ctrl_reg_02.bit.OTW_REP      = true,                 // Over Temperature Warning will raise nFault
+  .ctrl_reg_02.bit.OTW_REP      = true, // Over Temperature Warning will raise nFault
   .ctrl_reg_02.bit.DIS_GDF      = false,
   .ctrl_reg_02.bit.DIS_GDUV     = false,
   .ctrl_reg_02.bit.OCP_ACT      = true,
@@ -189,45 +162,15 @@ static drv8353_t drv_cfg[] =
  {
   .p_drvCfgHandler  = &DrvCfgList[MOTOR_1],
   .p_drvRegHandler  = &DrvRegList[MOTOR_1],
-//  .enableTimeOut    = true,
-//  .rxTimeOut        = true,
  },
  {
   .p_drvCfgHandler  = &DrvCfgList[MOTOR_2],
   .p_drvRegHandler  = &DrvRegList[MOTOR_2],
-//  .enableTimeOut    = true,
-//  .rxTimeOut        = true,
  },
 };
 
 static const hal_motor_cfg_t hal_motor_cfg[] =
 {
-#if (defined UOMODRI_V1_ENABLE) && (!defined  UOMODRI_V2_ENABLE)
- {
-  .p_pwmCntCmp[0]   = &PwmCounterCompareCfgList[0],
-  .p_pwmCntCmp[1]   = &PwmCounterCompareCfgList[1],
-  .p_pwmCntCmp[2]   = &PwmCounterCompareCfgList[2],
-  .p_vAcq[0]        = &AdcAcqList[0],
-  .p_vAcq[1]        = &AdcAcqList[4],
-  .p_vAcq[2]        = &AdcAcqList[8],
-  .p_iAcq[0]        = &AdcAcqList[2],
-  .p_iAcq[1]        = &AdcAcqList[6],
-  .p_iAcq[2]        = &AdcAcqList[10],
-  .p_intAcq         = &AdcIntList[0],
- },
- {
-  .p_pwmCntCmp[0]   = &PwmCounterCompareCfgList[3],
-  .p_pwmCntCmp[1]   = &PwmCounterCompareCfgList[4],
-  .p_pwmCntCmp[2]   = &PwmCounterCompareCfgList[5],
-  .p_vAcq[0]        = &AdcAcqList[1],
-  .p_vAcq[1]        = &AdcAcqList[5],
-  .p_vAcq[2]        = &AdcAcqList[9],
-  .p_iAcq[0]        = &AdcAcqList[3],
-  .p_iAcq[1]        = &AdcAcqList[7],
-  .p_iAcq[2]        = &AdcAcqList[11],
-  .p_intAcq         = &AdcIntList[1],
- },
-#elif (defined UOMODRI_V2_ENABLE)
  {
   .p_pwmCntCmp[0]   = &PwmCounterCompareCfgList[0],
   .p_pwmCntCmp[1]   = &PwmCounterCompareCfgList[1],
@@ -246,8 +189,6 @@ static const hal_motor_cfg_t hal_motor_cfg[] =
   .p_iAcq[2]        = &AdcAcqList[5],
   .p_intAcq         = &AdcIntList[1],
  },
-#endif
-
 };
 
 #pragma DATA_ALIGN(cmd_uOmodri, 8)
@@ -281,7 +222,7 @@ static cmd_t cmd_uOmodri[2] =
 };
 
 #pragma DATA_ALIGN(motor_foc, 8)
-#ifdef CM_CORE_ENABLE
+#if (CM_CORE_ENABLE)
 #pragma DATA_SECTION(motor_foc, "MSGRAM_CPU_TO_CM");
 #else
 #pragma DATA_SECTION(motor_foc, "ramgs1");
@@ -297,25 +238,11 @@ static foc_t motor_foc[] =
   .motor_cfg.ki                         = MOTOR1_KI,
   .motor_cfg.polePairs                  = MOTOR1_POLES_PAIRS,
   //--- MOTOR ACQUISITION STRUCTURE -------------------------------------------
-#if (defined UOMODRI_V1_ENABLE) && (!defined  UOMODRI_V2_ENABLE)
-  .motor_acq.p_vaMeasReg                = (volatile uint16_t *)(MOTOR1_VA_ADC_PPB_RESULT_ADDR),
-  .motor_acq.p_vbMeasReg                = (volatile uint16_t *)(MOTOR1_VB_ADC_PPB_RESULT_ADDR),
-  .motor_acq.p_vcMeasReg                = (volatile uint16_t *)(MOTOR1_VC_ADC_PPB_RESULT_ADDR),
-  .motor_acq.p_vExtMeasReg              = (volatile uint16_t *)(EXTERN_V1_ADC_PPB_RESULT_ADDR),
+  .motor_acq.p_vExtMeasReg              = (volatile uint16_t *)(VEXT1_ADC_PPB_RESULT_ADDR),
   .motor_acq.p_vBusMeasReg              = (volatile uint16_t *)(VBUS_ADC_PPB_RESULT_ADDR),
   .motor_acq.p_iaMeasReg                = (volatile int16_t *)(MOTOR1_IA_ADC_PPB_RESULT_ADDR),
   .motor_acq.p_ibMeasReg                = (volatile int16_t *)(MOTOR1_IB_ADC_PPB_RESULT_ADDR),
   .motor_acq.p_icMeasReg                = (volatile int16_t *)(MOTOR1_IC_ADC_PPB_RESULT_ADDR),
-  .motor_acq.va                         = 0.0f,
-  .motor_acq.vb                         = 0.0f,
-  .motor_acq.vc                         = 0.0f,
-#elif (defined UOMODRI_V2_ENABLE)
-  .motor_acq.p_vExtMeasReg              = (volatile uint16_t *)(VEXT1_ADC_PPB_RESULT_ADDR),
-  .motor_acq.p_vBusMeasReg              = (volatile uint16_t *)(VBUS_ADC_PPB1_RESULT_ADDR),
-  .motor_acq.p_iaMeasReg                = (volatile int16_t *)(MOTOR1_IA_ADC_PPB1_RESULT_ADDR),
-  .motor_acq.p_ibMeasReg                = (volatile int16_t *)(MOTOR1_IB_ADC_PPB1_RESULT_ADDR),
-  .motor_acq.p_icMeasReg                = (volatile int16_t *)(MOTOR1_IC_ADC_PPB1_RESULT_ADDR),
-#endif
   .motor_acq.vbus                       = 0.0f,
   .motor_acq.vExt                       = 0.0f,
   .motor_acq.ia                         = 0.0f,
@@ -325,35 +252,6 @@ static foc_t motor_foc[] =
   .motor_acq.vBusFlt.one_minus_a        = VBUS_LPF_ONE_M_ALPHA,
   .motor_acq.vExtFlt.a                  = VEXT_LPF_ALPHA,
   .motor_acq.vExtFlt.one_minus_a        = VEXT_LPF_ONE_M_ALPHA,
-//  .motor_acq.p_vExtMeasReg              = {(volatile uint16_t *)(VEXT1_ADC_RESULT0_ADDR),
-//                                           (volatile uint16_t *)(VEXT1_ADC_RESULT1_ADDR)},
-//  .motor_acq.p_vBusMeasReg              = {(volatile uint16_t *)(VBUS_ADC_RESULT0_ADDR),
-//                                           (volatile uint16_t *)(VBUS_ADC_RESULT1_ADDR),
-//                                           (volatile uint16_t *)(VBUS_ADC_RESULT2_ADDR),
-//                                           (volatile uint16_t *)(VBUS_ADC_RESULT3_ADDR)},
-//  .motor_acq.p_iaMeasReg                = {(volatile int16_t *)(MOTOR1_IA_ADC_RESULT0_ADDR),
-//                                           (volatile int16_t *)(MOTOR1_IA_ADC_RESULT1_ADDR),
-//                                           (volatile int16_t *)(MOTOR1_IA_ADC_RESULT2_ADDR),
-//                                           (volatile int16_t *)(MOTOR1_IA_ADC_RESULT3_ADDR)},
-//  .motor_acq.p_ibMeasReg                = {(volatile int16_t *)(MOTOR1_IB_ADC_RESULT0_ADDR),
-//                                           (volatile int16_t *)(MOTOR1_IB_ADC_RESULT1_ADDR),
-//                                           (volatile int16_t *)(MOTOR1_IB_ADC_RESULT2_ADDR),
-//                                           (volatile int16_t *)(MOTOR1_IB_ADC_RESULT3_ADDR)},
-//  .motor_acq.p_icMeasReg                = {(volatile int16_t *)(MOTOR1_IC_ADC_RESULT0_ADDR),
-//                                           (volatile int16_t *)(MOTOR1_IC_ADC_RESULT1_ADDR),
-//                                           (volatile int16_t *)(MOTOR1_IC_ADC_RESULT2_ADDR),
-//                                           (volatile int16_t *)(MOTOR1_IC_ADC_RESULT3_ADDR)},
-//  .motor_acq.vbus                       = 0.0f,
-//  .motor_acq.vExt                       = 0.0f,
-//  .motor_acq.ia                         = 0.0f,
-//  .motor_acq.ib                         = 0.0f,
-//  .motor_acq.ic                         = 0.0f,
-//  .motor_acq.vBusFlt.a                  = VBUS_LPF_ALPHA,
-//  .motor_acq.vBusFlt.one_minus_a        = VBUS_LPF_ONE_M_ALPHA,
-//  .motor_acq.vExtFlt.a                  = VEXT_LPF_ALPHA,
-//  .motor_acq.vExtFlt.one_minus_a        = VEXT_LPF_ONE_M_ALPHA,
-//  .motor_acq.iabcFlt.a                  = IABC_LPF_ALPHA,
-//  .motor_acq.iabcFlt.one_minus_a        = IABC_LPF_ONE_M_ALPHA,
   //--- MOTOR ENCORDER STRUCTURE ----------------------------------------------
   .motor_enc.p_qepHandle                = (&QepCfgList[MOTOR_1]),
   .motor_enc.polePairs                  = MOTOR1_POLES_PAIRS,
@@ -484,25 +382,11 @@ static foc_t motor_foc[] =
   .motor_cfg.ki                         = MOTOR2_KI,
   .motor_cfg.polePairs                  = MOTOR2_POLES_PAIRS,
   //--- MOTOR ACQUISITION STRUCTURE -------------------------------------------
-#if (defined UOMODRI_V1_ENABLE) && (!defined  UOMODRI_V2_ENABLE)
-  .motor_acq.p_vaMeasReg                = (volatile uint16_t *)(MOTOR2_VA_ADC_PPB_RESULT_ADDR),
-  .motor_acq.p_vbMeasReg                = (volatile uint16_t *)(MOTOR2_VB_ADC_PPB_RESULT_ADDR),
-  .motor_acq.p_vcMeasReg                = (volatile uint16_t *)(MOTOR2_VC_ADC_PPB_RESULT_ADDR),
-  .motor_acq.p_vExtMeasReg              = (volatile uint16_t *)(EXTERN_V2_ADC_PPB_RESULT_ADDR),
+  .motor_acq.p_vExtMeasReg              = (volatile uint16_t *)(VEXT2_ADC_PPB_RESULT_ADDR),
   .motor_acq.p_vBusMeasReg              = (volatile uint16_t *)(VBUS_ADC_PPB_RESULT_ADDR),
   .motor_acq.p_iaMeasReg                = (volatile int16_t *)(MOTOR2_IA_ADC_PPB_RESULT_ADDR),
   .motor_acq.p_ibMeasReg                = (volatile int16_t *)(MOTOR2_IB_ADC_PPB_RESULT_ADDR),
   .motor_acq.p_icMeasReg                = (volatile int16_t *)(MOTOR2_IC_ADC_PPB_RESULT_ADDR),
-  .motor_acq.va                         = 0.0f,
-  .motor_acq.vb                         = 0.0f,
-  .motor_acq.vc                         = 0.0f,
-#elif (defined UOMODRI_V2_ENABLE)
-  .motor_acq.p_vExtMeasReg              = (volatile uint16_t *)(VEXT2_ADC_PPB_RESULT_ADDR),
-  .motor_acq.p_vBusMeasReg              = (volatile uint16_t *)(VBUS_ADC_PPB1_RESULT_ADDR),
-  .motor_acq.p_iaMeasReg                = (volatile int16_t *)(MOTOR2_IA_ADC_PPB1_RESULT_ADDR),
-  .motor_acq.p_ibMeasReg                = (volatile int16_t *)(MOTOR2_IB_ADC_PPB1_RESULT_ADDR),
-  .motor_acq.p_icMeasReg                = (volatile int16_t *)(MOTOR2_IC_ADC_PPB1_RESULT_ADDR),
-#endif
   .motor_acq.vbus                       = 0.0f,
   .motor_acq.vExt                       = 0.0f,
   .motor_acq.ia                         = 0.0f,
@@ -512,35 +396,6 @@ static foc_t motor_foc[] =
   .motor_acq.vBusFlt.one_minus_a        = VBUS_LPF_ONE_M_ALPHA,
   .motor_acq.vExtFlt.a                  = VEXT_LPF_ALPHA,
   .motor_acq.vExtFlt.one_minus_a        = VEXT_LPF_ONE_M_ALPHA,
-//  .motor_acq.p_vExtMeasReg              = {(volatile uint16_t *)(VEXT2_ADC_RESULT0_ADDR),
-//                                           (volatile uint16_t *)(VEXT2_ADC_RESULT1_ADDR)},
-//  .motor_acq.p_vBusMeasReg              = {(volatile uint16_t *)(VBUS_ADC_RESULT0_ADDR),
-//                                           (volatile uint16_t *)(VBUS_ADC_RESULT1_ADDR),
-//                                           (volatile uint16_t *)(VBUS_ADC_RESULT2_ADDR),
-//                                           (volatile uint16_t *)(VBUS_ADC_RESULT3_ADDR)},
-//  .motor_acq.p_iaMeasReg                = {(volatile int16_t *)(MOTOR2_IA_ADC_RESULT0_ADDR),
-//                                           (volatile int16_t *)(MOTOR2_IA_ADC_RESULT1_ADDR),
-//                                           (volatile int16_t *)(MOTOR2_IA_ADC_RESULT2_ADDR),
-//                                           (volatile int16_t *)(MOTOR2_IA_ADC_RESULT3_ADDR)},
-//  .motor_acq.p_ibMeasReg                = {(volatile int16_t *)(MOTOR2_IB_ADC_RESULT0_ADDR),
-//                                           (volatile int16_t *)(MOTOR2_IB_ADC_RESULT1_ADDR),
-//                                           (volatile int16_t *)(MOTOR2_IB_ADC_RESULT2_ADDR),
-//                                           (volatile int16_t *)(MOTOR2_IB_ADC_RESULT3_ADDR)},
-//  .motor_acq.p_icMeasReg                = {(volatile int16_t *)(MOTOR2_IC_ADC_RESULT0_ADDR),
-//                                           (volatile int16_t *)(MOTOR2_IC_ADC_RESULT1_ADDR),
-//                                           (volatile int16_t *)(MOTOR2_IC_ADC_RESULT2_ADDR),
-//                                           (volatile int16_t *)(MOTOR2_IC_ADC_RESULT3_ADDR)},
-//  .motor_acq.vbus                       = 0.0f,
-//  .motor_acq.ia                         = 0.0f,
-//  .motor_acq.ib                         = 0.0f,
-//  .motor_acq.ic                         = 0.0f,
-////  .motor_acq.measNew                    = false,
-//  .motor_acq.vBusFlt.a                  = VBUS_LPF_ALPHA,
-//  .motor_acq.vBusFlt.one_minus_a        = VBUS_LPF_ONE_M_ALPHA,
-//  .motor_acq.vExtFlt.a                  = VEXT_LPF_ALPHA,
-//  .motor_acq.vExtFlt.one_minus_a        = VEXT_LPF_ONE_M_ALPHA,
-//  .motor_acq.iabcFlt.a                  = IABC_LPF_ALPHA,
-//  .motor_acq.iabcFlt.one_minus_a        = IABC_LPF_ONE_M_ALPHA,
   //--- MOTOR ENCORDER STRUCTURE ----------------------------------------------
   .motor_enc.p_qepHandle                = (&QepCfgList[MOTOR_2]),
   .motor_enc.polePairs                  = MOTOR2_POLES_PAIRS,
@@ -700,14 +555,14 @@ static foc_t motor_foc[] =
 /** @var    MOTOR_STRUCT    motor[]
  *  @brief  General structure array configuration structure for the Hardware Abstraction Layer.
  */
-#ifdef CM_CORE_ENABLE
+#if (CM_CORE_ENABLE)
 #pragma DATA_SECTION(motor, "MSGRAM_CPU_TO_CM");
 #else
 #pragma DATA_SECTION(motor, "ramgs1");
 #endif
 static motor_t motor[2] =
 {
-#ifdef CLA_CORE_ENABLE
+#if (CLA_CORE_ENABLE)
  {
   //--- MOTOR_1 ---------------------------------------------------------------
   .motor_id         = MOTOR_1,
