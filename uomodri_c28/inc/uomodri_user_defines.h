@@ -23,8 +23,8 @@
  * @{
  */
 // UOMODRI revision
-#define UOMODRI_V1_0_ENABLE                     (1)
-#define UOMODRI_V2_0_ENABLE                     (0)
+#define UOMODRI_V1_0_ENABLE                     (0)
+#define UOMODRI_V2_0_ENABLE                     (1)
 #if (UOMODRI_V1_0_ENABLE) && (UOMODRI_V2_0_ENABLE)
 #error "Only one config must be set @ a time."
 #elif (!UOMODRI_V1_0_ENABLE) && (!UOMODRI_V2_0_ENABLE)
@@ -146,56 +146,65 @@
  * GPIO DEBUG DEFINES
  ***********************************************************************/
 /** @defgroup GPIO debug pins configuration.
- *  @brief    Configure pins available on DF13-10p connector for debug.
+ *  @brief    Configure pins available on DF13 connector for debug.
  * @{
  */
 #if (UOMODRI_V1_0_ENABLE)
 #define DBG_PIN4                                (149)
 #define DBG_PIN4_CFG                            GPIO_149_GPIO149
+#define DBG_PIN4_CORE                           GPIO_CORE_CPU1
 #define DBG_PIN4_SET                            (HWREG(GPIODATA_BASE + GPIO_O_GPESET)   = GPIO_GPESET_GPIO149)
 #define DBG_PIN4_CLEAR                          (HWREG(GPIODATA_BASE + GPIO_O_GPECLEAR) = GPIO_GPECLEAR_GPIO149)
 #define DBG_PIN4_TOGGLE                         (HWREG(GPIODATA_BASE + GPIO_O_GPETOGGLE)= GPIO_GPETOGGLE_GPIO149)
 #define DBG_PIN3                                (81)
 #define DBG_PIN3_CFG                            GPIO_81_GPIO81
+#define DBG_PIN3_CORE                           GPIO_CORE_CPU1
 #define DBG_PIN3_SET                            (HWREG(GPIODATA_BASE + GPIO_O_GPCSET)   = GPIO_GPCSET_GPIO81)
 #define DBG_PIN3_CLEAR                          (HWREG(GPIODATA_BASE + GPIO_O_GPCCLEAR) = GPIO_GPCCLEAR_GPIO81)
 #define DBG_PIN3_TOGGLE                         (HWREG(GPIODATA_BASE + GPIO_O_GPCTOGGLE)= GPIO_GPCTOGGLE_GPIO81)
 #define DBG_PIN2                                (82)
 #define DBG_PIN2_CFG                            GPIO_82_GPIO82
+#define DBG_PIN2_CORE                           GPIO_CORE_CPU1
 #define DBG_PIN2_SET                            (HWREG(GPIODATA_BASE + GPIO_O_GPCSET)   = GPIO_GPCSET_GPIO82)
 #define DBG_PIN2_CLEAR                          (HWREG(GPIODATA_BASE + GPIO_O_GPCCLEAR) = GPIO_GPCCLEAR_GPIO82)
 #define DBG_PIN2_TOGGLE                         (HWREG(GPIODATA_BASE + GPIO_O_GPCTOGGLE)= GPIO_GPCTOGGLE_GPIO82)
 #define DBG_PIN1                                (77)
 #define DBG_PIN1_CFG                            GPIO_77_GPIO77
+#define DBG_PIN1_CORE                           GPIO_CORE_CPU1
 #define DBG_PIN1_SET                            (HWREG(GPIODATA_BASE + GPIO_O_GPCSET)   = GPIO_GPCSET_GPIO77)
 #define DBG_PIN1_CLEAR                          (HWREG(GPIODATA_BASE + GPIO_O_GPCCLEAR) = GPIO_GPCCLEAR_GPIO77)
 #define DBG_PIN1_TOGGLE                         (HWREG(GPIODATA_BASE + GPIO_O_GPCTOGGLE)= GPIO_GPCTOGGLE_GPIO77)
 #define DBG_PIN0                                (78)
 #define DBG_PIN0_CFG                            GPIO_78_GPIO78
+#define DBG_PIN0_CORE                           GPIO_CORE_CM
 #define DBG_PIN0_SET                            (HWREG(GPIODATA_BASE + GPIO_O_GPCSET)   = GPIO_GPCSET_GPIO78)
 #define DBG_PIN0_CLEAR                          (HWREG(GPIODATA_BASE + GPIO_O_GPCCLEAR) = GPIO_GPCCLEAR_GPIO78)
 #define DBG_PIN0_TOGGLE                         (HWREG(GPIODATA_BASE + GPIO_O_GPCTOGGLE)= GPIO_GPCTOGGLE_GPIO78)
 #elif (UOMODRI_V2_0_ENABLE)
 #define DBG_PIN3                                (77)
 #define DBG_PIN3_CFG                            GPIO_77_GPIO77
+#define DBG_PIN3_CORE                           GPIO_CORE_CPU1
 #define DBG_PIN3_SET                            (HWREG(GPIODATA_BASE + GPIO_O_GPCSET)   = GPIO_GPCSET_GPIO77)
 #define DBG_PIN3_CLEAR                          (HWREG(GPIODATA_BASE + GPIO_O_GPCCLEAR) = GPIO_GPCCLEAR_GPIO77)
 #define DBG_PIN3_TOGGLE                         (HWREG(GPIODATA_BASE + GPIO_O_GPCTOGGLE)= GPIO_GPCTOGGLE_GPIO77)
 #define DBG_PIN3_READ                           (HWREG(GPIODATA_BASE + GPIO_O_GPCDAT) & GPIO_GPCDAT_GPIO77)
 #define DBG_PIN2                                (78)
 #define DBG_PIN2_CFG                            GPIO_78_GPIO78
+#define DBG_PIN2_CORE                           GPIO_CORE_CPU1
 #define DBG_PIN2_SET                            (HWREG(GPIODATA_BASE + GPIO_O_GPCSET)   = GPIO_GPCSET_GPIO78)
 #define DBG_PIN2_CLEAR                          (HWREG(GPIODATA_BASE + GPIO_O_GPCCLEAR) = GPIO_GPCCLEAR_GPIO78)
 #define DBG_PIN2_TOGGLE                         (HWREG(GPIODATA_BASE + GPIO_O_GPCTOGGLE)= GPIO_GPCTOGGLE_GPIO78)
 #define DBG_PIN2_READ                           (HWREG(GPIODATA_BASE + GPIO_O_GPCDAT) & GPIO_GPCDAT_GPIO78)
 #define DBG_PIN1                                (81)
 #define DBG_PIN1_CFG                            GPIO_81_GPIO81
+#define DBG_PIN1_CORE                           GPIO_CORE_CM
 #define DBG_PIN1_SET                            (HWREG(GPIODATA_BASE + GPIO_O_GPCSET)   = GPIO_GPCSET_GPIO81)
 #define DBG_PIN1_CLEAR                          (HWREG(GPIODATA_BASE + GPIO_O_GPCCLEAR) = GPIO_GPCCLEAR_GPIO81)
 #define DBG_PIN1_TOGGLE                         (HWREG(GPIODATA_BASE + GPIO_O_GPCTOGGLE)= GPIO_GPCTOGGLE_GPIO81)
 #define DBG_PIN1_READ                           (HWREG(GPIODATA_BASE + GPIO_O_GPCDAT) & GPIO_GPCDAT_GPIO81)
 #define DBG_PIN0                                (82)
 #define DBG_PIN0_CFG                            GPIO_82_GPIO82
+#define DBG_PIN0_CORE                           GPIO_CORE_CPU1
 #define DBG_PIN0_SET                            (HWREG(GPIODATA_BASE + GPIO_O_GPCSET)   = GPIO_GPCSET_GPIO82)
 #define DBG_PIN0_CLEAR                          (HWREG(GPIODATA_BASE + GPIO_O_GPCCLEAR) = GPIO_GPCCLEAR_GPIO82)
 #define DBG_PIN0_TOGGLE                         (HWREG(GPIODATA_BASE + GPIO_O_GPCTOGGLE)= GPIO_GPCTOGGLE_GPIO82)

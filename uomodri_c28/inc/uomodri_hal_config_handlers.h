@@ -42,9 +42,7 @@ static const gpio_cfg_t GpioPinsCfgList[] =
 #endif
 #if (UOMODRI_V1_0_ENABLE)
  // GPIO Debug pins
- {.pinNumber = DBG_PIN0,                .fctMux = DBG_PIN0_CFG,                 .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CM,         .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0,  .intEnable = false},
- {.pinNumber = DBG_PIN1,                .fctMux = DBG_PIN1_CFG,                 .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,       .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0,  .intEnable = false},
- {.pinNumber = DBG_PIN4,                .fctMux = DBG_PIN4_CFG,                 .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,       .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0,  .intEnable = false},
+ {.pinNumber = DBG_PIN4,                .fctMux = DBG_PIN4_CFG,                 .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = DBG_PIN4_CORE,        .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0,  .intEnable = false},
  // IMU & DEBUG communication
  {.pinNumber = EXT_DBG_SPI_SIMO,        .fctMux = EXT_DBG_SPI_SIMO_CFG,         .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CM,         .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 1,  .intEnable = false},
  {.pinNumber = EXT_DBG_SPI_SOMI,        .fctMux = EXT_DBG_SPI_SOMI_CFG,         .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,       .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 1,  .intEnable = false},
@@ -54,9 +52,6 @@ static const gpio_cfg_t GpioPinsCfgList[] =
 #elif (UOMODRI_V2_0_ENABLE)
  // GPIO/USB VBUS detection
  {.pinNumber = USB_VBUS_DETECT,         .fctMux = USB_VBUS_DETECT_CFG,          .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,       .direction = GPIO_DIR_MODE_IN,  .samplingInMode = GPIO_QUAL_3SAMPLE,.setValue = 0,  .intEnable = false},
- // GPIO Debug pins
- {.pinNumber = DBG_PIN0,                .fctMux = DBG_PIN0_CFG,                 .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,       .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0,  .intEnable = false},
- {.pinNumber = DBG_PIN1,                .fctMux = DBG_PIN1_CFG,                 .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CM,         .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0,  .intEnable = false},
  // GPIO Select pins
  {.pinNumber = SELECT_PIN_0,            .fctMux = SELECT_PIN_0_CFG,             .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,       .direction = GPIO_DIR_MODE_IN,  .samplingInMode = GPIO_QUAL_6SAMPLE,.setValue = 0,  .intEnable = false},
  {.pinNumber = SELECT_PIN_1,            .fctMux = SELECT_PIN_1_CFG,             .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,       .direction = GPIO_DIR_MODE_IN,  .samplingInMode = GPIO_QUAL_6SAMPLE,.setValue = 0,  .intEnable = false},
@@ -75,9 +70,11 @@ static const gpio_cfg_t GpioPinsCfgList[] =
  {.pinNumber = RS485_RX_EN,             .fctMux = RS485_RX_EN_CFG,              .pinType = GPIO_PIN_TYPE_OD,    .coreSelect = GPIO_CORE_CPU1,       .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 1,  .intEnable = false},
  {.pinNumber = RS485_TX_EN,             .fctMux = RS485_TX_EN_CFG,              .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,       .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0,  .intEnable = false},
 #endif
- // GPIO Debug pins
- {.pinNumber = DBG_PIN2,                .fctMux = DBG_PIN2_CFG,                 .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,       .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0,  .intEnable = false},
- {.pinNumber = DBG_PIN3,                .fctMux = DBG_PIN3_CFG,                 .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,       .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0,  .intEnable = false},
+
+ {.pinNumber = DBG_PIN0,                .fctMux = DBG_PIN0_CFG,                 .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = DBG_PIN0_CORE,        .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0,  .intEnable = false},
+ {.pinNumber = DBG_PIN1,                .fctMux = DBG_PIN1_CFG,                 .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = DBG_PIN1_CORE,        .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0,  .intEnable = false},
+ {.pinNumber = DBG_PIN2,                .fctMux = DBG_PIN2_CFG,                 .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = DBG_PIN2_CORE,        .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0,  .intEnable = false},
+ {.pinNumber = DBG_PIN3,                .fctMux = DBG_PIN3_CFG,                 .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = DBG_PIN3_CORE,        .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0,  .intEnable = false},
  // Quadrature encoder #1
  {.pinNumber = MOTOR1_ENC_CHA,          .fctMux = MOTOR1_ENC_CHA_CFG,           .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,       .direction = GPIO_DIR_MODE_IN,  .samplingInMode = GPIO_QUAL_6SAMPLE,.setValue = 0,  .intEnable = false},
  {.pinNumber = MOTOR1_ENC_CHB,          .fctMux = MOTOR1_ENC_CHB_CFG,           .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,       .direction = GPIO_DIR_MODE_IN,  .samplingInMode = GPIO_QUAL_6SAMPLE,.setValue = 0,  .intEnable = false},
@@ -126,29 +123,19 @@ static const gpio_cfg_t GpioPinsCfgList[] =
   */
 static const adc_ini_t  AdcInitList[] =
 {
- /* ADCA - Ia Motor2, Ia Motor1 */
+ /* ADCA - Ia_M1, Ia_M2 */
  {.adcBase = MOTOR1_IA_ADC_ADDR,    .adcChannel = MOTOR1_IA_CH, .adcSOCNumber = MOTOR1_Iabc_SOC_NUM,    .adcTriggerSrc = MOTOR1_ADC_SOC_TRIGGER_EVT},
  {.adcBase = MOTOR2_IA_ADC_ADDR,    .adcChannel = MOTOR2_IA_CH, .adcSOCNumber = MOTOR2_Iabc_SOC_NUM,    .adcTriggerSrc = MOTOR2_ADC_SOC_TRIGGER_EVT},
- /* ADCB - Ib Motor2, Ib Motor1 */
+ /* ADCB - Ib_M1, Ib_M2 */
  {.adcBase = MOTOR1_IB_ADC_ADDR,    .adcChannel = MOTOR1_IB_CH, .adcSOCNumber = MOTOR1_Iabc_SOC_NUM,    .adcTriggerSrc = MOTOR1_ADC_SOC_TRIGGER_EVT},
  {.adcBase = MOTOR2_IB_ADC_ADDR,    .adcChannel = MOTOR2_IB_CH, .adcSOCNumber = MOTOR2_Iabc_SOC_NUM,    .adcTriggerSrc = MOTOR2_ADC_SOC_TRIGGER_EVT},
-#if (UOMODRI_V1_0_ENABLE)
- /* ADCD - Ic Motor1, Ic Motor2 */
+ /* ADCD (UOMODRI_V1_0_ENABLE): Ic_M1, Ic_M2 / ADCC (UOMODRI_V2_0_ENABLE): Ic_M1, Ic_M2 */
  {.adcBase = MOTOR1_IC_ADC_ADDR,    .adcChannel = MOTOR1_IC_CH, .adcSOCNumber = MOTOR1_Iabc_SOC_NUM,    .adcTriggerSrc = MOTOR1_ADC_SOC_TRIGGER_EVT},
  {.adcBase = MOTOR2_IC_ADC_ADDR,    .adcChannel = MOTOR2_IC_CH, .adcSOCNumber = MOTOR2_Iabc_SOC_NUM,    .adcTriggerSrc = MOTOR2_ADC_SOC_TRIGGER_EVT},
- /* ADCC - Vbus, Vin1 external analog input, Vin2 external analog input */
+ /* ADCC (UOMODRI_V1_0_ENABLE): VBUS, VEXT1, VEXT2 / ADCD (UOMODRI_V2_0_ENABLE): VBUS, VEXT1, VEXT2 */
  {.adcBase = VBUS_ADC_ADDR,         .adcChannel = VBUS_CH,      .adcSOCNumber = VBUS_SOC_NUM,           .adcTriggerSrc = VBUS_ADC_SOC_TRIGGER_EVT},
  {.adcBase = VEXT1_ADC_ADDR,        .adcChannel = VEXT1_CH,     .adcSOCNumber = VEXT1_SOC_NUM,          .adcTriggerSrc = VEXT1_ADC_SOC_TRIGGER_EVT},
  {.adcBase = VEXT2_ADC_ADDR,        .adcChannel = VEXT2_CH,     .adcSOCNumber = VEXT2_SOC_NUM,          .adcTriggerSrc = VEXT2_ADC_SOC_TRIGGER_EVT},
-#elif (UOMODRI_V2_0_ENABLE)
- /* ADCC - Ic Motor, Ic Motor1 */
- {.adcBase = MOTOR1_IC_ADC_ADDR,    .adcChannel = MOTOR1_IC_CH, .adcSOCNumber = MOTOR1_Iabc_SOC_NUM,    .adcTriggerSrc = MOTOR1_ADC_SOC_TRIGGER_EVT},
- {.adcBase = MOTOR2_IC_ADC_ADDR,    .adcChannel = MOTOR2_IC_CH, .adcSOCNumber = MOTOR2_Iabc_SOC_NUM,    .adcTriggerSrc = MOTOR2_ADC_SOC_TRIGGER_EVT},
- /* ADCD - Vbus, Vin1 external analog input, Vin2 external analog input */
- {.adcBase = VBUS_ADC_ADDR,         .adcChannel = VBUS_CH,      .adcSOCNumber = VBUS_SOC_NUM,           .adcTriggerSrc = VBUS_ADC_SOC_TRIGGER_EVT},
- {.adcBase = VEXT1_ADC_ADDR,        .adcChannel = VEXT1_CH,     .adcSOCNumber = VEXT1_SOC_NUM,          .adcTriggerSrc = VEXT1_ADC_SOC_TRIGGER_EVT},
- {.adcBase = VEXT2_ADC_ADDR,        .adcChannel = VEXT2_CH,     .adcSOCNumber = VEXT2_SOC_NUM,          .adcTriggerSrc = VEXT2_ADC_SOC_TRIGGER_EVT},
-#endif
  // END OF ARRAY
  {.adcBase = UINT32_MAX},
 };
@@ -164,23 +151,13 @@ static const adc_acq_t  AdcAcqList[] =
   /* ADCB : Ib_M1, Ib_M2 */
  {.adcBase = MOTOR1_IB_ADC_ADDR,    .adcResultReg = (volatile uint16_t *)(MOTOR1_IB_ADC_RESULT_ADDR),   .adcSOCNumber = MOTOR1_Iabc_SOC_NUM,    .adcPPBNumber = MOTOR1_Iabc_PPB_NUM},
  {.adcBase = MOTOR2_IB_ADC_ADDR,    .adcResultReg = (volatile uint16_t *)(MOTOR2_IB_ADC_RESULT_ADDR),   .adcSOCNumber = MOTOR2_Iabc_SOC_NUM,    .adcPPBNumber = MOTOR2_Iabc_PPB_NUM},
-#if (UOMODRI_V1_0_ENABLE)
- /* ADCD : Ic_M1, Ic_M2 */
+ /* ADCD (UOMODRI_V1_0_ENABLE): Ic_M1, Ic_M2 / ADCC (UOMODRI_V2_0_ENABLE): Ic_M1, Ic_M2 */
  {.adcBase = MOTOR1_IC_ADC_ADDR,    .adcResultReg = (volatile uint16_t *)(MOTOR1_IC_ADC_RESULT_ADDR),   .adcSOCNumber = MOTOR1_Iabc_SOC_NUM,    .adcPPBNumber = MOTOR1_Iabc_PPB_NUM},
  {.adcBase = MOTOR2_IC_ADC_ADDR,    .adcResultReg = (volatile uint16_t *)(MOTOR2_IC_ADC_RESULT_ADDR),   .adcSOCNumber = MOTOR2_Iabc_SOC_NUM,    .adcPPBNumber = MOTOR2_Iabc_PPB_NUM},
- /* ADCC : VBUS, VEXT1, VEXT2 */
+ /* ADCC (UOMODRI_V1_0_ENABLE): VBUS, VEXT1, VEXT2 / ADCD (UOMODRI_V2_0_ENABLE): VBUS, VEXT1, VEXT2 */
  {.adcBase = VBUS_ADC_ADDR,         .adcResultReg = (volatile uint16_t *)(VBUS_ADC_RESULT_ADDR),        .adcSOCNumber = VBUS_SOC_NUM,           .adcPPBNumber = VBUS_PPB_NUM},
  {.adcBase = VEXT1_ADC_ADDR,        .adcResultReg = (volatile uint16_t *)(VEXT1_ADC_RESULT_ADDR),       .adcSOCNumber = VEXT1_SOC_NUM,          .adcPPBNumber = VEXT1_PPB_NUM},
  {.adcBase = VEXT2_ADC_ADDR,        .adcResultReg = (volatile uint16_t *)(VEXT2_ADC_RESULT_ADDR),       .adcSOCNumber = VEXT2_SOC_NUM,          .adcPPBNumber = VEXT2_PPB_NUM},
-#elif (UOMODRI_V2_0_ENABLE)
-  /* ADCC : Ic_M1, Ic_M2 */
- {.adcBase = MOTOR1_IC_ADC_ADDR,    .adcResultReg = (volatile uint16_t *)(MOTOR1_IC_ADC_RESULT_ADDR),   .adcSOCNumber = MOTOR1_Iabc_SOC_NUM,    .adcPPBNumber = MOTOR1_Iabc_PPB_NUM},
- {.adcBase = MOTOR2_IC_ADC_ADDR,    .adcResultReg = (volatile uint16_t *)(MOTOR2_IC_ADC_RESULT_ADDR),   .adcSOCNumber = MOTOR2_Iabc_SOC_NUM,    .adcPPBNumber = MOTOR2_Iabc_PPB_NUM},
- /* ADCD : VBUS, VEXT1, VEXT2 */
- {.adcBase = VBUS_ADC_ADDR,         .adcResultReg = (volatile uint16_t *)(VBUS_ADC_RESULT_ADDR),        .adcSOCNumber = VBUS_SOC_NUM,           .adcPPBNumber = VBUS_PPB_NUM},
- {.adcBase = VEXT1_ADC_ADDR,        .adcResultReg = (volatile uint16_t *)(VEXT1_ADC_RESULT_ADDR),       .adcSOCNumber = VEXT1_SOC_NUM,          .adcPPBNumber = VEXT1_PPB_NUM},
- {.adcBase = VEXT2_ADC_ADDR,        .adcResultReg = (volatile uint16_t *)(VEXT2_ADC_RESULT_ADDR),       .adcSOCNumber = VEXT2_SOC_NUM,          .adcPPBNumber = VEXT2_PPB_NUM},
-#endif
  // END OF ARRAY
  {.adcBase = UINT32_MAX}
 };
