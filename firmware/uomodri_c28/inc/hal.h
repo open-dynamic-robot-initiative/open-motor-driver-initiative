@@ -32,6 +32,13 @@ typedef enum
     EPWM_DELAY_ENABLE   = 1                                         /*!< Enable Deadband delay mode. */
 } EPWM_DelayModeEnable_e;
 
+typedef enum
+{
+    SCI_MULTI_PROC_NONE = 0,
+    SCI_MULTI_PROC_ADDR = 1,
+    SCI_MULTI_PROC_IDLE = 2
+} SCI_MultiPrcessorCtrl_e;
+
 /***********************************************************************
  * HARDWARE ABSTRACTION LAYER (HAL) CONTROL STRUCTURES
  ***********************************************************************/
@@ -44,6 +51,7 @@ typedef struct __EPWM_TIME_BASE_t__
     uint32_t                            epwmBase;                   /*!< ePWM peripheral address. */
     uint16_t                            phaseCount;                 /*!< Phase counter. Sets offset (min value). */
     uint16_t                            syncOutputMode;             /*!< Output sync signal generation. \see EPWM_SyncOutPulseMode */
+    EPWM_SyncInPulseSource              syncInputSrc;               /*!< Select the sync input signal.*/
 } epwm_tb_t;
 
 /**
@@ -122,13 +130,13 @@ typedef struct __EPWM_INTERRUPT_EVENTS_t__
 typedef struct __EPWM_CFG_t__
 {
     const uint32_t                      epwmBase;                   /*!< ePWM peripheral address. */
-    const epwm_tb_t*                    p_epwmTimeBase;
-    const epwm_cc_t*                    p_epwmCaptureCompare;
-    const epwm_aq_t*                    p_epwmActionQualifier;
-    const epwm_db_t*                    p_epwmDeadband;
-    const epwm_pc_t*                    p_epwmProgChopper;
-    const epwm_et_t*                    p_epwmAdcSocEventTrigger;
-    const epwm_it_t*                    p_epwmInterruptsEvent;
+    const epwm_tb_t*    const           p_epwmTimeBase;
+    const epwm_cc_t*    const           p_epwmCounterCompare;
+    const epwm_aq_t*    const           p_epwmActionQualifier;
+    const epwm_db_t*    const           p_epwmDeadband;
+    const epwm_pc_t*    const           p_epwmProgChopper;
+    const epwm_et_t*    const           p_epwmAdcSocEventTrigger;
+    const epwm_it_t*    const           p_epwmInterruptsEvent;
     const uint32_t                      epwmAdcSocSrcExtern;
 } epwm_cfg_t;
 
@@ -138,11 +146,11 @@ typedef struct __EPWM_CFG_t__
  */
 typedef struct __EQEP_CFG_t__
 {
-    uint32_t                            eqepBase;                   /*!< eQEP peripheral address. */
-    uint32_t                            eqepMaxResolution;
-    uint32_t                            eqepUnitTimerPeriod;
-    uint16_t                            eqepConfig;
-    EQEP_StrobeSource                   eqepStrobeSrc;
+    const uint32_t                      eqepBase;                   /*!< eQEP peripheral address. */
+    const uint32_t                      eqepMaxResolution;
+    const uint32_t                      eqepUnitTimerPeriod;
+    const uint16_t                      eqepConfig;
+    const EQEP_StrobeSource             eqepStrobeSrc;
 } eqep_cfg_t;
 
 /**
@@ -151,30 +159,28 @@ typedef struct __EQEP_CFG_t__
  */
 typedef struct __SPI_CFG_t__
 {
-    uint32_t                            spiBase;                    /*!< ADC peripheral address. */
-    uint32_t                            bitRate;
-    uint16_t                            dataWidth;
-    SPI_Mode                            mode;
-    SPI_TransferProtocol                protocol;
-    SPI_TxFIFOLevel                     txLevel;
-    SPI_RxFIFOLevel                     rxLevel;
-    uint16_t                            intSrc;
-    bool_t                              highSpeedMode;
-    bool_t                              intEnable;                  /*!< GPIO can be configured as IT source */
+    const uint32_t                      spiBase;                    /*!< ADC peripheral address. */
+    const uint32_t                      bitRate;
+    const uint16_t                      dataWidth;
+    const SPI_Mode                      mode;
+    const SPI_TransferProtocol          protocol;
+    const SPI_TxFIFOLevel               txLevel;
+    const SPI_RxFIFOLevel               rxLevel;
+    const uint16_t                      intSrc;
+    const bool_t                        highSpeedMode;
+    const bool_t                        intEnable;                  /*!< GPIO can be configured as IT source */
 } spi_cfg_t;
 
 typedef struct __SCI_CFG_t__
 {
     uint32_t                            sciBase;                    /*!< ADC peripheral address. */
     uint32_t                            bitRate;
-    uint16_t                            dataWidth;
-    SPI_Mode                            mode;
-    SPI_TransferProtocol                protocol;
+    uint32_t                            sciMode;
     SCI_TxFIFOLevel                     txLevel;
     SCI_RxFIFOLevel                     rxLevel;
     uint16_t                            intSrc;
-    bool_t                              highSpeedMode;
     bool_t                              intEnable;                  /*!< GPIO can be configured as IT source */
+    SCI_MultiPrcessorCtrl_e             multiProcMode;
 } sci_cfg_t;
 
 /**
@@ -183,25 +189,25 @@ typedef struct __SCI_CFG_t__
  */
 typedef struct __DMA_CFG_t__
 {
-    uint32_t                            dmaChBase;
+    const uint32_t                      dmaChBase;
     const void*                         p_srcAddr;
     const void*                         p_dstAddr;
-    uint32_t                            transferSize;
-    uint32_t                            srcWrapSize;
-    uint32_t                            dstWrapSize;
-    uint32_t                            config;
-    uint16_t                            burstSize;
-    int16_t                             srcStep;
-    int16_t                             dstStep;
+    const uint32_t                      transferSize;
+    const uint32_t                      srcWrapSize;
+    const uint32_t                      dstWrapSize;
+    const uint32_t                      config;
+    const uint16_t                      burstSize;
+    const int16_t                       srcStep;
+    const int16_t                       dstStep;
 //    int16_t             srcTransferStep;
 //    int16_t             dstTransferStep;
 //    int16_t             srcBurstStep;
 //    int16_t             dstBurstStep;
-    int16_t                             srcWrapStep;
-    int16_t                             dstWrapStep;
-    DMA_Trigger                         trigger;
-    DMA_InterruptMode                   intMode;
-    bool_t                              intEnable;
+    const int16_t                       srcWrapStep;
+    const int16_t                       dstWrapStep;
+    const DMA_Trigger                   trigger;
+    const DMA_InterruptMode             intMode;
+    const bool_t                        intEnable;
 } dma_cfg_t;
 
 /**
@@ -225,31 +231,31 @@ typedef struct __CLA_CFG_t__
  */
 typedef struct __GPIO_CFG_t__
 {
-    uint32_t                            pinNumber;                  /*!< GPIO pin number (GPIO0 - GPIO168). */
-    uint32_t                            fctMux;                     /*!< GPIO configuration functions (peripheral affectation matrix). \see pin_map.h */
-    uint32_t 	            	        pinType;                	/*!< GPIO pad configuration :
+    const uint32_t                      pinNumber;                  /*!< GPIO pin number (GPIO0 - GPIO168). */
+    const uint32_t                      fctMux;                     /*!< GPIO configuration functions (peripheral affectation matrix). \see pin_map.h */
+    const uint32_t 	            	    pinType;                	/*!< GPIO pad configuration :
                                                                         - \em GPIO_PIN_TYPE_STD (Push-pull output or floating input),
                                                                         - \em GPIO_PIN_TYPE_PULLUP (Pull-up enable for input),
                                                                         - \em GPIO_PIN_TYPE_INVERT (Invert polarity on input),
                                                                         - \em GPIO_PIN_TYPE_OD (Open-drain on output) */
-    GPIO_CoreSelect         	        coreSelect;             	/*!< GPIO core dependency.
+    const GPIO_CoreSelect         	    coreSelect;             	/*!< GPIO core dependency.
                                                                         - \em GPIO_CORE_CPU1,
                                                                         - \em GPIO_CORE_CPU1_CLA1,
                                                                         - \em GPIO_CORE_CPU2,
                                                                         - \em GPIO_CORE_CPU2_CLA1 */
-    GPIO_Direction          	        direction;              	/*!< GPIO direction :
+    const GPIO_Direction          	    direction;              	/*!< GPIO direction :
                                                                         - \em GPIO_DIR_MODE_IN,
                                                                         - \em GPIO_DIR_MODE_OUT */
-    GPIO_QualificationMode		        samplingInMode;         	/*!< GPIO input sampling mode :
+    const GPIO_QualificationMode		samplingInMode;         	/*!< GPIO input sampling mode :
                                                                         - \em GPIO_QUAL_SYNC,
                                                                         - \em GPIO_QUAL_3SAMPLE,
                                                                         - \em GPIO_QUAL_6SAMPLE,
                                                                         - \em GPIO_QUAL_ASYNC */
-    GPIO_AnalogMode                     analogModeEnable;           /*!< GPIO is dedicated to USB */
-    GPIO_ExternalIntNum                 extIntNum;                  /*!< GPIO external interrupt source number */
-    GPIO_IntType                        intType;                    /*!< GPIO interrupt event source */
-    bool_t                              intEnable;                  /*!< GPIO can be configured as IT source */
-    bool_t                              setValue;                   /*!< GPIO initial value if defined as output. */
+    const GPIO_AnalogMode               analogModeEnable;           /*!< GPIO is dedicated to USB */
+    const GPIO_ExternalIntNum           extIntNum;                  /*!< GPIO external interrupt source number */
+    const GPIO_IntType                  intType;                    /*!< GPIO interrupt event source */
+    const bool_t                        intEnable;                  /*!< GPIO can be configured as IT source */
+    const bool_t                        setValue;                   /*!< GPIO initial value if defined as output. */
 } gpio_cfg_t;
 
 /**
@@ -258,10 +264,10 @@ typedef struct __GPIO_CFG_t__
  */
 typedef struct __ADC_INITIALIZATION_t__
 {
-    uint32_t                            adcBase;                    /*!< ADC peripheral address. */
-    ADC_Channel                         adcChannel;                 /*!< ADC sampling channel. */
-    ADC_SOCNumber                       adcSOCNumber;               /*!< ADC Start-Of-Conversion (SOC) number (0-15). */
-    ADC_Trigger                         adcTriggerSrc;              /*!< ADC SOC trigger source. */
+    const uint32_t                      adcBase;                    /*!< ADC peripheral address. */
+    const ADC_Channel                   adcChannel;                 /*!< ADC sampling channel. */
+    const ADC_SOCNumber                 adcSOCNumber;               /*!< ADC Start-Of-Conversion (SOC) number (0-15). */
+    const ADC_Trigger                   adcTriggerSrc;              /*!< ADC SOC trigger source. */
 } adc_ini_t;
 
 /**
@@ -270,10 +276,10 @@ typedef struct __ADC_INITIALIZATION_t__
  */
 typedef struct __ADC_ACQUISITIONS_RESULTS_t__
 {
-    uint32_t                            adcBase;                    /*!< ADC peripheral address. */
+    const uint32_t                      adcBase;                    /*!< ADC peripheral address. */
     volatile uint16_t* const            adcResultReg;
-    ADC_SOCNumber                       adcSOCNumber;
-    ADC_PPBNumber                       adcPPBNumber;
+    const ADC_SOCNumber                 adcSOCNumber;
+    const ADC_PPBNumber                 adcPPBNumber;
 } adc_acq_t;
 
 /**
@@ -282,9 +288,9 @@ typedef struct __ADC_ACQUISITIONS_RESULTS_t__
  */
 typedef struct __ADC_INTERRUPT_EVENTS_t__
 {
-    uint32_t                            adcBase;                    /*!< ADC peripheral address. */
-    ADC_SOCNumber                       adcEOCNumber;               /*!< ADC End-Of-Conversion (EOC) number (0-15). */
-    ADC_IntNumber                       adcIntNumber;               /*!< IT source (0-3) associated to ADC \& SOC number. */
+    const uint32_t                      adcBase;                    /*!< ADC peripheral address. */
+    const ADC_SOCNumber                 adcEOCNumber;               /*!< ADC End-Of-Conversion (EOC) number (0-15). */
+    const ADC_IntNumber                 adcIntNumber;               /*!< IT source (0-3) associated to ADC \& SOC number. */
 } adc_int_t;
 
 /**
@@ -293,11 +299,10 @@ typedef struct __ADC_INTERRUPT_EVENTS_t__
  */
 typedef struct __ADC_CFG_t__
 {
-    uint32_t                            adcBase;                    /*!< ADC peripheral address. */
-    uint32_t                            adcResultBase;              /*!< ADC results address. */
-    const adc_ini_t*                    p_adcIni;                   /*!< Pointer on ADC start-of-conversion configuration handler */
-    const adc_acq_t*                    p_adcAcq;                   /*!< Pointer on ADC result configuration handler */
-    const adc_int_t*                    p_adcInt;                   /*!< Pointer on ADC Interrupt source configuration handler */
+    const uint32_t                      adcBase;                    /*!< ADC peripheral address. */
+    const adc_ini_t*    const           p_adcIni;                   /*!< Pointer on ADC start-of-conversion configuration handler */
+    const adc_acq_t*    const           p_adcAcq;                   /*!< Pointer on ADC result configuration handler */
+    const adc_int_t*    const           p_adcInt;                   /*!< Pointer on ADC Interrupt source configuration handler */
 } adc_cfg_t;
 
 /**
@@ -367,7 +372,6 @@ typedef struct __HAL_MOTOR_CFG_t__
 {
     const epwm_cc_t*    const           p_pwmCntCmp[3];
     const adc_acq_t*    const           p_iAcq[3];
-    const adc_acq_t*    const           p_vAcq[3];
     const adc_int_t*    const           p_intAcq;
 } hal_motor_cfg_t;
 

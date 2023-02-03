@@ -7,7 +7,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <math.h>
-#ifndef USE_CM_CORE
+#ifdef CPU1
 #include "f2838x_device.h"
 #include "motor.h"
 #else
@@ -264,28 +264,58 @@ typedef struct __com_cpu1_to_cm_t__
     uint16_t    data_size;
 } com_cpu1_to_cm_t;
 
-#ifdef USE_CM_CORE
+#ifndef CPU1
 typedef struct __attribute__((__packed__)) __dbg_uart_msg_t__
 {
     uint8_t         header[2];
-    uint32_t        count;
-    float_t         pos_m1;
-//    float_t         vel_m1;
-    float_t         pos_m2;
-//    float_t         vel_m2;
-    float_t         pos_as5047u;
-    float_t         vel_as5047u;
+//    uint32_t        count;
+//    float_t         ia;
+//    float_t         ib;
+//    float_t         ic;
+//    float_t         vbus;
+//    float_t         ialpha;
+//    float_t         ibeta;
+//    float_t         id;
+    float_t         iq;
+    float_t         iqref;
+//    float_t         ud;
+//    float_t         uq;
+//    float_t         ualpha;
+//    float_t         ubeta;
+//    float_t         ua;
+//    float_t         ub;
+//    float_t         uc;
+    float_t         pos;
+    float_t         posref;
+    float_t         vel;
+    float_t         velref;
+//    uint32_t        itcnt;
     uint8_t         crc;
 } dbg_uart_msg_t;
 
 typedef struct __attribute__((__packed__)) __dbg_uart_addr_t__
 {
-    float_t*        p_pos_m1;
-    float_t*        p_vel_m1;
-    float_t*        p_pos_m2;
-    float_t*        p_vel_m2;
-    float_t*        p_pos_as5047u;
-    float_t*        p_vel_as5047u;
+    float_t*        p_ia;
+    float_t*        p_ib;
+    float_t*        p_ic;
+    float_t*        p_vbus;
+    float_t*        p_ialpha;
+    float_t*        p_ibeta;
+    float_t*        p_id;
+    float_t*        p_iq;
+    float_t*        p_ud;
+    float_t*        p_uq;
+    float_t*        p_ualpha;
+    float_t*        p_ubeta;
+    float_t*        p_ua;
+    float_t*        p_ub;
+    float_t*        p_uc;
+    float_t*        p_pos;
+    float_t*        p_posref;
+    float_t*        p_vel;
+    float_t*        p_velref;
+    float_t*        p_iqref;
+//    uint32_t*       p_itcnt;
 } dbg_uart_addr_t;
 #endif
 
@@ -321,7 +351,7 @@ typedef struct __attribute__((__packed__)) __dbg_uart_addr_t__
 /***********************************************************************
  * FUNCTIONS DECLARATION
  ***********************************************************************/
-#ifndef USE_CM_CORE
+#ifdef CPU1
 bool_t COM_msgExtract(mst2slv_msg_t*,  cmd_t*, cmd_t*);
 bool_t COM_msgExtract_cla(mst2slv_msg_cla_t*, cmd_t*, cmd_t*);
 void COM_msgCreate(motor_t*, motor_t*, slv2mst_msg_t*);
@@ -333,7 +363,7 @@ uint32_t COM_crc32_cla(mst2slv_msg_cla_t*);
 void com_msgDbgTx(dbg_uart_addr_t*, dbg_uart_msg_t*);
 uint32_t com_crc32(uint16_t*, size_t);
 uint8_t com_crc8(uint8_t*, size_t);
-uint8_t com_crc8_fast(uint8_t, uint8_t*, size_t);
+uint8_t com_crc8_fast(uint8_t*, size_t);
 #endif
 
 #endif

@@ -1,5 +1,5 @@
-#ifndef __ENCODERS_H__
-#define __ENCODERS_H__
+#ifndef __ENCODER_H__
+#define __ENCODER_H__
 
 /***********************************************************************
  * INCLUDES
@@ -8,7 +8,7 @@
 #include <stdint.h>
 #include <math.h>
 
-#ifndef USE_CM_CORE
+#ifdef CPU1
 #include "hal.h"
 #include "uomodri_user_defines.h"
 #else
@@ -33,7 +33,7 @@ typedef struct __speed_t__
 
 typedef struct __encoder_t__
 {
-#ifndef USE_CM_CORE
+#ifdef CPU1
     // pointers on HAL structure, QEP registers and direct access to QEP counter register
     const eqep_cfg_t*   p_qepHandle;        /*!< Pointer on HAL structure */
 #else
@@ -64,4 +64,4 @@ inline void ENC_getPosition(encoder_t*);
 inline void ENC_getSpeed(encoder_t*);
 inline void ENC_getTheta(encoder_t*);
 
-#endif /* __ENCODERS_H__ */
+#endif /* __ENCODER_H__ */

@@ -1,7 +1,7 @@
 /***********************************************************************
  * INCLUDE
  ***********************************************************************/
-#ifndef USE_CM_CORE
+#ifdef CPU1
 #include "f2838x_device.h"
 #include "driverlib.h"
 #include "device.h"
@@ -68,6 +68,10 @@ inline void ENC_resetPeriph(encoder_t* p_enc)
     uint32_t eqepBase       = p_enc->p_qepHandle->eqepBase;
     // Reset encoder position
     EQEP_setPosition(eqepBase, 0);
+    /* Reset the time base for edge capture unit */
+    HWREGH(eqepBase + EQEP_O_QCPRDLAT) = 0;
+    /* Reset the Period count */
+    HWREGH(eqepBase + EQEP_O_QCTMRLAT) = 0;
     // Reset interrupts status flags
     EQEP_clearInterruptStatus(eqepBase, (EQEP_INT_GLOBAL | EQEP_INT_POS_CNT_ERROR | EQEP_INT_PHASE_ERROR |
             EQEP_INT_DIR_CHANGE | EQEP_INT_WATCHDOG | EQEP_INT_UNDERFLOW | EQEP_INT_OVERFLOW |
@@ -93,11 +97,11 @@ inline void ENC_getPosition(encoder_t* p_enc)
     p_enc->thetaDir         = EQEP_getDirection(eqepBase);
     // Compute electrical angle (each pole pair is normalized between 0 and 1)
     float32_t thetaElec     = (float32_t)p_enc->polePairs * p_enc->thetaMech[NEW];
-#if (defined CM_CORE)
-    p_enc->thetaElec        = __mpy2pif32(p_enc->thetaElec - (float32_t)((int32_t)thetaElec));
+#ifdef CPU1
+    p_enc->thetaElec        = __mpy2pif32(__fracf32(thetaElec));
     p_enc->thetaMech[NEW]   = __mpy2pif32(p_enc->thetaMech[NEW]);
 #else
-    p_enc->thetaElec        = __mpy2pif32(__fracf32(thetaElec));
+    p_enc->thetaElec        = __mpy2pif32(p_enc->thetaElec - (float32_t)((int32_t)thetaElec));
     p_enc->thetaMech[NEW]   = __mpy2pif32(p_enc->thetaMech[NEW]);
 #endif
 

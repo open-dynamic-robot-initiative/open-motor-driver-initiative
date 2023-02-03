@@ -8,6 +8,11 @@
 #include "device.h"
 #include "hw_types.h"
 #include "communication.h"
+//#include "usblib.h"
+//#include "usbcdc.h"
+//#include "usb_ids.h"
+//#include "device/usbdevice.h"
+//#include "device/usbdcdc.h"
 
 /***********************************************************************
  * DEFINES
@@ -26,6 +31,43 @@ slv2mst_msg_t   status_msg;
 
 #pragma DATA_SECTION(led_msg, "ramgs1")
 uint16_t        led_msg[LED_MSG_TX_16BIT_LENGTH];
+
+//******************************************************************************
+//
+// The CDC device initialization and customization structures. In this case,
+// we are using USBBuffers between the CDC device class driver and the
+// application code. The function pointers and callback data values are set
+// to insert a buffer in each of the data channels, transmit and receive.
+//
+// With the buffer in place, the CDC channel callback is set to the relevant
+// channel function and the callback data is set to point to the channel
+// instance data. The buffer, in turn, has its callback set to the application
+// function and the callback data set to our CDC instance structure.
+//
+//******************************************************************************
+//tUSBBuffer g_sTxBuffer =
+//{
+//    true,                           // This is a transmit buffer.
+//    TxHandler,                      // pfnCallback
+//    (void *)&g_sCDCDevice,          // Callback data is our device pointer.
+//    USBDCDCPacketWrite,             // pfnTransfer
+//    USBDCDCTxPacketAvailable,       // pfnAvailable
+//    (void *)&g_sCDCDevice,          // pvHandle
+//    g_pi8USBTxBuffer,               // pi8Buffer
+//    SCI_BUFFER_SIZE                 // ui32BufferSize
+//};
+//
+//tUSBBuffer g_sRxBuffer =
+//{
+//    false,                          // This is a receive buffer.
+//    RxHandler,                      // pfnCallback
+//    (void *)&g_sCDCDevice,          // Callback data is our device pointer.
+//    USBDCDCPacketRead,              // pfnTransfer
+//    USBDCDCRxPacketAvailable,       // pfnAvailable
+//    (void *)&g_sCDCDevice,          // pvHandle
+//    g_pi8USBRxBuffer,               // pi8Buffer
+//    SCI_BUFFER_SIZE                 // ui32BufferSize
+//};
 
 /***********************************************************************
  * FUNCTIONS DECLARATION

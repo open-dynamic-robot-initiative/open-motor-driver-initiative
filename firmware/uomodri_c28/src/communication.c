@@ -23,7 +23,7 @@ bool_t COM_msgExtract(mst2slv_msg_t* p_msg,  cmd_t* p_cmd_m1,  cmd_t* p_cmd_m2)
         cmd_reg_t* p_cmd_reg            = &p_cmd_m1->enableReg.bit;
         p_cmd_m1->posRef                = (float32_t)(pos_s32                   * POSITION_LSB      * FM_ROUND2RAD);
         p_cmd_m1->velRef                = (float32_t)(p_msg->velocity[MOTOR_1]  * VELOCITY_LSB      * FM_KRPM2RADPS);
-        p_cmd_m1->iqRef                 = (float32_t)(p_msg->current[MOTOR_1]   * IQ_LSB);
+        p_cmd_m1->iqff                  = (float32_t)(p_msg->current[MOTOR_1]   * IQ_LSB);
         p_cmd_m1->kpCoeff               = (float32_t)(p_msg->kpCoeff[MOTOR_1]   * KP_LSB            * FM_RAD2ROUND);
         p_cmd_m1->kdCoeff               = (float32_t)(p_msg->kdCoeff[MOTOR_1]   * KD_LSB            * FM_RADPS2KRPM);
         float32_t isat                  = (float32_t)(MSB_16(p_msg->iSat)       * CURRENT_SAT_LSB);
@@ -41,7 +41,7 @@ bool_t COM_msgExtract(mst2slv_msg_t* p_msg,  cmd_t* p_cmd_m1,  cmd_t* p_cmd_m2)
         p_cmd_reg                       = &p_cmd_m2->enableReg.bit;
         p_cmd_m2->posRef                = (float32_t)(pos_s32                   * POSITION_LSB      * FM_ROUND2RAD);
         p_cmd_m2->velRef                = (float32_t)(p_msg->velocity[MOTOR_2]  * VELOCITY_LSB      * FM_KRPM2RADPS);
-        p_cmd_m2->iqRef                 = (float32_t)(p_msg->current[MOTOR_2]   * IQ_LSB);
+        p_cmd_m2->iqff                  = (float32_t)(p_msg->current[MOTOR_2]   * IQ_LSB);
         p_cmd_m2->kpCoeff               = (float32_t)(p_msg->kpCoeff[MOTOR_2]   * KP_LSB            * FM_RAD2ROUND);
         p_cmd_m2->kdCoeff               = (float32_t)(p_msg->kdCoeff[MOTOR_2]   * KD_LSB            * FM_RADPS2KRPM);
         isat                            = (float32_t)(LSB_16(p_msg->iSat)       * CURRENT_SAT_LSB);
@@ -117,12 +117,12 @@ bool_t COM_msgExtract_cla(mst2slv_msg_cla_t* p_msg, cmd_t* p_cmd_m1, cmd_t* p_cm
         break;
 
     case COM_RX_STATE_IQ_MOT1:
-        p_cmd_m1->iqRef     = (float32_t)(p_msg->msg_rx * IQ_LSB);
+        p_cmd_m1->iqff      = (float32_t)(p_msg->msg_rx * IQ_LSB);
         COM_crc32_cla(p_msg);
         break;
 
     case COM_RX_STATE_IQ_MOT2:
-        p_cmd_m2->iqRef     = (float32_t)(p_msg->msg_rx * IQ_LSB);
+        p_cmd_m2->iqff      = (float32_t)(p_msg->msg_rx * IQ_LSB);
         COM_crc32_cla(p_msg);
         break;
 
@@ -254,7 +254,7 @@ void COM_resetCmdStruct(cmd_t* p_cmd)
 {
     p_cmd->posRef               = 0.0f;
     p_cmd->velRef               = 0.0f;
-    p_cmd->iqRef                = 0.0f;
+    p_cmd->iqff                 = 0.0f;
     p_cmd->kpCoeff              = 0.0f;
     p_cmd->kdCoeff              = 0.0f;
     p_cmd->iSat                 = 0.0f;

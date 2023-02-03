@@ -32,14 +32,10 @@ inline void FOC_getMeasures(acq_t* p_acq)
     p_acq->ia       = (float32_t)(*p_acq->p_iaMeasReg) * ADC_MOTOR_CURRENT_SCALE;
     p_acq->ib       = (float32_t)(*p_acq->p_ibMeasReg) * ADC_MOTOR_CURRENT_SCALE;
     p_acq->ic       = (float32_t)(*p_acq->p_icMeasReg) * ADC_MOTOR_CURRENT_SCALE;
-    // Get the latest phase voltage values in Volt
-    p_acq->va       = (float32_t)(*p_acq->p_vaMeasReg) * ADC_MOTOR_VOLTAGE_SCALE;
-    p_acq->vb       = (float32_t)(*p_acq->p_vbMeasReg) * ADC_MOTOR_VOLTAGE_SCALE;
-    p_acq->vc       = (float32_t)(*p_acq->p_vcMeasReg) * ADC_MOTOR_VOLTAGE_SCALE;
     // Get the latest Voltage supply value in Volt (minimum is one to avoid dividing by zero later)
     float32_t vbus  = __fmax(((float32_t)(*p_acq->p_vBusMeasReg) * ADC_VBUS_VOLTAGE_SCALE), 1.0f);
     UOMODRI_VBUS_FLT(p_acq->vBusFlt, p_acq->vbus, vbus);
-    float32_t vext  = (float32_t)(*p_acq->p_vExtMeasReg) * ADC_EXTERN_VOLTAGE_SCALE;
+    float32_t vext  = (float32_t)(*p_acq->p_vExtMeasReg) * ADC_VEXT12_VOLTAGE_SCALE;
     UOMODRI_VEXT_FLT(p_acq->vExtFlt, p_acq->vExt, vext);
 
     return;
@@ -94,11 +90,11 @@ inline void FOC_runControl(foc_t* p_foc)
     float32_t iq            = (p_foc->cosTheta * p_foc->ibeta) - (p_foc->sinTheta * p_foc->ialpha);
     UOMODRI_IDQ_FLT(p_foc->iParkFlt, p_foc->iq, iq);
     // Compute decoupling feed-forward terms
-#if((defined UOMODRI_FEED_FORWARD_ENABLE) && (UOMODRI_FEED_FORWARD_ENABLE))
+#if (UOMODRI_FEED_FORWARD_ENABLE)
     const params_t* p_cfg   = &p_foc->motor_cfg;
     speed_t*        p_speed = &p_enc->speed;
     p_foc->piId.ff          = -1.0f * p_speed->speedMech * p_cfg->Ls * p_foc->iq;
-    p_foc->piIq.ff          = (p_speed->speedMech * p_cfg->Ls * p_foc->id) + (p_speed->speedMech * p_cfg->ke);
+    p_foc->piIq.ff          = (p_speed->speedElec * p_cfg->Ls * p_foc->id) + (p_speed->speedMech * p_cfg->ke);
 //    p_foc->piIq.ff         += (p_foc->iqRef > 0.0f) ? (0.1f / 12.5f * p_acq->vbus) : (-0.1f / 12.5f * p_acq->vbus);
 //    p_foc->piIq.ff          = p_cfg->Rs * p_foc->iqRef + p_speed->speedElec * p_cfg->ke;
 #else
@@ -200,7 +196,7 @@ inline void FOC_resetCmdStruct(cmd_t* p_cmd)
 {
     p_cmd->posRef               = 0.0f;
     p_cmd->velRef               = 0.0f;
-    p_cmd->iqRef                = 0.0f;
+    p_cmd->iqff                 = 0.0f;
     p_cmd->kpCoeff              = 0.0f;
     p_cmd->kdCoeff              = 0.0f;
     p_cmd->iSat                 = 0.0f;//(p_cmd->motor_id == MOTOR_1) ? (MOTOR1_CURRENT_REGULATOR_SAT_MAX) : (MOTOR2_CURRENT_REGULATOR_SAT_MAX);
