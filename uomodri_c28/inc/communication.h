@@ -218,6 +218,8 @@ typedef struct __mst_2slv_msg_cla_t__
     uint16_t        msg_tmp;
 } mst2slv_msg_cla_t;
 
+
+
 /**
  * @struct  slv2mst_msg_t
  * @brief   Slave to master full status message including CRC from uOmodri
@@ -257,12 +259,35 @@ typedef struct __cmd_uomodri_t__
  * @struct  com_cpu1_to_cm_t
  * @brief   Structure for address transfer between CPU (16bits) and CM(8bits)
  */
-typedef struct __com_cpu1_to_cm_t__
+#ifdef CPU1
+typedef struct __com_cpu_2_cm_t__
 {
-    uint32_t    data_addr;
-    uint16_t    data_pos;
-    uint16_t    data_size;
-} com_cpu1_to_cm_t;
+    float32_t   ia;
+    float32_t   ib;
+    float32_t   ic;
+    float32_t   vbus;
+    float32_t   ialpha;
+    float32_t   ibeta;
+    float32_t   id;
+    float32_t   iq;
+    float32_t   ud;
+    float32_t   uq;
+    float32_t   ualpha;
+    float32_t   ubeta;
+    float32_t   ua;
+    float32_t   ub;
+    float32_t   uc;
+    float32_t   theta;
+    float32_t   posRef;
+    float32_t   speed;
+    float32_t   velRef;
+    float32_t   iqRef;
+    uint64_t    itcnt;
+//    uint32_t    data_addr;
+//    uint16_t    data_pos;
+//    uint16_t    data_size;
+} com_cpu_2_cm_t;
+#endif
 
 #ifndef CPU1
 typedef struct __attribute__((__packed__)) __dbg_uart_msg_t__
@@ -291,6 +316,7 @@ typedef struct __attribute__((__packed__)) __dbg_uart_msg_t__
     float_t         velref;
 //    uint32_t        itcnt;
     uint8_t         crc;
+    uint8_t         padding;
 } dbg_uart_msg_t;
 
 typedef struct __attribute__((__packed__)) __dbg_uart_addr_t__
@@ -315,7 +341,7 @@ typedef struct __attribute__((__packed__)) __dbg_uart_addr_t__
     float_t*        p_vel;
     float_t*        p_velref;
     float_t*        p_iqref;
-//    uint32_t*       p_itcnt;
+    uint64_t*       p_itcnt;
 } dbg_uart_addr_t;
 #endif
 
@@ -363,7 +389,8 @@ uint32_t COM_crc32_cla(mst2slv_msg_cla_t*);
 void com_msgDbgTx(dbg_uart_addr_t*, dbg_uart_msg_t*);
 uint32_t com_crc32(uint16_t*, size_t);
 uint8_t com_crc8(uint8_t*, size_t);
-uint8_t com_crc8_fast(uint8_t*, size_t);
+//uint8_t com_crc8_fast(uint8_t*, size_t);
+uint8_t com_crc8_fast(uint8_t, uint8_t*, size_t);
 #endif
 
 #endif

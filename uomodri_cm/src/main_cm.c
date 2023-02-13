@@ -21,6 +21,11 @@
  ***********************************************************************/
 
 /************************************************************************
+ * FUNCTIONS DECLARATION
+ ************************************************************************/
+inline void IPC_CpuToCmAddrSync(dbg_uart_addr_t*);
+
+/************************************************************************
  * LOCAL VARIABLES
  ************************************************************************/
 #pragma DATA_ALIGN(ucControlTable, 1024)
@@ -53,6 +58,7 @@ dbg_uart_msg_t dbg_uart_tx_msg =
  .velref            = 0.0f,
 // .itcnt             = 0U,
  .crc               = 0,
+ .padding           = 0,
 };
 
 dbg_uart_addr_t dbg_uart_addr =
@@ -76,8 +82,8 @@ dbg_uart_addr_t dbg_uart_addr =
  .p_posref          = NULL,
  .p_vel             = NULL,
  .p_velref          = NULL,
-// .p_itcnt           = NULL,
  .p_iqref           = NULL,
+ .p_itcnt           = NULL,
 };
 
 /************************************************************************
@@ -97,68 +103,72 @@ void main(void)
     CM_init();
     // Hardware Abstraction Layer initialization
     HAL_CM_init(&hal_cm);
-
-    uint32_t command, data;
-    // Get address of ia of MOTOR_1
-    while(!IPC_readCommand(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, &command, (uint32_t *)&dbg_uart_addr.p_ia, &data));
-    IPC_ackFlagRtoL(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG);
-    // Get address of ib of MOTOR_1
-    while(!IPC_readCommand(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, &command, (uint32_t *)&dbg_uart_addr.p_ib, &data));
-    IPC_ackFlagRtoL(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG);
-    // Get address of ic of MOTOR_2
-    while(!IPC_readCommand(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, &command, (uint32_t *)&dbg_uart_addr.p_ic, &data));
-    IPC_ackFlagRtoL(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG);
-    // Get address of vbus of MOTOR_1
-    while(!IPC_readCommand(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, &command, (uint32_t *)&dbg_uart_addr.p_vbus, &data));
-    IPC_ackFlagRtoL(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG);
-    // Get address of ialpha of MOTOR_1
-    while(!IPC_readCommand(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, &command, (uint32_t *)&dbg_uart_addr.p_ialpha, &data));
-    IPC_ackFlagRtoL(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG);
-    // Get address of ibeta of MOTOR_1
-    while(!IPC_readCommand(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, &command, (uint32_t *)&dbg_uart_addr.p_ibeta, &data));
-    IPC_ackFlagRtoL(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG);
-    // Get address of id of MOTOR_1
-    while(!IPC_readCommand(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, &command, (uint32_t *)&dbg_uart_addr.p_id, &data));
-    IPC_ackFlagRtoL(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG);
-    // Get address of iq of MOTOR_1
-    while(!IPC_readCommand(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, &command, (uint32_t *)&dbg_uart_addr.p_iq, &data));
-    IPC_ackFlagRtoL(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG);
-    // Get address of ud of MOTOR_1
-    while(!IPC_readCommand(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, &command, (uint32_t *)&dbg_uart_addr.p_ud, &data));
-    IPC_ackFlagRtoL(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG);
-    // Get address of uq of MOTOR_1
-    while(!IPC_readCommand(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, &command, (uint32_t *)&dbg_uart_addr.p_uq, &data));
-    IPC_ackFlagRtoL(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG);
-    // Get address of ualpha of MOTOR_1
-    while(!IPC_readCommand(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, &command, (uint32_t *)&dbg_uart_addr.p_ualpha, &data));
-    IPC_ackFlagRtoL(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG);
-    // Get address of ubeta of MOTOR_1
-    while(!IPC_readCommand(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, &command, (uint32_t *)&dbg_uart_addr.p_ubeta, &data));
-    IPC_ackFlagRtoL(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG);
-    // Get address of ua of MOTOR_1
-    while(!IPC_readCommand(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, &command, (uint32_t *)&dbg_uart_addr.p_ua, &data));
-    IPC_ackFlagRtoL(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG);
-    // Get address of ub of MOTOR_1
-    while(!IPC_readCommand(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, &command, (uint32_t *)&dbg_uart_addr.p_ub, &data));
-    IPC_ackFlagRtoL(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG);
-    // Get address of uc of MOTOR_1
-    while(!IPC_readCommand(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, &command, (uint32_t *)&dbg_uart_addr.p_uc, &data));
-    IPC_ackFlagRtoL(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG);
-    // Get address of absolute encoder position of MOTOR_1
-    while(!IPC_readCommand(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, &command, (uint32_t *)&dbg_uart_addr.p_pos, &data));
-    IPC_ackFlagRtoL(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG);
-    // Get address of reference position of MOTOR_1
-    while(!IPC_readCommand(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, &command, (uint32_t *)&dbg_uart_addr.p_posref, &data));
-    IPC_ackFlagRtoL(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG);
-    // Get address of encoder speed variable of MOTOR_1
-    while(!IPC_readCommand(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, &command, (uint32_t *)&dbg_uart_addr.p_vel, &data));
-    IPC_ackFlagRtoL(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG);
-    // Get address of reference speed of MOTOR_1
-    while(!IPC_readCommand(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, &command, (uint32_t *)&dbg_uart_addr.p_velref, &data));
-    IPC_ackFlagRtoL(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG);
-    // Get address of IT counter of MOTOR_1
-    while(!IPC_readCommand(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, &command, (uint32_t *)&dbg_uart_addr.p_iqref, &data));
-    IPC_ackFlagRtoL(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG);
+    // IPC address translation
+    IPC_CpuToCmAddrSync(&dbg_uart_addr);
+//    uint32_t command, data;
+//    // Get address of ia of MOTOR_1
+//    while(!IPC_readCommand(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, &command, (uint32_t *)&dbg_uart_addr.p_ia, &data));
+//    IPC_ackFlagRtoL(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG);
+//    // Get address of ib of MOTOR_1
+//    while(!IPC_readCommand(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, &command, (uint32_t *)&dbg_uart_addr.p_ib, &data));
+//    IPC_ackFlagRtoL(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG);
+//    // Get address of ic of MOTOR_2
+//    while(!IPC_readCommand(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, &command, (uint32_t *)&dbg_uart_addr.p_ic, &data));
+//    IPC_ackFlagRtoL(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG);
+//    // Get address of vbus of MOTOR_1
+//    while(!IPC_readCommand(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, &command, (uint32_t *)&dbg_uart_addr.p_vbus, &data));
+//    IPC_ackFlagRtoL(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG);
+//    // Get address of ialpha of MOTOR_1
+//    while(!IPC_readCommand(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, &command, (uint32_t *)&dbg_uart_addr.p_ialpha, &data));
+//    IPC_ackFlagRtoL(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG);
+//    // Get address of ibeta of MOTOR_1
+//    while(!IPC_readCommand(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, &command, (uint32_t *)&dbg_uart_addr.p_ibeta, &data));
+//    IPC_ackFlagRtoL(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG);
+//    // Get address of id of MOTOR_1
+//    while(!IPC_readCommand(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, &command, (uint32_t *)&dbg_uart_addr.p_id, &data));
+//    IPC_ackFlagRtoL(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG);
+//    // Get address of iq of MOTOR_1
+//    while(!IPC_readCommand(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, &command, (uint32_t *)&dbg_uart_addr.p_iq, &data));
+//    IPC_ackFlagRtoL(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG);
+//    // Get address of ud of MOTOR_1
+//    while(!IPC_readCommand(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, &command, (uint32_t *)&dbg_uart_addr.p_ud, &data));
+//    IPC_ackFlagRtoL(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG);
+//    // Get address of uq of MOTOR_1
+//    while(!IPC_readCommand(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, &command, (uint32_t *)&dbg_uart_addr.p_uq, &data));
+//    IPC_ackFlagRtoL(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG);
+//    // Get address of ualpha of MOTOR_1
+//    while(!IPC_readCommand(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, &command, (uint32_t *)&dbg_uart_addr.p_ualpha, &data));
+//    IPC_ackFlagRtoL(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG);
+//    // Get address of ubeta of MOTOR_1
+//    while(!IPC_readCommand(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, &command, (uint32_t *)&dbg_uart_addr.p_ubeta, &data));
+//    IPC_ackFlagRtoL(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG);
+//    // Get address of ua of MOTOR_1
+//    while(!IPC_readCommand(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, &command, (uint32_t *)&dbg_uart_addr.p_ua, &data));
+//    IPC_ackFlagRtoL(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG);
+//    // Get address of ub of MOTOR_1
+//    while(!IPC_readCommand(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, &command, (uint32_t *)&dbg_uart_addr.p_ub, &data));
+//    IPC_ackFlagRtoL(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG);
+//    // Get address of uc of MOTOR_1
+//    while(!IPC_readCommand(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, &command, (uint32_t *)&dbg_uart_addr.p_uc, &data));
+//    IPC_ackFlagRtoL(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG);
+//    // Get address of absolute encoder position of MOTOR_1
+//    while(!IPC_readCommand(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, &command, (uint32_t *)&dbg_uart_addr.p_pos, &data));
+//    IPC_ackFlagRtoL(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG);
+//    // Get address of PositionRef of MOTOR_1
+//    while(!IPC_readCommand(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, &command, (uint32_t *)&dbg_uart_addr.p_posref, &data));
+//    IPC_ackFlagRtoL(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG);
+//    // Get address of encoder speed variable of MOTOR_1
+//    while(!IPC_readCommand(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, &command, (uint32_t *)&dbg_uart_addr.p_vel, &data));
+//    IPC_ackFlagRtoL(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG);
+//    // Get address of SpeedRef of MOTOR_1
+//    while(!IPC_readCommand(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, &command, (uint32_t *)&dbg_uart_addr.p_velref, &data));
+//    IPC_ackFlagRtoL(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG);
+//    // Get address of IqRef of MOTOR_1
+//    while(!IPC_readCommand(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, &command, (uint32_t *)&dbg_uart_addr.p_iqref, &data));
+//    IPC_ackFlagRtoL(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG);
+//    // Get address of IT counter of MOTOR_1
+//    while(!IPC_readCommand(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, &command, (uint32_t *)&dbg_uart_addr.p_itcnt, &data));
+//    IPC_ackFlagRtoL(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG);
 
     // Loop forever. Wait for IPC interrupts
     while(1)
@@ -170,28 +180,101 @@ void main(void)
         GPIO_writePin(EXT_DBG_SPI_SOMI, 1);
         // Create debug message
         com_msgDbgTx(&dbg_uart_addr, &dbg_uart_tx_msg);
-        // Acknowledge IT associated to input flag.
-        IPC_ackFlagRtoL(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG);
 //        DBG_PIN0_CLEAR;
 //        EXT_DBG_SPI_SIMO_CLEAR;
 //        GPIO_writePin(EXT_DBG_SPI_SIMO, 0);
 //        EXT_DBG_SPI_SOMI_CLEAR;
         GPIO_writePin(EXT_DBG_SPI_SOMI, 0);
         // Wait Tx buffer + UART Tx module are empty.
-        while(UART_isBusy(UART0_BASE));
+//        while(UART_isBusy(UART0_BASE));
         // Force purge of Rx buffer.
-        while(UART_readCharNonBlocking(UART0_BASE) != -1);
+//        while(UART_readCharNonBlocking(UART0_BASE) != -1);
         // Get the index associated to uDMA UART0_TX configuration
         //    while((cm_udmaCfgList[udmaCfgIdx].dmaChannel != UDMA_CHANNEL_UART0_TX) ? (udmaCfgIdx++) : (udmaCfgIdx));
         // Enable the uDMA UART0 Tx channel
-        if(!UDMA_isChannelEnabled(UDMA_BASE, cm_udmaCfgList[0].dmaChannel))
-        {
-            ucControlTable[UDMA_CHANNEL_UART0_TX].chControlAttr &= ~(UDMA_DMACHCTL_XFERSIZE_M | UDMA_DMACHCTL_XFERMODE_M);
-            ucControlTable[UDMA_CHANNEL_UART0_TX].chControlAttr |= ((cm_udmaCfgList[0].transferMode) << UDMA_DMACHCTL_XFERMODE_S);//cm_udmaCfgList[udmaCfgIdx].transferMode;
-            ucControlTable[UDMA_CHANNEL_UART0_TX].chControlAttr |= ((cm_udmaCfgList[0].transferSize - 1) << UDMA_DMACHCTL_XFERSIZE_S);//((cm_udmaCfgList[udmaCfgIdx].transferSize - 1) << UDMA_DMACHCTL_XFERSIZE_S);
-            UDMA_enableChannel(UDMA_BASE, UDMA_CHANNEL_UART0_TX);
-        }
+        while(UDMA_isChannelEnabled(UDMA_BASE, cm_udmaCfgList[0].dmaChannel));
+        ucControlTable[UDMA_CHANNEL_UART0_TX].chControlAttr &= ~(UDMA_DMACHCTL_XFERSIZE_M | UDMA_DMACHCTL_XFERMODE_M);
+        ucControlTable[UDMA_CHANNEL_UART0_TX].chControlAttr |= ((cm_udmaCfgList[0].transferMode) << UDMA_DMACHCTL_XFERMODE_S);//cm_udmaCfgList[udmaCfgIdx].transferMode;
+        ucControlTable[UDMA_CHANNEL_UART0_TX].chControlAttr |= ((cm_udmaCfgList[0].transferSize - 1) << UDMA_DMACHCTL_XFERSIZE_S);//((cm_udmaCfgList[udmaCfgIdx].transferSize - 1) << UDMA_DMACHCTL_XFERSIZE_S);
+        UDMA_enableChannel(UDMA_BASE, UDMA_CHANNEL_UART0_TX);
+//        if(!UDMA_isChannelEnabled(UDMA_BASE, cm_udmaCfgList[0].dmaChannel))
+//        {
+//            ucControlTable[UDMA_CHANNEL_UART0_TX].chControlAttr &= ~(UDMA_DMACHCTL_XFERSIZE_M | UDMA_DMACHCTL_XFERMODE_M);
+//            ucControlTable[UDMA_CHANNEL_UART0_TX].chControlAttr |= ((cm_udmaCfgList[0].transferMode) << UDMA_DMACHCTL_XFERMODE_S);//cm_udmaCfgList[udmaCfgIdx].transferMode;
+//            ucControlTable[UDMA_CHANNEL_UART0_TX].chControlAttr |= ((cm_udmaCfgList[0].transferSize - 1) << UDMA_DMACHCTL_XFERSIZE_S);//((cm_udmaCfgList[udmaCfgIdx].transferSize - 1) << UDMA_DMACHCTL_XFERSIZE_S);
+//            UDMA_enableChannel(UDMA_BASE, UDMA_CHANNEL_UART0_TX);
+//        }
+        // Acknowledge IT associated to input flag.
+        IPC_ackFlagRtoL(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG);
     }
+}
+
+inline void IPC_CpuToCmAddrSync(dbg_uart_addr_t* p_addr)
+{
+    uint32_t command, data;
+    // Get address of ia of MOTOR_1
+    while(!IPC_readCommand(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, &command, (uint32_t *)&p_addr->p_ia, &data));
+    IPC_ackFlagRtoL(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG);
+    // Get address of ib of MOTOR_1
+    while(!IPC_readCommand(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, &command, (uint32_t *)&p_addr->p_ib, &data));
+    IPC_ackFlagRtoL(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG);
+    // Get address of ic of MOTOR_2
+    while(!IPC_readCommand(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, &command, (uint32_t *)&p_addr->p_ic, &data));
+    IPC_ackFlagRtoL(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG);
+    // Get address of vbus of MOTOR_1
+    while(!IPC_readCommand(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, &command, (uint32_t *)&p_addr->p_vbus, &data));
+    IPC_ackFlagRtoL(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG);
+    // Get address of ialpha of MOTOR_1
+    while(!IPC_readCommand(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, &command, (uint32_t *)&p_addr->p_ialpha, &data));
+    IPC_ackFlagRtoL(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG);
+    // Get address of ibeta of MOTOR_1
+    while(!IPC_readCommand(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, &command, (uint32_t *)&p_addr->p_ibeta, &data));
+    IPC_ackFlagRtoL(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG);
+    // Get address of id of MOTOR_1
+    while(!IPC_readCommand(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, &command, (uint32_t *)&p_addr->p_id, &data));
+    IPC_ackFlagRtoL(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG);
+    // Get address of iq of MOTOR_1
+    while(!IPC_readCommand(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, &command, (uint32_t *)&p_addr->p_iq, &data));
+    IPC_ackFlagRtoL(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG);
+    // Get address of ud of MOTOR_1
+    while(!IPC_readCommand(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, &command, (uint32_t *)&p_addr->p_ud, &data));
+    IPC_ackFlagRtoL(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG);
+    // Get address of uq of MOTOR_1
+    while(!IPC_readCommand(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, &command, (uint32_t *)&p_addr->p_uq, &data));
+    IPC_ackFlagRtoL(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG);
+    // Get address of ualpha of MOTOR_1
+    while(!IPC_readCommand(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, &command, (uint32_t *)&p_addr->p_ualpha, &data));
+    IPC_ackFlagRtoL(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG);
+    // Get address of ubeta of MOTOR_1
+    while(!IPC_readCommand(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, &command, (uint32_t *)&p_addr->p_ubeta, &data));
+    IPC_ackFlagRtoL(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG);
+    // Get address of ua of MOTOR_1
+    while(!IPC_readCommand(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, &command, (uint32_t *)&p_addr->p_ua, &data));
+    IPC_ackFlagRtoL(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG);
+    // Get address of ub of MOTOR_1
+    while(!IPC_readCommand(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, &command, (uint32_t *)&p_addr->p_ub, &data));
+    IPC_ackFlagRtoL(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG);
+    // Get address of uc of MOTOR_1
+    while(!IPC_readCommand(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, &command, (uint32_t *)&p_addr->p_uc, &data));
+    IPC_ackFlagRtoL(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG);
+    // Get address of absolute encoder position of MOTOR_1
+    while(!IPC_readCommand(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, &command, (uint32_t *)&p_addr->p_pos, &data));
+    IPC_ackFlagRtoL(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG);
+    // Get address of PositionRef of MOTOR_1
+    while(!IPC_readCommand(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, &command, (uint32_t *)&p_addr->p_posref, &data));
+    IPC_ackFlagRtoL(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG);
+    // Get address of encoder speed variable of MOTOR_1
+    while(!IPC_readCommand(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, &command, (uint32_t *)&p_addr->p_vel, &data));
+    IPC_ackFlagRtoL(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG);
+    // Get address of SpeedRef of MOTOR_1
+    while(!IPC_readCommand(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, &command, (uint32_t *)&p_addr->p_velref, &data));
+    IPC_ackFlagRtoL(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG);
+    // Get address of IqRef of MOTOR_1
+    while(!IPC_readCommand(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, &command, (uint32_t *)&p_addr->p_iqref, &data));
+    IPC_ackFlagRtoL(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG);
+    // Get address of IT counter of MOTOR_1
+    while(!IPC_readCommand(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, &command, (uint32_t *)&p_addr->p_itcnt, &data));
+    IPC_ackFlagRtoL(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG);
 }
 
 //

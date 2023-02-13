@@ -138,7 +138,7 @@ inline bool_t MOT_runControl(motor_t* p_motor)
         break;
 
     case MOTOR_STATE_ERROR:
-        p_motor->itCnt          = 0U;
+        p_motor->itCnt          = p_motor->itCnt;
         p_foc->idRef            = 0.0f;
         p_foc->iqRef            = 0.0f;
         p_motor->motor_state    = MOTOR_STATE_ERROR;
