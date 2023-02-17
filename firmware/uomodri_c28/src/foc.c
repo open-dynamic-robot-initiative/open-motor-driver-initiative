@@ -95,8 +95,6 @@ inline void FOC_runControl(foc_t* p_foc)
     speed_t*        p_speed = &p_enc->speed;
     p_foc->piId.ff          = -1.0f * p_speed->speedMech * p_cfg->Ls * p_foc->iq;
     p_foc->piIq.ff          = (p_speed->speedElec * p_cfg->Ls * p_foc->id) + (p_speed->speedMech * p_cfg->ke);
-//    p_foc->piIq.ff         += (p_foc->iqRef > 0.0f) ? (0.1f / 12.5f * p_acq->vbus) : (-0.1f / 12.5f * p_acq->vbus);
-//    p_foc->piIq.ff          = p_cfg->Rs * p_foc->iqRef + p_speed->speedElec * p_cfg->ke;
 #else
     p_foc->piId.ff          = 0.0f;
     p_foc->piIq.ff          = 0.0f;

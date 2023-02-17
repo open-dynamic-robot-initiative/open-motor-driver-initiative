@@ -32,6 +32,11 @@ slv2mst_msg_t   status_msg;
 #pragma DATA_SECTION(led_msg, "ramgs1")
 uint16_t        led_msg[LED_MSG_TX_16BIT_LENGTH];
 
+#if (defined DEBUG) && (CM_CORE_ENABLE) && (0)
+#pragma DATA_SECTION(cpu2cm_dbg_msg, "MSGRAM_CPU_TO_CM");
+com_cpu_2_cm_t  cpu2cm_dbg_msg;
+#endif
+
 //******************************************************************************
 //
 // The CDC device initialization and customization structures. In this case,

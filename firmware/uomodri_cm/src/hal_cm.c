@@ -61,8 +61,8 @@ void HAL_CM_uDMA_init(const udma_cfg_t* p_udmaCfg)
         {
             /* Put the attributes in a known state for the uDMA software channel.
              * These should already be disabled by default. */            //
-            UDMA_disableChannelAttribute(UDMA_BASE, dmaChannel,
-                                         UDMA_CH_ATTR_ALTSELECT | UDMA_CH_ATTR_HIGH_PRIORITY | UDMA_CH_ATTR_REQMASK);
+            UDMA_disableChannelAttribute(UDMA_BASE, dmaChannel, UDMA_CH_ATTR_ALL);
+//                                         UDMA_CH_ATTR_ALTSELECT | UDMA_CH_ATTR_HIGH_PRIORITY | UDMA_CH_ATTR_REQMASK);
             UDMA_enableChannelAttribute(UDMA_BASE, dmaChannel, UDMA_CH_ATTR_USEBURST);
             /* Configure the control parameters for the UART TX/RX channels
              * Tx channel will be used to transfer data from the buffer to the UART Data register.
@@ -89,11 +89,29 @@ void HAL_CM_uDMA_init(const udma_cfg_t* p_udmaCfg)
  */
 void HAL_CM_UART_init(const uart_cfg_t* p_uart)
 {
+//    if(p_uart != NULL)
+//    {
+//        UART_enableFIFO(UART0_BASE);
+//        UART_setFIFOLevel(UART0_BASE, UART_FIFO_TX6_8, UART_FIFO_RX6_8);
+//        UART_disableLoopback(UART0_BASE);
+//        UART_enableDMA(UART0_BASE, p_uart->dmaFlags);
+//        // Configure UART & Enable the module.
+//        UART_clearRxError(UART0_BASE);
+//        UART_setConfig(UART0_BASE, UART_CLK_FREQ, p_uart->baudRate, p_uart->uartCfg);
+//        if(p_uart->intEnable)
+//        {
+//            UART_registerInterrupt(INT_UART0, p_uart->p_fnHandler);
+//            UART_clearInterruptStatus(UART0_BASE, UART_INT_DMATX | UART_INT_DMARX | UART_INT_9BIT |
+//                                      UART_INT_EOT | UART_INT_OE | UART_INT_BE | UART_INT_PE |
+//                                      UART_INT_FE | UART_INT_RT | UART_INT_TX | UART_INT_RX);
+//            UART_enableInterrupt(UART0_BASE, p_uart->intFlags);
+//        }
+//    }
     if(p_uart != NULL)
     {
         UART_setFIFOLevel(UART0_BASE, UART_FIFO_TX6_8, UART_FIFO_RX6_8);
         UART_enableFIFO(UART0_BASE);
-        (p_uart->loopBackEnable) ? (UART_enableLoopback(UART0_BASE)) : (UART_disableLoopback(UART0_BASE));
+        UART_disableLoopback(UART0_BASE);
         UART_enableDMA(UART0_BASE, p_uart->dmaFlags);
         // Configure UART & Enable the module.
         UART_setConfig(UART0_BASE, UART_CLK_FREQ, p_uart->baudRate, p_uart->uartCfg);
@@ -101,6 +119,7 @@ void HAL_CM_UART_init(const uart_cfg_t* p_uart)
         // Enable the UART0 module.
         UART_enableModule(UART0_BASE);
     }
+
 
     return;
 }

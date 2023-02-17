@@ -3,6 +3,5 @@
 /Release/
 /Release_Flash/
 /device/
-/device/driverlib/
-/device/source/
-/html/
+/device/driverlib_cm/
+

@@ -11,6 +11,7 @@
 
 #include "hal.h"
 #include "drv8353.h"
+#include "as5047u.h"
 #include "foc.h"
 #include "motor.h"
 #include "communication.h"
@@ -50,6 +51,34 @@ static const int_cfg_t InterruptList[] =
  // END OF ARRAY
  {.intNum           = UINT32_MAX},
 };
+
+#if (CLA_CORE_ENABLE)
+static const asenc_cfg_t  ASencCfgList[] =
+{
+ {
+  .spiHandle        = ENC_SPI_BASE,
+  .gpioNumber_CS    = EXT_DBG_SPI_CS1,
+ }
+};
+
+static as_enc_t asenc_cfg[] =
+{
+ {
+  .asencHandle      = &ASencCfgList[MOTOR_1],
+  .angleData.all    = 0U,
+  .velData.all      = 0U,
+  .degAngle         = 0.0f,
+  .prevAngle        = 0.0f,
+  .startAngle       = 0.0f,
+  .totalAngle       = 0.0f,
+  .turnNum          = 0.0f,
+  .rndCount         = 0.0f,
+  .vel              = 0.0f,
+  .quadNum          = 0.0f,
+  .prevQuadNum      = 0.0f,
+ },
+};
+#endif
 
 /** @var    DRV_Cfg     DrvCfgList[]
  *  @brief  List all IOs \& SPI peripherals used for DRV communication.
@@ -192,7 +221,8 @@ static const hal_motor_cfg_t hal_motor_cfg[] =
 };
 
 #pragma DATA_ALIGN(cmd_uOmodri, 8)
-#pragma DATA_SECTION(cmd_uOmodri, "MSGRAM_CPU_TO_CM")
+//#pragma DATA_SECTION(cmd_uOmodri, "MSGRAM_CPU_TO_CM")
+#pragma DATA_SECTION(cmd_uOmodri, "ramgs0")
 static cmd_t cmd_uOmodri[2] =
 {
  {
@@ -222,11 +252,11 @@ static cmd_t cmd_uOmodri[2] =
 };
 
 #pragma DATA_ALIGN(motor_foc, 8)
-#if (CM_CORE_ENABLE)
-#pragma DATA_SECTION(motor_foc, "MSGRAM_CPU_TO_CM");
-#else
-#pragma DATA_SECTION(motor_foc, "ramgs1");
-#endif
+//#if (CM_CORE_ENABLE)
+//#pragma DATA_SECTION(motor_foc, "MSGRAM_CPU_TO_CM");
+//#else
+#pragma DATA_SECTION(motor_foc, "ramgs0");
+//#endif
 static foc_t motor_foc[] =
 {
  {
@@ -555,49 +585,14 @@ static foc_t motor_foc[] =
 /** @var    MOTOR_STRUCT    motor[]
  *  @brief  General structure array configuration structure for the Hardware Abstraction Layer.
  */
-#if (CM_CORE_ENABLE)
-#pragma DATA_SECTION(motor, "MSGRAM_CPU_TO_CM");
-#else
-#pragma DATA_SECTION(motor, "ramgs1");
-#endif
+//#if (CM_CORE_ENABLE)
+//#pragma DATA_SECTION(motor, "MSGRAM_CPU_TO_CM");
+//#else
+#pragma DATA_ALIGN(motor, 8)
+#pragma DATA_SECTION(motor, "ramgs0");
+//#endif
 static motor_t motor[2] =
 {
-#if (CLA_CORE_ENABLE)
- {
-  //--- MOTOR_1 ---------------------------------------------------------------
-  .motor_id         = MOTOR_1,
-  .motorHalCfg_u.ptr= &hal_motor_cfg[MOTOR_1],
-  .motorDRV_u.ptr   = &drv_cfg[MOTOR_1],
-  .motorFOC_u.ptr   = &motor_foc[MOTOR_1],
-  //--- FSM motor initial state -----------------------------------------------
-  .motor_state      = MOTOR_STATE_INIT,
-  //--- Error message ---------------------------------------------------------
-  .motor_error.all  = MOTOR_ERROR_NO_ERROR,
-  .clCycleNb        = 0,
-  .itCnt            = 0,
-  .itDone           = false,
-  .motorChAReg_u.ptr= (volatile uint16_t *)(MOTOR1_PWM1_CMD_ADDR),
-  .motorChBReg_u.ptr= (volatile uint16_t *)(MOTOR1_PWM2_CMD_ADDR),
-  .motorChCReg_u.ptr= (volatile uint16_t *)(MOTOR1_PWM3_CMD_ADDR),
- },
- {
-  //--- MOTOR_1 ---------------------------------------------------------------
-  .motor_id         = MOTOR_2,
-  .motorHalCfg_u    = {.ptr = &hal_motor_cfg[MOTOR_2]},
-  .motorDRV_u.ptr   = &drv_cfg[MOTOR_2],
-  .motorFOC_u.ptr   = &motor_foc[MOTOR_2],
-  //--- FSM motor initial state -----------------------------------------------
-  .motor_state      = MOTOR_STATE_INIT,
-  //--- Error message ---------------------------------------------------------
-  .motor_error.all  = MOTOR_ERROR_NO_ERROR,
-  .clCycleNb        = 0,
-  .itCnt            = 0,
-  .itDone           = false,
-  .motorChAReg_u.ptr= (volatile uint16_t *)(MOTOR2_PWM1_CMD_ADDR),
-  .motorChBReg_u.ptr= (volatile uint16_t *)(MOTOR2_PWM2_CMD_ADDR),
-  .motorChCReg_u.ptr= (volatile uint16_t *)(MOTOR2_PWM3_CMD_ADDR),
- },
-#else
  {
   //--- MOTOR_1 ---------------------------------------------------------------
   .motor_id         = MOTOR_1,
@@ -632,7 +627,6 @@ static motor_t motor[2] =
   .p_motorChBReg    = (volatile uint16_t *)(MOTOR2_PWM2_CMD_ADDR),
   .p_motorChCReg    = (volatile uint16_t *)(MOTOR2_PWM3_CMD_ADDR),
  },
-#endif
 };
 
 static const dma_cfg_t  dmaMem2MemCfgList[] =

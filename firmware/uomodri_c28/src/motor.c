@@ -16,15 +16,10 @@
  */
 inline void MOT_runCommand(motor_t* p_motor, float32_t cmd_a, float32_t cmd_b, float32_t cmd_c)
 {
-#if (CLA_CORE_ENABLE)
-    *(p_motor->motorChAReg_u.ptr) = (uint16_t)((cmd_a) * PWM_TIMEBASE_CNT);
-    *(p_motor->motorChBReg_u.ptr) = (uint16_t)((cmd_b) * PWM_TIMEBASE_CNT);
-    *(p_motor->motorChCReg_u.ptr) = (uint16_t)((cmd_c) * PWM_TIMEBASE_CNT);
-#else
     *(p_motor->p_motorChAReg) = (uint16_t)((cmd_a) * PWM_TIMEBASE_CNT);
     *(p_motor->p_motorChBReg) = (uint16_t)((cmd_b) * PWM_TIMEBASE_CNT);
     *(p_motor->p_motorChCReg) = (uint16_t)((cmd_c) * PWM_TIMEBASE_CNT);
-#endif
+
     return;
 }
 
@@ -34,15 +29,10 @@ inline void MOT_runCommand(motor_t* p_motor, float32_t cmd_a, float32_t cmd_b, f
  */
 inline void MOT_stopCommand(motor_t* p_motor)
 {
-#if (CLA_CORE_ENABLE)
-    *(p_motor->motorChAReg_u.ptr) = (uint16_t)PWM_TIMEBASE_CNT;
-    *(p_motor->motorChBReg_u.ptr) = (uint16_t)PWM_TIMEBASE_CNT;
-    *(p_motor->motorChCReg_u.ptr) = (uint16_t)PWM_TIMEBASE_CNT;
-#else
     *(p_motor->p_motorChAReg) = (uint16_t)PWM_TIMEBASE_CNT;
     *(p_motor->p_motorChBReg) = (uint16_t)PWM_TIMEBASE_CNT;
     *(p_motor->p_motorChCReg) = (uint16_t)PWM_TIMEBASE_CNT;
-#endif
+
     return;
 }
 
@@ -53,6 +43,9 @@ inline void MOT_stopCommand(motor_t* p_motor)
  */
 inline bool_t MOT_runControl(motor_t* p_motor)
 {
+    static float32_t enc_theta[2] = {FM_ROUND2RAD, FM_ROUND2RAD};//{0.0f, 0.0f};
+
+    motor_id_e  id              = p_motor->motor_id;
     foc_t*      p_foc           = p_motor->p_motorFOC;
     error_reg_u error           = p_motor->motor_error;
     encoder_t*  p_enc           = &p_foc->motor_enc;
@@ -95,11 +88,11 @@ inline bool_t MOT_runControl(motor_t* p_motor)
         p_motor->itCnt          = 0U;
         p_foc->idRef           += 1e-4f; // Increment for alignment current procedure
         p_foc->iqRef            = 0.0f;
+        enc_theta[id]          -= (M_PI * 1e-4f);
         p_motor->motor_state    = (p_foc->idRef < p_foc->iAlignMax) ? (MOTOR_STATE_ALIGN_UP)    : (MOTOR_STATE_ALIGN_FIX);
         p_motor->motor_state    = (en_bit.motorEnable)              ? (p_motor->motor_state)    : (MOTOR_STATE_INIT);
         p_motor->motor_state    = (en_bit.systemEnable)             ? (p_motor->motor_state)    : (MOTOR_STATE_INIT);
-        ENC_resetPeriph(p_enc);
-        ENC_resetStruct(p_enc);
+        (p_motor->motor_state != MOTOR_STATE_ALIGN_UP)              ? (ENC_resetStruct(p_enc))  : (p_enc->thetaElec = enc_theta[id]);
         FOC_runControl(p_foc);
         MOT_runCommand(p_motor, p_foc->dtc_u, p_foc->dtc_v, p_foc->dtc_w);
         break;
@@ -138,7 +131,7 @@ inline bool_t MOT_runControl(motor_t* p_motor)
         break;
 
     case MOTOR_STATE_ERROR:
-        p_motor->itCnt          = 0U;
+        p_motor->itCnt          = p_motor->itCnt;
         p_foc->idRef            = 0.0f;
         p_foc->iqRef            = 0.0f;
         p_motor->motor_state    = MOTOR_STATE_ERROR;
