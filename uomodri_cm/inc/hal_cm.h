@@ -24,10 +24,10 @@ typedef struct __UART_CFG_t__
     uint32_t    uartCfg;
     uint32_t    baudRate;
     uint32_t    dmaFlags;
-    uint32_t    intFlags;
+//    uint32_t    intFlags;
     bool        dmaEnable;
-    bool        intEnable;
-    void        (*p_fnHandler)(void);
+//    bool        intEnable;
+//    void        (*p_fnHandler)(void);
 } uart_cfg_t;
 
 /**

@@ -252,18 +252,18 @@ static const spi_cfg_t  spiCfgList[] =
   .highSpeedMode    = false,
   .intEnable        = false
  },
-// {
-//  .spiBase          = DBG_SPI_BASE,
-//  .bitRate          = 10000000U,
-//  .dataWidth        = 16U,
-//  .mode             = SPI_MODE_MASTER,
-//  .protocol         = SPI_PROT_POL0PHA0,
-//  .txLevel          = SPI_FIFO_TX8,
-//  .rxLevel          = SPI_FIFO_RX8,
-//  .intSrc           = 0,
-//  .highSpeedMode    = false,
-//  .intEnable        = false
-// },
+ {
+  .spiBase          = DBG_SPI_BASE,
+  .bitRate          = 10000000U,
+  .dataWidth        = 16U,
+  .mode             = SPI_MODE_MASTER,
+  .protocol         = SPI_PROT_POL0PHA0,
+  .txLevel          = SPI_FIFO_TX8,
+  .rxLevel          = SPI_FIFO_RX8,
+  .intSrc           = 0,
+  .highSpeedMode    = false,
+  .intEnable        = false
+ },
  {
   .spiBase          = LED_SPI_BASE,
   .bitRate          = 2380000U,
@@ -376,10 +376,12 @@ static const sci_cfg_t  sciCfgList[] =
  }
 };
 
+#if (CLA_CORE_ENABLE)
 static const cla_cfg_t  claCfgList[] =
 {
- {.progRAM = MEMCFG_SECT_LS2,   .dataRAM = (MEMCFG_SECT_LS0 | MEMCFG_SECT_LS1), .claTaskFlg = CLA_TASKFLAG_1,   .claTaskNum = CLA_TASK_1},   //.fun_ptr = &Cla1Task1
+ {.progRAM = MEMCFG_SECT_LS2,   .dataRAM = (MEMCFG_SECT_LS0 | MEMCFG_SECT_LS1), .claTaskFlg = CLA_TASKFLAG_1,   .claTaskNum = CLA_TASK_1, .fun_ptr = &Cla1Task1},
 };
+#endif
 
 /** @var    ePWM_TB_TypeDef PwmTimeBaseCfgList[]
  *  @brief  List all the configurations necessaries for ePWM Time Base submodule.
