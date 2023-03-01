@@ -43,14 +43,15 @@ inline void MOT_stopCommand(motor_t* p_motor)
  */
 inline bool_t MOT_runControl(motor_t* p_motor)
 {
-    static float32_t enc_theta[2] = {FM_ROUND2RAD, FM_ROUND2RAD};//{0.0f, 0.0f};
+    static float32_t enc_theta[2] = {MOTOR1_THETA_ALIGN_MAX, MOTOR2_THETA_ALIGN_MAX};
 
-    motor_id_e  id              = p_motor->motor_id;
-    foc_t*      p_foc           = p_motor->p_motorFOC;
-    error_reg_u error           = p_motor->motor_error;
-    encoder_t*  p_enc           = &p_foc->motor_enc;
-    cmd_t*      p_cmd           = &p_foc->motor_cmd;
-    cmd_reg_t   en_bit          = p_cmd->enableReg.bit;
+    uint8_t         id          = p_motor->motor_id;
+    foc_t*          p_foc       = p_motor->p_motorFOC;
+//    error_reg_u*    p_err       = &p_motor->motor_error;
+    error_reg_u     err         = {.all = 0};
+    encoder_t*      p_enc       = &p_foc->motor_enc;
+    cmd_t*          p_cmd       = &p_foc->motor_cmd;
+    cmd_reg_t       en_bit      = p_cmd->enableReg.bit;
     p_enc->indexOffset          = en_bit.encOffsetEnable;
 
     // Read the phases current, voltage & Vbus
@@ -64,11 +65,26 @@ inline bool_t MOT_runControl(motor_t* p_motor)
 
     // Save number of cycles elapsed since control loop startup
     p_motor->clCycleNb          = EPWM_getTimeBaseCounterValue(p_motor->p_motorHalCfg->p_pwmCntCmp[0]->epwmBase);
-    error.bit.drv_fault         = !GPIO_readPin(p_motor->p_motorDRV->p_drvCfgHandler->gpioNumber_FAULT);
-    error.bit.pos_rollover      = p_enc->rollOverError && en_bit.rollOverEnable;
-    error.bit.com_timeout       = (p_cmd->cptTimeout > p_cmd->timeoutRef) && p_cmd->timeoutRef;
-    error.bit.enc_mismatch      = p_enc->indexDetect && p_enc->indexError;
-    p_motor->motor_state        = (error.all)                       ? (MOTOR_STATE_ERROR)       : (p_motor->motor_state);
+
+#if 1
+    err.bit.drv_fault           = !GPIO_readPin(p_motor->p_motorDRV->p_drvCfgHandler->gpioNumber_FAULT);
+    err.bit.pos_rollover        = p_enc->rollOverError && en_bit.rollOverEnable;
+    err.bit.com_timeout         = (p_cmd->cptTimeout > p_cmd->timeoutRef) && p_cmd->timeoutRef;
+    err.bit.enc_mismatch        = p_enc->indexDetect && p_enc->indexError;
+    p_motor->motor_state        = (err.all)                         ? (MOTOR_STATE_ERROR)       : (p_motor->motor_state);
+    p_motor->motor_error.all    = err.all;
+//    p_err->bit.drv_fault        = !GPIO_readPin(p_motor->p_motorDRV->p_drvCfgHandler->gpioNumber_FAULT);
+//    p_err->bit.pos_rollover     = p_enc->rollOverError && en_bit.rollOverEnable;
+//    p_err->bit.com_timeout      = (p_cmd->cptTimeout > p_cmd->timeoutRef) && p_cmd->timeoutRef;
+//    p_err->bit.enc_mismatch     = p_enc->indexDetect && p_enc->indexError;
+//    p_motor->motor_state        = (p_err->all)                      ? (MOTOR_STATE_ERROR)       : (p_motor->motor_state);
+#else
+    p_motor->motor_error.bit.drv_fault      = !GPIO_readPin(p_motor->p_motorDRV->p_drvCfgHandler->gpioNumber_FAULT);
+    p_motor->motor_error.bit.pos_rollover   = p_enc->rollOverError && en_bit.rollOverEnable;
+    p_motor->motor_error.bit.com_timeout    = (p_cmd->cptTimeout > p_cmd->timeoutRef) && p_cmd->timeoutRef;
+    p_motor->motor_error.bit.enc_mismatch   = p_enc->indexDetect && p_enc->indexError;
+    p_motor->motor_state        = (p_motor->motor_error.all)        ? (MOTOR_STATE_ERROR)       : (p_motor->motor_state);
+#endif
 
     switch(p_motor->motor_state)
     {
@@ -86,13 +102,13 @@ inline bool_t MOT_runControl(motor_t* p_motor)
 
     case MOTOR_STATE_ALIGN_UP:
         p_motor->itCnt          = 0U;
-        p_foc->idRef           += 1e-4f; // Increment for alignment current procedure
+        p_foc->idRef           += (id == MOTOR_1)                   ? (MOTOR1_CURRENT_ALIGN_INC): (MOTOR2_CURRENT_ALIGN_INC); // Increment for current alignment procedure
         p_foc->iqRef            = 0.0f;
-        enc_theta[id]          -= (M_PI * 1e-4f);
+        enc_theta[id]          -= (id == MOTOR_1)                   ? (MOTOR1_THETA_ALIGN_DEC)  : (MOTOR2_THETA_ALIGN_DEC); // Decrement for position alignment procedure
         p_motor->motor_state    = (p_foc->idRef < p_foc->iAlignMax) ? (MOTOR_STATE_ALIGN_UP)    : (MOTOR_STATE_ALIGN_FIX);
         p_motor->motor_state    = (en_bit.motorEnable)              ? (p_motor->motor_state)    : (MOTOR_STATE_INIT);
         p_motor->motor_state    = (en_bit.systemEnable)             ? (p_motor->motor_state)    : (MOTOR_STATE_INIT);
-        (p_motor->motor_state != MOTOR_STATE_ALIGN_UP)              ? (ENC_resetStruct(p_enc))  : (p_enc->thetaElec = enc_theta[id]);
+        (p_motor->motor_state  != MOTOR_STATE_ALIGN_UP)             ? (ENC_resetStruct(p_enc))  : (p_enc->thetaElec = enc_theta[id]);
         FOC_runControl(p_foc);
         MOT_runCommand(p_motor, p_foc->dtc_u, p_foc->dtc_v, p_foc->dtc_w);
         break;
@@ -135,8 +151,8 @@ inline bool_t MOT_runControl(motor_t* p_motor)
         p_foc->idRef            = 0.0f;
         p_foc->iqRef            = 0.0f;
         p_motor->motor_state    = MOTOR_STATE_ERROR;
-        ENC_resetPeriph(p_enc);
-        FOC_resetStruct(p_foc);
+//        ENC_resetPeriph(p_enc);
+//        FOC_resetStruct(p_foc);
 //        FOC_runControl(p_foc);
         MOT_stopCommand(p_motor);
         break;

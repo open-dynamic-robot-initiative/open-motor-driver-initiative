@@ -25,8 +25,8 @@ typedef struct __speed_t__
     float32_t       speedLowScaler;         /*!< Low speed estimation - [rad.register] - scaler / dtRegister = velocity */
     float32_t       speedLow;               /*!< Low speed estimation - [rad/s] - scaler / dtRegister = velocity */
     float32_t       alpha;                  /*!< Speed merge coefficient */
-    lpf_t           speedFlt;               /*!< Filter structure for speed filtering */
-    float32_t       speedMech;              /*!< Mechanical output speed - [rad/s] */
+    lpf_t           speedFlt[2];            /*!< Filter structure for speed filtering */
+    float32_t       speedMech[2];           /*!< Mechanical output speed - [rad/s] */
     float32_t       speedElec;              /*!< Electrical output speed (pole pairs integration) - [rad/s] */
     float32_t       theta[2];               /*!< Angular position of rotor - [pu] */
 } speed_t;

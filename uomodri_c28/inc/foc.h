@@ -162,7 +162,7 @@ typedef struct __foc_control_t__
     float32_t           dtc_w;          /*!< Duty cycles on channel w - [pu] between -0.5 and 0.5 */
     float32_t           idRef;          /*!< PI controller set point values for D-axis current - [A] */
     float32_t           iqRef;          /*!< PI controller set point values for Q-axis current - [A] */
-    float32_t           iAlignMax;      /*!< Maximum current required during alignment phase -[A] */
+    float32_t           iAlignMax;      /*!< Maximum current required during the phase alignment - [A] */
     pi_t                piId;           /*!< PI controller structure for current control */
     pi_t                piIq;           /*!< PI controller structure for current control */
     pd_t                pdPosVel;       /*!< PD controller structure for position/velocity control */
