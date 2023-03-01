@@ -93,20 +93,15 @@ inline void FOC_runControl(foc_t* p_foc)
 #if (UOMODRI_FEED_FORWARD_ENABLE)
     const params_t* p_cfg   = &p_foc->motor_cfg;
     speed_t*        p_speed = &p_enc->speed;
-    p_foc->piId.ff          = -1.0f * p_speed->speedMech * p_cfg->Ls * p_foc->iq;
-    p_foc->piIq.ff          = (p_speed->speedElec * p_cfg->Ls * p_foc->id) + (p_speed->speedMech * p_cfg->ke);
+    p_foc->piId.ff          = -1.0f * p_speed->speedMech[0] * p_cfg->Ls * p_foc->iq;
+    p_foc->piIq.ff          = (p_speed->speedElec * p_cfg->Ls * p_foc->id) + (p_speed->speedMech[0] * p_cfg->ke);
 #else
     p_foc->piId.ff          = 0.0f;
     p_foc->piIq.ff          = 0.0f;
 #endif
     // Compute Id(Flux Current) and Iq (Torque Current) PI controllers
-#if (0)//(defined DEBUG)
-    p_foc->ud               = ((p_foc->motor_state == MOTOR_STATE_READY) || (p_foc->motor_state == MOTOR_STATE_STOP)) ? (0.0f)          : (FOC_runPI(&p_foc->piId));
-    p_foc->uq               = ((p_foc->motor_state == MOTOR_STATE_READY) || (p_foc->motor_state == MOTOR_STATE_STOP)) ? (p_foc->iqRef)  : (FOC_runPI(&p_foc->piIq));
-#else
     p_foc->ud               = FOC_runPI(&p_foc->piId);
     p_foc->uq               = FOC_runPI(&p_foc->piIq);
-#endif
     p_foc->vmax             = p_acq->vbus * FM_1DIVSQRT3;
 //    p_foc->udMax            = p_foc->vmax;
 //    p_foc->uqMax            = __sqrt((p_foc->vmax * p_foc->vmax) - (p_foc->ud * p_foc->ud));

@@ -624,7 +624,7 @@ __attribute__((interrupt)) void adc_isrMotor2(void)
             transfer_array[14]  = motor[MOTOR_2].p_motorFOC->uc;
             transfer_array[15]  = motor[MOTOR_2].p_motorFOC->motor_enc.thetaAbsolute;
             transfer_array[16]  = motor[MOTOR_2].p_motorFOC->motor_cmd.posRef;
-            transfer_array[17]  = motor[MOTOR_2].p_motorFOC->motor_enc.speed.speedMech;
+            transfer_array[17]  = motor[MOTOR_2].p_motorFOC->motor_enc.speed.speedMech[0];
             transfer_array[18]  = motor[MOTOR_2].p_motorFOC->motor_cmd.velRef;
             transfer_array[19]  = motor[MOTOR_2].p_motorFOC->iqRef;
 #endif

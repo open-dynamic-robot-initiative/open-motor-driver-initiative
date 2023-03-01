@@ -34,12 +34,8 @@ void ENC_resetStruct(encoder_t* p_enc)
     p_enc->thetaMech[NEW]   = 0.0f;
     p_enc->thetaMech[OLD]   = 0.0f;
     p_enc->thetaElec        = 0.0f;
-//    p_enc->thetaDir         = 0;
-
     p_enc->thetaIndex       = 0.0f;
-//    p_enc->thetaMechIndex   = 0.0f;
     p_enc->thetaAbsolute    = 0.0f;
-//    p_enc->thetaAbsIndex    = 0.0f;
     p_enc->turnNb           = 0U;
     p_enc->indexDetect      = false;
     p_enc->indexOffset      = false;
@@ -53,7 +49,8 @@ void ENC_resetStruct(encoder_t* p_enc)
     p_speed->theta[OLD]     = 0.0f;
     p_speed->speedHigh      = 0.0f;
     p_speed->speedLow       = 0.0f;
-    p_speed->speedMech      = 0.0f;
+    p_speed->speedMech[0]   = 0.0f;
+    p_speed->speedMech[1]   = 0.0f;
     p_speed->speedElec      = 0.0f;
 
     return;
@@ -116,6 +113,8 @@ inline void ENC_getSpeed(encoder_t* p_enc)
 {
     uint32_t eqepBase           = p_enc->p_qepHandle->eqepBase;
     speed_t* p_speed            = &p_enc->speed;
+//    bool_t newSpeedHigh         = false;
+//    bool_t newSpeedLow          = false;
     //-------------------------------------------------------------------
     //     HIGH SPEED ESTIMATION
     //-------------------------------------------------------------------
@@ -131,6 +130,7 @@ inline void ENC_getSpeed(encoder_t* p_enc)
         deltaTheta              = (deltaTheta < -M_PI)  ? (deltaTheta + (2.0f * M_PI)) : (deltaTheta);
         // Compute high speed estimation
         p_speed->speedHigh      = deltaTheta * p_speed->speedHighScaler;
+//        newSpeedHigh            = true;
     }
     //-------------------------------------------------------------------
     //     LOW SPEED ESTIMATION
@@ -145,6 +145,7 @@ inline void ENC_getSpeed(encoder_t* p_enc)
         p_speed->speedLow       = (EQEP_getStatus(eqepBase) & (EQEP_STS_CAP_OVRFLW_ERROR | EQEP_STS_CAP_DIR_ERROR)) ? (0.0f) : (p_speed->speedLow);
         // Clear position event, direction change and timer overflow flags (even if direction and timer overflow are not set)
         EQEP_clearStatus(eqepBase, (EQEP_STS_UNIT_POS_EVNT | EQEP_STS_CAP_OVRFLW_ERROR | EQEP_STS_CAP_DIR_ERROR));
+//        newSpeedLow             = true;
     }
     //-------------------------------------------------------------------
     //     SPEED ESTIMATION MERGE
@@ -171,10 +172,14 @@ inline void ENC_getSpeed(encoder_t* p_enc)
 // see : http://www.diegm.uniud.it/petrella/Azionamenti%20Elettrici%20II/Tesine/Petrella%20et%20al.%20-%20Speed%20Measurement%20Algorithms%20for%20Low-Resolution%20Incremental%20Encoder%20Equipped%20Drives_a%20Comparative%20Analysis.pdf
     // Compute merge coefficient
 //    p_speed->alpha              = __fsat((float32_t)(0.05f * (fabs(p_speed->speedHigh) - SPEED_ESTIMATION_THRESHOLD)), 1.0f, 0.0f);
-    float32_t speedFusion       = p_speed->speedHigh;//    p_enc->speedEst.speedRef = (1.0f - p_enc->speedEst.alpha) * p_enc->speedEst.lowMechSpeedEst + p_enc->speedEst.alpha * p_enc->speedEst.highMechSpeedEst;
-    UOMODRI_SPEED_FLT(p_speed->speedFlt, p_speed->speedMech, speedFusion);
-//    p_speed->speedMech         = p_speed->speedHigh;//speedFusion;
-    p_speed->speedElec          = (float32_t)p_enc->polePairs * p_speed->speedMech;
+//    if(newSpeedHigh)
+//    {
+    float32_t speedFusion   = p_speed->speedHigh;//    p_enc->speedEst.speedRef = (1.0f - p_enc->speedEst.alpha) * p_enc->speedEst.lowMechSpeedEst + p_enc->speedEst.alpha * p_enc->speedEst.highMechSpeedEst;
+    UOMODRI_SPEED_FLT(p_speed->speedFlt[0], p_speed->speedMech[0], speedFusion);
+    UOMODRI_SPEED_FLT(p_speed->speedFlt[1], p_speed->speedMech[1], speedFusion);
+    //    p_speed->speedMech         = p_speed->speedHigh;//speedFusion;
+    p_speed->speedElec      = (float32_t)p_enc->polePairs * p_speed->speedMech[0];
+//    }
 
     return;
 }

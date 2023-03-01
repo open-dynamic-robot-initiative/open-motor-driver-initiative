@@ -142,6 +142,11 @@
 #define LSB_64(x)                               ((x) & 0xFFFFFFFF)
 #define MSB_64(x)                               (((x) >> 32) & 0xFFFFFFFF)
 
+#define NEW                                     (0)     /*!< Current data */
+#define OLD                                     (1)     /*!< Previous data */
+#define MOTOR_1                                 (0)     /*!< Select Motor_1 */
+#define MOTOR_2                                 (1)     /*!< Select Motor_2 */
+
 /***********************************************************************
  *  DEVICE INITIALIZATION DEFINES
  ***********************************************************************/
@@ -203,7 +208,7 @@
 #define DBG_PIN2_READ                           (HWREG(GPIODATA_BASE + GPIO_O_GPCDAT) & GPIO_GPCDAT_GPIO78)
 #define DBG_PIN1                                (81)
 #define DBG_PIN1_CFG                            GPIO_81_GPIO81
-#define DBG_PIN1_CORE                           GPIO_CORE_CM
+#define DBG_PIN1_CORE                           GPIO_CORE_CPU1
 #define DBG_PIN1_SET                            (HWREG(GPIODATA_BASE + GPIO_O_GPCSET)   = GPIO_GPCSET_GPIO81)
 #define DBG_PIN1_CLEAR                          (HWREG(GPIODATA_BASE + GPIO_O_GPCCLEAR) = GPIO_GPCCLEAR_GPIO81)
 #define DBG_PIN1_TOGGLE                         (HWREG(GPIODATA_BASE + GPIO_O_GPCTOGGLE)= GPIO_GPCTOGGLE_GPIO81)
@@ -967,7 +972,7 @@
 #define MOTOR1_ENC_RESOLUTION                   (5000.0f)
 #define MOTOR1_ENC_QUADRATURE_SCALE             (4.0f * MOTOR1_ENC_RESOLUTION)
 #define MOTOR1_ENC_RESOLUTION_SCALE             (1.0f / MOTOR1_ENC_QUADRATURE_SCALE)
-#define MOTOR1_ENC_CONFIG                       (EQEP_CONFIG_2X_RESOLUTION | EQEP_CONFIG_QUADRATURE | MOTOR1_QEP_SWAP | EQEP_CONFIG_IGATE_ENABLE)
+#define MOTOR1_ENC_CONFIG                       (EQEP_CONFIG_2X_RESOLUTION | EQEP_CONFIG_QUADRATURE | MOTOR1_QEP_SWAP | EQEP_CONFIG_IGATE_DISABLE)
 #define MOTOR1_ENC_SPEED_HIGH_SAMPLING_FREQ     (1000) // [Hz] Velocity computation frequency
 #define MOTOR1_ENC_SPEED_HIGH_SAMPLING_TICKS    (DEVICE_SYSCLK_FREQ / MOTOR1_ENC_SPEED_HIGH_SAMPLING_FREQ)
 #define MOTOR1_ENC_SPEED_HIGH_SCALE             (MOTOR1_ENC_SPEED_HIGH_SAMPLING_FREQ) // 2pi / dt
@@ -976,6 +981,8 @@
 #define MOTOR1_ENC_SPEED_TIME_CONST             (2.0f * M_PI * MOTOR1_ENC_SPEED_CUTOFF_FREQ * PWM_PERIOD)
 #define MOTOR1_ENC_SPEED_LPF_ALPHA              (MOTOR1_ENC_SPEED_TIME_CONST / (1.0f + MOTOR1_ENC_SPEED_TIME_CONST))
 #define MOTOR1_ENC_SPEED_LPF_ONE_M_ALPHA        (1.0f - MOTOR1_ENC_SPEED_LPF_ALPHA)
+#define MOTOR1_ENC_SPEED_LOCAL_LPF_ALPHA        (MOTOR1_ENC_SPEED_TIME_CONST / (1.0f + MOTOR1_ENC_SPEED_TIME_CONST))
+#define MOTOR1_ENC_SPEED_LOCAL_LPF_ONE_M_ALPHA  (1.0f - MOTOR1_ENC_SPEED_LPF_ALPHA)
 
 #if (USE_RMDX8H_ON_MOTOR2)
 #define MOTOR2_ENC_RESOLUTION                   (1024.0f)//MOTOR1_ENC_RESOLUTION
@@ -1003,6 +1010,8 @@
 #define MOTOR2_ENC_SPEED_TIME_CONST             MOTOR1_ENC_SPEED_TIME_CONST
 #define MOTOR2_ENC_SPEED_LPF_ALPHA              MOTOR1_ENC_SPEED_LPF_ALPHA
 #define MOTOR2_ENC_SPEED_LPF_ONE_M_ALPHA        MOTOR1_ENC_SPEED_LPF_ONE_M_ALPHA
+#define MOTOR2_ENC_SPEED_LOCAL_LPF_ALPHA        MOTOR1_ENC_SPEED_LOCAL_LPF_ALPHA
+#define MOTOR2_ENC_SPEED_LOCAL_LPF_ONE_M_ALPHA  MOTOR1_ENC_SPEED_LOCAL_LPF_ONE_M_ALPHA
 #endif
 
 //#define MOTOR1_ENC_LOW_SPEED_SCALE      (2.0 * M_PI * MOTOR1_ENC_RESOLUTION_SCALE * DEVICE_SYSCLK_FREQ * (1 << QEP_UNIT_POS_EVENT_DIV) / (1 << (QEP_CAPTURE_CLOCK_DIV >> 4)))
@@ -1031,7 +1040,7 @@
 #define QEP_EMUL_MODE                           EQEP_EMULATIONMODE_RUNFREE
 #define QEP_LATCH_MODE                          (EQEP_LATCH_SW_INDEX_MARKER | EQEP_LATCH_UNIT_TIME_OUT)//(EQEP_LATCH_RISING_INDEX | EQEP_LATCH_UNIT_TIME_OUT)
 #define QEP_RESET_POSITION_MODE                 EQEP_POSITION_RESET_MAX_POS
-#define QEP_CAPTURE_CLOCK_DIV                   EQEP_CAPTURE_CLK_DIV_64
+#define QEP_CAPTURE_CLOCK_DIV                   EQEP_CAPTURE_CLK_DIV_16
 #define QEP_UNIT_POS_EVENT_DIV                  EQEP_UNIT_POS_EVNT_DIV_4
 //#define PERxSYSCLK_TO_EQEPCLK_DIV               (1)
 //#define EQEPCLK_FREQ                            (DEVICE_SYSCLK_FREQ / pow(2.0, ((QEP_CAPTURE_CLOCK_DIV >> 4) & 0x07)))
@@ -1046,14 +1055,19 @@
 #define MOTOR1_KV                               (300.0f)    // Motor constant (rpm/V)
 #define MOTOR1_KE                               (FM_SQRT3 / (MOTOR1_KV * FM_RPM2RADPS))   //1.0 / (MOTOR1_KV * FM_RPM2RAD * MOTOR1_POLES_PAIRS) // Motor back EMF constant (V/rad/s)
 #define MOTOR1_KI                               (0.1f)      // Motor torque constant (N.m/A)
-#define MOTOR1_RS                               (0.53f)//(0.7f)      // Stator resistance (ohm)
-#define MOTOR1_LS                               (210e-6)//(134e-6f)   // Stator d-axis inductance (H)
-#define MOTOR1_POLES_PAIRS                      (12.0f)        // Number of poles
-#define MOTOR1_CURRENT_CUTOFF_FREQ              (1000.0f)    // Current loop bandwidth (Hz)
+#define MOTOR1_RS                               (0.53f)     // Stator resistance (ohm)
+#define MOTOR1_LS                               (210e-6f)   // Stator d-axis inductance (H)
+#define MOTOR1_POLES_PAIRS                      (12.0f)     // Number of poles
+#define MOTOR1_CURRENT_CUTOFF_FREQ              (1000.0f)   // Current loop bandwidth (Hz)
 #define MOTOR1_CURRENT_TIME_CONST               (2.0f * M_PI * MOTOR1_CURRENT_CUTOFF_FREQ * PWM_PERIOD)
 #define MOTOR1_CURRENT_LPF_ALPHA                (MOTOR1_CURRENT_TIME_CONST / (1.0f + MOTOR1_CURRENT_TIME_CONST))
 #define MOTOR1_CURRENT_LPF_ONE_M_ALPHA          (1.0f - MOTOR1_CURRENT_LPF_ALPHA)
 #define MOTOR1_CURRENT_ALIGN_MAX                (2.0f)      // Current on d-axis for motor alignment (A)
+#define MOTOR1_CURRENT_ALIGN_TIME               (0.5f)
+#define MOTOR1_CURRENT_ALIGN_INC                (MOTOR1_CURRENT_ALIGN_MAX / MOTOR1_CURRENT_ALIGN_TIME / PWM_FREQ)
+#define MOTOR1_THETA_ALIGN_MAX                  (FM_ROUND2RAD)
+#define MOTOR1_THETA_ALIGN_TIME                 MOTOR1_CURRENT_ALIGN_TIME
+#define MOTOR1_THETA_ALIGN_DEC                  (MOTOR1_THETA_ALIGN_MAX / MOTOR1_THETA_ALIGN_TIME / PWM_FREQ)
 #define MOTOR1_PI_ID_KP_COEF                    (MOTOR1_LS * 2.0f * M_PI * MOTOR1_CURRENT_CUTOFF_FREQ)
 #define MOTOR1_PI_ID_KI_COEF                    (MOTOR1_RS * 2.0f * M_PI * MOTOR1_CURRENT_CUTOFF_FREQ)
 #define MOTOR1_PI_IQ_KP_COEF                    (MOTOR1_LS * 2.0f * M_PI * MOTOR1_CURRENT_CUTOFF_FREQ)
@@ -1103,7 +1117,12 @@
 #define MOTOR2_CURRENT_TIME_CONST               MOTOR1_CURRENT_TIME_CONST
 #define MOTOR2_CURRENT_LPF_ALPHA                MOTOR1_CURRENT_LPF_ALPHA
 #define MOTOR2_CURRENT_LPF_ONE_M_ALPHA          MOTOR1_CURRENT_LPF_ONE_M_ALPHA
-#define MOTOR2_CURRENT_ALIGN_MAX                MOTOR1_CURRENT_ALIGN_MAX     // Current on d-axis for motor alignment (A)
+#define MOTOR2_CURRENT_ALIGN_MAX                MOTOR1_CURRENT_ALIGN_MAX
+#define MOTOR2_CURRENT_ALIGN_TIME               MOTOR1_CURRENT_ALIGN_TIME
+#define MOTOR2_CURRENT_ALIGN_INC                MOTOR1_CURRENT_ALIGN_INC
+#define MOTOR2_THETA_ALIGN_MAX                  MOTOR1_THETA_ALIGN_MAX
+#define MOTOR2_THETA_ALIGN_TIME                 MOTOR1_THETA_ALIGN_TIME
+#define MOTOR2_THETA_ALIGN_DEC                  MOTOR1_THETA_ALIGN_DEC
 #define MOTOR2_PI_ID_KP_COEF                    MOTOR1_PI_ID_KP_COEF
 #define MOTOR2_PI_ID_KI_COEF                    MOTOR1_PI_ID_KI_COEF
 #define MOTOR2_PI_IQ_KP_COEF                    MOTOR1_PI_IQ_KP_COEF
@@ -1163,21 +1182,21 @@ typedef struct __lowPassFilter_t__
  * @enum    ArrayID
  * @brief   Easier array management for history.
  */
-typedef enum
-{
-    NEW = 0,    /*!< Current data */
-    OLD = 1,    /*!< Previous data */
-} array_id_e;
+//typedef enum
+//{
+//    NEW = 0,    /*!< Current data */
+//    OLD = 1,    /*!< Previous data */
+//} array_id_e;
 
 /**
  * @enum    MotorID
  * @brief   Easier motor identification
  */
-typedef enum
-{
-    MOTOR_1 = 0,    /*!< Select Motor_1 */
-    MOTOR_2 = 1,    /*!< Select Motor_2 */
-    NO_MOT  = -1,   /*!< No motor selected */
-} motor_id_e;
+//typedef enum
+//{
+//    MOTOR_1 = 0,    /*!< Select Motor_1 */
+//    MOTOR_2 = 1,    /*!< Select Motor_2 */
+//    NO_MOT  = -1,   /*!< No motor selected */
+//} motor_id_e;
 
 #endif

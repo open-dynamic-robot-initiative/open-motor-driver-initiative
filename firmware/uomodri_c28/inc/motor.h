@@ -16,11 +16,6 @@
 /***********************************************************************
  * DEFINES
  ***********************************************************************/
-#define MOTOR_ERROR_NO_ERROR        (0) /*!< No error */
-#define MOTOR_ERROR_ENCODER         (1) /*!< Encoder error too high */
-#define MOTOR_ERROR_POS_ROLLOVER    (2) /*!< Position roll-over occurred */
-#define MOTOR_ERROR_DRV_NFAULT      (4) /*!< Motor DRV nFault error */
-#define MOTOR_ERROR_COM_TIMEOUT     (8) /*!< Communication timeout error */
 
 /***********************************************************************
  * TYPDEF ENUM
@@ -86,7 +81,7 @@ typedef union __uint16_u__
 
 typedef struct __MOTOR_STRUCT_t__
 {
-    const motor_id_e                motor_id;       /*!< Motor identification */
+    const uint8_t                   motor_id;       /*!< Motor identification */
     const hal_motor_cfg_t*  const   p_motorHalCfg;  /*!< Pointer on the HAL structure (PWM, ADC , IT) associated to the motor */
     drv8353_t* const                p_motorDRV;     /*!< Pointer on the DRV structure associated to the motor */
     foc_t* const                    p_motorFOC;     /*!< Pointer on the FOC structure associated to the motor */

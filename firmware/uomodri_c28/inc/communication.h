@@ -43,6 +43,15 @@
 #define MSG_RX_EI2OC                                (0x0400)
 #define MSG_RX_TIMEOUT                              (0x00FF)
 
+#define STATUS_ERROR_NO_ERROR                       (0) /*!< No error */
+#define STATUS_ERROR_ENCODER1                       (1) /*!< Encoder_1 error too high */
+#define STATUS_ERROR_SPI_RECV_TIMEOUT               (2) /*!< Timeout for receiving current references exceeded */
+#define STATUS_ERROR_CRIT_TEMP                      (3) /*!< Motor temperature reached critical valued */
+#define STATUS_ERROR_POSCONV                        (4) /*!< Unused error */
+#define STATUS_ERROR_POS_ROLLOVER                   (5) /*!< Position roll-over occurred */
+#define STATUS_ERROR_ENCODER2                       (6) /*!< Encoder_2 error too high */
+#define STATUS_ERROR_DRV_NFAULT                     (7) /*!< Motor DRV nFault error */
+
 /***********************************************************************
  * COMMUNICATION CRC TABLE
  ***********************************************************************/
@@ -109,17 +118,17 @@ static unsigned char const crc8_table[] =
  * @enum    com_statusError
  * @brief   Error flags list.
  */
-typedef enum
-{
-    STATUS_ERROR_NO_ERROR           = 0, /*!< No error */
-    STATUS_ERROR_ENCODER1           = 1, /*!< Encoder_1 error too high */
-    STATUS_ERROR_SPI_RECV_TIMEOUT   = 2, /*!< Timeout for receiving current references exceeded */
-    STATUS_ERROR_CRIT_TEMP          = 3, /*!< Motor temperature reached critical valued */
-    STATUS_ERROR_POSCONV            = 4, /*!< Unused error */
-    STATUS_ERROR_POS_ROLLOVER       = 5, /*!< Position roll-over occurred */
-    STATUS_ERROR_ENCODER2           = 6, /*!< Encoder_2 error too high */
-    STATUS_ERROR_DRV_NFAULT         = 7, /*!< Motor DRV nFault error */
-} com_statusError;
+//typedef enum
+//{
+//    STATUS_ERROR_NO_ERROR           = 0, /*!< No error */
+//    STATUS_ERROR_ENCODER1           = 1, /*!< Encoder_1 error too high */
+//    STATUS_ERROR_SPI_RECV_TIMEOUT   = 2, /*!< Timeout for receiving current references exceeded */
+//    STATUS_ERROR_CRIT_TEMP          = 3, /*!< Motor temperature reached critical valued */
+//    STATUS_ERROR_POSCONV            = 4, /*!< Unused error */
+//    STATUS_ERROR_POS_ROLLOVER       = 5, /*!< Position roll-over occurred */
+//    STATUS_ERROR_ENCODER2           = 6, /*!< Encoder_2 error too high */
+//    STATUS_ERROR_DRV_NFAULT         = 7, /*!< Motor DRV nFault error */
+//} com_statusError;
 
 /**
  * @enum    com_rx_state_e
