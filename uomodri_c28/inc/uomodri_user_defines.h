@@ -977,7 +977,7 @@
 #define MOTOR1_ENC_SPEED_HIGH_SAMPLING_TICKS    (DEVICE_SYSCLK_FREQ / MOTOR1_ENC_SPEED_HIGH_SAMPLING_FREQ)
 #define MOTOR1_ENC_SPEED_HIGH_SCALE             (MOTOR1_ENC_SPEED_HIGH_SAMPLING_FREQ) // 2pi / dt
 #define MOTOR1_ENC_SPEED_LOW_SCALE              (2.0f * M_PI * DEVICE_SYSCLK_FREQ * (1 << QEP_UNIT_POS_EVENT_DIV) / (1 << (QEP_CAPTURE_CLOCK_DIV >> 4)) / MOTOR1_ENC_RESOLUTION_SCALE)
-#define MOTOR1_ENC_SPEED_CUTOFF_FREQ            (200.0f)     // cutoff frequency for velocity estimation
+#define MOTOR1_ENC_SPEED_CUTOFF_FREQ            (100.0f)     // cutoff frequency for velocity estimation
 #define MOTOR1_ENC_SPEED_TIME_CONST             (2.0f * M_PI * MOTOR1_ENC_SPEED_CUTOFF_FREQ * PWM_PERIOD)
 #define MOTOR1_ENC_SPEED_LPF_ALPHA              (MOTOR1_ENC_SPEED_TIME_CONST / (1.0f + MOTOR1_ENC_SPEED_TIME_CONST))
 #define MOTOR1_ENC_SPEED_LPF_ONE_M_ALPHA        (1.0f - MOTOR1_ENC_SPEED_LPF_ALPHA)
@@ -1055,10 +1055,10 @@
 #define MOTOR1_KV                               (300.0f)    // Motor constant (rpm/V)
 #define MOTOR1_KE                               (FM_SQRT3 / (MOTOR1_KV * FM_RPM2RADPS))   //1.0 / (MOTOR1_KV * FM_RPM2RAD * MOTOR1_POLES_PAIRS) // Motor back EMF constant (V/rad/s)
 #define MOTOR1_KI                               (0.1f)      // Motor torque constant (N.m/A)
-#define MOTOR1_RS                               (0.53f)     // Stator resistance (ohm)
+#define MOTOR1_RS                               (0.40f)     // Stator resistance (ohm)
 #define MOTOR1_LS                               (210e-6f)   // Stator d-axis inductance (H)
 #define MOTOR1_POLES_PAIRS                      (12.0f)     // Number of poles
-#define MOTOR1_CURRENT_CUTOFF_FREQ              (1000.0f)   // Current loop bandwidth (Hz)
+#define MOTOR1_CURRENT_CUTOFF_FREQ              (500.0f)   // Current loop bandwidth (Hz)
 #define MOTOR1_CURRENT_TIME_CONST               (2.0f * M_PI * MOTOR1_CURRENT_CUTOFF_FREQ * PWM_PERIOD)
 #define MOTOR1_CURRENT_LPF_ALPHA                (MOTOR1_CURRENT_TIME_CONST / (1.0f + MOTOR1_CURRENT_TIME_CONST))
 #define MOTOR1_CURRENT_LPF_ONE_M_ALPHA          (1.0f - MOTOR1_CURRENT_LPF_ALPHA)
