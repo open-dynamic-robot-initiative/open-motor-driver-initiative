@@ -50,7 +50,9 @@
 #define STATUS_ERROR_POSCONV                        (4) /*!< Unused error */
 #define STATUS_ERROR_POS_ROLLOVER                   (5) /*!< Position roll-over occurred */
 #define STATUS_ERROR_ENCODER2                       (6) /*!< Encoder_2 error too high */
-#define STATUS_ERROR_DRV_NFAULT                     (7) /*!< Motor DRV nFault error */
+//#define STATUS_ERROR_DRV_NFAULT                     (7) /*!< Motor DRV nFault error */
+#define STATUS_ERROR_DRV1_FAULT                     (7) /*!< Motor1 DRV Fault error */
+#define STATUS_ERROR_DRV2_FAULT                     (8) /*!< Motor2 DRV Fault error */
 
 /***********************************************************************
  * COMMUNICATION CRC TABLE
@@ -693,7 +695,6 @@ typedef struct __com_dbg_rx_msg_t__
  ***********************************************************************/
 #ifdef CPU1
 bool_t COM_msgExtract(mst2slv_msg_t*,  cmd_t*, cmd_t*);
-bool_t COM_msgExtract_cla(mst2slv_msg_cla_t*, cmd_t*, cmd_t*);
 void COM_msgCreate(motor_t*, motor_t*, slv2mst_msg_t*);
 void COM_resetCmdStruct(cmd_t*);
 void COM_resetMsgExtractStruct(mst2slv_msg_cla_t*);

@@ -185,6 +185,15 @@ typedef struct __foc_control_t__
 // This threshold corresponds to the minimum current for the measure to be considered as correct.
 #define FOC_RE_CURRENT_THRESHOLD    0.1f
 
+#define FOC_GET_MEASURES(p_acq)                                                                         \
+        p_acq.ia        = (float32_t)(*p_acq.p_iaMeasReg) * ADC_MOTOR_CURRENT_SCALE;                    \
+        p_acq.ib        = (float32_t)(*p_acq.p_ibMeasReg) * ADC_MOTOR_CURRENT_SCALE;                    \
+        p_acq.ic        = (float32_t)(*p_acq.p_icMeasReg) * ADC_MOTOR_CURRENT_SCALE;                    \
+        float32_t vbus  = __fmax(((float32_t)(*p_acq.p_vBusMeasReg) * ADC_VBUS_VOLTAGE_SCALE), 1.0f);   \
+        UOMODRI_VBUS_FLT(p_acq.vBusFlt, p_acq.vbus, vbus);                                              \
+        float32_t vext  = (float32_t)(*p_acq.p_vExtMeasReg) * ADC_VEXT12_VOLTAGE_SCALE;                 \
+        UOMODRI_VEXT_FLT(p_acq.vExtFlt, p_acq.vExt, vext);
+
 /***********************************************************************
  * FUNCTIONS DECLARATION
  ***********************************************************************/

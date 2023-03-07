@@ -16,6 +16,12 @@
 /***********************************************************************
  * DEFINES
  ***********************************************************************/
+#define MOTOR_STATE_INIT        (0x00)
+#define MOTOR_STATE_ALIGN_UP    (0x01)
+#define MOTOR_STATE_ALIGN_FIX   (0x02)
+#define MOTOR_STATE_READY       (0x04)
+#define MOTOR_STATE_STOP        (0x08)
+#define MOTOR_STATE_ERROR       (0xFF)
 
 /***********************************************************************
  * TYPDEF ENUM
@@ -24,31 +30,40 @@
  * @enum    motor_state_e
  * @brief   Motor states for the Finite State Machine (FSM).
  */
-typedef enum
-{
-    MOTOR_STATE_INIT            = 0x00,
-    MOTOR_STATE_ALIGN_UP        = 0x01,
-    MOTOR_STATE_ALIGN_FIX       = 0x02,
-    MOTOR_STATE_READY           = 0x04,
-    MOTOR_STATE_STOP            = 0x08,
-    MOTOR_STATE_ERROR           = 0xFF,
-} motor_state_e;
+//typedef enum
+//{
+//    MOTOR_STATE_INIT            = 0x00,
+//    MOTOR_STATE_ALIGN_UP        = 0x01,
+//    MOTOR_STATE_ALIGN_FIX       = 0x02,
+//    MOTOR_STATE_READY           = 0x04,
+//    MOTOR_STATE_STOP            = 0x08,
+//    MOTOR_STATE_ERROR           = 0xFF,
+//} motor_state_e;
 
 /***********************************************************************
  * CONTROL STRUCTURES
  ***********************************************************************/
-typedef struct __error_reg_t__
-{
-    uint16_t    enc_mismatch    : 1;                /*!< Bits 0   : R/W - Encoder error too high */
-    uint16_t    pos_rollover    : 1;                /*!< Bits 1   : R/W - Position roll-over occurred */
-    uint16_t    drv_fault       : 1;                /*!< Bits 2   : R/W - Motor DRV nFault error */
-    uint16_t    com_timeout     : 1;                /*!< Bits 3   : R/W - Communication timeout error */
-} error_reg_t;
+//typedef struct __error_reg_t__
+//{
+//    uint16_t    enc_mismatch    : 1;                /*!< Bits 0   : R/W - Encoder error too high */
+//    uint16_t    pos_rollover    : 1;                /*!< Bits 1   : R/W - Position roll-over occurred */
+//    uint16_t    drv_fault       : 1;                /*!< Bits 2   : R/W - Motor DRV nFault error */
+//    uint16_t    com_timeout     : 1;                /*!< Bits 3   : R/W - Communication timeout error */
+//} error_reg_t;
 
 typedef union __error_reg_u__
 {
-    uint16_t    all;
-    error_reg_t bit;
+    //uint16_t    all;
+    uint8_t     all;
+    struct
+    {
+        uint8_t enc_mismatch    : 1;                /*!< Bits 0   : R/W - Encoder error too high */
+        uint8_t pos_rollover    : 1;                /*!< Bits 1   : R/W - Position roll-over occurred */
+        uint8_t drv_fault       : 1;                /*!< Bits 2   : R/W - Motor DRV nFault error */
+        uint8_t com_timeout     : 1;                /*!< Bits 3   : R/W - Communication timeout error */
+        uint8_t error_RSV1      : 4;                /*!< Bits 4-15: R/W - Reserved */
+    };
+//    error_reg_t bit;
 } error_reg_u;
 
 /**
@@ -89,7 +104,8 @@ typedef struct __MOTOR_STRUCT_t__
     uint32_t                        clCycleNb;
     float32_t                       statorResEst;   /*!< Q-axis resistance estimation. [Ohm] */
     lpf_t                           statorResEstFlt;/*!< Resistance estimation low-pass filter */
-    motor_state_e                   motor_state;    /*!< Current motor state for the FSM. */
+    //motor_state_e                   motor_state;    /*!< Current motor state for the FSM. */
+    uint8_t                         motor_state;    /*!< Current motor state for the FSM. */
     error_reg_u                     motor_error;    /*!< Error messages */
     // PWM address register for FOC command
     volatile uint16_t* const        p_motorChAReg;

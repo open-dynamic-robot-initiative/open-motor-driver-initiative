@@ -230,10 +230,10 @@ void main(void)
                 DMA_startChannel(DMA_LED_SPI_TX_BASE_ADDR);
             }
             // Read DRV data to get status registers (MOTOR_1)
-            if(motor[MOTOR_1].motor_error.bit.drv_fault)
+            if(motor[MOTOR_1].motor_error.drv_fault)
                 DRV_readStatus(motor[MOTOR_1].p_motorDRV);
             // Read DRV data to get status registers (MOTOR_2)
-            if(motor[MOTOR_2].motor_error.bit.drv_fault)
+            if(motor[MOTOR_2].motor_error.drv_fault)
                 DRV_readStatus(motor[MOTOR_2].p_motorDRV);
             // Timeout management
             timeout_flag            = true;
@@ -321,7 +321,7 @@ inline void LED_dimming(motor_t* p_motor1, motor_t* p_motor2, uint16_t* p_msg)
     float32_t       timer_fade_blink= (float32_t)((timer_cpt_ms < 500)  ? (timer_cpt_ms)    : (1000 - timer_cpt_ms)) / 500.0f;
     float32_t       timer_blink     = (timer_cpt_ms < 500)              ? (0.0f)            : (1.0f);
     timer_cpt_ms                    = (timer_cpt_ms < 1000)             ? (timer_cpt_ms + 1): (0);
-    motor_state_e   motor_state     = MOTOR_STATE_INIT;
+    uint8_t         motor_state     = MOTOR_STATE_INIT;//    motor_state_e   motor_state     = MOTOR_STATE_INIT;
 
     if((p_motor1->motor_state == MOTOR_STATE_INIT) || (p_motor2->motor_state == MOTOR_STATE_INIT))
         motor_state = MOTOR_STATE_INIT;

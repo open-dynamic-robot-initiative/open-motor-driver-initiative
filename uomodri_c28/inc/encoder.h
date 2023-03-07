@@ -56,6 +56,56 @@ typedef struct __encoder_t__
 } encoder_t;
 
 /***********************************************************************
+ * DEFINES
+ ***********************************************************************/
+#define MAX_ROLLOVER                    (127)
+#define MIN_ROLLOVER                    (-128)
+#define ENC_GET_POSITION(p_enc)                                                                                 \
+        p_enc->thetaMech[OLD]   = p_enc->thetaMech[NEW];                                                        \
+        p_enc->thetaMech[NEW]   = (float32_t)HWREG(eqepBase + EQEP_O_QPOSSLAT) * p_enc->thetaMechScaler;        \
+        p_enc->thetaDir         = (HWREGH(eqepBase + EQEP_O_QEPSTS) & EQEP_QEPSTS_QDF)? (1) : (-1);             \
+        float32_t thetaElec     = (float32_t)p_enc->polePairs * p_enc->thetaMech[NEW];                          \
+        p_enc->thetaElec        = __mpy2pif32(__fracf32(thetaElec));                                            \
+        p_enc->thetaMech[NEW]   = __mpy2pif32(p_enc->thetaMech[NEW]);
+
+#define ENC_GET_SPEED(p_enc)                                                                                                    \
+        speed_t* p_speed                    = &p_enc->speed;                                                                    \
+        if(HWREGH(eqepBase + EQEP_O_QFLG) & EQEP_INT_UNIT_TIME_OUT)                                                             \
+        {                                                                                                                       \
+            p_speed->theta[OLD]             = p_speed->theta[NEW];                                                              \
+            p_speed->theta[NEW]             = __mpy2pif32((float32_t)HWREG(eqepBase + EQEP_O_QPOSLAT) * p_enc->thetaMechScaler);\
+            HWREGH(eqepBase + EQEP_O_QCLR)  = EQEP_INT_UNIT_TIME_OUT;                                                           \
+            float32_t deltaTheta            = p_speed->theta[NEW] - p_speed->theta[OLD];                                        \
+            deltaTheta                      = (deltaTheta > M_PI)   ? (deltaTheta - (2.0f * M_PI)) : (deltaTheta);              \
+            deltaTheta                      = (deltaTheta < -M_PI)  ? (deltaTheta + (2.0f * M_PI)) : (deltaTheta);              \
+            p_speed->speedHigh              = deltaTheta * p_speed->speedHighScaler;                                            \
+        }                                                                                                                       \
+        float32_t speedFusion   = p_speed->speedHigh;                                                                           \
+        UOMODRI_SPEED_FLT(p_speed->speedFlt[0], p_speed->speedMech[0], speedFusion);                                            \
+        UOMODRI_SPEED_FLT(p_speed->speedFlt[1], p_speed->speedMech[1], speedFusion);                                            \
+        p_speed->speedElec      = (float32_t)p_enc->polePairs * p_speed->speedMech[0];
+
+#define ENC_GET_THETA(p_enc)                                                                                                                \
+        float32_t deltaThetaMech= p_enc->thetaMech[NEW] - p_enc->thetaMech[OLD];                                                            \
+        p_enc->turnNb           = (deltaThetaMech > M_PI)   ? (p_enc->turnNb - 1) : (p_enc->turnNb);                                        \
+        p_enc->turnNb           = (deltaThetaMech < -M_PI)  ? (p_enc->turnNb + 1) : (p_enc->turnNb);                                        \
+        bool_t maxRollOver      = (p_enc->turnNb > MAX_ROLLOVER)? (true) : (false);                                                         \
+        bool_t minRollOver      = (p_enc->turnNb < MIN_ROLLOVER)? (true) : (false);                                                         \
+        p_enc->rollOverError    = (maxRollOver || minRollOver)  ? (true) : (false);                                                         \
+        p_enc->turnNb           = (maxRollOver) ? (MIN_ROLLOVER) : (p_enc->turnNb);                                                         \
+        p_enc->turnNb           = (minRollOver) ? (MAX_ROLLOVER) : (p_enc->turnNb);                                                         \
+        if(EQEP_getInterruptStatus(eqepBase) & EQEP_INT_INDEX_EVNT_LATCH)                                                                   \
+        {                                                                                                                                   \
+            float32_t thetaIndex= __mpy2pif32((float32_t)EQEP_getIndexPositionLatch(eqepBase) * p_enc->thetaMechScaler);                    \
+            p_enc->thetaIndex   = (!p_enc->indexDetect) ? (thetaIndex) : (p_enc->thetaIndex);                                               \
+            p_enc->indexDetect  = true;                                                                                                     \
+            p_enc->indexError   = (fabsf(p_enc->thetaIndex - thetaIndex) < __mpy2pif32(4.0f / p_enc->thetaMechScaler)) ? (false) : (true);  \
+            p_enc->indexToggle  = !p_enc->indexToggle;                                                                                      \
+            EQEP_clearInterruptStatus(eqepBase, EQEP_INT_INDEX_EVNT_LATCH);                                                                 \
+        }                                                                                                                                   \
+        p_enc->thetaAbsolute    = p_enc->thetaMech[NEW] + __mpy2pif32((float32_t)p_enc->turnNb);
+
+/***********************************************************************
  * FUNCTIONS DECLARATION
  ***********************************************************************/
 inline void ENC_resetStruct(encoder_t*);

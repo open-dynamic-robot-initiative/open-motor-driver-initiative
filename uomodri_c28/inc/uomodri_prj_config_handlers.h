@@ -155,12 +155,12 @@ static drv_reg_t        DrvRegList[] =
   .ctrl_reg_02.bit.DIS_GDUV     = false,
   .ctrl_reg_02.bit.OCP_ACT      = true,
   // Gate Drive HS register initialization (Address: 0x3)
-  .ctrl_reg_03.bit.IDRIVEN_HS   = DRV_ISINK_HS_0P300_A,
-  .ctrl_reg_03.bit.IDRIVEP_HS   = DRV_ISOUR_HS_0P150_A,
+  .ctrl_reg_03.bit.IDRIVEN_HS   = DRV_ISINK_HS_0P600_A,//DRV_ISINK_HS_0P300_A,
+  .ctrl_reg_03.bit.IDRIVEP_HS   = DRV_ISOUR_HS_0P300_A,//DRV_ISOUR_HS_0P150_A,
   .ctrl_reg_03.bit.LOCK         = DRV_REG_UNLOCK,
   // Gate Drive LS register initialization (Address: 0x4)
-  .ctrl_reg_04.bit.IDRIVEN_LS   = DRV_ISINK_LS_0P300_A,
-  .ctrl_reg_04.bit.IDRIVEP_LS   = DRV_ISOUR_LS_0P150_A,
+  .ctrl_reg_04.bit.IDRIVEN_LS   = DRV_ISINK_LS_0P600_A,//DRV_ISINK_LS_0P300_A,
+  .ctrl_reg_04.bit.IDRIVEP_LS   = DRV_ISOUR_LS_0P300_A,//DRV_ISOUR_LS_0P150_A,
   .ctrl_reg_04.bit.TDRIVE       = DRV_TSOUR_1000_NS,
   // Over Current Protection register initialization (Address: 0x5)
   .ctrl_reg_05.bit.VDS_LVL      = DRV_VDS_LVL_0P080_V,

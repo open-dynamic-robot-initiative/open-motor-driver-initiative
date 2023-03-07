@@ -62,119 +62,6 @@ bool_t COM_msgExtract(mst2slv_msg_t* p_msg,  cmd_t* p_cmd_m1,  cmd_t* p_cmd_m2)
 }
 
 /**
- * @brief       	Master to slave message extraction function to be performed by CLA - TO BE TESTED
- * @param[in]       p_msg       Pointer on the extraction structure
- * @param[out]      p_cmd_m1    Pointer on the command structure used for MOTOR_1 control(actions to be realized by motor_foc).
- * @param[out]      p_cmd_m2    Pointer on the command structure used for MOTOR_2 control(actions to be realized by motor_foc).
- * @return          Is message received from Master board valid or not ?
- */
-bool_t COM_msgExtract_cla(mst2slv_msg_cla_t* p_msg, cmd_t* p_cmd_m1, cmd_t* p_cmd_m2)
-{
-    float32_t   isat            = 0.0f;
-    bool_t      msg_rx_valid    = false;
-
-    switch(p_msg->msg_rx_state)
-    {
-    case COM_RX_STATE_MODE:
-        p_cmd_m1->enableReg.bit.encOffsetEnable = (bool_t)((p_msg->msg_rx & MSG_RX_EI1OC)   ? (true): (false));
-        p_cmd_m1->enableReg.bit.rollOverEnable  = (bool_t)((p_msg->msg_rx & MSG_RX_EPRE)    ? (true): (false));
-        p_cmd_m1->enableReg.bit.motorEnable     = (bool_t)((p_msg->msg_rx & MSG_RX_EM1)     ? (true): (false));
-        p_cmd_m1->enableReg.bit.systemEnable    = (bool_t)((p_msg->msg_rx & MSG_RX_ES)      ? (true): (false));
-        p_cmd_m1->timeoutRef                    = (uint16_t)p_msg->msg_rx & MSG_RX_TIMEOUT;
-        p_cmd_m2->enableReg.bit.encOffsetEnable = (bool_t)((p_msg->msg_rx & MSG_RX_EI2OC)   ? (true): (false));
-        p_cmd_m2->enableReg.bit.rollOverEnable  = (bool_t)((p_msg->msg_rx & MSG_RX_EPRE)    ? (true): (false));
-        p_cmd_m2->enableReg.bit.motorEnable     = (bool_t)((p_msg->msg_rx & MSG_RX_EM2)     ? (true): (false));
-        p_cmd_m2->enableReg.bit.systemEnable    = (bool_t)((p_msg->msg_rx & MSG_RX_ES)      ? (true): (false));
-        p_cmd_m2->timeoutRef                    = (uint16_t)p_msg->msg_rx & MSG_RX_TIMEOUT;
-        p_msg->msg_crc32                        = UINT32_MAX;
-        COM_crc32_cla(p_msg);
-        break;
-
-    case COM_RX_STATE_POS_MSB_MOT1:
-    case COM_RX_STATE_POS_MSB_MOT2:
-        p_msg->msg_tmp      = p_msg->msg_rx;
-        COM_crc32_cla(p_msg);
-        break;
-
-    case COM_RX_STATE_POS_LSB_MOT1:
-        p_cmd_m1->posRef    = (float32_t)((int32_t)FUS_16_TO_32(p_msg->msg_tmp, p_msg->msg_rx) * POSITION_LSB * FM_ROUND2RAD);
-        COM_crc32_cla(p_msg);
-        break;
-
-    case COM_RX_STATE_POS_LSB_MOT2:
-        p_cmd_m2->posRef    = (float32_t)((int32_t)FUS_16_TO_32(p_msg->msg_tmp, p_msg->msg_rx) * POSITION_LSB * FM_ROUND2RAD);
-        COM_crc32_cla(p_msg);
-        break;
-
-    case COM_RX_STATE_VEL_MOT1:
-        p_cmd_m1->velRef    = (float32_t)(p_msg->msg_rx * VELOCITY_LSB * FM_KRPM2RADPS);
-        COM_crc32_cla(p_msg);
-        break;
-
-    case COM_RX_STATE_VEL_MOT2:
-        p_cmd_m2->velRef    = (float32_t)(p_msg->msg_rx * VELOCITY_LSB * FM_KRPM2RADPS);
-        COM_crc32_cla(p_msg);
-        break;
-
-    case COM_RX_STATE_IQ_MOT1:
-        p_cmd_m1->iqff      = (float32_t)(p_msg->msg_rx * IQ_LSB);
-        COM_crc32_cla(p_msg);
-        break;
-
-    case COM_RX_STATE_IQ_MOT2:
-        p_cmd_m2->iqff      = (float32_t)(p_msg->msg_rx * IQ_LSB);
-        COM_crc32_cla(p_msg);
-        break;
-
-    case COM_RX_STATE_KP_MOT1:
-        p_cmd_m1->kpCoeff   = (float32_t)(p_msg->msg_rx * KP_LSB * FM_RAD2ROUND);
-        COM_crc32_cla(p_msg);
-        break;
-
-    case COM_RX_STATE_KP_MOT2:
-        p_cmd_m2->kpCoeff   = (float32_t)(p_msg->msg_rx * KP_LSB * FM_RAD2ROUND);
-        COM_crc32_cla(p_msg);
-        break;
-
-    case COM_RX_STATE_KD_MOT1:
-        p_cmd_m1->kdCoeff   = (float32_t)(p_msg->msg_rx * KD_LSB * FM_RADPS2KRPM);
-        COM_crc32_cla(p_msg);
-        break;
-
-    case COM_RX_STATE_KD_MOT2:
-        p_cmd_m2->kdCoeff   = (float32_t)(p_msg->msg_rx * KD_LSB * FM_RADPS2KRPM);
-        COM_crc32_cla(p_msg);
-        break;
-
-    case COM_RX_STATE_ISAT_MOT12:
-        isat                = (float32_t)(MSB_16(p_msg->msg_rx) * CURRENT_SAT_LSB);
-        p_cmd_m1->iSat      = (isat < MOTOR1_CURRENT_CMD_SAT_MAX)   ? (isat)            : (MOTOR1_CURRENT_CMD_SAT_MAX);
-        p_cmd_m1->iSat      = (p_cmd_m1->iSat > 0.0f)               ? (p_cmd_m1->iSat)  : (MOTOR1_CURRENT_CMD_SAT_MAX);
-        isat                = (float32_t)(LSB_16(p_msg->msg_rx) * CURRENT_SAT_LSB);
-        p_cmd_m2->iSat      = (isat < MOTOR2_CURRENT_CMD_SAT_MAX)   ? (isat)            : (MOTOR2_CURRENT_CMD_SAT_MAX);
-        p_cmd_m2->iSat      = (p_cmd_m2->iSat > 0.0f)               ? (p_cmd_m2->iSat)  : (MOTOR2_CURRENT_CMD_SAT_MAX);
-        COM_crc32_cla(p_msg);
-        break;
-
-    case COM_RX_STATE_INDEX:
-        p_cmd_m1->index     = p_msg->msg_rx;
-        p_cmd_m2->index     = p_msg->msg_rx;
-        COM_crc32_cla(p_msg);
-        break;
-
-    case COM_RX_STATE_CRC_LSB:
-        p_msg->msg_tmp      = p_msg->msg_rx;
-        break;
-
-    case COM_RX_STATE_CRC_MSB:
-        msg_rx_valid        = (p_msg->msg_crc32 == FUS_16_TO_32(p_msg->msg_tmp, p_msg->msg_rx)) ? (true) : (false);
-        break;
-    }
-
-    return (msg_rx_valid);
-}
-
-/**
  * @brief	        Slave to Master message creation/update using motor_foc data structure.
  * @param[in]       p_motor_m1  Pointer on data structure used for MOTOR_1 control.
  * @param[in]       p_motor_m2  Pointer on data structure used for MOTOR_1 control.
@@ -183,15 +70,15 @@ bool_t COM_msgExtract_cla(mst2slv_msg_cla_t* p_msg, cmd_t* p_cmd_m1, cmd_t* p_cm
 void COM_msgCreate(motor_t* p_motor_m1, motor_t* p_motor_m2, slv2mst_msg_t* p_msg)
 {
     foc_t* p_foc                        = p_motor_m1->p_motorFOC;
-    motor_state_e state                 = p_motor_m1->motor_state;
-    error_reg_u* p_err[2]               = {&p_motor_m1->motor_error, &p_motor_m2->motor_error};
+//    motor_state_e state                 = p_motor_m1->motor_state;
     encoder_t* p_enc                    = &p_foc->motor_enc;
-    cmd_reg_t* p_cmd_reg                = &p_foc->motor_cmd.enableReg.bit;
-    float32_t pos_offset                = p_enc->thetaAbsolute - ((p_cmd_reg->encOffsetEnable) ? (p_enc->thetaIndex) : (0.0f));
+    cmd_reg_u cmd_reg                   = {.all = p_foc->motor_cmd.enableReg.all};
+    float32_t pos_offset                = p_enc->thetaAbsolute - ((cmd_reg.bit.encOffsetEnable) ? (p_enc->thetaIndex) : (0.0f));
     int32_t pos                         = (int32_t)(pos_offset                  / POSITION_LSB      * FM_RAD2ROUND);
+    uint8_t state                       = p_motor_m1->motor_state;
     bool_t align_done                   = (state == MOTOR_STATE_READY) || (state == MOTOR_STATE_STOP);
     // Update status field - MOTOR_1
-    p_msg->status.bit.M1E               = p_cmd_reg->motorEnable;   // MOTOR_1 enabled
+    p_msg->status.bit.M1E               = cmd_reg.bit.motorEnable;  // MOTOR_1 enabled
     p_msg->status.bit.M1R               = align_done;               // MOTOR_1 ready
     p_msg->status.bit.IDX1T             = p_enc->indexToggle;       // MOTOR_1 index toggle
     p_msg->status.bit.IDX1D             = p_enc->indexDetect;       // MOTOR_1 index detected
@@ -202,20 +89,20 @@ void COM_msgCreate(motor_t* p_motor_m1, motor_t* p_motor_m2, slv2mst_msg_t* p_ms
     p_msg->coilRes[MOTOR_1]             = (uint16_t)(p_foc->resEst              / RESISTANCE_LSB);
     p_msg->adcSamples[MOTOR_1]          = (uint16_t)(p_foc->motor_acq.vExt      / VOLTAGE_LSB);
 
-    p_msg->status.bit.SE                = p_cmd_reg->systemEnable;  // System enabled
+    p_msg->status.bit.SE                = cmd_reg.bit.systemEnable; // System enabled
     p_msg->status.bit.STATUS_RSV1       = 0;
     p_msg->lastCmdIndex                 = p_foc->motor_cmd.index;
     p_msg->timeStamp                    = (uint16_t)CPUTimer_getTimerCount(CPU_TIMER_0_BASE);
 
     p_foc                               = p_motor_m2->p_motorFOC;
-    state                               = p_motor_m2->motor_state;
     p_enc                               = &p_foc->motor_enc;
-    p_cmd_reg                           = &p_foc->motor_cmd.enableReg.bit;
-    pos_offset                          = p_enc->thetaAbsolute - ((p_cmd_reg->encOffsetEnable) ? (p_enc->thetaIndex) : (0.0f));
+    cmd_reg.all                         = p_foc->motor_cmd.enableReg.all;
+    pos_offset                          = p_enc->thetaAbsolute - ((cmd_reg.bit.encOffsetEnable) ? (p_enc->thetaIndex) : (0.0f));
     pos                                 = (int32_t)(pos_offset                  / POSITION_LSB      * FM_RAD2ROUND);
+    state                               = p_motor_m2->motor_state;
     align_done                          = (state == MOTOR_STATE_READY) || (state == MOTOR_STATE_STOP);
     // Update status field - MOTOR_2
-    p_msg->status.bit.M2E               = p_cmd_reg->motorEnable;   // MOTOR_2 enabled
+    p_msg->status.bit.M2E               = cmd_reg.bit.motorEnable;  // MOTOR_2 enabled
     p_msg->status.bit.M2R               = align_done;               // MOTOR_2 ready
     p_msg->status.bit.IDX2T             = p_enc->indexToggle;       // MOTOR_2 index toggle
     p_msg->status.bit.IDX2D             = p_enc->indexDetect;       // MOTOR_2 index detected
@@ -226,26 +113,84 @@ void COM_msgCreate(motor_t* p_motor_m1, motor_t* p_motor_m2, slv2mst_msg_t* p_ms
     p_msg->coilRes[MOTOR_2]             = (uint16_t)(p_foc->resEst              / RESISTANCE_LSB);
     p_msg->adcSamples[MOTOR_2]          = (uint16_t)(p_foc->motor_acq.vExt      / VOLTAGE_LSB);
 
-#if 0
+#define ERR_CFG 5
+#if (ERR_CFG == 1)
+    error_reg_u* p_err[2]               = {&p_motor_m1->motor_error, &p_motor_m2->motor_error};
+    bool_t no_err                       = (!p_err[MOTOR_1]->all)        && (!p_err[MOTOR_2]->all);
+    bool_t rollover_err                 = p_err[MOTOR_1]->pos_rollover  || p_err[MOTOR_2]->pos_rollover;
+    //    bool_t drv_fault_err                = p_err[MOTOR_1]->drv_fault     || p_err[MOTOR_2]->drv_fault;
+    bool_t timeout_err                  = p_err[MOTOR_1]->com_timeout   || p_err[MOTOR_2]->com_timeout;
+    bool_t drv1_err                     = p_err[MOTOR_1]->drv_fault;
+    bool_t drv2_err                     = p_err[MOTOR_2]->drv_fault;
+    bool_t enc1_err                     = p_err[MOTOR_1]->enc_mismatch;
+    bool_t enc2_err                     = p_err[MOTOR_2]->enc_mismatch;
+
+    if(no_err)
+        p_msg->status.bit.ERROR_CODE    = STATUS_ERROR_NO_ERROR;
+    else if(rollover_err)
+        p_msg->status.bit.ERROR_CODE    = STATUS_ERROR_POS_ROLLOVER;
+    else if(timeout_err)
+        p_msg->status.bit.ERROR_CODE    = STATUS_ERROR_SPI_RECV_TIMEOUT;
+    else if(drv1_err)
+        p_msg->status.bit.ERROR_CODE    = STATUS_ERROR_DRV1_FAULT;
+    else if(drv2_err)
+        p_msg->status.bit.ERROR_CODE    = STATUS_ERROR_DRV2_FAULT;
+    else if(enc1_err)
+        p_msg->status.bit.ERROR_CODE    = STATUS_ERROR_ENCODER1;
+    else if(enc2_err)
+        p_msg->status.bit.ERROR_CODE    = STATUS_ERROR_ENCODER2;
+
+#elif (ERR_CFG == 2)
+    error_reg_u* p_err[2]               = {&p_motor_m1->motor_error, &p_motor_m2->motor_error};
     if((!p_err[MOTOR_1]->all) && (!p_err[MOTOR_2]->all))
         p_msg->status.bit.ERROR_CODE    = STATUS_ERROR_NO_ERROR;
-    else if((p_err[MOTOR_1]->bit.pos_rollover) || (p_err[MOTOR_2]->bit.pos_rollover))
+    else if((p_err[MOTOR_1]->pos_rollover) || (p_err[MOTOR_2]->pos_rollover))
         p_msg->status.bit.ERROR_CODE    = STATUS_ERROR_POS_ROLLOVER;
-    else if((p_err[MOTOR_1]->bit.drv_fault) || (p_err[MOTOR_2]->bit.drv_fault))
-        p_msg->status.bit.ERROR_CODE    = STATUS_ERROR_DRV_NFAULT;
-    else if(p_err[MOTOR_1]->bit.enc_mismatch)
-        p_msg->status.bit.ERROR_CODE    = STATUS_ERROR_ENCODER1;
-    else if(p_err[MOTOR_2]->bit.enc_mismatch)
-        p_msg->status.bit.ERROR_CODE    = STATUS_ERROR_ENCODER2;
-    else if((p_err[MOTOR_1]->bit.com_timeout) || (p_err[MOTOR_2]->bit.com_timeout))
+    else if((p_err[MOTOR_1]->com_timeout) || (p_err[MOTOR_2]->com_timeout))
         p_msg->status.bit.ERROR_CODE    = STATUS_ERROR_SPI_RECV_TIMEOUT;
-#elif 0
-    bool_t no_err                       = (!p_err[MOTOR_1]->all)            && (!p_err[MOTOR_2]->all);
-    bool_t rollover_err                 = p_err[MOTOR_1]->bit.pos_rollover  || p_err[MOTOR_2]->bit.pos_rollover;
-    bool_t drv_fault_err                = p_err[MOTOR_1]->bit.drv_fault     || p_err[MOTOR_2]->bit.drv_fault;
-    bool_t timeout_err                  = p_err[MOTOR_1]->bit.com_timeout   || p_err[MOTOR_2]->bit.com_timeout;
-    bool_t enc1_err                     = p_err[MOTOR_1]->bit.enc_mismatch;
-    bool_t enc2_err                     = p_err[MOTOR_2]->bit.enc_mismatch;
+    else if(p_err[MOTOR_1]->drv_fault)
+        p_msg->status.bit.ERROR_CODE    = STATUS_ERROR_DRV1_FAULT;
+    else if(p_err[MOTOR_2]->drv_fault)
+        p_msg->status.bit.ERROR_CODE    = STATUS_ERROR_DRV2_FAULT;
+    else if(p_err[MOTOR_1]->enc_mismatch)
+        p_msg->status.bit.ERROR_CODE    = STATUS_ERROR_ENCODER1;
+    else if(p_err[MOTOR_2]->enc_mismatch)
+        p_msg->status.bit.ERROR_CODE    = STATUS_ERROR_ENCODER2;
+#elif (ERR_CFG == 3)
+    error_reg_u* p_err_m1               = &p_motor_m1->motor_error;
+    error_reg_u* p_err_m2               = &p_motor_m2->motor_error;
+    bool_t no_err                       = (!p_err_m1->all)      && (!p_err_m2->all);
+    bool_t rollover_err                 = p_err_m1->pos_rollover|| p_err_m2->pos_rollover;
+    bool_t timeout_err                  = p_err_m1->com_timeout || p_err_m2->com_timeout;
+    bool_t drv1_err                     = p_err_m1->drv_fault;
+    bool_t drv2_err                     = p_err_m2->drv_fault;
+    bool_t enc1_err                     = p_err_m1->enc_mismatch;
+    bool_t enc2_err                     = p_err_m2->enc_mismatch;
+
+    if(no_err)
+        p_msg->status.bit.ERROR_CODE    = STATUS_ERROR_NO_ERROR;
+    else if(rollover_err)
+        p_msg->status.bit.ERROR_CODE    = STATUS_ERROR_POS_ROLLOVER;
+    else if(timeout_err)
+        p_msg->status.bit.ERROR_CODE    = STATUS_ERROR_SPI_RECV_TIMEOUT;
+    else if(drv1_err)
+        p_msg->status.bit.ERROR_CODE    = STATUS_ERROR_DRV1_FAULT;
+    else if(drv2_err)
+        p_msg->status.bit.ERROR_CODE    = STATUS_ERROR_DRV1_FAULT;
+    else if(enc1_err)
+        p_msg->status.bit.ERROR_CODE    = STATUS_ERROR_ENCODER1;
+    else if(enc2_err)
+        p_msg->status.bit.ERROR_CODE    = STATUS_ERROR_ENCODER2;
+#elif (ERR_CFG == 4)
+    error_reg_u* p_err_m1               = &p_motor_m1->motor_error;
+    error_reg_u* p_err_m2               = &p_motor_m2->motor_error;
+    bool_t no_err                       = (!p_err_m1->all)      && (!p_err_m2->all);
+    bool_t rollover_err                 = p_err_m1->pos_rollover|| p_err_m2->pos_rollover;
+    bool_t timeout_err                  = p_err_m1->com_timeout || p_err_m2->com_timeout;
+    bool_t drv1_err                     = p_err_m1->drv_fault;
+    bool_t drv2_err                     = p_err_m2->drv_fault;
+    bool_t enc1_err                     = p_err_m1->enc_mismatch;
+    bool_t enc2_err                     = p_err_m2->enc_mismatch;
 
     if(no_err)
         p_msg->status.bit.ERROR_CODE    = STATUS_ERROR_NO_ERROR;
@@ -255,45 +200,88 @@ void COM_msgCreate(motor_t* p_motor_m1, motor_t* p_motor_m2, slv2mst_msg_t* p_ms
             p_msg->status.bit.ERROR_CODE    = STATUS_ERROR_POS_ROLLOVER;
         else
         {
-            if(drv_fault_err)
-                p_msg->status.bit.ERROR_CODE    = STATUS_ERROR_DRV_NFAULT;
+            if(timeout_err)
+                p_msg->status.bit.ERROR_CODE    = STATUS_ERROR_SPI_RECV_TIMEOUT;
             else
             {
-                if(enc1_err)
-                    p_msg->status.bit.ERROR_CODE    = STATUS_ERROR_ENCODER1;
+                if(drv1_err)
+                    p_msg->status.bit.ERROR_CODE    = STATUS_ERROR_DRV1_FAULT;
                 else
                 {
-                    if(enc2_err)
-                        p_msg->status.bit.ERROR_CODE    = STATUS_ERROR_ENCODER2;
+                    if(drv2_err)
+                        p_msg->status.bit.ERROR_CODE    = STATUS_ERROR_DRV2_FAULT;
                     else
                     {
-                        if(timeout_err)
-                            p_msg->status.bit.ERROR_CODE    = STATUS_ERROR_SPI_RECV_TIMEOUT;
+                        if(enc1_err)
+                            p_msg->status.bit.ERROR_CODE    = STATUS_ERROR_ENCODER1;
+                        else
+                        {
+                            if(enc2_err)
+                                p_msg->status.bit.ERROR_CODE    = STATUS_ERROR_ENCODER2;
+                        }
                     }
                 }
             }
         }
     }
-#else
-    bool_t no_err                       = (!p_err[MOTOR_1]->all)            && (!p_err[MOTOR_2]->all);
-    bool_t rollover_err                 = p_err[MOTOR_1]->bit.pos_rollover  || p_err[MOTOR_2]->bit.pos_rollover;
-    bool_t drv_fault_err                = p_err[MOTOR_1]->bit.drv_fault     || p_err[MOTOR_2]->bit.drv_fault;
-    bool_t timeout_err                  = p_err[MOTOR_1]->bit.com_timeout   || p_err[MOTOR_2]->bit.com_timeout;
-    bool_t enc1_err                     = p_err[MOTOR_1]->bit.enc_mismatch;
-    bool_t enc2_err                     = p_err[MOTOR_2]->bit.enc_mismatch;
+#elif (ERR_CFG == 5)
+    error_reg_u err[2]                  = {{.all = p_motor_m1->motor_error.all},
+                                           {.all = p_motor_m2->motor_error.all}};
+    if((!err[MOTOR_1].all) && (!err[MOTOR_2].all))
+        p_msg->status.bit.ERROR_CODE    = STATUS_ERROR_NO_ERROR;
+    else if((err[MOTOR_1].pos_rollover) || (err[MOTOR_2].pos_rollover))
+        p_msg->status.bit.ERROR_CODE    = STATUS_ERROR_POS_ROLLOVER;
+    else if((err[MOTOR_1].com_timeout) || (err[MOTOR_2].com_timeout))
+        p_msg->status.bit.ERROR_CODE    = STATUS_ERROR_SPI_RECV_TIMEOUT;
+    else if(err[MOTOR_1].drv_fault)
+        p_msg->status.bit.ERROR_CODE    = STATUS_ERROR_DRV1_FAULT;
+    else if(err[MOTOR_2].drv_fault)
+        p_msg->status.bit.ERROR_CODE    = STATUS_ERROR_DRV2_FAULT;
+    else if(err[MOTOR_1].enc_mismatch)
+        p_msg->status.bit.ERROR_CODE    = STATUS_ERROR_ENCODER1;
+    else if(err[MOTOR_2].enc_mismatch)
+        p_msg->status.bit.ERROR_CODE    = STATUS_ERROR_ENCODER2;
+#elif (ERR_CFG == 6)
+    error_reg_u err_m1                  = {.all = p_motor_m1->motor_error.all};
+    error_reg_u err_m2                  = {.all = p_motor_m2->motor_error.all};
+    if((!err_m1.all) && (!err_m2.all))
+        p_msg->status.bit.ERROR_CODE    = STATUS_ERROR_NO_ERROR;
+    else if((err_m1.pos_rollover) || (err_m2.pos_rollover))
+        p_msg->status.bit.ERROR_CODE    = STATUS_ERROR_POS_ROLLOVER;
+    else if((err_m1.com_timeout) || (err_m2.com_timeout))
+        p_msg->status.bit.ERROR_CODE    = STATUS_ERROR_SPI_RECV_TIMEOUT;
+    else if(err_m1.drv_fault)
+        p_msg->status.bit.ERROR_CODE    = STATUS_ERROR_DRV1_FAULT;
+    else if(err_m2.drv_fault)
+        p_msg->status.bit.ERROR_CODE    = STATUS_ERROR_DRV2_FAULT;
+    else if(err_m1.enc_mismatch)
+        p_msg->status.bit.ERROR_CODE    = STATUS_ERROR_ENCODER1;
+    else if(err_m2.enc_mismatch)
+        p_msg->status.bit.ERROR_CODE    = STATUS_ERROR_ENCODER2;
+#elif (ERR_CFG == 7)
+    error_reg_u err[2]                  = {{.all = p_motor_m1->motor_error.all}, {.all = p_motor_m2->motor_error.all}};
+    bool_t no_err                       = (!err[MOTOR_1].all)       && (!err[MOTOR_2].all);
+    bool_t rollover_err                 = err[MOTOR_1].pos_rollover || err[MOTOR_2].pos_rollover;
+    bool_t timeout_err                  = err[MOTOR_1].com_timeout  || err[MOTOR_2].com_timeout;
+    bool_t drv1_err                     = err[MOTOR_1].drv_fault;
+    bool_t drv2_err                     = err[MOTOR_2].drv_fault;
+    bool_t enc1_err                     = err[MOTOR_1].enc_mismatch;
+    bool_t enc2_err                     = err[MOTOR_2].enc_mismatch;
 
     if(no_err)
         p_msg->status.bit.ERROR_CODE    = STATUS_ERROR_NO_ERROR;
     else if(rollover_err)
         p_msg->status.bit.ERROR_CODE    = STATUS_ERROR_POS_ROLLOVER;
-    else if(drv_fault_err)
-        p_msg->status.bit.ERROR_CODE    = STATUS_ERROR_DRV_NFAULT;
+    else if(timeout_err)
+        p_msg->status.bit.ERROR_CODE    = STATUS_ERROR_SPI_RECV_TIMEOUT;
+    else if(drv1_err)
+        p_msg->status.bit.ERROR_CODE    = STATUS_ERROR_DRV1_FAULT;
+    else if(drv2_err)
+        p_msg->status.bit.ERROR_CODE    = STATUS_ERROR_DRV2_FAULT;
     else if(enc1_err)
         p_msg->status.bit.ERROR_CODE    = STATUS_ERROR_ENCODER1;
     else if(enc2_err)
         p_msg->status.bit.ERROR_CODE    = STATUS_ERROR_ENCODER2;
-    else if(timeout_err)
-        p_msg->status.bit.ERROR_CODE    = STATUS_ERROR_SPI_RECV_TIMEOUT;
 #endif
     // Compute CRC
     uint32_t crc = COM_crc32((uint16_t *)p_msg, COM_MSG_TX_RX_16BIT_PAYLOAD_LENGTH);
