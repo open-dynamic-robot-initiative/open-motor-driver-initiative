@@ -39,19 +39,27 @@ typedef enum
 /***********************************************************************
  * CONTROL STRUCTURES
  ***********************************************************************/
-typedef struct __cmd_bit_reg_t__
-{
-    uint16_t        systemEnable        : 1;    /*!< Bit 0      : R/W - Enable system to start. No power on motors.         */
-    uint16_t        motorEnable         : 1;    /*!< Bit 1      : R/W - Enable power on motor.                              */
-    uint16_t        rollOverEnable      : 1;    /*!< Bit 2      : R/W - Limit the rotations to +/- 128 rounds.              */
-    uint16_t        encOffsetEnable     : 1;    /*!< Bit 3      : R/W - Use encoder index in position computation.          */
-    uint16_t        CMD_RSV1            : 12;   /*!< Bit 4-15   : R/W - Reserved                                            */
-} cmd_reg_t;
+//typedef struct __cmd_bit_reg_t__
+//{
+//    uint8_t         systemEnable        : 1;    /*!< Bit 0      : R/W - Enable system to start. No power on motors.         */
+//    uint8_t         motorEnable         : 1;    /*!< Bit 1      : R/W - Enable power on motor.                              */
+//    uint8_t         rollOverEnable      : 1;    /*!< Bit 2      : R/W - Limit the rotations to +/- 128 rounds.              */
+//    uint8_t         encOffsetEnable     : 1;    /*!< Bit 3      : R/W - Use encoder index in position computation.          */
+//    uint8_t         CMD_RSV1            : 4;    /*!< Bit 4-7    : R/W - Reserved                                            */
+//} cmd_reg_t;
 
 typedef union __cmd_bit_reg_u__
 {
-    uint16_t        all;
-    cmd_reg_t       bit;
+    uint8_t         all;
+    struct
+    {
+        uint8_t     systemEnable        : 1;    /*!< Bit 0      : R/W - Enable system to start. No power on motors.         */
+        uint8_t     motorEnable         : 1;    /*!< Bit 1      : R/W - Enable power on motor.                              */
+        uint8_t     rollOverEnable      : 1;    /*!< Bit 2      : R/W - Limit the rotations to +/- 128 rounds.              */
+        uint8_t     encOffsetEnable     : 1;    /*!< Bit 3      : R/W - Use encoder index in position computation.          */
+        uint8_t     CMD_RSV1            : 4;    /*!< Bit 4-7    : R/W - Reserved                                            */
+    };
+//    cmd_reg_t       bit;
 } cmd_reg_u;
 
 /**
@@ -131,7 +139,7 @@ typedef struct __cmd_t__
     uint16_t    timeoutRef;
     uint16_t    cptTimeout;
     uint16_t    index;
-    cmd_reg_u   enableReg;
+    cmd_reg_u   cmdArray;
 } cmd_t;
 
 typedef struct __foc_control_t__
@@ -173,14 +181,14 @@ typedef struct __foc_control_t__
 /***********************************************************************
  * DEFINES
  ***********************************************************************/
-#define FOC_CMD_SYSTEM_ENABLE       0x0001U
-#define FOC_CMD_MOTOR_ENABLE        0x0002U
-#define FOC_CMD_ROLLOVER_ENABLE     0x0004U
-#define FOC_CMD_OFFSET_COMP_ENABLE  0x0008U
-#define FOC_CMD_MOTOR_START         (FOC_CMD_SYSTEM_ENABLE | FOC_CMD_MOTOR_ENABLE)
-#define FOC_CMD_MOTOR_START_TEST    (((x) & FOC_CMD_MOTOR_START) == FOC_CMD_MOTOR_START)
-#define FOC_CMD_OFFSET_RUN          (FOC_CMD_SYSTEM_ENABLE | FOC_CMD_MOTOR_ENABLE | FOC_CMD_OFFSET_COMP_ENABLE)
-#define FOC_CMD_OFFSET_RUN_TEST(x)  (((x) & FOC_CMD_OFFSET_RUN) == FOC_CMD_OFFSET_RUN)
+//#define FOC_CMD_SYSTEM_ENABLE       0x0001U
+//#define FOC_CMD_MOTOR_ENABLE        0x0002U
+//#define FOC_CMD_ROLLOVER_ENABLE     0x0004U
+//#define FOC_CMD_OFFSET_COMP_ENABLE  0x0008U
+//#define FOC_CMD_MOTOR_START         (FOC_CMD_SYSTEM_ENABLE | FOC_CMD_MOTOR_ENABLE)
+//#define FOC_CMD_MOTOR_START_TEST    (((x) & FOC_CMD_MOTOR_START) == FOC_CMD_MOTOR_START)
+//#define FOC_CMD_OFFSET_RUN          (FOC_CMD_SYSTEM_ENABLE | FOC_CMD_MOTOR_ENABLE | FOC_CMD_OFFSET_COMP_ENABLE)
+//#define FOC_CMD_OFFSET_RUN_TEST(x)  (((x) & FOC_CMD_OFFSET_RUN) == FOC_CMD_OFFSET_RUN)
 // Resistance estimation uses Ohm's Law R = U/I so we have to ensure I != 0.
 // This threshold corresponds to the minimum current for the measure to be considered as correct.
 #define FOC_RE_CURRENT_THRESHOLD    0.1f

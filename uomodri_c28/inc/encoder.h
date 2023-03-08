@@ -60,31 +60,29 @@ typedef struct __encoder_t__
  ***********************************************************************/
 #define MAX_ROLLOVER                    (127)
 #define MIN_ROLLOVER                    (-128)
-#define ENC_GET_POSITION(p_enc)                                                                                 \
-        p_enc->thetaMech[OLD]   = p_enc->thetaMech[NEW];                                                        \
-        p_enc->thetaMech[NEW]   = (float32_t)HWREG(eqepBase + EQEP_O_QPOSSLAT) * p_enc->thetaMechScaler;        \
-        p_enc->thetaDir         = (HWREGH(eqepBase + EQEP_O_QEPSTS) & EQEP_QEPSTS_QDF)? (1) : (-1);             \
-        float32_t thetaElec     = (float32_t)p_enc->polePairs * p_enc->thetaMech[NEW];                          \
-        p_enc->thetaElec        = __mpy2pif32(__fracf32(thetaElec));                                            \
+#define ENC_GET_POSITION(p_enc)                                                                             \
+        p_enc->thetaMech[OLD]   = p_enc->thetaMech[NEW];                                                    \
+        p_enc->thetaMech[NEW]   = (float32_t)HWREG(eqepBase + EQEP_O_QPOSSLAT) * p_enc->thetaMechScaler;    \
+        p_enc->thetaDir         = (HWREGH(eqepBase + EQEP_O_QEPSTS) & EQEP_QEPSTS_QDF)? (1) : (-1);         \
+        float32_t thetaElec     = (float32_t)p_enc->polePairs * p_enc->thetaMech[NEW];                      \
+        p_enc->thetaElec        = __mpy2pif32(__fracf32(thetaElec));                                        \
         p_enc->thetaMech[NEW]   = __mpy2pif32(p_enc->thetaMech[NEW]);
-
-#define ENC_GET_SPEED(p_enc)                                                                                                    \
-        speed_t* p_speed                    = &p_enc->speed;                                                                    \
-        if(HWREGH(eqepBase + EQEP_O_QFLG) & EQEP_INT_UNIT_TIME_OUT)                                                             \
-        {                                                                                                                       \
-            p_speed->theta[OLD]             = p_speed->theta[NEW];                                                              \
-            p_speed->theta[NEW]             = __mpy2pif32((float32_t)HWREG(eqepBase + EQEP_O_QPOSLAT) * p_enc->thetaMechScaler);\
-            HWREGH(eqepBase + EQEP_O_QCLR)  = EQEP_INT_UNIT_TIME_OUT;                                                           \
-            float32_t deltaTheta            = p_speed->theta[NEW] - p_speed->theta[OLD];                                        \
-            deltaTheta                      = (deltaTheta > M_PI)   ? (deltaTheta - (2.0f * M_PI)) : (deltaTheta);              \
-            deltaTheta                      = (deltaTheta < -M_PI)  ? (deltaTheta + (2.0f * M_PI)) : (deltaTheta);              \
-            p_speed->speedHigh              = deltaTheta * p_speed->speedHighScaler;                                            \
-        }                                                                                                                       \
-        float32_t speedFusion   = p_speed->speedHigh;                                                                           \
-        UOMODRI_SPEED_FLT(p_speed->speedFlt[0], p_speed->speedMech[0], speedFusion);                                            \
-        UOMODRI_SPEED_FLT(p_speed->speedFlt[1], p_speed->speedMech[1], speedFusion);                                            \
+#define ENC_GET_SPEED(p_enc)                                                                                                        \
+        speed_t* p_speed                    = &p_enc->speed;                                                                        \
+        if(HWREGH(eqepBase + EQEP_O_QFLG) & EQEP_INT_UNIT_TIME_OUT)                                                                 \
+        {                                                                                                                           \
+            p_speed->theta[OLD]             = p_speed->theta[NEW];                                                                  \
+            p_speed->theta[NEW]             = __mpy2pif32((float32_t)HWREG(eqepBase + EQEP_O_QPOSLAT) * p_enc->thetaMechScaler);    \
+            HWREGH(eqepBase + EQEP_O_QCLR)  = EQEP_INT_UNIT_TIME_OUT;                                                               \
+            float32_t deltaTheta            = p_speed->theta[NEW] - p_speed->theta[OLD];                                            \
+            deltaTheta                      = (deltaTheta > M_PI)   ? (deltaTheta - (2.0f * M_PI)) : (deltaTheta);                  \
+            deltaTheta                      = (deltaTheta < -M_PI)  ? (deltaTheta + (2.0f * M_PI)) : (deltaTheta);                  \
+            p_speed->speedHigh              = deltaTheta * p_speed->speedHighScaler;                                                \
+        }                                                                                                                           \
+        float32_t speedFusion   = p_speed->speedHigh;                                                                               \
+        UOMODRI_SPEED_FLT(p_speed->speedFlt[0], p_speed->speedMech[0], speedFusion);                                                \
+        UOMODRI_SPEED_FLT(p_speed->speedFlt[1], p_speed->speedMech[1], speedFusion);                                                \
         p_speed->speedElec      = (float32_t)p_enc->polePairs * p_speed->speedMech[0];
-
 #define ENC_GET_THETA(p_enc)                                                                                                                \
         float32_t deltaThetaMech= p_enc->thetaMech[NEW] - p_enc->thetaMech[OLD];                                                            \
         p_enc->turnNb           = (deltaThetaMech > M_PI)   ? (p_enc->turnNb - 1) : (p_enc->turnNb);                                        \

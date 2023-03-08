@@ -195,7 +195,7 @@ inline void FOC_resetCmdStruct(cmd_t* p_cmd)
     p_cmd->iSat                 = 0.0f;//(p_cmd->motor_id == MOTOR_1) ? (MOTOR1_CURRENT_REGULATOR_SAT_MAX) : (MOTOR2_CURRENT_REGULATOR_SAT_MAX);
     p_cmd->timeoutRef           = 0;
     p_cmd->cptTimeout           = 0;
-    p_cmd->enableReg.all        = 0;
+    p_cmd->cmdArray.all         = 0;
 //    p_cmd->encOffsetCompEnable  = false;
 //    p_cmd->rollOverEnable       = false;
 //    p_cmd->motorEnable          = false;

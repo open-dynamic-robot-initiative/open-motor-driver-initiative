@@ -235,7 +235,7 @@ static cmd_t cmd_uOmodri[2] =
   .timeoutRef       = 0U,
   .cptTimeout       = 0U,
   .index            = 0U,
-  .enableReg.all    = 0U,
+  .cmdArray.all     = 0U,
  },
  {
   .posRef           = 0.0f,
@@ -247,7 +247,7 @@ static cmd_t cmd_uOmodri[2] =
   .timeoutRef       = 0U,
   .cptTimeout       = 0U,
   .index            = 0U,
-  .enableReg.all    = 0U,
+  .cmdArray.all     = 0U,
  },
 };
 
@@ -322,7 +322,7 @@ static foc_t motor_foc[] =
   .motor_cmd.timeoutRef                     = 0U,
   .motor_cmd.cptTimeout                     = 0U,
   .motor_cmd.index                          = 0U,
-  .motor_cmd.enableReg.all                  = 0U,
+  .motor_cmd.cmdArray.all                   = 0U,
 
   //--- Maximum current alignment value ---------------------------------------
   .iAlignMax                                = MOTOR1_CURRENT_ALIGN_MAX,
@@ -466,7 +466,7 @@ static foc_t motor_foc[] =
   .motor_cmd.timeoutRef                     = 0U,
   .motor_cmd.cptTimeout                     = 0U,
   .motor_cmd.index                          = 0U,
-  .motor_cmd.enableReg.all                  = 0U,
+  .motor_cmd.cmdArray.all                   = 0U,
 //  .motor_cmd[ODD].posRef                = 0.0f,
 //  .motor_cmd[ODD].velRef                = 0.0f,
 //  .motor_cmd[ODD].iqRef                 = 0.0f,

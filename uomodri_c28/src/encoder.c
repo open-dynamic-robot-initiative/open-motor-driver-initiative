@@ -197,9 +197,9 @@ inline void ENC_getTheta(encoder_t* p_enc)
     p_enc->turnNb               = (deltaThetaMech > M_PI)   ? (p_enc->turnNb - 1) : (p_enc->turnNb);
     p_enc->turnNb               = (deltaThetaMech < -M_PI)  ? (p_enc->turnNb + 1) : (p_enc->turnNb);
     // If theta difference is high or low enough, we overflowed or underflowed
-    bool_t maxRollOver          = (p_enc->turnNb > MAX_ROLLOVER)                        ? (true) : (false);
-    bool_t minRollOver          = (p_enc->turnNb < MIN_ROLLOVER)                        ? (true) : (false);
-    p_enc->rollOverError        = (maxRollOver || minRollOver || p_enc->rollOverError)  ? (true) : (false);
+    bool_t maxRollOver          = (p_enc->turnNb > MAX_ROLLOVER)? (true) : (false);
+    bool_t minRollOver          = (p_enc->turnNb < MIN_ROLLOVER)? (true) : (false);
+    p_enc->rollOverError        = (maxRollOver || minRollOver)  ? (true) : (false);
     // Saturate turnNb between -128 and 127
     p_enc->turnNb               = (maxRollOver) ? (MIN_ROLLOVER) : (p_enc->turnNb);
     p_enc->turnNb               = (minRollOver) ? (MAX_ROLLOVER) : (p_enc->turnNb);

@@ -50,9 +50,9 @@
 #define STATUS_ERROR_POSCONV                        (4) /*!< Unused error */
 #define STATUS_ERROR_POS_ROLLOVER                   (5) /*!< Position roll-over occurred */
 #define STATUS_ERROR_ENCODER2                       (6) /*!< Encoder_2 error too high */
-//#define STATUS_ERROR_DRV_NFAULT                     (7) /*!< Motor DRV nFault error */
-#define STATUS_ERROR_DRV1_FAULT                     (7) /*!< Motor1 DRV Fault error */
-#define STATUS_ERROR_DRV2_FAULT                     (8) /*!< Motor2 DRV Fault error */
+#define STATUS_ERROR_DRV_FAULT                      (7) /*!< Motor DRV nFault error */
+//#define STATUS_ERROR_DRV1_FAULT                     (7) /*!< Motor1 DRV Fault error */
+//#define STATUS_ERROR_DRV2_FAULT                     (8) /*!< Motor2 DRV Fault error */
 
 /***********************************************************************
  * COMMUNICATION CRC TABLE
@@ -193,18 +193,18 @@ typedef enum
  * @struct  mst2slv_reg_t
  * @brief   Master to Slave command structure (bits definition) for uOmodri
  */
-typedef struct __mst2slv_reg_t__
-{
-    uint16_t        TIMEOUT     : 8;    /*!< Bits 7-0   : R/W - Timeout disable system after no valid command in milliseconds           */
-    uint16_t        CMD_RSV1    : 2;    /*!< Bits 9-8   : R/W - Reserved                                                                */
-//    uint16_t        RST         : 1;    /*!< Bits 9     : R/W - Force a reset of CPU1, CPU1 periph, CPU2, CM, CM periph                 */
-    uint16_t        EI2OC       : 1;    /*!< Bits 10    : R/W - Enable/Disable incremental encoder index offset compensation - MOTOR_2  */
-    uint16_t        EI1OC       : 1;    /*!< Bits 11    : R/W - Enable/Disable incremental encoder index offset compensation - MOTOR_1  */
-    uint16_t        EPRE        : 1;    /*!< Bits 12    : R/W - Enable/Disable position rollover error - position range : -128 to +128  */
-    uint16_t        EM2         : 1;    /*!< Bits 13    : R/W - Enable(calibration procedure, alignment \& run)/Disable - MOTOR_2       */
-    uint16_t        EM1         : 1;    /*!< Bits 14    : R/W - Enable(calibration procedure, alignment \& run)/Disable - MOTOR_1       */
-    uint16_t        ES          : 1;    /*!< Bits 15    : R/W - Enable/Disable System                                                   */
-} mst2slv_reg_t;
+//typedef struct __mst2slv_reg_t__
+//{
+//    uint16_t        TIMEOUT     : 8;    /*!< Bits 7-0   : R/W - Timeout disable system after no valid command in milliseconds           */
+//    uint16_t        CMD_RSV1    : 2;    /*!< Bits 9-8   : R/W - Reserved                                                                */
+////    uint16_t        RST         : 1;    /*!< Bits 9     : R/W - Force a reset of CPU1, CPU1 periph, CPU2, CM, CM periph                 */
+//    uint16_t        EI2OC       : 1;    /*!< Bits 10    : R/W - Enable/Disable incremental encoder index offset compensation - MOTOR_2  */
+//    uint16_t        EI1OC       : 1;    /*!< Bits 11    : R/W - Enable/Disable incremental encoder index offset compensation - MOTOR_1  */
+//    uint16_t        EPRE        : 1;    /*!< Bits 12    : R/W - Enable/Disable position rollover error - position range : -128 to +128  */
+//    uint16_t        EM2         : 1;    /*!< Bits 13    : R/W - Enable(calibration procedure, alignment \& run)/Disable - MOTOR_2       */
+//    uint16_t        EM1         : 1;    /*!< Bits 14    : R/W - Enable(calibration procedure, alignment \& run)/Disable - MOTOR_1       */
+//    uint16_t        ES          : 1;    /*!< Bits 15    : R/W - Enable/Disable System                                                   */
+//} mst2slv_reg_t;
 
 /**
  * @union   mst2slv_reg_u
@@ -212,28 +212,39 @@ typedef struct __mst2slv_reg_t__
  */
 typedef union __mst2slv_reg_u__
 {
-  uint16_t          all;                /*!< Short (16bits) type access */
-  mst2slv_reg_t     bit;                /*!< @see command_mode_t        */
+    uint16_t        all;                /*!< Short (16bits) type access */
+    struct
+    {
+        uint16_t    TIMEOUT     : 8;    /*!< Bits 7-0   : R/W - Timeout disable system after no valid command in milliseconds           */
+        uint16_t    CMD_RSV1    : 2;    /*!< Bits 9-8   : R/W - Reserved                                                                */
+        uint16_t    EI2OC       : 1;    /*!< Bits 10    : R/W - Enable/Disable incremental encoder index offset compensation - MOTOR_2  */
+        uint16_t    EI1OC       : 1;    /*!< Bits 11    : R/W - Enable/Disable incremental encoder index offset compensation - MOTOR_1  */
+        uint16_t    EPRE        : 1;    /*!< Bits 12    : R/W - Enable/Disable position rollover error - position range : -128 to +128  */
+        uint16_t    EM2         : 1;    /*!< Bits 13    : R/W - Enable(calibration procedure, alignment \& run)/Disable - MOTOR_2       */
+        uint16_t    EM1         : 1;    /*!< Bits 14    : R/W - Enable(calibration procedure, alignment \& run)/Disable - MOTOR_1       */
+        uint16_t    ES          : 1;    /*!< Bits 15    : R/W - Enable/Disable System                                                   */
+    };
+//mst2slv_reg_t     bit;                /*!< @see command_mode_t        */
 } mst2slv_reg_u;
 
 /**
  * @struct  slv2mst_reg_t
  * @brief   Slave to Master status structure (bits definition) from uOmodri.
  */
-typedef struct __slv2mst_reg_t__
-{
-    uint16_t        ERROR_CODE  : 4;    /*!< Bits 3-0   : R/W - Timeout disable system after no valid command               */
-    uint16_t        STATUS_RSV1 : 3;    /*!< Bits 6-4   : R/W - Reserved                                                    */
-    uint16_t        IDX2T       : 1;    /*!< Bits 7     : R/W - incremental encoder status toggle on index detect - MOTOR_2 */
-    uint16_t        IDX1T       : 1;    /*!< Bits 8     : R/W - incremental encoder status toggle on index detect - MOTOR_1 */
-    uint16_t        IDX2D       : 1;    /*!< Bits 9     : R/W - incremental encoder status index detected - MOTOR_2         */
-    uint16_t        IDX1D       : 1;    /*!< Bits 10    : R/W - incremental encoder status index detected - MOTOR_1         */
-    uint16_t        M2R         : 1;    /*!< Bits 11    : R/W - MOTOR_2 ready/not ready                                     */
-    uint16_t        M2E         : 1;    /*!< Bits 12    : R/W - MOTOR_2 enabled/not enabled                                 */
-    uint16_t        M1R         : 1;    /*!< Bits 13    : R/W - MOTOR_1 ready/not ready                                     */
-    uint16_t        M1E         : 1;    /*!< Bits 14    : R/W - MOTOR_1 enabled/not enabled                                 */
-    uint16_t        SE          : 1;    /*!< Bits 15    : R/W - System enabled/disabled                                     */
-} slv2mst_reg_t;
+//typedef struct __slv2mst_reg_t__
+//{
+//    uint16_t        ERROR_CODE  : 4;    /*!< Bits 3-0   : R/W - Timeout disable system after no valid command               */
+//    uint16_t        STATUS_RSV1 : 3;    /*!< Bits 6-4   : R/W - Reserved                                                    */
+//    uint16_t        IDX2T       : 1;    /*!< Bits 7     : R/W - incremental encoder status toggle on index detect - MOTOR_2 */
+//    uint16_t        IDX1T       : 1;    /*!< Bits 8     : R/W - incremental encoder status toggle on index detect - MOTOR_1 */
+//    uint16_t        IDX2D       : 1;    /*!< Bits 9     : R/W - incremental encoder status index detected - MOTOR_2         */
+//    uint16_t        IDX1D       : 1;    /*!< Bits 10    : R/W - incremental encoder status index detected - MOTOR_1         */
+//    uint16_t        M2R         : 1;    /*!< Bits 11    : R/W - MOTOR_2 ready/not ready                                     */
+//    uint16_t        M2E         : 1;    /*!< Bits 12    : R/W - MOTOR_2 enabled/not enabled                                 */
+//    uint16_t        M1R         : 1;    /*!< Bits 13    : R/W - MOTOR_1 ready/not ready                                     */
+//    uint16_t        M1E         : 1;    /*!< Bits 14    : R/W - MOTOR_1 enabled/not enabled                                 */
+//    uint16_t        SE          : 1;    /*!< Bits 15    : R/W - System enabled/disabled                                     */
+//} slv2mst_reg_t;
 
 /**
  * @union   slv2mst_reg_u
@@ -241,8 +252,22 @@ typedef struct __slv2mst_reg_t__
  */
 typedef union __slv2mst_reg_u__
 {
-  uint16_t          all;                /*!< Short (16bits) type access */
-  slv2mst_reg_t     bit;                /*!< @see DRV_Stat00_t          */
+    uint16_t        all;                /*!< Short (16bits) type access */
+    struct
+    {
+        uint16_t    ERROR_CODE  : 4;    /*!< Bits 3-0   : R/W - Timeout disable system after no valid command               */
+        uint16_t    STATUS_RSV1 : 3;    /*!< Bits 6-4   : R/W - Reserved                                                    */
+        uint16_t    IDX2T       : 1;    /*!< Bits 7     : R/W - incremental encoder status toggle on index detect - MOTOR_2 */
+        uint16_t    IDX1T       : 1;    /*!< Bits 8     : R/W - incremental encoder status toggle on index detect - MOTOR_1 */
+        uint16_t    IDX2D       : 1;    /*!< Bits 9     : R/W - incremental encoder status index detected - MOTOR_2         */
+        uint16_t    IDX1D       : 1;    /*!< Bits 10    : R/W - incremental encoder status index detected - MOTOR_1         */
+        uint16_t    M2R         : 1;    /*!< Bits 11    : R/W - MOTOR_2 ready/not ready                                     */
+        uint16_t    M2E         : 1;    /*!< Bits 12    : R/W - MOTOR_2 enabled/not enabled                                 */
+        uint16_t    M1R         : 1;    /*!< Bits 13    : R/W - MOTOR_1 ready/not ready                                     */
+        uint16_t    M1E         : 1;    /*!< Bits 14    : R/W - MOTOR_1 enabled/not enabled                                 */
+        uint16_t    SE          : 1;    /*!< Bits 15    : R/W - System enabled/disabled                                     */
+    };
+//  slv2mst_reg_t     bit;                /*!< @see DRV_Stat00_t          */
 } slv2mst_reg_u;
 
 /**
@@ -279,13 +304,13 @@ typedef struct __mst2slv_msg_t__
  * @struct  mst2slv_msg_cla_t
  * @brief   Master 2 Slave structure associated with COM_msgExtract_cla (state machine)
  */
-typedef struct __mst2slv_msg_cla_t__
-{
-    com_rx_state_e  msg_rx_state;
-    uint32_t        msg_crc32;
-    uint16_t        msg_rx;
-    uint16_t        msg_tmp;
-} mst2slv_msg_cla_t;
+//typedef struct __mst2slv_msg_cla_t__
+//{
+//    com_rx_state_e  msg_rx_state;
+//    uint32_t        msg_crc32;
+//    uint16_t        msg_rx;
+//    uint16_t        msg_tmp;
+//} mst2slv_msg_cla_t;
 
 /**
  * @struct  slv2mst_msg_t
@@ -697,9 +722,9 @@ typedef struct __com_dbg_rx_msg_t__
 bool_t COM_msgExtract(mst2slv_msg_t*,  cmd_t*, cmd_t*);
 void COM_msgCreate(motor_t*, motor_t*, slv2mst_msg_t*);
 void COM_resetCmdStruct(cmd_t*);
-void COM_resetMsgExtractStruct(mst2slv_msg_cla_t*);
+//void COM_resetMsgExtractStruct(mst2slv_msg_cla_t*);
 uint32_t COM_crc32(uint16_t*, uint16_t);
-uint32_t COM_crc32_cla(mst2slv_msg_cla_t*);
+//uint32_t COM_crc32_cla(mst2slv_msg_cla_t*);
 #else
 void COM_msgDbgTx(dbg_uart_addr_t*, dbg_uart_msg_t*);
 //void COM_msgDbgTx(com_dbg_tx_msg_t*, uint8_t);
