@@ -26,11 +26,6 @@
 	</natures>
 	<linkedResources>
 		<link>
-			<name>2838x_RAM_lnk_cm.cmd</name>
-			<type>1</type>
-			<locationURI>C2000WARE_ROOT/device_support/f2838x/common/cmd/2838x_RAM_lnk_cm.cmd</locationURI>
-		</link>
-		<link>
 			<name>device/cm.c</name>
 			<type>1</type>
 			<locationURI>C2000WARE_ROOT/device_support/f2838x/common/source/cm.c</locationURI>
@@ -39,6 +34,11 @@
 			<name>device/startup_cm.c</name>
 			<type>1</type>
 			<locationURI>C2000WARE_ROOT/device_support/f2838x/common/source/startup_cm.c</locationURI>
+		</link>
+		<link>
+			<name>inc/communication.h</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/uomodri_c28/inc/communication.h</locationURI>
 		</link>
 		<link>
 			<name>device/driverlib_cm/aes.c</name>
@@ -159,7 +159,7 @@
 	<variableList>
 		<variable>
 			<name>C2000WARE_ROOT</name>
-			<value>file:/C:/STM32Toolchain/TI/c2000/C2000Ware_3_04_00_00</value>
+			<value>file:/C:/STM32Toolchain/TI/c2000/C2000Ware_4_03_00_00</value>
 		</variable>
 	</variableList>
 </projectDescription>

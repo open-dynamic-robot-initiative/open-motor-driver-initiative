@@ -1,80 +1,95 @@
 #ifndef __UOMODRI_CM_HAL_CONFIG_HANDLERS_H__
 #define __UOMODRI_CM_HAL_CONFIG_HANDLERS_H__
 
-// drivers
+/************************************************************************
+ * INCLUDES
+ ************************************************************************/
 #include "driverlib_cm.h"
 #include "cm.h"
 
 #include "hal_cm.h"
 #include "uomodri_cm_user_defines.h"
 
-//extern float32_t    arrayTx[4];
-//extern float32_t    arrayRx[4];
-extern uint8_t      arrayTx[MSG_TX_SIZE];
-extern uint8_t      arrayRx[MSG_RX_SIZE];
-extern __interrupt void IPC_ISR0(void);
+/************************************************************************
+ * GLOBAL VARIABLES
+ ************************************************************************/
+extern dbg_uart_msg_t dbg_uart_tx_msg;
 
-static const UART_TypeDef uartCfg =
-{.uartCfg = (UART_CONFIG_WLEN_8 | UART_CONFIG_STOP_ONE |UART_CONFIG_PAR_NONE),
- .baudRate = 12000000,//7372800, //3686400, //115200,
- .dmaFlags = (UART_DMA_TX | UART_DMA_RX),
- .dmaEnable = true,
- .loopBackEnable = true,
+/************************************************************************
+ * FUNCTIONS DECLARATION
+ ************************************************************************/
+//extern __interrupt void ipc_isr0(void);
+extern __interrupt UART_RX_IntHandler(void);
+
+/************************************************************************
+ * VARIABLES INITIALIZATION
+ ************************************************************************/
+static const uart_cfg_t cm_uartCfg =
+{
+ .uartCfg           = (UART_CONFIG_WLEN_8 | UART_CONFIG_STOP_ONE |UART_CONFIG_PAR_NONE),
+ .baudRate          = 12000000,
+ .dmaFlags          = UART_DMA_TX,// | UART_DMA_RX,
+// .intFlags          = UART_INT_DMATX | UART_INT_TX, //UART_INT_DMARX | UART_INT_TX | UART_INT_RX,
+ .dmaEnable         = true,
+// .intEnable         = true,
+// .p_fnHandler       = NULL,//UART_RX_IntHandler(),
 };
 
-static const uDMA_TypeDef udmaCfgList[] =
+static const udma_cfg_t cm_udmaCfgList[] =
 {
- {.dmaChannel   = UDMA_CHANNEL_UART0_RX,
-  .dmaCfg       = (UDMA_SIZE_8 | UDMA_SRC_INC_NONE | UDMA_DST_INC_8 | UDMA_ARB_4 | UDMA_NEXT_USEBURST),
-//  .flagAttr     = UDMA_CH_ATTR_ALL,
-//  .index        = ,
-  .srcAddr      = (void *)(UART0_BASE + UART_O_DR),
-  .dstAddr      = (void *)&arrayRx[0],
-  .transferMode = UDMA_MODE_BASIC,
-  .transferSize = MSG_RX_SIZE,
+// {
+//  .dmaChannel       = UDMA_CHANNEL_UART0_RX,
+//  .dmaCfg           = (UDMA_SIZE_8 | UDMA_SRC_INC_NONE | UDMA_DST_INC_8 | UDMA_ARB_4 | UDMA_NEXT_USEBURST),
+//  .srcAddr          = (void *)(UART0_BASE + UART_O_DR),//(void *)&dbg_uart_tx_msg,
+////  .dstAddr          = (void *)(UART0_BASE + UART_O_DR),
+//  .transferMode     = UDMA_MODE_BASIC,
+//  .transferSize     = sizeof(dbg_uart_msg_t),
+// },
+ {
+  .dmaChannel       = UDMA_CHANNEL_UART0_TX,
+  .dmaCfg           = (UDMA_SIZE_8 | UDMA_SRC_INC_8 | UDMA_DST_INC_NONE | UDMA_ARB_8 | UDMA_NEXT_USEBURST),
+  .srcAddr          = (void *)&dbg_uart_tx_msg,
+  .dstAddr          = (void *)(UART0_BASE + UART_O_DR),
+  .transferMode     = UDMA_MODE_BASIC,
+  .transferSize     = sizeof(dbg_uart_msg_t),
  },
- {.dmaChannel   = UDMA_CHANNEL_UART0_TX,
-  .dmaCfg       = (UDMA_SIZE_8 | UDMA_SRC_INC_8 | UDMA_DST_INC_NONE | UDMA_ARB_4 | UDMA_NEXT_USEBURST),
-//  .flagAttr     = UDMA_CH_ATTR_ALL,
-  .srcAddr      = (void *)&arrayTx[0],
-  .dstAddr      = (void *)(UART0_BASE + UART_O_DR),
-  .transferMode = UDMA_MODE_BASIC,
-  .transferSize = MSG_TX_SIZE,
- },
- {.dmaChannel   = 0xFFFFFFFF},
+ {.dmaChannel       = UINT32_MAX},
 };
 
-static const IPC_TypeDef ipcCfgList[] =
+static const ipc_cfg_t  cm_ipcCfgList[] =
 {
- {.ipcType          = IPC_CM_L_CPU1_R,
-  .p_msgQ           = NULL,
-  .ipcInt           = IPC_INT0,
-  .ipcIntHandler    = &IPC_ISR0,
+ {
+  .ipcType          = IPC_CM_L_CPU1_R,
+  .ipcFlag          = IPC_CPU1_TO_CM_FLAG,
+  //  .ipcInt           = IPC_INT0,
+  //  .p_ipcIntHandler  = &ipc_isr0,
   .ipcMsgQEnable    = false,
-  .ipcIntEnable     = true,
+  .ipcIntEnable     = false,
  },
  {.ipcType          = IPC_TOTAL_NUM},
 };
 
-static const CRC_TypeDef crcCfg =
-{.poly          = 0x04C11DB7,
- .width         = 32,
- .seed          = 0xffffffff,
- .endianness    = GCRC_ENDIANNESS_BIG,
- .dataType      = GCRC_DATATYPE_32BIT,
- .bitRev        = false,
- .dataMask      = 0,
+static const gcrc_cfg_t cm_crcCfg =
+{
+ .poly              = GCRC_FIXEDPATH_POLY,
+ .polysize          = GCRC_FIXEDPATH_POLYSIZE,
+ .seed              = UINT32_MAX,
+ .endianness        = GCRC_ENDIANNESS_BIG,
+ .dataType          = GCRC_DATATYPE_32BIT,
+ .dataMask          = GCRC_FIXEDPATH_DATAMASK,
+ .bitRev            = GCRC_FIXEDPATH_BITREVERSE,
 };
 
 
 /** @var    HAL     hal
  *  @brief  General configuration structure for the Hardware Abstraction Layer.
  */
-static const HAL_CM hal_cm =
-{.p_uartHandler = &uartCfg,
- .p_udmaHandler = udmaCfgList,
- .p_ipcHandler  = ipcCfgList,
- .p_crcHandler  = NULL,//&crcCfg,
+static const hal_cm_t   hal_cm =
+{
+ .p_uartHandle      = &cm_uartCfg,
+ .p_udmaHandle      = cm_udmaCfgList,
+ .p_ipcHandle       = cm_ipcCfgList,
+ .p_crcHandle       = NULL,//&cm_crcCfg,
 };
 
-#endif  /*__UOMODRI_HAL_CM_CONFIG_HANDLERS_H__*/
+#endif  /*__UOMODRI_CM_HAL_CONFIG_HANDLERS_H__*/

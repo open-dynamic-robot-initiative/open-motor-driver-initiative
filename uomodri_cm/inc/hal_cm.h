@@ -6,113 +6,91 @@
 #ifndef __HAL_CM_H__
 #define __HAL_CM_H__
 
+/************************************************************************
+ * INCLUDES
+ ************************************************************************/
 #include "driverlib_cm.h"
 #include "cm.h"
 
+/************************************************************************
+ * TYPDEF DEFINES
+ ************************************************************************/
 /**
- * @struct  UART_TypeDef
+ * @struct  uart_cfg_t
  * @brief   UART global Hardware Abstraction Layer structure for CM microcontroller.
  */
-typedef struct _UART_Cfg_TypeDef_
+typedef struct __UART_CFG_t__
 {
     uint32_t    uartCfg;
     uint32_t    baudRate;
     uint32_t    dmaFlags;
+//    uint32_t    intFlags;
     bool        dmaEnable;
-    bool        loopBackEnable;
-} UART_TypeDef;
-
+//    bool        intEnable;
+//    void        (*p_fnHandler)(void);
+} uart_cfg_t;
 
 /**
- * @struct  uDMA_TypeDef
+ * @struct  udma_cfg_t
  * @brief   uDMA global Hardware Abstraction Layer structure for the CM microcontroller
  */
-typedef struct _uDMA_Cfg_TypeDef_
+typedef struct __UDMA_CFG_t__
 {
     uint32_t    dmaChannel;
     uint32_t    dmaCfg;
-//    uint32_t    flagAttr;
-//    int32_t     index;
     void*       srcAddr;
     void*       dstAddr;
     uint32_t    transferMode;
     uint32_t    transferSize;
-//    uint32_t    transferSize;//    uint32_t dmaRxBase;
-//    uint32_t    srcWrapSize;
-//    uint32_t    destWrapSize;
-//    uint32_t    config;
-//    uint16_t    burstSize;
-//    int16_t     destStep;
-//    int16_t     srcStep;
-//    const void* destAddr;
-//    const void* srcAddr;
-//    DMA_Trigger trigger;
-} uDMA_TypeDef;
-
+} udma_cfg_t;
 
 /**
- * @struct  IT_TypeDef
- * @brief   Interrupt source configuration handler
+ * @struct  ipc_cfg_t
+ * @brief   IPC global Hardware Abstraction Layer structure for CM microcontroller.
  */
-typedef struct _IT_TypeDef_
-{
-//    const ID_ENUM   motorID;
-    uint32_t    intNum;
-    uint32_t    intPeriphBase;
-    uint16_t    intPeriphSrc;
-    uint16_t    intCpuGroup;
-    uint16_t    intAckGroup;
-    void        (*handler)(void);
-} IT_TypeDef;
-
-typedef struct _IPC_TypeDef_
+typedef struct __IPC_CFG_t__
 {
     const IPC_Type_t                ipcType;
-    volatile IPC_MessageQueue_t*    p_msgQ;
+    volatile IPC_MessageQueue_t*    p_ipcMsgQ;
     const uint32_t                  ipcIntMsgQL;
     const uint32_t                  ipcIntMsgQR;
+    const uint32_t                  ipcFlag;
     const uint32_t                  ipcInt;
-    void                            (*ipcIntHandler)(void);
+    void                            (*p_ipcIntHandler)(void);
     const bool                      ipcMsgQEnable;
     const bool                      ipcIntEnable;
-} IPC_TypeDef;
+} ipc_cfg_t;
 
-typedef struct _GCRC_TypeDef_
+/**
+ * @struct  gcrc_cfg_t
+ * @brief   CRC global Hardware Abstraction Layer structure for the CM microcontroller
+ */
+typedef struct __GCRC_CFG_t__
 {
     uint32_t    poly;
-    uint32_t    width;
+    uint32_t    polysize;
     uint32_t    seed;
     uint32_t    endianness;
     uint32_t    dataType;
-    bool        bitRev;
     uint32_t    dataMask;
-} CRC_TypeDef;
+    bool        bitRev;
+} gcrc_cfg_t;
 
 /**
- * @struct  HAL_CM
+ * @struct  hal_cm_t
  * @brief   General HAL structure handler for the CM microcontroller
  */
 typedef struct __HAL_CM__
 {
-    const UART_TypeDef* p_uartHandler;
-    const IPC_TypeDef*  p_ipcHandler;
-    const CRC_TypeDef*  p_crcHandler;
-    const uDMA_TypeDef* p_udmaHandler;
-} HAL_CM;
+    const uart_cfg_t*   p_uartHandle;
+    const ipc_cfg_t*    p_ipcHandle;
+    const gcrc_cfg_t*   p_crcHandle;
+    const udma_cfg_t*   p_udmaHandle;
+} hal_cm_t;
 
-
-/*
- * Function prototypes
- */
-
-void HAL_CM_init(const HAL_CM*);
-void HAL_CM_IT_init(const IT_TypeDef*);
-
-// ADC interrupt service routine
-//extern __interrupt void adc1ISR(void);
-//extern __interrupt void adc2ISR(void);
-//extern __interrupt void adc3ISR(void);
-//extern __interrupt void adc4ISR(void);
-//extern __interrupt void isrMotor1(void);
+/************************************************************************
+ * FUNCTIONS DECLARATION
+ ************************************************************************/
+void HAL_CM_init(const hal_cm_t*);
 
 #endif

@@ -27,6 +27,11 @@
 	</natures>
 	<linkedResources>
 		<link>
+			<name>usblib.lib</name>
+			<type>1</type>
+			<locationURI>C2000WARE_ROOT/libraries/communications/usb/f2838x/lib/usblib.lib</locationURI>
+		</link>
+		<link>
 			<name>device/f2838x_globalvariabledefs.c</name>
 			<type>1</type>
 			<locationURI>C2000WARE_ROOT/device_support/f2838x/headers/source/f2838x_globalvariabledefs.c</locationURI>
@@ -335,7 +340,11 @@
 	<variableList>
 		<variable>
 			<name>C2000WARE_ROOT</name>
-			<value>file:/C:/STM32Toolchain/TI/c2000/C2000Ware_3_04_00_00</value>
+			<value>file:/C:/STM32Toolchain/TI/c2000/C2000Ware_4_03_00_00</value>
+		</variable>
+		<variable>
+			<name>SYSCONFIG_TOOL</name>
+			<value>file:/C:/STM32Toolchain/TI/ccs1000/ccs/utils/sysconfig_1.12.1/sysconfig_cli.bat</value>
 		</variable>
 	</variableList>
 </projectDescription>

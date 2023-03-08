@@ -1,1 +1,7 @@
 /Debug/
+/Debug_Flash/
+/Release/
+/Release_Flash/
+/device/
+/device/driverlib_cm/
+

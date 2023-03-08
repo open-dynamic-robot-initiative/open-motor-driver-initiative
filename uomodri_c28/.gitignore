@@ -1,1 +1,9 @@
 /Debug/
+/Debug_Flash/
+/Release/
+/Release_Flash/
+/device/
+/device/driverlib/
+/device/source/
+/html/
+/uOmodri_c28.doxyfile
