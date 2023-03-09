@@ -7,3 +7,5 @@
 /device/source/
 /html/
 /uOmodri_c28.doxyfile
+/inc/fifo.h
+/src/fifo.c
