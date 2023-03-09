@@ -53,7 +53,7 @@ inline bool_t MOT_runControl(motor_t* p_motor)
     cmd_reg_u       cmd_reg     = {.all = p_cmd->cmdArray.all};
     p_enc->indexOffset          = cmd_reg.encOffsetEnable;
 
-#define USE_MACRO   1
+#define USE_MACRO   0
 
 #if (USE_MACRO)
     uint32_t eqepBase           = p_enc->p_qepHandle->eqepBase;
