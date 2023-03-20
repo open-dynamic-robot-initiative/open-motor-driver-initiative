@@ -68,15 +68,21 @@ typedef union __cmd_bit_reg_u__
  */
 typedef struct __pi_t__
 {
+#if (CLA_CORE_ENABLE)
+    float32_t*          p_fb;           /*!< Pointer on the feedback current */
+    float32_t*          p_set;          /*!< Pointer on the setpoint current */
+    float32_t*          p_sat;          /*!< Pointer on the saturation value to use */
+#else
     float32_t* const    p_fb;           /*!< Pointer on the feedback current */
     float32_t* const    p_set;          /*!< Pointer on the setpoint current */
+    float32_t* const    p_sat;          /*!< Pointer on the saturation value to use */
+#endif
     float32_t           err;            /*!< Current error */
     float32_t           kp;             /*!< Proportional gain */
     float32_t           ki;             /*!< Integral gain */
     float32_t           integral;       /*!< Integral term partial computation */
     float32_t           ff;             /*!< Feed-forward term */
     float32_t           out;            /*!< Controller output */
-    float32_t* const    p_sat;          /*!< Pointer on the saturation value to use */
 } pi_t;
 
 /**
@@ -85,18 +91,30 @@ typedef struct __pi_t__
  */
 typedef struct __pd_t__
 {
+#if (CLA_CORE_ENABLE)
+    float32_t*          p_fbTheta;      /*!< Pointer on the feedback position */
+    float32_t*          p_setTheta;     /*!< Pointer on the setpoint position */
+    float32_t*          p_fbSpeed;      /*!< Pointer on the feedback speed */
+    float32_t*          p_setSpeed;     /*!< Pointer on the Set point speed */
+    float32_t*          p_kp;           /*!< Pointer on the Proportional gain */
+    float32_t*          p_kd;           /*!< Pointer on the Derivative gain */
+    float32_t*          p_ff;           /*!< Pointer on the feed-forward term */
+    float32_t*          p_sat;          /*!< Controller saturation */
+#else
     float32_t* const    p_fbTheta;      /*!< Pointer on the feedback position */
     float32_t* const    p_setTheta;     /*!< Pointer on the setpoint position */
-    float32_t           errTheta;       /*!< Error position */
     float32_t* const    p_fbSpeed;      /*!< Pointer on the feedback speed */
     float32_t* const    p_setSpeed;     /*!< Pointer on the Set point speed */
-    float32_t           errSpeed;       /*!< Error speed */
     float32_t* const    p_kp;           /*!< Pointer on the Proportional gain */
     float32_t* const    p_kd;           /*!< Pointer on the Derivative gain */
-    float32_t           derivative;     /*!< Derivative term partial computation */
     float32_t* const    p_ff;           /*!< Pointer on the feed-forward term */
-    float32_t           out;            /*!< Controller output */
     float32_t* const    p_sat;          /*!< Controller saturation */
+#endif
+    float32_t           errTheta;       /*!< Error position */
+    float32_t           errSpeed;       /*!< Error speed */
+    float32_t           derivative;     /*!< Derivative term partial computation */
+    float32_t           out;            /*!< Controller output */
+
 } pd_t;
 
 typedef struct __params_t__
@@ -107,17 +125,29 @@ typedef struct __params_t__
     float32_t       kv;                 /*!< Motor speed constant [RPM/V or rad/s/V] */
     float32_t       ke;                 /*!< Motor back EMF constant [V/rad/s] (electrical radians) = 1/kv */
     float32_t       ki;                 /*!< Motor torque constant [N.m/A] */
+#if (CLA_CORE_ENABLE)
+    float32_t       polePairs;          /*!< Number of pole pairs */
+#else
     const float32_t polePairs;          /*!< Number of pole pairs */
+#endif
 } params_t;
 
 typedef struct __acquisitions_t__
 {
     // ADC result registers
+#if (CLA_CORE_ENABLE)
+    volatile uint16_t*  p_vBusMeasReg;
+    volatile uint16_t*  p_vExtMeasReg;
+    volatile int16_t*   p_iaMeasReg;
+    volatile int16_t*   p_ibMeasReg;
+    volatile int16_t*   p_icMeasReg;
+#else
     volatile uint16_t*  const p_vBusMeasReg;
     volatile uint16_t*  const p_vExtMeasReg;
     volatile int16_t*   const p_iaMeasReg;
     volatile int16_t*   const p_ibMeasReg;
     volatile int16_t*   const p_icMeasReg;
+#endif
     // ADC values scaled
     float32_t           vbus;       // [V]
     float32_t           vExt;       // [V]
@@ -193,21 +223,21 @@ typedef struct __foc_control_t__
 // This threshold corresponds to the minimum current for the measure to be considered as correct.
 #define FOC_RE_CURRENT_THRESHOLD    0.1f
 
-#define FOC_GET_MEASURES(p_acq)                                                                         \
-        p_acq.ia        = (float32_t)(*p_acq.p_iaMeasReg) * ADC_MOTOR_CURRENT_SCALE;                    \
-        p_acq.ib        = (float32_t)(*p_acq.p_ibMeasReg) * ADC_MOTOR_CURRENT_SCALE;                    \
-        p_acq.ic        = (float32_t)(*p_acq.p_icMeasReg) * ADC_MOTOR_CURRENT_SCALE;                    \
-        float32_t vbus  = __fmax(((float32_t)(*p_acq.p_vBusMeasReg) * ADC_VBUS_VOLTAGE_SCALE), 1.0f);   \
-        UOMODRI_VBUS_FLT(p_acq.vBusFlt, p_acq.vbus, vbus);                                              \
-        float32_t vext  = (float32_t)(*p_acq.p_vExtMeasReg) * ADC_VEXT12_VOLTAGE_SCALE;                 \
-        UOMODRI_VEXT_FLT(p_acq.vExtFlt, p_acq.vExt, vext);
+//#define FOC_GET_MEASURES(p_acq)                                                                         \
+//        p_acq.ia        = (float32_t)(*p_acq.p_iaMeasReg) * ADC_MOTOR_CURRENT_SCALE;                    \
+//        p_acq.ib        = (float32_t)(*p_acq.p_ibMeasReg) * ADC_MOTOR_CURRENT_SCALE;                    \
+//        p_acq.ic        = (float32_t)(*p_acq.p_icMeasReg) * ADC_MOTOR_CURRENT_SCALE;                    \                                                                                                 \
+//        float32_t vbus  = __fmax(((float32_t)(*p_acq.p_vBusMeasReg) * ADC_VBUS_VOLTAGE_SCALE), 1.0f);   \
+//        UOMODRI_VBUS_FLT(p_acq.vBusFlt, p_acq.vbus, vbus);                                              \
+//        float32_t vext  = (float32_t)(*p_acq.p_vExtMeasReg) * ADC_VEXT12_VOLTAGE_SCALE;                 \
+//        UOMODRI_VEXT_FLT(p_acq.vExtFlt, p_acq.vExt, vext);
 
 /***********************************************************************
  * FUNCTIONS DECLARATION
  ***********************************************************************/
-inline void FOC_getMeasures(acq_t*);
-inline void FOC_runControl(foc_t*);
-inline float32_t FOC_runPD(pd_t*);
-void FOC_resetStruct(foc_t*);
+//inline void FOC_getMeasures(acq_t*);
+//inline void FOC_runControl(foc_t*);
+//inline float32_t FOC_runPD(pd_t*);
+////inline void FOC_resetStruct(foc_t*);
 
 #endif

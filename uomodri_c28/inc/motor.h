@@ -117,8 +117,8 @@ typedef struct __MOTOR_STRUCT_t__
 /***********************************************************************
  * FUNCTIONS DECLARATION
  ***********************************************************************/
-inline void MOT_runCommand(motor_t*, float32_t, float32_t, float32_t);
-inline void MOT_stopCommand(motor_t*);
-inline bool_t MOT_runControl(motor_t*);
+//inline void MOT_runCommand(motor_t*, float32_t, float32_t, float32_t);
+//inline void MOT_stopCommand(motor_t*);
+//inline bool_t MOT_runControl(motor_t*);
 
 #endif /* __MOTOR_H__ */

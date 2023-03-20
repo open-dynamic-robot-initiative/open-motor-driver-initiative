@@ -13,6 +13,7 @@
 #include "as5047u.h"
 #endif
 #include "ws2812b.h"
+#include "uOmodri_shared.h"
 #include "encoder.h"
 #include "foc.h"
 #include "motor.h"
@@ -20,7 +21,7 @@
 #include "uomodri_hal_config_handlers.h"
 #include "uomodri_prj_config_handlers.h"
 #if (CLA_CORE_ENABLE)
-#include "cla_shared.h"
+#include <uOmodri_shared.h>
 #endif
 
 /***********************************************************************
@@ -28,7 +29,7 @@
  ***********************************************************************/
 extern motor_t          motor[2];
 #if (CLA_CORE_ENABLE)
-extern as_enc_t         asenc_cfg[0];
+//extern as_enc_t         asenc_cfg[0];
 #endif
 extern const hal_cfg_t  hal;
 extern cmd_t            cmd_uOmodri[2];
@@ -45,14 +46,14 @@ extern uint32_t Cla1ConstRunStart, Cla1ConstLoadStart, Cla1ConstLoadSize;
 
 //#pragma DATA_SECTION(angle,"Cla1ToCpuMsgRAM");
 //float32_t           angle[2];
-#pragma DATA_SECTION(thetaAbs,"Cla1ToCpuMsgRAM");
-float32_t               thetaAbs        = 0.0f;
-#pragma DATA_SECTION(velocity,"Cla1ToCpuMsgRAM");
-float32_t               velocity        = 0.0f;
-#pragma DATA_SECTION(cla_new_flag,"Cla1ToCpuMsgRAM");
-bool_t                  cla_new_flag    = false;
-#pragma DATA_SECTION(cpu1_ready_flag,"CpuToCla1MsgRAM");
-bool_t                  cpu1_ready_flag = false;
+//#pragma DATA_SECTION(thetaAbs,"Cla1ToCpuMsgRAM");
+//float32_t               thetaAbs        = 0.0f;
+//#pragma DATA_SECTION(velocity,"Cla1ToCpuMsgRAM");
+//float32_t               velocity        = 0.0f;
+//#pragma DATA_SECTION(cla_new_flag,"Cla1ToCpuMsgRAM");
+//bool_t                  cla_new_flag    = false;
+//#pragma DATA_SECTION(cpu1_ready_flag,"CpuToCla1MsgRAM");
+//bool_t                  cpu1_ready_flag = false;
 //#pragma DATA_SECTION(pos_as5047u, "MSGRAM_CPU_TO_CM");
 //BitDataFrame32_u    pos_as5047u;
 //#pragma DATA_SECTION(vel_as5047u, "MSGRAM_CPU_TO_CM");
@@ -75,10 +76,10 @@ inline void IPC_CpuToCmAddrSync(void);
  */
 void main(void)
 {
-#if (CLA_CORE_ENABLE)
-    cla_new_flag    = false;
-    cpu1_ready_flag = false;
-#endif
+//#if (CLA_CORE_ENABLE)
+//    cla_new_flag    = false;
+//    cpu1_ready_flag = false;
+//#endif
     // uOmodri low level device initialization
     MCU_ini();
     // Hardware Abstraction Layer initialization
@@ -90,8 +91,8 @@ void main(void)
     HAL_ADC_offsetCalib(motor[MOTOR_1].p_motorHalCfg);
     HAL_ADC_offsetCalib(motor[MOTOR_2].p_motorHalCfg);
     // Force a reset of FOC structures
-    FOC_resetStruct(motor[MOTOR_1].p_motorFOC);
-    FOC_resetStruct(motor[MOTOR_2].p_motorFOC);
+//    FOC_resetStruct(motor[MOTOR_1].p_motorFOC);
+//    FOC_resetStruct(motor[MOTOR_2].p_motorFOC);
     // Force a reset of the intermediate command structures. Working structures are embedded in FOC structures.
     COM_resetCmdStruct(&cmd_uOmodri[MOTOR_1]);
     COM_resetCmdStruct(&cmd_uOmodri[MOTOR_2]);
@@ -102,9 +103,9 @@ void main(void)
 #if (CM_CORE_ENABLE)
     IPC_CpuToCmAddrSync();
 #endif
-#if (CLA_CORE_ENABLE)
-    cpu1_ready_flag         = true;//(cpu1_ready_flag == true) ? (false) : (true);
-#endif
+//#if (CLA_CORE_ENABLE)
+//    cpu1_ready_flag         = true;//(cpu1_ready_flag == true) ? (false) : (true);
+//#endif
     bool_t cmd_msg_valid    = false;
     bool_t timeout_flag     = false;
 
@@ -520,7 +521,7 @@ __attribute__((interrupt)) void adc_isrMotor1(void)
 #endif
     while(DMA_getTransferStatusFlag(DMA_CMD_2_FOC_BASE_ADDR));
     // Motor control
-    motor[MOTOR_1].itDone = MOT_runControl(&motor[MOTOR_1]);
+//    motor[MOTOR_1].itDone = MOT_runControl(&motor[MOTOR_1]);
 #if (defined DEBUG) && (CM_CORE_ENABLE) && (0)
     if(!IPC_isFlagBusyLtoR(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG))
     {
@@ -575,7 +576,7 @@ __attribute__((interrupt)) void adc_isrMotor2(void)
 #endif
     while(DMA_getTransferStatusFlag(DMA_CMD_2_FOC_BASE_ADDR));
     // Motor control
-    motor[MOTOR_2].itDone = MOT_runControl(&motor[MOTOR_2]);
+//    motor[MOTOR_2].itDone = MOT_runControl(&motor[MOTOR_2]);
     if(!IPC_isFlagBusyLtoR(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG))
         {
 #if (0)

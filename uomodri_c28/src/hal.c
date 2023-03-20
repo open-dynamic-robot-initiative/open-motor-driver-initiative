@@ -8,7 +8,7 @@
  ***********************************************************************/
 #include "device.h"
 #include "hal.h"
-#include "cla_shared.h"
+//#include "cla_shared.h"
 
 /***********************************************************************
  * FUNCTIONS DECLARATION
@@ -726,7 +726,7 @@ void HAL_CLA_ini(const cla_cfg_t* p_clacCfg)
     // Enable Tasks 1 and 8
     CLA_enableIACK(CLA1_BASE);
     CLA_enableTasks(CLA1_BASE, (1 << p_clacCfg->claTaskNum));
-    CLA_forceTasks(CLA1_BASE, (1 << p_clacCfg->claTaskNum));
+//    CLA_forceTasks(CLA1_BASE, (1 << p_clacCfg->claTaskNum));
     }
 
     return;

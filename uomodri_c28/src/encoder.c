@@ -25,7 +25,7 @@
  * @brief           Reset the ENCODER structure
  * @param[inout]    *p_enc   Pointer on the ENCODER structure to reset.
  */
-void ENC_resetStruct(encoder_t* p_enc)
+inline void ENC_resetStruct(encoder_t* p_enc)
 {
     speed_t* p_speed        = &p_enc->speed;
 

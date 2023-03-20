@@ -52,33 +52,33 @@ static const int_cfg_t InterruptList[] =
  {.intNum           = UINT32_MAX},
 };
 
-#if (CLA_CORE_ENABLE)
-static const asenc_cfg_t  ASencCfgList[] =
-{
- {
-  .spiHandle        = ENC_SPI_BASE,
-  .gpioNumber_CS    = EXT_DBG_SPI_CS1,
- }
-};
-
-static as_enc_t asenc_cfg[] =
-{
- {
-  .asencHandle      = &ASencCfgList[MOTOR_1],
-  .angleData.all    = 0U,
-  .velData.all      = 0U,
-  .degAngle         = 0.0f,
-  .prevAngle        = 0.0f,
-  .startAngle       = 0.0f,
-  .totalAngle       = 0.0f,
-  .turnNum          = 0.0f,
-  .rndCount         = 0.0f,
-  .vel              = 0.0f,
-  .quadNum          = 0.0f,
-  .prevQuadNum      = 0.0f,
- },
-};
-#endif
+//#if (CLA_CORE_ENABLE)
+//static const asenc_cfg_t  ASencCfgList[] =
+//{
+// {
+//  .spiHandle        = ENC_SPI_BASE,
+//  .gpioNumber_CS    = EXT_DBG_SPI_CS1,
+// }
+//};
+//
+//static as_enc_t asenc_cfg[] =
+//{
+// {
+//  .asencHandle      = &ASencCfgList[MOTOR_1],
+//  .angleData.all    = 0U,
+//  .velData.all      = 0U,
+//  .degAngle         = 0.0f,
+//  .prevAngle        = 0.0f,
+//  .startAngle       = 0.0f,
+//  .totalAngle       = 0.0f,
+//  .turnNum          = 0.0f,
+//  .rndCount         = 0.0f,
+//  .vel              = 0.0f,
+//  .quadNum          = 0.0f,
+//  .prevQuadNum      = 0.0f,
+// },
+//};
+//#endif
 
 /** @var    DRV_Cfg     DrvCfgList[]
  *  @brief  List all IOs \& SPI peripherals used for DRV communication.
@@ -251,13 +251,15 @@ static cmd_t cmd_uOmodri[2] =
  },
 };
 
+#if (CLA_CORE_ENABLE)
+#pragma DATA_ALIGN(motor_foc, 4)
+#pragma DATA_SECTION(motor_foc, "ClaDataRam");
+foc_t motor_foc[] =
+#else
 #pragma DATA_ALIGN(motor_foc, 8)
-//#if (CM_CORE_ENABLE)
-//#pragma DATA_SECTION(motor_foc, "MSGRAM_CPU_TO_CM");
-//#else
 #pragma DATA_SECTION(motor_foc, "ramgs0");
-//#endif
 static foc_t motor_foc[] =
+#endif
 {
  {
   //--- MOTOR PARAMS STRUCTURE ------------------------------------------------
@@ -304,7 +306,8 @@ static foc_t motor_foc[] =
   .motor_enc.speed.speedLow                 = 0.0f,
   .motor_enc.speed.alpha                    = 0.0f,
   //  .motor_enc.speed.speedRef             = 0.0f,
-  .motor_enc.speed.speedMech                = 0.0f,
+  .motor_enc.speed.speedMech[0]             = 0.0f,
+  .motor_enc.speed.speedMech[1]             = 0.0f,
   .motor_enc.speed.speedElec                = 0.0f,
   .motor_enc.speed.theta[NEW]               = 0.0f,
   .motor_enc.speed.theta[OLD]               = 0.0f,
@@ -448,7 +451,8 @@ static foc_t motor_foc[] =
   .motor_enc.speed.speedLow                 = 0.0f,
   .motor_enc.speed.alpha                    = 0.0f,
   //  .motor_enc.speed.speedRef             = 0.0f,
-  .motor_enc.speed.speedMech                = 0.0f,
+  .motor_enc.speed.speedMech[0]             = 0.0f,
+  .motor_enc.speed.speedMech[1]             = 0.0f,
   .motor_enc.speed.speedElec                = 0.0f,
   .motor_enc.speed.theta[NEW]               = 0.0f,
   .motor_enc.speed.theta[OLD]               = 0.0f,
@@ -585,13 +589,15 @@ static foc_t motor_foc[] =
 /** @var    MOTOR_STRUCT    motor[]
  *  @brief  General structure array configuration structure for the Hardware Abstraction Layer.
  */
-//#if (CM_CORE_ENABLE)
-//#pragma DATA_SECTION(motor, "MSGRAM_CPU_TO_CM");
-//#else
+#if (CLA_CORE_ENABLE)
+#pragma DATA_ALIGN(motor, 4)
+#pragma DATA_SECTION(motor, "ClaDataRam");
+motor_t motor[2] =
+#else
 #pragma DATA_ALIGN(motor, 8)
 #pragma DATA_SECTION(motor, "ramgs0");
-//#endif
 static motor_t motor[2] =
+#endif
 {
  {
   //--- MOTOR_1 ---------------------------------------------------------------

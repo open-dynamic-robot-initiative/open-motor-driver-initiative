@@ -343,6 +343,10 @@
 			<value>file:/C:/STM32Toolchain/TI/c2000/C2000Ware_4_03_00_00</value>
 		</variable>
 		<variable>
+			<name>CLAMATH_ROOT</name>
+			<value>$%7BC2000WARE_ROOT%7D/libraries/math/CLAmath/c28</value>
+		</variable>
+		<variable>
 			<name>SYSCONFIG_TOOL</name>
 			<value>file:/C:/STM32Toolchain/TI/ccs1000/ccs/utils/sysconfig_1.12.1/sysconfig_cli.bat</value>
 		</variable>

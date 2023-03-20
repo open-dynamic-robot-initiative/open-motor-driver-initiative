@@ -55,44 +55,46 @@ MEMORY
    FLASH13          : origin = 0x0BE000, length = 0x001FF0  /* on-chip Flash */
 //   FLASH13_RSVD     : origin = 0x0BFFF0, length = 0x000010  /* Reserve and do not use for code as per the errata advisory "Memory: Prefetching Beyond Valid Memory" */
 
-   CPU1TOCPU2RAM   : origin = 0x03A000, length = 0x000800
-   CPU2TOCPU1RAM   : origin = 0x03B000, length = 0x000800
-   CPUTOCMRAM      : origin = 0x039000, length = 0x000800
-   CMTOCPURAM      : origin = 0x038000, length = 0x000800
+   CPU1TOCPU2RAM   	: origin = 0x03A000, length = 0x000800
+   CPU2TOCPU1RAM   	: origin = 0x03B000, length = 0x000800
+   CPUTOCMRAM      	: origin = 0x039000, length = 0x000800
+   CMTOCPURAM      	: origin = 0x038000, length = 0x000800
 
    CANA_MSG_RAM     : origin = 0x049000, length = 0x000800
    CANB_MSG_RAM     : origin = 0x04B000, length = 0x000800
 
    RESET            : origin = 0x3FFFC0, length = 0x000002
 
-   CLA1_MSGRAMLOW   : origin = 0x001480,   length = 0x000080
-   CLA1_MSGRAMHIGH  : origin = 0x001500,   length = 0x000080
+   CLA1_MSGRAMLOW   : origin = 0x001480, length = 0x000080
+   CLA1_MSGRAMHIGH  : origin = 0x001500, length = 0x000080
+   CLA1_DMA_MSGRAM  : origin = 0x001680, length = 0x000080
+   DMA_CLA1_MSGRAM  : origin = 0x001700, length = 0x000080
 }
 
 SECTIONS
 {
-   codestart           : > BEGIN, ALIGN(8)
-   .text               : > FLASH4, ALIGN(8)
-   .cinit              : > FLASH4, ALIGN(8)
-   .switch             : > FLASH4, ALIGN(8)
-   .reset              : > RESET, TYPE = DSECT /* not used, */
-   .stack              : > RAMM1
+   codestart		: > BEGIN,  ALIGN(8)
+   .text			: > FLASH4, ALIGN(8) 	/* Executable code -								Initalized */
+   .cinit			: > FLASH5, ALIGN(8) 	/* Global and static variables -					Initalized */
+   .switch			: > FLASH5, ALIGN(8)	/* Jump tables for switch statements -				Initalized */
+   .reset			: > RESET,  TYPE = DSECT/* not used, */
+   .stack			: > RAMM1				/* system stack	-									Not Initalized */
 
 #if defined(__TI_EABI__)
-   .init_array      : > FLASH4, ALIGN(8)
-   .bss             : > RAMLS3
+   .init_array      : > FLASH5, ALIGN(8)	/* Table of C++ constructors called at startup -	Initalized */
+   .bss             : > RAMLS3				/* Global variables -								Not Initalized */
    .bss:output      : > RAMLS3
    .bss:cio			: > RAMLS3
-   .data            : > RAMLS4
-   .sysmem          : > RAMLS4
+   .data            : > RAMLS4				/* Non-const objects (global variables) -			Initalized */
+   .sysmem          : > RAMLS4				/* Malloc heap -									Not Initalized */
    /* Initalized sections go in Flash */
-   .const           : > FLASH4, ALIGN(8)
+   .const           : > FLASH5, ALIGN(8)	/* Initialized global variables -					Initalized */
 #else
-   .pinit           : > FLASH1, ALIGN(8)
-   .ebss            : > RAMLS3
+   .pinit           : > FLASH5, ALIGN(8)
+   .ebss            : > RAMLS3				/* Global variables -								Not Initalized */
    .esysmem         : > RAMLS4
    /* Initalized sections go in Flash */
-   .econst          : >> FLASH4 | FLASH5, ALIGN(8)
+   .econst          : > FLASH5, ALIGN(8)
 #endif
 
    ramgs0			: > RAMGS0//, type=NOINIT
@@ -103,52 +105,34 @@ SECTIONS
    MSGRAM_CPU_TO_CM    : > CPUTOCMRAM//, type=NOINIT
    MSGRAM_CM_TO_CPU    : > CMTOCPURAM//, type=NOINIT
 
-   dclfuncs : > FLASH1, ALIGN(8)
-
-//#if defined(__TI_EABI__)
-//    /* CLA specific sections */
-//    Cla1Prog        : LOAD = FLASH4,
-//                      RUN = RAMLS6,
-//                      LOAD_START(Cla1ProgLoadStart),
-//                      //LOAD_END(Cla1funcsLoadEnd),
-//                      RUN_START(Cla1ProgRunStart),
-//                      LOAD_SIZE(Cla1ProgLoadSize),
-//                      PAGE = 0, ALIGN(4)
-//#else
-//    /* CLA specific sections */
-//    Cla1Prog        : LOAD = FLASH5,
-//                      RUN = RAMLS5,
-//                      LOAD_START(_Cla1ProgLoadStart),
-//                      RUN_START(_Cla1ProgRunStart),
-//                      LOAD_SIZE(_Cla1ProgLoadSize),
-//                      PAGE = 0, ALIGN(4)
-//#endif
-
-    /* CLA specific sections */
-//#if defined(__TI_EABI__)
-   Cla1Prog         :   LOAD = FLASH4,
-                        RUN = RAMLS2,
+/* CLA specific sections */
+#if defined(__TI_EABI__)
+   Cla1Prog         :   LOAD = FLASH6,
+                        RUN = RAMLS5,
                         LOAD_START(Cla1funcsLoadStart),
                         LOAD_END(Cla1funcsLoadEnd),
                         RUN_START(Cla1funcsRunStart),
                         LOAD_SIZE(Cla1funcsLoadSize),
                         ALIGN(8)
-//#else
-//   Cla1Prog         :   LOAD = FLASH4,
-//                        RUN = RAMLS2,
-//                        LOAD_START(_Cla1funcsLoadStart),
-//                        LOAD_END(_Cla1funcsLoadEnd),
-//                        RUN_START(_Cla1funcsRunStart),
-//                        LOAD_SIZE(_Cla1funcsLoadSize),
-//                        ALIGN(8)
-//#endif
-//   Cla1Prog         : > RAMLS2
+#else
+	Cla1Prog         :	LOAD = FLASH6,
+                        RUN = RAMLS5,
+                        LOAD_START(_Cla1funcsLoadStart),
+                        LOAD_END(_Cla1funcsLoadEnd),
+                        RUN_START(_Cla1funcsRunStart),
+                        LOAD_SIZE(_Cla1funcsLoadSize),
+                        ALIGN(8)
+#endif
+
    CLADataLS0       : > RAMLS0
    CLADataLS1       : > RAMLS1
 
    Cla1ToCpuMsgRAM  : > CLA1_MSGRAMLOW, type=NOINIT
    CpuToCla1MsgRAM  : > CLA1_MSGRAMHIGH, type=NOINIT
-   Cla1DataRam      : >> RAMLS0 | RAMLS1
+   Cla1ToDmaMsgRAM  : > CLA1_DMA_MSGRAM, type=NOINIT
+
+   DmaToCla1MsgRAM  : > DMA_CLA1_MSGRAM, type=NOINIT
+   ClaDataRam      	: >> RAMLS0 | RAMLS1
 
    /* CLA C compiler sections */
    //
@@ -163,7 +147,7 @@ SECTIONS
    .bss_cla         : > RAMLS1
    cla_shared       : > RAMLS1
 #if defined(__TI_EABI__)
-   .const_cla       :   LOAD = FLASH4,
+   .const_cla       :   LOAD = FLASH2,
                         RUN = RAMLS1,
                         RUN_START(Cla1ConstRunStart),
                         LOAD_START(Cla1ConstLoadStart),
@@ -177,8 +161,8 @@ SECTIONS
 #endif
 
 
-   #if defined(__TI_EABI__)
-       .TI.ramfunc : {} LOAD = FLASH4,
+#if defined(__TI_EABI__)
+	.TI.ramfunc : {}	LOAD = FLASH3,
                         RUN = RAMD0,
                         LOAD_START(RamfuncsLoadStart),
                         LOAD_SIZE(RamfuncsLoadSize),
@@ -187,8 +171,8 @@ SECTIONS
                         RUN_SIZE(RamfuncsRunSize),
                         RUN_END(RamfuncsRunEnd),
                         ALIGN(8)
-   #else
-       .TI.ramfunc : {} LOAD = FLASH3,
+#else
+	.TI.ramfunc : {} 	LOAD = FLASH3,
                         RUN = RAMD0,
                         LOAD_START(_RamfuncsLoadStart),
                         LOAD_SIZE(_RamfuncsLoadSize),
@@ -197,7 +181,7 @@ SECTIONS
                         RUN_SIZE(_RamfuncsRunSize),
                         RUN_END(_RamfuncsRunEnd),
                         ALIGN(8)
-   #endif
+#endif
 
 }
 

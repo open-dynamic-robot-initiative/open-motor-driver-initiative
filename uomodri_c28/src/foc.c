@@ -1,5 +1,5 @@
 /***********************************************************************
- * INCLUDE FILES
+ * INCLUDES
  ***********************************************************************/
 #include "driverlib.h"
 #include "device.h"
@@ -16,7 +16,7 @@ inline float32_t FOC_runPI(pi_t*);
 inline void FOC_resetPD(pd_t*);
 inline void FOC_resetCmdStruct(cmd_t*);
 void limit_norm(float32_t*, float32_t*, float32_t);
-void FOC_svpwm1(foc_t*);
+//void FOC_svpwm1(foc_t*);
 void FOC_svpwm2(foc_t*);
 
 /***********************************************************************
@@ -111,7 +111,7 @@ inline void FOC_runControl(foc_t* p_foc)
     p_foc->ualpha           = (p_foc->cosTheta * p_foc->ud) - (p_foc->sinTheta * p_foc->uq);
     p_foc->ubeta            = (p_foc->sinTheta * p_foc->ud) + (p_foc->cosTheta * p_foc->uq);
 
-    FOC_svpwm1(p_foc);
+//    FOC_svpwm1(p_foc);
 
     return;
 }
@@ -207,46 +207,46 @@ inline void FOC_resetCmdStruct(cmd_t* p_cmd)
  * @brief           Reset the FOC structure
  * @param[inout]    *p_foc   Pointer on the FOC structure to reset.
  */
-void FOC_resetStruct(foc_t* p_foc)
-{
-    // Reset Id & Iq currents PI controllers
-    FOC_resetPI(&p_foc->piId);
-    FOC_resetPI(&p_foc->piIq);
-    // Reset position PD controller
-    FOC_resetPD(&p_foc->pdPosVel);
-//    FOC_resetPD(&p_foc->pdPosVel[EVEN]);
-    // Reset encoder structure
-    ENC_resetStruct(&p_foc->motor_enc);
-    // Reset analog measures
-    FOC_resetMeasuresStruct(&p_foc->motor_acq);
-    // Reset the commands associated to motor control
-    FOC_resetCmdStruct(&p_foc->motor_cmd);
-    // Reset currents and voltages
-    p_foc->sinTheta         = 0.0f;
-    p_foc->cosTheta         = 0.0f;
-    p_foc->ialpha           = 0.0f;
-    p_foc->ibeta            = 0.0f;
-    p_foc->id               = 0.0f;
-    p_foc->iq               = 0.0f;
-    p_foc->ud               = 0.0f;
-    p_foc->uq               = 0.0f;
-    p_foc->ualpha           = 0.0f;
-    p_foc->ubeta            = 0.0f;
-    p_foc->ua               = 0.0f;
-    p_foc->ub               = 0.0f;
-    p_foc->uc               = 0.0f;
-    p_foc->vmax             = 0.0f;
-    p_foc->dtc_u            = 0.0f;
-    p_foc->dtc_v            = 0.0f;
-    p_foc->dtc_w            = 0.0f;
-//    p_foc->idRef            = 0.0f;
-//    p_foc->iqRef            = 0.0f;
-    p_foc->resEst           = 0.0f;
-//    p_foc->cmd_cr_active    = ODD;
-//    p_foc->cmd_nx_active    = ODD;
-
-    return;
-}
+//inline void FOC_resetStruct(foc_t* p_foc)
+//{
+//    // Reset Id & Iq currents PI controllers
+//    FOC_resetPI(&p_foc->piId);
+//    FOC_resetPI(&p_foc->piIq);
+//    // Reset position PD controller
+//    FOC_resetPD(&p_foc->pdPosVel);
+////    FOC_resetPD(&p_foc->pdPosVel[EVEN]);
+//    // Reset encoder structure
+//    ENC_resetStruct(&p_foc->motor_enc);
+//    // Reset analog measures
+//    FOC_resetMeasuresStruct(&p_foc->motor_acq);
+//    // Reset the commands associated to motor control
+//    FOC_resetCmdStruct(&p_foc->motor_cmd);
+//    // Reset currents and voltages
+//    p_foc->sinTheta         = 0.0f;
+//    p_foc->cosTheta         = 0.0f;
+//    p_foc->ialpha           = 0.0f;
+//    p_foc->ibeta            = 0.0f;
+//    p_foc->id               = 0.0f;
+//    p_foc->iq               = 0.0f;
+//    p_foc->ud               = 0.0f;
+//    p_foc->uq               = 0.0f;
+//    p_foc->ualpha           = 0.0f;
+//    p_foc->ubeta            = 0.0f;
+//    p_foc->ua               = 0.0f;
+//    p_foc->ub               = 0.0f;
+//    p_foc->uc               = 0.0f;
+//    p_foc->vmax             = 0.0f;
+//    p_foc->dtc_u            = 0.0f;
+//    p_foc->dtc_v            = 0.0f;
+//    p_foc->dtc_w            = 0.0f;
+////    p_foc->idRef            = 0.0f;
+////    p_foc->iqRef            = 0.0f;
+//    p_foc->resEst           = 0.0f;
+////    p_foc->cmd_cr_active    = ODD;
+////    p_foc->cmd_nx_active    = ODD;
+//
+//    return;
+//}
 
 /**
  * @brief           Scale the length of vector (x, y) to be <= limit
@@ -268,20 +268,20 @@ void limit_norm(float32_t *p_x, float32_t *p_y, float32_t limit)
  * @brief           First implementation of the Space Vector Modulation (SVM)
  * @param[inout]    *p_foc   Pointer on the FOC structure.
  */
-void FOC_svpwm1(foc_t* p_foc)
-{
-    // Inverse Clarke transform
-    p_foc->ua               = p_foc->ualpha;
-    p_foc->ub               = (-0.5f * p_foc->ualpha) + (FM_SQRT3DIV2 * p_foc->ubeta);
-    p_foc->uc               = (-0.5f * p_foc->ualpha) - (FM_SQRT3DIV2 * p_foc->ubeta);
-    // Compute middle voltage to center PWM duty cycles around it
-    float32_t   uOffset     = 0.5f * (FMIN3(p_foc->ua, p_foc->ub, p_foc->uc) + FMAX3(p_foc->ua, p_foc->ub, p_foc->uc));
-    float32_t   uMidPoint   = 0.5f * (p_foc->dtcMax + p_foc->dtcMin);
-    // Compute duty cycles
-    p_foc->dtc_u            = __fsat((((p_foc->ua - uOffset) / p_foc->motor_acq.vbus) + uMidPoint), p_foc->dtcMax, p_foc->dtcMin);
-    p_foc->dtc_v            = __fsat((((p_foc->ub - uOffset) / p_foc->motor_acq.vbus) + uMidPoint), p_foc->dtcMax, p_foc->dtcMin);
-    p_foc->dtc_w            = __fsat((((p_foc->uc - uOffset) / p_foc->motor_acq.vbus) + uMidPoint), p_foc->dtcMax, p_foc->dtcMin);
-}
+//void FOC_svpwm1(foc_t* p_foc)
+//{
+//    // Inverse Clarke transform
+//    p_foc->ua               = p_foc->ualpha;
+//    p_foc->ub               = (-0.5f * p_foc->ualpha) + (FM_SQRT3DIV2 * p_foc->ubeta);
+//    p_foc->uc               = (-0.5f * p_foc->ualpha) - (FM_SQRT3DIV2 * p_foc->ubeta);
+//    // Compute middle voltage to center PWM duty cycles around it
+//    float32_t   uOffset     = 0.5f * (FMIN3(p_foc->ua, p_foc->ub, p_foc->uc) + FMAX3(p_foc->ua, p_foc->ub, p_foc->uc));
+//    float32_t   uMidPoint   = 0.5f * (p_foc->dtcMax + p_foc->dtcMin);
+//    // Compute duty cycles
+//    p_foc->dtc_u            = __fsat((((p_foc->ua - uOffset) / p_foc->motor_acq.vbus) + uMidPoint), p_foc->dtcMax, p_foc->dtcMin);
+//    p_foc->dtc_v            = __fsat((((p_foc->ub - uOffset) / p_foc->motor_acq.vbus) + uMidPoint), p_foc->dtcMax, p_foc->dtcMin);
+//    p_foc->dtc_w            = __fsat((((p_foc->uc - uOffset) / p_foc->motor_acq.vbus) + uMidPoint), p_foc->dtcMax, p_foc->dtcMin);
+//}
 
 /**
  * @brief           Second implementation of the Space Vector Modulation (SVM)
