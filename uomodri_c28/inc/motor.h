@@ -97,10 +97,12 @@ typedef union __uint16_u__
 typedef struct __MOTOR_STRUCT_t__
 {
     const uint8_t                   motor_id;       /*!< Motor identification */
-    const hal_motor_cfg_t*  const   p_motorHalCfg;  /*!< Pointer on the HAL structure (PWM, ADC , IT) associated to the motor */
-    drv8353_t* const                p_motorDRV;     /*!< Pointer on the DRV structure associated to the motor */
+//    const hal_motor_cfg_t*  const   p_motorHalCfg;  /*!< Pointer on the HAL structure (PWM, ADC , IT) associated to the motor */
+//    drv8353_t* const                p_motorDRV;     /*!< Pointer on the DRV structure associated to the motor */
     foc_t* const                    p_motorFOC;     /*!< Pointer on the FOC structure associated to the motor */
     uint64_t                        itCnt;          /*!< Event counter incrementing on every IT call */
+    const uint32_t                  pwm_ch_addr[3];
+    const uint32_t                  drv_fault_pin_num;
     uint32_t                        clCycleNb;
     float32_t                       statorResEst;   /*!< Q-axis resistance estimation. [Ohm] */
     lpf_t                           statorResEstFlt;/*!< Resistance estimation low-pass filter */

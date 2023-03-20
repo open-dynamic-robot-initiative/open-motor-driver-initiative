@@ -285,7 +285,7 @@ static foc_t motor_foc[] =
   .motor_acq.vExtFlt.a                      = VEXT_LPF_ALPHA,
   .motor_acq.vExtFlt.one_minus_a            = VEXT_LPF_ONE_M_ALPHA,
   //--- MOTOR ENCORDER STRUCTURE ----------------------------------------------
-  .motor_enc.p_qepHandle                    = (&QepCfgList[MOTOR_1]),
+  .motor_enc.eqepBaseAddr                   = MOTOR1_QEP_BASE,
   .motor_enc.polePairs                      = MOTOR1_POLES_PAIRS,
   .motor_enc.thetaElec                      = 0.0f,
   .motor_enc.thetaMech[NEW]                 = 0.0f,
@@ -430,7 +430,7 @@ static foc_t motor_foc[] =
   .motor_acq.vExtFlt.a                      = VEXT_LPF_ALPHA,
   .motor_acq.vExtFlt.one_minus_a            = VEXT_LPF_ONE_M_ALPHA,
   //--- MOTOR ENCORDER STRUCTURE ----------------------------------------------
-  .motor_enc.p_qepHandle                    = (&QepCfgList[MOTOR_2]),
+  .motor_enc.eqepBaseAddr                   = MOTOR2_QEP_BASE,
   .motor_enc.polePairs                      = MOTOR2_POLES_PAIRS,
   .motor_enc.thetaElec                      = 0.0f,
   .motor_enc.thetaMech[NEW]                 = 0.0f,

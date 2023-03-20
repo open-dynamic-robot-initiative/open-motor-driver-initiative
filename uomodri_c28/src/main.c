@@ -85,8 +85,8 @@ void main(void)
     // Hardware Abstraction Layer initialization
     HAL_ini(&hal);
     // DRV8353 initialization
-    DRV_ini(motor[MOTOR_1].p_motorDRV);
-    DRV_ini(motor[MOTOR_2].p_motorDRV);
+    DRV_ini(&drv_cfg[MOTOR_1]);
+    DRV_ini(&drv_cfg[MOTOR_2]);
     // ADC offset calibration for debug
     HAL_ADC_offsetCalib(motor[MOTOR_1].p_motorHalCfg);
     HAL_ADC_offsetCalib(motor[MOTOR_2].p_motorHalCfg);
@@ -231,11 +231,11 @@ void main(void)
                 DMA_startChannel(DMA_LED_SPI_TX_BASE_ADDR);
             }
             // Read DRV data to get status registers (MOTOR_1)
-            if(motor[MOTOR_1].motor_error.drv_fault)
-                DRV_readStatus(motor[MOTOR_1].p_motorDRV);
-            // Read DRV data to get status registers (MOTOR_2)
-            if(motor[MOTOR_2].motor_error.drv_fault)
-                DRV_readStatus(motor[MOTOR_2].p_motorDRV);
+//            if(motor[MOTOR_1].motor_error.drv_fault)
+//                DRV_readStatus(motor[MOTOR_1].p_motorDRV);
+//            // Read DRV data to get status registers (MOTOR_2)
+//            if(motor[MOTOR_2].motor_error.drv_fault)
+//                DRV_readStatus(motor[MOTOR_2].p_motorDRV);
             // Timeout management
             timeout_flag            = true;
             // Clear CPU timer flag
