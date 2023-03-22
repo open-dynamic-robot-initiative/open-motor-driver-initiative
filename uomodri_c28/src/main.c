@@ -9,7 +9,7 @@
 #include "main.h"
 #include "hal.h"
 #include "drv8353.h"
-#if (CLA_CORE_ENABLE)
+#if (CLA1_CORE_ENABLE)
 #include "as5047u.h"
 #endif
 #include "ws2812b.h"
@@ -19,7 +19,7 @@
 #include "uomodri_user_defines.h"
 #include "uomodri_hal_config_handlers.h"
 #include "uomodri_prj_config_handlers.h"
-#if (CLA_CORE_ENABLE)
+#if (CLA1_CORE_ENABLE)
 #include "cla_shared.h"
 #endif
 
@@ -27,7 +27,7 @@
  * VARIABLES
  ***********************************************************************/
 extern motor_t          motor[2];
-#if (CLA_CORE_ENABLE)
+#if (CLA1_CORE_ENABLE)
 extern as_enc_t         asenc_cfg[0];
 #endif
 extern const hal_cfg_t  hal;
@@ -36,7 +36,7 @@ extern cmd_t            cmd_uOmodri[2];
 #pragma DATA_SECTION(transfer_array, "MSGRAM_CPU_TO_CM");
 float32_t               transfer_array[20];
 #endif
-#if (CLA_CORE_ENABLE)
+#if (CLA1_CORE_ENABLE)
 extern uint32_t Cla1funcsRunStart, Cla1funcsLoadStart, Cla1funcsLoadSize;
 extern uint32_t Cla1ConstRunStart, Cla1ConstLoadStart, Cla1ConstLoadSize;
 //#pragma SET_DATA_SECTION("cla_shared")
@@ -75,7 +75,7 @@ inline void IPC_CpuToCmAddrSync(void);
  */
 void main(void)
 {
-#if (CLA_CORE_ENABLE)
+#if (CLA1_CORE_ENABLE)
     cla_new_flag    = false;
     cpu1_ready_flag = false;
 #endif
@@ -84,11 +84,11 @@ void main(void)
     // Hardware Abstraction Layer initialization
     HAL_ini(&hal);
     // DRV8353 initialization
-    DRV_ini(motor[MOTOR_1].p_motorDRV);
-    DRV_ini(motor[MOTOR_2].p_motorDRV);
+    DRV_ini(&drv_cfg[MOTOR_1], &drv_reg[MOTOR_1]);
+    DRV_ini(&drv_cfg[MOTOR_2], &drv_reg[MOTOR_2]);
     // ADC offset calibration for debug
-    HAL_ADC_offsetCalib(motor[MOTOR_1].p_motorHalCfg);
-    HAL_ADC_offsetCalib(motor[MOTOR_2].p_motorHalCfg);
+    HAL_ADC_offsetCalib(&periph_motor_cfg[MOTOR_1]);
+    HAL_ADC_offsetCalib(&periph_motor_cfg[MOTOR_2]);
     // Force a reset of FOC structures
     FOC_resetStruct(motor[MOTOR_1].p_motorFOC);
     FOC_resetStruct(motor[MOTOR_2].p_motorFOC);
@@ -102,7 +102,7 @@ void main(void)
 #if (CM_CORE_ENABLE)
     IPC_CpuToCmAddrSync();
 #endif
-#if (CLA_CORE_ENABLE)
+#if (CLA1_CORE_ENABLE)
     cpu1_ready_flag         = true;//(cpu1_ready_flag == true) ? (false) : (true);
 #endif
     bool_t cmd_msg_valid    = false;
@@ -229,12 +229,12 @@ void main(void)
                 LED_dimming(&motor[MOTOR_1], &motor[MOTOR_2], &led_msg[0]);
                 DMA_startChannel(DMA_LED_SPI_TX_BASE_ADDR);
             }
-            // Read DRV data to get status registers (MOTOR_1)
-            if(motor[MOTOR_1].motor_error.drv_fault)
-                DRV_readStatus(motor[MOTOR_1].p_motorDRV);
-            // Read DRV data to get status registers (MOTOR_2)
-            if(motor[MOTOR_2].motor_error.drv_fault)
-                DRV_readStatus(motor[MOTOR_2].p_motorDRV);
+//            // Read DRV data to get status registers (MOTOR_1)
+//            if(motor[MOTOR_1].motor_error.drv_fault)
+//                DRV_readStatus(motor[MOTOR_1].p_motorDRV);
+//            // Read DRV data to get status registers (MOTOR_2)
+//            if(motor[MOTOR_2].motor_error.drv_fault)
+//                DRV_readStatus(motor[MOTOR_2].p_motorDRV);
             // Timeout management
             timeout_flag            = true;
             // Clear CPU timer flag

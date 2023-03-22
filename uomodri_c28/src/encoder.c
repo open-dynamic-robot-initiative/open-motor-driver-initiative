@@ -60,7 +60,7 @@ void ENC_resetStruct(encoder_t* p_enc)
  */
 inline void ENC_resetPeriph(encoder_t* p_enc)
 {
-    uint32_t eqepBase       = p_enc->p_qepHandle->eqepBase;
+    uint32_t eqepBase       = p_enc->eqepBaseAddr;
     // Reset encoder position
     EQEP_setPosition(eqepBase, 0);
     /* Reset the time base for edge capture unit */
@@ -73,7 +73,8 @@ inline void ENC_resetPeriph(encoder_t* p_enc)
             EQEP_INT_POS_COMP_READY | EQEP_INT_POS_COMP_MATCH | EQEP_INT_STROBE_EVNT_LATCH |
             EQEP_INT_INDEX_EVNT_LATCH | EQEP_INT_UNIT_TIME_OUT | EQEP_INT_QMA_ERROR));
     // Reset general status flags
-    EQEP_clearStatus(eqepBase, (EQEP_STS_UNIT_POS_EVNT | EQEP_STS_CAP_OVRFLW_ERROR | EQEP_STS_CAP_DIR_ERROR | EQEP_STS_1ST_IDX_FLAG));
+    EQEP_clearStatus(eqepBase, (EQEP_STS_UNIT_POS_EVNT | EQEP_STS_CAP_OVRFLW_ERROR |
+            EQEP_STS_CAP_DIR_ERROR | EQEP_STS_1ST_IDX_FLAG));
 
     return;
 }
@@ -84,7 +85,7 @@ inline void ENC_resetPeriph(encoder_t* p_enc)
  */
 inline void ENC_getPosition(encoder_t* p_enc)
 {
-    uint32_t eqepBase       = p_enc->p_qepHandle->eqepBase;
+    uint32_t eqepBase       = p_enc->eqepBaseAddr;
     p_enc->thetaMech[OLD]   = p_enc->thetaMech[NEW];
     // Compute mechanical angle normalized between 0 and 1
     p_enc->thetaMech[NEW]   = (float32_t)EQEP_getStrobePositionLatch(eqepBase) * p_enc->thetaMechScaler;
@@ -109,7 +110,7 @@ inline void ENC_getPosition(encoder_t* p_enc)
  */
 inline void ENC_getSpeed(encoder_t* p_enc)
 {
-    uint32_t eqepBase           = p_enc->p_qepHandle->eqepBase;
+    uint32_t eqepBase           = p_enc->eqepBaseAddr;
     speed_t* p_speed            = &p_enc->speed;
 //    bool_t newSpeedHigh         = false;
 //    bool_t newSpeedLow          = false;
@@ -188,7 +189,7 @@ inline void ENC_getSpeed(encoder_t* p_enc)
  */
 inline void ENC_getTheta(encoder_t* p_enc)
 {
-    uint32_t eqepBase           = p_enc->p_qepHandle->eqepBase;
+    uint32_t eqepBase           = p_enc->eqepBaseAddr;
     //-------------------------------------------------------------------
     //     TURN CONTROL
     //-------------------------------------------------------------------

@@ -28,7 +28,7 @@ extern "C" {
 /***********************************************************************
  * VARIABLES
  ***********************************************************************/
-#if (CLA_CORE_ENABLE)
+#if (CLA1_CORE_ENABLE)
 extern float32_t    thetaAbs;
 extern float32_t    velocity;
 extern bool_t       cla_new_flag;

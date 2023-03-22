@@ -170,9 +170,9 @@ void HAL_ADC_ini(const adc_cfg_t* p_adcCfg)
  * @brief       ADC calibration function for the PPB (Post Processing Block)
  * @param[in]   *p_motor    Pointer on the motor configuration structure
  */
-void HAL_ADC_offsetCalib(const hal_motor_cfg_t* p_halMotorCfg)
+void HAL_ADC_offsetCalib(const periph_motor_cfg_t* p_periphMotorCfg)
 {
-    if(p_halMotorCfg != NULL)
+    if(p_periphMotorCfg != NULL)
     {
         const epwm_cc_t*    p_pwmCC     = NULL;
         const adc_int_t*    p_ITConv    = NULL;
@@ -184,38 +184,38 @@ void HAL_ADC_offsetCalib(const hal_motor_cfg_t* p_halMotorCfg)
         // force no switching with low side transistors closed
         for(loop = 0; loop < 3; loop++)
         {
-            p_pwmCC = p_halMotorCfg->p_pwmCntCmp[loop];
+            p_pwmCC = p_periphMotorCfg->p_pwmCntCmp[loop];
             EPWM_setCounterCompareValue(p_pwmCC->epwmBase, p_pwmCC->compModule, p_pwmCC->compCount);
         }
 
         for(calibCnt = 0; calibCnt < 10000; calibCnt++)
         {
             /* Wait data acquisition for Ia, Ib, Ic . Blocking. */
-            p_ITConv = p_halMotorCfg->p_intAcq;
+            p_ITConv = p_periphMotorCfg->p_intAcq;
             // Wait IT flag event
             while(ADC_getInterruptStatus(p_ITConv->adcBase, p_ITConv->adcIntNumber) == false);
             if(calibCnt > 1000)
                 for(loop = 0; loop < 3; loop++)
-                    UOMODRI_HAL_ADC_CALIB(fltCoef, i[loop], (float32_t) *(p_halMotorCfg->p_iAcq[loop]->adcResultReg));
+                    UOMODRI_HAL_ADC_CALIB(fltCoef, i[loop], (float32_t) *(p_periphMotorCfg->p_iAcq[loop]->adcResultReg));
             else
                 for(loop = 0; loop < 3; loop++)
-                    i[loop] = (float32_t) *(p_halMotorCfg->p_iAcq[loop]->adcResultReg);
+                    i[loop] = (float32_t) *(p_periphMotorCfg->p_iAcq[loop]->adcResultReg);
 
             // clear flags
             for(loop = 0; loop < 3; loop++)
             {
                 // Clear the interrupt overflow flag
-                ADC_clearInterruptOverflowStatus(p_halMotorCfg->p_iAcq[loop]->adcBase, p_ITConv->adcIntNumber);
+                ADC_clearInterruptOverflowStatus(p_periphMotorCfg->p_iAcq[loop]->adcBase, p_ITConv->adcIntNumber);
                 // Clear the interrupt flag
-                ADC_clearInterruptStatus(p_halMotorCfg->p_iAcq[loop]->adcBase, p_ITConv->adcIntNumber);
+                ADC_clearInterruptStatus(p_periphMotorCfg->p_iAcq[loop]->adcBase, p_ITConv->adcIntNumber);
             }
         }
 
         // Set offsets in PPBs
         for(loop = 0; loop < 3; loop++)
             // Sets the post processing block reference offset for tensions
-            ADC_setPPBReferenceOffset(p_halMotorCfg->p_iAcq[loop]->adcBase,
-                                      p_halMotorCfg->p_iAcq[loop]->adcPPBNumber,
+            ADC_setPPBReferenceOffset(p_periphMotorCfg->p_iAcq[loop]->adcBase,
+                                      p_periphMotorCfg->p_iAcq[loop]->adcPPBNumber,
                                       (uint16_t)i[loop]);
     }
 

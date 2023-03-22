@@ -39,15 +39,6 @@ typedef enum
 /***********************************************************************
  * CONTROL STRUCTURES
  ***********************************************************************/
-//typedef struct __cmd_bit_reg_t__
-//{
-//    uint8_t         systemEnable        : 1;    /*!< Bit 0      : R/W - Enable system to start. No power on motors.         */
-//    uint8_t         motorEnable         : 1;    /*!< Bit 1      : R/W - Enable power on motor.                              */
-//    uint8_t         rollOverEnable      : 1;    /*!< Bit 2      : R/W - Limit the rotations to +/- 128 rounds.              */
-//    uint8_t         encOffsetEnable     : 1;    /*!< Bit 3      : R/W - Use encoder index in position computation.          */
-//    uint8_t         CMD_RSV1            : 4;    /*!< Bit 4-7    : R/W - Reserved                                            */
-//} cmd_reg_t;
-
 typedef union __cmd_bit_reg_u__
 {
     uint8_t         all;
@@ -59,7 +50,6 @@ typedef union __cmd_bit_reg_u__
         uint8_t     encOffsetEnable     : 1;    /*!< Bit 3      : R/W - Use encoder index in position computation.          */
         uint8_t     CMD_RSV1            : 4;    /*!< Bit 4-7    : R/W - Reserved                                            */
     };
-//    cmd_reg_t       bit;
 } cmd_reg_u;
 
 /**
@@ -115,9 +105,7 @@ typedef struct __acquisitions_t__
     // ADC result registers
     volatile uint16_t*  const p_vBusMeasReg;
     volatile uint16_t*  const p_vExtMeasReg;
-    volatile int16_t*   const p_iaMeasReg;
-    volatile int16_t*   const p_ibMeasReg;
-    volatile int16_t*   const p_icMeasReg;
+    volatile int16_t*   const p_iMeasReg[3];
     // ADC values scaled
     float32_t           vbus;       // [V]
     float32_t           vExt;       // [V]
@@ -150,7 +138,7 @@ typedef struct __foc_control_t__
     cmd_t               motor_cmd;      /*!< Motor commands */
     lpf_t               iParkFlt;       /*!< Low-pass filter parameters affected to park transform */
     float32_t           sinTheta;       /*!< Sinus of the electrical rotor angle */
-    float32_t           cosTheta;       /*!< Cosine of the electrical rotor angle  */
+    float32_t           cosTheta;       /*!< Cosine of the electrical rotor angle */
     float32_t           ialpha;         /*!< Direct Clarke transform result - [A] */
     float32_t           ibeta;          /*!< Direct Clarke transform result - [A] */
     float32_t           id;             /*!< Filtered Direct Park transform result - [A] */
@@ -171,6 +159,7 @@ typedef struct __foc_control_t__
     float32_t           idRef;          /*!< PI controller set point values for D-axis current - [A] */
     float32_t           iqRef;          /*!< PI controller set point values for Q-axis current - [A] */
     float32_t           iAlignMax;      /*!< Maximum current required during the phase alignment - [A] */
+    float32_t           thetaAlign;     /*!< Initial position to force a rotor movement during alignment - [RAD] */
     pi_t                piId;           /*!< PI controller structure for current control */
     pi_t                piIq;           /*!< PI controller structure for current control */
     pd_t                pdPosVel;       /*!< PD controller structure for position/velocity control */

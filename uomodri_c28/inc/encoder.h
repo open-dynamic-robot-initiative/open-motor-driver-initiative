@@ -35,7 +35,8 @@ typedef struct __encoder_t__
 {
 #ifdef CPU1
     // pointers on HAL structure, QEP registers and direct access to QEP counter register
-    const eqep_cfg_t*   p_qepHandle;        /*!< Pointer on HAL structure */
+    const uint32_t      eqepBaseAddr;       /*!< Address of EQEP peripheral used inHAL structure */
+//    const eqep_cfg_t*   p_qepHandle;        /*!< Pointer on HAL structure */
 #else
     uint32_t            rsvd1;
 #endif

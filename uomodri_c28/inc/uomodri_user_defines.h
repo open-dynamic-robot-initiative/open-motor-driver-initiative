@@ -34,7 +34,7 @@
 #define CPU1_CORE_ENABLE                        (1)
 #define CPU2_CORE_ENABLE                        (0)
 #define CM_CORE_ENABLE                          (1)
-#define CLA_CORE_ENABLE                         (0)
+#define CLA1_CORE_ENABLE                        (0)
 // CM peripherals ENABLE/DISABLE
 #define USB_BUS_ENABLE                          (0)
 #define UART_BUS_ENABLE                         (1)
@@ -60,7 +60,10 @@
 #define UOMODRI_HAL_ADC_CALIB(flt_coef, y, x)   LPF_FILTER_1(flt_coef, y, x)
 #define UOMODRI_FEED_FORWARD_ENABLE             (0)
 
-#define USE_RMDX8H_ON_MOTOR2                    (0)
+#define USE_RMDX8H_MOTOR_ON_MOTOR1              (1)
+#define USE_SOLO_MOTOR_ON_MOTOR1                (0)
+
+#define USE_RMDX8H_MOTOR_ON_MOTOR2              (0)
 #define USE_SOLO_MOTOR_ON_MOTOR2                (0)
 #define USE_MOTOR1_PARAMS_ON_MOTOR2             (1)
 /**
@@ -76,19 +79,19 @@
 //#endif
 
 #ifndef FM_SQRT3
-#define FM_SQRT3                                1.7320508075688772935274463415059f  /* sqrt(3) */
+#define FM_SQRT3                                (1.7320508075688772935274463415059f)  /* sqrt(3) */
 #endif
 
 #ifndef FM_1DIVSQRT3
-#define FM_1DIVSQRT3                            0.57735026918962576450914878050196f /* 1/sqrt(3) */
+#define FM_1DIVSQRT3                            (0.57735026918962576450914878050196f) /* 1/sqrt(3) */
 #endif
 
 #ifndef FM_SQRT3DIV2
-#define FM_SQRT3DIV2                            0.86602540378443864676372317075294f /* sqrt(3)/2 */
+#define FM_SQRT3DIV2                            (0.86602540378443864676372317075294f) /* sqrt(3)/2 */
 #endif
 
 #ifndef FM_1DIV3
-#define FM_1DIV3                                0.33333333333333333333333333333333f /* 1/3 */
+#define FM_1DIV3                                (0.33333333333333333333333333333333f) /* 1/3 */
 #endif
 
 #ifndef FM_ROUND2RAD
@@ -146,6 +149,9 @@
 #define OLD                                     (1)     /*!< Previous data */
 #define MOTOR_1                                 (0)     /*!< Select Motor_1 */
 #define MOTOR_2                                 (1)     /*!< Select Motor_2 */
+#define CHANNEL_1                               (0)     /*!< Select Channel_1 in PWM */
+#define CHANNEL_2                               (1)     /*!< Select Channel_2 in PWM */
+#define CHANNEL_3                               (2)     /*!< Select Channel_3 in PWM */
 
 /***********************************************************************
  *  DEVICE INITIALIZATION DEFINES
@@ -591,42 +597,42 @@
  */
 #if (UOMODRI_V1_0_ENABLE)
 // DRV1 SPI defines
-#define MOTOR1_DRV_GPIO_EN                      (89)
+#define MOTOR1_DRV_GPIO_EN_NUM                  (89)
 #define MOTOR1_DRV_GPIO_EN_CFG                  GPIO_89_GPIO89
 #define MOTOR1_DRV_GPIO_EN_SET                  (HWREG(GPIODATA_BASE + GPIO_O_GPCSET)   = GPIO_GPCSET_GPIO89)
 #define MOTOR1_DRV_GPIO_EN_CLEAR                (HWREG(GPIODATA_BASE + GPIO_O_GPCCLEAR) = GPIO_GPCCLEAR_GPIO89)
 #define MOTOR1_DRV_GPIO_EN_TOGGLE               (HWREG(GPIODATA_BASE + GPIO_O_GPCTOGGLE)= GPIO_GPCTOGGLE_GPIO89)
-#define MOTOR1_DRV_GPIO_NFAULT                  (90)
-#define MOTOR1_DRV_GPIO_NFAULT_CFG              GPIO_90_GPIO90
-#define MOTOR1_DRV_GPIO_NFAULT_READ             (HWREG(GPIODATA_BASE + GPIO_O_GPCDAT) & GPIO_GPCDAT_GPIO90)
+#define MOTOR1_DRV_GPIO_FAULT_NUM               (90)
+#define MOTOR1_DRV_GPIO_FAULT_CFG               GPIO_90_GPIO90
+#define MOTOR1_DRV_GPIO_FAULT_READ              (HWREG(GPIODATA_BASE + GPIO_O_GPCDAT) & GPIO_GPCDAT_GPIO90)
 // DRV2 SPI defines
-#define MOTOR2_DRV_GPIO_EN                      (37)
+#define MOTOR2_DRV_GPIO_EN_NUM                  (37)
 #define MOTOR2_DRV_GPIO_EN_CFG                  GPIO_37_GPIO37
 #define MOTOR2_DRV_GPIO_EN_SET                  (HWREG(GPIODATA_BASE + GPIO_O_GPBSET)   = GPIO_GPBSET_GPIO37)
 #define MOTOR2_DRV_GPIO_EN_CLEAR                (HWREG(GPIODATA_BASE + GPIO_O_GPBCLEAR) = GPIO_GPBCLEAR_GPIO37)
 #define MOTOR2_DRV_GPIO_EN_TOGGLE               (HWREG(GPIODATA_BASE + GPIO_O_GPBTOGGLE)= GPIO_GPBTOGGLE_GPIO37)
-#define MOTOR2_DRV_GPIO_NFAULT                  (36)
-#define MOTOR2_DRV_GPIO_NFAULT_CFG              GPIO_36_GPIO36
-#define MOTOR2_DRV_GPIO_NFAULT_READ             (HWREG(GPIODATA_BASE + GPIO_O_GPBDAT) & GPIO_GPBDAT_GPIO36)
+#define MOTOR2_DRV_GPIO_FAULT_NUM               (36)
+#define MOTOR2_DRV_GPIO_FAULT_CFG               GPIO_36_GPIO36
+#define MOTOR2_DRV_GPIO_FAULT_READ              (HWREG(GPIODATA_BASE + GPIO_O_GPBDAT) & GPIO_GPBDAT_GPIO36)
 #elif (UOMODRI_V2_0_ENABLE)
 // DRV1 SPI defines
-#define MOTOR1_DRV_GPIO_EN                      (90)
+#define MOTOR1_DRV_GPIO_EN_NUM                  (90)
 #define MOTOR1_DRV_GPIO_EN_CFG                  GPIO_90_GPIO90
 #define MOTOR1_DRV_GPIO_EN_SET                  (HWREG(GPIODATA_BASE + GPIO_O_GPCSET)   = GPIO_GPCSET_GPIO90)
 #define MOTOR1_DRV_GPIO_EN_CLEAR                (HWREG(GPIODATA_BASE + GPIO_O_GPCCLEAR) = GPIO_GPCCLEAR_GPIO90)
 #define MOTOR1_DRV_GPIO_EN_TOGGLE               (HWREG(GPIODATA_BASE + GPIO_O_GPCTOGGLE)= GPIO_GPCTOGGLE_GPIO90)
-#define MOTOR1_DRV_GPIO_NFAULT                  (92)
-#define MOTOR1_DRV_GPIO_NFAULT_CFG              GPIO_92_GPIO92
-#define MOTOR1_DRV_GPIO_NFAULT_READ             (HWREG(GPIODATA_BASE + GPIO_O_GPCDAT) & GPIO_GPCDAT_GPIO92)
+#define MOTOR1_DRV_GPIO_FAULT_NUM               (92)
+#define MOTOR1_DRV_GPIO_FAULT_CFG               GPIO_92_GPIO92
+#define MOTOR1_DRV_GPIO_FAULT_READ              (HWREG(GPIODATA_BASE + GPIO_O_GPCDAT) & GPIO_GPCDAT_GPIO92)
 // DRV2 SPI defines
-#define MOTOR2_DRV_GPIO_EN                      (31)
+#define MOTOR2_DRV_GPIO_EN_NUM                  (31)
 #define MOTOR2_DRV_GPIO_EN_CFG                  GPIO_31_GPIO31
 #define MOTOR2_DRV_GPIO_EN_SET                  (HWREG(GPIODATA_BASE + GPIO_O_GPASET)   = GPIO_GPASET_GPIO31)
 #define MOTOR2_DRV_GPIO_EN_CLEAR                (HWREG(GPIODATA_BASE + GPIO_O_GPACLEAR) = GPIO_GPACLEAR_GPIO31)
 #define MOTOR2_DRV_GPIO_EN_TOGGLE               (HWREG(GPIODATA_BASE + GPIO_O_GPATOGGLE)= GPIO_GPATOGGLE_GPIO31)
-#define MOTOR2_DRV_GPIO_NFAULT                  (118)
-#define MOTOR2_DRV_GPIO_NFAULT_CFG              GPIO_118_GPIO118
-#define MOTOR2_DRV_GPIO_NFAULT_READ             (HWREG(GPIODATA_BASE + GPIO_O_GPDDAT) & GPIO_GPDDAT_GPIO118)
+#define MOTOR2_DRV_GPIO_FAULT_NUM               (118)
+#define MOTOR2_DRV_GPIO_FAULT_CFG               GPIO_118_GPIO118
+#define MOTOR2_DRV_GPIO_FAULT_READ              (HWREG(GPIODATA_BASE + GPIO_O_GPDDAT) & GPIO_GPDDAT_GPIO118)
 #endif
 /**
  * @}
@@ -899,7 +905,11 @@
 #define PWM_FREQ                                (40000) //[Hz]
 #define PWM_PERIOD                              (1.0f / (float32_t)PWM_FREQ)
 #define PWM_COUNTER_MODE                        EPWM_COUNTER_MODE_UP_DOWN
-#define PWM_TIMEBASE_CNT                        (TBCLK_FREQ / PWM_FREQ / ((PWM_COUNTER_MODE == EPWM_COUNTER_MODE_UP_DOWN) ? (2) : (1))) // PWM Period register (max value)
+#if (PWM_COUNTER_MODE == EPWM_COUNTER_MODE_UP_DOWN)
+#define PWM_TIMEBASE_CNT                        (TBCLK_FREQ / PWM_FREQ / (2)) // PWM Period register (max value)
+#else
+#define PWM_TIMEBASE_CNT                        (TBCLK_FREQ / PWM_FREQ / (1)) // PWM Period register (max value)
+#endif
 #define PWM_TIMEBASE_HALF_CNT                   (PWM_TIMEBASE_CNT / 2)
 #define PWM_INITIAL_PHASE_0                     (0)                     // PWM initial phase offset (MOTOR_1)
 #define PWM_INITIAL_PHASE_90                    PWM_TIMEBASE_HALF_CNT   // PWM initial phase offset (MOTOR_2)
@@ -969,35 +979,51 @@
  *  @brief    Configure resolution \& speed scaler (low \& high speed).
  * @{
  */
+#if (USE_RMDX8H_MOTOR_ON_MOTOR1) && (!USE_SOLO_MOTOR_ON_MOTOR1)
+#define MOTOR1_ENC_RESOLUTION                   (1024.0f)
+#elif (!USE_RMDX8H_MOTOR_ON_MOTOR1) && (USE_SOLO_MOTOR_ON_MOTOR1)
 #define MOTOR1_ENC_RESOLUTION                   (5000.0f)
+#else
+#error "Config error on MOTOR_1 : Only one motor config must be set @ a time."
+#endif
 #define MOTOR1_ENC_QUADRATURE_SCALE             (4.0f * MOTOR1_ENC_RESOLUTION)
 #define MOTOR1_ENC_RESOLUTION_SCALE             (1.0f / MOTOR1_ENC_QUADRATURE_SCALE)
 #define MOTOR1_ENC_CONFIG                       (EQEP_CONFIG_2X_RESOLUTION | EQEP_CONFIG_QUADRATURE | MOTOR1_QEP_SWAP | EQEP_CONFIG_IGATE_DISABLE)
-#define MOTOR1_ENC_SPEED_HIGH_SAMPLING_FREQ     (1000) // [Hz] Velocity computation frequency
+#define MOTOR1_ENC_SPEED_HIGH_SAMPLING_FREQ     (1000U) // [Hz] Velocity computation frequency
 #define MOTOR1_ENC_SPEED_HIGH_SAMPLING_TICKS    (DEVICE_SYSCLK_FREQ / MOTOR1_ENC_SPEED_HIGH_SAMPLING_FREQ)
 #define MOTOR1_ENC_SPEED_HIGH_SCALE             (MOTOR1_ENC_SPEED_HIGH_SAMPLING_FREQ) // 2pi / dt
 #define MOTOR1_ENC_SPEED_LOW_SCALE              (2.0f * M_PI * DEVICE_SYSCLK_FREQ * (1 << QEP_UNIT_POS_EVENT_DIV) / (1 << (QEP_CAPTURE_CLOCK_DIV >> 4)) / MOTOR1_ENC_RESOLUTION_SCALE)
-#define MOTOR1_ENC_SPEED_CUTOFF_FREQ            (100.0f)     // cutoff frequency for velocity estimation
+#define MOTOR1_ENC_SPEED_CUTOFF_FREQ            (100.0f) // cutoff frequency for velocity estimation
 #define MOTOR1_ENC_SPEED_TIME_CONST             (2.0f * M_PI * MOTOR1_ENC_SPEED_CUTOFF_FREQ * PWM_PERIOD)
 #define MOTOR1_ENC_SPEED_LPF_ALPHA              (MOTOR1_ENC_SPEED_TIME_CONST / (1.0f + MOTOR1_ENC_SPEED_TIME_CONST))
 #define MOTOR1_ENC_SPEED_LPF_ONE_M_ALPHA        (1.0f - MOTOR1_ENC_SPEED_LPF_ALPHA)
 #define MOTOR1_ENC_SPEED_LOCAL_LPF_ALPHA        (MOTOR1_ENC_SPEED_TIME_CONST / (1.0f + MOTOR1_ENC_SPEED_TIME_CONST))
 #define MOTOR1_ENC_SPEED_LOCAL_LPF_ONE_M_ALPHA  (1.0f - MOTOR1_ENC_SPEED_LPF_ALPHA)
 
-#if (USE_RMDX8H_ON_MOTOR2)
-#define MOTOR2_ENC_RESOLUTION                   (1024.0f)//MOTOR1_ENC_RESOLUTION
-#define MOTOR2_ENC_QUADRATURE_SCALE             (4.0f * MOTOR2_ENC_RESOLUTION)//MOTOR1_ENC_QUADRATURE_SCALE
-#define MOTOR2_ENC_RESOLUTION_SCALE             (1.0f / MOTOR2_ENC_QUADRATURE_SCALE)//MOTOR1_ENC_RESOLUTION_SCALE
-#define MOTOR2_ENC_CONFIG                       (EQEP_CONFIG_2X_RESOLUTION | EQEP_CONFIG_QUADRATURE | MOTOR2_QEP_SWAP | EQEP_CONFIG_IGATE_ENABLE)//MOTOR1_ENC_CONFIG
-#define MOTOR2_ENC_SPEED_HIGH_SAMPLING_FREQ     (1000)//MOTOR1_ENC_SPEED_HIGH_SAMPLING_FREQ // [Hz] Velocity computation frequency
-#define MOTOR2_ENC_SPEED_HIGH_SAMPLING_TICKS    (DEVICE_SYSCLK_FREQ / MOTOR2_ENC_SPEED_HIGH_SAMPLING_FREQ)//MOTOR1_ENC_SPEED_HIGH_SAMPLING_TICKS
-#define MOTOR2_ENC_SPEED_HIGH_SCALE             (MOTOR2_ENC_SPEED_HIGH_SAMPLING_FREQ) //MOTOR1_ENC_SPEED_HIGH_SCALE // 2pi / dt
-#define MOTOR2_ENC_SPEED_LOW_SCALE              (2.0f * M_PI * DEVICE_SYSCLK_FREQ * (1 << QEP_UNIT_POS_EVENT_DIV) / (1 << (QEP_CAPTURE_CLOCK_DIV >> 4)) / MOTOR2_ENC_RESOLUTION_SCALE)//MOTOR1_ENC_SPEED_LOW_SCALE
-#define MOTOR2_ENC_SPEED_CUTOFF_FREQ            (200.0f)//MOTOR1_ENC_SPEED_CUTOFF_FREQ     // cutoff frequency for velocity estimation
-#define MOTOR2_ENC_SPEED_TIME_CONST             (2.0f * M_PI * MOTOR2_ENC_SPEED_CUTOFF_FREQ * PWM_PERIOD)//MOTOR1_ENC_SPEED_TIME_CONST
-#define MOTOR2_ENC_SPEED_LPF_ALPHA              (MOTOR2_ENC_SPEED_TIME_CONST / (1.0f + MOTOR2_ENC_SPEED_TIME_CONST))//MOTOR1_ENC_SPEED_LPF_ALPHA
-#define MOTOR2_ENC_SPEED_LPF_ONE_M_ALPHA        (1.0f - MOTOR2_ENC_SPEED_LPF_ALPHA)//MOTOR1_ENC_SPEED_LPF_ONE_M_ALPHA
-#elif (USE_MOTOR1_PARAMS_ON_MOTOR2)
+#if (USE_RMDX8H_MOTOR_ON_MOTOR2) && (!USE_SOLO_MOTOR_ON_MOTOR2) && (!USE_MOTOR1_PARAMS_ON_MOTOR2)
+#define MOTOR2_ENC_RESOLUTION                   (1024.0f)
+#elif (!USE_RMDX8H_MOTOR_ON_MOTOR2) && (USE_SOLO_MOTOR_ON_MOTOR2) && (!USE_MOTOR1_PARAMS_ON_MOTOR2)
+#define MOTOR2_ENC_RESOLUTION                   (5000.0f)
+#elif (!USE_RMDX8H_MOTOR_ON_MOTOR2) && (!USE_SOLO_MOTOR_ON_MOTOR2) && (USE_MOTOR1_PARAMS_ON_MOTOR2)
+#define MOTOR2_ENC_RESOLUTION                   MOTOR1_ENC_RESOLUTION
+#else
+#error "Config error on MOTOR_2 : Only one motor config must be set @ a time."
+#endif
+#if (((USE_RMDX8H_MOTOR_ON_MOTOR2) || (USE_SOLO_MOTOR_ON_MOTOR2)) && (!USE_MOTOR1_PARAMS_ON_MOTOR2))
+#define MOTOR2_ENC_QUADRATURE_SCALE             (4.0f * MOTOR2_ENC_RESOLUTION)
+#define MOTOR2_ENC_RESOLUTION_SCALE             (1.0f / MOTOR2_ENC_QUADRATURE_SCALE)
+#define MOTOR2_ENC_CONFIG                       (EQEP_CONFIG_2X_RESOLUTION | EQEP_CONFIG_QUADRATURE | MOTOR2_QEP_SWAP | EQEP_CONFIG_IGATE_DISABLE)
+#define MOTOR2_ENC_SPEED_HIGH_SAMPLING_FREQ     (1000U) // [Hz] Velocity computation frequency
+#define MOTOR2_ENC_SPEED_HIGH_SAMPLING_TICKS    (DEVICE_SYSCLK_FREQ / MOTOR2_ENC_SPEED_HIGH_SAMPLING_FREQ)
+#define MOTOR2_ENC_SPEED_HIGH_SCALE             (MOTOR2_ENC_SPEED_HIGH_SAMPLING_FREQ) // 2pi / dt
+#define MOTOR2_ENC_SPEED_LOW_SCALE              (2.0f * M_PI * DEVICE_SYSCLK_FREQ * (1 << QEP_UNIT_POS_EVENT_DIV) / (1 << (QEP_CAPTURE_CLOCK_DIV >> 4)) / MOTOR2_ENC_RESOLUTION_SCALE)
+#define MOTOR2_ENC_SPEED_CUTOFF_FREQ            (100.0f) // cutoff frequency for velocity estimation
+#define MOTOR2_ENC_SPEED_TIME_CONST             (2.0f * M_PI * MOTOR2_ENC_SPEED_CUTOFF_FREQ * PWM_PERIOD)
+#define MOTOR2_ENC_SPEED_LPF_ALPHA              (MOTOR2_ENC_SPEED_TIME_CONST / (1.0f + MOTOR2_ENC_SPEED_TIME_CONST))
+#define MOTOR2_ENC_SPEED_LPF_ONE_M_ALPHA        (1.0f - MOTOR2_ENC_SPEED_LPF_ALPHA)
+#define MOTOR2_ENC_SPEED_LOCAL_LPF_ALPHA        (MOTOR2_ENC_SPEED_TIME_CONST / (1.0f + MOTOR2_ENC_SPEED_TIME_CONST))
+#define MOTOR2_ENC_SPEED_LOCAL_LPF_ONE_M_ALPHA  (1.0f - MOTOR2_ENC_SPEED_LPF_ALPHA)
+#elif ((!USE_RMDX8H_MOTOR_ON_MOTOR2) && (!USE_SOLO_MOTOR_ON_MOTOR2) && (USE_MOTOR1_PARAMS_ON_MOTOR2))
 #define MOTOR2_ENC_RESOLUTION                   MOTOR1_ENC_RESOLUTION
 #define MOTOR2_ENC_QUADRATURE_SCALE             MOTOR1_ENC_QUADRATURE_SCALE
 #define MOTOR2_ENC_RESOLUTION_SCALE             MOTOR1_ENC_RESOLUTION_SCALE
@@ -1052,72 +1078,99 @@
  * MOTORS DEFINES
  ***********************************************************************/
 /*** Motor 1 constants ***/
+#if (USE_RMDX8H_MOTOR_ON_MOTOR1) && (!USE_SOLO_MOTOR_ON_MOTOR1)
+#define MOTOR1_KV                               (33.0f)     // Motor constant (rpm/V)
+#define MOTOR1_KE                               (FM_SQRT3 / (MOTOR1_KV * FM_RPM2RADPS)) // Motor back EMF constant (V/rad/s)
+#define MOTOR1_KI                               (0.3f)      // Motor torque constant (N.m/A)
+#define MOTOR1_RS                               (0.52f)     // Stator resistance (ohm)
+#define MOTOR1_LS                               (260e-6)    // Stator d-axis inductance (H)
+#define MOTOR1_POLES_PAIRS                      (20.0f)     // Number of poles
+#define MOTOR1_CURRENT_ALIGN_MAX                (2.0f)      // Current on d-axis for motor alignment (A)
+#define MOTOR1_CURRENT_CMD_SAT_MAX              (10.0f)
+#elif (!USE_RMDX8H_MOTOR_ON_MOTOR1) && (USE_SOLO_MOTOR_ON_MOTOR1)
 #define MOTOR1_KV                               (300.0f)    // Motor constant (rpm/V)
-#define MOTOR1_KE                               (FM_SQRT3 / (MOTOR1_KV * FM_RPM2RADPS))   //1.0 / (MOTOR1_KV * FM_RPM2RAD * MOTOR1_POLES_PAIRS) // Motor back EMF constant (V/rad/s)
+#define MOTOR1_KE                               (FM_SQRT3 / (MOTOR1_KV * FM_RPM2RADPS)) // Motor back EMF constant (V/rad/s)
 #define MOTOR1_KI                               (0.1f)      // Motor torque constant (N.m/A)
 #define MOTOR1_RS                               (0.40f)     // Stator resistance (ohm)
 #define MOTOR1_LS                               (210e-6f)   // Stator d-axis inductance (H)
 #define MOTOR1_POLES_PAIRS                      (12.0f)     // Number of poles
-#define MOTOR1_CURRENT_CUTOFF_FREQ              (500.0f)   // Current loop bandwidth (Hz)
+#define MOTOR1_CURRENT_ALIGN_MAX                (2.0f)      // Current on d-axis for motor alignment (A)
+#define MOTOR1_CURRENT_CMD_SAT_MAX              (10.0f)
+#endif
+#define MOTOR1_CURRENT_CUTOFF_FREQ              (1000.0f)   // Current loop bandwidth (Hz)
 #define MOTOR1_CURRENT_TIME_CONST               (2.0f * M_PI * MOTOR1_CURRENT_CUTOFF_FREQ * PWM_PERIOD)
 #define MOTOR1_CURRENT_LPF_ALPHA                (MOTOR1_CURRENT_TIME_CONST / (1.0f + MOTOR1_CURRENT_TIME_CONST))
 #define MOTOR1_CURRENT_LPF_ONE_M_ALPHA          (1.0f - MOTOR1_CURRENT_LPF_ALPHA)
-#define MOTOR1_CURRENT_ALIGN_MAX                (2.0f)      // Current on d-axis for motor alignment (A)
-#define MOTOR1_CURRENT_ALIGN_TIME               (0.5f)
+#define MOTOR1_CURRENT_ALIGN_TIME               (0.5f)      // in seconds
 #define MOTOR1_CURRENT_ALIGN_INC                (MOTOR1_CURRENT_ALIGN_MAX / MOTOR1_CURRENT_ALIGN_TIME / PWM_FREQ)
-#define MOTOR1_THETA_ALIGN_MAX                  (FM_ROUND2RAD)
+#define MOTOR1_THETA_ALIGN_MAX                  FM_ROUND2RAD
 #define MOTOR1_THETA_ALIGN_TIME                 MOTOR1_CURRENT_ALIGN_TIME
 #define MOTOR1_THETA_ALIGN_DEC                  (MOTOR1_THETA_ALIGN_MAX / MOTOR1_THETA_ALIGN_TIME / PWM_FREQ)
 #define MOTOR1_PI_ID_KP_COEF                    (MOTOR1_LS * 2.0f * M_PI * MOTOR1_CURRENT_CUTOFF_FREQ)
 #define MOTOR1_PI_ID_KI_COEF                    (MOTOR1_RS * 2.0f * M_PI * MOTOR1_CURRENT_CUTOFF_FREQ)
 #define MOTOR1_PI_IQ_KP_COEF                    (MOTOR1_LS * 2.0f * M_PI * MOTOR1_CURRENT_CUTOFF_FREQ)
 #define MOTOR1_PI_IQ_KI_COEF                    (MOTOR1_RS * 2.0f * M_PI * MOTOR1_CURRENT_CUTOFF_FREQ)
-#define MOTOR1_CURRENT_CMD_SAT_MAX              (10.0f)
-//#define MOTOR1_SPEED_REGULATOR_KP_COEF          (1.0f)
-//#define MOTOR1_SPEED_REGULATOR_KD_COEF          (0.02f)
-#define MOTOR1_DTC_MAX                          (0.9f)     // Max duty cycle
-#define MOTOR1_DTC_MIN                          (0.1f)     // Min duty cycle
+#define MOTOR1_DTC_MAX                          (0.9f)      // Max duty cycle
+#define MOTOR1_DTC_MIN                          (0.1f)      // Min duty cycle
 #define MOTOR1_STATOR_RESISTOR_CUTOFF_FREQ      (0.2f)
 #define MOTOR1_STATOR_RESISTOR_TIME_CONST       (2.0f * M_PI * MOTOR1_STATOR_RESISTOR_CUTOFF_FREQ * PWM_PERIOD)
 #define MOTOR1_STATOR_RESISTOR_LPF_ALPHA        (MOTOR1_STATOR_RESISTOR_TIME_CONST / (1.0f + MOTOR1_STATOR_RESISTOR_TIME_CONST))
 #define MOTOR1_STATOR_RESISTOR_LPF_ONE_M_ALPHA  (1.0f - MOTOR1_STATOR_RESISTOR_LPF_ALPHA)
 
 /*** Motor 2 constants ***/
-#if (USE_RMDX8H_ON_MOTOR2)
-#define MOTOR2_KV                               (33.0f)    // Motor constant (rpm/V)
-#define MOTOR2_KE                               (FM_SQRT3 / (MOTOR2_KV * FM_RPM2RADPS))   //1.0 / (MOTOR2_KV * FM_RPM2RAD * MOTOR2_POLES_PAIRS) // Motor back EMF constant (V/rad/s)
-#define MOTOR2_KI                               (0.3f)                  // Motor torque constant (N.m/A)
-#define MOTOR2_RS                               (0.52f)//(0.7f)         // Stator resistance (ohm)
-#define MOTOR2_LS                               (260e-6)//(134e-6f)     // Stator d-axis inductance (H)
-#define MOTOR2_POLES_PAIRS                      (20.0f)        // Number of poles
-#define MOTOR2_CURRENT_CUTOFF_FREQ              (1000.0f)    // Current loop bandwidth (Hz)
+#if (USE_RMDX8H_MOTOR_ON_MOTOR2) && (!USE_SOLO_MOTOR_ON_MOTOR2) && (!USE_MOTOR1_PARAMS_ON_MOTOR2)
+#define MOTOR2_KV                               (33.0f)     // Motor constant (rpm/V)
+#define MOTOR2_KE                               (FM_SQRT3 / (MOTOR2_KV * FM_RPM2RADPS)) // Motor back EMF constant (V/rad/s)
+#define MOTOR2_KI                               (0.3f)      // Motor torque constant (N.m/A)
+#define MOTOR2_RS                               (0.52f)     // Stator resistance (ohm)
+#define MOTOR2_LS                               (260e-6)    // Stator d-axis inductance (H)
+#define MOTOR2_POLES_PAIRS                      (20.0f)     // Number of poles
+#define MOTOR2_CURRENT_ALIGN_MAX                (2.0f)      // Current on d-axis for motor alignment (A)
+#define MOTOR2_CURRENT_CMD_SAT_MAX              (10.0f)
+#elif (!USE_RMDX8H_MOTOR_ON_MOTOR2) && (USE_SOLO_MOTOR_ON_MOTOR2) && (!USE_MOTOR1_PARAMS_ON_MOTOR2)
+#define MOTOR2_KV                               (300.0f)    // Motor constant (rpm/V)
+#define MOTOR2_KE                               (FM_SQRT3 / (MOTOR2_KV * FM_RPM2RADPS)) // Motor back EMF constant (V/rad/s)
+#define MOTOR2_KI                               (0.1f)      // Motor torque constant (N.m/A)
+#define MOTOR2_RS                               (0.40f)     // Stator resistance (ohm)
+#define MOTOR2_LS                               (210e-6f)   // Stator d-axis inductance (H)
+#define MOTOR2_POLES_PAIRS                      (12.0f)     // Number of poles
+#define MOTOR2_CURRENT_ALIGN_MAX                (2.0f)      // Current on d-axis for motor alignment (A)
+#define MOTOR2_CURRENT_CMD_SAT_MAX              (10.0f)
+#elif (!USE_RMDX8H_MOTOR_ON_MOTOR2) && (!USE_SOLO_MOTOR_ON_MOTOR2) && (USE_MOTOR1_PARAMS_ON_MOTOR2)
+#define MOTOR2_KV                               MOTOR1_KV   // Motor constant (rpm/V)
+#define MOTOR2_KE                               MOTOR1_KE   // Motor back EMF constant (V/rad/s)
+#define MOTOR2_KI                               MOTOR1_KI   // Motor torque constant (N.m/A)
+#define MOTOR2_RS                               MOTOR1_RS   // Stator resistance (ohm)
+#define MOTOR2_LS                               MOTOR1_LS   // Stator d-axis inductance (H)
+#define MOTOR2_POLES_PAIRS                      MOTOR1_POLES_PAIRS          // Number of poles
+#define MOTOR2_CURRENT_ALIGN_MAX                MOTOR1_CURRENT_ALIGN_MAX    // Current on d-axis for motor alignment (A)
+#define MOTOR2_CURRENT_CMD_SAT_MAX              MOTOR1_CURRENT_CMD_SAT_MAX
+#endif
+#if (((USE_RMDX8H_MOTOR_ON_MOTOR2) || (USE_SOLO_MOTOR_ON_MOTOR2)) && (!USE_MOTOR1_PARAMS_ON_MOTOR2))
+#define MOTOR2_CURRENT_CUTOFF_FREQ              (1000.0f)   // Current loop bandwidth (Hz)
 #define MOTOR2_CURRENT_TIME_CONST               (2.0f * M_PI * MOTOR2_CURRENT_CUTOFF_FREQ * PWM_PERIOD)
 #define MOTOR2_CURRENT_LPF_ALPHA                (MOTOR2_CURRENT_TIME_CONST / (1.0f + MOTOR2_CURRENT_TIME_CONST))
 #define MOTOR2_CURRENT_LPF_ONE_M_ALPHA          (1.0f - MOTOR2_CURRENT_LPF_ALPHA)
-#define MOTOR2_CURRENT_ALIGN_MAX                (2.0f)      // Current on d-axis for motor alignment (A)
+#define MOTOR2_CURRENT_ALIGN_TIME               (0.5f)      // in seconds
+#define MOTOR2_CURRENT_ALIGN_INC                (MOTOR2_CURRENT_ALIGN_MAX / MOTOR2_CURRENT_ALIGN_TIME / PWM_FREQ)
+#define MOTOR2_THETA_ALIGN_MAX                  FM_ROUND2RAD
+#define MOTOR2_THETA_ALIGN_TIME                 MOTOR2_CURRENT_ALIGN_TIME
+#define MOTOR2_THETA_ALIGN_DEC                  (MOTOR2_THETA_ALIGN_MAX / MOTOR2_THETA_ALIGN_TIME / PWM_FREQ)
 #define MOTOR2_PI_ID_KP_COEF                    (MOTOR2_LS * 2.0f * M_PI * MOTOR2_CURRENT_CUTOFF_FREQ)
 #define MOTOR2_PI_ID_KI_COEF                    (MOTOR2_RS * 2.0f * M_PI * MOTOR2_CURRENT_CUTOFF_FREQ)
 #define MOTOR2_PI_IQ_KP_COEF                    (MOTOR2_LS * 2.0f * M_PI * MOTOR2_CURRENT_CUTOFF_FREQ)
 #define MOTOR2_PI_IQ_KI_COEF                    (MOTOR2_RS * 2.0f * M_PI * MOTOR2_CURRENT_CUTOFF_FREQ)
-#define MOTOR2_CURRENT_CMD_SAT_MAX              (10.0f)
-#define MOTOR2_DTC_MAX                          (0.9f)     // Max duty cycle
-#define MOTOR2_DTC_MIN                          (0.1f)     // Min duty cycle
+#define MOTOR2_DTC_MAX                          (0.9f)      // Max duty cycle
+#define MOTOR2_DTC_MIN                          (0.1f)      // Min duty cycle
 #define MOTOR2_STATOR_RESISTOR_CUTOFF_FREQ      (0.2f)
 #define MOTOR2_STATOR_RESISTOR_TIME_CONST       (2.0f * M_PI * MOTOR2_STATOR_RESISTOR_CUTOFF_FREQ * PWM_PERIOD)
 #define MOTOR2_STATOR_RESISTOR_LPF_ALPHA        (MOTOR2_STATOR_RESISTOR_TIME_CONST / (1.0f + MOTOR2_STATOR_RESISTOR_TIME_CONST))
 #define MOTOR2_STATOR_RESISTOR_LPF_ONE_M_ALPHA  (1.0f - MOTOR2_STATOR_RESISTOR_LPF_ALPHA)
-#elif (USE_MOTOR1_PARAMS_ON_MOTOR2)
-#define MOTOR2_KV                               MOTOR1_KV                   // Motor constant (rpm/V)
-#define MOTOR2_KE                               MOTOR1_KE                   // Motor back EMF constant (V/rad/s)
-#define MOTOR2_KI                               MOTOR1_KI                   // Motor torque constant (N.m/A)
-#define MOTOR2_RS                               MOTOR1_RS                   // Stator resistance (ohm)
-#define MOTOR2_LS                               MOTOR1_LS                   // Stator d-axis inductance (H)
-#define MOTOR2_POLES_PAIRS                      MOTOR1_POLES_PAIRS          // Number of poles
-#define MOTOR2_CURRENT_CUTOFF_FREQ              MOTOR1_CURRENT_CUTOFF_FREQ  // Current loop bandwidth (Hz)
+#elif ((!USE_RMDX8H_MOTOR_ON_MOTOR2) && (!USE_SOLO_MOTOR_ON_MOTOR2) && (USE_MOTOR1_PARAMS_ON_MOTOR2))
+#define MOTOR2_CURRENT_CUTOFF_FREQ              MOTOR1_CURRENT_CUTOFF_FREQ // Current loop bandwidth (Hz)
 #define MOTOR2_CURRENT_TIME_CONST               MOTOR1_CURRENT_TIME_CONST
 #define MOTOR2_CURRENT_LPF_ALPHA                MOTOR1_CURRENT_LPF_ALPHA
 #define MOTOR2_CURRENT_LPF_ONE_M_ALPHA          MOTOR1_CURRENT_LPF_ONE_M_ALPHA
-#define MOTOR2_CURRENT_ALIGN_MAX                MOTOR1_CURRENT_ALIGN_MAX
 #define MOTOR2_CURRENT_ALIGN_TIME               MOTOR1_CURRENT_ALIGN_TIME
 #define MOTOR2_CURRENT_ALIGN_INC                MOTOR1_CURRENT_ALIGN_INC
 #define MOTOR2_THETA_ALIGN_MAX                  MOTOR1_THETA_ALIGN_MAX
@@ -1127,9 +1180,8 @@
 #define MOTOR2_PI_ID_KI_COEF                    MOTOR1_PI_ID_KI_COEF
 #define MOTOR2_PI_IQ_KP_COEF                    MOTOR1_PI_IQ_KP_COEF
 #define MOTOR2_PI_IQ_KI_COEF                    MOTOR1_PI_IQ_KI_COEF
-#define MOTOR2_CURRENT_CMD_SAT_MAX              MOTOR1_CURRENT_CMD_SAT_MAX
-#define MOTOR2_DTC_MAX                          MOTOR1_DTC_MAX              // Max duty cycle
-#define MOTOR2_DTC_MIN                          MOTOR1_DTC_MIN              // Min duty cycle
+#define MOTOR2_DTC_MAX                          MOTOR1_DTC_MAX
+#define MOTOR2_DTC_MIN                          MOTOR1_DTC_MIN
 #define MOTOR2_STATOR_RESISTOR_CUTOFF_FREQ      MOTOR1_STATOR_RESISTOR_CUTOFF_FREQ
 #define MOTOR2_STATOR_RESISTOR_TIME_CONST       MOTOR1_STATOR_RESISTOR_TIME_CONST
 #define MOTOR2_STATOR_RESISTOR_LPF_ALPHA        MOTOR1_STATOR_RESISTOR_LPF_ALPHA
@@ -1149,6 +1201,7 @@
 #define VEXT_CUTOFF_TIME_CONST                  (2.0f * M_PI * VEXT_CUTOFF_FREQ * PWM_PERIOD)
 #define VEXT_LPF_ALPHA                          (VEXT_CUTOFF_TIME_CONST / (1.0f + VEXT_CUTOFF_TIME_CONST))
 #define VEXT_LPF_ONE_M_ALPHA                    (1.0f - VEXT_LPF_ALPHA)
+
 
 /***********************************************************************
  * COMMUNICATION DEFINES
@@ -1177,26 +1230,5 @@ typedef struct __lowPassFilter_t__
     float32_t a;
     float32_t one_minus_a;
 } lpf_t;
-
-/**
- * @enum    ArrayID
- * @brief   Easier array management for history.
- */
-//typedef enum
-//{
-//    NEW = 0,    /*!< Current data */
-//    OLD = 1,    /*!< Previous data */
-//} array_id_e;
-
-/**
- * @enum    MotorID
- * @brief   Easier motor identification
- */
-//typedef enum
-//{
-//    MOTOR_1 = 0,    /*!< Select Motor_1 */
-//    MOTOR_2 = 1,    /*!< Select Motor_2 */
-//    NO_MOT  = -1,   /*!< No motor selected */
-//} motor_id_e;
 
 #endif
