@@ -122,7 +122,7 @@ void main(void)
                 cmd_uOmodri[MOTOR_1].cptTimeout++;
                 cmd_uOmodri[MOTOR_2].cptTimeout++;
             }
-            if(!DMA_getRunStatusFlag(DMA_COM_SPI_RX_BASE_ADDR) && GPIO_readPin(COM_SPI_CS))
+            if(!DMA_getRunStatusFlag(DMA_COM_SPI_RX_BASE_ADDR) && GPIO_readPin(COM_SPI_CS_NUM))
             {
                 // Prepare SPI and associated DMA for a new receive
                 SPI_resetRxFIFO(COM_SPI_BASE);

@@ -87,13 +87,13 @@ static const drv_cfg_t  drv_cfg[] =
 {
  {
   .spiHandle        = DRV_SPI_BASE,
-  .gpioNumber_CS    = MOTOR1_DRV_SPI_CS,
+  .gpioNumber_CS    = MOTOR1_DRV_SPI_CS_NUM,
   .gpioNumber_EN    = MOTOR1_DRV_GPIO_EN_NUM,
   .gpioNumber_FAULT = MOTOR1_DRV_GPIO_FAULT_NUM,
  },
  {
   .spiHandle        = DRV_SPI_BASE,
-  .gpioNumber_CS    = MOTOR2_DRV_SPI_CS,
+  .gpioNumber_CS    = MOTOR2_DRV_SPI_CS_NUM,
   .gpioNumber_EN    = MOTOR2_DRV_GPIO_EN_NUM,
   .gpioNumber_FAULT = MOTOR2_DRV_GPIO_FAULT_NUM,
  },
