@@ -1016,11 +1016,7 @@
 #if (((USE_RMDX8H_MOTOR_ON_MOTOR2) || (USE_SOLO_MOTOR_ON_MOTOR2)) && (!USE_MOTOR1_PARAMS_ON_MOTOR2))
 #define MOTOR2_ENC_QUADRATURE_SCALE             (4.0f * MOTOR2_ENC_RESOLUTION)
 #define MOTOR2_ENC_RESOLUTION_SCALE             (1.0f / MOTOR2_ENC_QUADRATURE_SCALE)
-<<<<<<< HEAD
 #define MOTOR2_ENC_CONFIG                       (EQEP_CONFIG_2X_RESOLUTION | EQEP_CONFIG_QUADRATURE | MOTOR2_QEP_SWAP | EQEP_CONFIG_IGATE_DISABLE)
-=======
-#define MOTOR2_ENC_CONFIG                       (EQEP_CONFIG_2X_RESOLUTION | EQEP_CONFIG_QUADRATURE | MOTOR2_QEP_SWAP | EQEP_CONFIG_IGATE_ENABLE)
->>>>>>> 62c43a5d8d279d2bfe863dd1f7ce8319622181dd
 #define MOTOR2_ENC_SPEED_HIGH_SAMPLING_FREQ     (1000U) // [Hz] Velocity computation frequency
 #define MOTOR2_ENC_SPEED_HIGH_SAMPLING_TICKS    (DEVICE_SYSCLK_FREQ / MOTOR2_ENC_SPEED_HIGH_SAMPLING_FREQ)
 #define MOTOR2_ENC_SPEED_HIGH_SCALE             (MOTOR2_ENC_SPEED_HIGH_SAMPLING_FREQ) // 2pi / dt
@@ -1128,11 +1124,7 @@
 /*** Motor 2 constants ***/
 #if (USE_RMDX8H_MOTOR_ON_MOTOR2) && (!USE_SOLO_MOTOR_ON_MOTOR2) && (!USE_MOTOR1_PARAMS_ON_MOTOR2)
 #define MOTOR2_KV                               (33.0f)     // Motor constant (rpm/V)
-<<<<<<< HEAD
 #define MOTOR2_KE                               (FM_SQRT3 / (MOTOR2_KV * FM_RPM2RADPS)) // Motor back EMF constant (V/rad/s)
-=======
-#define MOTOR2_KE                               (FM_SQRT3 / (MOTOR2_KV * FM_RPM2RADPS))   //1.0 / (MOTOR2_KV * FM_RPM2RAD * MOTOR2_POLES_PAIRS) // Motor back EMF constant (V/rad/s)
->>>>>>> 62c43a5d8d279d2bfe863dd1f7ce8319622181dd
 #define MOTOR2_KI                               (0.3f)      // Motor torque constant (N.m/A)
 #define MOTOR2_RS                               (0.52f)     // Stator resistance (ohm)
 #define MOTOR2_LS                               (260e-6)    // Stator d-axis inductance (H)
@@ -1141,11 +1133,7 @@
 #define MOTOR2_CURRENT_CMD_SAT_MAX              (10.0f)
 #elif (!USE_RMDX8H_MOTOR_ON_MOTOR2) && (USE_SOLO_MOTOR_ON_MOTOR2) && (!USE_MOTOR1_PARAMS_ON_MOTOR2)
 #define MOTOR2_KV                               (300.0f)    // Motor constant (rpm/V)
-<<<<<<< HEAD
 #define MOTOR2_KE                               (FM_SQRT3 / (MOTOR2_KV * FM_RPM2RADPS)) // Motor back EMF constant (V/rad/s)
-=======
-#define MOTOR2_KE                               (FM_SQRT3 / (MOTOR2_KV * FM_RPM2RADPS))   //1.0 / (MOTOR2_KV * FM_RPM2RAD * MOTOR2_POLES_PAIRS) // Motor back EMF constant (V/rad/s)
->>>>>>> 62c43a5d8d279d2bfe863dd1f7ce8319622181dd
 #define MOTOR2_KI                               (0.1f)      // Motor torque constant (N.m/A)
 #define MOTOR2_RS                               (0.40f)     // Stator resistance (ohm)
 #define MOTOR2_LS                               (210e-6f)   // Stator d-axis inductance (H)
@@ -1169,11 +1157,7 @@
 #define MOTOR2_CURRENT_LPF_ONE_M_ALPHA          (1.0f - MOTOR2_CURRENT_LPF_ALPHA)
 #define MOTOR2_CURRENT_ALIGN_TIME               (0.5f)      // in seconds
 #define MOTOR2_CURRENT_ALIGN_INC                (MOTOR2_CURRENT_ALIGN_MAX / MOTOR2_CURRENT_ALIGN_TIME / PWM_FREQ)
-<<<<<<< HEAD
 #define MOTOR2_THETA_ALIGN_MAX                  FM_ROUND2RAD
-=======
-#define MOTOR2_THETA_ALIGN_MAX                  (FM_ROUND2RAD)
->>>>>>> 62c43a5d8d279d2bfe863dd1f7ce8319622181dd
 #define MOTOR2_THETA_ALIGN_TIME                 MOTOR2_CURRENT_ALIGN_TIME
 #define MOTOR2_THETA_ALIGN_DEC                  (MOTOR2_THETA_ALIGN_MAX / MOTOR2_THETA_ALIGN_TIME / PWM_FREQ)
 #define MOTOR2_PI_ID_KP_COEF                    (MOTOR2_LS * 2.0f * M_PI * MOTOR2_CURRENT_CUTOFF_FREQ)
