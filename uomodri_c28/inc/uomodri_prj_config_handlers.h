@@ -88,14 +88,14 @@ static const drv_cfg_t  drv_cfg[] =
  {
   .spiHandle        = DRV_SPI_BASE,
   .gpioNumber_CS    = MOTOR1_DRV_SPI_CS_NUM,
-  .gpioNumber_EN    = MOTOR1_DRV_GPIO_EN_NUM,
-  .gpioNumber_FAULT = MOTOR1_DRV_GPIO_FAULT_NUM,
+  .gpioNumber_EN    = MOTOR1_DRV_EN_NUM,
+  .gpioNumber_FAULT = MOTOR1_DRV_FAULT_NUM,
  },
  {
   .spiHandle        = DRV_SPI_BASE,
   .gpioNumber_CS    = MOTOR2_DRV_SPI_CS_NUM,
-  .gpioNumber_EN    = MOTOR2_DRV_GPIO_EN_NUM,
-  .gpioNumber_FAULT = MOTOR2_DRV_GPIO_FAULT_NUM,
+  .gpioNumber_EN    = MOTOR2_DRV_EN_NUM,
+  .gpioNumber_FAULT = MOTOR2_DRV_FAULT_NUM,
  },
 };
 
@@ -563,8 +563,8 @@ static motor_t motor[2] =
   .itCnt                                    = 0,
   .itDone                                   = false,
   //--- DRV IO Config ---------------------------------------------------------
-  .drvFaultGpioNum                          = MOTOR1_DRV_GPIO_FAULT_NUM,
-  .drvEnGpioNum                             = MOTOR1_DRV_GPIO_EN_NUM,
+  .drvFaultGpioNum                          = MOTOR1_DRV_FAULT_NUM,
+  .drvEnGpioNum                             = MOTOR1_DRV_EN_NUM,
   //---- PWM config address ---------------------------------------------------
   .epwmBaseAddr[CHANNEL_1]                  = MOTOR1_PWM1_BASE,
   .epwmBaseAddr[CHANNEL_2]                  = MOTOR1_PWM2_BASE,
@@ -588,8 +588,8 @@ static motor_t motor[2] =
   .itCnt                                    = 0,
   .itDone                                   = false,
   //--- DRV IO Config ---------------------------------------------------------
-  .drvFaultGpioNum                          = MOTOR2_DRV_GPIO_FAULT_NUM,
-  .drvEnGpioNum                             = MOTOR2_DRV_GPIO_EN_NUM,
+  .drvFaultGpioNum                          = MOTOR2_DRV_FAULT_NUM,
+  .drvEnGpioNum                             = MOTOR2_DRV_EN_NUM,
   //---- PWM periph config address --------------------------------------------
   .epwmBaseAddr[CHANNEL_1]                  = MOTOR2_PWM1_BASE,
   .epwmBaseAddr[CHANNEL_2]                  = MOTOR2_PWM2_BASE,
