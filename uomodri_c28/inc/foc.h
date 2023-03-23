@@ -39,15 +39,6 @@ typedef enum
 /***********************************************************************
  * CONTROL STRUCTURES
  ***********************************************************************/
-//typedef struct __cmd_bit_reg_t__
-//{
-//    uint8_t         systemEnable        : 1;    /*!< Bit 0      : R/W - Enable system to start. No power on motors.         */
-//    uint8_t         motorEnable         : 1;    /*!< Bit 1      : R/W - Enable power on motor.                              */
-//    uint8_t         rollOverEnable      : 1;    /*!< Bit 2      : R/W - Limit the rotations to +/- 128 rounds.              */
-//    uint8_t         encOffsetEnable     : 1;    /*!< Bit 3      : R/W - Use encoder index in position computation.          */
-//    uint8_t         CMD_RSV1            : 4;    /*!< Bit 4-7    : R/W - Reserved                                            */
-//} cmd_reg_t;
-
 typedef union __cmd_bit_reg_u__
 {
     uint8_t         all;
@@ -59,7 +50,6 @@ typedef union __cmd_bit_reg_u__
         uint8_t     encOffsetEnable     : 1;    /*!< Bit 3      : R/W - Use encoder index in position computation.          */
         uint8_t     CMD_RSV1            : 4;    /*!< Bit 4-7    : R/W - Reserved                                            */
     };
-//    cmd_reg_t       bit;
 } cmd_reg_u;
 
 /**
@@ -68,7 +58,7 @@ typedef union __cmd_bit_reg_u__
  */
 typedef struct __pi_t__
 {
-#if (CLA_CORE_ENABLE)
+#if (CLA1_CORE_ENABLE)
     float32_t*          p_fb;           /*!< Pointer on the feedback current */
     float32_t*          p_set;          /*!< Pointer on the setpoint current */
     float32_t*          p_sat;          /*!< Pointer on the saturation value to use */
@@ -91,7 +81,7 @@ typedef struct __pi_t__
  */
 typedef struct __pd_t__
 {
-#if (CLA_CORE_ENABLE)
+#if (CLA1_CORE_ENABLE)
     float32_t*          p_fbTheta;      /*!< Pointer on the feedback position */
     float32_t*          p_setTheta;     /*!< Pointer on the setpoint position */
     float32_t*          p_fbSpeed;      /*!< Pointer on the feedback speed */
@@ -125,7 +115,7 @@ typedef struct __params_t__
     float32_t       kv;                 /*!< Motor speed constant [RPM/V or rad/s/V] */
     float32_t       ke;                 /*!< Motor back EMF constant [V/rad/s] (electrical radians) = 1/kv */
     float32_t       ki;                 /*!< Motor torque constant [N.m/A] */
-#if (CLA_CORE_ENABLE)
+#if (CLA1_CORE_ENABLE)
     float32_t       polePairs;          /*!< Number of pole pairs */
 #else
     const float32_t polePairs;          /*!< Number of pole pairs */
@@ -135,18 +125,14 @@ typedef struct __params_t__
 typedef struct __acquisitions_t__
 {
     // ADC result registers
-#if (CLA_CORE_ENABLE)
+#if (CLA1_CORE_ENABLE)
     volatile uint16_t*  p_vBusMeasReg;
     volatile uint16_t*  p_vExtMeasReg;
-    volatile int16_t*   p_iaMeasReg;
-    volatile int16_t*   p_ibMeasReg;
-    volatile int16_t*   p_icMeasReg;
+    volatile int16_t*   p_iMeasReg[3];
 #else
     volatile uint16_t*  const p_vBusMeasReg;
     volatile uint16_t*  const p_vExtMeasReg;
-    volatile int16_t*   const p_iaMeasReg;
-    volatile int16_t*   const p_ibMeasReg;
-    volatile int16_t*   const p_icMeasReg;
+    volatile int16_t*   const p_iMeasReg[3];
 #endif
     // ADC values scaled
     float32_t           vbus;       // [V]
@@ -180,7 +166,7 @@ typedef struct __foc_control_t__
     cmd_t               motor_cmd;      /*!< Motor commands */
     lpf_t               iParkFlt;       /*!< Low-pass filter parameters affected to park transform */
     float32_t           sinTheta;       /*!< Sinus of the electrical rotor angle */
-    float32_t           cosTheta;       /*!< Cosine of the electrical rotor angle  */
+    float32_t           cosTheta;       /*!< Cosine of the electrical rotor angle */
     float32_t           ialpha;         /*!< Direct Clarke transform result - [A] */
     float32_t           ibeta;          /*!< Direct Clarke transform result - [A] */
     float32_t           id;             /*!< Filtered Direct Park transform result - [A] */
@@ -201,6 +187,7 @@ typedef struct __foc_control_t__
     float32_t           idRef;          /*!< PI controller set point values for D-axis current - [A] */
     float32_t           iqRef;          /*!< PI controller set point values for Q-axis current - [A] */
     float32_t           iAlignMax;      /*!< Maximum current required during the phase alignment - [A] */
+    float32_t           thetaAlign;     /*!< Initial position to force a rotor movement during alignment - [RAD] */
     pi_t                piId;           /*!< PI controller structure for current control */
     pi_t                piIq;           /*!< PI controller structure for current control */
     pd_t                pdPosVel;       /*!< PD controller structure for position/velocity control */
@@ -226,7 +213,7 @@ typedef struct __foc_control_t__
 //#define FOC_GET_MEASURES(p_acq)                                                                         \
 //        p_acq.ia        = (float32_t)(*p_acq.p_iaMeasReg) * ADC_MOTOR_CURRENT_SCALE;                    \
 //        p_acq.ib        = (float32_t)(*p_acq.p_ibMeasReg) * ADC_MOTOR_CURRENT_SCALE;                    \
-//        p_acq.ic        = (float32_t)(*p_acq.p_icMeasReg) * ADC_MOTOR_CURRENT_SCALE;                    \                                                                                                 \
+//        p_acq.ic        = (float32_t)(*p_acq.p_icMeasReg) * ADC_MOTOR_CURRENT_SCALE;                    \
 //        float32_t vbus  = __fmax(((float32_t)(*p_acq.p_vBusMeasReg) * ADC_VBUS_VOLTAGE_SCALE), 1.0f);   \
 //        UOMODRI_VBUS_FLT(p_acq.vBusFlt, p_acq.vbus, vbus);                                              \
 //        float32_t vext  = (float32_t)(*p_acq.p_vExtMeasReg) * ADC_VEXT12_VOLTAGE_SCALE;                 \
@@ -238,6 +225,6 @@ typedef struct __foc_control_t__
 //inline void FOC_getMeasures(acq_t*);
 //inline void FOC_runControl(foc_t*);
 //inline float32_t FOC_runPD(pd_t*);
-////inline void FOC_resetStruct(foc_t*);
+//void FOC_resetStruct(foc_t*);
 
 #endif

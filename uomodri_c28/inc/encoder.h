@@ -33,17 +33,18 @@ typedef struct __speed_t__
 
 typedef struct __encoder_t__
 {
-#if (defined CPU1) && (CLA_CORE_ENABLE)
+#if (defined CPU1) && (!defined CLA1_CORE_ENABLE)
     // pointers on HAL structure, QEP registers and direct access to QEP counter register
-
-    uint32_t            eqepBaseAddr;       /*!< Address of the EQEP structure used in HAL */
-#elif (defined CPU1)
+    const uint32_t      eqepBaseAddr;       /*!< Address of EQEP peripheral used inHAL structure */
+//    const eqep_cfg_t*   p_qepHandle;        /*!< Pointer on HAL structure */
+#elif (defined CPU1) && (defined CLA1_CORE_ENABLE)
     // pointers on HAL structure, QEP registers and direct access to QEP counter register
-    const eqep_cfg_t*   p_qepHandle;        /*!< Pointer on HAL structure */
-#else
+    uint32_t            eqepBaseAddr;       /*!< Address of EQEP peripheral used inHAL structure */
+//    const eqep_cfg_t*   p_qepHandle;        /*!< Pointer on HAL structure */
+    #else
     uint32_t            rsvd1;
 #endif
-#if (CLA_CORE_ENABLE)
+#if (CLA1_CORE_ENABLE)
     float32_t           polePairs;          /*!< Number of motor pole pairs */
 #else
     const float32_t     polePairs;          /*!< Number of motor pole pairs */

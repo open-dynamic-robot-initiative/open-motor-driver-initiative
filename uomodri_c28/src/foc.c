@@ -29,9 +29,9 @@ void FOC_svpwm2(foc_t*);
 inline void FOC_getMeasures(acq_t* p_acq)
 {
     // Get the latest current values in Amps
-    p_acq->ia       = (float32_t)(*p_acq->p_iaMeasReg) * ADC_MOTOR_CURRENT_SCALE;
-    p_acq->ib       = (float32_t)(*p_acq->p_ibMeasReg) * ADC_MOTOR_CURRENT_SCALE;
-    p_acq->ic       = (float32_t)(*p_acq->p_icMeasReg) * ADC_MOTOR_CURRENT_SCALE;
+    p_acq->ia       = (float32_t)(*p_acq->p_iMeasReg[CHANNEL_1]) * ADC_MOTOR_CURRENT_SCALE;
+    p_acq->ib       = (float32_t)(*p_acq->p_iMeasReg[CHANNEL_2]) * ADC_MOTOR_CURRENT_SCALE;
+    p_acq->ic       = (float32_t)(*p_acq->p_iMeasReg[CHANNEL_3]) * ADC_MOTOR_CURRENT_SCALE;
     // Get the latest Voltage supply value in Volt (minimum is one to avoid dividing by zero later)
     float32_t vbus  = __fmax(((float32_t)(*p_acq->p_vBusMeasReg) * ADC_VBUS_VOLTAGE_SCALE), 1.0f);
     UOMODRI_VBUS_FLT(p_acq->vBusFlt, p_acq->vbus, vbus);
@@ -196,18 +196,13 @@ inline void FOC_resetCmdStruct(cmd_t* p_cmd)
     p_cmd->timeoutRef           = 0;
     p_cmd->cptTimeout           = 0;
     p_cmd->cmdArray.all         = 0;
-//    p_cmd->encOffsetCompEnable  = false;
-//    p_cmd->rollOverEnable       = false;
-//    p_cmd->motorEnable          = false;
-//    p_cmd->systemEnable         = false;
-//    p_cmd->cmdAccesValid        = false;
 }
 
 /**
  * @brief           Reset the FOC structure
  * @param[inout]    *p_foc   Pointer on the FOC structure to reset.
  */
-//inline void FOC_resetStruct(foc_t* p_foc)
+//void FOC_resetStruct(foc_t* p_foc)
 //{
 //    // Reset Id & Iq currents PI controllers
 //    FOC_resetPI(&p_foc->piId);
@@ -343,3 +338,4 @@ void FOC_svpwm2(foc_t* p_foc)
 
     return;
 }
+

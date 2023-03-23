@@ -32,188 +32,100 @@ extern motor_t motor[];
 __interrupt void Cla1Task1(void)
 {
     // Motor control
-//    motor[MOTOR_1].itDone = MOT_runControl(&motor[MOTOR_1]);
-    static float32_t enc_theta; //= {MOTOR1_THETA_ALIGN_MAX, MOTOR2_THETA_ALIGN_MAX};
-    enc_theta                   = MOTOR1_THETA_ALIGN_MAX;
-//    enc_theta[1]                = MOTOR2_THETA_ALIGN_MAX;
-//    uint8_t         id          = motor[MOTOR_1].motor_id;
-    foc_t*          p_foc       = motor[MOTOR_1].p_motorFOC;
-    error_reg_u*    p_err       = &motor[MOTOR_1].motor_error;
-//    acq_t*          p_acq       = &p_foc->motor_acq;
-    encoder_t*      p_enc       = &p_foc->motor_enc;
-    cmd_t*          p_cmd       = &p_foc->motor_cmd;
-    uint8_t*        p_state     = &motor[MOTOR_1].motor_state;
-    cmd_reg_u       cmd_reg     = {.all = p_cmd->cmdArray.all};
-    p_enc->indexOffset          = cmd_reg.encOffsetEnable;
+    motor[MOTOR_1].itDone = MOT_runControl(&motor[MOTOR_1]);
 
-    // Read the phases current, voltage & Vbus
-    FOC_getMeasures(&p_foc->motor_acq);
-    // Read encoder position
-    ENC_getPosition(p_enc);
-    // Estimate speed
-    ENC_getSpeed(p_enc);
-    // Rollover test & index
-    ENC_getTheta(p_enc);
-//    uint32_t eqepBase           = p_enc->p_qepHandle->eqepBase;
+//    foc_t*          p_foc       = motor[MOTOR_1].p_motorFOC;
+//    error_reg_u*    p_err       = &motor[MOTOR_1].motor_error;
+//    encoder_t*      p_enc       = &p_foc->motor_enc;
+//    cmd_t*          p_cmd       = &p_foc->motor_cmd;
+//    uint8_t*        p_state     = &motor[MOTOR_1].motor_state;
+//    cmd_reg_u       cmd_reg     = {.all = p_cmd->cmdArray.all};
+//    p_enc->indexOffset          = cmd_reg.encOffsetEnable;
+//
 //    // Read the phases current, voltage & Vbus
-//    // Get the latest current values in Amps
-//    p_acq->ia                   = (float32_t)(*p_acq->p_iaMeasReg) * ADC_MOTOR_CURRENT_SCALE;
-//    p_acq->ib                   = (float32_t)(*p_acq->p_ibMeasReg) * ADC_MOTOR_CURRENT_SCALE;
-//    p_acq->ic                   = (float32_t)(*p_acq->p_icMeasReg) * ADC_MOTOR_CURRENT_SCALE;
-//    // Get the latest Voltage supply value in Volt (minimum is one to avoid dividing by zero later)
-//    float32_t vbus              = __mmaxf32(((float32_t)(*p_acq->p_vBusMeasReg) * ADC_VBUS_VOLTAGE_SCALE), 1.0f);
-//    UOMODRI_VBUS_FLT(p_acq->vBusFlt, p_acq->vbus, vbus);
-//    float32_t vext              = (float32_t)(*p_acq->p_vExtMeasReg) * ADC_VEXT12_VOLTAGE_SCALE;
-//    UOMODRI_VEXT_FLT(p_acq->vExtFlt, p_acq->vExt, vext);
-//
+//    FOC_getMeasures(&p_foc->motor_acq);
 //    // Read encoder position
-//    // Compute mechanical angle normalized between 0 and 1
-//    p_enc->thetaMech[NEW]       = (float32_t)EQEP_getStrobePositionLatch(eqepBase) * p_enc->thetaMechScaler;
-//    // Get direction : -1 = CCW/reverse, 1 = CW/forward
-//    p_enc->thetaDir             = EQEP_getDirection(eqepBase);
-//    // Compute electrical angle (each pole pair is normalized between 0 and 1)
-//    float32_t thetaElec         = (float32_t)p_enc->polePairs * p_enc->thetaMech[NEW];
-//    p_enc->thetaElec            = FM_ROUND2RAD * __mfracf32(thetaElec);
-//    p_enc->thetaMech[NEW]       = FM_ROUND2RAD * p_enc->thetaMech[NEW];
-//
+//    ENC_getPosition(p_enc);
 //    // Estimate speed
-//    speed_t* p_speed            = &p_enc->speed;
-//    //-------------------------------------------------------------------
-//    //     HIGH SPEED ESTIMATION
-//    //-------------------------------------------------------------------
-//    if(EQEP_getInterruptStatus(eqepBase) & EQEP_INT_UNIT_TIME_OUT)
-//    {
-//        p_speed->theta[OLD]     = p_speed->theta[NEW];
-//        p_speed->theta[NEW]     = FM_ROUND2RAD * (float32_t)EQEP_getPositionLatch(eqepBase) * p_enc->thetaMechScaler;
-//        EQEP_clearInterruptStatus(eqepBase, (EQEP_INT_UNIT_TIME_OUT));// | EQEP_INT_OVERFLOW | EQEP_INT_UNDERFLOW));
-//        // Compute angle difference
-//        float32_t deltaTheta    = p_speed->theta[NEW] - p_speed->theta[OLD];
-//        // Saturate it between -pi and pi
-//        deltaTheta              = (deltaTheta > M_PI)   ? (deltaTheta - (2.0f * M_PI)) : (deltaTheta);
-//        deltaTheta              = (deltaTheta < -M_PI)  ? (deltaTheta + (2.0f * M_PI)) : (deltaTheta);
-//        // Compute high speed estimation
-//        p_speed->speedHigh      = deltaTheta * p_speed->speedHighScaler;
-//    }
-//    //-------------------------------------------------------------------
-//    //     SPEED ESTIMATION MERGE
-//    //-------------------------------------------------------------------
-//    float32_t speedFusion       = p_speed->speedHigh;
-//    UOMODRI_SPEED_FLT(p_speed->speedFlt[0], p_speed->speedMech[0], speedFusion);
-//    UOMODRI_SPEED_FLT(p_speed->speedFlt[1], p_speed->speedMech[1], speedFusion);
-//    p_speed->speedElec          = (float32_t)p_enc->polePairs * p_speed->speedMech[0];
-//
+//    ENC_getSpeed(p_enc);
 //    // Rollover test & index
-//    //-------------------------------------------------------------------
-//    //     TURN CONTROL
-//    //-------------------------------------------------------------------
-//    float32_t deltaThetaMech    = p_enc->thetaMech[NEW] - p_enc->thetaMech[OLD];
-//    // Update turnNb
-//    p_enc->turnNb               = (deltaThetaMech > M_PI)   ? (p_enc->turnNb - 1) : (p_enc->turnNb);
-//    p_enc->turnNb               = (deltaThetaMech < -M_PI)  ? (p_enc->turnNb + 1) : (p_enc->turnNb);
-//    // If theta difference is high or low enough, we overflowed or underflowed
-//    bool_t maxRollOver          = (p_enc->turnNb > MAX_ROLLOVER)? (true) : (false);
-//    bool_t minRollOver          = (p_enc->turnNb < MIN_ROLLOVER)? (true) : (false);
-//    p_enc->rollOverError        = (maxRollOver || minRollOver)  ? (true) : (false);
-//    // Saturate turnNb between -128 and 127
-//    p_enc->turnNb               = (maxRollOver) ? (MIN_ROLLOVER) : (p_enc->turnNb);
-//    p_enc->turnNb               = (minRollOver) ? (MAX_ROLLOVER) : (p_enc->turnNb);
-//    //-------------------------------------------------------------------
-//    //     INDEX HANDLING
-//    //-------------------------------------------------------------------
-//    if(EQEP_getInterruptStatus(eqepBase) & EQEP_INT_INDEX_EVNT_LATCH)
-//    {
-//        // Compute indexed mechanical angle normalized between 0 and 2 x PI
-//        float32_t thetaIndex    = FM_ROUND2RAD * (float32_t)EQEP_getIndexPositionLatch(eqepBase) * p_enc->thetaMechScaler;
-//        // Save first indexed mechanical angle normalized between 0 and 2 x PI
-//        p_enc->thetaIndex       = (!p_enc->indexDetect) ? (thetaIndex) : (p_enc->thetaIndex);
-//        // Set index detection flag.
-//        p_enc->indexDetect      = true;
-//        // Check if current index capture match the first index capture
-//        p_enc->indexError       = (fabsf(p_enc->thetaIndex - thetaIndex) < (FM_ROUND2RAD * 4.0f / p_enc->thetaMechScaler)) ? (false) : (true);
-//        // Toggle index
-//        p_enc->indexToggle      = !p_enc->indexToggle;
-//        // Clear flag
-//        EQEP_clearInterruptStatus(eqepBase, EQEP_INT_INDEX_EVNT_LATCH);
-//    }
-//    // Compute new absolute angle
-//    p_enc->thetaAbsolute        = p_enc->thetaMech[NEW] + (FM_ROUND2RAD * (float32_t)p_enc->turnNb);
+//    ENC_getTheta(p_enc);
 //
-//    // Save number of cycles elapsed since control loop startup
-    motor[MOTOR_1].clCycleNb    = EPWM_getTimeBaseCounterValue(motor[MOTOR_1].pwm_ch_addr[0]);
-    p_err->drv_fault            = !GPIO_readPin(motor[MOTOR_1].drv_fault_pin_num)               || p_err->drv_fault;
-    p_err->pos_rollover         = (p_enc->rollOverError && cmd_reg.rollOverEnable)              || p_err->pos_rollover;
-    p_err->com_timeout          = ((p_cmd->cptTimeout > p_cmd->timeoutRef) && p_cmd->timeoutRef)|| p_err->com_timeout;
-    p_err->enc_mismatch         = (p_enc->indexDetect && p_enc->indexError)                     || p_err->enc_mismatch;
-    *p_state                    = (p_err->all)                      ? (MOTOR_STATE_ERROR)       : (*p_state);
-
-    switch(*p_state)
-    {
-    case MOTOR_STATE_INIT:
-    default:
-        motor[MOTOR_1].itCnt    = 0U;
-        p_foc->idRef            = 0.0f;
-        p_foc->iqRef            = 0.0f;
-        *p_state                = (cmd_reg.motorEnable)             ? (MOTOR_STATE_ALIGN_UP)    : (MOTOR_STATE_INIT);
-        *p_state                = (cmd_reg.systemEnable)            ? (*p_state)                : (MOTOR_STATE_INIT);
-        ENC_resetPeriph(p_enc);
-        FOC_resetStruct(p_foc);
-        MOT_stopCommand(&motor[MOTOR_1]);
-        break;
-
-    case MOTOR_STATE_ALIGN_UP:
-        motor[MOTOR_1].itCnt    = 0U;
-        p_foc->idRef           += MOTOR1_CURRENT_ALIGN_INC; // Increment for current alignment procedure
-        p_foc->iqRef            = 0.0f;
-        enc_theta              -= MOTOR1_THETA_ALIGN_DEC; // Decrement for position alignment procedure
-        *p_state                = (p_foc->idRef < p_foc->iAlignMax) ? (MOTOR_STATE_ALIGN_UP)    : (MOTOR_STATE_ALIGN_FIX);
-        *p_state                = (cmd_reg.motorEnable)             ? (*p_state)                : (MOTOR_STATE_INIT);
-        *p_state                = (cmd_reg.systemEnable)            ? (*p_state)                : (MOTOR_STATE_INIT);
-        (*p_state  != MOTOR_STATE_ALIGN_UP)                         ? (ENC_resetStruct(p_enc))  : (p_enc->thetaElec = enc_theta);
-        FOC_runControl(p_foc);
-        MOT_runCommand(&motor[MOTOR_1], p_foc->dtc_u, p_foc->dtc_v, p_foc->dtc_w);
-        break;
-
-    case MOTOR_STATE_ALIGN_FIX:
-        motor[MOTOR_1].itCnt   += 1U; // wait 2s
-        p_foc->idRef            = p_foc->iAlignMax; // Maintain alignment current
-        p_foc->iqRef            = 0.0f;
-        *p_state                = (motor[MOTOR_1].itCnt < (2 * PWM_FREQ))   ? (MOTOR_STATE_ALIGN_FIX)   : (MOTOR_STATE_READY);
-        *p_state                = (cmd_reg.motorEnable)                     ? (*p_state)                : (MOTOR_STATE_INIT);
-        *p_state                = (cmd_reg.systemEnable)                    ? (*p_state)                : (MOTOR_STATE_INIT);
-        ENC_resetPeriph(p_enc);
-        ENC_resetStruct(p_enc);
-        FOC_runControl(p_foc);
-        MOT_runCommand(&motor[MOTOR_1], p_foc->dtc_u, p_foc->dtc_v, p_foc->dtc_w);
-        break;
-
-    case MOTOR_STATE_READY:
-        motor[MOTOR_1].itCnt   += 1U;
-        p_foc->idRef            = 0.0f;
-        p_foc->iqRef            = FOC_runPD(&p_foc->pdPosVel);
-        *p_state                = (cmd_reg.motorEnable)             ? (MOTOR_STATE_READY)       : (MOTOR_STATE_STOP);
-        *p_state                = (cmd_reg.systemEnable)            ? (*p_state)                : (MOTOR_STATE_INIT);
-        FOC_runControl(p_foc);
-        MOT_runCommand(&motor[MOTOR_1], p_foc->dtc_u, p_foc->dtc_v, p_foc->dtc_w);
-        break;
-
-    case MOTOR_STATE_STOP:
-        motor[MOTOR_1].itCnt   += 1U;
-        p_foc->idRef            = 0.0f;
-        p_foc->iqRef            = 0.0f;
-        *p_state                = (!cmd_reg.motorEnable)            ? (MOTOR_STATE_STOP)        : (MOTOR_STATE_READY);
-        *p_state                = (cmd_reg.systemEnable)            ? (*p_state)                : (MOTOR_STATE_INIT);
-        FOC_runControl(p_foc);
-        MOT_runCommand(&motor[MOTOR_1], p_foc->dtc_u, p_foc->dtc_v, p_foc->dtc_w);
-        break;
-
-    case MOTOR_STATE_ERROR:
-        motor[MOTOR_1].itCnt    = motor[MOTOR_1].itCnt;
-        p_foc->idRef            = 0.0f;
-        p_foc->iqRef            = 0.0f;
-        *p_state                = MOTOR_STATE_ERROR;
-        MOT_stopCommand(&motor[MOTOR_1]);
-        break;
-    }
+//    motor[MOTOR_1].clCycleNb    = EPWM_getTimeBaseCounterValue(motor[MOTOR_1].epwmBaseAddr[CHANNEL_1]);
+//    p_err->drv_fault            = !GPIO_readPin(motor[MOTOR_1].drvFaultNum)                     || p_err->drv_fault;
+//    p_err->pos_rollover         = (p_enc->rollOverError && cmd_reg.rollOverEnable)              || p_err->pos_rollover;
+//    p_err->com_timeout          = ((p_cmd->cptTimeout > p_cmd->timeoutRef) && p_cmd->timeoutRef)|| p_err->com_timeout;
+//    p_err->enc_mismatch         = (p_enc->indexDetect && p_enc->indexError)                     || p_err->enc_mismatch;
+//    *p_state                    = (p_err->all)                      ? (MOTOR_STATE_ERROR)       : (*p_state);
+//
+//    switch(*p_state)
+//    {
+//    case MOTOR_STATE_INIT:
+//    default:
+//        motor[MOTOR_1].itCnt    = 0U;
+//        p_foc->idRef            = 0.0f;
+//        p_foc->iqRef            = 0.0f;
+//        *p_state                = (cmd_reg.motorEnable)             ? (MOTOR_STATE_ALIGN_UP)    : (MOTOR_STATE_INIT);
+//        *p_state                = (cmd_reg.systemEnable)            ? (*p_state)                : (MOTOR_STATE_INIT);
+//        ENC_resetPeriph(p_enc);
+//        FOC_resetStruct(p_foc);
+//        MOT_stopCommand(&motor[MOTOR_1]);
+//        break;
+//
+//    case MOTOR_STATE_ALIGN_UP:
+//        motor[MOTOR_1].itCnt    = 0U;
+//        p_foc->idRef           += MOTOR1_CURRENT_ALIGN_INC; // Increment for current alignment procedure
+//        p_foc->iqRef            = 0.0f;
+//        p_foc->thetaAlign      -= MOTOR1_THETA_ALIGN_DEC; // Decrement for position alignment procedure
+//        *p_state                = (p_foc->idRef < p_foc->iAlignMax) ? (MOTOR_STATE_ALIGN_UP)    : (MOTOR_STATE_ALIGN_FIX);
+//        *p_state                = (cmd_reg.motorEnable)             ? (*p_state)                : (MOTOR_STATE_INIT);
+//        *p_state                = (cmd_reg.systemEnable)            ? (*p_state)                : (MOTOR_STATE_INIT);
+//        (*p_state  != MOTOR_STATE_ALIGN_UP)                         ? (ENC_resetStruct(p_enc))  : (p_enc->thetaElec = p_foc->thetaAlign);
+//        FOC_runControl(p_foc);
+//        MOT_runCommand(&motor[MOTOR_1], p_foc->dtc_u, p_foc->dtc_v, p_foc->dtc_w);
+//        break;
+//
+//    case MOTOR_STATE_ALIGN_FIX:
+//        motor[MOTOR_1].itCnt   += 1U; // wait 2s
+//        p_foc->idRef            = p_foc->iAlignMax; // Maintain alignment current
+//        p_foc->iqRef            = 0.0f;
+//        *p_state                = (motor[MOTOR_1].itCnt < (2 * PWM_FREQ))   ? (MOTOR_STATE_ALIGN_FIX)   : (MOTOR_STATE_READY);
+//        *p_state                = (cmd_reg.motorEnable)                     ? (*p_state)                : (MOTOR_STATE_INIT);
+//        *p_state                = (cmd_reg.systemEnable)                    ? (*p_state)                : (MOTOR_STATE_INIT);
+//        ENC_resetPeriph(p_enc);
+//        ENC_resetStruct(p_enc);
+//        FOC_runControl(p_foc);
+//        MOT_runCommand(&motor[MOTOR_1], p_foc->dtc_u, p_foc->dtc_v, p_foc->dtc_w);
+//        break;
+//
+//    case MOTOR_STATE_READY:
+//        motor[MOTOR_1].itCnt   += 1U;
+//        p_foc->idRef            = 0.0f;
+//        p_foc->iqRef            = FOC_runPD(&p_foc->pdPosVel);
+//        *p_state                = (cmd_reg.motorEnable)             ? (MOTOR_STATE_READY)       : (MOTOR_STATE_STOP);
+//        *p_state                = (cmd_reg.systemEnable)            ? (*p_state)                : (MOTOR_STATE_INIT);
+//        FOC_runControl(p_foc);
+//        MOT_runCommand(&motor[MOTOR_1], p_foc->dtc_u, p_foc->dtc_v, p_foc->dtc_w);
+//        break;
+//
+//    case MOTOR_STATE_STOP:
+//        motor[MOTOR_1].itCnt   += 1U;
+//        p_foc->idRef            = 0.0f;
+//        p_foc->iqRef            = 0.0f;
+//        *p_state                = (!cmd_reg.motorEnable)            ? (MOTOR_STATE_STOP)        : (MOTOR_STATE_READY);
+//        *p_state                = (cmd_reg.systemEnable)            ? (*p_state)                : (MOTOR_STATE_INIT);
+//        FOC_runControl(p_foc);
+//        MOT_runCommand(&motor[MOTOR_1], p_foc->dtc_u, p_foc->dtc_v, p_foc->dtc_w);
+//        break;
+//
+//    case MOTOR_STATE_ERROR:
+//        motor[MOTOR_1].itCnt    = motor[MOTOR_1].itCnt;
+//        p_foc->idRef            = 0.0f;
+//        p_foc->iqRef            = 0.0f;
+//        *p_state                = MOTOR_STATE_ERROR;
+//        MOT_stopCommand(&motor[MOTOR_1]);
+//        break;
+//    }
 }
 
 interrupt void Cla1Task2 ( void )
@@ -259,9 +171,9 @@ interrupt void Cla1Task8 ( void )
     //--- MOTOR ACQUISITION STRUCTURE -------------------------------------------
     motor_foc[MOTOR_1].motor_acq.p_vExtMeasReg                  = (volatile uint16_t *)(VEXT1_ADC_PPB_RESULT_ADDR);
     motor_foc[MOTOR_1].motor_acq.p_vBusMeasReg                  = (volatile uint16_t *)(VBUS_ADC_PPB_RESULT_ADDR);
-    motor_foc[MOTOR_1].motor_acq.p_iaMeasReg                    = (volatile int16_t *)(MOTOR1_IA_ADC_PPB_RESULT_ADDR);
-    motor_foc[MOTOR_1].motor_acq.p_ibMeasReg                    = (volatile int16_t *)(MOTOR1_IB_ADC_PPB_RESULT_ADDR);
-    motor_foc[MOTOR_1].motor_acq.p_icMeasReg                    = (volatile int16_t *)(MOTOR1_IC_ADC_PPB_RESULT_ADDR);
+    motor_foc[MOTOR_1].motor_acq.p_iMeasReg[CHANNEL_1]          = (volatile int16_t *)(MOTOR1_IA_ADC_PPB_RESULT_ADDR);
+    motor_foc[MOTOR_1].motor_acq.p_iMeasReg[CHANNEL_2]          = (volatile int16_t *)(MOTOR1_IB_ADC_PPB_RESULT_ADDR);
+    motor_foc[MOTOR_1].motor_acq.p_iMeasReg[CHANNEL_3]          = (volatile int16_t *)(MOTOR1_IC_ADC_PPB_RESULT_ADDR);
     motor_foc[MOTOR_1].motor_acq.vbus                           = 0.0f;
     motor_foc[MOTOR_1].motor_acq.vExt                           = 0.0f;
     motor_foc[MOTOR_1].motor_acq.ia                             = 0.0f;
@@ -314,6 +226,7 @@ interrupt void Cla1Task8 ( void )
     motor_foc[MOTOR_1].motor_cmd.cmdArray.all                   = 0U;
     //--- Maximum current alignment value ---------------------------------------
     motor_foc[MOTOR_1].iAlignMax                                = MOTOR1_CURRENT_ALIGN_MAX;
+    motor_foc[MOTOR_1].thetaAlign                               = MOTOR1_THETA_ALIGN_MAX,
     //---------------------------------------------------------------------------
     motor_foc[MOTOR_1].iParkFlt.a                               = MOTOR1_CURRENT_LPF_ALPHA;
     motor_foc[MOTOR_1].iParkFlt.one_minus_a                     = MOTOR1_CURRENT_LPF_ONE_M_ALPHA;
@@ -398,9 +311,9 @@ interrupt void Cla1Task8 ( void )
     //--- MOTOR ACQUISITION STRUCTURE -------------------------------------------
     motor_foc[MOTOR_2].motor_acq.p_vExtMeasReg                  = (volatile uint16_t *)(VEXT2_ADC_PPB_RESULT_ADDR);
     motor_foc[MOTOR_2].motor_acq.p_vBusMeasReg                  = (volatile uint16_t *)(VBUS_ADC_PPB_RESULT_ADDR);
-    motor_foc[MOTOR_2].motor_acq.p_iaMeasReg                    = (volatile int16_t *)(MOTOR2_IA_ADC_PPB_RESULT_ADDR);
-    motor_foc[MOTOR_2].motor_acq.p_ibMeasReg                    = (volatile int16_t *)(MOTOR2_IB_ADC_PPB_RESULT_ADDR);
-    motor_foc[MOTOR_2].motor_acq.p_icMeasReg                    = (volatile int16_t *)(MOTOR2_IC_ADC_PPB_RESULT_ADDR);
+    motor_foc[MOTOR_2].motor_acq.p_iMeasReg[CHANNEL_1]          = (volatile int16_t *)(MOTOR2_IA_ADC_PPB_RESULT_ADDR);
+    motor_foc[MOTOR_2].motor_acq.p_iMeasReg[CHANNEL_2]          = (volatile int16_t *)(MOTOR2_IB_ADC_PPB_RESULT_ADDR);
+    motor_foc[MOTOR_2].motor_acq.p_iMeasReg[CHANNEL_3]          = (volatile int16_t *)(MOTOR2_IC_ADC_PPB_RESULT_ADDR);
     motor_foc[MOTOR_2].motor_acq.vbus                           = 0.0f;
     motor_foc[MOTOR_2].motor_acq.vExt                           = 0.0f;
     motor_foc[MOTOR_2].motor_acq.ia                             = 0.0f;
@@ -454,6 +367,7 @@ interrupt void Cla1Task8 ( void )
     motor_foc[MOTOR_2].motor_cmd.cmdArray.all                   = 0U;
     //--- Maximum current alignment value ---------------------------------------
     motor_foc[MOTOR_2].iAlignMax                                = MOTOR2_CURRENT_ALIGN_MAX;
+    motor_foc[MOTOR_2].thetaAlign                               = MOTOR2_THETA_ALIGN_MAX,
     //---------------------------------------------------------------------------
     motor_foc[MOTOR_2].iParkFlt.a                               = MOTOR2_CURRENT_LPF_ALPHA;
     motor_foc[MOTOR_2].iParkFlt.one_minus_a                     = MOTOR2_CURRENT_LPF_ONE_M_ALPHA;

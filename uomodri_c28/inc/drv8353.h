@@ -566,33 +566,27 @@ typedef struct __drv8353_t__
  * DRV COMMUNICATION STRUCTURES
  ***********************************************************************/
 /**
- * @typedef drv_msg_t
- * @brief   General structure of a DRV8353 message
- */
-typedef struct __drv_msg_t__
-{
-    uint16_t    data    : 11;       /*!< Bits 10-0 : According Status registers (0 \& 1) or Control registers (2 -> 6)  */
-    uint16_t    addr    : 4;        /*!< Bits 14-11 : @see drv_Address_e                                                */
-    uint16_t    rw_cmd  : 1;        /*!< Bits 15 : @see drv_CtrlMode_e                                                  */
-} drv_msg_t;
-
-/**
  * @typedef drv_msg_u
  * @brief   General structure of a DRV8353 message included in a union typedef.
  */
 typedef union _drv_msg_u_
 {
-  uint16_t      all;                /*!< Short (16bits) type access */
-  drv_msg_t     bit;                /*!< @see drv_msg_t             */
+    uint16_t        all;                /*!< Short (16bits) type access */
+    struct
+    {
+        uint16_t    data    : 11;       /*!< Bits 10-0 : According Status registers (0 \& 1) or Control registers (2 -> 6)  */
+        uint16_t    addr    : 4;        /*!< Bits 14-11 : @see drv_Address_e                                                */
+        uint16_t    rw_cmd  : 1;        /*!< Bits 15 : @see drv_CtrlMode_e                                                  */
+    };
 } drv_msg_u;
 
 /***********************************************************************
  * FUNCTIONS DECLARATION
  ***********************************************************************/
-void DRV_ini(drv8353_t*);
-void DRV_readStatus(drv8353_t*);
-void DRV_readAll(drv8353_t*);
-void DRV_writeAll(drv8353_t*);
+void DRV_ini(const drv_cfg_t*, drv_reg_t*);
+void DRV_readStatus(const drv_cfg_t*, drv_reg_t*);
+void DRV_readAll(const drv_cfg_t*, drv_reg_t*);
+void DRV_writeAll(const drv_cfg_t*, drv_reg_t*);
 
 #ifdef __cplusplus
 }

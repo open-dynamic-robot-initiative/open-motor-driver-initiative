@@ -365,15 +365,15 @@ typedef struct __HAL_CFG_t__
 } hal_cfg_t;
 
 /**
- * @struct  __HAL_MOTOR_CFG_t__
+ * @struct  __PERIPH_MOTOR_CFG_t__
  * @brief   General Motor Hardware Abstraction Layer structure
  */
-typedef struct __HAL_MOTOR_CFG_t__
+typedef struct __PERIPH_MOTOR_CFG_t__
 {
     const epwm_cc_t*    const           p_pwmCntCmp[3];
     const adc_acq_t*    const           p_iAcq[3];
     const adc_int_t*    const           p_intAcq;
-} hal_motor_cfg_t;
+} periph_motor_cfg_t;
 
 /***********************************************************************
  * FUNCTIONS DECLARATION
@@ -382,6 +382,6 @@ void HAL_ini(const hal_cfg_t*);
 void HAL_SPI_start(const spi_cfg_t*);
 void HAL_INT_ini(const int_cfg_t*);
 void HAL_DMA_ini(const dma_cfg_t*);
-void HAL_ADC_offsetCalib(const hal_motor_cfg_t*);
+void HAL_ADC_offsetCalib(const periph_motor_cfg_t*);
 
 #endif

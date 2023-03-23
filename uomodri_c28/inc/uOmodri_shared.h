@@ -120,7 +120,6 @@ inline void ENC_resetStruct(encoder_t* p_enc)
     return;
 }
 
-
 /**
  * @brief           Read the phases current and phases \& bus voltages
  * @param[inout]    *p_acq  Pointer on the motor acquisition structure.
@@ -128,9 +127,9 @@ inline void ENC_resetStruct(encoder_t* p_enc)
 inline void FOC_getMeasures(acq_t* p_acq)
 {
     // Get the latest current values in Amps
-    p_acq->ia       = (float32_t)(*p_acq->p_iaMeasReg) * ADC_MOTOR_CURRENT_SCALE;
-    p_acq->ib       = (float32_t)(*p_acq->p_ibMeasReg) * ADC_MOTOR_CURRENT_SCALE;
-    p_acq->ic       = (float32_t)(*p_acq->p_icMeasReg) * ADC_MOTOR_CURRENT_SCALE;
+    p_acq->ia       = (float32_t)(*p_acq->p_iMeasReg[CHANNEL_1]) * ADC_MOTOR_CURRENT_SCALE;
+    p_acq->ib       = (float32_t)(*p_acq->p_iMeasReg[CHANNEL_2]) * ADC_MOTOR_CURRENT_SCALE;
+    p_acq->ic       = (float32_t)(*p_acq->p_iMeasReg[CHANNEL_3]) * ADC_MOTOR_CURRENT_SCALE;
     // Get the latest Voltage supply value in Volt (minimum is one to avoid dividing by zero later)
     float32_t vbus  = __mmaxf32(((float32_t)(*p_acq->p_vBusMeasReg) * ADC_VBUS_VOLTAGE_SCALE), 1.0f);
     UOMODRI_VBUS_FLT(p_acq->vBusFlt, p_acq->vbus, vbus);
@@ -307,9 +306,9 @@ inline void FOC_svpwm1(foc_t* p_foc)
  */
 inline void MOT_runCommand(motor_t* p_motor, float32_t cmd_a, float32_t cmd_b, float32_t cmd_c)
 {
-    *(p_motor->p_motorChAReg) = (uint16_t)((cmd_a) * PWM_TIMEBASE_CNT);
-    *(p_motor->p_motorChBReg) = (uint16_t)((cmd_b) * PWM_TIMEBASE_CNT);
-    *(p_motor->p_motorChCReg) = (uint16_t)((cmd_c) * PWM_TIMEBASE_CNT);
+    *(p_motor->p_motorCmdReg[CHANNEL_1])    = (uint16_t)((cmd_a) * PWM_TIMEBASE_CNT);
+    *(p_motor->p_motorCmdReg[CHANNEL_2])    = (uint16_t)((cmd_b) * PWM_TIMEBASE_CNT);
+    *(p_motor->p_motorCmdReg[CHANNEL_3])    = (uint16_t)((cmd_c) * PWM_TIMEBASE_CNT);
 
     return;
 }
@@ -320,9 +319,9 @@ inline void MOT_runCommand(motor_t* p_motor, float32_t cmd_a, float32_t cmd_b, f
  */
 inline void MOT_stopCommand(motor_t* p_motor)
 {
-    *(p_motor->p_motorChAReg) = (uint16_t)PWM_TIMEBASE_CNT;
-    *(p_motor->p_motorChBReg) = (uint16_t)PWM_TIMEBASE_CNT;
-    *(p_motor->p_motorChCReg) = (uint16_t)PWM_TIMEBASE_CNT;
+    *(p_motor->p_motorCmdReg[CHANNEL_1])    = (uint16_t)PWM_TIMEBASE_CNT;
+    *(p_motor->p_motorCmdReg[CHANNEL_2])    = (uint16_t)PWM_TIMEBASE_CNT;
+    *(p_motor->p_motorCmdReg[CHANNEL_3])    = (uint16_t)PWM_TIMEBASE_CNT;
 
     return;
 }
@@ -379,20 +378,22 @@ inline void FOC_runControl(foc_t* p_foc)
  */
 inline void ENC_resetPeriph(encoder_t* p_enc)
 {
+    uint32_t eqepBase       = p_enc->eqepBaseAddr;
     // Reset encoder position
-    EQEP_setPosition(p_enc->eqepBaseAddr, 0);
+    EQEP_setPosition(eqepBase, 0);
     /* Reset the time base for edge capture unit */
-    HWREGH(p_enc->eqepBaseAddr + EQEP_O_QCPRDLAT) = 0;
+    HWREGH(eqepBase + EQEP_O_QCPRDLAT) = 0;
     /* Reset the Period count */
-    HWREGH(p_enc->eqepBaseAddr + EQEP_O_QCTMRLAT) = 0;
+    HWREGH(eqepBase + EQEP_O_QCTMRLAT) = 0;
     // Reset interrupts status flags
-    EQEP_clearInterruptStatus(p_enc->eqepBaseAddr, (EQEP_INT_GLOBAL | EQEP_INT_POS_CNT_ERROR |
-            EQEP_INT_PHASE_ERROR | EQEP_INT_DIR_CHANGE | EQEP_INT_WATCHDOG | EQEP_INT_UNDERFLOW |
-            EQEP_INT_OVERFLOW | EQEP_INT_POS_COMP_READY | EQEP_INT_POS_COMP_MATCH | EQEP_INT_STROBE_EVNT_LATCH |
+    EQEP_clearInterruptStatus(eqepBase, (EQEP_INT_GLOBAL | EQEP_INT_POS_CNT_ERROR | EQEP_INT_PHASE_ERROR |
+            EQEP_INT_DIR_CHANGE | EQEP_INT_WATCHDOG | EQEP_INT_UNDERFLOW | EQEP_INT_OVERFLOW |
+            EQEP_INT_POS_COMP_READY | EQEP_INT_POS_COMP_MATCH | EQEP_INT_STROBE_EVNT_LATCH |
             EQEP_INT_INDEX_EVNT_LATCH | EQEP_INT_UNIT_TIME_OUT | EQEP_INT_QMA_ERROR));
     // Reset general status flags
-    EQEP_clearStatus(p_enc->eqepBaseAddr, (EQEP_STS_UNIT_POS_EVNT | EQEP_STS_CAP_OVRFLW_ERROR |
+    EQEP_clearStatus(eqepBase, (EQEP_STS_UNIT_POS_EVNT | EQEP_STS_CAP_OVRFLW_ERROR |
             EQEP_STS_CAP_DIR_ERROR | EQEP_STS_1ST_IDX_FLAG));
+
 
     return;
 }
@@ -403,13 +404,15 @@ inline void ENC_resetPeriph(encoder_t* p_enc)
  */
 inline void ENC_getPosition(encoder_t* p_enc)
 {
+    uint32_t eqepBase       = p_enc->eqepBaseAddr;
     p_enc->thetaMech[OLD]   = p_enc->thetaMech[NEW];
     // Compute mechanical angle normalized between 0 and 1
-    p_enc->thetaMech[NEW]   = (float32_t)EQEP_getStrobePositionLatch(p_enc->eqepBaseAddr) * p_enc->thetaMechScaler;
+    p_enc->thetaMech[NEW]   = (float32_t)EQEP_getStrobePositionLatch(eqepBase) * p_enc->thetaMechScaler;
     // Get direction : -1 = CCW/reverse, 1 = CW/forward
-    p_enc->thetaDir         = EQEP_getDirection(p_enc->eqepBaseAddr);
+    p_enc->thetaDir         = EQEP_getDirection(eqepBase);
     // Compute electrical angle (each pole pair is normalized between 0 and 1)
     float32_t thetaElec     = (float32_t)p_enc->polePairs * p_enc->thetaMech[NEW];
+
     // Compute electrical & mechanical angle (in rad)
     p_enc->thetaElec        = FM_ROUND2RAD * __mfracf32(thetaElec);
     p_enc->thetaMech[NEW]   = FM_ROUND2RAD * p_enc->thetaMech[NEW];
@@ -423,6 +426,7 @@ inline void ENC_getPosition(encoder_t* p_enc)
  */
 inline void ENC_getSpeed(encoder_t* p_enc)
 {
+    uint32_t eqepBase           = p_enc->eqepBaseAddr;
     speed_t* p_speed            = &p_enc->speed;
 //    bool_t newSpeedHigh         = false;
 //    bool_t newSpeedLow          = false;
@@ -432,8 +436,8 @@ inline void ENC_getSpeed(encoder_t* p_enc)
     if(EQEP_getInterruptStatus(p_enc->eqepBaseAddr) & EQEP_INT_UNIT_TIME_OUT)
     {
         p_speed->theta[OLD]     = p_speed->theta[NEW];
-        p_speed->theta[NEW]     = FM_ROUND2RAD * (float32_t)EQEP_getPositionLatch(p_enc->eqepBaseAddr) * p_enc->thetaMechScaler;
-        EQEP_clearInterruptStatus(p_enc->eqepBaseAddr, (EQEP_INT_UNIT_TIME_OUT));// | EQEP_INT_OVERFLOW | EQEP_INT_UNDERFLOW));
+        p_speed->theta[NEW]     = FM_ROUND2RAD * (float32_t)EQEP_getPositionLatch(eqepBase) * p_enc->thetaMechScaler;
+        EQEP_clearInterruptStatus(eqepBase, (EQEP_INT_UNIT_TIME_OUT));// | EQEP_INT_OVERFLOW | EQEP_INT_UNDERFLOW));
         // Compute angle difference
         float32_t deltaTheta    = p_speed->theta[NEW] - p_speed->theta[OLD];
         // Saturate it between -pi and pi
@@ -447,15 +451,15 @@ inline void ENC_getSpeed(encoder_t* p_enc)
     //     LOW SPEED ESTIMATION
     //-------------------------------------------------------------------
     // Check if unit position event occurred for low speed calculation
-    if(EQEP_getStatus(p_enc->eqepBaseAddr) & EQEP_STS_UNIT_POS_EVNT)//if(p_qepRegs->QEPSTS.all & EQEP_STS_UNIT_POS_EVNT)
+    if(EQEP_getStatus(eqepBase) & EQEP_STS_UNIT_POS_EVNT)//if(p_qepRegs->QEPSTS.all & EQEP_STS_UNIT_POS_EVNT)
     {
-        uint16_t period         = EQEP_getCapturePeriodLatch(p_enc->eqepBaseAddr);
+        uint16_t period         = EQEP_getCapturePeriodLatch(eqepBase);
         p_speed->speedLow       = (period != 0xFFFF) ? ((float32_t)(p_enc->thetaDir) * p_speed->speedLowScaler / (float32_t)period) : (p_speed->speedLow);
 //        p_speed->speedLow       = (float32_t)(p_enc->thetaDir) * p_speed->speedLowScaler / (float32_t)EQEP_getCapturePeriodLatch(eqepBase);
         // Speed is very close to zero because direction changed or the rotor doesn't move fast enough
-        p_speed->speedLow       = (EQEP_getStatus(p_enc->eqepBaseAddr) & (EQEP_STS_CAP_OVRFLW_ERROR | EQEP_STS_CAP_DIR_ERROR)) ? (0.0f) : (p_speed->speedLow);
+        p_speed->speedLow       = (EQEP_getStatus(eqepBase) & (EQEP_STS_CAP_OVRFLW_ERROR | EQEP_STS_CAP_DIR_ERROR)) ? (0.0f) : (p_speed->speedLow);
         // Clear position event, direction change and timer overflow flags (even if direction and timer overflow are not set)
-        EQEP_clearStatus(p_enc->eqepBaseAddr, (EQEP_STS_UNIT_POS_EVNT | EQEP_STS_CAP_OVRFLW_ERROR | EQEP_STS_CAP_DIR_ERROR));
+        EQEP_clearStatus(eqepBase, (EQEP_STS_UNIT_POS_EVNT | EQEP_STS_CAP_OVRFLW_ERROR | EQEP_STS_CAP_DIR_ERROR));
 //        newSpeedLow             = true;
     }
     //-------------------------------------------------------------------
@@ -501,6 +505,7 @@ inline void ENC_getSpeed(encoder_t* p_enc)
  */
 inline void ENC_getTheta(encoder_t* p_enc)
 {
+    uint32_t eqepBase           = p_enc->eqepBaseAddr;
     //-------------------------------------------------------------------
     //     TURN CONTROL
     //-------------------------------------------------------------------
@@ -518,10 +523,10 @@ inline void ENC_getTheta(encoder_t* p_enc)
     //-------------------------------------------------------------------
     //     INDEX HANDLING
     //-------------------------------------------------------------------
-    if(EQEP_getInterruptStatus(p_enc->eqepBaseAddr) & EQEP_INT_INDEX_EVNT_LATCH)
+    if(EQEP_getInterruptStatus(eqepBase) & EQEP_INT_INDEX_EVNT_LATCH)
     {
         // Compute indexed mechanical angle normalized between 0 and 2 x PI
-        float32_t thetaIndex    = FM_ROUND2RAD * (float32_t)EQEP_getIndexPositionLatch(p_enc->eqepBaseAddr) * p_enc->thetaMechScaler;
+        float32_t thetaIndex    = FM_ROUND2RAD * (float32_t)EQEP_getIndexPositionLatch(eqepBase) * p_enc->thetaMechScaler;
         // Save first indexed mechanical angle normalized between 0 and 2 x PI
         p_enc->thetaIndex       = (!p_enc->indexDetect) ? (thetaIndex) : (p_enc->thetaIndex);
         // Set index detection flag.
@@ -531,7 +536,7 @@ inline void ENC_getTheta(encoder_t* p_enc)
         // Toggle index
         p_enc->indexToggle      = !p_enc->indexToggle;
         // Clear flag
-        EQEP_clearInterruptStatus(p_enc->eqepBaseAddr, EQEP_INT_INDEX_EVNT_LATCH);
+        EQEP_clearInterruptStatus(eqepBase, EQEP_INT_INDEX_EVNT_LATCH);
     }
     // Compute new absolute angle
     p_enc->thetaAbsolute        = p_enc->thetaMech[NEW] + FM_ROUND2RAD * (float32_t)p_enc->turnNb;
@@ -575,9 +580,6 @@ inline void ENC_getTheta(encoder_t* p_enc)
  */
 inline bool_t MOT_runControl(motor_t* p_motor)
 {
-    static float32_t enc_theta[2];// = {MOTOR1_THETA_ALIGN_MAX, MOTOR2_THETA_ALIGN_MAX};
-    enc_theta[0]                = MOTOR1_THETA_ALIGN_MAX;
-    enc_theta[1]                = MOTOR2_THETA_ALIGN_MAX;
     uint8_t         id          = p_motor->motor_id;
     foc_t*          p_foc       = p_motor->p_motorFOC;
     error_reg_u*    p_err       = &p_motor->motor_error;
@@ -585,8 +587,6 @@ inline bool_t MOT_runControl(motor_t* p_motor)
     cmd_t*          p_cmd       = &p_foc->motor_cmd;
     cmd_reg_u       cmd_reg     = {.all = p_cmd->cmdArray.all};
     p_enc->indexOffset          = cmd_reg.encOffsetEnable;
-
-#define USE_MACRO   0
 
     FOC_getMeasures(&p_foc->motor_acq);
     // Read encoder position
@@ -597,8 +597,8 @@ inline bool_t MOT_runControl(motor_t* p_motor)
     ENC_getTheta(p_enc);
 
     // Save number of cycles elapsed since control loop startup
-    p_motor->clCycleNb          = EPWM_getTimeBaseCounterValue(p_motor->pwm_ch_addr[0]);
-    p_err->drv_fault            = !GPIO_readPin(p_motor->drv_fault_pin_num)                     || p_err->drv_fault;
+    p_motor->clCycleNb          = EPWM_getTimeBaseCounterValue(p_motor->epwmBaseAddr[CHANNEL_1]);
+    p_err->drv_fault            = !GPIO_readPin(p_motor->drvFaultNum)                           || p_err->drv_fault;
     p_err->pos_rollover         = (p_enc->rollOverError && cmd_reg.rollOverEnable)              || p_err->pos_rollover;
     p_err->com_timeout          = ((p_cmd->cptTimeout > p_cmd->timeoutRef) && p_cmd->timeoutRef)|| p_err->com_timeout;
     p_err->enc_mismatch         = (p_enc->indexDetect && p_enc->indexError)                     || p_err->enc_mismatch;
@@ -622,11 +622,11 @@ inline bool_t MOT_runControl(motor_t* p_motor)
         p_motor->itCnt          = 0U;
         p_foc->idRef           += (id == MOTOR_1)                   ? (MOTOR1_CURRENT_ALIGN_INC): (MOTOR2_CURRENT_ALIGN_INC); // Increment for current alignment procedure
         p_foc->iqRef            = 0.0f;
-        enc_theta[id]          -= (id == MOTOR_1)                   ? (MOTOR1_THETA_ALIGN_DEC)  : (MOTOR2_THETA_ALIGN_DEC); // Decrement for position alignment procedure
+        p_foc->thetaAlign      -= (id == MOTOR_1)                   ? (MOTOR1_THETA_ALIGN_DEC)  : (MOTOR2_THETA_ALIGN_DEC); // Decrement for position alignment procedure
         p_motor->motor_state    = (p_foc->idRef < p_foc->iAlignMax) ? (MOTOR_STATE_ALIGN_UP)    : (MOTOR_STATE_ALIGN_FIX);
         p_motor->motor_state    = (cmd_reg.motorEnable)             ? (p_motor->motor_state)    : (MOTOR_STATE_INIT);
         p_motor->motor_state    = (cmd_reg.systemEnable)            ? (p_motor->motor_state)    : (MOTOR_STATE_INIT);
-        (p_motor->motor_state  != MOTOR_STATE_ALIGN_UP)             ? (ENC_resetStruct(p_enc))  : (p_enc->thetaElec = enc_theta[id]);
+        (p_motor->motor_state  != MOTOR_STATE_ALIGN_UP)             ? (ENC_resetStruct(p_enc))  : (p_enc->thetaElec = p_foc->thetaAlign);
         FOC_runControl(p_foc);
         MOT_runCommand(p_motor, p_foc->dtc_u, p_foc->dtc_v, p_foc->dtc_w);
         break;

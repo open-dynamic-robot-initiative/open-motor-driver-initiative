@@ -20,7 +20,7 @@
 #include "uomodri_user_defines.h"
 #include "uomodri_hal_config_handlers.h"
 #include "uomodri_prj_config_handlers.h"
-#if (CLA_CORE_ENABLE)
+#if (CLA1_CORE_ENABLE)
 #include <uOmodri_shared.h>
 #endif
 
@@ -85,11 +85,11 @@ void main(void)
     // Hardware Abstraction Layer initialization
     HAL_ini(&hal);
     // DRV8353 initialization
-    DRV_ini(&drv_cfg[MOTOR_1]);
-    DRV_ini(&drv_cfg[MOTOR_2]);
+    DRV_ini(&drv_cfg[MOTOR_1], &drv_reg[MOTOR_1]);
+    DRV_ini(&drv_cfg[MOTOR_2], &drv_reg[MOTOR_2]);
     // ADC offset calibration for debug
-    HAL_ADC_offsetCalib(motor[MOTOR_1].p_motorHalCfg);
-    HAL_ADC_offsetCalib(motor[MOTOR_2].p_motorHalCfg);
+    HAL_ADC_offsetCalib(&periph_motor_cfg[MOTOR_1]);
+    HAL_ADC_offsetCalib(&periph_motor_cfg[MOTOR_2]);
     // Force a reset of FOC structures
 //    FOC_resetStruct(motor[MOTOR_1].p_motorFOC);
 //    FOC_resetStruct(motor[MOTOR_2].p_motorFOC);
@@ -123,7 +123,7 @@ void main(void)
                 cmd_uOmodri[MOTOR_1].cptTimeout++;
                 cmd_uOmodri[MOTOR_2].cptTimeout++;
             }
-            if(!DMA_getRunStatusFlag(DMA_COM_SPI_RX_BASE_ADDR) && GPIO_readPin(COM_SPI_CS))
+            if(!DMA_getRunStatusFlag(DMA_COM_SPI_RX_BASE_ADDR) && GPIO_readPin(COM_SPI_CS_NUM))
             {
                 // Prepare SPI and associated DMA for a new receive
                 SPI_resetRxFIFO(COM_SPI_BASE);
