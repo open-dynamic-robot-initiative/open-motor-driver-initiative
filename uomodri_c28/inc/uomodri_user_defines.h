@@ -79,43 +79,43 @@
 //#endif
 
 #ifndef FM_SQRT3
-#define FM_SQRT3                                (1.7320508075688772935274463415059f)  /* sqrt(3) */
+#define FM_SQRT3                                ((float32_t)(1.7320508075688772935274463415059f))  /* sqrt(3) */
 #endif
 
 #ifndef FM_1DIVSQRT3
-#define FM_1DIVSQRT3                            (0.57735026918962576450914878050196f) /* 1/sqrt(3) */
+#define FM_1DIVSQRT3                            ((float32_t)(0.57735026918962576450914878050196f)) /* 1/sqrt(3) */
 #endif
 
 #ifndef FM_SQRT3DIV2
-#define FM_SQRT3DIV2                            (0.86602540378443864676372317075294f) /* sqrt(3)/2 */
+#define FM_SQRT3DIV2                            ((float32_t)(0.86602540378443864676372317075294f)) /* sqrt(3)/2 */
 #endif
 
 #ifndef FM_1DIV3
-#define FM_1DIV3                                (0.33333333333333333333333333333333f) /* 1/3 */
+#define FM_1DIV3                                ((float32_t)(0.33333333333333333333333333333333f)) /* 1/3 */
 #endif
 
 #ifndef FM_ROUND2RAD
-#define FM_ROUND2RAD                            (2.0f * M_PI)
+#define FM_ROUND2RAD                            ((float32_t)(2.0f * M_PI))
 #endif
 
 #ifndef FM_RPM2RADPS
-#define FM_RPM2RADPS                            (FM_ROUND2RAD / 60.0f)
+#define FM_RPM2RADPS                            ((float32_t)(FM_ROUND2RAD / 60.0f))
 #endif
 
 #ifndef FM_RADPS2RPM
-#define FM_RADPS2RPM                            (1.0f / FM_RPM2RADPS)
+#define FM_RADPS2RPM                            ((float32_t)(1.0f / FM_RPM2RADPS))
 #endif
 
 #ifndef FM_RAD2ROUND
-#define FM_RAD2ROUND                            (1.0f / FM_ROUND2RAD)
+#define FM_RAD2ROUND                            ((float32_t)(1.0f / FM_ROUND2RAD))
 #endif
 
 #ifndef FM_KRPM2RADPS
-#define FM_KRPM2RADPS                           (1000.0f * FM_RPM2RADPS)
+#define FM_KRPM2RADPS                           ((float32_t)(1000.0f * FM_RPM2RADPS))
 #endif
 
 #ifndef FM_RADPS2KRPM
-#define FM_RADPS2KRPM                           (1.0f / FM_KRPM2RADPS)
+#define FM_RADPS2KRPM                           ((float32_t)(1.0f / FM_KRPM2RADPS))
 #endif
 
 #define FM_ABS(x)                               ((x) >= 0.0f ? (x) : -(x))

@@ -9,18 +9,19 @@
 extern "C" {
 #endif
 //#include "hal.h"
-#include "foc.h"
-#include "motor.h"
-#include "encoder.h"
-#include "uomodri_user_defines.h"
+#include <CLAmath.h>
 
 #define run_loop1_cla (1)
-#if run_loop1_cla == 1
-#include "CLAmath.h"
+#if (run_loop1_cla)
+#include <CLAmath.h>
 //#include "DCLCLA.h"
 #else
 #include "DCLF32.h"
 #endif
+#include "foc.h"
+#include "motor.h"
+#include "encoder.h"
+#include "uomodri_user_defines.h"
 
 /***********************************************************************
  * DEFINES
@@ -127,13 +128,13 @@ inline void ENC_resetStruct(encoder_t* p_enc)
 inline void FOC_getMeasures(acq_t* p_acq)
 {
     // Get the latest current values in Amps
-    p_acq->ia       = (float32_t)(*p_acq->p_iMeasReg[CHANNEL_1]) * ADC_MOTOR_CURRENT_SCALE;
-    p_acq->ib       = (float32_t)(*p_acq->p_iMeasReg[CHANNEL_2]) * ADC_MOTOR_CURRENT_SCALE;
-    p_acq->ic       = (float32_t)(*p_acq->p_iMeasReg[CHANNEL_3]) * ADC_MOTOR_CURRENT_SCALE;
+    p_acq->ia       = (float32_t)(*p_acq->p_iMeasReg[CHANNEL_1].ptr_i16) * ADC_MOTOR_CURRENT_SCALE;
+    p_acq->ib       = (float32_t)(*p_acq->p_iMeasReg[CHANNEL_2].ptr_i16) * ADC_MOTOR_CURRENT_SCALE;
+    p_acq->ic       = (float32_t)(*p_acq->p_iMeasReg[CHANNEL_3].ptr_i16) * ADC_MOTOR_CURRENT_SCALE;
     // Get the latest Voltage supply value in Volt (minimum is one to avoid dividing by zero later)
-    float32_t vbus  = __mmaxf32(((float32_t)(*p_acq->p_vBusMeasReg) * ADC_VBUS_VOLTAGE_SCALE), 1.0f);
+    float32_t vbus  = __mmaxf32(((float32_t)(*p_acq->p_vBusMeasReg.ptr_u16) * ADC_VBUS_VOLTAGE_SCALE), 1.0f);
     UOMODRI_VBUS_FLT(p_acq->vBusFlt, p_acq->vbus, vbus);
-    float32_t vext  = (float32_t)(*p_acq->p_vExtMeasReg) * ADC_VEXT12_VOLTAGE_SCALE;
+    float32_t vext  = (float32_t)(*p_acq->p_vExtMeasReg.ptr_u16) * ADC_VEXT12_VOLTAGE_SCALE;
     UOMODRI_VEXT_FLT(p_acq->vExtFlt, p_acq->vExt, vext);
 
     return;
@@ -306,9 +307,9 @@ inline void FOC_svpwm1(foc_t* p_foc)
  */
 inline void MOT_runCommand(motor_t* p_motor, float32_t cmd_a, float32_t cmd_b, float32_t cmd_c)
 {
-    *(p_motor->p_motorCmdReg[CHANNEL_1])    = (uint16_t)((cmd_a) * PWM_TIMEBASE_CNT);
-    *(p_motor->p_motorCmdReg[CHANNEL_2])    = (uint16_t)((cmd_b) * PWM_TIMEBASE_CNT);
-    *(p_motor->p_motorCmdReg[CHANNEL_3])    = (uint16_t)((cmd_c) * PWM_TIMEBASE_CNT);
+    *(p_motor->p_motorCmdReg[CHANNEL_1].ptr_u16)    = (uint16_t)((cmd_a) * PWM_TIMEBASE_CNT);
+    *(p_motor->p_motorCmdReg[CHANNEL_2].ptr_u16)    = (uint16_t)((cmd_b) * PWM_TIMEBASE_CNT);
+    *(p_motor->p_motorCmdReg[CHANNEL_3].ptr_u16)    = (uint16_t)((cmd_c) * PWM_TIMEBASE_CNT);
 
     return;
 }
@@ -319,9 +320,9 @@ inline void MOT_runCommand(motor_t* p_motor, float32_t cmd_a, float32_t cmd_b, f
  */
 inline void MOT_stopCommand(motor_t* p_motor)
 {
-    *(p_motor->p_motorCmdReg[CHANNEL_1])    = (uint16_t)PWM_TIMEBASE_CNT;
-    *(p_motor->p_motorCmdReg[CHANNEL_2])    = (uint16_t)PWM_TIMEBASE_CNT;
-    *(p_motor->p_motorCmdReg[CHANNEL_3])    = (uint16_t)PWM_TIMEBASE_CNT;
+    *(p_motor->p_motorCmdReg[CHANNEL_1].ptr_u16)    = (uint16_t)PWM_TIMEBASE_CNT;
+    *(p_motor->p_motorCmdReg[CHANNEL_2].ptr_u16)    = (uint16_t)PWM_TIMEBASE_CNT;
+    *(p_motor->p_motorCmdReg[CHANNEL_3].ptr_u16)    = (uint16_t)PWM_TIMEBASE_CNT;
 
     return;
 }
@@ -335,8 +336,9 @@ inline void FOC_runControl(foc_t* p_foc)
     acq_t*          p_acq   = &p_foc->motor_acq;
     encoder_t*      p_enc   = &p_foc->motor_enc;
     /* Compute sine and cosine from the electrical angle */
-    p_foc->sinTheta         = CLAsin(p_enc->thetaElec);
-    p_foc->cosTheta         = CLAcos(p_enc->thetaElec);
+    CLAsincos(p_enc->thetaElec, &p_foc->sinTheta, &p_foc->cosTheta);
+//    p_foc->sinTheta         = CLAsin(p_enc->thetaElec);
+//    p_foc->cosTheta         = CLAcos(p_enc->thetaElec);
     // Clarke transform
     p_foc->ialpha           = ((2.0f * p_acq->ia) - p_acq->ib - p_acq->ic) * FM_1DIV3;
     p_foc->ibeta            = (p_acq->ib - p_acq->ic) * FM_1DIVSQRT3;
@@ -441,8 +443,8 @@ inline void ENC_getSpeed(encoder_t* p_enc)
         // Compute angle difference
         float32_t deltaTheta    = p_speed->theta[NEW] - p_speed->theta[OLD];
         // Saturate it between -pi and pi
-        deltaTheta              = (deltaTheta > M_PI)   ? (deltaTheta - (2.0f * M_PI)) : (deltaTheta);
-        deltaTheta              = (deltaTheta < -M_PI)  ? (deltaTheta + (2.0f * M_PI)) : (deltaTheta);
+        deltaTheta              = (deltaTheta > M_PI)   ? (deltaTheta - (float32_t)(2.0f * M_PI)) : (deltaTheta);
+        deltaTheta              = (deltaTheta < -M_PI)  ? (deltaTheta + (float32_t)(2.0f * M_PI)) : (deltaTheta);
         // Compute high speed estimation
         p_speed->speedHigh      = deltaTheta * p_speed->speedHighScaler;
 //        newSpeedHigh            = true;
@@ -543,35 +545,6 @@ inline void ENC_getTheta(encoder_t* p_enc)
 
     return;
 }
-
-///**
-// * @brief           Command for the 3 phases of the ePWM
-// * @param[out]      p_motor Pointer on the associated motor structure
-// * @param[in]       cmd_a   Normalized command on PWM channel A (between 0 and 1)
-// * @param[in]       cmd_b   Normalized command on PWM channel B (between 0 and 1)
-// * @param[in]       cmd_c   Normalized command on PWM channel C (between 0 and 1)
-// */
-//inline void MOT_runCommand(motor_t* p_motor, float32_t cmd_a, float32_t cmd_b, float32_t cmd_c)
-//{
-//    *(p_motor->p_motorChAReg) = (uint16_t)((cmd_a) * PWM_TIMEBASE_CNT);
-//    *(p_motor->p_motorChBReg) = (uint16_t)((cmd_b) * PWM_TIMEBASE_CNT);
-//    *(p_motor->p_motorChCReg) = (uint16_t)((cmd_c) * PWM_TIMEBASE_CNT);
-//
-//    return;
-//}
-//
-///**
-// * @brief           Force a hard stop on the 3 phases of the ePWM (low side active)
-// * @param[out]      p_motor Pointer on the associated motor structure
-// */
-//inline void MOT_stopCommand(motor_t* p_motor)
-//{
-//    *(p_motor->p_motorChAReg) = (uint16_t)PWM_TIMEBASE_CNT;
-//    *(p_motor->p_motorChBReg) = (uint16_t)PWM_TIMEBASE_CNT;
-//    *(p_motor->p_motorChCReg) = (uint16_t)PWM_TIMEBASE_CNT;
-//
-//    return;
-//}
 
 /**
  * @brief           Control of the motor states

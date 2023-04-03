@@ -103,6 +103,10 @@ void main(void)
 #if (CM_CORE_ENABLE)
     IPC_CpuToCmAddrSync();
 #endif
+
+#if (CLA1_CORE_ENABLE)
+    CLA_forceTasks(CLA1_BASE, CLA_TASKFLAG_8);
+#endif
 //#if (CLA_CORE_ENABLE)
 //    cpu1_ready_flag         = true;//(cpu1_ready_flag == true) ? (false) : (true);
 //#endif

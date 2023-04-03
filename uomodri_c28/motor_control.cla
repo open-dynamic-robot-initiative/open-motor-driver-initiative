@@ -6,6 +6,7 @@
 /***********************************************************************
 * INCLUDES
 ***********************************************************************/
+//#include <CLAmath.h>
 #include "uOmodri_shared.h"
 #include "f2838x_device.h"
 #include "driverlib.h"
@@ -131,7 +132,7 @@ __interrupt void Cla1Task1(void)
 interrupt void Cla1Task2 ( void )
 {
     // Motor control
-//    motor[MOTOR_2].itDone = MOT_runControl(&motor[MOTOR_2]);
+    motor[MOTOR_2].itDone = MOT_runControl(&motor[MOTOR_2]);
 }
 
 interrupt void Cla1Task3 ( void )
@@ -161,6 +162,9 @@ interrupt void Cla1Task7 ( void )
 
 interrupt void Cla1Task8 ( void )
 {
+    // Uncomment this to debug the CLA while connected to the debugger
+    __mdebugstop();
+
     //--- MOTOR PARAMS STRUCTURE ------------------------------------------------
     motor_foc[MOTOR_1].motor_cfg.Rs                             = MOTOR1_RS;
     motor_foc[MOTOR_1].motor_cfg.Ls                             = MOTOR1_LS;
@@ -169,11 +173,11 @@ interrupt void Cla1Task8 ( void )
     motor_foc[MOTOR_1].motor_cfg.ki                             = MOTOR1_KI;
     motor_foc[MOTOR_1].motor_cfg.polePairs                      = MOTOR1_POLES_PAIRS;
     //--- MOTOR ACQUISITION STRUCTURE -------------------------------------------
-    motor_foc[MOTOR_1].motor_acq.p_vExtMeasReg                  = (volatile uint16_t *)(VEXT1_ADC_PPB_RESULT_ADDR);
-    motor_foc[MOTOR_1].motor_acq.p_vBusMeasReg                  = (volatile uint16_t *)(VBUS_ADC_PPB_RESULT_ADDR);
-    motor_foc[MOTOR_1].motor_acq.p_iMeasReg[CHANNEL_1]          = (volatile int16_t *)(MOTOR1_IA_ADC_PPB_RESULT_ADDR);
-    motor_foc[MOTOR_1].motor_acq.p_iMeasReg[CHANNEL_2]          = (volatile int16_t *)(MOTOR1_IB_ADC_PPB_RESULT_ADDR);
-    motor_foc[MOTOR_1].motor_acq.p_iMeasReg[CHANNEL_3]          = (volatile int16_t *)(MOTOR1_IC_ADC_PPB_RESULT_ADDR);
+    motor_foc[MOTOR_1].motor_acq.p_vExtMeasReg.int_32b          = VEXT1_ADC_PPB_RESULT_ADDR;
+    motor_foc[MOTOR_1].motor_acq.p_vBusMeasReg.int_32b          = VBUS_ADC_PPB_RESULT_ADDR;
+    motor_foc[MOTOR_1].motor_acq.p_iMeasReg[CHANNEL_1].int_32b  = MOTOR1_IA_ADC_PPB_RESULT_ADDR;
+    motor_foc[MOTOR_1].motor_acq.p_iMeasReg[CHANNEL_2].int_32b  = MOTOR1_IB_ADC_PPB_RESULT_ADDR;
+    motor_foc[MOTOR_1].motor_acq.p_iMeasReg[CHANNEL_3].int_32b  = MOTOR1_IC_ADC_PPB_RESULT_ADDR;
     motor_foc[MOTOR_1].motor_acq.vbus                           = 0.0f;
     motor_foc[MOTOR_1].motor_acq.vExt                           = 0.0f;
     motor_foc[MOTOR_1].motor_acq.ia                             = 0.0f;
@@ -309,11 +313,11 @@ interrupt void Cla1Task8 ( void )
     motor_foc[MOTOR_2].motor_cfg.ki                             = MOTOR2_KI;
     motor_foc[MOTOR_2].motor_cfg.polePairs                      = MOTOR2_POLES_PAIRS;
     //--- MOTOR ACQUISITION STRUCTURE -------------------------------------------
-    motor_foc[MOTOR_2].motor_acq.p_vExtMeasReg                  = (volatile uint16_t *)(VEXT2_ADC_PPB_RESULT_ADDR);
-    motor_foc[MOTOR_2].motor_acq.p_vBusMeasReg                  = (volatile uint16_t *)(VBUS_ADC_PPB_RESULT_ADDR);
-    motor_foc[MOTOR_2].motor_acq.p_iMeasReg[CHANNEL_1]          = (volatile int16_t *)(MOTOR2_IA_ADC_PPB_RESULT_ADDR);
-    motor_foc[MOTOR_2].motor_acq.p_iMeasReg[CHANNEL_2]          = (volatile int16_t *)(MOTOR2_IB_ADC_PPB_RESULT_ADDR);
-    motor_foc[MOTOR_2].motor_acq.p_iMeasReg[CHANNEL_3]          = (volatile int16_t *)(MOTOR2_IC_ADC_PPB_RESULT_ADDR);
+    motor_foc[MOTOR_2].motor_acq.p_vExtMeasReg.int_32b          = VEXT2_ADC_PPB_RESULT_ADDR;
+    motor_foc[MOTOR_2].motor_acq.p_vBusMeasReg.int_32b          = VBUS_ADC_PPB_RESULT_ADDR;
+    motor_foc[MOTOR_2].motor_acq.p_iMeasReg[CHANNEL_1].int_32b  = MOTOR2_IA_ADC_PPB_RESULT_ADDR;
+    motor_foc[MOTOR_2].motor_acq.p_iMeasReg[CHANNEL_2].int_32b  = MOTOR2_IB_ADC_PPB_RESULT_ADDR;
+    motor_foc[MOTOR_2].motor_acq.p_iMeasReg[CHANNEL_3].int_32b  = MOTOR2_IC_ADC_PPB_RESULT_ADDR;
     motor_foc[MOTOR_2].motor_acq.vbus                           = 0.0f;
     motor_foc[MOTOR_2].motor_acq.vExt                           = 0.0f;
     motor_foc[MOTOR_2].motor_acq.ia                             = 0.0f;
@@ -441,6 +445,54 @@ interrupt void Cla1Task8 ( void )
     //--- Resistance estimation low-pass filter ---------------------------------
     motor_foc[MOTOR_2].resEstFlt.a                              = MOTOR2_STATOR_RESISTOR_LPF_ALPHA;
     motor_foc[MOTOR_2].resEstFlt.one_minus_a                    = MOTOR2_STATOR_RESISTOR_LPF_ONE_M_ALPHA;
+
+    //--- MOTOR_1 ---------------------------------------------------------------
+    motor[MOTOR_1].motor_id                                     = MOTOR_1;
+    //--- FOC structure address -------------------------------------------------
+    motor[MOTOR_1].p_motorFOC                                   = &motor_foc[MOTOR_1];
+    //--- FSM motor initial state -----------------------------------------------
+    motor[MOTOR_1].motor_state                                  = MOTOR_STATE_INIT;
+    //--- Error message ---------------------------------------------------------
+    motor[MOTOR_1].motor_error.all                              = 0;
+    //---------------------------------------------------------------------------
+    motor[MOTOR_1].clCycleNb                                    = 0;
+    motor[MOTOR_1].itCnt                                        = 0;
+    motor[MOTOR_1].itDone                                       = false;
+    //--- DRV IO Config ---------------------------------------------------------
+    motor[MOTOR_1].drvFaultNum                                  = MOTOR1_DRV_FAULT_NUM;
+    motor[MOTOR_1].drvEnNum                                     = MOTOR1_DRV_EN_NUM;
+    //---- PWM config address ---------------------------------------------------
+    motor[MOTOR_1].epwmBaseAddr[CHANNEL_1]                      = MOTOR1_PWM1_BASE;
+    motor[MOTOR_1].epwmBaseAddr[CHANNEL_2]                      = MOTOR1_PWM2_BASE;
+    motor[MOTOR_1].epwmBaseAddr[CHANNEL_3]                      = MOTOR1_PWM3_BASE;
+    //---- PWM command address --------------------------------------------------
+    motor[MOTOR_1].p_motorCmdReg[CHANNEL_1].int_32b             = MOTOR1_PWM1_CMD_ADDR;
+    motor[MOTOR_1].p_motorCmdReg[CHANNEL_2].int_32b             = MOTOR1_PWM2_CMD_ADDR;
+    motor[MOTOR_1].p_motorCmdReg[CHANNEL_3].int_32b             = MOTOR1_PWM3_CMD_ADDR;
+
+    //--- MOTOR_2 ---------------------------------------------------------------
+    motor[MOTOR_2].motor_id                                     = MOTOR_2;
+    //--- FOC structure address -------------------------------------------------
+    motor[MOTOR_2].p_motorFOC                                   = &motor_foc[MOTOR_2];
+    //--- FSM motor initial state -----------------------------------------------
+    motor[MOTOR_2].motor_state                                  = MOTOR_STATE_INIT;
+    //--- Error message ---------------------------------------------------------
+    motor[MOTOR_2].motor_error.all                              = 0;
+    //---------------------------------------------------------------------------
+    motor[MOTOR_2].clCycleNb                                    = 0;
+    motor[MOTOR_2].itCnt                                        = 0;
+    motor[MOTOR_2].itDone                                       = false;
+    //--- DRV IO Config ---------------------------------------------------------
+    motor[MOTOR_2].drvFaultNum                                  = MOTOR2_DRV_FAULT_NUM;
+    motor[MOTOR_2].drvEnNum                                     = MOTOR2_DRV_EN_NUM;
+    //---- PWM config address ---------------------------------------------------
+    motor[MOTOR_2].epwmBaseAddr[CHANNEL_1]                      = MOTOR2_PWM1_BASE;
+    motor[MOTOR_2].epwmBaseAddr[CHANNEL_2]                      = MOTOR2_PWM2_BASE;
+    motor[MOTOR_2].epwmBaseAddr[CHANNEL_3]                      = MOTOR2_PWM3_BASE;
+    //---- PWM command address --------------------------------------------------
+    motor[MOTOR_1].p_motorCmdReg[CHANNEL_1].int_32b             = MOTOR2_PWM1_CMD_ADDR;
+    motor[MOTOR_1].p_motorCmdReg[CHANNEL_2].int_32b             = MOTOR2_PWM2_CMD_ADDR;
+    motor[MOTOR_1].p_motorCmdReg[CHANNEL_3].int_32b             = MOTOR2_PWM3_CMD_ADDR;
 }
 
 //bool_t as5047u_crc8check(BitDataFrame32_u data)

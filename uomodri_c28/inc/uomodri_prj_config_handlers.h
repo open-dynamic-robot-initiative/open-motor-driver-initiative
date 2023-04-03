@@ -239,12 +239,11 @@ static cmd_t cmd_uOmodri[2] =
 #if (CLA1_CORE_ENABLE)
 #pragma DATA_ALIGN(motor_foc, 4)
 #pragma DATA_SECTION(motor_foc, "ClaDataRam");
-foc_t motor_foc[] =
+foc_t motor_foc[2];
 #else
 #pragma DATA_ALIGN(motor_foc, 8)
 #pragma DATA_SECTION(motor_foc, "ramgs0");
 static foc_t motor_foc[] =
-#endif
 {
  {
   //--- MOTOR PARAMS STRUCTURE ------------------------------------------------
@@ -539,6 +538,7 @@ static foc_t motor_foc[] =
   //acog;
  },
 };
+#endif
 
 /** @var    MOTOR_STRUCT    motor[]
  *  @brief  General structure array configuration structure for the Hardware Abstraction Layer.
@@ -546,12 +546,11 @@ static foc_t motor_foc[] =
 #if (CLA1_CORE_ENABLE)
 #pragma DATA_ALIGN(motor, 4)
 #pragma DATA_SECTION(motor, "ClaDataRam");
-motor_t motor[2] =
+motor_t motor[2];
 #else
 #pragma DATA_ALIGN(motor, 8)
 #pragma DATA_SECTION(motor, "ramgs0");
 static motor_t motor[2] =
-#endif
 {
  {
   //--- MOTOR_1 ---------------------------------------------------------------
@@ -604,6 +603,7 @@ static motor_t motor[2] =
   .p_motorCmdReg[CHANNEL_3]                 = (volatile uint16_t *)(MOTOR2_PWM3_CMD_ADDR),
  },
 };
+#endif
 
 static const dma_cfg_t  dmaMem2MemCfgList[] =
 {

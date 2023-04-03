@@ -46,7 +46,11 @@ typedef union __error_reg_u__
 
 typedef struct __motor_struct_t__
 {
+#if (CLA1_CORE_ENABLE)
+    foc_t*                      p_motorFOC;             /*!< Pointer on the FOC structure associated to the motor */
+#else
     foc_t* const                p_motorFOC;             /*!< Pointer on the FOC structure associated to the motor */
+#endif
     uint64_t                    itCnt;                  /*!< Event counter incrementing on every IT call */
     uint32_t                    epwmBaseAddr[3];
     uint32_t                    drvFaultNum;
@@ -54,8 +58,13 @@ typedef struct __motor_struct_t__
     uint32_t                    clCycleNb;
     float32_t                   statorResEst;           /*!< Q-axis resistance estimation. [Ohm] */
     lpf_t                       statorResEstFlt;        /*!< Resistance estimation low-pass filter */
+#if (CLA1_CORE_ENABLE)
+    volatile cla_u16_ptr        p_motorCmdReg[3];       /*!< PWM address register for FOC command */
+    uint8_t                     motor_id;               /*!< Motor identification */
+#else
     volatile uint16_t* const    p_motorCmdReg[3];       /*!< PWM address register for FOC command */
     const uint8_t               motor_id;               /*!< Motor identification */
+#endif
     uint8_t                     motor_state;            /*!< Current motor state for the FSM. */
     error_reg_u                 motor_error;            /*!< Error messages */
     bool_t                      itDone;

@@ -381,12 +381,27 @@ static const sci_cfg_t  sciCfgList[] =
 static const cla_cfg_t  claCfgList[] =
 {
  {
-  .progRAM              = MEMCFG_SECT_LS2,
-  .dataRAM              = (MEMCFG_SECT_LS0 | MEMCFG_SECT_LS1),
+  .progRAM              = (MEMCFG_SECT_LS1 | MEMCFG_SECT_LS2 | MEMCFG_SECT_LS3 | MEMCFG_SECT_LS4 | MEMCFG_SECT_LS5 | MEMCFG_SECT_LS6 | MEMCFG_SECT_LS7),
+  .dataRAM              = (MEMCFG_SECT_LS0),// | MEMCFG_SECT_LS1),
   .claTaskFlg           = CLA_TASKFLAG_1,
   .claTaskNum           = CLA_TASK_1,
   .fun_ptr              = &Cla1Task1
  },
+ {
+  .progRAM              = (MEMCFG_SECT_LS1 | MEMCFG_SECT_LS2 | MEMCFG_SECT_LS3 | MEMCFG_SECT_LS4 | MEMCFG_SECT_LS5 | MEMCFG_SECT_LS6 | MEMCFG_SECT_LS7),
+  .dataRAM              = (MEMCFG_SECT_LS0),// | MEMCFG_SECT_LS1),
+  .claTaskFlg           = CLA_TASKFLAG_2,
+  .claTaskNum           = CLA_TASK_2,
+  .fun_ptr              = &Cla1Task2
+ },
+ {
+  .progRAM              = (MEMCFG_SECT_LS1 | MEMCFG_SECT_LS2 | MEMCFG_SECT_LS3 | MEMCFG_SECT_LS4 | MEMCFG_SECT_LS5 | MEMCFG_SECT_LS6 | MEMCFG_SECT_LS7),
+  .dataRAM              = (MEMCFG_SECT_LS0),// | MEMCFG_SECT_LS1),
+  .claTaskFlg           = CLA_TASKFLAG_8,
+  .claTaskNum           = CLA_TASK_8,
+  .fun_ptr              = &Cla1Task8
+ },
+ {.fun_ptr              = NULL},
 };
 #endif
 
@@ -552,7 +567,7 @@ static const hal_cfg_t hal =
  .p_spiHandle               = spiCfgList,
  .p_timerHandle             = timerCfgList,
 #if (CLA1_CORE_ENABLE)
- .p_claHandle               = NULL,//claCfgList,
+ .p_claHandle               = claCfgList,
 #else
  .p_claHandle               = NULL,
 #endif

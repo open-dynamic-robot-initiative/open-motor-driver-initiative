@@ -13,13 +13,14 @@ MEMORY
    RAMD0            : origin = 0x00C000, length = 0x000800
    RAMD1            : origin = 0x00C800, length = 0x000800
    RAMLS0           : origin = 0x008000, length = 0x000800
-   RAMLS1           : origin = 0x008800, length = 0x000800
+/*   RAMLS1           : origin = 0x008800, length = 0x000800
    RAMLS2           : origin = 0x009000, length = 0x000800
    RAMLS3           : origin = 0x009800, length = 0x000800
    RAMLS4           : origin = 0x00A000, length = 0x000800
    RAMLS5           : origin = 0x00A800, length = 0x000800
    RAMLS6           : origin = 0x00B000, length = 0x000800
-   RAMLS7           : origin = 0x00B800, length = 0x000800
+   RAMLS7           : origin = 0x00B800, length = 0x000800 */
+   RAMLS1_7			: origin = 0x008800, length = 0x003800
    RAMGS0           : origin = 0x00D000, length = 0x001000
    RAMGS1           : origin = 0x00E000, length = 0x001000
    RAMGS2           : origin = 0x00F000, length = 0x001000
@@ -82,17 +83,17 @@ SECTIONS
 
 #if defined(__TI_EABI__)
    .init_array      : > FLASH5, ALIGN(8)	/* Table of C++ constructors called at startup -	Initalized */
-   .bss             : > RAMLS3				/* Global variables -								Not Initalized */
-   .bss:output      : > RAMLS3
-   .bss:cio			: > RAMLS3
-   .data            : > RAMLS4				/* Non-const objects (global variables) -			Initalized */
-   .sysmem          : > RAMLS4				/* Malloc heap -									Not Initalized */
+   .bss             : > RAMLS0				/* Global variables -								Not Initalized */
+   .bss:output      : > RAMLS0
+   .bss:cio			: > RAMLS0
+   .data            : > RAMLS0				/* Non-const objects (global variables) -			Initalized */
+   .sysmem          : > RAMLS0				/* Malloc heap -									Not Initalized */
    /* Initalized sections go in Flash */
    .const           : > FLASH5, ALIGN(8)	/* Initialized global variables -					Initalized */
 #else
    .pinit           : > FLASH5, ALIGN(8)
-   .ebss            : > RAMLS3				/* Global variables -								Not Initalized */
-   .esysmem         : > RAMLS4
+   .ebss            : > RAMLS0				/* Global variables -								Not Initalized */
+   .esysmem         : > RAMLS0
    /* Initalized sections go in Flash */
    .econst          : > FLASH5, ALIGN(8)
 #endif
@@ -105,17 +106,20 @@ SECTIONS
    MSGRAM_CPU_TO_CM    : > CPUTOCMRAM//, type=NOINIT
    MSGRAM_CM_TO_CPU    : > CMTOCPURAM//, type=NOINIT
 
+   ClaDataRam      	: > RAMLS0 /*>> RAMLS0 | RAMLS1*/
+   /*ClaProgRam      	: >> RAMLS1 | RAMLS2 | RAMLS3 | RAMLS4 | RAMLS5 | RAMLS6 | RAMLS7*/
+
 /* CLA specific sections */
 #if defined(__TI_EABI__)
    Cla1Prog         :   LOAD = FLASH6,
-                        RUN = RAMLS5,
+                        RUN = RAMLS1_7,/*RAMLS2 | RAMLS3 | RAMLS4 | RAMLS5 | RAMLS6 | RAMLS7,*/
                         LOAD_START(Cla1funcsLoadStart),
                         LOAD_END(Cla1funcsLoadEnd),
                         RUN_START(Cla1funcsRunStart),
                         LOAD_SIZE(Cla1funcsLoadSize),
                         ALIGN(8)
 #else
-	Cla1Prog         :	LOAD = FLASH6,
+	Cla1Prog		:	LOAD = FLASH6,
                         RUN = RAMLS5,
                         LOAD_START(_Cla1funcsLoadStart),
                         LOAD_END(_Cla1funcsLoadEnd),
@@ -124,15 +128,15 @@ SECTIONS
                         ALIGN(8)
 #endif
 
-   CLADataLS0       : > RAMLS0
-   CLADataLS1       : > RAMLS1
+   CLADataLS0		: > RAMLS0
+   //CLADataLS1       : > RAMLS1
 
    Cla1ToCpuMsgRAM  : > CLA1_MSGRAMLOW, type=NOINIT
    CpuToCla1MsgRAM  : > CLA1_MSGRAMHIGH, type=NOINIT
    Cla1ToDmaMsgRAM  : > CLA1_DMA_MSGRAM, type=NOINIT
-
    DmaToCla1MsgRAM  : > DMA_CLA1_MSGRAM, type=NOINIT
-   ClaDataRam      	: >> RAMLS0 | RAMLS1
+
+   /*ClaDataRam      	: >> RAMLS0 | RAMLS1*/
 
    /* CLA C compiler sections */
    //
@@ -141,14 +145,14 @@ SECTIONS
    CLAscratch       :
                      { *.obj(CLAscratch)
                      . += CLA_SCRATCHPAD_SIZE;
-                     *.obj(CLAscratch_end) } >  RAMLS1
+                     *.obj(CLAscratch_end) } >  RAMLS0
 
-   .scratchpad      : > RAMLS1
-   .bss_cla         : > RAMLS1
-   cla_shared       : > RAMLS1
+   .scratchpad      : > RAMLS0
+   .bss_cla         : > RAMLS0
+   cla_shared       : > RAMLS1_7
 #if defined(__TI_EABI__)
    .const_cla       :   LOAD = FLASH2,
-                        RUN = RAMLS1,
+                        RUN = RAMLS0,
                         RUN_START(Cla1ConstRunStart),
                         LOAD_START(Cla1ConstLoadStart),
                         LOAD_SIZE(Cla1ConstLoadSize)

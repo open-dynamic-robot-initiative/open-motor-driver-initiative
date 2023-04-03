@@ -122,13 +122,20 @@ typedef struct __params_t__
 #endif
 } params_t;
 
+typedef union __cla_u16_ptr__
+{
+    volatile uint16_t*  ptr_u16; //Aligned to lower 16-bits
+    volatile int16_t*   ptr_i16;
+    uint32_t            int_32b; //32-bits
+} cla_u16_ptr;
+
 typedef struct __acquisitions_t__
 {
     // ADC result registers
 #if (CLA1_CORE_ENABLE)
-    volatile uint16_t*  p_vBusMeasReg;
-    volatile uint16_t*  p_vExtMeasReg;
-    volatile int16_t*   p_iMeasReg[3];
+    cla_u16_ptr         p_vBusMeasReg;
+    cla_u16_ptr         p_vExtMeasReg;
+    cla_u16_ptr         p_iMeasReg[3];
 #else
     volatile uint16_t*  const p_vBusMeasReg;
     volatile uint16_t*  const p_vExtMeasReg;
