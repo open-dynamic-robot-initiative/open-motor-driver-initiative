@@ -4,14 +4,11 @@
 /***********************************************************************
  * INCLUDE FILES
  ***********************************************************************/
-#include <stdbool.h>
 #include <stdint.h>
-#include <math.h>
+#include <hw_types.h>
+#include <f2838x_device.h>
 
-#include "f2838x_device.h"
-#include "hal.h"
 #include "foc.h"
-#include "drv8353.h"
 #include "uomodri_user_defines.h"
 
 /***********************************************************************
@@ -25,12 +22,16 @@
 #define MOTOR_STATE_ERROR       (0xFF)
 
 /***********************************************************************
- * TYPDEF ENUM
+ * ENUM TYPES
  ***********************************************************************/
 
 /***********************************************************************
- * CONTROL STRUCTURES
+ * UNION TYPES
  ***********************************************************************/
+/**
+ * @union   error_reg_u
+ * @brief   Bit field associated to all sources of motor errors.
+ */
 typedef union __error_reg_u__
 {
     uint8_t                     all;
@@ -44,37 +45,41 @@ typedef union __error_reg_u__
     };
 } error_reg_u;
 
-typedef struct __motor_struct_t__
+/***********************************************************************
+ * CONTROL STRUCTURES
+ ***********************************************************************/
+/**
+ * @struct  motor_t
+ * @brief   General structure for motor control.
+ */
+typedef struct __motor_t__
 {
 #if (CLA1_CORE_ENABLE)
-    foc_t*                      p_motorFOC;             /*!< Pointer on the FOC structure associated to the motor */
+    ptr_32b_u                   p_motorFOC;             /*!< Pointer on the FOC structure associated to the motor */
 #else
-    foc_t* const                p_motorFOC;             /*!< Pointer on the FOC structure associated to the motor */
+    foc_t* const                p_foc;                  /*!< Pointer on the FOC structure associated to the motor */
 #endif
     uint64_t                    itCnt;                  /*!< Event counter incrementing on every IT call */
-    uint32_t                    epwmBaseAddr[3];
-    uint32_t                    drvFaultNum;
-    uint32_t                    drvEnNum;
+    uint32_t                    epwmBaseAddr[3];        /*!< Address array for the PWM peripherals associated to the motor control */
+    uint32_t                    drvFaultNum;            /*!< GPIO associated to the DRV fault line */
+    uint32_t                    drvEnNum;               /*!< GPIO associated to the DRV enable line */
     uint32_t                    clCycleNb;
     float32_t                   statorResEst;           /*!< Q-axis resistance estimation. [Ohm] */
     lpf_t                       statorResEstFlt;        /*!< Resistance estimation low-pass filter */
 #if (CLA1_CORE_ENABLE)
-    volatile cla_u16_ptr        p_motorCmdReg[3];       /*!< PWM address register for FOC command */
+    volatile ptr_32b_u          p_motorCmdReg[3];       /*!< PWM address register for FOC command */
     uint8_t                     motor_id;               /*!< Motor identification */
 #else
-    volatile uint16_t* const    p_motorCmdReg[3];       /*!< PWM address register for FOC command */
+    volatile uint16_t* const    p_cmdReg[3];            /*!< PWM address register for FOC command */
     const uint8_t               motor_id;               /*!< Motor identification */
 #endif
     uint8_t                     motor_state;            /*!< Current motor state for the FSM. */
-    error_reg_u                 motor_error;            /*!< Error messages */
+    error_reg_u                 motor_error;            /*!< Bit field for the error sources. */
     bool_t                      itDone;
 } motor_t;
 
 /***********************************************************************
  * FUNCTIONS DECLARATION
  ***********************************************************************/
-//inline void MOT_runCommand(motor_t*, float32_t, float32_t, float32_t);
-//inline void MOT_stopCommand(motor_t*);
-//inline bool_t MOT_runControl(motor_t*);
 
 #endif /* __MOTOR_H__ */

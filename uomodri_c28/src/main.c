@@ -6,31 +6,22 @@
 /***********************************************************************
  * INCLUDES
  ***********************************************************************/
+#include <uomodri_shared.h>
 #include "main.h"
 #include "hal.h"
 #include "drv8353.h"
-#if (CLA_CORE_ENABLE)
-#include "as5047u.h"
-#endif
 #include "ws2812b.h"
-#include "uOmodri_shared.h"
 #include "encoder.h"
 #include "foc.h"
 #include "motor.h"
 #include "uomodri_user_defines.h"
 #include "uomodri_hal_config_handlers.h"
 #include "uomodri_prj_config_handlers.h"
-#if (CLA1_CORE_ENABLE)
-#include <uOmodri_shared.h>
-#endif
 
 /***********************************************************************
  * VARIABLES
  ***********************************************************************/
 extern motor_t          motor[2];
-#if (CLA_CORE_ENABLE)
-//extern as_enc_t         asenc_cfg[0];
-#endif
 extern const hal_cfg_t  hal;
 extern cmd_t            cmd_uOmodri[2];
 #if (defined DEBUG) && (CM_CORE_ENABLE)
@@ -76,10 +67,6 @@ inline void IPC_CpuToCmAddrSync(void);
  */
 void main(void)
 {
-//#if (CLA_CORE_ENABLE)
-//    cla_new_flag    = false;
-//    cpu1_ready_flag = false;
-//#endif
     // uOmodri low level device initialization
     MCU_ini();
     // Hardware Abstraction Layer initialization
@@ -91,8 +78,8 @@ void main(void)
     HAL_ADC_offsetCalib(&periph_motor_cfg[MOTOR_1]);
     HAL_ADC_offsetCalib(&periph_motor_cfg[MOTOR_2]);
     // Force a reset of FOC structures
-//    FOC_resetStruct(motor[MOTOR_1].p_motorFOC);
-//    FOC_resetStruct(motor[MOTOR_2].p_motorFOC);
+    FOC_resetStruct(motor[MOTOR_1].p_foc);
+    FOC_resetStruct(motor[MOTOR_2].p_foc);
     // Force a reset of the intermediate command structures. Working structures are embedded in FOC structures.
     COM_resetCmdStruct(&cmd_uOmodri[MOTOR_1]);
     COM_resetCmdStruct(&cmd_uOmodri[MOTOR_2]);
@@ -103,13 +90,10 @@ void main(void)
 #if (CM_CORE_ENABLE)
     IPC_CpuToCmAddrSync();
 #endif
-
 #if (CLA1_CORE_ENABLE)
     CLA_forceTasks(CLA1_BASE, CLA_TASKFLAG_8);
 #endif
-//#if (CLA_CORE_ENABLE)
-//    cpu1_ready_flag         = true;//(cpu1_ready_flag == true) ? (false) : (true);
-//#endif
+
     bool_t cmd_msg_valid    = false;
     bool_t timeout_flag     = false;
 
@@ -141,9 +125,9 @@ void main(void)
             if(cmd_msg_valid || timeout_flag)
             {
                 if(cmd_msg_valid && ((cmd_uOmodri[MOTOR_1].cmdArray.all & 0xB000) == 0xB000))
-                    cmd_uOmodri[MOTOR_1].posRef += motor[MOTOR_1].p_motorFOC->motor_enc.thetaIndex;
+                    cmd_uOmodri[MOTOR_1].posRef += motor[MOTOR_1].p_foc->motor_enc.thetaIndex;
                 if(cmd_msg_valid && ((cmd_uOmodri[MOTOR_2].cmdArray.all & 0x000B) == 0x000B))
-                    cmd_uOmodri[MOTOR_2].posRef += motor[MOTOR_2].p_motorFOC->motor_enc.thetaIndex;
+                    cmd_uOmodri[MOTOR_2].posRef += motor[MOTOR_2].p_foc->motor_enc.thetaIndex;
                 DMA_forceTrigger(DMA_CMD_2_FOC_BASE_ADDR);
             }
             cmd_msg_valid           = false;
@@ -525,7 +509,9 @@ __attribute__((interrupt)) void adc_isrMotor1(void)
 #endif
     while(DMA_getTransferStatusFlag(DMA_CMD_2_FOC_BASE_ADDR));
     // Motor control
-//    motor[MOTOR_1].itDone = MOT_runControl(&motor[MOTOR_1]);
+#if (!CLA1_CORE_ENABLE)
+    motor[MOTOR_1].itDone = MOT_runControl(&motor[MOTOR_1]);
+#endif
 #if (defined DEBUG) && (CM_CORE_ENABLE) && (0)
     if(!IPC_isFlagBusyLtoR(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG))
     {
@@ -580,7 +566,9 @@ __attribute__((interrupt)) void adc_isrMotor2(void)
 #endif
     while(DMA_getTransferStatusFlag(DMA_CMD_2_FOC_BASE_ADDR));
     // Motor control
-//    motor[MOTOR_2].itDone = MOT_runControl(&motor[MOTOR_2]);
+#if (!CLA1_CORE_ENABLE)
+    motor[MOTOR_2].itDone = MOT_runControl(&motor[MOTOR_2]);
+#endif
     if(!IPC_isFlagBusyLtoR(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG))
         {
 #if (0)
@@ -612,26 +600,26 @@ __attribute__((interrupt)) void adc_isrMotor2(void)
             cpu2cm_dbg_msg.status.uint32b   = (uint32_t)motor[MOTOR_1].p_motorFOC->motor_cmd.enableReg.all;
 #endif
 #if (1)
-            transfer_array[0]   = motor[MOTOR_2].p_motorFOC->motor_acq.ia;
-            transfer_array[1]   = motor[MOTOR_2].p_motorFOC->motor_acq.ib;
-            transfer_array[2]   = motor[MOTOR_2].p_motorFOC->motor_acq.ic;
-            transfer_array[3]   = motor[MOTOR_2].p_motorFOC->motor_acq.vbus;
-            transfer_array[4]   = motor[MOTOR_2].p_motorFOC->ialpha;
-            transfer_array[5]   = motor[MOTOR_2].p_motorFOC->ibeta;
-            transfer_array[6]   = motor[MOTOR_2].p_motorFOC->id;
-            transfer_array[7]   = motor[MOTOR_2].p_motorFOC->iq;
-            transfer_array[8]   = motor[MOTOR_2].p_motorFOC->ud;
-            transfer_array[9]   = motor[MOTOR_2].p_motorFOC->uq;
-            transfer_array[10]  = motor[MOTOR_2].p_motorFOC->ualpha;
-            transfer_array[11]  = motor[MOTOR_2].p_motorFOC->ubeta;
-            transfer_array[12]  = motor[MOTOR_2].p_motorFOC->ua;
-            transfer_array[13]  = motor[MOTOR_2].p_motorFOC->ub;
-            transfer_array[14]  = motor[MOTOR_2].p_motorFOC->uc;
-            transfer_array[15]  = motor[MOTOR_2].p_motorFOC->motor_enc.thetaAbsolute;
-            transfer_array[16]  = motor[MOTOR_2].p_motorFOC->motor_cmd.posRef;
-            transfer_array[17]  = motor[MOTOR_2].p_motorFOC->motor_enc.speed.speedMech[0];
-            transfer_array[18]  = motor[MOTOR_2].p_motorFOC->motor_cmd.velRef;
-            transfer_array[19]  = motor[MOTOR_2].p_motorFOC->iqRef;
+            transfer_array[0]   = motor[MOTOR_2].p_foc->motor_acq.ia;
+            transfer_array[1]   = motor[MOTOR_2].p_foc->motor_acq.ib;
+            transfer_array[2]   = motor[MOTOR_2].p_foc->motor_acq.ic;
+            transfer_array[3]   = motor[MOTOR_2].p_foc->motor_acq.vbus;
+            transfer_array[4]   = motor[MOTOR_2].p_foc->ialpha;
+            transfer_array[5]   = motor[MOTOR_2].p_foc->ibeta;
+            transfer_array[6]   = motor[MOTOR_2].p_foc->id;
+            transfer_array[7]   = motor[MOTOR_2].p_foc->iq;
+            transfer_array[8]   = motor[MOTOR_2].p_foc->ud;
+            transfer_array[9]   = motor[MOTOR_2].p_foc->uq;
+            transfer_array[10]  = motor[MOTOR_2].p_foc->ualpha;
+            transfer_array[11]  = motor[MOTOR_2].p_foc->ubeta;
+            transfer_array[12]  = motor[MOTOR_2].p_foc->ua;
+            transfer_array[13]  = motor[MOTOR_2].p_foc->ub;
+            transfer_array[14]  = motor[MOTOR_2].p_foc->uc;
+            transfer_array[15]  = motor[MOTOR_2].p_foc->motor_enc.thetaAbsolute;
+            transfer_array[16]  = motor[MOTOR_2].p_foc->motor_cmd.posRef;
+            transfer_array[17]  = motor[MOTOR_2].p_foc->motor_enc.speed.speedMech[0];
+            transfer_array[18]  = motor[MOTOR_2].p_foc->motor_cmd.velRef;
+            transfer_array[19]  = motor[MOTOR_2].p_foc->iqRef;
 #endif
             IPC_setFlagLtoR(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG);
         }

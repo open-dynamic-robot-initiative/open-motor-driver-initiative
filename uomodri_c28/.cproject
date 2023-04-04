@@ -251,8 +251,6 @@
 									<listOptionValue builtIn="false" value="CPU1"/>
 									<listOptionValue builtIn="false" value="DEBUG"/>
 									<listOptionValue builtIn="false" value="ccs_c2k"/>
-									<listOptionValue builtIn="false" value="__TMS320C28XX_CLA__"/>
-									<listOptionValue builtIn="false" value="__TMS320C28XX_CLA2__"/>
 								</option>
 								<option id="com.ti.ccstudio.buildDefinitions.C2000_22.6.compilerID.LARGE_MEMORY_MODEL.508900941" name="Option deprecated, set by default (--large_memory_model, -ml)" superClass="com.ti.ccstudio.buildDefinitions.C2000_22.6.compilerID.LARGE_MEMORY_MODEL" value="true" valueType="boolean"/>
 								<option id="com.ti.ccstudio.buildDefinitions.C2000_22.6.compilerID.UNIFIED_MEMORY.1079722758" name="Unified memory (--unified_memory, -mt)" superClass="com.ti.ccstudio.buildDefinitions.C2000_22.6.compilerID.UNIFIED_MEMORY" value="true" valueType="boolean"/>
@@ -329,7 +327,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="src/foc.c|spi_cla.cla|src/as5047u.c|src/motor.c|src/spi_cla.c|src/encoder.c|2838x_RAM_lnk_cpu1.cmd|src/fifo.c|2838x_flash_lnk_cpu1.cmd|src/usb_hal.c|src/PID.c|src/usb_ex1_serial_structs.c|src/usb_ex1_dev_serial.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="motor_control.cla|spi_cla.cla|2838x_RAM_lnk_cpu1.cmd|2838x_flash_lnk_cpu1.cmd|src/usb_hal.c|src/PID.c|src/usb_ex1_serial_structs.c|src/usb_ex1_dev_serial.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>

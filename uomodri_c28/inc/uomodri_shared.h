@@ -1,56 +1,47 @@
-#ifndef __CLA_SHARED_H__
-#define __CLA_SHARED_H__
+#ifndef __UOMODRI_SHARED_H__
+#define __UOMODRI_SHARED_H__
 
 /***********************************************************************
  * INCLUDES
  ***********************************************************************/
 #include <stdint.h>
-#ifdef __cplusplus
-extern "C" {
-#endif
-//#include "hal.h"
-#include <CLAmath.h>
 
-#define run_loop1_cla (1)
-#if (run_loop1_cla)
-#include <CLAmath.h>
-//#include "DCLCLA.h"
-#else
-#include "DCLF32.h"
-#endif
 #include "foc.h"
 #include "motor.h"
 #include "encoder.h"
 #include "uomodri_user_defines.h"
+#if (CLA1_CORE_ENABLE)
+#include <CLAmath.h>
+#else
+#include <math.h>//"DCLF32.h"
+#endif
 
 /***********************************************************************
  * DEFINES
  ***********************************************************************/
+#if (CLA1_CORE_ENABLE)
 #define MMAX3(x, y, z)                          (__mmaxf32(__mmaxf32((x), (y)), (z)))
 #define MMIN3(x, y, z)                          (__mminf32(__mminf32((x), (y)), (z)))
+#endif
 
 /***********************************************************************
  * VARIABLES
  ***********************************************************************/
-extern float32_t __mminf32(float32_t, float32_t);
-extern float32_t __mmaxf32(float32_t, float32_t);
-extern float32_t __mfracf32(float32_t);
-
-#if (CLA_CORE_ENABLE)
-extern foc_t motor_foc[];
-extern motor_t motor[];
+#if (CLA1_CORE_ENABLE)
+extern foc_t    motor_foc[];
+extern motor_t  motor[];
 #endif
 
 /***********************************************************************
  * FUNCTIONS DECLARATION
  ***********************************************************************/
-//
-// Function Prototypes
-//
-// The following are symbols defined in the CLA assembly code
-// Including them in the shared header file makes them
-// .global and the main CPU can make use of them.
-//
+#if (CLA1_CORE_ENABLE)
+extern float32_t __mminf32(float32_t, float32_t);
+extern float32_t __mmaxf32(float32_t, float32_t);
+extern float32_t __mfracf32(float32_t);
+#endif
+
+#if (CLA1_CORE_ENABLE)
 __interrupt void Cla1Task1();
 __interrupt void Cla1Task2();
 __interrupt void Cla1Task3();
@@ -59,9 +50,11 @@ __interrupt void Cla1Task5();
 __interrupt void Cla1Task6();
 __interrupt void Cla1Task7();
 __interrupt void Cla1Task8();
-//void initCLA(void);
+#endif
 
+#if (CLA1_CORE_ENABLE)
 inline float32_t __msatf32(float32_t, float32_t, float32_t);
+#endif
 inline void ENC_resetStruct(encoder_t*);
 inline void FOC_getMeasures(acq_t*);
 inline void FOC_resetMeasuresStruct(acq_t*);
@@ -84,14 +77,26 @@ inline bool_t MOT_runControl(motor_t*);
 /***********************************************************************
  * FUNCTIONS DEFINITIONS
  ***********************************************************************/
+#if (CLA1_CORE_ENABLE)
+/**
+ * @brief           Saturation function.
+ *                  out = a, if sat_min < a < sat_max,
+ *                  out = sat_max, if a > sat_max,
+ *                  out = sat_min, if a < sat_min
+ * @param a         Value to be tested.
+ * @param sat_max   Max level for saturation.
+ * @param sat_min   Min level for saturation.
+ * @return
+ */
 inline float32_t __msatf32(float32_t a, float32_t sat_max, float32_t sat_min)
 {
     return(__mmaxf32(__mminf32(a, sat_max), sat_min));
 }
+#endif
 
 /**
  * @brief           Reset the ENCODER structure
- * @param[inout]    *p_enc   Pointer on the ENCODER structure to reset.
+ * @param[inout]    *p_enc   Pointer on the ENCODER structure to be reset.
  */
 inline void ENC_resetStruct(encoder_t* p_enc)
 {
@@ -122,44 +127,10 @@ inline void ENC_resetStruct(encoder_t* p_enc)
 }
 
 /**
- * @brief           Read the phases current and phases \& bus voltages
- * @param[inout]    *p_acq  Pointer on the motor acquisition structure.
- */
-inline void FOC_getMeasures(acq_t* p_acq)
-{
-    // Get the latest current values in Amps
-    p_acq->ia       = (float32_t)(*p_acq->p_iMeasReg[CHANNEL_1].ptr_i16) * ADC_MOTOR_CURRENT_SCALE;
-    p_acq->ib       = (float32_t)(*p_acq->p_iMeasReg[CHANNEL_2].ptr_i16) * ADC_MOTOR_CURRENT_SCALE;
-    p_acq->ic       = (float32_t)(*p_acq->p_iMeasReg[CHANNEL_3].ptr_i16) * ADC_MOTOR_CURRENT_SCALE;
-    // Get the latest Voltage supply value in Volt (minimum is one to avoid dividing by zero later)
-    float32_t vbus  = __mmaxf32(((float32_t)(*p_acq->p_vBusMeasReg.ptr_u16) * ADC_VBUS_VOLTAGE_SCALE), 1.0f);
-    UOMODRI_VBUS_FLT(p_acq->vBusFlt, p_acq->vbus, vbus);
-    float32_t vext  = (float32_t)(*p_acq->p_vExtMeasReg.ptr_u16) * ADC_VEXT12_VOLTAGE_SCALE;
-    UOMODRI_VEXT_FLT(p_acq->vExtFlt, p_acq->vExt, vext);
-
-    return;
-}
-
-/**
- * @brief           Reset the acquisition structure - Only I & Vext
- * @param[inout]    *p_acq  Pointer on the motor acquisition structure.
- */
-inline void FOC_resetMeasuresStruct(acq_t* p_acq)
-{
-    // Get the latest current values in Amps
-    p_acq->ia   = 0.0f;
-    p_acq->ib   = 0.0f;
-    p_acq->ic   = 0.0f;
-    p_acq->vExt = 0.0f;
-
-    return;
-}
-
-/**
  * @brief           Reset the Proportional Integral (PI) Controller structure
  * @param[inout]    *p_pi   Pointer on the PI control structure.
  */
-inline void FOC_resetPI(pi_t* p_pi)
+inline void FOC_resetStructPI(pi_t* p_pi)
 {
     p_pi->err       = 0.0;
     p_pi->integral  = 0.0;
@@ -170,28 +141,10 @@ inline void FOC_resetPI(pi_t* p_pi)
 }
 
 /**
- * @brief           Run the Proportional Integral Controller (PI)
- * @param[inout]    *p_pi   Pointer on the PI control structure.
- * @return          out     Command of PI controller
- */
-inline float32_t FOC_runPI(pi_t* p_pi)
-{
-    float32_t sat_max   = 0.5f  * (*p_pi->p_sat);
-    float32_t sat_min   = -1.0f * sat_max;
-    p_pi->err           = (*p_pi->p_set) - (*p_pi->p_fb);
-    p_pi->integral     += (p_pi->ki * p_pi->err * (float32_t)PWM_PERIOD);
-    p_pi->integral      = __msatf32(p_pi->integral, sat_max, sat_min);//__fsat(p_pi->integral, sat_max, sat_min);
-    p_pi->out           = (p_pi->kp * p_pi->err) + p_pi->integral + p_pi->ff;
-    p_pi->out           = __msatf32(p_pi->out, sat_max, sat_min);//__fsat(p_pi->out, sat_max, sat_min);
-
-    return(p_pi->out);
-}
-
-/**
  * @brief           Reset the Proportional Derivative (PD) Controller structure
  * @param[inout]    *p_pd   Pointer on the PD control structure.
  */
-inline void FOC_resetPD(pd_t* p_pd)
+inline void FOC_resetStructPD(pd_t* p_pd)
 {
     p_pd->errTheta      = 0.0f;
     p_pd->errSpeed      = 0.0f;
@@ -202,29 +155,10 @@ inline void FOC_resetPD(pd_t* p_pd)
 }
 
 /**
- * @brief           Run the Proportional Derivative (PD) Controller
- * @param[inout]    *p_pd   Pointer on the PD control structure.
- * @return          out     Command of PD controller
- */
-inline float32_t FOC_runPD(pd_t* p_pd)
-{
-    float32_t sat_max   = 1.0f  * (*p_pd->p_sat);
-    float32_t sat_min   = -1.0f * sat_max;
-    p_pd->errTheta      = (*p_pd->p_setTheta) - (*p_pd->p_fbTheta);
-    p_pd->errSpeed      = (*p_pd->p_setSpeed) - (*p_pd->p_fbSpeed);
-    p_pd->derivative    = (*p_pd->p_kd) * p_pd->errSpeed;
-    // Compute PID and clamp output.
-    p_pd->out           = ((*p_pd->p_kp) * p_pd->errTheta) + p_pd->derivative + (*p_pd->p_ff);
-    p_pd->out           = __msatf32(p_pd->out, sat_min, sat_max);//__fsat(p_pd->out, sat_max, sat_min);
-
-    return(p_pd->out);
-}
-
-/**
  * @brief           Reset the command structure associated to motor control
  * @param[inout]    p_cmd   Pointer on the local command associated to motor control
  */
-inline void FOC_resetCmdStruct(cmd_t* p_cmd)
+inline void FOC_resetStructCmd(cmd_t* p_cmd)
 {
     p_cmd->posRef               = 0.0f;
     p_cmd->velRef               = 0.0f;
@@ -240,22 +174,36 @@ inline void FOC_resetCmdStruct(cmd_t* p_cmd)
 }
 
 /**
+ * @brief           Reset the acquisition structure - Only I & Vext
+ * @param[inout]    *p_acq  Pointer on the motor acquisition structure.
+ */
+inline void FOC_resetStructMeasures(acq_t* p_acq)
+{
+    p_acq->ia   = 0.0f;
+    p_acq->ib   = 0.0f;
+    p_acq->ic   = 0.0f;
+    p_acq->vExt = 0.0f;
+
+    return;
+}
+
+/**
  * @brief           Reset the FOC structure
  * @param[inout]    *p_foc   Pointer on the FOC structure to reset.
  */
 inline void FOC_resetStruct(foc_t* p_foc)
 {
     // Reset Id & Iq currents PI controllers
-    FOC_resetPI(&p_foc->piId);
-    FOC_resetPI(&p_foc->piIq);
+    FOC_resetStructPI(&p_foc->piId);
+    FOC_resetStructPI(&p_foc->piIq);
     // Reset position PD controller
-    FOC_resetPD(&p_foc->pdPosVel);
+    FOC_resetStructPD(&p_foc->pdPosVel);
     // Reset encoder structure
     ENC_resetStruct(&p_foc->motor_enc);
     // Reset analog measures
-    FOC_resetMeasuresStruct(&p_foc->motor_acq);
+    FOC_resetStructMeasures(&p_foc->motor_acq);
     // Reset the commands associated to motor control
-    FOC_resetCmdStruct(&p_foc->motor_cmd);
+    FOC_resetStructCmd(&p_foc->motor_cmd);
     // Reset currents and voltages
     p_foc->sinTheta         = 0.0f;
     p_foc->cosTheta         = 0.0f;
@@ -280,6 +228,95 @@ inline void FOC_resetStruct(foc_t* p_foc)
 }
 
 /**
+ * @brief           Read the phases current and phases \& bus voltages
+ * @param[inout]    *p_acq  Pointer on the motor acquisition structure.
+ */
+inline void FOC_getMeasures(acq_t* p_acq)
+{
+#if (CLA1_CORE_ENABLE)
+    // Get the latest current values in Amps
+    p_acq->ia       = (float32_t)(*(int16_t *)p_acq->p_iMeasReg[CHANNEL_1].ptr) * ADC_MOTOR_CURRENT_SCALE;
+    p_acq->ib       = (float32_t)(*(int16_t *)p_acq->p_iMeasReg[CHANNEL_2].ptr) * ADC_MOTOR_CURRENT_SCALE;
+    p_acq->ic       = (float32_t)(*(int16_t *)p_acq->p_iMeasReg[CHANNEL_3].ptr) * ADC_MOTOR_CURRENT_SCALE;
+    // Get the latest Voltage supply value in Volt (minimum is one to avoid dividing by zero later)
+    float32_t vbus  = __mmaxf32(((float32_t)(*(uint16_t *)p_acq->p_vBusMeasReg.ptr) * ADC_VBUS_VOLTAGE_SCALE), 1.0f);
+    UOMODRI_VBUS_FLT(p_acq->vBusFlt, p_acq->vbus, vbus);
+    float32_t vext  = (float32_t)(*(int16_t *)p_acq->p_vExtMeasReg.ptr) * ADC_VEXT12_VOLTAGE_SCALE;
+    UOMODRI_VEXT_FLT(p_acq->vExtFlt, p_acq->vExt, vext);
+#else
+    // Get the latest current values in Amps
+    p_acq->ia       = (float32_t)(*p_acq->p_iMeasReg[CHANNEL_1]) * ADC_MOTOR_CURRENT_SCALE;
+    p_acq->ib       = (float32_t)(*p_acq->p_iMeasReg[CHANNEL_2]) * ADC_MOTOR_CURRENT_SCALE;
+    p_acq->ic       = (float32_t)(*p_acq->p_iMeasReg[CHANNEL_3]) * ADC_MOTOR_CURRENT_SCALE;
+    // Get the latest Voltage supply value in Volt (minimum is one to avoid dividing by zero later)
+    float32_t vbus  = __fmax(((float32_t)(*p_acq->p_vBusMeasReg) * ADC_VBUS_VOLTAGE_SCALE), 1.0f);
+    UOMODRI_VBUS_FLT(p_acq->vBusFlt, p_acq->vbus, vbus);
+    float32_t vext  = (float32_t)(*p_acq->p_vExtMeasReg) * ADC_VEXT12_VOLTAGE_SCALE;
+    UOMODRI_VEXT_FLT(p_acq->vExtFlt, p_acq->vExt, vext);
+#endif
+
+    return;
+}
+
+/**
+ * @brief           Run the Proportional Integral Controller (PI)
+ * @param[inout]    *p_pi   Pointer on the PI control structure.
+ * @return          out     Command of PI controller
+ */
+inline float32_t FOC_runPI(pi_t* p_pi)
+{
+#if (CLA1_CORE_ENABLE)
+    float32_t sat_max   = 0.5f  * (*(float32_t *)p_pi->p_sat.ptr);
+    float32_t sat_min   = -1.0f * sat_max;
+    p_pi->err           = (*(float32_t *)p_pi->p_set.ptr) - (*(float32_t *)p_pi->p_fb.ptr);
+    p_pi->integral     += (p_pi->ki * p_pi->err * (float32_t)PWM_PERIOD);
+    p_pi->integral      = __msatf32(p_pi->integral, sat_max, sat_min);
+    p_pi->out           = (p_pi->kp * p_pi->err) + p_pi->integral + p_pi->ff;
+    p_pi->out           = __msatf32(p_pi->out, sat_max, sat_min);
+#else
+    float32_t sat_max   = 0.5f  * (*p_pi->p_sat);
+    float32_t sat_min   = -1.0f * sat_max;
+    p_pi->err           = (*p_pi->p_set) - (*p_pi->p_fb);
+    p_pi->integral     += (p_pi->ki * p_pi->err * (float32_t)PWM_PERIOD);
+    p_pi->integral      = __fsat(p_pi->integral, sat_max, sat_min);
+    p_pi->out           = (p_pi->kp * p_pi->err) + p_pi->integral + p_pi->ff;
+    p_pi->out           = __fsat(p_pi->out, sat_max, sat_min);
+#endif
+
+    return(p_pi->out);
+}
+
+/**
+ * @brief           Run the Proportional Derivative (PD) Controller
+ * @param[inout]    *p_pd   Pointer on the PD control structure.
+ * @return          out     Command of PD controller
+ */
+inline float32_t FOC_runPD(pd_t* p_pd)
+{
+#if (CLA1_CORE_ENABLE)
+    float32_t sat_max   = 1.0f  * (*(float32_t *)p_pd->p_sat.ptr);
+    float32_t sat_min   = -1.0f * sat_max;
+    p_pd->errTheta      = (*(float32_t *)p_pd->p_setTheta.ptr) - (*(float32_t *)p_pd->p_fbTheta.ptr);
+    p_pd->errSpeed      = (*(float32_t *)p_pd->p_setSpeed.ptr) - (*(float32_t *)p_pd->p_fbSpeed.ptr);
+    p_pd->derivative    = (*(float32_t *)p_pd->p_kd.ptr) * p_pd->errSpeed;
+    // Compute PID and clamp output.
+    p_pd->out           = ((*(float32_t *)p_pd->p_kp.ptr) * p_pd->errTheta) + p_pd->derivative + (*(float32_t *)p_pd->p_ff.ptr);
+    p_pd->out           = __msatf32(p_pd->out, sat_min, sat_max);
+#else
+    float32_t sat_max   = 1.0f  * (*p_pd->p_sat);
+    float32_t sat_min   = -1.0f * sat_max;
+    p_pd->errTheta      = (*p_pd->p_setTheta) - (*p_pd->p_fbTheta);
+    p_pd->errSpeed      = (*p_pd->p_setSpeed) - (*p_pd->p_fbSpeed);
+    p_pd->derivative    = (*p_pd->p_kd) * p_pd->errSpeed;
+    // Compute PID and clamp output.
+    p_pd->out           = ((*p_pd->p_kp) * p_pd->errTheta) + p_pd->derivative + (*p_pd->p_ff);
+    p_pd->out           = __fsat(p_pd->out, sat_max, sat_min);
+#endif
+
+    return(p_pd->out);
+}
+
+/**
  * @brief           First implementation of the Space Vector Modulation (SVM)
  * @param[inout]    *p_foc   Pointer on the FOC structure.
  */
@@ -290,12 +327,24 @@ inline void FOC_svpwm1(foc_t* p_foc)
     p_foc->ub               = (-0.5f * p_foc->ualpha) + (FM_SQRT3DIV2 * p_foc->ubeta);
     p_foc->uc               = (-0.5f * p_foc->ualpha) - (FM_SQRT3DIV2 * p_foc->ubeta);
     // Compute middle voltage to center PWM duty cycles around it
+#if (CLA1_CORE_ENABLE)
     float32_t   uOffset     = 0.5f * (MMIN3(p_foc->ua, p_foc->ub, p_foc->uc) + MMAX3(p_foc->ua, p_foc->ub, p_foc->uc));
+#else
+    float32_t   uOffset     = 0.5f * (FMIN3(p_foc->ua, p_foc->ub, p_foc->uc) + FMAX3(p_foc->ua, p_foc->ub, p_foc->uc));
+#endif
     float32_t   uMidPoint   = 0.5f * (p_foc->dtcMax + p_foc->dtcMin);
     // Compute duty cycles
+#if (CLA1_CORE_ENABLE)
     p_foc->dtc_u            = __msatf32((((p_foc->ua - uOffset) / p_foc->motor_acq.vbus) + uMidPoint), p_foc->dtcMax, p_foc->dtcMin);
     p_foc->dtc_v            = __msatf32((((p_foc->ub - uOffset) / p_foc->motor_acq.vbus) + uMidPoint), p_foc->dtcMax, p_foc->dtcMin);
     p_foc->dtc_w            = __msatf32((((p_foc->uc - uOffset) / p_foc->motor_acq.vbus) + uMidPoint), p_foc->dtcMax, p_foc->dtcMin);
+#else
+    p_foc->dtc_u            = __fsat((((p_foc->ua - uOffset) / p_foc->motor_acq.vbus) + uMidPoint), p_foc->dtcMax, p_foc->dtcMin);
+    p_foc->dtc_v            = __fsat((((p_foc->ub - uOffset) / p_foc->motor_acq.vbus) + uMidPoint), p_foc->dtcMax, p_foc->dtcMin);
+    p_foc->dtc_w            = __fsat((((p_foc->uc - uOffset) / p_foc->motor_acq.vbus) + uMidPoint), p_foc->dtcMax, p_foc->dtcMin);
+#endif
+
+    return;
 }
 
 /**
@@ -307,9 +356,15 @@ inline void FOC_svpwm1(foc_t* p_foc)
  */
 inline void MOT_runCommand(motor_t* p_motor, float32_t cmd_a, float32_t cmd_b, float32_t cmd_c)
 {
-    *(p_motor->p_motorCmdReg[CHANNEL_1].ptr_u16)    = (uint16_t)((cmd_a) * PWM_TIMEBASE_CNT);
-    *(p_motor->p_motorCmdReg[CHANNEL_2].ptr_u16)    = (uint16_t)((cmd_b) * PWM_TIMEBASE_CNT);
-    *(p_motor->p_motorCmdReg[CHANNEL_3].ptr_u16)    = (uint16_t)((cmd_c) * PWM_TIMEBASE_CNT);
+#if (CLA1_CORE_ENABLE)
+    *(uint16_t *)(p_motor->p_cmdReg[CHANNEL_1].ptr) = (uint16_t)((cmd_a) * PWM_TIMEBASE_CNT);
+    *(uint16_t *)(p_motor->p_cmdReg[CHANNEL_2].ptr) = (uint16_t)((cmd_b) * PWM_TIMEBASE_CNT);
+    *(uint16_t *)(p_motor->p_cmdReg[CHANNEL_3].ptr) = (uint16_t)((cmd_c) * PWM_TIMEBASE_CNT);
+#else
+    *(p_motor->p_cmdReg[CHANNEL_1]) = (uint16_t)((cmd_a) * PWM_TIMEBASE_CNT);
+    *(p_motor->p_cmdReg[CHANNEL_2]) = (uint16_t)((cmd_b) * PWM_TIMEBASE_CNT);
+    *(p_motor->p_cmdReg[CHANNEL_3]) = (uint16_t)((cmd_c) * PWM_TIMEBASE_CNT);
+#endif
 
     return;
 }
@@ -320,9 +375,15 @@ inline void MOT_runCommand(motor_t* p_motor, float32_t cmd_a, float32_t cmd_b, f
  */
 inline void MOT_stopCommand(motor_t* p_motor)
 {
-    *(p_motor->p_motorCmdReg[CHANNEL_1].ptr_u16)    = (uint16_t)PWM_TIMEBASE_CNT;
-    *(p_motor->p_motorCmdReg[CHANNEL_2].ptr_u16)    = (uint16_t)PWM_TIMEBASE_CNT;
-    *(p_motor->p_motorCmdReg[CHANNEL_3].ptr_u16)    = (uint16_t)PWM_TIMEBASE_CNT;
+#if (CLA1_CORE_ENABLE)
+    *(uint16_t *)(p_motor->p_cmdReg[CHANNEL_1].ptr)    = (uint16_t)PWM_TIMEBASE_CNT;
+    *(uint16_t *)(p_motor->p_cmdReg[CHANNEL_2].ptr)    = (uint16_t)PWM_TIMEBASE_CNT;
+    *(uint16_t *)(p_motor->p_cmdReg[CHANNEL_3].ptr)    = (uint16_t)PWM_TIMEBASE_CNT;
+#else
+    *(p_motor->p_cmdReg[CHANNEL_1]) = (uint16_t)PWM_TIMEBASE_CNT;
+    *(p_motor->p_cmdReg[CHANNEL_2]) = (uint16_t)PWM_TIMEBASE_CNT;
+    *(p_motor->p_cmdReg[CHANNEL_3]) = (uint16_t)PWM_TIMEBASE_CNT;
+#endif
 
     return;
 }
@@ -336,9 +397,14 @@ inline void FOC_runControl(foc_t* p_foc)
     acq_t*          p_acq   = &p_foc->motor_acq;
     encoder_t*      p_enc   = &p_foc->motor_enc;
     /* Compute sine and cosine from the electrical angle */
-    CLAsincos(p_enc->thetaElec, &p_foc->sinTheta, &p_foc->cosTheta);
-//    p_foc->sinTheta         = CLAsin(p_enc->thetaElec);
-//    p_foc->cosTheta         = CLAcos(p_enc->thetaElec);
+#if (CLA1_CORE_ENABLE)
+//    CLAsincos(p_enc->thetaElec, &p_foc->sinTheta, &p_foc->cosTheta);
+    p_foc->sinTheta         = CLAsin(p_enc->thetaElec);
+    p_foc->cosTheta         = CLAcos(p_enc->thetaElec);
+#else
+    p_foc->sinTheta         = __sin(p_enc->thetaElec);
+    p_foc->cosTheta         = __cos(p_enc->thetaElec);
+#endif
     // Clarke transform
     p_foc->ialpha           = ((2.0f * p_acq->ia) - p_acq->ib - p_acq->ic) * FM_1DIV3;
     p_foc->ibeta            = (p_acq->ib - p_acq->ic) * FM_1DIVSQRT3;
@@ -414,10 +480,17 @@ inline void ENC_getPosition(encoder_t* p_enc)
     p_enc->thetaDir         = EQEP_getDirection(eqepBase);
     // Compute electrical angle (each pole pair is normalized between 0 and 1)
     float32_t thetaElec     = (float32_t)p_enc->polePairs * p_enc->thetaMech[NEW];
-
     // Compute electrical & mechanical angle (in rad)
+#if (defined CPU1) && (CLA1_CORE_ENABLE)
     p_enc->thetaElec        = FM_ROUND2RAD * __mfracf32(thetaElec);
     p_enc->thetaMech[NEW]   = FM_ROUND2RAD * p_enc->thetaMech[NEW];
+#elif (defined CPU1)
+    p_enc->thetaElec        = __mpy2pif32(__fracf32(thetaElec));
+    p_enc->thetaMech[NEW]   = __mpy2pif32(p_enc->thetaMech[NEW]);
+#else
+    p_enc->thetaElec        = __mpy2pif32(p_enc->thetaElec - (float32_t)((int32_t)thetaElec));
+    p_enc->thetaMech[NEW]   = __mpy2pif32(p_enc->thetaMech[NEW]);
+#endif
 
     return;
 }
@@ -528,20 +601,32 @@ inline void ENC_getTheta(encoder_t* p_enc)
     if(EQEP_getInterruptStatus(eqepBase) & EQEP_INT_INDEX_EVNT_LATCH)
     {
         // Compute indexed mechanical angle normalized between 0 and 2 x PI
+#if (CLA1_CORE_ENABLE)
         float32_t thetaIndex    = FM_ROUND2RAD * (float32_t)EQEP_getIndexPositionLatch(eqepBase) * p_enc->thetaMechScaler;
+#else
+        float32_t thetaIndex    = __mpy2pif32((float32_t)EQEP_getIndexPositionLatch(eqepBase) * p_enc->thetaMechScaler);
+#endif
         // Save first indexed mechanical angle normalized between 0 and 2 x PI
         p_enc->thetaIndex       = (!p_enc->indexDetect) ? (thetaIndex) : (p_enc->thetaIndex);
         // Set index detection flag.
         p_enc->indexDetect      = true;
         // Check if current index capture match the first index capture
+#if (CLA1_CORE_ENABLE)
         p_enc->indexError       = (fabsf(p_enc->thetaIndex - thetaIndex) < (FM_ROUND2RAD * 4.0f / p_enc->thetaMechScaler)) ? (false) : (true);
+#else
+        p_enc->indexError       = (fabsf(p_enc->thetaIndex - thetaIndex) < __mpy2pif32(4.0f / p_enc->thetaMechScaler)) ? (false) : (true);
+#endif
         // Toggle index
         p_enc->indexToggle      = !p_enc->indexToggle;
         // Clear flag
         EQEP_clearInterruptStatus(eqepBase, EQEP_INT_INDEX_EVNT_LATCH);
     }
     // Compute new absolute angle
+#if (CLA1_CORE_ENABLE)
     p_enc->thetaAbsolute        = p_enc->thetaMech[NEW] + FM_ROUND2RAD * (float32_t)p_enc->turnNb;
+#else
+    p_enc->thetaAbsolute        = p_enc->thetaMech[NEW] + __mpy2pif32((float32_t)p_enc->turnNb);
+#endif
 
     return;
 }
@@ -554,7 +639,11 @@ inline void ENC_getTheta(encoder_t* p_enc)
 inline bool_t MOT_runControl(motor_t* p_motor)
 {
     uint8_t         id          = p_motor->motor_id;
-    foc_t*          p_foc       = p_motor->p_motorFOC;
+#if (CLA1_CORE_ENABLE)
+    foc_t*          p_foc       = (foc_t *)p_motor->p_foc.ptr;
+#else
+    foc_t*          p_foc       = p_motor->p_foc;
+#endif
     error_reg_u*    p_err       = &p_motor->motor_error;
     encoder_t*      p_enc       = &p_foc->motor_enc;
     cmd_t*          p_cmd       = &p_foc->motor_cmd;
@@ -652,8 +741,5 @@ inline bool_t MOT_runControl(motor_t* p_motor)
     return(true);
 }
 
-#ifdef __cplusplus
-}
-#endif // extern "C"
-#endif /* __CLA_SHARED_H__ */
+#endif /* __UOMODRI_SHARED_H__ */
 

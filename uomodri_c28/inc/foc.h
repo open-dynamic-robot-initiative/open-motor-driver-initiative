@@ -4,9 +4,8 @@
 /***********************************************************************
  * INCLUDE FILES
  ***********************************************************************/
-#include <stdbool.h>
 #include <stdint.h>
-#include <math.h>
+#include <hw_types.h>
 #ifdef CPU1
 #include "uomodri_user_defines.h"
 #else
@@ -18,7 +17,7 @@
 #include "encoder.h"
 
 /***********************************************************************
- * TYPDEF ENUM
+ * ENUM TYPES
  ***********************************************************************/
 /**
  * @enum    svm_sector_e
@@ -37,21 +36,38 @@ typedef enum
 } svm_sector_e;
 
 /***********************************************************************
- * CONTROL STRUCTURES
+ * UNION TYPES
  ***********************************************************************/
-typedef union __cmd_bit_reg_u__
+/**
+ * @union   ptr_32b_u
+ * @brief   Memory padding (C28 to CLA pointer address translation).
+ */
+typedef union __ptr_32b_u__
 {
-    uint8_t         all;
+    void*               ptr;
+    uint32_t            addr32b;
+} ptr_32b_u;
+
+/**
+ * @union   cmd_reg_u
+ * @brief   Bit field associated to motor control (motor \& encoder).
+ */
+typedef union __cmd_reg_u__
+{
+    uint8_t             all;
     struct
     {
-        uint8_t     systemEnable        : 1;    /*!< Bit 0      : R/W - Enable system to start. No power on motors.         */
-        uint8_t     motorEnable         : 1;    /*!< Bit 1      : R/W - Enable power on motor.                              */
-        uint8_t     rollOverEnable      : 1;    /*!< Bit 2      : R/W - Limit the rotations to +/- 128 rounds.              */
-        uint8_t     encOffsetEnable     : 1;    /*!< Bit 3      : R/W - Use encoder index in position computation.          */
-        uint8_t     CMD_RSV1            : 4;    /*!< Bit 4-7    : R/W - Reserved                                            */
+        uint8_t         systemEnable    : 1;    /*!< Bit 0      : R/W - Enable system to start. No power on motors.         */
+        uint8_t         motorEnable     : 1;    /*!< Bit 1      : R/W - Enable power on motor.                              */
+        uint8_t         rollOverEnable  : 1;    /*!< Bit 2      : R/W - Limit the rotations to +/- 128 rounds.              */
+        uint8_t         encOffsetEnable : 1;    /*!< Bit 3      : R/W - Use encoder index in position computation.          */
+        uint8_t         CMD_RSV1        : 4;    /*!< Bit 4-7    : R/W - Reserved                                            */
     };
 } cmd_reg_u;
 
+/***********************************************************************
+ * CONTROL STRUCTURES
+ ***********************************************************************/
 /**
  * @struct  pi_t
  * @brief   Proportional-Integral controller structure for FOC algorithm.
@@ -59,9 +75,9 @@ typedef union __cmd_bit_reg_u__
 typedef struct __pi_t__
 {
 #if (CLA1_CORE_ENABLE)
-    float32_t*          p_fb;           /*!< Pointer on the feedback current */
-    float32_t*          p_set;          /*!< Pointer on the setpoint current */
-    float32_t*          p_sat;          /*!< Pointer on the saturation value to use */
+    ptr_32b_u           p_fb;           /*!< Pointer on the feedback current */
+    ptr_32b_u           p_set;          /*!< Pointer on the setpoint current */
+    ptr_32b_u           p_sat;          /*!< Pointer on the saturation value to use */
 #else
     float32_t* const    p_fb;           /*!< Pointer on the feedback current */
     float32_t* const    p_set;          /*!< Pointer on the setpoint current */
@@ -82,23 +98,23 @@ typedef struct __pi_t__
 typedef struct __pd_t__
 {
 #if (CLA1_CORE_ENABLE)
-    float32_t*          p_fbTheta;      /*!< Pointer on the feedback position */
-    float32_t*          p_setTheta;     /*!< Pointer on the setpoint position */
-    float32_t*          p_fbSpeed;      /*!< Pointer on the feedback speed */
-    float32_t*          p_setSpeed;     /*!< Pointer on the Set point speed */
-    float32_t*          p_kp;           /*!< Pointer on the Proportional gain */
-    float32_t*          p_kd;           /*!< Pointer on the Derivative gain */
-    float32_t*          p_ff;           /*!< Pointer on the feed-forward term */
-    float32_t*          p_sat;          /*!< Controller saturation */
+    ptr_32b_u      	    p_fbTheta;      /*!< Pointer on the feedback position */
+    ptr_32b_u           p_setTheta;     /*!< Pointer on the setpoint position */
+    ptr_32b_u           p_fbSpeed;      /*!< Pointer on the feedback speed */
+    ptr_32b_u           p_setSpeed;     /*!< Pointer on the Set point speed */
+    ptr_32b_u           p_kp;           /*!< Pointer on the Proportional gain */
+    ptr_32b_u           p_kd;           /*!< Pointer on the Derivative gain */
+    ptr_32b_u           p_ff;           /*!< Pointer on the feed-forward term */
+    ptr_32b_u           p_sat;          /*!< Controller saturation */
 #else
-    float32_t* const    p_fbTheta;      /*!< Pointer on the feedback position */
-    float32_t* const    p_setTheta;     /*!< Pointer on the setpoint position */
-    float32_t* const    p_fbSpeed;      /*!< Pointer on the feedback speed */
-    float32_t* const    p_setSpeed;     /*!< Pointer on the Set point speed */
-    float32_t* const    p_kp;           /*!< Pointer on the Proportional gain */
-    float32_t* const    p_kd;           /*!< Pointer on the Derivative gain */
-    float32_t* const    p_ff;           /*!< Pointer on the feed-forward term */
-    float32_t* const    p_sat;          /*!< Controller saturation */
+    float32_t* const    p_fbTheta;      /*!< Constant pointer on the feedback position */
+    float32_t* const    p_setTheta;     /*!< Constant pointer on the setpoint position */
+    float32_t* const    p_fbSpeed;      /*!< Constant pointer on the feedback speed */
+    float32_t* const    p_setSpeed;     /*!< Constant pointer on the Set point speed */
+    float32_t* const    p_kp;           /*!< Constant pointer on the Proportional gain */
+    float32_t* const    p_kd;           /*!< Constant pointer on the Derivative gain */
+    float32_t* const    p_ff;           /*!< Constant pointer on the feed-forward term */
+    float32_t* const    p_sat;          /*!< Constant pointer on the controller saturation */
 #endif
     float32_t           errTheta;       /*!< Error position */
     float32_t           errSpeed;       /*!< Error speed */
@@ -107,35 +123,35 @@ typedef struct __pd_t__
 
 } pd_t;
 
+/**
+ * @struct  params_t
+ * @brief   Motor constants structure.
+ */
 typedef struct __params_t__
 {
-    // Motor constants
-    float32_t       Rs;                 /*!< Stator resistance [Ohm] */
-    float32_t       Ls;                 /*!< Stator inductance [H] */
-    float32_t       kv;                 /*!< Motor speed constant [RPM/V or rad/s/V] */
-    float32_t       ke;                 /*!< Motor back EMF constant [V/rad/s] (electrical radians) = 1/kv */
-    float32_t       ki;                 /*!< Motor torque constant [N.m/A] */
+    float32_t           Rs;             /*!< Stator resistance [Ohm] */
+    float32_t           Ls;             /*!< Stator inductance [H] */
+    float32_t           kv;             /*!< Motor speed constant [RPM/V or rad/s/V] */
+    float32_t           ke;             /*!< Motor back EMF constant [V/rad/s] (electrical radians) = 1/kv */
+    float32_t           ki;             /*!< Motor torque constant [N.m/A] */
 #if (CLA1_CORE_ENABLE)
-    float32_t       polePairs;          /*!< Number of pole pairs */
+    float32_t           polePairs;      /*!< Number of pole pairs */
 #else
-    const float32_t polePairs;          /*!< Number of pole pairs */
+    const float32_t     polePairs;      /*!< Number of pole pairs */
 #endif
 } params_t;
 
-typedef union __cla_u16_ptr__
-{
-    volatile uint16_t*  ptr_u16; //Aligned to lower 16-bits
-    volatile int16_t*   ptr_i16;
-    uint32_t            int_32b; //32-bits
-} cla_u16_ptr;
-
+/**
+ * @struct  acq_t
+ * @brief   Registers localization \& results
+ */
 typedef struct __acquisitions_t__
 {
     // ADC result registers
 #if (CLA1_CORE_ENABLE)
-    cla_u16_ptr         p_vBusMeasReg;
-    cla_u16_ptr         p_vExtMeasReg;
-    cla_u16_ptr         p_iMeasReg[3];
+    volatile ptr_32b_u  p_vBusMeasReg;
+    volatile ptr_32b_u  p_vExtMeasReg;
+    volatile ptr_32b_u  p_iMeasReg[3];
 #else
     volatile uint16_t*  const p_vBusMeasReg;
     volatile uint16_t*  const p_vExtMeasReg;
@@ -151,20 +167,28 @@ typedef struct __acquisitions_t__
     lpf_t               vExtFlt;
 } acq_t;
 
+/**
+ * @struct  cmd_t
+ * @brief   Commands for FOC process. Target the PD controller.
+ */
 typedef struct __cmd_t__
 {
-    float32_t   posRef;
-    float32_t   velRef;
-    float32_t   iqff;
-    float32_t   kpCoeff;
-    float32_t   kdCoeff;
-    float32_t   iSat;
-    uint16_t    timeoutRef;
-    uint16_t    cptTimeout;
-    uint16_t    index;
-    cmd_reg_u   cmdArray;
+    float32_t           posRef;
+    float32_t           velRef;
+    float32_t           iqff;
+    float32_t           kpCoeff;
+    float32_t           kdCoeff;
+    float32_t           iSat;
+    uint16_t            timeoutRef;
+    uint16_t            cptTimeout;
+    uint16_t            index;
+    cmd_reg_u           cmdArray;
 } cmd_t;
 
+/**
+ * @struct  foc_t
+ * @brief   General structure for FOC control.
+ */
 typedef struct __foc_control_t__
 {
     params_t            motor_cfg;      /*!< Motor configuration parameters */
@@ -205,33 +229,10 @@ typedef struct __foc_control_t__
 /***********************************************************************
  * DEFINES
  ***********************************************************************/
-//#define FOC_CMD_SYSTEM_ENABLE       0x0001U
-//#define FOC_CMD_MOTOR_ENABLE        0x0002U
-//#define FOC_CMD_ROLLOVER_ENABLE     0x0004U
-//#define FOC_CMD_OFFSET_COMP_ENABLE  0x0008U
-//#define FOC_CMD_MOTOR_START         (FOC_CMD_SYSTEM_ENABLE | FOC_CMD_MOTOR_ENABLE)
-//#define FOC_CMD_MOTOR_START_TEST    (((x) & FOC_CMD_MOTOR_START) == FOC_CMD_MOTOR_START)
-//#define FOC_CMD_OFFSET_RUN          (FOC_CMD_SYSTEM_ENABLE | FOC_CMD_MOTOR_ENABLE | FOC_CMD_OFFSET_COMP_ENABLE)
-//#define FOC_CMD_OFFSET_RUN_TEST(x)  (((x) & FOC_CMD_OFFSET_RUN) == FOC_CMD_OFFSET_RUN)
-// Resistance estimation uses Ohm's Law R = U/I so we have to ensure I != 0.
-// This threshold corresponds to the minimum current for the measure to be considered as correct.
 #define FOC_RE_CURRENT_THRESHOLD    0.1f
-
-//#define FOC_GET_MEASURES(p_acq)                                                                         \
-//        p_acq.ia        = (float32_t)(*p_acq.p_iaMeasReg) * ADC_MOTOR_CURRENT_SCALE;                    \
-//        p_acq.ib        = (float32_t)(*p_acq.p_ibMeasReg) * ADC_MOTOR_CURRENT_SCALE;                    \
-//        p_acq.ic        = (float32_t)(*p_acq.p_icMeasReg) * ADC_MOTOR_CURRENT_SCALE;                    \
-//        float32_t vbus  = __fmax(((float32_t)(*p_acq.p_vBusMeasReg) * ADC_VBUS_VOLTAGE_SCALE), 1.0f);   \
-//        UOMODRI_VBUS_FLT(p_acq.vBusFlt, p_acq.vbus, vbus);                                              \
-//        float32_t vext  = (float32_t)(*p_acq.p_vExtMeasReg) * ADC_VEXT12_VOLTAGE_SCALE;                 \
-//        UOMODRI_VEXT_FLT(p_acq.vExtFlt, p_acq.vExt, vext);
 
 /***********************************************************************
  * FUNCTIONS DECLARATION
  ***********************************************************************/
-//inline void FOC_getMeasures(acq_t*);
-//inline void FOC_runControl(foc_t*);
-//inline float32_t FOC_runPD(pd_t*);
-//void FOC_resetStruct(foc_t*);
 
-#endif
+#endif /* __FOC_H__ */

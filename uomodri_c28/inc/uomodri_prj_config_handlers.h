@@ -11,7 +11,6 @@
 
 #include "hal.h"
 #include "drv8353.h"
-#include "as5047u.h"
 #include "foc.h"
 #include "motor.h"
 #include "communication.h"
@@ -556,7 +555,7 @@ static motor_t motor[2] =
   //--- MOTOR_1 ---------------------------------------------------------------
   .motor_id                                 = MOTOR_1,
   //--- FOC structure address -------------------------------------------------
-  .p_motorFOC                               = &motor_foc[MOTOR_1],
+  .p_foc                                    = &motor_foc[MOTOR_1],
   //--- FSM motor initial state -----------------------------------------------
   .motor_state                              = MOTOR_STATE_INIT,
   //--- Error message ---------------------------------------------------------
@@ -573,15 +572,15 @@ static motor_t motor[2] =
   .epwmBaseAddr[CHANNEL_2]                  = MOTOR1_PWM2_BASE,
   .epwmBaseAddr[CHANNEL_3]                  = MOTOR1_PWM3_BASE,
   //---- PWM command address --------------------------------------------------
-  .p_motorCmdReg[CHANNEL_1]                 = (volatile uint16_t *)(MOTOR1_PWM1_CMD_ADDR),
-  .p_motorCmdReg[CHANNEL_2]                 = (volatile uint16_t *)(MOTOR1_PWM2_CMD_ADDR),
-  .p_motorCmdReg[CHANNEL_3]                 = (volatile uint16_t *)(MOTOR1_PWM3_CMD_ADDR),
+  .p_cmdReg[CHANNEL_1]                      = (volatile uint16_t *)(MOTOR1_PWM1_CMD_ADDR),
+  .p_cmdReg[CHANNEL_2]                      = (volatile uint16_t *)(MOTOR1_PWM2_CMD_ADDR),
+  .p_cmdReg[CHANNEL_3]                      = (volatile uint16_t *)(MOTOR1_PWM3_CMD_ADDR),
  },
  {
   //--- MOTOR_1 ---------------------------------------------------------------
   .motor_id                                 = MOTOR_2,
   //--- FOC structure address -------------------------------------------------
-  .p_motorFOC                               = &motor_foc[MOTOR_2],
+  .p_foc                                    = &motor_foc[MOTOR_2],
   //--- FSM motor initial state -----------------------------------------------
   .motor_state                              = MOTOR_STATE_INIT,
   //--- Error message ---------------------------------------------------------
@@ -598,9 +597,9 @@ static motor_t motor[2] =
   .epwmBaseAddr[CHANNEL_2]                  = MOTOR2_PWM2_BASE,
   .epwmBaseAddr[CHANNEL_3]                  = MOTOR2_PWM3_BASE,
   //---- PWM command reg address ----------------------------------------------
-  .p_motorCmdReg[CHANNEL_1]                 = (volatile uint16_t *)(MOTOR2_PWM1_CMD_ADDR),
-  .p_motorCmdReg[CHANNEL_2]                 = (volatile uint16_t *)(MOTOR2_PWM2_CMD_ADDR),
-  .p_motorCmdReg[CHANNEL_3]                 = (volatile uint16_t *)(MOTOR2_PWM3_CMD_ADDR),
+  .p_cmdReg[CHANNEL_1]                      = (volatile uint16_t *)(MOTOR2_PWM1_CMD_ADDR),
+  .p_cmdReg[CHANNEL_2]                      = (volatile uint16_t *)(MOTOR2_PWM2_CMD_ADDR),
+  .p_cmdReg[CHANNEL_3]                      = (volatile uint16_t *)(MOTOR2_PWM3_CMD_ADDR),
  },
 };
 #endif
