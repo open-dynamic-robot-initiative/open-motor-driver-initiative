@@ -5,16 +5,18 @@
  * INCLUDES
  ***********************************************************************/
 #include <stdint.h>
+#if (CLA1_CORE_ENABLE)
+#include <CLAmath.h>
+#else
+#include <hw_types.h>
+#include <math.h>//"DCLF32.h"
+#endif
+#include <f2838x_device.h>
 
 #include "foc.h"
 #include "motor.h"
 #include "encoder.h"
 #include "uomodri_user_defines.h"
-#if (CLA1_CORE_ENABLE)
-#include <CLAmath.h>
-#else
-#include <math.h>//"DCLF32.h"
-#endif
 
 /***********************************************************************
  * DEFINES

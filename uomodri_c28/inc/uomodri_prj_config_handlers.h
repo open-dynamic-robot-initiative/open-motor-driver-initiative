@@ -7,7 +7,7 @@
 //#include "f2838x_device.h"
 //#include "f2838x_examples.h"
 #include <stdint.h>
-#include "driverlib.h"
+#include <driverlib.h>
 
 #include "hal.h"
 #include "drv8353.h"

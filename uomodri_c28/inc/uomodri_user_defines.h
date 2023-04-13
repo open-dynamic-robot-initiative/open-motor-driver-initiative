@@ -10,9 +10,9 @@
  * INCLUDES
  ************************************************************************/
 #include <math.h>
-#include "f2838x_device.h"
-#include "driverlib.h"
-#include "device.h"
+#include <f2838x_device.h>
+#include <driverlib.h>
+#include <device.h>
 
 #include "drv8353.h"
 
@@ -39,17 +39,20 @@
 // CM peripherals ENABLE/DISABLE
 #define USB_BUS_ENABLE                          (0)
 #define UART_BUS_ENABLE                         (1)
-// Communication peripherals ENABLE/DISABLE
-#define CAN_BUS_ENABLE                          (0)
-#define RS485_BUS_ENABLE                        (0)
 #if ((USB_BUS_ENABLE) || (UART_BUS_ENABLE)) && (!CM_CORE_ENABLE)
 #error "In order to use USB or UART, CM must be active."
 #endif
 #if (UART_BUS_ENABLE) && (USB_BUS_ENABLE)
 #error "USB & UART share the same pins. They cannot run @ the same time"
 #endif
+// Communication peripherals ENABLE/DISABLE
+#define CAN_BUS_ENABLE                          (0)
+#define RS485_BUS_ENABLE                        (0)
+#define SPI_BUS_ENABLE                          (1)
 #if (RS485_BUS_ENABLE) && (CAN_BUS_ENABLE)
 #error "RS-485 & CAN share the same pins. They cannot run @ the same time"
+#elif ((RS485_BUS_ENABLE) || (CAN_BUS_ENABLE) ) && (SPI_BUS_ENABLE)
+#error "RS-485, CAN & SPI share the same data. They cannot run @ the same time"
 #endif
 // Filters definition
 #define UOMODRI_IABC_FLT(flt_coef, y, x)        LPF_FILTER_1(flt_coef, y, x)
@@ -75,10 +78,6 @@
  *  @brief    General constants definitions.
  * @{
  */
-//#ifndef FM_PI
-////#define FM_PI                                   3.14159265358979f
-//#endif
-
 #ifndef FM_SQRT3
 #define FM_SQRT3                                ((float32_t)(1.7320508075688772935274463415059f))  /* sqrt(3) */
 #endif
@@ -339,7 +338,7 @@
 /***********************************************************************
  * SCI DEFINES
  ***********************************************************************/
-#define COM_SCI_BASE                            SCIB_BASE
+#define COM_SCI_BASE                            SCIC_BASE
 
 /***********************************************************************
  * SPI DEFINES
@@ -992,11 +991,13 @@
 #error "Config error on MOTOR_1 : Only one motor config must be set @ a time."
 #endif
 #define MOTOR1_ENC_QUADRATURE_SCALE             (4.0f * MOTOR1_ENC_RESOLUTION)
+#define MOTOR1_ENC_QUADRATURE_SCALE_MAX         (MOTOR1_ENC_QUADRATURE_SCALE - 1)
 #define MOTOR1_ENC_RESOLUTION_SCALE             (1.0f / MOTOR1_ENC_QUADRATURE_SCALE)
 #define MOTOR1_ENC_CONFIG                       (EQEP_CONFIG_2X_RESOLUTION | EQEP_CONFIG_QUADRATURE | MOTOR1_QEP_SWAP | EQEP_CONFIG_IGATE_DISABLE)
-#define MOTOR1_ENC_SPEED_HIGH_SAMPLING_FREQ     (1000U) // [Hz] Velocity computation frequency
-#define MOTOR1_ENC_SPEED_HIGH_SAMPLING_TICKS    (DEVICE_SYSCLK_FREQ / MOTOR1_ENC_SPEED_HIGH_SAMPLING_FREQ)
-#define MOTOR1_ENC_SPEED_HIGH_SCALE             (MOTOR1_ENC_SPEED_HIGH_SAMPLING_FREQ) // 2pi / dt
+#define MOTOR1_ENC_SPEED_HIGH_SAMPLE_FREQ       (1000U) // [Hz] Velocity computation frequency
+#define MOTOR1_ENC_SPEED_HIGH_SAMPLE_TICKS      (DEVICE_SYSCLK_FREQ / MOTOR1_ENC_SPEED_HIGH_SAMPLE_FREQ)
+#define MOTOR1_ENC_SPEED_HIGH_SAMPLE_TICKS_MAX  (MOTOR1_ENC_SPEED_HIGH_SAMPLE_TICKS - 1)
+#define MOTOR1_ENC_SPEED_HIGH_SCALE             (MOTOR1_ENC_SPEED_HIGH_SAMPLE_FREQ) // 2pi / dt
 #define MOTOR1_ENC_SPEED_LOW_SCALE              (2.0f * M_PI * DEVICE_SYSCLK_FREQ * (1 << QEP_UNIT_POS_EVENT_DIV) / (1 << (QEP_CAPTURE_CLOCK_DIV >> 4)) / MOTOR1_ENC_RESOLUTION_SCALE)
 #define MOTOR1_ENC_SPEED_CUTOFF_FREQ            (100.0f) // cutoff frequency for velocity estimation
 #define MOTOR1_ENC_SPEED_TIME_CONST             (2.0f * M_PI * MOTOR1_ENC_SPEED_CUTOFF_FREQ * PWM_PERIOD)
@@ -1016,11 +1017,13 @@
 #endif
 #if (((USE_RMDX8H_MOTOR_ON_MOTOR2) || (USE_SOLO_MOTOR_ON_MOTOR2)) && (!USE_MOTOR1_PARAMS_ON_MOTOR2))
 #define MOTOR2_ENC_QUADRATURE_SCALE             (4.0f * MOTOR2_ENC_RESOLUTION)
+#define MOTOR2_ENC_QUADRATURE_SCALE_MAX         (MOTOR2_ENC_QUADRATURE_SCALE - 1)
 #define MOTOR2_ENC_RESOLUTION_SCALE             (1.0f / MOTOR2_ENC_QUADRATURE_SCALE)
 #define MOTOR2_ENC_CONFIG                       (EQEP_CONFIG_2X_RESOLUTION | EQEP_CONFIG_QUADRATURE | MOTOR2_QEP_SWAP | EQEP_CONFIG_IGATE_DISABLE)
-#define MOTOR2_ENC_SPEED_HIGH_SAMPLING_FREQ     (1000U) // [Hz] Velocity computation frequency
-#define MOTOR2_ENC_SPEED_HIGH_SAMPLING_TICKS    (DEVICE_SYSCLK_FREQ / MOTOR2_ENC_SPEED_HIGH_SAMPLING_FREQ)
-#define MOTOR2_ENC_SPEED_HIGH_SCALE             (MOTOR2_ENC_SPEED_HIGH_SAMPLING_FREQ) // 2pi / dt
+#define MOTOR2_ENC_SPEED_HIGH_SAMPLE_FREQ       (1000U) // [Hz] Velocity computation frequency
+#define MOTOR2_ENC_SPEED_HIGH_SAMPLE_TICKS      (DEVICE_SYSCLK_FREQ / MOTOR2_ENC_SPEED_HIGH_SAMPLE_FREQ)
+#define MOTOR2_ENC_SPEED_HIGH_SAMPLE_TICKS_MAX  (MOTOR2_ENC_SPEED_HIGH_SAMPLE_TICKS - 1)
+#define MOTOR2_ENC_SPEED_HIGH_SCALE             (MOTOR2_ENC_SPEED_HIGH_SAMPLE_FREQ) // 2pi / dt
 #define MOTOR2_ENC_SPEED_LOW_SCALE              (2.0f * M_PI * DEVICE_SYSCLK_FREQ * (1 << QEP_UNIT_POS_EVENT_DIV) / (1 << (QEP_CAPTURE_CLOCK_DIV >> 4)) / MOTOR2_ENC_RESOLUTION_SCALE)
 #define MOTOR2_ENC_SPEED_CUTOFF_FREQ            (100.0f) // cutoff frequency for velocity estimation
 #define MOTOR2_ENC_SPEED_TIME_CONST             (2.0f * M_PI * MOTOR2_ENC_SPEED_CUTOFF_FREQ * PWM_PERIOD)
@@ -1030,11 +1033,13 @@
 #define MOTOR2_ENC_SPEED_LOCAL_LPF_ONE_M_ALPHA  (1.0f - MOTOR2_ENC_SPEED_LPF_ALPHA)
 #elif ((!USE_RMDX8H_MOTOR_ON_MOTOR2) && (!USE_SOLO_MOTOR_ON_MOTOR2) && (USE_MOTOR1_PARAMS_ON_MOTOR2))
 #define MOTOR2_ENC_RESOLUTION                   MOTOR1_ENC_RESOLUTION
+#define MOTOR2_ENC_QUADRATURE_SCALE_MAX         MOTOR1_ENC_QUADRATURE_SCALE_MAX
 #define MOTOR2_ENC_QUADRATURE_SCALE             MOTOR1_ENC_QUADRATURE_SCALE
 #define MOTOR2_ENC_RESOLUTION_SCALE             MOTOR1_ENC_RESOLUTION_SCALE
 #define MOTOR2_ENC_CONFIG                       MOTOR1_ENC_CONFIG
-#define MOTOR2_ENC_SPEED_HIGH_SAMPLING_FREQ     MOTOR1_ENC_SPEED_HIGH_SAMPLING_FREQ // [Hz] Velocity computation frequency
-#define MOTOR2_ENC_SPEED_HIGH_SAMPLING_TICKS    MOTOR1_ENC_SPEED_HIGH_SAMPLING_TICKS
+#define MOTOR2_ENC_SPEED_HIGH_SAMPLE_FREQ       MOTOR1_ENC_SPEED_HIGH_SAMPLE_FREQ // [Hz] Velocity computation frequency
+#define MOTOR2_ENC_SPEED_HIGH_SAMPLE_TICKS      MOTOR1_ENC_SPEED_HIGH_SAMPLE_TICKS
+#define MOTOR2_ENC_SPEED_HIGH_SAMPLE_TICKS_MAX  MOTOR1_ENC_SPEED_HIGH_SAMPLE_TICKS_MAX
 #define MOTOR2_ENC_SPEED_HIGH_SCALE             MOTOR1_ENC_SPEED_HIGH_SCALE // 2pi / dt
 #define MOTOR2_ENC_SPEED_LOW_SCALE              MOTOR1_ENC_SPEED_LOW_SCALE
 #define MOTOR2_ENC_SPEED_CUTOFF_FREQ            MOTOR1_ENC_SPEED_CUTOFF_FREQ     // cutoff frequency for velocity estimation
@@ -1106,11 +1111,11 @@
 #define MOTOR1_CURRENT_TIME_CONST               (2.0f * M_PI * MOTOR1_CURRENT_CUTOFF_FREQ * PWM_PERIOD)
 #define MOTOR1_CURRENT_LPF_ALPHA                (MOTOR1_CURRENT_TIME_CONST / (1.0f + MOTOR1_CURRENT_TIME_CONST))
 #define MOTOR1_CURRENT_LPF_ONE_M_ALPHA          (1.0f - MOTOR1_CURRENT_LPF_ALPHA)
-#define MOTOR1_CURRENT_ALIGN_TIME               (0.5f)      // in seconds
-#define MOTOR1_CURRENT_ALIGN_INC                (MOTOR1_CURRENT_ALIGN_MAX / MOTOR1_CURRENT_ALIGN_TIME / PWM_FREQ)
+#define MOTOR1_CURRENT_ALIGN_RISE_TIME          (0.5f)      // in seconds
+#define MOTOR1_CURRENT_ALIGN_INC                (MOTOR1_CURRENT_ALIGN_MAX / MOTOR1_CURRENT_ALIGN_RISE_TIME / PWM_FREQ)
 #define MOTOR1_THETA_ALIGN_MAX                  FM_ROUND2RAD
-#define MOTOR1_THETA_ALIGN_TIME                 MOTOR1_CURRENT_ALIGN_TIME
-#define MOTOR1_THETA_ALIGN_DEC                  (MOTOR1_THETA_ALIGN_MAX / MOTOR1_THETA_ALIGN_TIME / PWM_FREQ)
+#define MOTOR1_THETA_ALIGN_FALL_TIME            MOTOR1_CURRENT_ALIGN_RISE_TIME
+#define MOTOR1_THETA_ALIGN_DEC                  (MOTOR1_THETA_ALIGN_MAX / MOTOR1_THETA_ALIGN_FALL_TIME / PWM_FREQ)
 #define MOTOR1_PI_ID_KP_COEF                    (MOTOR1_LS * 2.0f * M_PI * MOTOR1_CURRENT_CUTOFF_FREQ)
 #define MOTOR1_PI_ID_KI_COEF                    (MOTOR1_RS * 2.0f * M_PI * MOTOR1_CURRENT_CUTOFF_FREQ)
 #define MOTOR1_PI_IQ_KP_COEF                    (MOTOR1_LS * 2.0f * M_PI * MOTOR1_CURRENT_CUTOFF_FREQ)
@@ -1156,11 +1161,11 @@
 #define MOTOR2_CURRENT_TIME_CONST               (2.0f * M_PI * MOTOR2_CURRENT_CUTOFF_FREQ * PWM_PERIOD)
 #define MOTOR2_CURRENT_LPF_ALPHA                (MOTOR2_CURRENT_TIME_CONST / (1.0f + MOTOR2_CURRENT_TIME_CONST))
 #define MOTOR2_CURRENT_LPF_ONE_M_ALPHA          (1.0f - MOTOR2_CURRENT_LPF_ALPHA)
-#define MOTOR2_CURRENT_ALIGN_TIME               (0.5f)      // in seconds
-#define MOTOR2_CURRENT_ALIGN_INC                (MOTOR2_CURRENT_ALIGN_MAX / MOTOR2_CURRENT_ALIGN_TIME / PWM_FREQ)
+#define MOTOR2_CURRENT_ALIGN_RISE_TIME          (0.5f)      // in seconds
+#define MOTOR2_CURRENT_ALIGN_INC                (MOTOR2_CURRENT_ALIGN_MAX / MOTOR2_CURRENT_ALIGN_RISE_TIME / PWM_FREQ)
 #define MOTOR2_THETA_ALIGN_MAX                  FM_ROUND2RAD
-#define MOTOR2_THETA_ALIGN_TIME                 MOTOR2_CURRENT_ALIGN_TIME
-#define MOTOR2_THETA_ALIGN_DEC                  (MOTOR2_THETA_ALIGN_MAX / MOTOR2_THETA_ALIGN_TIME / PWM_FREQ)
+#define MOTOR2_THETA_ALIGN_FALL_TIME            MOTOR2_CURRENT_ALIGN_RISE_TIME
+#define MOTOR2_THETA_ALIGN_DEC                  (MOTOR2_THETA_ALIGN_MAX / MOTOR2_THETA_ALIGN_FALL_TIME / PWM_FREQ)
 #define MOTOR2_PI_ID_KP_COEF                    (MOTOR2_LS * 2.0f * M_PI * MOTOR2_CURRENT_CUTOFF_FREQ)
 #define MOTOR2_PI_ID_KI_COEF                    (MOTOR2_RS * 2.0f * M_PI * MOTOR2_CURRENT_CUTOFF_FREQ)
 #define MOTOR2_PI_IQ_KP_COEF                    (MOTOR2_LS * 2.0f * M_PI * MOTOR2_CURRENT_CUTOFF_FREQ)
@@ -1176,10 +1181,10 @@
 #define MOTOR2_CURRENT_TIME_CONST               MOTOR1_CURRENT_TIME_CONST
 #define MOTOR2_CURRENT_LPF_ALPHA                MOTOR1_CURRENT_LPF_ALPHA
 #define MOTOR2_CURRENT_LPF_ONE_M_ALPHA          MOTOR1_CURRENT_LPF_ONE_M_ALPHA
-#define MOTOR2_CURRENT_ALIGN_TIME               MOTOR1_CURRENT_ALIGN_TIME
+#define MOTOR2_CURRENT_ALIGN_RISE_TIME          MOTOR1_CURRENT_ALIGN_RISE_TIME
 #define MOTOR2_CURRENT_ALIGN_INC                MOTOR1_CURRENT_ALIGN_INC
 #define MOTOR2_THETA_ALIGN_MAX                  MOTOR1_THETA_ALIGN_MAX
-#define MOTOR2_THETA_ALIGN_TIME                 MOTOR1_THETA_ALIGN_TIME
+#define MOTOR2_THETA_ALIGN_FALL_TIME            MOTOR1_THETA_ALIGN_FALL_TIME
 #define MOTOR2_THETA_ALIGN_DEC                  MOTOR1_THETA_ALIGN_DEC
 #define MOTOR2_PI_ID_KP_COEF                    MOTOR1_PI_ID_KP_COEF
 #define MOTOR2_PI_ID_KI_COEF                    MOTOR1_PI_ID_KI_COEF

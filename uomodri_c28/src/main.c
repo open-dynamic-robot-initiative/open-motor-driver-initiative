@@ -90,6 +90,12 @@ void main(void)
 #if (CM_CORE_ENABLE)
     IPC_CpuToCmAddrSync();
 #endif
+#if (RS485_BUS_ENABLE)
+    uart_addr_u uart_addr;
+    uart_addr.addr_0 = GPIO_readPin(SELECT_PIN_0_NUM);
+    uart_addr.addr_1 = GPIO_readPin(SELECT_PIN_1_NUM);
+    uart_addr.addr_2 = GPIO_readPin(SELECT_PIN_2_NUM);
+#endif
 #if (CLA1_CORE_ENABLE)
     CLA_forceTasks(CLA1_BASE, CLA_TASKFLAG_8);
 #endif

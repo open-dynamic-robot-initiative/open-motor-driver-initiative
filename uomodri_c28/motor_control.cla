@@ -16,9 +16,10 @@
 /***********************************************************************
  * VARIABLES
  ***********************************************************************/
+#if (CLA1_CORE_ENABLE)
 extern foc_t motor_foc[];
 extern motor_t motor[];
-
+#endif
 /***********************************************************************
  * DEFINES
  ***********************************************************************/
@@ -30,6 +31,7 @@ extern motor_t motor[];
 /***********************************************************************
  * FUNCTIONS DEFINITION
  ***********************************************************************/
+#if (CLA1_CORE_ENABLE)
 __interrupt void Cla1Task1(void)
 {
     // Motor control
@@ -492,7 +494,7 @@ interrupt void Cla1Task8 ( void )
     motor[MOTOR_1].p_motorCmdReg[CHANNEL_2].addr32b             = MOTOR2_PWM2_CMD_ADDR;
     motor[MOTOR_1].p_motorCmdReg[CHANNEL_3].addr32b             = MOTOR2_PWM3_CMD_ADDR;
 }
-
+#endif
 //bool_t as5047u_crc8check(BitDataFrame32_u data)
 //{
 //    uint32_t    crc = 0xC4;

@@ -4,7 +4,7 @@
 /***********************************************************************
  * INCLUDE FILES
  ***********************************************************************/
-#include "driverlib.h"
+#include <driverlib.h>
 
 #include "hal.h"
 #include "communication.h"
@@ -71,19 +71,29 @@ static const gpio_cfg_t GpioPinsCfgList[] =
  {.pinNumber = RS485_RX_EN_NUM,         .fctMux = RS485_RX_EN_CFG,          .pinType = GPIO_PIN_TYPE_OD,    .coreSelect = GPIO_CORE_CPU1,       .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 1,  .intEnable = false},
  {.pinNumber = RS485_TX_EN_NUM,         .fctMux = RS485_TX_EN_CFG,          .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,       .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0,  .intEnable = false},
 #endif
-
  {.pinNumber = DBG_PIN0_NUM,            .fctMux = DBG_PIN0_CFG,             .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = DBG_PIN0_CORE,        .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0,  .intEnable = false},
  {.pinNumber = DBG_PIN1_NUM,            .fctMux = DBG_PIN1_CFG,             .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = DBG_PIN1_CORE,        .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0,  .intEnable = false},
  {.pinNumber = DBG_PIN2_NUM,            .fctMux = DBG_PIN2_CFG,             .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = DBG_PIN2_CORE,        .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0,  .intEnable = false},
  {.pinNumber = DBG_PIN3_NUM,            .fctMux = DBG_PIN3_CFG,             .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = DBG_PIN3_CORE,        .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0,  .intEnable = false},
+#if (CLA1_CORE_ENABLE)
  // Quadrature encoder #1
  {.pinNumber = MOTOR1_ENC_CHA_NUM,      .fctMux = MOTOR1_ENC_CHA_CFG,       .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1_CLA1,  .direction = GPIO_DIR_MODE_IN,  .samplingInMode = GPIO_QUAL_6SAMPLE,.setValue = 0,  .intEnable = false},
  {.pinNumber = MOTOR1_ENC_CHB_NUM,      .fctMux = MOTOR1_ENC_CHB_CFG,       .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1_CLA1,  .direction = GPIO_DIR_MODE_IN,  .samplingInMode = GPIO_QUAL_6SAMPLE,.setValue = 0,  .intEnable = false},
  {.pinNumber = MOTOR1_ENC_CHI_NUM,      .fctMux = MOTOR1_ENC_CHI_CFG,       .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1_CLA1,  .direction = GPIO_DIR_MODE_IN,  .samplingInMode = GPIO_QUAL_6SAMPLE,.setValue = 0,  .intEnable = false},
  // Quadrature encoder #2
+ {.pinNumber = MOTOR2_ENC_CHA_NUM,      .fctMux = MOTOR2_ENC_CHA_CFG,       .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1_CLA1,  .direction = GPIO_DIR_MODE_IN,  .samplingInMode = GPIO_QUAL_6SAMPLE,.setValue = 0,  .intEnable = false},
+ {.pinNumber = MOTOR2_ENC_CHB_NUM,      .fctMux = MOTOR2_ENC_CHB_CFG,       .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1_CLA1,  .direction = GPIO_DIR_MODE_IN,  .samplingInMode = GPIO_QUAL_6SAMPLE,.setValue = 0,  .intEnable = false},
+ {.pinNumber = MOTOR2_ENC_CHI_NUM,      .fctMux = MOTOR2_ENC_CHI_CFG,       .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1_CLA1,  .direction = GPIO_DIR_MODE_IN,  .samplingInMode = GPIO_QUAL_6SAMPLE,.setValue = 0,  .intEnable = false},
+#else
+ // Quadrature encoder #1
+ {.pinNumber = MOTOR1_ENC_CHA_NUM,      .fctMux = MOTOR1_ENC_CHA_CFG,       .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,       .direction = GPIO_DIR_MODE_IN,  .samplingInMode = GPIO_QUAL_6SAMPLE,.setValue = 0,  .intEnable = false},
+ {.pinNumber = MOTOR1_ENC_CHB_NUM,      .fctMux = MOTOR1_ENC_CHB_CFG,       .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,       .direction = GPIO_DIR_MODE_IN,  .samplingInMode = GPIO_QUAL_6SAMPLE,.setValue = 0,  .intEnable = false},
+ {.pinNumber = MOTOR1_ENC_CHI_NUM,      .fctMux = MOTOR1_ENC_CHI_CFG,       .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,       .direction = GPIO_DIR_MODE_IN,  .samplingInMode = GPIO_QUAL_6SAMPLE,.setValue = 0,  .intEnable = false},
+ // Quadrature encoder #2
  {.pinNumber = MOTOR2_ENC_CHA_NUM,      .fctMux = MOTOR2_ENC_CHA_CFG,       .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,       .direction = GPIO_DIR_MODE_IN,  .samplingInMode = GPIO_QUAL_6SAMPLE,.setValue = 0,  .intEnable = false},
  {.pinNumber = MOTOR2_ENC_CHB_NUM,      .fctMux = MOTOR2_ENC_CHB_CFG,       .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,       .direction = GPIO_DIR_MODE_IN,  .samplingInMode = GPIO_QUAL_6SAMPLE,.setValue = 0,  .intEnable = false},
  {.pinNumber = MOTOR2_ENC_CHI_NUM,      .fctMux = MOTOR2_ENC_CHI_CFG,       .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,       .direction = GPIO_DIR_MODE_IN,  .samplingInMode = GPIO_QUAL_6SAMPLE,.setValue = 0,  .intEnable = false},
+#endif
  // DRV communication
  {.pinNumber = DRV_SPI_SIMO_NUM,        .fctMux = DRV_SPI_SIMO_CFG,         .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,       .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 1,  .intEnable = false},
  {.pinNumber = DRV_SPI_SOMI_NUM,        .fctMux = DRV_SPI_SOMI_CFG,         .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,       .direction = GPIO_DIR_MODE_IN,  .samplingInMode = GPIO_QUAL_SYNC,   .setValue = 0,  .intEnable = false},
@@ -97,24 +107,43 @@ static const gpio_cfg_t GpioPinsCfgList[] =
  {.pinNumber = LED_SPI_SIMO_NUM,        .fctMux = LED_SPI_SIMO_CFG,         .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,       .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 1,  .intEnable = false},
  // DRV1 configuration pins
  {.pinNumber = MOTOR1_DRV_EN_NUM,       .fctMux = MOTOR1_DRV_EN_CFG,        .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,       .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0,  .intEnable = false},
+ {.pinNumber = MOTOR1_DRV_SPI_CS_NUM,   .fctMux = MOTOR1_DRV_SPI_CS_CFG,    .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,       .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 1,  .intEnable = false},
+ {.pinNumber = MOTOR1_DRV_FAULT_NUM,    .fctMux = MOTOR1_DRV_FAULT_CFG,     .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,       .direction = GPIO_DIR_MODE_IN,  .samplingInMode = GPIO_QUAL_3SAMPLE,.setValue = 0,  .intEnable = false},
+ // DRV2 configuration pins
+ {.pinNumber = MOTOR2_DRV_EN_NUM,       .fctMux = MOTOR2_DRV_EN_CFG,        .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,       .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0,  .intEnable = false},
+ {.pinNumber = MOTOR2_DRV_SPI_CS_NUM,   .fctMux = MOTOR2_DRV_SPI_CS_CFG,    .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,       .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 1,  .intEnable = false},
+ {.pinNumber = MOTOR2_DRV_FAULT_NUM,    .fctMux = MOTOR2_DRV_FAULT_CFG,     .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,       .direction = GPIO_DIR_MODE_IN,  .samplingInMode = GPIO_QUAL_3SAMPLE,.setValue = 0,  .intEnable = false},
+#if (CLA1_CORE_ENABLE)
+ // PWM MOTOR_1 configuration pins
  {.pinNumber = MOTOR1_PWM1_CHA_NUM,     .fctMux = MOTOR1_PWM1_CHA_CFG,      .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1_CLA1,  .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0,  .intEnable = false},
  {.pinNumber = MOTOR1_PWM1_CHB_NUM,     .fctMux = MOTOR1_PWM1_CHB_CFG,      .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1_CLA1,  .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 1,  .intEnable = false},
  {.pinNumber = MOTOR1_PWM2_CHA_NUM,     .fctMux = MOTOR1_PWM2_CHA_CFG,      .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1_CLA1,  .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0,  .intEnable = false},
  {.pinNumber = MOTOR1_PWM2_CHB_NUM,     .fctMux = MOTOR1_PWM2_CHB_CFG,      .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1_CLA1,  .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 1,  .intEnable = false},
  {.pinNumber = MOTOR1_PWM3_CHA_NUM,     .fctMux = MOTOR1_PWM3_CHA_CFG,      .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1_CLA1,  .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0,  .intEnable = false},
  {.pinNumber = MOTOR1_PWM3_CHB_NUM,     .fctMux = MOTOR1_PWM3_CHB_CFG,      .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1_CLA1,  .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 1,  .intEnable = false},
- {.pinNumber = MOTOR1_DRV_SPI_CS_NUM,   .fctMux = MOTOR1_DRV_SPI_CS_CFG,    .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,       .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 1,  .intEnable = false},
- {.pinNumber = MOTOR1_DRV_FAULT_NUM,    .fctMux = MOTOR1_DRV_FAULT_CFG,     .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,       .direction = GPIO_DIR_MODE_IN,  .samplingInMode = GPIO_QUAL_3SAMPLE,.setValue = 0,  .intEnable = false},
- // DRV2 configuration pins
- {.pinNumber = MOTOR2_DRV_EN_NUM,       .fctMux = MOTOR2_DRV_EN_CFG,        .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,       .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0,  .intEnable = false},
+ // PWM MOTOR_2 configuration pins
+ {.pinNumber = MOTOR2_PWM1_CHA_NUM,     .fctMux = MOTOR2_PWM1_CHA_CFG,      .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1_CLA1,  .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0,  .intEnable = false},
+ {.pinNumber = MOTOR2_PWM1_CHB_NUM,     .fctMux = MOTOR2_PWM1_CHB_CFG,      .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1_CLA1,  .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 1,  .intEnable = false},
+ {.pinNumber = MOTOR2_PWM2_CHA_NUM,     .fctMux = MOTOR2_PWM2_CHA_CFG,      .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1_CLA1,  .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0,  .intEnable = false},
+ {.pinNumber = MOTOR2_PWM2_CHB_NUM,     .fctMux = MOTOR2_PWM2_CHB_CFG,      .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1_CLA1,  .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 1,  .intEnable = false},
+ {.pinNumber = MOTOR2_PWM3_CHA_NUM,     .fctMux = MOTOR2_PWM3_CHA_CFG,      .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1_CLA1,  .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0,  .intEnable = false},
+ {.pinNumber = MOTOR2_PWM3_CHB_NUM,     .fctMux = MOTOR2_PWM3_CHB_CFG,      .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1_CLA1,  .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 1,  .intEnable = false},
+#else
+ // PWM MOTOR_1 configuration pins
+ {.pinNumber = MOTOR1_PWM1_CHA_NUM,     .fctMux = MOTOR1_PWM1_CHA_CFG,      .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,       .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0,  .intEnable = false},
+ {.pinNumber = MOTOR1_PWM1_CHB_NUM,     .fctMux = MOTOR1_PWM1_CHB_CFG,      .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,       .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 1,  .intEnable = false},
+ {.pinNumber = MOTOR1_PWM2_CHA_NUM,     .fctMux = MOTOR1_PWM2_CHA_CFG,      .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,       .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0,  .intEnable = false},
+ {.pinNumber = MOTOR1_PWM2_CHB_NUM,     .fctMux = MOTOR1_PWM2_CHB_CFG,      .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,       .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 1,  .intEnable = false},
+ {.pinNumber = MOTOR1_PWM3_CHA_NUM,     .fctMux = MOTOR1_PWM3_CHA_CFG,      .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,       .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0,  .intEnable = false},
+ {.pinNumber = MOTOR1_PWM3_CHB_NUM,     .fctMux = MOTOR1_PWM3_CHB_CFG,      .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,       .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 1,  .intEnable = false},
+ // PWM MOTOR_2 configuration pins
  {.pinNumber = MOTOR2_PWM1_CHA_NUM,     .fctMux = MOTOR2_PWM1_CHA_CFG,      .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,       .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0,  .intEnable = false},
  {.pinNumber = MOTOR2_PWM1_CHB_NUM,     .fctMux = MOTOR2_PWM1_CHB_CFG,      .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,       .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 1,  .intEnable = false},
  {.pinNumber = MOTOR2_PWM2_CHA_NUM,     .fctMux = MOTOR2_PWM2_CHA_CFG,      .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,       .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0,  .intEnable = false},
  {.pinNumber = MOTOR2_PWM2_CHB_NUM,     .fctMux = MOTOR2_PWM2_CHB_CFG,      .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,       .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 1,  .intEnable = false},
  {.pinNumber = MOTOR2_PWM3_CHA_NUM,     .fctMux = MOTOR2_PWM3_CHA_CFG,      .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,       .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0,  .intEnable = false},
  {.pinNumber = MOTOR2_PWM3_CHB_NUM,     .fctMux = MOTOR2_PWM3_CHB_CFG,      .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,       .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 1,  .intEnable = false},
- {.pinNumber = MOTOR2_DRV_SPI_CS_NUM,   .fctMux = MOTOR2_DRV_SPI_CS_CFG,    .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,       .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 1,  .intEnable = false},
- {.pinNumber = MOTOR2_DRV_FAULT_NUM,    .fctMux = MOTOR2_DRV_FAULT_CFG,     .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,       .direction = GPIO_DIR_MODE_IN,  .samplingInMode = GPIO_QUAL_3SAMPLE,.setValue = 0,  .intEnable = false},
+#endif
  // END OF ARRAY
  {.pinNumber = UINT32_MAX},
 };
@@ -194,15 +223,15 @@ static const eqep_cfg_t QepCfgList[] =
 {
  {
   .eqepBase             = MOTOR1_QEP_BASE,
-  .eqepMaxResolution    = (MOTOR1_ENC_QUADRATURE_SCALE - 1),
-  .eqepUnitTimerPeriod  = (MOTOR1_ENC_SPEED_HIGH_SAMPLING_TICKS - 1),
+  .eqepMaxResolution    = MOTOR1_ENC_QUADRATURE_SCALE_MAX,
+  .eqepUnitTimerPeriod  = MOTOR1_ENC_SPEED_HIGH_SAMPLE_TICKS_MAX,
   .eqepConfig           = MOTOR1_ENC_CONFIG,
   .eqepStrobeSrc        = EQEP_STROBE_OR_ADCSOCA
  },
  {
   .eqepBase             = MOTOR2_QEP_BASE,
-  .eqepMaxResolution    = (MOTOR2_ENC_QUADRATURE_SCALE - 1),
-  .eqepUnitTimerPeriod  = (MOTOR2_ENC_SPEED_HIGH_SAMPLING_TICKS - 1),
+  .eqepMaxResolution    = MOTOR2_ENC_QUADRATURE_SCALE_MAX,
+  .eqepUnitTimerPeriod  = MOTOR2_ENC_SPEED_HIGH_SAMPLE_TICKS_MAX,
   .eqepConfig           = MOTOR2_ENC_CONFIG,
   .eqepStrobeSrc        = EQEP_STROBE_OR_ADCSOCB
  },

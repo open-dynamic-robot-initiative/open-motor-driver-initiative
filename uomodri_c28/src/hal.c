@@ -6,9 +6,8 @@
 /***********************************************************************
  * INCLUDE FILES
  ***********************************************************************/
-#include "device.h"
+#include <device.h>
 #include "hal.h"
-//#include "cla_shared.h"
 
 /***********************************************************************
  * FUNCTIONS DECLARATION
@@ -549,6 +548,8 @@ void HAL_SCI_ini(const sci_cfg_t* p_sciCfg)
         uint32_t sciBase = p_sciCfg->sciBase;
         while(sciBase != UINT32_MAX)
         {
+            /* Initialize SCIx and its FIFO */
+            SCI_performSoftwareReset(sciBase);
             /* Set SPI configuration, disable loopback */
             SCI_setConfig(sciBase, DEVICE_LSPCLK_FREQ, p_sciCfg->bitRate, p_sciCfg->sciMode);
             /* Stop the SCI during configuration */
@@ -559,14 +560,16 @@ void HAL_SCI_ini(const sci_cfg_t* p_sciCfg)
                 SCI_setAddrMultiProcessorMode(sciBase);
             else if(p_sciCfg->multiProcMode == SCI_MULTI_PROC_IDLE)
                 SCI_setIdleMultiProcessorMode(sciBase);
+            /* Resets the SCI Transmit and Receive Channels */
+            SCI_resetChannels(sciBase);
             /* Configure FIFO if required. */
             SCI_disableFIFO(sciBase);
             if((p_sciCfg->rxLevel != SCI_FIFO_RX0) || (p_sciCfg->txLevel != SCI_FIFO_TX0))
             {
-                SCI_enableFIFO(sciBase);
                 SCI_resetTxFIFO(sciBase);
                 SCI_resetRxFIFO(sciBase);
                 SCI_setFIFOInterruptLevel(sciBase, p_sciCfg->txLevel, p_sciCfg->rxLevel);
+                SCI_enableFIFO(sciBase);
             }
             /* Clear flags & enable or disable interrupts */
             SCI_clearInterruptStatus(sciBase, SCI_INT_RXERR | SCI_INT_RXRDY_BRKDT | SCI_INT_FE | SCI_INT_OE | SCI_INT_PE | SCI_INT_TXFF | SCI_INT_RXFF);
@@ -575,6 +578,7 @@ void HAL_SCI_ini(const sci_cfg_t* p_sciCfg)
                 SCI_enableInterrupt(sciBase, p_sciCfg->intSrc);
             /* Restart SCI after configuration */
             SCI_enableModule(sciBase);
+            SCI_performSoftwareReset(sciBase);
             sciBase = (++p_sciCfg)->sciBase;
         }
     }

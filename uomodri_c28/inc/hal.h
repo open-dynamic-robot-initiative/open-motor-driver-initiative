@@ -11,27 +11,20 @@
  ***********************************************************************/
 #include <stdbool.h>
 #include <stdint.h>
-#include "f2838x_device.h"
-#include "driverlib.h"
+#include <f2838x_device.h>
+#include <driverlib.h>
+
 #include "uomodri_user_defines.h"
 
 /***********************************************************************
  * DEFINES
  ***********************************************************************/
+#define EPWM_DELAY_DISABLE      (0)     /*!< Disable/bypass Deadband delay mode. */
+#define EPWM_DELAY_ENABLE       (1)     /*!< Enable Deadband delay mode. */
 
 /***********************************************************************
  * ENUMARATIONS
  ***********************************************************************/
-/**
- * @enum    EPWM_DelayModeEnable
- * @brief   Enable or disable Deadband delay unit.
- */
-typedef enum
-{
-    EPWM_DELAY_DISABLE  = 0,                                        /*!< Disable/bypass Deadband delay mode. */
-    EPWM_DELAY_ENABLE   = 1                                         /*!< Enable Deadband delay mode. */
-} EPWM_DelayModeEnable_e;
-
 typedef enum
 {
     SCI_MULTI_PROC_NONE = 0,
@@ -43,7 +36,7 @@ typedef enum
  * HARDWARE ABSTRACTION LAYER (HAL) CONTROL STRUCTURES
  ***********************************************************************/
 /**
- * @struct  __EPWM_TIME_BASE_t__
+ * @struct  epwm_tb_t
  * @brief   ePWM - Time Base submodule structure definition.
  */
 typedef struct __EPWM_TIME_BASE_t__
@@ -55,7 +48,7 @@ typedef struct __EPWM_TIME_BASE_t__
 } epwm_tb_t;
 
 /**
- * @struct  __EPWM_COUNTER_COMPARE_t__
+ * @struct  epwm_cc_t
  * @brief   ePWM - Counter Compare submodule structure definition.
  */
 typedef struct __EPWM_COUNTER_COMPARE_t__
@@ -66,7 +59,7 @@ typedef struct __EPWM_COUNTER_COMPARE_t__
 } epwm_cc_t;
 
 /**
- * @struct  __EPWM_ACTION_QUALIFIER_t__
+ * @struct  epwm_aq_t
  * @brief   ePWM - Action Qualifier submodule structure definition.
  */
 typedef struct __EPWM_ACTION_QUALIFIER_t__
@@ -77,7 +70,7 @@ typedef struct __EPWM_ACTION_QUALIFIER_t__
 } epwm_aq_t;
 
 /**
- * @struct  __EPWM_DEADBAND_t__
+ * @struct  epwm_db_t
  * @brief   ePWM - DeadBand Unit submodule structure definition.
  */
 typedef struct __EPWM_DEADBAND_t__
@@ -85,11 +78,11 @@ typedef struct __EPWM_DEADBAND_t__
     uint32_t                            epwmBase;                   /*!< ePWM peripheral address. */
     uint16_t                            redCount;                   /*!< Rising Edge Delay counter. */
     uint16_t                            fedCount;                   /*!< Falling Edge Delay counter. */
-    EPWM_DelayModeEnable_e              DelayMode;                  /*!< Enable deadband unit. */
+    bool_t                              DelayMode;                  /*!< Enable deadband unit. */
 } epwm_db_t;
 
 /**
- * @struct  __EPWM_CHOPPER_t__
+ * @struct  epwm_pc_t
  * @brief   ePWM - Chopper submodule structure definition.
  */
 typedef struct __EPWM_CHOPPER_t__
@@ -101,7 +94,7 @@ typedef struct __EPWM_CHOPPER_t__
 } epwm_pc_t;
 
 /**
- * @struct  __EPWM_ADC_SOC_EVENT_TRIGGER_t__
+ * @struct  epwm_et_t
  * @brief   ePWM - ADC SOC events trigger submodule structure definition.
  */
 typedef struct __EPWM_ADC_SOC_EVENT_TRIGGER_t__
@@ -113,7 +106,7 @@ typedef struct __EPWM_ADC_SOC_EVENT_TRIGGER_t__
 } epwm_et_t;
 
 /**
- * @struct  __EPWM_INTERRUPT_EVENTS_t__
+ * @struct  epwm_it_t
  * @brief   ePWM - Interrupts Events submodule structure definition.
  */
 typedef struct __EPWM_INTERRUPT_EVENTS_t__
@@ -124,7 +117,7 @@ typedef struct __EPWM_INTERRUPT_EVENTS_t__
 } epwm_it_t;
 
 /**
- * @struct  __EPWM_CFG_t__
+ * @struct  epwm_cfg_t
  * @brief   ePWM global Hardware Abstraction Layer structure
  */
 typedef struct __EPWM_CFG_t__
@@ -141,7 +134,7 @@ typedef struct __EPWM_CFG_t__
 } epwm_cfg_t;
 
 /**
- * @struct  __EQEP_CFG_t__
+ * @struct  eqep_cfg_t
  * @brief   eQEP global Hardware Abstraction Layer structure
  */
 typedef struct __EQEP_CFG_t__
@@ -154,7 +147,7 @@ typedef struct __EQEP_CFG_t__
 } eqep_cfg_t;
 
 /**
- * @struct  __SPI_CFG_t__
+ * @struct  spi_cfg_t
  * @brief   SPI global Hardware Abstraction Layer structure
  */
 typedef struct __SPI_CFG_t__
@@ -171,6 +164,10 @@ typedef struct __SPI_CFG_t__
     const bool_t                        intEnable;                  /*!< GPIO can be configured as IT source */
 } spi_cfg_t;
 
+/**
+ * @struct  sci_cfg_t
+ * @brief   SCI/UART global Hardware Abstraction Layer structure
+ */
 typedef struct __SCI_CFG_t__
 {
     uint32_t                            sciBase;                    /*!< ADC peripheral address. */
@@ -184,7 +181,7 @@ typedef struct __SCI_CFG_t__
 } sci_cfg_t;
 
 /**
- * @struct  __DMA_CFG_t__
+ * @struct  dma_cfg_t
  * @brief   DMA global Hardware Abstraction Layer structure
  */
 typedef struct __DMA_CFG_t__
@@ -211,7 +208,7 @@ typedef struct __DMA_CFG_t__
 } dma_cfg_t;
 
 /**
- * @struct  __CLA_TypeDef__
+ * @struct  cla_cfg_t
  * @brief   CLA global Hardware Abstraction Layer structure - To be updated
  */
 typedef struct __CLA_CFG_t__
@@ -226,7 +223,7 @@ typedef struct __CLA_CFG_t__
 } cla_cfg_t;
 
 /**
- * @struct  __GPIO_CFG_t__
+ * @struct  gpio_cfg_t
  * @brief   GPIO structure definition for all IOs except analog ones.
  */
 typedef struct __GPIO_CFG_t__
@@ -259,7 +256,7 @@ typedef struct __GPIO_CFG_t__
 } gpio_cfg_t;
 
 /**
- * @struct  __ADC_INITIALIZATION_t__
+ * @struct  adc_ini_t
  * @brief   ADC initial configuration (start-of-conversion) handler
  */
 typedef struct __ADC_INITIALIZATION_t__
@@ -271,7 +268,7 @@ typedef struct __ADC_INITIALIZATION_t__
 } adc_ini_t;
 
 /**
- * @struct  __ADC_ACQUISITIONS_RESULTS_t__
+ * @struct  adc_acq_t
  * @brief   ADC acquisition results (base and Post-Processing Block) configuration handler
  */
 typedef struct __ADC_ACQUISITIONS_RESULTS_t__
@@ -283,7 +280,7 @@ typedef struct __ADC_ACQUISITIONS_RESULTS_t__
 } adc_acq_t;
 
 /**
- * @struct  __ADC_INTERRUPT_EVENTS_t__
+ * @struct  adc_int_t
  * @brief   ADC Interrupt source configuration handler
  */
 typedef struct __ADC_INTERRUPT_EVENTS_t__
@@ -294,7 +291,7 @@ typedef struct __ADC_INTERRUPT_EVENTS_t__
 } adc_int_t;
 
 /**
- * @struct  __ADC_CFG_t__
+ * @struct  adc_cfg_t
  * @brief   ADC module configuration handler
  */
 typedef struct __ADC_CFG_t__
@@ -306,7 +303,7 @@ typedef struct __ADC_CFG_t__
 } adc_cfg_t;
 
 /**
- * @struct  __INT_CFG_t__
+ * @struct  int_cfg_t
  * @brief   Interrupt source configuration handler
  */
 typedef struct __INT_CFG_t__
@@ -317,7 +314,7 @@ typedef struct __INT_CFG_t__
 } int_cfg_t;
 
 /**
- * @struct  __IPC_CFG_t__
+ * @struct  ipc_cfg_t
  * @brief   IPC module configuration handler
  */
 typedef struct __IPC_CFG_t__
@@ -335,7 +332,7 @@ typedef struct __IPC_CFG_t__
 } ipc_cfg_t;
 
 /**
- * @struct  __CPU_TMR_CFG_t__
+ * @struct  tmr_cfg_t
  * @brief   Timer0/1/2 module configuration handler
  */
 typedef struct __CPU_TMR_CFG_t__
@@ -347,7 +344,7 @@ typedef struct __CPU_TMR_CFG_t__
 } tmr_cfg_t;
 
 /**
- * @struct  __HAL_CFG_t__
+ * @struct  hal_cfg_t
  * @brief   General HAL structure handler for the project
  */
 typedef struct __HAL_CFG_t__
@@ -365,7 +362,7 @@ typedef struct __HAL_CFG_t__
 } hal_cfg_t;
 
 /**
- * @struct  __PERIPH_MOTOR_CFG_t__
+ * @struct  periph_motor_cfg_t
  * @brief   General Motor Hardware Abstraction Layer structure
  */
 typedef struct __PERIPH_MOTOR_CFG_t__
