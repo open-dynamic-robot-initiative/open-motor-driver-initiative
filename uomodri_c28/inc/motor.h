@@ -16,9 +16,12 @@
  ***********************************************************************/
 #define MOTOR_STATE_INIT        (0x00)
 #define MOTOR_STATE_ALIGN_UP    (0x01)
-#define MOTOR_STATE_ALIGN_FIX   (0x02)
-#define MOTOR_STATE_READY       (0x04)
-#define MOTOR_STATE_STOP        (0x08)
+#define MOTOR_STATE_ALIGN_ENC1  (0x02)
+#define MOTOR_STATE_ALIGN_DOWN  (0x04)
+#define MOTOR_STATE_ALIGN_ENC2  (0x08)
+#define MOTOR_STATE_ALIGN_FIX   (0x10)
+#define MOTOR_STATE_READY       (0x20)
+#define MOTOR_STATE_STOP        (0x40)
 #define MOTOR_STATE_ERROR       (0xFF)
 
 /***********************************************************************
@@ -41,7 +44,8 @@ typedef union __error_reg_u__
         uint8_t                 pos_rollover    : 1;    /*!< Bits 1   : R/W - Position roll-over occurred */
         uint8_t                 drv_fault       : 1;    /*!< Bits 2   : R/W - Motor DRV nFault error */
         uint8_t                 com_timeout     : 1;    /*!< Bits 3   : R/W - Communication timeout error */
-        uint8_t                 error_RSV1      : 4;    /*!< Bits 4-15: R/W - Reserved */
+        uint8_t                 align_fault     : 1;    /*!< Bits 4   : R/W - Alignment procedure fault */
+        uint8_t                 error_RSV1      : 3;    /*!< Bits 5-7 : R/W - Reserved */
     };
 } error_reg_u;
 

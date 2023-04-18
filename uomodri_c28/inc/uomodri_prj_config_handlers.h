@@ -310,8 +310,8 @@ static foc_t motor_foc[] =
   .motor_cmd.index                          = 0U,
   .motor_cmd.cmdArray.all                   = 0U,
   //--- Maximum current alignment value ---------------------------------------
-  .iAlignMax                                = MOTOR1_CURRENT_ALIGN_MAX,
-  .thetaAlign                               = MOTOR1_THETA_ALIGN_MAX,
+//  .iAlignMax                                = MOTOR1_CURRENT_ALIGN_MAX,
+//  .thetaAlign                               = 0.0f,//MOTOR1_THETA_ALIGN_MAX,
   //---------------------------------------------------------------------------
   .iParkFlt.a                               = MOTOR1_CURRENT_LPF_ALPHA,
   .iParkFlt.one_minus_a                     = MOTOR1_CURRENT_LPF_ONE_M_ALPHA,
@@ -455,8 +455,8 @@ static foc_t motor_foc[] =
   .motor_cmd.index                          = 0U,
   .motor_cmd.cmdArray.all                   = 0U,
   //--- Maximum current alignment value ---------------------------------------
-  .iAlignMax                                = MOTOR2_CURRENT_ALIGN_MAX,
-  .thetaAlign                               = MOTOR2_THETA_ALIGN_MAX,
+//  .iAlignMax                                = MOTOR2_CURRENT_ALIGN_MAX,
+//  .thetaAlign                               = 0.0f,//MOTOR2_THETA_ALIGN_MAX,
   //---------------------------------------------------------------------------
   .iParkFlt.a                               = MOTOR2_CURRENT_LPF_ALPHA,
   .iParkFlt.one_minus_a                     = MOTOR2_CURRENT_LPF_ONE_M_ALPHA,
