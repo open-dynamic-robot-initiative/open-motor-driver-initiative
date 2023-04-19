@@ -131,7 +131,7 @@ __interrupt void Cla1Task1(void)
 //    }
 }
 
-interrupt void Cla1Task2 ( void )
+__interrupt void Cla1Task2 ( void )
 {
     // Motor control
     motor[MOTOR_2].itDone = MOT_runControl(&motor[MOTOR_2]);
@@ -162,7 +162,7 @@ interrupt void Cla1Task7 ( void )
 
 }
 
-interrupt void Cla1Task8 ( void )
+__interrupt void Cla1Task8 ( void )
 {
     // Uncomment this to debug the CLA while connected to the debugger
     __mdebugstop();
@@ -230,9 +230,8 @@ interrupt void Cla1Task8 ( void )
     motor_foc[MOTOR_1].motor_cmd.cptTimeout                     = 0U;
     motor_foc[MOTOR_1].motor_cmd.index                          = 0U;
     motor_foc[MOTOR_1].motor_cmd.cmdArray.all                   = 0U;
-    //--- Maximum current alignment value ---------------------------------------
-    motor_foc[MOTOR_1].iAlignMax                                = MOTOR1_CURRENT_ALIGN_MAX;
-    motor_foc[MOTOR_1].thetaAlign                               = MOTOR1_THETA_ALIGN_MAX,
+    //--- Initial position for alignment procedure ------------------------------
+    motor_foc[MOTOR_1].posAlign                                 = MOTOR1_POSITION_ALIGN_MAX,
     //---------------------------------------------------------------------------
     motor_foc[MOTOR_1].iParkFlt.a                               = MOTOR1_CURRENT_LPF_ALPHA;
     motor_foc[MOTOR_1].iParkFlt.one_minus_a                     = MOTOR1_CURRENT_LPF_ONE_M_ALPHA;
@@ -370,9 +369,8 @@ interrupt void Cla1Task8 ( void )
     motor_foc[MOTOR_2].motor_cmd.cptTimeout                     = 0U;
     motor_foc[MOTOR_2].motor_cmd.index                          = 0U;
     motor_foc[MOTOR_2].motor_cmd.cmdArray.all                   = 0U;
-    //--- Maximum current alignment value ---------------------------------------
-    motor_foc[MOTOR_2].iAlignMax                                = MOTOR2_CURRENT_ALIGN_MAX;
-    motor_foc[MOTOR_2].thetaAlign                               = MOTOR2_THETA_ALIGN_MAX,
+    //--- Initial position for alignment procedure ------------------------------
+    motor_foc[MOTOR_2].posAlign                                 = MOTOR2_POSITION_ALIGN_MAX,
     //---------------------------------------------------------------------------
     motor_foc[MOTOR_2].iParkFlt.a                               = MOTOR2_CURRENT_LPF_ALPHA;
     motor_foc[MOTOR_2].iParkFlt.one_minus_a                     = MOTOR2_CURRENT_LPF_ONE_M_ALPHA;
@@ -449,7 +447,7 @@ interrupt void Cla1Task8 ( void )
     //--- MOTOR_1 ---------------------------------------------------------------
     motor[MOTOR_1].motor_id                                     = MOTOR_1;
     //--- FOC structure address -------------------------------------------------
-    motor[MOTOR_1].p_motorFOC.ptr                               = &motor_foc[MOTOR_1];
+    motor[MOTOR_1].p_foc.ptr                                    = &motor_foc[MOTOR_1];
     //--- FSM motor initial state -----------------------------------------------
     motor[MOTOR_1].motor_state                                  = MOTOR_STATE_INIT;
     //--- Error message ---------------------------------------------------------
@@ -466,14 +464,14 @@ interrupt void Cla1Task8 ( void )
     motor[MOTOR_1].epwmBaseAddr[CHANNEL_2]                      = MOTOR1_PWM2_BASE;
     motor[MOTOR_1].epwmBaseAddr[CHANNEL_3]                      = MOTOR1_PWM3_BASE;
     //---- PWM command address --------------------------------------------------
-    motor[MOTOR_1].p_motorCmdReg[CHANNEL_1].addr32b             = MOTOR1_PWM1_CMD_ADDR;
-    motor[MOTOR_1].p_motorCmdReg[CHANNEL_2].addr32b             = MOTOR1_PWM2_CMD_ADDR;
-    motor[MOTOR_1].p_motorCmdReg[CHANNEL_3].addr32b             = MOTOR1_PWM3_CMD_ADDR;
+    motor[MOTOR_1].p_cmdReg[CHANNEL_1].addr32b                  = MOTOR1_PWM1_CMD_ADDR;
+    motor[MOTOR_1].p_cmdReg[CHANNEL_2].addr32b                  = MOTOR1_PWM2_CMD_ADDR;
+    motor[MOTOR_1].p_cmdReg[CHANNEL_3].addr32b                  = MOTOR1_PWM3_CMD_ADDR;
 
     //--- MOTOR_2 ---------------------------------------------------------------
     motor[MOTOR_2].motor_id                                     = MOTOR_2;
     //--- FOC structure address -------------------------------------------------
-    motor[MOTOR_2].p_motorFOC.ptr                               = &motor_foc[MOTOR_2];
+    motor[MOTOR_2].p_foc.ptr                                    = &motor_foc[MOTOR_2];
     //--- FSM motor initial state -----------------------------------------------
     motor[MOTOR_2].motor_state                                  = MOTOR_STATE_INIT;
     //--- Error message ---------------------------------------------------------
@@ -490,9 +488,9 @@ interrupt void Cla1Task8 ( void )
     motor[MOTOR_2].epwmBaseAddr[CHANNEL_2]                      = MOTOR2_PWM2_BASE;
     motor[MOTOR_2].epwmBaseAddr[CHANNEL_3]                      = MOTOR2_PWM3_BASE;
     //---- PWM command address --------------------------------------------------
-    motor[MOTOR_1].p_motorCmdReg[CHANNEL_1].addr32b             = MOTOR2_PWM1_CMD_ADDR;
-    motor[MOTOR_1].p_motorCmdReg[CHANNEL_2].addr32b             = MOTOR2_PWM2_CMD_ADDR;
-    motor[MOTOR_1].p_motorCmdReg[CHANNEL_3].addr32b             = MOTOR2_PWM3_CMD_ADDR;
+    motor[MOTOR_1].p_cmdReg[CHANNEL_1].addr32b              = MOTOR2_PWM1_CMD_ADDR;
+    motor[MOTOR_1].p_cmdReg[CHANNEL_2].addr32b             = MOTOR2_PWM2_CMD_ADDR;
+    motor[MOTOR_1].p_cmdReg[CHANNEL_3].addr32b             = MOTOR2_PWM3_CMD_ADDR;
 }
 #endif
 //bool_t as5047u_crc8check(BitDataFrame32_u data)

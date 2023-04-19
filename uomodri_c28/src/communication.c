@@ -69,7 +69,11 @@ bool_t COM_msgExtract(mst2slv_msg_t* p_msg,  cmd_t* p_cmd_m1,  cmd_t* p_cmd_m2)
  */
 void COM_msgCreate(motor_t* p_motor_m1, motor_t* p_motor_m2, slv2mst_msg_t* p_msg)
 {
+#if (CLA1_CORE_ENABLE)
+    foc_t* p_foc                        = (foc_t *)p_motor_m1->p_foc.ptr;
+#else
     foc_t* p_foc                        = p_motor_m1->p_foc;
+#endif
     encoder_t* p_enc                    = &p_foc->motor_enc;
     cmd_reg_u cmd_reg                   = {.all = p_foc->motor_cmd.cmdArray.all};
     float32_t pos_offset                = p_enc->thetaAbsolute - ((cmd_reg.encOffsetEnable) ? (p_enc->thetaIndex) : (0.0f));
@@ -93,7 +97,11 @@ void COM_msgCreate(motor_t* p_motor_m1, motor_t* p_motor_m2, slv2mst_msg_t* p_ms
     p_msg->lastCmdIndex                 = p_foc->motor_cmd.index;
     p_msg->timeStamp                    = (uint16_t)CPUTimer_getTimerCount(CPU_TIMER_0_BASE);
 
+#if (CLA1_CORE_ENABLE)
+    p_foc                               = (foc_t *)p_motor_m2->p_foc.ptr;
+#else
     p_foc                               = p_motor_m2->p_foc;
+#endif
     p_enc                               = &p_foc->motor_enc;
     cmd_reg.all                         = p_foc->motor_cmd.cmdArray.all;
     pos_offset                          = p_enc->thetaAbsolute - ((cmd_reg.encOffsetEnable) ? (p_enc->thetaIndex) : (0.0f));

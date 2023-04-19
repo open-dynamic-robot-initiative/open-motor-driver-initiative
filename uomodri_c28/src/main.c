@@ -78,8 +78,13 @@ void main(void)
     HAL_ADC_offsetCalib(&periph_motor_cfg[MOTOR_1]);
     HAL_ADC_offsetCalib(&periph_motor_cfg[MOTOR_2]);
     // Force a reset of FOC structures
+#if (CLA1_CORE_ENABLE)
+    FOC_resetStruct((foc_t *)motor[MOTOR_1].p_foc.ptr);
+    FOC_resetStruct((foc_t *)motor[MOTOR_2].p_foc.ptr);
+#else
     FOC_resetStruct(motor[MOTOR_1].p_foc);
     FOC_resetStruct(motor[MOTOR_2].p_foc);
+#endif
     // Force a reset of the intermediate command structures. Working structures are embedded in FOC structures.
     COM_resetCmdStruct(&cmd_uOmodri[MOTOR_1]);
     COM_resetCmdStruct(&cmd_uOmodri[MOTOR_2]);
@@ -130,10 +135,17 @@ void main(void)
             // Send new commands to FOC structures if extract valid
             if(cmd_msg_valid || timeout_flag)
             {
+#if (CLA1_CORE_ENABLE)
+                if(cmd_msg_valid && ((cmd_uOmodri[MOTOR_1].cmdArray.all & 0xB000) == 0xB000))
+                    cmd_uOmodri[MOTOR_1].posRef += ((foc_t *)(motor[MOTOR_1].p_foc.ptr))->motor_enc.thetaIndex;
+                if(cmd_msg_valid && ((cmd_uOmodri[MOTOR_2].cmdArray.all & 0x000B) == 0x000B))
+                    cmd_uOmodri[MOTOR_2].posRef += ((foc_t *)(motor[MOTOR_2].p_foc.ptr))->motor_enc.thetaIndex;
+#else
                 if(cmd_msg_valid && ((cmd_uOmodri[MOTOR_1].cmdArray.all & 0xB000) == 0xB000))
                     cmd_uOmodri[MOTOR_1].posRef += motor[MOTOR_1].p_foc->motor_enc.thetaIndex;
                 if(cmd_msg_valid && ((cmd_uOmodri[MOTOR_2].cmdArray.all & 0x000B) == 0x000B))
                     cmd_uOmodri[MOTOR_2].posRef += motor[MOTOR_2].p_foc->motor_enc.thetaIndex;
+#endif
                 DMA_forceTrigger(DMA_CMD_2_FOC_BASE_ADDR);
             }
             cmd_msg_valid           = false;
@@ -316,13 +328,13 @@ inline void LED_dimming(motor_t* p_motor1, motor_t* p_motor2, uint16_t* p_msg)
     float32_t       timer_fade_blink= (float32_t)((timer_cpt_ms < 500)  ? (timer_cpt_ms)    : (1000 - timer_cpt_ms)) / 500.0f;
     float32_t       timer_blink     = (timer_cpt_ms < 500)              ? (0.0f)            : (1.0f);
     timer_cpt_ms                    = (timer_cpt_ms < 1000)             ? (timer_cpt_ms + 1): (0);
-    uint8_t         motor_state     = MOTOR_STATE_INIT;//    motor_state_e   motor_state     = MOTOR_STATE_INIT;
+    uint8_t         motor_state     = MOTOR_STATE_INIT;
 
     if((p_motor1->motor_state == MOTOR_STATE_INIT) || (p_motor2->motor_state == MOTOR_STATE_INIT))
         motor_state = MOTOR_STATE_INIT;
-    else if(((p_motor1->motor_state == MOTOR_STATE_ALIGN_UP) || (p_motor1->motor_state == MOTOR_STATE_ALIGN_FIX)) &&
-            ((p_motor2->motor_state == MOTOR_STATE_ALIGN_UP) || (p_motor2->motor_state == MOTOR_STATE_ALIGN_FIX)))
-        motor_state = MOTOR_STATE_ALIGN_UP;
+    else if(((p_motor1->motor_state == MOTOR_STATE_ALIGN_MOVE) || (p_motor1->motor_state == MOTOR_STATE_ALIGN_FIX)) &&
+            ((p_motor2->motor_state == MOTOR_STATE_ALIGN_MOVE) || (p_motor2->motor_state == MOTOR_STATE_ALIGN_FIX)))
+        motor_state = MOTOR_STATE_ALIGN_MOVE;
     else if(((p_motor1->motor_state == MOTOR_STATE_READY) || (p_motor1->motor_state == MOTOR_STATE_STOP)) &&
             ((p_motor2->motor_state == MOTOR_STATE_READY) || (p_motor2->motor_state == MOTOR_STATE_STOP)))
         motor_state = MOTOR_STATE_READY;
@@ -331,7 +343,7 @@ inline void LED_dimming(motor_t* p_motor1, motor_t* p_motor2, uint16_t* p_msg)
 
     switch(motor_state)
     {
-    case MOTOR_STATE_ALIGN_UP:
+    case MOTOR_STATE_ALIGN_MOVE:
     case MOTOR_STATE_ALIGN_FIX:
         ws2812b_writeLed((uint16_t)(0xff * timer_fade_blink), 0, (uint16_t)(0xff * timer_fade_blink), p_msg); //Magenta fade,
         break;
@@ -605,7 +617,28 @@ __attribute__((interrupt)) void adc_isrMotor2(void)
             cpu2cm_dbg_msg.isat.float32b    = motor[MOTOR_1].p_motorFOC->motor_cmd.iSat;
             cpu2cm_dbg_msg.status.uint32b   = (uint32_t)motor[MOTOR_1].p_motorFOC->motor_cmd.enableReg.all;
 #endif
-#if (1)
+#if (CLA1_CORE_ENABLE)
+            transfer_array[0]   = ((foc_t *)(motor[MOTOR_2].p_foc.ptr))->motor_acq.ia;
+            transfer_array[1]   = ((foc_t *)(motor[MOTOR_2].p_foc.ptr))->motor_acq.ib;
+            transfer_array[2]   = ((foc_t *)(motor[MOTOR_2].p_foc.ptr))->motor_acq.ic;
+            transfer_array[3]   = ((foc_t *)(motor[MOTOR_2].p_foc.ptr))->motor_acq.vbus;
+            transfer_array[4]   = ((foc_t *)(motor[MOTOR_2].p_foc.ptr))->ialpha;
+            transfer_array[5]   = ((foc_t *)(motor[MOTOR_2].p_foc.ptr))->ibeta;
+            transfer_array[6]   = ((foc_t *)(motor[MOTOR_2].p_foc.ptr))->id;
+            transfer_array[7]   = ((foc_t *)(motor[MOTOR_2].p_foc.ptr))->iq;
+            transfer_array[8]   = ((foc_t *)(motor[MOTOR_2].p_foc.ptr))->ud;
+            transfer_array[9]   = ((foc_t *)(motor[MOTOR_2].p_foc.ptr))->uq;
+            transfer_array[10]  = ((foc_t *)(motor[MOTOR_2].p_foc.ptr))->ualpha;
+            transfer_array[11]  = ((foc_t *)(motor[MOTOR_2].p_foc.ptr))->ubeta;
+            transfer_array[12]  = ((foc_t *)(motor[MOTOR_2].p_foc.ptr))->ua;
+            transfer_array[13]  = ((foc_t *)(motor[MOTOR_2].p_foc.ptr))->ub;
+            transfer_array[14]  = ((foc_t *)(motor[MOTOR_2].p_foc.ptr))->uc;
+            transfer_array[15]  = ((foc_t *)(motor[MOTOR_2].p_foc.ptr))->motor_enc.thetaAbsolute;
+            transfer_array[16]  = ((foc_t *)(motor[MOTOR_2].p_foc.ptr))->motor_cmd.posRef;
+            transfer_array[17]  = ((foc_t *)(motor[MOTOR_2].p_foc.ptr))->motor_enc.speed.speedMech[0];
+            transfer_array[18]  = ((foc_t *)(motor[MOTOR_2].p_foc.ptr))->motor_cmd.velRef;
+            transfer_array[19]  = ((foc_t *)(motor[MOTOR_2].p_foc.ptr))->iqRef;
+#else
             transfer_array[0]   = motor[MOTOR_2].p_foc->motor_acq.ia;
             transfer_array[1]   = motor[MOTOR_2].p_foc->motor_acq.ib;
             transfer_array[2]   = motor[MOTOR_2].p_foc->motor_acq.ic;
