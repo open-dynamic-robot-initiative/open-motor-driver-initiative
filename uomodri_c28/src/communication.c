@@ -83,8 +83,8 @@ void COM_msgCreate(motor_t* p_motor_m1, motor_t* p_motor_m2, slv2mst_msg_t* p_ms
     // Update status field - MOTOR_1
     p_msg->status.M1E                   = cmd_reg.motorEnable;      // MOTOR_1 enabled
     p_msg->status.M1R                   = align_done;               // MOTOR_1 ready
-    p_msg->status.IDX1T                 = p_enc->indexToggle;       // MOTOR_1 index toggle
-    p_msg->status.IDX1D                 = p_enc->indexDetect;       // MOTOR_1 index detected
+    p_msg->status.IDX1T                 = p_enc->flags.indexToggle; // MOTOR_1 index toggle
+    p_msg->status.IDX1D                 = p_enc->flags.indexDetect; // MOTOR_1 index detected
     p_msg->position[MOTOR_1].u16_msb    = MSB_32(pos);
     p_msg->position[MOTOR_1].u16_lsb    = LSB_32(pos);
     p_msg->velocity[MOTOR_1]            = (int16_t)(p_enc->speed.speedMech[0]   / VELOCITY_LSB      * FM_RADPS2KRPM);
@@ -111,8 +111,8 @@ void COM_msgCreate(motor_t* p_motor_m1, motor_t* p_motor_m2, slv2mst_msg_t* p_ms
     // Update status field - MOTOR_2
     p_msg->status.M2E                   = cmd_reg.motorEnable;      // MOTOR_2 enabled
     p_msg->status.M2R                   = align_done;               // MOTOR_2 ready
-    p_msg->status.IDX2T                 = p_enc->indexToggle;       // MOTOR_2 index toggle
-    p_msg->status.IDX2D                 = p_enc->indexDetect;       // MOTOR_2 index detected
+    p_msg->status.IDX2T                 = p_enc->flags.indexToggle; // MOTOR_2 index toggle
+    p_msg->status.IDX2D                 = p_enc->flags.indexDetect; // MOTOR_2 index detected
     p_msg->position[MOTOR_2].u16_msb    = MSB_32(pos);
     p_msg->position[MOTOR_2].u16_lsb    = LSB_32(pos);
     p_msg->velocity[MOTOR_2]            = (int16_t)(p_enc->speed.speedMech[0]   / VELOCITY_LSB      * FM_RADPS2KRPM);

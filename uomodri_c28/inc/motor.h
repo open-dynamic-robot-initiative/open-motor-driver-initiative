@@ -47,7 +47,7 @@ typedef union __error_reg_u__
         uint8_t                 pos_rollover    : 1;    /*!< Bits 1   : R/W - Position roll-over occurred */
         uint8_t                 drv_fault       : 1;    /*!< Bits 2   : R/W - Motor DRV nFault error */
         uint8_t                 com_timeout     : 1;    /*!< Bits 3   : R/W - Communication timeout error */
-        uint8_t                 enc_fault       : 1;    /*!< Bits 4   : R/W - Alignment procedure fault */
+        uint8_t                 enc_failure     : 1;    /*!< Bits 4   : R/W - encoder failure during alignment. */
         uint8_t                 error_RSV1      : 3;    /*!< Bits 5-7 : R/W - Reserved */
     };
 } error_reg_u;

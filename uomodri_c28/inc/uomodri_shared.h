@@ -112,11 +112,12 @@ inline void ENC_resetStruct(encoder_t* p_enc)
     p_enc->thetaIndex       = 0.0f;
     p_enc->thetaAbsolute    = 0.0f;
     p_enc->turnNb           = 0U;
-    p_enc->indexDetect      = false;
-    p_enc->indexOffset      = false;
-    p_enc->indexToggle      = false;
-    p_enc->indexError       = false;
-    p_enc->rollOverError    = false;
+    p_enc->flags.all        = 0U;
+//    p_enc->indexDetect      = false;
+//    p_enc->indexOffset      = false;
+//    p_enc->indexToggle      = false;
+//    p_enc->indexError       = false;
+//    p_enc->rollOverError    = false;
 
     p_speed->alpha          = 0.0f;
     p_speed->theta[NEW]     = 0.0f;
@@ -281,7 +282,7 @@ inline void ENC_getTheta(encoder_t* p_enc)
     // If theta difference is high or low enough, we overflowed or underflowed
     bool_t maxRollOver          = (p_enc->turnNb > MAX_ROLLOVER)? (true) : (false);
     bool_t minRollOver          = (p_enc->turnNb < MIN_ROLLOVER)? (true) : (false);
-    p_enc->rollOverError        = (maxRollOver || minRollOver)  ? (true) : (false);
+    p_enc->flags.rollOverError  = (maxRollOver || minRollOver)  ? (true) : (false);
     // Saturate turnNb between -128 and 127
     p_enc->turnNb               = (maxRollOver) ? (MIN_ROLLOVER) : (p_enc->turnNb);
     p_enc->turnNb               = (minRollOver) ? (MAX_ROLLOVER) : (p_enc->turnNb);
@@ -297,17 +298,19 @@ inline void ENC_getTheta(encoder_t* p_enc)
         float32_t thetaIndex    = __mpy2pif32((float32_t)EQEP_getIndexPositionLatch(eqepBase) * p_enc->thetaMechScaler);
 #endif
         // Save first indexed mechanical angle normalized between 0 and 2 x PI
-        p_enc->thetaIndex       = (!p_enc->indexDetect) ? (thetaIndex) : (p_enc->thetaIndex);
+        p_enc->thetaIndex       = (!p_enc->flags.indexDetect) ? (thetaIndex) : (p_enc->thetaIndex);
         // Set index detection flag.
-        p_enc->indexDetect      = true;
+        p_enc->flags.indexDetect= true;
         // Check if current index capture match the first index capture
 #if (CLA1_CORE_ENABLE)
-        p_enc->indexError       = (fabsf(p_enc->thetaIndex - thetaIndex) < (FM_ROUND2RAD * 4.0f / p_enc->thetaMechScaler)) ? (false) : (true);
+        float32_t tmp           = FM_ROUND2RAD * 4.0f / p_enc->thetaMechScaler;
+        p_enc->flags.indexError = (fabsf(p_enc->thetaIndex - thetaIndex) < tmp) ? (false) : (true);
 #else
-        p_enc->indexError       = (fabsf(p_enc->thetaIndex - thetaIndex) < __mpy2pif32(4.0f / p_enc->thetaMechScaler)) ? (false) : (true);
+        float32_t tmp           = __mpy2pif32(4.0f / p_enc->thetaMechScaler);
+        p_enc->flags.indexError = (fabsf(p_enc->thetaIndex - thetaIndex) < tmp) ? (false) : (true);
 #endif
         // Toggle index
-        p_enc->indexToggle      = !p_enc->indexToggle;
+        p_enc->flags.indexToggle= !p_enc->flags.indexToggle;
         // Clear flag
         EQEP_clearInterruptStatus(eqepBase, EQEP_INT_INDEX_EVNT_LATCH);
     }
@@ -650,14 +653,14 @@ inline bool_t MOT_runControl(motor_t* p_motor)
     error_reg_u*        p_err           = &p_motor->motor_error;
     encoder_t*          p_enc           = &p_foc->motor_enc;
     cmd_t*              p_cmd           = &p_foc->motor_cmd;
+    uint8_t*            p_state         = &p_motor->motor_state;
+    float32_t           tmp             = 0.0f;
     cmd_reg_u           cmd_reg         = {.all = p_cmd->cmdArray.all};
     uint8_t             motor_id        = p_motor->motor_id;
-    bool_t              id1ref_test     = false;
-    bool_t              id2ref_test     = false;
-    bool_t              enc1_test       = false;
-    bool_t              enc2_test       = false;
-    p_enc->indexOffset                  = cmd_reg.encOffsetEnable;
+    bool_t              idref_max       = false;
+    p_enc->flags.indexOffset            = cmd_reg.encOffsetEnable;
 
+    //  Read currents in 3 phases + Vbus
     FOC_getMeasures(&p_foc->motor_acq);
     // Read encoder position
     ENC_getPosition(p_enc);
@@ -669,13 +672,13 @@ inline bool_t MOT_runControl(motor_t* p_motor)
     // Save number of cycles elapsed since control loop startup
     p_motor->clCycleNb          = EPWM_getTimeBaseCounterValue(p_motor->epwmBaseAddr[CHANNEL_1]);
     p_err->drv_fault            = !GPIO_readPin(p_motor->drvFaultNum)                           || p_err->drv_fault;
-    p_err->pos_rollover         = (p_enc->rollOverError && cmd_reg.rollOverEnable)              || p_err->pos_rollover;
-    p_err->com_timeout          = ((p_cmd->cptTimeout > p_cmd->timeoutRef) && p_cmd->timeoutRef)|| p_err->com_timeout;
-    p_err->enc_mismatch         = (p_enc->indexDetect && p_enc->indexError)                     || p_err->enc_mismatch;
-    p_err->enc_fault            = (p_motor->motor_state == MOTOR_STATE_ALIGN_FIX) && (enc1_test || enc2_test) || p_err->enc_fault;
-    p_motor->motor_state        = (p_err->all)                      ?(MOTOR_STATE_ERROR)        :(p_motor->motor_state);
+    p_err->pos_rollover         = (p_enc->flags.rollOverError && cmd_reg.rollOverEnable)        || p_err->pos_rollover;
+    p_err->com_timeout          = (p_cmd->cptTimeout > p_cmd->timeoutRef) && p_cmd->timeoutRef  || p_err->com_timeout;
+    p_err->enc_mismatch         = (p_enc->flags.indexDetect && p_enc->flags.indexError)         || p_err->enc_mismatch;
+    p_err->enc_failure          = p_enc->flags.phaseError                                       || p_err->enc_failure;
+    *p_state                    = (p_err->all)                      ?(MOTOR_STATE_ERROR)        :(*p_state);
 
-    switch(p_motor->motor_state)
+    switch(*p_state)
     {
     case MOTOR_STATE_INIT:
     default:
@@ -683,8 +686,8 @@ inline bool_t MOT_runControl(motor_t* p_motor)
         p_foc->idRef            = 0.0f;
         p_foc->iqRef            = 0.0f;
         p_foc->posAlign         = (motor_id == MOTOR_1)             ?(MOTOR1_POSITION_ALIGN_MAX):(MOTOR2_POSITION_ALIGN_MAX);
-        p_motor->motor_state    = (cmd_reg.motorEnable)             ?(MOTOR_STATE_ALIGN_MOVE)   :(MOTOR_STATE_INIT);
-        p_motor->motor_state    = (cmd_reg.systemEnable)            ?(p_motor->motor_state)     :(MOTOR_STATE_INIT);
+        *p_state                = (cmd_reg.motorEnable)             ?(MOTOR_STATE_ALIGN_MOVE)   :(MOTOR_STATE_INIT);
+        *p_state                = (cmd_reg.systemEnable)            ?(*p_state)                 :(MOTOR_STATE_INIT);
         ENC_resetPeriph(p_enc);
         FOC_resetStruct(p_foc);
         MOT_stopCommand(p_motor);
@@ -695,19 +698,14 @@ inline bool_t MOT_runControl(motor_t* p_motor)
         p_foc->idRef           += (motor_id == MOTOR_1)             ?(MOTOR1_CURRENT_ALIGN_INC) :(MOTOR2_CURRENT_ALIGN_INC);
         p_foc->iqRef            = 0.0f;
         p_foc->posAlign        -= (motor_id == MOTOR_1)             ?(MOTOR1_POSITION_ALIGN_DEC):(MOTOR2_POSITION_ALIGN_DEC);
-        id1ref_test             = (motor_id == MOTOR_1) && (p_foc->idRef < MOTOR1_CURRENT_ALIGN_MAX);
-        id2ref_test             = (motor_id == MOTOR_2) && (p_foc->idRef < MOTOR2_CURRENT_ALIGN_MAX);
-#if (CLA1_CORE_ENABLE)
-        enc1_test               = (motor_id == MOTOR_1) && (fabsf(p_enc->thetaMech[NEW]) >= (2.0f * MOTOR1_ENC_RESOLUTION_RAD));
-        enc2_test               = (motor_id == MOTOR_2) && (fabsf(p_enc->thetaMech[NEW]) >= (2.0f * MOTOR2_ENC_RESOLUTION_RAD));
-#else
-        enc1_test               = (motor_id == MOTOR_1) && (fabsf(p_enc->thetaMech[NEW]) >= (2.0f * MOTOR1_ENC_RESOLUTION_RAD));
-        enc2_test               = (motor_id == MOTOR_2) && (fabsf(p_enc->thetaMech[NEW]) >= (2.0f * MOTOR2_ENC_RESOLUTION_RAD));
-#endif
-        p_motor->motor_state    = (id1ref_test || id2ref_test)      ?(MOTOR_STATE_ALIGN_MOVE)   :(MOTOR_STATE_ALIGN_FIX);
-        p_motor->motor_state    = (cmd_reg.motorEnable)             ?(p_motor->motor_state)     :(MOTOR_STATE_INIT);
-        p_motor->motor_state    = (cmd_reg.systemEnable)            ?(p_motor->motor_state)     :(MOTOR_STATE_INIT);
-        (p_motor->motor_state  != MOTOR_STATE_ALIGN_MOVE)           ?(ENC_resetStruct(p_enc))   :(p_enc->thetaElec = p_foc->posAlign);
+        tmp                     = (motor_id == MOTOR_1)             ?(MOTOR1_CURRENT_ALIGN_MAX) :(MOTOR2_CURRENT_ALIGN_MAX);
+        idref_max               = (p_foc->idRef >= tmp)             ?(true)                     :(false);
+        tmp                     = 2.0f * ((motor_id == MOTOR_1)     ?(MOTOR1_ENC_RESOLUTION_RAD):(MOTOR2_ENC_RESOLUTION_RAD));
+        p_enc->flags.phaseError = idref_max && (fabsf(p_enc->thetaMech[NEW]) < tmp) ?(true)     :(false);
+        *p_state                = (idref_max)                       ?(MOTOR_STATE_ALIGN_FIX)    :(MOTOR_STATE_ALIGN_MOVE);
+        *p_state                = (cmd_reg.motorEnable)             ?(*p_state)                 :(MOTOR_STATE_INIT);
+        *p_state                = (cmd_reg.systemEnable)            ?(*p_state)                 :(MOTOR_STATE_INIT);
+        (*p_state != MOTOR_STATE_ALIGN_MOVE)                        ?(ENC_resetStruct(p_enc))   :(p_enc->thetaElec = p_foc->posAlign);
         FOC_runControl(p_foc);
         MOT_runCommand(p_motor, p_foc->dtc_u, p_foc->dtc_v, p_foc->dtc_w);
         break;
@@ -716,9 +714,9 @@ inline bool_t MOT_runControl(motor_t* p_motor)
         p_motor->itCnt         += 1U; // wait 2s
         p_foc->idRef            = (motor_id == MOTOR_1)             ?(MOTOR1_CURRENT_ALIGN_MAX) :(MOTOR2_CURRENT_ALIGN_MAX);
         p_foc->iqRef            = 0.0f;
-        p_motor->motor_state    = (p_motor->itCnt < (2 * PWM_FREQ)) ?(MOTOR_STATE_ALIGN_FIX)    :(MOTOR_STATE_READY);
-        p_motor->motor_state    = (cmd_reg.motorEnable)             ?(p_motor->motor_state)     :(MOTOR_STATE_INIT);
-        p_motor->motor_state    = (cmd_reg.systemEnable)            ?(p_motor->motor_state)     :(MOTOR_STATE_INIT);
+        *p_state                = (p_motor->itCnt >= (2 * PWM_FREQ))?(MOTOR_STATE_READY)        :(MOTOR_STATE_ALIGN_FIX);
+        *p_state                = (cmd_reg.motorEnable)             ?(*p_state)                 :(MOTOR_STATE_INIT);
+        *p_state                = (cmd_reg.systemEnable)            ?(*p_state)                 :(MOTOR_STATE_INIT);
         ENC_resetPeriph(p_enc);
         ENC_resetStruct(p_enc);
         FOC_runControl(p_foc);
@@ -729,8 +727,8 @@ inline bool_t MOT_runControl(motor_t* p_motor)
         p_motor->itCnt         += 1U;
         p_foc->idRef            = 0.0f;
         p_foc->iqRef            = FOC_runPD(&p_foc->pdPosVel);
-        p_motor->motor_state    = (cmd_reg.motorEnable)             ?(MOTOR_STATE_READY)        :(MOTOR_STATE_STOP);
-        p_motor->motor_state    = (cmd_reg.systemEnable)            ?(p_motor->motor_state)     :(MOTOR_STATE_INIT);
+        *p_state                = (cmd_reg.motorEnable)             ?(MOTOR_STATE_READY)        :(MOTOR_STATE_STOP);
+        *p_state                = (cmd_reg.systemEnable)            ?(*p_state)                 :(MOTOR_STATE_INIT);
         FOC_runControl(p_foc);
         MOT_runCommand(p_motor, p_foc->dtc_u, p_foc->dtc_v, p_foc->dtc_w);
         break;
@@ -739,8 +737,8 @@ inline bool_t MOT_runControl(motor_t* p_motor)
         p_motor->itCnt         += 1U;
         p_foc->idRef            = 0.0f;
         p_foc->iqRef            = 0.0f;
-        p_motor->motor_state    = (!cmd_reg.motorEnable)            ?(MOTOR_STATE_STOP)         :(MOTOR_STATE_READY);
-        p_motor->motor_state    = (cmd_reg.systemEnable)            ?(p_motor->motor_state)     :(MOTOR_STATE_INIT);
+        *p_state                = (cmd_reg.motorEnable)             ?(MOTOR_STATE_READY)        :(MOTOR_STATE_STOP);
+        *p_state                = (cmd_reg.systemEnable)            ?(*p_state)                 :(MOTOR_STATE_INIT);
         FOC_runControl(p_foc);
         MOT_runCommand(p_motor, p_foc->dtc_u, p_foc->dtc_v, p_foc->dtc_w);
         break;
@@ -749,7 +747,7 @@ inline bool_t MOT_runControl(motor_t* p_motor)
         p_motor->itCnt          = p_motor->itCnt;
         p_foc->idRef            = 0.0f;
         p_foc->iqRef            = 0.0f;
-        p_motor->motor_state    = MOTOR_STATE_ERROR;
+        *p_state                = MOTOR_STATE_ERROR;
 //        ENC_resetPeriph(p_enc);
 //        FOC_resetStruct(p_foc);
 //        FOC_runControl(p_foc);

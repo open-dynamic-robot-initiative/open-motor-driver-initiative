@@ -16,6 +16,21 @@
 /***********************************************************************
  * CONTROL STRUCTURES
  ***********************************************************************/
+typedef union __enc_test_u__
+{
+    uint8_t             all;
+    struct
+    {
+        uint8_t         indexDetect     : 1;    /*!< Bit 0      : R/W - Has index been detected? */
+        uint8_t         indexOffset     : 1;    /*!< Bit 1      : R/W - Is index compensation activated? */
+        uint8_t         indexToggle     : 1;    /*!< Bit 2      : R/W - Toggle flag every time index is seen. */
+        uint8_t         indexError      : 1;    /*!< Bit 3      : R/W - Mismatch between index and mechanical angle capture. */
+        uint8_t         rollOverError   : 1;    /*!< Bit 4      : R/W - Roll-over error flag. */
+        uint8_t         phaseError      : 1;    /*!< Bit 5      : R/W - Phase A, phase B or both are missing. */
+        uint8_t         ENC_TEST_RSV1   : 2;    /*!< Bit 6-7    : R/W - Reserved */
+    };
+} enc_test_u;
+
 /**
  * @struct  speed_t
  * @brief   Speed estimation structure of encoder.
@@ -54,11 +69,13 @@ typedef struct __encoder_t__
     speed_t             speed;              /*!< Speed estimation structure */
     int16_t             turnNb;             /*!< Number of full turns (signed) */
     int16_t             thetaDir;           /*!< Rotor direction - -1 = CCW/reverse, 1 = CW/forward */
-    bool_t              indexDetect;        /*!< Has index been detected */
-    bool_t              indexOffset;        /*!< Is index compensation activated */
-    bool_t              indexToggle;        /*!< Flag that toggles every time index is seen */
-    bool_t              indexError;         /*!< Mismatch error between consecutive index mechanical angle capture */
-    bool_t              rollOverError;      /*!< Roll-over error flag */
+    enc_test_u          flags;
+//    bool_t              indexDetect;        /*!< Has index been detected */
+//    bool_t              indexOffset;        /*!< Is index compensation activated */
+//    bool_t              indexToggle;        /*!< Flag that toggles every time index is seen */
+//    bool_t              indexError;         /*!< Mismatch error between consecutive index mechanical angle capture */
+//    bool_t              rollOverError;      /*!< Roll-over error flag */
+//    bool_t              phaseError;         /*!< A, B or both phases are missing */
 } encoder_t;
 
 /***********************************************************************
