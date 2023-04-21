@@ -197,6 +197,7 @@ __interrupt void Cla1Task8 ( void )
     motor_foc[MOTOR_1].motor_enc.thetaMech[OLD]                 = 0.0f;
     motor_foc[MOTOR_1].motor_enc.thetaMechScaler                = (float32_t)MOTOR1_ENC_RESOLUTION_SCALE;
     motor_foc[MOTOR_1].motor_enc.thetaIndex                     = 0.0f;
+    motor_foc[MOTOR_1].motor_enc.thetaIndexAbsolute             = 0.0f;
     motor_foc[MOTOR_1].motor_enc.thetaAbsolute                  = 0.0f;
     motor_foc[MOTOR_1].motor_enc.turnNb                         = 0;
     motor_foc[MOTOR_1].motor_enc.thetaDir                       = 0;
@@ -337,6 +338,7 @@ __interrupt void Cla1Task8 ( void )
     motor_foc[MOTOR_2].motor_enc.thetaMech[OLD]                 = 0.0f;
     motor_foc[MOTOR_2].motor_enc.thetaMechScaler                = (float32_t)MOTOR2_ENC_RESOLUTION_SCALE;
     motor_foc[MOTOR_2].motor_enc.thetaIndex                     = 0.0f;
+    motor_foc[MOTOR_2].motor_enc.thetaIndexAbsolute             = 0.0f;
     motor_foc[MOTOR_2].motor_enc.thetaAbsolute                  = 0.0f;
     motor_foc[MOTOR_2].motor_enc.turnNb                         = 0;
     motor_foc[MOTOR_2].motor_enc.thetaDir                       = 0;

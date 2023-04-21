@@ -142,9 +142,9 @@ void main(void)
                     cmd_uOmodri[MOTOR_2].posRef += ((foc_t *)(motor[MOTOR_2].p_foc.ptr))->motor_enc.thetaIndex;
 #else
                 if(cmd_msg_valid && ((cmd_uOmodri[MOTOR_1].cmdArray.all & 0xB000) == 0xB000))
-                    cmd_uOmodri[MOTOR_1].posRef += motor[MOTOR_1].p_foc->motor_enc.thetaIndex;
+                    cmd_uOmodri[MOTOR_1].posRef += motor[MOTOR_1].p_foc->motor_enc.thetaIndexAbsolute;
                 if(cmd_msg_valid && ((cmd_uOmodri[MOTOR_2].cmdArray.all & 0x000B) == 0x000B))
-                    cmd_uOmodri[MOTOR_2].posRef += motor[MOTOR_2].p_foc->motor_enc.thetaIndex;
+                    cmd_uOmodri[MOTOR_2].posRef += motor[MOTOR_2].p_foc->motor_enc.thetaIndexAbsolute;
 #endif
                 DMA_forceTrigger(DMA_CMD_2_FOC_BASE_ADDR);
             }

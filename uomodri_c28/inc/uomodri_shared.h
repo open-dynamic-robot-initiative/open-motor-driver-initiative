@@ -271,21 +271,26 @@ inline void ENC_getSpeed(encoder_t* p_enc)
  */
 inline void ENC_getTheta(encoder_t* p_enc)
 {
-    uint32_t eqepBase           = p_enc->eqepBaseAddr;
+    uint32_t eqepBase               = p_enc->eqepBaseAddr;
     //-------------------------------------------------------------------
     //     TURN CONTROL
     //-------------------------------------------------------------------
-    float32_t deltaThetaMech    = p_enc->thetaMech[NEW] - p_enc->thetaMech[OLD];
+    float32_t deltaThetaMech        = p_enc->thetaMech[NEW] - p_enc->thetaMech[OLD];
     // Update turnNb
-    p_enc->turnNb               = (deltaThetaMech > M_PI)   ? (p_enc->turnNb - 1) : (p_enc->turnNb);
-    p_enc->turnNb               = (deltaThetaMech < -M_PI)  ? (p_enc->turnNb + 1) : (p_enc->turnNb);
+    p_enc->turnNb                   = (deltaThetaMech > M_PI)   ? (p_enc->turnNb - 1) : (p_enc->turnNb);
+    p_enc->turnNb                   = (deltaThetaMech < -M_PI)  ? (p_enc->turnNb + 1) : (p_enc->turnNb);
     // If theta difference is high or low enough, we overflowed or underflowed
-    bool_t maxRollOver          = (p_enc->turnNb > MAX_ROLLOVER)? (true) : (false);
-    bool_t minRollOver          = (p_enc->turnNb < MIN_ROLLOVER)? (true) : (false);
-    p_enc->flags.rollOverError  = (maxRollOver || minRollOver)  ? (true) : (false);
+    bool_t maxRollOver              = (p_enc->turnNb > MAX_ROLLOVER)? (true) : (false);
+    bool_t minRollOver              = (p_enc->turnNb < MIN_ROLLOVER)? (true) : (false);
+    p_enc->flags.rollOverError      = (maxRollOver || minRollOver)  ? (true) : (false);
     // Saturate turnNb between -128 and 127
-    p_enc->turnNb               = (maxRollOver) ? (MIN_ROLLOVER) : (p_enc->turnNb);
-    p_enc->turnNb               = (minRollOver) ? (MAX_ROLLOVER) : (p_enc->turnNb);
+    p_enc->turnNb                   = (maxRollOver) ? (MIN_ROLLOVER) : (p_enc->turnNb);
+    p_enc->turnNb                   = (minRollOver) ? (MAX_ROLLOVER) : (p_enc->turnNb);
+#if (CLA1_CORE_ENABLE)
+    float32_t turnNbRad             = FM_ROUND2RAD * (float32_t)p_enc->turnNb;
+#else
+    float32_t turnNbRad             = __mpy2pif32((float32_t)p_enc->turnNb);
+#endif
     //-------------------------------------------------------------------
     //     INDEX HANDLING
     //-------------------------------------------------------------------
@@ -293,33 +298,31 @@ inline void ENC_getTheta(encoder_t* p_enc)
     {
         // Compute indexed mechanical angle normalized between 0 and 2 x PI
 #if (CLA1_CORE_ENABLE)
-        float32_t thetaIndex    = FM_ROUND2RAD * (float32_t)EQEP_getIndexPositionLatch(eqepBase) * p_enc->thetaMechScaler;
+        float32_t thetaIndex        = FM_ROUND2RAD * (float32_t)EQEP_getIndexPositionLatch(eqepBase) * p_enc->thetaMechScaler;
 #else
-        float32_t thetaIndex    = __mpy2pif32((float32_t)EQEP_getIndexPositionLatch(eqepBase) * p_enc->thetaMechScaler);
+        float32_t thetaIndex        = __mpy2pif32((float32_t)EQEP_getIndexPositionLatch(eqepBase) * p_enc->thetaMechScaler);
 #endif
         // Save first indexed mechanical angle normalized between 0 and 2 x PI
-        p_enc->thetaIndex       = (!p_enc->flags.indexDetect) ? (thetaIndex) : (p_enc->thetaIndex);
+        p_enc->thetaIndex           = (!p_enc->flags.indexDetect) ? (thetaIndex)            : (p_enc->thetaIndex);
+        // Save first absolute indexed mechanical angle
+        p_enc->thetaIndexAbsolute   = (!p_enc->flags.indexDetect) ? (thetaIndex + turnNbRad): (p_enc->thetaIndexAbsolute);
         // Set index detection flag.
-        p_enc->flags.indexDetect= true;
+        p_enc->flags.indexDetect    = true;
         // Check if current index capture match the first index capture
 #if (CLA1_CORE_ENABLE)
-        float32_t tmp           = FM_ROUND2RAD * 4.0f / p_enc->thetaMechScaler;
-        p_enc->flags.indexError = (fabsf(p_enc->thetaIndex - thetaIndex) < tmp) ? (false) : (true);
+        float32_t tmp               = FM_ROUND2RAD * 4.0f / p_enc->thetaMechScaler;
+        p_enc->flags.indexError     = (fabsf(p_enc->thetaIndex - thetaIndex) < tmp) ? (false) : (true);
 #else
-        float32_t tmp           = __mpy2pif32(4.0f / p_enc->thetaMechScaler);
-        p_enc->flags.indexError = (fabsf(p_enc->thetaIndex - thetaIndex) < tmp) ? (false) : (true);
+        float32_t tmp               = __mpy2pif32(4.0f / p_enc->thetaMechScaler);
+        p_enc->flags.indexError     = (fabsf(p_enc->thetaIndex - thetaIndex) < tmp) ? (false) : (true);
 #endif
         // Toggle index
-        p_enc->flags.indexToggle= !p_enc->flags.indexToggle;
+        p_enc->flags.indexToggle    = !p_enc->flags.indexToggle;
         // Clear flag
         EQEP_clearInterruptStatus(eqepBase, EQEP_INT_INDEX_EVNT_LATCH);
     }
     // Compute new absolute angle
-#if (CLA1_CORE_ENABLE)
-    p_enc->thetaAbsolute        = p_enc->thetaMech[NEW] + FM_ROUND2RAD * (float32_t)p_enc->turnNb;
-#else
-    p_enc->thetaAbsolute        = p_enc->thetaMech[NEW] + __mpy2pif32((float32_t)p_enc->turnNb);
-#endif
+    p_enc->thetaAbsolute            = p_enc->thetaMech[NEW] + turnNbRad;
 
     return;
 }

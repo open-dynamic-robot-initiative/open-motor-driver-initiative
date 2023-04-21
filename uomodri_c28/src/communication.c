@@ -76,7 +76,8 @@ void COM_msgCreate(motor_t* p_motor_m1, motor_t* p_motor_m2, slv2mst_msg_t* p_ms
 #endif
     encoder_t* p_enc                    = &p_foc->motor_enc;
     cmd_reg_u cmd_reg                   = {.all = p_foc->motor_cmd.cmdArray.all};
-    float32_t pos_offset                = p_enc->thetaAbsolute - ((cmd_reg.encOffsetEnable) ? (p_enc->thetaIndex) : (0.0f));
+    float32_t theta_index_comp          = (cmd_reg.encOffsetEnable) ? (p_enc->thetaIndexAbsolute) : (0.0f);
+    float32_t pos_offset                = p_enc->thetaAbsolute - theta_index_comp;
     int32_t pos                         = (int32_t)(pos_offset                  / POSITION_LSB      * FM_RAD2ROUND);
     uint8_t state                       = p_motor_m1->motor_state;
     bool_t align_done                   = (state == MOTOR_STATE_READY) || (state == MOTOR_STATE_STOP);
@@ -104,7 +105,8 @@ void COM_msgCreate(motor_t* p_motor_m1, motor_t* p_motor_m2, slv2mst_msg_t* p_ms
 #endif
     p_enc                               = &p_foc->motor_enc;
     cmd_reg.all                         = p_foc->motor_cmd.cmdArray.all;
-    pos_offset                          = p_enc->thetaAbsolute - ((cmd_reg.encOffsetEnable) ? (p_enc->thetaIndex) : (0.0f));
+    theta_index_comp                    = (cmd_reg.encOffsetEnable) ? (p_enc->thetaIndexAbsolute) : (0.0f);
+    pos_offset                          = p_enc->thetaAbsolute - theta_index_comp;
     pos                                 = (int32_t)(pos_offset                  / POSITION_LSB      * FM_RAD2ROUND);
     state                               = p_motor_m2->motor_state;
     align_done                          = (state == MOTOR_STATE_READY) || (state == MOTOR_STATE_STOP);
