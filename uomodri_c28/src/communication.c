@@ -69,18 +69,19 @@ bool_t COM_msgExtract(mst2slv_msg_t* p_msg,  cmd_t* p_cmd_m1,  cmd_t* p_cmd_m2)
  */
 void COM_msgCreate(motor_t* p_motor_m1, motor_t* p_motor_m2, slv2mst_msg_t* p_msg)
 {
-    foc_t* p_foc                        = p_motor_m1->p_motorFOC;
+    foc_t* p_foc                        = p_motor_m1->p_foc;
     encoder_t* p_enc                    = &p_foc->motor_enc;
     cmd_reg_u cmd_reg                   = {.all = p_foc->motor_cmd.cmdArray.all};
-    float32_t pos_offset                = p_enc->thetaAbsolute - ((cmd_reg.encOffsetEnable) ? (p_enc->thetaIndex) : (0.0f));
+    float32_t theta_index_comp          = (cmd_reg.encOffsetEnable) ? (p_enc->thetaIndexAbsolute) : (0.0f);
+    float32_t pos_offset                = p_enc->thetaAbsolute - theta_index_comp;
     int32_t pos                         = (int32_t)(pos_offset                  / POSITION_LSB      * FM_RAD2ROUND);
     uint8_t state                       = p_motor_m1->motor_state;
     bool_t align_done                   = (state == MOTOR_STATE_READY) || (state == MOTOR_STATE_STOP);
     // Update status field - MOTOR_1
     p_msg->status.M1E                   = cmd_reg.motorEnable;      // MOTOR_1 enabled
     p_msg->status.M1R                   = align_done;               // MOTOR_1 ready
-    p_msg->status.IDX1T                 = p_enc->indexToggle;       // MOTOR_1 index toggle
-    p_msg->status.IDX1D                 = p_enc->indexDetect;       // MOTOR_1 index detected
+    p_msg->status.IDX1T                 = p_enc->flags.indexToggle; // MOTOR_1 index toggle
+    p_msg->status.IDX1D                 = p_enc->flags.indexDetect; // MOTOR_1 index detected
     p_msg->position[MOTOR_1].u16_msb    = MSB_32(pos);
     p_msg->position[MOTOR_1].u16_lsb    = LSB_32(pos);
     p_msg->velocity[MOTOR_1]            = (int16_t)(p_enc->speed.speedMech[0]   / VELOCITY_LSB      * FM_RADPS2KRPM);
@@ -93,18 +94,19 @@ void COM_msgCreate(motor_t* p_motor_m1, motor_t* p_motor_m2, slv2mst_msg_t* p_ms
     p_msg->lastCmdIndex                 = p_foc->motor_cmd.index;
     p_msg->timeStamp                    = (uint16_t)CPUTimer_getTimerCount(CPU_TIMER_0_BASE);
 
-    p_foc                               = p_motor_m2->p_motorFOC;
+    p_foc                               = p_motor_m2->p_foc;
     p_enc                               = &p_foc->motor_enc;
     cmd_reg.all                         = p_foc->motor_cmd.cmdArray.all;
-    pos_offset                          = p_enc->thetaAbsolute - ((cmd_reg.encOffsetEnable) ? (p_enc->thetaIndex) : (0.0f));
+    theta_index_comp                    = (cmd_reg.encOffsetEnable) ? (p_enc->thetaIndexAbsolute) : (0.0f);
+    pos_offset                          = p_enc->thetaAbsolute - theta_index_comp;
     pos                                 = (int32_t)(pos_offset                  / POSITION_LSB      * FM_RAD2ROUND);
     state                               = p_motor_m2->motor_state;
     align_done                          = (state == MOTOR_STATE_READY) || (state == MOTOR_STATE_STOP);
     // Update status field - MOTOR_2
     p_msg->status.M2E                   = cmd_reg.motorEnable;      // MOTOR_2 enabled
     p_msg->status.M2R                   = align_done;               // MOTOR_2 ready
-    p_msg->status.IDX2T                 = p_enc->indexToggle;       // MOTOR_2 index toggle
-    p_msg->status.IDX2D                 = p_enc->indexDetect;       // MOTOR_2 index detected
+    p_msg->status.IDX2T                 = p_enc->flags.indexToggle; // MOTOR_2 index toggle
+    p_msg->status.IDX2D                 = p_enc->flags.indexDetect; // MOTOR_2 index detected
     p_msg->position[MOTOR_2].u16_msb    = MSB_32(pos);
     p_msg->position[MOTOR_2].u16_lsb    = LSB_32(pos);
     p_msg->velocity[MOTOR_2]            = (int16_t)(p_enc->speed.speedMech[0]   / VELOCITY_LSB      * FM_RADPS2KRPM);

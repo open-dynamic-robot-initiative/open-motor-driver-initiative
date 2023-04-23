@@ -18,19 +18,23 @@
  * DEFINES
  ***********************************************************************/
 #define MOTOR_STATE_INIT        (0x00)
-#define MOTOR_STATE_ALIGN_UP    (0x01)
+#define MOTOR_STATE_ALIGN_MOVE  (0x01)
 #define MOTOR_STATE_ALIGN_FIX   (0x02)
 #define MOTOR_STATE_READY       (0x04)
 #define MOTOR_STATE_STOP        (0x08)
 #define MOTOR_STATE_ERROR       (0xFF)
 
 /***********************************************************************
- * TYPDEF ENUM
+ * ENUM TYPES
  ***********************************************************************/
 
 /***********************************************************************
- * CONTROL STRUCTURES
+ * UNION TYPES
  ***********************************************************************/
+/**
+ * @union   error_reg_u
+ * @brief   Bit field associated to all sources of motor errors.
+ */
 typedef union __error_reg_u__
 {
     uint8_t                     all;
@@ -40,24 +44,32 @@ typedef union __error_reg_u__
         uint8_t                 pos_rollover    : 1;    /*!< Bits 1   : R/W - Position roll-over occurred */
         uint8_t                 drv_fault       : 1;    /*!< Bits 2   : R/W - Motor DRV nFault error */
         uint8_t                 com_timeout     : 1;    /*!< Bits 3   : R/W - Communication timeout error */
-        uint8_t                 error_RSV1      : 4;    /*!< Bits 4-15: R/W - Reserved */
+        uint8_t                 enc_failure     : 1;    /*!< Bits 4   : R/W - encoder failure during alignment. */
+        uint8_t                 error_RSV1      : 3;    /*!< Bits 5-7 : R/W - Reserved */
     };
 } error_reg_u;
 
-typedef struct __motor_struct_t__
+/***********************************************************************
+ * CONTROL STRUCTURES
+ ***********************************************************************/
+/**
+ * @struct  motor_t
+ * @brief   General structure for motor control.
+ */
+typedef struct __motor_t__
 {
-    foc_t* const                p_motorFOC;             /*!< Pointer on the FOC structure associated to the motor */
+    foc_t* const                p_foc;                  /*!< Pointer on the FOC structure associated to the motor */
     uint64_t                    itCnt;                  /*!< Event counter incrementing on every IT call */
-    uint32_t                    epwmBaseAddr[3];
-    uint32_t                    drvFaultGpioNum;
-    uint32_t                    drvEnGpioNum;
+    uint32_t                    epwmBaseAddr[3];        /*!< Address array for the PWM peripherals associated to the motor control */
+    uint32_t                    drvFaultNum;            /*!< GPIO associated to the DRV fault line */
+    uint32_t                    drvEnNum;               /*!< GPIO associated to the DRV enable line */
     uint32_t                    clCycleNb;
     float32_t                   statorResEst;           /*!< Q-axis resistance estimation. [Ohm] */
     lpf_t                       statorResEstFlt;        /*!< Resistance estimation low-pass filter */
-    volatile uint16_t* const    p_motorCmdReg[3];       /*!< PWM address register for FOC command */
+    volatile uint16_t* const    p_cmdReg[3];            /*!< PWM address register for FOC command */
     const uint8_t               motor_id;               /*!< Motor identification */
     uint8_t                     motor_state;            /*!< Current motor state for the FSM. */
-    error_reg_u                 motor_error;            /*!< Error messages */
+    error_reg_u                 motor_error;            /*!< Bit field for the error sources. */
     bool_t                      itDone;
 } motor_t;
 

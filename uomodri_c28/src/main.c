@@ -90,8 +90,8 @@ void main(void)
     HAL_ADC_offsetCalib(&periph_motor_cfg[MOTOR_1]);
     HAL_ADC_offsetCalib(&periph_motor_cfg[MOTOR_2]);
     // Force a reset of FOC structures
-    FOC_resetStruct(motor[MOTOR_1].p_motorFOC);
-    FOC_resetStruct(motor[MOTOR_2].p_motorFOC);
+    FOC_resetStruct(motor[MOTOR_1].p_foc);
+    FOC_resetStruct(motor[MOTOR_2].p_foc);
     // Force a reset of the intermediate command structures. Working structures are embedded in FOC structures.
     COM_resetCmdStruct(&cmd_uOmodri[MOTOR_1]);
     COM_resetCmdStruct(&cmd_uOmodri[MOTOR_2]);
@@ -102,9 +102,7 @@ void main(void)
 #if (CM_CORE_ENABLE)
     IPC_CpuToCmAddrSync();
 #endif
-#if (CLA1_CORE_ENABLE)
-    cpu1_ready_flag         = true;//(cpu1_ready_flag == true) ? (false) : (true);
-#endif
+
     bool_t cmd_msg_valid    = false;
     bool_t timeout_flag     = false;
 
@@ -136,9 +134,9 @@ void main(void)
             if(cmd_msg_valid || timeout_flag)
             {
                 if(cmd_msg_valid && ((cmd_uOmodri[MOTOR_1].cmdArray.all & 0xB000) == 0xB000))
-                    cmd_uOmodri[MOTOR_1].posRef += motor[MOTOR_1].p_motorFOC->motor_enc.thetaIndex;
+                    cmd_uOmodri[MOTOR_1].posRef += motor[MOTOR_1].p_foc->motor_enc.thetaIndexAbsolute;
                 if(cmd_msg_valid && ((cmd_uOmodri[MOTOR_2].cmdArray.all & 0x000B) == 0x000B))
-                    cmd_uOmodri[MOTOR_2].posRef += motor[MOTOR_2].p_motorFOC->motor_enc.thetaIndex;
+                    cmd_uOmodri[MOTOR_2].posRef += motor[MOTOR_2].p_foc->motor_enc.thetaIndexAbsolute;
                 DMA_forceTrigger(DMA_CMD_2_FOC_BASE_ADDR);
             }
             cmd_msg_valid           = false;
@@ -325,9 +323,9 @@ inline void LED_dimming(motor_t* p_motor1, motor_t* p_motor2, uint16_t* p_msg)
 
     if((p_motor1->motor_state == MOTOR_STATE_INIT) || (p_motor2->motor_state == MOTOR_STATE_INIT))
         motor_state = MOTOR_STATE_INIT;
-    else if(((p_motor1->motor_state == MOTOR_STATE_ALIGN_UP) || (p_motor1->motor_state == MOTOR_STATE_ALIGN_FIX)) &&
-            ((p_motor2->motor_state == MOTOR_STATE_ALIGN_UP) || (p_motor2->motor_state == MOTOR_STATE_ALIGN_FIX)))
-        motor_state = MOTOR_STATE_ALIGN_UP;
+    else if(((p_motor1->motor_state == MOTOR_STATE_ALIGN_MOVE) || (p_motor1->motor_state == MOTOR_STATE_ALIGN_FIX)) &&
+            ((p_motor2->motor_state == MOTOR_STATE_ALIGN_MOVE) || (p_motor2->motor_state == MOTOR_STATE_ALIGN_FIX)))
+        motor_state = MOTOR_STATE_ALIGN_MOVE;
     else if(((p_motor1->motor_state == MOTOR_STATE_READY) || (p_motor1->motor_state == MOTOR_STATE_STOP)) &&
             ((p_motor2->motor_state == MOTOR_STATE_READY) || (p_motor2->motor_state == MOTOR_STATE_STOP)))
         motor_state = MOTOR_STATE_READY;
@@ -336,7 +334,7 @@ inline void LED_dimming(motor_t* p_motor1, motor_t* p_motor2, uint16_t* p_msg)
 
     switch(motor_state)
     {
-    case MOTOR_STATE_ALIGN_UP:
+    case MOTOR_STATE_ALIGN_MOVE:
     case MOTOR_STATE_ALIGN_FIX:
         ws2812b_writeLed((uint16_t)(0xff * timer_fade_blink), 0, (uint16_t)(0xff * timer_fade_blink), p_msg); //Magenta fade,
         break;
@@ -607,26 +605,26 @@ __attribute__((interrupt)) void adc_isrMotor2(void)
             cpu2cm_dbg_msg.status.uint32b   = (uint32_t)motor[MOTOR_1].p_motorFOC->motor_cmd.enableReg.all;
 #endif
 #if (1)
-            transfer_array[0]   = motor[MOTOR_2].p_motorFOC->motor_acq.ia;
-            transfer_array[1]   = motor[MOTOR_2].p_motorFOC->motor_acq.ib;
-            transfer_array[2]   = motor[MOTOR_2].p_motorFOC->motor_acq.ic;
-            transfer_array[3]   = motor[MOTOR_2].p_motorFOC->motor_acq.vbus;
-            transfer_array[4]   = motor[MOTOR_2].p_motorFOC->ialpha;
-            transfer_array[5]   = motor[MOTOR_2].p_motorFOC->ibeta;
-            transfer_array[6]   = motor[MOTOR_2].p_motorFOC->id;
-            transfer_array[7]   = motor[MOTOR_2].p_motorFOC->iq;
-            transfer_array[8]   = motor[MOTOR_2].p_motorFOC->ud;
-            transfer_array[9]   = motor[MOTOR_2].p_motorFOC->uq;
-            transfer_array[10]  = motor[MOTOR_2].p_motorFOC->ualpha;
-            transfer_array[11]  = motor[MOTOR_2].p_motorFOC->ubeta;
-            transfer_array[12]  = motor[MOTOR_2].p_motorFOC->ua;
-            transfer_array[13]  = motor[MOTOR_2].p_motorFOC->ub;
-            transfer_array[14]  = motor[MOTOR_2].p_motorFOC->uc;
-            transfer_array[15]  = motor[MOTOR_2].p_motorFOC->motor_enc.thetaAbsolute;
-            transfer_array[16]  = motor[MOTOR_2].p_motorFOC->motor_cmd.posRef;
-            transfer_array[17]  = motor[MOTOR_2].p_motorFOC->motor_enc.speed.speedMech[0];
-            transfer_array[18]  = motor[MOTOR_2].p_motorFOC->motor_cmd.velRef;
-            transfer_array[19]  = motor[MOTOR_2].p_motorFOC->iqRef;
+            transfer_array[0]   = motor[MOTOR_2].p_foc->motor_acq.ia;
+            transfer_array[1]   = motor[MOTOR_2].p_foc->motor_acq.ib;
+            transfer_array[2]   = motor[MOTOR_2].p_foc->motor_acq.ic;
+            transfer_array[3]   = motor[MOTOR_2].p_foc->motor_acq.vbus;
+            transfer_array[4]   = motor[MOTOR_2].p_foc->ialpha;
+            transfer_array[5]   = motor[MOTOR_2].p_foc->ibeta;
+            transfer_array[6]   = motor[MOTOR_2].p_foc->id;
+            transfer_array[7]   = motor[MOTOR_2].p_foc->iq;
+            transfer_array[8]   = motor[MOTOR_2].p_foc->ud;
+            transfer_array[9]   = motor[MOTOR_2].p_foc->uq;
+            transfer_array[10]  = motor[MOTOR_2].p_foc->ualpha;
+            transfer_array[11]  = motor[MOTOR_2].p_foc->ubeta;
+            transfer_array[12]  = motor[MOTOR_2].p_foc->ua;
+            transfer_array[13]  = motor[MOTOR_2].p_foc->ub;
+            transfer_array[14]  = motor[MOTOR_2].p_foc->uc;
+            transfer_array[15]  = motor[MOTOR_2].p_foc->motor_enc.thetaAbsolute;
+            transfer_array[16]  = motor[MOTOR_2].p_foc->motor_cmd.posRef;
+            transfer_array[17]  = motor[MOTOR_2].p_foc->motor_enc.speed.speedMech[0];
+            transfer_array[18]  = motor[MOTOR_2].p_foc->motor_cmd.velRef;
+            transfer_array[19]  = motor[MOTOR_2].p_foc->iqRef;
 #endif
             IPC_setFlagLtoR(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG);
         }

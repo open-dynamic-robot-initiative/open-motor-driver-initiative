@@ -11,7 +11,6 @@
 
 #include "hal.h"
 #include "drv8353.h"
-#include "as5047u.h"
 #include "foc.h"
 #include "motor.h"
 #include "communication.h"
@@ -237,11 +236,7 @@ static cmd_t cmd_uOmodri[2] =
 };
 
 #pragma DATA_ALIGN(motor_foc, 8)
-//#if (CM_CORE_ENABLE)
-//#pragma DATA_SECTION(motor_foc, "MSGRAM_CPU_TO_CM");
-//#else
 #pragma DATA_SECTION(motor_foc, "ramgs0");
-//#endif
 static foc_t motor_foc[] =
 {
  {
@@ -275,14 +270,11 @@ static foc_t motor_foc[] =
   .motor_enc.thetaMech[OLD]                 = 0.0f,
   .motor_enc.thetaMechScaler                = (float32_t)MOTOR1_ENC_RESOLUTION_SCALE,
   .motor_enc.thetaIndex                     = 0.0f,
+  .motor_enc.thetaIndexAbsolute             = 0.0f,
   .motor_enc.thetaAbsolute                  = 0.0f,
   .motor_enc.turnNb                         = 0,
   .motor_enc.thetaDir                       = 0,
-  .motor_enc.indexDetect                    = false,
-  .motor_enc.indexOffset                    = false,
-  .motor_enc.indexToggle                    = false,
-  .motor_enc.indexError                     = false,
-  .motor_enc.rollOverError                  = false,
+  .motor_enc.flags.all                      = 0,
   .motor_enc.speed.speedHighScaler          = (float32_t)MOTOR1_ENC_SPEED_HIGH_SCALE,
   .motor_enc.speed.speedHigh                = 0.0f,
   .motor_enc.speed.speedLowScaler           = (float32_t)MOTOR1_ENC_SPEED_LOW_SCALE,
@@ -309,9 +301,8 @@ static foc_t motor_foc[] =
   .motor_cmd.cptTimeout                     = 0U,
   .motor_cmd.index                          = 0U,
   .motor_cmd.cmdArray.all                   = 0U,
-  //--- Maximum current alignment value ---------------------------------------
-  .iAlignMax                                = MOTOR1_CURRENT_ALIGN_MAX,
-  .thetaAlign                               = MOTOR1_THETA_ALIGN_MAX,
+  //--- Initial position for alignment procedure ------------------------------
+  .posAlign                                 = MOTOR1_POSITION_ALIGN_MAX,
   //---------------------------------------------------------------------------
   .iParkFlt.a                               = MOTOR1_CURRENT_LPF_ALPHA,
   .iParkFlt.one_minus_a                     = MOTOR1_CURRENT_LPF_ONE_M_ALPHA,
@@ -420,14 +411,11 @@ static foc_t motor_foc[] =
   .motor_enc.thetaMech[OLD]                 = 0.0f,
   .motor_enc.thetaMechScaler                = (float32_t)MOTOR2_ENC_RESOLUTION_SCALE,
   .motor_enc.thetaIndex                     = 0.0f,
+  .motor_enc.thetaIndexAbsolute             = 0.0f,
   .motor_enc.thetaAbsolute                  = 0.0f,
   .motor_enc.turnNb                         = 0,
   .motor_enc.thetaDir                       = 0,
-  .motor_enc.indexDetect                    = false,
-  .motor_enc.indexOffset                    = false,
-  .motor_enc.indexToggle                    = false,
-  .motor_enc.indexError                     = false,
-  .motor_enc.rollOverError                  = false,
+  .motor_enc.flags.all                      = 0,
   .motor_enc.speed.speedHighScaler          = (float32_t)MOTOR2_ENC_SPEED_HIGH_SCALE,
   .motor_enc.speed.speedHigh                = 0.0f,
   .motor_enc.speed.speedLowScaler           = (float32_t)MOTOR2_ENC_SPEED_LOW_SCALE,
@@ -454,9 +442,8 @@ static foc_t motor_foc[] =
   .motor_cmd.cptTimeout                     = 0U,
   .motor_cmd.index                          = 0U,
   .motor_cmd.cmdArray.all                   = 0U,
-  //--- Maximum current alignment value ---------------------------------------
-  .iAlignMax                                = MOTOR2_CURRENT_ALIGN_MAX,
-  .thetaAlign                               = MOTOR2_THETA_ALIGN_MAX,
+  //--- Initial position for alignment procedure ------------------------------
+  .posAlign                                 = MOTOR2_POSITION_ALIGN_MAX,
   //---------------------------------------------------------------------------
   .iParkFlt.a                               = MOTOR2_CURRENT_LPF_ALPHA,
   .iParkFlt.one_minus_a                     = MOTOR2_CURRENT_LPF_ONE_M_ALPHA,
@@ -553,7 +540,7 @@ static motor_t motor[2] =
   //--- MOTOR_1 ---------------------------------------------------------------
   .motor_id                                 = MOTOR_1,
   //--- FOC structure address -------------------------------------------------
-  .p_motorFOC                               = &motor_foc[MOTOR_1],
+  .p_foc                                    = &motor_foc[MOTOR_1],
   //--- FSM motor initial state -----------------------------------------------
   .motor_state                              = MOTOR_STATE_INIT,
   //--- Error message ---------------------------------------------------------
@@ -563,22 +550,22 @@ static motor_t motor[2] =
   .itCnt                                    = 0,
   .itDone                                   = false,
   //--- DRV IO Config ---------------------------------------------------------
-  .drvFaultGpioNum                          = MOTOR1_DRV_FAULT_NUM,
-  .drvEnGpioNum                             = MOTOR1_DRV_EN_NUM,
+  .drvFaultNum                              = MOTOR1_DRV_FAULT_NUM,
+  .drvEnNum                                 = MOTOR1_DRV_EN_NUM,
   //---- PWM config address ---------------------------------------------------
   .epwmBaseAddr[CHANNEL_1]                  = MOTOR1_PWM1_BASE,
   .epwmBaseAddr[CHANNEL_2]                  = MOTOR1_PWM2_BASE,
   .epwmBaseAddr[CHANNEL_3]                  = MOTOR1_PWM3_BASE,
   //---- PWM command address --------------------------------------------------
-  .p_motorCmdReg[CHANNEL_1]                 = (volatile uint16_t *)(MOTOR1_PWM1_CMD_ADDR),
-  .p_motorCmdReg[CHANNEL_2]                 = (volatile uint16_t *)(MOTOR1_PWM2_CMD_ADDR),
-  .p_motorCmdReg[CHANNEL_3]                 = (volatile uint16_t *)(MOTOR1_PWM3_CMD_ADDR),
+  .p_cmdReg[CHANNEL_1]                      = (volatile uint16_t *)(MOTOR1_PWM1_CMD_ADDR),
+  .p_cmdReg[CHANNEL_2]                      = (volatile uint16_t *)(MOTOR1_PWM2_CMD_ADDR),
+  .p_cmdReg[CHANNEL_3]                      = (volatile uint16_t *)(MOTOR1_PWM3_CMD_ADDR),
  },
  {
   //--- MOTOR_1 ---------------------------------------------------------------
   .motor_id                                 = MOTOR_2,
   //--- FOC structure address -------------------------------------------------
-  .p_motorFOC                               = &motor_foc[MOTOR_2],
+  .p_foc                                    = &motor_foc[MOTOR_2],
   //--- FSM motor initial state -----------------------------------------------
   .motor_state                              = MOTOR_STATE_INIT,
   //--- Error message ---------------------------------------------------------
@@ -588,16 +575,16 @@ static motor_t motor[2] =
   .itCnt                                    = 0,
   .itDone                                   = false,
   //--- DRV IO Config ---------------------------------------------------------
-  .drvFaultGpioNum                          = MOTOR2_DRV_FAULT_NUM,
-  .drvEnGpioNum                             = MOTOR2_DRV_EN_NUM,
+  .drvFaultNum                              = MOTOR2_DRV_FAULT_NUM,
+  .drvEnNum                                 = MOTOR2_DRV_EN_NUM,
   //---- PWM periph config address --------------------------------------------
   .epwmBaseAddr[CHANNEL_1]                  = MOTOR2_PWM1_BASE,
   .epwmBaseAddr[CHANNEL_2]                  = MOTOR2_PWM2_BASE,
   .epwmBaseAddr[CHANNEL_3]                  = MOTOR2_PWM3_BASE,
   //---- PWM command reg address ----------------------------------------------
-  .p_motorCmdReg[CHANNEL_1]                 = (volatile uint16_t *)(MOTOR2_PWM1_CMD_ADDR),
-  .p_motorCmdReg[CHANNEL_2]                 = (volatile uint16_t *)(MOTOR2_PWM2_CMD_ADDR),
-  .p_motorCmdReg[CHANNEL_3]                 = (volatile uint16_t *)(MOTOR2_PWM3_CMD_ADDR),
+  .p_cmdReg[CHANNEL_1]                      = (volatile uint16_t *)(MOTOR2_PWM1_CMD_ADDR),
+  .p_cmdReg[CHANNEL_2]                      = (volatile uint16_t *)(MOTOR2_PWM2_CMD_ADDR),
+  .p_cmdReg[CHANNEL_3]                      = (volatile uint16_t *)(MOTOR2_PWM3_CMD_ADDR),
  },
 };
 

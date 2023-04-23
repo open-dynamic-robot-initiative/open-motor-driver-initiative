@@ -18,7 +18,7 @@
 #include "encoder.h"
 
 /***********************************************************************
- * TYPDEF ENUM
+ * ENUM TYPES
  ***********************************************************************/
 /**
  * @enum    svm_sector_e
@@ -37,21 +37,28 @@ typedef enum
 } svm_sector_e;
 
 /***********************************************************************
- * CONTROL STRUCTURES
+ * UNION TYPES
  ***********************************************************************/
-typedef union __cmd_bit_reg_u__
+/**
+ * @union   cmd_reg_u
+ * @brief   Bit field associated to motor control (motor \& encoder).
+ */
+typedef union __cmd_reg_u__
 {
-    uint8_t         all;
+    uint8_t             all;
     struct
     {
-        uint8_t     systemEnable        : 1;    /*!< Bit 0      : R/W - Enable system to start. No power on motors.         */
-        uint8_t     motorEnable         : 1;    /*!< Bit 1      : R/W - Enable power on motor.                              */
-        uint8_t     rollOverEnable      : 1;    /*!< Bit 2      : R/W - Limit the rotations to +/- 128 rounds.              */
-        uint8_t     encOffsetEnable     : 1;    /*!< Bit 3      : R/W - Use encoder index in position computation.          */
-        uint8_t     CMD_RSV1            : 4;    /*!< Bit 4-7    : R/W - Reserved                                            */
+        uint8_t         systemEnable    : 1;    /*!< Bit 0      : R/W - Enable system to start. No power on motors.         */
+        uint8_t         motorEnable     : 1;    /*!< Bit 1      : R/W - Enable power on motor.                              */
+        uint8_t         rollOverEnable  : 1;    /*!< Bit 2      : R/W - Limit the rotations to +/- 128 rounds.              */
+        uint8_t         encOffsetEnable : 1;    /*!< Bit 3      : R/W - Use encoder index in position computation.          */
+        uint8_t         CMD_RSV1        : 4;    /*!< Bit 4-7    : R/W - Reserved                                            */
     };
 } cmd_reg_u;
 
+/***********************************************************************
+ * CONTROL STRUCTURES
+ ***********************************************************************/
 /**
  * @struct  pi_t
  * @brief   Proportional-Integral controller structure for FOC algorithm.
@@ -60,13 +67,13 @@ typedef struct __pi_t__
 {
     float32_t* const    p_fb;           /*!< Pointer on the feedback current */
     float32_t* const    p_set;          /*!< Pointer on the setpoint current */
+    float32_t* const    p_sat;          /*!< Pointer on the saturation value to use */
     float32_t           err;            /*!< Current error */
     float32_t           kp;             /*!< Proportional gain */
     float32_t           ki;             /*!< Integral gain */
     float32_t           integral;       /*!< Integral term partial computation */
     float32_t           ff;             /*!< Feed-forward term */
     float32_t           out;            /*!< Controller output */
-    float32_t* const    p_sat;          /*!< Pointer on the saturation value to use */
 } pi_t;
 
 /**
@@ -75,20 +82,24 @@ typedef struct __pi_t__
  */
 typedef struct __pd_t__
 {
-    float32_t* const    p_fbTheta;      /*!< Pointer on the feedback position */
-    float32_t* const    p_setTheta;     /*!< Pointer on the setpoint position */
+    float32_t* const    p_fbTheta;      /*!< Constant pointer on the feedback position */
+    float32_t* const    p_setTheta;     /*!< Constant pointer on the setpoint position */
+    float32_t* const    p_fbSpeed;      /*!< Constant pointer on the feedback speed */
+    float32_t* const    p_setSpeed;     /*!< Constant pointer on the Set point speed */
+    float32_t* const    p_kp;           /*!< Constant pointer on the Proportional gain */
+    float32_t* const    p_kd;           /*!< Constant pointer on the Derivative gain */
+    float32_t* const    p_ff;           /*!< Constant pointer on the feed-forward term */
+    float32_t* const    p_sat;          /*!< Constant pointer on the controller saturation */
     float32_t           errTheta;       /*!< Error position */
-    float32_t* const    p_fbSpeed;      /*!< Pointer on the feedback speed */
-    float32_t* const    p_setSpeed;     /*!< Pointer on the Set point speed */
     float32_t           errSpeed;       /*!< Error speed */
-    float32_t* const    p_kp;           /*!< Pointer on the Proportional gain */
-    float32_t* const    p_kd;           /*!< Pointer on the Derivative gain */
     float32_t           derivative;     /*!< Derivative term partial computation */
-    float32_t* const    p_ff;           /*!< Pointer on the feed-forward term */
     float32_t           out;            /*!< Controller output */
-    float32_t* const    p_sat;          /*!< Controller saturation */
 } pd_t;
 
+/**
+ * @struct  params_t
+ * @brief   Motor constants structure.
+ */
 typedef struct __params_t__
 {
     // Motor constants
@@ -100,6 +111,10 @@ typedef struct __params_t__
     const float32_t polePairs;          /*!< Number of pole pairs */
 } params_t;
 
+/**
+ * @struct  acq_t
+ * @brief   Registers localization \& results
+ */
 typedef struct __acquisitions_t__
 {
     // ADC result registers
@@ -116,6 +131,10 @@ typedef struct __acquisitions_t__
     lpf_t               vExtFlt;
 } acq_t;
 
+/**
+ * @struct  cmd_t
+ * @brief   Commands for FOC process. Target the PD controller.
+ */
 typedef struct __cmd_t__
 {
     float32_t   posRef;
@@ -130,7 +149,11 @@ typedef struct __cmd_t__
     cmd_reg_u   cmdArray;
 } cmd_t;
 
-typedef struct __foc_control_t__
+/**
+ * @struct  foc_t
+ * @brief   General structure for FOC control.
+ */
+typedef struct __foc_t__
 {
     params_t            motor_cfg;      /*!< Motor configuration parameters */
     acq_t               motor_acq;      /*!< Current \& voltage acquisitions */
@@ -158,8 +181,7 @@ typedef struct __foc_control_t__
     float32_t           dtc_w;          /*!< Duty cycles on channel w - [pu] between -0.5 and 0.5 */
     float32_t           idRef;          /*!< PI controller set point values for D-axis current - [A] */
     float32_t           iqRef;          /*!< PI controller set point values for Q-axis current - [A] */
-    float32_t           iAlignMax;      /*!< Maximum current required during the phase alignment - [A] */
-    float32_t           thetaAlign;     /*!< Initial position to force a rotor movement during alignment - [RAD] */
+    float32_t           posAlign;       /*!< Initial position to force a rotor movement during alignment - [RAD] */
     pi_t                piId;           /*!< PI controller structure for current control */
     pi_t                piIq;           /*!< PI controller structure for current control */
     pd_t                pdPosVel;       /*!< PD controller structure for position/velocity control */
@@ -182,15 +204,6 @@ typedef struct __foc_control_t__
 // This threshold corresponds to the minimum current for the measure to be considered as correct.
 #define FOC_RE_CURRENT_THRESHOLD    0.1f
 
-#define FOC_GET_MEASURES(p_acq)                                                                         \
-        p_acq.ia        = (float32_t)(*p_acq.p_iaMeasReg) * ADC_MOTOR_CURRENT_SCALE;                    \
-        p_acq.ib        = (float32_t)(*p_acq.p_ibMeasReg) * ADC_MOTOR_CURRENT_SCALE;                    \
-        p_acq.ic        = (float32_t)(*p_acq.p_icMeasReg) * ADC_MOTOR_CURRENT_SCALE;                    \
-        float32_t vbus  = __fmax(((float32_t)(*p_acq.p_vBusMeasReg) * ADC_VBUS_VOLTAGE_SCALE), 1.0f);   \
-        UOMODRI_VBUS_FLT(p_acq.vBusFlt, p_acq.vbus, vbus);                                              \
-        float32_t vext  = (float32_t)(*p_acq.p_vExtMeasReg) * ADC_VEXT12_VOLTAGE_SCALE;                 \
-        UOMODRI_VEXT_FLT(p_acq.vExtFlt, p_acq.vExt, vext);
-
 /***********************************************************************
  * FUNCTIONS DECLARATION
  ***********************************************************************/
@@ -199,4 +212,4 @@ inline void FOC_runControl(foc_t*);
 inline float32_t FOC_runPD(pd_t*);
 void FOC_resetStruct(foc_t*);
 
-#endif
+#endif /* __FOC_H__ */

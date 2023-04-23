@@ -194,14 +194,14 @@ static const eqep_cfg_t QepCfgList[] =
  {
   .eqepBase             = MOTOR1_QEP_BASE,
   .eqepMaxResolution    = (MOTOR1_ENC_QUADRATURE_SCALE - 1),
-  .eqepUnitTimerPeriod  = (MOTOR1_ENC_SPEED_HIGH_SAMPLING_TICKS - 1),
+  .eqepUnitTimerPeriod  = (MOTOR1_ENC_SPEED_HIGH_SAMPLE_TICKS - 1),
   .eqepConfig           = MOTOR1_ENC_CONFIG,
   .eqepStrobeSrc        = EQEP_STROBE_OR_ADCSOCA
  },
  {
   .eqepBase             = MOTOR2_QEP_BASE,
   .eqepMaxResolution    = (MOTOR2_ENC_QUADRATURE_SCALE - 1),
-  .eqepUnitTimerPeriod  = (MOTOR2_ENC_SPEED_HIGH_SAMPLING_TICKS - 1),
+  .eqepUnitTimerPeriod  = (MOTOR2_ENC_SPEED_HIGH_SAMPLE_TICKS - 1),
   .eqepConfig           = MOTOR2_ENC_CONFIG,
   .eqepStrobeSrc        = EQEP_STROBE_OR_ADCSOCB
  },

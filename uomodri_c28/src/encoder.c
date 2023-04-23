@@ -29,27 +29,23 @@ void ENC_resetStruct(encoder_t* p_enc)
 {
     speed_t* p_speed        = &p_enc->speed;
 
-    p_enc->thetaMech[NEW]   = 0.0f;
-    p_enc->thetaMech[OLD]   = 0.0f;
-    p_enc->thetaElec        = 0.0f;
-    p_enc->thetaIndex       = 0.0f;
-    p_enc->thetaAbsolute    = 0.0f;
-    p_enc->turnNb           = 0U;
-    p_enc->indexDetect      = false;
-    p_enc->indexOffset      = false;
-    p_enc->indexToggle      = false;
-    p_enc->indexError       = false;
-    p_enc->rollOverError    = false;
+    p_enc->thetaElec            = 0.0f;
+    p_enc->thetaMech[NEW]       = 0.0f;
+    p_enc->thetaMech[OLD]       = 0.0f;
+    p_enc->thetaIndex           = 0.0f;
+    p_enc->thetaIndexAbsolute   = 0.0f;
+    p_enc->thetaAbsolute        = 0.0f;
+    p_enc->turnNb               = 0U;
+    p_enc->flags.all            = 0U;
 
-    p_speed->alpha          = 0.0f;
-//    p_speed->speedRef       = 0.0f;
-    p_speed->theta[NEW]     = 0.0f;
-    p_speed->theta[OLD]     = 0.0f;
-    p_speed->speedHigh      = 0.0f;
-    p_speed->speedLow       = 0.0f;
-    p_speed->speedMech[0]   = 0.0f;
-    p_speed->speedMech[1]   = 0.0f;
-    p_speed->speedElec      = 0.0f;
+    p_speed->alpha              = 0.0f;
+    p_speed->theta[NEW]         = 0.0f;
+    p_speed->theta[OLD]         = 0.0f;
+    p_speed->speedHigh          = 0.0f;
+    p_speed->speedLow           = 0.0f;
+    p_speed->speedMech[0]       = 0.0f;
+    p_speed->speedMech[1]       = 0.0f;
+    p_speed->speedElec          = 0.0f;
 
     return;
 }
@@ -125,8 +121,8 @@ inline void ENC_getSpeed(encoder_t* p_enc)
         // Compute angle difference
         float32_t deltaTheta    = p_speed->theta[NEW] - p_speed->theta[OLD];
         // Saturate it between -pi and pi
-        deltaTheta              = (deltaTheta > M_PI)   ? (deltaTheta - (2.0f * M_PI)) : (deltaTheta);
-        deltaTheta              = (deltaTheta < -M_PI)  ? (deltaTheta + (2.0f * M_PI)) : (deltaTheta);
+        deltaTheta              = (deltaTheta > M_PI)   ? (deltaTheta - FM_2MULTPI) : (deltaTheta);
+        deltaTheta              = (deltaTheta < -M_PI)  ? (deltaTheta + FM_2MULTPI) : (deltaTheta);
         // Compute high speed estimation
         p_speed->speedHigh      = deltaTheta * p_speed->speedHighScaler;
 //        newSpeedHigh            = true;
@@ -200,30 +196,34 @@ inline void ENC_getTheta(encoder_t* p_enc)
     // If theta difference is high or low enough, we overflowed or underflowed
     bool_t maxRollOver          = (p_enc->turnNb > MAX_ROLLOVER)? (true) : (false);
     bool_t minRollOver          = (p_enc->turnNb < MIN_ROLLOVER)? (true) : (false);
-    p_enc->rollOverError        = (maxRollOver || minRollOver)  ? (true) : (false);
+    p_enc->flags.rollOverError  = (maxRollOver || minRollOver)  ? (true) : (false);
     // Saturate turnNb between -128 and 127
     p_enc->turnNb               = (maxRollOver) ? (MIN_ROLLOVER) : (p_enc->turnNb);
     p_enc->turnNb               = (minRollOver) ? (MAX_ROLLOVER) : (p_enc->turnNb);
+    float32_t turnNbRad         = __mpy2pif32((float32_t)p_enc->turnNb);
     //-------------------------------------------------------------------
     //     INDEX HANDLING
     //-------------------------------------------------------------------
     if(EQEP_getInterruptStatus(eqepBase) & EQEP_INT_INDEX_EVNT_LATCH)
     {
         // Compute indexed mechanical angle normalized between 0 and 2 x PI
-        float32_t thetaIndex    = __mpy2pif32((float32_t)EQEP_getIndexPositionLatch(eqepBase) * p_enc->thetaMechScaler);
+        float32_t thetaIndex        = __mpy2pif32((float32_t)EQEP_getIndexPositionLatch(eqepBase) * p_enc->thetaMechScaler);
         // Save first indexed mechanical angle normalized between 0 and 2 x PI
-        p_enc->thetaIndex       = (!p_enc->indexDetect) ? (thetaIndex) : (p_enc->thetaIndex);
+        p_enc->thetaIndex           = (!p_enc->flags.indexDetect) ? (thetaIndex) : (p_enc->thetaIndex);
+        // Save first absolute indexed mechanical angle
+        p_enc->thetaIndexAbsolute   = (!p_enc->flags.indexDetect) ? (thetaIndex + turnNbRad): (p_enc->thetaIndexAbsolute);
         // Set index detection flag.
-        p_enc->indexDetect      = true;
+        p_enc->flags.indexDetect    = true;
         // Check if current index capture match the first index capture
-        p_enc->indexError       = (fabsf(p_enc->thetaIndex - thetaIndex) < __mpy2pif32(4.0f / p_enc->thetaMechScaler)) ? (false) : (true);
+        float32_t tmp               = __mpy2pif32(4.0f / p_enc->thetaMechScaler);
+        p_enc->flags.indexError     = (fabsf(p_enc->thetaIndex - thetaIndex) < tmp) ? (false) : (true);
         // Toggle index
-        p_enc->indexToggle      = !p_enc->indexToggle;
+        p_enc->flags.indexToggle    = !p_enc->flags.indexToggle;
         // Clear flag
         EQEP_clearInterruptStatus(eqepBase, EQEP_INT_INDEX_EVNT_LATCH);
     }
     // Compute new absolute angle
-    p_enc->thetaAbsolute        = p_enc->thetaMech[NEW] + __mpy2pif32((float32_t)p_enc->turnNb);
+    p_enc->thetaAbsolute        = p_enc->thetaMech[NEW] + turnNbRad;//__mpy2pif32((float32_t)p_enc->turnNb);
 
     return;
 }
