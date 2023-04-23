@@ -104,29 +104,30 @@ inline float32_t __msatf32(float32_t a, float32_t sat_max, float32_t sat_min)
  */
 inline void ENC_resetStruct(encoder_t* p_enc)
 {
-    speed_t* p_speed        = &p_enc->speed;
+    speed_t* p_speed            = &p_enc->speed;
 
-    p_enc->thetaElec        = 0.0f;
-    p_enc->thetaMech[NEW]   = 0.0f;
-    p_enc->thetaMech[OLD]   = 0.0f;
-    p_enc->thetaIndex       = 0.0f;
-    p_enc->thetaAbsolute    = 0.0f;
-    p_enc->turnNb           = 0U;
-    p_enc->flags.all        = 0U;
+    p_enc->thetaElec            = 0.0f;
+    p_enc->thetaMech[NEW]       = 0.0f;
+    p_enc->thetaMech[OLD]       = 0.0f;
+    p_enc->thetaIndex           = 0.0f;
+    p_enc->thetaIndexAbsolute   = 0.0f;
+    p_enc->thetaAbsolute        = 0.0f;
+    p_enc->turnNb               = 0U;
+    p_enc->flags.all            = 0U;
 //    p_enc->indexDetect      = false;
 //    p_enc->indexOffset      = false;
 //    p_enc->indexToggle      = false;
 //    p_enc->indexError       = false;
 //    p_enc->rollOverError    = false;
 
-    p_speed->alpha          = 0.0f;
-    p_speed->theta[NEW]     = 0.0f;
-    p_speed->theta[OLD]     = 0.0f;
-    p_speed->speedHigh      = 0.0f;
-    p_speed->speedLow       = 0.0f;
-    p_speed->speedMech[0]   = 0.0f;
-    p_speed->speedMech[1]   = 0.0f;
-    p_speed->speedElec      = 0.0f;
+    p_speed->alpha              = 0.0f;
+    p_speed->theta[NEW]         = 0.0f;
+    p_speed->theta[OLD]         = 0.0f;
+    p_speed->speedHigh          = 0.0f;
+    p_speed->speedLow           = 0.0f;
+    p_speed->speedMech[0]       = 0.0f;
+    p_speed->speedMech[1]       = 0.0f;
+    p_speed->speedElec          = 0.0f;
 
     return;
 }
