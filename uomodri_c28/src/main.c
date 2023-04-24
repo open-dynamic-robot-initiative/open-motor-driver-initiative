@@ -133,9 +133,13 @@ void main(void)
             // Send new commands to FOC structures if extract valid
             if(cmd_msg_valid || timeout_flag)
             {
-                if(cmd_msg_valid && ((cmd_uOmodri[MOTOR_1].cmdArray.all & 0xB000) == 0xB000))
+//                if(cmd_msg_valid && ((cmd_uOmodri[MOTOR_1].cmdArray.all & 0xB000) == 0xB000))
+//                    cmd_uOmodri[MOTOR_1].posRef += motor[MOTOR_1].p_foc->motor_enc.thetaIndexAbsolute;
+//                if(cmd_msg_valid && ((cmd_uOmodri[MOTOR_2].cmdArray.all & 0x000B) == 0x000B))
+//                    cmd_uOmodri[MOTOR_2].posRef += motor[MOTOR_2].p_foc->motor_enc.thetaIndexAbsolute;
+                if(cmd_msg_valid && ((cmd_uOmodri[MOTOR_1].cmdArray.all & 0x0B) == 0x0B))
                     cmd_uOmodri[MOTOR_1].posRef += motor[MOTOR_1].p_foc->motor_enc.thetaIndexAbsolute;
-                if(cmd_msg_valid && ((cmd_uOmodri[MOTOR_2].cmdArray.all & 0x000B) == 0x000B))
+                if(cmd_msg_valid && ((cmd_uOmodri[MOTOR_2].cmdArray.all & 0x0B) == 0x0B))
                     cmd_uOmodri[MOTOR_2].posRef += motor[MOTOR_2].p_foc->motor_enc.thetaIndexAbsolute;
                 DMA_forceTrigger(DMA_CMD_2_FOC_BASE_ADDR);
             }
@@ -158,60 +162,6 @@ void main(void)
                     DMA_startChannel(DMA_COM_SPI_TX_BASE_ADDR);
                 }
             }
-//            if(!IPC_isFlagBusyLtoR(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG))
-//            {
-#if (0)
-                cpu2cm_dbg_msg.itcnt.uint32b    = (uint32_t)MSB_64(motor[MOTOR_1].itCnt);
-                cpu2cm_dbg_msg.ia.float32b      = motor[MOTOR_1].p_motorFOC->motor_acq.ia;
-                cpu2cm_dbg_msg.ib.float32b      = motor[MOTOR_1].p_motorFOC->motor_acq.ib;
-                cpu2cm_dbg_msg.ic.float32b      = motor[MOTOR_1].p_motorFOC->motor_acq.ic;
-                cpu2cm_dbg_msg.vbus.float32b    = motor[MOTOR_1].p_motorFOC->motor_acq.vbus;
-                cpu2cm_dbg_msg.ialpha.float32b  = motor[MOTOR_1].p_motorFOC->ialpha;
-                cpu2cm_dbg_msg.ibeta.float32b   = motor[MOTOR_1].p_motorFOC->ibeta;
-                cpu2cm_dbg_msg.id.float32b      = motor[MOTOR_1].p_motorFOC->id;
-                cpu2cm_dbg_msg.iq.float32b      = motor[MOTOR_1].p_motorFOC->iq;
-                cpu2cm_dbg_msg.iqRef.float32b   = motor[MOTOR_1].p_motorFOC->iqRef;
-                cpu2cm_dbg_msg.ud.float32b      = motor[MOTOR_1].p_motorFOC->ud;
-                cpu2cm_dbg_msg.uq.float32b      = motor[MOTOR_1].p_motorFOC->uq;
-                cpu2cm_dbg_msg.ualpha.float32b  = motor[MOTOR_1].p_motorFOC->ualpha;
-                cpu2cm_dbg_msg.ubeta.float32b   = motor[MOTOR_1].p_motorFOC->ubeta;
-                cpu2cm_dbg_msg.ua.float32b      = motor[MOTOR_1].p_motorFOC->ua;
-                cpu2cm_dbg_msg.ub.float32b      = motor[MOTOR_1].p_motorFOC->ub;
-                cpu2cm_dbg_msg.uc.float32b      = motor[MOTOR_1].p_motorFOC->uc;
-                cpu2cm_dbg_msg.theta.float32b   = motor[MOTOR_1].p_motorFOC->motor_enc.thetaAbsolute;
-                cpu2cm_dbg_msg.posRef.float32b  = motor[MOTOR_1].p_motorFOC->motor_cmd.posRef;
-                cpu2cm_dbg_msg.speed.float32b   = motor[MOTOR_1].p_motorFOC->motor_enc.speed.speedMech;
-                cpu2cm_dbg_msg.velRef.float32b  = motor[MOTOR_1].p_motorFOC->motor_cmd.velRef;
-                cpu2cm_dbg_msg.pd_kp.float32b   = motor[MOTOR_1].p_motorFOC->motor_cmd.kpCoeff;
-                cpu2cm_dbg_msg.pd_kd.float32b   = motor[MOTOR_1].p_motorFOC->motor_cmd.kdCoeff;
-                cpu2cm_dbg_msg.iqff.float32b    = motor[MOTOR_1].p_motorFOC->motor_cmd.iqff;
-                cpu2cm_dbg_msg.isat.float32b    = motor[MOTOR_1].p_motorFOC->motor_cmd.iSat;
-                cpu2cm_dbg_msg.status.uint32b   = (uint32_t)motor[MOTOR_1].p_motorFOC->motor_cmd.enableReg.all;
-                //        IPC_setFlagLtoR(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG);
-#endif
-//                transfer_array[0]   = motor[MOTOR_2].p_motorFOC->motor_acq.ia;
-//                transfer_array[1]   = motor[MOTOR_2].p_motorFOC->motor_acq.ib;
-//                transfer_array[2]   = motor[MOTOR_2].p_motorFOC->motor_acq.ic;
-//                transfer_array[3]   = motor[MOTOR_2].p_motorFOC->motor_acq.vbus;
-//                transfer_array[4]   = motor[MOTOR_2].p_motorFOC->ialpha;
-//                transfer_array[5]   = motor[MOTOR_2].p_motorFOC->ibeta;
-//                transfer_array[6]   = motor[MOTOR_2].p_motorFOC->id;
-//                transfer_array[7]   = motor[MOTOR_2].p_motorFOC->iq;
-//                transfer_array[8]   = motor[MOTOR_2].p_motorFOC->ud;
-//                transfer_array[9]   = motor[MOTOR_2].p_motorFOC->uq;
-//                transfer_array[10]  = motor[MOTOR_2].p_motorFOC->ualpha;
-//                transfer_array[11]  = motor[MOTOR_2].p_motorFOC->ubeta;
-//                transfer_array[12]  = motor[MOTOR_2].p_motorFOC->ua;
-//                transfer_array[13]  = motor[MOTOR_2].p_motorFOC->ub;
-//                transfer_array[14]  = motor[MOTOR_2].p_motorFOC->uc;
-//                transfer_array[15]  = motor[MOTOR_2].p_motorFOC->motor_enc.thetaAbsolute;
-//                transfer_array[16]  = motor[MOTOR_2].p_motorFOC->motor_cmd.posRef;
-//                transfer_array[17]  = motor[MOTOR_2].p_motorFOC->motor_enc.speed.speedMech;
-//                transfer_array[18]  = motor[MOTOR_2].p_motorFOC->motor_cmd.velRef;
-//                transfer_array[19]  = motor[MOTOR_2].p_motorFOC->iqRef;
-//
-//                IPC_setFlagLtoR(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG);
-//            }
             motor[MOTOR_1].itDone   = false;
             motor[MOTOR_2].itDone   = false;
         }

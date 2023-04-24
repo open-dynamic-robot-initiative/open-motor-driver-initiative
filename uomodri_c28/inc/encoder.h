@@ -66,7 +66,7 @@ typedef struct __encoder_t__
     float32_t           thetaElec;          /*!< Angular electrical position  - [pu] */
     float32_t           thetaMech[2];       /*!< Angular mechanical position  - [pu] */
     float32_t           thetaMechScaler;    /*!< Angular mechanical scaler - [pu/register] */
-    float32_t           thetaIndex;         /*!< Index mechanical angle */
+    float32_t           thetaIndexRelative; /*!< Index mechanical angle */
     float32_t           thetaIndexAbsolute; /*!< First index mechanical angle */
     float32_t           thetaAbsolute;      /*!< Absolute angular position - [turns] */
     speed_t             speed;              /*!< Speed estimation structure */

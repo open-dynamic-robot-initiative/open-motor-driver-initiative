@@ -94,8 +94,8 @@ inline bool_t MOT_runControl(motor_t* p_motor)
         p_foc->posAlign        -= (motor_id == MOTOR_1)             ?(MOTOR1_POSITION_ALIGN_DEC):(MOTOR2_POSITION_ALIGN_DEC);
         tmp                     = (motor_id == MOTOR_1)             ?(MOTOR1_CURRENT_ALIGN_MAX) :(MOTOR2_CURRENT_ALIGN_MAX);
         idref_max               = (p_foc->idRef >= tmp)             ?(true)                     :(false);
-        tmp                     = 2.0f * ((motor_id == MOTOR_1)     ?(MOTOR1_ENC_RESOLUTION_RAD):(MOTOR2_ENC_RESOLUTION_RAD));
-        p_enc->flags.phaseError = idref_max && (fabsf(p_enc->thetaMech[NEW]) < tmp) ?(true)     :(false);
+        tmp                     = 10.0f * ((motor_id == MOTOR_1)     ?(MOTOR1_ENC_RESOLUTION_RAD):(MOTOR2_ENC_RESOLUTION_RAD));
+        p_enc->flags.phaseError = (idref_max && (fabsf(p_enc->thetaMech[NEW]) < tmp)) ?(true)   :(false);
         *p_state                = (idref_max)                       ?(MOTOR_STATE_ALIGN_FIX)    :(MOTOR_STATE_ALIGN_MOVE);
         *p_state                = (cmd_reg.motorEnable)             ?(*p_state)                 :(MOTOR_STATE_INIT);
         *p_state                = (cmd_reg.systemEnable)            ?(*p_state)                 :(MOTOR_STATE_INIT);

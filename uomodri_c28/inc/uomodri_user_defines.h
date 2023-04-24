@@ -60,8 +60,8 @@
 #define UOMODRI_HAL_ADC_CALIB(flt_coef, y, x)   LPF_FILTER_1(flt_coef, y, x)
 #define UOMODRI_FEED_FORWARD_ENABLE             (0)
 
-#define USE_RMDX8H_MOTOR_ON_MOTOR1              (1)
-#define USE_SOLO_MOTOR_ON_MOTOR1                (0)
+#define USE_RMDX8H_MOTOR_ON_MOTOR1              (0)
+#define USE_SOLO_MOTOR_ON_MOTOR1                (1)
 
 #define USE_RMDX8H_MOTOR_ON_MOTOR2              (0)
 #define USE_SOLO_MOTOR_ON_MOTOR2                (0)

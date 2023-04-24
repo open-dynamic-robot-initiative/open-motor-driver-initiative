@@ -32,7 +32,7 @@ void ENC_resetStruct(encoder_t* p_enc)
     p_enc->thetaElec            = 0.0f;
     p_enc->thetaMech[NEW]       = 0.0f;
     p_enc->thetaMech[OLD]       = 0.0f;
-    p_enc->thetaIndex           = 0.0f;
+    p_enc->thetaIndexRelative   = 0.0f;
     p_enc->thetaIndexAbsolute   = 0.0f;
     p_enc->thetaAbsolute        = 0.0f;
     p_enc->turnNb               = 0U;
@@ -209,14 +209,14 @@ inline void ENC_getTheta(encoder_t* p_enc)
         // Compute indexed mechanical angle normalized between 0 and 2 x PI
         float32_t thetaIndex        = __mpy2pif32((float32_t)EQEP_getIndexPositionLatch(eqepBase) * p_enc->thetaMechScaler);
         // Save first indexed mechanical angle normalized between 0 and 2 x PI
-        p_enc->thetaIndex           = (!p_enc->flags.indexDetect) ? (thetaIndex) : (p_enc->thetaIndex);
+        p_enc->thetaIndexRelative   = (!p_enc->flags.indexDetect) ? (thetaIndex)            : (p_enc->thetaIndexRelative);
         // Save first absolute indexed mechanical angle
         p_enc->thetaIndexAbsolute   = (!p_enc->flags.indexDetect) ? (thetaIndex + turnNbRad): (p_enc->thetaIndexAbsolute);
         // Set index detection flag.
         p_enc->flags.indexDetect    = true;
         // Check if current index capture match the first index capture
         float32_t tmp               = __mpy2pif32(4.0f / p_enc->thetaMechScaler);
-        p_enc->flags.indexError     = (fabsf(p_enc->thetaIndex - thetaIndex) < tmp) ? (false) : (true);
+        p_enc->flags.indexError     = (fabsf(p_enc->thetaIndexRelative - thetaIndex) < tmp) ? (false) : (true);
         // Toggle index
         p_enc->flags.indexToggle    = !p_enc->flags.indexToggle;
         // Clear flag
