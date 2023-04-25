@@ -269,13 +269,15 @@ inline void LED_dimming(motor_t* p_motor1, motor_t* p_motor2, uint16_t* p_msg)
     float32_t       timer_fade_blink= (float32_t)((timer_cpt_ms < 500)  ? (timer_cpt_ms)    : (1000 - timer_cpt_ms)) / 500.0f;
     float32_t       timer_blink     = (timer_cpt_ms < 500)              ? (0.0f)            : (1.0f);
     timer_cpt_ms                    = (timer_cpt_ms < 1000)             ? (timer_cpt_ms + 1): (0);
-    uint8_t         motor_state     = MOTOR_STATE_INIT;//    motor_state_e   motor_state     = MOTOR_STATE_INIT;
+    uint8_t         motor_state     = MOTOR_STATE_START;//    motor_state_e   motor_state     = MOTOR_STATE_INIT;
 
-    if((p_motor1->motor_state == MOTOR_STATE_INIT) || (p_motor2->motor_state == MOTOR_STATE_INIT))
-        motor_state = MOTOR_STATE_INIT;
-    else if(((p_motor1->motor_state == MOTOR_STATE_ALIGN_MOVE) || (p_motor1->motor_state == MOTOR_STATE_ALIGN_FIX)) &&
-            ((p_motor2->motor_state == MOTOR_STATE_ALIGN_MOVE) || (p_motor2->motor_state == MOTOR_STATE_ALIGN_FIX)))
-        motor_state = MOTOR_STATE_ALIGN_MOVE;
+    if((p_motor1->motor_state == MOTOR_STATE_START) || (p_motor2->motor_state == MOTOR_STATE_START))
+        motor_state = MOTOR_STATE_START;
+    else if(((p_motor1->motor_state == MOTOR_STATE_INIT_FW) || (p_motor1->motor_state == MOTOR_STATE_INIT_REV) ||
+            (p_motor1->motor_state == MOTOR_STATE_INIT_TEST)|| (p_motor1->motor_state == MOTOR_STATE_INIT_FIX)) &&
+            ((p_motor2->motor_state == MOTOR_STATE_INIT_FW) || (p_motor2->motor_state == MOTOR_STATE_INIT_REV) ||
+            (p_motor2->motor_state == MOTOR_STATE_INIT_TEST)|| (p_motor2->motor_state == MOTOR_STATE_INIT_FIX)))
+        motor_state = MOTOR_STATE_INIT_FIX;
     else if(((p_motor1->motor_state == MOTOR_STATE_READY) || (p_motor1->motor_state == MOTOR_STATE_STOP)) &&
             ((p_motor2->motor_state == MOTOR_STATE_READY) || (p_motor2->motor_state == MOTOR_STATE_STOP)))
         motor_state = MOTOR_STATE_READY;
@@ -284,8 +286,10 @@ inline void LED_dimming(motor_t* p_motor1, motor_t* p_motor2, uint16_t* p_msg)
 
     switch(motor_state)
     {
-    case MOTOR_STATE_ALIGN_MOVE:
-    case MOTOR_STATE_ALIGN_FIX:
+    case MOTOR_STATE_INIT_FW:
+    case MOTOR_STATE_INIT_REV:
+    case MOTOR_STATE_INIT_TEST:
+    case MOTOR_STATE_INIT_FIX:
         ws2812b_writeLed((uint16_t)(0xff * timer_fade_blink), 0, (uint16_t)(0xff * timer_fade_blink), p_msg); //Magenta fade,
         break;
     case MOTOR_STATE_READY:
@@ -295,7 +299,7 @@ inline void LED_dimming(motor_t* p_motor1, motor_t* p_motor2, uint16_t* p_msg)
     case MOTOR_STATE_ERROR:
         ws2812b_writeLed((uint16_t)(0xff * timer_blink), 0, 0, p_msg);//red fade, error control
         break;
-    case MOTOR_STATE_INIT:
+    case MOTOR_STATE_START:
     default:
         ws2812b_writeLed(0,  0, (uint16_t)(0xff * timer_fade_blink), p_msg);//blue fade
     }

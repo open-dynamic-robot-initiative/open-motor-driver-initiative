@@ -28,7 +28,7 @@ typedef union __enc_test_u__
         uint8_t         indexToggle     : 1;    /*!< Bit 2      : R/W - Toggle flag every time index is seen. */
         uint8_t         indexError      : 1;    /*!< Bit 3      : R/W - Mismatch between index and mechanical angle capture. */
         uint8_t         rollOverError   : 1;    /*!< Bit 4      : R/W - Roll-over error flag. */
-        uint8_t         phaseError      : 1;    /*!< Bit 5      : R/W - Phase A, phase B or both are missing. */
+        uint8_t         encError        : 1;    /*!< Bit 5      : R/W - Detect an error on encoder (pole pairs mismatch, phases errors...) */
         uint8_t         ENC_TEST_RSV1   : 2;    /*!< Bit 6-7    : R/W - Reserved */
     };
 } enc_test_u;

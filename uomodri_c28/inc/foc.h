@@ -181,7 +181,8 @@ typedef struct __foc_t__
     float32_t           dtc_w;          /*!< Duty cycles on channel w - [pu] between -0.5 and 0.5 */
     float32_t           idRef;          /*!< PI controller set point values for D-axis current - [A] */
     float32_t           iqRef;          /*!< PI controller set point values for Q-axis current - [A] */
-    float32_t           posAlign;       /*!< Initial position to force a rotor movement during alignment - [RAD] */
+    float32_t           initPos;        /*!< Initial position to force a rotor movement during alignment - [RAD] */
+    float32_t           initPosEnc[2];  /*!< Initial positions of theta electric during alignment (forward \& reverse - [RAD] */
     pi_t                piId;           /*!< PI controller structure for current control */
     pi_t                piIq;           /*!< PI controller structure for current control */
     pd_t                pdPosVel;       /*!< PD controller structure for position/velocity control */

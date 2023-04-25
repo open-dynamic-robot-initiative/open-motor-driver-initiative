@@ -302,7 +302,9 @@ static foc_t motor_foc[] =
   .motor_cmd.index                          = 0U,
   .motor_cmd.cmdArray.all                   = 0U,
   //--- Initial position for alignment procedure ------------------------------
-  .posAlign                                 = MOTOR1_POSITION_ALIGN_MAX,
+  .initPos                                  = 0.0f,
+  .initPosEnc[FW]                           = 0.0f,
+  .initPosEnc[REV]                          = 0.0f,
   //---------------------------------------------------------------------------
   .iParkFlt.a                               = MOTOR1_CURRENT_LPF_ALPHA,
   .iParkFlt.one_minus_a                     = MOTOR1_CURRENT_LPF_ONE_M_ALPHA,
@@ -443,7 +445,9 @@ static foc_t motor_foc[] =
   .motor_cmd.index                          = 0U,
   .motor_cmd.cmdArray.all                   = 0U,
   //--- Initial position for alignment procedure ------------------------------
-  .posAlign                                 = MOTOR2_POSITION_ALIGN_MAX,
+  .initPos                                  = 0.0f,
+  .initPosEnc[FW]                           = 0.0f,
+  .initPosEnc[REV]                          = 0.0f,
   //---------------------------------------------------------------------------
   .iParkFlt.a                               = MOTOR2_CURRENT_LPF_ALPHA,
   .iParkFlt.one_minus_a                     = MOTOR2_CURRENT_LPF_ONE_M_ALPHA,
@@ -542,12 +546,12 @@ static motor_t motor[2] =
   //--- FOC structure address -------------------------------------------------
   .p_foc                                    = &motor_foc[MOTOR_1],
   //--- FSM motor initial state -----------------------------------------------
-  .motor_state                              = MOTOR_STATE_INIT,
+  .motor_state                              = MOTOR_STATE_START,
   //--- Error message ---------------------------------------------------------
   .motor_error.all                          = 0,
   //---------------------------------------------------------------------------
   .clCycleNb                                = 0,
-  .itCnt                                    = 0,
+  .itCnt                                    = 0UL,
   .itDone                                   = false,
   //--- DRV IO Config ---------------------------------------------------------
   .drvFaultNum                              = MOTOR1_DRV_FAULT_NUM,
@@ -567,12 +571,12 @@ static motor_t motor[2] =
   //--- FOC structure address -------------------------------------------------
   .p_foc                                    = &motor_foc[MOTOR_2],
   //--- FSM motor initial state -----------------------------------------------
-  .motor_state                              = MOTOR_STATE_INIT,
+  .motor_state                              = MOTOR_STATE_START,
   //--- Error message ---------------------------------------------------------
   .motor_error.all                          = 0,
   //---------------------------------------------------------------------------
   .clCycleNb                                = 0,
-  .itCnt                                    = 0,
+  .itCnt                                    = 0UL,
   .itDone                                   = false,
   //--- DRV IO Config ---------------------------------------------------------
   .drvFaultNum                              = MOTOR2_DRV_FAULT_NUM,
