@@ -26,6 +26,9 @@
 #define MOTOR_STATE_STOP            (0x20)
 #define MOTOR_STATE_ERROR           (0xFF)
 
+#define USE_STATE_MACHINE_4_ELECTRONCS_ENGINEERS    (1)
+#define USE_STATE_MACHINE_4_COMPUTER_SCIENTISTS     (0)
+
 /***********************************************************************
  * ENUM TYPES
  ***********************************************************************/
