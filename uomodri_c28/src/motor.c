@@ -43,7 +43,7 @@ inline void MOT_stopCommand(motor_t* p_motor)
  */
 inline bool_t MOT_runControl(motor_t* p_motor)
 {
-#if (USE_STATE_MACHIN_4_ELECTRONCS_ENGINEERS)
+#if (USE_STATE_MACHINE_4_ELECTRONCS_ENGINEERS)
     foc_t*              p_foc           = p_motor->p_foc;
     error_reg_u*        p_err           = &p_motor->motor_error;
     encoder_t*          p_enc           = &p_foc->motor_enc;
@@ -179,7 +179,7 @@ inline bool_t MOT_runControl(motor_t* p_motor)
          MOT_stopCommand(p_motor);
          break;
      }
-#elif (USE_STATE_MACHIN_4_COMPUTER_SCIENTISTS)
+#elif (USE_STATE_MACHINE_4_COMPUTER_SCIENTISTS)
     foc_t*              p_foc       = p_motor->p_foc;
     error_reg_u*        p_err       = &p_motor->motor_error;
     encoder_t*          p_enc       = &p_foc->motor_enc;
