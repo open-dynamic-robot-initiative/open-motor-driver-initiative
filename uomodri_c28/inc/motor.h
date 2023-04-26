@@ -17,17 +17,22 @@
 /***********************************************************************
  * DEFINES
  ***********************************************************************/
-#define MOTOR_STATE_START           (0x00)
-#define MOTOR_STATE_INIT_FW         (0x01)
-#define MOTOR_STATE_INIT_REV        (0x02)
-#define MOTOR_STATE_INIT_TEST       (0x04)
-#define MOTOR_STATE_INIT_FIX        (0x08)
-#define MOTOR_STATE_READY           (0x10)
-#define MOTOR_STATE_STOP            (0x20)
-#define MOTOR_STATE_ERROR           (0xFF)
+#define MOTOR_STATE_START                           (0x00)
+#define MOTOR_STATE_INIT_FW                         (0x01)
+#define MOTOR_STATE_INIT_REV                        (0x02)
+#define MOTOR_STATE_INIT_TEST                       (0x04)
+#define MOTOR_STATE_INIT_FIX                        (0x08)
+#define MOTOR_STATE_READY                           (0x10)
+#define MOTOR_STATE_STOP                            (0x20)
+#define MOTOR_STATE_ERROR                           (0xFF)
 
 #define USE_STATE_MACHINE_4_ELECTRONCS_ENGINEERS    (1)
 #define USE_STATE_MACHINE_4_COMPUTER_SCIENTISTS     (0)
+#if (USE_STATE_MACHINE_4_ELECTRONCS_ENGINEERS) && (USE_STATE_MACHINE_4_COMPUTER_SCIENTISTS)
+#error "Only one state machine must be set @ a time."
+#elif (!USE_STATE_MACHINE_4_ELECTRONCS_ENGINEERS) && (!USE_STATE_MACHINE_4_COMPUTER_SCIENTISTS)
+#error "@ least one state machine must be set @ a time."
+#endif
 
 /***********************************************************************
  * ENUM TYPES
