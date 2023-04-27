@@ -152,34 +152,34 @@ inline bool_t MOT_runControl(motor_t* p_motor)
         MOT_runCommand(p_motor, p_foc->dtc_u, p_foc->dtc_v, p_foc->dtc_w);
         break;
 
-     case MOTOR_STATE_READY:
-         p_motor->itCnt         += 1U;
-         p_foc->idRef            = 0.0f;
-         p_foc->iqRef            = FOC_runPD(&p_foc->pdPosVel);
-         *p_state                = (cmd_reg.motorEnable)     ? (MOTOR_STATE_READY)           : (MOTOR_STATE_STOP);
-         *p_state                = (cmd_reg.systemEnable)    ? (*p_state)                    : (MOTOR_STATE_START);
-         FOC_runControl(p_foc);
-         MOT_runCommand(p_motor, p_foc->dtc_u, p_foc->dtc_v, p_foc->dtc_w);
-         break;
+    case MOTOR_STATE_READY:
+        p_motor->itCnt         += 1U;
+        p_foc->idRef            = 0.0f;
+        p_foc->iqRef            = FOC_runPD(&p_foc->pdPosVel);
+        *p_state                = (cmd_reg.motorEnable)     ? (MOTOR_STATE_READY)           : (MOTOR_STATE_STOP);
+        *p_state                = (cmd_reg.systemEnable)    ? (*p_state)                    : (MOTOR_STATE_START);
+        FOC_runControl(p_foc);
+        MOT_runCommand(p_motor, p_foc->dtc_u, p_foc->dtc_v, p_foc->dtc_w);
+        break;
 
-     case MOTOR_STATE_STOP:
-         p_motor->itCnt         += 1U;
-         p_foc->idRef            = 0.0f;
-         p_foc->iqRef            = 0.0f;
-         *p_state                = (cmd_reg.motorEnable)     ? (MOTOR_STATE_READY)           : (MOTOR_STATE_STOP);
-         *p_state                = (cmd_reg.systemEnable)    ? (*p_state)                    : (MOTOR_STATE_START);
-         MOT_stopCommand(p_motor);
-         break;
+    case MOTOR_STATE_STOP:
+        p_motor->itCnt         += 1U;
+        p_foc->idRef            = 0.0f;
+        p_foc->iqRef            = 0.0f;
+        *p_state                = (cmd_reg.motorEnable)     ? (MOTOR_STATE_READY)           : (MOTOR_STATE_STOP);
+        *p_state                = (cmd_reg.systemEnable)    ? (*p_state)                    : (MOTOR_STATE_START);
+        MOT_stopCommand(p_motor);
+        break;
 
-     case MOTOR_STATE_ERROR:
-         p_motor->itCnt          = p_motor->itCnt;
-         p_foc->idRef            = 0.0f;
-         p_foc->iqRef            = 0.0f;
-         *p_state                = MOTOR_STATE_ERROR;
-         MOT_stopCommand(p_motor);
-         break;
-     }
-#elif (USE_STATE_MACHINE_4_COMPUTER_SCIENTISTS)
+    case MOTOR_STATE_ERROR:
+        p_motor->itCnt          = p_motor->itCnt;
+        p_foc->idRef            = 0.0f;
+        p_foc->iqRef            = 0.0f;
+        *p_state                = MOTOR_STATE_ERROR;
+        MOT_stopCommand(p_motor);
+        break;
+    }
+#else
     foc_t*              p_foc       = p_motor->p_foc;
     error_reg_u*        p_err       = &p_motor->motor_error;
     encoder_t*          p_enc       = &p_foc->motor_enc;
@@ -209,7 +209,7 @@ inline bool_t MOT_runControl(motor_t* p_motor)
     p_err->enc_mismatch             = (p_enc->flags.indexDetect && p_enc->flags.indexError)         || p_err->enc_mismatch;
     p_err->enc_failure              = p_enc->flags.encError                                         || p_err->enc_failure;
     if(p_err->all)
-    *p_state                        = MOTOR_STATE_ERROR;
+        *p_state                        = MOTOR_STATE_ERROR;
 
     switch(*p_state)
     {
@@ -381,7 +381,6 @@ inline bool_t MOT_runControl(motor_t* p_motor)
         break;
     }
 #endif
-
 
     return(true);
 }

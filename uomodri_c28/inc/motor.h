@@ -27,12 +27,6 @@
 #define MOTOR_STATE_ERROR                           (0xFF)
 
 #define USE_STATE_MACHINE_4_ELECTRONCS_ENGINEERS    (1)
-#define USE_STATE_MACHINE_4_COMPUTER_SCIENTISTS     (0)
-#if (USE_STATE_MACHINE_4_ELECTRONCS_ENGINEERS) && (USE_STATE_MACHINE_4_COMPUTER_SCIENTISTS)
-#error "Only one state machine must be set @ a time."
-#elif (!USE_STATE_MACHINE_4_ELECTRONCS_ENGINEERS) && (!USE_STATE_MACHINE_4_COMPUTER_SCIENTISTS)
-#error "@ least one state machine must be set @ a time."
-#endif
 
 /***********************************************************************
  * ENUM TYPES
