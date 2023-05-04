@@ -274,17 +274,12 @@ static foc_t motor_foc[] =
   .motor_enc.thetaMech[NEW]                 = 0.0f,
   .motor_enc.thetaMech[OLD]                 = 0.0f,
   .motor_enc.thetaMechScaler                = (float32_t)MOTOR1_ENC_RESOLUTION_SCALE,
-  .motor_enc.thetaIndex                     = 0.0f,
+  .motor_enc.thetaIndexRelative             = 0.0f,
   .motor_enc.thetaIndexAbsolute             = 0.0f,
   .motor_enc.thetaAbsolute                  = 0.0f,
   .motor_enc.turnNb                         = 0,
   .motor_enc.thetaDir                       = 0,
   .motor_enc.flags.all                      = 0,
-//  .motor_enc.indexDetect                    = false,
-//  .motor_enc.indexOffset                    = false,
-//  .motor_enc.indexToggle                    = false,
-//  .motor_enc.indexError                     = false,
-//  .motor_enc.rollOverError                  = false,
   .motor_enc.speed.speedHighScaler          = (float32_t)MOTOR1_ENC_SPEED_HIGH_SCALE,
   .motor_enc.speed.speedHigh                = 0.0f,
   .motor_enc.speed.speedLowScaler           = (float32_t)MOTOR1_ENC_SPEED_LOW_SCALE,
@@ -312,7 +307,9 @@ static foc_t motor_foc[] =
   .motor_cmd.index                          = 0,
   .motor_cmd.cmdArray.all                   = 0,
   //--- Initial position for alignment procedure ------------------------------
-  .posAlign                                 = MOTOR1_POSITION_ALIGN_MAX,
+  .initPos                                  = 0.0f,
+  .initPosEnc[FW]                           = 0.0f,
+  .initPosEnc[REV]                          = 0.0f,
   //---------------------------------------------------------------------------
   .iParkFlt.a                               = MOTOR1_CURRENT_LPF_ALPHA,
   .iParkFlt.one_minus_a                     = MOTOR1_CURRENT_LPF_ONE_M_ALPHA,
@@ -420,17 +417,12 @@ static foc_t motor_foc[] =
   .motor_enc.thetaMech[NEW]                 = 0.0f,
   .motor_enc.thetaMech[OLD]                 = 0.0f,
   .motor_enc.thetaMechScaler                = (float32_t)MOTOR2_ENC_RESOLUTION_SCALE,
-  .motor_enc.thetaIndex                     = 0.0f,
+  .motor_enc.thetaIndexRelative             = 0.0f,
   .motor_enc.thetaIndexAbsolute             = 0.0f,
   .motor_enc.thetaAbsolute                  = 0.0f,
   .motor_enc.turnNb                         = 0,
   .motor_enc.thetaDir                       = 0,
   .motor_enc.flags.all                      = 0,
-//  .motor_enc.indexDetect                    = false,
-//  .motor_enc.indexOffset                    = false,
-//  .motor_enc.indexToggle                    = false,
-//  .motor_enc.indexError                     = false,
-//  .motor_enc.rollOverError                  = false,
   .motor_enc.speed.speedHighScaler          = (float32_t)MOTOR2_ENC_SPEED_HIGH_SCALE,
   .motor_enc.speed.speedHigh                = 0.0f,
   .motor_enc.speed.speedLowScaler           = (float32_t)MOTOR2_ENC_SPEED_LOW_SCALE,
@@ -458,7 +450,9 @@ static foc_t motor_foc[] =
   .motor_cmd.index                          = 0,
   .motor_cmd.cmdArray.all                   = 0,
   //--- Initial position for alignment procedure ------------------------------
-  .posAlign                                 = MOTOR2_POSITION_ALIGN_MAX,
+  .initPos                                  = 0.0f,
+  .initPosEnc[FW]                           = 0.0f,
+  .initPosEnc[REV]                          = 0.0f,
   //---------------------------------------------------------------------------
   .iParkFlt.a                               = MOTOR2_CURRENT_LPF_ALPHA,
   .iParkFlt.one_minus_a                     = MOTOR2_CURRENT_LPF_ONE_M_ALPHA,
@@ -559,12 +553,12 @@ static motor_t motor[2] =
   //--- FOC structure address -------------------------------------------------
   .p_foc                                    = &motor_foc[MOTOR_1],
   //--- FSM motor initial state -----------------------------------------------
-  .motor_state                              = MOTOR_STATE_INIT,
+  .motor_state                              = MOTOR_STATE_START,
   //--- Error message ---------------------------------------------------------
   .motor_error.all                          = 0,
   //---------------------------------------------------------------------------
   .clCycleNb                                = 0,
-  .itCnt                                    = 0,
+  .itCnt                                    = 0UL,
   .itDone                                   = false,
   //--- DRV IO Config ---------------------------------------------------------
   .drvFaultNum                              = MOTOR1_DRV_FAULT_NUM,
@@ -584,12 +578,12 @@ static motor_t motor[2] =
   //--- FOC structure address -------------------------------------------------
   .p_foc                                    = &motor_foc[MOTOR_2],
   //--- FSM motor initial state -----------------------------------------------
-  .motor_state                              = MOTOR_STATE_INIT,
+  .motor_state                              = MOTOR_STATE_START,
   //--- Error message ---------------------------------------------------------
   .motor_error.all                          = 0,
   //---------------------------------------------------------------------------
   .clCycleNb                                = 0,
-  .itCnt                                    = 0,
+  .itCnt                                    = 0UL,
   .itDone                                   = false,
   //--- DRV IO Config ---------------------------------------------------------
   .drvFaultNum                              = MOTOR2_DRV_FAULT_NUM,

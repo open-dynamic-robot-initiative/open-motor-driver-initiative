@@ -136,14 +136,14 @@ void main(void)
             if(cmd_msg_valid || timeout_flag)
             {
 #if (CLA1_CORE_ENABLE)
-                if(cmd_msg_valid && ((cmd_uOmodri[MOTOR_1].cmdArray.all & 0xB000) == 0xB000))
-                    cmd_uOmodri[MOTOR_1].posRef += ((foc_t *)(motor[MOTOR_1].p_foc.ptr))->motor_enc.thetaIndex;
-                if(cmd_msg_valid && ((cmd_uOmodri[MOTOR_2].cmdArray.all & 0x000B) == 0x000B))
-                    cmd_uOmodri[MOTOR_2].posRef += ((foc_t *)(motor[MOTOR_2].p_foc.ptr))->motor_enc.thetaIndex;
+                if(cmd_msg_valid && ((cmd_uOmodri[MOTOR_1].cmdArray.all & 0x0B) == 0x0B))
+                    cmd_uOmodri[MOTOR_1].posRef += ((foc_t *)(motor[MOTOR_1].p_foc.ptr))->motor_enc.thetaIndexAbsolute;
+                if(cmd_msg_valid && ((cmd_uOmodri[MOTOR_2].cmdArray.all & 0x0B) == 0x0B))
+                    cmd_uOmodri[MOTOR_2].posRef += ((foc_t *)(motor[MOTOR_2].p_foc.ptr))->motor_enc.thetaIndexAbsolute;
 #else
-                if(cmd_msg_valid && ((cmd_uOmodri[MOTOR_1].cmdArray.all & 0xB000) == 0xB000))
+                if(cmd_msg_valid && ((cmd_uOmodri[MOTOR_1].cmdArray.all & 0x0B) == 0x0B))
                     cmd_uOmodri[MOTOR_1].posRef += motor[MOTOR_1].p_foc->motor_enc.thetaIndexAbsolute;
-                if(cmd_msg_valid && ((cmd_uOmodri[MOTOR_2].cmdArray.all & 0x000B) == 0x000B))
+                if(cmd_msg_valid && ((cmd_uOmodri[MOTOR_2].cmdArray.all & 0x0B) == 0x0B))
                     cmd_uOmodri[MOTOR_2].posRef += motor[MOTOR_2].p_foc->motor_enc.thetaIndexAbsolute;
 #endif
                 DMA_forceTrigger(DMA_CMD_2_FOC_BASE_ADDR);
@@ -328,23 +328,27 @@ inline void LED_dimming(motor_t* p_motor1, motor_t* p_motor2, uint16_t* p_msg)
     float32_t       timer_fade_blink= (float32_t)((timer_cpt_ms < 500)  ? (timer_cpt_ms)    : (1000 - timer_cpt_ms)) / 500.0f;
     float32_t       timer_blink     = (timer_cpt_ms < 500)              ? (0.0f)            : (1.0f);
     timer_cpt_ms                    = (timer_cpt_ms < 1000)             ? (timer_cpt_ms + 1): (0);
-    uint8_t         motor_state     = MOTOR_STATE_INIT;
+    uint8_t         motor_state     = MOTOR_STATE_START;
 
-    if((p_motor1->motor_state == MOTOR_STATE_INIT) || (p_motor2->motor_state == MOTOR_STATE_INIT))
-        motor_state = MOTOR_STATE_INIT;
-    else if(((p_motor1->motor_state == MOTOR_STATE_ALIGN_MOVE) || (p_motor1->motor_state == MOTOR_STATE_ALIGN_FIX)) &&
-            ((p_motor2->motor_state == MOTOR_STATE_ALIGN_MOVE) || (p_motor2->motor_state == MOTOR_STATE_ALIGN_FIX)))
-        motor_state = MOTOR_STATE_ALIGN_MOVE;
-    else if(((p_motor1->motor_state == MOTOR_STATE_READY) || (p_motor1->motor_state == MOTOR_STATE_STOP)) &&
-            ((p_motor2->motor_state == MOTOR_STATE_READY) || (p_motor2->motor_state == MOTOR_STATE_STOP)))
+    if((p_motor1->motor_state == MOTOR_STATE_START)         || (p_motor2->motor_state == MOTOR_STATE_START))
+        motor_state = MOTOR_STATE_START;
+    else if((p_motor1->motor_state == MOTOR_STATE_INIT_FW)  || (p_motor1->motor_state == MOTOR_STATE_INIT_REV)  ||
+            (p_motor1->motor_state == MOTOR_STATE_INIT_TEST)|| (p_motor1->motor_state == MOTOR_STATE_INIT_FIX)  ||
+            (p_motor2->motor_state == MOTOR_STATE_INIT_FW)  || (p_motor2->motor_state == MOTOR_STATE_INIT_REV)  ||
+            (p_motor2->motor_state == MOTOR_STATE_INIT_TEST)|| (p_motor2->motor_state == MOTOR_STATE_INIT_FIX))
+        motor_state = MOTOR_STATE_INIT_FIX;
+    else if((p_motor1->motor_state == MOTOR_STATE_READY)    || (p_motor1->motor_state == MOTOR_STATE_STOP)      ||
+            (p_motor2->motor_state == MOTOR_STATE_READY)    || (p_motor2->motor_state == MOTOR_STATE_STOP))
         motor_state = MOTOR_STATE_READY;
-    if((p_motor1->motor_state == MOTOR_STATE_ERROR) || (p_motor2->motor_state == MOTOR_STATE_ERROR))
+    if((p_motor1->motor_state == MOTOR_STATE_ERROR)         || (p_motor2->motor_state == MOTOR_STATE_ERROR))
         motor_state = MOTOR_STATE_ERROR;
 
     switch(motor_state)
     {
-    case MOTOR_STATE_ALIGN_MOVE:
-    case MOTOR_STATE_ALIGN_FIX:
+    case MOTOR_STATE_INIT_FW:
+    case MOTOR_STATE_INIT_REV:
+    case MOTOR_STATE_INIT_TEST:
+    case MOTOR_STATE_INIT_FIX:
         ws2812b_writeLed((uint16_t)(0xff * timer_fade_blink), 0, (uint16_t)(0xff * timer_fade_blink), p_msg); //Magenta fade,
         break;
     case MOTOR_STATE_READY:
@@ -354,7 +358,7 @@ inline void LED_dimming(motor_t* p_motor1, motor_t* p_motor2, uint16_t* p_msg)
     case MOTOR_STATE_ERROR:
         ws2812b_writeLed((uint16_t)(0xff * timer_blink), 0, 0, p_msg);//red fade, error control
         break;
-    case MOTOR_STATE_INIT:
+    case MOTOR_STATE_START:
     default:
         ws2812b_writeLed(0,  0, (uint16_t)(0xff * timer_fade_blink), p_msg);//blue fade
     }

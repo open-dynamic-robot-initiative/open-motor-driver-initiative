@@ -149,6 +149,10 @@
 #define LSB_64(x)                               ((x) & 0xFFFFFFFF)
 #define MSB_64(x)                               (((x) >> 32) & 0xFFFFFFFF)
 
+#define MIN                                     (0)
+#define MAX                                     (1)
+#define FW                                      (0)     /*!< Forward direction */
+#define REV                                     (1)     /*!< Reverse direction */
 #define NEW                                     (0)     /*!< Current data */
 #define OLD                                     (1)     /*!< Previous data */
 #define MOTOR_1                                 (0)     /*!< Select Motor_1 */
@@ -1102,7 +1106,7 @@
 #define MOTOR1_RS                               (0.52f)     // Stator resistance (ohm)
 #define MOTOR1_LS                               (260e-6)    // Stator d-axis inductance (H)
 #define MOTOR1_POLES_PAIRS                      (20.0f)     // Number of poles
-#define MOTOR1_CURRENT_ALIGN_MAX                (2.0f)      // Current on d-axis for motor alignment (A)
+#define MOTOR1_CURRENT_INIT_MAX                 (2.0f)      // Current on d-axis for motor alignment (A)
 #define MOTOR1_CURRENT_CMD_SAT_MAX              (10.0f)
 #elif (!USE_RMDX8H_MOTOR_ON_MOTOR1) && (USE_SOLO_MOTOR_ON_MOTOR1)
 #define MOTOR1_KV                               (300.0f)    // Motor constant (rpm/V)
@@ -1111,20 +1115,24 @@
 #define MOTOR1_RS                               (0.40f)     // Stator resistance (ohm)
 #define MOTOR1_LS                               (210e-6f)   // Stator d-axis inductance (H)
 #define MOTOR1_POLES_PAIRS                      (12.0f)     // Number of poles
-#define MOTOR1_CURRENT_ALIGN_MAX                (2.0f)      // Current on d-axis for motor alignment (A)
+#define MOTOR1_CURRENT_INIT_MAX                 (2.0f)      // Current on d-axis for motor alignment (A)
 #define MOTOR1_CURRENT_CMD_SAT_MAX              (10.0f)
 #endif
 #define MOTOR1_CURRENT_CUTOFF_FREQ              (1000.0f)   // Current loop bandwidth (Hz)
 #define MOTOR1_CURRENT_TIME_CONST               (2.0f * M_PI * MOTOR1_CURRENT_CUTOFF_FREQ * PWM_PERIOD)
 #define MOTOR1_CURRENT_LPF_ALPHA                (MOTOR1_CURRENT_TIME_CONST / (1.0f + MOTOR1_CURRENT_TIME_CONST))
 #define MOTOR1_CURRENT_LPF_ONE_M_ALPHA          (1.0f - MOTOR1_CURRENT_LPF_ALPHA)
-#define MOTOR1_CURRENT_ALIGN_RISE_TIME          (0.5f)      // in seconds
-#define MOTOR1_CURRENT_ALIGN_INC                (MOTOR1_CURRENT_ALIGN_MAX / MOTOR1_CURRENT_ALIGN_RISE_TIME / PWM_FREQ)
-#define MOTOR1_POSITION_ALIGN_MAX               FM_2MULTPI
-#define MOTOR1_POSITION_ALIGN_FALL_TIME         MOTOR1_CURRENT_ALIGN_RISE_TIME
-#define MOTOR1_POSITION_ALIGN_RISE_TIME         MOTOR1_CURRENT_ALIGN_RISE_TIME
-#define MOTOR1_POSITION_ALIGN_DEC               (MOTOR1_POSITION_ALIGN_MAX / MOTOR1_POSITION_ALIGN_FALL_TIME / PWM_FREQ)
-#define MOTOR1_POSITION_ALIGN_INC               (MOTOR1_POSITION_ALIGN_MAX / MOTOR1_POSITION_ALIGN_RISE_TIME / PWM_FREQ)
+#define MOTOR1_FIX_INIT_TIME                    (2.0f)      // in seconds
+#define MOTOR1_FIX_INIT_EVT                     (MOTOR1_FIX_INIT_TIME * PWM_FREQ)
+#define MOTOR1_CURRENT_INIT_TIME                (0.5f)      // in seconds
+#define MOTOR1_CURRENT_INIT_EVT                 (MOTOR1_CURRENT_INIT_TIME * PWM_FREQ)
+#define MOTOR1_CURRENT_INIT_STEP                (MOTOR1_CURRENT_INIT_MAX / MOTOR1_CURRENT_INIT_EVT)
+#define MOTOR1_POSITION_INIT_MAX                FM_2MULTPI
+#define MOTOR1_POSITION_INIT_TIME               MOTOR1_CURRENT_INIT_TIME
+#define MOTOR1_POSITION_INIT_EVT                (MOTOR1_POSITION_INIT_TIME * PWM_FREQ)
+#define MOTOR1_POSITION_INIT_STEP               (MOTOR1_POSITION_INIT_MAX / MOTOR1_POSITION_INIT_EVT)
+#define MOTOR1_POSITION_INIT_ERR_MAX            ((MOTOR1_POSITION_INIT_MAX + (FM_2MULTPI / 10.0f)) / MOTOR1_POLES_PAIRS)
+#define MOTOR1_POSITION_INIT_ERR_MIN            ((MOTOR1_POSITION_INIT_MAX - (FM_2MULTPI / 10.0f)) / MOTOR1_POLES_PAIRS)
 #define MOTOR1_PI_ID_KP_COEF                    (MOTOR1_LS * 2.0f * M_PI * MOTOR1_CURRENT_CUTOFF_FREQ)
 #define MOTOR1_PI_ID_KI_COEF                    (MOTOR1_RS * 2.0f * M_PI * MOTOR1_CURRENT_CUTOFF_FREQ)
 #define MOTOR1_PI_IQ_KP_COEF                    (MOTOR1_LS * 2.0f * M_PI * MOTOR1_CURRENT_CUTOFF_FREQ)
@@ -1144,7 +1152,7 @@
 #define MOTOR2_RS                               (0.52f)     // Stator resistance (ohm)
 #define MOTOR2_LS                               (260e-6)    // Stator d-axis inductance (H)
 #define MOTOR2_POLES_PAIRS                      (20.0f)     // Number of poles
-#define MOTOR2_CURRENT_ALIGN_MAX                (2.0f)      // Current on d-axis for motor alignment (A)
+#define MOTOR2_CURRENT_INIT_MAX                 (4.0f)      // Current on d-axis for motor alignment (A)
 #define MOTOR2_CURRENT_CMD_SAT_MAX              (10.0f)
 #elif (!USE_RMDX8H_MOTOR_ON_MOTOR2) && (USE_SOLO_MOTOR_ON_MOTOR2) && (!USE_MOTOR1_PARAMS_ON_MOTOR2)
 #define MOTOR2_KV                               (300.0f)    // Motor constant (rpm/V)
@@ -1153,7 +1161,7 @@
 #define MOTOR2_RS                               (0.40f)     // Stator resistance (ohm)
 #define MOTOR2_LS                               (210e-6f)   // Stator d-axis inductance (H)
 #define MOTOR2_POLES_PAIRS                      (12.0f)     // Number of poles
-#define MOTOR2_CURRENT_ALIGN_MAX                (2.0f)      // Current on d-axis for motor alignment (A)
+#define MOTOR2_CURRENT_INIT_MAX                 (2.0f)      // Current on d-axis for motor alignment (A)
 #define MOTOR2_CURRENT_CMD_SAT_MAX              (10.0f)
 #elif (!USE_RMDX8H_MOTOR_ON_MOTOR2) && (!USE_SOLO_MOTOR_ON_MOTOR2) && (USE_MOTOR1_PARAMS_ON_MOTOR2)
 #define MOTOR2_KV                               MOTOR1_KV   // Motor constant (rpm/V)
@@ -1161,8 +1169,8 @@
 #define MOTOR2_KI                               MOTOR1_KI   // Motor torque constant (N.m/A)
 #define MOTOR2_RS                               MOTOR1_RS   // Stator resistance (ohm)
 #define MOTOR2_LS                               MOTOR1_LS   // Stator d-axis inductance (H)
-#define MOTOR2_POLES_PAIRS                      MOTOR1_POLES_PAIRS          // Number of poles
-#define MOTOR2_CURRENT_ALIGN_MAX                MOTOR1_CURRENT_ALIGN_MAX    // Current on d-axis for motor alignment (A)
+#define MOTOR2_POLES_PAIRS                      MOTOR1_POLES_PAIRS // Number of poles
+#define MOTOR2_CURRENT_INIT_MAX                 MOTOR1_CURRENT_INIT_MAX
 #define MOTOR2_CURRENT_CMD_SAT_MAX              MOTOR1_CURRENT_CMD_SAT_MAX
 #endif
 #if (((USE_RMDX8H_MOTOR_ON_MOTOR2) || (USE_SOLO_MOTOR_ON_MOTOR2)) && (!USE_MOTOR1_PARAMS_ON_MOTOR2))
@@ -1170,11 +1178,17 @@
 #define MOTOR2_CURRENT_TIME_CONST               (2.0f * M_PI * MOTOR2_CURRENT_CUTOFF_FREQ * PWM_PERIOD)
 #define MOTOR2_CURRENT_LPF_ALPHA                (MOTOR2_CURRENT_TIME_CONST / (1.0f + MOTOR2_CURRENT_TIME_CONST))
 #define MOTOR2_CURRENT_LPF_ONE_M_ALPHA          (1.0f - MOTOR2_CURRENT_LPF_ALPHA)
-#define MOTOR2_CURRENT_ALIGN_RISE_TIME          (0.5f)      // in seconds
-#define MOTOR2_CURRENT_ALIGN_INC                (MOTOR2_CURRENT_ALIGN_MAX / MOTOR2_CURRENT_ALIGN_RISE_TIME / PWM_FREQ)
-#define MOTOR2_POSITION_ALIGN_MAX               FM_ROUND2RAD
-#define MOTOR2_POSITION_ALIGN_FALL_TIME         MOTOR2_CURRENT_ALIGN_RISE_TIME
-#define MOTOR2_POSITION_ALIGN_STEP              (MOTOR2_POSITION_ALIGN_MAX / MOTOR2_POSITION_ALIGN_FALL_TIME / PWM_FREQ)
+#define MOTOR2_FIX_INIT_TIME                    (2.0f)      // in seconds
+#define MOTOR2_FIX_INIT_EVT                     (MOTOR2_FIX_INIT_TIME * PWM_FREQ)
+#define MOTOR2_CURRENT_INIT_TIME                (0.5f)      // in seconds
+#define MOTOR2_CURRENT_INIT_EVT                 (MOTOR2_CURRENT_INIT_TIME * PWM_FREQ)
+#define MOTOR2_CURRENT_INIT_STEP                (MOTOR2_CURRENT_INIT_MAX / MOTOR2_CURRENT_INIT_EVT)
+#define MOTOR2_POSITION_INIT_MAX                FM_2MULTPI
+#define MOTOR2_POSITION_INIT_TIME               MOTOR2_CURRENT_INIT_TIME
+#define MOTOR2_POSITION_INIT_EVT                (MOTOR2_POSITION_INIT_TIME * PWM_FREQ)
+#define MOTOR2_POSITION_INIT_STEP               (MOTOR2_POSITION_INIT_MAX / MOTOR2_POSITION_INIT_EVT)
+#define MOTOR2_POSITION_INIT_ERR_MAX            (MOTOR2_POSITION_INIT_MAX + (FM_2MULTPI / 10.0f))
+#define MOTOR2_POSITION_INIT_ERR_MIN            (MOTOR2_POSITION_INIT_MAX - (FM_2MULTPI / 10.0f))
 #define MOTOR2_PI_ID_KP_COEF                    (MOTOR2_LS * 2.0f * M_PI * MOTOR2_CURRENT_CUTOFF_FREQ)
 #define MOTOR2_PI_ID_KI_COEF                    (MOTOR2_RS * 2.0f * M_PI * MOTOR2_CURRENT_CUTOFF_FREQ)
 #define MOTOR2_PI_IQ_KP_COEF                    (MOTOR2_LS * 2.0f * M_PI * MOTOR2_CURRENT_CUTOFF_FREQ)
@@ -1190,13 +1204,17 @@
 #define MOTOR2_CURRENT_TIME_CONST               MOTOR1_CURRENT_TIME_CONST
 #define MOTOR2_CURRENT_LPF_ALPHA                MOTOR1_CURRENT_LPF_ALPHA
 #define MOTOR2_CURRENT_LPF_ONE_M_ALPHA          MOTOR1_CURRENT_LPF_ONE_M_ALPHA
-#define MOTOR2_CURRENT_ALIGN_RISE_TIME          MOTOR1_CURRENT_ALIGN_RISE_TIME
-#define MOTOR2_CURRENT_ALIGN_INC                MOTOR1_CURRENT_ALIGN_INC
-#define MOTOR2_POSITION_ALIGN_MAX               MOTOR1_POSITION_ALIGN_MAX
-#define MOTOR2_POSITION_ALIGN_FALL_TIME         MOTOR1_POSITION_ALIGN_FALL_TIME
-#define MOTOR2_POSITION_ALIGN_RISE_TIME         MOTOR1_POSITION_ALIGN_RISE_TIME
-#define MOTOR2_POSITION_ALIGN_DEC               MOTOR1_POSITION_ALIGN_DEC
-#define MOTOR2_POSITION_ALIGN_INC               MOTOR1_POSITION_ALIGN_INC
+#define MOTOR2_FIX_INIT_TIME                    MOTOR1_FIX_INIT_TIME
+#define MOTOR2_FIX_INIT_EVT                     MOTOR1_FIX_INIT_EVT
+#define MOTOR2_CURRENT_INIT_TIME                MOTOR1_CURRENT_INIT_TIME
+#define MOTOR2_CURRENT_INIT_EVT                 MOTOR1_CURRENT_INIT_EVT
+#define MOTOR2_CURRENT_INIT_STEP                MOTOR1_CURRENT_INIT_STEP
+#define MOTOR2_POSITION_INIT_MAX                MOTOR1_POSITION_INIT_MAX
+#define MOTOR2_POSITION_INIT_TIME               MOTOR1_POSITION_INIT_TIME
+#define MOTOR2_POSITION_INIT_EVT                MOTOR1_POSITION_INIT_EVT
+#define MOTOR2_POSITION_INIT_STEP               MOTOR1_POSITION_INIT_STEP
+#define MOTOR2_POSITION_INIT_ERR_MAX            MOTOR1_POSITION_INIT_ERR_MAX
+#define MOTOR2_POSITION_INIT_ERR_MIN            MOTOR1_POSITION_INIT_ERR_MIN
 #define MOTOR2_PI_ID_KP_COEF                    MOTOR1_PI_ID_KP_COEF
 #define MOTOR2_PI_ID_KI_COEF                    MOTOR1_PI_ID_KI_COEF
 #define MOTOR2_PI_IQ_KP_COEF                    MOTOR1_PI_IQ_KP_COEF

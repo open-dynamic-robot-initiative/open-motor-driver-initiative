@@ -14,18 +14,16 @@
 /***********************************************************************
  * DEFINES
  ***********************************************************************/
-#define MOTOR_STATE_INIT        (0x00)
-#define MOTOR_STATE_ALIGN_MOVE  (0x01)
-//#define MOTOR_STATE_ALIGN_ENC1  (0x02)
-//#define MOTOR_STATE_ALIGN_DOWN  (0x04)
-//#define MOTOR_STATE_ALIGN_ENC2  (0x08)
-//#define MOTOR_STATE_ALIGN_FIX   (0x10)
-//#define MOTOR_STATE_READY       (0x20)
-//#define MOTOR_STATE_STOP        (0x40)
-#define MOTOR_STATE_ALIGN_FIX   (0x02)
-#define MOTOR_STATE_READY       (0x04)
-#define MOTOR_STATE_STOP        (0x08)
-#define MOTOR_STATE_ERROR       (0xFF)
+#define MOTOR_STATE_START                           (0x00)
+#define MOTOR_STATE_INIT_FW                         (0x01)
+#define MOTOR_STATE_INIT_REV                        (0x02)
+#define MOTOR_STATE_INIT_TEST                       (0x04)
+#define MOTOR_STATE_INIT_FIX                        (0x08)
+#define MOTOR_STATE_READY                           (0x10)
+#define MOTOR_STATE_STOP                            (0x20)
+#define MOTOR_STATE_ERROR                           (0xFF)
+
+#define USE_STATE_MACHINE_4_ELECTRONCS_ENGINEERS    (1)
 
 /***********************************************************************
  * ENUM TYPES
