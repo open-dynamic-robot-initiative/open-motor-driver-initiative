@@ -217,8 +217,8 @@ typedef struct __CLA_CFG_t__
     uint32_t                dataRAM;
     uint16_t                claTaskFlg;
     CLA_TaskNumber          claTaskNum;
-//    CLA_MVECTNumber         claIntVector;
-//    CLA_MVECTNumber         claIntVect;
+    CLA_MVECTNumber         claIntVect;
+    CLA_Trigger             claTrigSrc;
     void                    (*fun_ptr)(void);
 } cla_cfg_t;
 

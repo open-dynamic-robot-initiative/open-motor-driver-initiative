@@ -102,6 +102,7 @@ void main(void)
     uart_addr.addr_2 = GPIO_readPin(SELECT_PIN_2_NUM);
 #endif
 #if (CLA1_CORE_ENABLE)
+    // Force task 8, the one time initialization task
     CLA_forceTasks(CLA1_BASE, CLA_TASKFLAG_8);
 #endif
 

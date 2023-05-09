@@ -131,6 +131,8 @@ void COM_msgCreate(motor_t* p_motor_m1, motor_t* p_motor_m2, slv2mst_msg_t* p_ms
     p_msg->status.ERROR_CODE            = (p_err[MOTOR_2]->drv_fault)   ? (STATUS_ERROR_DRV_FAULT)          : (p_msg->status.ERROR_CODE);
     p_msg->status.ERROR_CODE            = (p_err[MOTOR_1]->enc_mismatch)? (STATUS_ERROR_ENCODER1)           : (p_msg->status.ERROR_CODE);
     p_msg->status.ERROR_CODE            = (p_err[MOTOR_2]->enc_mismatch)? (STATUS_ERROR_ENCODER2)           : (p_msg->status.ERROR_CODE);
+    p_msg->status.ERROR_CODE            = (p_err[MOTOR_1]->enc_failure) ? (STATUS_ERROR_ENCODER1)           : (p_msg->status.ERROR_CODE);
+    p_msg->status.ERROR_CODE            = (p_err[MOTOR_2]->enc_failure) ? (STATUS_ERROR_ENCODER2)           : (p_msg->status.ERROR_CODE);
 
     // Compute CRC
     uint32_t crc = COM_crc32((uint16_t *)p_msg, COM_MSG_TX_RX_16BIT_PAYLOAD_LENGTH);

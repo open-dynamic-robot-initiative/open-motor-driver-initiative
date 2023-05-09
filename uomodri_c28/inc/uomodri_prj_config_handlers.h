@@ -101,7 +101,8 @@ static const drv_cfg_t  drv_cfg[] =
 /** @var    DRV_Reg     DrvRegList[]
  *  @brief  List all configuration registers for each DRVs.
  */
-static drv_reg_t        drv_reg[] =
+#pragma DATA_SECTION(drv_reg, "ramgs0")
+static drv_reg_t drv_reg[] =
 {
  {
   .ctrl_reg_02.bit.CLR_FLT      = false,
@@ -204,7 +205,7 @@ static const periph_motor_cfg_t periph_motor_cfg[] =
  },
 };
 
-#pragma DATA_ALIGN(cmd_uOmodri, 8)
+#pragma DATA_ALIGN(cmd_uOmodri, 4)
 //#pragma DATA_SECTION(cmd_uOmodri, "MSGRAM_CPU_TO_CM")
 #pragma DATA_SECTION(cmd_uOmodri, "ramgs0")
 static cmd_t cmd_uOmodri[2] =
@@ -377,6 +378,7 @@ static foc_t motor_foc[] =
   .pdPosVel.derivative                      = 0.0f,
   .pdPosVel.p_ff                            = (float32_t *)(&motor_foc[MOTOR_1].motor_cmd.iqff),
   .pdPosVel.p_sat                           = (float32_t *)(&motor_foc[MOTOR_1].motor_cmd.iSat),
+  motor_foc[MOTOR_2].pdPosVel.out           = 0.0f;
   //--- FOC - Q-axis resistance estimation ------------------------------------
   .resEst                                   = 1.0f,
   //--- Resistance estimation low-pass filter ---------------------------------
@@ -558,7 +560,7 @@ static motor_t motor[2] =
   .motor_error.all                          = 0,
   //---------------------------------------------------------------------------
   .clCycleNb                                = 0,
-  .itCnt                                    = 0UL,
+  .itCnt                                    = 0U,
   .itDone                                   = false,
   //--- DRV IO Config ---------------------------------------------------------
   .drvFaultNum                              = MOTOR1_DRV_FAULT_NUM,
@@ -583,7 +585,7 @@ static motor_t motor[2] =
   .motor_error.all                          = 0,
   //---------------------------------------------------------------------------
   .clCycleNb                                = 0,
-  .itCnt                                    = 0UL,
+  .itCnt                                    = 0U,
   .itDone                                   = false,
   //--- DRV IO Config ---------------------------------------------------------
   .drvFaultNum                              = MOTOR2_DRV_FAULT_NUM,

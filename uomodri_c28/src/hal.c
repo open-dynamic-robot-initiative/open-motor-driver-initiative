@@ -34,6 +34,7 @@ void HAL_ini(const hal_cfg_t* p_hal)
 {
     if(p_hal != NULL)
     {
+        EALLOW;
         // Initialize GPIO pins
         HAL_GPIO_ini(p_hal->p_gpioHandle);
         // Initialize ADC
@@ -55,6 +56,7 @@ void HAL_ini(const hal_cfg_t* p_hal)
         HAL_SPI_ini(p_hal->p_spiHandle);
         // Initialize CLA
         HAL_CLA_ini(p_hal->p_claHandle);
+        EDIS;
     }
 
     return;
@@ -677,28 +679,22 @@ void HAL_CLA_ini(const cla_cfg_t* p_clacCfg)
 {
     if(p_clacCfg != NULL)
     {
-        EALLOW;
-
-        while(p_clacCfg->fun_ptr != NULL)
-        {
-
 #ifdef _FLASH
-            extern uint32_t Cla1funcsRunStart, Cla1funcsLoadStart, Cla1funcsLoadSize;
-            extern uint32_t Cla1ConstRunStart, Cla1ConstLoadStart, Cla1ConstLoadSize;
-            // Copy over code from FLASH to RAM
-            memcpy((uint32_t *)&Cla1funcsRunStart,  (uint32_t *)&Cla1funcsLoadStart,    (uint32_t)&Cla1funcsLoadSize);
-            memcpy((uint32_t *)&Cla1ConstRunStart,  (uint32_t *)&Cla1ConstLoadStart,    (uint32_t)&Cla1ConstLoadSize);
+        extern uint32_t Cla1funcsRunStart, Cla1funcsLoadStart, Cla1funcsLoadSize;
+        extern uint32_t Cla1ConstRunStart, Cla1ConstLoadStart, Cla1ConstLoadSize;
+        // Copy over code from FLASH to RAM
+        memcpy((uint32_t *)&Cla1funcsRunStart,  (uint32_t *)&Cla1funcsLoadStart,    (uint32_t)&Cla1funcsLoadSize);
+        memcpy((uint32_t *)&Cla1ConstRunStart,  (uint32_t *)&Cla1ConstLoadStart,    (uint32_t)&Cla1ConstLoadSize);
 #endif //_FLASH
 
-            // Initialize and wait for CLA1ToCPUMsgRAM
-            MemCfg_initSections(MEMCFG_SECT_MSGCLA1TOCPU);
-            while (!MemCfg_getInitStatus(MEMCFG_SECT_MSGCLA1TOCPU));
-            // Initialize and wait for CPUToCLA1MsgRAM
-            MemCfg_initSections(MEMCFG_SECT_MSGCPUTOCLA1);
-            while (!MemCfg_getInitStatus(MEMCFG_SECT_MSGCPUTOCLA1));
+        uint8_t i;
+        while(p_clacCfg->fun_ptr != NULL)
+        {
+#pragma diag_suppress=770
+            CLA_mapTaskVector(CLA1_BASE, p_clacCfg->claIntVect, (uint16_t)&(p_clacCfg->fun_ptr));
+            CLA_setTriggerSource(p_clacCfg->claTaskNum, p_clacCfg->claTrigSrc);
 
-            uint8_t i;
-
+            // Configure LSRAMs
             for(i = 0; i < 8; i++)
             {
                 uint32_t memcfg_sect_lsx = MEMCFG_SECT_TYPE_LS | (1 << i);
@@ -707,40 +703,109 @@ void HAL_CLA_ini(const cla_cfg_t* p_clacCfg)
                  * set the space to be a program block */
                 if((p_clacCfg->progRAM & memcfg_sect_lsx) == memcfg_sect_lsx)
                 {
-                    MemCfg_setLSRAMMasterSel(memcfg_sect_lsx, MEMCFG_LSRAMMASTER_CPU_CLA1);
+                    MemCfg_setLSRAMControllerSel(memcfg_sect_lsx, MEMCFG_LSRAMCONTROLLER_CPU_CLA1);
                     MemCfg_setCLAMemType(memcfg_sect_lsx, MEMCFG_CLA_MEM_PROGRAM);
+//                    MemCfg_setProtection(memcfg_sect_lsx, MEMCFG_PROT_ALLOWCPUFETCH | MEMCFG_PROT_ALLOWCPUWRITE);
                 }
                 /* Configure LSxRAM as data spaces for the CLA
                  * First configure the CLA to be the master for LSx and then
                  * set the spaces to be code blocks */
                 if((p_clacCfg->dataRAM & memcfg_sect_lsx) == memcfg_sect_lsx)
                 {
-                    MemCfg_setLSRAMMasterSel(memcfg_sect_lsx, MEMCFG_LSRAMMASTER_CPU_CLA1);
+                    MemCfg_setLSRAMControllerSel(memcfg_sect_lsx, MEMCFG_LSRAMCONTROLLER_CPU_CLA1);
                     MemCfg_setCLAMemType(memcfg_sect_lsx, MEMCFG_CLA_MEM_DATA);
+//                    MemCfg_setProtection(memcfg_sect_lsx, MEMCFG_PROT_ALLOWCPUFETCH | MEMCFG_PROT_ALLOWCPUWRITE);
                 }
             }
-
-            /* Suppressing #770-D conversion from pointer to smaller integer
-             * The CLA address range is 16 bits so the addresses passed to the MVECT
-             * registers will be in the lower 64KW address space. Turn the warning
-             * back on after the MVECTs are assigned addresses */
-            EDIS;
-            EALLOW;
-
-#pragma diag_suppress=770
-
-            CLA_mapTaskVector(CLA1_BASE, (CLA_MVECTNumber)p_clacCfg->claTaskNum, (uint16_t)&(p_clacCfg->fun_ptr));
-            //    CLA_mapTaskVector(CLA1_BASE, CLA_MVECT_2, (uint16_t)&(p_clacCfg->fun_ptr));
-#pragma diag_warning=770
-            // Enable Tasks 1 and 8
-            CLA_enableIACK(CLA1_BASE);
-            CLA_enableTasks(CLA1_BASE, (1 << p_clacCfg->claTaskNum));
-            //    CLA_forceTasks(CLA1_BASE, (1 << p_clacCfg->claTaskNum));
+            p_clacCfg++;
         }
+
+        // Initialize RAMs (CLA1ToCPUMsgRAM)
+        MemCfg_initSections(MEMCFG_SECT_MSGCLA1TOCPU);
+        while (!MemCfg_getInitStatus(MEMCFG_SECT_MSGCLA1TOCPU));
+        // Initialize RAMs (CPUToCLA1MsgRAM)
+        MemCfg_initSections(MEMCFG_SECT_MSGCPUTOCLA1);
+        while (!MemCfg_getInitStatus(MEMCFG_SECT_MSGCPUTOCLA1));
+
+        /* Disable background task */
+        CLA_disableBackgroundTask(CLA1_BASE);
+        /* Enable the IACK instruction to start a task on CLA in software for all  8 CLA tasks.
+         * Also, globally enable all 8 tasks (or a subset of tasks)
+         * by writing to their respective bits in the MIER register
+         */
+        CLA_enableIACK(CLA1_BASE);
+        CLA_enableTasks(CLA1_BASE, CLA_TASKFLAG_ALL);
     }
 
     return;
 }
+//{
+//    if(p_clacCfg != NULL)
+//    {
+//        EALLOW;
+//
+//        while(p_clacCfg->fun_ptr != NULL)
+//        {
+//
+//#ifdef _FLASH
+//            extern uint32_t Cla1funcsRunStart, Cla1funcsLoadStart, Cla1funcsLoadSize;
+//            extern uint32_t Cla1ConstRunStart, Cla1ConstLoadStart, Cla1ConstLoadSize;
+//            // Copy over code from FLASH to RAM
+//            memcpy((uint32_t *)&Cla1funcsRunStart,  (uint32_t *)&Cla1funcsLoadStart,    (uint32_t)&Cla1funcsLoadSize);
+//            memcpy((uint32_t *)&Cla1ConstRunStart,  (uint32_t *)&Cla1ConstLoadStart,    (uint32_t)&Cla1ConstLoadSize);
+//#endif //_FLASH
+//
+//            // Initialize and wait for CLA1ToCPUMsgRAM
+//            MemCfg_initSections(MEMCFG_SECT_MSGCLA1TOCPU);
+//            while (!MemCfg_getInitStatus(MEMCFG_SECT_MSGCLA1TOCPU));
+//            // Initialize and wait for CPUToCLA1MsgRAM
+//            MemCfg_initSections(MEMCFG_SECT_MSGCPUTOCLA1);
+//            while (!MemCfg_getInitStatus(MEMCFG_SECT_MSGCPUTOCLA1));
+//
+//            uint8_t i;
+//
+//            for(i = 0; i < 8; i++)
+//            {
+//                uint32_t memcfg_sect_lsx = MEMCFG_SECT_TYPE_LS | (1 << i);
+//                /* Select LSxRAM to be the programming space for the CLA
+//                 * First configure the CLA to be the master for LSx and then
+//                 * set the space to be a program block */
+//                if((p_clacCfg->progRAM & memcfg_sect_lsx) == memcfg_sect_lsx)
+//                {
+//                    MemCfg_setLSRAMMasterSel(memcfg_sect_lsx, MEMCFG_LSRAMMASTER_CPU_CLA1);
+//                    MemCfg_setCLAMemType(memcfg_sect_lsx, MEMCFG_CLA_MEM_PROGRAM);
+//                }
+//                /* Configure LSxRAM as data spaces for the CLA
+//                 * First configure the CLA to be the master for LSx and then
+//                 * set the spaces to be code blocks */
+//                if((p_clacCfg->dataRAM & memcfg_sect_lsx) == memcfg_sect_lsx)
+//                {
+//                    MemCfg_setLSRAMMasterSel(memcfg_sect_lsx, MEMCFG_LSRAMMASTER_CPU_CLA1);
+//                    MemCfg_setCLAMemType(memcfg_sect_lsx, MEMCFG_CLA_MEM_DATA);
+//                }
+//            }
+//
+//            /* Suppressing #770-D conversion from pointer to smaller integer
+//             * The CLA address range is 16 bits so the addresses passed to the MVECT
+//             * registers will be in the lower 64KW address space. Turn the warning
+//             * back on after the MVECTs are assigned addresses */
+//            EDIS;
+//            EALLOW;
+//
+//#pragma diag_suppress=770
+//
+//            CLA_mapTaskVector(CLA1_BASE, (CLA_MVECTNumber)p_clacCfg->claTaskNum, (uint16_t)&(p_clacCfg->fun_ptr));
+//            //    CLA_mapTaskVector(CLA1_BASE, CLA_MVECT_2, (uint16_t)&(p_clacCfg->fun_ptr));
+//#pragma diag_warning=770
+//            // Enable Tasks 1 and 8
+//            CLA_enableIACK(CLA1_BASE);
+//            CLA_enableTasks(CLA1_BASE, (1 << p_clacCfg->claTaskNum));
+//            //    CLA_forceTasks(CLA1_BASE, (1 << p_clacCfg->claTaskNum));
+//        }
+//    }
+//
+//    return;
+//}
 
 /**
  * @brief       Interrupts initialization function.

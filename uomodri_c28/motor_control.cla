@@ -36,102 +36,9 @@ __interrupt void Cla1Task1(void)
 {
     // Motor control
     motor[MOTOR_1].itDone = MOT_runControl(&motor[MOTOR_1]);
-
-//    foc_t*          p_foc       = motor[MOTOR_1].p_motorFOC;
-//    error_reg_u*    p_err       = &motor[MOTOR_1].motor_error;
-//    encoder_t*      p_enc       = &p_foc->motor_enc;
-//    cmd_t*          p_cmd       = &p_foc->motor_cmd;
-//    uint8_t*        p_state     = &motor[MOTOR_1].motor_state;
-//    cmd_reg_u       cmd_reg     = {.all = p_cmd->cmdArray.all};
-//    p_enc->indexOffset          = cmd_reg.encOffsetEnable;
-//
-//    // Read the phases current, voltage & Vbus
-//    FOC_getMeasures(&p_foc->motor_acq);
-//    // Read encoder position
-//    ENC_getPosition(p_enc);
-//    // Estimate speed
-//    ENC_getSpeed(p_enc);
-//    // Rollover test & index
-//    ENC_getTheta(p_enc);
-//
-//    motor[MOTOR_1].clCycleNb    = EPWM_getTimeBaseCounterValue(motor[MOTOR_1].epwmBaseAddr[CHANNEL_1]);
-//    p_err->drv_fault            = !GPIO_readPin(motor[MOTOR_1].drvFaultNum)                     || p_err->drv_fault;
-//    p_err->pos_rollover         = (p_enc->rollOverError && cmd_reg.rollOverEnable)              || p_err->pos_rollover;
-//    p_err->com_timeout          = ((p_cmd->cptTimeout > p_cmd->timeoutRef) && p_cmd->timeoutRef)|| p_err->com_timeout;
-//    p_err->enc_mismatch         = (p_enc->indexDetect && p_enc->indexError)                     || p_err->enc_mismatch;
-//    *p_state                    = (p_err->all)                      ? (MOTOR_STATE_ERROR)       : (*p_state);
-//
-//    switch(*p_state)
-//    {
-//    case MOTOR_STATE_INIT:
-//    default:
-//        motor[MOTOR_1].itCnt    = 0U;
-//        p_foc->idRef            = 0.0f;
-//        p_foc->iqRef            = 0.0f;
-//        *p_state                = (cmd_reg.motorEnable)             ? (MOTOR_STATE_ALIGN_UP)    : (MOTOR_STATE_INIT);
-//        *p_state                = (cmd_reg.systemEnable)            ? (*p_state)                : (MOTOR_STATE_INIT);
-//        ENC_resetPeriph(p_enc);
-//        FOC_resetStruct(p_foc);
-//        MOT_stopCommand(&motor[MOTOR_1]);
-//        break;
-//
-//    case MOTOR_STATE_ALIGN_UP:
-//        motor[MOTOR_1].itCnt    = 0U;
-//        p_foc->idRef           += MOTOR1_CURRENT_ALIGN_INC; // Increment for current alignment procedure
-//        p_foc->iqRef            = 0.0f;
-//        p_foc->thetaAlign      -= MOTOR1_THETA_ALIGN_DEC; // Decrement for position alignment procedure
-//        *p_state                = (p_foc->idRef < p_foc->iAlignMax) ? (MOTOR_STATE_ALIGN_UP)    : (MOTOR_STATE_ALIGN_FIX);
-//        *p_state                = (cmd_reg.motorEnable)             ? (*p_state)                : (MOTOR_STATE_INIT);
-//        *p_state                = (cmd_reg.systemEnable)            ? (*p_state)                : (MOTOR_STATE_INIT);
-//        (*p_state  != MOTOR_STATE_ALIGN_UP)                         ? (ENC_resetStruct(p_enc))  : (p_enc->thetaElec = p_foc->thetaAlign);
-//        FOC_runControl(p_foc);
-//        MOT_runCommand(&motor[MOTOR_1], p_foc->dtc_u, p_foc->dtc_v, p_foc->dtc_w);
-//        break;
-//
-//    case MOTOR_STATE_ALIGN_FIX:
-//        motor[MOTOR_1].itCnt   += 1U; // wait 2s
-//        p_foc->idRef            = p_foc->iAlignMax; // Maintain alignment current
-//        p_foc->iqRef            = 0.0f;
-//        *p_state                = (motor[MOTOR_1].itCnt < (2 * PWM_FREQ))   ? (MOTOR_STATE_ALIGN_FIX)   : (MOTOR_STATE_READY);
-//        *p_state                = (cmd_reg.motorEnable)                     ? (*p_state)                : (MOTOR_STATE_INIT);
-//        *p_state                = (cmd_reg.systemEnable)                    ? (*p_state)                : (MOTOR_STATE_INIT);
-//        ENC_resetPeriph(p_enc);
-//        ENC_resetStruct(p_enc);
-//        FOC_runControl(p_foc);
-//        MOT_runCommand(&motor[MOTOR_1], p_foc->dtc_u, p_foc->dtc_v, p_foc->dtc_w);
-//        break;
-//
-//    case MOTOR_STATE_READY:
-//        motor[MOTOR_1].itCnt   += 1U;
-//        p_foc->idRef            = 0.0f;
-//        p_foc->iqRef            = FOC_runPD(&p_foc->pdPosVel);
-//        *p_state                = (cmd_reg.motorEnable)             ? (MOTOR_STATE_READY)       : (MOTOR_STATE_STOP);
-//        *p_state                = (cmd_reg.systemEnable)            ? (*p_state)                : (MOTOR_STATE_INIT);
-//        FOC_runControl(p_foc);
-//        MOT_runCommand(&motor[MOTOR_1], p_foc->dtc_u, p_foc->dtc_v, p_foc->dtc_w);
-//        break;
-//
-//    case MOTOR_STATE_STOP:
-//        motor[MOTOR_1].itCnt   += 1U;
-//        p_foc->idRef            = 0.0f;
-//        p_foc->iqRef            = 0.0f;
-//        *p_state                = (!cmd_reg.motorEnable)            ? (MOTOR_STATE_STOP)        : (MOTOR_STATE_READY);
-//        *p_state                = (cmd_reg.systemEnable)            ? (*p_state)                : (MOTOR_STATE_INIT);
-//        FOC_runControl(p_foc);
-//        MOT_runCommand(&motor[MOTOR_1], p_foc->dtc_u, p_foc->dtc_v, p_foc->dtc_w);
-//        break;
-//
-//    case MOTOR_STATE_ERROR:
-//        motor[MOTOR_1].itCnt    = motor[MOTOR_1].itCnt;
-//        p_foc->idRef            = 0.0f;
-//        p_foc->iqRef            = 0.0f;
-//        *p_state                = MOTOR_STATE_ERROR;
-//        MOT_stopCommand(&motor[MOTOR_1]);
-//        break;
-//    }
 }
 
-__interrupt void Cla1Task2 ( void )
+__interrupt void Cla1Task2(void)
 {
     // Motor control
     motor[MOTOR_2].itDone = MOT_runControl(&motor[MOTOR_2]);
@@ -162,7 +69,7 @@ interrupt void Cla1Task7 ( void )
 
 }
 
-__interrupt void Cla1Task8 ( void )
+__interrupt void Cla1Task8(void)
 {
     // Uncomment this to debug the CLA while connected to the debugger
     __mdebugstop();
@@ -180,11 +87,11 @@ __interrupt void Cla1Task8 ( void )
     motor_foc[MOTOR_1].motor_acq.p_iMeasReg[CHANNEL_1].addr32b  = MOTOR1_IA_ADC_PPB_RESULT_ADDR;
     motor_foc[MOTOR_1].motor_acq.p_iMeasReg[CHANNEL_2].addr32b  = MOTOR1_IB_ADC_PPB_RESULT_ADDR;
     motor_foc[MOTOR_1].motor_acq.p_iMeasReg[CHANNEL_3].addr32b  = MOTOR1_IC_ADC_PPB_RESULT_ADDR;
-    motor_foc[MOTOR_1].motor_acq.vbus                           = 0.0f;
-    motor_foc[MOTOR_1].motor_acq.vExt                           = 0.0f;
-    motor_foc[MOTOR_1].motor_acq.ia                             = 0.0f;
-    motor_foc[MOTOR_1].motor_acq.ib                             = 0.0f;
-    motor_foc[MOTOR_1].motor_acq.ic                             = 0.0f;
+//    motor_foc[MOTOR_1].motor_acq.vbus                           = 0.0f;
+//    motor_foc[MOTOR_1].motor_acq.vExt                           = 0.0f;
+//    motor_foc[MOTOR_1].motor_acq.ia                             = 0.0f;
+//    motor_foc[MOTOR_1].motor_acq.ib                             = 0.0f;
+//    motor_foc[MOTOR_1].motor_acq.ic                             = 0.0f;
     motor_foc[MOTOR_1].motor_acq.vBusFlt.a                      = VBUS_LPF_ALPHA;
     motor_foc[MOTOR_1].motor_acq.vBusFlt.one_minus_a            = VBUS_LPF_ONE_M_ALPHA;
     motor_foc[MOTOR_1].motor_acq.vExtFlt.a                      = VEXT_LPF_ALPHA;
@@ -192,26 +99,26 @@ __interrupt void Cla1Task8 ( void )
     //--- MOTOR ENCORDER STRUCTURE ----------------------------------------------
     motor_foc[MOTOR_1].motor_enc.eqepBaseAddr                   = MOTOR1_QEP_BASE;
     motor_foc[MOTOR_1].motor_enc.polePairs                      = MOTOR1_POLES_PAIRS;
-    motor_foc[MOTOR_1].motor_enc.thetaElec                      = 0.0f;
+//    motor_foc[MOTOR_1].motor_enc.thetaElec                      = 0.0f;
     motor_foc[MOTOR_1].motor_enc.thetaMech[NEW]                 = 0.0f;
-    motor_foc[MOTOR_1].motor_enc.thetaMech[OLD]                 = 0.0f;
+//    motor_foc[MOTOR_1].motor_enc.thetaMech[OLD]                 = 0.0f;
     motor_foc[MOTOR_1].motor_enc.thetaMechScaler                = (float32_t)MOTOR1_ENC_RESOLUTION_SCALE;
-    motor_foc[MOTOR_1].motor_enc.thetaIndexRelative             = 0.0f;
-    motor_foc[MOTOR_1].motor_enc.thetaIndexAbsolute             = 0.0f;
-    motor_foc[MOTOR_1].motor_enc.thetaAbsolute                  = 0.0f;
+//    motor_foc[MOTOR_1].motor_enc.thetaIndexRelative             = 0.0f;
+//    motor_foc[MOTOR_1].motor_enc.thetaIndexAbsolute             = 0.0f;
+//    motor_foc[MOTOR_1].motor_enc.thetaAbsolute                  = 0.0f;
     motor_foc[MOTOR_1].motor_enc.turnNb                         = 0;
-    motor_foc[MOTOR_1].motor_enc.thetaDir                       = 0;
+//    motor_foc[MOTOR_1].motor_enc.thetaDir                       = 0;
     motor_foc[MOTOR_1].motor_enc.flags.all                      = 0;
     motor_foc[MOTOR_1].motor_enc.speed.speedHighScaler          = (float32_t)MOTOR1_ENC_SPEED_HIGH_SCALE;
-    motor_foc[MOTOR_1].motor_enc.speed.speedHigh                = 0.0f;
+//    motor_foc[MOTOR_1].motor_enc.speed.speedHigh                = 0.0f;
     motor_foc[MOTOR_1].motor_enc.speed.speedLowScaler           = (float32_t)MOTOR1_ENC_SPEED_LOW_SCALE;
-    motor_foc[MOTOR_1].motor_enc.speed.speedLow                 = 0.0f;
-    motor_foc[MOTOR_1].motor_enc.speed.alpha                    = 0.0f;
+//    motor_foc[MOTOR_1].motor_enc.speed.speedLow                 = 0.0f;
+//    motor_foc[MOTOR_1].motor_enc.speed.alpha                    = 0.0f;
     motor_foc[MOTOR_1].motor_enc.speed.speedMech[0]             = 0.0f;
     motor_foc[MOTOR_1].motor_enc.speed.speedMech[1]             = 0.0f;
-    motor_foc[MOTOR_1].motor_enc.speed.speedElec                = 0.0f;
+//    motor_foc[MOTOR_1].motor_enc.speed.speedElec                = 0.0f;
     motor_foc[MOTOR_1].motor_enc.speed.theta[NEW]               = 0.0f;
-    motor_foc[MOTOR_1].motor_enc.speed.theta[OLD]               = 0.0f;
+//    motor_foc[MOTOR_1].motor_enc.speed.theta[OLD]               = 0.0f;
     motor_foc[MOTOR_1].motor_enc.speed.speedFlt[0].a            = (float32_t)MOTOR1_ENC_SPEED_LPF_ALPHA;
     motor_foc[MOTOR_1].motor_enc.speed.speedFlt[0].one_minus_a  = (float32_t)MOTOR1_ENC_SPEED_LPF_ONE_M_ALPHA;
     motor_foc[MOTOR_1].motor_enc.speed.speedFlt[1].a            = (float32_t)MOTOR1_ENC_SPEED_LOCAL_LPF_ALPHA;
@@ -228,44 +135,43 @@ __interrupt void Cla1Task8 ( void )
     motor_foc[MOTOR_1].motor_cmd.index                          = 0U;
     motor_foc[MOTOR_1].motor_cmd.cmdArray.all                   = 0U;
     //--- Initial position for alignment procedure ------------------------------
-    motor_foc[MOTOR_1].initPos                                  = 0.0f;
-    motor_foc[MOTOR_1].initPosEnc[FW]                           = 0.0f;
-    motor_foc[MOTOR_1].initPosEnc[REV]                          = 0.0f;
+//    motor_foc[MOTOR_1].initPos                                  = 0.0f;
+//    motor_foc[MOTOR_1].initPosEnc[FW]                           = 0.0f;
+//    motor_foc[MOTOR_1].initPosEnc[REV]                          = 0.0f;
     //---------------------------------------------------------------------------
     motor_foc[MOTOR_1].iParkFlt.a                               = MOTOR1_CURRENT_LPF_ALPHA;
     motor_foc[MOTOR_1].iParkFlt.one_minus_a                     = MOTOR1_CURRENT_LPF_ONE_M_ALPHA;
     //--- FOC - Sine / Cosine computation of angular position -------------------
-    motor_foc[MOTOR_1].sinTheta                                 = 0.0f;
-    motor_foc[MOTOR_1].cosTheta                                 = 0.0f;
+//    motor_foc[MOTOR_1].sinTheta                                 = 0.0f;
+//    motor_foc[MOTOR_1].cosTheta                                 = 0.0f;
     //--- FOC - Clarke transform results ----------------------------------------
-    motor_foc[MOTOR_1].ialpha                                   = 0.0f;
-    motor_foc[MOTOR_1].ibeta                                    = 0.0f;
+//    motor_foc[MOTOR_1].ialpha                                   = 0.0f;
+//    motor_foc[MOTOR_1].ibeta                                    = 0.0f;
     //--- FOC - Park transform results ------------------------------------------
-    motor_foc[MOTOR_1].id                                       = 0.0f;
-    motor_foc[MOTOR_1].iq                                       = 0.0f;
+//    motor_foc[MOTOR_1].id                                       = 0.0f;
+//    motor_foc[MOTOR_1].iq                                       = 0.0f;
     //--- FOC - Inverse Park transform results ----------------------------------
-    motor_foc[MOTOR_1].ud                                       = 0.0f;
-    motor_foc[MOTOR_1].uq                                       = 0.0f;
+//    motor_foc[MOTOR_1].ud                                       = 0.0f;
+//    motor_foc[MOTOR_1].uq                                       = 0.0f;
     //--- FOC - Inverse Clarke transform results --------------------------------
-    motor_foc[MOTOR_1].ualpha                                   = 0.0f;
-    motor_foc[MOTOR_1].ubeta                                    = 0.0f;
+//    motor_foc[MOTOR_1].ualpha                                   = 0.0f;
+//    motor_foc[MOTOR_1].ubeta                                    = 0.0f;
     //--- FOC - Phase commands --------------------------------------------------
-    motor_foc[MOTOR_1].ua                                       = 0.0f;
-    motor_foc[MOTOR_1].ub                                       = 0.0f;
-    motor_foc[MOTOR_1].uc                                       = 0.0f;
+//    motor_foc[MOTOR_1].ua                                       = 0.0f;
+//    motor_foc[MOTOR_1].ub                                       = 0.0f;
+//    motor_foc[MOTOR_1].uc                                       = 0.0f;
     //--- FOC - Max current and voltage -----------------------------------------
-    motor_foc[MOTOR_1].vmax                                     = 0.0f;
-    //  .imax                                 = MOTOR12_IMAX;
+//    motor_foc[MOTOR_1].vmax                                     = 0.0f;
     //--- FOC - Initialize duty cycle saturation --------------------------------
     motor_foc[MOTOR_1].dtcMax                                   = MOTOR1_DTC_MAX;
     motor_foc[MOTOR_1].dtcMin                                   = MOTOR1_DTC_MIN;
     //--- FOC - Duty cycles -----------------------------------------------------
-    motor_foc[MOTOR_1].dtc_u                                    = 0.0f;
-    motor_foc[MOTOR_1].dtc_v                                    = 0.0f;
-    motor_foc[MOTOR_1].dtc_w                                    = 0.0f;
+//    motor_foc[MOTOR_1].dtc_u                                    = 0.0f;
+//    motor_foc[MOTOR_1].dtc_v                                    = 0.0f;
+//    motor_foc[MOTOR_1].dtc_w                                    = 0.0f;
     //--- FOC - PI setpoint values ----------------------------------------------
-    motor_foc[MOTOR_1].idRef                                    = 0.0f;
-    motor_foc[MOTOR_1].iqRef                                    = 0.0f;
+//    motor_foc[MOTOR_1].idRef                                    = 0.0f;
+//    motor_foc[MOTOR_1].iqRef                                    = 0.0f;
     //--- FOC - Initialize PI controller (Id) -----------------------------------
     motor_foc[MOTOR_1].piId.p_fb.ptr                            = (float32_t *)(&motor_foc[MOTOR_1].id);
     motor_foc[MOTOR_1].piId.p_set.ptr                           = (float32_t *)(&motor_foc[MOTOR_1].idRef);
@@ -298,11 +204,12 @@ __interrupt void Cla1Task8 ( void )
     motor_foc[MOTOR_1].pdPosVel.derivative                      = 0.0f;
     motor_foc[MOTOR_1].pdPosVel.p_ff.ptr                        = (float32_t *)(&motor_foc[MOTOR_1].motor_cmd.iqff);
     motor_foc[MOTOR_1].pdPosVel.p_sat.ptr                       = (float32_t *)(&motor_foc[MOTOR_1].motor_cmd.iSat);
+    motor_foc[MOTOR_1].pdPosVel.out                             = 0.0f;
     //--- FOC - Q-axis resistance estimation ------------------------------------
-    motor_foc[MOTOR_1].resEst                                   = 1.0f;
+//    motor_foc[MOTOR_1].resEst                                   = 1.0f;
     //--- Resistance estimation low-pass filter ---------------------------------
-    motor_foc[MOTOR_1].resEstFlt.a                              = MOTOR1_STATOR_RESISTOR_LPF_ALPHA;
-    motor_foc[MOTOR_1].resEstFlt.one_minus_a                    = MOTOR1_STATOR_RESISTOR_LPF_ONE_M_ALPHA;
+//    motor_foc[MOTOR_1].resEstFlt.a                              = MOTOR1_STATOR_RESISTOR_LPF_ALPHA;
+//    motor_foc[MOTOR_1].resEstFlt.one_minus_a                    = MOTOR1_STATOR_RESISTOR_LPF_ONE_M_ALPHA;
      //---------------------------------------------------------------------------
      //---------------------------------------------------------------------------
     //--- MOTOR PARAMS STRUCTURE ------------------------------------------------
@@ -318,11 +225,11 @@ __interrupt void Cla1Task8 ( void )
     motor_foc[MOTOR_2].motor_acq.p_iMeasReg[CHANNEL_1].addr32b  = MOTOR2_IA_ADC_PPB_RESULT_ADDR;
     motor_foc[MOTOR_2].motor_acq.p_iMeasReg[CHANNEL_2].addr32b  = MOTOR2_IB_ADC_PPB_RESULT_ADDR;
     motor_foc[MOTOR_2].motor_acq.p_iMeasReg[CHANNEL_3].addr32b  = MOTOR2_IC_ADC_PPB_RESULT_ADDR;
-    motor_foc[MOTOR_2].motor_acq.vbus                           = 0.0f;
-    motor_foc[MOTOR_2].motor_acq.vExt                           = 0.0f;
-    motor_foc[MOTOR_2].motor_acq.ia                             = 0.0f;
-    motor_foc[MOTOR_2].motor_acq.ib                             = 0.0f;
-    motor_foc[MOTOR_2].motor_acq.ic                             = 0.0f;
+//    motor_foc[MOTOR_2].motor_acq.vbus                           = 0.0f;
+//    motor_foc[MOTOR_2].motor_acq.vExt                           = 0.0f;
+//    motor_foc[MOTOR_2].motor_acq.ia                             = 0.0f;
+//    motor_foc[MOTOR_2].motor_acq.ib                             = 0.0f;
+//    motor_foc[MOTOR_2].motor_acq.ic                             = 0.0f;
     motor_foc[MOTOR_2].motor_acq.vBusFlt.a                      = VBUS_LPF_ALPHA;
     motor_foc[MOTOR_2].motor_acq.vBusFlt.one_minus_a            = VBUS_LPF_ONE_M_ALPHA;
     motor_foc[MOTOR_2].motor_acq.vExtFlt.a                      = VEXT_LPF_ALPHA;
@@ -330,26 +237,26 @@ __interrupt void Cla1Task8 ( void )
     //--- MOTOR ENCORDER STRUCTURE ----------------------------------------------
     motor_foc[MOTOR_2].motor_enc.eqepBaseAddr                   = MOTOR2_QEP_BASE;
     motor_foc[MOTOR_2].motor_enc.polePairs                      = MOTOR2_POLES_PAIRS;
-    motor_foc[MOTOR_2].motor_enc.thetaElec                      = 0.0f;
+//    motor_foc[MOTOR_2].motor_enc.thetaElec                      = 0.0f;
     motor_foc[MOTOR_2].motor_enc.thetaMech[NEW]                 = 0.0f;
-    motor_foc[MOTOR_2].motor_enc.thetaMech[OLD]                 = 0.0f;
+//    motor_foc[MOTOR_2].motor_enc.thetaMech[OLD]                 = 0.0f;
     motor_foc[MOTOR_2].motor_enc.thetaMechScaler                = (float32_t)MOTOR2_ENC_RESOLUTION_SCALE;
-    motor_foc[MOTOR_2].motor_enc.thetaIndexRelative             = 0.0f;
-    motor_foc[MOTOR_2].motor_enc.thetaIndexAbsolute             = 0.0f;
-    motor_foc[MOTOR_2].motor_enc.thetaAbsolute                  = 0.0f;
+//    motor_foc[MOTOR_2].motor_enc.thetaIndexRelative             = 0.0f;
+//    motor_foc[MOTOR_2].motor_enc.thetaIndexAbsolute             = 0.0f;
+//    motor_foc[MOTOR_2].motor_enc.thetaAbsolute                  = 0.0f;
     motor_foc[MOTOR_2].motor_enc.turnNb                         = 0;
-    motor_foc[MOTOR_2].motor_enc.thetaDir                       = 0;
+//    motor_foc[MOTOR_2].motor_enc.thetaDir                       = 0;
     motor_foc[MOTOR_2].motor_enc.flags.all                      = 0;
     motor_foc[MOTOR_2].motor_enc.speed.speedHighScaler          = (float32_t)MOTOR2_ENC_SPEED_HIGH_SCALE;
-    motor_foc[MOTOR_2].motor_enc.speed.speedHigh                = 0.0f;
+//    motor_foc[MOTOR_2].motor_enc.speed.speedHigh                = 0.0f;
     motor_foc[MOTOR_2].motor_enc.speed.speedLowScaler           = (float32_t)MOTOR2_ENC_SPEED_LOW_SCALE;
-    motor_foc[MOTOR_2].motor_enc.speed.speedLow                 = 0.0f;
-    motor_foc[MOTOR_2].motor_enc.speed.alpha                    = 0.0f;
+//    motor_foc[MOTOR_2].motor_enc.speed.speedLow                 = 0.0f;
+//    motor_foc[MOTOR_2].motor_enc.speed.alpha                    = 0.0f;
     motor_foc[MOTOR_2].motor_enc.speed.speedMech[0]             = 0.0f;
     motor_foc[MOTOR_2].motor_enc.speed.speedMech[1]             = 0.0f;
-    motor_foc[MOTOR_2].motor_enc.speed.speedElec                = 0.0f;
+//    motor_foc[MOTOR_2].motor_enc.speed.speedElec                = 0.0f;
     motor_foc[MOTOR_2].motor_enc.speed.theta[NEW]               = 0.0f;
-    motor_foc[MOTOR_2].motor_enc.speed.theta[OLD]               = 0.0f;
+//    motor_foc[MOTOR_2].motor_enc.speed.theta[OLD]               = 0.0f;
     motor_foc[MOTOR_2].motor_enc.speed.speedFlt[0].a            = (float32_t)MOTOR2_ENC_SPEED_LPF_ALPHA;
     motor_foc[MOTOR_2].motor_enc.speed.speedFlt[0].one_minus_a  = (float32_t)MOTOR2_ENC_SPEED_LPF_ONE_M_ALPHA;
     motor_foc[MOTOR_2].motor_enc.speed.speedFlt[1].a            = (float32_t)MOTOR2_ENC_SPEED_LOCAL_LPF_ALPHA;
@@ -366,43 +273,43 @@ __interrupt void Cla1Task8 ( void )
     motor_foc[MOTOR_2].motor_cmd.index                          = 0U;
     motor_foc[MOTOR_2].motor_cmd.cmdArray.all                   = 0U;
     //--- Initial position for alignment procedure ------------------------------
-    motor_foc[MOTOR_2].initPos                                  = 0.0f;
-    motor_foc[MOTOR_2].initPosEnc[FW]                           = 0.0f;
-    motor_foc[MOTOR_2].initPosEnc[REV]                          = 0.0f;
+//    motor_foc[MOTOR_2].initPos                                  = 0.0f;
+//    motor_foc[MOTOR_2].initPosEnc[FW]                           = 0.0f;
+//    motor_foc[MOTOR_2].initPosEnc[REV]                          = 0.0f;
     //---------------------------------------------------------------------------
     motor_foc[MOTOR_2].iParkFlt.a                               = MOTOR2_CURRENT_LPF_ALPHA;
     motor_foc[MOTOR_2].iParkFlt.one_minus_a                     = MOTOR2_CURRENT_LPF_ONE_M_ALPHA;
     //--- FOC - Sine / Cosine computation of angular position -------------------
-    motor_foc[MOTOR_2].sinTheta                                 = 0.0f;
-    motor_foc[MOTOR_2].cosTheta                                 = 0.0f;
+//    motor_foc[MOTOR_2].sinTheta                                 = 0.0f;
+//    motor_foc[MOTOR_2].cosTheta                                 = 0.0f;
     //--- FOC - Clarke transform results ----------------------------------------
-    motor_foc[MOTOR_2].ialpha                                   = 0.0f;
-    motor_foc[MOTOR_2].ibeta                                    = 0.0f;
+//    motor_foc[MOTOR_2].ialpha                                   = 0.0f;
+//    motor_foc[MOTOR_2].ibeta                                    = 0.0f;
     //--- FOC - Park transform results ------------------------------------------
     motor_foc[MOTOR_2].id                                       = 0.0f;
     motor_foc[MOTOR_2].iq                                       = 0.0f;
     //--- FOC - Inverse Park transform results ----------------------------------
-    motor_foc[MOTOR_2].ud                                       = 0.0f;
-    motor_foc[MOTOR_2].uq                                       = 0.0f;
+//    motor_foc[MOTOR_2].ud                                       = 0.0f;
+//    motor_foc[MOTOR_2].uq                                       = 0.0f;
     //--- FOC - Inverse Clarke transform results --------------------------------
-    motor_foc[MOTOR_2].ualpha                                   = 0.0f;
-    motor_foc[MOTOR_2].ubeta                                    = 0.0f;
+//    motor_foc[MOTOR_2].ualpha                                   = 0.0f;
+//    motor_foc[MOTOR_2].ubeta                                    = 0.0f;
     //--- FOC - Phase commands --------------------------------------------------
-    motor_foc[MOTOR_2].ua                                       = 0.0f;
-    motor_foc[MOTOR_2].ub                                       = 0.0f;
-    motor_foc[MOTOR_2].uc                                       = 0.0f;
+//    motor_foc[MOTOR_2].ua                                       = 0.0f;
+//    motor_foc[MOTOR_2].ub                                       = 0.0f;
+//    motor_foc[MOTOR_2].uc                                       = 0.0f;
     //--- FOC - Max current and voltage -----------------------------------------
-    motor_foc[MOTOR_2].vmax                                     = 0.0f;
+//    motor_foc[MOTOR_2].vmax                                     = 0.0f;
     //--- FOC - Initialize duty cycle saturation --------------------------------
     motor_foc[MOTOR_2].dtcMax                                   = MOTOR2_DTC_MAX;
     motor_foc[MOTOR_2].dtcMin                                   = MOTOR2_DTC_MIN;
     //--- FOC - Duty cycles -----------------------------------------------------
-    motor_foc[MOTOR_2].dtc_u                                    = 0.0f;
-    motor_foc[MOTOR_2].dtc_v                                    = 0.0f;
-    motor_foc[MOTOR_2].dtc_w                                    = 0.0f;
+//    motor_foc[MOTOR_2].dtc_u                                    = 0.0f;
+//    motor_foc[MOTOR_2].dtc_v                                    = 0.0f;
+//    motor_foc[MOTOR_2].dtc_w                                    = 0.0f;
     //--- FOC - PI setpoint values ----------------------------------------------
-    motor_foc[MOTOR_2].idRef                                    = 0.0f;
-    motor_foc[MOTOR_2].iqRef                                    = 0.0f;
+//    motor_foc[MOTOR_2].idRef                                    = 0.0f;
+//    motor_foc[MOTOR_2].iqRef                                    = 0.0f;
     //--- FOC - Initialize PI controller (Id) -----------------------------------
     motor_foc[MOTOR_2].piId.p_fb.ptr                            = (float32_t *)(&motor_foc[MOTOR_2].id);
     motor_foc[MOTOR_2].piId.p_set.ptr                           = (float32_t *)(&motor_foc[MOTOR_2].idRef);
@@ -437,10 +344,10 @@ __interrupt void Cla1Task8 ( void )
     motor_foc[MOTOR_2].pdPosVel.p_sat.ptr                       = (float32_t *)(&motor_foc[MOTOR_2].motor_cmd.iSat);
     motor_foc[MOTOR_2].pdPosVel.out                             = 0.0f;
     //--- FOC - Q-axis resistance estimation ------------------------------------
-    motor_foc[MOTOR_2].resEst                                   = 0.0f;
+//    motor_foc[MOTOR_2].resEst                                   = 0.0f;
     //--- Resistance estimation low-pass filter ---------------------------------
-    motor_foc[MOTOR_2].resEstFlt.a                              = MOTOR2_STATOR_RESISTOR_LPF_ALPHA;
-    motor_foc[MOTOR_2].resEstFlt.one_minus_a                    = MOTOR2_STATOR_RESISTOR_LPF_ONE_M_ALPHA;
+//    motor_foc[MOTOR_2].resEstFlt.a                              = MOTOR2_STATOR_RESISTOR_LPF_ALPHA;
+//    motor_foc[MOTOR_2].resEstFlt.one_minus_a                    = MOTOR2_STATOR_RESISTOR_LPF_ONE_M_ALPHA;
 
     //--- MOTOR_1 ---------------------------------------------------------------
     motor[MOTOR_1].motor_id                                     = MOTOR_1;
@@ -451,8 +358,8 @@ __interrupt void Cla1Task8 ( void )
     //--- Error message ---------------------------------------------------------
     motor[MOTOR_1].motor_error.all                              = 0;
     //---------------------------------------------------------------------------
-    motor[MOTOR_1].clCycleNb                                    = 0;
-    motor[MOTOR_1].itCnt                                        = 0;
+//    motor[MOTOR_1].clCycleNb                                    = 0U;
+//    motor[MOTOR_1].itCnt                                        = 0U;
     motor[MOTOR_1].itDone                                       = false;
     //--- DRV IO Config ---------------------------------------------------------
     motor[MOTOR_1].drvFaultNum                                  = MOTOR1_DRV_FAULT_NUM;
@@ -475,8 +382,8 @@ __interrupt void Cla1Task8 ( void )
     //--- Error message ---------------------------------------------------------
     motor[MOTOR_2].motor_error.all                              = 0;
     //---------------------------------------------------------------------------
-    motor[MOTOR_2].clCycleNb                                    = 0;
-    motor[MOTOR_2].itCnt                                        = 0;
+//    motor[MOTOR_2].clCycleNb                                    = 0U;
+//    motor[MOTOR_2].itCnt                                        = 0U;
     motor[MOTOR_2].itDone                                       = false;
     //--- DRV IO Config ---------------------------------------------------------
     motor[MOTOR_2].drvFaultNum                                  = MOTOR2_DRV_FAULT_NUM;
@@ -491,33 +398,5 @@ __interrupt void Cla1Task8 ( void )
     motor[MOTOR_2].p_cmdReg[CHANNEL_3].addr32b                  = MOTOR2_PWM3_CMD_ADDR;
 }
 #endif
-//bool_t as5047u_crc8check(BitDataFrame32_u data)
-//{
-//    uint32_t    crc = 0xC4;
-//    int8_t      i = 0, bit = 0;
-//    uint8_t     com[2];
-//
-//    com[0]  = data.byte_8.byte_3;
-//    com[1]  = data.byte_8.byte_2;
-//
-//    for(i = 0; i < 2; i++)
-//    {
-//        crc ^= com[i];
-//        for(bit = 0; bit < 8; bit++)
-//        {
-//            if(crc & 0x80)
-//            {
-//                crc <<= 1;
-//                crc  ^= 0x1D;
-//            }
-//            else
-//                crc <<= 1;
-//        }
-//    }
-//
-//    return((data.bit.crc == (crc^0xFF)) ? (true) : (false));
-//}
 
-//
 // End of file
-//

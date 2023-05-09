@@ -61,10 +61,10 @@ typedef struct __motor_t__
 {
 #if (CLA1_CORE_ENABLE)
     ptr_32b_u                   p_foc;                  /*!< Pointer on the FOC structure associated to the motor */
-#else
+    #else
     foc_t* const                p_foc;                  /*!< Pointer on the FOC structure associated to the motor */
 #endif
-    uint64_t                    itCnt;                  /*!< Event counter incrementing on every IT call */
+    uint32_t                    itCnt;                  /*!< Event counter incrementing on every IT call */
     uint32_t                    epwmBaseAddr[3];        /*!< Address array for the PWM peripherals associated to the motor control */
     uint32_t                    drvFaultNum;            /*!< GPIO associated to the DRV fault line */
     uint32_t                    drvEnNum;               /*!< GPIO associated to the DRV enable line */
