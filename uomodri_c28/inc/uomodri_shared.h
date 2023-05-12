@@ -9,7 +9,7 @@
 #include <CLAmath.h>
 #else
 #include <hw_types.h>
-#include <math.h>//"DCLF32.h"
+#include <math.h>
 #endif
 #include <f2838x_device.h>
 
@@ -32,6 +32,9 @@
 #if (CLA1_CORE_ENABLE)
 extern foc_t    motor_foc[];
 extern motor_t  motor[];
+#else
+//extern static foc_t     motor_foc[];
+//extern static motor_t   motor[];
 #endif
 
 /***********************************************************************
@@ -45,7 +48,7 @@ extern float32_t CLAcos(float32_t);
 extern float32_t CLAsin(float32_t);
 #endif
 
-#if (CLA1_CORE_ENABLE)
+#if (CLA1_CORE_ENABLE) || (CLA1_TEST_CORE_ENABLE)
 __interrupt void Cla1Task1();
 __interrupt void Cla1Task2();
 __interrupt void Cla1Task3();

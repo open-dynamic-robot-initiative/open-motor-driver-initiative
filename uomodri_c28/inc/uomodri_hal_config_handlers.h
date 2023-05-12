@@ -12,6 +12,13 @@
 #include "uomodri_user_defines.h"
 
 /***********************************************************************
+ * FUNCTIONS DECLARATION
+ ***********************************************************************/
+__attribute__((interrupt)) void Cla1Task1(void);
+__attribute__((interrupt)) void Cla1Task2(void);
+__attribute__((interrupt)) void Cla1Task8(void);
+
+/***********************************************************************
  * VARIABLE DECLARATION
  ***********************************************************************/
 extern mst2slv_msg_t    cmd_msg;
@@ -71,10 +78,10 @@ static const gpio_cfg_t GpioPinsCfgList[] =
  {.pinNumber = RS485_RX_EN_NUM,         .fctMux = RS485_RX_EN_CFG,          .pinType = GPIO_PIN_TYPE_OD,    .coreSelect = GPIO_CORE_CPU1,       .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 1,  .intEnable = false},
  {.pinNumber = RS485_TX_EN_NUM,         .fctMux = RS485_TX_EN_CFG,          .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,       .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0,  .intEnable = false},
 #endif
- {.pinNumber = DBG_PIN0_NUM,            .fctMux = DBG_PIN0_CFG,             .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = DBG_PIN0_CORE,        .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0,  .intEnable = false},
- {.pinNumber = DBG_PIN1_NUM,            .fctMux = DBG_PIN1_CFG,             .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = DBG_PIN1_CORE,        .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0,  .intEnable = false},
- {.pinNumber = DBG_PIN2_NUM,            .fctMux = DBG_PIN2_CFG,             .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = DBG_PIN2_CORE,        .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0,  .intEnable = false},
- {.pinNumber = DBG_PIN3_NUM,            .fctMux = DBG_PIN3_CFG,             .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = DBG_PIN3_CORE,        .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0,  .intEnable = false},
+ {.pinNumber = DBG_PIN0_NUM,            .fctMux = DBG_PIN0_CFG,             .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = DBG_PIN0_CORE,        .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_SYNC,   .setValue = 0,  .intEnable = false},
+ {.pinNumber = DBG_PIN1_NUM,            .fctMux = DBG_PIN1_CFG,             .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = DBG_PIN1_CORE,        .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_SYNC,   .setValue = 0,  .intEnable = false},
+ {.pinNumber = DBG_PIN2_NUM,            .fctMux = DBG_PIN2_CFG,             .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = DBG_PIN2_CORE,        .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_SYNC,   .setValue = 0,  .intEnable = false},
+ {.pinNumber = DBG_PIN3_NUM,            .fctMux = DBG_PIN3_CFG,             .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = DBG_PIN3_CORE,        .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_SYNC,   .setValue = 0,  .intEnable = false},
 #if (CLA1_CORE_ENABLE)
  // Quadrature encoder #1
  {.pinNumber = MOTOR1_ENC_CHA_NUM,      .fctMux = MOTOR1_ENC_CHA_CFG,       .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1_CLA1,  .direction = GPIO_DIR_MODE_IN,  .samplingInMode = GPIO_QUAL_6SAMPLE,.setValue = 0,  .intEnable = false},
@@ -197,8 +204,8 @@ static const adc_acq_t  AdcAcqList[] =
  */
 static const adc_int_t  AdcIntList[] =
 {
- {.adcBase = MOTOR12_IA_ADC_ADDR,   .adcEOCNumber = MOTOR1_Iabc_SOC_NUM,    .adcIntNumber = MOTOR1_IA_INT_NUM},
- {.adcBase = MOTOR12_IA_ADC_ADDR,   .adcEOCNumber = MOTOR2_Iabc_SOC_NUM,    .adcIntNumber = MOTOR2_IA_INT_NUM},
+ {.adcBase = MOTOR12_IA_ADC_ADDR,   .intTrigger = MOTOR1_Iabc_SOC_NUM,  .adcIntNumber = MOTOR1_IA_INT_NUM},
+ {.adcBase = MOTOR12_IA_ADC_ADDR,   .intTrigger = MOTOR2_Iabc_SOC_NUM,  .adcIntNumber = MOTOR2_IA_INT_NUM},
  // END OF ARRAY
  {.adcBase = UINT32_MAX}
 };
@@ -406,12 +413,11 @@ static const sci_cfg_t  sciCfgList[] =
  }
 };
 
-#if (CLA1_CORE_ENABLE)
 static const cla_cfg_t  claCfgList[] =
 {
  {
-  .progRAM              = (MEMCFG_SECT_LS3),// | MEMCFG_SECT_LS5 | MEMCFG_SECT_LS6 | MEMCFG_SECT_LS7),
-  .dataRAM              = (MEMCFG_SECT_LS0),// | MEMCFG_SECT_LS1),
+  .progRAM              = MEMCFG_SECT_LS2 | MEMCFG_SECT_LS3,// | MEMCFG_SECT_LS4 | MEMCFG_SECT_LS5 | MEMCFG_SECT_LS6 | MEMCFG_SECT_LS7),
+  .dataRAM              = MEMCFG_SECT_LS0,// | MEMCFG_SECT_LS1),
   .claTaskFlg           = CLA_TASKFLAG_1,
   .claTaskNum           = CLA_TASK_1,
   .claIntVect           = CLA_MVECT_1,
@@ -419,26 +425,25 @@ static const cla_cfg_t  claCfgList[] =
   .fun_ptr              = &Cla1Task1
  },
  {
-  .progRAM              = (MEMCFG_SECT_LS3),// | MEMCFG_SECT_LS5 | MEMCFG_SECT_LS6 | MEMCFG_SECT_LS7),
-  .dataRAM              = (MEMCFG_SECT_LS0),// | MEMCFG_SECT_LS1),
+  .progRAM              = MEMCFG_SECT_LS2 | MEMCFG_SECT_LS3,// | MEMCFG_SECT_LS4 | MEMCFG_SECT_LS5 | MEMCFG_SECT_LS6 | MEMCFG_SECT_LS7),
+  .dataRAM              = MEMCFG_SECT_LS0,// | MEMCFG_SECT_LS1),
   .claTaskFlg           = CLA_TASKFLAG_2,
   .claTaskNum           = CLA_TASK_2,
   .claIntVect           = CLA_MVECT_2,
   .claTrigSrc           = CLA_TRIGGER_ADCA2,
   .fun_ptr              = &Cla1Task2
  },
- {
-  .progRAM              = (MEMCFG_SECT_LS3),// | MEMCFG_SECT_LS5 | MEMCFG_SECT_LS6 | MEMCFG_SECT_LS7),
-  .dataRAM              = (MEMCFG_SECT_LS0),// | MEMCFG_SECT_LS1),
-  .claTaskFlg           = CLA_TASKFLAG_8,
-  .claTaskNum           = CLA_TASK_8,
-  .claIntVect           = CLA_MVECT_8,
-  .claTrigSrc           = CLA_TRIGGER_SOFTWARE,
-  .fun_ptr              = &Cla1Task8
- },
+// {
+//  .progRAM              = (MEMCFG_SECT_LS2 | MEMCFG_SECT_LS3 | MEMCFG_SECT_LS4 | MEMCFG_SECT_LS5 | MEMCFG_SECT_LS6 | MEMCFG_SECT_LS7),
+//  .dataRAM              = (MEMCFG_SECT_LS0),// | MEMCFG_SECT_LS1),
+//  .claTaskFlg           = CLA_TASKFLAG_8,
+//  .claTaskNum           = CLA_TASK_8,
+//  .claIntVect           = CLA_MVECT_8,
+//  .claTrigSrc           = CLA_TRIGGER_SOFTWARE,
+//  .fun_ptr              = &Cla1Task8
+// },
  {.fun_ptr              = NULL},
 };
-#endif
 
 /** @var    ePWM_TB_TypeDef PwmTimeBaseCfgList[]
  *  @brief  List all the configurations necessaries for ePWM Time Base submodule.
@@ -511,6 +516,14 @@ static const epwm_et_t  PwmAdcSocEventTriggerCfgList[] =
  {.epwmBase = UINT32_MAX},
 };
 
+static const epwm_it_t  PwmIntCfgList[] =
+{
+ {.epwmBase = MOTOR1_PWM1_BASE, .intEvtCount = 1, .intSource = EPWM_INT_TBCTR_ZERO},
+ {.epwmBase = MOTOR2_PWM1_BASE, .intEvtCount = 1, .intSource = EPWM_INT_TBCTR_ZERO},
+ // END OF ARRAY
+ {.epwmBase = UINT32_MAX},
+};
+
 /** @var    ePWM_TypeDef PwmCfgList[]
  *  @brief  List all the configurations necessaries for PWM module.
  */
@@ -523,7 +536,7 @@ static const epwm_cfg_t PwmCfgList[] =
   .p_epwmDeadband           = &PwmDeadBandCfgList[0],
   .p_epwmProgChopper        = NULL,
   .p_epwmAdcSocEventTrigger = &PwmAdcSocEventTriggerCfgList[0],
-  .p_epwmInterruptsEvent    = NULL,
+  .p_epwmInterruptsEvent    = NULL,//&PwmIntCfgList[0],
   .epwmAdcSocSrcExtern      = SYSCTL_ADCSOC_SRC_PWM1SOCA,
  },
  {.epwmBase                 = MOTOR1_PWM2_BASE,
@@ -553,7 +566,7 @@ static const epwm_cfg_t PwmCfgList[] =
   .p_epwmDeadband           = &PwmDeadBandCfgList[3],
   .p_epwmProgChopper        = NULL,
   .p_epwmAdcSocEventTrigger = &PwmAdcSocEventTriggerCfgList[1],
-  .p_epwmInterruptsEvent    = NULL,
+  .p_epwmInterruptsEvent    = NULL,//&PwmIntCfgList[1],
   .epwmAdcSocSrcExtern      = SYSCTL_ADCSOC_SRC_PWM4SOCB,
  },
  {.epwmBase                 = MOTOR2_PWM2_BASE,
@@ -601,7 +614,7 @@ static const hal_cfg_t hal =
 #endif
  .p_spiHandle               = spiCfgList,
  .p_timerHandle             = timerCfgList,
-#if (CLA1_CORE_ENABLE)
+#if (CLA1_CORE_ENABLE || CLA1_TEST_CORE_ENABLE)
  .p_claHandle               = claCfgList,
 #else
  .p_claHandle               = NULL,

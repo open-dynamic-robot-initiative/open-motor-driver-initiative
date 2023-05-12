@@ -35,7 +35,8 @@
 #define CPU1_CORE_ENABLE                        (1)
 #define CPU2_CORE_ENABLE                        (0)
 #define CM_CORE_ENABLE                          (1)
-#define CLA1_CORE_ENABLE                        (1)
+#define CLA1_CORE_ENABLE                        (0)
+#define CLA1_TEST_CORE_ENABLE                   (1)
 // CM peripherals ENABLE/DISABLE
 #define USB_BUS_ENABLE                          (0)
 #define UART_BUS_ENABLE                         (1)
@@ -215,14 +216,14 @@
 #define DBG_PIN3_READ                           (HWREG(GPIODATA_BASE + GPIO_O_GPCDAT) & GPIO_GPCDAT_GPIO77)
 #define DBG_PIN2_NUM                            (78)
 #define DBG_PIN2_CFG                            GPIO_78_GPIO78
-#define DBG_PIN2_CORE                           GPIO_CORE_CPU1
+#define DBG_PIN2_CORE                           GPIO_CORE_CPU1_CLA1
 #define DBG_PIN2_SET                            (HWREG(GPIODATA_BASE + GPIO_O_GPCSET)   = GPIO_GPCSET_GPIO78)
 #define DBG_PIN2_CLEAR                          (HWREG(GPIODATA_BASE + GPIO_O_GPCCLEAR) = GPIO_GPCCLEAR_GPIO78)
 #define DBG_PIN2_TOGGLE                         (HWREG(GPIODATA_BASE + GPIO_O_GPCTOGGLE)= GPIO_GPCTOGGLE_GPIO78)
 #define DBG_PIN2_READ                           (HWREG(GPIODATA_BASE + GPIO_O_GPCDAT) & GPIO_GPCDAT_GPIO78)
 #define DBG_PIN1_NUM                            (81)
 #define DBG_PIN1_CFG                            GPIO_81_GPIO81
-#define DBG_PIN1_CORE                           GPIO_CORE_CPU1
+#define DBG_PIN1_CORE                           GPIO_CORE_CPU1_CLA1
 #define DBG_PIN1_SET                            (HWREG(GPIODATA_BASE + GPIO_O_GPCSET)   = GPIO_GPCSET_GPIO81)
 #define DBG_PIN1_CLEAR                          (HWREG(GPIODATA_BASE + GPIO_O_GPCCLEAR) = GPIO_GPCCLEAR_GPIO81)
 #define DBG_PIN1_TOGGLE                         (HWREG(GPIODATA_BASE + GPIO_O_GPCTOGGLE)= GPIO_GPCTOGGLE_GPIO81)
@@ -760,11 +761,11 @@
  *  @brief    Define the interrupt source \& the PIE Interrupt Number associated
  * @{
  */
-#define MOTOR1_IA_INT_CH                        INT_ADCA3
-#define MOTOR2_IA_INT_CH                        INT_ADCA4
-#define MOTOR1_IA_INT_NUM                       ADC_INT_NUMBER3
-#define MOTOR2_IA_INT_NUM                       ADC_INT_NUMBER4
-#define MOTOR1_IA_INT_ACK_GROUP                 INTERRUPT_ACK_GROUP10
+#define MOTOR1_IA_INT_CH                        INT_ADCA1//INT_ADCA3
+#define MOTOR2_IA_INT_CH                        INT_ADCA2//INT_ADCA4
+#define MOTOR1_IA_INT_NUM                       ADC_INT_NUMBER1
+#define MOTOR2_IA_INT_NUM                       ADC_INT_NUMBER2
+#define MOTOR1_IA_INT_ACK_GROUP                 INTERRUPT_ACK_GROUP1
 #define MOTOR2_IA_INT_ACK_GROUP                 INTERRUPT_ACK_GROUP10
 /**
  * @}

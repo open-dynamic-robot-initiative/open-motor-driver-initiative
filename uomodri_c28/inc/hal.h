@@ -286,7 +286,7 @@ typedef struct __ADC_ACQUISITIONS_RESULTS_t__
 typedef struct __ADC_INTERRUPT_EVENTS_t__
 {
     const uint32_t                      adcBase;                    /*!< ADC peripheral address. */
-    const ADC_SOCNumber                 adcEOCNumber;               /*!< ADC End-Of-Conversion (EOC) number (0-15). */
+    const ADC_SOCNumber                 intTrigger;                 /*!< ADC End-Of-Conversion (EOC) number (0-15). */
     const ADC_IntNumber                 adcIntNumber;               /*!< IT source (0-3) associated to ADC \& SOC number. */
 } adc_int_t;
 

@@ -6,12 +6,12 @@
 /***********************************************************************
 * INCLUDES
 ***********************************************************************/
-//#include <CLAmath.h>
+#include "uomodri_user_defines.h"
+#if (!CLA1_TEST_CORE_ENABLE) && (CLA1_CORE_ENABLE)
 #include "uOmodri_shared.h"
+#endif
 #include "f2838x_device.h"
 #include "driverlib.h"
-//#include "motor.h"
-//#include "uomodri_user_defines.h"
 
 /***********************************************************************
  * VARIABLES
@@ -19,10 +19,14 @@
 #if (CLA1_CORE_ENABLE)
 extern foc_t motor_foc[];
 extern motor_t motor[];
+#elif (CLA1_TEST_CORE_ENABLE)
+uint16_t i;
 #endif
+
 /***********************************************************************
  * DEFINES
  ***********************************************************************/
+#define MAX_LOOP    (10)
 
 /***********************************************************************
  * FUNCTIONS DECLARATION
@@ -34,14 +38,26 @@ extern motor_t motor[];
 #if (CLA1_CORE_ENABLE)
 __interrupt void Cla1Task1(void)
 {
+    DBG_PIN1_SET;
     // Motor control
     motor[MOTOR_1].itDone = MOT_runControl(&motor[MOTOR_1]);
+    // Clear the interrupt overflow flag
+//    ADC_clearInterruptOverflowStatus(MOTOR12_IA_ADC_ADDR, MOTOR1_IA_INT_NUM);
+    // Clear the interrupt flag
+//    ADC_clearInterruptStatus(MOTOR12_IA_ADC_ADDR, MOTOR1_IA_INT_NUM);
+    DBG_PIN1_CLEAR;
 }
 
 __interrupt void Cla1Task2(void)
 {
+    DBG_PIN2_SET;
     // Motor control
     motor[MOTOR_2].itDone = MOT_runControl(&motor[MOTOR_2]);
+    // Clear the interrupt overflow flag
+//    ADC_clearInterruptOverflowStatus(MOTOR12_IA_ADC_ADDR, MOTOR2_IA_INT_NUM);
+    // Clear the interrupt flag
+//    ADC_clearInterruptStatus(MOTOR12_IA_ADC_ADDR, MOTOR2_IA_INT_NUM);
+    DBG_PIN2_CLEAR;
 }
 
 interrupt void Cla1Task3 ( void )
@@ -71,8 +87,9 @@ interrupt void Cla1Task7 ( void )
 
 __interrupt void Cla1Task8(void)
 {
+    DBG_PIN2_SET;
     // Uncomment this to debug the CLA while connected to the debugger
-    __mdebugstop();
+//    __mdebugstop();
 
     //--- MOTOR PARAMS STRUCTURE ------------------------------------------------
     motor_foc[MOTOR_1].motor_cfg.Rs                             = MOTOR1_RS;
@@ -397,6 +414,58 @@ __interrupt void Cla1Task8(void)
     motor[MOTOR_2].p_cmdReg[CHANNEL_2].addr32b                  = MOTOR2_PWM2_CMD_ADDR;
     motor[MOTOR_2].p_cmdReg[CHANNEL_3].addr32b                  = MOTOR2_PWM3_CMD_ADDR;
 }
+
+#elif (CLA1_TEST_CORE_ENABLE)
+__interrupt void Cla1Task1(void)
+{
+    DBG_PIN1_SET;
+    for(i = 0; i < MAX_LOOP; i++)
+        __mnop();
+    // Clear EPWM1 interrupt flag so that next interrupt can come in
+//    EPWM_clearEventTriggerInterruptFlag(EPWM1_BASE);
+    DBG_PIN1_CLEAR;
+}
+
+__interrupt void Cla1Task2(void)
+{
+    DBG_PIN2_SET;
+    for(i = 0; i < MAX_LOOP; i++)
+        __mnop();
+    // Clear EPWM1 interrupt flag so that next interrupt can come in
+//    EPWM_clearEventTriggerInterruptFlag(EPWM4_BASE);
+    DBG_PIN2_CLEAR;
+}
+
+interrupt void Cla1Task3 ( void )
+{
+
+}
+
+interrupt void Cla1Task4 ( void )
+{
+
+}
+
+interrupt void Cla1Task5 ( void )
+{
+
+}
+
+interrupt void Cla1Task6 ( void )
+{
+
+}
+
+interrupt void Cla1Task7 ( void )
+{
+
+}
+
+__interrupt void Cla1Task8(void)
+{
+
+}
+
 #endif
 
 // End of file

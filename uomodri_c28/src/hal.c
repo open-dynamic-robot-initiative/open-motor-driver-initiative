@@ -74,7 +74,7 @@ void HAL_GPIO_ini(const gpio_cfg_t* p_gpio)
 
         while(pinNum != UINT32_MAX)
         {
-            GPIO_setMasterCore(pinNum, p_gpio->coreSelect);
+            GPIO_setControllerCore(pinNum, p_gpio->coreSelect);
             if(p_gpio->analogModeEnable == GPIO_ANALOG_DISABLED)
             {
                 GPIO_setPinConfig(p_gpio->fctMux);
@@ -153,7 +153,7 @@ void HAL_ADC_ini(const adc_cfg_t* p_adcCfg)
             {
                 while(p_adcInt->adcBase == adcBase)
                 {
-                    ADC_setInterruptSource(adcBase, p_adcInt->adcIntNumber, p_adcInt->adcEOCNumber);
+                    ADC_setInterruptSource(adcBase, p_adcInt->adcIntNumber, p_adcInt->intTrigger);
                     ADC_enableContinuousMode(adcBase, p_adcInt->adcIntNumber);
                     ADC_enableInterrupt(adcBase, p_adcInt->adcIntNumber);
                     ADC_clearInterruptStatus(adcBase, p_adcInt->adcIntNumber);
@@ -691,7 +691,7 @@ void HAL_CLA_ini(const cla_cfg_t* p_clacCfg)
         while(p_clacCfg->fun_ptr != NULL)
         {
 #pragma diag_suppress=770
-            CLA_mapTaskVector(CLA1_BASE, p_clacCfg->claIntVect, (uint16_t)&(p_clacCfg->fun_ptr));
+            CLA_mapTaskVector(CLA1_BASE, p_clacCfg->claIntVect, (uint16_t)p_clacCfg->fun_ptr);
             CLA_setTriggerSource(p_clacCfg->claTaskNum, p_clacCfg->claTrigSrc);
 
             // Configure LSRAMs

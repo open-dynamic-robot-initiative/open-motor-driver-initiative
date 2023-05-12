@@ -47,37 +47,14 @@ static const int_cfg_t InterruptList[] =
   .intAckGroup      = MOTOR2_IA_INT_ACK_GROUP,
   .p_intHandler     = &adc_isrMotor2
  },
- // END OF ARRAY
- {.intNum           = UINT32_MAX},
-};
-
-//#if (CLA1_CORE_ENABLE)
-//static const asenc_cfg_t  ASencCfgList[] =
-//{
 // {
-//  .spiHandle        = ENC_SPI_BASE,
-//  .gpioNumber_CS    = EXT_DBG_SPI_CS1,
-// }
-//};
-//
-//static as_enc_t asenc_cfg[] =
-//{
-// {
-//  .asencHandle      = &ASencCfgList[MOTOR_1],
-//  .angleData.all    = 0U,
-//  .velData.all      = 0U,
-//  .degAngle         = 0.0f,
-//  .prevAngle        = 0.0f,
-//  .startAngle       = 0.0f,
-//  .totalAngle       = 0.0f,
-//  .turnNum          = 0.0f,
-//  .rndCount         = 0.0f,
-//  .vel              = 0.0f,
-//  .quadNum          = 0.0f,
-//  .prevQuadNum      = 0.0f,
+//  .intNum           = INT_EPWM1,
+//  .intAckGroup      = INTERRUPT_ACK_GROUP3,
+//  .p_intHandler     = NULL,
 // },
-//};
-//#endif
+// // END OF ARRAY
+// {.intNum           = UINT32_MAX},
+};
 
 /** @var    DRV_Cfg     DrvCfgList[]
  *  @brief  List all IOs \& SPI peripherals used for DRV communication.
@@ -378,7 +355,7 @@ static foc_t motor_foc[] =
   .pdPosVel.derivative                      = 0.0f,
   .pdPosVel.p_ff                            = (float32_t *)(&motor_foc[MOTOR_1].motor_cmd.iqff),
   .pdPosVel.p_sat                           = (float32_t *)(&motor_foc[MOTOR_1].motor_cmd.iSat),
-  motor_foc[MOTOR_2].pdPosVel.out           = 0.0f;
+  .pdPosVel.out                             = 0.0f,
   //--- FOC - Q-axis resistance estimation ------------------------------------
   .resEst                                   = 1.0f,
   //--- Resistance estimation low-pass filter ---------------------------------
