@@ -69,7 +69,7 @@ bool_t COM_msgExtract(mst2slv_msg_t* p_msg,  cmd_t* p_cmd_m1,  cmd_t* p_cmd_m2)
  */
 void COM_msgCreate(motor_t* p_motor_m1, motor_t* p_motor_m2, slv2mst_msg_t* p_msg)
 {
-#if (CLA1_CORE_ENABLE)
+#if (CLA_CORE_ENABLE)
     foc_t* p_foc                        = (foc_t *)p_motor_m1->p_foc.ptr;
 #else
     foc_t* p_foc                        = p_motor_m1->p_foc;
@@ -98,7 +98,7 @@ void COM_msgCreate(motor_t* p_motor_m1, motor_t* p_motor_m2, slv2mst_msg_t* p_ms
     p_msg->lastCmdIndex                 = p_foc->motor_cmd.index;
     p_msg->timeStamp                    = (uint16_t)CPUTimer_getTimerCount(CPU_TIMER_0_BASE);
 
-#if (CLA1_CORE_ENABLE)
+#if (CLA_CORE_ENABLE)
     p_foc                               = (foc_t *)p_motor_m2->p_foc.ptr;
 #else
     p_foc                               = p_motor_m2->p_foc;
@@ -140,6 +140,73 @@ void COM_msgCreate(motor_t* p_motor_m1, motor_t* p_motor_m2, slv2mst_msg_t* p_ms
     p_msg->crc.u16_lsb                  = MSB_32(crc);
 
     return;
+}
+
+bool_t COM_msgCreateLite(motor_t* p_motor, slv2mst_msg_t* p_msg)
+{
+    foc_t* p_foc                        = (foc_t *)p_motor->p_foc.ptr;
+    encoder_t* p_enc                    = &p_foc->motor_enc;
+    error_reg_u* p_err                  = &p_motor->motor_error;
+    cmd_reg_u cmd_reg                   = {.all = p_foc->motor_cmd.cmdArray.all};
+    float32_t theta_index_comp          = (cmd_reg.encOffsetEnable) ? (p_enc->thetaIndexAbsolute) : (0.0f);
+    float32_t pos_offset                = p_enc->thetaAbsolute - theta_index_comp;
+    int32_t pos                         = (int32_t)(pos_offset                  / POSITION_LSB      * FM_RAD2ROUND);
+    uint8_t state                       = p_motor->motor_state;
+    uint8_t motor_id                    = p_motor->motor_id;
+    bool_t align_done                   = (state == MOTOR_STATE_READY) || (state == MOTOR_STATE_STOP);
+    bool_t msg_done                     = false;
+
+    p_msg->position[motor_id].u16_msb   = MSB_32(pos);
+    p_msg->position[motor_id].u16_lsb   = LSB_32(pos);
+    p_msg->velocity[motor_id]           = (int16_t)(p_enc->speed.speedMech[0]   / VELOCITY_LSB      * FM_RADPS2KRPM);
+    p_msg->current[motor_id]            = (int16_t)(p_foc->iq                   / IQ_LSB);
+    p_msg->coilRes[motor_id]            = (uint16_t)(p_foc->resEst              / RESISTANCE_LSB);
+    p_msg->adcSamples[motor_id]         = (uint16_t)(p_foc->motor_acq.vExt      / VOLTAGE_LSB);
+
+    if(motor_id == MOTOR_1)
+    {
+        // Update status field - MOTOR_1
+        p_msg->status.M1E               = cmd_reg.motorEnable;      // MOTOR_1 enabled
+        p_msg->status.M1R               = align_done;               // MOTOR_1 ready
+        p_msg->status.IDX1T             = p_enc->flags.indexToggle; // MOTOR_1 index toggle
+        p_msg->status.IDX1D             = p_enc->flags.indexDetect; // MOTOR_1 index detected
+
+        p_msg->status.ERROR_CODE        = (p_err->com_timeout)  ? (STATUS_ERROR_SPI_RECV_TIMEOUT)   : (STATUS_ERROR_NO_ERROR);
+        p_msg->status.ERROR_CODE        = (p_err->pos_rollover) ? (STATUS_ERROR_POS_ROLLOVER)       : (p_msg->status.ERROR_CODE);
+        p_msg->status.ERROR_CODE        = (p_err->drv_fault)    ? (STATUS_ERROR_DRV_FAULT)          : (p_msg->status.ERROR_CODE);
+        p_msg->status.ERROR_CODE        = (p_err->enc_mismatch) ? (STATUS_ERROR_ENCODER1)           : (p_msg->status.ERROR_CODE);
+        p_msg->status.ERROR_CODE        = (p_err->enc_failure)  ? (STATUS_ERROR_ENCODER1)           : (p_msg->status.ERROR_CODE);
+
+        msg_done                        = false;
+    }
+    else
+    {
+        // Update status field - MOTOR_2
+        p_msg->status.M2E               = cmd_reg.motorEnable;      // MOTOR_2 enabled
+        p_msg->status.M2R               = align_done;               // MOTOR_2 ready
+        p_msg->status.IDX2T             = p_enc->flags.indexToggle; // MOTOR_2 index toggle
+        p_msg->status.IDX2D             = p_enc->flags.indexDetect; // MOTOR_2 index detected
+
+        p_msg->status.SE                = cmd_reg.systemEnable; // System enabled
+        p_msg->status.STATUS_RSV1       = 0;
+        p_msg->lastCmdIndex             = p_foc->motor_cmd.index;
+        p_msg->timeStamp                = (uint16_t)CPUTimer_getTimerCount(CPU_TIMER_0_BASE);
+
+        p_msg->status.ERROR_CODE        = (p_err->com_timeout)  ? (STATUS_ERROR_SPI_RECV_TIMEOUT)   : (p_msg->status.ERROR_CODE);
+        p_msg->status.ERROR_CODE        = (p_err->pos_rollover) ? (STATUS_ERROR_POS_ROLLOVER)       : (p_msg->status.ERROR_CODE);
+        p_msg->status.ERROR_CODE        = (p_err->drv_fault)    ? (STATUS_ERROR_DRV_FAULT)          : (p_msg->status.ERROR_CODE);
+        p_msg->status.ERROR_CODE        = (p_err->enc_mismatch) ? (STATUS_ERROR_ENCODER2)           : (p_msg->status.ERROR_CODE);
+        p_msg->status.ERROR_CODE        = (p_err->enc_failure)  ? (STATUS_ERROR_ENCODER2)           : (p_msg->status.ERROR_CODE);
+
+        // Compute CRC
+        uint32_t crc = COM_crc32((uint16_t *)p_msg, COM_MSG_TX_RX_16BIT_PAYLOAD_LENGTH);
+        p_msg->crc.u16_msb              = LSB_32(crc);              // required for Solo
+        p_msg->crc.u16_lsb              = MSB_32(crc);
+
+        msg_done                        = true;
+    }
+
+    return(msg_done);
 }
 
 /**

@@ -55,7 +55,7 @@ typedef struct __speed_t__
  */
 typedef struct __encoder_t__
 {
-#if (defined CPU1) && (!CLA1_CORE_ENABLE)
+#if (defined CPU1) && (!CLA_CORE_ENABLE)
     const uint32_t      eqepBaseAddr;       /*!< Address of EQEP peripheral used in HAL structure */
     const float32_t     polePairs;          /*!< Number of motor pole pairs */
 #else

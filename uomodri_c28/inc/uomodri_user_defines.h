@@ -35,8 +35,8 @@
 #define CPU1_CORE_ENABLE                        (1)
 #define CPU2_CORE_ENABLE                        (0)
 #define CM_CORE_ENABLE                          (1)
-#define CLA1_CORE_ENABLE                        (0)
-#define CLA1_TEST_CORE_ENABLE                   (1)
+#define CLA_CORE_ENABLE                         (1)
+#define CLA_TEST_CORE_ENABLE                    (0)
 // CM peripherals ENABLE/DISABLE
 #define USB_BUS_ENABLE                          (0)
 #define UART_BUS_ENABLE                         (1)

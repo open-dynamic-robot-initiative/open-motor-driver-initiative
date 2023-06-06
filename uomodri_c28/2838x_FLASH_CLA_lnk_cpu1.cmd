@@ -14,13 +14,13 @@ MEMORY
    RAMD1            : origin = 0x00C800, length = 0x000800
    RAMLS0           : origin = 0x008000, length = 0x000800
    RAMLS1           : origin = 0x008800, length = 0x000800
-   RAMLS2_7			: origin = 0x009000, length = 0x000800
-/* RAMLS2           : origin = 0x009000, length = 0x000800*/
-   RAMLS3           : origin = 0x009800, length = 0x000800
+   RAMLS2           : origin = 0x009000, length = 0x000800
+   RAMLS3_7			: origin = 0x009800, length = 0x002800
+/* RAMLS3           : origin = 0x009800, length = 0x000800
    RAMLS4           : origin = 0x00A000, length = 0x000800
    RAMLS5           : origin = 0x00A800, length = 0x000800
    RAMLS6           : origin = 0x00B000, length = 0x000800
-   RAMLS7           : origin = 0x00B800, length = 0x000800
+   RAMLS7           : origin = 0x00B800, length = 0x000800*/
    RAMGS0           : origin = 0x00D000, length = 0x001000
    RAMGS1           : origin = 0x00E000, length = 0x001000
    RAMGS2           : origin = 0x00F000, length = 0x001000
@@ -57,18 +57,18 @@ MEMORY
    FLASH13          : origin = 0x0BE000, length = 0x001FF0
 //   FLASH13_RSVD     : origin = 0x0BFFF0, length = 0x000010  /* Reserve and do not use for code as per the errata advisory "Memory: Prefetching Beyond Valid Memory" */
 
-   CPU1TOCPU2RAM   	: origin = 0x03A000, length = 0x000800
-   CPU2TOCPU1RAM   	: origin = 0x03B000, length = 0x000800
-   CPUTOCMRAM      	: origin = 0x039000, length = 0x000800
-   CMTOCPURAM      	: origin = 0x038000, length = 0x000800
+   CPU1_CPU2_RAM   	: origin = 0x03A000, length = 0x000800
+   CPU2_CPU1_RAM   	: origin = 0x03B000, length = 0x000800
+   CPU_CM_RAM      	: origin = 0x039000, length = 0x000800
+   CM_CPU_RAM      	: origin = 0x038000, length = 0x000800
 
    CANA_MSG_RAM     : origin = 0x049000, length = 0x000800
    CANB_MSG_RAM     : origin = 0x04B000, length = 0x000800
 
    RESET            : origin = 0x3FFFC0, length = 0x000002
 
-   CLA1_MSGRAMLOW   : origin = 0x001480, length = 0x000080
-   CLA1_MSGRAMHIGH  : origin = 0x001500, length = 0x000080
+   CLA1_CPU_MSGRAM	: origin = 0x001480, length = 0x000080
+   CPU_CLA1_MSGRAM	: origin = 0x001500, length = 0x000080
    CLA1_DMA_MSGRAM  : origin = 0x001680, length = 0x000080
    DMA_CLA1_MSGRAM  : origin = 0x001700, length = 0x000080
 }
@@ -85,56 +85,46 @@ SECTIONS
 #if defined(__TI_EABI__)
    .init_array      : > FLASH0, ALIGN(4)	/* Table of C++ constructors called at startup -	Initalized */
    .const           : > FLASH1, ALIGN(4)	/* Initialized constants -							Initalized */
-   .data            : > RAMLS1				/* Initialized global variables -					Initalized */
-   .sysmem          : > RAMLS1				/* Malloc heap -									Not Initalized */
-   .bss             : > RAMLS0				/* Not initialized global variables -				Not Initalized */
-   .bss:output      : > RAMLS0
-   .bss:cio			: > RAMLS0
+   .data            : > RAMLS2				/* Initialized global variables -					Initalized */
+   .sysmem          : > RAMLS2				/* Malloc heap -									Not Initalized */
+   .bss             : > RAMLS2 //RAMLS3				/* Not initialized global variables -				Not Initalized */
+   .bss:output      : > RAMLS2 //RAMLS3
+   .bss:cio			: > RAMLS2 //RAMLS3
 #else
    .pinit           : > FLASH0, ALIGN(4)
    .econst          : > FLASH1, ALIGN(4)	/* Initialized constants -							Initalized */
-   .esysmem         : > RAMLS1				/* Malloc heap -									Not Initalized */
-   .ebss            : > RAMLS0				/* Not initialized global variables -				Not Initalized */
+   .esysmem         : > RAMLS2				/* Malloc heap -									Not Initalized */
+   .ebss            : > RAMLS2 //RAMLS3				/* Not initialized global variables -				Not Initalized */
 #endif
 
    ramgs0			: > RAMGS0//, type=NOINIT
    ramgs1			: > RAMGS1, type=NOINIT
 
-   MSGRAM_CPU1_TO_CPU2 : > CPU1TOCPU2RAM, type=NOINIT
-   MSGRAM_CPU2_TO_CPU1 : > CPU2TOCPU1RAM, type=NOINIT
-   MSGRAM_CPU_TO_CM    : > CPUTOCMRAM//, type=NOINIT
-   MSGRAM_CM_TO_CPU    : > CMTOCPURAM//, type=NOINIT
+   MSGRAM_CPU1_TO_CPU2	: > CPU1_CPU2_RAM, type=NOINIT
+   MSGRAM_CPU2_TO_CPU1	: > CPU2_CPU1_RAM, type=NOINIT
+   MSGRAM_CPU_TO_CM		: > CPU_CM_RAM//, type=NOINIT
+   MSGRAM_CM_TO_CPU		: > CM_CPU_RAM//, type=NOINIT
 
-   MSGRAM_CLA1_TO_CPU  : > CLA1_MSGRAMLOW,	type=NOINIT
-   MSGRAM_CPU_TO_CLA1  : > CLA1_MSGRAMHIGH, type=NOINIT
-   MSGRAM_CLA1_TO_DMA  : > CLA1_DMA_MSGRAM, type=NOINIT
-   MSGRAM_DMA_TO_CLA1  : > DMA_CLA1_MSGRAM, type=NOINIT
-/*
-   Cpu1ToCpu2MsgRAM	: > CPU1TOCPU2RAM, type=NOINIT
-   Cpu2ToCpu1MsgRAM	: > CPU2TOCPU1RAM, type=NOINIT
-   CpuToCmMsgRAM	: > CPUTOCMRAM//, type=NOINIT
-   CmToCpuMsgRAM	: > CMTOCPURAM//, type=NOINIT
-
-   Cla1ToCpuMsgRAM  : > CLA1_MSGRAMLOW,	 type=NOINIT
-   CpuToCla1MsgRAM  : > CLA1_MSGRAMHIGH, type=NOINIT
-   Cla1ToDmaMsgRAM  : > CLA1_DMA_MSGRAM, type=NOINIT
-   DmaToCla1MsgRAM  : > DMA_CLA1_MSGRAM, type=NOINIT
-*/
+   MSGRAM_CLA_TO_CPU	: > CLA1_CPU_MSGRAM, type=NOINIT
+   MSGRAM_CPU_TO_CLA	: > CPU_CLA1_MSGRAM, type=NOINIT
+   MSGRAM_CLA_TO_DMA	: > CLA1_DMA_MSGRAM, type=NOINIT
+   MSGRAM_DMA_TO_CLA	: > DMA_CLA1_MSGRAM, type=NOINIT
 
 /* CLA specific sections */
-   ClaDataRam      	: > RAMLS0 /*>> RAMLS0 | RAMLS1*/
+   ClaDataRam0     	: > RAMLS0 /*>> RAMLS0 | RAMLS1*/
+   ClaDataRam1     	: > RAMLS1 /*>> RAMLS0 | RAMLS1*/
    CLAscratch		:
                      { *.obj(CLAscratch)
                      . += CLA_SCRATCHPAD_SIZE;
-                     *.obj(CLAscratch_end) } >  RAMLS0
-   .scratchpad      : > RAMLS0
-   .bss_cla         : > RAMLS0
-   cla_shared       : > RAMLS1
-   CLA1mathTables   : > RAMLS1
+                     *.obj(CLAscratch_end) } >  RAMLS2
+   .scratchpad      : > RAMLS2//RAMLS3
+   .bss_cla         : > RAMLS2//RAMLS3
+   cla_shared       : > RAMLS2
+   CLA1mathTables   : > RAMLS2
 
 #if defined(__TI_EABI__)
    Cla1Prog         :   LOAD = FLASH2_3,
-                        RUN = RAMLS2_7,
+                        RUN = RAMLS3_7,
                         LOAD_START(Cla1funcsLoadStart),
                         LOAD_END(Cla1funcsLoadEnd),
                         RUN_START(Cla1funcsRunStart),
@@ -142,7 +132,7 @@ SECTIONS
                         ALIGN(4)
 #else
    Cla1Prog			:	LOAD = FLASH2_3,
-                        RUN = RAMLS2_7,
+                        RUN = RAMLS3_7,
                         LOAD_START(_Cla1funcsLoadStart),
                         LOAD_END(_Cla1funcsLoadEnd),
                         RUN_START(_Cla1funcsRunStart),
@@ -152,13 +142,13 @@ SECTIONS
 
 #if defined(__TI_EABI__)
    .const_cla       :   LOAD = FLASH1,
-                        RUN = RAMLS0,
+                        RUN = RAMLS2,
                         RUN_START(Cla1ConstRunStart),
                         LOAD_START(Cla1ConstLoadStart),
                         LOAD_SIZE(Cla1ConstLoadSize)
 #else
    .const_cla       :   LOAD = FLASH1,
-                        RUN = RAMLS0,
+                        RUN = RAMLS2,
                         RUN_START(_Cla1ConstRunStart),
                         LOAD_START(_Cla1ConstLoadStart),
                         LOAD_SIZE(_Cla1ConstLoadSize)

@@ -59,9 +59,9 @@ typedef union __error_reg_u__
  */
 typedef struct __motor_t__
 {
-#if (CLA1_CORE_ENABLE)
+#if (CLA_CORE_ENABLE)
     ptr_32b_u                   p_foc;                  /*!< Pointer on the FOC structure associated to the motor */
-    #else
+#else
     foc_t* const                p_foc;                  /*!< Pointer on the FOC structure associated to the motor */
 #endif
     uint32_t                    itCnt;                  /*!< Event counter incrementing on every IT call */
@@ -71,7 +71,7 @@ typedef struct __motor_t__
     uint32_t                    clCycleNb;
     float32_t                   statorResEst;           /*!< Q-axis resistance estimation. [Ohm] */
     lpf_t                       statorResEstFlt;        /*!< Resistance estimation low-pass filter */
-#if (CLA1_CORE_ENABLE)
+#if (CLA_CORE_ENABLE)
     volatile ptr_32b_u          p_cmdReg[3];            /*!< PWM address register for FOC command */
     uint8_t                     motor_id;               /*!< Motor identification */
 #else

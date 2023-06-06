@@ -219,7 +219,8 @@ typedef struct __CLA_CFG_t__
     CLA_TaskNumber          claTaskNum;
     CLA_MVECTNumber         claIntVect;
     CLA_Trigger             claTrigSrc;
-    void                    (*fun_ptr)(void);
+    void                    (*p_claFunc)(void);
+    bool_t                  claForceTask;
 } cla_cfg_t;
 
 /**

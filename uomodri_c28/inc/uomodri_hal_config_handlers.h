@@ -16,13 +16,14 @@
  ***********************************************************************/
 __attribute__((interrupt)) void Cla1Task1(void);
 __attribute__((interrupt)) void Cla1Task2(void);
+__attribute__((interrupt)) void Cla1Task3(void);
 __attribute__((interrupt)) void Cla1Task8(void);
 
 /***********************************************************************
  * VARIABLE DECLARATION
  ***********************************************************************/
 extern mst2slv_msg_t    cmd_msg;
-extern slv2mst_msg_t    status_msg;
+extern slv2mst_msg_t    status_msg[];
 extern uint16_t         led_msg[LED_MSG_TX_16BIT_LENGTH];
 
 /** @var    GPIO_TypeDef GpioPinsCfgList[]
@@ -82,7 +83,7 @@ static const gpio_cfg_t GpioPinsCfgList[] =
  {.pinNumber = DBG_PIN1_NUM,            .fctMux = DBG_PIN1_CFG,             .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = DBG_PIN1_CORE,        .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_SYNC,   .setValue = 0,  .intEnable = false},
  {.pinNumber = DBG_PIN2_NUM,            .fctMux = DBG_PIN2_CFG,             .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = DBG_PIN2_CORE,        .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_SYNC,   .setValue = 0,  .intEnable = false},
  {.pinNumber = DBG_PIN3_NUM,            .fctMux = DBG_PIN3_CFG,             .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = DBG_PIN3_CORE,        .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_SYNC,   .setValue = 0,  .intEnable = false},
-#if (CLA1_CORE_ENABLE)
+#if (CLA_CORE_ENABLE)
  // Quadrature encoder #1
  {.pinNumber = MOTOR1_ENC_CHA_NUM,      .fctMux = MOTOR1_ENC_CHA_CFG,       .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1_CLA1,  .direction = GPIO_DIR_MODE_IN,  .samplingInMode = GPIO_QUAL_6SAMPLE,.setValue = 0,  .intEnable = false},
  {.pinNumber = MOTOR1_ENC_CHB_NUM,      .fctMux = MOTOR1_ENC_CHB_CFG,       .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1_CLA1,  .direction = GPIO_DIR_MODE_IN,  .samplingInMode = GPIO_QUAL_6SAMPLE,.setValue = 0,  .intEnable = false},
@@ -120,7 +121,7 @@ static const gpio_cfg_t GpioPinsCfgList[] =
  {.pinNumber = MOTOR2_DRV_EN_NUM,       .fctMux = MOTOR2_DRV_EN_CFG,        .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,       .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0,  .intEnable = false},
  {.pinNumber = MOTOR2_DRV_SPI_CS_NUM,   .fctMux = MOTOR2_DRV_SPI_CS_CFG,    .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,       .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 1,  .intEnable = false},
  {.pinNumber = MOTOR2_DRV_FAULT_NUM,    .fctMux = MOTOR2_DRV_FAULT_CFG,     .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,       .direction = GPIO_DIR_MODE_IN,  .samplingInMode = GPIO_QUAL_3SAMPLE,.setValue = 0,  .intEnable = false},
-#if (CLA1_CORE_ENABLE)
+#if (CLA_CORE_ENABLE)
  // PWM MOTOR_1 configuration pins
  {.pinNumber = MOTOR1_PWM1_CHA_NUM,     .fctMux = MOTOR1_PWM1_CHA_CFG,      .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1_CLA1,  .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0,  .intEnable = false},
  {.pinNumber = MOTOR1_PWM1_CHB_NUM,     .fctMux = MOTOR1_PWM1_CHB_CFG,      .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1_CLA1,  .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 1,  .intEnable = false},
@@ -324,7 +325,7 @@ static const dma_cfg_t  dmaCfgList[] =
  {
   .dmaChBase            = DMA_COM_SPI_TX_BASE_ADDR,
   .p_dstAddr            = (uint16_t *) COM_SPI_TX_BASE_REG_ADDR,
-  .p_srcAddr            = (uint16_t *) &status_msg.timeStamp,
+  .p_srcAddr            = (uint16_t *) &status_msg[0].timeStamp,
   .burstSize            = DMA_COM_SPI_TX_16BIT_BURST_EVT,
   .transferSize         = DMA_COM_SPI_TX_16BIT_TRANSFER_EVT,
   .dstWrapSize          = DMA_NO_WRAP,
@@ -397,7 +398,7 @@ static const tmr_cfg_t  timerCfgList[] =
   .cpuTimerBase         = CPU_TIMER_0_BASE,
   .periodCount          = CPU_TIMER_0_PERIOD,
   .prescaler            = CPU_TIMER_0_PRESCALER,
-  .intEnable            = false,
+  .intEnable            = true,
  },
  // END OF ARRAY
  {.cpuTimerBase         = UINT32_MAX},
@@ -416,33 +417,46 @@ static const sci_cfg_t  sciCfgList[] =
 static const cla_cfg_t  claCfgList[] =
 {
  {
-  .progRAM              = MEMCFG_SECT_LS2 | MEMCFG_SECT_LS3,// | MEMCFG_SECT_LS4 | MEMCFG_SECT_LS5 | MEMCFG_SECT_LS6 | MEMCFG_SECT_LS7),
-  .dataRAM              = MEMCFG_SECT_LS0,// | MEMCFG_SECT_LS1),
+  .progRAM              = MEMCFG_SECT_LS3 | MEMCFG_SECT_LS4 | MEMCFG_SECT_LS5 | MEMCFG_SECT_LS6 | MEMCFG_SECT_LS7,
+  .dataRAM              = MEMCFG_SECT_LS0 | MEMCFG_SECT_LS2,
   .claTaskFlg           = CLA_TASKFLAG_1,
   .claTaskNum           = CLA_TASK_1,
   .claIntVect           = CLA_MVECT_1,
   .claTrigSrc           = CLA_TRIGGER_ADCA1,
-  .fun_ptr              = &Cla1Task1
+  .p_claFunc            = &Cla1Task1,
+  .claForceTask         = false,
  },
  {
-  .progRAM              = MEMCFG_SECT_LS2 | MEMCFG_SECT_LS3,// | MEMCFG_SECT_LS4 | MEMCFG_SECT_LS5 | MEMCFG_SECT_LS6 | MEMCFG_SECT_LS7),
-  .dataRAM              = MEMCFG_SECT_LS0,// | MEMCFG_SECT_LS1),
+  .progRAM              = MEMCFG_SECT_LS3 | MEMCFG_SECT_LS4 | MEMCFG_SECT_LS5 | MEMCFG_SECT_LS6 | MEMCFG_SECT_LS7,
+  .dataRAM              = MEMCFG_SECT_LS1 | MEMCFG_SECT_LS2,
   .claTaskFlg           = CLA_TASKFLAG_2,
   .claTaskNum           = CLA_TASK_2,
   .claIntVect           = CLA_MVECT_2,
   .claTrigSrc           = CLA_TRIGGER_ADCA2,
-  .fun_ptr              = &Cla1Task2
+  .p_claFunc            = &Cla1Task2,
+  .claForceTask         = false,
  },
-// {
-//  .progRAM              = (MEMCFG_SECT_LS2 | MEMCFG_SECT_LS3 | MEMCFG_SECT_LS4 | MEMCFG_SECT_LS5 | MEMCFG_SECT_LS6 | MEMCFG_SECT_LS7),
-//  .dataRAM              = (MEMCFG_SECT_LS0),// | MEMCFG_SECT_LS1),
-//  .claTaskFlg           = CLA_TASKFLAG_8,
-//  .claTaskNum           = CLA_TASK_8,
-//  .claIntVect           = CLA_MVECT_8,
-//  .claTrigSrc           = CLA_TRIGGER_SOFTWARE,
-//  .fun_ptr              = &Cla1Task8
-// },
- {.fun_ptr              = NULL},
+ {
+  .progRAM              = MEMCFG_SECT_LS3 | MEMCFG_SECT_LS4 | MEMCFG_SECT_LS5 | MEMCFG_SECT_LS6 | MEMCFG_SECT_LS7,
+  .dataRAM              = MEMCFG_SECT_LS0 | MEMCFG_SECT_LS1 | MEMCFG_SECT_LS2,
+  .claTaskFlg           = CLA_TASKFLAG_3,
+  .claTaskNum           = CLA_TASK_3,
+  .claIntVect           = CLA_MVECT_3,
+  .claTrigSrc           = CLA_TRIGGER_SOFTWARE,
+  .p_claFunc            = &Cla1Task3,
+  .claForceTask         = false,
+ },
+ {
+  .progRAM              = MEMCFG_SECT_LS3 | MEMCFG_SECT_LS4 | MEMCFG_SECT_LS5 | MEMCFG_SECT_LS6 | MEMCFG_SECT_LS7,
+  .dataRAM              = MEMCFG_SECT_LS0 | MEMCFG_SECT_LS1 | MEMCFG_SECT_LS2,
+  .claTaskFlg           = CLA_TASKFLAG_8,
+  .claTaskNum           = CLA_TASK_8,
+  .claIntVect           = CLA_MVECT_8,
+  .claTrigSrc           = CLA_TRIGGER_SOFTWARE,
+  .p_claFunc            = &Cla1Task8,
+  .claForceTask         = true,
+ },
+ {.p_claFunc            = NULL},
 };
 
 /** @var    ePWM_TB_TypeDef PwmTimeBaseCfgList[]
@@ -614,7 +628,7 @@ static const hal_cfg_t hal =
 #endif
  .p_spiHandle               = spiCfgList,
  .p_timerHandle             = timerCfgList,
-#if (CLA1_CORE_ENABLE || CLA1_TEST_CORE_ENABLE)
+#if (CLA_CORE_ENABLE || CLA1_TEST_CORE_ENABLE)
  .p_claHandle               = claCfgList,
 #else
  .p_claHandle               = NULL,

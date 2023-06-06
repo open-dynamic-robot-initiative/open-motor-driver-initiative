@@ -36,14 +36,18 @@ typedef union __uart_addr_u__
 /***********************************************************************
  * GLOBAL VARIABLES
  ***********************************************************************/
-#pragma DATA_ALIGN(cmd_msg, 8)
+#pragma DATA_ALIGN(cmd_msg, 4)
 #pragma DATA_SECTION(cmd_msg, "ramgs1")
 mst2slv_msg_t   cmd_msg;
 
-#pragma DATA_ALIGN(status_msg, 8)
+#pragma DATA_ALIGN(status_msg, 4)
 #pragma DATA_SECTION(status_msg, "ramgs1")
-slv2mst_msg_t   status_msg;
+slv2mst_msg_t   status_msg[2];
+//#pragma DATA_ALIGN(status_tmp_msg, 4)
+//#pragma DATA_SECTION(status_tmp_msg, "ramgs1")
+//slv2mst_msg_t   status_tmp_msg;
 
+#pragma DATA_ALIGN(led_msg, 4)
 #pragma DATA_SECTION(led_msg, "ramgs1")
 uint16_t        led_msg[LED_MSG_TX_16BIT_LENGTH];
 
@@ -55,7 +59,7 @@ com_cpu_2_cm_t  cpu2cm_dbg_msg;
 /***********************************************************************
  * FUNCTIONS DECLARATION
  ***********************************************************************/
-__attribute__((interrupt)) void adc_isrMotor1(void);
-__attribute__((interrupt)) void adc_isrMotor2(void);
+//__attribute__((interrupt)) void adc_isrMotor1(void);
+//__attribute__((interrupt)) void adc_isrMotor2(void);
 
 #endif /* __MAIN_H__ */

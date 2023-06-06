@@ -28,6 +28,9 @@
  ***********************************************************************/
 __attribute__((interrupt)) void adc_isrMotor1(void);
 __attribute__((interrupt)) void adc_isrMotor2(void);
+__attribute__((interrupt)) void cla_isrMotor1(void);
+__attribute__((interrupt)) void cla_isrMotor2(void);
+__attribute__((interrupt)) void tmr_isrLed(void);
 
 /***********************************************************************
  * VARIABLES
@@ -37,28 +40,44 @@ __attribute__((interrupt)) void adc_isrMotor2(void);
  */
 static const int_cfg_t InterruptList[] =
 {
+// {
+//  .intNum           = MOTOR1_IA_INT_CH,
+//  .intAckGroup      = MOTOR1_IA_INT_ACK_GROUP,
+//  .p_intHandler     = &adc_isrMotor1
+// },
+// {
+//  .intNum           = MOTOR2_IA_INT_CH,
+//  .intAckGroup      = MOTOR2_IA_INT_ACK_GROUP,
+//  .p_intHandler     = &adc_isrMotor2
+// },
  {
-  .intNum           = MOTOR1_IA_INT_CH,
-  .intAckGroup      = MOTOR1_IA_INT_ACK_GROUP,
-  .p_intHandler     = &adc_isrMotor1
+  .intNum           = INT_CLA1_1,
+  .intAckGroup      = INTERRUPT_ACK_GROUP11,
+  .p_intHandler     = &cla_isrMotor1
  },
  {
-  .intNum           = MOTOR2_IA_INT_CH,
-  .intAckGroup      = MOTOR2_IA_INT_ACK_GROUP,
-  .p_intHandler     = &adc_isrMotor2
+  .intNum           = INT_CLA1_2,
+  .intAckGroup      = INTERRUPT_ACK_GROUP11,
+  .p_intHandler     = &cla_isrMotor2
+ },
+ {
+  .intNum           = INT_TIMER0,
+  .intAckGroup      = INTERRUPT_ACK_GROUP1,
+  .p_intHandler     = &tmr_isrLed
  },
 // {
 //  .intNum           = INT_EPWM1,
 //  .intAckGroup      = INTERRUPT_ACK_GROUP3,
 //  .p_intHandler     = NULL,
 // },
-// // END OF ARRAY
-// {.intNum           = UINT32_MAX},
+ // END OF ARRAY
+ {.intNum           = UINT32_MAX},
 };
 
 /** @var    DRV_Cfg     DrvCfgList[]
  *  @brief  List all IOs \& SPI peripherals used for DRV communication.
  */
+#pragma DATA_SECTION(drv_cfg, "ramgs0")
 static const drv_cfg_t  drv_cfg[] =
 {
  {
@@ -182,10 +201,15 @@ static const periph_motor_cfg_t periph_motor_cfg[] =
  },
 };
 
+#if (CLA_CORE_ENABLE)
 #pragma DATA_ALIGN(cmd_uOmodri, 4)
-//#pragma DATA_SECTION(cmd_uOmodri, "MSGRAM_CPU_TO_CM")
-#pragma DATA_SECTION(cmd_uOmodri, "ramgs0")
+#pragma DATA_SECTION(cmd_uOmodri, "MSGRAM_CPU_TO_CLA")
+cmd_t cmd_uOmodri[2];
+#else
+#pragma DATA_ALIGN(cmd_uOmodri, 4)
+#pragma DATA_SECTION(cmd_uOmodri, "ramgs0");
 static cmd_t cmd_uOmodri[2] =
+
 {
  {
   .posRef           = 0.0f,
@@ -212,13 +236,17 @@ static cmd_t cmd_uOmodri[2] =
   .cmdArray.all     = 0U,
  },
 };
+#endif
 
-#if (CLA1_CORE_ENABLE)
-#pragma DATA_ALIGN(motor_foc, 4)
-#pragma DATA_SECTION(motor_foc, "ClaDataRam");
-foc_t motor_foc[2];
+#if (CLA_CORE_ENABLE)
+#pragma DATA_ALIGN(motor_foc_m1, 4)
+#pragma DATA_SECTION(motor_foc_m1, "ClaDataRam0");
+foc_t motor_foc_m1;
+#pragma DATA_ALIGN(motor_foc_m2, 4)
+#pragma DATA_SECTION(motor_foc_m2, "ClaDataRam1");
+foc_t motor_foc_m2;
 #else
-#pragma DATA_ALIGN(motor_foc, 8)
+#pragma DATA_ALIGN(motor_foc, 4)
 #pragma DATA_SECTION(motor_foc, "ramgs0");
 static foc_t motor_foc[] =
 {
@@ -275,6 +303,7 @@ static foc_t motor_foc[] =
   .motor_enc.speed.speedFlt[1].one_minus_a  = (float32_t)MOTOR1_ENC_SPEED_LOCAL_LPF_ONE_M_ALPHA,
   //--- MOTOR COMMAND STRUCTURE -----------------------------------------------
   .motor_cmd.posRef                         = 0.0f,
+  .motor_cmd.posRefOffset                   = 0.0f,
   .motor_cmd.velRef                         = 0.0f,
   .motor_cmd.iqff                           = 0.0f,
   .motor_cmd.kpCoeff                        = 0.0f,
@@ -345,7 +374,7 @@ static foc_t motor_foc[] =
   .piIq.out                                 = 0.0f,
   //--- FOC - Initialize PD controller (Speed & position) ---------------------
   .pdPosVel.p_fbTheta                       = (float32_t *)(&motor_foc[MOTOR_1].motor_enc.thetaAbsolute),
-  .pdPosVel.p_setTheta                      = (float32_t *)(&motor_foc[MOTOR_1].motor_cmd.posRef),
+  .pdPosVel.p_setTheta                      = (float32_t *)(&motor_foc[MOTOR_1].motor_cmd.posRefOffset),
   .pdPosVel.errTheta                        = 0.0f,
   .pdPosVel.p_fbSpeed                       = (float32_t *)(&motor_foc[MOTOR_1].motor_enc.speed.speedMech[0]),
   .pdPosVel.p_setSpeed                      = (float32_t *)(&motor_foc[MOTOR_1].motor_cmd.velRef),
@@ -419,6 +448,7 @@ static foc_t motor_foc[] =
   .motor_enc.speed.speedFlt[1].one_minus_a  = (float32_t)MOTOR2_ENC_SPEED_LOCAL_LPF_ONE_M_ALPHA,
   //--- MOTOR COMMAND STRUCTURE -----------------------------------------------
   .motor_cmd.posRef                         = 0.0f,
+  .motor_cmd.posRefOffset                   = 0.0f,
   .motor_cmd.velRef                         = 0.0f,
   .motor_cmd.iqff                           = 0.0f,
   .motor_cmd.kpCoeff                        = 0.0f,
@@ -489,7 +519,7 @@ static foc_t motor_foc[] =
   .piIq.out                                 = 0.0f,
   //--- FOC - Initialize PD controller (Speed & position) ---------------------
   .pdPosVel.p_fbTheta                       = (float32_t *)(&motor_foc[MOTOR_2].motor_enc.thetaAbsolute),
-  .pdPosVel.p_setTheta                      = (float32_t *)(&motor_foc[MOTOR_2].motor_cmd.posRef),
+  .pdPosVel.p_setTheta                      = (float32_t *)(&motor_foc[MOTOR_2].motor_cmd.posRefOffset),
   .pdPosVel.errTheta                        = 0.0f,
   .pdPosVel.p_fbSpeed                       = (float32_t *)(&motor_foc[MOTOR_2].motor_enc.speed.speedMech[0]),
   .pdPosVel.p_setSpeed                      = (float32_t *)(&motor_foc[MOTOR_2].motor_cmd.velRef),
@@ -517,12 +547,15 @@ static foc_t motor_foc[] =
 /** @var    MOTOR_STRUCT    motor[]
  *  @brief  General structure array configuration structure for the Hardware Abstraction Layer.
  */
-#if (CLA1_CORE_ENABLE)
-#pragma DATA_ALIGN(motor, 4)
-#pragma DATA_SECTION(motor, "ClaDataRam");
-motor_t motor[2];
+#if (CLA_CORE_ENABLE)
+#pragma DATA_ALIGN(motor_m1, 4)
+#pragma DATA_SECTION(motor_m1, "ClaDataRam0");
+motor_t motor_m1;
+#pragma DATA_ALIGN(motor_m2, 4)
+#pragma DATA_SECTION(motor_m2, "ClaDataRam1");
+motor_t motor_m2;
 #else
-#pragma DATA_ALIGN(motor, 8)
+#pragma DATA_ALIGN(motor, 4)
 #pragma DATA_SECTION(motor, "ramgs0");
 static motor_t motor[2] =
 {
@@ -583,6 +616,7 @@ static const dma_cfg_t  dmaMem2MemCfgList[] =
 {
  // DMA base register initialization
  // DMA to duplicate message from uOmodri command struct to foc struct.
+#if (!CLA_CORE_ENABLE)
  {
   .dmaChBase        = DMA_CMD_2_FOC_BASE_ADDR,
   .p_dstAddr        = (uint16_t *)&motor_foc[MOTOR_1].motor_cmd,
@@ -600,6 +634,7 @@ static const dma_cfg_t  dmaMem2MemCfgList[] =
   .intMode          = DMA_INT_AT_END,
   .intEnable        = false,
  },
+#endif
  // END OF ARRAY
  {.dmaChBase        = UINT32_MAX},
 };

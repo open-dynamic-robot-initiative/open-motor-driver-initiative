@@ -74,7 +74,7 @@ typedef union __cmd_reg_u__
  */
 typedef struct __pi_t__
 {
-#if (CLA1_CORE_ENABLE)
+#if (CLA_CORE_ENABLE)
     ptr_32b_u           p_fb;           /*!< Pointer on the feedback current */
     ptr_32b_u           p_set;          /*!< Pointer on the setpoint current */
     ptr_32b_u           p_sat;          /*!< Pointer on the saturation value to use */
@@ -97,7 +97,7 @@ typedef struct __pi_t__
  */
 typedef struct __pd_t__
 {
-#if (CLA1_CORE_ENABLE)
+#if (CLA_CORE_ENABLE)
     ptr_32b_u      	    p_fbTheta;      /*!< Pointer on the feedback position */
     ptr_32b_u           p_setTheta;     /*!< Pointer on the setpoint position */
     ptr_32b_u           p_fbSpeed;      /*!< Pointer on the feedback speed */
@@ -134,7 +134,7 @@ typedef struct __params_t__
     float32_t           kv;             /*!< Motor speed constant [RPM/V or rad/s/V] */
     float32_t           ke;             /*!< Motor back EMF constant [V/rad/s] (electrical radians) = 1/kv */
     float32_t           ki;             /*!< Motor torque constant [N.m/A] */
-#if (CLA1_CORE_ENABLE)
+#if (CLA_CORE_ENABLE)
     float32_t           polePairs;      /*!< Number of pole pairs */
 #else
     const float32_t     polePairs;      /*!< Number of pole pairs */
@@ -148,7 +148,7 @@ typedef struct __params_t__
 typedef struct __acquisitions_t__
 {
     // ADC result registers
-#if (CLA1_CORE_ENABLE)
+#if (CLA_CORE_ENABLE)
     volatile ptr_32b_u  p_vBusMeasReg;
     volatile ptr_32b_u  p_vExtMeasReg;
     volatile ptr_32b_u  p_iMeasReg[3];
@@ -174,6 +174,7 @@ typedef struct __acquisitions_t__
 typedef struct __cmd_t__
 {
     float32_t           posRef;
+    float32_t           posRefOffset;
     float32_t           velRef;
     float32_t           iqff;
     float32_t           kpCoeff;
