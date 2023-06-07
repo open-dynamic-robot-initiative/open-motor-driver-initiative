@@ -66,26 +66,26 @@ MEMORY
 SECTIONS
 {
    codestart           : > BEGIN, ALIGN(8)
-   .text               : >> FLASH0 | FLASH1 | FLASH2, ALIGN(8)
-   .cinit              : > FLASH2, ALIGN(8)
-   .switch             : > FLASH1, ALIGN(8)
+   .text               : > FLASH4, ALIGN(8)
+   .cinit              : > FLASH4, ALIGN(8)
+   .switch             : > FLASH4, ALIGN(8)
    .reset              : > RESET, TYPE = DSECT /* not used, */
    .stack              : > RAMM1
 
 #if defined(__TI_EABI__)
-   .init_array      : > FLASH2, ALIGN(8)
-   .bss             : > RAMLS5
+   .init_array      : > FLASH4, ALIGN(8)
+   .bss             : > RAMLS3
    .bss:output      : > RAMLS3
-   .bss:cio         : > RAMLS5
-   .data            : > RAMLS5
-   .sysmem          : > RAMLS5
+   .bss:cio         : > RAMLS3
+   .data            : > RAMLS4
+   .sysmem          : > RAMLS4
    /* Initalized sections go in Flash */
-   .const           : > FLASH2, ALIGN(8)
+   .const           : > FLASH4, ALIGN(8)
 #else
    .pinit           : > FLASH1, ALIGN(8)
-   .ebss            : > RAMLS5
-   .esysmem         : > RAMLS5
-   .cio             : > RAMLS5
+   .ebss            : > RAMLS3
+   .esysmem         : > RAMLS4
+   .cio             : > RAMLS4
    /* Initalized sections go in Flash */
    .econst          : > FLASH2, ALIGN(8)
 #endif
@@ -99,16 +99,16 @@ SECTIONS
    MSGRAM_CM_TO_CPU    : > CMTOCPURAM//, type=NOINIT
 
    /* The following section definition are for SDFM examples */
-   Filter_RegsFile  : > RAMGS0
+/* Filter_RegsFile  : > RAMGS0
    Filter1_RegsFile : > RAMGS1, fill=0x1111
    Filter2_RegsFile : > RAMGS2, fill=0x2222
    Filter3_RegsFile : > RAMGS3, fill=0x3333
    Filter4_RegsFile : > RAMGS4, fill=0x4444
-   Difference_RegsFile : >RAMGS5, fill=0x3333
+   Difference_RegsFile : >RAMGS5, fill=0x3333 */
 
    #if defined(__TI_EABI__)
-       .TI.ramfunc : {} LOAD = FLASH0,
-                        RUN = RAMLS0 | RAMLS1 | RAMLS2 |RAMLS3,
+       .TI.ramfunc : {} LOAD = FLASH4,
+                        RUN = RAMD0,
                         LOAD_START(RamfuncsLoadStart),
                         LOAD_SIZE(RamfuncsLoadSize),
                         LOAD_END(RamfuncsLoadEnd),
@@ -117,8 +117,8 @@ SECTIONS
                         RUN_END(RamfuncsRunEnd),
                         ALIGN(8)
    #else
-       .TI.ramfunc : {} LOAD = FLASH0,
-                        RUN = RAMLS0 | RAMLS1 | RAMLS2 |RAMLS3,
+       .TI.ramfunc : {} LOAD = FLASH3,
+                        RUN = RAMD0,
                         LOAD_START(_RamfuncsLoadStart),
                         LOAD_SIZE(_RamfuncsLoadSize),
                         LOAD_END(_RamfuncsLoadEnd),
