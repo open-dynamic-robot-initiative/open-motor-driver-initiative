@@ -244,6 +244,10 @@ typedef struct __mst2slv_msg_t__
     uint16_t        iSat;
     uint16_t        index;
     U32toU16_reg_t  crc;
+    com_rx_state_e  msg_rx_state;
+    uint32_t        msg_crc32;
+    uint16_t        msg_rx;
+    uint16_t        msg_tmp;
 } mst2slv_msg_t;
 
 /**
@@ -667,10 +671,12 @@ typedef struct __com_dbg_rx_msg_t__
  ***********************************************************************/
 #ifdef CPU1
 bool_t COM_msgExtract(mst2slv_msg_t*,  cmd_t*, cmd_t*);
+bool_t COM_msgExtractStep(mst2slv_msg_t*, cmd_t*, cmd_t*);
 void COM_msgCreate(motor_t*, motor_t*, slv2mst_msg_t*);
 bool_t COM_msgCreateLite(motor_t*, slv2mst_msg_t*);
 void COM_resetCmdStruct(cmd_t*);
 uint32_t COM_crc32(uint16_t*, uint16_t);
+uint32_t COM_crc32_cla(mst2slv_msg_t*);
 #else
 void COM_msgDbgTx(dbg_uart_addr_t*, dbg_uart_msg_t*);
 //void COM_msgDbgTx(com_dbg_tx_msg_t*, uint8_t);

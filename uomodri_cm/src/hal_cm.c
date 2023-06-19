@@ -120,7 +120,6 @@ void HAL_CM_UART_init(const uart_cfg_t* p_uart)
         UART_enableModule(UART0_BASE);
     }
 
-
     return;
 }
 

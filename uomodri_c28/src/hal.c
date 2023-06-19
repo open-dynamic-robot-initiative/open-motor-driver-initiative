@@ -708,6 +708,7 @@ void HAL_CLA_ini(const cla_cfg_t* p_clacCfg)
         {
 #pragma diag_suppress=770
             CLA_mapTaskVector(CLA1_BASE, p_clacCfg->claIntVect, (uint16_t)p_clacCfg->p_claFunc);
+#pragma diag_warning=770
             CLA_setTriggerSource(p_clacCfg->claTaskNum, p_clacCfg->claTrigSrc);
 
             // Configure LSRAMs

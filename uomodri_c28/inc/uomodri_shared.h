@@ -5,7 +5,7 @@
  * INCLUDES
  ***********************************************************************/
 #include <stdint.h>
-#if (CLA_CORE_ENABLE)
+#if (defined CLA_CORE_ENABLE) && (CLA_CORE_ENABLE)
 #include <CLAmath.h>
 #else
 #include <hw_types.h>
@@ -258,8 +258,8 @@ inline void ENC_getSpeed(encoder_t* p_enc)
         // Compute angle difference
         float32_t deltaTheta    = p_speed->theta[NEW] - p_speed->theta[OLD];
         // Saturate it between -pi and pi
-        deltaTheta              = (deltaTheta > M_PI)   ? (deltaTheta - FM_2MULTPI) : (deltaTheta);
-        deltaTheta              = (deltaTheta < -M_PI)  ? (deltaTheta + FM_2MULTPI) : (deltaTheta);
+        deltaTheta              = (deltaTheta > UOMODRI_PI) ? (deltaTheta - FM_2MULTPI) : (deltaTheta);
+        deltaTheta              = (deltaTheta < -UOMODRI_PI)? (deltaTheta + FM_2MULTPI) : (deltaTheta);
         // Compute high speed estimation
         p_speed->speedHigh      = deltaTheta * p_speed->speedHighScaler;
 //        newSpeedHigh            = true;
@@ -328,8 +328,8 @@ inline void ENC_getTheta(encoder_t* p_enc)
     //-------------------------------------------------------------------
     float32_t deltaThetaMech        = p_enc->thetaMech[NEW] - p_enc->thetaMech[OLD];
     // Update turnNb
-    p_enc->turnNb                   = (deltaThetaMech > M_PI)   ? (p_enc->turnNb - 1) : (p_enc->turnNb);
-    p_enc->turnNb                   = (deltaThetaMech < -M_PI)  ? (p_enc->turnNb + 1) : (p_enc->turnNb);
+    p_enc->turnNb                   = (deltaThetaMech > UOMODRI_PI) ? (p_enc->turnNb - 1) : (p_enc->turnNb);
+    p_enc->turnNb                   = (deltaThetaMech < -UOMODRI_PI)? (p_enc->turnNb + 1) : (p_enc->turnNb);
     // If theta difference is high or low enough, we overflowed or underflowed
     bool_t maxRollOver              = (p_enc->turnNb > MAX_ROLLOVER)? (true) : (false);
     bool_t minRollOver              = (p_enc->turnNb < MIN_ROLLOVER)? (true) : (false);
@@ -362,8 +362,10 @@ inline void ENC_getTheta(encoder_t* p_enc)
         // Check if current index capture match the first index capture
 #if (CLA_CORE_ENABLE)
         float32_t tmp               = FM_ROUND2RAD * 4.0f / p_enc->thetaMechScaler;
+//        p_enc->flags.indexError     = (abs(p_enc->thetaIndexRelative - thetaIndex) < tmp) ? (false) : (true);
 #else
         float32_t tmp               = __mpy2pif32(4.0f / p_enc->thetaMechScaler);
+//        p_enc->flags.indexError     = (fabsf(p_enc->thetaIndexRelative - thetaIndex) < tmp) ? (false) : (true);
 #endif
         p_enc->flags.indexError     = (fabsf(p_enc->thetaIndexRelative - thetaIndex) < tmp) ? (false) : (true);
         // Toggle index
@@ -716,7 +718,6 @@ inline bool_t MOT_runControl(motor_t* p_motor)
     uint8_t         motor_id    = p_motor->motor_id;
     bool_t          evt_max     = false;
     p_enc->flags.indexOffset    = cmd_reg.encOffsetEnable;
-    // !!!! posref will be incremented every time we enter in the function !!!
     p_cmd->posRefOffset         = p_cmd->posRef + ((cmd_reg.encOffsetEnable) ? (p_enc->thetaIndexAbsolute) : (0.0f));
     // Read currents in 3 phases + Vbus
     FOC_getMeasures(&p_foc->motor_acq);
@@ -731,7 +732,7 @@ inline bool_t MOT_runControl(motor_t* p_motor)
     p_motor->clCycleNb          = EPWM_getTimeBaseCounterValue(p_motor->epwmBaseAddr[CHANNEL_1]);
     p_err->drv_fault            = !GPIO_readPin(p_motor->drvFaultNum)                           || p_err->drv_fault;
     p_err->pos_rollover         = (p_enc->flags.rollOverError && cmd_reg.rollOverEnable)        || p_err->pos_rollover;
-    p_err->com_timeout          = (p_cmd->cptTimeout > p_cmd->timeoutRef) && p_cmd->timeoutRef  || p_err->com_timeout;
+    p_err->com_timeout          = ((p_cmd->cptTimeout > p_cmd->timeoutRef) && p_cmd->timeoutRef)|| p_err->com_timeout;
     p_err->enc_mismatch         = (p_enc->flags.indexDetect && p_enc->flags.indexError)         || p_err->enc_mismatch;
     p_err->enc_failure          = p_enc->flags.encError                                         || p_err->enc_failure;
     *p_state                    = (p_err->all)              ? (MOTOR_STATE_ERROR)           : (*p_state);
@@ -833,7 +834,7 @@ inline bool_t MOT_runControl(motor_t* p_motor)
         break;
 
     case MOTOR_STATE_ERROR:
-        p_motor->itCnt          = p_motor->itCnt;
+//        p_motor->itCnt          = p_motor->itCnt;
         p_foc->idRef            = 0.0f;
         p_foc->iqRef            = 0.0f;
         *p_state                = MOTOR_STATE_ERROR;
