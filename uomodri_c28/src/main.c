@@ -26,9 +26,17 @@ extern motor_t          motor_m2;
 extern const hal_cfg_t  hal;
 extern cmd_t            cmd_uOmodri[2];
 
-uint8_t tx_msg_cr       = 0U;
-uint8_t tx_msg_nx       = 1U;
+//#pragma DATA_ALIGN(tx_msg_cr, 2)
+//#pragma DATA_SECTION(tx_msg_cr, "ramgs0");
+uint16_t tx_msg_cr      = 0U;
+//#pragma DATA_ALIGN(tx_msg_nx, 2)
+//#pragma DATA_SECTION(tx_msg_nx, "ramgs0");
+uint16_t tx_msg_nx      = 1U;
+//#pragma DATA_ALIGN(tx_msg_full, 2)
+//#pragma DATA_SECTION(tx_msg_full, "ramgs0");
 bool_t tx_msg_full      = false;
+//#pragma DATA_ALIGN(tmr_timeout, 2)
+//#pragma DATA_SECTION(tmr_timeout, "ramgs0");
 bool_t tmr_timeout      = false;
 
 /***********************************************************************
@@ -56,8 +64,8 @@ void main(void)
     HAL_ADC_offsetCalib(&periph_motor_cfg[MOTOR_1]);
     HAL_ADC_offsetCalib(&periph_motor_cfg[MOTOR_2]);
     // Force a reset of the intermediate command structures. Working structures are embedded in FOC structures.
-    COM_resetCmdStruct(&cmd_uOmodri[MOTOR_1]);
-    COM_resetCmdStruct(&cmd_uOmodri[MOTOR_2]);
+//    COM_resetCmdStruct(&cmd_uOmodri[MOTOR_1]);
+//    COM_resetCmdStruct(&cmd_uOmodri[MOTOR_2]);
     // Interrupts initialization
     HAL_INT_ini(InterruptList);
 
@@ -71,7 +79,7 @@ void main(void)
          * SPI COM RX management - Receive & extract message if valid
          * DMA CMD TO FOC struct - Propagate new commands (message extract or timeout inc)
          */
-        if(!DMA_getRunStatusFlag(DMA_COM_SPI_RX_BASE_ADDR) && COM_SPI_CS_READ)//GPIO_readPin(COM_SPI_CS_NUM))
+        if(!DMA_getRunStatusFlag(DMA_COM_SPI_RX_BASE_ADDR) && COM_SPI_CS_READ)
         {
             // Prepare SPI and associated DMA for a new receive
             SPI_resetRxFIFO(COM_SPI_BASE);
@@ -88,7 +96,7 @@ void main(void)
             cmd_uOmodri[MOTOR_2].cptTimeout = cptTimeout;
             tmr_timeout                     = false;
             rx_msg_valid                    = false;
-            CLA_forceTasks(CLA1_BASE, CLA_TASKFLAG_3);
+            CLA_forceTasks(CLA1_BASE, CLA_TASKFLAG_2);
         }
 
         /*
@@ -176,17 +184,17 @@ inline void LED_dimming(motor_t* p_motor1, motor_t* p_motor2, uint16_t* p_msg)
     timer_cpt_ms                    = (timer_cpt_ms < 1000)             ? (timer_cpt_ms + 1): (0);
     uint8_t         motor_state     = MOTOR_STATE_START;
 
-    if((p_motor1->motor_state == MOTOR_STATE_START)         || (p_motor2->motor_state == MOTOR_STATE_START))
+    if((p_motor1->state == MOTOR_STATE_START)           || (p_motor2->state == MOTOR_STATE_START))
         motor_state = MOTOR_STATE_START;
-    else if((p_motor1->motor_state == MOTOR_STATE_INIT_FW)  || (p_motor1->motor_state == MOTOR_STATE_INIT_REV)  ||
-            (p_motor1->motor_state == MOTOR_STATE_INIT_TEST)|| (p_motor1->motor_state == MOTOR_STATE_INIT_FIX)  ||
-            (p_motor2->motor_state == MOTOR_STATE_INIT_FW)  || (p_motor2->motor_state == MOTOR_STATE_INIT_REV)  ||
-            (p_motor2->motor_state == MOTOR_STATE_INIT_TEST)|| (p_motor2->motor_state == MOTOR_STATE_INIT_FIX))
+    else if((p_motor1->state == MOTOR_STATE_INIT_FW)    || (p_motor1->state == MOTOR_STATE_INIT_REV)    ||
+            (p_motor1->state == MOTOR_STATE_INIT_TEST)  || (p_motor1->state == MOTOR_STATE_INIT_FIX)    ||
+            (p_motor2->state == MOTOR_STATE_INIT_FW)    || (p_motor2->state == MOTOR_STATE_INIT_REV)    ||
+            (p_motor2->state == MOTOR_STATE_INIT_TEST)  || (p_motor2->state == MOTOR_STATE_INIT_FIX))
         motor_state = MOTOR_STATE_INIT_FIX;
-    else if((p_motor1->motor_state == MOTOR_STATE_READY)    || (p_motor1->motor_state == MOTOR_STATE_STOP)      ||
-            (p_motor2->motor_state == MOTOR_STATE_READY)    || (p_motor2->motor_state == MOTOR_STATE_STOP))
+    else if((p_motor1->state == MOTOR_STATE_READY)      || (p_motor1->state == MOTOR_STATE_STOP)        ||
+            (p_motor2->state == MOTOR_STATE_READY)      || (p_motor2->state == MOTOR_STATE_STOP))
         motor_state = MOTOR_STATE_READY;
-    if((p_motor1->motor_state == MOTOR_STATE_ERROR)         || (p_motor2->motor_state == MOTOR_STATE_ERROR))
+    if((p_motor1->state == MOTOR_STATE_ERROR)           || (p_motor2->state == MOTOR_STATE_ERROR))
         motor_state = MOTOR_STATE_ERROR;
 
     switch(motor_state)

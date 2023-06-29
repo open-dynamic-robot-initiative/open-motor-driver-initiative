@@ -54,14 +54,14 @@ typedef union __ptr_32b_u__
  */
 typedef union __cmd_reg_u__
 {
-    uint8_t             all;
+    uint16_t            all;
     struct
     {
-        uint8_t         systemEnable    : 1;    /*!< Bit 0      : R/W - Enable system to start. No power on motors.         */
-        uint8_t         motorEnable     : 1;    /*!< Bit 1      : R/W - Enable power on motor.                              */
-        uint8_t         rollOverEnable  : 1;    /*!< Bit 2      : R/W - Limit the rotations to +/- 128 rounds.              */
-        uint8_t         encOffsetEnable : 1;    /*!< Bit 3      : R/W - Use encoder index in position computation.          */
-        uint8_t         CMD_RSV1        : 4;    /*!< Bit 4-7    : R/W - Reserved                                            */
+        uint16_t        systemEnable    : 1;    /*!< Bit 0      : R/W - Enable system to start. No power on motors.         */
+        uint16_t        motorEnable     : 1;    /*!< Bit 1      : R/W - Enable power on motor.                              */
+        uint16_t        rollOverEnable  : 1;    /*!< Bit 2      : R/W - Limit the rotations to +/- 128 rounds.              */
+        uint16_t        encOffsetEnable : 1;    /*!< Bit 3      : R/W - Use encoder index in position computation.          */
+        uint16_t        CMD_RSV1        : 12;   /*!< Bit 4-15   : R/W - Reserved                                            */
     };
 } cmd_reg_u;
 
@@ -149,9 +149,12 @@ typedef struct __acquisitions_t__
 {
     // ADC result registers
 #if (CLA_CORE_ENABLE)
-    volatile ptr_32b_u  p_vBusMeasReg;
-    volatile ptr_32b_u  p_vExtMeasReg;
-    volatile ptr_32b_u  p_iMeasReg[3];
+//    ptr_32b_u           p_vBusMeasReg;
+//    ptr_32b_u           p_vExtMeasReg;
+//    ptr_32b_u           p_iMeasReg[3];
+    uint32_t            vBusMeasAddr;
+    uint32_t            vExtMeasAddr;
+    uint32_t            iabcMeasAddr[3];
 #else
     volatile uint16_t*  const p_vBusMeasReg;
     volatile uint16_t*  const p_vExtMeasReg;
@@ -183,7 +186,7 @@ typedef struct __cmd_t__
     uint16_t            timeoutRef;
     uint16_t            cptTimeout;
     uint16_t            index;
-    cmd_reg_u           cmdArray;
+    cmd_reg_u           cmdBits;
 } cmd_t;
 
 /**
@@ -192,34 +195,40 @@ typedef struct __cmd_t__
  */
 typedef struct __foc_t__
 {
-    params_t            motor_cfg;      /*!< Motor configuration parameters */
-    acq_t               motor_acq;      /*!< Current \& voltage acquisitions */
-    encoder_t           motor_enc;      /*!< Encoder position & speed */
-    cmd_t               motor_cmd;      /*!< Motor commands */
+    params_t            cfg;        /*!< Motor configuration parameters */
+    acq_t               acq;        /*!< Current \& voltage acquisitions */
+    encoder_t           enc;        /*!< Encoder position & speed */
+    cmd_t               cmd;        /*!< Motor commands */
     lpf_t               iParkFlt;       /*!< Low-pass filter parameters affected to park transform */
-    float32_t           sinTheta;       /*!< Sinus of the electrical rotor angle */
-    float32_t           cosTheta;       /*!< Cosine of the electrical rotor angle */
-    float32_t           ialpha;         /*!< Direct Clarke transform result - [A] */
-    float32_t           ibeta;          /*!< Direct Clarke transform result - [A] */
-    float32_t           id;             /*!< Filtered Direct Park transform result - [A] */
-    float32_t           iq;             /*!< Filtered Quadrature Park transform result - [A] */
-    float32_t           ud;             /*!< Inverse Park transform result - [V] */
-    float32_t           uq;             /*!< Inverse Park transform result - [V] */
-    float32_t           ualpha;         /*!< Inverse Clarke transform result - [V] */
-    float32_t           ubeta;          /*!< Inverse Clarke transform result - [V] */
-    float32_t           ua;             /*!< Phase commands - Channel a - [V] */
-    float32_t           ub;             /*!< Phase commands - Channel b - [V] */
-    float32_t           uc;             /*!< Phase commands - Channel c - [V] */
-    float32_t           vmax;           /*!< Bus voltage saturation - [V] */
-    float32_t           dtcMax;         /*!< Max saturation duty-cycle */
-    float32_t           dtcMin;         /*!< Min saturation duty-cycle */
-    float32_t           dtc_u;          /*!< Duty cycles on channel u - [pu] between -0.5 and 0.5 */
-    float32_t           dtc_v;          /*!< Duty cycles on channel v - [pu] between -0.5 and 0.5 */
-    float32_t           dtc_w;          /*!< Duty cycles on channel w - [pu] between -0.5 and 0.5 */
-    float32_t           idRef;          /*!< PI controller set point values for D-axis current - [A] */
-    float32_t           iqRef;          /*!< PI controller set point values for Q-axis current - [A] */
-    float32_t           initPos;        /*!< Initial position to force a rotor movement during alignment - [RAD] */
-    float32_t           initPosEnc[2];  /*!< Initial positions of theta electric during alignment (forward \& reverse) - [RAD] */
+    struct
+    {
+        float32_t       sinTheta;       /*!< Sinus of the electrical rotor angle */
+        float32_t       cosTheta;       /*!< Cosine of the electrical rotor angle */
+        float32_t       ialpha;         /*!< Direct Clarke transform result - [A] */
+        float32_t       ibeta;          /*!< Direct Clarke transform result - [A] */
+        float32_t       id;             /*!< Filtered Direct Park transform result - [A] */
+        float32_t       iq;             /*!< Filtered Quadrature Park transform result - [A] */
+        float32_t       ud;             /*!< Inverse Park transform result - [V] */
+        float32_t       uq;             /*!< Inverse Park transform result - [V] */
+        float32_t       ualpha;         /*!< Inverse Clarke transform result - [V] */
+        float32_t       ubeta;          /*!< Inverse Clarke transform result - [V] */
+        float32_t       ua;             /*!< Phase commands - Channel a - [V] */
+        float32_t       ub;             /*!< Phase commands - Channel b - [V] */
+        float32_t       uc;             /*!< Phase commands - Channel c - [V] */
+        float32_t       vmax;           /*!< Bus voltage saturation - [V] */
+        float32_t       dtcMax;         /*!< Max saturation duty-cycle */
+        float32_t       dtcMin;         /*!< Min saturation duty-cycle */
+        float32_t       dtc_u;          /*!< Duty cycles on channel u - [pu] between -0.5 and 0.5 */
+        float32_t       dtc_v;          /*!< Duty cycles on channel v - [pu] between -0.5 and 0.5 */
+        float32_t       dtc_w;          /*!< Duty cycles on channel w - [pu] between -0.5 and 0.5 */
+        float32_t       idRef;          /*!< PI controller set point values for D-axis current - [A] */
+        float32_t       iqRef;          /*!< PI controller set point values for Q-axis current - [A] */
+    };
+    struct
+    {
+        float32_t       initPos;        /*!< Initial position to force a rotor movement during alignment - [RAD] */
+        float32_t       initPosEnc[2];  /*!< Initial positions of theta electric during alignment (forward \& reverse) - [RAD] */
+    };
     pi_t                piId;           /*!< PI controller structure for current control */
     pi_t                piIq;           /*!< PI controller structure for current control */
     pd_t                pdPosVel;       /*!< PD controller structure for position/velocity control */
@@ -231,6 +240,15 @@ typedef struct __foc_t__
  * DEFINES
  ***********************************************************************/
 #define FOC_RE_CURRENT_THRESHOLD    0.1f
+#define CMD_SYSTEM_EN_POS           (0)
+#define CMD_SYSTEM_EN_MASK          (1 << CMD_SYSTEM_EN_POS)
+#define CMD_MOTOR_EN_POS            (1)
+#define CMD_MOTOR_EN_MASK           (1 << CMD_MOTOR_EN_POS)
+#define CMD_ROLLOVER_EN_POS         (2)
+#define CMD_ROLLOVER_EN_MASK        (1 << CMD_ROLLOVER_EN_POS)
+#define CMD_ENCODER_OFFSET_POS      (3)
+#define CMD_ENCODER_OFFSET_MASK     (1 << CMD_ENCODER_OFFSET_POS)
+#define CMD_POSITION_OFFSET_COMP    (CMD_SYSTEM_EN_MASK | CMD_MOTOR_EN_MASK | CMD_ENCODER_OFFSET_MASK)
 
 /***********************************************************************
  * FUNCTIONS DECLARATION

@@ -26,8 +26,8 @@
 /***********************************************************************
  * FUNCTIONS DECLARATION
  ***********************************************************************/
-__attribute__((interrupt)) void adc_isrMotor1(void);
-__attribute__((interrupt)) void adc_isrMotor2(void);
+//__attribute__((interrupt)) void adc_isrMotor1(void);
+//__attribute__((interrupt)) void adc_isrMotor2(void);
 __attribute__((interrupt)) void cla_isrMotor1(void);
 __attribute__((interrupt)) void cla_isrMotor2(void);
 __attribute__((interrupt)) void tmr_isrLed(void);
@@ -51,12 +51,12 @@ static const int_cfg_t InterruptList[] =
 //  .p_intHandler     = &adc_isrMotor2
 // },
  {
-  .intNum           = INT_CLA1_1,
+  .intNum           = INT_CLA1_3,
   .intAckGroup      = INTERRUPT_ACK_GROUP11,
   .p_intHandler     = &cla_isrMotor1
  },
  {
-  .intNum           = INT_CLA1_2,
+  .intNum           = INT_CLA1_4,
   .intAckGroup      = INTERRUPT_ACK_GROUP11,
   .p_intHandler     = &cla_isrMotor2
  },
@@ -239,12 +239,12 @@ static cmd_t cmd_uOmodri[2] =
 #endif
 
 #if (CLA_CORE_ENABLE)
-#pragma DATA_ALIGN(motor_foc_m1, 4)
-#pragma DATA_SECTION(motor_foc_m1, "ClaDataRam0");
-foc_t motor_foc_m1;
-#pragma DATA_ALIGN(motor_foc_m2, 4)
-#pragma DATA_SECTION(motor_foc_m2, "ClaDataRam1");
-foc_t motor_foc_m2;
+//#pragma DATA_ALIGN(motor_foc_m1, 4)
+//#pragma DATA_SECTION(motor_foc_m1, "ClaDataRam0");
+//foc_t motor_foc_m1;
+//#pragma DATA_ALIGN(motor_foc_m2, 4)
+//#pragma DATA_SECTION(motor_foc_m2, "ClaDataRam1");
+//foc_t motor_foc_m2;
 #else
 #pragma DATA_ALIGN(motor_foc, 4)
 #pragma DATA_SECTION(motor_foc, "ramgs0");

@@ -71,6 +71,9 @@ MEMORY
    CPU_CLA1_MSGRAM	: origin = 0x001500, length = 0x000080
    CLA1_DMA_MSGRAM  : origin = 0x001680, length = 0x000080
    DMA_CLA1_MSGRAM  : origin = 0x001700, length = 0x000080
+
+   /*CLA1_DATAROM_RESERVED    : origin = 0x01001000, length = 0x000070 //, fill = 0xFFFF
+   CLA1_DATAROM             : origin = 0x01001870, length = 0x00078a //, fill = 0xFFFF*/
 }
 
 SECTIONS
@@ -121,6 +124,7 @@ SECTIONS
    .bss_cla         : > RAMLS2//RAMLS3
    cla_shared       : > RAMLS2
    CLA1mathTables   : > RAMLS2
+   //CLA1mathTables	: load = CLA1_DATAROM//, run = CLA1_DATAROM_RUN
 
 #if defined(__TI_EABI__)
    Cla1Prog         :   LOAD = FLASH2_3,

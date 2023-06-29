@@ -27,21 +27,6 @@
 	</natures>
 	<linkedResources>
 		<link>
-			<name>F2838xCPU1_CLADATAROM_Symbols_fpu32.lib</name>
-			<type>1</type>
-			<locationURI>C2000WARE_ROOT/libraries/boot_rom/f2838x/revA/rom_symbol_libs/cpu1/claDataROM/F2838xCPU1_CLADATAROM_Symbols_fpu32.lib</locationURI>
-		</link>
-		<link>
-			<name>cla2_math_library_datarom_fpu32_eabi.lib</name>
-			<type>1</type>
-			<locationURI>C2000WARE_ROOT/libraries/math/CLAmath/c28/lib/cla2_math_library_datarom_fpu32_eabi.lib</locationURI>
-		</link>
-		<link>
-			<name>driverlib.lib</name>
-			<type>1</type>
-			<locationURI>C2000WARE_ROOT/driverlib/f2838x/driverlib/ccs/Debug/driverlib.lib</locationURI>
-		</link>
-		<link>
 			<name>src/device/device.c</name>
 			<type>1</type>
 			<locationURI>C2000WARE_ROOT/device_support/f2838x/common/source/device.c</locationURI>
@@ -56,6 +41,10 @@
 		<variable>
 			<name>C2000WARE_ROOT</name>
 			<value>file:/C:/STM32Toolchain/TI/c2000/C2000Ware_4_03_00_00</value>
+		</variable>
+		<variable>
+			<name>CLADATAROM_ROOT</name>
+			<value>$%7BC2000WARE_ROOT%7D/libraries/boot_rom/f2838x/revA/rom_symbol_libs/cpu1/claDataROM</value>
 		</variable>
 		<variable>
 			<name>CLAMATH_ROOT</name>

@@ -11,6 +11,7 @@
  ***********************************************************************/
 #include <stdbool.h>
 #include <stdint.h>
+#include <hw_types.h>
 #include <f2838x_device.h>
 #include <driverlib.h>
 
@@ -275,7 +276,8 @@ typedef struct __ADC_INITIALIZATION_t__
 typedef struct __ADC_ACQUISITIONS_RESULTS_t__
 {
     const uint32_t                      adcBase;                    /*!< ADC peripheral address. */
-    volatile uint16_t* const            adcResultReg;
+//    volatile uint16_t* const            adcResultReg;
+    const uint32_t                      adcResultAddr;
     const ADC_SOCNumber                 adcSOCNumber;
     const ADC_PPBNumber                 adcPPBNumber;
 } adc_acq_t;

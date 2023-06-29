@@ -17,7 +17,7 @@
 __attribute__((interrupt)) void Cla1Task1(void);
 __attribute__((interrupt)) void Cla1Task2(void);
 __attribute__((interrupt)) void Cla1Task3(void);
-__attribute__((interrupt)) void Cla1Task8(void);
+__attribute__((interrupt)) void Cla1Task4(void);
 
 /***********************************************************************
  * VARIABLE DECLARATION
@@ -183,19 +183,32 @@ static const adc_ini_t  AdcInitList[] =
  */
 static const adc_acq_t  AdcAcqList[] =
 {
-  /* ADCA : Ia_M1, Ia_M2 */
- {.adcBase = MOTOR1_IA_ADC_ADDR,    .adcResultReg = (volatile uint16_t *)(MOTOR1_IA_ADC_RESULT_ADDR),   .adcSOCNumber = MOTOR1_Iabc_SOC_NUM,    .adcPPBNumber = MOTOR1_Iabc_PPB_NUM},
- {.adcBase = MOTOR2_IA_ADC_ADDR,    .adcResultReg = (volatile uint16_t *)(MOTOR2_IA_ADC_RESULT_ADDR),   .adcSOCNumber = MOTOR2_Iabc_SOC_NUM,    .adcPPBNumber = MOTOR2_Iabc_PPB_NUM},
-  /* ADCB : Ib_M1, Ib_M2 */
- {.adcBase = MOTOR1_IB_ADC_ADDR,    .adcResultReg = (volatile uint16_t *)(MOTOR1_IB_ADC_RESULT_ADDR),   .adcSOCNumber = MOTOR1_Iabc_SOC_NUM,    .adcPPBNumber = MOTOR1_Iabc_PPB_NUM},
- {.adcBase = MOTOR2_IB_ADC_ADDR,    .adcResultReg = (volatile uint16_t *)(MOTOR2_IB_ADC_RESULT_ADDR),   .adcSOCNumber = MOTOR2_Iabc_SOC_NUM,    .adcPPBNumber = MOTOR2_Iabc_PPB_NUM},
+//  /* ADCA : Ia_M1, Ia_M2 */
+// {.adcBase = MOTOR1_IA_ADC_ADDR,    .adcResultReg = (volatile uint16_t *)(MOTOR1_IA_ADC_RESULT_ADDR),   .adcSOCNumber = MOTOR1_Iabc_SOC_NUM,    .adcPPBNumber = MOTOR1_Iabc_PPB_NUM},
+// {.adcBase = MOTOR2_IA_ADC_ADDR,    .adcResultReg = (volatile uint16_t *)(MOTOR2_IA_ADC_RESULT_ADDR),   .adcSOCNumber = MOTOR2_Iabc_SOC_NUM,    .adcPPBNumber = MOTOR2_Iabc_PPB_NUM},
+//  /* ADCB : Ib_M1, Ib_M2 */
+// {.adcBase = MOTOR1_IB_ADC_ADDR,    .adcResultReg = (volatile uint16_t *)(MOTOR1_IB_ADC_RESULT_ADDR),   .adcSOCNumber = MOTOR1_Iabc_SOC_NUM,    .adcPPBNumber = MOTOR1_Iabc_PPB_NUM},
+// {.adcBase = MOTOR2_IB_ADC_ADDR,    .adcResultReg = (volatile uint16_t *)(MOTOR2_IB_ADC_RESULT_ADDR),   .adcSOCNumber = MOTOR2_Iabc_SOC_NUM,    .adcPPBNumber = MOTOR2_Iabc_PPB_NUM},
+// /* ADCD (UOMODRI_V1_0_ENABLE): Ic_M1, Ic_M2 / ADCC (UOMODRI_V2_0_ENABLE): Ic_M1, Ic_M2 */
+// {.adcBase = MOTOR1_IC_ADC_ADDR,    .adcResultReg = (volatile uint16_t *)(MOTOR1_IC_ADC_RESULT_ADDR),   .adcSOCNumber = MOTOR1_Iabc_SOC_NUM,    .adcPPBNumber = MOTOR1_Iabc_PPB_NUM},
+// {.adcBase = MOTOR2_IC_ADC_ADDR,    .adcResultReg = (volatile uint16_t *)(MOTOR2_IC_ADC_RESULT_ADDR),   .adcSOCNumber = MOTOR2_Iabc_SOC_NUM,    .adcPPBNumber = MOTOR2_Iabc_PPB_NUM},
+// /* ADCC (UOMODRI_V1_0_ENABLE): VBUS, VEXT1, VEXT2 / ADCD (UOMODRI_V2_0_ENABLE): VBUS, VEXT1, VEXT2 */
+// {.adcBase = VBUS_ADC_ADDR,         .adcResultReg = (volatile uint16_t *)(VBUS_ADC_RESULT_ADDR),        .adcSOCNumber = VBUS_SOC_NUM,           .adcPPBNumber = VBUS_PPB_NUM},
+// {.adcBase = VEXT1_ADC_ADDR,        .adcResultReg = (volatile uint16_t *)(VEXT1_ADC_RESULT_ADDR),       .adcSOCNumber = VEXT1_SOC_NUM,          .adcPPBNumber = VEXT1_PPB_NUM},
+// {.adcBase = VEXT2_ADC_ADDR,        .adcResultReg = (volatile uint16_t *)(VEXT2_ADC_RESULT_ADDR),       .adcSOCNumber = VEXT2_SOC_NUM,          .adcPPBNumber = VEXT2_PPB_NUM},
+ /* ADCA : Ia_M1, Ia_M2 */
+ {.adcBase = MOTOR1_IA_ADC_ADDR,    .adcResultAddr = MOTOR1_IA_ADC_RESULT_ADDR, .adcSOCNumber = MOTOR1_Iabc_SOC_NUM,    .adcPPBNumber = MOTOR1_Iabc_PPB_NUM},
+ {.adcBase = MOTOR2_IA_ADC_ADDR,    .adcResultAddr = MOTOR2_IA_ADC_RESULT_ADDR, .adcSOCNumber = MOTOR2_Iabc_SOC_NUM,    .adcPPBNumber = MOTOR2_Iabc_PPB_NUM},
+ /* ADCB : Ib_M1, Ib_M2 */
+ {.adcBase = MOTOR1_IB_ADC_ADDR,    .adcResultAddr = MOTOR1_IB_ADC_RESULT_ADDR, .adcSOCNumber = MOTOR1_Iabc_SOC_NUM,    .adcPPBNumber = MOTOR1_Iabc_PPB_NUM},
+ {.adcBase = MOTOR2_IB_ADC_ADDR,    .adcResultAddr = MOTOR2_IB_ADC_RESULT_ADDR, .adcSOCNumber = MOTOR2_Iabc_SOC_NUM,    .adcPPBNumber = MOTOR2_Iabc_PPB_NUM},
  /* ADCD (UOMODRI_V1_0_ENABLE): Ic_M1, Ic_M2 / ADCC (UOMODRI_V2_0_ENABLE): Ic_M1, Ic_M2 */
- {.adcBase = MOTOR1_IC_ADC_ADDR,    .adcResultReg = (volatile uint16_t *)(MOTOR1_IC_ADC_RESULT_ADDR),   .adcSOCNumber = MOTOR1_Iabc_SOC_NUM,    .adcPPBNumber = MOTOR1_Iabc_PPB_NUM},
- {.adcBase = MOTOR2_IC_ADC_ADDR,    .adcResultReg = (volatile uint16_t *)(MOTOR2_IC_ADC_RESULT_ADDR),   .adcSOCNumber = MOTOR2_Iabc_SOC_NUM,    .adcPPBNumber = MOTOR2_Iabc_PPB_NUM},
+ {.adcBase = MOTOR1_IC_ADC_ADDR,    .adcResultAddr = MOTOR1_IC_ADC_RESULT_ADDR, .adcSOCNumber = MOTOR1_Iabc_SOC_NUM,    .adcPPBNumber = MOTOR1_Iabc_PPB_NUM},
+ {.adcBase = MOTOR2_IC_ADC_ADDR,    .adcResultAddr = MOTOR2_IC_ADC_RESULT_ADDR, .adcSOCNumber = MOTOR2_Iabc_SOC_NUM,    .adcPPBNumber = MOTOR2_Iabc_PPB_NUM},
  /* ADCC (UOMODRI_V1_0_ENABLE): VBUS, VEXT1, VEXT2 / ADCD (UOMODRI_V2_0_ENABLE): VBUS, VEXT1, VEXT2 */
- {.adcBase = VBUS_ADC_ADDR,         .adcResultReg = (volatile uint16_t *)(VBUS_ADC_RESULT_ADDR),        .adcSOCNumber = VBUS_SOC_NUM,           .adcPPBNumber = VBUS_PPB_NUM},
- {.adcBase = VEXT1_ADC_ADDR,        .adcResultReg = (volatile uint16_t *)(VEXT1_ADC_RESULT_ADDR),       .adcSOCNumber = VEXT1_SOC_NUM,          .adcPPBNumber = VEXT1_PPB_NUM},
- {.adcBase = VEXT2_ADC_ADDR,        .adcResultReg = (volatile uint16_t *)(VEXT2_ADC_RESULT_ADDR),       .adcSOCNumber = VEXT2_SOC_NUM,          .adcPPBNumber = VEXT2_PPB_NUM},
+ {.adcBase = VBUS_ADC_ADDR,         .adcResultAddr = VBUS_ADC_RESULT_ADDR,      .adcSOCNumber = VBUS_SOC_NUM,           .adcPPBNumber = VBUS_PPB_NUM},
+ {.adcBase = VEXT1_ADC_ADDR,        .adcResultAddr = VEXT1_ADC_RESULT_ADDR,     .adcSOCNumber = VEXT1_SOC_NUM,          .adcPPBNumber = VEXT1_PPB_NUM},
+ {.adcBase = VEXT2_ADC_ADDR,        .adcResultAddr = VEXT2_ADC_RESULT_ADDR,     .adcSOCNumber = VEXT2_SOC_NUM,          .adcPPBNumber = VEXT2_PPB_NUM},
  // END OF ARRAY
  {.adcBase = UINT32_MAX}
 };
@@ -419,41 +432,41 @@ static const cla_cfg_t  claCfgList[] =
  {
   .progRAM              = MEMCFG_SECT_LS3 | MEMCFG_SECT_LS4 | MEMCFG_SECT_LS5 | MEMCFG_SECT_LS6 | MEMCFG_SECT_LS7,
   .dataRAM              = MEMCFG_SECT_LS0 | MEMCFG_SECT_LS1 | MEMCFG_SECT_LS2,
-  .claTaskFlg           = CLA_TASKFLAG_8,
-  .claTaskNum           = CLA_TASK_8,
-  .claIntVect           = CLA_MVECT_8,
+  .claTaskFlg           = CLA_TASKFLAG_1,
+  .claTaskNum           = CLA_TASK_1,
+  .claIntVect           = CLA_MVECT_1,
   .claTrigSrc           = CLA_TRIGGER_SOFTWARE,
-  .p_claFunc            = &Cla1Task8,
+  .p_claFunc            = &Cla1Task1,
   .claForceTask         = true,
  },
  {
   .progRAM              = MEMCFG_SECT_LS3 | MEMCFG_SECT_LS4 | MEMCFG_SECT_LS5 | MEMCFG_SECT_LS6 | MEMCFG_SECT_LS7,
   .dataRAM              = MEMCFG_SECT_LS0 | MEMCFG_SECT_LS1 | MEMCFG_SECT_LS2,
-  .claTaskFlg           = CLA_TASKFLAG_3,
-  .claTaskNum           = CLA_TASK_3,
-  .claIntVect           = CLA_MVECT_3,
+  .claTaskFlg           = CLA_TASKFLAG_2,
+  .claTaskNum           = CLA_TASK_2,
+  .claIntVect           = CLA_MVECT_2,
   .claTrigSrc           = CLA_TRIGGER_SOFTWARE,
-  .p_claFunc            = &Cla1Task3,
+  .p_claFunc            = &Cla1Task2,
   .claForceTask         = false,
  },
  {
   .progRAM              = MEMCFG_SECT_LS3 | MEMCFG_SECT_LS4 | MEMCFG_SECT_LS5 | MEMCFG_SECT_LS6 | MEMCFG_SECT_LS7,
   .dataRAM              = MEMCFG_SECT_LS0 | MEMCFG_SECT_LS2,
-  .claTaskFlg           = CLA_TASKFLAG_1,
-  .claTaskNum           = CLA_TASK_1,
-  .claIntVect           = CLA_MVECT_1,
+  .claTaskFlg           = CLA_TASKFLAG_3,
+  .claTaskNum           = CLA_TASK_3,
+  .claIntVect           = CLA_MVECT_3,
   .claTrigSrc           = CLA_TRIGGER_ADCA1,
-  .p_claFunc            = &Cla1Task1,
+  .p_claFunc            = &Cla1Task3,
   .claForceTask         = false,
  },
  {
   .progRAM              = MEMCFG_SECT_LS3 | MEMCFG_SECT_LS4 | MEMCFG_SECT_LS5 | MEMCFG_SECT_LS6 | MEMCFG_SECT_LS7,
   .dataRAM              = MEMCFG_SECT_LS1 | MEMCFG_SECT_LS2,
-  .claTaskFlg           = CLA_TASKFLAG_2,
-  .claTaskNum           = CLA_TASK_2,
-  .claIntVect           = CLA_MVECT_2,
+  .claTaskFlg           = CLA_TASKFLAG_4,
+  .claTaskNum           = CLA_TASK_4,
+  .claIntVect           = CLA_MVECT_4,
   .claTrigSrc           = CLA_TRIGGER_ADCA2,
-  .p_claFunc            = &Cla1Task2,
+  .p_claFunc            = &Cla1Task4,
   .claForceTask         = false,
  },
  {.p_claFunc            = NULL},
@@ -628,7 +641,7 @@ static const hal_cfg_t hal =
 #endif
  .p_spiHandle               = spiCfgList,
  .p_timerHandle             = timerCfgList,
-#if (CLA_CORE_ENABLE || CLA1_TEST_CORE_ENABLE)
+#if (CLA_CORE_ENABLE)
  .p_claHandle               = claCfgList,
 #else
  .p_claHandle               = NULL,

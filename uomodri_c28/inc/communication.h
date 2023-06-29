@@ -244,10 +244,10 @@ typedef struct __mst2slv_msg_t__
     uint16_t        iSat;
     uint16_t        index;
     U32toU16_reg_t  crc;
-    com_rx_state_e  msg_rx_state;
-    uint32_t        msg_crc32;
-    uint16_t        msg_rx;
-    uint16_t        msg_tmp;
+//    com_rx_state_e  msg_rx_state;
+//    uint32_t        msg_crc32;
+//    uint16_t        msg_rx;
+//    uint16_t        msg_tmp;
 } mst2slv_msg_t;
 
 /**

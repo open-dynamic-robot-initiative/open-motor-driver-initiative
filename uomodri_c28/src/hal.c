@@ -35,8 +35,6 @@ void HAL_ini(const hal_cfg_t* p_hal)
     if(p_hal != NULL)
     {
         EALLOW;
-        // Initialize CLA
-        HAL_CLA_ini(p_hal->p_claHandle);
         // Initialize GPIO pins
         HAL_GPIO_ini(p_hal->p_gpioHandle);
         // Initialize ADC
@@ -56,6 +54,8 @@ void HAL_ini(const hal_cfg_t* p_hal)
         HAL_DMA_ini(p_hal->p_dmaHandle);
         // Initialize SPI
         HAL_SPI_ini(p_hal->p_spiHandle);
+        // Initialize CLA
+        HAL_CLA_ini(p_hal->p_claHandle);
         EDIS;
     }
 
@@ -197,10 +197,12 @@ void HAL_ADC_offsetCalib(const periph_motor_cfg_t* p_periphMotorCfg)
             while(ADC_getInterruptStatus(p_ITConv->adcBase, p_ITConv->adcIntNumber) == false);
             if(calibCnt > 1000)
                 for(loop = 0; loop < 3; loop++)
-                    UOMODRI_HAL_ADC_CALIB(fltCoef, i[loop], (float32_t) *(p_periphMotorCfg->p_iAcq[loop]->adcResultReg));
+//                    UOMODRI_HAL_ADC_CALIB(fltCoef, i[loop], (float32_t) *(p_periphMotorCfg->p_iAcq[loop]->adcResultReg));
+                    UOMODRI_HAL_ADC_CALIB(fltCoef, i[loop], (float32_t)(HWREGH(p_periphMotorCfg->p_iAcq[loop]->adcResultAddr)));
             else
                 for(loop = 0; loop < 3; loop++)
-                    i[loop] = (float32_t) *(p_periphMotorCfg->p_iAcq[loop]->adcResultReg);
+//                    i[loop] = (float32_t) *(p_periphMotorCfg->p_iAcq[loop]->adcResultReg);
+                    i[loop] = (float32_t)(HWREGH(p_periphMotorCfg->p_iAcq[loop]->adcResultAddr));
 
             // clear flags
             for(loop = 0; loop < 3; loop++)
@@ -696,12 +698,10 @@ void HAL_CLA_ini(const cla_cfg_t* p_clacCfg)
 
         /* Disable background task */
         CLA_disableBackgroundTask(CLA1_BASE);
-        /* Enable the IACK instruction to start a task on CLA in software for all 8 CLA tasks.
-         * Also, globally enable all 8 tasks (or a subset of tasks)
-         * by writing to their respective bits in the MIER register
-         */
+        /* Enable the IACK instruction to start a task on CLA in software for all 8 CLA tasks */
         CLA_enableIACK(CLA1_BASE);
-//        CLA_enableTasks(CLA1_BASE, CLA_TASKFLAG_ALL);
+        /* Enable each initialized task */
+//        CLA_enableTasks(CLA1_BASE, CLA_TASKFLAG_ALL);//p_clacCfg->claTaskFlg);
 
         uint8_t i;
         while(p_clacCfg->p_claFunc != NULL)
@@ -722,7 +722,6 @@ void HAL_CLA_ini(const cla_cfg_t* p_clacCfg)
                 {
                     MemCfg_setLSRAMControllerSel(memcfg_sect_lsx, MEMCFG_LSRAMCONTROLLER_CPU_CLA1);
                     MemCfg_setCLAMemType(memcfg_sect_lsx, MEMCFG_CLA_MEM_PROGRAM);
-//                    MemCfg_setProtection(memcfg_sect_lsx, MEMCFG_PROT_ALLOWCPUFETCH | MEMCFG_PROT_ALLOWCPUWRITE);
                 }
                 /* Configure LSxRAM as data spaces for the CLA
                  * First configure the CLA to be the master for LSx and then
@@ -731,7 +730,6 @@ void HAL_CLA_ini(const cla_cfg_t* p_clacCfg)
                 {
                     MemCfg_setLSRAMControllerSel(memcfg_sect_lsx, MEMCFG_LSRAMCONTROLLER_CPU_CLA1);
                     MemCfg_setCLAMemType(memcfg_sect_lsx, MEMCFG_CLA_MEM_DATA);
-//                    MemCfg_setProtection(memcfg_sect_lsx, MEMCFG_PROT_ALLOWCPUFETCH | MEMCFG_PROT_ALLOWCPUWRITE);
                 }
             }
 
