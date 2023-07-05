@@ -162,18 +162,18 @@ static const gpio_cfg_t GpioPinsCfgList[] =
 static const adc_ini_t  AdcInitList[] =
 {
  /* ADCA - Ia_M1, Ia_M2 */
- {.adcBase = MOTOR1_IA_ADC_ADDR,    .adcChannel = MOTOR1_IA_CH, .adcSOCNumber = MOTOR1_Iabc_SOC_NUM,    .adcTriggerSrc = MOTOR1_ADC_SOC_TRIGGER_EVT},
- {.adcBase = MOTOR2_IA_ADC_ADDR,    .adcChannel = MOTOR2_IA_CH, .adcSOCNumber = MOTOR2_Iabc_SOC_NUM,    .adcTriggerSrc = MOTOR2_ADC_SOC_TRIGGER_EVT},
+ {.adcBase = MOTOR1_IA_ADC_CFG_ADDR,.adcChannel = MOTOR1_IA_CH, .adcSOCNumber = MOTOR1_IABC_SOC_NUM,.adcTriggerSrc = MOTOR1_ADC_SOC_TRIGGER_EVT},
+ {.adcBase = MOTOR2_IA_ADC_CFG_ADDR,.adcChannel = MOTOR2_IA_CH, .adcSOCNumber = MOTOR2_IABC_SOC_NUM,.adcTriggerSrc = MOTOR2_ADC_SOC_TRIGGER_EVT},
  /* ADCB - Ib_M1, Ib_M2 */
- {.adcBase = MOTOR1_IB_ADC_ADDR,    .adcChannel = MOTOR1_IB_CH, .adcSOCNumber = MOTOR1_Iabc_SOC_NUM,    .adcTriggerSrc = MOTOR1_ADC_SOC_TRIGGER_EVT},
- {.adcBase = MOTOR2_IB_ADC_ADDR,    .adcChannel = MOTOR2_IB_CH, .adcSOCNumber = MOTOR2_Iabc_SOC_NUM,    .adcTriggerSrc = MOTOR2_ADC_SOC_TRIGGER_EVT},
+ {.adcBase = MOTOR1_IB_ADC_CFG_ADDR,.adcChannel = MOTOR1_IB_CH, .adcSOCNumber = MOTOR1_IABC_SOC_NUM,.adcTriggerSrc = MOTOR1_ADC_SOC_TRIGGER_EVT},
+ {.adcBase = MOTOR2_IB_ADC_CFG_ADDR,.adcChannel = MOTOR2_IB_CH, .adcSOCNumber = MOTOR2_IABC_SOC_NUM,.adcTriggerSrc = MOTOR2_ADC_SOC_TRIGGER_EVT},
  /* ADCD (UOMODRI_V1_0_ENABLE): Ic_M1, Ic_M2 / ADCC (UOMODRI_V2_0_ENABLE): Ic_M1, Ic_M2 */
- {.adcBase = MOTOR1_IC_ADC_ADDR,    .adcChannel = MOTOR1_IC_CH, .adcSOCNumber = MOTOR1_Iabc_SOC_NUM,    .adcTriggerSrc = MOTOR1_ADC_SOC_TRIGGER_EVT},
- {.adcBase = MOTOR2_IC_ADC_ADDR,    .adcChannel = MOTOR2_IC_CH, .adcSOCNumber = MOTOR2_Iabc_SOC_NUM,    .adcTriggerSrc = MOTOR2_ADC_SOC_TRIGGER_EVT},
+ {.adcBase = MOTOR1_IC_ADC_CFG_ADDR,.adcChannel = MOTOR1_IC_CH, .adcSOCNumber = MOTOR1_IABC_SOC_NUM,.adcTriggerSrc = MOTOR1_ADC_SOC_TRIGGER_EVT},
+ {.adcBase = MOTOR2_IC_ADC_CFG_ADDR,.adcChannel = MOTOR2_IC_CH, .adcSOCNumber = MOTOR2_IABC_SOC_NUM,.adcTriggerSrc = MOTOR2_ADC_SOC_TRIGGER_EVT},
  /* ADCC (UOMODRI_V1_0_ENABLE): VBUS, VEXT1, VEXT2 / ADCD (UOMODRI_V2_0_ENABLE): VBUS, VEXT1, VEXT2 */
- {.adcBase = VBUS_ADC_ADDR,         .adcChannel = VBUS_CH,      .adcSOCNumber = VBUS_SOC_NUM,           .adcTriggerSrc = VBUS_ADC_SOC_TRIGGER_EVT},
- {.adcBase = VEXT1_ADC_ADDR,        .adcChannel = VEXT1_CH,     .adcSOCNumber = VEXT1_SOC_NUM,          .adcTriggerSrc = VEXT1_ADC_SOC_TRIGGER_EVT},
- {.adcBase = VEXT2_ADC_ADDR,        .adcChannel = VEXT2_CH,     .adcSOCNumber = VEXT2_SOC_NUM,          .adcTriggerSrc = VEXT2_ADC_SOC_TRIGGER_EVT},
+ {.adcBase = VBUS_ADC_CFG_ADDR,     .adcChannel = VBUS_CH,      .adcSOCNumber = VBUS_SOC_NUM,       .adcTriggerSrc = VBUS_ADC_SOC_TRIGGER_EVT},
+ {.adcBase = VEXT1_ADC_CFG_ADDR,    .adcChannel = VEXT1_CH,     .adcSOCNumber = VEXT1_SOC_NUM,      .adcTriggerSrc = VEXT1_ADC_SOC_TRIGGER_EVT},
+ {.adcBase = VEXT2_ADC_CFG_ADDR,    .adcChannel = VEXT2_CH,     .adcSOCNumber = VEXT2_SOC_NUM,      .adcTriggerSrc = VEXT2_ADC_SOC_TRIGGER_EVT},
  // END OF ARRAY
  {.adcBase = UINT32_MAX},
 };
@@ -197,18 +197,18 @@ static const adc_acq_t  AdcAcqList[] =
 // {.adcBase = VEXT1_ADC_ADDR,        .adcResultReg = (volatile uint16_t *)(VEXT1_ADC_RESULT_ADDR),       .adcSOCNumber = VEXT1_SOC_NUM,          .adcPPBNumber = VEXT1_PPB_NUM},
 // {.adcBase = VEXT2_ADC_ADDR,        .adcResultReg = (volatile uint16_t *)(VEXT2_ADC_RESULT_ADDR),       .adcSOCNumber = VEXT2_SOC_NUM,          .adcPPBNumber = VEXT2_PPB_NUM},
  /* ADCA : Ia_M1, Ia_M2 */
- {.adcBase = MOTOR1_IA_ADC_ADDR,    .adcResultAddr = MOTOR1_IA_ADC_RESULT_ADDR, .adcSOCNumber = MOTOR1_Iabc_SOC_NUM,    .adcPPBNumber = MOTOR1_Iabc_PPB_NUM},
- {.adcBase = MOTOR2_IA_ADC_ADDR,    .adcResultAddr = MOTOR2_IA_ADC_RESULT_ADDR, .adcSOCNumber = MOTOR2_Iabc_SOC_NUM,    .adcPPBNumber = MOTOR2_Iabc_PPB_NUM},
+ {.adcBase = MOTOR1_IA_ADC_CFG_ADDR,.adcResultBase = MOTOR1_IA_ADC_RESULT_ADDR, .adcSOCNumber = MOTOR1_IABC_SOC_NUM,.adcPPBNumber = MOTOR1_IABC_PPB_NUM},
+ {.adcBase = MOTOR2_IA_ADC_CFG_ADDR,.adcResultBase = MOTOR2_IA_ADC_RESULT_ADDR, .adcSOCNumber = MOTOR2_IABC_SOC_NUM,.adcPPBNumber = MOTOR2_IABC_PPB_NUM},
  /* ADCB : Ib_M1, Ib_M2 */
- {.adcBase = MOTOR1_IB_ADC_ADDR,    .adcResultAddr = MOTOR1_IB_ADC_RESULT_ADDR, .adcSOCNumber = MOTOR1_Iabc_SOC_NUM,    .adcPPBNumber = MOTOR1_Iabc_PPB_NUM},
- {.adcBase = MOTOR2_IB_ADC_ADDR,    .adcResultAddr = MOTOR2_IB_ADC_RESULT_ADDR, .adcSOCNumber = MOTOR2_Iabc_SOC_NUM,    .adcPPBNumber = MOTOR2_Iabc_PPB_NUM},
+ {.adcBase = MOTOR1_IB_ADC_CFG_ADDR,.adcResultBase = MOTOR1_IB_ADC_RESULT_ADDR, .adcSOCNumber = MOTOR1_IABC_SOC_NUM,.adcPPBNumber = MOTOR1_IABC_PPB_NUM},
+ {.adcBase = MOTOR2_IB_ADC_CFG_ADDR,.adcResultBase = MOTOR2_IB_ADC_RESULT_ADDR, .adcSOCNumber = MOTOR2_IABC_SOC_NUM,.adcPPBNumber = MOTOR2_IABC_PPB_NUM},
  /* ADCD (UOMODRI_V1_0_ENABLE): Ic_M1, Ic_M2 / ADCC (UOMODRI_V2_0_ENABLE): Ic_M1, Ic_M2 */
- {.adcBase = MOTOR1_IC_ADC_ADDR,    .adcResultAddr = MOTOR1_IC_ADC_RESULT_ADDR, .adcSOCNumber = MOTOR1_Iabc_SOC_NUM,    .adcPPBNumber = MOTOR1_Iabc_PPB_NUM},
- {.adcBase = MOTOR2_IC_ADC_ADDR,    .adcResultAddr = MOTOR2_IC_ADC_RESULT_ADDR, .adcSOCNumber = MOTOR2_Iabc_SOC_NUM,    .adcPPBNumber = MOTOR2_Iabc_PPB_NUM},
+ {.adcBase = MOTOR1_IC_ADC_CFG_ADDR,.adcResultBase = MOTOR1_IC_ADC_RESULT_ADDR, .adcSOCNumber = MOTOR1_IABC_SOC_NUM,.adcPPBNumber = MOTOR1_IABC_PPB_NUM},
+ {.adcBase = MOTOR2_IC_ADC_CFG_ADDR,.adcResultBase = MOTOR2_IC_ADC_RESULT_ADDR, .adcSOCNumber = MOTOR2_IABC_SOC_NUM,.adcPPBNumber = MOTOR2_IABC_PPB_NUM},
  /* ADCC (UOMODRI_V1_0_ENABLE): VBUS, VEXT1, VEXT2 / ADCD (UOMODRI_V2_0_ENABLE): VBUS, VEXT1, VEXT2 */
- {.adcBase = VBUS_ADC_ADDR,         .adcResultAddr = VBUS_ADC_RESULT_ADDR,      .adcSOCNumber = VBUS_SOC_NUM,           .adcPPBNumber = VBUS_PPB_NUM},
- {.adcBase = VEXT1_ADC_ADDR,        .adcResultAddr = VEXT1_ADC_RESULT_ADDR,     .adcSOCNumber = VEXT1_SOC_NUM,          .adcPPBNumber = VEXT1_PPB_NUM},
- {.adcBase = VEXT2_ADC_ADDR,        .adcResultAddr = VEXT2_ADC_RESULT_ADDR,     .adcSOCNumber = VEXT2_SOC_NUM,          .adcPPBNumber = VEXT2_PPB_NUM},
+ {.adcBase = VBUS_ADC_CFG_ADDR,     .adcResultBase = VBUS_ADC_RESULT_ADDR,      .adcSOCNumber = VBUS_SOC_NUM,       .adcPPBNumber = VBUS_PPB_NUM},
+ {.adcBase = VEXT1_ADC_CFG_ADDR,    .adcResultBase = VEXT1_ADC_RESULT_ADDR,     .adcSOCNumber = VEXT1_SOC_NUM,      .adcPPBNumber = VEXT1_PPB_NUM},
+ {.adcBase = VEXT2_ADC_CFG_ADDR,    .adcResultBase = VEXT2_ADC_RESULT_ADDR,     .adcSOCNumber = VEXT2_SOC_NUM,      .adcPPBNumber = VEXT2_PPB_NUM},
  // END OF ARRAY
  {.adcBase = UINT32_MAX}
 };
@@ -218,8 +218,8 @@ static const adc_acq_t  AdcAcqList[] =
  */
 static const adc_int_t  AdcIntList[] =
 {
- {.adcBase = MOTOR12_IA_ADC_ADDR,   .intTrigger = MOTOR1_Iabc_SOC_NUM,  .adcIntNumber = MOTOR1_IA_INT_NUM},
- {.adcBase = MOTOR12_IA_ADC_ADDR,   .intTrigger = MOTOR2_Iabc_SOC_NUM,  .adcIntNumber = MOTOR2_IA_INT_NUM},
+ {.adcBase = MOTOR1_IA_ADC_CFG_ADDR,    .intTrigger = MOTOR1_IABC_SOC_NUM,  .adcIntNumber = MOTOR1_IA_INT_NUM},
+ {.adcBase = MOTOR2_IA_ADC_CFG_ADDR,    .intTrigger = MOTOR2_IABC_SOC_NUM,  .adcIntNumber = MOTOR2_IA_INT_NUM},
  // END OF ARRAY
  {.adcBase = UINT32_MAX}
 };
@@ -229,10 +229,10 @@ static const adc_int_t  AdcIntList[] =
  */
 static const adc_cfg_t  AdcCfgList[] =
 {
- {.adcBase = MOTOR12_IA_ADC_ADDR,   .p_adcIni = &AdcInitList[0],    .p_adcAcq = &AdcAcqList[0], .p_adcInt = &AdcIntList[0]},
- {.adcBase = MOTOR12_IB_ADC_ADDR,   .p_adcIni = &AdcInitList[2],    .p_adcAcq = &AdcAcqList[2], .p_adcInt = NULL},
- {.adcBase = MOTOR12_IC_ADC_ADDR,   .p_adcIni = &AdcInitList[4],    .p_adcAcq = &AdcAcqList[4], .p_adcInt = NULL},
- {.adcBase = VBUS_VEXT12_ADC_ADDR,  .p_adcIni = &AdcInitList[6],    .p_adcAcq = &AdcAcqList[6], .p_adcInt = NULL},
+ {.adcBase = MOTOR12_IA_ADC_CFG_ADDR,   .p_adcIni = &AdcInitList[0],.p_adcAcq = &AdcAcqList[0], .p_adcInt = &AdcIntList[0]},
+ {.adcBase = MOTOR12_IB_ADC_CFG_ADDR,   .p_adcIni = &AdcInitList[2],.p_adcAcq = &AdcAcqList[2], .p_adcInt = NULL},
+ {.adcBase = MOTOR12_IC_ADC_CFG_ADDR,   .p_adcIni = &AdcInitList[4],.p_adcAcq = &AdcAcqList[4], .p_adcInt = NULL},
+ {.adcBase = VBUS_VEXT12_ADC_CFG_ADDR,  .p_adcIni = &AdcInitList[6],.p_adcAcq = &AdcAcqList[6], .p_adcInt = NULL},
  // END OF ARRAY
  {.adcBase = UINT32_MAX},
 };

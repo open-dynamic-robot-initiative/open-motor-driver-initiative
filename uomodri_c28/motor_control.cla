@@ -155,11 +155,16 @@ __attribute__((interrupt)) void Cla1Task1(void)
     motor_m1.foc.cfg.ki                             = MOTOR1_KI;
     motor_m1.foc.cfg.polePairs                      = MOTOR1_POLES_PAIRS;
     //--- MOTOR ACQUISITION STRUCTURE -------------------------------------------
-    motor_m1.foc.acq.vExtMeasAddr                   = VEXT1_ADC_PPB_RESULT_ADDR;
-    motor_m1.foc.acq.vBusMeasAddr                   = VBUS_ADC_PPB_RESULT_ADDR;
-    motor_m1.foc.acq.iabcMeasAddr[CHANNEL_1]        = MOTOR1_IA_ADC_PPB_RESULT_ADDR;
-    motor_m1.foc.acq.iabcMeasAddr[CHANNEL_2]        = MOTOR1_IB_ADC_PPB_RESULT_ADDR;
-    motor_m1.foc.acq.iabcMeasAddr[CHANNEL_3]        = MOTOR1_IC_ADC_PPB_RESULT_ADDR;
+    motor_m1.foc.acq.iabcResultBase[CHANNEL_1]      = MOTOR1_IA_ADC_RESULT_ADDR;
+    motor_m1.foc.acq.iabcResultBase[CHANNEL_2]      = MOTOR1_IB_ADC_RESULT_ADDR;
+    motor_m1.foc.acq.iabcResultBase[CHANNEL_3]      = MOTOR1_IC_ADC_RESULT_ADDR;
+    motor_m1.foc.acq.vBusResultBase                 = VBUS_ADC_RESULT_ADDR;
+    motor_m1.foc.acq.vExtResultBase                 = VEXT1_ADC_RESULT_ADDR;
+    motor_m1.foc.acq.iabcppbNum[CHANNEL_1]          = MOTOR1_IABC_PPB_NUM;
+    motor_m1.foc.acq.iabcppbNum[CHANNEL_2]          = MOTOR1_IABC_PPB_NUM;
+    motor_m1.foc.acq.iabcppbNum[CHANNEL_3]          = MOTOR1_IABC_PPB_NUM;
+    motor_m1.foc.acq.vBusppbNum                     = VBUS_PPB_NUM;
+    motor_m1.foc.acq.vExtppbNum                     = VEXT1_PPB_NUM;
     motor_m1.foc.acq.vBusFlt.a                      = VBUS_LPF_ALPHA;
     motor_m1.foc.acq.vBusFlt.one_minus_a            = VBUS_LPF_ONE_M_ALPHA;
     motor_m1.foc.acq.vExtFlt.a                      = VEXT_LPF_ALPHA;
@@ -260,11 +265,16 @@ __attribute__((interrupt)) void Cla1Task1(void)
     motor_m2.foc.cfg.ki                             = MOTOR2_KI;
     motor_m2.foc.cfg.polePairs                      = MOTOR2_POLES_PAIRS;
     //--- MOTOR ACQUISITION STRUCTURE -------------------------------------------
-    motor_m2.foc.acq.vExtMeasAddr                   = VEXT2_ADC_PPB_RESULT_ADDR;
-    motor_m2.foc.acq.vBusMeasAddr                   = VBUS_ADC_PPB_RESULT_ADDR;
-    motor_m2.foc.acq.iabcMeasAddr[CHANNEL_1]        = MOTOR2_IA_ADC_PPB_RESULT_ADDR;
-    motor_m2.foc.acq.iabcMeasAddr[CHANNEL_2]        = MOTOR2_IB_ADC_PPB_RESULT_ADDR;
-    motor_m2.foc.acq.iabcMeasAddr[CHANNEL_3]        = MOTOR2_IC_ADC_PPB_RESULT_ADDR;
+    motor_m2.foc.acq.iabcResultBase[CHANNEL_1]      = MOTOR2_IA_ADC_RESULT_ADDR;
+    motor_m2.foc.acq.iabcResultBase[CHANNEL_2]      = MOTOR2_IB_ADC_RESULT_ADDR;
+    motor_m2.foc.acq.iabcResultBase[CHANNEL_3]      = MOTOR2_IC_ADC_RESULT_ADDR;
+    motor_m2.foc.acq.vBusResultBase                 = VBUS_ADC_RESULT_ADDR;
+    motor_m2.foc.acq.vExtResultBase                 = VEXT2_ADC_RESULT_ADDR;
+    motor_m2.foc.acq.iabcppbNum[CHANNEL_1]          = MOTOR2_IABC_PPB_NUM;
+    motor_m2.foc.acq.iabcppbNum[CHANNEL_2]          = MOTOR2_IABC_PPB_NUM;
+    motor_m2.foc.acq.iabcppbNum[CHANNEL_3]          = MOTOR2_IABC_PPB_NUM;
+    motor_m2.foc.acq.vBusppbNum                     = VBUS_PPB_NUM;
+    motor_m2.foc.acq.vExtppbNum                     = VEXT2_PPB_NUM;
     motor_m2.foc.acq.vBusFlt.a                      = VBUS_LPF_ALPHA;
     motor_m2.foc.acq.vBusFlt.one_minus_a            = VBUS_LPF_ONE_M_ALPHA;
     motor_m2.foc.acq.vExtFlt.a                      = VEXT_LPF_ALPHA;

@@ -152,20 +152,28 @@ typedef struct __acquisitions_t__
 //    ptr_32b_u           p_vBusMeasReg;
 //    ptr_32b_u           p_vExtMeasReg;
 //    ptr_32b_u           p_iMeasReg[3];
-    uint32_t            vBusMeasAddr;
-    uint32_t            vExtMeasAddr;
-    uint32_t            iabcMeasAddr[3];
+
+//    uint32_t            vBusMeasAddr;
+//    uint32_t            vExtMeasAddr;
+//    uint32_t            iabcMeasAddr[3];
+
+    uint32_t            iabcResultBase[3];
+    uint32_t            vBusResultBase;
+    uint32_t            vExtResultBase;
+    ADC_PPBNumber       iabcppbNum[3];
+    ADC_PPBNumber       vBusppbNum;
+    ADC_PPBNumber       vExtppbNum;
 #else
     volatile uint16_t*  const p_vBusMeasReg;
     volatile uint16_t*  const p_vExtMeasReg;
     volatile int16_t*   const p_iMeasReg[3];
 #endif
     // ADC values scaled
-    float32_t           vbus;       // [V]
-    float32_t           vExt;       // [V]
     float32_t           ia;         // [A]
     float32_t           ib;         // [A]
     float32_t           ic;         // [A]
+    float32_t           vbus;       // [V]
+    float32_t           vExt;       // [V]
     lpf_t               vBusFlt;
     lpf_t               vExtFlt;
 } acq_t;

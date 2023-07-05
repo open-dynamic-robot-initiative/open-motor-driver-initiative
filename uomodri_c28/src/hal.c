@@ -176,13 +176,15 @@ void HAL_ADC_offsetCalib(const periph_motor_cfg_t* p_periphMotorCfg)
     if(p_periphMotorCfg != NULL)
     {
         const epwm_cc_t*    p_pwmCC     = NULL;
-        const adc_int_t*    p_ITConv    = NULL;
+        const adc_int_t*    p_ITConv    = p_periphMotorCfg->p_intAcq;
+        const adc_acq_t*    p_iAcq      = NULL;
         lpf_t               fltCoef     = {.a = 0.998f, .one_minus_a = 0.002f};
-        float32_t           i[3]        = {0.0f, 0.0f, 0.0f};
+        float32_t           iRaw[3]     = {0.0f, 0.0f, 0.0f};
+        float32_t           iFlt[3]     = {0.0f, 0.0f, 0.0f};
         uint16_t            calibCnt    = 0;
         uint8_t             loop        = 0;
 
-        // force no switching with low side transistors closed
+        // force no switching with low side transistors closed & high side open
         for(loop = 0; loop < 3; loop++)
         {
             p_pwmCC = p_periphMotorCfg->p_pwmCntCmp[loop];
@@ -191,35 +193,41 @@ void HAL_ADC_offsetCalib(const periph_motor_cfg_t* p_periphMotorCfg)
 
         for(calibCnt = 0; calibCnt < 10000; calibCnt++)
         {
-            /* Wait data acquisition for Ia, Ib, Ic . Blocking. */
-            p_ITConv = p_periphMotorCfg->p_intAcq;
-            // Wait IT flag event
+            // Wait IT flag event. Blocking.
             while(ADC_getInterruptStatus(p_ITConv->adcBase, p_ITConv->adcIntNumber) == false);
+
+            // Get current results
+            for(loop = 0; loop < 3; loop++)
+            {
+                p_iAcq      = p_periphMotorCfg->p_iAcq[loop];
+                iRaw[loop]  = (float32_t)ADC_readResult(p_iAcq->adcResultBase, p_iAcq->adcSOCNumber);
+            }
+
+            // filter
             if(calibCnt > 1000)
                 for(loop = 0; loop < 3; loop++)
-//                    UOMODRI_HAL_ADC_CALIB(fltCoef, i[loop], (float32_t) *(p_periphMotorCfg->p_iAcq[loop]->adcResultReg));
-                    UOMODRI_HAL_ADC_CALIB(fltCoef, i[loop], (float32_t)(HWREGH(p_periphMotorCfg->p_iAcq[loop]->adcResultAddr)));
+                    UOMODRI_HAL_ADC_CALIB(fltCoef, iFlt[loop], iRaw[loop]);
             else
                 for(loop = 0; loop < 3; loop++)
-//                    i[loop] = (float32_t) *(p_periphMotorCfg->p_iAcq[loop]->adcResultReg);
-                    i[loop] = (float32_t)(HWREGH(p_periphMotorCfg->p_iAcq[loop]->adcResultAddr));
+                    iFlt[loop]  = iRaw[loop];
 
             // clear flags
             for(loop = 0; loop < 3; loop++)
             {
-                // Clear the interrupt overflow flag
-                ADC_clearInterruptOverflowStatus(p_periphMotorCfg->p_iAcq[loop]->adcBase, p_ITConv->adcIntNumber);
-                // Clear the interrupt flag
-                ADC_clearInterruptStatus(p_periphMotorCfg->p_iAcq[loop]->adcBase, p_ITConv->adcIntNumber);
+                p_iAcq  = p_periphMotorCfg->p_iAcq[loop];
+                // Clear the interrupt flags
+                ADC_clearInterruptOverflowStatus(p_iAcq->adcBase, p_ITConv->adcIntNumber);
+                ADC_clearInterruptStatus(p_iAcq->adcBase, p_ITConv->adcIntNumber);
             }
         }
 
         // Set offsets in PPBs
         for(loop = 0; loop < 3; loop++)
+        {
+            p_iAcq  = p_periphMotorCfg->p_iAcq[loop];
             // Sets the post processing block reference offset for tensions
-            ADC_setPPBReferenceOffset(p_periphMotorCfg->p_iAcq[loop]->adcBase,
-                                      p_periphMotorCfg->p_iAcq[loop]->adcPPBNumber,
-                                      (uint16_t)i[loop]);
+            ADC_setPPBReferenceOffset(p_iAcq->adcBase, p_iAcq->adcPPBNumber, (uint16_t)iFlt[loop]);
+        }
     }
 
     return;

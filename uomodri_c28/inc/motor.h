@@ -28,6 +28,17 @@
 /***********************************************************************
  * ENUM TYPES
  ***********************************************************************/
+//typedef enum __motor_states__
+//{
+//    MOTOR_STATE_START       = 0x0000,
+//    MOTOR_STATE_INIT_FW     = 0x0001,
+//    MOTOR_STATE_INIT_REV    = 0x0002,
+//    MOTOR_STATE_INIT_TEST   = 0x0004,
+//    MOTOR_STATE_INIT_FIX    = 0x0008,
+//    MOTOR_STATE_READY       = 0x0010,
+//    MOTOR_STATE_STOP        = 0x0020,
+//    MOTOR_STATE_ERROR       = 0xFFFF,
+//} motor_states;
 
 /***********************************************************************
  * UNION TYPES

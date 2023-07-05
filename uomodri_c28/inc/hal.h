@@ -276,8 +276,7 @@ typedef struct __ADC_INITIALIZATION_t__
 typedef struct __ADC_ACQUISITIONS_RESULTS_t__
 {
     const uint32_t                      adcBase;                    /*!< ADC peripheral address. */
-//    volatile uint16_t* const            adcResultReg;
-    const uint32_t                      adcResultAddr;
+    const uint32_t                      adcResultBase;
     const ADC_SOCNumber                 adcSOCNumber;
     const ADC_PPBNumber                 adcPPBNumber;
 } adc_acq_t;
