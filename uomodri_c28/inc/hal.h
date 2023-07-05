@@ -12,8 +12,8 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <hw_types.h>
-#include <f2838x_device.h>
-#include <driverlib.h>
+#include "f2838x_device.h"
+#include "driverlib.h"
 
 #include "uomodri_user_defines.h"
 
@@ -230,7 +230,7 @@ typedef struct __CLA_CFG_t__
  */
 typedef struct __GPIO_CFG_t__
 {
-    const uint32_t                      pinNumber;                  /*!< GPIO pin number (GPIO0 - GPIO168). */
+    const uint32_t                      pinNum;                     /*!< GPIO pin number (GPIO0 - GPIO168). */
     const uint32_t                      fctMux;                     /*!< GPIO configuration functions (peripheral affectation matrix). \see pin_map.h */
     const uint32_t 	            	    pinType;                	/*!< GPIO pad configuration :
                                                                         - \em GPIO_PIN_TYPE_STD (Push-pull output or floating input),
@@ -265,8 +265,8 @@ typedef struct __ADC_INITIALIZATION_t__
 {
     const uint32_t                      adcBase;                    /*!< ADC peripheral address. */
     const ADC_Channel                   adcChannel;                 /*!< ADC sampling channel. */
-    const ADC_SOCNumber                 adcSOCNumber;               /*!< ADC Start-Of-Conversion (SOC) number (0-15). */
-    const ADC_Trigger                   adcTriggerSrc;              /*!< ADC SOC trigger source. */
+    const ADC_SOCNumber                 adcSOCNum;                  /*!< ADC Start-Of-Conversion (SOC) number (0-15). */
+    const ADC_Trigger                   adcTrigSrc;                 /*!< ADC SOC trigger source. */
 } adc_ini_t;
 
 /**
@@ -277,8 +277,8 @@ typedef struct __ADC_ACQUISITIONS_RESULTS_t__
 {
     const uint32_t                      adcBase;                    /*!< ADC peripheral address. */
     const uint32_t                      adcResultBase;
-    const ADC_SOCNumber                 adcSOCNumber;
-    const ADC_PPBNumber                 adcPPBNumber;
+    const ADC_SOCNumber                 adcSOCNum;
+    const ADC_PPBNumber                 adcPPBNum;
 } adc_acq_t;
 
 /**
@@ -288,8 +288,8 @@ typedef struct __ADC_ACQUISITIONS_RESULTS_t__
 typedef struct __ADC_INTERRUPT_EVENTS_t__
 {
     const uint32_t                      adcBase;                    /*!< ADC peripheral address. */
-    const ADC_SOCNumber                 intTrigger;                 /*!< ADC End-Of-Conversion (EOC) number (0-15). */
-    const ADC_IntNumber                 adcIntNumber;               /*!< IT source (0-3) associated to ADC \& SOC number. */
+    const ADC_SOCNumber                 intTrig;                    /*!< ADC End-Of-Conversion (EOC) number (0-15). */
+    const ADC_IntNumber                 adcIntNum;                  /*!< IT source (0-3) associated to ADC \& SOC number. */
 } adc_int_t;
 
 /**

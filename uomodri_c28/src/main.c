@@ -6,14 +6,15 @@
 /***********************************************************************
  * INCLUDES
  ***********************************************************************/
-#include <uomodri_shared.h>
+//#include <uomodri_shared.h>
 #include "main.h"
 #include "hal.h"
 #include "drv8353.h"
 #include "ws2812b.h"
-#include "encoder.h"
-#include "foc.h"
+//#include "encoder.h"
+//#include "foc.h"
 #include "motor.h"
+#include "communication.h"
 #include "uomodri_user_defines.h"
 #include "uomodri_hal_config_handlers.h"
 #include "uomodri_prj_config_handlers.h"
@@ -21,10 +22,17 @@
 /***********************************************************************
  * VARIABLES
  ***********************************************************************/
-extern motor_t          motor_m1;
-extern motor_t          motor_m2;
-extern const hal_cfg_t  hal;
-extern cmd_t            cmd_uOmodri[2];
+#pragma DATA_ALIGN(cmd_msg, 4)
+#pragma DATA_SECTION(cmd_msg, "ramgs1")
+mst2slv_msg_t   cmd_msg;
+
+#pragma DATA_ALIGN(status_msg, 4)
+#pragma DATA_SECTION(status_msg, "ramgs1")
+slv2mst_msg_t   status_msg[2];
+
+#pragma DATA_ALIGN(led_msg, 4)
+#pragma DATA_SECTION(led_msg, "ramgs1")
+uint16_t        led_msg[LED_MSG_TX_16BIT_LENGTH];
 
 //#pragma DATA_ALIGN(tx_msg_cr, 2)
 //#pragma DATA_SECTION(tx_msg_cr, "ramgs0");
@@ -38,6 +46,11 @@ bool_t tx_msg_full      = false;
 //#pragma DATA_ALIGN(tmr_timeout, 2)
 //#pragma DATA_SECTION(tmr_timeout, "ramgs0");
 bool_t tmr_timeout      = false;
+
+extern motor_t          motor_m1;
+extern motor_t          motor_m2;
+extern const hal_cfg_t  hal;
+extern cmd_t            cmd_uOmodri[2];
 
 /***********************************************************************
  * FUNCTIONS DECLARATION

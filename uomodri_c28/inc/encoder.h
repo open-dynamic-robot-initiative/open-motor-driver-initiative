@@ -58,7 +58,7 @@ typedef struct __encoder_t__
     const uint32_t      eqepBaseAddr;       /*!< Address of EQEP peripheral used in HAL structure */
     const float32_t     polePairs;          /*!< Number of motor pole pairs */
 #else
-    uint32_t            eqepBaseAddr;       /*!< Address of EQEP peripheral used in HAL structure */
+    uint32_t            eqepBase;           /*!< Address of EQEP peripheral used in HAL structure */
     float32_t           polePairs;          /*!< Number of motor pole pairs */
 #endif
     float32_t           thetaElec;          /*!< Angular electrical position  - [pu] */

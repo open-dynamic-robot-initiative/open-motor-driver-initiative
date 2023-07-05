@@ -6,7 +6,7 @@
 /***********************************************************************
  * INCLUDE FILES
  ***********************************************************************/
-#include <device.h>
+#include "device.h"
 #include "hal.h"
 
 /***********************************************************************
@@ -70,7 +70,7 @@ void HAL_GPIO_ini(const gpio_cfg_t* p_gpio)
 {
     if(p_gpio != NULL)
     {
-        uint32_t pinNum = p_gpio->pinNumber;
+        uint32_t pinNum = p_gpio->pinNum;
 
         while(pinNum != UINT32_MAX)
         {
@@ -93,7 +93,7 @@ void HAL_GPIO_ini(const gpio_cfg_t* p_gpio)
             }
             else
                 GPIO_setAnalogMode(pinNum, GPIO_ANALOG_ENABLED);
-            pinNum = (++p_gpio)->pinNumber;
+            pinNum = (++p_gpio)->pinNum;
         }
     }
 
@@ -135,8 +135,8 @@ void HAL_ADC_ini(const adc_cfg_t* p_adcCfg)
                  * SOC source will be PWM, no IT.
                  */
                 ADC_setSOCPriority(adcBase, ADC_SOC_PRIORITY);
-                ADC_setupSOC(adcBase, p_adcIni->adcSOCNumber, p_adcIni->adcTriggerSrc, p_adcIni->adcChannel, ADC_SAMPLING_WINDOW);
-                ADC_setInterruptSOCTrigger(adcBase, p_adcIni->adcSOCNumber, ADC_INT_SOC_TRIGGER);
+                ADC_setupSOC(adcBase, p_adcIni->adcSOCNum, p_adcIni->adcTrigSrc, p_adcIni->adcChannel, ADC_SAMPLING_WINDOW);
+                ADC_setInterruptSOCTrigger(adcBase, p_adcIni->adcSOCNum, ADC_INT_SOC_TRIGGER);
                 p_adcIni++;
             }
 
@@ -145,7 +145,7 @@ void HAL_ADC_ini(const adc_cfg_t* p_adcCfg)
                 /* Post processing block initialization, associate with ADC_SOC_NUMBER0
                  * Initialize PPB offset to zero
                  */
-                ADC_setupPPB(adcBase, p_adcAcq->adcPPBNumber, p_adcAcq->adcSOCNumber);
+                ADC_setupPPB(adcBase, p_adcAcq->adcPPBNum, p_adcAcq->adcSOCNum);
                 p_adcAcq++;
             }
 
@@ -153,10 +153,10 @@ void HAL_ADC_ini(const adc_cfg_t* p_adcCfg)
             {
                 while(p_adcInt->adcBase == adcBase)
                 {
-                    ADC_setInterruptSource(adcBase, p_adcInt->adcIntNumber, p_adcInt->intTrigger);
-                    ADC_enableContinuousMode(adcBase, p_adcInt->adcIntNumber);
-                    ADC_enableInterrupt(adcBase, p_adcInt->adcIntNumber);
-                    ADC_clearInterruptStatus(adcBase, p_adcInt->adcIntNumber);
+                    ADC_setInterruptSource(adcBase, p_adcInt->adcIntNum, p_adcInt->intTrig);
+                    ADC_enableContinuousMode(adcBase, p_adcInt->adcIntNum);
+                    ADC_enableInterrupt(adcBase, p_adcInt->adcIntNum);
+                    ADC_clearInterruptStatus(adcBase, p_adcInt->adcIntNum);
                     p_adcInt++;
                 }
             }
@@ -194,13 +194,13 @@ void HAL_ADC_offsetCalib(const periph_motor_cfg_t* p_periphMotorCfg)
         for(calibCnt = 0; calibCnt < 10000; calibCnt++)
         {
             // Wait IT flag event. Blocking.
-            while(ADC_getInterruptStatus(p_ITConv->adcBase, p_ITConv->adcIntNumber) == false);
+            while(ADC_getInterruptStatus(p_ITConv->adcBase, p_ITConv->adcIntNum) == false);
 
             // Get current results
             for(loop = 0; loop < 3; loop++)
             {
                 p_iAcq      = p_periphMotorCfg->p_iAcq[loop];
-                iRaw[loop]  = (float32_t)ADC_readResult(p_iAcq->adcResultBase, p_iAcq->adcSOCNumber);
+                iRaw[loop]  = (float32_t)ADC_readResult(p_iAcq->adcResultBase, p_iAcq->adcSOCNum);
             }
 
             // filter
@@ -216,8 +216,8 @@ void HAL_ADC_offsetCalib(const periph_motor_cfg_t* p_periphMotorCfg)
             {
                 p_iAcq  = p_periphMotorCfg->p_iAcq[loop];
                 // Clear the interrupt flags
-                ADC_clearInterruptOverflowStatus(p_iAcq->adcBase, p_ITConv->adcIntNumber);
-                ADC_clearInterruptStatus(p_iAcq->adcBase, p_ITConv->adcIntNumber);
+                ADC_clearInterruptOverflowStatus(p_iAcq->adcBase, p_ITConv->adcIntNum);
+                ADC_clearInterruptStatus(p_iAcq->adcBase, p_ITConv->adcIntNum);
             }
         }
 
@@ -226,7 +226,7 @@ void HAL_ADC_offsetCalib(const periph_motor_cfg_t* p_periphMotorCfg)
         {
             p_iAcq  = p_periphMotorCfg->p_iAcq[loop];
             // Sets the post processing block reference offset for tensions
-            ADC_setPPBReferenceOffset(p_iAcq->adcBase, p_iAcq->adcPPBNumber, (uint16_t)iFlt[loop]);
+            ADC_setPPBReferenceOffset(p_iAcq->adcBase, p_iAcq->adcPPBNum, (uint16_t)iFlt[loop]);
         }
     }
 

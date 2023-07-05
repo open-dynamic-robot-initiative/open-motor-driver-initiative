@@ -6,10 +6,8 @@
  ***********************************************************************/
 #include <stdint.h>
 #include <hw_types.h>
-#include <driverlib.h>
-#include <device.h>
-
-#include "communication.h"
+#include "driverlib.h"
+#include "device.h"
 
 /***********************************************************************
  * ENUM TYPES
@@ -36,20 +34,9 @@ typedef union __uart_addr_u__
 /***********************************************************************
  * GLOBAL VARIABLES
  ***********************************************************************/
-#pragma DATA_ALIGN(cmd_msg, 4)
-#pragma DATA_SECTION(cmd_msg, "ramgs1")
-mst2slv_msg_t   cmd_msg;
-
-#pragma DATA_ALIGN(status_msg, 4)
-#pragma DATA_SECTION(status_msg, "ramgs1")
-slv2mst_msg_t   status_msg[2];
 //#pragma DATA_ALIGN(status_tmp_msg, 4)
 //#pragma DATA_SECTION(status_tmp_msg, "ramgs1")
 //slv2mst_msg_t   status_tmp_msg;
-
-#pragma DATA_ALIGN(led_msg, 4)
-#pragma DATA_SECTION(led_msg, "ramgs1")
-uint16_t        led_msg[LED_MSG_TX_16BIT_LENGTH];
 
 #if (defined DEBUG) && (CM_CORE_ENABLE) && (0)
 #pragma DATA_SECTION(cpu2cm_dbg_msg, "MSGRAM_CPU_TO_CM");

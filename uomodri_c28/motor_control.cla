@@ -8,11 +8,11 @@
 ***********************************************************************/
 #include "uomodri_user_defines.h"
 #if (!CLA1_TEST_CORE_ENABLE) && (CLA_CORE_ENABLE)
-#include "CLAmath.h"
+//#include "CLAmath.h"
 #include "uOmodri_shared.h"
 #endif
-#include "f2838x_device.h"
-#include "driverlib.h"
+//#include "f2838x_device.h"
+//#include "driverlib.h"
 
 /***********************************************************************
  * VARIABLES
@@ -160,17 +160,17 @@ __attribute__((interrupt)) void Cla1Task1(void)
     motor_m1.foc.acq.iabcResultBase[CHANNEL_3]      = MOTOR1_IC_ADC_RESULT_ADDR;
     motor_m1.foc.acq.vBusResultBase                 = VBUS_ADC_RESULT_ADDR;
     motor_m1.foc.acq.vExtResultBase                 = VEXT1_ADC_RESULT_ADDR;
-    motor_m1.foc.acq.iabcppbNum[CHANNEL_1]          = MOTOR1_IABC_PPB_NUM;
-    motor_m1.foc.acq.iabcppbNum[CHANNEL_2]          = MOTOR1_IABC_PPB_NUM;
-    motor_m1.foc.acq.iabcppbNum[CHANNEL_3]          = MOTOR1_IABC_PPB_NUM;
-    motor_m1.foc.acq.vBusppbNum                     = VBUS_PPB_NUM;
-    motor_m1.foc.acq.vExtppbNum                     = VEXT1_PPB_NUM;
+    motor_m1.foc.acq.ppbNum.ia                      = MOTOR1_IABC_PPB_NUM;
+    motor_m1.foc.acq.ppbNum.ib                      = MOTOR1_IABC_PPB_NUM;
+    motor_m1.foc.acq.ppbNum.ic                      = MOTOR1_IABC_PPB_NUM;
+    motor_m1.foc.acq.ppbNum.vbus                    = VBUS_PPB_NUM;
+    motor_m1.foc.acq.ppbNum.vext                    = VEXT1_PPB_NUM;
     motor_m1.foc.acq.vBusFlt.a                      = VBUS_LPF_ALPHA;
     motor_m1.foc.acq.vBusFlt.one_minus_a            = VBUS_LPF_ONE_M_ALPHA;
     motor_m1.foc.acq.vExtFlt.a                      = VEXT_LPF_ALPHA;
     motor_m1.foc.acq.vExtFlt.one_minus_a            = VEXT_LPF_ONE_M_ALPHA;
     //--- MOTOR ENCORDER STRUCTURE ----------------------------------------------
-    motor_m1.foc.enc.eqepBaseAddr                   = MOTOR1_QEP_BASE;
+    motor_m1.foc.enc.eqepBase                       = MOTOR1_QEP_BASE;
     motor_m1.foc.enc.polePairs                      = MOTOR1_POLES_PAIRS;
     motor_m1.foc.enc.thetaMech[NEW]                 = 0.0f;
     motor_m1.foc.enc.thetaMech[OLD]                 = 0.0f;
@@ -250,9 +250,9 @@ __attribute__((interrupt)) void Cla1Task1(void)
     motor_m1.drvFaultNum                            = MOTOR1_DRV_FAULT_NUM;
     motor_m1.drvEnNum                               = MOTOR1_DRV_EN_NUM;
     //---- PWM config address ---------------------------------------------------
-    motor_m1.epwmBaseAddr[CHANNEL_1]                = MOTOR1_PWM1_BASE;
-    motor_m1.epwmBaseAddr[CHANNEL_2]                = MOTOR1_PWM2_BASE;
-    motor_m1.epwmBaseAddr[CHANNEL_3]                = MOTOR1_PWM3_BASE;
+    motor_m1.epwmBase[CHANNEL_1]                    = MOTOR1_PWM1_BASE;
+    motor_m1.epwmBase[CHANNEL_2]                    = MOTOR1_PWM2_BASE;
+    motor_m1.epwmBase[CHANNEL_3]                    = MOTOR1_PWM3_BASE;
     //---------------------------------------------------------------------------
     //---------------------------------------------------------------------------
     //--- MOTOR_2 ---------------------------------------------------------------
@@ -270,17 +270,17 @@ __attribute__((interrupt)) void Cla1Task1(void)
     motor_m2.foc.acq.iabcResultBase[CHANNEL_3]      = MOTOR2_IC_ADC_RESULT_ADDR;
     motor_m2.foc.acq.vBusResultBase                 = VBUS_ADC_RESULT_ADDR;
     motor_m2.foc.acq.vExtResultBase                 = VEXT2_ADC_RESULT_ADDR;
-    motor_m2.foc.acq.iabcppbNum[CHANNEL_1]          = MOTOR2_IABC_PPB_NUM;
-    motor_m2.foc.acq.iabcppbNum[CHANNEL_2]          = MOTOR2_IABC_PPB_NUM;
-    motor_m2.foc.acq.iabcppbNum[CHANNEL_3]          = MOTOR2_IABC_PPB_NUM;
-    motor_m2.foc.acq.vBusppbNum                     = VBUS_PPB_NUM;
-    motor_m2.foc.acq.vExtppbNum                     = VEXT2_PPB_NUM;
+    motor_m2.foc.acq.ppbNum.ia                      = MOTOR2_IABC_PPB_NUM;
+    motor_m2.foc.acq.ppbNum.ib                      = MOTOR2_IABC_PPB_NUM;
+    motor_m2.foc.acq.ppbNum.ic                      = MOTOR2_IABC_PPB_NUM;
+    motor_m2.foc.acq.ppbNum.vbus                    = VBUS_PPB_NUM;
+    motor_m2.foc.acq.ppbNum.vext                    = VEXT2_PPB_NUM;
     motor_m2.foc.acq.vBusFlt.a                      = VBUS_LPF_ALPHA;
     motor_m2.foc.acq.vBusFlt.one_minus_a            = VBUS_LPF_ONE_M_ALPHA;
     motor_m2.foc.acq.vExtFlt.a                      = VEXT_LPF_ALPHA;
     motor_m2.foc.acq.vExtFlt.one_minus_a            = VEXT_LPF_ONE_M_ALPHA;
     //--- MOTOR ENCORDER STRUCTURE ----------------------------------------------
-    motor_m2.foc.enc.eqepBaseAddr                   = MOTOR2_QEP_BASE;
+    motor_m2.foc.enc.eqepBase                       = MOTOR2_QEP_BASE;
     motor_m2.foc.enc.polePairs                      = MOTOR2_POLES_PAIRS;
     motor_m2.foc.enc.thetaMech[NEW]                 = 0.0f;
     motor_m2.foc.enc.thetaMech[OLD]                 = 0.0f;
@@ -360,9 +360,9 @@ __attribute__((interrupt)) void Cla1Task1(void)
     motor_m2.drvFaultNum                            = MOTOR2_DRV_FAULT_NUM;
     motor_m2.drvEnNum                               = MOTOR2_DRV_EN_NUM;
     //---- PWM config address ---------------------------------------------------
-    motor_m2.epwmBaseAddr[CHANNEL_1]                = MOTOR2_PWM1_BASE;
-    motor_m2.epwmBaseAddr[CHANNEL_2]                = MOTOR2_PWM2_BASE;
-    motor_m2.epwmBaseAddr[CHANNEL_3]                = MOTOR2_PWM3_BASE;
+    motor_m2.epwmBase[CHANNEL_1]                    = MOTOR2_PWM1_BASE;
+    motor_m2.epwmBase[CHANNEL_2]                    = MOTOR2_PWM2_BASE;
+    motor_m2.epwmBase[CHANNEL_3]                    = MOTOR2_PWM3_BASE;
 //    DBG_PIN2_CLEAR;
 }
 

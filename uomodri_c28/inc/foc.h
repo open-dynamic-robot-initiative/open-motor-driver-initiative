@@ -65,6 +65,20 @@ typedef union __cmd_reg_u__
     };
 } cmd_reg_u;
 
+typedef union __ppb_num_u__
+{
+    uint32_t            all;
+    struct
+    {
+        uint32_t        ia              : 6;    /*!< Bit 0-5    : R/W - Enable system to start. No power on motors.         */
+        uint32_t        ib              : 6;    /*!< Bit 6-11   : R/W - Enable power on motor.                              */
+        uint32_t        ic              : 6;    /*!< Bit 12-17   : R/W - Limit the rotations to +/- 128 rounds.              */
+        uint16_t        vbus            : 6;    /*!< Bit 18-23  : R/W - Use encoder index in position computation.          */
+        uint16_t        vext            : 6;    /*!< Bit 24-29  : R/W - Use encoder index in position computation.          */
+        uint16_t        PPB_RSV1        : 2;    /*!< Bit 30-31  : R/W - Reserved                                            */
+    };
+} ppb_num_u;
+
 /***********************************************************************
  * CONTROL STRUCTURES
  ***********************************************************************/
@@ -149,20 +163,10 @@ typedef struct __acquisitions_t__
 {
     // ADC result registers
 #if (CLA_CORE_ENABLE)
-//    ptr_32b_u           p_vBusMeasReg;
-//    ptr_32b_u           p_vExtMeasReg;
-//    ptr_32b_u           p_iMeasReg[3];
-
-//    uint32_t            vBusMeasAddr;
-//    uint32_t            vExtMeasAddr;
-//    uint32_t            iabcMeasAddr[3];
-
     uint32_t            iabcResultBase[3];
     uint32_t            vBusResultBase;
     uint32_t            vExtResultBase;
-    ADC_PPBNumber       iabcppbNum[3];
-    ADC_PPBNumber       vBusppbNum;
-    ADC_PPBNumber       vExtppbNum;
+    ppb_num_u           ppbNum;
 #else
     volatile uint16_t*  const p_vBusMeasReg;
     volatile uint16_t*  const p_vExtMeasReg;

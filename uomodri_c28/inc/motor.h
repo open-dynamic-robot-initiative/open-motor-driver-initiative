@@ -6,7 +6,7 @@
  ***********************************************************************/
 #include <stdint.h>
 #include <hw_types.h>
-#include <f2838x_device.h>
+#include "f2838x_device.h"
 
 #include "foc.h"
 #include "uomodri_user_defines.h"
@@ -77,7 +77,7 @@ typedef struct __motor_t__
     foc_t* const                p_foc;                  /*!< Pointer on the FOC structure associated to the motor */
 #endif
     uint32_t                    itCnt;                  /*!< Event counter incrementing on every IT call */
-    uint32_t                    epwmBaseAddr[3];        /*!< Address array for the PWM peripherals associated to the motor control */
+    uint32_t                    epwmBase[3];            /*!< Address array for the PWM peripherals associated to the motor control */
     uint32_t                    drvFaultNum;            /*!< GPIO associated to the DRV fault line */
     uint32_t                    drvEnNum;               /*!< GPIO associated to the DRV enable line */
     uint32_t                    clCycleNb;

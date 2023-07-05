@@ -144,7 +144,7 @@ inline void ENC_resetStruct(encoder_t* p_enc)
  */
 inline void ENC_resetPeriph(encoder_t* p_enc)
 {
-    uint32_t eqepBase       = p_enc->eqepBaseAddr;
+    uint32_t eqepBase       = p_enc->eqepBase;
     // Reset encoder position
     EQEP_setPosition(eqepBase, 0);
     /* Reset the time base for edge capture unit */
@@ -169,7 +169,7 @@ inline void ENC_resetPeriph(encoder_t* p_enc)
  */
 inline void ENC_getPosition(encoder_t* p_enc)
 {
-    uint32_t eqepBase       = p_enc->eqepBaseAddr;
+    uint32_t eqepBase       = p_enc->eqepBase;
     p_enc->thetaMech[OLD]   = p_enc->thetaMech[NEW];
     // Compute mechanical angle normalized between 0 and 1
     p_enc->thetaMech[NEW]   = (float32_t)EQEP_getStrobePositionLatch(eqepBase) * p_enc->thetaMechScaler;
@@ -198,14 +198,14 @@ inline void ENC_getPosition(encoder_t* p_enc)
  */
 inline void ENC_getSpeed(encoder_t* p_enc)
 {
-    uint32_t eqepBase           = p_enc->eqepBaseAddr;
+    uint32_t eqepBase           = p_enc->eqepBase;
     speed_t* p_speed            = &p_enc->speed;
 //    bool_t newSpeedHigh         = false;
 //    bool_t newSpeedLow          = false;
     //-------------------------------------------------------------------
     //     HIGH SPEED ESTIMATION
     //-------------------------------------------------------------------
-    if(EQEP_getInterruptStatus(p_enc->eqepBaseAddr) & EQEP_INT_UNIT_TIME_OUT)
+    if(EQEP_getInterruptStatus(p_enc->eqepBase) & EQEP_INT_UNIT_TIME_OUT)
     {
         p_speed->theta[OLD]     = p_speed->theta[NEW];
 #if (CLA_CORE_ENABLE)
@@ -281,7 +281,7 @@ inline void ENC_getSpeed(encoder_t* p_enc)
  */
 inline void ENC_getTheta(encoder_t* p_enc)
 {
-    uint32_t eqepBase               = p_enc->eqepBaseAddr;
+    uint32_t eqepBase               = p_enc->eqepBase;
     //-------------------------------------------------------------------
     //     TURN CONTROL
     //-------------------------------------------------------------------
@@ -451,34 +451,15 @@ inline void FOC_getMeasures(acq_t* p_acq)
 {
 #if (CLA_CORE_ENABLE)
     // Get the latest current values in Amps
-//    p_acq->ia       = (float32_t)(*(int16_t *)p_acq->p_iMeasReg[CHANNEL_1].ptr) * ADC_MOTOR_CURRENT_SCALE;
-//    p_acq->ib       = (float32_t)(*(int16_t *)p_acq->p_iMeasReg[CHANNEL_2].ptr) * ADC_MOTOR_CURRENT_SCALE;
-//    p_acq->ic       = (float32_t)(*(int16_t *)p_acq->p_iMeasReg[CHANNEL_3].ptr) * ADC_MOTOR_CURRENT_SCALE;
-
-//    p_acq->ia       = (float32_t)(HWREGH(p_acq->p_iMeasReg[CHANNEL_1].addr32b)) * ADC_MOTOR_CURRENT_SCALE;
-//    p_acq->ib       = (float32_t)(HWREGH(p_acq->p_iMeasReg[CHANNEL_2].addr32b)) * ADC_MOTOR_CURRENT_SCALE;
-//    p_acq->ic       = (float32_t)(HWREGH(p_acq->p_iMeasReg[CHANNEL_3].addr32b)) * ADC_MOTOR_CURRENT_SCALE;
-
-//    p_acq->ia       = (float32_t)(HWREGH(p_acq->iabcMeasAddr[CHANNEL_1])) * ADC_MOTOR_CURRENT_SCALE;
-//    p_acq->ib       = (float32_t)(HWREGH(p_acq->iabcMeasAddr[CHANNEL_2])) * ADC_MOTOR_CURRENT_SCALE;
-//    p_acq->ic       = (float32_t)(HWREGH(p_acq->iabcMeasAddr[CHANNEL_3])) * ADC_MOTOR_CURRENT_SCALE;
-
-    p_acq->ia       = ((float32_t)ADC_readPPBResult(p_acq->iabcResultBase[CHANNEL_1], p_acq->iabcppbNum[CHANNEL_1])) * ADC_MOTOR_CURRENT_SCALE;
-    p_acq->ib       = ((float32_t)ADC_readPPBResult(p_acq->iabcResultBase[CHANNEL_2], p_acq->iabcppbNum[CHANNEL_2])) * ADC_MOTOR_CURRENT_SCALE;
-    p_acq->ic       = ((float32_t)ADC_readPPBResult(p_acq->iabcResultBase[CHANNEL_3], p_acq->iabcppbNum[CHANNEL_3])) * ADC_MOTOR_CURRENT_SCALE;
-    // Get the latest Voltage supply value in Volt (minimum is one to avoid dividing by zero later)
-//    float32_t vbus  = __mmaxf32(((float32_t)(*(uint16_t *)p_acq->p_vBusMeasReg.ptr) * ADC_VBUS_VOLTAGE_SCALE), 1.0f);
-//    UOMODRI_VBUS_FLT(p_acq->vBusFlt, p_acq->vbus, vbus);
-//    float32_t vext  = (float32_t)(*(int16_t *)p_acq->p_vExtMeasReg.ptr) * ADC_VEXT12_VOLTAGE_SCALE;
-//    UOMODRI_VEXT_FLT(p_acq->vExtFlt, p_acq->vExt, vext);
-
-//    float32_t vbus  = (float32_t)(HWREGH(p_acq->vBusMeasAddr)) * ADC_VBUS_VOLTAGE_SCALE;
-    float32_t vbus  = (float32_t)ADC_readPPBResult(p_acq->vBusResultBase, p_acq->vBusppbNum) * ADC_VBUS_VOLTAGE_SCALE;
+    p_acq->ia       = ((float32_t)ADC_readPPBResult(p_acq->iabcResultBase[CHANNEL_1], (ADC_PPBNumber)p_acq->ppbNum.ia)) * ADC_MOTOR_CURRENT_SCALE;
+    p_acq->ib       = ((float32_t)ADC_readPPBResult(p_acq->iabcResultBase[CHANNEL_2], (ADC_PPBNumber)p_acq->ppbNum.ib)) * ADC_MOTOR_CURRENT_SCALE;
+    p_acq->ic       = ((float32_t)ADC_readPPBResult(p_acq->iabcResultBase[CHANNEL_3], (ADC_PPBNumber)p_acq->ppbNum.ic)) * ADC_MOTOR_CURRENT_SCALE;
+    // Get voltage of supply bus in Volt (minimum is one to avoid dividing by zero later)
+    float32_t vbus  = (float32_t)ADC_readPPBResult(p_acq->vBusResultBase, (ADC_PPBNumber)p_acq->ppbNum.vbus) * ADC_VBUS_VOLTAGE_SCALE;
     vbus            = __mmaxf32(vbus, 1.0f);
     UOMODRI_VBUS_FLT(p_acq->vBusFlt, p_acq->vbus, vbus);
-
-//    float32_t vext  = (float32_t)(HWREGH(p_acq->vExtMeasAddr)) * ADC_VEXT12_VOLTAGE_SCALE;
-    float32_t vext  = (float32_t)ADC_readPPBResult(p_acq->vExtResultBase, p_acq->vExtppbNum) * ADC_VEXT12_VOLTAGE_SCALE;
+    // Get voltage of external input in Volt (minimum is one to avoid dividing by zero later)
+    float32_t vext  = (float32_t)ADC_readPPBResult(p_acq->vExtResultBase, (ADC_PPBNumber)p_acq->ppbNum.vext) * ADC_VEXT12_VOLTAGE_SCALE;
     UOMODRI_VEXT_FLT(p_acq->vExtFlt, p_acq->vExt, vext);
 #else
     // Get the latest current values in Amps
@@ -660,9 +641,20 @@ inline void MOT_runCommand(motor_t* p_motor, float32_t cmd_a, float32_t cmd_b, f
         HWREGH(MOTOR2_PWM3_CMD_ADDR) = (uint16_t)((cmd_c) * PWM_TIMEBASE_CNT);
     }
 #else
-    HWREGH(p_motor->epwmBaseAddr[CHANNEL_1] + MOTOR12_PWMx_CMD_ADDR_OFFSET) = (uint16_t)((cmd_a) * PWM_TIMEBASE_CNT);
-    HWREGH(p_motor->epwmBaseAddr[CHANNEL_2] + MOTOR12_PWMx_CMD_ADDR_OFFSET) = (uint16_t)((cmd_b) * PWM_TIMEBASE_CNT);
-    HWREGH(p_motor->epwmBaseAddr[CHANNEL_3] + MOTOR12_PWMx_CMD_ADDR_OFFSET) = (uint16_t)((cmd_c) * PWM_TIMEBASE_CNT);
+//    uint16_t i      = 0;
+//    uint16_t cmd[3] = {(uint16_t)((cmd_a) * PWM_TIMEBASE_CNT),
+//                       (uint16_t)((cmd_b) * PWM_TIMEBASE_CNT),
+//                       (uint16_t)((cmd_c) * PWM_TIMEBASE_CNT)};
+//    for(i = 0; i < 3; i++)
+//        EPWM_setCounterCompareValue(p_motor->epwmBase[i], EPWM_COUNTER_COMPARE_A, cmd[i]);
+
+//    EPWM_setCounterCompareValue(p_motor->epwmBase[CHANNEL_1], EPWM_COUNTER_COMPARE_A, (uint16_t)((cmd_a) * PWM_TIMEBASE_CNT));
+//    EPWM_setCounterCompareValue(p_motor->epwmBase[CHANNEL_2], EPWM_COUNTER_COMPARE_A, (uint16_t)((cmd_b) * PWM_TIMEBASE_CNT));
+//    EPWM_setCounterCompareValue(p_motor->epwmBase[CHANNEL_3], EPWM_COUNTER_COMPARE_A, (uint16_t)((cmd_c) * PWM_TIMEBASE_CNT));
+
+    HWREGH(p_motor->epwmBase[CHANNEL_1] + MOTOR12_PWMx_CMD_ADDR_OFFSET) = (uint16_t)((cmd_a) * PWM_TIMEBASE_CNT);
+    HWREGH(p_motor->epwmBase[CHANNEL_2] + MOTOR12_PWMx_CMD_ADDR_OFFSET) = (uint16_t)((cmd_b) * PWM_TIMEBASE_CNT);
+    HWREGH(p_motor->epwmBase[CHANNEL_3] + MOTOR12_PWMx_CMD_ADDR_OFFSET) = (uint16_t)((cmd_c) * PWM_TIMEBASE_CNT);
 #endif
 #else
     *(p_motor->p_cmdReg[CHANNEL_1]) = (uint16_t)((cmd_a) * PWM_TIMEBASE_CNT);
@@ -694,9 +686,20 @@ inline void MOT_stopCommand(motor_t* p_motor)
         HWREGH(MOTOR2_PWM3_CMD_ADDR) = (uint16_t)PWM_TIMEBASE_CNT;
     }
 #else
-    HWREGH(p_motor->epwmBaseAddr[CHANNEL_1] + MOTOR12_PWMx_CMD_ADDR_OFFSET) = (uint16_t)PWM_TIMEBASE_CNT;
-    HWREGH(p_motor->epwmBaseAddr[CHANNEL_2] + MOTOR12_PWMx_CMD_ADDR_OFFSET) = (uint16_t)PWM_TIMEBASE_CNT;
-    HWREGH(p_motor->epwmBaseAddr[CHANNEL_3] + MOTOR12_PWMx_CMD_ADDR_OFFSET) = (uint16_t)PWM_TIMEBASE_CNT;
+//    uint16_t i  = 0;
+//    for(i = 0; i < 3; i++)
+//        EPWM_setCounterCompareValue(p_motor->epwmBase[i], EPWM_COUNTER_COMPARE_A, (uint16_t)PWM_TIMEBASE_CNT);
+
+//    uint16_t tmp = (float32_t)PWM_TIMEBASE_CNT;
+//    MOT_runCommand(p_motor, tmp, tmp, tmp);
+
+//    EPWM_setCounterCompareValue(p_motor->epwmBase[CHANNEL_1], EPWM_COUNTER_COMPARE_A, (uint16_t)PWM_TIMEBASE_CNT);
+//    EPWM_setCounterCompareValue(p_motor->epwmBase[CHANNEL_2], EPWM_COUNTER_COMPARE_A, (uint16_t)PWM_TIMEBASE_CNT);
+//    EPWM_setCounterCompareValue(p_motor->epwmBase[CHANNEL_3], EPWM_COUNTER_COMPARE_A, (uint16_t)PWM_TIMEBASE_CNT);
+
+    HWREGH(p_motor->epwmBase[CHANNEL_1] + MOTOR12_PWMx_CMD_ADDR_OFFSET) = (uint16_t)PWM_TIMEBASE_CNT;
+    HWREGH(p_motor->epwmBase[CHANNEL_2] + MOTOR12_PWMx_CMD_ADDR_OFFSET) = (uint16_t)PWM_TIMEBASE_CNT;
+    HWREGH(p_motor->epwmBase[CHANNEL_3] + MOTOR12_PWMx_CMD_ADDR_OFFSET) = (uint16_t)PWM_TIMEBASE_CNT;
 #endif
 #else
     *(p_motor->p_cmdReg[CHANNEL_1]) = (uint16_t)PWM_TIMEBASE_CNT;
@@ -743,7 +746,7 @@ inline bool_t MOT_runControl(motor_t* p_motor)
     ENC_getTheta(p_enc);
 
     // Save number of cycles elapsed since control loop startup
-    p_motor->clCycleNb          = EPWM_getTimeBaseCounterValue(p_motor->epwmBaseAddr[CHANNEL_1]);
+    p_motor->clCycleNb          = EPWM_getTimeBaseCounterValue(p_motor->epwmBase[CHANNEL_1]);
     p_err->drv_fault            = !GPIO_readPin(p_motor->drvFaultNum)                           || p_err->drv_fault;
     p_err->pos_rollover         = (p_enc->flags.rollOverError && cmd_reg.rollOverEnable)        || p_err->pos_rollover;
     p_err->com_timeout          = ((p_cmd->cptTimeout > p_cmd->timeoutRef) && p_cmd->timeoutRef)|| p_err->com_timeout;
@@ -866,8 +869,8 @@ inline bool_t MOT_runControl(motor_t* p_motor)
     foc_t*          p_foc           = p_motor->p_foc;
 #endif
     error_reg_u*    p_err           = &p_motor->error;
-    encoder_t*      p_enc           = &p_foc->enc;//&p_motor->foc.enc;//
-    cmd_t*          p_cmd           = &p_foc->cmd;//&p_motor->foc.cmd;
+    encoder_t*      p_enc           = &p_foc->enc;
+    cmd_t*          p_cmd           = &p_foc->cmd;
     float32_t       tmp             = 0.0f;
     float32_t       diff            = 0.0f;
     float32_t       err             = 0.0f;
@@ -886,7 +889,7 @@ inline bool_t MOT_runControl(motor_t* p_motor)
     ENC_getTheta(p_enc);
 
     // Save number of cycles elapsed since control loop startup
-    p_motor->clCycleNb              = EPWM_getTimeBaseCounterValue(p_motor->epwmBaseAddr[CHANNEL_1]);
+    p_motor->clCycleNb              = EPWM_getTimeBaseCounterValue(p_motor->epwmBase[CHANNEL_1]);
     p_err->drv_fault                = !GPIO_readPin(p_motor->drvFaultNum)                           || p_err->drv_fault;
     p_err->pos_rollover             = (p_enc->flags.rollOverError && cmd_reg.rollOverEnable)        || p_err->pos_rollover;
     p_err->com_timeout              = ((p_cmd->cptTimeout > p_cmd->timeoutRef) && p_cmd->timeoutRef)|| p_err->com_timeout;
@@ -909,9 +912,9 @@ inline bool_t MOT_runControl(motor_t* p_motor)
             p_motor->state          = MOTOR_STATE_INIT_FW;
         else
             p_motor->state          = MOTOR_STATE_START;
-//        ENC_resetPeriph(p_enc);
-//        FOC_resetStruct(p_foc);
-        FOC_runControl(p_foc);
+        ENC_resetPeriph(p_enc);
+        FOC_resetStruct(p_foc);
+//        FOC_runControl(p_foc);
         MOT_stopCommand(p_motor);
         break;
 
