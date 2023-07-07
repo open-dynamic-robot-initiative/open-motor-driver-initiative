@@ -8,7 +8,6 @@
 
 #include "hal.h"
 #include "communication.h"
-#include "uomodri_shared.h"
 #include "uomodri_user_defines.h"
 
 /***********************************************************************

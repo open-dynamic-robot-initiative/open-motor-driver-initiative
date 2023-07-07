@@ -67,15 +67,15 @@ typedef union __cmd_reg_u__
 
 typedef union __ppb_num_u__
 {
-    uint32_t            all;
+    uint16_t            all;
     struct
     {
-        uint32_t        ia              : 6;    /*!< Bit 0-5    : R/W - Enable system to start. No power on motors.         */
-        uint32_t        ib              : 6;    /*!< Bit 6-11   : R/W - Enable power on motor.                              */
-        uint32_t        ic              : 6;    /*!< Bit 12-17   : R/W - Limit the rotations to +/- 128 rounds.              */
-        uint16_t        vbus            : 6;    /*!< Bit 18-23  : R/W - Use encoder index in position computation.          */
-        uint16_t        vext            : 6;    /*!< Bit 24-29  : R/W - Use encoder index in position computation.          */
-        uint16_t        PPB_RSV1        : 2;    /*!< Bit 30-31  : R/W - Reserved                                            */
+        uint16_t        ia              : 2;    /*!< Bit 0-1    : R/W - Enable system to start. No power on motors.         */
+        uint16_t        ib              : 2;    /*!< Bit 2-3    : R/W - Enable power on motor.                              */
+        uint16_t        ic              : 2;    /*!< Bit 4-5    : R/W - Limit the rotations to +/- 128 rounds.              */
+        uint16_t        vbus            : 2;    /*!< Bit 6-7    : R/W - Use encoder index in position computation.          */
+        uint16_t        vext            : 2;    /*!< Bit 8-9    : R/W - Use encoder index in position computation.          */
+        uint16_t        PPB_RSV1        : 6;    /*!< Bit 10-15  : R/W - Reserved                                            */
     };
 } ppb_num_u;
 
@@ -161,6 +161,14 @@ typedef struct __params_t__
  */
 typedef struct __acquisitions_t__
 {
+    // ADC values scaled
+    float32_t           ia;         // [A]
+    float32_t           ib;         // [A]
+    float32_t           ic;         // [A]
+    float32_t           vbus;       // [V]
+    float32_t           vExt;       // [V]
+    lpf_t               vBusFlt;
+    lpf_t               vExtFlt;
     // ADC result registers
 #if (CLA_CORE_ENABLE)
     uint32_t            iabcResultBase[3];
@@ -172,14 +180,6 @@ typedef struct __acquisitions_t__
     volatile uint16_t*  const p_vExtMeasReg;
     volatile int16_t*   const p_iMeasReg[3];
 #endif
-    // ADC values scaled
-    float32_t           ia;         // [A]
-    float32_t           ib;         // [A]
-    float32_t           ic;         // [A]
-    float32_t           vbus;       // [V]
-    float32_t           vExt;       // [V]
-    lpf_t               vBusFlt;
-    lpf_t               vExtFlt;
 } acq_t;
 
 /**
@@ -207,10 +207,10 @@ typedef struct __cmd_t__
  */
 typedef struct __foc_t__
 {
-    params_t            cfg;        /*!< Motor configuration parameters */
-    acq_t               acq;        /*!< Current \& voltage acquisitions */
-    encoder_t           enc;        /*!< Encoder position & speed */
-    cmd_t               cmd;        /*!< Motor commands */
+    params_t            cfg;            /*!< Motor configuration parameters */
+    acq_t               acq;            /*!< Current \& voltage acquisitions */
+    encoder_t           enc;            /*!< Encoder position & speed */
+    cmd_t               cmd;            /*!< Motor commands */
     lpf_t               iParkFlt;       /*!< Low-pass filter parameters affected to park transform */
     struct
     {
@@ -238,8 +238,12 @@ typedef struct __foc_t__
     };
     struct
     {
-        float32_t       initPos;        /*!< Initial position to force a rotor movement during alignment - [RAD] */
+        float32_t       initPosStep;    /*!< Initial position to force a rotor movement during alignment - [RAD] */
+        float32_t       initPosCnt;     /*!< Initial position to force a rotor movement during alignment - [RAD] */
+        float32_t       initFixCnt;     /*!< Initial position to force a rotor movement during alignment - [RAD] */
         float32_t       initPosEnc[2];  /*!< Initial positions of theta electric during alignment (forward \& reverse) - [RAD] */
+        float32_t       initDiff;
+        float32_t       initErr[2];
     };
     pi_t                piId;           /*!< PI controller structure for current control */
     pi_t                piIq;           /*!< PI controller structure for current control */

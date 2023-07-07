@@ -6,7 +6,9 @@
 /***********************************************************************
  * INCLUDES
  ***********************************************************************/
-//#include <uomodri_shared.h>
+#include "driverlib.h"
+#include "device.h"
+
 #include "main.h"
 #include "hal.h"
 #include "drv8353.h"
@@ -76,9 +78,6 @@ void main(void)
     // ADC offset calibration for debug
     HAL_ADC_offsetCalib(&periph_motor_cfg[MOTOR_1]);
     HAL_ADC_offsetCalib(&periph_motor_cfg[MOTOR_2]);
-    // Force a reset of the intermediate command structures. Working structures are embedded in FOC structures.
-//    COM_resetCmdStruct(&cmd_uOmodri[MOTOR_1]);
-//    COM_resetCmdStruct(&cmd_uOmodri[MOTOR_2]);
     // Interrupts initialization
     HAL_INT_ini(InterruptList);
 
@@ -195,10 +194,10 @@ inline void LED_dimming(motor_t* p_motor1, motor_t* p_motor2, uint16_t* p_msg)
     float32_t       timer_fade_blink= (float32_t)((timer_cpt_ms < 500)  ? (timer_cpt_ms)    : (1000 - timer_cpt_ms)) / 500.0f;
     float32_t       timer_blink     = (timer_cpt_ms < 500)              ? (0.0f)            : (1.0f);
     timer_cpt_ms                    = (timer_cpt_ms < 1000)             ? (timer_cpt_ms + 1): (0);
-    uint8_t         motor_state     = MOTOR_STATE_START;
+    uint8_t         motor_state     = MOTOR_STATE_IDLE;
 
-    if((p_motor1->state == MOTOR_STATE_START)           || (p_motor2->state == MOTOR_STATE_START))
-        motor_state = MOTOR_STATE_START;
+    if((p_motor1->state == MOTOR_STATE_IDLE)            || (p_motor2->state == MOTOR_STATE_IDLE))
+        motor_state = MOTOR_STATE_IDLE;
     else if((p_motor1->state == MOTOR_STATE_INIT_FW)    || (p_motor1->state == MOTOR_STATE_INIT_REV)    ||
             (p_motor1->state == MOTOR_STATE_INIT_TEST)  || (p_motor1->state == MOTOR_STATE_INIT_FIX)    ||
             (p_motor2->state == MOTOR_STATE_INIT_FW)    || (p_motor2->state == MOTOR_STATE_INIT_REV)    ||
@@ -225,7 +224,7 @@ inline void LED_dimming(motor_t* p_motor1, motor_t* p_motor2, uint16_t* p_msg)
     case MOTOR_STATE_ERROR:
         ws2812b_writeLed((uint16_t)(0xff * timer_blink), 0, 0, p_msg);//red fade, error control
         break;
-    case MOTOR_STATE_START:
+    case MOTOR_STATE_IDLE:
     default:
         ws2812b_writeLed(0,  0, (uint16_t)(0xff * timer_fade_blink), p_msg);//blue fade
     }

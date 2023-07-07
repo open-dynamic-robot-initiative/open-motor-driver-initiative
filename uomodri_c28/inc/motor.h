@@ -14,7 +14,7 @@
 /***********************************************************************
  * DEFINES
  ***********************************************************************/
-#define MOTOR_STATE_START                           (0x0000)
+#define MOTOR_STATE_IDLE                            (0x0000)
 #define MOTOR_STATE_INIT_FW                         (0x0001)
 #define MOTOR_STATE_INIT_REV                        (0x0002)
 #define MOTOR_STATE_INIT_TEST                       (0x0004)
@@ -23,7 +23,7 @@
 #define MOTOR_STATE_STOP                            (0x0020)
 #define MOTOR_STATE_ERROR                           (0xFFFF)
 
-#define USE_STATE_MACHINE_4_ELECTRONCS_ENGINEERS    (0)
+#define USE_STATE_MACHINE_4_ELECTRONCS_ENGINEERS    (1)
 
 /***********************************************************************
  * ENUM TYPES
@@ -71,8 +71,7 @@ typedef union __error_reg_u__
 typedef struct __motor_t__
 {
 #if (CLA_CORE_ENABLE)
-//    ptr_32b_u                   p_foc;                  /*!< Pointer on the FOC structure associated to the motor */
-    foc_t                       foc;
+    foc_t                       foc;                    /*!< FOC structure associated to the motor */
 #else
     foc_t* const                p_foc;                  /*!< Pointer on the FOC structure associated to the motor */
 #endif
@@ -84,7 +83,6 @@ typedef struct __motor_t__
     float32_t                   statorResEst;           /*!< Q-axis resistance estimation. [Ohm] */
     lpf_t                       statorResEstFlt;        /*!< Resistance estimation low-pass filter */
 #if (CLA_CORE_ENABLE)
-//    uint32_t                    epwmCmdAddr[3];         /*!< PWM address register for FOC command */
     uint16_t                    id;                     /*!< Motor identification */
 #else
     volatile uint16_t* const    p_cmdReg[3];            /*!< PWM address register for FOC command */

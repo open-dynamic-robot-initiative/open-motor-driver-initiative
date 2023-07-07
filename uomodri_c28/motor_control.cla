@@ -209,6 +209,14 @@ __attribute__((interrupt)) void Cla1Task1(void)
     //--- FOC - Initialize duty cycle saturation --------------------------------
     motor_m1.foc.dtcMax                             = MOTOR1_DTC_MAX;
     motor_m1.foc.dtcMin                             = MOTOR1_DTC_MIN;
+    //--- FOC - Encoder test ----------------------------------------------------
+    motor_m1.foc.initPosStep                        = 0.0f;
+    motor_m1.foc.initPosCnt                         = MOTOR1_POSITION_INIT_EVT;
+    motor_m1.foc.initFixCnt                         = MOTOR1_FIX_INIT_EVT;
+    motor_m1.foc.initPosEnc[FW]                     = 0.0f;
+    motor_m1.foc.initPosEnc[REV]                    = 0.0f;
+    motor_m1.foc.initErr[MIN]                       = MOTOR1_POSITION_INIT_ERR_MIN;
+    motor_m1.foc.initErr[MAX]                       = MOTOR1_POSITION_INIT_ERR_MAX;
     //--- FOC - Initialize PI controller (Id) -----------------------------------
     motor_m1.foc.piId.p_fb.ptr                      = (float32_t *)(&motor_m1.foc.id);
     motor_m1.foc.piId.p_set.ptr                     = (float32_t *)(&motor_m1.foc.idRef);
@@ -243,7 +251,7 @@ __attribute__((interrupt)) void Cla1Task1(void)
     motor_m1.foc.pdPosVel.p_sat.ptr                 = (float32_t *)(&motor_m1.foc.cmd.iSat);
     motor_m1.foc.pdPosVel.out                       = 0.0f;
     //--- FSM motor initial state -----------------------------------------------
-    motor_m1.state                                  = MOTOR_STATE_START;
+    motor_m1.state                                  = MOTOR_STATE_IDLE;
     //--- Error message ---------------------------------------------------------
     motor_m1.error.all                              = 0;
     //--- DRV IO Config ---------------------------------------------------------
@@ -319,6 +327,14 @@ __attribute__((interrupt)) void Cla1Task1(void)
     //--- FOC - Initialize duty cycle saturation --------------------------------
     motor_m2.foc.dtcMax                             = MOTOR2_DTC_MAX;
     motor_m2.foc.dtcMin                             = MOTOR2_DTC_MIN;
+    //--- FOC - Encoder test ----------------------------------------------------
+    motor_m2.foc.initPosStep                        = 0.0f;
+    motor_m2.foc.initPosCnt                         = MOTOR2_POSITION_INIT_EVT;
+    motor_m2.foc.initFixCnt                         = MOTOR2_FIX_INIT_EVT;
+    motor_m2.foc.initPosEnc[FW]                     = 0.0f;
+    motor_m2.foc.initPosEnc[REV]                    = 0.0f;
+    motor_m2.foc.initErr[MIN]                       = MOTOR2_POSITION_INIT_ERR_MIN;
+    motor_m2.foc.initErr[MAX]                       = MOTOR2_POSITION_INIT_ERR_MAX;
     //--- FOC - Initialize PI controller (Id) -----------------------------------
     motor_m2.foc.piId.p_fb.ptr                      = (float32_t *)(&motor_m2.foc.id);
     motor_m2.foc.piId.p_set.ptr                     = (float32_t *)(&motor_m2.foc.idRef);
@@ -353,7 +369,7 @@ __attribute__((interrupt)) void Cla1Task1(void)
     motor_m2.foc.pdPosVel.p_sat.ptr                 = (float32_t *)(&motor_m2.foc.cmd.iSat);
     motor_m2.foc.pdPosVel.out                       = 0.0f;
     //--- FSM motor initial state -----------------------------------------------
-    motor_m2.state                                  = MOTOR_STATE_START;
+    motor_m2.state                                  = MOTOR_STATE_IDLE;
     //--- Error message ---------------------------------------------------------
     motor_m2.error.all                              = 0;
     //--- DRV IO Config ---------------------------------------------------------
