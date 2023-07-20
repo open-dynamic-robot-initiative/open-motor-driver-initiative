@@ -21,19 +21,19 @@
 #define CRC_INIT_CRC32                              0xFFFFFFFF
 
 #define MSG_RX_ES_POS                               (15)
-#define MSG_RX_ES_MASK                              (1 << MSG_RX_ES_POS)
+#define MSG_RX_ES_MASK                              (1U << MSG_RX_ES_POS)
 #define MSG_RX_EM1_POS                              (14)
-#define MSG_RX_EM1_MASK                             (1 << MSG_RX_EM1_POS)
+#define MSG_RX_EM1_MASK                             (1U << MSG_RX_EM1_POS)
 #define MSG_RX_EM2_POS                              (13)
-#define MSG_RX_EM2_MASK                             (1 << MSG_RX_EM2_POS)
+#define MSG_RX_EM2_MASK                             (1U << MSG_RX_EM2_POS)
 #define MSG_RX_EPRE_POS                             (12)
-#define MSG_RX_EPRE_MASK                            (1 << MSG_RX_EPRE_POS)
+#define MSG_RX_EPRE_MASK                            (1U << MSG_RX_EPRE_POS)
 #define MSG_RX_EI1OC_POS                            (11)
-#define MSG_RX_EI1OC_MASK                           (1 << MSG_RX_EI1OC_POS)
+#define MSG_RX_EI1OC_MASK                           (1U << MSG_RX_EI1OC_POS)
 #define MSG_RX_EI2OC_POS                            (10)
-#define MSG_RX_EI2OC_MASK                           (1 << MSG_RX_EI2OC_POS)
+#define MSG_RX_EI2OC_MASK                           (1U << MSG_RX_EI2OC_POS)
 #define MSG_RX_TIMEOUT_POS                          (0)
-#define MSG_RX_TIMEOUT_MASK                         (0xFF << MSG_RX_TIMEOUT_POS)
+#define MSG_RX_TIMEOUT_MASK                         (0xFFU << MSG_RX_TIMEOUT_POS)
 
 #define MSG_RX_ES                                   (0x8000)
 #define MSG_RX_EM1                                  (0x4000)
@@ -244,23 +244,18 @@ typedef struct __mst2slv_msg_t__
     uint16_t        iSat;
     uint16_t        index;
     U32toU16_reg_t  crc;
-//    com_rx_state_e  msg_rx_state;
-//    uint32_t        msg_crc32;
-//    uint16_t        msg_rx;
-//    uint16_t        msg_tmp;
 } mst2slv_msg_t;
 
 /**
- * @struct  mst2slv_msg_cla_t
- * @brief   Master 2 Slave structure associated with COM_msgExtract_cla (state machine)
+ * @struct  mst2slv_msg_otf_t
+ * @brief   Master 2 Slave structure associated with COM_msgExtractOnTheFly (state machine)
  */
-//typedef struct __mst2slv_msg_cla_t__
-//{
-//    com_rx_state_e  msg_rx_state;
-//    uint32_t        msg_crc32;
-//    uint16_t        msg_rx;
-//    uint16_t        msg_tmp;
-//} mst2slv_msg_cla_t;
+typedef struct __mst2slv_msg_otf_t__
+{
+    com_rx_state_e  msg_rx_state;
+    uint32_t        msg_crc32;
+    uint16_t        msg_tmp;
+} mst2slv_msg_otf_t;
 
 /**
  * @struct  slv2mst_msg_t
@@ -671,12 +666,12 @@ typedef struct __com_dbg_rx_msg_t__
  ***********************************************************************/
 #ifdef CPU1
 bool_t COM_msgExtract(mst2slv_msg_t*,  cmd_t*, cmd_t*);
-bool_t COM_msgExtractStep(mst2slv_msg_t*, cmd_t*, cmd_t*);
+bool_t COM_msgExtractOnTheFly(mst2slv_msg_otf_t*, cmd_t*, cmd_t*, uint16_t);
 void COM_msgCreate(motor_t*, motor_t*, slv2mst_msg_t*);
 bool_t COM_msgCreateLite(motor_t*, slv2mst_msg_t*);
 void COM_resetCmdStruct(cmd_t*);
-uint32_t COM_crc32(uint16_t*, uint16_t);
-uint32_t COM_crc32_cla(mst2slv_msg_t*);
+void COM_resetMsgExtractOnTheFlyStruct(mst2slv_msg_otf_t*);
+uint32_t COM_crc32(uint32_t, uint16_t*, uint16_t);
 #else
 void COM_msgDbgTx(dbg_uart_addr_t*, dbg_uart_msg_t*);
 //void COM_msgDbgTx(com_dbg_tx_msg_t*, uint8_t);

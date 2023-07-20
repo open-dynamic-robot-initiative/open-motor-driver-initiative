@@ -25,16 +25,20 @@
  * VARIABLES
  ***********************************************************************/
 #pragma DATA_ALIGN(cmd_msg, 4)
-#pragma DATA_SECTION(cmd_msg, "ramgs1")
-mst2slv_msg_t   cmd_msg;
+#pragma DATA_SECTION(cmd_msg, "ramgs0")
+mst2slv_msg_otf_t   cmd_msg;
+//= {.msg_rx_state = COM_RX_STATE_MODE,
+//                               .msg_crc32 = UINT32_MAX,
+//                               .msg_tmp = 0U,
+//};
 
 #pragma DATA_ALIGN(status_msg, 4)
-#pragma DATA_SECTION(status_msg, "ramgs1")
-slv2mst_msg_t   status_msg[2];
+#pragma DATA_SECTION(status_msg, "ramgs0")
+slv2mst_msg_t       status_msg[2];
 
 #pragma DATA_ALIGN(led_msg, 4)
-#pragma DATA_SECTION(led_msg, "ramgs1")
-uint16_t        led_msg[LED_MSG_TX_16BIT_LENGTH];
+#pragma DATA_SECTION(led_msg, "ramgs0")
+uint16_t            led_msg[LED_MSG_TX_16BIT_LENGTH];
 
 //#pragma DATA_ALIGN(tx_msg_cr, 2)
 //#pragma DATA_SECTION(tx_msg_cr, "ramgs0");
@@ -47,7 +51,8 @@ uint16_t tx_msg_nx      = 1U;
 bool_t tx_msg_full      = false;
 //#pragma DATA_ALIGN(tmr_timeout, 2)
 //#pragma DATA_SECTION(tmr_timeout, "ramgs0");
-bool_t tmr_timeout      = false;
+//bool_t tmr_timeout      = false;
+bool_t rx_msg_valid     = false;
 
 extern motor_t          motor_m1;
 extern motor_t          motor_m2;
@@ -81,53 +86,12 @@ void main(void)
     // Interrupts initialization
     HAL_INT_ini(InterruptList);
 
-    static uint8_t cptTimeout   = 0U;
-    bool_t rx_msg_valid         = false;
-
+    COM_resetCmdStruct(&cmd_uOmodri[MOTOR_1]);
+    COM_resetCmdStruct(&cmd_uOmodri[MOTOR_2]);
+    // Reset the message extraction On-The-Fly structure
+    COM_resetMsgExtractOnTheFlyStruct(&cmd_msg);
     // Infinite loop
-    while(1)
-    {
-        /*
-         * SPI COM RX management - Receive & extract message if valid
-         * DMA CMD TO FOC struct - Propagate new commands (message extract or timeout inc)
-         */
-        if(!DMA_getRunStatusFlag(DMA_COM_SPI_RX_BASE_ADDR) && COM_SPI_CS_READ)
-        {
-            // Prepare SPI and associated DMA for a new receive
-            SPI_resetRxFIFO(COM_SPI_BASE);
-            DMA_clearTriggerFlag(DMA_COM_SPI_RX_BASE_ADDR);
-            // Extract received message & send new commands to FOC structures if valid
-            rx_msg_valid                    = COM_msgExtract(&cmd_msg, &cmd_uOmodri[MOTOR_1], &cmd_uOmodri[MOTOR_2]);
-            // Restart DMA reception
-            DMA_startChannel(DMA_COM_SPI_RX_BASE_ADDR);
-        }
-        if(tmr_timeout || rx_msg_valid)
-        {
-            cptTimeout                      = (rx_msg_valid) ? (0U) : (cptTimeout + 1);
-            cmd_uOmodri[MOTOR_1].cptTimeout = cptTimeout;
-            cmd_uOmodri[MOTOR_2].cptTimeout = cptTimeout;
-            tmr_timeout                     = false;
-            rx_msg_valid                    = false;
-            CLA_forceTasks(CLA1_BASE, CLA_TASKFLAG_2);
-        }
-
-        /*
-         * SPI COM TX management - Create message & send it
-         */
-        DINT;//__disable_interrupts();//
-        if(tx_msg_full && !DMA_getRunStatusFlag(DMA_COM_SPI_TX_BASE_ADDR) && COM_SPI_CS_READ)
-        {
-            tx_msg_cr   = (tx_msg_cr) ? (0U) : (1U);
-            tx_msg_nx   = (tx_msg_cr) ? (0U) : (1U);
-            DMA_configAddresses(DMA_COM_SPI_TX_BASE_ADDR, (uint16_t *) COM_SPI_TX_BASE_REG_ADDR, (uint16_t *) &status_msg[tx_msg_cr].timeStamp);
-            // Force first write in SPI_O_DAT
-            COM_SPI_DAT(status_msg[tx_msg_cr].status.all);
-            SPI_resetTxFIFO(COM_SPI_BASE);
-            DMA_startChannel(DMA_COM_SPI_TX_BASE_ADDR);
-            tx_msg_full = false;
-        }
-        EINT;//__enable_interrupts();//
-    }
+    while(1);
 }
 
 /**
@@ -234,13 +198,23 @@ inline void LED_dimming(motor_t* p_motor1, motor_t* p_motor2, uint16_t* p_msg)
 
 __attribute__((interrupt)) void cla_isrMotor1(void)
 {
-    tx_msg_full = COM_msgCreateLite(&motor_m1, &status_msg[tx_msg_nx]);
+    COM_msgCreateLite(&motor_m1, &status_msg[tx_msg_nx]);
     Interrupt_clearACKGroup(INTERRUPT_ACK_GROUP11);//InterruptList[0].intAckGroup);
 }
 
 __attribute__((interrupt)) void cla_isrMotor2(void)
 {
-    tx_msg_full = COM_msgCreateLite(&motor_m2, &status_msg[tx_msg_nx]);
+    COM_msgCreateLite(&motor_m2, &status_msg[tx_msg_nx]);
+    if(!DMA_getRunStatusFlag(DMA_COM_SPI_TX_BASE_ADDR) && COM_SPI_CS_READ)
+    {
+        tx_msg_cr   = (tx_msg_cr) ? (0U) : (1U);
+        tx_msg_nx   = (tx_msg_cr) ? (0U) : (1U);
+        DMA_configAddresses(DMA_COM_SPI_TX_BASE_ADDR, (uint16_t *) COM_SPI_TX_BASE_REG_ADDR, (uint16_t *) &status_msg[tx_msg_cr].timeStamp);
+        // Force first write in SPI_O_DAT
+        COM_SPI_DAT(status_msg[tx_msg_cr].status.all);
+        SPI_resetTxFIFO(COM_SPI_BASE);
+        DMA_startChannel(DMA_COM_SPI_TX_BASE_ADDR);
+    }
     Interrupt_clearACKGroup(INTERRUPT_ACK_GROUP11);//InterruptList[1].intAckGroup);
 }
 
@@ -253,6 +227,26 @@ __attribute__((interrupt)) void tmr_isrLed(void)
         DMA_startChannel(DMA_LED_SPI_TX_BASE_ADDR);
     }
     // Timeout management
-    tmr_timeout = true;
+    cmd_uOmodri[MOTOR_1].cptTimeout++;
+    cmd_uOmodri[MOTOR_2].cptTimeout++;
+    CLA_forceTasks(CLA1_BASE, CLA_TASKFLAG_2);
     Interrupt_clearACKGroup(INTERRUPT_ACK_GROUP1);
+}
+
+__attribute__((interrupt)) void spi_isrComRx(void)
+{
+    while((SPI_getRxFIFOStatus(COM_SPI_BASE)) && (!rx_msg_valid))
+        rx_msg_valid = COM_msgExtractOnTheFly(&cmd_msg, &cmd_uOmodri[MOTOR_1], &cmd_uOmodri[MOTOR_2], SPI_readDataNonBlocking(COM_SPI_BASE));
+    if(rx_msg_valid)
+    {
+        cmd_uOmodri[MOTOR_1].cptTimeout = 0U;
+        cmd_uOmodri[MOTOR_2].cptTimeout = 0U;
+        CLA_forceTasks(CLA1_BASE, CLA_TASKFLAG_2);
+        rx_msg_valid                    = false;
+        COM_resetMsgExtractOnTheFlyStruct(&cmd_msg);
+    }
+    if(COM_SPI_CS_READ)
+        SPI_resetRxFIFO(COM_SPI_BASE);
+    SPI_clearInterruptStatus(COM_SPI_BASE, SPI_INT_RXFF);// | SPI_INT_RXFF_OVERFLOW);
+    Interrupt_clearACKGroup(INTERRUPT_ACK_GROUP6);
 }

@@ -23,7 +23,7 @@ typedef union __enc_test_u__
     {
         uint16_t        indexDetect     : 1;    /*!< Bit 0      : R/W - Has index been detected? */
         uint16_t        indexOffset     : 1;    /*!< Bit 1      : R/W - Is index compensation activated? */
-        uint16_t        indexToggle     : 1;    /*!< Bit 2      : R/W - Toggle flag every time index is seen. */
+        uint16_t        indexToggle     : 1;    /*!< Bit 2      : R/W - Toggle flag each time index is seen. */
         uint16_t        indexError      : 1;    /*!< Bit 3      : R/W - Mismatch between index and mechanical angle capture. */
         uint16_t        rollOverError   : 1;    /*!< Bit 4      : R/W - Roll-over error flag. */
         uint16_t        alignError      : 1;    /*!< Bit 5      : R/W - Detect an error on encoder (pole pairs mismatch, phases errors...) */

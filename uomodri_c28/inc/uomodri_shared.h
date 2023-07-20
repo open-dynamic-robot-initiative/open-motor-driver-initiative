@@ -219,17 +219,17 @@ inline void ENC_getSpeed(encoder_t* p_enc)
     //     LOW SPEED ESTIMATION
     //-------------------------------------------------------------------
     // Check if unit position event occurred for low speed calculation
-    if(EQEP_getStatus(eqepBase) & EQEP_STS_UNIT_POS_EVNT)//if(p_qepRegs->QEPSTS.all & EQEP_STS_UNIT_POS_EVNT)
-    {
-        uint16_t period         = EQEP_getCapturePeriodLatch(eqepBase);
-        p_speed->speedLow       = (period != 0xFFFF) ? ((float32_t)(p_enc->thetaDir) * p_speed->speedLowScaler / (float32_t)period) : (p_speed->speedLow);
-//        p_speed->speedLow       = (float32_t)(p_enc->thetaDir) * p_speed->speedLowScaler / (float32_t)EQEP_getCapturePeriodLatch(eqepBase);
-        // Speed is very close to zero because direction changed or the rotor doesn't move fast enough
-        p_speed->speedLow       = (EQEP_getStatus(eqepBase) & (EQEP_STS_CAP_OVRFLW_ERROR | EQEP_STS_CAP_DIR_ERROR)) ? (0.0f) : (p_speed->speedLow);
-        // Clear position event, direction change and timer overflow flags (even if direction and timer overflow are not set)
-        EQEP_clearStatus(eqepBase, (EQEP_STS_UNIT_POS_EVNT | EQEP_STS_CAP_OVRFLW_ERROR | EQEP_STS_CAP_DIR_ERROR));
-//        newSpeedLow             = true;
-    }
+//    if(EQEP_getStatus(eqepBase) & EQEP_STS_UNIT_POS_EVNT)//if(p_qepRegs->QEPSTS.all & EQEP_STS_UNIT_POS_EVNT)
+//    {
+//        uint16_t period         = EQEP_getCapturePeriodLatch(eqepBase);
+//        p_speed->speedLow       = (period != 0xFFFF) ? ((float32_t)(p_enc->thetaDir) * p_speed->speedLowScaler / (float32_t)period) : (p_speed->speedLow);
+////        p_speed->speedLow       = (float32_t)(p_enc->thetaDir) * p_speed->speedLowScaler / (float32_t)EQEP_getCapturePeriodLatch(eqepBase);
+//        // Speed is very close to zero because direction changed or the rotor doesn't move fast enough
+//        p_speed->speedLow       = (EQEP_getStatus(eqepBase) & (EQEP_STS_CAP_OVRFLW_ERROR | EQEP_STS_CAP_DIR_ERROR)) ? (0.0f) : (p_speed->speedLow);
+//        // Clear position event, direction change and timer overflow flags (even if direction and timer overflow are not set)
+//        EQEP_clearStatus(eqepBase, (EQEP_STS_UNIT_POS_EVNT | EQEP_STS_CAP_OVRFLW_ERROR | EQEP_STS_CAP_DIR_ERROR));
+////        newSpeedLow             = true;
+//    }
     //-------------------------------------------------------------------
     //     SPEED ESTIMATION MERGE
     //-------------------------------------------------------------------
@@ -365,7 +365,7 @@ inline void FOC_resetStructPD(pd_t* p_pd)
 inline void FOC_resetStructCmd(cmd_t* p_cmd)
 {
     p_cmd->posRef               = 0.0f;
-    p_cmd->posRefOffset         = 0.0f;
+//    p_cmd->posRefOffset         = 0.0f;
     p_cmd->velRef               = 0.0f;
     p_cmd->iqff                 = 0.0f;
     p_cmd->kpCoeff              = 0.0f;
@@ -422,7 +422,7 @@ inline void FOC_resetStruct(foc_t* p_foc)
     p_foc->ua               = 0.0f;
     p_foc->ub               = 0.0f;
     p_foc->uc               = 0.0f;
-    p_foc->vmax             = 0.0f;
+//    p_foc->vmax             = 0.0f;
     p_foc->dtc_u            = 0.0f;
     p_foc->dtc_v            = 0.0f;
     p_foc->dtc_w            = 0.0f;
@@ -448,8 +448,7 @@ inline void FOC_getMeasures(acq_t* p_acq)
     p_acq->ic       = ((float32_t)ADC_readPPBResult(p_acq->iabcResultBase[CHANNEL_3], (ADC_PPBNumber)p_acq->ppbNum.ic)) * ADC_MOTOR_CURRENT_SCALE;
     // Get voltage of supply bus in Volt (minimum is one to avoid dividing by zero later)
     float32_t vbus  = (float32_t)ADC_readPPBResult(p_acq->vBusResultBase, (ADC_PPBNumber)p_acq->ppbNum.vbus) * ADC_VBUS_VOLTAGE_SCALE;
-    vbus            = __mmaxf32(vbus, 1.0f);
-    UOMODRI_VBUS_FLT(p_acq->vBusFlt, p_acq->vbus, vbus);
+    UOMODRI_VBUS_FLT(p_acq->vBusFlt, p_acq->vbus, __mmaxf32(vbus, 1.0f));
     // Get voltage of external input in Volt (minimum is one to avoid dividing by zero later)
     float32_t vext  = (float32_t)ADC_readPPBResult(p_acq->vExtResultBase, (ADC_PPBNumber)p_acq->ppbNum.vext) * ADC_VEXT12_VOLTAGE_SCALE;
     UOMODRI_VEXT_FLT(p_acq->vExtFlt, p_acq->vExt, vext);
@@ -595,7 +594,7 @@ void FOC_runControl(foc_t* p_foc)
     // Compute Id(Flux Current) and Iq (Torque Current) PI controllers
     p_foc->ud               = FOC_runPI(&p_foc->piId);
     p_foc->uq               = FOC_runPI(&p_foc->piIq);
-    p_foc->vmax             = p_acq->vbus * FM_1DIVSQRT3;
+//    p_foc->vmax             = p_acq->vbus * FM_1DIVSQRT3;
 //    p_foc->udMax            = p_foc->vmax;
 //    p_foc->uqMax            = __sqrt((p_foc->vmax * p_foc->vmax) - (p_foc->ud * p_foc->ud));
 //    float32_t v_ref         = __sqrt((p_foc->ud * p_foc->ud) + (p_foc->uq * p_foc->uq));
@@ -680,11 +679,7 @@ void MOT_stopCommand(motor_t* p_motor)
 bool_t MOT_runControl(motor_t* p_motor)
 {
 #if (USE_STATE_MACHINE_4_ELECTRONCS_ENGINEERS)
-#if (CLA_CORE_ENABLE)
     foc_t*          p_foc       = &p_motor->foc;
-#else
-    foc_t*          p_foc       = p_motor->p_foc;
-#endif
     error_reg_u*    p_err       = &p_motor->error;
     encoder_t*      p_enc       = &p_foc->enc;
     cmd_t*          p_cmd       = &p_foc->cmd;
@@ -693,7 +688,7 @@ bool_t MOT_runControl(motor_t* p_motor)
     bool_t          evt_flag    = false;
     bool_t          start       = cmd_reg.motorEnable && cmd_reg.systemEnable;
     p_enc->flags.indexOffset    = cmd_reg.encOffsetEnable;
-    p_cmd->posRefOffset         = p_cmd->posRef + ((cmd_reg.encOffsetEnable) ? (p_enc->thetaIndexAbsolute) : (0.0f));
+//    p_cmd->posRefOffset         = p_cmd->posRef + ((cmd_reg.encOffsetEnable) ? (p_enc->thetaIndexAbsolute) : (0.0f));
 
     // Read currents in 3 phases + Vbus
     FOC_getMeasures(&p_foc->acq);
@@ -809,18 +804,14 @@ bool_t MOT_runControl(motor_t* p_motor)
         break;
     }
 #else
-#if (CLA_CORE_ENABLE)
     foc_t*          p_foc           = &p_motor->foc;
-#else
-    foc_t*          p_foc           = p_motor->p_foc;
-#endif
     error_reg_u*    p_err           = &p_motor->error;
     encoder_t*      p_enc           = &p_foc->enc;
     cmd_t*          p_cmd           = &p_foc->cmd;
     cmd_reg_u       cmd_reg         = {.all = p_cmd->cmdBits.all};
     bool_t          start           = cmd_reg.motorEnable && cmd_reg.systemEnable;
     p_enc->flags.indexOffset        = cmd_reg.encOffsetEnable;
-    p_cmd->posRefOffset             = p_cmd->posRef + ((cmd_reg.encOffsetEnable) ? (p_enc->thetaIndexAbsolute) : (0.0f));
+//    p_cmd->posRefOffset             = p_cmd->posRef + ((cmd_reg.encOffsetEnable) ? (p_enc->thetaIndexAbsolute) : (0.0f));
 
     //  Read currents in 3 phases + Vbus
     FOC_getMeasures(&p_foc->acq);

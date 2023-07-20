@@ -148,6 +148,8 @@ __attribute__((interrupt)) void Cla1Task1(void)
     motor_m1.id                                     = MOTOR_1;
     //--- FOC structure ---------------------------------------------------------
     //--- MOTOR PARAMS STRUCTURE ------------------------------------------------
+//    motor_m1.foc.cfg = (params_t){.Rs = MOTOR1_RS, .Ls = MOTOR1_LS, .kv = MOTOR1_KV, .ke = MOTOR1_KE, .ki = MOTOR1_KI, .polePairs = MOTOR1_POLES_PAIRS};
+//    motor_m1.foc.cfg = (params_t){MOTOR1_RS, MOTOR1_LS, MOTOR1_KV, MOTOR1_KE, MOTOR1_KI, MOTOR1_POLES_PAIRS};
     motor_m1.foc.cfg.Rs                             = MOTOR1_RS;
     motor_m1.foc.cfg.Ls                             = MOTOR1_LS;
     motor_m1.foc.cfg.kv                             = MOTOR1_KV;
@@ -190,7 +192,6 @@ __attribute__((interrupt)) void Cla1Task1(void)
     motor_m1.foc.enc.speed.speedFlt[1].one_minus_a  = (float32_t)MOTOR1_ENC_SPEED_LOCAL_LPF_ONE_M_ALPHA;
     //--- MOTOR COMMAND STRUCTURE -----------------------------------------------
     motor_m1.foc.cmd.posRef                         = 0.0f;
-    motor_m1.foc.cmd.posRefOffset                   = 0.0f;
     motor_m1.foc.cmd.velRef                         = 0.0f;
     motor_m1.foc.cmd.iqff                           = 0.0f;
     motor_m1.foc.cmd.kpCoeff                        = 0.0f;
@@ -239,7 +240,7 @@ __attribute__((interrupt)) void Cla1Task1(void)
     motor_m1.foc.piIq.out                           = 0.0f;
     //--- FOC - Initialize PD controller (Speed & position) ---------------------
     motor_m1.foc.pdPosVel.p_fbTheta.ptr             = (float32_t *)(&motor_m1.foc.enc.thetaAbsolute);
-    motor_m1.foc.pdPosVel.p_setTheta.ptr            = (float32_t *)(&motor_m1.foc.cmd.posRefOffset);
+    motor_m1.foc.pdPosVel.p_setTheta.ptr            = (float32_t *)(&motor_m1.foc.cmd.posRef);
     motor_m1.foc.pdPosVel.errTheta                  = 0.0f;
     motor_m1.foc.pdPosVel.p_fbSpeed.ptr             = (float32_t *)(&motor_m1.foc.enc.speed.speedMech[0]);
     motor_m1.foc.pdPosVel.p_setSpeed.ptr            = (float32_t *)(&motor_m1.foc.cmd.velRef);
@@ -308,7 +309,6 @@ __attribute__((interrupt)) void Cla1Task1(void)
     motor_m2.foc.enc.speed.speedFlt[1].one_minus_a  = (float32_t)MOTOR2_ENC_SPEED_LOCAL_LPF_ONE_M_ALPHA;
     //--- MOTOR COMMAND STRUCTURE -----------------------------------------------
     motor_m2.foc.cmd.posRef                         = 0.0f;
-    motor_m2.foc.cmd.posRefOffset                   = 0.0f;
     motor_m2.foc.cmd.velRef                         = 0.0f;
     motor_m2.foc.cmd.iqff                           = 0.0f;
     motor_m2.foc.cmd.kpCoeff                        = 0.0f;
@@ -357,7 +357,7 @@ __attribute__((interrupt)) void Cla1Task1(void)
     motor_m2.foc.piIq.out                           = 0.0f;
     //--- FOC - Initialize PD controller (Speed & position) ---------------------
     motor_m2.foc.pdPosVel.p_fbTheta.ptr             = (float32_t *)(&motor_m2.foc.enc.thetaAbsolute);
-    motor_m2.foc.pdPosVel.p_setTheta.ptr            = (float32_t *)(&motor_m2.foc.cmd.posRefOffset);
+    motor_m2.foc.pdPosVel.p_setTheta.ptr            = (float32_t *)(&motor_m2.foc.cmd.posRef);
     motor_m2.foc.pdPosVel.errTheta                  = 0.0f;
     motor_m2.foc.pdPosVel.p_fbSpeed.ptr             = (float32_t *)(&motor_m2.foc.enc.speed.speedMech[0]);
     motor_m2.foc.pdPosVel.p_setSpeed.ptr            = (float32_t *)(&motor_m2.foc.cmd.velRef);
@@ -423,30 +423,30 @@ __attribute__((interrupt)) void Cla1Task2(void)
 //    DBG_PIN1_CLEAR;
 
     if((cmd_uOmodri[MOTOR_1].cmdBits.all & CMD_POSITION_OFFSET_COMP) == CMD_POSITION_OFFSET_COMP)
-        cmd_uOmodri[MOTOR_1].posRef += motor_m1.foc.enc.thetaIndexAbsolute;
-    motor_m1.foc.cmd.posRef     = cmd_uOmodri[MOTOR_1].posRef;
-    motor_m1.foc.cmd.velRef     = cmd_uOmodri[MOTOR_1].velRef;
-    motor_m1.foc.cmd.iqff       = cmd_uOmodri[MOTOR_1].iqff;
-    motor_m1.foc.cmd.kpCoeff    = cmd_uOmodri[MOTOR_1].kpCoeff;
-    motor_m1.foc.cmd.kdCoeff    = cmd_uOmodri[MOTOR_1].kdCoeff;
-    motor_m1.foc.cmd.iSat       = cmd_uOmodri[MOTOR_1].iSat;
-    motor_m1.foc.cmd.timeoutRef = cmd_uOmodri[MOTOR_1].timeoutRef;
-    motor_m1.foc.cmd.cptTimeout = cmd_uOmodri[MOTOR_1].cptTimeout;
-    motor_m1.foc.cmd.index      = cmd_uOmodri[MOTOR_1].index;
-    motor_m1.foc.cmd.cmdBits    = cmd_uOmodri[MOTOR_1].cmdBits;
+        cmd_uOmodri[MOTOR_1].posRef+= motor_m1.foc.enc.thetaIndexAbsolute;
+    motor_m1.foc.cmd.posRef         = cmd_uOmodri[MOTOR_1].posRef;
+    motor_m1.foc.cmd.velRef         = cmd_uOmodri[MOTOR_1].velRef;
+    motor_m1.foc.cmd.iqff           = cmd_uOmodri[MOTOR_1].iqff;
+    motor_m1.foc.cmd.kpCoeff        = cmd_uOmodri[MOTOR_1].kpCoeff;
+    motor_m1.foc.cmd.kdCoeff        = cmd_uOmodri[MOTOR_1].kdCoeff;
+    motor_m1.foc.cmd.iSat           = cmd_uOmodri[MOTOR_1].iSat;
+    motor_m1.foc.cmd.timeoutRef     = cmd_uOmodri[MOTOR_1].timeoutRef;
+    motor_m1.foc.cmd.cptTimeout     = cmd_uOmodri[MOTOR_1].cptTimeout;
+    motor_m1.foc.cmd.index          = cmd_uOmodri[MOTOR_1].index;
+    motor_m1.foc.cmd.cmdBits        = cmd_uOmodri[MOTOR_1].cmdBits;
 
     if((cmd_uOmodri[MOTOR_2].cmdBits.all & CMD_POSITION_OFFSET_COMP) == CMD_POSITION_OFFSET_COMP)
-        cmd_uOmodri[MOTOR_2].posRef += motor_m2.foc.enc.thetaIndexAbsolute;
-    motor_m2.foc.cmd.posRef     = cmd_uOmodri[MOTOR_2].posRef;
-    motor_m2.foc.cmd.velRef     = cmd_uOmodri[MOTOR_2].velRef;
-    motor_m2.foc.cmd.iqff       = cmd_uOmodri[MOTOR_2].iqff;
-    motor_m2.foc.cmd.kpCoeff    = cmd_uOmodri[MOTOR_2].kpCoeff;
-    motor_m2.foc.cmd.kdCoeff    = cmd_uOmodri[MOTOR_2].kdCoeff;
-    motor_m2.foc.cmd.iSat       = cmd_uOmodri[MOTOR_2].iSat;
-    motor_m2.foc.cmd.timeoutRef = cmd_uOmodri[MOTOR_2].timeoutRef;
-    motor_m2.foc.cmd.cptTimeout = cmd_uOmodri[MOTOR_2].cptTimeout;
-    motor_m2.foc.cmd.index      = cmd_uOmodri[MOTOR_2].index;
-    motor_m2.foc.cmd.cmdBits    = cmd_uOmodri[MOTOR_2].cmdBits;
+        cmd_uOmodri[MOTOR_2].posRef+= motor_m2.foc.enc.thetaIndexAbsolute;
+    motor_m2.foc.cmd.posRef         = cmd_uOmodri[MOTOR_2].posRef;
+    motor_m2.foc.cmd.velRef         = cmd_uOmodri[MOTOR_2].velRef;
+    motor_m2.foc.cmd.iqff           = cmd_uOmodri[MOTOR_2].iqff;
+    motor_m2.foc.cmd.kpCoeff        = cmd_uOmodri[MOTOR_2].kpCoeff;
+    motor_m2.foc.cmd.kdCoeff        = cmd_uOmodri[MOTOR_2].kdCoeff;
+    motor_m2.foc.cmd.iSat           = cmd_uOmodri[MOTOR_2].iSat;
+    motor_m2.foc.cmd.timeoutRef     = cmd_uOmodri[MOTOR_2].timeoutRef;
+    motor_m2.foc.cmd.cptTimeout     = cmd_uOmodri[MOTOR_2].cptTimeout;
+    motor_m2.foc.cmd.index          = cmd_uOmodri[MOTOR_2].index;
+    motor_m2.foc.cmd.cmdBits        = cmd_uOmodri[MOTOR_2].cmdBits;
 #endif
 }
 

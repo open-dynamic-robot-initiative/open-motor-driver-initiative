@@ -189,7 +189,6 @@ typedef struct __acquisitions_t__
 typedef struct __cmd_t__
 {
     float32_t           posRef;
-    float32_t           posRefOffset;
     float32_t           velRef;
     float32_t           iqff;
     float32_t           kpCoeff;
@@ -227,7 +226,7 @@ typedef struct __foc_t__
         float32_t       ua;             /*!< Phase commands - Channel a - [V] */
         float32_t       ub;             /*!< Phase commands - Channel b - [V] */
         float32_t       uc;             /*!< Phase commands - Channel c - [V] */
-        float32_t       vmax;           /*!< Bus voltage saturation - [V] */
+//        float32_t       vmax;           /*!< Bus voltage saturation - [V] */
         float32_t       dtcMax;         /*!< Max saturation duty-cycle */
         float32_t       dtcMin;         /*!< Min saturation duty-cycle */
         float32_t       dtc_u;          /*!< Duty cycles on channel u - [pu] between -0.5 and 0.5 */

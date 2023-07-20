@@ -21,9 +21,9 @@ __attribute__((interrupt)) void Cla1Task4(void);
 /***********************************************************************
  * VARIABLE DECLARATION
  ***********************************************************************/
-extern mst2slv_msg_t    cmd_msg;
-extern slv2mst_msg_t    status_msg[];
-extern uint16_t         led_msg[LED_MSG_TX_16BIT_LENGTH];
+extern mst2slv_msg_otf_t    cmd_msg;
+extern slv2mst_msg_t        status_msg[];
+extern uint16_t             led_msg[LED_MSG_TX_16BIT_LENGTH];
 
 /** @var    GPIO_TypeDef GpioPinsCfgList[]
  *  @brief  List all the GPIO definitions except the analog pins.
@@ -300,7 +300,8 @@ static const spi_cfg_t  spiCfgList[] =
   .rxLevel          = SPI_FIFO_RX1,
   .intSrc           = 0,
   .highSpeedMode    = false,
-  .intEnable        = false
+  .intSrc           = SPI_INT_RXFF,
+  .intEnable        = true
  },
  {
   .spiBase          = DBG_SPI_BASE,
@@ -352,23 +353,23 @@ static const dma_cfg_t  dmaCfgList[] =
   .intEnable            = false,
  },
  // DMA for SPI communication Rx
- {
-  .dmaChBase            = DMA_COM_SPI_RX_BASE_ADDR,
-  .p_dstAddr            = (uint16_t *) &cmd_msg,
-  .p_srcAddr            = (uint16_t *) COM_SPI_RX_BASE_REG_ADDR,
-  .burstSize            = DMA_COM_SPI_RX_16BIT_BURST_EVT,
-  .transferSize         = DMA_COM_SPI_RX_16BIT_TRANSFER_EVT,
-  .dstWrapSize          = DMA_NO_WRAP,
-  .srcWrapSize          = DMA_NO_WRAP,
-  .dstStep              = DMA_COM_SPI_RX_16BIT_INC_STEP,
-  .srcStep              = 0,
-  .dstWrapStep          = 0,
-  .srcWrapStep          = 0,
-  .config               = DMA_COM_SPI_RX_16BIT_CONFIG,
-  .trigger              = DMA_COM_SPI_RX_TRIGGER_SRC,
-  .intMode              = DMA_INT_AT_END,
-  .intEnable            = false,
- },
+// {
+//  .dmaChBase            = DMA_COM_SPI_RX_BASE_ADDR,
+//  .p_dstAddr            = (uint16_t *) &cmd_msg,
+//  .p_srcAddr            = (uint16_t *) COM_SPI_RX_BASE_REG_ADDR,
+//  .burstSize            = DMA_COM_SPI_RX_16BIT_BURST_EVT,
+//  .transferSize         = DMA_COM_SPI_RX_16BIT_TRANSFER_EVT,
+//  .dstWrapSize          = DMA_NO_WRAP,
+//  .srcWrapSize          = DMA_NO_WRAP,
+//  .dstStep              = DMA_COM_SPI_RX_16BIT_INC_STEP,
+//  .srcStep              = 0,
+//  .dstWrapStep          = 0,
+//  .srcWrapStep          = 0,
+//  .config               = DMA_COM_SPI_RX_16BIT_CONFIG,
+//  .trigger              = DMA_COM_SPI_RX_TRIGGER_SRC,
+//  .intMode              = DMA_INT_AT_END,
+//  .intEnable            = false,
+// },
  // DMA for the RGB LED
  {
   .dmaChBase            = DMA_LED_SPI_TX_BASE_ADDR,

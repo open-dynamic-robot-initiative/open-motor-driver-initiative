@@ -6,7 +6,7 @@
 <mapEntry key="org.eclipse.cdt.debug.ui.memory.memorybrowser.MemoryBrowser@#$Texas Instruments XDS110 USB Debug Probe_0/C28xx_CPU1@#$1" value="16-Bit Hex - TI Style"/>
 </mapAttribute>
 <mapAttribute key="ccs.memoryview.pageexpr">
-<mapEntry key="org.eclipse.cdt.debug.ui.memory.memorybrowser.MemoryBrowser@#$Texas Instruments XDS110 USB Debug Probe/C28xx_CPU1" value="Data@@0x9800"/>
+<mapEntry key="org.eclipse.cdt.debug.ui.memory.memorybrowser.MemoryBrowser@#$Texas Instruments XDS110 USB Debug Probe/C28xx_CPU1" value="Data@@0x8800"/>
 <mapEntry key="org.eclipse.cdt.debug.ui.memory.memorybrowser.MemoryBrowser@#$Texas Instruments XDS110 USB Debug Probe/CPU1_CLA1" value="Data@@0x8000"/>
 <mapEntry key="org.eclipse.cdt.debug.ui.memory.memorybrowser.MemoryBrowser@#$Texas Instruments XDS110 USB Debug Probe_0/C28xx_CPU1" value="Data@@0x88000"/>
 </mapAttribute>
