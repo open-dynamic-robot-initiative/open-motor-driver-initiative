@@ -32,6 +32,7 @@ __attribute__((interrupt)) void cla_isrMotor1(void);
 __attribute__((interrupt)) void cla_isrMotor2(void);
 __attribute__((interrupt)) void tmr_isrLed(void);
 __attribute__((interrupt)) void spi_isrComRx(void);
+__attribute__((interrupt)) void dma_isrComRx(void);
 
 /***********************************************************************
  * VARIABLES
@@ -66,10 +67,15 @@ static const int_cfg_t InterruptList[] =
   .intAckGroup      = INTERRUPT_ACK_GROUP1,
   .p_intHandler     = &tmr_isrLed
  },
+// {
+//  .intNum           = INT_SPIB_RX,
+//  .intAckGroup      = INTERRUPT_ACK_GROUP6,
+//  .p_intHandler     = &spi_isrComRx
+// },
  {
-  .intNum           = INT_SPIB_RX,
-  .intAckGroup      = INTERRUPT_ACK_GROUP6,
-  .p_intHandler     = &spi_isrComRx
+  .intNum           = INT_DMA_CH6,
+  .intAckGroup      = INTERRUPT_ACK_GROUP7,
+  .p_intHandler     = &dma_isrComRx
  },
 // {
 //  .intNum           = INT_EPWM1,

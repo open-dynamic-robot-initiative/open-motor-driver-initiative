@@ -24,13 +24,17 @@
 /***********************************************************************
  * VARIABLES
  ***********************************************************************/
-#pragma DATA_ALIGN(cmd_msg, 4)
-#pragma DATA_SECTION(cmd_msg, "ramgs0")
-mst2slv_msg_otf_t   cmd_msg;
+#pragma DATA_ALIGN(cmd_msg_otf, 4)
+#pragma DATA_SECTION(cmd_msg_otf, "ramgs0")
+mst2slv_msg_otf_t   cmd_msg_otf;
 //= {.msg_rx_state = COM_RX_STATE_MODE,
 //                               .msg_crc32 = UINT32_MAX,
 //                               .msg_tmp = 0U,
 //};
+
+#pragma DATA_ALIGN(cmd_msg, 4)
+#pragma DATA_SECTION(cmd_msg, "ramgs0")
+mst2slv_msg_t       cmd_msg;
 
 #pragma DATA_ALIGN(status_msg, 4)
 #pragma DATA_SECTION(status_msg, "ramgs0")
@@ -64,6 +68,7 @@ extern cmd_t            cmd_uOmodri[2];
  ***********************************************************************/
 static void MCU_ini(void);
 inline void LED_dimming(motor_t*, motor_t*, uint16_t*);
+extern void MOT_initStruct(motor_t*, uint16_t);
 
 /***********************************************************************
  * FUNCTIONS DEFINITION
@@ -75,6 +80,9 @@ void main(void)
 {
     // uOmodri low level device initialization
     MCU_ini();
+    // init shared structure used by CLA & C28
+//    MOT_initStruct(&motor_m1, MOTOR_1);
+//    MOT_initStruct(&motor_m2, MOTOR_2);
     // Hardware Abstraction Layer initialization
     HAL_ini(&hal);
     // DRV8353 initialization
@@ -89,7 +97,7 @@ void main(void)
     COM_resetCmdStruct(&cmd_uOmodri[MOTOR_1]);
     COM_resetCmdStruct(&cmd_uOmodri[MOTOR_2]);
     // Reset the message extraction On-The-Fly structure
-    COM_resetMsgExtractOnTheFlyStruct(&cmd_msg);
+    COM_resetMsgExtractOnTheFlyStruct(&cmd_msg_otf);
     // Infinite loop
     while(1);
 }
@@ -209,10 +217,10 @@ __attribute__((interrupt)) void cla_isrMotor2(void)
     {
         tx_msg_cr   = (tx_msg_cr) ? (0U) : (1U);
         tx_msg_nx   = (tx_msg_cr) ? (0U) : (1U);
-        DMA_configAddresses(DMA_COM_SPI_TX_BASE_ADDR, (uint16_t *) COM_SPI_TX_BASE_REG_ADDR, (uint16_t *) &status_msg[tx_msg_cr].timeStamp);
+        SPI_resetTxFIFO(COM_SPI_BASE);
         // Force first write in SPI_O_DAT
         COM_SPI_DAT(status_msg[tx_msg_cr].status.all);
-        SPI_resetTxFIFO(COM_SPI_BASE);
+        DMA_configAddresses(DMA_COM_SPI_TX_BASE_ADDR, (uint16_t *) COM_SPI_TX_BASE_REG_ADDR, (uint16_t *) &status_msg[tx_msg_cr].timeStamp);
         DMA_startChannel(DMA_COM_SPI_TX_BASE_ADDR);
     }
     Interrupt_clearACKGroup(INTERRUPT_ACK_GROUP11);//InterruptList[1].intAckGroup);
@@ -236,17 +244,44 @@ __attribute__((interrupt)) void tmr_isrLed(void)
 __attribute__((interrupt)) void spi_isrComRx(void)
 {
     while((SPI_getRxFIFOStatus(COM_SPI_BASE)) && (!rx_msg_valid))
-        rx_msg_valid = COM_msgExtractOnTheFly(&cmd_msg, &cmd_uOmodri[MOTOR_1], &cmd_uOmodri[MOTOR_2], SPI_readDataNonBlocking(COM_SPI_BASE));
+        rx_msg_valid = COM_msgExtractOnTheFly(&cmd_msg_otf, &cmd_uOmodri[MOTOR_1], &cmd_uOmodri[MOTOR_2], SPI_readDataNonBlocking(COM_SPI_BASE));
     if(rx_msg_valid)
     {
         cmd_uOmodri[MOTOR_1].cptTimeout = 0U;
         cmd_uOmodri[MOTOR_2].cptTimeout = 0U;
         CLA_forceTasks(CLA1_BASE, CLA_TASKFLAG_2);
         rx_msg_valid                    = false;
-        COM_resetMsgExtractOnTheFlyStruct(&cmd_msg);
+        COM_resetMsgExtractOnTheFlyStruct(&cmd_msg_otf);
     }
     if(COM_SPI_CS_READ)
         SPI_resetRxFIFO(COM_SPI_BASE);
     SPI_clearInterruptStatus(COM_SPI_BASE, SPI_INT_RXFF);// | SPI_INT_RXFF_OVERFLOW);
     Interrupt_clearACKGroup(INTERRUPT_ACK_GROUP6);
 }
+
+__attribute__((interrupt)) void dma_isrComRx(void)
+{
+//    if(!DMA_getRunStatusFlag(DMA_COM_SPI_RX_BASE_ADDR) && GPIO_readPin(COM_SPI_CS_NUM))
+//    {
+        // Prepare SPI and associated DMA for a new receive
+//        SPI_resetRxFIFO(COM_SPI_BASE);
+        DMA_clearTriggerFlag(DMA_COM_SPI_RX_BASE_ADDR);
+        // Extract received message & send new commands to FOC structures if valid
+        rx_msg_valid       = COM_msgExtract(&cmd_msg, &cmd_uOmodri[MOTOR_1], &cmd_uOmodri[MOTOR_2]);
+        // Restart DMA reception
+        DMA_startChannel(DMA_COM_SPI_RX_BASE_ADDR);
+        if(rx_msg_valid)
+            {
+                cmd_uOmodri[MOTOR_1].cptTimeout = 0U;
+                cmd_uOmodri[MOTOR_2].cptTimeout = 0U;
+                CLA_forceTasks(CLA1_BASE, CLA_TASKFLAG_2);
+                rx_msg_valid                    = false;
+//                COM_resetMsgExtractOnTheFlyStruct(&cmd_msg);
+            }
+            if(COM_SPI_CS_READ)
+                SPI_resetRxFIFO(COM_SPI_BASE);
+//            SPI_clearInterruptStatus(COM_SPI_BASE, SPI_INT_RXFF);// | SPI_INT_RXFF_OVERFLOW);
+            Interrupt_clearACKGroup(INTERRUPT_ACK_GROUP7);
+//    }
+}
+

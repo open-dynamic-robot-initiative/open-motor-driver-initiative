@@ -16,7 +16,7 @@
  */
 bool_t COM_msgExtract(mst2slv_msg_t* p_msg, cmd_t* p_cmd_m1, cmd_t* p_cmd_m2)
 {
-    uint32_t crc                        = COM_crc32(0xFFFFFFFF, (uint16_t *) p_msg, COM_MSG_TX_RX_16BIT_PAYLOAD_LENGTH);
+    uint32_t crc                        = COM_crc32(0xFFFFFFFF, (uint16_t *)p_msg, COM_MSG_TX_RX_16BIT_PAYLOAD_LENGTH);
     if((MSB_32(crc) == p_msg->crc.u16_msb) && (LSB_32(crc) == p_msg->crc.u16_lsb))
     {
         int32_t pos_s32                 = (int32_t)FUS_16_TO_32(p_msg->position[MOTOR_1].u16_msb, p_msg->position[MOTOR_1].u16_lsb);
@@ -197,12 +197,7 @@ bool_t COM_msgExtractOnTheFly(mst2slv_msg_otf_t* p_msg, cmd_t* p_cmd_m1, cmd_t* 
  */
 void COM_msgCreate(motor_t* p_motor_m1, motor_t* p_motor_m2, slv2mst_msg_t* p_msg)
 {
-#if (CLA_CORE_ENABLE)
-//    foc_t* p_foc                        = (foc_t *)p_motor_m1->p_foc.ptr;
     foc_t* p_foc                        = &p_motor_m1->foc;
-#else
-    foc_t* p_foc                        = p_motor_m1->p_foc;
-#endif
     encoder_t* p_enc                    = &p_foc->enc;
     cmd_reg_u cmd_reg                   = {.all = p_foc->cmd.cmdBits.all};
     float32_t theta_index_comp          = (cmd_reg.encOffsetEnable) ? (p_enc->thetaIndexAbsolute) : (0.0f);
@@ -226,12 +221,7 @@ void COM_msgCreate(motor_t* p_motor_m1, motor_t* p_motor_m2, slv2mst_msg_t* p_ms
     p_msg->lastCmdIndex                 = p_foc->cmd.index;
     p_msg->timeStamp                    = (uint16_t)CPUTimer_getTimerCount(CPU_TIMER_0_BASE);
 
-#if (CLA_CORE_ENABLE)
-//    p_foc                               = (foc_t *)p_motor_m2->p_foc.ptr;
     p_foc                               = &p_motor_m2->foc;
-#else
-    p_foc                               = p_motor_m2->p_foc;
-#endif
     p_enc                               = &p_foc->enc;
     cmd_reg.all                         = p_foc->cmd.cmdBits.all;
     theta_index_comp                    = (cmd_reg.encOffsetEnable) ? (p_enc->thetaIndexAbsolute) : (0.0f);
