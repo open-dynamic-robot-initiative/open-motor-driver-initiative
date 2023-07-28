@@ -222,7 +222,7 @@
 #define DBG_PIN3_READ                           (HWREG(GPIODATA_BASE + GPIO_O_GPCDAT) & GPIO_GPCDAT_GPIO77)
 #define DBG_PIN2_NUM                            (78)
 #define DBG_PIN2_CFG                            GPIO_78_GPIO78
-#define DBG_PIN2_CORE                           GPIO_CORE_CPU1_CLA1
+#define DBG_PIN2_CORE                           GPIO_CORE_CPU1
 #define DBG_PIN2_SET                            (HWREG(GPIODATA_BASE + GPIO_O_GPCSET)   = GPIO_GPCSET_GPIO78)
 #define DBG_PIN2_CLEAR                          (HWREG(GPIODATA_BASE + GPIO_O_GPCCLEAR) = GPIO_GPCCLEAR_GPIO78)
 #define DBG_PIN2_TOGGLE                         (HWREG(GPIODATA_BASE + GPIO_O_GPCTOGGLE)= GPIO_GPCTOGGLE_GPIO78)
@@ -236,7 +236,7 @@
 #define DBG_PIN1_READ                           (HWREG(GPIODATA_BASE + GPIO_O_GPCDAT) & GPIO_GPCDAT_GPIO81)
 #define DBG_PIN0_NUM                            (82)
 #define DBG_PIN0_CFG                            GPIO_82_GPIO82
-#define DBG_PIN0_CORE                           GPIO_CORE_CPU1
+#define DBG_PIN0_CORE                           GPIO_CORE_CPU1_CLA1
 #define DBG_PIN0_SET                            (HWREG(GPIODATA_BASE + GPIO_O_GPCSET)   = GPIO_GPCSET_GPIO82)
 #define DBG_PIN0_CLEAR                          (HWREG(GPIODATA_BASE + GPIO_O_GPCCLEAR) = GPIO_GPCCLEAR_GPIO82)
 #define DBG_PIN0_TOGGLE                         (HWREG(GPIODATA_BASE + GPIO_O_GPCTOGGLE)= GPIO_GPCTOGGLE_GPIO82)

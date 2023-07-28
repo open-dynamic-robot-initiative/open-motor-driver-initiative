@@ -7,31 +7,18 @@
 * INCLUDES
 ***********************************************************************/
 #include "uomodri_user_defines.h"
-#if (!CLA1_TEST_CORE_ENABLE) && (CLA_CORE_ENABLE)
-//#include "CLAmath.h"
 #include "uOmodri_shared.h"
-#endif
-//#include "f2838x_device.h"
-//#include "driverlib.h"
 
 /***********************************************************************
  * VARIABLES
  ***********************************************************************/
-#if (CLA_CORE_ENABLE)
-//extern foc_t    motor_foc_m1;
-//extern foc_t    motor_foc_m2;
 extern motor_t  motor_m1;
 extern motor_t  motor_m2;
 extern cmd_t    cmd_uOmodri[];
-//extern bool_t ch_extract;
-#elif (CLA1_TEST_CORE_ENABLE)
-uint16_t i;
-#endif
 
 /***********************************************************************
  * DEFINES
  ***********************************************************************/
-#define MAX_LOOP    (10)
 
 /***********************************************************************
  * FUNCTIONS DECLARATION
@@ -42,54 +29,24 @@ uint16_t i;
  ***********************************************************************/
 __attribute__((interrupt)) void Cla1Task1(void)
 {
-//    __mdebugstop();
-//    DBG_PIN2_SET;
+#if defined (DEBUG)
+    DBG_PIN1_SET;
+    __mdebugstop();
+#endif
     // Initialize motors structures
     MOT_initStruct(&motor_m1, MOTOR_1);
     MOT_initStruct(&motor_m2, MOTOR_2);
-//    DBG_PIN2_CLEAR;
+#if defined (DEBUG)
+    DBG_PIN1_CLEAR;
+#endif
 }
 
 __attribute__((interrupt)) void Cla1Task2(void)
 {
-#if (0)
-    if((cmd_uOmodri[MOTOR_1].cmdArray.all & 0x0B) == 0x0B)
-        cmd_uOmodri[MOTOR_1].posRef += ((foc_t *)(motor_m1.p_foc.ptr))->motor_enc.thetaIndexAbsolute;
-    if((cmd_uOmodri[MOTOR_2].cmdArray.all & 0x0B) == 0x0B)
-        cmd_uOmodri[MOTOR_2].posRef += ((foc_t *)(motor_m2.p_foc.ptr))->motor_enc.thetaIndexAbsolute;
-
-    ((foc_t *)(motor_m1.p_foc.ptr))->motor_cmd = cmd_uOmodri[MOTOR_1];
-    ((foc_t *)(motor_m2.p_foc.ptr))->motor_cmd = cmd_uOmodri[MOTOR_2];
-#else
-//    DBG_PIN1_SET;
-//    __mdebugstop();
-//    if((cmd_uOmodri[MOTOR_1].cmdBits.all & CMD_POSITION_OFFSET_COMP) == CMD_POSITION_OFFSET_COMP)
-//        cmd_uOmodri[MOTOR_1].posRef += ((foc_t *)(motor_m1.p_foc.ptr))->motor_enc.thetaIndexAbsolute;
-//    ((foc_t *)(motor_m1.p_foc.ptr))->motor_cmd.posRef       = cmd_uOmodri[MOTOR_1].posRef;
-//    ((foc_t *)(motor_m1.p_foc.ptr))->motor_cmd.velRef       = cmd_uOmodri[MOTOR_1].velRef;
-//    ((foc_t *)(motor_m1.p_foc.ptr))->motor_cmd.iqff         = cmd_uOmodri[MOTOR_1].iqff;
-//    ((foc_t *)(motor_m1.p_foc.ptr))->motor_cmd.kpCoeff      = cmd_uOmodri[MOTOR_1].kpCoeff;
-//    ((foc_t *)(motor_m1.p_foc.ptr))->motor_cmd.kdCoeff      = cmd_uOmodri[MOTOR_1].kdCoeff;
-//    ((foc_t *)(motor_m1.p_foc.ptr))->motor_cmd.iSat         = cmd_uOmodri[MOTOR_1].iSat;
-//    ((foc_t *)(motor_m1.p_foc.ptr))->motor_cmd.timeoutRef   = cmd_uOmodri[MOTOR_1].timeoutRef;
-//    ((foc_t *)(motor_m1.p_foc.ptr))->motor_cmd.cptTimeout   = cmd_uOmodri[MOTOR_1].cptTimeout;
-//    ((foc_t *)(motor_m1.p_foc.ptr))->motor_cmd.index        = cmd_uOmodri[MOTOR_1].index;
-//    ((foc_t *)(motor_m1.p_foc.ptr))->motor_cmd.cmdBits      = cmd_uOmodri[MOTOR_1].cmdBits;
-//
-//    if((cmd_uOmodri[MOTOR_2].cmdBits.all & CMD_POSITION_OFFSET_COMP) == CMD_POSITION_OFFSET_COMP)
-//        cmd_uOmodri[MOTOR_2].posRef += ((foc_t *)(motor_m2.p_foc.ptr))->motor_enc.thetaIndexAbsolute;
-//    ((foc_t *)(motor_m2.p_foc.ptr))->motor_cmd.posRef       = cmd_uOmodri[MOTOR_2].posRef;
-//    ((foc_t *)(motor_m2.p_foc.ptr))->motor_cmd.velRef       = cmd_uOmodri[MOTOR_2].velRef;
-//    ((foc_t *)(motor_m2.p_foc.ptr))->motor_cmd.iqff         = cmd_uOmodri[MOTOR_2].iqff;
-//    ((foc_t *)(motor_m2.p_foc.ptr))->motor_cmd.kpCoeff      = cmd_uOmodri[MOTOR_2].kpCoeff;
-//    ((foc_t *)(motor_m2.p_foc.ptr))->motor_cmd.kdCoeff      = cmd_uOmodri[MOTOR_2].kdCoeff;
-//    ((foc_t *)(motor_m2.p_foc.ptr))->motor_cmd.iSat         = cmd_uOmodri[MOTOR_2].iSat;
-//    ((foc_t *)(motor_m2.p_foc.ptr))->motor_cmd.timeoutRef   = cmd_uOmodri[MOTOR_2].timeoutRef;
-//    ((foc_t *)(motor_m2.p_foc.ptr))->motor_cmd.cptTimeout   = cmd_uOmodri[MOTOR_2].cptTimeout;
-//    ((foc_t *)(motor_m2.p_foc.ptr))->motor_cmd.index        = cmd_uOmodri[MOTOR_2].index;
-//    ((foc_t *)(motor_m2.p_foc.ptr))->motor_cmd.cmdBits      = cmd_uOmodri[MOTOR_2].cmdBits;
-//    DBG_PIN1_CLEAR;
-
+#if defined (DEBUG)
+    DBG_PIN1_SET;
+    __mdebugstop();
+#endif
     if((cmd_uOmodri[MOTOR_1].cmdBits.all & CMD_POSITION_OFFSET_COMP) == CMD_POSITION_OFFSET_COMP)
         cmd_uOmodri[MOTOR_1].posRef+= motor_m1.foc.enc.thetaIndexAbsolute;
     motor_m1.foc.cmd.posRef         = cmd_uOmodri[MOTOR_1].posRef;
@@ -115,27 +72,35 @@ __attribute__((interrupt)) void Cla1Task2(void)
     motor_m2.foc.cmd.cptTimeout     = cmd_uOmodri[MOTOR_2].cptTimeout;
     motor_m2.foc.cmd.index          = cmd_uOmodri[MOTOR_2].index;
     motor_m2.foc.cmd.cmdBits        = cmd_uOmodri[MOTOR_2].cmdBits;
+#if defined (DEBUG)
+    DBG_PIN1_CLEAR;
 #endif
 }
 
 __attribute__((interrupt)) void Cla1Task3(void)
 {
-    DBG_PIN1_SET;
+#if defined (DEBUG)
+    DBG_PIN0_SET;
     __mdebugstop();
+#endif
     // Motor control
-//    motor_m1.itDone = MOT_runControl(&motor_m1);
     MOT_runControl(&motor_m1);
-    DBG_PIN1_CLEAR;
+#if defined (DEBUG)
+    DBG_PIN0_CLEAR;
+#endif
 }
 
 __attribute__((interrupt)) void Cla1Task4(void)
 {
-    DBG_PIN2_SET;
+#if defined (DEBUG)
+    DBG_PIN0_SET;
     __mdebugstop();
+#endif
     // Motor control
-//    motor_m2.itDone = MOT_runControl(&motor_m2);
     MOT_runControl(&motor_m2);
-    DBG_PIN2_CLEAR;
+#if defined (DEBUG)
+    DBG_PIN0_CLEAR;
+#endif
 }
 
 __attribute__((interrupt)) void Cla1Task5(void)
