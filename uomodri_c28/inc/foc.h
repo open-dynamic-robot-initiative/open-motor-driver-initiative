@@ -263,6 +263,8 @@ typedef struct __foc_t__
 #define CMD_ROLLOVER_EN_MASK        (1 << CMD_ROLLOVER_EN_POS)
 #define CMD_ENCODER_OFFSET_POS      (3)
 #define CMD_ENCODER_OFFSET_MASK     (1 << CMD_ENCODER_OFFSET_POS)
+#define CMD_TIMEOUT_EN_POS          (4)
+#define CMD_TIMEOUT_EN_MASK         (1 << CMD_TIMEOUT_EN_POS)
 #define CMD_POSITION_OFFSET_COMP    (CMD_SYSTEM_EN_MASK | CMD_MOTOR_EN_MASK | CMD_ENCODER_OFFSET_MASK)
 
 /***********************************************************************
