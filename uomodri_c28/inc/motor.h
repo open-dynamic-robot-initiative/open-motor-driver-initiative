@@ -70,24 +70,18 @@ typedef union __error_reg_u__
  */
 typedef struct __motor_t__
 {
-#if (CLA_CORE_ENABLE)
     foc_t                       foc;                    /*!< FOC structure associated to the motor */
-#else
-    foc_t* const                p_foc;                  /*!< Pointer on the FOC structure associated to the motor */
-#endif
     uint32_t                    itCnt;                  /*!< Event counter incrementing on every IT call */
     uint32_t                    epwmBase[3];            /*!< Address array for the PWM peripherals associated to the motor control */
     uint32_t                    drvFaultNum;            /*!< GPIO associated to the DRV fault line */
     uint32_t                    drvEnNum;               /*!< GPIO associated to the DRV enable line */
     uint32_t                    clCycleNb;
-    float32_t                   statorResEst;           /*!< Q-axis resistance estimation. [Ohm] */
-    lpf_t                       statorResEstFlt;        /*!< Resistance estimation low-pass filter */
-#if (CLA_CORE_ENABLE)
+    struct
+    {
+        float32_t               statorResEst;           /*!< Q-axis resistance estimation. [Ohm] */
+        lpf_t                   statorResEstFlt;        /*!< Resistance estimation low-pass filter */
+    };
     uint16_t                    id;                     /*!< Motor identification */
-#else
-    volatile uint16_t* const    p_cmdReg[3];            /*!< PWM address register for FOC command */
-    const uint16_t              motor_id;               /*!< Motor identification */
-#endif
     uint16_t                    state;                  /*!< Current motor state for the FSM. */
     error_reg_u                 error;                  /*!< Bit field for the error sources. */
 } motor_t;
@@ -95,5 +89,6 @@ typedef struct __motor_t__
 /***********************************************************************
  * FUNCTIONS DECLARATION
  ***********************************************************************/
+void MOT_initStruct(motor_t*, uint16_t);
 
 #endif /* __MOTOR_H__ */

@@ -61,8 +61,8 @@ void main(void)
     // uOmodri low level device initialization
     MCU_ini();
     // init shared structure used by CLA & C28
-//    MOT_initStruct(&motor_m1, MOTOR_1);
-//    MOT_initStruct(&motor_m2, MOTOR_2);
+    MOT_initStruct(&motor_m1, MOTOR_1);
+    MOT_initStruct(&motor_m2, MOTOR_2);
     // Hardware Abstraction Layer initialization
     HAL_ini(&hal);
     // DRV8353 initialization
@@ -219,54 +219,31 @@ __attribute__((interrupt)) void tmr_isrLed(void)
     // Timeout management
     cmd_uOmodri[MOTOR_1].cptTimeout++;
     cmd_uOmodri[MOTOR_2].cptTimeout++;
-    CLA_forceTasks(CLA1_BASE, CLA_TASKFLAG_2);
+    CLA_forceTasks(CLA1_BASE, CLA_TASKFLAG_1);
     Interrupt_clearACKGroup(INTERRUPT_ACK_GROUP1);
 }
 
-//__attribute__((interrupt)) void spi_isrComRx(void)
-//{
-//    while((SPI_getRxFIFOStatus(COM_SPI_BASE)) && (!rx_msg_valid))
-//        rx_msg_valid = COM_msgExtractOnTheFly(&cmd_msg_otf, &cmd_uOmodri[MOTOR_1], &cmd_uOmodri[MOTOR_2], SPI_readDataNonBlocking(COM_SPI_BASE));
-//    if(rx_msg_valid)
-//    {
-//        cmd_uOmodri[MOTOR_1].cptTimeout = 0U;
-//        cmd_uOmodri[MOTOR_2].cptTimeout = 0U;
-//        CLA_forceTasks(CLA1_BASE, CLA_TASKFLAG_2);
-//        rx_msg_valid                    = false;
-//        COM_resetMsgExtractOnTheFlyStruct(&cmd_msg_otf);
-//    }
-//    if(COM_SPI_CS_READ)
-//        SPI_resetRxFIFO(COM_SPI_BASE);
-//    SPI_clearInterruptStatus(COM_SPI_BASE, SPI_INT_RXFF);// | SPI_INT_RXFF_OVERFLOW);
-//    Interrupt_clearACKGroup(INTERRUPT_ACK_GROUP6);
-//}
-
 __attribute__((interrupt)) void dma_isrComRx(void)
 {
-//    if(!DMA_getRunStatusFlag(DMA_COM_SPI_RX_BASE_ADDR) && GPIO_readPin(COM_SPI_CS_NUM))
-//    {
-        // Prepare SPI and associated DMA for a new receive
-//        SPI_resetRxFIFO(COM_SPI_BASE);
+#if defined (DEBUG)
     DBG_PIN3_SET;
-    DMA_clearTriggerFlag(DMA_COM_SPI_RX_BASE_ADDR);
-        // Extract received message & send new commands to FOC structures if valid
-//        rx_msg_valid       = COM_msgExtract(&cmd_msg, &cmd_uOmodri[MOTOR_1], &cmd_uOmodri[MOTOR_2]);
-
-        if(COM_msgExtract(&cmd_msg, &cmd_uOmodri[MOTOR_1], &cmd_uOmodri[MOTOR_2]))
-            {
-                cmd_uOmodri[MOTOR_1].cptTimeout = 0U;
-                cmd_uOmodri[MOTOR_2].cptTimeout = 0U;
-                CLA_forceTasks(CLA1_BASE, CLA_TASKFLAG_2);
-//                rx_msg_valid                    = false;
-//                COM_resetMsgExtractOnTheFlyStruct(&cmd_msg);
-            }
-        // Restart DMA reception
-        DMA_startChannel(DMA_COM_SPI_RX_BASE_ADDR);
-//            if(COM_SPI_CS_READ)
-                SPI_resetRxFIFO(COM_SPI_BASE);
-//            SPI_clearInterruptStatus(COM_SPI_BASE, SPI_INT_RXFF);// | SPI_INT_RXFF_OVERFLOW);
-            Interrupt_clearACKGroup(INTERRUPT_ACK_GROUP7);
-//    }
-            DBG_PIN3_CLEAR;
+#endif
+    // Extract received message & send new commands to FOC structures if valid
+    if(COM_msgExtract(&cmd_msg, &cmd_uOmodri[MOTOR_1], &cmd_uOmodri[MOTOR_2]))
+    {
+        cmd_uOmodri[MOTOR_1].cptTimeout = 0U;
+        cmd_uOmodri[MOTOR_2].cptTimeout = 0U;
+        CLA_forceTasks(CLA1_BASE, CLA_TASKFLAG_1);
+    }
+    // Restart DMA reception
+    DMA_startChannel(DMA_COM_SPI_RX_BASE_ADDR);
+    // Reset the SPI Rx fifo
+    SPI_resetRxFIFO(COM_SPI_BASE);
+    // Clear IT flag
+    Interrupt_clearACKGroup(INTERRUPT_ACK_GROUP7);
+    //    }
+#if defined (DEBUG)
+    DBG_PIN3_CLEAR;
+#endif
 }
 

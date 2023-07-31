@@ -23,25 +23,19 @@ extern cmd_t    cmd_uOmodri[];
 /***********************************************************************
  * FUNCTIONS DECLARATION
  ***********************************************************************/
+__attribute__((interrupt)) void cmdNew_Task(void);
+__attribute__((interrupt)) void motor1_Task(void);
+__attribute__((interrupt)) void motor2_Task(void);
+__attribute__((interrupt)) void Cla1Task4(void);
+__attribute__((interrupt)) void Cla1Task5(void);
+__attribute__((interrupt)) void Cla1Task6(void);
+__attribute__((interrupt)) void Cla1Task7(void);
+__attribute__((interrupt)) void Cla1Task8(void);
 
 /***********************************************************************
  * FUNCTIONS DEFINITION
  ***********************************************************************/
-__attribute__((interrupt)) void Cla1Task1(void)
-{
-#if defined (DEBUG)
-    DBG_PIN1_SET;
-    __mdebugstop();
-#endif
-    // Initialize motors structures
-    MOT_initStruct(&motor_m1, MOTOR_1);
-    MOT_initStruct(&motor_m2, MOTOR_2);
-#if defined (DEBUG)
-    DBG_PIN1_CLEAR;
-#endif
-}
-
-__attribute__((interrupt)) void Cla1Task2(void)
+__attribute__((interrupt)) void cmdNew_Task(void)
 {
 #if defined (DEBUG)
     DBG_PIN1_SET;
@@ -77,7 +71,7 @@ __attribute__((interrupt)) void Cla1Task2(void)
 #endif
 }
 
-__attribute__((interrupt)) void Cla1Task3(void)
+__attribute__((interrupt)) void motor1_Task(void)
 {
 #if defined (DEBUG)
     DBG_PIN0_SET;
@@ -90,7 +84,7 @@ __attribute__((interrupt)) void Cla1Task3(void)
 #endif
 }
 
-__attribute__((interrupt)) void Cla1Task4(void)
+__attribute__((interrupt)) void motor2_Task(void)
 {
 #if defined (DEBUG)
     DBG_PIN0_SET;
@@ -101,6 +95,11 @@ __attribute__((interrupt)) void Cla1Task4(void)
 #if defined (DEBUG)
     DBG_PIN0_CLEAR;
 #endif
+}
+
+__attribute__((interrupt)) void Cla1Task4(void)
+{
+
 }
 
 __attribute__((interrupt)) void Cla1Task5(void)

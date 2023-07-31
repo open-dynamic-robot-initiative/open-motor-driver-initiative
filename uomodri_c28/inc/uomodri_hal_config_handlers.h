@@ -13,10 +13,9 @@
 /***********************************************************************
  * FUNCTIONS DECLARATION
  ***********************************************************************/
-__attribute__((interrupt)) void Cla1Task1(void);
-__attribute__((interrupt)) void Cla1Task2(void);
-__attribute__((interrupt)) void Cla1Task3(void);
-__attribute__((interrupt)) void Cla1Task4(void);
+extern __attribute__((interrupt)) void cmdNew_Task(void);
+extern __attribute__((interrupt)) void motor1_Task(void);
+extern __attribute__((interrupt)) void motor2_Task(void);
 
 /***********************************************************************
  * VARIABLE DECLARATION
@@ -301,7 +300,6 @@ static const spi_cfg_t  spiCfgList[] =
   .rxLevel          = SPI_FIFO_RX1,
   .intSrc           = 0,
   .highSpeedMode    = false,
-  .intSrc           = SPI_INT_RXFF,
   .intEnable        = false
  },
  {
@@ -437,37 +435,27 @@ static const cla_cfg_t  claCfgList[] =
   .claTaskNum           = CLA_TASK_1,
   .claIntVect           = CLA_MVECT_1,
   .claTrigSrc           = CLA_TRIGGER_SOFTWARE,
-  .p_claFunc            = &Cla1Task1,
-  .claForceTask         = true,
- },
- {
-  .progRAM              = MEMCFG_SECT_LS3 | MEMCFG_SECT_LS4 | MEMCFG_SECT_LS5 | MEMCFG_SECT_LS6 | MEMCFG_SECT_LS7,
-  .dataRAM              = MEMCFG_SECT_LS0 | MEMCFG_SECT_LS1 | MEMCFG_SECT_LS2,
-  .claTaskFlg           = CLA_TASKFLAG_2,
-  .claTaskNum           = CLA_TASK_2,
-  .claIntVect           = CLA_MVECT_2,
-  .claTrigSrc           = CLA_TRIGGER_SOFTWARE,
-  .p_claFunc            = &Cla1Task2,
+  .p_claFunc            = &cmdNew_Task,
   .claForceTask         = false,
  },
  {
   .progRAM              = MEMCFG_SECT_LS3 | MEMCFG_SECT_LS4 | MEMCFG_SECT_LS5 | MEMCFG_SECT_LS6 | MEMCFG_SECT_LS7,
   .dataRAM              = MEMCFG_SECT_LS0 | MEMCFG_SECT_LS2,
-  .claTaskFlg           = CLA_TASKFLAG_3,
-  .claTaskNum           = CLA_TASK_3,
-  .claIntVect           = CLA_MVECT_3,
+  .claTaskFlg           = CLA_TASKFLAG_2,
+  .claTaskNum           = CLA_TASK_2,
+  .claIntVect           = CLA_MVECT_2,
   .claTrigSrc           = CLA_TRIGGER_ADCA1,
-  .p_claFunc            = &Cla1Task3,
+  .p_claFunc            = &motor1_Task,
   .claForceTask         = false,
  },
  {
   .progRAM              = MEMCFG_SECT_LS3 | MEMCFG_SECT_LS4 | MEMCFG_SECT_LS5 | MEMCFG_SECT_LS6 | MEMCFG_SECT_LS7,
   .dataRAM              = MEMCFG_SECT_LS1 | MEMCFG_SECT_LS2,
-  .claTaskFlg           = CLA_TASKFLAG_4,
-  .claTaskNum           = CLA_TASK_4,
-  .claIntVect           = CLA_MVECT_4,
+  .claTaskFlg           = CLA_TASKFLAG_3,
+  .claTaskNum           = CLA_TASK_3,
+  .claIntVect           = CLA_MVECT_3,
   .claTrigSrc           = CLA_TRIGGER_ADCA2,
-  .p_claFunc            = &Cla1Task4,
+  .p_claFunc            = &motor2_Task,
   .claForceTask         = false,
  },
  {.p_claFunc            = NULL},
