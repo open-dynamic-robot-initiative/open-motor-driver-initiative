@@ -1,6 +1,9 @@
 /***********************************************************************
  * INCLUDES
  ***********************************************************************/
+#include <stdlib.h>
+#include "vcu2/vcu2_crc.h"
+
 #include "uomodri_user_defines.h"
 #include "communication.h"
 
@@ -14,9 +17,10 @@
  * @param[out]      p_cmd_m2    Pointer on the command structure used for MOTOR_2 control(actions to be realized by motor_foc).
  * @return          Is message received from Master board valid or not ?
  */
-bool_t COM_msgExtract(mst2slv_msg_t* p_msg, cmd_t* p_cmd_m1, cmd_t* p_cmd_m2)
+bool_t COM_msgExtract(mst2slv_msg_t* p_msg, mst2slv_msg_t* p_swap, cmd_t* p_cmd_m1, cmd_t* p_cmd_m2)
 {
-    uint32_t crc                        = COM_crc32(0xFFFFFFFF, (uint16_t *)p_msg, COM_MSG_TX_RX_16BIT_PAYLOAD_LENGTH);
+    COM_msgSwapEndian((uint16_t *)p_msg, (uint16_t *)p_swap, COM_MSG_TX_RX_16BIT_PAYLOAD_LENGTH);
+    uint32_t crc                        = COM_vcrc32((uint16_t *)p_swap, COM_MSG_TX_RX_16BIT_PAYLOAD_LENGTH);
     if((MSB_32(crc) == p_msg->crc.u16_msb) && (LSB_32(crc) == p_msg->crc.u16_lsb))
     {
         int32_t pos_s32                 = (int32_t)FUS_16_TO_32(p_msg->position[MOTOR_1].u16_msb, p_msg->position[MOTOR_1].u16_lsb);
@@ -190,12 +194,13 @@ bool_t COM_msgExtractOnTheFly(mst2slv_msg_otf_t* p_msg, cmd_t* p_cmd_m1, cmd_t* 
 }
 
 /**
- * @brief	        Slave to Master message creation/update using motor_foc data structure.
- * @param[in]       p_motor_m1  Pointer on data structure used for MOTOR_1 control.
- * @param[in]       p_motor_m2  Pointer on data structure used for MOTOR_1 control.
- * @param[inout]    p_msg       Pointer on the message to transmit to the Master board
+ * @brief           Slave to Master message creation/update.
+ * @param[in]       *p_motor_m1 Pointer on data structure used for MOTOR_1 control.
+ * @param[in]       *p_motor_m2 Pointer on data structure used for MOTOR_2 control.
+ * @param[inout]    *p_msg      Pointer on the message to transmit to the Master board.
+ * @param[inout]    *p_swap     Pointer on the temporary message necessary for CRC computation.
  */
-void COM_msgCreate(motor_t* p_motor_m1, motor_t* p_motor_m2, slv2mst_msg_t* p_msg)
+void COM_msgCreate(motor_t* p_motor_m1, motor_t* p_motor_m2, slv2mst_msg_t* p_msg, slv2mst_msg_t* p_swap)
 {
     foc_t* p_foc                        = &p_motor_m1->foc;
     encoder_t* p_enc                    = &p_foc->enc;
@@ -253,14 +258,21 @@ void COM_msgCreate(motor_t* p_motor_m1, motor_t* p_motor_m2, slv2mst_msg_t* p_ms
     p_msg->status.ERROR_CODE            = (p_err[MOTOR_2]->enc_alignErr)? (STATUS_ERROR_ENCODER2)           : (p_msg->status.ERROR_CODE);
 
     // Compute CRC
-    uint32_t crc = COM_crc32(0xFFFFFFFF, (uint16_t *)p_msg, COM_MSG_TX_RX_16BIT_PAYLOAD_LENGTH);
+    COM_msgSwapEndian((uint16_t *)p_msg, (uint16_t *)p_swap, COM_MSG_TX_RX_16BIT_PAYLOAD_LENGTH);
+    uint32_t crc                        = COM_vcrc32((uint16_t *)p_swap, COM_MSG_TX_RX_16BIT_PAYLOAD_LENGTH);
     p_msg->crc.u16_msb                  = LSB_32(crc);              // required for Solo
     p_msg->crc.u16_lsb                  = MSB_32(crc);
 
     return;
 }
 
-bool_t COM_msgCreateLite(motor_t* p_motor, slv2mst_msg_t* p_msg)
+/**
+ * @brief           Slave to Master message creation/update. IT Call.
+ * @param[in]       *p_motor    Pointer on current data structure used for control.
+ * @param[inout]    *p_msg      Pointer on the message to transmit to the Master board.
+ * @param[inout]    *p_swap     Pointer on the temporary message necessary for CRC computation.
+ */
+bool_t COM_msgCreateIT(motor_t* p_motor, slv2mst_msg_t* p_msg, slv2mst_msg_t* p_swap)
 {
     foc_t* p_foc                        = &p_motor->foc;
     encoder_t* p_enc                    = &p_foc->enc;
@@ -315,7 +327,8 @@ bool_t COM_msgCreateLite(motor_t* p_motor, slv2mst_msg_t* p_msg)
         p_msg->status.ERROR_CODE        = (motor_err.enc_alignErr)  ? (STATUS_ERROR_ENCODER2)           : (p_msg->status.ERROR_CODE);
 
         // Compute CRC
-        uint32_t crc = COM_crc32(0xFFFFFFFF, (uint16_t *)p_msg, COM_MSG_TX_RX_16BIT_PAYLOAD_LENGTH);
+        COM_msgSwapEndian((uint16_t *)p_msg, (uint16_t *)p_swap, COM_MSG_TX_RX_16BIT_PAYLOAD_LENGTH);
+        uint32_t crc                    = COM_vcrc32((uint16_t *)p_swap, COM_MSG_TX_RX_16BIT_PAYLOAD_LENGTH);
         p_msg->crc.u16_msb              = LSB_32(crc);              // required for Solo
         p_msg->crc.u16_lsb              = MSB_32(crc);
 
@@ -367,25 +380,50 @@ uint32_t COM_crc32(uint32_t seed, uint16_t* p_buf, uint16_t len)
   uint32_t crc = seed;
   while(len--)
     {
-      crc = (crc << 8) ^ crc32_table[((crc >> 24) ^ MSB_16(*p_buf)) & 0xFF];
-      crc = (crc << 8) ^ crc32_table[((crc >> 24) ^ LSB_16(*p_buf)) & 0xFF];
+      crc = (crc << 8) ^ crc32_table_normal[((crc >> 24) ^ MSB_16(*p_buf)) & 0xFF];
+      crc = (crc << 8) ^ crc32_table_normal[((crc >> 24) ^ LSB_16(*p_buf)) & 0xFF];
       p_buf++;
     }
 
   return(crc);
 }
 
+
 /**
- * @brief           Software cyclic redundancy check (CRC) using predefined array. Used with COM_msgExtract_cla.
- *                  CRC computed at each new state
- * @param[in]       data    Value to be added into CRC.
- * @param[inout]    crc     Current state of CRC.
- * @return          New computed value of CRC.
+ * @brief           Endianness conversion. Swap bytes in a message.
+ * @param[in]       *p_msg  Pointer on the message to swap.
+ * @param[out]      *p_swap Pointer on the swapped message.
+ * @param[in]       length  Number of elements to be swapped.
  */
-//uint32_t COM_crc32_cla(mst2slv_msg_t* p_msg)
-//{
-//    p_msg->msg_crc32    = (p_msg->msg_crc32 << 8) ^ crc32_table[((p_msg->msg_crc32 >> 24) ^ MSB_16(p_msg->msg_rx)) & 0xFF];
-//    p_msg->msg_crc32    = (p_msg->msg_crc32 << 8) ^ crc32_table[((p_msg->msg_crc32 >> 24) ^ LSB_16(p_msg->msg_rx)) & 0xFF];
-//
-//    return(p_msg->msg_crc32);
-//}
+void COM_msgSwapEndian(uint16_t* p_msg, uint16_t* p_swap, uint16_t length)
+{
+    uint16_t i;
+
+    for(i = 0; i < length; i++)
+        *p_swap++ = (*p_msg << 8) | (*p_msg++ >> 8);
+
+    return;
+}
+
+/**
+ * @brief           Software cyclic redundancy check (CRC) using the VCRC assembly code accelerator.
+ * @param[in]       *p_msg  Pointer on the message to compute.
+ * @param[in]       length  Number of elements necessary for CRC computation.
+ * @return          New CRC result.
+ */
+uint32_t COM_vcrc32(uint16_t* p_msg, uint16_t length)
+{
+    CRC_Obj crc;
+    // Initialize the CRC object
+    crc.seedValue   = CRC_INIT_CRC32;
+    crc.nMsgBytes   = 2 * length;
+    crc.parity      = CRC_parity_even;
+    crc.crcResult   = 0;
+    crc.pMsgBuffer  = (uint16_t *)p_msg;
+    crc.init        = (void (*)(void *))CRC_init32Bit;
+    crc.run         = (void (*)(void *))CRC_run32BitPoly1;
+    // Run the CRC module with the VCRC assembly code
+    crc.init(&crc);
+    crc.run(&crc);
+    return(crc.crcResult);
+}

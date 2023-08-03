@@ -54,5 +54,9 @@
 			<name>SYSCONFIG_TOOL</name>
 			<value>file:/C:/STM32Toolchain/TI/ccs1000/ccs/utils/sysconfig_1.12.1/sysconfig_cli.bat</value>
 		</variable>
+		<variable>
+			<name>VCU_ROOT</name>
+			<value>file:/C:/STM32Toolchain/TI/c2000/C2000Ware_4_03_00_00/libraries/dsp/VCU/c28</value>
+		</variable>
 	</variableList>
 </projectDescription>

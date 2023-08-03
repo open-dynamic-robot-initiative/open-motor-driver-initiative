@@ -25,9 +25,15 @@
 #pragma DATA_ALIGN(rx_msg, 4)
 #pragma DATA_SECTION(rx_msg, "ramgs0")
 mst2slv_msg_t           rx_msg;
+#pragma DATA_ALIGN(rx_swap, 4)
+#pragma DATA_SECTION(rx_swap, "ramgs0")
+mst2slv_msg_t           rx_swap;
 #pragma DATA_ALIGN(tx_msg, 4)
 #pragma DATA_SECTION(tx_msg, "ramgs0")
 slv2mst_msg_t           tx_msg[2];
+#pragma DATA_ALIGN(tx_swap, 4)
+#pragma DATA_SECTION(tx_swap, "ramgs0")
+slv2mst_msg_t           tx_swap;
 #pragma DATA_ALIGN(led_msg, 4)
 #pragma DATA_SECTION(led_msg, "ramgs0")
 uint16_t                led_msg[LED_MSG_TX_16BIT_LENGTH];
@@ -181,7 +187,7 @@ inline void LED_dimming(motor_t* p_motor1, motor_t* p_motor2, uint16_t* p_msg)
 __attribute__((interrupt)) void cla_isrMotor1(void)
 {
     DBG_PIN2_SET;
-    COM_msgCreateLite(&motor_m1, &tx_msg[tx_msg_nx]);
+    COM_msgCreateIT(&motor_m1, &tx_msg[tx_msg_nx], NULL);
     Interrupt_clearACKGroup(INTERRUPT_ACK_GROUP11);//InterruptList[0].intAckGroup);
     DBG_PIN2_CLEAR;
 }
@@ -189,7 +195,7 @@ __attribute__((interrupt)) void cla_isrMotor1(void)
 __attribute__((interrupt)) void cla_isrMotor2(void)
 {
     DBG_PIN2_SET;
-    COM_msgCreateLite(&motor_m2, &tx_msg[tx_msg_nx]);
+    COM_msgCreateIT(&motor_m2, &tx_msg[tx_msg_nx], &tx_swap);
     if(!DMA_getRunStatusFlag(DMA_COM_SPI_TX_BASE_ADDR) && COM_SPI_CS_READ)
     {
         tx_msg_cr   = (tx_msg_cr) ? (0U) : (1U);
@@ -206,9 +212,9 @@ __attribute__((interrupt)) void cla_isrMotor2(void)
 
 __attribute__((interrupt)) void tmr_isrLed(void)
 {
-#if defined (DEBUG)
-    DBG_PIN3_SET;
-#endif
+//#if defined (DEBUG)
+//    DBG_PIN3_SET;
+//#endif
     // LED dimming control
     if(!DMA_getRunStatusFlag(DMA_LED_SPI_TX_BASE_ADDR))
     {
@@ -220,9 +226,9 @@ __attribute__((interrupt)) void tmr_isrLed(void)
     cmd_uOmodri[MOTOR_2].cptTimeout++;
     CLA_forceTasks(CLA1_BASE, CLA_TASKFLAG_1);
     Interrupt_clearACKGroup(INTERRUPT_ACK_GROUP1);
-#if defined (DEBUG)
-    DBG_PIN3_CLEAR;
-#endif
+//#if defined (DEBUG)
+//    DBG_PIN3_CLEAR;
+//#endif
 }
 
 __attribute__((interrupt)) void dma_isrComRx(void)
@@ -231,7 +237,7 @@ __attribute__((interrupt)) void dma_isrComRx(void)
     DBG_PIN3_SET;
 #endif
     // Extract received message & send new commands to FOC structures if valid
-    if(COM_msgExtract(&rx_msg, &cmd_uOmodri[MOTOR_1], &cmd_uOmodri[MOTOR_2]))
+    if(COM_msgExtract(&rx_msg, &rx_swap, &cmd_uOmodri[MOTOR_1], &cmd_uOmodri[MOTOR_2]))
     {
         cmd_uOmodri[MOTOR_1].cptTimeout = 0U;
         cmd_uOmodri[MOTOR_2].cptTimeout = 0U;

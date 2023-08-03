@@ -665,13 +665,15 @@ typedef struct __com_dbg_rx_msg_t__
  * FUNCTIONS DECLARATION
  ***********************************************************************/
 #ifdef CPU1
-bool_t COM_msgExtract(mst2slv_msg_t*,  cmd_t*, cmd_t*);
+bool_t COM_msgExtract(mst2slv_msg_t*, mst2slv_msg_t*, cmd_t*, cmd_t*);
 bool_t COM_msgExtractOnTheFly(mst2slv_msg_otf_t*, cmd_t*, cmd_t*, uint16_t);
-void COM_msgCreate(motor_t*, motor_t*, slv2mst_msg_t*);
-bool_t COM_msgCreateLite(motor_t*, slv2mst_msg_t*);
+void COM_msgCreate(motor_t*, motor_t*, slv2mst_msg_t*, slv2mst_msg_t*);
+bool_t COM_msgCreateIT(motor_t*, slv2mst_msg_t*, slv2mst_msg_t*);
 void COM_resetCmdStruct(cmd_t*);
 void COM_resetMsgExtractOnTheFlyStruct(mst2slv_msg_otf_t*);
 uint32_t COM_crc32(uint32_t, uint16_t*, uint16_t);
+void COM_msgSwapEndian(uint16_t*, uint16_t*, uint16_t);
+uint32_t COM_vcrc32(uint16_t*, uint16_t);
 #else
 void COM_msgDbgTx(dbg_uart_addr_t*, dbg_uart_msg_t*);
 //void COM_msgDbgTx(com_dbg_tx_msg_t*, uint8_t);
