@@ -26,11 +26,6 @@
 	</natures>
 	<linkedResources>
 		<link>
-			<name>driverlib_cm.lib</name>
-			<type>1</type>
-			<locationURI>C2000WARE_ROOT/driverlib/f2838x/driverlib_cm/ccs/Debug/driverlib_cm.lib</locationURI>
-		</link>
-		<link>
 			<name>inc/communication.h</name>
 			<type>1</type>
 			<locationURI>PARENT-1-PROJECT_LOC/uomodri_c28/inc/communication.h</locationURI>
