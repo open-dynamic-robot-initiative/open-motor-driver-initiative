@@ -26,8 +26,6 @@
 /***********************************************************************
  * FUNCTIONS DECLARATION
  ***********************************************************************/
-//__attribute__((interrupt)) void adc_isrMotor1(void);
-//__attribute__((interrupt)) void adc_isrMotor2(void);
 __attribute__((interrupt)) void cla_isrMotor1(void);
 __attribute__((interrupt)) void cla_isrMotor2(void);
 __attribute__((interrupt)) void tmr_isrLed(void);
@@ -42,24 +40,24 @@ __attribute__((interrupt)) void dma_isrComRx(void);
 static const int_cfg_t InterruptList[] =
 {
  {
-  .intNum           = INT_CLA1_2,
-  .intAckGroup      = INTERRUPT_ACK_GROUP11,
-  .p_intHandler     = &cla_isrMotor1
+  .intNum           = INT_CLA_MOTOR1,
+  .intAckGroup      = INT_CLA_MOTOR1_GROUP,
+  .p_intHandler     = INT_CLA_MOTOR1_HANDLER
  },
  {
-  .intNum           = INT_CLA1_3,
-  .intAckGroup      = INTERRUPT_ACK_GROUP11,
-  .p_intHandler     = &cla_isrMotor2
+  .intNum           = INT_CLA_MOTOR2,
+  .intAckGroup      = INT_CLA_MOTOR2_GROUP,
+  .p_intHandler     = INT_CLA_MOTOR2_HANDLER
  },
  {
-  .intNum           = INT_TIMER0,
-  .intAckGroup      = INTERRUPT_ACK_GROUP1,
-  .p_intHandler     = &tmr_isrLed
+  .intNum           = INT_TIMER_LED,
+  .intAckGroup      = INT_TIMER_LED_GROUP,
+  .p_intHandler     = INT_TIMER_LED_HANDLER
  },
  {
-  .intNum           = INT_DMA_CH6,
-  .intAckGroup      = INTERRUPT_ACK_GROUP7,
-  .p_intHandler     = &dma_isrComRx
+  .intNum           = INT_DMA_RX_MSG,
+  .intAckGroup      = INT_DMA_RX_MSG_GROUP,
+  .p_intHandler     = INT_DMA_RX_MSG_HANDLER
  },
  // END OF ARRAY
  {.intNum           = UINT32_MAX},

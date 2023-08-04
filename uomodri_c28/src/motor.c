@@ -7,6 +7,11 @@
 /***********************************************************************
  * FUNCTIONS DEFINITIONS
  ***********************************************************************/
+/**
+ * @brief           Global structure initialization for MOTOR_1 \& MOTOR_2
+ * @param           *p_motor    Pointer on the associated motor structure
+ * @param           motor_id    Motor identifier.
+ */
 void MOT_initStruct(motor_t* p_motor, uint16_t motor_id)
 {
     if(motor_id == MOTOR_1)

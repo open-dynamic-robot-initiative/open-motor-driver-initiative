@@ -184,18 +184,27 @@ inline void LED_dimming(motor_t* p_motor1, motor_t* p_motor2, uint16_t* p_msg)
     return;
 }
 
+/***********************************************************************
+ * INTERRUPT FUNCTIONS DEFINITION
+ ***********************************************************************/
 __attribute__((interrupt)) void cla_isrMotor1(void)
 {
+#if defined (DEBUG)
     DBG_PIN2_SET;
-    COM_msgCreateIT(&motor_m1, &tx_msg[tx_msg_nx], NULL);
-    Interrupt_clearACKGroup(INTERRUPT_ACK_GROUP11);//InterruptList[0].intAckGroup);
+#endif
+    COM_msgCreate(&motor_m1, &tx_msg[tx_msg_nx], NULL);
+    Interrupt_clearACKGroup(INT_CLA_MOTOR1_GROUP);
+#if defined (DEBUG)
     DBG_PIN2_CLEAR;
+#endif
 }
 
 __attribute__((interrupt)) void cla_isrMotor2(void)
 {
+#if defined (DEBUG)
     DBG_PIN2_SET;
-    COM_msgCreateIT(&motor_m2, &tx_msg[tx_msg_nx], &tx_swap);
+#endif
+    COM_msgCreate(&motor_m2, &tx_msg[tx_msg_nx], &tx_swap);
     if(!DMA_getRunStatusFlag(DMA_COM_SPI_TX_BASE_ADDR) && COM_SPI_CS_READ)
     {
         tx_msg_cr   = (tx_msg_cr) ? (0U) : (1U);
@@ -206,15 +215,17 @@ __attribute__((interrupt)) void cla_isrMotor2(void)
         DMA_configAddresses(DMA_COM_SPI_TX_BASE_ADDR, (uint16_t *) COM_SPI_TX_BASE_REG_ADDR, (uint16_t *) &tx_msg[tx_msg_cr].timeStamp);
         DMA_startChannel(DMA_COM_SPI_TX_BASE_ADDR);
     }
-    Interrupt_clearACKGroup(INTERRUPT_ACK_GROUP11);//InterruptList[1].intAckGroup);
+    Interrupt_clearACKGroup(INT_CLA_MOTOR2_GROUP);
+#if defined (DEBUG)
     DBG_PIN2_CLEAR;
+#endif
 }
 
 __attribute__((interrupt)) void tmr_isrLed(void)
 {
-//#if defined (DEBUG)
-//    DBG_PIN3_SET;
-//#endif
+#if defined (DEBUG)
+    DBG_PIN3_SET;
+#endif
     // LED dimming control
     if(!DMA_getRunStatusFlag(DMA_LED_SPI_TX_BASE_ADDR))
     {
@@ -225,10 +236,10 @@ __attribute__((interrupt)) void tmr_isrLed(void)
     cmd_uOmodri[MOTOR_1].cptTimeout++;
     cmd_uOmodri[MOTOR_2].cptTimeout++;
     CLA_forceTasks(CLA1_BASE, CLA_TASKFLAG_1);
-    Interrupt_clearACKGroup(INTERRUPT_ACK_GROUP1);
-//#if defined (DEBUG)
-//    DBG_PIN3_CLEAR;
-//#endif
+    Interrupt_clearACKGroup(INT_TIMER_LED_GROUP);
+#if defined (DEBUG)
+    DBG_PIN3_CLEAR;
+#endif
 }
 
 __attribute__((interrupt)) void dma_isrComRx(void)
@@ -248,8 +259,7 @@ __attribute__((interrupt)) void dma_isrComRx(void)
     // Reset the SPI Rx fifo
     SPI_resetRxFIFO(COM_SPI_BASE);
     // Clear IT flag
-    Interrupt_clearACKGroup(INTERRUPT_ACK_GROUP7);
-    //    }
+    Interrupt_clearACKGroup(INT_DMA_RX_MSG_GROUP);
 #if defined (DEBUG)
     DBG_PIN3_CLEAR;
 #endif

@@ -1242,6 +1242,22 @@
 #define VEXT_LPF_ONE_M_ALPHA                    (1.0f - VEXT_LPF_ALPHA)
 
 /***********************************************************************
+ * INTERRUPTS DEFINES
+ ***********************************************************************/
+#define INT_CLA_MOTOR1                          INT_CLA1_2
+#define INT_CLA_MOTOR1_GROUP                    INTERRUPT_ACK_GROUP11
+#define INT_CLA_MOTOR1_HANDLER                  &cla_isrMotor1
+#define INT_CLA_MOTOR2                          INT_CLA1_3
+#define INT_CLA_MOTOR2_GROUP                    INTERRUPT_ACK_GROUP11
+#define INT_CLA_MOTOR2_HANDLER                  &cla_isrMotor2
+#define INT_TIMER_LED                           INT_TIMER0
+#define INT_TIMER_LED_GROUP                     INTERRUPT_ACK_GROUP1
+#define INT_TIMER_LED_HANDLER                   &tmr_isrLed
+#define INT_DMA_RX_MSG                          INT_DMA_CH6
+#define INT_DMA_RX_MSG_GROUP                    INTERRUPT_ACK_GROUP7
+#define INT_DMA_RX_MSG_HANDLER                  &dma_isrComRx
+
+/***********************************************************************
  * COMMUNICATION DEFINES
  ***********************************************************************/
 #define COM_MSG_TX_RX_8BIT_FULL_LENGTH          (34)

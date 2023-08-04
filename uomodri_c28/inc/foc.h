@@ -238,8 +238,8 @@ typedef struct __foc_t__
     struct
     {
         float32_t       initPosStep;    /*!< Initial position to force a rotor movement during alignment - [RAD] */
-        float32_t       initPosCnt;     /*!< Initial position to force a rotor movement during alignment - [RAD] */
-        float32_t       initFixCnt;     /*!< Initial position to force a rotor movement during alignment - [RAD] */
+        uint32_t        initPosCnt;     /*!< Initial position to force a rotor movement during alignment - [RAD] */
+        uint32_t        initFixCnt;     /*!< Initial position to force a rotor movement during alignment - [RAD] */
         float32_t       initPosEnc[2];  /*!< Initial positions of theta electric during alignment (forward \& reverse) - [RAD] */
         float32_t       initDiff;
         float32_t       initErr[2];
