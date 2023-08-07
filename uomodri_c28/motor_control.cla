@@ -1,0 +1,127 @@
+/*
+ * File name: motor_control.cla
+ * Description: Source file containing motor control functions running on CLA processor.
+ */
+
+/***********************************************************************
+* INCLUDES
+***********************************************************************/
+#include "uomodri_user_defines.h"
+#include "uOmodri_shared.h"
+
+/***********************************************************************
+ * VARIABLES
+ ***********************************************************************/
+extern motor_t  motor_m1;
+extern motor_t  motor_m2;
+extern cmd_t    cmd_uOmodri[];
+
+/***********************************************************************
+ * DEFINES
+ ***********************************************************************/
+
+/***********************************************************************
+ * FUNCTIONS DECLARATION
+ ***********************************************************************/
+__attribute__((interrupt)) void cmdNew_Task(void);
+__attribute__((interrupt)) void motor1_Task(void);
+__attribute__((interrupt)) void motor2_Task(void);
+__attribute__((interrupt)) void Cla1Task4(void);
+__attribute__((interrupt)) void Cla1Task5(void);
+__attribute__((interrupt)) void Cla1Task6(void);
+__attribute__((interrupt)) void Cla1Task7(void);
+__attribute__((interrupt)) void Cla1Task8(void);
+
+/***********************************************************************
+ * FUNCTIONS DEFINITION
+ ***********************************************************************/
+__attribute__((interrupt)) void cmdNew_Task(void)
+{
+#if defined (DEBUG)
+    DBG_PIN1_SET;
+    __mdebugstop();
+#endif
+    if((cmd_uOmodri[MOTOR_1].cmdBits.all & CMD_POSITION_OFFSET_COMP) == CMD_POSITION_OFFSET_COMP)
+        motor_m1.foc.cmd.posRef = cmd_uOmodri[MOTOR_1].posRef + motor_m1.foc.enc.thetaIndexAbsolute;
+    else
+        motor_m1.foc.cmd.posRef = cmd_uOmodri[MOTOR_1].posRef;
+    motor_m1.foc.cmd.velRef     = cmd_uOmodri[MOTOR_1].velRef;
+    motor_m1.foc.cmd.iqff       = cmd_uOmodri[MOTOR_1].iqff;
+    motor_m1.foc.cmd.kpCoeff    = cmd_uOmodri[MOTOR_1].kpCoeff;
+    motor_m1.foc.cmd.kdCoeff    = cmd_uOmodri[MOTOR_1].kdCoeff;
+    motor_m1.foc.cmd.iSat       = cmd_uOmodri[MOTOR_1].iSat;
+    motor_m1.foc.cmd.timeoutRef = cmd_uOmodri[MOTOR_1].timeoutRef;
+    motor_m1.foc.cmd.cptTimeout = cmd_uOmodri[MOTOR_1].cptTimeout;
+    motor_m1.foc.cmd.index      = cmd_uOmodri[MOTOR_1].index;
+    motor_m1.foc.cmd.cmdBits    = cmd_uOmodri[MOTOR_1].cmdBits;
+
+    if((cmd_uOmodri[MOTOR_2].cmdBits.all & CMD_POSITION_OFFSET_COMP) == CMD_POSITION_OFFSET_COMP)
+        motor_m2.foc.cmd.posRef = cmd_uOmodri[MOTOR_2].posRef + motor_m2.foc.enc.thetaIndexAbsolute;
+    else
+        motor_m2.foc.cmd.posRef = cmd_uOmodri[MOTOR_2].posRef;
+    motor_m2.foc.cmd.velRef     = cmd_uOmodri[MOTOR_2].velRef;
+    motor_m2.foc.cmd.iqff       = cmd_uOmodri[MOTOR_2].iqff;
+    motor_m2.foc.cmd.kpCoeff    = cmd_uOmodri[MOTOR_2].kpCoeff;
+    motor_m2.foc.cmd.kdCoeff    = cmd_uOmodri[MOTOR_2].kdCoeff;
+    motor_m2.foc.cmd.iSat       = cmd_uOmodri[MOTOR_2].iSat;
+    motor_m2.foc.cmd.timeoutRef = cmd_uOmodri[MOTOR_2].timeoutRef;
+    motor_m2.foc.cmd.cptTimeout = cmd_uOmodri[MOTOR_2].cptTimeout;
+    motor_m2.foc.cmd.index      = cmd_uOmodri[MOTOR_2].index;
+    motor_m2.foc.cmd.cmdBits    = cmd_uOmodri[MOTOR_2].cmdBits;
+#if defined (DEBUG)
+    DBG_PIN1_CLEAR;
+#endif
+}
+
+__attribute__((interrupt)) void motor1_Task(void)
+{
+#if defined (DEBUG)
+    DBG_PIN0_SET;
+    __mdebugstop();
+#endif
+    // Motor control
+    MOT_runControl(&motor_m1);
+#if defined (DEBUG)
+    DBG_PIN0_CLEAR;
+#endif
+}
+
+__attribute__((interrupt)) void motor2_Task(void)
+{
+#if defined (DEBUG)
+    DBG_PIN0_SET;
+    __mdebugstop();
+#endif
+    // Motor control
+    MOT_runControl(&motor_m2);
+#if defined (DEBUG)
+    DBG_PIN0_CLEAR;
+#endif
+}
+
+__attribute__((interrupt)) void Cla1Task4(void)
+{
+
+}
+
+__attribute__((interrupt)) void Cla1Task5(void)
+{
+
+}
+
+__attribute__((interrupt)) void Cla1Task6(void)
+{
+
+}
+
+__attribute__((interrupt)) void Cla1Task7(void)
+{
+
+}
+
+__attribute__((interrupt)) void Cla1Task8(void)
+{
+
+}
+
+// End of file

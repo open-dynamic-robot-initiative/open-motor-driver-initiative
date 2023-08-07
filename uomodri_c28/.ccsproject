@@ -12,7 +12,7 @@
 	<createSlaveProjects value=""/>
 	<templateProperties value="id=com.ti.common.project.core.emptyProjectWithMainTemplate"/>
 	<filesToOpen value="main.c"/>
-	<isTargetManual value="false"/>
+	<isTargetManual value="true"/>
 	<connection value="common/targetdb/connections/TIXDS110_Connection.xml"/>
 	<sourceLookupPath value=""/>
 </projectOptions>
