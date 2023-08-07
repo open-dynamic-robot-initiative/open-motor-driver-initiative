@@ -190,136 +190,18 @@ static const periph_motor_cfg_t periph_motor_cfg[] =
  },
 };
 
-#if (CLA_CORE_ENABLE)
 #pragma DATA_ALIGN(cmd_uOmodri, 4)
 #pragma DATA_SECTION(cmd_uOmodri, "MSGRAM_CPU_TO_CLA")
 cmd_t cmd_uOmodri[2];
-#else
-#pragma DATA_ALIGN(cmd_uOmodri, 4)
-#pragma DATA_SECTION(cmd_uOmodri, "ramgs0");
-static cmd_t cmd_uOmodri[2] =
-
-{
- {
-  .posRef           = 0.0f,
-  .velRef           = 0.0f,
-  .iqff             = 0.0f,
-  .kpCoeff          = 0.0f,
-  .kdCoeff          = 0.0f,
-  .iSat             = 0.0f,
-  .timeoutRef       = 0U,
-  .cptTimeout       = 0U,
-  .index            = 0U,
-  .cmdArray.all     = 0U,
- },
- {
-  .posRef           = 0.0f,
-  .velRef           = 0.0f,
-  .iqff             = 0.0f,
-  .kpCoeff          = 0.0f,
-  .kdCoeff          = 0.0f,
-  .iSat             = 0.0f,
-  .timeoutRef       = 0U,
-  .cptTimeout       = 0U,
-  .index            = 0U,
-  .cmdArray.all     = 0U,
- },
-};
-#endif
 
 /** @var    MOTOR_STRUCT    motor[]
  *  @brief  General structure array configuration structure for the Hardware Abstraction Layer.
  */
-#if (CLA_CORE_ENABLE)
 #pragma DATA_ALIGN(motor_m1, 4)
 #pragma DATA_SECTION(motor_m1, "ClaDataRam0");
 motor_t motor_m1;
 #pragma DATA_ALIGN(motor_m2, 4)
 #pragma DATA_SECTION(motor_m2, "ClaDataRam1");
 motor_t motor_m2;
-#else
-#pragma DATA_ALIGN(motor, 4)
-#pragma DATA_SECTION(motor, "ramgs0");
-static motor_t motor[2] =
-{
- {
-  //--- MOTOR_1 ---------------------------------------------------------------
-  .motor_id                                 = MOTOR_1,
-  //--- FOC structure address -------------------------------------------------
-  .p_foc                                    = &motor_foc[MOTOR_1],
-  //--- FSM motor initial state -----------------------------------------------
-  .motor_state                              = MOTOR_STATE_START,
-  //--- Error message ---------------------------------------------------------
-  .motor_error.all                          = 0,
-  //---------------------------------------------------------------------------
-  .clCycleNb                                = 0,
-  .itCnt                                    = 0U,
-  .itDone                                   = false,
-  //--- DRV IO Config ---------------------------------------------------------
-  .drvFaultNum                              = MOTOR1_DRV_FAULT_NUM,
-  .drvEnNum                                 = MOTOR1_DRV_EN_NUM,
-  //---- PWM config address ---------------------------------------------------
-  .epwmBaseAddr[CHANNEL_1]                  = MOTOR1_PWM1_BASE,
-  .epwmBaseAddr[CHANNEL_2]                  = MOTOR1_PWM2_BASE,
-  .epwmBaseAddr[CHANNEL_3]                  = MOTOR1_PWM3_BASE,
-  //---- PWM command address --------------------------------------------------
-  .p_cmdReg[CHANNEL_1]                      = (volatile uint16_t *)(MOTOR1_PWM1_CMD_ADDR),
-  .p_cmdReg[CHANNEL_2]                      = (volatile uint16_t *)(MOTOR1_PWM2_CMD_ADDR),
-  .p_cmdReg[CHANNEL_3]                      = (volatile uint16_t *)(MOTOR1_PWM3_CMD_ADDR),
- },
- {
-  //--- MOTOR_1 ---------------------------------------------------------------
-  .motor_id                                 = MOTOR_2,
-  //--- FOC structure address -------------------------------------------------
-  .p_foc                                    = &motor_foc[MOTOR_2],
-  //--- FSM motor initial state -----------------------------------------------
-  .motor_state                              = MOTOR_STATE_START,
-  //--- Error message ---------------------------------------------------------
-  .motor_error.all                          = 0,
-  //---------------------------------------------------------------------------
-  .clCycleNb                                = 0,
-  .itCnt                                    = 0U,
-  .itDone                                   = false,
-  //--- DRV IO Config ---------------------------------------------------------
-  .drvFaultNum                              = MOTOR2_DRV_FAULT_NUM,
-  .drvEnNum                                 = MOTOR2_DRV_EN_NUM,
-  //---- PWM periph config address --------------------------------------------
-  .epwmBaseAddr[CHANNEL_1]                  = MOTOR2_PWM1_BASE,
-  .epwmBaseAddr[CHANNEL_2]                  = MOTOR2_PWM2_BASE,
-  .epwmBaseAddr[CHANNEL_3]                  = MOTOR2_PWM3_BASE,
-  //---- PWM command reg address ----------------------------------------------
-  .p_cmdReg[CHANNEL_1]                      = (volatile uint16_t *)(MOTOR2_PWM1_CMD_ADDR),
-  .p_cmdReg[CHANNEL_2]                      = (volatile uint16_t *)(MOTOR2_PWM2_CMD_ADDR),
-  .p_cmdReg[CHANNEL_3]                      = (volatile uint16_t *)(MOTOR2_PWM3_CMD_ADDR),
- },
-};
-#endif
-
-static const dma_cfg_t  dmaMem2MemCfgList[] =
-{
- // DMA base register initialization
- // DMA to duplicate message from uOmodri command struct to foc struct.
-#if (!CLA_CORE_ENABLE)
- {
-  .dmaChBase        = DMA_CMD_2_FOC_BASE_ADDR,
-  .p_dstAddr        = (uint16_t *)&motor_foc[MOTOR_1].motor_cmd,
-  .dstStep          = 1,
-  .p_srcAddr        = (uint16_t *)&cmd_uOmodri[MOTOR_1],
-  .srcStep          = 1,
-  .burstSize        = sizeof(cmd_t),
-  .transferSize     = 2,//DMA_MEM_TO_MEM_M1_16BIT_TRANSFER_EVT,
-  .dstWrapStep      = sizeof(foc_t),
-  .dstWrapSize      = 1,
-  .srcWrapStep      = sizeof(cmd_t),
-  .srcWrapSize      = 1,
-  .config           = DMA_CFG_ONESHOT_ENABLE | DMA_CFG_CONTINUOUS_ENABLE | DMA_CFG_SIZE_16BIT,
-  .trigger          = DMA_TRIGGER_SOFTWARE,
-  .intMode          = DMA_INT_AT_END,
-  .intEnable        = false,
- },
-#endif
- // END OF ARRAY
- {.dmaChBase        = UINT32_MAX},
-};
 
 #endif  /*__UOMODRI_PRJ_CONFIG_HANDLERS_H__*/

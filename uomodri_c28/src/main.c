@@ -22,6 +22,7 @@
 /***********************************************************************
  * VARIABLES
  ***********************************************************************/
+// Variable in GS0
 #pragma DATA_ALIGN(rx_msg, 4)
 #pragma DATA_SECTION(rx_msg, "ramgs0")
 mst2slv_msg_t           rx_msg;
@@ -37,10 +38,10 @@ slv2mst_msg_t           tx_swap;
 #pragma DATA_ALIGN(led_msg, 4)
 #pragma DATA_SECTION(led_msg, "ramgs0")
 uint16_t                led_msg[LED_MSG_TX_16BIT_LENGTH];
-
+// Local variables
 uint16_t                tx_msg_cr = 0U;
 uint16_t                tx_msg_nx = 1U;
-
+// External variables
 extern motor_t          motor_m1;
 extern motor_t          motor_m2;
 extern const hal_cfg_t  hal;
@@ -62,7 +63,7 @@ void main(void)
 {
     // uOmodri low level device initialization
     MCU_ini();
-    // init shared structure used by CLA & C28
+    // Shared structure initialization used by CLA & C28
     MOT_initStruct(&motor_m1, MOTOR_1);
     MOT_initStruct(&motor_m2, MOTOR_2);
     // Hardware Abstraction Layer initialization
@@ -142,23 +143,20 @@ static void MCU_ini(void)
  */
 inline void LED_dimming(motor_t* p_motor1, motor_t* p_motor2, uint16_t* p_msg)
 {
-    static uint16_t timer_cpt_ms    = 0;
-    float32_t       timer_fade_blink= (float32_t)((timer_cpt_ms < 500)  ? (timer_cpt_ms)    : (1000 - timer_cpt_ms)) / 500.0f;
-    float32_t       timer_blink     = (timer_cpt_ms < 500)              ? (0.0f)            : (1.0f);
-    timer_cpt_ms                    = (timer_cpt_ms < 1000)             ? (timer_cpt_ms + 1): (0);
-    uint8_t         motor_state     = MOTOR_STATE_IDLE;
+    static uint16_t timer_cpt_ms        = 0;
+    float32_t       timer_fade_blink    = (float32_t)((timer_cpt_ms < 500)  ? (timer_cpt_ms)    : (1000 - timer_cpt_ms)) / 500.0f;
+    float32_t       timer_blink         = (timer_cpt_ms < 500)              ? (0.0f)            : (1.0f);
+    timer_cpt_ms                        = (timer_cpt_ms < 1000)             ? (timer_cpt_ms + 1): (0);
+    uint16_t        motor_state         = MOTOR_STATE_IDLE;
+    uint16_t        u16_timer_fade_blink= (uint16_t)(0xff * timer_fade_blink);
 
-    if((p_motor1->state == MOTOR_STATE_IDLE)            || (p_motor2->state == MOTOR_STATE_IDLE))
+    if((p_motor1->state == MOTOR_STATE_IDLE)    || (p_motor2->state == MOTOR_STATE_IDLE))
         motor_state = MOTOR_STATE_IDLE;
-    else if((p_motor1->state == MOTOR_STATE_INIT_FW)    || (p_motor1->state == MOTOR_STATE_INIT_REV)    ||
-            (p_motor1->state == MOTOR_STATE_INIT_TEST)  || (p_motor1->state == MOTOR_STATE_INIT_FIX)    ||
-            (p_motor2->state == MOTOR_STATE_INIT_FW)    || (p_motor2->state == MOTOR_STATE_INIT_REV)    ||
-            (p_motor2->state == MOTOR_STATE_INIT_TEST)  || (p_motor2->state == MOTOR_STATE_INIT_FIX))
+    else if((p_motor1->state & MOTOR_STATE_INIT)|| (p_motor2->state & MOTOR_STATE_INIT))
         motor_state = MOTOR_STATE_INIT_FIX;
-    else if((p_motor1->state == MOTOR_STATE_READY)      || (p_motor1->state == MOTOR_STATE_STOP)        ||
-            (p_motor2->state == MOTOR_STATE_READY)      || (p_motor2->state == MOTOR_STATE_STOP))
+    else if((p_motor1->state & MOTOR_STATE_OK)  || (p_motor2->state & MOTOR_STATE_OK))
         motor_state = MOTOR_STATE_READY;
-    if((p_motor1->state == MOTOR_STATE_ERROR)           || (p_motor2->state == MOTOR_STATE_ERROR))
+    if((p_motor1->state == MOTOR_STATE_ERROR)   || (p_motor2->state == MOTOR_STATE_ERROR))
         motor_state = MOTOR_STATE_ERROR;
 
     switch(motor_state)
@@ -167,44 +165,48 @@ inline void LED_dimming(motor_t* p_motor1, motor_t* p_motor2, uint16_t* p_msg)
     case MOTOR_STATE_INIT_REV:
     case MOTOR_STATE_INIT_TEST:
     case MOTOR_STATE_INIT_FIX:
-        ws2812b_writeLed((uint16_t)(0xff * timer_fade_blink), 0, (uint16_t)(0xff * timer_fade_blink), p_msg); //Magenta fade,
+        ws2812b_writeLed(u16_timer_fade_blink, 0, u16_timer_fade_blink, p_msg); //Magenta fade,
         break;
     case MOTOR_STATE_READY:
     case MOTOR_STATE_STOP:
-        ws2812b_writeLed(0, (uint16_t)(0xff * timer_fade_blink), 0, p_msg);//Green fade, Active control
+        ws2812b_writeLed(0, u16_timer_fade_blink, 0, p_msg);//Green fade, Active control
         break;
     case MOTOR_STATE_ERROR:
         ws2812b_writeLed((uint16_t)(0xff * timer_blink), 0, 0, p_msg);//red fade, error control
         break;
     case MOTOR_STATE_IDLE:
     default:
-        ws2812b_writeLed(0,  0, (uint16_t)(0xff * timer_fade_blink), p_msg);//blue fade
+        ws2812b_writeLed(0,  0, u16_timer_fade_blink, p_msg);//blue fade
     }
 
     return;
 }
 
 /***********************************************************************
- * INTERRUPT HANDLING FUNCTIONS DEFINITION
+ * INTERRUPT HANDLING FUNCTIONS DEFINITIONS
  ***********************************************************************/
 __attribute__((interrupt)) void cla_isrMotor1(void)
 {
-#if defined (DEBUG)
+#ifdef DEBUG
     DBG_PIN2_SET;
 #endif
+    // Create partially the Tx message
     COM_msgCreate(&motor_m1, &tx_msg[tx_msg_nx], NULL);
+    // Clear IT
     Interrupt_clearACKGroup(INT_CLA_MOTOR1_GROUP);
-#if defined (DEBUG)
+#ifdef DEBUG
     DBG_PIN2_CLEAR;
 #endif
 }
 
 __attribute__((interrupt)) void cla_isrMotor2(void)
 {
-#if defined (DEBUG)
+#ifdef DEBUG
     DBG_PIN2_SET;
 #endif
+    // Finalize the Tx message
     COM_msgCreate(&motor_m2, &tx_msg[tx_msg_nx], &tx_swap);
+    // Check that SPI is free for transmit
     if(!DMA_getRunStatusFlag(DMA_COM_SPI_TX_BASE_ADDR) && COM_SPI_CS_READ)
     {
         tx_msg_cr   = (tx_msg_cr) ? (0U) : (1U);
@@ -215,15 +217,16 @@ __attribute__((interrupt)) void cla_isrMotor2(void)
         DMA_configAddresses(DMA_COM_SPI_TX_BASE_ADDR, (uint16_t *) COM_SPI_TX_BASE_REG_ADDR, (uint16_t *) &tx_msg[tx_msg_cr].timeStamp);
         DMA_startChannel(DMA_COM_SPI_TX_BASE_ADDR);
     }
+    // Clear IT
     Interrupt_clearACKGroup(INT_CLA_MOTOR2_GROUP);
-#if defined (DEBUG)
+#ifdef DEBUG
     DBG_PIN2_CLEAR;
 #endif
 }
 
 __attribute__((interrupt)) void tmr_isrLed(void)
 {
-#if defined (DEBUG)
+#ifdef DEBUG
     DBG_PIN3_SET;
 #endif
     // LED dimming control
@@ -237,14 +240,14 @@ __attribute__((interrupt)) void tmr_isrLed(void)
     cmd_uOmodri[MOTOR_2].cptTimeout++;
     CLA_forceTasks(CLA1_BASE, CLA_TASKFLAG_1);
     Interrupt_clearACKGroup(INT_TIMER_LED_GROUP);
-#if defined (DEBUG)
+#ifdef DEBUG
     DBG_PIN3_CLEAR;
 #endif
 }
 
 __attribute__((interrupt)) void dma_isrComRx(void)
 {
-#if defined (DEBUG)
+#ifdef DEBUG
     DBG_PIN3_SET;
 #endif
     // Extract received message & send new commands to FOC structures if valid
@@ -260,7 +263,7 @@ __attribute__((interrupt)) void dma_isrComRx(void)
     SPI_resetRxFIFO(COM_SPI_BASE);
     // Clear IT flag
     Interrupt_clearACKGroup(INT_DMA_RX_MSG_GROUP);
-#if defined (DEBUG)
+#ifdef DEBUG
     DBG_PIN3_CLEAR;
 #endif
 }

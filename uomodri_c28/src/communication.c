@@ -65,7 +65,6 @@ bool_t COM_msgExtract(mst2slv_msg_t* p_msg, mst2slv_msg_t* p_swap, cmd_t* p_cmd_
     return(false);
 }
 
-#if (CLA_CORE_ENABLE)
 /**
  * @brief           Slave to Master message creation/update. IT Call.
  * @param[in]       *p_motor    Pointer on current data structure used for control.
@@ -135,81 +134,6 @@ bool_t COM_msgCreate(motor_t* p_motor, slv2mst_msg_t* p_msg, slv2mst_msg_t* p_sw
         return(true);
     }
 }
-
-#else
-/**
- * @brief           Slave to Master message creation/update.
- * @param[in]       *p_motor_m1 Pointer on data structure used for MOTOR_1 control.
- * @param[in]       *p_motor_m2 Pointer on data structure used for MOTOR_2 control.
- * @param[inout]    *p_msg      Pointer on the message to transmit to the Master board.
- * @param[inout]    *p_swap     Pointer on the temporary message necessary for CRC computation.
- */
-void COM_msgCreate(motor_t* p_motor_m1, motor_t* p_motor_m2, slv2mst_msg_t* p_msg, slv2mst_msg_t* p_swap)
-{
-    foc_t* p_foc                        = &p_motor_m1->foc;
-    encoder_t* p_enc                    = &p_foc->enc;
-    cmd_reg_u cmd_reg                   = {.all = p_foc->cmd.cmdBits.all};
-    float32_t theta_index_comp          = (cmd_reg.encOffsetEnable) ? (p_enc->thetaIndexAbsolute) : (0.0f);
-    float32_t pos_offset                = p_enc->thetaAbsolute - theta_index_comp;
-    int32_t pos                         = (int32_t)(pos_offset                  / POSITION_LSB      * FM_RAD2ROUND);
-    bool_t align_done                   = (p_motor_m1->state == MOTOR_STATE_READY) || (p_motor_m1->state == MOTOR_STATE_STOP);
-    // Update status field - MOTOR_1
-    p_msg->status.M1E                   = cmd_reg.motorEnable;      // MOTOR_1 enabled
-    p_msg->status.M1R                   = align_done;               // MOTOR_1 ready
-    p_msg->status.IDX1T                 = p_enc->flags.indexToggle; // MOTOR_1 index toggle
-    p_msg->status.IDX1D                 = p_enc->flags.indexDetect; // MOTOR_1 index detected
-    p_msg->position[MOTOR_1].u16_msb    = MSB_32(pos);
-    p_msg->position[MOTOR_1].u16_lsb    = LSB_32(pos);
-    p_msg->velocity[MOTOR_1]            = (int16_t)(p_enc->speed.speedMech[0]   / VELOCITY_LSB      * FM_RADPS2KRPM);
-    p_msg->current[MOTOR_1]             = (int16_t)(p_foc->iq                   / IQ_LSB);
-    p_msg->coilRes[MOTOR_1]             = (uint16_t)(p_foc->resEst              / RESISTANCE_LSB);
-    p_msg->adcSamples[MOTOR_1]          = (uint16_t)(p_foc->acq.vExt            / VOLTAGE_LSB);
-
-    p_msg->status.SE                    = cmd_reg.systemEnable; // System enabled
-    p_msg->status.STATUS_RSV1           = 0;
-    p_msg->lastCmdIndex                 = p_foc->cmd.index;
-    p_msg->timeStamp                    = (uint16_t)CPUTimer_getTimerCount(CPU_TIMER_0_BASE);
-
-    p_foc                               = &p_motor_m2->foc;
-    p_enc                               = &p_foc->enc;
-    cmd_reg.all                         = p_foc->cmd.cmdBits.all;
-    theta_index_comp                    = (cmd_reg.encOffsetEnable) ? (p_enc->thetaIndexAbsolute) : (0.0f);
-    pos_offset                          = p_enc->thetaAbsolute - theta_index_comp;
-    pos                                 = (int32_t)(pos_offset                  / POSITION_LSB      * FM_RAD2ROUND);
-    align_done                          = (p_motor_m2->state == MOTOR_STATE_READY) || (p_motor_m2->state == MOTOR_STATE_STOP);
-    // Update status field - MOTOR_2
-    p_msg->status.M2E                   = cmd_reg.motorEnable;      // MOTOR_2 enabled
-    p_msg->status.M2R                   = align_done;               // MOTOR_2 ready
-    p_msg->status.IDX2T                 = p_enc->flags.indexToggle; // MOTOR_2 index toggle
-    p_msg->status.IDX2D                 = p_enc->flags.indexDetect; // MOTOR_2 index detected
-    p_msg->position[MOTOR_2].u16_msb    = MSB_32(pos);
-    p_msg->position[MOTOR_2].u16_lsb    = LSB_32(pos);
-    p_msg->velocity[MOTOR_2]            = (int16_t)(p_enc->speed.speedMech[0]   / VELOCITY_LSB      * FM_RADPS2KRPM);
-    p_msg->current[MOTOR_2]             = (int16_t)(p_foc->iq                   / IQ_LSB);
-    p_msg->coilRes[MOTOR_2]             = (uint16_t)(p_foc->resEst              / RESISTANCE_LSB);
-    p_msg->adcSamples[MOTOR_2]          = (uint16_t)(p_foc->acq.vExt            / VOLTAGE_LSB);
-
-    error_reg_u* p_err[2]               = {&p_motor_m1->error, &p_motor_m2->error};
-    p_msg->status.ERROR_CODE            = (p_err[MOTOR_1]->com_timeout) ? (STATUS_ERROR_SPI_RECV_TIMEOUT)   : (STATUS_ERROR_NO_ERROR);
-    p_msg->status.ERROR_CODE            = (p_err[MOTOR_2]->com_timeout) ? (STATUS_ERROR_SPI_RECV_TIMEOUT)   : (p_msg->status.ERROR_CODE);
-    p_msg->status.ERROR_CODE            = (p_err[MOTOR_1]->pos_rollover)? (STATUS_ERROR_POS_ROLLOVER)       : (p_msg->status.ERROR_CODE);
-    p_msg->status.ERROR_CODE            = (p_err[MOTOR_2]->pos_rollover)? (STATUS_ERROR_POS_ROLLOVER)       : (p_msg->status.ERROR_CODE);
-    p_msg->status.ERROR_CODE            = (p_err[MOTOR_1]->drv_fault)   ? (STATUS_ERROR_DRV_FAULT)          : (p_msg->status.ERROR_CODE);
-    p_msg->status.ERROR_CODE            = (p_err[MOTOR_2]->drv_fault)   ? (STATUS_ERROR_DRV_FAULT)          : (p_msg->status.ERROR_CODE);
-    p_msg->status.ERROR_CODE            = (p_err[MOTOR_1]->enc_indexErr)? (STATUS_ERROR_ENCODER1)           : (p_msg->status.ERROR_CODE);
-    p_msg->status.ERROR_CODE            = (p_err[MOTOR_2]->enc_indexErr)? (STATUS_ERROR_ENCODER2)           : (p_msg->status.ERROR_CODE);
-    p_msg->status.ERROR_CODE            = (p_err[MOTOR_1]->enc_alignErr)? (STATUS_ERROR_ENCODER1)           : (p_msg->status.ERROR_CODE);
-    p_msg->status.ERROR_CODE            = (p_err[MOTOR_2]->enc_alignErr)? (STATUS_ERROR_ENCODER2)           : (p_msg->status.ERROR_CODE);
-
-    // Compute CRC
-    COM_msgSwapEndian((uint16_t *)p_msg, (uint16_t *)p_swap, COM_MSG_TX_RX_16BIT_PAYLOAD_LENGTH);
-    uint32_t crc                        = COM_vcrc32((uint16_t *)p_swap, COM_MSG_TX_RX_16BIT_PAYLOAD_LENGTH);
-    p_msg->crc.u16_msb                  = LSB_32(crc);              // required for Solo
-    p_msg->crc.u16_lsb                  = MSB_32(crc);
-
-    return;
-}
-#endif
 
 /**
  * @brief           Reset the command structure for a motor

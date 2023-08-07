@@ -70,12 +70,12 @@ typedef union __ppb_num_u__
     uint16_t            all;
     struct
     {
-        uint16_t        ia              : 2;    /*!< Bit 0-1    : R/W - Enable system to start. No power on motors.         */
-        uint16_t        ib              : 2;    /*!< Bit 2-3    : R/W - Enable power on motor.                              */
-        uint16_t        ic              : 2;    /*!< Bit 4-5    : R/W - Limit the rotations to +/- 128 rounds.              */
-        uint16_t        vbus            : 2;    /*!< Bit 6-7    : R/W - Use encoder index in position computation.          */
-        uint16_t        vext            : 2;    /*!< Bit 8-9    : R/W - Use encoder index in position computation.          */
-        uint16_t        PPB_RSV1        : 6;    /*!< Bit 10-15  : R/W - Reserved                                            */
+        uint16_t        ia              : 2;    /*!< Bit 0-1    : R/W - Post Processing Block for ia current measure.   */
+        uint16_t        ib              : 2;    /*!< Bit 2-3    : R/W - Post Processing Block for ib current measure.   */
+        uint16_t        ic              : 2;    /*!< Bit 4-5    : R/W - Post Processing Block for ic current measure.   */
+        uint16_t        vbus            : 2;    /*!< Bit 6-7    : R/W - Post Processing Block for Vbus tension measure. */
+        uint16_t        vext            : 2;    /*!< Bit 8-9    : R/W - Post Processing Block for Vext tension measure. */
+        uint16_t        PPB_RSV1        : 6;    /*!< Bit 10-15  : R/W - Reserved                                        */
     };
 } ppb_num_u;
 
@@ -88,15 +88,9 @@ typedef union __ppb_num_u__
  */
 typedef struct __pi_t__
 {
-#if (CLA_CORE_ENABLE)
     ptr_32b_u           p_fb;           /*!< Pointer on the feedback current */
     ptr_32b_u           p_set;          /*!< Pointer on the setpoint current */
     ptr_32b_u           p_sat;          /*!< Pointer on the saturation value to use */
-#else
-    float32_t* const    p_fb;           /*!< Pointer on the feedback current */
-    float32_t* const    p_set;          /*!< Pointer on the setpoint current */
-    float32_t* const    p_sat;          /*!< Pointer on the saturation value to use */
-#endif
     float32_t           err;            /*!< Current error */
     float32_t           kp;             /*!< Proportional gain */
     float32_t           ki;             /*!< Integral gain */
@@ -111,7 +105,6 @@ typedef struct __pi_t__
  */
 typedef struct __pd_t__
 {
-#if (CLA_CORE_ENABLE)
     ptr_32b_u           p_fbTheta;      /*!< Pointer on the feedback position */
     ptr_32b_u           p_setTheta;     /*!< Pointer on the setpoint position */
     ptr_32b_u           p_fbSpeed;      /*!< Pointer on the feedback speed */
@@ -119,17 +112,7 @@ typedef struct __pd_t__
     ptr_32b_u           p_kp;           /*!< Pointer on the Proportional gain */
     ptr_32b_u           p_kd;           /*!< Pointer on the Derivative gain */
     ptr_32b_u           p_ff;           /*!< Pointer on the feed-forward term */
-    ptr_32b_u           p_sat;          /*!< Controller saturation */
-#else
-    float32_t* const    p_fbTheta;      /*!< Constant pointer on the feedback position */
-    float32_t* const    p_setTheta;     /*!< Constant pointer on the setpoint position */
-    float32_t* const    p_fbSpeed;      /*!< Constant pointer on the feedback speed */
-    float32_t* const    p_setSpeed;     /*!< Constant pointer on the Set point speed */
-    float32_t* const    p_kp;           /*!< Constant pointer on the Proportional gain */
-    float32_t* const    p_kd;           /*!< Constant pointer on the Derivative gain */
-    float32_t* const    p_ff;           /*!< Constant pointer on the feed-forward term */
-    float32_t* const    p_sat;          /*!< Constant pointer on the controller saturation */
-#endif
+    ptr_32b_u           p_sat;          /*!< Pointer on the controller saturation */
     float32_t           errTheta;       /*!< Error position */
     float32_t           errSpeed;       /*!< Error speed */
     float32_t           derivative;     /*!< Derivative term partial computation */
@@ -148,11 +131,7 @@ typedef struct __params_t__
     float32_t           kv;             /*!< Motor speed constant [RPM/V or rad/s/V] */
     float32_t           ke;             /*!< Motor back EMF constant [V/rad/s] (electrical radians) = 1/kv */
     float32_t           ki;             /*!< Motor torque constant [N.m/A] */
-#if (CLA_CORE_ENABLE)
     float32_t           polePairs;      /*!< Number of pole pairs */
-#else
-    const float32_t     polePairs;      /*!< Number of pole pairs */
-#endif
 } params_t;
 
 /**
@@ -162,24 +141,17 @@ typedef struct __params_t__
 typedef struct __acquisitions_t__
 {
     // ADC values scaled
-    float32_t           ia;         // [A]
-    float32_t           ib;         // [A]
-    float32_t           ic;         // [A]
-    float32_t           vbus;       // [V]
-    float32_t           vExt;       // [V]
-    lpf_t               vBusFlt;
-    lpf_t               vExtFlt;
-    // ADC result registers
-#if (CLA_CORE_ENABLE)
-    uint32_t            iabcResultBase[3];
-    uint32_t            vBusResultBase;
-    uint32_t            vExtResultBase;
+    float32_t           ia;                 // [A]
+    float32_t           ib;                 // [A]
+    float32_t           ic;                 // [A]
+    float32_t           vbus;               // [V]
+    float32_t           vExt;               // [V]
+    lpf_t               vBusFlt;            // Low Pass Vbus filter parameters
+    lpf_t               vExtFlt;            // Low Pass Vext filter parameters
+    uint32_t            iabcResultBase[3];  // ADC phase current result registers
+    uint32_t            vBusResultBase;     // ADC Vbus result register
+    uint32_t            vExtResultBase;     // ADC external voltage result register
     ppb_num_u           ppbNum;
-#else
-    volatile uint16_t*  const p_vBusMeasReg;
-    volatile uint16_t*  const p_vExtMeasReg;
-    volatile int16_t*   const p_iMeasReg[3];
-#endif
 } acq_t;
 
 /**

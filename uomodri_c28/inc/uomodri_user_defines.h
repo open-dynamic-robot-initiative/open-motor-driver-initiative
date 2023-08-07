@@ -99,7 +99,7 @@
 #define FM_2MULTPI                              (6.283185307179586476925286766559f) /* 2xPI */
 #endif
 
-#if (defined CLA_CORE_ENABLE) && (CLA_CORE_ENABLE)
+#if (CLA_CORE_ENABLE)
 #define UOMODRI_PI                              (CLAMATH_PI)
 #else
 #define UOMODRI_PI                              (M_PI)

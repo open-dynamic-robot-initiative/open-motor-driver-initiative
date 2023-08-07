@@ -708,8 +708,6 @@ void HAL_CLA_ini(const cla_cfg_t* p_clacCfg)
         CLA_disableBackgroundTask(CLA1_BASE);
         /* Enable the IACK instruction to start a task on CLA in software for all 8 CLA tasks */
         CLA_enableIACK(CLA1_BASE);
-        /* Enable each initialized task */
-//        CLA_enableTasks(CLA1_BASE, CLA_TASKFLAG_ALL);//p_clacCfg->claTaskFlg);
 
         uint8_t i;
         while(p_clacCfg->p_claFunc != NULL)
