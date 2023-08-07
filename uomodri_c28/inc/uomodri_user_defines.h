@@ -9,9 +9,10 @@
 /************************************************************************
  * INCLUDES
  ************************************************************************/
-#include "f2838x_device.h"
-#include "driverlib.h"
-#include "device.h"
+#include <CLAmath.h>
+#include <f2838x_device.h>
+#include <driverlib.h>
+#include <device.h>
 
 #include "drv8353.h"
 
@@ -34,21 +35,25 @@
 #define CPU1_CORE_ENABLE                        (1)
 #define CPU2_CORE_ENABLE                        (0)
 #define CM_CORE_ENABLE                          (1)
-#define CLA1_CORE_ENABLE                        (0)
+#define CLA_CORE_ENABLE                         (1)
+#define CLA_TEST_CORE_ENABLE                    (0)
 // CM peripherals ENABLE/DISABLE
 #define USB_BUS_ENABLE                          (0)
 #define UART_BUS_ENABLE                         (1)
-// Communication peripherals ENABLE/DISABLE
-#define CAN_BUS_ENABLE                          (0)
-#define RS485_BUS_ENABLE                        (0)
 #if ((USB_BUS_ENABLE) || (UART_BUS_ENABLE)) && (!CM_CORE_ENABLE)
 #error "In order to use USB or UART, CM must be active."
 #endif
 #if (UART_BUS_ENABLE) && (USB_BUS_ENABLE)
 #error "USB & UART share the same pins. They cannot run @ the same time"
 #endif
+// Communication peripherals ENABLE/DISABLE
+#define CAN_BUS_ENABLE                          (0)
+#define RS485_BUS_ENABLE                        (0)
+#define SPI_BUS_ENABLE                          (1)
 #if (RS485_BUS_ENABLE) && (CAN_BUS_ENABLE)
 #error "RS-485 & CAN share the same pins. They cannot run @ the same time"
+#elif ((RS485_BUS_ENABLE) || (CAN_BUS_ENABLE) ) && (SPI_BUS_ENABLE)
+#error "RS-485, CAN & SPI share the same data. They cannot run @ the same time"
 #endif
 // Filters definition
 #define UOMODRI_IABC_FLT(flt_coef, y, x)        LPF_FILTER_1(flt_coef, y, x)
@@ -74,10 +79,6 @@
  *  @brief    General constants definitions.
  * @{
  */
-//#ifndef FM_PI
-////#define FM_PI                                   3.14159265358979f
-//#endif
-
 #ifndef FM_SQRT3
 #define FM_SQRT3                                (1.7320508075688772935274463415059f)  /* sqrt(3) */
 #endif
@@ -98,8 +99,14 @@
 #define FM_2MULTPI                              (6.283185307179586476925286766559f) /* 2xPI */
 #endif
 
+#if (defined CLA_CORE_ENABLE) && (CLA_CORE_ENABLE)
+#define UOMODRI_PI                              (CLAMATH_PI)
+#else
+#define UOMODRI_PI                              (M_PI)
+#endif
+
 #ifndef FM_ROUND2RAD
-#define FM_ROUND2RAD                            ((float32_t)(2.0f * M_PI))
+#define FM_ROUND2RAD                            ((float32_t)(2.0f * UOMODRI_PI))
 #endif
 
 #ifndef FM_RPM2RADPS
@@ -222,14 +229,14 @@
 #define DBG_PIN2_READ                           (HWREG(GPIODATA_BASE + GPIO_O_GPCDAT) & GPIO_GPCDAT_GPIO78)
 #define DBG_PIN1_NUM                            (81)
 #define DBG_PIN1_CFG                            GPIO_81_GPIO81
-#define DBG_PIN1_CORE                           GPIO_CORE_CPU1
+#define DBG_PIN1_CORE                           GPIO_CORE_CPU1_CLA1
 #define DBG_PIN1_SET                            (HWREG(GPIODATA_BASE + GPIO_O_GPCSET)   = GPIO_GPCSET_GPIO81)
 #define DBG_PIN1_CLEAR                          (HWREG(GPIODATA_BASE + GPIO_O_GPCCLEAR) = GPIO_GPCCLEAR_GPIO81)
 #define DBG_PIN1_TOGGLE                         (HWREG(GPIODATA_BASE + GPIO_O_GPCTOGGLE)= GPIO_GPCTOGGLE_GPIO81)
 #define DBG_PIN1_READ                           (HWREG(GPIODATA_BASE + GPIO_O_GPCDAT) & GPIO_GPCDAT_GPIO81)
 #define DBG_PIN0_NUM                            (82)
 #define DBG_PIN0_CFG                            GPIO_82_GPIO82
-#define DBG_PIN0_CORE                           GPIO_CORE_CPU1
+#define DBG_PIN0_CORE                           GPIO_CORE_CPU1_CLA1
 #define DBG_PIN0_SET                            (HWREG(GPIODATA_BASE + GPIO_O_GPCSET)   = GPIO_GPCSET_GPIO82)
 #define DBG_PIN0_CLEAR                          (HWREG(GPIODATA_BASE + GPIO_O_GPCCLEAR) = GPIO_GPCCLEAR_GPIO82)
 #define DBG_PIN0_TOGGLE                         (HWREG(GPIODATA_BASE + GPIO_O_GPCTOGGLE)= GPIO_GPCTOGGLE_GPIO82)
@@ -288,14 +295,14 @@
  * CAN / RS-485 DEFINES
  ***********************************************************************/
 #if (CAN_BUS_ENABLE) && ((UOMODRI_V1_0_ENABLE) || ((!RS485_BUS_ENABLE) && (UOMODRI_V2_0_ENABLE)))
-#define CAN_RX                                  (13)
+#define CAN_RX_NUM                              (13)
 #define CAN_RX_CFG                              GPIO_13_CANB_RX
-#define CAN_TX                                  (12)
+#define CAN_TX_NUM                              (12)
 #define CAN_TX_CFG                              GPIO_12_CANB_TX
 #elif (RS485_BUS_ENABLE) && (!CAN_BUS_ENABLE) && (UOMODRI_V2_0_ENABLE)
-#define RS485_RX                                (13)
+#define RS485_RX_NUM                            (13)
 #define RS485_RX_CFG                            GPIO_13_SCIC_RX
-#define RS485_TX                                (12)
+#define RS485_TX_NUM                            (12)
 #define RS485_TX_CFG                            GPIO_12_SCIC_TX
 #endif
 #if (UOMODRI_V2_0_ENABLE)
@@ -346,7 +353,7 @@
 /***********************************************************************
  * SCI DEFINES
  ***********************************************************************/
-#define COM_SCI_BASE                            SCIB_BASE
+#define COM_SCI_BASE                            SCIC_BASE
 
 /***********************************************************************
  * SPI DEFINES
@@ -734,8 +741,8 @@
  *  @brief    Associate the SOC for each measure to perform.
  * @{
  */
-#define MOTOR1_Iabc_SOC_NUM                     ADC_SOC_NUMBER0//ADC_SOC_NUMBER0
-#define MOTOR2_Iabc_SOC_NUM                     ADC_SOC_NUMBER1//ADC_SOC_NUMBER4
+#define MOTOR1_IABC_SOC_NUM                     ADC_SOC_NUMBER0//ADC_SOC_NUMBER0
+#define MOTOR2_IABC_SOC_NUM                     ADC_SOC_NUMBER1//ADC_SOC_NUMBER4
 #define VBUS_SOC_NUM                            ADC_SOC_NUMBER0//ADC_SOC_NUMBER0
 #define VEXT1_SOC_NUM                           ADC_SOC_NUMBER1//ADC_SOC_NUMBER4
 #define VEXT2_SOC_NUM                           ADC_SOC_NUMBER2//ADC_SOC_NUMBER6
@@ -747,8 +754,8 @@
  *  @brief    Associate the PPB for each measure to perform.
  * @{
  */
-#define MOTOR1_Iabc_PPB_NUM                     ADC_PPB_NUMBER1//ADC_PPB_NUMBER1
-#define MOTOR2_Iabc_PPB_NUM                     ADC_PPB_NUMBER2//ADC_PPB_NUMBER3
+#define MOTOR1_IABC_PPB_NUM                     ADC_PPB_NUMBER1//ADC_PPB_NUMBER1
+#define MOTOR2_IABC_PPB_NUM                     ADC_PPB_NUMBER2//ADC_PPB_NUMBER3
 #define VBUS_PPB_NUM                            ADC_PPB_NUMBER1//ADC_PPB_NUMBER1
 #define VEXT1_PPB_NUM                           ADC_PPB_NUMBER2//ADC_PPB_NUMBER3
 #define VEXT2_PPB_NUM                           ADC_PPB_NUMBER3//ADC_PPB_NUMBER4
@@ -760,11 +767,11 @@
  *  @brief    Define the interrupt source \& the PIE Interrupt Number associated
  * @{
  */
-#define MOTOR1_IA_INT_CH                        INT_ADCA3
-#define MOTOR2_IA_INT_CH                        INT_ADCA4
-#define MOTOR1_IA_INT_NUM                       ADC_INT_NUMBER3
-#define MOTOR2_IA_INT_NUM                       ADC_INT_NUMBER4
-#define MOTOR1_IA_INT_ACK_GROUP                 INTERRUPT_ACK_GROUP10
+#define MOTOR1_IA_INT_CH                        INT_ADCA1//INT_ADCA3
+#define MOTOR2_IA_INT_CH                        INT_ADCA2//INT_ADCA4
+#define MOTOR1_IA_INT_NUM                       ADC_INT_NUMBER1
+#define MOTOR2_IA_INT_NUM                       ADC_INT_NUMBER2
+#define MOTOR1_IA_INT_ACK_GROUP                 INTERRUPT_ACK_GROUP1
 #define MOTOR2_IA_INT_ACK_GROUP                 INTERRUPT_ACK_GROUP10
 /**
  * @}
@@ -775,24 +782,32 @@
  * @{
  */
 // ADC Base Address
-#define MOTOR12_IA_ADC_ADDR                     ADCA_BASE
-#define MOTOR12_IB_ADC_ADDR                     ADCB_BASE
+#define MOTOR12_IA_ADC_CFG_ADDR                 ADCA_BASE
+#define MOTOR12_IB_ADC_CFG_ADDR                 ADCB_BASE
 #if (UOMODRI_V1_0_ENABLE)
 #define VBUS_VEXT12_ADC_ADDR                    ADCC_BASE
 #define MOTOR12_IC_ADC_ADDR                     ADCD_BASE
 #elif (UOMODRI_V2_0_ENABLE)
-#define MOTOR12_IC_ADC_ADDR                     ADCC_BASE
-#define VBUS_VEXT12_ADC_ADDR                    ADCD_BASE
+#define MOTOR12_IC_ADC_CFG_ADDR                 ADCC_BASE
+#define VBUS_VEXT12_ADC_CFG_ADDR                ADCD_BASE
 #endif
-#define MOTOR1_IA_ADC_ADDR                      MOTOR12_IA_ADC_ADDR
-#define MOTOR2_IA_ADC_ADDR                      MOTOR12_IA_ADC_ADDR
-#define MOTOR1_IB_ADC_ADDR                      MOTOR12_IB_ADC_ADDR
-#define MOTOR2_IB_ADC_ADDR                      MOTOR12_IB_ADC_ADDR
-#define MOTOR1_IC_ADC_ADDR                      MOTOR12_IC_ADC_ADDR
-#define MOTOR2_IC_ADC_ADDR                      MOTOR12_IC_ADC_ADDR
-#define VBUS_ADC_ADDR                           VBUS_VEXT12_ADC_ADDR
-#define VEXT1_ADC_ADDR                          VBUS_VEXT12_ADC_ADDR
-#define VEXT2_ADC_ADDR                          VBUS_VEXT12_ADC_ADDR
+#define MOTOR1_IA_ADC_CFG_ADDR                  ADCA_BASE
+#define MOTOR2_IA_ADC_CFG_ADDR                  ADCA_BASE
+#define MOTOR1_IB_ADC_CFG_ADDR                  ADCB_BASE
+#define MOTOR2_IB_ADC_CFG_ADDR                  ADCB_BASE
+#if (UOMODRI_V1_0_ENABLE)
+#define MOTOR1_IC_ADC_CFG_ADDR                  ADCD_BASE
+#define MOTOR2_IC_ADC_CFG_ADDR                  ADCD_BASE
+#define VBUS_ADC_CFG_ADDR                       ADCC_BASE
+#define VEXT1_ADC_CFG_ADDR                      ADCC_BASE
+#define VEXT2_ADC_CFG_ADDR                      ADCC_BASE
+#elif (UOMODRI_V2_0_ENABLE)
+#define MOTOR1_IC_ADC_CFG_ADDR                  ADCC_BASE
+#define MOTOR2_IC_ADC_CFG_ADDR                  ADCC_BASE
+#define VBUS_ADC_CFG_ADDR                       ADCD_BASE
+#define VEXT1_ADC_CFG_ADDR                      ADCD_BASE
+#define VEXT2_ADC_CFG_ADDR                      ADCD_BASE
+#endif
 /**
  * @}
  */
@@ -801,41 +816,23 @@
  *  @brief    Define the ADC results base address for all the conversion to be performed.
  * @{
  */
-#define MOTOR12_IA_ADC_RESULT_ADDR              ADCARESULT_BASE
-#define MOTOR12_IB_ADC_RESULT_ADDR              ADCBRESULT_BASE
+#define MOTOR1_IA_ADC_RESULT_ADDR               ADCARESULT_BASE
+#define MOTOR2_IA_ADC_RESULT_ADDR               ADCARESULT_BASE
+#define MOTOR1_IB_ADC_RESULT_ADDR               ADCBRESULT_BASE
+#define MOTOR2_IB_ADC_RESULT_ADDR               ADCBRESULT_BASE
 #if (UOMODRI_V1_0_ENABLE)
-#define VBUS_VEXT12_ADC_RESULT_ADDR             ADCCRESULT_BASE
-#define MOTOR12_IC_ADC_RESULT_ADDR              ADCDRESULT_BASE
+#define MOTOR1_IC_ADC_RESULT_ADDR               ADCDRESULT_BASE
+#define MOTOR2_IC_ADC_RESULT_ADDR               ADCDRESULT_BASE
+#define VBUS_ADC_RESULT_ADDR                    ADCCRESULT_BASE
+#define VEXT1_ADC_RESULT_ADDR                   ADCCRESULT_BASE
+#define VEXT2_ADC_RESULT_ADDR                   ADCCRESULT_BASE
 #elif (UOMODRI_V2_0_ENABLE)
-#define MOTOR12_IC_ADC_RESULT_ADDR              ADCCRESULT_BASE
-#define VBUS_VEXT12_ADC_RESULT_ADDR             ADCDRESULT_BASE
+#define MOTOR1_IC_ADC_RESULT_ADDR               ADCCRESULT_BASE
+#define MOTOR2_IC_ADC_RESULT_ADDR               ADCCRESULT_BASE
+#define VBUS_ADC_RESULT_ADDR                    ADCDRESULT_BASE
+#define VEXT1_ADC_RESULT_ADDR                   ADCDRESULT_BASE
+#define VEXT2_ADC_RESULT_ADDR                   ADCDRESULT_BASE
 #endif
-#define MOTOR1_IA_ADC_RESULT_ADDR               (MOTOR12_IA_ADC_RESULT_ADDR     + ADC_RESULTx_OFFSET_BASE       + (1U * MOTOR1_Iabc_SOC_NUM))
-#define MOTOR2_IA_ADC_RESULT_ADDR               (MOTOR12_IA_ADC_RESULT_ADDR     + ADC_RESULTx_OFFSET_BASE       + (1U * MOTOR2_Iabc_SOC_NUM))
-#define MOTOR1_IB_ADC_RESULT_ADDR               (MOTOR12_IB_ADC_RESULT_ADDR     + ADC_RESULTx_OFFSET_BASE       + (1U * MOTOR1_Iabc_SOC_NUM))
-#define MOTOR2_IB_ADC_RESULT_ADDR               (MOTOR12_IB_ADC_RESULT_ADDR     + ADC_RESULTx_OFFSET_BASE       + (1U * MOTOR2_Iabc_SOC_NUM))
-#define MOTOR1_IC_ADC_RESULT_ADDR               (MOTOR12_IC_ADC_RESULT_ADDR     + ADC_RESULTx_OFFSET_BASE       + (1U * MOTOR1_Iabc_SOC_NUM))
-#define MOTOR2_IC_ADC_RESULT_ADDR               (MOTOR12_IC_ADC_RESULT_ADDR     + ADC_RESULTx_OFFSET_BASE       + (1U * MOTOR2_Iabc_SOC_NUM))
-#define VBUS_ADC_RESULT_ADDR                    (VBUS_VEXT12_ADC_RESULT_ADDR    + ADC_RESULTx_OFFSET_BASE       + (1U * VBUS_SOC_NUM))
-#define VEXT1_ADC_RESULT_ADDR                   (VBUS_VEXT12_ADC_RESULT_ADDR    + ADC_RESULTx_OFFSET_BASE       + (1U * VEXT1_SOC_NUM))
-#define VEXT2_ADC_RESULT_ADDR                   (VBUS_VEXT12_ADC_RESULT_ADDR    + ADC_RESULTx_OFFSET_BASE       + (1U * VEXT2_SOC_NUM))
-/**
- * @}
- */
-
-/** @defgroup ADC PPB Base result Address
- *  @brief    Define the ADC PPB results base address for all the conversion to be performed.
- * @{
- */
-#define MOTOR1_IA_ADC_PPB_RESULT_ADDR           (MOTOR12_IA_ADC_RESULT_ADDR     + ADC_PPBxRESULT_OFFSET_BASE    + (2U * MOTOR1_Iabc_PPB_NUM))
-#define MOTOR2_IA_ADC_PPB_RESULT_ADDR           (MOTOR12_IA_ADC_RESULT_ADDR     + ADC_PPBxRESULT_OFFSET_BASE    + (2U * MOTOR2_Iabc_PPB_NUM))
-#define MOTOR1_IB_ADC_PPB_RESULT_ADDR           (MOTOR12_IB_ADC_RESULT_ADDR     + ADC_PPBxRESULT_OFFSET_BASE    + (2U * MOTOR1_Iabc_PPB_NUM))
-#define MOTOR2_IB_ADC_PPB_RESULT_ADDR           (MOTOR12_IB_ADC_RESULT_ADDR     + ADC_PPBxRESULT_OFFSET_BASE    + (2U * MOTOR2_Iabc_PPB_NUM))
-#define MOTOR1_IC_ADC_PPB_RESULT_ADDR           (MOTOR12_IC_ADC_RESULT_ADDR     + ADC_PPBxRESULT_OFFSET_BASE    + (2U * MOTOR1_Iabc_PPB_NUM))
-#define MOTOR2_IC_ADC_PPB_RESULT_ADDR           (MOTOR12_IC_ADC_RESULT_ADDR     + ADC_PPBxRESULT_OFFSET_BASE    + (2U * MOTOR2_Iabc_PPB_NUM))
-#define VBUS_ADC_PPB_RESULT_ADDR                (VBUS_VEXT12_ADC_RESULT_ADDR    + ADC_PPBxRESULT_OFFSET_BASE    + (2U * VBUS_PPB_NUM))
-#define VEXT1_ADC_PPB_RESULT_ADDR               (VBUS_VEXT12_ADC_RESULT_ADDR    + ADC_PPBxRESULT_OFFSET_BASE    + (2U * VEXT1_PPB_NUM))
-#define VEXT2_ADC_PPB_RESULT_ADDR               (VBUS_VEXT12_ADC_RESULT_ADDR    + ADC_PPBxRESULT_OFFSET_BASE    + (2U * VEXT2_PPB_NUM))
 /**
  * @}
  */
@@ -847,20 +844,20 @@
  *  @brief    Define the address of all the ePWM used (2 motors).
  * @{
  */
-#define MOTOR1_PWMx_CMD_ADDR_OFFSET             1U // bits 31-16 of CMPx registers
-#define MOTOR2_PWMx_CMD_ADDR_OFFSET             1U // bits 31-16 of CMPx registers
+#define MOTOR12_PWMx_CMD_REG_OFFSET             0x01U // bits 31-16 of CMPx registers
+#define MOTOR12_PWMx_CMD_ADDR_OFFSET            (EPWM_O_CMPA + MOTOR12_PWMx_CMD_REG_OFFSET)
 #define MOTOR1_PWM1_BASE                        EPWM1_BASE
 #define MOTOR1_PWM2_BASE                        EPWM2_BASE
 #define MOTOR1_PWM3_BASE                        EPWM3_BASE
 #define MOTOR2_PWM1_BASE                        EPWM4_BASE
 #define MOTOR2_PWM2_BASE                        EPWM5_BASE
 #define MOTOR2_PWM3_BASE                        EPWM6_BASE
-#define MOTOR1_PWM1_CMD_ADDR                    (MOTOR1_PWM1_BASE + EPWM_O_CMPA + MOTOR1_PWMx_CMD_ADDR_OFFSET)
-#define MOTOR1_PWM2_CMD_ADDR                    (MOTOR1_PWM2_BASE + EPWM_O_CMPA + MOTOR1_PWMx_CMD_ADDR_OFFSET)
-#define MOTOR1_PWM3_CMD_ADDR                    (MOTOR1_PWM3_BASE + EPWM_O_CMPA + MOTOR1_PWMx_CMD_ADDR_OFFSET)
-#define MOTOR2_PWM1_CMD_ADDR                    (MOTOR2_PWM1_BASE + EPWM_O_CMPA + MOTOR2_PWMx_CMD_ADDR_OFFSET)
-#define MOTOR2_PWM2_CMD_ADDR                    (MOTOR2_PWM2_BASE + EPWM_O_CMPA + MOTOR2_PWMx_CMD_ADDR_OFFSET)
-#define MOTOR2_PWM3_CMD_ADDR                    (MOTOR2_PWM3_BASE + EPWM_O_CMPA + MOTOR2_PWMx_CMD_ADDR_OFFSET)
+#define MOTOR1_PWM1_CMD_ADDR                    (MOTOR1_PWM1_BASE + MOTOR12_PWMx_CMD_ADDR_OFFSET)
+#define MOTOR1_PWM2_CMD_ADDR                    (MOTOR1_PWM2_BASE + MOTOR12_PWMx_CMD_ADDR_OFFSET)
+#define MOTOR1_PWM3_CMD_ADDR                    (MOTOR1_PWM3_BASE + MOTOR12_PWMx_CMD_ADDR_OFFSET)
+#define MOTOR2_PWM1_CMD_ADDR                    (MOTOR2_PWM1_BASE + MOTOR12_PWMx_CMD_ADDR_OFFSET)
+#define MOTOR2_PWM2_CMD_ADDR                    (MOTOR2_PWM2_BASE + MOTOR12_PWMx_CMD_ADDR_OFFSET)
+#define MOTOR2_PWM3_CMD_ADDR                    (MOTOR2_PWM3_BASE + MOTOR12_PWMx_CMD_ADDR_OFFSET)
 /**
  * @}
  */
@@ -1007,9 +1004,9 @@
 #define MOTOR1_ENC_SPEED_HIGH_SAMPLE_TICKS      (DEVICE_SYSCLK_FREQ / MOTOR1_ENC_SPEED_HIGH_SAMPLE_FREQ)
 #define MOTOR1_ENC_SPEED_HIGH_SAMPLE_TICKS_MAX  (MOTOR1_ENC_SPEED_HIGH_SAMPLE_TICKS - 1)
 #define MOTOR1_ENC_SPEED_HIGH_SCALE             (MOTOR1_ENC_SPEED_HIGH_SAMPLE_FREQ) // 2pi / dt
-#define MOTOR1_ENC_SPEED_LOW_SCALE              (2.0f * M_PI * DEVICE_SYSCLK_FREQ * (1 << QEP_UNIT_POS_EVENT_DIV) / (1 << (QEP_CAPTURE_CLOCK_DIV >> 4)) / MOTOR1_ENC_RESOLUTION_SCALE)
+#define MOTOR1_ENC_SPEED_LOW_SCALE              (2.0f * UOMODRI_PI * DEVICE_SYSCLK_FREQ * (1 << QEP_UNIT_POS_EVENT_DIV) / (1 << (QEP_CAPTURE_CLOCK_DIV >> 4)) / MOTOR1_ENC_RESOLUTION_SCALE)
 #define MOTOR1_ENC_SPEED_CUTOFF_FREQ            (100.0f) // cutoff frequency for velocity estimation
-#define MOTOR1_ENC_SPEED_TIME_CONST             (2.0f * M_PI * MOTOR1_ENC_SPEED_CUTOFF_FREQ * PWM_PERIOD)
+#define MOTOR1_ENC_SPEED_TIME_CONST             (2.0f * UOMODRI_PI * MOTOR1_ENC_SPEED_CUTOFF_FREQ * PWM_PERIOD)
 #define MOTOR1_ENC_SPEED_LPF_ALPHA              (MOTOR1_ENC_SPEED_TIME_CONST / (1.0f + MOTOR1_ENC_SPEED_TIME_CONST))
 #define MOTOR1_ENC_SPEED_LPF_ONE_M_ALPHA        (1.0f - MOTOR1_ENC_SPEED_LPF_ALPHA)
 #define MOTOR1_ENC_SPEED_LOCAL_LPF_ALPHA        (MOTOR1_ENC_SPEED_TIME_CONST / (1.0f + MOTOR1_ENC_SPEED_TIME_CONST))
@@ -1034,17 +1031,17 @@
 #define MOTOR2_ENC_SPEED_HIGH_SAMPLE_TICKS      (DEVICE_SYSCLK_FREQ / MOTOR2_ENC_SPEED_HIGH_SAMPLE_FREQ)
 #define MOTOR2_ENC_SPEED_HIGH_SAMPLE_TICKS_MAX  (MOTOR2_ENC_SPEED_HIGH_SAMPLE_TICKS - 1)
 #define MOTOR2_ENC_SPEED_HIGH_SCALE             (MOTOR2_ENC_SPEED_HIGH_SAMPLE_FREQ) // 2pi / dt
-#define MOTOR2_ENC_SPEED_LOW_SCALE              (2.0f * M_PI * DEVICE_SYSCLK_FREQ * (1 << QEP_UNIT_POS_EVENT_DIV) / (1 << (QEP_CAPTURE_CLOCK_DIV >> 4)) / MOTOR2_ENC_RESOLUTION_SCALE)
+#define MOTOR2_ENC_SPEED_LOW_SCALE              (2.0f * UOMODRI_PI * DEVICE_SYSCLK_FREQ * (1 << QEP_UNIT_POS_EVENT_DIV) / (1 << (QEP_CAPTURE_CLOCK_DIV >> 4)) / MOTOR2_ENC_RESOLUTION_SCALE)
 #define MOTOR2_ENC_SPEED_CUTOFF_FREQ            (100.0f) // cutoff frequency for velocity estimation
-#define MOTOR2_ENC_SPEED_TIME_CONST             (2.0f * M_PI * MOTOR2_ENC_SPEED_CUTOFF_FREQ * PWM_PERIOD)
+#define MOTOR2_ENC_SPEED_TIME_CONST             (2.0f * UOMODRI_PI * MOTOR2_ENC_SPEED_CUTOFF_FREQ * PWM_PERIOD)
 #define MOTOR2_ENC_SPEED_LPF_ALPHA              (MOTOR2_ENC_SPEED_TIME_CONST / (1.0f + MOTOR2_ENC_SPEED_TIME_CONST))
 #define MOTOR2_ENC_SPEED_LPF_ONE_M_ALPHA        (1.0f - MOTOR2_ENC_SPEED_LPF_ALPHA)
 #define MOTOR2_ENC_SPEED_LOCAL_LPF_ALPHA        (MOTOR2_ENC_SPEED_TIME_CONST / (1.0f + MOTOR2_ENC_SPEED_TIME_CONST))
 #define MOTOR2_ENC_SPEED_LOCAL_LPF_ONE_M_ALPHA  (1.0f - MOTOR2_ENC_SPEED_LPF_ALPHA)
 #elif ((!USE_RMDX8H_MOTOR_ON_MOTOR2) && (!USE_SOLO_MOTOR_ON_MOTOR2) && (USE_MOTOR1_PARAMS_ON_MOTOR2))
 #define MOTOR2_ENC_RESOLUTION                   MOTOR1_ENC_RESOLUTION
-#define MOTOR2_ENC_QUADRATURE_SCALE             MOTOR1_ENC_QUADRATURE_SCALE
 #define MOTOR2_ENC_QUADRATURE_SCALE_MAX         MOTOR1_ENC_QUADRATURE_SCALE_MAX
+#define MOTOR2_ENC_QUADRATURE_SCALE             MOTOR1_ENC_QUADRATURE_SCALE
 #define MOTOR2_ENC_RESOLUTION_SCALE             MOTOR1_ENC_RESOLUTION_SCALE
 #define MOTOR2_ENC_RESOLUTION_RAD               MOTOR1_ENC_RESOLUTION_RAD
 #define MOTOR2_ENC_CONFIG                       MOTOR1_ENC_CONFIG
@@ -1061,8 +1058,8 @@
 #define MOTOR2_ENC_SPEED_LOCAL_LPF_ONE_M_ALPHA  MOTOR1_ENC_SPEED_LOCAL_LPF_ONE_M_ALPHA
 #endif
 
-//#define MOTOR1_ENC_LOW_SPEED_SCALE      (2.0 * M_PI * MOTOR1_ENC_RESOLUTION_SCALE * DEVICE_SYSCLK_FREQ * (1 << QEP_UNIT_POS_EVENT_DIV) / (1 << (QEP_CAPTURE_CLOCK_DIV >> 4)))
-//#define MOTOR2_ENC_LOW_SPEED_SCALE      (2.0 * M_PI * MOTOR2_ENC_RESOLUTION_SCALE * DEVICE_SYSCLK_FREQ * (1 << QEP_UNIT_POS_EVENT_DIV) / (1 << (QEP_CAPTURE_CLOCK_DIV >> 4)))
+//#define MOTOR1_ENC_LOW_SPEED_SCALE      (2.0 * UOMODRI_PI * MOTOR1_ENC_RESOLUTION_SCALE * DEVICE_SYSCLK_FREQ * (1 << QEP_UNIT_POS_EVENT_DIV) / (1 << (QEP_CAPTURE_CLOCK_DIV >> 4)))
+//#define MOTOR2_ENC_LOW_SPEED_SCALE      (2.0 * UOMODRI_PI * MOTOR2_ENC_RESOLUTION_SCALE * DEVICE_SYSCLK_FREQ * (1 << QEP_UNIT_POS_EVENT_DIV) / (1 << (QEP_CAPTURE_CLOCK_DIV >> 4)))
 /**
  * @}
  */
@@ -1106,7 +1103,7 @@
 #define MOTOR1_RS                               (0.52f)     // Stator resistance (ohm)
 #define MOTOR1_LS                               (260e-6)    // Stator d-axis inductance (H)
 #define MOTOR1_POLES_PAIRS                      (20.0f)     // Number of poles
-#define MOTOR1_CURRENT_INIT_MAX                 (4.0f)      // Current on d-axis for motor alignment (A)
+#define MOTOR1_CURRENT_INIT_MAX                 (2.0f)      // Current on d-axis for motor alignment (A)
 #define MOTOR1_CURRENT_CMD_SAT_MAX              (10.0f)
 #elif (!USE_RMDX8H_MOTOR_ON_MOTOR1) && (USE_SOLO_MOTOR_ON_MOTOR1)
 #define MOTOR1_KV                               (300.0f)    // Motor constant (rpm/V)
@@ -1119,28 +1116,29 @@
 #define MOTOR1_CURRENT_CMD_SAT_MAX              (10.0f)
 #endif
 #define MOTOR1_CURRENT_CUTOFF_FREQ              (1000.0f)   // Current loop bandwidth (Hz)
-#define MOTOR1_CURRENT_LPF_TIME_CONST           (2.0f * M_PI * MOTOR1_CURRENT_CUTOFF_FREQ * PWM_PERIOD)
-#define MOTOR1_CURRENT_LPF_ALPHA                (MOTOR1_CURRENT_LPF_TIME_CONST / (1.0f + MOTOR1_CURRENT_LPF_TIME_CONST))
+#define MOTOR1_CURRENT_TIME_CONST               (2.0f * UOMODRI_PI * MOTOR1_CURRENT_CUTOFF_FREQ * PWM_PERIOD)
+#define MOTOR1_CURRENT_LPF_ALPHA                (MOTOR1_CURRENT_TIME_CONST / (1.0f + MOTOR1_CURRENT_TIME_CONST))
 #define MOTOR1_CURRENT_LPF_ONE_M_ALPHA          (1.0f - MOTOR1_CURRENT_LPF_ALPHA)
-#define MOTOR1_FIX_INIT_TIME                    (2.0f)      // in seconds
-#define MOTOR1_FIX_INIT_EVT                     (MOTOR1_FIX_INIT_TIME * PWM_FREQ)
-#define MOTOR1_CURRENT_INIT_TIME                (0.5f)      // in seconds
-#define MOTOR1_CURRENT_INIT_EVT                 (MOTOR1_CURRENT_INIT_TIME * PWM_FREQ)
+#define MOTOR1_FIX_INIT_DELAY                   (2.0f)      // in seconds
+#define MOTOR1_FIX_INIT_EVT                     (MOTOR1_FIX_INIT_DELAY * PWM_FREQ)
+#define MOTOR1_CURRENT_INIT_DELAY               (0.5f)      // in seconds
+#define MOTOR1_CURRENT_INIT_EVT                 (MOTOR1_CURRENT_INIT_DELAY * PWM_FREQ)
 #define MOTOR1_CURRENT_INIT_STEP                (MOTOR1_CURRENT_INIT_MAX / MOTOR1_CURRENT_INIT_EVT)
 #define MOTOR1_POSITION_INIT_MAX                FM_2MULTPI
-#define MOTOR1_POSITION_INIT_TIME               MOTOR1_CURRENT_INIT_TIME
-#define MOTOR1_POSITION_INIT_EVT                (MOTOR1_POSITION_INIT_TIME * PWM_FREQ)
+#define MOTOR1_POSITION_INIT_DELAY              MOTOR1_CURRENT_INIT_DELAY
+#define MOTOR1_POSITION_INIT_EVT                (MOTOR1_POSITION_INIT_DELAY * PWM_FREQ)
 #define MOTOR1_POSITION_INIT_STEP               (MOTOR1_POSITION_INIT_MAX / MOTOR1_POSITION_INIT_EVT)
 #define MOTOR1_POSITION_INIT_ERR_MAX            ((MOTOR1_POSITION_INIT_MAX + (FM_2MULTPI / 10.0f)) / MOTOR1_POLES_PAIRS)
 #define MOTOR1_POSITION_INIT_ERR_MIN            ((MOTOR1_POSITION_INIT_MAX - (FM_2MULTPI / 10.0f)) / MOTOR1_POLES_PAIRS)
-#define MOTOR1_PI_ID_KP_COEF                    (MOTOR1_LS * 2.0f * M_PI * MOTOR1_CURRENT_CUTOFF_FREQ)
-#define MOTOR1_PI_ID_KI_COEF                    (MOTOR1_RS * 2.0f * M_PI * MOTOR1_CURRENT_CUTOFF_FREQ)
-#define MOTOR1_PI_IQ_KP_COEF                    (MOTOR1_LS * 2.0f * M_PI * MOTOR1_CURRENT_CUTOFF_FREQ)
-#define MOTOR1_PI_IQ_KI_COEF                    (MOTOR1_RS * 2.0f * M_PI * MOTOR1_CURRENT_CUTOFF_FREQ)
+#define MOTOR1_POSITION_INIT_ERR                (FM_2MULTPI / 10.0f / MOTOR1_POLES_PAIRS)
+#define MOTOR1_PI_ID_KP_COEF                    (MOTOR1_LS * 2.0f * UOMODRI_PI * MOTOR1_CURRENT_CUTOFF_FREQ)
+#define MOTOR1_PI_ID_KI_COEF                    (MOTOR1_RS * 2.0f * UOMODRI_PI * MOTOR1_CURRENT_CUTOFF_FREQ)
+#define MOTOR1_PI_IQ_KP_COEF                    (MOTOR1_LS * 2.0f * UOMODRI_PI * MOTOR1_CURRENT_CUTOFF_FREQ)
+#define MOTOR1_PI_IQ_KI_COEF                    (MOTOR1_RS * 2.0f * UOMODRI_PI * MOTOR1_CURRENT_CUTOFF_FREQ)
 #define MOTOR1_DTC_MAX                          (0.9f)      // Max duty cycle
 #define MOTOR1_DTC_MIN                          (0.1f)      // Min duty cycle
 #define MOTOR1_STATOR_RESISTOR_CUTOFF_FREQ      (0.2f)
-#define MOTOR1_STATOR_RESISTOR_TIME_CONST       (2.0f * M_PI * MOTOR1_STATOR_RESISTOR_CUTOFF_FREQ * PWM_PERIOD)
+#define MOTOR1_STATOR_RESISTOR_TIME_CONST       (2.0f * UOMODRI_PI * MOTOR1_STATOR_RESISTOR_CUTOFF_FREQ * PWM_PERIOD)
 #define MOTOR1_STATOR_RESISTOR_LPF_ALPHA        (MOTOR1_STATOR_RESISTOR_TIME_CONST / (1.0f + MOTOR1_STATOR_RESISTOR_TIME_CONST))
 #define MOTOR1_STATOR_RESISTOR_LPF_ONE_M_ALPHA  (1.0f - MOTOR1_STATOR_RESISTOR_LPF_ALPHA)
 
@@ -1169,14 +1167,14 @@
 #define MOTOR2_KI                               MOTOR1_KI   // Motor torque constant (N.m/A)
 #define MOTOR2_RS                               MOTOR1_RS   // Stator resistance (ohm)
 #define MOTOR2_LS                               MOTOR1_LS   // Stator d-axis inductance (H)
-#define MOTOR2_POLES_PAIRS                      MOTOR1_POLES_PAIRS// Number of poles
+#define MOTOR2_POLES_PAIRS                      MOTOR1_POLES_PAIRS // Number of poles
 #define MOTOR2_CURRENT_INIT_MAX                 MOTOR1_CURRENT_INIT_MAX
 #define MOTOR2_CURRENT_CMD_SAT_MAX              MOTOR1_CURRENT_CMD_SAT_MAX
 #endif
 #if (((USE_RMDX8H_MOTOR_ON_MOTOR2) || (USE_SOLO_MOTOR_ON_MOTOR2)) && (!USE_MOTOR1_PARAMS_ON_MOTOR2))
 #define MOTOR2_CURRENT_CUTOFF_FREQ              (1000.0f)   // Current loop bandwidth (Hz)
-#define MOTOR2_CURRENT_LPF_TIME_CONST           (2.0f * M_PI * MOTOR2_CURRENT_CUTOFF_FREQ * PWM_PERIOD)
-#define MOTOR2_CURRENT_LPF_ALPHA                (MOTOR2_CURRENT_LPF_TIME_CONST / (1.0f + MOTOR2_CURRENT_LPF_TIME_CONST))
+#define MOTOR2_CURRENT_TIME_CONST               (2.0f * UOMODRI_PI * MOTOR2_CURRENT_CUTOFF_FREQ * PWM_PERIOD)
+#define MOTOR2_CURRENT_LPF_ALPHA                (MOTOR2_CURRENT_TIME_CONST / (1.0f + MOTOR2_CURRENT_TIME_CONST))
 #define MOTOR2_CURRENT_LPF_ONE_M_ALPHA          (1.0f - MOTOR2_CURRENT_LPF_ALPHA)
 #define MOTOR2_FIX_INIT_TIME                    (2.0f)      // in seconds
 #define MOTOR2_FIX_INIT_EVT                     (MOTOR2_FIX_INIT_TIME * PWM_FREQ)
@@ -1189,32 +1187,34 @@
 #define MOTOR2_POSITION_INIT_STEP               (MOTOR2_POSITION_INIT_MAX / MOTOR2_POSITION_INIT_EVT)
 #define MOTOR2_POSITION_INIT_ERR_MAX            (MOTOR2_POSITION_INIT_MAX + (FM_2MULTPI / 10.0f))
 #define MOTOR2_POSITION_INIT_ERR_MIN            (MOTOR2_POSITION_INIT_MAX - (FM_2MULTPI / 10.0f))
-#define MOTOR2_PI_ID_KP_COEF                    (MOTOR2_LS * 2.0f * M_PI * MOTOR2_CURRENT_CUTOFF_FREQ)
-#define MOTOR2_PI_ID_KI_COEF                    (MOTOR2_RS * 2.0f * M_PI * MOTOR2_CURRENT_CUTOFF_FREQ)
-#define MOTOR2_PI_IQ_KP_COEF                    (MOTOR2_LS * 2.0f * M_PI * MOTOR2_CURRENT_CUTOFF_FREQ)
-#define MOTOR2_PI_IQ_KI_COEF                    (MOTOR2_RS * 2.0f * M_PI * MOTOR2_CURRENT_CUTOFF_FREQ)
+#define MOTOR2_POSITION_INIT_ERR                (FM_2MULTPI / 10.0f / MOTOR2_POLES_PAIRS)
+#define MOTOR2_PI_ID_KP_COEF                    (MOTOR2_LS * 2.0f * UOMODRI_PI * MOTOR2_CURRENT_CUTOFF_FREQ)
+#define MOTOR2_PI_ID_KI_COEF                    (MOTOR2_RS * 2.0f * UOMODRI_PI * MOTOR2_CURRENT_CUTOFF_FREQ)
+#define MOTOR2_PI_IQ_KP_COEF                    (MOTOR2_LS * 2.0f * UOMODRI_PI * MOTOR2_CURRENT_CUTOFF_FREQ)
+#define MOTOR2_PI_IQ_KI_COEF                    (MOTOR2_RS * 2.0f * UOMODRI_PI * MOTOR2_CURRENT_CUTOFF_FREQ)
 #define MOTOR2_DTC_MAX                          (0.9f)      // Max duty cycle
 #define MOTOR2_DTC_MIN                          (0.1f)      // Min duty cycle
 #define MOTOR2_STATOR_RESISTOR_CUTOFF_FREQ      (0.2f)
-#define MOTOR2_STATOR_RESISTOR_TIME_CONST       (2.0f * M_PI * MOTOR2_STATOR_RESISTOR_CUTOFF_FREQ * PWM_PERIOD)
+#define MOTOR2_STATOR_RESISTOR_TIME_CONST       (2.0f * UOMODRI_PI * MOTOR2_STATOR_RESISTOR_CUTOFF_FREQ * PWM_PERIOD)
 #define MOTOR2_STATOR_RESISTOR_LPF_ALPHA        (MOTOR2_STATOR_RESISTOR_TIME_CONST / (1.0f + MOTOR2_STATOR_RESISTOR_TIME_CONST))
 #define MOTOR2_STATOR_RESISTOR_LPF_ONE_M_ALPHA  (1.0f - MOTOR2_STATOR_RESISTOR_LPF_ALPHA)
 #elif ((!USE_RMDX8H_MOTOR_ON_MOTOR2) && (!USE_SOLO_MOTOR_ON_MOTOR2) && (USE_MOTOR1_PARAMS_ON_MOTOR2))
 #define MOTOR2_CURRENT_CUTOFF_FREQ              MOTOR1_CURRENT_CUTOFF_FREQ // Current loop bandwidth (Hz)
-#define MOTOR2_CURRENT_LPF_TIME_CONST           MOTOR1_CURRENT_LPF_TIME_CONST
+#define MOTOR2_CURRENT_TIME_CONST               MOTOR1_CURRENT_TIME_CONST
 #define MOTOR2_CURRENT_LPF_ALPHA                MOTOR1_CURRENT_LPF_ALPHA
 #define MOTOR2_CURRENT_LPF_ONE_M_ALPHA          MOTOR1_CURRENT_LPF_ONE_M_ALPHA
-#define MOTOR2_FIX_INIT_TIME                    MOTOR1_FIX_INIT_TIME
+#define MOTOR2_FIX_INIT_DELAY                   MOTOR1_FIX_INIT_DELAY
 #define MOTOR2_FIX_INIT_EVT                     MOTOR1_FIX_INIT_EVT
-#define MOTOR2_CURRENT_INIT_TIME                MOTOR1_CURRENT_INIT_TIME
+#define MOTOR2_CURRENT_INIT_DELAY               MOTOR1_CURRENT_INIT_DELAY
 #define MOTOR2_CURRENT_INIT_EVT                 MOTOR1_CURRENT_INIT_EVT
 #define MOTOR2_CURRENT_INIT_STEP                MOTOR1_CURRENT_INIT_STEP
 #define MOTOR2_POSITION_INIT_MAX                MOTOR1_POSITION_INIT_MAX
-#define MOTOR2_POSITION_INIT_TIME               MOTOR1_POSITION_INIT_TIME
+#define MOTOR2_POSITION_INIT_DELAY              MOTOR1_POSITION_INIT_DELAY
 #define MOTOR2_POSITION_INIT_EVT                MOTOR1_POSITION_INIT_EVT
 #define MOTOR2_POSITION_INIT_STEP               MOTOR1_POSITION_INIT_STEP
 #define MOTOR2_POSITION_INIT_ERR_MAX            MOTOR1_POSITION_INIT_ERR_MAX
 #define MOTOR2_POSITION_INIT_ERR_MIN            MOTOR1_POSITION_INIT_ERR_MIN
+#define MOTOR2_POSITION_INIT_ERR                MOTOR1_POSITION_INIT_ERR
 #define MOTOR2_PI_ID_KP_COEF                    MOTOR1_PI_ID_KP_COEF
 #define MOTOR2_PI_ID_KI_COEF                    MOTOR1_PI_ID_KI_COEF
 #define MOTOR2_PI_IQ_KP_COEF                    MOTOR1_PI_IQ_KP_COEF
@@ -1229,18 +1229,33 @@
 
 #define MOTOR12_OVERMODULATION                  (1.15f)
 #define IABC_CUTOFF_FREQ                        (15000.0f)   // vbus voltage loop bandwidth (Hz)
-#define IABC_CUTOFF_TIME_CONST                  (2.0f * M_PI * IABC_CUTOFF_FREQ * PWM_PERIOD)
+#define IABC_CUTOFF_TIME_CONST                  (2.0f * UOMODRI_PI * IABC_CUTOFF_FREQ * PWM_PERIOD)
 #define IABC_LPF_ALPHA                          (IABC_CUTOFF_TIME_CONST / (1.0f + IABC_CUTOFF_TIME_CONST))
 #define IABC_LPF_ONE_M_ALPHA                    (1.0f - IABC_LPF_ALPHA)
 #define VBUS_CUTOFF_FREQ                        (400.0f)    // vbus voltage loop bandwidth (Hz)
-#define VBUS_CUTOFF_TIME_CONST                  (2.0f * M_PI * VBUS_CUTOFF_FREQ * PWM_PERIOD)
+#define VBUS_CUTOFF_TIME_CONST                  (2.0f * UOMODRI_PI * VBUS_CUTOFF_FREQ * PWM_PERIOD)
 #define VBUS_LPF_ALPHA                          (VBUS_CUTOFF_TIME_CONST / (1.0f + VBUS_CUTOFF_TIME_CONST))
 #define VBUS_LPF_ONE_M_ALPHA                    (1.0f - VBUS_LPF_ALPHA)
 #define VEXT_CUTOFF_FREQ                        (4000.0f)   // vbus voltage loop bandwidth (Hz)
-#define VEXT_CUTOFF_TIME_CONST                  (2.0f * M_PI * VEXT_CUTOFF_FREQ * PWM_PERIOD)
+#define VEXT_CUTOFF_TIME_CONST                  (2.0f * UOMODRI_PI * VEXT_CUTOFF_FREQ * PWM_PERIOD)
 #define VEXT_LPF_ALPHA                          (VEXT_CUTOFF_TIME_CONST / (1.0f + VEXT_CUTOFF_TIME_CONST))
 #define VEXT_LPF_ONE_M_ALPHA                    (1.0f - VEXT_LPF_ALPHA)
 
+/***********************************************************************
+ * INTERRUPTS DEFINES
+ ***********************************************************************/
+#define INT_CLA_MOTOR1                          INT_CLA1_2
+#define INT_CLA_MOTOR1_GROUP                    INTERRUPT_ACK_GROUP11
+#define INT_CLA_MOTOR1_HANDLER                  &cla_isrMotor1
+#define INT_CLA_MOTOR2                          INT_CLA1_3
+#define INT_CLA_MOTOR2_GROUP                    INTERRUPT_ACK_GROUP11
+#define INT_CLA_MOTOR2_HANDLER                  &cla_isrMotor2
+#define INT_TIMER_LED                           INT_TIMER0
+#define INT_TIMER_LED_GROUP                     INTERRUPT_ACK_GROUP1
+#define INT_TIMER_LED_HANDLER                   &tmr_isrLed
+#define INT_DMA_RX_MSG                          INT_DMA_CH6
+#define INT_DMA_RX_MSG_GROUP                    INTERRUPT_ACK_GROUP7
+#define INT_DMA_RX_MSG_HANDLER                  &dma_isrComRx
 
 /***********************************************************************
  * COMMUNICATION DEFINES

@@ -4,33 +4,41 @@
 /***********************************************************************
  * INCLUDE FILES
  ***********************************************************************/
-#include <stdbool.h>
 #include <stdint.h>
-#include <math.h>
+#include <hw_types.h>
+#include "f2838x_device.h"
 
-#include <f2838x_device.h>
-//#include "hal.h"
 #include "foc.h"
-//#include "drv8353.h"
 #include "uomodri_user_defines.h"
 
 /***********************************************************************
  * DEFINES
  ***********************************************************************/
-#define MOTOR_STATE_START                           (0x00)
-#define MOTOR_STATE_INIT_FW                         (0x01)
-#define MOTOR_STATE_INIT_REV                        (0x02)
-#define MOTOR_STATE_INIT_TEST                       (0x04)
-#define MOTOR_STATE_INIT_FIX                        (0x08)
-#define MOTOR_STATE_READY                           (0x10)
-#define MOTOR_STATE_STOP                            (0x20)
-#define MOTOR_STATE_ERROR                           (0xFF)
+#define MOTOR_STATE_IDLE                            (0x0000)
+#define MOTOR_STATE_INIT_FW                         (0x0001)
+#define MOTOR_STATE_INIT_REV                        (0x0002)
+#define MOTOR_STATE_INIT_TEST                       (0x0004)
+#define MOTOR_STATE_INIT_FIX                        (0x0008)
+#define MOTOR_STATE_READY                           (0x0010)
+#define MOTOR_STATE_STOP                            (0x0020)
+#define MOTOR_STATE_ERROR                           (0xFFFF)
 
-#define USE_STATE_MACHINE_4_ELECTRONCS_ENGINEERS    (1)
+#define USE_STATE_MACHINE_4_ELECTRONCS_ENGINEERS    (0)
 
 /***********************************************************************
  * ENUM TYPES
  ***********************************************************************/
+//typedef enum __motor_states__
+//{
+//    MOTOR_STATE_START       = 0x0000,
+//    MOTOR_STATE_INIT_FW     = 0x0001,
+//    MOTOR_STATE_INIT_REV    = 0x0002,
+//    MOTOR_STATE_INIT_TEST   = 0x0004,
+//    MOTOR_STATE_INIT_FIX    = 0x0008,
+//    MOTOR_STATE_READY       = 0x0010,
+//    MOTOR_STATE_STOP        = 0x0020,
+//    MOTOR_STATE_ERROR       = 0xFFFF,
+//} motor_states;
 
 /***********************************************************************
  * UNION TYPES
@@ -41,15 +49,15 @@
  */
 typedef union __error_reg_u__
 {
-    uint8_t                     all;
+    uint16_t                    all;
     struct
     {
-        uint8_t                 enc_mismatch    : 1;    /*!< Bits 0   : R/W - Encoder error too high */
-        uint8_t                 pos_rollover    : 1;    /*!< Bits 1   : R/W - Position roll-over occurred */
-        uint8_t                 drv_fault       : 1;    /*!< Bits 2   : R/W - Motor DRV nFault error */
-        uint8_t                 com_timeout     : 1;    /*!< Bits 3   : R/W - Communication timeout error */
-        uint8_t                 enc_failure     : 1;    /*!< Bits 4   : R/W - encoder failure during alignment. */
-        uint8_t                 error_RSV1      : 3;    /*!< Bits 5-7 : R/W - Reserved */
+        uint16_t                enc_indexErr    : 1;    /*!< Bits 0   : R/W - Encoder error too high */
+        uint16_t                pos_rollover    : 1;    /*!< Bits 1   : R/W - Position roll-over occurred */
+        uint16_t                drv_fault       : 1;    /*!< Bits 2   : R/W - Motor DRV nFault error */
+        uint16_t                com_timeout     : 1;    /*!< Bits 3   : R/W - Communication timeout error */
+        uint16_t                enc_alignErr    : 1;    /*!< Bits 4   : R/W - encoder failure during alignment. */
+        uint16_t                error_RSV1      : 11;   /*!< Bits 5-15: R/W - Reserved */
     };
 } error_reg_u;
 
@@ -62,26 +70,25 @@ typedef union __error_reg_u__
  */
 typedef struct __motor_t__
 {
-    foc_t* const                p_foc;                  /*!< Pointer on the FOC structure associated to the motor */
-    uint64_t                    itCnt;                  /*!< Event counter incrementing on every IT call */
-    uint32_t                    epwmBaseAddr[3];        /*!< Address array for the PWM peripherals associated to the motor control */
+    foc_t                       foc;                    /*!< FOC structure associated to the motor */
+    uint32_t                    itCnt;                  /*!< Event counter incrementing on every IT call */
+    uint32_t                    epwmBase[3];            /*!< Address array for the PWM peripherals associated to the motor control */
     uint32_t                    drvFaultNum;            /*!< GPIO associated to the DRV fault line */
     uint32_t                    drvEnNum;               /*!< GPIO associated to the DRV enable line */
     uint32_t                    clCycleNb;
-    float32_t                   statorResEst;           /*!< Q-axis resistance estimation. [Ohm] */
-    lpf_t                       statorResEstFlt;        /*!< Resistance estimation low-pass filter */
-    volatile uint16_t* const    p_cmdReg[3];            /*!< PWM address register for FOC command */
-    const uint8_t               motor_id;               /*!< Motor identification */
-    uint8_t                     motor_state;            /*!< Current motor state for the FSM. */
-    error_reg_u                 motor_error;            /*!< Bit field for the error sources. */
-    bool_t                      itDone;
+    struct
+    {
+        float32_t               statorResEst;           /*!< Q-axis resistance estimation. [Ohm] */
+        lpf_t                   statorResEstFlt;        /*!< Resistance estimation low-pass filter */
+    };
+    uint16_t                    id;                     /*!< Motor identification */
+    uint16_t                    state;                  /*!< Current motor state for the FSM. */
+    error_reg_u                 error;                  /*!< Bit field for the error sources. */
 } motor_t;
 
 /***********************************************************************
  * FUNCTIONS DECLARATION
  ***********************************************************************/
-inline void MOT_runCommand(motor_t*, float32_t, float32_t, float32_t);
-inline void MOT_stopCommand(motor_t*);
-inline bool_t MOT_runControl(motor_t*);
+void MOT_initStruct(motor_t*, uint16_t);
 
 #endif /* __MOTOR_H__ */

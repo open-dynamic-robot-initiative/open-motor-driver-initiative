@@ -1,6 +1,9 @@
 /***********************************************************************
  * INCLUDES
  ***********************************************************************/
+#include <stdlib.h>
+#include "vcu2/vcu2_crc.h"
+
 #include "uomodri_user_defines.h"
 #include "communication.h"
 
@@ -14,13 +17,14 @@
  * @param[out]      p_cmd_m2    Pointer on the command structure used for MOTOR_2 control(actions to be realized by motor_foc).
  * @return          Is message received from Master board valid or not ?
  */
-bool_t COM_msgExtract(mst2slv_msg_t* p_msg,  cmd_t* p_cmd_m1,  cmd_t* p_cmd_m2)
+bool_t COM_msgExtract(mst2slv_msg_t* p_msg, mst2slv_msg_t* p_swap, cmd_t* p_cmd_m1, cmd_t* p_cmd_m2)
 {
-    uint32_t crc                        = COM_crc32((uint16_t *) p_msg, COM_MSG_TX_RX_16BIT_PAYLOAD_LENGTH);
+    COM_msgSwapEndian((uint16_t *)p_msg, (uint16_t *)p_swap, COM_MSG_TX_RX_16BIT_PAYLOAD_LENGTH);
+    uint32_t crc                        = COM_vcrc32((uint16_t *)p_swap, COM_MSG_TX_RX_16BIT_PAYLOAD_LENGTH);
     if((MSB_32(crc) == p_msg->crc.u16_msb) && (LSB_32(crc) == p_msg->crc.u16_lsb))
     {
         int32_t pos_s32                 = (int32_t)FUS_16_TO_32(p_msg->position[MOTOR_1].u16_msb, p_msg->position[MOTOR_1].u16_lsb);
-        cmd_reg_u* p_cmd_reg            = &p_cmd_m1->cmdArray;
+        cmd_reg_u* p_cmd_reg            = &p_cmd_m1->cmdBits;
         p_cmd_m1->posRef                = (float32_t)(pos_s32                   * POSITION_LSB      * FM_ROUND2RAD);
         p_cmd_m1->velRef                = (float32_t)(p_msg->velocity[MOTOR_1]  * VELOCITY_LSB      * FM_KRPM2RADPS);
         p_cmd_m1->iqff                  = (float32_t)(p_msg->current[MOTOR_1]   * IQ_LSB);
@@ -38,7 +42,7 @@ bool_t COM_msgExtract(mst2slv_msg_t* p_msg,  cmd_t* p_cmd_m1,  cmd_t* p_cmd_m2)
         p_cmd_reg->systemEnable         = (bool_t)p_msg->mode.ES;
 
         pos_s32                         = (int32_t)FUS_16_TO_32(p_msg->position[MOTOR_2].u16_msb, p_msg->position[MOTOR_2].u16_lsb);
-        p_cmd_reg                       = &p_cmd_m2->cmdArray;
+        p_cmd_reg                       = &p_cmd_m2->cmdBits;
         p_cmd_m2->posRef                = (float32_t)(pos_s32                   * POSITION_LSB      * FM_ROUND2RAD);
         p_cmd_m2->velRef                = (float32_t)(p_msg->velocity[MOTOR_2]  * VELOCITY_LSB      * FM_KRPM2RADPS);
         p_cmd_m2->iqff                  = (float32_t)(p_msg->current[MOTOR_2]   * IQ_LSB);
@@ -61,22 +65,94 @@ bool_t COM_msgExtract(mst2slv_msg_t* p_msg,  cmd_t* p_cmd_m1,  cmd_t* p_cmd_m2)
     return(false);
 }
 
+#if (CLA_CORE_ENABLE)
 /**
- * @brief	        Slave to Master message creation/update using motor_foc data structure.
- * @param[in]       p_motor_m1  Pointer on data structure used for MOTOR_1 control.
- * @param[in]       p_motor_m2  Pointer on data structure used for MOTOR_1 control.
- * @param[inout]    p_msg       Pointer on the message to transmit to the Master board
+ * @brief           Slave to Master message creation/update. IT Call.
+ * @param[in]       *p_motor    Pointer on current data structure used for control.
+ * @param[inout]    *p_msg      Pointer on the message to transmit to the Master board.
+ * @param[inout]    *p_swap     Pointer on the temporary message necessary for CRC computation.
  */
-void COM_msgCreate(motor_t* p_motor_m1, motor_t* p_motor_m2, slv2mst_msg_t* p_msg)
+bool_t COM_msgCreate(motor_t* p_motor, slv2mst_msg_t* p_msg, slv2mst_msg_t* p_swap)
 {
-    foc_t* p_foc                        = p_motor_m1->p_foc;
-    encoder_t* p_enc                    = &p_foc->motor_enc;
-    cmd_reg_u cmd_reg                   = {.all = p_foc->motor_cmd.cmdArray.all};
+    foc_t* p_foc                        = &p_motor->foc;
+    encoder_t* p_enc                    = &p_foc->enc;
+    error_reg_u motor_err               = p_motor->error;
+    cmd_reg_u motor_cmd                 = {.all = p_foc->cmd.cmdBits.all};
+    float32_t theta_index_comp          = (motor_cmd.encOffsetEnable) ? (p_enc->thetaIndexAbsolute) : (0.0f);
+    float32_t pos_offset                = p_enc->thetaAbsolute - theta_index_comp;
+    int32_t pos                         = (int32_t)(pos_offset                  / POSITION_LSB      * FM_RAD2ROUND);
+    uint16_t motor_id                   = p_motor->id;
+    bool_t align_done                   = (p_motor->state == MOTOR_STATE_READY) || (p_motor->state == MOTOR_STATE_STOP);
+
+    p_msg->position[motor_id].u16_msb   = MSB_32(pos);
+    p_msg->position[motor_id].u16_lsb   = LSB_32(pos);
+    p_msg->velocity[motor_id]           = (int16_t)(p_enc->speed.speedMech[0]   / VELOCITY_LSB      * FM_RADPS2KRPM);
+    p_msg->current[motor_id]            = (int16_t)(p_foc->iq                   / IQ_LSB);
+    p_msg->coilRes[motor_id]            = (uint16_t)(p_foc->resEst              / RESISTANCE_LSB);
+    p_msg->adcSamples[motor_id]         = (uint16_t)(p_foc->acq.vExt            / VOLTAGE_LSB);
+
+    if(motor_id == MOTOR_1)
+    {
+        // Update status field - MOTOR_1
+        p_msg->status.M1E               = motor_cmd.motorEnable;    // MOTOR_1 enabled
+        p_msg->status.M1R               = align_done;               // MOTOR_1 ready
+        p_msg->status.IDX1T             = p_enc->flags.indexToggle; // MOTOR_1 index toggle
+        p_msg->status.IDX1D             = p_enc->flags.indexDetect; // MOTOR_1 index detected
+
+        p_msg->status.ERROR_CODE        = (motor_err.com_timeout)   ? (STATUS_ERROR_SPI_RECV_TIMEOUT)   : (STATUS_ERROR_NO_ERROR);
+        p_msg->status.ERROR_CODE        = (motor_err.pos_rollover)  ? (STATUS_ERROR_POS_ROLLOVER)       : (p_msg->status.ERROR_CODE);
+        p_msg->status.ERROR_CODE        = (motor_err.drv_fault)     ? (STATUS_ERROR_DRV_FAULT)          : (p_msg->status.ERROR_CODE);
+        p_msg->status.ERROR_CODE        = (motor_err.enc_indexErr)  ? (STATUS_ERROR_ENCODER1)           : (p_msg->status.ERROR_CODE);
+        p_msg->status.ERROR_CODE        = (motor_err.enc_alignErr)  ? (STATUS_ERROR_ENCODER1)           : (p_msg->status.ERROR_CODE);
+
+        return(false);
+    }
+    else
+    {
+        // Update status field - MOTOR_2
+        p_msg->status.M2E               = motor_cmd.motorEnable;    // MOTOR_2 enabled
+        p_msg->status.M2R               = align_done;               // MOTOR_2 ready
+        p_msg->status.IDX2T             = p_enc->flags.indexToggle; // MOTOR_2 index toggle
+        p_msg->status.IDX2D             = p_enc->flags.indexDetect; // MOTOR_2 index detected
+
+        p_msg->status.SE                = motor_cmd.systemEnable;   // System enabled
+        p_msg->status.STATUS_RSV1       = 0;
+        p_msg->lastCmdIndex             = p_foc->cmd.index;
+        p_msg->timeStamp                = (uint16_t)CPUTimer_getTimerCount(CPU_TIMER_0_BASE);
+
+        p_msg->status.ERROR_CODE        = (motor_err.com_timeout)   ? (STATUS_ERROR_SPI_RECV_TIMEOUT)   : (p_msg->status.ERROR_CODE);
+        p_msg->status.ERROR_CODE        = (motor_err.pos_rollover)  ? (STATUS_ERROR_POS_ROLLOVER)       : (p_msg->status.ERROR_CODE);
+        p_msg->status.ERROR_CODE        = (motor_err.drv_fault)     ? (STATUS_ERROR_DRV_FAULT)          : (p_msg->status.ERROR_CODE);
+        p_msg->status.ERROR_CODE        = (motor_err.enc_indexErr)  ? (STATUS_ERROR_ENCODER2)           : (p_msg->status.ERROR_CODE);
+        p_msg->status.ERROR_CODE        = (motor_err.enc_alignErr)  ? (STATUS_ERROR_ENCODER2)           : (p_msg->status.ERROR_CODE);
+
+        // Compute CRC
+        COM_msgSwapEndian((uint16_t *)p_msg, (uint16_t *)p_swap, COM_MSG_TX_RX_16BIT_PAYLOAD_LENGTH);
+        uint32_t crc                    = COM_vcrc32((uint16_t *)p_swap, COM_MSG_TX_RX_16BIT_PAYLOAD_LENGTH);
+        p_msg->crc.u16_msb              = LSB_32(crc);              // required for Solo
+        p_msg->crc.u16_lsb              = MSB_32(crc);
+
+        return(true);
+    }
+}
+
+#else
+/**
+ * @brief           Slave to Master message creation/update.
+ * @param[in]       *p_motor_m1 Pointer on data structure used for MOTOR_1 control.
+ * @param[in]       *p_motor_m2 Pointer on data structure used for MOTOR_2 control.
+ * @param[inout]    *p_msg      Pointer on the message to transmit to the Master board.
+ * @param[inout]    *p_swap     Pointer on the temporary message necessary for CRC computation.
+ */
+void COM_msgCreate(motor_t* p_motor_m1, motor_t* p_motor_m2, slv2mst_msg_t* p_msg, slv2mst_msg_t* p_swap)
+{
+    foc_t* p_foc                        = &p_motor_m1->foc;
+    encoder_t* p_enc                    = &p_foc->enc;
+    cmd_reg_u cmd_reg                   = {.all = p_foc->cmd.cmdBits.all};
     float32_t theta_index_comp          = (cmd_reg.encOffsetEnable) ? (p_enc->thetaIndexAbsolute) : (0.0f);
     float32_t pos_offset                = p_enc->thetaAbsolute - theta_index_comp;
     int32_t pos                         = (int32_t)(pos_offset                  / POSITION_LSB      * FM_RAD2ROUND);
-    uint8_t state                       = p_motor_m1->motor_state;
-    bool_t align_done                   = (state == MOTOR_STATE_READY) || (state == MOTOR_STATE_STOP);
+    bool_t align_done                   = (p_motor_m1->state == MOTOR_STATE_READY) || (p_motor_m1->state == MOTOR_STATE_STOP);
     // Update status field - MOTOR_1
     p_msg->status.M1E                   = cmd_reg.motorEnable;      // MOTOR_1 enabled
     p_msg->status.M1R                   = align_done;               // MOTOR_1 ready
@@ -87,21 +163,20 @@ void COM_msgCreate(motor_t* p_motor_m1, motor_t* p_motor_m2, slv2mst_msg_t* p_ms
     p_msg->velocity[MOTOR_1]            = (int16_t)(p_enc->speed.speedMech[0]   / VELOCITY_LSB      * FM_RADPS2KRPM);
     p_msg->current[MOTOR_1]             = (int16_t)(p_foc->iq                   / IQ_LSB);
     p_msg->coilRes[MOTOR_1]             = (uint16_t)(p_foc->resEst              / RESISTANCE_LSB);
-    p_msg->adcSamples[MOTOR_1]          = (uint16_t)(p_foc->motor_acq.vExt      / VOLTAGE_LSB);
+    p_msg->adcSamples[MOTOR_1]          = (uint16_t)(p_foc->acq.vExt            / VOLTAGE_LSB);
 
     p_msg->status.SE                    = cmd_reg.systemEnable; // System enabled
     p_msg->status.STATUS_RSV1           = 0;
-    p_msg->lastCmdIndex                 = p_foc->motor_cmd.index;
+    p_msg->lastCmdIndex                 = p_foc->cmd.index;
     p_msg->timeStamp                    = (uint16_t)CPUTimer_getTimerCount(CPU_TIMER_0_BASE);
 
-    p_foc                               = p_motor_m2->p_foc;
-    p_enc                               = &p_foc->motor_enc;
-    cmd_reg.all                         = p_foc->motor_cmd.cmdArray.all;
+    p_foc                               = &p_motor_m2->foc;
+    p_enc                               = &p_foc->enc;
+    cmd_reg.all                         = p_foc->cmd.cmdBits.all;
     theta_index_comp                    = (cmd_reg.encOffsetEnable) ? (p_enc->thetaIndexAbsolute) : (0.0f);
     pos_offset                          = p_enc->thetaAbsolute - theta_index_comp;
     pos                                 = (int32_t)(pos_offset                  / POSITION_LSB      * FM_RAD2ROUND);
-    state                               = p_motor_m2->motor_state;
-    align_done                          = (state == MOTOR_STATE_READY) || (state == MOTOR_STATE_STOP);
+    align_done                          = (p_motor_m2->state == MOTOR_STATE_READY) || (p_motor_m2->state == MOTOR_STATE_STOP);
     // Update status field - MOTOR_2
     p_msg->status.M2E                   = cmd_reg.motorEnable;      // MOTOR_2 enabled
     p_msg->status.M2R                   = align_done;               // MOTOR_2 ready
@@ -112,27 +187,29 @@ void COM_msgCreate(motor_t* p_motor_m1, motor_t* p_motor_m2, slv2mst_msg_t* p_ms
     p_msg->velocity[MOTOR_2]            = (int16_t)(p_enc->speed.speedMech[0]   / VELOCITY_LSB      * FM_RADPS2KRPM);
     p_msg->current[MOTOR_2]             = (int16_t)(p_foc->iq                   / IQ_LSB);
     p_msg->coilRes[MOTOR_2]             = (uint16_t)(p_foc->resEst              / RESISTANCE_LSB);
-    p_msg->adcSamples[MOTOR_2]          = (uint16_t)(p_foc->motor_acq.vExt      / VOLTAGE_LSB);
+    p_msg->adcSamples[MOTOR_2]          = (uint16_t)(p_foc->acq.vExt            / VOLTAGE_LSB);
 
-    error_reg_u* p_err[2]               = {&p_motor_m1->motor_error, &p_motor_m2->motor_error};
+    error_reg_u* p_err[2]               = {&p_motor_m1->error, &p_motor_m2->error};
     p_msg->status.ERROR_CODE            = (p_err[MOTOR_1]->com_timeout) ? (STATUS_ERROR_SPI_RECV_TIMEOUT)   : (STATUS_ERROR_NO_ERROR);
     p_msg->status.ERROR_CODE            = (p_err[MOTOR_2]->com_timeout) ? (STATUS_ERROR_SPI_RECV_TIMEOUT)   : (p_msg->status.ERROR_CODE);
     p_msg->status.ERROR_CODE            = (p_err[MOTOR_1]->pos_rollover)? (STATUS_ERROR_POS_ROLLOVER)       : (p_msg->status.ERROR_CODE);
     p_msg->status.ERROR_CODE            = (p_err[MOTOR_2]->pos_rollover)? (STATUS_ERROR_POS_ROLLOVER)       : (p_msg->status.ERROR_CODE);
     p_msg->status.ERROR_CODE            = (p_err[MOTOR_1]->drv_fault)   ? (STATUS_ERROR_DRV_FAULT)          : (p_msg->status.ERROR_CODE);
     p_msg->status.ERROR_CODE            = (p_err[MOTOR_2]->drv_fault)   ? (STATUS_ERROR_DRV_FAULT)          : (p_msg->status.ERROR_CODE);
-    p_msg->status.ERROR_CODE            = (p_err[MOTOR_1]->enc_mismatch)? (STATUS_ERROR_ENCODER1)           : (p_msg->status.ERROR_CODE);
-    p_msg->status.ERROR_CODE            = (p_err[MOTOR_2]->enc_mismatch)? (STATUS_ERROR_ENCODER2)           : (p_msg->status.ERROR_CODE);
-    p_msg->status.ERROR_CODE            = (p_err[MOTOR_1]->enc_failure) ? (STATUS_ERROR_ENCODER1)           : (p_msg->status.ERROR_CODE);
-    p_msg->status.ERROR_CODE            = (p_err[MOTOR_2]->enc_failure) ? (STATUS_ERROR_ENCODER2)           : (p_msg->status.ERROR_CODE);
+    p_msg->status.ERROR_CODE            = (p_err[MOTOR_1]->enc_indexErr)? (STATUS_ERROR_ENCODER1)           : (p_msg->status.ERROR_CODE);
+    p_msg->status.ERROR_CODE            = (p_err[MOTOR_2]->enc_indexErr)? (STATUS_ERROR_ENCODER2)           : (p_msg->status.ERROR_CODE);
+    p_msg->status.ERROR_CODE            = (p_err[MOTOR_1]->enc_alignErr)? (STATUS_ERROR_ENCODER1)           : (p_msg->status.ERROR_CODE);
+    p_msg->status.ERROR_CODE            = (p_err[MOTOR_2]->enc_alignErr)? (STATUS_ERROR_ENCODER2)           : (p_msg->status.ERROR_CODE);
 
     // Compute CRC
-    uint32_t crc = COM_crc32((uint16_t *)p_msg, COM_MSG_TX_RX_16BIT_PAYLOAD_LENGTH);
+    COM_msgSwapEndian((uint16_t *)p_msg, (uint16_t *)p_swap, COM_MSG_TX_RX_16BIT_PAYLOAD_LENGTH);
+    uint32_t crc                        = COM_vcrc32((uint16_t *)p_swap, COM_MSG_TX_RX_16BIT_PAYLOAD_LENGTH);
     p_msg->crc.u16_msb                  = LSB_32(crc);              // required for Solo
     p_msg->crc.u16_lsb                  = MSB_32(crc);
 
     return;
 }
+#endif
 
 /**
  * @brief           Reset the command structure for a motor
@@ -149,55 +226,46 @@ void COM_resetCmdStruct(cmd_t* p_cmd)
     p_cmd->timeoutRef           = 0U;
     p_cmd->cptTimeout           = 0U;
     p_cmd->index                = 0U;
-    p_cmd->cmdArray.all         = 0U;
+    p_cmd->cmdBits.all          = 0U;
 
     return;
 }
 
 /**
- * @brief           Reset the extraction structure associated with COM_msgExtract_cla
- * @param[in]       p_msg       Pointer on the extraction structure
+ * @brief           Endianness conversion. Swap bytes in a message.
+ * @param[in]       *p_msg  Pointer on the message to swap.
+ * @param[out]      *p_swap Pointer on the swapped message.
+ * @param[in]       length  Number of elements to be swapped.
  */
-//void COM_resetMsgExtractStruct(mst2slv_msg_cla_t* p_msg)
-//{
-//    p_msg->msg_rx_state = COM_RX_STATE_MODE;
-//    p_msg->msg_crc32    = UINT32_MAX;
-//    p_msg->msg_rx       = 0U;
-//    p_msg->msg_tmp      = 0U;
-//
-//    return;
-//}
-
-/**
- * @brief       	Software cyclic redundancy check (CRC) using predefined array.
- * @param[in]       p_buf   Pointer on the array to be CRCed.
- * @param[in]       len     Length of the array
- * @return
- */
-uint32_t COM_crc32(uint16_t* p_buf, uint16_t len)
+void COM_msgSwapEndian(uint16_t* p_msg, uint16_t* p_swap, uint16_t length)
 {
-  uint32_t crc = 0xFFFFFFFF;
-  while (len--)
-    {
-      crc = (crc << 8) ^ crc32_table[((crc >> 24) ^ MSB_16(*p_buf)) & 0xFF];
-      crc = (crc << 8) ^ crc32_table[((crc >> 24) ^ LSB_16(*p_buf)) & 0xFF];
-      p_buf++;
-    }
+    uint16_t i;
 
-  return(crc);
+    for(i = 0; i < length; i++)
+        *p_swap++ = (*p_msg << 8) | (*p_msg++ >> 8);
+
+    return;
 }
 
 /**
- * @brief           Software cyclic redundancy check (CRC) using predefined array. Used with COM_msgExtract_cla.
- *                  CRC computed at each new state
- * @param[in]       data    Value to be added into CRC.
- * @param[inout]    crc     Current state of CRC.
- * @return          New computed value of CRC.
+ * @brief           Software cyclic redundancy check (CRC) using the VCRC assembly code accelerator.
+ * @param[in]       *p_msg  Pointer on the message to compute.
+ * @param[in]       length  Number of elements necessary for CRC computation.
+ * @return          New CRC result.
  */
-//uint32_t COM_crc32_cla(mst2slv_msg_cla_t* p_msg)
-//{
-//    p_msg->msg_crc32    = (p_msg->msg_crc32 << 8) ^ crc32_table[((p_msg->msg_crc32 >> 24) ^ MSB_16(p_msg->msg_rx)) & 0xFF];
-//    p_msg->msg_crc32    = (p_msg->msg_crc32 << 8) ^ crc32_table[((p_msg->msg_crc32 >> 24) ^ LSB_16(p_msg->msg_rx)) & 0xFF];
-//
-//    return(p_msg->msg_crc32);
-//}
+uint32_t COM_vcrc32(uint16_t* p_msg, uint16_t length)
+{
+    CRC_Obj crc;
+    // Initialize the CRC object
+    crc.seedValue   = CRC_INIT_CRC32;
+    crc.nMsgBytes   = 2 * length;
+    crc.parity      = CRC_parity_even;
+    crc.crcResult   = 0;
+    crc.pMsgBuffer  = (uint16_t *)p_msg;
+    crc.init        = (void (*)(void *))CRC_init32Bit;
+    crc.run         = (void (*)(void *))CRC_run32BitPoly1;
+    // Run the CRC module with the VCRC assembly code
+    crc.init(&crc);
+    crc.run(&crc);
+    return(crc.crcResult);
+}

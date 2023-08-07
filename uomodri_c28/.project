@@ -27,11 +27,6 @@
 	</natures>
 	<linkedResources>
 		<link>
-			<name>driverlib.lib</name>
-			<type>1</type>
-			<locationURI>C2000WARE_ROOT/driverlib/f2838x/driverlib/ccs/Debug/driverlib.lib</locationURI>
-		</link>
-		<link>
 			<name>src/device/device.c</name>
 			<type>1</type>
 			<locationURI>C2000WARE_ROOT/device_support/f2838x/common/source/device.c</locationURI>
@@ -48,8 +43,20 @@
 			<value>file:/C:/STM32Toolchain/TI/c2000/C2000Ware_4_03_00_00</value>
 		</variable>
 		<variable>
+			<name>CLA_DATA_ROM_ROOT</name>
+			<value>$%7BC2000WARE_ROOT%7D/libraries/boot_rom/f2838x/revA/rom_symbol_libs/cpu1/claDataROM</value>
+		</variable>
+		<variable>
+			<name>CLA_MATH_ROOT</name>
+			<value>$%7BC2000WARE_ROOT%7D/libraries/math/CLAmath/c28</value>
+		</variable>
+		<variable>
 			<name>SYSCONFIG_TOOL</name>
-			<value>file:/C:/STM32Toolchain/TI/ccs1000/ccs/utils/sysconfig_1.12.1/sysconfig_cli.bat</value>
+			<value>$%7BCCS_INSTALL_ROOT%7D/utils/sysconfig_1.12.1/sysconfig_cli.bat</value>
+		</variable>
+		<variable>
+			<name>VCU_ROOT</name>
+			<value>$%7BC2000WARE_ROOT%7D/libraries/dsp/VCU/c28</value>
 		</variable>
 	</variableList>
 </projectDescription>

@@ -34,6 +34,7 @@ void HAL_ini(const hal_cfg_t* p_hal)
 {
     if(p_hal != NULL)
     {
+        EALLOW;
         // Initialize GPIO pins
         HAL_GPIO_ini(p_hal->p_gpioHandle);
         // Initialize ADC
@@ -55,6 +56,7 @@ void HAL_ini(const hal_cfg_t* p_hal)
         HAL_SPI_ini(p_hal->p_spiHandle);
         // Initialize CLA
         HAL_CLA_ini(p_hal->p_claHandle);
+        EDIS;
     }
 
     return;
@@ -68,11 +70,11 @@ void HAL_GPIO_ini(const gpio_cfg_t* p_gpio)
 {
     if(p_gpio != NULL)
     {
-        uint32_t pinNum = p_gpio->pinNumber;
+        uint32_t pinNum = p_gpio->pinNum;
 
         while(pinNum != UINT32_MAX)
         {
-            GPIO_setMasterCore(pinNum, p_gpio->coreSelect);
+            GPIO_setControllerCore(pinNum, p_gpio->coreSelect);
             if(p_gpio->analogModeEnable == GPIO_ANALOG_DISABLED)
             {
                 GPIO_setPinConfig(p_gpio->fctMux);
@@ -91,7 +93,7 @@ void HAL_GPIO_ini(const gpio_cfg_t* p_gpio)
             }
             else
                 GPIO_setAnalogMode(pinNum, GPIO_ANALOG_ENABLED);
-            pinNum = (++p_gpio)->pinNumber;
+            pinNum = (++p_gpio)->pinNum;
         }
     }
 
@@ -133,8 +135,8 @@ void HAL_ADC_ini(const adc_cfg_t* p_adcCfg)
                  * SOC source will be PWM, no IT.
                  */
                 ADC_setSOCPriority(adcBase, ADC_SOC_PRIORITY);
-                ADC_setupSOC(adcBase, p_adcIni->adcSOCNumber, p_adcIni->adcTriggerSrc, p_adcIni->adcChannel, ADC_SAMPLING_WINDOW);
-                ADC_setInterruptSOCTrigger(adcBase, p_adcIni->adcSOCNumber, ADC_INT_SOC_TRIGGER);
+                ADC_setupSOC(adcBase, p_adcIni->adcSOCNum, p_adcIni->adcTrigSrc, p_adcIni->adcChannel, ADC_SAMPLING_WINDOW);
+                ADC_setInterruptSOCTrigger(adcBase, p_adcIni->adcSOCNum, ADC_INT_SOC_TRIGGER);
                 p_adcIni++;
             }
 
@@ -143,7 +145,7 @@ void HAL_ADC_ini(const adc_cfg_t* p_adcCfg)
                 /* Post processing block initialization, associate with ADC_SOC_NUMBER0
                  * Initialize PPB offset to zero
                  */
-                ADC_setupPPB(adcBase, p_adcAcq->adcPPBNumber, p_adcAcq->adcSOCNumber);
+                ADC_setupPPB(adcBase, p_adcAcq->adcPPBNum, p_adcAcq->adcSOCNum);
                 p_adcAcq++;
             }
 
@@ -151,10 +153,10 @@ void HAL_ADC_ini(const adc_cfg_t* p_adcCfg)
             {
                 while(p_adcInt->adcBase == adcBase)
                 {
-                    ADC_setInterruptSource(adcBase, p_adcInt->adcIntNumber, p_adcInt->adcEOCNumber);
-                    ADC_enableContinuousMode(adcBase, p_adcInt->adcIntNumber);
-                    ADC_enableInterrupt(adcBase, p_adcInt->adcIntNumber);
-                    ADC_clearInterruptStatus(adcBase, p_adcInt->adcIntNumber);
+                    ADC_setInterruptSource(adcBase, p_adcInt->adcIntNum, p_adcInt->intTrig);
+                    ADC_enableContinuousMode(adcBase, p_adcInt->adcIntNum);
+                    ADC_enableInterrupt(adcBase, p_adcInt->adcIntNum);
+                    ADC_clearInterruptStatus(adcBase, p_adcInt->adcIntNum);
                     p_adcInt++;
                 }
             }
@@ -174,13 +176,15 @@ void HAL_ADC_offsetCalib(const periph_motor_cfg_t* p_periphMotorCfg)
     if(p_periphMotorCfg != NULL)
     {
         const epwm_cc_t*    p_pwmCC     = NULL;
-        const adc_int_t*    p_ITConv    = NULL;
+        const adc_int_t*    p_ITConv    = p_periphMotorCfg->p_intAcq;
+        const adc_acq_t*    p_iAcq      = NULL;
         lpf_t               fltCoef     = {.a = 0.998f, .one_minus_a = 0.002f};
-        float32_t           i[3]        = {0.0f, 0.0f, 0.0f};
+        float32_t           iRaw[3]     = {0.0f, 0.0f, 0.0f};
+        float32_t           iFlt[3]     = {0.0f, 0.0f, 0.0f};
         uint16_t            calibCnt    = 0;
         uint8_t             loop        = 0;
 
-        // force no switching with low side transistors closed
+        // force no switching with low side transistors closed & high side open
         for(loop = 0; loop < 3; loop++)
         {
             p_pwmCC = p_periphMotorCfg->p_pwmCntCmp[loop];
@@ -189,33 +193,41 @@ void HAL_ADC_offsetCalib(const periph_motor_cfg_t* p_periphMotorCfg)
 
         for(calibCnt = 0; calibCnt < 10000; calibCnt++)
         {
-            /* Wait data acquisition for Ia, Ib, Ic . Blocking. */
-            p_ITConv = p_periphMotorCfg->p_intAcq;
-            // Wait IT flag event
-            while(ADC_getInterruptStatus(p_ITConv->adcBase, p_ITConv->adcIntNumber) == false);
+            // Wait IT flag event. Blocking.
+            while(ADC_getInterruptStatus(p_ITConv->adcBase, p_ITConv->adcIntNum) == false);
+
+            // Get current results
+            for(loop = 0; loop < 3; loop++)
+            {
+                p_iAcq      = p_periphMotorCfg->p_iAcq[loop];
+                iRaw[loop]  = (float32_t)ADC_readResult(p_iAcq->adcResultBase, p_iAcq->adcSOCNum);
+            }
+
+            // filter
             if(calibCnt > 1000)
                 for(loop = 0; loop < 3; loop++)
-                    UOMODRI_HAL_ADC_CALIB(fltCoef, i[loop], (float32_t) *(p_periphMotorCfg->p_iAcq[loop]->adcResultReg));
+                    UOMODRI_HAL_ADC_CALIB(fltCoef, iFlt[loop], iRaw[loop]);
             else
                 for(loop = 0; loop < 3; loop++)
-                    i[loop] = (float32_t) *(p_periphMotorCfg->p_iAcq[loop]->adcResultReg);
+                    iFlt[loop]  = iRaw[loop];
 
             // clear flags
             for(loop = 0; loop < 3; loop++)
             {
-                // Clear the interrupt overflow flag
-                ADC_clearInterruptOverflowStatus(p_periphMotorCfg->p_iAcq[loop]->adcBase, p_ITConv->adcIntNumber);
-                // Clear the interrupt flag
-                ADC_clearInterruptStatus(p_periphMotorCfg->p_iAcq[loop]->adcBase, p_ITConv->adcIntNumber);
+                p_iAcq  = p_periphMotorCfg->p_iAcq[loop];
+                // Clear the interrupt flags
+                ADC_clearInterruptOverflowStatus(p_iAcq->adcBase, p_ITConv->adcIntNum);
+                ADC_clearInterruptStatus(p_iAcq->adcBase, p_ITConv->adcIntNum);
             }
         }
 
         // Set offsets in PPBs
         for(loop = 0; loop < 3; loop++)
+        {
+            p_iAcq  = p_periphMotorCfg->p_iAcq[loop];
             // Sets the post processing block reference offset for tensions
-            ADC_setPPBReferenceOffset(p_periphMotorCfg->p_iAcq[loop]->adcBase,
-                                      p_periphMotorCfg->p_iAcq[loop]->adcPPBNumber,
-                                      (uint16_t)i[loop]);
+            ADC_setPPBReferenceOffset(p_iAcq->adcBase, p_iAcq->adcPPBNum, (uint16_t)iFlt[loop]);
+        }
     }
 
     return;
@@ -548,6 +560,8 @@ void HAL_SCI_ini(const sci_cfg_t* p_sciCfg)
         uint32_t sciBase = p_sciCfg->sciBase;
         while(sciBase != UINT32_MAX)
         {
+            /* Initialize SCIx and its FIFO */
+            SCI_performSoftwareReset(sciBase);
             /* Set SPI configuration, disable loopback */
             SCI_setConfig(sciBase, DEVICE_LSPCLK_FREQ, p_sciCfg->bitRate, p_sciCfg->sciMode);
             /* Stop the SCI during configuration */
@@ -558,14 +572,16 @@ void HAL_SCI_ini(const sci_cfg_t* p_sciCfg)
                 SCI_setAddrMultiProcessorMode(sciBase);
             else if(p_sciCfg->multiProcMode == SCI_MULTI_PROC_IDLE)
                 SCI_setIdleMultiProcessorMode(sciBase);
+            /* Resets the SCI Transmit and Receive Channels */
+            SCI_resetChannels(sciBase);
             /* Configure FIFO if required. */
             SCI_disableFIFO(sciBase);
             if((p_sciCfg->rxLevel != SCI_FIFO_RX0) || (p_sciCfg->txLevel != SCI_FIFO_TX0))
             {
-                SCI_enableFIFO(sciBase);
                 SCI_resetTxFIFO(sciBase);
                 SCI_resetRxFIFO(sciBase);
                 SCI_setFIFOInterruptLevel(sciBase, p_sciCfg->txLevel, p_sciCfg->rxLevel);
+                SCI_enableFIFO(sciBase);
             }
             /* Clear flags & enable or disable interrupts */
             SCI_clearInterruptStatus(sciBase, SCI_INT_RXERR | SCI_INT_RXRDY_BRKDT | SCI_INT_FE | SCI_INT_OE | SCI_INT_PE | SCI_INT_TXFF | SCI_INT_RXFF);
@@ -574,6 +590,7 @@ void HAL_SCI_ini(const sci_cfg_t* p_sciCfg)
                 SCI_enableInterrupt(sciBase, p_sciCfg->intSrc);
             /* Restart SCI after configuration */
             SCI_enableModule(sciBase);
+            SCI_performSoftwareReset(sciBase);
             sciBase = (++p_sciCfg)->sciBase;
         }
     }
@@ -672,60 +689,66 @@ void HAL_CLA_ini(const cla_cfg_t* p_clacCfg)
 {
     if(p_clacCfg != NULL)
     {
-        EALLOW;
-
 #ifdef _FLASH
         extern uint32_t Cla1funcsRunStart, Cla1funcsLoadStart, Cla1funcsLoadSize;
         extern uint32_t Cla1ConstRunStart, Cla1ConstLoadStart, Cla1ConstLoadSize;
         // Copy over code from FLASH to RAM
-        memcpy((uint32_t *)&Cla1funcsRunStart,  (uint32_t *)&Cla1funcsLoadStart,    (uint32_t)&Cla1funcsLoadSize);
-        memcpy((uint32_t *)&Cla1ConstRunStart,  (uint32_t *)&Cla1ConstLoadStart,    (uint32_t)&Cla1ConstLoadSize);
+        memcpy((uint32_t *)&Cla1funcsRunStart, (uint32_t *)&Cla1funcsLoadStart, (uint32_t)&Cla1funcsLoadSize);
+        memcpy((uint32_t *)&Cla1ConstRunStart, (uint32_t *)&Cla1ConstLoadStart, (uint32_t)&Cla1ConstLoadSize);
 #endif //_FLASH
 
-        // Initialize and wait for CLA1ToCPUMsgRAM
+        // Initialize RAMs (CLA1ToCPUMsgRAM)
         MemCfg_initSections(MEMCFG_SECT_MSGCLA1TOCPU);
         while (!MemCfg_getInitStatus(MEMCFG_SECT_MSGCLA1TOCPU));
-        // Initialize and wait for CPUToCLA1MsgRAM
+        // Initialize RAMs (CPUToCLA1MsgRAM)
         MemCfg_initSections(MEMCFG_SECT_MSGCPUTOCLA1);
         while (!MemCfg_getInitStatus(MEMCFG_SECT_MSGCPUTOCLA1));
 
+        /* Disable background task */
+        CLA_disableBackgroundTask(CLA1_BASE);
+        /* Enable the IACK instruction to start a task on CLA in software for all 8 CLA tasks */
+        CLA_enableIACK(CLA1_BASE);
+        /* Enable each initialized task */
+//        CLA_enableTasks(CLA1_BASE, CLA_TASKFLAG_ALL);//p_clacCfg->claTaskFlg);
+
         uint8_t i;
-
-        for(i = 0; i < 8; i++)
+        while(p_clacCfg->p_claFunc != NULL)
         {
-            uint32_t memcfg_sect_lsx = MEMCFG_SECT_TYPE_LS | (1 << i);
-            /* Select LSxRAM to be the programming space for the CLA
-             * First configure the CLA to be the master for LSx and then
-             * set the space to be a program block */
-            if((p_clacCfg->progRAM & memcfg_sect_lsx) == memcfg_sect_lsx)
-            {
-                MemCfg_setLSRAMMasterSel(memcfg_sect_lsx, MEMCFG_LSRAMMASTER_CPU_CLA1);
-                MemCfg_setCLAMemType(memcfg_sect_lsx, MEMCFG_CLA_MEM_PROGRAM);
-            }
-            /* Configure LSxRAM as data spaces for the CLA
-             * First configure the CLA to be the master for LSx and then
-             * set the spaces to be code blocks */
-            if((p_clacCfg->dataRAM & memcfg_sect_lsx) == memcfg_sect_lsx)
-            {
-                MemCfg_setLSRAMMasterSel(memcfg_sect_lsx, MEMCFG_LSRAMMASTER_CPU_CLA1);
-                MemCfg_setCLAMemType(memcfg_sect_lsx, MEMCFG_CLA_MEM_DATA);
-            }
-        }
-
-    /* Suppressing #770-D conversion from pointer to smaller integer
-     * The CLA address range is 16 bits so the addresses passed to the MVECT
-     * registers will be in the lower 64KW address space. Turn the warning
-     * back on after the MVECTs are assigned addresses */
-        EDIS;
-        EALLOW;
-
 #pragma diag_suppress=770
-    CLA_mapTaskVector(CLA1_BASE, CLA_MVECT_1, (uint16_t)&(p_clacCfg->fun_ptr));
+            CLA_mapTaskVector(CLA1_BASE, p_clacCfg->claIntVect, (uint16_t)p_clacCfg->p_claFunc);
 #pragma diag_warning=770
-    // Enable Tasks 1 and 8
-    CLA_enableIACK(CLA1_BASE);
-    CLA_enableTasks(CLA1_BASE, (1 << p_clacCfg->claTaskNum));
-    CLA_forceTasks(CLA1_BASE, (1 << p_clacCfg->claTaskNum));
+            CLA_setTriggerSource(p_clacCfg->claTaskNum, p_clacCfg->claTrigSrc);
+
+            // Configure LSRAMs
+            for(i = 0; i < 8; i++)
+            {
+                uint32_t memcfg_sect_lsx = MEMCFG_SECT_TYPE_LS | (1 << i);
+                /* Select LSxRAM to be the programming space for the CLA
+                 * First configure the CLA to be the master for LSx and then
+                 * set the space to be a program block */
+                if((p_clacCfg->progRAM & memcfg_sect_lsx) == memcfg_sect_lsx)
+                {
+                    MemCfg_setLSRAMControllerSel(memcfg_sect_lsx, MEMCFG_LSRAMCONTROLLER_CPU_CLA1);
+                    MemCfg_setCLAMemType(memcfg_sect_lsx, MEMCFG_CLA_MEM_PROGRAM);
+                }
+                /* Configure LSxRAM as data spaces for the CLA
+                 * First configure the CLA to be the master for LSx and then
+                 * set the spaces to be code blocks */
+                if((p_clacCfg->dataRAM & memcfg_sect_lsx) == memcfg_sect_lsx)
+                {
+                    MemCfg_setLSRAMControllerSel(memcfg_sect_lsx, MEMCFG_LSRAMCONTROLLER_CPU_CLA1);
+                    MemCfg_setCLAMemType(memcfg_sect_lsx, MEMCFG_CLA_MEM_DATA);
+                }
+            }
+
+            /* Enable each initialized task */
+            CLA_enableTasks(CLA1_BASE, p_clacCfg->claTaskFlg);
+            /* Force a task initialization if required */
+            if(p_clacCfg->claForceTask)
+                CLA_forceTasks(CLA1_BASE, p_clacCfg->claTaskFlg);
+
+            p_clacCfg++;
+        }
     }
 
     return;
