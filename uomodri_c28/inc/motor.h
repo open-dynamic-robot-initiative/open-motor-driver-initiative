@@ -16,13 +16,15 @@
  ***********************************************************************/
 typedef enum __motor_state__
 {
-    MOTOR_STATE_IDLE        = 0x0000,
-    MOTOR_STATE_INIT_FW     = 0x0001,
-    MOTOR_STATE_INIT_REV    = 0x0002,
-    MOTOR_STATE_INIT_TEST   = 0x0004,
-    MOTOR_STATE_INIT_FIX    = 0x0008,
-    MOTOR_STATE_READY       = 0x0010,
-    MOTOR_STATE_STOP        = 0x0020,
+    MOTOR_STATE_WAIT_SYNC   = 0x0000,
+    MOTOR_STATE_ADC_CALIB   = 0x0001,
+    MOTOR_STATE_IDLE        = 0x0002,
+    MOTOR_STATE_INIT_FW     = 0x0004,
+    MOTOR_STATE_INIT_REV    = 0x0008,
+    MOTOR_STATE_INIT_TEST   = 0x0010,
+    MOTOR_STATE_INIT_FIX    = 0x0020,
+    MOTOR_STATE_READY       = 0x0040,
+    MOTOR_STATE_STOP        = 0x0080,
     MOTOR_STATE_ERROR       = 0xFFFF,
 } motor_state;
 
@@ -35,6 +37,9 @@ typedef enum __motor_state__
                                                      MOTOR_STATE_INIT_REV | \
                                                      MOTOR_STATE_INIT_TEST | \
                                                      MOTOR_STATE_INIT_FIX)
+#define MOTOR_STATE_BOOT                            (MOTOR_STATE_WAIT_SYNC | \
+                                                     MOTOR_STATE_ADC_CALIB | \
+                                                     MOTOR_STATE_IDLE)
 
 #define USE_STATE_MACHINE_4_ELECTRONCS_ENGINEERS    (0)
 

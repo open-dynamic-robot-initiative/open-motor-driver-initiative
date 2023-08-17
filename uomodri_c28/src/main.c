@@ -71,14 +71,17 @@ void main(void)
     // DRV8353 initialization
     DRV_ini(&drv_cfg[MOTOR_1], &drv_reg[MOTOR_1]);
     DRV_ini(&drv_cfg[MOTOR_2], &drv_reg[MOTOR_2]);
-    // ADC offset calibration for debug
-    HAL_ADC_offsetCalib(&periph_motor_cfg[MOTOR_1]);
-    HAL_ADC_offsetCalib(&periph_motor_cfg[MOTOR_2]);
-    // Interrupts initialization
-    HAL_INT_ini(InterruptList);
     // Force a reset on intermediate command structure
     COM_resetCmdStruct(&cmd_uOmodri[MOTOR_1]);
     COM_resetCmdStruct(&cmd_uOmodri[MOTOR_2]);
+    // ADC offset calibration for debug
+    cmd_uOmodri[MOTOR_1].bitField.calibEnable = true;
+    cmd_uOmodri[MOTOR_2].bitField.calibEnable = true;
+    CLA_forceTasks(CLA1_BASE, CLA_CMD_NEW_TASK_FLAG);
+//    HAL_ADC_offsetCalib(&periph_motor_cfg[MOTOR_1]);
+//    HAL_ADC_offsetCalib(&periph_motor_cfg[MOTOR_2]);
+    // Interrupts initialization
+    HAL_INT_ini(InterruptList);
     // Infinite loop
     while(1);
 }
@@ -150,7 +153,7 @@ inline void LED_dimming(motor_t* p_motor1, motor_t* p_motor2, uint16_t* p_msg)
     uint16_t        motor_state         = MOTOR_STATE_IDLE;
     uint16_t        u16_timer_fade_blink= (uint16_t)(0xff * timer_fade_blink);
 
-    if((p_motor1->state == MOTOR_STATE_IDLE)    || (p_motor2->state == MOTOR_STATE_IDLE))
+    if((p_motor1->state & MOTOR_STATE_BOOT)     || (p_motor2->state & MOTOR_STATE_BOOT))
         motor_state = MOTOR_STATE_IDLE;
     else if((p_motor1->state & MOTOR_STATE_INIT)|| (p_motor2->state & MOTOR_STATE_INIT))
         motor_state = MOTOR_STATE_INIT_FIX;
@@ -174,6 +177,8 @@ inline void LED_dimming(motor_t* p_motor1, motor_t* p_motor2, uint16_t* p_msg)
     case MOTOR_STATE_ERROR:
         ws2812b_writeLed((uint16_t)(0xff * timer_blink), 0, 0, p_msg);//red fade, error control
         break;
+    case MOTOR_STATE_WAIT_SYNC:
+    case MOTOR_STATE_ADC_CALIB:
     case MOTOR_STATE_IDLE:
     default:
         ws2812b_writeLed(0,  0, u16_timer_fade_blink, p_msg);//blue fade
@@ -238,7 +243,7 @@ __attribute__((interrupt)) void tmr_isrLed(void)
     // Timeout management
     cmd_uOmodri[MOTOR_1].cptTimeout++;
     cmd_uOmodri[MOTOR_2].cptTimeout++;
-    CLA_forceTasks(CLA1_BASE, CLA_TASKFLAG_1);
+    CLA_forceTasks(CLA1_BASE, CLA_CMD_NEW_TASK_FLAG);
     Interrupt_clearACKGroup(INT_TIMER_LED_GROUP);
 #ifdef DEBUG
     DBG_PIN3_CLEAR;
@@ -255,7 +260,7 @@ __attribute__((interrupt)) void dma_isrComRx(void)
     {
         cmd_uOmodri[MOTOR_1].cptTimeout = 0U;
         cmd_uOmodri[MOTOR_2].cptTimeout = 0U;
-        CLA_forceTasks(CLA1_BASE, CLA_TASKFLAG_1);
+        CLA_forceTasks(CLA1_BASE, CLA_CMD_NEW_TASK_FLAG);
     }
     // Restart DMA reception
     DMA_startChannel(DMA_COM_SPI_RX_BASE_ADDR);

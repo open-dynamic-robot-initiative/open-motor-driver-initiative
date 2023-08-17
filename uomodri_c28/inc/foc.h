@@ -61,7 +61,8 @@ typedef union __cmd_reg_u__
         uint16_t        motorEnable     : 1;    /*!< Bit 1      : R/W - Enable power on motor.                              */
         uint16_t        rollOverEnable  : 1;    /*!< Bit 2      : R/W - Limit the rotations to +/- 128 rounds.              */
         uint16_t        encOffsetEnable : 1;    /*!< Bit 3      : R/W - Use encoder index in position computation.          */
-        uint16_t        CMD_RSV1        : 12;   /*!< Bit 4-15   : R/W - Reserved                                            */
+        uint16_t        calibEnable     : 1;    /*!< Bit 4      : R/W - Ready for ADC calibration. (Offset compensation).   */
+        uint16_t        CMD_RSV1        : 11;   /*!< Bit 5-15   : R/W - Reserved                                            */
     };
 } cmd_reg_u;
 
@@ -73,11 +74,25 @@ typedef union __ppb_num_u__
         uint16_t        ia              : 2;    /*!< Bit 0-1    : R/W - Post Processing Block for ia current measure.   */
         uint16_t        ib              : 2;    /*!< Bit 2-3    : R/W - Post Processing Block for ib current measure.   */
         uint16_t        ic              : 2;    /*!< Bit 4-5    : R/W - Post Processing Block for ic current measure.   */
-        uint16_t        vbus            : 2;    /*!< Bit 6-7    : R/W - Post Processing Block for Vbus tension measure. */
-        uint16_t        vext            : 2;    /*!< Bit 8-9    : R/W - Post Processing Block for Vext tension measure. */
+        uint16_t        vBus            : 2;    /*!< Bit 6-7    : R/W - Post Processing Block for Vbus tension measure. */
+        uint16_t        vExt            : 2;    /*!< Bit 8-9    : R/W - Post Processing Block for Vext tension measure. */
         uint16_t        PPB_RSV1        : 6;    /*!< Bit 10-15  : R/W - Reserved                                        */
     };
 } ppb_num_u;
+
+typedef union __soc_num_u__
+{
+    uint32_t            all;
+    struct
+    {
+        uint32_t        ia              : 4;    /*!< Bit 0-3    : R/W - Start Of Conversion (SOC) Block for ia current measure.     */
+        uint32_t        ib              : 4;    /*!< Bit 4-7    : R/W - Start Of Conversion (SOC) Block for ib current measure.     */
+        uint32_t        ic              : 4;    /*!< Bit 8-11   : R/W - Start Of Conversion (SOC) Block for ic current measure.     */
+        uint32_t        vBus            : 4;    /*!< Bit 12-15  : R/W - Start Of Conversion (SOC) Block for Vbus tension measure.   */
+        uint32_t        vExt            : 4;    /*!< Bit 16-19  : R/W - Start Of Conversion (SOC) Block for Vext tension measure.   */
+        uint32_t        SOC_RSV1        : 12;   /*!< Bit 20-31  : R/W - Reserved                                                    */
+    };
+} soc_num_u;
 
 /***********************************************************************
  * CONTROL STRUCTURES
@@ -144,14 +159,22 @@ typedef struct __acquisitions_t__
     float32_t           ia;                 // [A]
     float32_t           ib;                 // [A]
     float32_t           ic;                 // [A]
-    float32_t           vbus;               // [V]
+    float32_t           vBus;               // [V]
     float32_t           vExt;               // [V]
-    lpf_t               vBusFlt;            // Low Pass Vbus filter parameters
-    lpf_t               vExtFlt;            // Low Pass Vext filter parameters
-    uint32_t            iabcResultBase[3];  // ADC phase current result registers
-    uint32_t            vBusResultBase;     // ADC Vbus result register
-    uint32_t            vExtResultBase;     // ADC external voltage result register
-    ppb_num_u           ppbNum;
+    struct
+    {
+        lpf_t           vBusFlt;            // Low Pass Vbus filter parameters
+        lpf_t           vExtFlt;            // Low Pass Vext filter parameters
+    };
+    struct
+    {
+        uint32_t        iabcCfgBase[3];
+        uint32_t        iabcResultBase[3];  // ADC phase current result registers
+        uint32_t        vBusResultBase;     // ADC Vbus result register
+        uint32_t        vExtResultBase;     // ADC external voltage result register
+        soc_num_u       socNum;
+        ppb_num_u       ppbNum;
+    };
 } acq_t;
 
 /**
@@ -169,7 +192,7 @@ typedef struct __cmd_t__
     uint16_t            timeoutRef;
     uint16_t            cptTimeout;
     uint16_t            index;
-    cmd_reg_u           cmdBits;
+    cmd_reg_u           bitField;
 } cmd_t;
 
 /**

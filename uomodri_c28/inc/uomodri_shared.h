@@ -36,6 +36,10 @@
 #if (CLA_CORE_ENABLE)
 extern motor_t  motor_m1;
 extern motor_t  motor_m2;
+
+static float32_t ia_calib;
+static float32_t ib_calib;
+static float32_t ic_calib;
 #else
 extern static motor_t   motor[];
 #endif
@@ -47,14 +51,14 @@ extern static motor_t   motor[];
 extern float32_t __mminf32(float32_t, float32_t);
 extern float32_t __mmaxf32(float32_t, float32_t);
 extern float32_t __mfracf32(float32_t);
-extern float32_t CLAcos(float32_t);
-extern float32_t CLAsin(float32_t);
+//extern float32_t CLAcos(float32_t);
+//extern float32_t CLAsin(float32_t);
 extern void CLAsincos(float32_t, float32_t*, float32_t*);
 
+__attribute__((interrupt)) void initVar_Task(void);
 __attribute__((interrupt)) void cmdNew_Task(void);
 __attribute__((interrupt)) void motor1_Task(void);
 __attribute__((interrupt)) void motor2_Task(void);
-__attribute__((interrupt)) void Cla1Task4(void);
 __attribute__((interrupt)) void Cla1Task5(void);
 __attribute__((interrupt)) void Cla1Task6(void);
 __attribute__((interrupt)) void Cla1Task7(void);
@@ -62,6 +66,7 @@ __attribute__((interrupt)) void Cla1Task8(void);
 
 inline float32_t __msatf32(float32_t, float32_t, float32_t);
 #endif
+inline bool_t ADC_offsetCalib(acq_t*, uint32_t);
 inline void ENC_resetStruct(encoder_t*);
 inline void ENC_resetPeriph(encoder_t*);
 inline void ENC_getPosition(encoder_t*);
@@ -79,7 +84,9 @@ inline void FOC_svpwm1(foc_t*);
 void FOC_runControl(foc_t*);
 
 void MOT_runCommand(motor_t*, float32_t, float32_t, float32_t);
+void MOT_runCommand2(uint32_t, float32_t);
 void MOT_stopCommand(motor_t*);
+void MOT_stopCommand2(uint32_t);
 bool_t MOT_runControl(motor_t*);
 
 /***********************************************************************
@@ -101,6 +108,45 @@ inline float32_t __msatf32(float32_t a, float32_t sat_max, float32_t sat_min)
     return(__mmaxf32(__mminf32(a, sat_max), sat_min));
 }
 #endif
+
+inline bool_t ADC_offsetCalib(acq_t* p_acq, uint32_t calibCnt)
+{
+    lpf_t fltCoef   = {.a = 0.998f, .one_minus_a = 0.002f};
+
+
+    // Get current results
+    p_acq->ia       = (float32_t)ADC_readResult(p_acq->iabcResultBase[CHANNEL_1], (ADC_SOCNumber)p_acq->socNum.ia);
+    p_acq->ib       = (float32_t)ADC_readResult(p_acq->iabcResultBase[CHANNEL_2], (ADC_SOCNumber)p_acq->socNum.ib);
+    p_acq->ic       = (float32_t)ADC_readResult(p_acq->iabcResultBase[CHANNEL_3], (ADC_SOCNumber)p_acq->socNum.ic);
+
+    // filter
+    if(calibCnt < 1000)
+    {
+        ia_calib    = p_acq->ia;
+        ib_calib    = p_acq->ib;
+        ic_calib    = p_acq->ic;
+
+        return(false);
+    }
+    else if(calibCnt < 10000)
+    {
+        UOMODRI_HAL_ADC_CALIB(fltCoef, ia_calib, p_acq->ia);
+        UOMODRI_HAL_ADC_CALIB(fltCoef, ib_calib, p_acq->ib);
+        UOMODRI_HAL_ADC_CALIB(fltCoef, ic_calib, p_acq->ic);
+
+        return(false);
+    }
+    else
+    {
+        // Set offsets in PPBs
+        // Sets the post processing block reference offset for tensions
+        ADC_setPPBReferenceOffset(p_acq->iabcCfgBase[CHANNEL_1], (ADC_PPBNumber)p_acq->ppbNum.ia, (uint16_t)ia_calib);
+        ADC_setPPBReferenceOffset(p_acq->iabcCfgBase[CHANNEL_2], (ADC_PPBNumber)p_acq->ppbNum.ib, (uint16_t)ib_calib);
+        ADC_setPPBReferenceOffset(p_acq->iabcCfgBase[CHANNEL_3], (ADC_PPBNumber)p_acq->ppbNum.ic, (uint16_t)ic_calib);
+
+        return(true);
+    }
+}
 
 /**
  * @brief           Reset the ENCODER structure
@@ -366,14 +412,13 @@ inline void FOC_resetStructPD(pd_t* p_pd)
 inline void FOC_resetStructCmd(cmd_t* p_cmd)
 {
     p_cmd->posRef               = 0.0f;
-//    p_cmd->posRefOffset         = 0.0f;
     p_cmd->velRef               = 0.0f;
     p_cmd->iqff                 = 0.0f;
     p_cmd->kpCoeff              = 0.0f;
     p_cmd->kdCoeff              = 0.0f;
     p_cmd->timeoutRef           = 0;
     p_cmd->cptTimeout           = 0;
-    p_cmd->cmdBits.all          = 0;
+    p_cmd->bitField.all         = 0;
 
     return;
 }
@@ -447,10 +492,10 @@ inline void FOC_getMeasures(acq_t* p_acq)
     p_acq->ib       = ((float32_t)ADC_readPPBResult(p_acq->iabcResultBase[CHANNEL_2], (ADC_PPBNumber)p_acq->ppbNum.ib)) * ADC_MOTOR_CURRENT_SCALE;
     p_acq->ic       = ((float32_t)ADC_readPPBResult(p_acq->iabcResultBase[CHANNEL_3], (ADC_PPBNumber)p_acq->ppbNum.ic)) * ADC_MOTOR_CURRENT_SCALE;
     // Get voltage of supply bus in Volt (minimum is one to avoid dividing by zero later)
-    float32_t vbus  = (float32_t)ADC_readPPBResult(p_acq->vBusResultBase, (ADC_PPBNumber)p_acq->ppbNum.vbus) * ADC_VBUS_VOLTAGE_SCALE;
-    UOMODRI_VBUS_FLT(p_acq->vBusFlt, p_acq->vbus, __mmaxf32(vbus, 1.0f));
+    float32_t vbus  = (float32_t)ADC_readPPBResult(p_acq->vBusResultBase, (ADC_PPBNumber)p_acq->ppbNum.vBus) * ADC_VBUS_VOLTAGE_SCALE;
+    UOMODRI_VBUS_FLT(p_acq->vBusFlt, p_acq->vBus, __mmaxf32(vbus, 1.0f));
     // Get voltage of external input in Volt (minimum is one to avoid dividing by zero later)
-    float32_t vext  = (float32_t)ADC_readPPBResult(p_acq->vExtResultBase, (ADC_PPBNumber)p_acq->ppbNum.vext) * ADC_VEXT12_VOLTAGE_SCALE;
+    float32_t vext  = (float32_t)ADC_readPPBResult(p_acq->vExtResultBase, (ADC_PPBNumber)p_acq->ppbNum.vExt) * ADC_VEXT12_VOLTAGE_SCALE;
     UOMODRI_VEXT_FLT(p_acq->vExtFlt, p_acq->vExt, vext);
 
     return;
@@ -533,9 +578,9 @@ inline void FOC_svpwm1(foc_t* p_foc)
     float32_t   uMidPoint   = 0.5f * (p_foc->dtcMax + p_foc->dtcMin);
     // Compute duty cycles
 #if (CLA_CORE_ENABLE)
-    p_foc->dtc_u            = __msatf32((((p_foc->ua - uOffset) / p_foc->acq.vbus) + uMidPoint), p_foc->dtcMax, p_foc->dtcMin);
-    p_foc->dtc_v            = __msatf32((((p_foc->ub - uOffset) / p_foc->acq.vbus) + uMidPoint), p_foc->dtcMax, p_foc->dtcMin);
-    p_foc->dtc_w            = __msatf32((((p_foc->uc - uOffset) / p_foc->acq.vbus) + uMidPoint), p_foc->dtcMax, p_foc->dtcMin);
+    p_foc->dtc_u            = __msatf32((((p_foc->ua - uOffset) / p_foc->acq.vBus) + uMidPoint), p_foc->dtcMax, p_foc->dtcMin);
+    p_foc->dtc_v            = __msatf32((((p_foc->ub - uOffset) / p_foc->acq.vBus) + uMidPoint), p_foc->dtcMax, p_foc->dtcMin);
+    p_foc->dtc_w            = __msatf32((((p_foc->uc - uOffset) / p_foc->acq.vBus) + uMidPoint), p_foc->dtcMax, p_foc->dtcMin);
 #else
     p_foc->dtc_u            = __fsat((((p_foc->ua - uOffset) / p_foc->motor_acq.vbus) + uMidPoint), p_foc->dtcMax, p_foc->dtcMin);
     p_foc->dtc_v            = __fsat((((p_foc->ub - uOffset) / p_foc->motor_acq.vbus) + uMidPoint), p_foc->dtcMax, p_foc->dtcMin);
@@ -614,9 +659,9 @@ void MOT_runCommand(motor_t* p_motor, float32_t cmd_a, float32_t cmd_b, float32_
 //    for(i = 0; i < 3; i++)
 //        EPWM_setCounterCompareValue(p_motor->epwmBase[i], EPWM_COUNTER_COMPARE_A, cmd[i]);
 
-    EPWM_setCounterCompareValue(p_motor->epwmBase[CHANNEL_1], EPWM_COUNTER_COMPARE_A, (uint16_t)((cmd_a) * PWM_TIMEBASE_CNT));
-    EPWM_setCounterCompareValue(p_motor->epwmBase[CHANNEL_2], EPWM_COUNTER_COMPARE_A, (uint16_t)((cmd_b) * PWM_TIMEBASE_CNT));
-    EPWM_setCounterCompareValue(p_motor->epwmBase[CHANNEL_3], EPWM_COUNTER_COMPARE_A, (uint16_t)((cmd_c) * PWM_TIMEBASE_CNT));
+    EPWM_setCounterCompareValue(p_motor->epwmBase[CHANNEL_1], EPWM_COUNTER_COMPARE_A, (uint16_t)(cmd_a * PWM_TIMEBASE_CNT));
+    EPWM_setCounterCompareValue(p_motor->epwmBase[CHANNEL_2], EPWM_COUNTER_COMPARE_A, (uint16_t)(cmd_b * PWM_TIMEBASE_CNT));
+    EPWM_setCounterCompareValue(p_motor->epwmBase[CHANNEL_3], EPWM_COUNTER_COMPARE_A, (uint16_t)(cmd_c * PWM_TIMEBASE_CNT));
 
 //    HWREGH(p_motor->epwmBase[CHANNEL_1] + MOTOR12_PWMx_CMD_ADDR_OFFSET) = (uint16_t)((cmd_a) * PWM_TIMEBASE_CNT);
 //    HWREGH(p_motor->epwmBase[CHANNEL_2] + MOTOR12_PWMx_CMD_ADDR_OFFSET) = (uint16_t)((cmd_b) * PWM_TIMEBASE_CNT);
@@ -626,6 +671,13 @@ void MOT_runCommand(motor_t* p_motor, float32_t cmd_a, float32_t cmd_b, float32_
     *(p_motor->p_cmdReg[CHANNEL_2]) = (uint16_t)((cmd_b) * PWM_TIMEBASE_CNT);
     *(p_motor->p_cmdReg[CHANNEL_3]) = (uint16_t)((cmd_c) * PWM_TIMEBASE_CNT);
 #endif
+
+    return;
+}
+
+void MOT_runCommand2(uint32_t epwm_base, float32_t cmd)
+{
+    EPWM_setCounterCompareValue(epwm_base, EPWM_COUNTER_COMPARE_A, (uint16_t)(cmd * PWM_TIMEBASE_CNT));
 
     return;
 }
@@ -660,6 +712,13 @@ void MOT_stopCommand(motor_t* p_motor)
     return;
 }
 
+void MOT_stopCommand2(uint32_t epwm_base)
+{
+    EPWM_setCounterCompareValue(epwm_base, EPWM_COUNTER_COMPARE_A, (uint16_t)PWM_TIMEBASE_CNT);
+
+    return;
+}
+
 /**
  * @brief           Control of the motor states
  * @param[inout]    p_motor Pointer on the associated motor structure
@@ -672,7 +731,7 @@ bool_t MOT_runControl(motor_t* p_motor)
     error_reg_u*    p_err       = &p_motor->error;
     encoder_t*      p_enc       = &p_foc->enc;
     cmd_t*          p_cmd       = &p_foc->cmd;
-    cmd_reg_u       cmd_reg     = {.all = p_cmd->cmdBits.all};
+    cmd_reg_u       cmd_reg     = {.all = p_cmd->bitField.all};
     uint16_t        motor_id    = p_motor->id;
     bool_t          evt_flag    = false;
     bool_t          start       = cmd_reg.motorEnable && cmd_reg.systemEnable;
@@ -698,6 +757,25 @@ bool_t MOT_runControl(motor_t* p_motor)
 
     switch(p_motor->state)
     {
+    case MOTOR_STATE_WAIT_SYNC:
+        p_motor->itCnt          = 0U;
+        p_motor->state          = (cmd_reg.calibEnable)     ? (MOTOR_STATE_ADC_CALIB)       : (MOTOR_STATE_WAIT_SYNC);
+//        MOT_stopCommand(p_motor);
+        MOT_stopCommand2(p_motor->epwmBase[CHANNEL_1]);
+        MOT_stopCommand2(p_motor->epwmBase[CHANNEL_2]);
+        MOT_stopCommand2(p_motor->epwmBase[CHANNEL_3]);
+        break;
+
+    case MOTOR_STATE_ADC_CALIB:
+        p_motor->itCnt         += 1U;
+        evt_flag                = ADC_offsetCalib(&p_foc->acq, p_motor->itCnt);
+        p_motor->state          = (evt_flag)                ? (MOTOR_STATE_IDLE)            : (MOTOR_STATE_ADC_CALIB);
+//        MOT_stopCommand(p_motor);
+        MOT_stopCommand2(p_motor->epwmBase[CHANNEL_1]);
+        MOT_stopCommand2(p_motor->epwmBase[CHANNEL_2]);
+        MOT_stopCommand2(p_motor->epwmBase[CHANNEL_3]);
+        break;
+
     case MOTOR_STATE_IDLE:
     default:
         p_motor->itCnt          = 0U;
@@ -709,59 +787,69 @@ bool_t MOT_runControl(motor_t* p_motor)
         p_motor->state          = (start)                   ? (MOTOR_STATE_INIT_FW)         : (MOTOR_STATE_IDLE);
         ENC_resetPeriph(p_enc);
         FOC_resetStruct(p_foc);
-        MOT_stopCommand(p_motor);
+//        MOT_stopCommand(p_motor);
+        MOT_stopCommand2(p_motor->epwmBase[CHANNEL_1]);
+        MOT_stopCommand2(p_motor->epwmBase[CHANNEL_2]);
+        MOT_stopCommand2(p_motor->epwmBase[CHANNEL_3]);
         break;
 
     case MOTOR_STATE_INIT_FW:
-        evt_flag                = __mgtu(p_motor->itCnt, p_foc->initPosCnt);//(p_motor->itCnt > p_foc->initPosCnt) ? (true) : (false);
+        evt_flag                = __mgtu(p_motor->itCnt, p_foc->initPosCnt);
         p_motor->itCnt          = (evt_flag)                ? (0U)                          : (p_motor->itCnt + 1);
         p_foc->initPosEnc[FW]   = p_enc->thetaAbsolute;
         p_foc->idRef           += (motor_id == MOTOR_1)     ? (MOTOR1_CURRENT_INIT_STEP)    : (MOTOR2_CURRENT_INIT_STEP);
-        p_foc->iqRef            = 0.0f;
         p_foc->initPosStep     -= (motor_id == MOTOR_1)     ? (MOTOR1_POSITION_INIT_STEP)   : (MOTOR2_POSITION_INIT_STEP);
         p_enc->thetaElec        = p_foc->initPosStep;
         p_motor->state          = (evt_flag)                ? (MOTOR_STATE_INIT_REV)        : (MOTOR_STATE_INIT_FW);
         p_motor->state          = (start)                   ? (p_motor->state)              : (MOTOR_STATE_IDLE);
         FOC_runControl(p_foc);
-        MOT_runCommand(p_motor, p_foc->dtc_u, p_foc->dtc_v, p_foc->dtc_w);
+//        MOT_runCommand(p_motor, p_foc->dtc_u, p_foc->dtc_v, p_foc->dtc_w);
+        MOT_runCommand2(p_motor->epwmBase[CHANNEL_1], p_foc->dtc_u);
+        MOT_runCommand2(p_motor->epwmBase[CHANNEL_2], p_foc->dtc_v);
+        MOT_runCommand2(p_motor->epwmBase[CHANNEL_3], p_foc->dtc_w);
         break;
 
     case MOTOR_STATE_INIT_REV:
-        evt_flag                = __mgtu(p_motor->itCnt, p_foc->initPosCnt);//(p_motor->itCnt > p_foc->initPosCnt) ? (true) : (false);
+        evt_flag                = __mgtu(p_motor->itCnt, p_foc->initPosCnt);
         p_motor->itCnt          = (evt_flag)                ? (0U)                          : (p_motor->itCnt + 1);
         p_foc->initPosEnc[REV]  = p_enc->thetaAbsolute;
         p_foc->idRef            = (motor_id == MOTOR_1)     ? (MOTOR1_CURRENT_INIT_MAX)     : (MOTOR2_CURRENT_INIT_MAX);
-        p_foc->iqRef            = 0.0f;
         p_foc->initPosStep     += (motor_id == MOTOR_1)     ? (MOTOR1_POSITION_INIT_STEP)   : (MOTOR2_POSITION_INIT_STEP);
         p_enc->thetaElec        = p_foc->initPosStep;
         p_motor->state          = (evt_flag)                ? (MOTOR_STATE_INIT_TEST)       : (MOTOR_STATE_INIT_REV);
         p_motor->state          = (start)                   ? (p_motor->state)              : (MOTOR_STATE_IDLE);
         FOC_runControl(p_foc);
-        MOT_runCommand(p_motor, p_foc->dtc_u, p_foc->dtc_v, p_foc->dtc_w);
+//        MOT_runCommand(p_motor, p_foc->dtc_u, p_foc->dtc_v, p_foc->dtc_w);
+        MOT_runCommand2(p_motor->epwmBase[CHANNEL_1], p_foc->dtc_u);
+        MOT_runCommand2(p_motor->epwmBase[CHANNEL_2], p_foc->dtc_v);
+        MOT_runCommand2(p_motor->epwmBase[CHANNEL_3], p_foc->dtc_w);
         break;
 
     case MOTOR_STATE_INIT_TEST:
         p_foc->initDiff         = p_foc->initPosEnc[REV] - p_foc->initPosEnc[FW];
         p_enc->flags.alignError = ((p_foc->initDiff < p_foc->initErr[MIN]) || (p_foc->initDiff > p_foc->initErr[MAX])) ? (true) : (false);
-        p_motor->itCnt          = 0U;
         p_foc->idRef            = (motor_id == MOTOR_1)     ? (MOTOR1_CURRENT_INIT_MAX)     : (MOTOR2_CURRENT_INIT_MAX);
-        p_foc->iqRef            = 0.0f;
         p_motor->state          = (start)                   ? (MOTOR_STATE_INIT_FIX)        : (MOTOR_STATE_IDLE);
         FOC_runControl(p_foc);
-        MOT_runCommand(p_motor, p_foc->dtc_u, p_foc->dtc_v, p_foc->dtc_w);
+//        MOT_runCommand(p_motor, p_foc->dtc_u, p_foc->dtc_v, p_foc->dtc_w);
+        MOT_runCommand2(p_motor->epwmBase[CHANNEL_1], p_foc->dtc_u);
+        MOT_runCommand2(p_motor->epwmBase[CHANNEL_2], p_foc->dtc_v);
+        MOT_runCommand2(p_motor->epwmBase[CHANNEL_3], p_foc->dtc_w);
         break;
 
     case MOTOR_STATE_INIT_FIX:
-        evt_flag                = __mgtu(p_motor->itCnt, p_foc->initFixCnt);//(p_motor->itCnt > p_foc->initFixCnt) ? (true) : (false);
+        evt_flag                = __mgtu(p_motor->itCnt, p_foc->initFixCnt);
         p_motor->itCnt         += 1U;
         p_foc->idRef            = (motor_id == MOTOR_1)     ? (MOTOR1_CURRENT_INIT_MAX)     : (MOTOR2_CURRENT_INIT_MAX);
-        p_foc->iqRef            = 0.0f;
         p_motor->state          = (evt_flag)                ? (MOTOR_STATE_READY)           : (MOTOR_STATE_INIT_FIX);
         p_motor->state          = (start)                   ? (p_motor->state)              : (MOTOR_STATE_IDLE);
         ENC_resetPeriph(p_enc);
         ENC_resetStruct(p_enc);
         FOC_runControl(p_foc);
-        MOT_runCommand(p_motor, p_foc->dtc_u, p_foc->dtc_v, p_foc->dtc_w);
+//        MOT_runCommand(p_motor, p_foc->dtc_u, p_foc->dtc_v, p_foc->dtc_w);
+        MOT_runCommand2(p_motor->epwmBase[CHANNEL_1], p_foc->dtc_u);
+        MOT_runCommand2(p_motor->epwmBase[CHANNEL_2], p_foc->dtc_v);
+        MOT_runCommand2(p_motor->epwmBase[CHANNEL_3], p_foc->dtc_w);
         break;
 
     case MOTOR_STATE_READY:
@@ -771,23 +859,31 @@ bool_t MOT_runControl(motor_t* p_motor)
         p_motor->state          = (!cmd_reg.motorEnable)    ? (MOTOR_STATE_STOP)            : (MOTOR_STATE_READY);
         p_motor->state          = (cmd_reg.systemEnable)    ? (p_motor->state)              : (MOTOR_STATE_IDLE);
         FOC_runControl(p_foc);
-        MOT_runCommand(p_motor, p_foc->dtc_u, p_foc->dtc_v, p_foc->dtc_w);
+//        MOT_runCommand(p_motor, p_foc->dtc_u, p_foc->dtc_v, p_foc->dtc_w);
+        MOT_runCommand2(p_motor->epwmBase[CHANNEL_1], p_foc->dtc_u);
+        MOT_runCommand2(p_motor->epwmBase[CHANNEL_2], p_foc->dtc_v);
+        MOT_runCommand2(p_motor->epwmBase[CHANNEL_3], p_foc->dtc_w);
         break;
 
     case MOTOR_STATE_STOP:
         p_motor->itCnt         += 1U;
-        p_foc->idRef            = 0.0f;
         p_foc->iqRef            = 0.0f;
         p_motor->state          = (cmd_reg.motorEnable)     ? (MOTOR_STATE_READY)           : (MOTOR_STATE_STOP);
         p_motor->state          = (cmd_reg.systemEnable)    ? (p_motor->state)              : (MOTOR_STATE_IDLE);
-        MOT_stopCommand(p_motor);
+//        MOT_stopCommand(p_motor);
+        MOT_stopCommand2(p_motor->epwmBase[CHANNEL_1]);
+        MOT_stopCommand2(p_motor->epwmBase[CHANNEL_2]);
+        MOT_stopCommand2(p_motor->epwmBase[CHANNEL_3]);
         break;
 
     case MOTOR_STATE_ERROR:
         p_foc->idRef            = 0.0f;
         p_foc->iqRef            = 0.0f;
         p_motor->state          = MOTOR_STATE_ERROR;
-        MOT_stopCommand(p_motor);
+//        MOT_stopCommand(p_motor);
+        MOT_stopCommand2(p_motor->epwmBase[CHANNEL_1]);
+        MOT_stopCommand2(p_motor->epwmBase[CHANNEL_2]);
+        MOT_stopCommand2(p_motor->epwmBase[CHANNEL_3]);
         break;
     }
 #else
@@ -795,7 +891,7 @@ bool_t MOT_runControl(motor_t* p_motor)
     error_reg_u*    p_err           = &p_motor->error;
     encoder_t*      p_enc           = &p_foc->enc;
     cmd_t*          p_cmd           = &p_foc->cmd;
-    cmd_reg_u       cmd_reg         = {.all = p_cmd->cmdBits.all};
+    cmd_reg_u       cmd_reg         = {.all = p_cmd->bitField.all};
     uint16_t        motor_id        = p_motor->id;
     bool_t          start           = cmd_reg.motorEnable && cmd_reg.systemEnable;
     p_enc->flags.indexOffset        = cmd_reg.encOffsetEnable;
@@ -821,8 +917,27 @@ bool_t MOT_runControl(motor_t* p_motor)
 
     switch(p_motor->state)
     {
+    case MOTOR_STATE_WAIT_SYNC:
+        if(p_cmd->bitField.calibEnable)
+            p_motor->state          = MOTOR_STATE_ADC_CALIB;
+//        MOT_stopCommand(p_motor);
+        MOT_stopCommand2(p_motor->epwmBase[CHANNEL_1]);
+        MOT_stopCommand2(p_motor->epwmBase[CHANNEL_2]);
+        MOT_stopCommand2(p_motor->epwmBase[CHANNEL_3]);
+        break;
+
+    case MOTOR_STATE_ADC_CALIB:
+        p_motor->itCnt             += 1U;
+        if(ADC_offsetCalib(&p_foc->acq, p_motor->itCnt))
+            p_motor->state          = MOTOR_STATE_IDLE;
+//        MOT_stopCommand(p_motor);
+        MOT_stopCommand2(p_motor->epwmBase[CHANNEL_1]);
+        MOT_stopCommand2(p_motor->epwmBase[CHANNEL_2]);
+        MOT_stopCommand2(p_motor->epwmBase[CHANNEL_3]);
+        break;
+
     case MOTOR_STATE_IDLE:
-    default:
+//    default:
         p_motor->itCnt              = 0U;
         p_foc->idRef                = 0.0f;
         p_foc->iqRef                = 0.0f;
@@ -833,7 +948,10 @@ bool_t MOT_runControl(motor_t* p_motor)
             p_motor->state          = MOTOR_STATE_INIT_FW;
         ENC_resetPeriph(p_enc);
         FOC_resetStruct(p_foc);
-        MOT_stopCommand(p_motor);
+//        MOT_stopCommand(p_motor);
+        MOT_stopCommand2(p_motor->epwmBase[CHANNEL_1]);
+        MOT_stopCommand2(p_motor->epwmBase[CHANNEL_2]);
+        MOT_stopCommand2(p_motor->epwmBase[CHANNEL_3]);
         break;
 
     case MOTOR_STATE_INIT_FW:
@@ -854,17 +972,19 @@ bool_t MOT_runControl(motor_t* p_motor)
         }
         else
         {
-            if(start)
+            if(!start)
                 p_motor->state      = MOTOR_STATE_INIT_FW;
             else
                 p_motor->state      = MOTOR_STATE_IDLE;
             p_motor->itCnt         += 1U;
         }
-        p_foc->iqRef                = 0.0f;
         p_foc->initPosEnc[FW]       = p_enc->thetaAbsolute;
         p_enc->thetaElec            = p_foc->initPosStep;
         FOC_runControl(p_foc);
-        MOT_runCommand(p_motor, p_foc->dtc_u, p_foc->dtc_v, p_foc->dtc_w);
+//        MOT_runCommand(p_motor, p_foc->dtc_u, p_foc->dtc_v, p_foc->dtc_w);
+        MOT_runCommand2(p_motor->epwmBase[CHANNEL_1], p_foc->dtc_u);
+        MOT_runCommand2(p_motor->epwmBase[CHANNEL_2], p_foc->dtc_v);
+        MOT_runCommand2(p_motor->epwmBase[CHANNEL_3], p_foc->dtc_w);
         break;
 
     case MOTOR_STATE_INIT_REV:
@@ -891,11 +1011,13 @@ bool_t MOT_runControl(motor_t* p_motor)
                 p_motor->state      = MOTOR_STATE_IDLE;
             p_motor->itCnt         += 1U;
         }
-        p_foc->iqRef                = 0.0f;
         p_foc->initPosEnc[REV]      = p_enc->thetaAbsolute;
         p_enc->thetaElec            = p_foc->initPosStep;
         FOC_runControl(p_foc);
-        MOT_runCommand(p_motor, p_foc->dtc_u, p_foc->dtc_v, p_foc->dtc_w);
+//        MOT_runCommand(p_motor, p_foc->dtc_u, p_foc->dtc_v, p_foc->dtc_w);
+        MOT_runCommand2(p_motor->epwmBase[CHANNEL_1], p_foc->dtc_u);
+        MOT_runCommand2(p_motor->epwmBase[CHANNEL_2], p_foc->dtc_v);
+        MOT_runCommand2(p_motor->epwmBase[CHANNEL_3], p_foc->dtc_w);
         break;
 
     case MOTOR_STATE_INIT_TEST:
@@ -903,13 +1025,14 @@ bool_t MOT_runControl(motor_t* p_motor)
             p_motor->state          = MOTOR_STATE_IDLE;
         else
             p_motor->state          = MOTOR_STATE_INIT_FIX;
-        p_motor->itCnt              = 0U;
         p_foc->idRef                = (motor_id == MOTOR_1) ? (MOTOR1_CURRENT_INIT_MAX) : (MOTOR2_CURRENT_INIT_MAX);
-        p_foc->iqRef                = 0.0f;
         p_foc->initDiff             = p_foc->initPosEnc[REV] - p_foc->initPosEnc[FW];
         p_enc->flags.alignError     = ((p_foc->initDiff < p_foc->initErr[MIN]) || (p_foc->initDiff > p_foc->initErr[MAX])) ? (true) : (false);
         FOC_runControl(p_foc);
-        MOT_runCommand(p_motor, p_foc->dtc_u, p_foc->dtc_v, p_foc->dtc_w);
+//        MOT_runCommand(p_motor, p_foc->dtc_u, p_foc->dtc_v, p_foc->dtc_w);
+        MOT_runCommand2(p_motor->epwmBase[CHANNEL_1], p_foc->dtc_u);
+        MOT_runCommand2(p_motor->epwmBase[CHANNEL_2], p_foc->dtc_v);
+        MOT_runCommand2(p_motor->epwmBase[CHANNEL_3], p_foc->dtc_w);
         break;
 
     case MOTOR_STATE_INIT_FIX:
@@ -919,11 +1042,13 @@ bool_t MOT_runControl(motor_t* p_motor)
         else if(__mgtu(p_motor->itCnt, p_foc->initFixCnt))
             p_motor->state          = MOTOR_STATE_READY;
         p_motor->itCnt             += 1U;
-        p_foc->iqRef                = 0.0f;
         ENC_resetPeriph(p_enc);
         ENC_resetStruct(p_enc);
         FOC_runControl(p_foc);
-        MOT_runCommand(p_motor, p_foc->dtc_u, p_foc->dtc_v, p_foc->dtc_w);
+//        MOT_runCommand(p_motor, p_foc->dtc_u, p_foc->dtc_v, p_foc->dtc_w);
+        MOT_runCommand2(p_motor->epwmBase[CHANNEL_1], p_foc->dtc_u);
+        MOT_runCommand2(p_motor->epwmBase[CHANNEL_2], p_foc->dtc_v);
+        MOT_runCommand2(p_motor->epwmBase[CHANNEL_3], p_foc->dtc_w);
         break;
 
     case MOTOR_STATE_READY:
@@ -935,7 +1060,10 @@ bool_t MOT_runControl(motor_t* p_motor)
         p_foc->idRef                = 0.0f;
         p_foc->iqRef                = FOC_runPD(&p_foc->pdPosVel);
         FOC_runControl(p_foc);
-        MOT_runCommand(p_motor, p_foc->dtc_u, p_foc->dtc_v, p_foc->dtc_w);
+//        MOT_runCommand(p_motor, p_foc->dtc_u, p_foc->dtc_v, p_foc->dtc_w);
+        MOT_runCommand2(p_motor->epwmBase[CHANNEL_1], p_foc->dtc_u);
+        MOT_runCommand2(p_motor->epwmBase[CHANNEL_2], p_foc->dtc_v);
+        MOT_runCommand2(p_motor->epwmBase[CHANNEL_3], p_foc->dtc_w);
         break;
 
     case MOTOR_STATE_STOP:
@@ -946,14 +1074,20 @@ bool_t MOT_runControl(motor_t* p_motor)
         p_motor->itCnt             += 1U;
         p_foc->idRef                = 0.0f;
         p_foc->iqRef                = 0.0f;
-        MOT_stopCommand(p_motor);
+//        MOT_stopCommand(p_motor);
+        MOT_stopCommand2(p_motor->epwmBase[CHANNEL_1]);
+        MOT_stopCommand2(p_motor->epwmBase[CHANNEL_2]);
+        MOT_stopCommand2(p_motor->epwmBase[CHANNEL_3]);
         break;
 
     case MOTOR_STATE_ERROR:
         p_motor->state              = MOTOR_STATE_ERROR;
         p_foc->idRef                = 0.0f;
         p_foc->iqRef                = 0.0f;
-        MOT_stopCommand(p_motor);
+//        MOT_stopCommand(p_motor);
+        MOT_stopCommand2(p_motor->epwmBase[CHANNEL_1]);
+        MOT_stopCommand2(p_motor->epwmBase[CHANNEL_2]);
+        MOT_stopCommand2(p_motor->epwmBase[CHANNEL_3]);
         break;
     }
 #endif
