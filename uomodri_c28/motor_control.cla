@@ -14,7 +14,7 @@
  ***********************************************************************/
 extern motor_t      motor_m1;
 extern motor_t      motor_m2;
-extern cmd_t        cmd_uOmodri[];
+extern cmd_t        cmd_uomodri[];
 extern float32_t    ia_calib;
 extern float32_t    ib_calib;
 extern float32_t    ic_calib;
@@ -52,33 +52,33 @@ __attribute__((interrupt)) void cmdNew_Task(void)
     DBG_PIN1_SET;
     __mdebugstop();
 #endif
-    if((cmd_uOmodri[MOTOR_1].bitField.all & CMD_POSITION_OFFSET_COMP) == CMD_POSITION_OFFSET_COMP)
-        motor_m1.foc.cmd.posRef     = cmd_uOmodri[MOTOR_1].posRef + motor_m1.foc.enc.thetaIndexAbsolute;
+    if((cmd_uomodri[MOTOR_1].bitField.all & CMD_POSITION_OFFSET_COMP) == CMD_POSITION_OFFSET_COMP)
+        motor_m1.foc.cmd.posRef     = cmd_uomodri[MOTOR_1].posRef + motor_m1.foc.enc.thetaIndexAbsolute;
     else
-        motor_m1.foc.cmd.posRef     = cmd_uOmodri[MOTOR_1].posRef;
-    motor_m1.foc.cmd.velRef         = cmd_uOmodri[MOTOR_1].velRef;
-    motor_m1.foc.cmd.iqff           = cmd_uOmodri[MOTOR_1].iqff;
-    motor_m1.foc.cmd.kpCoeff        = cmd_uOmodri[MOTOR_1].kpCoeff;
-    motor_m1.foc.cmd.kdCoeff        = cmd_uOmodri[MOTOR_1].kdCoeff;
-    motor_m1.foc.cmd.iSat           = cmd_uOmodri[MOTOR_1].iSat;
-    motor_m1.foc.cmd.timeoutRef     = cmd_uOmodri[MOTOR_1].timeoutRef;
-    motor_m1.foc.cmd.cptTimeout     = cmd_uOmodri[MOTOR_1].cptTimeout;
-    motor_m1.foc.cmd.index          = cmd_uOmodri[MOTOR_1].index;
-    motor_m1.foc.cmd.bitField.all   = cmd_uOmodri[MOTOR_1].bitField.all;
+        motor_m1.foc.cmd.posRef     = cmd_uomodri[MOTOR_1].posRef;
+    motor_m1.foc.cmd.velRef         = cmd_uomodri[MOTOR_1].velRef;
+    motor_m1.foc.cmd.iqff           = cmd_uomodri[MOTOR_1].iqff;
+    motor_m1.foc.cmd.kpCoeff        = cmd_uomodri[MOTOR_1].kpCoeff;
+    motor_m1.foc.cmd.kdCoeff        = cmd_uomodri[MOTOR_1].kdCoeff;
+    motor_m1.foc.cmd.iSat           = cmd_uomodri[MOTOR_1].iSat;
+    motor_m1.foc.cmd.timeoutRef     = cmd_uomodri[MOTOR_1].timeoutRef;
+    motor_m1.foc.cmd.cptTimeout     = cmd_uomodri[MOTOR_1].cptTimeout;
+    motor_m1.foc.cmd.index          = cmd_uomodri[MOTOR_1].index;
+    motor_m1.foc.cmd.bitField.all   = cmd_uomodri[MOTOR_1].bitField.all;
 
-    if((cmd_uOmodri[MOTOR_2].bitField.all & CMD_POSITION_OFFSET_COMP) == CMD_POSITION_OFFSET_COMP)
-        motor_m2.foc.cmd.posRef     = cmd_uOmodri[MOTOR_2].posRef + motor_m2.foc.enc.thetaIndexAbsolute;
+    if((cmd_uomodri[MOTOR_2].bitField.all & CMD_POSITION_OFFSET_COMP) == CMD_POSITION_OFFSET_COMP)
+        motor_m2.foc.cmd.posRef     = cmd_uomodri[MOTOR_2].posRef + motor_m2.foc.enc.thetaIndexAbsolute;
     else
-        motor_m2.foc.cmd.posRef     = cmd_uOmodri[MOTOR_2].posRef;
-    motor_m2.foc.cmd.velRef         = cmd_uOmodri[MOTOR_2].velRef;
-    motor_m2.foc.cmd.iqff           = cmd_uOmodri[MOTOR_2].iqff;
-    motor_m2.foc.cmd.kpCoeff        = cmd_uOmodri[MOTOR_2].kpCoeff;
-    motor_m2.foc.cmd.kdCoeff        = cmd_uOmodri[MOTOR_2].kdCoeff;
-    motor_m2.foc.cmd.iSat           = cmd_uOmodri[MOTOR_2].iSat;
-    motor_m2.foc.cmd.timeoutRef     = cmd_uOmodri[MOTOR_2].timeoutRef;
-    motor_m2.foc.cmd.cptTimeout     = cmd_uOmodri[MOTOR_2].cptTimeout;
-    motor_m2.foc.cmd.index          = cmd_uOmodri[MOTOR_2].index;
-    motor_m2.foc.cmd.bitField.all   = cmd_uOmodri[MOTOR_2].bitField.all;
+        motor_m2.foc.cmd.posRef     = cmd_uomodri[MOTOR_2].posRef;
+    motor_m2.foc.cmd.velRef         = cmd_uomodri[MOTOR_2].velRef;
+    motor_m2.foc.cmd.iqff           = cmd_uomodri[MOTOR_2].iqff;
+    motor_m2.foc.cmd.kpCoeff        = cmd_uomodri[MOTOR_2].kpCoeff;
+    motor_m2.foc.cmd.kdCoeff        = cmd_uomodri[MOTOR_2].kdCoeff;
+    motor_m2.foc.cmd.iSat           = cmd_uomodri[MOTOR_2].iSat;
+    motor_m2.foc.cmd.timeoutRef     = cmd_uomodri[MOTOR_2].timeoutRef;
+    motor_m2.foc.cmd.cptTimeout     = cmd_uomodri[MOTOR_2].cptTimeout;
+    motor_m2.foc.cmd.index          = cmd_uomodri[MOTOR_2].index;
+    motor_m2.foc.cmd.bitField.all   = cmd_uomodri[MOTOR_2].bitField.all;
 #ifdef DEBUG
     DBG_PIN1_CLEAR;
 #endif

@@ -190,9 +190,9 @@ static drv_reg_t drv_reg[] =
 // },
 //};
 
-#pragma DATA_ALIGN(cmd_uOmodri, 4)
-#pragma DATA_SECTION(cmd_uOmodri, "MSGRAM_CPU_TO_CLA")
-cmd_t cmd_uOmodri[2];
+#pragma DATA_ALIGN(cmd_uomodri, 4)
+#pragma DATA_SECTION(cmd_uomodri, "MSGRAM_CPU_TO_CLA")
+cmd_t cmd_uomodri[2];
 
 /** @var    MOTOR_STRUCT    motor[]
  *  @brief  General structure array configuration structure for the Hardware Abstraction Layer.

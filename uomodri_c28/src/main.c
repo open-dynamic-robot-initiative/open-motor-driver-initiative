@@ -45,7 +45,7 @@ uint16_t                tx_msg_nx = 1U;
 extern motor_t          motor_m1;
 extern motor_t          motor_m2;
 extern const hal_cfg_t  hal;
-extern cmd_t            cmd_uOmodri[2];
+extern cmd_t            cmd_uomodri[2];
 
 /***********************************************************************
  * FUNCTIONS DECLARATION
@@ -72,11 +72,11 @@ void main(void)
     DRV_ini(&drv_cfg[MOTOR_1], &drv_reg[MOTOR_1]);
     DRV_ini(&drv_cfg[MOTOR_2], &drv_reg[MOTOR_2]);
     // Force a reset on intermediate command structure
-    COM_resetCmdStruct(&cmd_uOmodri[MOTOR_1]);
-    COM_resetCmdStruct(&cmd_uOmodri[MOTOR_2]);
+    COM_resetCmdStruct(&cmd_uomodri[MOTOR_1]);
+    COM_resetCmdStruct(&cmd_uomodri[MOTOR_2]);
     // ADC offset calibration for debug
-    cmd_uOmodri[MOTOR_1].bitField.calibEnable = true;
-    cmd_uOmodri[MOTOR_2].bitField.calibEnable = true;
+    cmd_uomodri[MOTOR_1].bitField.calibEnable = true;
+    cmd_uomodri[MOTOR_2].bitField.calibEnable = true;
     CLA_forceTasks(CLA1_BASE, CLA_CMD_NEW_TASK_FLAG);
 //    HAL_ADC_offsetCalib(&periph_motor_cfg[MOTOR_1]);
 //    HAL_ADC_offsetCalib(&periph_motor_cfg[MOTOR_2]);
@@ -89,7 +89,7 @@ void main(void)
 /**
  * @brief           Microcontroller initialization function
  *                  - Configure master clock to 200MHz
- *                  - Configure auxiliary clock (CM core) to 125MHz (USB à 60MHz)
+ *                  - Configure auxiliary clock (CM core) to 125MHz (USB ï¿½ 60MHz)
  *                  - Enable GPIO clocking
  *                  - Configure the interruption vector table
  *                  - Boot CM from flash or RAM
@@ -241,8 +241,8 @@ __attribute__((interrupt)) void tmr_isrLed(void)
         DMA_startChannel(DMA_LED_SPI_TX_BASE_ADDR);
     }
     // Timeout management
-    cmd_uOmodri[MOTOR_1].cptTimeout++;
-    cmd_uOmodri[MOTOR_2].cptTimeout++;
+    cmd_uomodri[MOTOR_1].cptTimeout++;
+    cmd_uomodri[MOTOR_2].cptTimeout++;
     CLA_forceTasks(CLA1_BASE, CLA_CMD_NEW_TASK_FLAG);
     Interrupt_clearACKGroup(INT_TIMER_LED_GROUP);
 #ifdef DEBUG
@@ -256,10 +256,10 @@ __attribute__((interrupt)) void dma_isrComRx(void)
     DBG_PIN3_SET;
 #endif
     // Extract received message & send new commands to FOC structures if valid
-    if(COM_msgExtract(&rx_msg, &rx_swap, &cmd_uOmodri[MOTOR_1], &cmd_uOmodri[MOTOR_2]))
+    if(COM_msgExtract(&rx_msg, &rx_swap, &cmd_uomodri[MOTOR_1], &cmd_uomodri[MOTOR_2]))
     {
-        cmd_uOmodri[MOTOR_1].cptTimeout = 0U;
-        cmd_uOmodri[MOTOR_2].cptTimeout = 0U;
+        cmd_uomodri[MOTOR_1].cptTimeout = 0U;
+        cmd_uomodri[MOTOR_2].cptTimeout = 0U;
         CLA_forceTasks(CLA1_BASE, CLA_CMD_NEW_TASK_FLAG);
     }
     // Restart DMA reception
