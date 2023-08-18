@@ -74,14 +74,15 @@ void main(void)
     // Force a reset on intermediate command structure
     COM_resetCmdStruct(&cmd_uomodri[MOTOR_1]);
     COM_resetCmdStruct(&cmd_uomodri[MOTOR_2]);
+    // Interrupts initialization
+    HAL_INT_ini(InterruptList);
     // ADC offset calibration for debug
     cmd_uomodri[MOTOR_1].bitField.calibEnable = true;
     cmd_uomodri[MOTOR_2].bitField.calibEnable = true;
     CLA_forceTasks(CLA1_BASE, CLA_CMD_NEW_TASK_FLAG);
 //    HAL_ADC_offsetCalib(&periph_motor_cfg[MOTOR_1]);
 //    HAL_ADC_offsetCalib(&periph_motor_cfg[MOTOR_2]);
-    // Interrupts initialization
-    HAL_INT_ini(InterruptList);
+
     // Infinite loop
     while(1);
 }

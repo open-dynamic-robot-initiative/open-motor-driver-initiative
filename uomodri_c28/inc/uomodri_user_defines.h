@@ -1268,8 +1268,6 @@
 #define CLA_MOTOR2_TRIGGER_SRC                  CLA_TRIGGER_ADCA2
 #define CLA_MOTOR2_TASK_HANDLER                 &motor2_Task
 
-
-
 /***********************************************************************
  * INTERRUPTS DEFINES
  ***********************************************************************/

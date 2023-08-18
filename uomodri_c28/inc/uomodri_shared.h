@@ -40,6 +40,7 @@ extern motor_t  motor_m2;
 static float32_t ia_calib;
 static float32_t ib_calib;
 static float32_t ic_calib;
+static lpf_t fltCalibCoef;
 #else
 extern static motor_t   motor[];
 #endif
@@ -66,7 +67,7 @@ __attribute__((interrupt)) void Cla1Task8(void);
 
 inline float32_t __msatf32(float32_t, float32_t, float32_t);
 #endif
-inline bool_t ADC_offsetCalib(acq_t*, uint32_t);
+bool_t ADC_offsetCalib(acq_t*, uint32_t);
 inline void ENC_resetStruct(encoder_t*);
 inline void ENC_resetPeriph(encoder_t*);
 inline void ENC_getPosition(encoder_t*);
@@ -109,11 +110,9 @@ inline float32_t __msatf32(float32_t a, float32_t sat_max, float32_t sat_min)
 }
 #endif
 
-inline bool_t ADC_offsetCalib(acq_t* p_acq, uint32_t calibCnt)
+bool_t ADC_offsetCalib(acq_t* p_acq, uint32_t calibCnt)
 {
-    lpf_t fltCoef   = {.a = 0.998f, .one_minus_a = 0.002f};
-
-
+    bool_t adc_offset_calib_done;
     // Get current results
     p_acq->ia       = (float32_t)ADC_readResult(p_acq->iabcResultBase[CHANNEL_1], (ADC_SOCNumber)p_acq->socNum.ia);
     p_acq->ib       = (float32_t)ADC_readResult(p_acq->iabcResultBase[CHANNEL_2], (ADC_SOCNumber)p_acq->socNum.ib);
@@ -126,14 +125,16 @@ inline bool_t ADC_offsetCalib(acq_t* p_acq, uint32_t calibCnt)
         ib_calib    = p_acq->ib;
         ic_calib    = p_acq->ic;
 
-        return(false);
+        adc_offset_calib_done = false;
+//        return(false);
     }
     else if(calibCnt < 10000)
     {
-        UOMODRI_HAL_ADC_CALIB(fltCoef, ia_calib, p_acq->ia);
-        UOMODRI_HAL_ADC_CALIB(fltCoef, ib_calib, p_acq->ib);
-        UOMODRI_HAL_ADC_CALIB(fltCoef, ic_calib, p_acq->ic);
+        UOMODRI_HAL_ADC_CALIB(fltCalibCoef, ia_calib, p_acq->ia);
+        UOMODRI_HAL_ADC_CALIB(fltCalibCoef, ib_calib, p_acq->ib);
+        UOMODRI_HAL_ADC_CALIB(fltCalibCoef, ic_calib, p_acq->ic);
 
+        adc_offset_calib_done = false;
         return(false);
     }
     else
@@ -144,8 +145,11 @@ inline bool_t ADC_offsetCalib(acq_t* p_acq, uint32_t calibCnt)
         ADC_setPPBReferenceOffset(p_acq->iabcCfgBase[CHANNEL_2], (ADC_PPBNumber)p_acq->ppbNum.ib, (uint16_t)ib_calib);
         ADC_setPPBReferenceOffset(p_acq->iabcCfgBase[CHANNEL_3], (ADC_PPBNumber)p_acq->ppbNum.ic, (uint16_t)ic_calib);
 
-        return(true);
+        adc_offset_calib_done = true;
+//        return(true);
     }
+
+    return(adc_offset_calib_done);
 }
 
 /**
@@ -918,7 +922,7 @@ bool_t MOT_runControl(motor_t* p_motor)
     switch(p_motor->state)
     {
     case MOTOR_STATE_WAIT_SYNC:
-        if(p_cmd->bitField.calibEnable)
+        if(p_cmd->bitField.all & CMD_CALIBRATION_EN_MASK)
             p_motor->state          = MOTOR_STATE_ADC_CALIB;
 //        MOT_stopCommand(p_motor);
         MOT_stopCommand2(p_motor->epwmBase[CHANNEL_1]);
