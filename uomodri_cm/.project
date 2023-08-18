@@ -44,7 +44,7 @@
 	<variableList>
 		<variable>
 			<name>C2000WARE_ROOT</name>
-			<value>file:/C:/STM32Toolchain/TI/c2000/C2000Ware_4_03_00_00</value>
+			<value>file:/home/jmanhes/ti/c2000/C2000Ware_5_00_00_00</value>
 		</variable>
 	</variableList>
 </projectDescription>

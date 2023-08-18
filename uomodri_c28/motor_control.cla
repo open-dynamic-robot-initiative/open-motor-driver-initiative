@@ -7,7 +7,7 @@
 * INCLUDES
 ***********************************************************************/
 #include "uomodri_user_defines.h"
-#include "uOmodri_shared.h"
+#include "uomodri_shared.h"
 
 /***********************************************************************
  * VARIABLES
