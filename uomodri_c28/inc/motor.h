@@ -29,14 +29,14 @@ typedef enum __motor_state__
 /***********************************************************************
  * DEFINES
  ***********************************************************************/
-#define MOTOR_STATE_IDLE                            (0x0000)
-#define MOTOR_STATE_INIT_FW                         (0x0001)
-#define MOTOR_STATE_INIT_REV                        (0x0002)
-#define MOTOR_STATE_INIT_TEST                       (0x0004)
-#define MOTOR_STATE_INIT_FIX                        (0x0008)
-#define MOTOR_STATE_READY                           (0x0010)
-#define MOTOR_STATE_STOP                            (0x0020)
-#define MOTOR_STATE_ERROR                           (0xFFFF)
+//#define MOTOR_STATE_IDLE                            (0x0000)
+//#define MOTOR_STATE_INIT_FW                         (0x0001)
+//#define MOTOR_STATE_INIT_REV                        (0x0002)
+//#define MOTOR_STATE_INIT_TEST                       (0x0004)
+//#define MOTOR_STATE_INIT_FIX                        (0x0008)
+//#define MOTOR_STATE_READY                           (0x0010)
+//#define MOTOR_STATE_STOP                            (0x0020)
+//#define MOTOR_STATE_ERROR                           (0xFFFF)
 
 #define MOTOR_STATE_OK                              (MOTOR_STATE_READY | \
                                                      MOTOR_STATE_STOP)
@@ -90,8 +90,8 @@ typedef struct __motor_t__
         lpf_t                   statorResEstFlt;        /*!< Resistance estimation low-pass filter */
     };
     uint16_t                    id;                     /*!< Motor identification */
-    uint16_t                    state;                  /*!< Current motor state for the FSM. */
     error_reg_u                 error;                  /*!< Bit field for the error sources. */
+    motor_state                 state;                  /*!< Current motor state for the FSM. */
 } motor_t;
 
 /***********************************************************************
