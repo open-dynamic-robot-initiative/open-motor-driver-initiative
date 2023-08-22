@@ -168,27 +168,27 @@ static drv_reg_t drv_reg[] =
  },
 };
 
-//static const periph_motor_cfg_t periph_motor_cfg[] =
-//{
-// {
-//  .p_pwmCntCmp[CHANNEL_1]   = &PwmCounterCompareCfgList[0],
-//  .p_pwmCntCmp[CHANNEL_2]   = &PwmCounterCompareCfgList[1],
-//  .p_pwmCntCmp[CHANNEL_3]   = &PwmCounterCompareCfgList[2],
-//  .p_iAcq[CHANNEL_1]        = &AdcAcqList[0],
-//  .p_iAcq[CHANNEL_2]        = &AdcAcqList[2],
-//  .p_iAcq[CHANNEL_3]        = &AdcAcqList[4],
-//  .p_intAcq                 = NULL,//&AdcIntList[0],
-// },
-// {
-//  .p_pwmCntCmp[CHANNEL_1]   = &PwmCounterCompareCfgList[3],
-//  .p_pwmCntCmp[CHANNEL_2]   = &PwmCounterCompareCfgList[4],
-//  .p_pwmCntCmp[CHANNEL_3]   = &PwmCounterCompareCfgList[5],
-//  .p_iAcq[CHANNEL_1]        = &AdcAcqList[1],
-//  .p_iAcq[CHANNEL_2]        = &AdcAcqList[3],
-//  .p_iAcq[CHANNEL_3]        = &AdcAcqList[5],
-//  .p_intAcq                 = NULL,//&AdcIntList[1],
-// },
-//};
+static const periph_motor_cfg_t periph_motor_cfg[] =
+{
+ {
+  .p_pwmCntCmp[CHANNEL_1]   = &PwmCounterCompareCfgList[0],
+  .p_pwmCntCmp[CHANNEL_2]   = &PwmCounterCompareCfgList[1],
+  .p_pwmCntCmp[CHANNEL_3]   = &PwmCounterCompareCfgList[2],
+  .p_iAcq[CHANNEL_1]        = &AdcAcqList[0],
+  .p_iAcq[CHANNEL_2]        = &AdcAcqList[2],
+  .p_iAcq[CHANNEL_3]        = &AdcAcqList[4],
+  .p_intAcq                 = &AdcIntList[0],
+ },
+ {
+  .p_pwmCntCmp[CHANNEL_1]   = &PwmCounterCompareCfgList[3],
+  .p_pwmCntCmp[CHANNEL_2]   = &PwmCounterCompareCfgList[4],
+  .p_pwmCntCmp[CHANNEL_3]   = &PwmCounterCompareCfgList[5],
+  .p_iAcq[CHANNEL_1]        = &AdcAcqList[1],
+  .p_iAcq[CHANNEL_2]        = &AdcAcqList[3],
+  .p_iAcq[CHANNEL_3]        = &AdcAcqList[5],
+  .p_intAcq                 = &AdcIntList[1],
+ },
+};
 
 #pragma DATA_ALIGN(cmd_uomodri, 4)
 #pragma DATA_SECTION(cmd_uomodri, "MSGRAM_CPU_TO_CLA")

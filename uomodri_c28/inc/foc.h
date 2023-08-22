@@ -61,8 +61,8 @@ typedef union __cmd_reg_u__
         uint16_t        motorEnable     : 1;    /*!< Bit 1      : R/W - Enable power on motor.                              */
         uint16_t        rollOverEnable  : 1;    /*!< Bit 2      : R/W - Limit the rotations to +/- 128 rounds.              */
         uint16_t        encOffsetEnable : 1;    /*!< Bit 3      : R/W - Use encoder index in position computation.          */
-        uint16_t        calibEnable     : 1;    /*!< Bit 4      : R/W - Ready for ADC calibration. (Offset compensation).   */
-        uint16_t        CMD_RSV1        : 11;   /*!< Bit 5-15   : R/W - Reserved                                            */
+//        uint16_t        calibEnable     : 1;    /*!< Bit 4      : R/W - Ready for ADC calibration. (Offset compensation).   */
+        uint16_t        CMD_RSV1        : 12;   /*!< Bit 5-15   : R/W - Reserved                                            */
     };
 } cmd_reg_u;
 
@@ -174,6 +174,8 @@ typedef struct __acquisitions_t__
         uint32_t        vExtResultBase;     // ADC external voltage result register
         soc_num_u       socNum;
         ppb_num_u       ppbNum;
+//        ADC_IntNumber   intNum;
+
     };
 } acq_t;
 
@@ -258,8 +260,8 @@ typedef struct __foc_t__
 #define CMD_ROLLOVER_EN_MASK        (1 << CMD_ROLLOVER_EN_POS)
 #define CMD_ENCODER_OFFSET_POS      (3)
 #define CMD_ENCODER_OFFSET_MASK     (1 << CMD_ENCODER_OFFSET_POS)
-#define CMD_CALIBRATION_EN_POS      (4)
-#define CMD_CALIBRATION_EN_MASK     (1 << CMD_CALIBRATION_EN_POS)
+//#define CMD_CALIBRATION_EN_POS      (4)
+//#define CMD_CALIBRATION_EN_MASK     (1 << CMD_CALIBRATION_EN_POS)
 //#define CMD_TIMEOUT_EN_POS          (4)
 //#define CMD_TIMEOUT_EN_MASK         (1 << CMD_TIMEOUT_EN_POS)
 #define CMD_POSITION_OFFSET_COMP    (CMD_SYSTEM_EN_MASK | CMD_MOTOR_EN_MASK | CMD_ENCODER_OFFSET_MASK)

@@ -74,15 +74,14 @@ void main(void)
     // Force a reset on intermediate command structure
     COM_resetCmdStruct(&cmd_uomodri[MOTOR_1]);
     COM_resetCmdStruct(&cmd_uomodri[MOTOR_2]);
+    // ADC offset calibration for debug
+//    cmd_uomodri[MOTOR_1].bitField.calibEnable = true;
+//    cmd_uomodri[MOTOR_2].bitField.calibEnable = true;
+//    CLA_forceTasks(CLA1_BASE, CLA_INIT_VAR_TASK_FLAG);
+    HAL_ADC_offsetCalib(&periph_motor_cfg[MOTOR_1]);
+    HAL_ADC_offsetCalib(&periph_motor_cfg[MOTOR_2]);
     // Interrupts initialization
     HAL_INT_ini(InterruptList);
-    // ADC offset calibration for debug
-    cmd_uomodri[MOTOR_1].bitField.calibEnable = true;
-    cmd_uomodri[MOTOR_2].bitField.calibEnable = true;
-    CLA_forceTasks(CLA1_BASE, CLA_CMD_NEW_TASK_FLAG);
-//    HAL_ADC_offsetCalib(&periph_motor_cfg[MOTOR_1]);
-//    HAL_ADC_offsetCalib(&periph_motor_cfg[MOTOR_2]);
-
     // Infinite loop
     while(1);
 }
@@ -178,8 +177,8 @@ inline void LED_dimming(motor_t* p_motor1, motor_t* p_motor2, uint16_t* p_msg)
     case MOTOR_STATE_ERROR:
         ws2812b_writeLed((uint16_t)(0xff * timer_blink), 0, 0, p_msg);//red fade, error control
         break;
-    case MOTOR_STATE_WAIT_SYNC:
-    case MOTOR_STATE_ADC_CALIB:
+//    case MOTOR_STATE_WAIT_SYNC:
+//    case MOTOR_STATE_ADC_CALIB:
     case MOTOR_STATE_IDLE:
     default:
         ws2812b_writeLed(0,  0, u16_timer_fade_blink, p_msg);//blue fade
