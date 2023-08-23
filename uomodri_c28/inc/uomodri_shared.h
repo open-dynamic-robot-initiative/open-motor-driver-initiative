@@ -6,11 +6,12 @@
  ***********************************************************************/
 #include <stdint.h>
 #if (CLA_CORE_ENABLE)
-#include <CLAmath.h>
+#include "CLAmath.h"
 #else
 #include <hw_types.h>
 #include <math.h>
 #endif
+#include "driverlib.h"
 #include "f2838x_device.h"
 #include "foc.h"
 #include "motor.h"
@@ -36,11 +37,6 @@
 #if (CLA_CORE_ENABLE)
 extern motor_t  motor_m1;
 extern motor_t  motor_m2;
-
-//static float32_t ia_calib;
-//static float32_t ib_calib;
-//static float32_t ic_calib;
-//static lpf_t fltCalibCoef;
 #else
 extern static motor_t   motor[];
 #endif
@@ -56,11 +52,10 @@ extern float32_t __mfracf32(float32_t);
 //extern float32_t CLAsin(float32_t);
 extern void CLAsincos(float32_t, float32_t*, float32_t*);
 
-//__attribute__((interrupt)) void initVar_Task(void);
+__attribute__((interrupt)) void adcCalib_Task(void);
 __attribute__((interrupt)) void cmdNew_Task(void);
 __attribute__((interrupt)) void motor1_Task(void);
 __attribute__((interrupt)) void motor2_Task(void);
-__attribute__((interrupt)) void Cla1Task4(void);
 __attribute__((interrupt)) void Cla1Task5(void);
 __attribute__((interrupt)) void Cla1Task6(void);
 __attribute__((interrupt)) void Cla1Task7(void);
@@ -68,8 +63,7 @@ __attribute__((interrupt)) void Cla1Task8(void);
 
 inline float32_t __msatf32(float32_t, float32_t, float32_t);
 #endif
-//bool_t ADC_offsetCalib(acq_t*, uint32_t);
-bool_t ADC_offsetCalib(motor_t*);
+void ADC_offsetCalib(motor_t*);
 inline void ENC_resetStruct(encoder_t*);
 inline void ENC_resetPeriph(encoder_t*);
 inline void ENC_getPosition(encoder_t*);
@@ -109,92 +103,56 @@ inline float32_t __msatf32(float32_t a, float32_t sat_max, float32_t sat_min)
 }
 #endif
 
-//bool_t ADC_offsetCalib(motor_t* p_motor)//, acq_t* p_acq)//, uint32_t calibCnt)
-//{
-//    acq_t*      p_acq       = &p_motor->foc.acq;
-//    lpf_t       fltCalibCoef= {.a = 0.998f, .one_minus_a = 0.002f};
-//    float32_t   ia_calib    = 0.0f;
-//    float32_t   ib_calib    = 0.0f;
-//    float32_t   ic_calib    = 0.0f;
-//    uint16_t    calibCnt    = 0;
-//
-//    MOT_stopCommand(p_motor->epwmBase[CHANNEL_1]);
-//    MOT_stopCommand(p_motor->epwmBase[CHANNEL_2]);
-//    MOT_stopCommand(p_motor->epwmBase[CHANNEL_3]);
-//
-//    for(calibCnt = 0; calibCnt < 10000; calibCnt++)
-//    {
-//        // Wait IT flag event. Blocking.
-//        while(ADC_getInterruptStatus(p_acq->iabcCfgBase[CHANNEL_1], p_acq->intNum) == false);
-//        // Get current results
-//        p_acq->ia       = (float32_t)ADC_readResult(p_acq->iabcResultBase[CHANNEL_1], (ADC_SOCNumber)p_acq->socNum.ia);
-//        p_acq->ib       = (float32_t)ADC_readResult(p_acq->iabcResultBase[CHANNEL_2], (ADC_SOCNumber)p_acq->socNum.ib);
-//        p_acq->ic       = (float32_t)ADC_readResult(p_acq->iabcResultBase[CHANNEL_3], (ADC_SOCNumber)p_acq->socNum.ic);
-//        // filter
-//        if(calibCnt < 1000)
-//        {
-//            ia_calib    = p_acq->ia;
-//            ib_calib    = p_acq->ib;
-//            ic_calib    = p_acq->ic;
-//        }
-//        else if(calibCnt < 10000)
-//        {
-//            UOMODRI_HAL_ADC_CALIB(fltCalibCoef, ia_calib, p_acq->ia);
-//            UOMODRI_HAL_ADC_CALIB(fltCalibCoef, ib_calib, p_acq->ib);
-//            UOMODRI_HAL_ADC_CALIB(fltCalibCoef, ic_calib, p_acq->ic);
-//        }
-//        // Clear the interrupt flags
-//        ADC_clearInterruptOverflowStatus(p_acq->iabcCfgBase[CHANNEL_1], p_acq->intNum);
-//        ADC_clearInterruptStatus(p_acq->iabcCfgBase[CHANNEL_1], p_acq->intNum);
-//    }
-//    // Set offsets in PPBs
-//    // Sets the post processing block reference offset for tensions
-//    ADC_setPPBReferenceOffset(p_acq->iabcCfgBase[CHANNEL_1], (ADC_PPBNumber)p_acq->ppbNum.ia, (uint16_t)ia_calib);
-//    ADC_setPPBReferenceOffset(p_acq->iabcCfgBase[CHANNEL_2], (ADC_PPBNumber)p_acq->ppbNum.ib, (uint16_t)ib_calib);
-//    ADC_setPPBReferenceOffset(p_acq->iabcCfgBase[CHANNEL_3], (ADC_PPBNumber)p_acq->ppbNum.ic, (uint16_t)ic_calib);
-//
-//    return(true);
-//}
+/**
+ * @brief       ADC calibration function for the PPB (Post Processing Block)
+ * @param[in]   *p_motor    Pointer on the motor configuration structure.
+ */
+void ADC_offsetCalib(motor_t* p_motor)
+{
+    acq_t*      p_acq       = &p_motor->foc.acq;
+    lpf_t       fltCalibCoef= {.a = 0.998f, .one_minus_a = 0.002f};
+    float32_t   ia_calib    = 0.0f;
+    float32_t   ib_calib    = 0.0f;
+    float32_t   ic_calib    = 0.0f;
+    uint16_t    calibCnt    = 0;
 
-//    bool_t adc_offset_calib_done;
-//    // Get current results
-//    p_acq->ia       = (float32_t)ADC_readResult(p_acq->iabcResultBase[CHANNEL_1], (ADC_SOCNumber)p_acq->socNum.ia);
-//    p_acq->ib       = (float32_t)ADC_readResult(p_acq->iabcResultBase[CHANNEL_2], (ADC_SOCNumber)p_acq->socNum.ib);
-//    p_acq->ic       = (float32_t)ADC_readResult(p_acq->iabcResultBase[CHANNEL_3], (ADC_SOCNumber)p_acq->socNum.ic);
-//
-//    // filter
-//    if(calibCnt < 1000)
-//    {
-//        ia_calib    = p_acq->ia;
-//        ib_calib    = p_acq->ib;
-//        ic_calib    = p_acq->ic;
-//
-//        adc_offset_calib_done = false;
-////        return(false);
-//    }
-//    else if(calibCnt < 10000)
-//    {
-//        UOMODRI_HAL_ADC_CALIB(fltCalibCoef, ia_calib, p_acq->ia);
-//        UOMODRI_HAL_ADC_CALIB(fltCalibCoef, ib_calib, p_acq->ib);
-//        UOMODRI_HAL_ADC_CALIB(fltCalibCoef, ic_calib, p_acq->ic);
-//
-//        adc_offset_calib_done = false;
-//        return(false);
-//    }
-//    else
-//    {
-//        // Set offsets in PPBs
-//        // Sets the post processing block reference offset for tensions
-//        ADC_setPPBReferenceOffset(p_acq->iabcCfgBase[CHANNEL_1], (ADC_PPBNumber)p_acq->ppbNum.ia, (uint16_t)ia_calib);
-//        ADC_setPPBReferenceOffset(p_acq->iabcCfgBase[CHANNEL_2], (ADC_PPBNumber)p_acq->ppbNum.ib, (uint16_t)ib_calib);
-//        ADC_setPPBReferenceOffset(p_acq->iabcCfgBase[CHANNEL_3], (ADC_PPBNumber)p_acq->ppbNum.ic, (uint16_t)ic_calib);
-//
-//        adc_offset_calib_done = true;
-////        return(true);
-//    }
-//
-//    return(adc_offset_calib_done);
-//}
+    MOT_stopCommand(p_motor->epwmBase[CHANNEL_1]);
+    MOT_stopCommand(p_motor->epwmBase[CHANNEL_2]);
+    MOT_stopCommand(p_motor->epwmBase[CHANNEL_3]);
+
+    for(calibCnt = 0; calibCnt < 10000; calibCnt++)
+    {
+        // Wait IT flag event. Blocking.
+        while(ADC_getInterruptStatus(p_acq->iabcCfgBase[CHANNEL_1], p_acq->intNum.adcInt) == false);
+        // Get current results
+        p_acq->ia       = (float32_t)ADC_readResult(p_acq->iabcResultBase[CHANNEL_1], (ADC_SOCNumber)p_acq->socNum.ia);
+        p_acq->ib       = (float32_t)ADC_readResult(p_acq->iabcResultBase[CHANNEL_2], (ADC_SOCNumber)p_acq->socNum.ib);
+        p_acq->ic       = (float32_t)ADC_readResult(p_acq->iabcResultBase[CHANNEL_3], (ADC_SOCNumber)p_acq->socNum.ic);
+        // filter
+        if(calibCnt < 1000)
+        {
+            ia_calib    = p_acq->ia;
+            ib_calib    = p_acq->ib;
+            ic_calib    = p_acq->ic;
+        }
+        else if(calibCnt < 10000)
+        {
+            UOMODRI_HAL_ADC_CALIB(fltCalibCoef, ia_calib, p_acq->ia);
+            UOMODRI_HAL_ADC_CALIB(fltCalibCoef, ib_calib, p_acq->ib);
+            UOMODRI_HAL_ADC_CALIB(fltCalibCoef, ic_calib, p_acq->ic);
+        }
+        // Clear the interrupt flags
+        ADC_clearInterruptOverflowStatus(p_acq->iabcCfgBase[CHANNEL_1], p_acq->intNum.adcInt);
+        ADC_clearInterruptStatus(p_acq->iabcCfgBase[CHANNEL_1], p_acq->intNum.adcInt);
+    }
+    // Set offsets in PPBs
+    // Sets the post processing block reference offset for tensions
+    ADC_setPPBReferenceOffset(p_acq->iabcCfgBase[CHANNEL_1], (ADC_PPBNumber)p_acq->ppbNum.ia, (uint16_t)ia_calib);
+    ADC_setPPBReferenceOffset(p_acq->iabcCfgBase[CHANNEL_2], (ADC_PPBNumber)p_acq->ppbNum.ib, (uint16_t)ib_calib);
+    ADC_setPPBReferenceOffset(p_acq->iabcCfgBase[CHANNEL_3], (ADC_PPBNumber)p_acq->ppbNum.ic, (uint16_t)ic_calib);
+//    CLA_clearTaskFlags(CLA1_BASE, CLA_TASKFLAG_ALL);
+}
+
 
 /**
  * @brief           Reset the ENCODER structure

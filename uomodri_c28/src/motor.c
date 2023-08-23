@@ -42,7 +42,7 @@ void MOT_initStruct(motor_t* p_motor, uint16_t motor_id)
         p_motor->foc.acq.socNum.ib                      = MOTOR1_IABC_SOC_NUM;
         p_motor->foc.acq.socNum.ic                      = MOTOR1_IABC_SOC_NUM;
         p_motor->foc.acq.socNum.vExt                    = VEXT1_SOC_NUM;
-//        p_motor->foc.acq.intNum                         = MOTOR1_IA_INT_NUM;
+        p_motor->foc.acq.intNum.adcInt                  = MOTOR1_IA_INT_NUM;
         //--- MOTOR ENCORDER STRUCTURE ------------------------------------------
         p_motor->foc.enc.eqepBase                       = MOTOR1_QEP_BASE;
         p_motor->foc.enc.polePairs                      = MOTOR1_POLES_PAIRS;
@@ -108,7 +108,7 @@ void MOT_initStruct(motor_t* p_motor, uint16_t motor_id)
         p_motor->foc.acq.socNum.ib                      = MOTOR2_IABC_SOC_NUM;
         p_motor->foc.acq.socNum.ic                      = MOTOR2_IABC_SOC_NUM;
         p_motor->foc.acq.socNum.vExt                    = VEXT2_SOC_NUM;
-//        p_motor->foc.acq.intNum                         = MOTOR2_IA_INT_NUM;
+        p_motor->foc.acq.intNum.adcInt                  = MOTOR2_IA_INT_NUM;
         //--- MOTOR ENCORDER STRUCTURE ------------------------------------------
         p_motor->foc.enc.eqepBase                       = MOTOR2_QEP_BASE;
         p_motor->foc.enc.polePairs                      = MOTOR2_POLES_PAIRS;

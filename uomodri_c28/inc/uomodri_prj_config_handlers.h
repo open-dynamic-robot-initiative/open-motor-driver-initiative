@@ -26,6 +26,7 @@
 /***********************************************************************
  * FUNCTIONS DECLARATION
  ***********************************************************************/
+__attribute__((interrupt)) void cla_ClearTask(void);
 __attribute__((interrupt)) void cla_isrMotor1(void);
 __attribute__((interrupt)) void cla_isrMotor2(void);
 __attribute__((interrupt)) void tmr_isrLed(void);
@@ -39,6 +40,11 @@ __attribute__((interrupt)) void dma_isrComRx(void);
  */
 static const int_cfg_t InterruptList[] =
 {
+ {
+  .intNum           = INT_CLA_ADC_CALIB,
+  .intAckGroup      = INT_CLA_ADC_CALIB_GROUP,
+  .p_intHandler     = INT_CLA_ADC_HANDLER_HANDLER
+ },
  {
   .intNum           = INT_CLA_MOTOR1,
   .intAckGroup      = INT_CLA_MOTOR1_GROUP,
@@ -165,28 +171,6 @@ static drv_reg_t drv_reg[] =
   .ctrl_reg_06.bit.CSA_FET      = false,
   // Amplifier calibration calibration routine (Address: 0x7)
   .ctrl_reg_07.bit.CAL_MODE     = false,
- },
-};
-
-static const periph_motor_cfg_t periph_motor_cfg[] =
-{
- {
-  .p_pwmCntCmp[CHANNEL_1]   = &PwmCounterCompareCfgList[0],
-  .p_pwmCntCmp[CHANNEL_2]   = &PwmCounterCompareCfgList[1],
-  .p_pwmCntCmp[CHANNEL_3]   = &PwmCounterCompareCfgList[2],
-  .p_iAcq[CHANNEL_1]        = &AdcAcqList[0],
-  .p_iAcq[CHANNEL_2]        = &AdcAcqList[2],
-  .p_iAcq[CHANNEL_3]        = &AdcAcqList[4],
-  .p_intAcq                 = &AdcIntList[0],
- },
- {
-  .p_pwmCntCmp[CHANNEL_1]   = &PwmCounterCompareCfgList[3],
-  .p_pwmCntCmp[CHANNEL_2]   = &PwmCounterCompareCfgList[4],
-  .p_pwmCntCmp[CHANNEL_3]   = &PwmCounterCompareCfgList[5],
-  .p_iAcq[CHANNEL_1]        = &AdcAcqList[1],
-  .p_iAcq[CHANNEL_2]        = &AdcAcqList[3],
-  .p_iAcq[CHANNEL_3]        = &AdcAcqList[5],
-  .p_intAcq                 = &AdcIntList[1],
  },
 };
 

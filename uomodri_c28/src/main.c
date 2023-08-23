@@ -74,12 +74,8 @@ void main(void)
     // Force a reset on intermediate command structure
     COM_resetCmdStruct(&cmd_uomodri[MOTOR_1]);
     COM_resetCmdStruct(&cmd_uomodri[MOTOR_2]);
-    // ADC offset calibration for debug
-//    cmd_uomodri[MOTOR_1].bitField.calibEnable = true;
-//    cmd_uomodri[MOTOR_2].bitField.calibEnable = true;
-//    CLA_forceTasks(CLA1_BASE, CLA_INIT_VAR_TASK_FLAG);
-    HAL_ADC_offsetCalib(&periph_motor_cfg[MOTOR_1]);
-    HAL_ADC_offsetCalib(&periph_motor_cfg[MOTOR_2]);
+    // Start ADC offset calibration on CLA
+    CLA_forceTasks(CLA1_BASE, CLA_ADC_CALIB_TASK_FLAG);
     // Interrupts initialization
     HAL_INT_ini(InterruptList);
     // Infinite loop
@@ -190,6 +186,20 @@ inline void LED_dimming(motor_t* p_motor1, motor_t* p_motor2, uint16_t* p_msg)
 /***********************************************************************
  * INTERRUPT HANDLING FUNCTIONS DEFINITIONS
  ***********************************************************************/
+__attribute__((interrupt)) void cla_ClearTask(void)
+{
+#ifdef DEBUG
+    DBG_PIN2_SET;
+#endif
+    // Purge pending tasks
+    CLA_clearTaskFlags(CLA1_BASE, CLA_TASKFLAG_ALL);
+    // Clear IT
+    Interrupt_clearACKGroup(INTERRUPT_ACK_GROUP11);
+#ifdef DEBUG
+    DBG_PIN2_CLEAR;
+#endif
+}
+
 __attribute__((interrupt)) void cla_isrMotor1(void)
 {
 #ifdef DEBUG

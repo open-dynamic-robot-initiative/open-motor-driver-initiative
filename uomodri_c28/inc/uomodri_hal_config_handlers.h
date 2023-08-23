@@ -13,7 +13,7 @@
 /***********************************************************************
  * FUNCTIONS DECLARATION
  ***********************************************************************/
-//extern __attribute__((interrupt)) void initVar_Task(void);
+extern __attribute__((interrupt)) void adcCalib_Task(void);
 extern __attribute__((interrupt)) void cmdNew_Task(void);
 extern __attribute__((interrupt)) void motor1_Task(void);
 extern __attribute__((interrupt)) void motor2_Task(void);
@@ -390,16 +390,16 @@ static const sci_cfg_t  sciCfgList[] =
 
 static const cla_cfg_t  claCfgList[] =
 {
-// {
-//  .progRAM              = CLA_PROG_RAM,
-//  .dataRAM              = CLA_DATA_RAM,
-//  .claTaskFlg           = CLA_INIT_VAR_TASK_FLAG,
-//  .claTaskNum           = CLA_INIT_VAR_TASK_NUMBER,
-//  .claIntVect           = CLA_INIT_VAR_INTERRUPT_VECTOR,
-//  .claTrigSrc           = CLA_INIT_VAR_TRIGGER_SRC,
-//  .p_claFunc            = CLA_INIT_VAR_TASK_HANDLER,
-//  .claForceTask         = false,
-// },
+ {
+  .progRAM              = CLA_PROG_RAM,
+  .dataRAM              = CLA_DATA_RAM,
+  .claTaskFlg           = CLA_ADC_CALIB_TASK_FLAG,
+  .claTaskNum           = CLA_ADC_CALIB_TASK_NUMBER,
+  .claIntVect           = CLA_ADC_CALIB_INTERRUPT_VECTOR,
+  .claTrigSrc           = CLA_ADC_CALIB_TRIGGER_SRC,
+  .p_claFunc            = CLA_ADC_CALIB_TASK_HANDLER,
+  .claForceTask         = false,
+ },
  {
   .progRAM              = CLA_PROG_RAM,
   .dataRAM              = CLA_DATA_RAM,

@@ -94,6 +94,12 @@ typedef union __soc_num_u__
     };
 } soc_num_u;
 
+typedef union __int_num_u__
+{
+    uint32_t            all;
+    ADC_IntNumber       adcInt;
+} int_num_u;
+
 /***********************************************************************
  * CONTROL STRUCTURES
  ***********************************************************************/
@@ -173,9 +179,8 @@ typedef struct __acquisitions_t__
         uint32_t        vBusResultBase;     // ADC Vbus result register
         uint32_t        vExtResultBase;     // ADC external voltage result register
         soc_num_u       socNum;
+        int_num_u       intNum;
         ppb_num_u       ppbNum;
-//        ADC_IntNumber   intNum;
-
     };
 } acq_t;
 

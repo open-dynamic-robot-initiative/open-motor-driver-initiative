@@ -1244,37 +1244,40 @@
 #define CLA_PROG_RAM                            (MEMCFG_SECT_LS3 | MEMCFG_SECT_LS4 | MEMCFG_SECT_LS5 | MEMCFG_SECT_LS6 | MEMCFG_SECT_LS7)
 #define CLA_DATA_RAM                            (MEMCFG_SECT_LS0 | MEMCFG_SECT_LS1 | MEMCFG_SECT_LS2)
 
-//#define CLA_INIT_VAR_TASK_FLAG                  CLA_TASKFLAG_1
-//#define CLA_INIT_VAR_TASK_NUMBER                CLA_TASK_1
-//#define CLA_INIT_VAR_INTERRUPT_VECTOR           CLA_MVECT_1
-//#define CLA_INIT_VAR_TRIGGER_SRC                CLA_TRIGGER_SOFTWARE
-//#define CLA_INIT_VAR_TASK_HANDLER               &initVar_Task
+#define CLA_ADC_CALIB_TASK_FLAG                 CLA_TASKFLAG_1
+#define CLA_ADC_CALIB_TASK_NUMBER               CLA_TASK_1
+#define CLA_ADC_CALIB_INTERRUPT_VECTOR          CLA_MVECT_1
+#define CLA_ADC_CALIB_TRIGGER_SRC               CLA_TRIGGER_SOFTWARE
+#define CLA_ADC_CALIB_TASK_HANDLER              &adcCalib_Task
 
-#define CLA_CMD_NEW_TASK_FLAG                   CLA_TASKFLAG_1
-#define CLA_CMD_NEW_TASK_NUMBER                 CLA_TASK_1
-#define CLA_CMD_NEW_INTERRUPT_VECTOR            CLA_MVECT_1
+#define CLA_CMD_NEW_TASK_FLAG                   CLA_TASKFLAG_2
+#define CLA_CMD_NEW_TASK_NUMBER                 CLA_TASK_2
+#define CLA_CMD_NEW_INTERRUPT_VECTOR            CLA_MVECT_2
 #define CLA_CMD_NEW_TRIGGER_SRC                 CLA_TRIGGER_SOFTWARE
 #define CLA_CMD_NEW_TASK_HANDLER                &cmdNew_Task
 
-#define CLA_MOTOR1_TASK_FLAG                    CLA_TASKFLAG_2
-#define CLA_MOTOR1_TASK_NUMBER                  CLA_TASK_2
-#define CLA_MOTOR1_INTERRUPT_VECTOR             CLA_MVECT_2
+#define CLA_MOTOR1_TASK_FLAG                    CLA_TASKFLAG_3
+#define CLA_MOTOR1_TASK_NUMBER                  CLA_TASK_3
+#define CLA_MOTOR1_INTERRUPT_VECTOR             CLA_MVECT_3
 #define CLA_MOTOR1_TRIGGER_SRC                  CLA_TRIGGER_ADCA1
 #define CLA_MOTOR1_TASK_HANDLER                 &motor1_Task
 
-#define CLA_MOTOR2_TASK_FLAG                    CLA_TASKFLAG_3
-#define CLA_MOTOR2_TASK_NUMBER                  CLA_TASK_3
-#define CLA_MOTOR2_INTERRUPT_VECTOR             CLA_MVECT_3
+#define CLA_MOTOR2_TASK_FLAG                    CLA_TASKFLAG_4
+#define CLA_MOTOR2_TASK_NUMBER                  CLA_TASK_4
+#define CLA_MOTOR2_INTERRUPT_VECTOR             CLA_MVECT_4
 #define CLA_MOTOR2_TRIGGER_SRC                  CLA_TRIGGER_ADCA2
 #define CLA_MOTOR2_TASK_HANDLER                 &motor2_Task
 
 /***********************************************************************
  * INTERRUPTS DEFINES
  ***********************************************************************/
-#define INT_CLA_MOTOR1                          INT_CLA1_2
+#define INT_CLA_ADC_CALIB                       INT_CLA1_1
+#define INT_CLA_ADC_CALIB_GROUP                 INTERRUPT_ACK_GROUP11
+#define INT_CLA_ADC_HANDLER_HANDLER             &cla_ClearTask
+#define INT_CLA_MOTOR1                          INT_CLA1_3
 #define INT_CLA_MOTOR1_GROUP                    INTERRUPT_ACK_GROUP11
 #define INT_CLA_MOTOR1_HANDLER                  &cla_isrMotor1
-#define INT_CLA_MOTOR2                          INT_CLA1_3
+#define INT_CLA_MOTOR2                          INT_CLA1_4
 #define INT_CLA_MOTOR2_GROUP                    INTERRUPT_ACK_GROUP11
 #define INT_CLA_MOTOR2_HANDLER                  &cla_isrMotor2
 #define INT_TIMER_LED                           INT_TIMER0
