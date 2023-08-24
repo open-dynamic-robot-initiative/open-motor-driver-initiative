@@ -191,10 +191,10 @@ __attribute__((interrupt)) void cla_ClearTask(void)
 #ifdef DEBUG
     DBG_PIN2_SET;
 #endif
-    // Purge pending tasks
+    // Purge pending tasks after ADC calibration.
     CLA_clearTaskFlags(CLA1_BASE, CLA_TASKFLAG_ALL);
     // Clear IT
-    Interrupt_clearACKGroup(INTERRUPT_ACK_GROUP11);
+    Interrupt_clearACKGroup(INT_CLA_ADC_CALIB_GROUP);
 #ifdef DEBUG
     DBG_PIN2_CLEAR;
 #endif
