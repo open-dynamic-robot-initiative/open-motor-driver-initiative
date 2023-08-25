@@ -23,39 +23,46 @@ void            DRV_writeOne(const drv_cfg_t*, DRV_Address_e, uint16_t);
  * @brief       Start \& configure the DRV ICs.
  * @param[in]   *p_drv      Pointer on the DRV definition structure
  */
-void DRV_ini(const drv_cfg_t* p_drvCfg, drv_reg_t* p_drvReg)
+bool_t DRV_ini(const drv_cfg_t* p_drvCfg, drv_reg_t* p_drvReg)
 {
+    bool_t drv_test     = false;
     if((p_drvCfg != NULL) && (p_drvReg != NULL))
     {
-        DRV_Enable(p_drvCfg);
-        if(DRV_SetConfig(p_drvCfg, p_drvReg))
-            DRV_Calibration(p_drvCfg, p_drvReg);
+        if(DRV_Enable(p_drvCfg))
+        {
+            if(DRV_SetConfig(p_drvCfg, p_drvReg))
+            {
+                DRV_Calibration(p_drvCfg, p_drvReg);
+                drv_test= true;
+            }
+        }
     }
 
-    return;
+    return(drv_test);
 }
 
 /**
  * @brief       Enable the DRV IC pin.
  * @param[in]   *p_drv      Pointer on the DRV definition structure
- * @return      bool        True if DRV is in fault state else false.
+ * @return      bool_t      True if DRV is enable else DRV is in fault state.
  */
 static bool_t DRV_Enable(const drv_cfg_t* p_drvCfg)
 {
-    uint32_t pin_drv_en     = p_drvCfg->gpioNumber_EN;
     uint16_t cpt_time_out   = 0;
-    bool_t fault_drv        = false;
+    bool_t drv_enable       = true;
     // Enable the DRV8353
-    GPIO_writePin(pin_drv_en, 1);
+    GPIO_writePin(p_drvCfg->gpioNumber_EN, 1);
     // Wait 1ms
     DEVICE_DELAY_US(1000U);
     // Make sure the FAULT bit is not set during startup
-    while((DRV_readOne(p_drvCfg, DRV_ADDRESS_STATUS_0) & FLT_STATUS_FAULT_Msk) && (cpt_time_out < 1000))
-        fault_drv = (++cpt_time_out > 999) ? (true) : (false);
+    while(drv_enable && (DRV_readOne(p_drvCfg, DRV_ADDRESS_STATUS_0) & FLT_STATUS_FAULT_Msk))
+        drv_enable  = (++cpt_time_out < 1000) ? (true) : (false);
     // Wait for the DRV8353 to go through start up sequence
     DEVICE_DELAY_US(1000U);
+    // Check that fault pin is similar as register bit. FAULT is active low.
+    drv_enable      = drv_enable && GPIO_readPin(p_drvCfg->gpioNumber_FAULT);
 
-    return (fault_drv);
+    return(drv_enable);
 }
 
 /**
@@ -73,7 +80,7 @@ static bool_t DRV_SetConfig(const drv_cfg_t* p_drvCfg, drv_reg_t* p_drvReg)
     // Read it back to ensure it worked
     DRV_readAll(p_drvCfg, p_drvReg);
 
-    return (((reg_test.ctrl_reg_02.all  == p_drvReg->ctrl_reg_02.all) &&
+    return(((reg_test.ctrl_reg_02.all   == p_drvReg->ctrl_reg_02.all) &&
             (reg_test.ctrl_reg_03.all   == p_drvReg->ctrl_reg_03.all) &&
             (reg_test.ctrl_reg_04.all   == p_drvReg->ctrl_reg_04.all) &&
             (reg_test.ctrl_reg_05.all   == p_drvReg->ctrl_reg_05.all) &&
@@ -90,23 +97,23 @@ static bool_t DRV_SetConfig(const drv_cfg_t* p_drvCfg, drv_reg_t* p_drvReg)
 static void DRV_Calibration(const drv_cfg_t* p_drvCfg, drv_reg_t* p_drvReg)
 {
     // Set auto calibration
-    drv_ctrl07_u auto_calib = {.bit.CAL_MODE = true};
+    drv_ctrl07_u auto_calib = {.CAL_MODE = true};
     DRV_writeOne(p_drvCfg, DRV_ADDRESS_CONTROL_7, auto_calib.all); // Write Control Register 7
     // Enable channels calibration
     drv_ctrl06_u calib      = p_drvReg->ctrl_reg_06;
-    calib.bit.CSA_CAL_A     = true;
-    calib.bit.CSA_CAL_B     = true;
-    calib.bit.CSA_CAL_C     = true;
+    calib.CSA_CAL_A         = true;
+    calib.CSA_CAL_B         = true;
+    calib.CSA_CAL_C         = true;
     DRV_writeOne(p_drvCfg, DRV_ADDRESS_CONTROL_6, calib.all);// Write Control Register 6
     // Wait for 1ms
     DEVICE_DELAY_US(1000U);
     // stop auto calibration
-    auto_calib.bit.CAL_MODE = false;
+    auto_calib.CAL_MODE     = false;
     DRV_writeOne(p_drvCfg, DRV_ADDRESS_CONTROL_7, auto_calib.all); // Write Control Register 7
     // stop channels calibration
-    calib.bit.CSA_CAL_A     = false;
-    calib.bit.CSA_CAL_B     = false;
-    calib.bit.CSA_CAL_C     = false;
+    calib.CSA_CAL_A         = false;
+    calib.CSA_CAL_B         = false;
+    calib.CSA_CAL_C         = false;
     DRV_writeOne(p_drvCfg, DRV_ADDRESS_CONTROL_6, calib.all); // Write Control Register 6
 
     return;

@@ -38,6 +38,13 @@ slv2mst_msg_t           tx_swap;
 #pragma DATA_ALIGN(led_msg, 4)
 #pragma DATA_SECTION(led_msg, "ramgs0")
 uint16_t                led_msg[LED_MSG_TX_16BIT_LENGTH];
+#pragma DATA_ALIGN(rs485_rx_msg, 4)
+#pragma DATA_SECTION(rs485_rx_msg, "ramgs0")
+uint16_t                rs485_rx_msg[64];
+#pragma DATA_ALIGN(rs485_tx_msg, 4)
+#pragma DATA_SECTION(rs485_tx_msg, "ramgs0")
+uint16_t                rs485_tx_msg[64];
+
 // Local variables
 uint16_t                tx_msg_cr = 0U;
 uint16_t                tx_msg_nx = 1U;
@@ -69,8 +76,8 @@ void main(void)
     // Hardware Abstraction Layer initialization
     HAL_ini(&hal);
     // DRV8353 initialization
-    DRV_ini(&drv_cfg[MOTOR_1], &drv_reg[MOTOR_1]);
-    DRV_ini(&drv_cfg[MOTOR_2], &drv_reg[MOTOR_2]);
+    motor_m1.error.drv_fault = !DRV_ini(&drv_cfg[MOTOR_1], &drv_reg[MOTOR_1]);
+    motor_m2.error.drv_fault = !DRV_ini(&drv_cfg[MOTOR_2], &drv_reg[MOTOR_2]);
     // Force a reset on intermediate command structure
     COM_resetCmdStruct(&cmd_uomodri[MOTOR_1]);
     COM_resetCmdStruct(&cmd_uomodri[MOTOR_2]);
@@ -78,6 +85,8 @@ void main(void)
     CLA_forceTasks(CLA1_BASE, CLA_ADC_CALIB_TASK_FLAG);
     // Interrupts initialization
     HAL_INT_ini(InterruptList);
+    // Enable RS485 message reception on THVD2450
+    RS485_RECEIVE;
     // Infinite loop
     while(1);
 }
@@ -113,8 +122,8 @@ static void MCU_ini(void)
 //#undef DEVICE_LSPCLK_FREQ
 //#define DEVICE_LSPCLK_FREQ          (DEVICE_SYSCLK_FREQ / 1)
     /* Set LSPCLK divider */
-//    SysCtl_setLowSpeedClock(SYSCTL_LSPCLK_PRESCALE_1);
-//    ASSERT(SysCtl_getLowSpeedClock(DEVICE_OSCSRC_FREQ) == UOMODRI_LSPCLK_FREQ);
+    SysCtl_setLowSpeedClock(SYSCTL_LSPCLK_PRESCALE_1);
+    ASSERT(SysCtl_getLowSpeedClock(DEVICE_OSCSRC_FREQ) == UOMODRI_LSPCLK_FREQ);
 #if ((defined USB_BUS_ENABLE_ON_CM) && (defined CM_CORE_ENABLE))
     /* Allocate Shared Peripheral USB to the CM Side. */
     SysCtl_allocateSharedPeripheral(SYSCTL_PALLOCATE_USBA, 1);
@@ -281,5 +290,20 @@ __attribute__((interrupt)) void dma_isrComRx(void)
 #ifdef DEBUG
     DBG_PIN3_CLEAR;
 #endif
+}
+
+__attribute__((interrupt)) void rs485_isrRx(void)
+{
+    static uint16_t i = 0;
+    SCI_readCharArray(COM_SCI_BASE, &rs485_rx_msg[i], (uint16_t)SCI_FIFO_RX16);
+    i = (i < 4) ? (i + 1) : (0);
+    // Clear IT flag
+    Interrupt_clearACKGroup(INTERRUPT_ACK_GROUP8);
+}
+
+__attribute__((interrupt)) void rs485_isrTx(void)
+{
+    // Clear IT flag
+    Interrupt_clearACKGroup(INTERRUPT_ACK_GROUP8);
 }
 

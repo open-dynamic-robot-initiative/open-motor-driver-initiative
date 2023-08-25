@@ -31,6 +31,8 @@ __attribute__((interrupt)) void cla_isrMotor1(void);
 __attribute__((interrupt)) void cla_isrMotor2(void);
 __attribute__((interrupt)) void tmr_isrLed(void);
 __attribute__((interrupt)) void dma_isrComRx(void);
+__attribute__((interrupt)) void rs485_isrRx(void);
+__attribute__((interrupt)) void rs485_isrTx(void);
 
 /***********************************************************************
  * VARIABLES
@@ -65,6 +67,16 @@ static const int_cfg_t InterruptList[] =
   .intAckGroup      = INT_DMA_RX_MSG_GROUP,
   .p_intHandler     = INT_DMA_RX_MSG_HANDLER
  },
+ {
+  .intNum           = INT_SCIC_RX,
+  .intAckGroup      = INTERRUPT_ACK_GROUP8,
+  .p_intHandler     = &rs485_isrRx
+ },
+ {
+   .intNum           = INT_SCIC_TX,
+   .intAckGroup      = INTERRUPT_ACK_GROUP8,
+   .p_intHandler     = &rs485_isrTx
+ },
  // END OF ARRAY
  {.intNum           = UINT32_MAX},
 };
@@ -96,81 +108,81 @@ static const drv_cfg_t  drv_cfg[] =
 static drv_reg_t drv_reg[] =
 {
  {
-  .ctrl_reg_02.bit.CLR_FLT      = false,
-  .ctrl_reg_02.bit.BRAKE        = false,
-  .ctrl_reg_02.bit.COAST        = false,
-  .ctrl_reg_02.bit.PWM1_DIR     = false,
-  .ctrl_reg_02.bit.PWM1_COM     = false,
-  .ctrl_reg_02.bit.PWM_MODE     = DRV_PWMMODE_6,
-  .ctrl_reg_02.bit.OTW_REP      = true, // Over Temperature Warning will raise nFault
-  .ctrl_reg_02.bit.DIS_GDF      = false,
-  .ctrl_reg_02.bit.DIS_GDUV     = false,
-  .ctrl_reg_02.bit.OCP_ACT      = true,
+  .ctrl_reg_02.CLR_FLT      = false,
+  .ctrl_reg_02.BRAKE        = false,
+  .ctrl_reg_02.COAST        = false,
+  .ctrl_reg_02.PWM1_DIR     = false,
+  .ctrl_reg_02.PWM1_COM     = false,
+  .ctrl_reg_02.PWM_MODE     = DRV_PWMMODE_6,
+  .ctrl_reg_02.OTW_REP      = true, // Over Temperature Warning will raise nFault
+  .ctrl_reg_02.DIS_GDF      = false,
+  .ctrl_reg_02.DIS_GDUV     = false,
+  .ctrl_reg_02.OCP_ACT      = true,
   // Gate Drive HS register initialization (Address: 0x3)
-  .ctrl_reg_03.bit.IDRIVEN_HS   = DRV_ISINK_HS_0P300_A,
-  .ctrl_reg_03.bit.IDRIVEP_HS   = DRV_ISOUR_HS_0P150_A,
-  .ctrl_reg_03.bit.LOCK         = DRV_REG_UNLOCK,
+  .ctrl_reg_03.IDRIVEN_HS   = DRV_ISINK_HS_0P300_A,
+  .ctrl_reg_03.IDRIVEP_HS   = DRV_ISOUR_HS_0P150_A,
+  .ctrl_reg_03.LOCK         = DRV_REG_UNLOCK,
   // Gate Drive LS register initialization (Address: 0x4)
-  .ctrl_reg_04.bit.IDRIVEN_LS   = DRV_ISINK_LS_0P300_A,
-  .ctrl_reg_04.bit.IDRIVEP_LS   = DRV_ISOUR_LS_0P150_A,
-  .ctrl_reg_04.bit.TDRIVE       = DRV_TSOUR_1000_NS,
-  .ctrl_reg_04.bit.CBC          = false,
+  .ctrl_reg_04.IDRIVEN_LS   = DRV_ISINK_LS_0P300_A,
+  .ctrl_reg_04.IDRIVEP_LS   = DRV_ISOUR_LS_0P150_A,
+  .ctrl_reg_04.TDRIVE       = DRV_TSOUR_1000_NS,
+  .ctrl_reg_04.CBC          = false,
   // Over Current Protection register initialization (Address: 0x5)
-  .ctrl_reg_05.bit.VDS_LVL      = DRV_VDS_LVL_0P080_V,
-  .ctrl_reg_05.bit.OCP_DEG      = DRV_OCPDEG_4_US,
-  .ctrl_reg_05.bit.OCP_MODE     = DRV_LATCHED_SHUTDOWN,
-  .ctrl_reg_05.bit.DEAD_TIME    = DRV_DEADTIME_50_NS,
-  .ctrl_reg_05.bit.TRETRY       = true,
+  .ctrl_reg_05.VDS_LVL      = DRV_VDS_LVL_0P080_V,
+  .ctrl_reg_05.OCP_DEG      = DRV_OCPDEG_4_US,
+  .ctrl_reg_05.OCP_MODE     = DRV_LATCHED_SHUTDOWN,
+  .ctrl_reg_05.DEAD_TIME    = DRV_DEADTIME_50_NS,
+  .ctrl_reg_05.TRETRY       = true,
   // Current Sense Amplifier register initialization (Address: 0x6)
-  .ctrl_reg_06.bit.SEN_LVL      = DRV_SENLVL_0P25_V,
-  .ctrl_reg_06.bit.CSA_CAL_C    = false,
-  .ctrl_reg_06.bit.CSA_CAL_B    = false,
-  .ctrl_reg_06.bit.CSA_CAL_A    = false,
-  .ctrl_reg_06.bit.DIS_SEN      = false,
-  .ctrl_reg_06.bit.CSA_GAIN     = DRV_CSA_GAIN_REG,
-  .ctrl_reg_06.bit.LS_REF       = false,
-  .ctrl_reg_06.bit.VREF_DIV     = true,
-  .ctrl_reg_06.bit.CSA_FET      = false,
+  .ctrl_reg_06.SEN_LVL      = DRV_SENLVL_0P25_V,
+  .ctrl_reg_06.CSA_CAL_C    = false,
+  .ctrl_reg_06.CSA_CAL_B    = false,
+  .ctrl_reg_06.CSA_CAL_A    = false,
+  .ctrl_reg_06.DIS_SEN      = false,
+  .ctrl_reg_06.CSA_GAIN     = DRV_CSA_GAIN_REG,
+  .ctrl_reg_06.LS_REF       = false,
+  .ctrl_reg_06.VREF_DIV     = true,
+  .ctrl_reg_06.CSA_FET      = false,
   // Amplifier calibration calibration routine (Address: 0x7)
-  .ctrl_reg_07.bit.CAL_MODE     = false,
+  .ctrl_reg_07.CAL_MODE     = false,
  },
  {
-  .ctrl_reg_02.bit.CLR_FLT      = false,
-  .ctrl_reg_02.bit.BRAKE        = false,
-  .ctrl_reg_02.bit.COAST        = false,
-  .ctrl_reg_02.bit.PWM1_DIR     = false,
-  .ctrl_reg_02.bit.PWM1_COM     = false,
-  .ctrl_reg_02.bit.PWM_MODE     = DRV_PWMMODE_6,
-  .ctrl_reg_02.bit.OTW_REP      = true, // Over Temperature Warning will raise nFault
-  .ctrl_reg_02.bit.DIS_GDF      = false,
-  .ctrl_reg_02.bit.DIS_GDUV     = false,
-  .ctrl_reg_02.bit.OCP_ACT      = true,
+  .ctrl_reg_02.CLR_FLT      = false,
+  .ctrl_reg_02.BRAKE        = false,
+  .ctrl_reg_02.COAST        = false,
+  .ctrl_reg_02.PWM1_DIR     = false,
+  .ctrl_reg_02.PWM1_COM     = false,
+  .ctrl_reg_02.PWM_MODE     = DRV_PWMMODE_6,
+  .ctrl_reg_02.OTW_REP      = true, // Over Temperature Warning will raise nFault
+  .ctrl_reg_02.DIS_GDF      = false,
+  .ctrl_reg_02.DIS_GDUV     = false,
+  .ctrl_reg_02.OCP_ACT      = true,
   // Gate Drive HS register initialization (Address: 0x3)
-  .ctrl_reg_03.bit.IDRIVEN_HS   = DRV_ISINK_HS_0P600_A,//DRV_ISINK_HS_0P300_A,
-  .ctrl_reg_03.bit.IDRIVEP_HS   = DRV_ISOUR_HS_0P300_A,//DRV_ISOUR_HS_0P150_A,
-  .ctrl_reg_03.bit.LOCK         = DRV_REG_UNLOCK,
+  .ctrl_reg_03.IDRIVEN_HS   = DRV_ISINK_HS_0P600_A,//DRV_ISINK_HS_0P300_A,
+  .ctrl_reg_03.IDRIVEP_HS   = DRV_ISOUR_HS_0P300_A,//DRV_ISOUR_HS_0P150_A,
+  .ctrl_reg_03.LOCK         = DRV_REG_UNLOCK,
   // Gate Drive LS register initialization (Address: 0x4)
-  .ctrl_reg_04.bit.IDRIVEN_LS   = DRV_ISINK_LS_0P600_A,//DRV_ISINK_LS_0P300_A,
-  .ctrl_reg_04.bit.IDRIVEP_LS   = DRV_ISOUR_LS_0P300_A,//DRV_ISOUR_LS_0P150_A,
-  .ctrl_reg_04.bit.TDRIVE       = DRV_TSOUR_1000_NS,
+  .ctrl_reg_04.IDRIVEN_LS   = DRV_ISINK_LS_0P600_A,//DRV_ISINK_LS_0P300_A,
+  .ctrl_reg_04.IDRIVEP_LS   = DRV_ISOUR_LS_0P300_A,//DRV_ISOUR_LS_0P150_A,
+  .ctrl_reg_04.TDRIVE       = DRV_TSOUR_1000_NS,
   // Over Current Protection register initialization (Address: 0x5)
-  .ctrl_reg_05.bit.VDS_LVL      = DRV_VDS_LVL_0P080_V,
-  .ctrl_reg_05.bit.OCP_DEG      = DRV_OCPDEG_4_US,
-  .ctrl_reg_05.bit.OCP_MODE     = DRV_LATCHED_SHUTDOWN,
-  .ctrl_reg_05.bit.DEAD_TIME    = DRV_DEADTIME_50_NS,
-  .ctrl_reg_05.bit.TRETRY       = true,
+  .ctrl_reg_05.VDS_LVL      = DRV_VDS_LVL_0P080_V,
+  .ctrl_reg_05.OCP_DEG      = DRV_OCPDEG_4_US,
+  .ctrl_reg_05.OCP_MODE     = DRV_LATCHED_SHUTDOWN,
+  .ctrl_reg_05.DEAD_TIME    = DRV_DEADTIME_50_NS,
+  .ctrl_reg_05.TRETRY       = true,
   // Current Sense Amplifier register initialization (Address: 0x6)
-  .ctrl_reg_06.bit.SEN_LVL      = DRV_SENLVL_0P25_V,
-  .ctrl_reg_06.bit.CSA_CAL_C    = false,
-  .ctrl_reg_06.bit.CSA_CAL_B    = false,
-  .ctrl_reg_06.bit.CSA_CAL_A    = false,
-  .ctrl_reg_06.bit.DIS_SEN      = false,
-  .ctrl_reg_06.bit.CSA_GAIN     = DRV_CSA_GAIN_REG,
-  .ctrl_reg_06.bit.LS_REF       = false,
-  .ctrl_reg_06.bit.VREF_DIV     = true,
-  .ctrl_reg_06.bit.CSA_FET      = false,
+  .ctrl_reg_06.SEN_LVL      = DRV_SENLVL_0P25_V,
+  .ctrl_reg_06.CSA_CAL_C    = false,
+  .ctrl_reg_06.CSA_CAL_B    = false,
+  .ctrl_reg_06.CSA_CAL_A    = false,
+  .ctrl_reg_06.DIS_SEN      = false,
+  .ctrl_reg_06.CSA_GAIN     = DRV_CSA_GAIN_REG,
+  .ctrl_reg_06.LS_REF       = false,
+  .ctrl_reg_06.VREF_DIV     = true,
+  .ctrl_reg_06.CSA_FET      = false,
   // Amplifier calibration calibration routine (Address: 0x7)
-  .ctrl_reg_07.bit.CAL_MODE     = false,
+  .ctrl_reg_07.CAL_MODE     = false,
  },
 };
 

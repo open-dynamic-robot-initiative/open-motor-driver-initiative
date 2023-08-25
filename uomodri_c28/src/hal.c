@@ -168,72 +168,6 @@ void HAL_ADC_ini(const adc_cfg_t* p_adcCfg)
 }
 
 /**
- * @brief       ADC calibration function for the PPB (Post Processing Block)
- * @param[in]   *p_motor    Pointer on the motor configuration structure
- */
-//void HAL_ADC_offsetCalib(const periph_motor_cfg_t* p_periphMotorCfg)
-//{
-//    if(p_periphMotorCfg != NULL)
-//    {
-//        const epwm_cc_t*    p_pwmCC     = NULL;
-//        const adc_int_t*    p_ITConv    = p_periphMotorCfg->p_intAcq;
-//        const adc_acq_t*    p_iAcq      = NULL;
-//        lpf_t               fltCoef     = {.a = 0.998f, .one_minus_a = 0.002f};
-//        float32_t           iRaw[3]     = {0.0f, 0.0f, 0.0f};
-//        float32_t           iFlt[3]     = {0.0f, 0.0f, 0.0f};
-//        uint16_t            calibCnt    = 0;
-//        uint8_t             loop        = 0;
-//
-//        // force no switching with low side transistors closed & high side open
-//        for(loop = 0; loop < 3; loop++)
-//        {
-//            p_pwmCC = p_periphMotorCfg->p_pwmCntCmp[loop];
-//            EPWM_setCounterCompareValue(p_pwmCC->epwmBase, p_pwmCC->compModule, p_pwmCC->compCount);
-//        }
-//
-//        for(calibCnt = 0; calibCnt < 10000; calibCnt++)
-//        {
-//            // Wait IT flag event. Blocking.
-//            while(ADC_getInterruptStatus(p_ITConv->adcBase, p_ITConv->adcIntNum) == false);
-//
-//            // Get current results
-//            for(loop = 0; loop < 3; loop++)
-//            {
-//                p_iAcq      = p_periphMotorCfg->p_iAcq[loop];
-//                iRaw[loop]  = (float32_t)ADC_readResult(p_iAcq->adcResultBase, p_iAcq->adcSOCNum);
-//            }
-//
-//            // filter
-//            if(calibCnt > 1000)
-//                for(loop = 0; loop < 3; loop++)
-//                    UOMODRI_HAL_ADC_CALIB(fltCoef, iFlt[loop], iRaw[loop]);
-//            else
-//                for(loop = 0; loop < 3; loop++)
-//                    iFlt[loop]  = iRaw[loop];
-//
-//            // clear flags
-//            for(loop = 0; loop < 3; loop++)
-//            {
-//                p_iAcq  = p_periphMotorCfg->p_iAcq[loop];
-//                // Clear the interrupt flags
-//                ADC_clearInterruptOverflowStatus(p_iAcq->adcBase, p_ITConv->adcIntNum);
-//                ADC_clearInterruptStatus(p_iAcq->adcBase, p_ITConv->adcIntNum);
-//            }
-//        }
-//
-//        // Set offsets in PPBs
-//        for(loop = 0; loop < 3; loop++)
-//        {
-//            p_iAcq  = p_periphMotorCfg->p_iAcq[loop];
-//            // Sets the post processing block reference offset for tensions
-//            ADC_setPPBReferenceOffset(p_iAcq->adcBase, p_iAcq->adcPPBNum, (uint16_t)iFlt[loop]);
-//        }
-//    }
-//
-//    return;
-//}
-
-/**
  * @brief       ePWM global peripheral initialization function.
  * @param[in]   *p_pwmCfg   Pointer on the PWM configuration structure
  */
@@ -526,7 +460,7 @@ void HAL_SPI_ini(const spi_cfg_t* p_spiCfg)
                 SPI_setFIFOInterruptLevel(spiBase, p_spiCfg->txLevel, p_spiCfg->rxLevel);
             }
             /* Set SPI configuration, disable loopback, enable free run (debug mode) */
-            SPI_setConfig(spiBase, DEVICE_LSPCLK_FREQ, p_spiCfg->protocol, p_spiCfg->mode, p_spiCfg->bitRate, p_spiCfg->dataWidth);
+            SPI_setConfig(spiBase, UOMODRI_LSPCLK_FREQ, p_spiCfg->protocol, p_spiCfg->mode, p_spiCfg->bitRate, p_spiCfg->dataWidth);
             SPI_setEmulationMode(spiBase, SPI_EMULATION_FREE_RUN);
             SPI_disableLoopback(spiBase);
             SPI_disableHighSpeedMode(spiBase);
@@ -561,11 +495,9 @@ void HAL_SCI_ini(const sci_cfg_t* p_sciCfg)
         while(sciBase != UINT32_MAX)
         {
             /* Initialize SCIx and its FIFO */
-            SCI_performSoftwareReset(sciBase);
+//            SCI_performSoftwareReset(sciBase);
             /* Set SPI configuration, disable loopback */
-            SCI_setConfig(sciBase, DEVICE_LSPCLK_FREQ, p_sciCfg->bitRate, p_sciCfg->sciMode);
-            /* Stop the SCI during configuration */
-//            SCI_disableModule(sciBase);
+            SCI_setConfig(sciBase, UOMODRI_LSPCLK_FREQ, p_sciCfg->bitRate, p_sciCfg->sciMode);
             SCI_disableLoopback(sciBase);
             /* Multiprocessor mode */
             if(p_sciCfg->multiProcMode == SCI_MULTI_PROC_ADDR)
@@ -578,10 +510,10 @@ void HAL_SCI_ini(const sci_cfg_t* p_sciCfg)
             SCI_disableFIFO(sciBase);
             if((p_sciCfg->rxLevel != SCI_FIFO_RX0) || (p_sciCfg->txLevel != SCI_FIFO_TX0))
             {
-                SCI_resetTxFIFO(sciBase);
-                SCI_resetRxFIFO(sciBase);
                 SCI_setFIFOInterruptLevel(sciBase, p_sciCfg->txLevel, p_sciCfg->rxLevel);
                 SCI_enableFIFO(sciBase);
+                SCI_resetTxFIFO(sciBase);
+                SCI_resetRxFIFO(sciBase);
             }
             /* Clear flags & enable or disable interrupts */
             SCI_clearInterruptStatus(sciBase, SCI_INT_RXERR | SCI_INT_RXRDY_BRKDT | SCI_INT_FE | SCI_INT_OE | SCI_INT_PE | SCI_INT_TXFF | SCI_INT_RXFF);

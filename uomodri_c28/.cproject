@@ -332,7 +332,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="2838x_flash_lnk_cpu1.cmd|2838x_RAM_lnk_cpu1.cmd" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name=""/>
+						<entry excluding="src/device/xbar.c|src/device/version.c|src/device/usb.c|src/device/sysctl.c|src/device/sdfm.c|src/device/sci.c|src/device/pmbus.c|src/device/memcfg.c|src/device/mcbsp.c|src/device/mcan.c|src/device/ipc.c|src/device/interrupt.c|src/device/i2c.c|src/device/hrpwm.c|src/device/hrcap.c|src/device/gpio.c|src/device/fsi.c|src/device/flash.c|src/device/escss.c|src/device/erad.c|src/device/eqep.c|src/device/epwm.c|src/device/emif.c|src/device/ecap.c|src/device/dma.c|src/device/dcsm.c|src/device/dcc.c|src/device/dac.c|src/device/cputimer.c|src/device/cmpss.c|src/device/clb.c|src/device/cla.c|src/device/can.c|src/device/bgcrc.c|src/device/asysctl.c|src/device/spi.c|src/device/adc.c|2838x_flash_lnk_cpu1.cmd|2838x_RAM_lnk_cpu1.cmd" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>

@@ -153,7 +153,6 @@ void ADC_offsetCalib(motor_t* p_motor)
 //    CLA_clearTaskFlags(CLA1_BASE, CLA_TASKFLAG_ALL);
 }
 
-
 /**
  * @brief           Reset the ENCODER structure
  * @param[inout]    *p_enc   Pointer on the ENCODER structure to be reset.

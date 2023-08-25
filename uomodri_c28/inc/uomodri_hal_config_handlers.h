@@ -242,7 +242,7 @@ static const spi_cfg_t  spiCfgList[] =
 {
  {
   .spiBase          = DRV_SPI_BASE,
-  .bitRate          = 400000U,
+  .bitRate          = 2.0e6,//400000U,
   .dataWidth        = 16U,
   .mode             = SPI_MODE_MASTER,
   .protocol         = SPI_PROT_POL0PHA0,
@@ -254,7 +254,7 @@ static const spi_cfg_t  spiCfgList[] =
  },
  {
   .spiBase          = COM_SPI_BASE,
-  .bitRate          = 6000000U,
+  .bitRate          = 6.0e6,//6000000U,
   .dataWidth        = 16U,
   .mode             = SPI_MODE_SLAVE,
   .protocol         = SPI_PROT_POL0PHA1,
@@ -266,7 +266,7 @@ static const spi_cfg_t  spiCfgList[] =
  },
  {
   .spiBase          = DBG_SPI_BASE,
-  .bitRate          = 10000000U,
+  .bitRate          = 10.0e6,//10000000U,
   .dataWidth        = 16U,
   .mode             = SPI_MODE_MASTER,
   .protocol         = SPI_PROT_POL0PHA0,
@@ -278,7 +278,7 @@ static const spi_cfg_t  spiCfgList[] =
  },
  {
   .spiBase          = LED_SPI_BASE,
-  .bitRate          = 2380000U,
+  .bitRate          = 2.38e6,//2380000U,
   .dataWidth        = 16U,
   .mode             = SPI_MODE_MASTER,
   .protocol         = SPI_PROT_POL0PHA0,
@@ -369,68 +369,73 @@ static const tmr_cfg_t  timerCfgList[] =
 {
  {
   // CPU timer 0
-  .cpuTimerBase         = CPU_TIMER_0_BASE,
-  .periodCount          = CPU_TIMER_0_PERIOD,
-  .prescaler            = CPU_TIMER_0_PRESCALER,
-  .intEnable            = true,
+  .cpuTimerBase     = CPU_TIMER_0_BASE,
+  .periodCount      = CPU_TIMER_0_PERIOD,
+  .prescaler        = CPU_TIMER_0_PRESCALER,
+  .intEnable        = true,
  },
  // END OF ARRAY
- {.cpuTimerBase         = UINT32_MAX},
+ {.cpuTimerBase     = UINT32_MAX},
 };
 
 static const sci_cfg_t  sciCfgList[] =
 {
  {
- .sciBase               = COM_SCI_BASE,
- .bitRate               = 12500000U,
- .sciMode               = SCI_CONFIG_WLEN_8 | SCI_CONFIG_PAR_NONE | SCI_CONFIG_STOP_ONE,
- .multiProcMode         = SCI_MULTI_PROC_ADDR,
- }
+  .sciBase          = COM_SCI_BASE,
+  .bitRate          = 12.5e6,//9600U,//12000000U,
+  .sciMode          = (uint32_t)(SCI_CONFIG_WLEN_8 | SCI_CONFIG_PAR_NONE | SCI_CONFIG_STOP_ONE),
+  .txLevel          = SCI_FIFO_TX16,
+  .rxLevel          = SCI_FIFO_RX16,
+  .intSrc           = SCI_INT_RXFF,//SCI_INT_RXERR | SCI_INT_RXRDY_BRKDT |
+  .intEnable        = true,
+  .multiProcMode    = SCI_MULTI_PROC_NONE,
+ },
+ {.sciBase          = UINT32_MAX},
 };
 
 static const cla_cfg_t  claCfgList[] =
 {
  {
-  .progRAM              = CLA_PROG_RAM,
-  .dataRAM              = CLA_DATA_RAM,
-  .claTaskFlg           = CLA_ADC_CALIB_TASK_FLAG,
-  .claTaskNum           = CLA_ADC_CALIB_TASK_NUMBER,
-  .claIntVect           = CLA_ADC_CALIB_INTERRUPT_VECTOR,
-  .claTrigSrc           = CLA_ADC_CALIB_TRIGGER_SRC,
-  .p_claFunc            = CLA_ADC_CALIB_TASK_HANDLER,
-  .claForceTask         = false,
+  .progRAM          = CLA_PROG_RAM,
+  .dataRAM          = CLA_DATA_RAM,
+  .claTaskFlg       = CLA_ADC_CALIB_TASK_FLAG,
+  .claTaskNum       = CLA_ADC_CALIB_TASK_NUMBER,
+  .claIntVect       = CLA_ADC_CALIB_INTERRUPT_VECTOR,
+  .claTrigSrc       = CLA_ADC_CALIB_TRIGGER_SRC,
+  .p_claFunc        = CLA_ADC_CALIB_TASK_HANDLER,
+  .claForceTask     = false,
  },
  {
-  .progRAM              = CLA_PROG_RAM,
-  .dataRAM              = CLA_DATA_RAM,
-  .claTaskFlg           = CLA_CMD_NEW_TASK_FLAG,
-  .claTaskNum           = CLA_CMD_NEW_TASK_NUMBER,
-  .claIntVect           = CLA_CMD_NEW_INTERRUPT_VECTOR,
-  .claTrigSrc           = CLA_CMD_NEW_TRIGGER_SRC,
-  .p_claFunc            = CLA_CMD_NEW_TASK_HANDLER,
-  .claForceTask         = false,
+  .progRAM          = CLA_PROG_RAM,
+  .dataRAM          = CLA_DATA_RAM,
+  .claTaskFlg       = CLA_CMD_NEW_TASK_FLAG,
+  .claTaskNum       = CLA_CMD_NEW_TASK_NUMBER,
+  .claIntVect       = CLA_CMD_NEW_INTERRUPT_VECTOR,
+  .claTrigSrc       = CLA_CMD_NEW_TRIGGER_SRC,
+  .p_claFunc        = CLA_CMD_NEW_TASK_HANDLER,
+  .claForceTask     = false,
  },
  {
-  .progRAM              = CLA_PROG_RAM,
-  .dataRAM              = CLA_DATA_RAM,
-  .claTaskFlg           = CLA_MOTOR1_TASK_FLAG,
-  .claTaskNum           = CLA_MOTOR1_TASK_NUMBER,
-  .claIntVect           = CLA_MOTOR1_INTERRUPT_VECTOR,
-  .claTrigSrc           = CLA_MOTOR1_TRIGGER_SRC,
-  .p_claFunc            = CLA_MOTOR1_TASK_HANDLER,
-  .claForceTask         = false,
+  .progRAM          = CLA_PROG_RAM,
+  .dataRAM          = CLA_DATA_RAM,
+  .claTaskFlg       = CLA_MOTOR1_TASK_FLAG,
+  .claTaskNum       = CLA_MOTOR1_TASK_NUMBER,
+  .claIntVect       = CLA_MOTOR1_INTERRUPT_VECTOR,
+  .claTrigSrc       = CLA_MOTOR1_TRIGGER_SRC,
+  .p_claFunc        = CLA_MOTOR1_TASK_HANDLER,
+  .claForceTask     = false,
  },
  {
-  .progRAM              = CLA_PROG_RAM,
-  .dataRAM              = CLA_DATA_RAM,
-  .claTaskFlg           = CLA_MOTOR2_TASK_FLAG,
-  .claTaskNum           = CLA_MOTOR2_TASK_NUMBER,
-  .claIntVect           = CLA_MOTOR2_INTERRUPT_VECTOR,
-  .claTrigSrc           = CLA_MOTOR2_TRIGGER_SRC,
-  .p_claFunc            = CLA_MOTOR2_TASK_HANDLER,
-  .claForceTask         = false,
+  .progRAM          = CLA_PROG_RAM,
+  .dataRAM          = CLA_DATA_RAM,
+  .claTaskFlg       = CLA_MOTOR2_TASK_FLAG,
+  .claTaskNum       = CLA_MOTOR2_TASK_NUMBER,
+  .claIntVect       = CLA_MOTOR2_INTERRUPT_VECTOR,
+  .claTrigSrc       = CLA_MOTOR2_TRIGGER_SRC,
+  .p_claFunc        = CLA_MOTOR2_TASK_HANDLER,
+  .claForceTask     = false,
  },
- {.p_claFunc            = NULL},
+ {.p_claFunc        = NULL},
 };
 
 /** @var    ePWM_TB_TypeDef PwmTimeBaseCfgList[]
