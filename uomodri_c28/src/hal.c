@@ -494,8 +494,6 @@ void HAL_SCI_ini(const sci_cfg_t* p_sciCfg)
         uint32_t sciBase = p_sciCfg->sciBase;
         while(sciBase != UINT32_MAX)
         {
-            /* Initialize SCIx and its FIFO */
-//            SCI_performSoftwareReset(sciBase);
             /* Set SPI configuration, disable loopback */
             SCI_setConfig(sciBase, UOMODRI_LSPCLK_FREQ, p_sciCfg->bitRate, p_sciCfg->sciMode);
             SCI_disableLoopback(sciBase);
@@ -520,9 +518,6 @@ void HAL_SCI_ini(const sci_cfg_t* p_sciCfg)
             SCI_disableInterrupt(sciBase, SCI_INT_RXERR | SCI_INT_RXRDY_BRKDT | SCI_INT_TXRDY | SCI_INT_TXFF | SCI_INT_RXFF);
             if(p_sciCfg->intEnable)
                 SCI_enableInterrupt(sciBase, p_sciCfg->intSrc);
-            /* Restart SCI after configuration */
-            SCI_enableModule(sciBase);
-            SCI_performSoftwareReset(sciBase);
             sciBase = (++p_sciCfg)->sciBase;
         }
     }

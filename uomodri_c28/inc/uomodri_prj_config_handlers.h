@@ -68,14 +68,14 @@ static const int_cfg_t InterruptList[] =
   .p_intHandler     = INT_DMA_RX_MSG_HANDLER
  },
  {
-  .intNum           = INT_SCIC_RX,
-  .intAckGroup      = INTERRUPT_ACK_GROUP8,
-  .p_intHandler     = &rs485_isrRx
+  .intNum           = INT_RS485_RX_MSG,
+  .intAckGroup      = INT_RS485_RX_MSG_GROUP,
+  .p_intHandler     = INT_RS485_RX_MSG_HANDLER
  },
  {
-   .intNum           = INT_SCIC_TX,
-   .intAckGroup      = INTERRUPT_ACK_GROUP8,
-   .p_intHandler     = &rs485_isrTx
+   .intNum           = INT_RS485_TX_MSG,
+   .intAckGroup      = INT_RS485_TX_MSG_GROUP,
+   .p_intHandler     = INT_RS485_TX_MSG_HANDLER
  },
  // END OF ARRAY
  {.intNum           = UINT32_MAX},

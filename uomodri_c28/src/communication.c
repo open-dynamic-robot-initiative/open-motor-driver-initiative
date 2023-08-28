@@ -24,7 +24,7 @@ bool_t COM_msgExtract(mst2slv_msg_t* p_msg, mst2slv_msg_t* p_swap, cmd_t* p_cmd_
     if((MSB_32(crc) == p_msg->crc.u16_msb) && (LSB_32(crc) == p_msg->crc.u16_lsb))
     {
         int32_t pos_s32                 = (int32_t)FUS_16_TO_32(p_msg->position[MOTOR_1].u16_msb, p_msg->position[MOTOR_1].u16_lsb);
-        cmd_reg_u* p_cmd_reg            = &p_cmd_m1->bitField;
+        cmd_reg_u* p_cmd_reg            = &p_cmd_m1->cmdField;
         p_cmd_m1->posRef                = (float32_t)(pos_s32                   * POSITION_LSB      * FM_ROUND2RAD);
         p_cmd_m1->velRef                = (float32_t)(p_msg->velocity[MOTOR_1]  * VELOCITY_LSB      * FM_KRPM2RADPS);
         p_cmd_m1->iqff                  = (float32_t)(p_msg->current[MOTOR_1]   * IQ_LSB);
@@ -42,7 +42,7 @@ bool_t COM_msgExtract(mst2slv_msg_t* p_msg, mst2slv_msg_t* p_swap, cmd_t* p_cmd_
         p_cmd_reg->systemEnable         = (bool_t)p_msg->mode.ES;
 
         pos_s32                         = (int32_t)FUS_16_TO_32(p_msg->position[MOTOR_2].u16_msb, p_msg->position[MOTOR_2].u16_lsb);
-        p_cmd_reg                       = &p_cmd_m2->bitField;
+        p_cmd_reg                       = &p_cmd_m2->cmdField;
         p_cmd_m2->posRef                = (float32_t)(pos_s32                   * POSITION_LSB      * FM_ROUND2RAD);
         p_cmd_m2->velRef                = (float32_t)(p_msg->velocity[MOTOR_2]  * VELOCITY_LSB      * FM_KRPM2RADPS);
         p_cmd_m2->iqff                  = (float32_t)(p_msg->current[MOTOR_2]   * IQ_LSB);
@@ -76,7 +76,7 @@ bool_t COM_msgCreate(motor_t* p_motor, slv2mst_msg_t* p_msg, slv2mst_msg_t* p_sw
     foc_t* p_foc                        = &p_motor->foc;
     encoder_t* p_enc                    = &p_foc->enc;
     error_reg_u motor_err               = p_motor->error;
-    cmd_reg_u motor_cmd                 = {.all = p_foc->cmd.bitField.all};
+    cmd_reg_u motor_cmd                 = {.all = p_foc->cmd.cmdField.all};
     float32_t theta_index_comp          = (motor_cmd.encOffsetEnable) ? (p_enc->thetaIndexAbsolute) : (0.0f);
     float32_t pos_offset                = p_enc->thetaAbsolute - theta_index_comp;
     int32_t pos                         = (int32_t)(pos_offset                  / POSITION_LSB      * FM_RAD2ROUND);
@@ -150,7 +150,7 @@ void COM_resetCmdStruct(cmd_t* p_cmd)
     p_cmd->timeoutRef           = 0U;
     p_cmd->cptTimeout           = 0U;
     p_cmd->index                = 0U;
-    p_cmd->bitField.all         = 0U;
+    p_cmd->cmdField.all         = 0U;
 
     return;
 }

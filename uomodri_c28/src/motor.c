@@ -174,7 +174,8 @@ void MOT_initStruct(motor_t* p_motor, uint16_t motor_id)
     p_motor->foc.cmd.timeoutRef                         = 0U;
     p_motor->foc.cmd.cptTimeout                         = 0U;
     p_motor->foc.cmd.index                              = 0U;
-    p_motor->foc.cmd.bitField.all                       = 0U;
+    p_motor->foc.cmd.cmdField.all                       = 0U;
+    p_motor->foc.cmd.statusField.all                    = 0U;
     //--- FOC - Park transform results ------------------------------------------
     p_motor->foc.id                                     = 0.0f;
     p_motor->foc.iq                                     = 0.0f;

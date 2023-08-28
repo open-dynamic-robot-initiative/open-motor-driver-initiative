@@ -42,9 +42,10 @@ __attribute__((interrupt)) void adcCalib_Task(void)
     DBG_PIN1_SET;
 //    __mdebugstop();
 #endif
+    // Start ADC calibration
     ADC_offsetCalib(&motor_m1);
     ADC_offsetCalib(&motor_m2);
-//    CLA_clearTaskFlags(CLA1_BASE, CLA_TASKFLAG_ALL);
+    // Enable float rounding
     __asm(" MSETFLG RNDF32 = 1");
 #ifdef DEBUG
     DBG_PIN1_CLEAR;
@@ -57,7 +58,7 @@ __attribute__((interrupt)) void cmdNew_Task(void)
     DBG_PIN1_SET;
 //    __mdebugstop();
 #endif
-    if((cmd_uomodri[MOTOR_1].bitField.all & CMD_POSITION_OFFSET_COMP) == CMD_POSITION_OFFSET_COMP)
+    if((cmd_uomodri[MOTOR_1].cmdField.all & CMD_POSITION_OFFSET_COMP) == CMD_POSITION_OFFSET_COMP)
         motor_m1.foc.cmd.posRef     = cmd_uomodri[MOTOR_1].posRef + motor_m1.foc.enc.thetaIndexAbsolute;
     else
         motor_m1.foc.cmd.posRef     = cmd_uomodri[MOTOR_1].posRef;
@@ -69,9 +70,10 @@ __attribute__((interrupt)) void cmdNew_Task(void)
     motor_m1.foc.cmd.timeoutRef     = cmd_uomodri[MOTOR_1].timeoutRef;
     motor_m1.foc.cmd.cptTimeout     = cmd_uomodri[MOTOR_1].cptTimeout;
     motor_m1.foc.cmd.index          = cmd_uomodri[MOTOR_1].index;
-    motor_m1.foc.cmd.bitField.all   = cmd_uomodri[MOTOR_1].bitField.all;
+    motor_m1.foc.cmd.cmdField.all   = cmd_uomodri[MOTOR_1].cmdField.all;
+    motor_m1.foc.cmd.statusField.all= cmd_uomodri[MOTOR_1].statusField.all;
 
-    if((cmd_uomodri[MOTOR_2].bitField.all & CMD_POSITION_OFFSET_COMP) == CMD_POSITION_OFFSET_COMP)
+    if((cmd_uomodri[MOTOR_2].cmdField.all & CMD_POSITION_OFFSET_COMP) == CMD_POSITION_OFFSET_COMP)
         motor_m2.foc.cmd.posRef     = cmd_uomodri[MOTOR_2].posRef + motor_m2.foc.enc.thetaIndexAbsolute;
     else
         motor_m2.foc.cmd.posRef     = cmd_uomodri[MOTOR_2].posRef;
@@ -83,7 +85,8 @@ __attribute__((interrupt)) void cmdNew_Task(void)
     motor_m2.foc.cmd.timeoutRef     = cmd_uomodri[MOTOR_2].timeoutRef;
     motor_m2.foc.cmd.cptTimeout     = cmd_uomodri[MOTOR_2].cptTimeout;
     motor_m2.foc.cmd.index          = cmd_uomodri[MOTOR_2].index;
-    motor_m2.foc.cmd.bitField.all   = cmd_uomodri[MOTOR_2].bitField.all;
+    motor_m2.foc.cmd.cmdField.all   = cmd_uomodri[MOTOR_2].cmdField.all;
+    motor_m2.foc.cmd.statusField.all= cmd_uomodri[MOTOR_2].statusField.all;
 #ifdef DEBUG
     DBG_PIN1_CLEAR;
 #endif

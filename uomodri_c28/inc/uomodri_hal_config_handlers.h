@@ -221,20 +221,6 @@ static const eqep_cfg_t QepCfgList[] =
  {.eqepBase             = UINT32_MAX},
 };
 
-//static const sci_cfg_t sciCfgList[] =
-//{
-// {
-//  .sciBase              = DBG_SCI_BASE,
-//  .bitRate              = 3125000U,
-//  .mode                 = SCI_CONFIG_WLEN_8 | SCI_CONFIG_STOP_ONE | (uint16_t)SCI_CONFIG_PAR_NONE,
-//  .txLevel              = SCI_FIFO_TX16,
-//  .rxLevel              = SCI_FIFO_RX16,
-//  .intEnable            = false,
-// },
-// // END OF ARRAY
-// {.sciBase              = UINT32_MAX},
-//};
-
 /** @var    SPI_TypeDef spiCfgList[]
  *  @brief  List all the configurations defined for each SPI communication modules.
  */
@@ -242,7 +228,7 @@ static const spi_cfg_t  spiCfgList[] =
 {
  {
   .spiBase          = DRV_SPI_BASE,
-  .bitRate          = 2.0e6,//400000U,
+  .bitRate          = 2.0e6,
   .dataWidth        = 16U,
   .mode             = SPI_MODE_MASTER,
   .protocol         = SPI_PROT_POL0PHA0,
@@ -254,7 +240,7 @@ static const spi_cfg_t  spiCfgList[] =
  },
  {
   .spiBase          = COM_SPI_BASE,
-  .bitRate          = 6.0e6,//6000000U,
+  .bitRate          = 6.0e6,
   .dataWidth        = 16U,
   .mode             = SPI_MODE_SLAVE,
   .protocol         = SPI_PROT_POL0PHA1,
@@ -266,7 +252,7 @@ static const spi_cfg_t  spiCfgList[] =
  },
  {
   .spiBase          = DBG_SPI_BASE,
-  .bitRate          = 10.0e6,//10000000U,
+  .bitRate          = 10.0e6,
   .dataWidth        = 16U,
   .mode             = SPI_MODE_MASTER,
   .protocol         = SPI_PROT_POL0PHA0,
@@ -278,7 +264,7 @@ static const spi_cfg_t  spiCfgList[] =
  },
  {
   .spiBase          = LED_SPI_BASE,
-  .bitRate          = 2.38e6,//2380000U,
+  .bitRate          = 2.38e6,
   .dataWidth        = 16U,
   .mode             = SPI_MODE_MASTER,
   .protocol         = SPI_PROT_POL0PHA0,
@@ -382,14 +368,15 @@ static const sci_cfg_t  sciCfgList[] =
 {
  {
   .sciBase          = COM_SCI_BASE,
-  .bitRate          = 12.5e6,//9600U,//12000000U,
+  .bitRate          = 12.5e6,
   .sciMode          = (uint32_t)(SCI_CONFIG_WLEN_8 | SCI_CONFIG_PAR_NONE | SCI_CONFIG_STOP_ONE),
   .txLevel          = SCI_FIFO_TX16,
-  .rxLevel          = SCI_FIFO_RX16,
-  .intSrc           = SCI_INT_RXFF,//SCI_INT_RXERR | SCI_INT_RXRDY_BRKDT |
+  .rxLevel          = SCI_FIFO_RX8,
+  .intSrc           = SCI_INT_RXFF,// | SCI_INT_RXERR | SCI_INT_RXRDY_BRKDT,
   .intEnable        = true,
   .multiProcMode    = SCI_MULTI_PROC_NONE,
  },
+  // END OF ARRAY
  {.sciBase          = UINT32_MAX},
 };
 

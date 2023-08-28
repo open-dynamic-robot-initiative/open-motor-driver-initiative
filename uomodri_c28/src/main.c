@@ -75,18 +75,21 @@ void main(void)
     MOT_initStruct(&motor_m2, MOTOR_2);
     // Hardware Abstraction Layer initialization
     HAL_ini(&hal);
-    // DRV8353 initialization
-    motor_m1.error.drv_fault = !DRV_ini(&drv_cfg[MOTOR_1], &drv_reg[MOTOR_1]);
-    motor_m2.error.drv_fault = !DRV_ini(&drv_cfg[MOTOR_2], &drv_reg[MOTOR_2]);
     // Force a reset on intermediate command structure
     COM_resetCmdStruct(&cmd_uomodri[MOTOR_1]);
     COM_resetCmdStruct(&cmd_uomodri[MOTOR_2]);
+    // DRV8353 initialization
+    cmd_uomodri[MOTOR_1].statusField.drv_initErr = !DRV_ini(&drv_cfg[MOTOR_1], &drv_reg[MOTOR_1]);
+    cmd_uomodri[MOTOR_2].statusField.drv_initErr = !DRV_ini(&drv_cfg[MOTOR_2], &drv_reg[MOTOR_2]);
     // Start ADC offset calibration on CLA
     CLA_forceTasks(CLA1_BASE, CLA_ADC_CALIB_TASK_FLAG);
     // Interrupts initialization
     HAL_INT_ini(InterruptList);
     // Enable RS485 message reception on THVD2450
-    RS485_RECEIVE;
+    CAN_DISABLE;
+    RS485_TX_DISABLE;
+    RS485_RX_ENABLE;
+//    RS485_RECEIVE;
     // Infinite loop
     while(1);
 }
@@ -294,11 +297,17 @@ __attribute__((interrupt)) void dma_isrComRx(void)
 
 __attribute__((interrupt)) void rs485_isrRx(void)
 {
+
     static uint16_t i = 0;
-    SCI_readCharArray(COM_SCI_BASE, &rs485_rx_msg[i], (uint16_t)SCI_FIFO_RX16);
+
+    SCI_readCharArray(COM_SCI_BASE, &rs485_rx_msg[i], (uint16_t)SCI_FIFO_RX8);
     i = (i < 4) ? (i + 1) : (0);
+
+    SCI_clearOverflowStatus(COM_SCI_BASE);
+    SCI_clearInterruptStatus(COM_SCI_BASE, SCI_INT_RXFF | SCI_INT_RXERR | SCI_INT_RXRDY_BRKDT);
+
     // Clear IT flag
-    Interrupt_clearACKGroup(INTERRUPT_ACK_GROUP8);
+    Interrupt_clearACKGroup(INT_RS485_RX_MSG_GROUP);
 }
 
 __attribute__((interrupt)) void rs485_isrTx(void)

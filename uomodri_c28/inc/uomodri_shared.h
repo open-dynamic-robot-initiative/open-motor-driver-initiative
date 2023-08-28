@@ -423,7 +423,7 @@ inline void FOC_resetStructCmd(cmd_t* p_cmd)
     p_cmd->kdCoeff              = 0.0f;
     p_cmd->timeoutRef           = 0;
     p_cmd->cptTimeout           = 0;
-    p_cmd->bitField.all         = 0;
+    p_cmd->cmdField.all         = 0;
 
     return;
 }
@@ -684,7 +684,7 @@ bool_t MOT_runControl(motor_t* p_motor)
     error_reg_u*    p_err       = &p_motor->error;
     encoder_t*      p_enc       = &p_foc->enc;
     cmd_t*          p_cmd       = &p_foc->cmd;
-    cmd_reg_u       cmd_reg     = {.all = p_cmd->bitField.all};
+    cmd_reg_u       cmd_reg     = {.all = p_cmd->cmdField.all};
     uint16_t        motor_id    = p_motor->id;
     bool_t          evt_flag    = false;
     bool_t          start       = cmd_reg.motorEnable && cmd_reg.systemEnable;
@@ -817,7 +817,8 @@ bool_t MOT_runControl(motor_t* p_motor)
     error_reg_u*    p_err           = &p_motor->error;
     encoder_t*      p_enc           = &p_foc->enc;
     cmd_t*          p_cmd           = &p_foc->cmd;
-    cmd_reg_u       cmd_reg         = {.all = p_cmd->bitField.all};
+    cmd_reg_u       cmd_reg         = {.all = p_cmd->cmdField.all};
+    status_reg_u    status_reg      = {.all = p_cmd->statusField.all};
     uint16_t        motor_id        = p_motor->id;
     bool_t          start           = cmd_reg.motorEnable && cmd_reg.systemEnable;
     p_enc->flags.indexOffset        = cmd_reg.encOffsetEnable;
@@ -833,7 +834,7 @@ bool_t MOT_runControl(motor_t* p_motor)
 
     // Save number of cycles elapsed since control loop startup
     p_motor->clCycleNb              = EPWM_getTimeBaseCounterValue(p_motor->epwmBase[CHANNEL_1]);
-    p_err->drv_fault                = !GPIO_readPin(p_motor->drvFaultNum)                           || p_err->drv_fault;
+    p_err->drv_fault                = !GPIO_readPin(p_motor->drvFaultNum) || status_reg.drv_initErr || p_err->drv_fault;
     p_err->pos_rollover             = (p_enc->flags.rollOverError && cmd_reg.rollOverEnable)        || p_err->pos_rollover;
     p_err->com_timeout              = ((p_cmd->cptTimeout > p_cmd->timeoutRef) && p_cmd->timeoutRef)|| p_err->com_timeout;
     p_err->enc_indexErr             = (p_enc->flags.indexDetect && p_enc->flags.indexError)         || p_err->enc_indexErr;

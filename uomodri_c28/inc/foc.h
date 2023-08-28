@@ -48,6 +48,16 @@ typedef union __ptr_32b_u__
     uint32_t            addr32b;
 } ptr_32b_u;
 
+typedef union __status_reg_u__
+{
+    uint16_t            all;
+    struct
+    {
+        uint16_t        drv_initErr     : 1;    /*!< Bits 0   : R/W - DRV initialization went wrong */
+        uint16_t        status_RSV1     : 15;   /*!< Bits 1-15: R/W - Reserved */
+    };
+} status_reg_u;
+
 /**
  * @union   cmd_reg_u
  * @brief   Bit field associated to motor control (motor \& encoder).
@@ -199,7 +209,8 @@ typedef struct __cmd_t__
     uint16_t            timeoutRef;
     uint16_t            cptTimeout;
     uint16_t            index;
-    cmd_reg_u           bitField;
+    cmd_reg_u           cmdField;
+    status_reg_u        statusField;
 } cmd_t;
 
 /**

@@ -324,6 +324,9 @@
 #define RS485_TX_EN_SET                         (HWREG(GPIODATA_BASE + GPIO_O_GPCSET)   = GPIO_GPCSET_GPIO94)
 #define RS485_TX_EN_CLEAR                       (HWREG(GPIODATA_BASE + GPIO_O_GPCCLEAR) = GPIO_GPCCLEAR_GPIO94)
 #define RS485_TX_EN_TOGGLE                      (HWREG(GPIODATA_BASE + GPIO_O_GPCTOGGLE)= GPIO_GPCTOGGLE_GPIO94)
+
+#define CAN_ENABLE                              CAN_SHDN_EN_SET
+#define CAN_DISABLE                             CAN_SHDN_EN_CLEAR
 #define RS485_TX_ENABLE                         RS485_TX_EN_SET
 #define RS485_TX_DISABLE                        RS485_TX_EN_CLEAR
 #define RS485_TRANSMIT                          RS485_RX_DISABLE; \
@@ -1297,6 +1300,12 @@
 #define INT_DMA_RX_MSG                          INT_DMA_CH6
 #define INT_DMA_RX_MSG_GROUP                    INTERRUPT_ACK_GROUP7
 #define INT_DMA_RX_MSG_HANDLER                  &dma_isrComRx
+#define INT_RS485_RX_MSG                        INT_SCIC_RX
+#define INT_RS485_RX_MSG_GROUP                  INTERRUPT_ACK_GROUP8
+#define INT_RS485_RX_MSG_HANDLER                &rs485_isrRx
+#define INT_RS485_TX_MSG                        INT_SCIC_TX
+#define INT_RS485_TX_MSG_GROUP                  INTERRUPT_ACK_GROUP8
+#define INT_RS485_TX_MSG_HANDLER                &rs485_isrTx
 
 /***********************************************************************
  * COMMUNICATION DEFINES
