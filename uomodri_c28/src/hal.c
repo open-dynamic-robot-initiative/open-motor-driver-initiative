@@ -518,6 +518,8 @@ void HAL_SCI_ini(const sci_cfg_t* p_sciCfg)
             SCI_disableInterrupt(sciBase, SCI_INT_RXERR | SCI_INT_RXRDY_BRKDT | SCI_INT_TXRDY | SCI_INT_TXFF | SCI_INT_RXFF);
             if(p_sciCfg->intEnable)
                 SCI_enableInterrupt(sciBase, p_sciCfg->intSrc);
+            SCI_enableModule(sciBase);
+            SCI_performSoftwareReset(sciBase);
             sciBase = (++p_sciCfg)->sciBase;
         }
     }

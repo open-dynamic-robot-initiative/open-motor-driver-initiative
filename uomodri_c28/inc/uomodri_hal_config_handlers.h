@@ -370,9 +370,9 @@ static const sci_cfg_t  sciCfgList[] =
   .sciBase          = COM_SCI_BASE,
   .bitRate          = 12.5e6,
   .sciMode          = (uint32_t)(SCI_CONFIG_WLEN_8 | SCI_CONFIG_PAR_NONE | SCI_CONFIG_STOP_ONE),
-  .txLevel          = SCI_FIFO_TX16,
-  .rxLevel          = SCI_FIFO_RX8,
-  .intSrc           = SCI_INT_RXFF,// | SCI_INT_RXERR | SCI_INT_RXRDY_BRKDT,
+  .txLevel          = SCI_FIFO_TX0,
+  .rxLevel          = SCI_FIFO_RX2,
+  .intSrc           = SCI_INT_RXERR | SCI_INT_RXRDY_BRKDT | SCI_INT_FE | SCI_INT_OE | SCI_INT_PE, //SCI_INT_RXFF,//
   .intEnable        = true,
   .multiProcMode    = SCI_MULTI_PROC_NONE,
  },

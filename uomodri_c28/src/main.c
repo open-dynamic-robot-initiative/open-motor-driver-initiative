@@ -86,10 +86,7 @@ void main(void)
     // Interrupts initialization
     HAL_INT_ini(InterruptList);
     // Enable RS485 message reception on THVD2450
-    CAN_DISABLE;
-    RS485_TX_DISABLE;
-    RS485_RX_ENABLE;
-//    RS485_RECEIVE;
+    RS485_RECEIVE;
     // Infinite loop
     while(1);
 }
@@ -298,13 +295,13 @@ __attribute__((interrupt)) void dma_isrComRx(void)
 __attribute__((interrupt)) void rs485_isrRx(void)
 {
 
-    static uint16_t i = 0;
+//    static uint16_t i = 0;
 
-    SCI_readCharArray(COM_SCI_BASE, &rs485_rx_msg[i], (uint16_t)SCI_FIFO_RX8);
-    i = (i < 4) ? (i + 1) : (0);
+//    SCI_readCharArray(COM_SCI_BASE, &rs485_rx_msg[i], (uint16_t)SCI_FIFO_RX8);
+//    i = (i < 4) ? (i + 1) : (0);
 
     SCI_clearOverflowStatus(COM_SCI_BASE);
-    SCI_clearInterruptStatus(COM_SCI_BASE, SCI_INT_RXFF | SCI_INT_RXERR | SCI_INT_RXRDY_BRKDT);
+    SCI_clearInterruptStatus(COM_SCI_BASE, SCI_INT_RXFF | SCI_INT_RXERR | SCI_INT_RXRDY_BRKDT | SCI_INT_FE | SCI_INT_OE | SCI_INT_PE);
 
     // Clear IT flag
     Interrupt_clearACKGroup(INT_RS485_RX_MSG_GROUP);

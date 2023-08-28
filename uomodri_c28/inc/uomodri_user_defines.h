@@ -317,23 +317,26 @@
 #define RS485_RX_EN_SET                         (HWREG(GPIODATA_BASE + GPIO_O_GPDSET)   = GPIO_GPDSET_GPIO97)
 #define RS485_RX_EN_CLEAR                       (HWREG(GPIODATA_BASE + GPIO_O_GPDCLEAR) = GPIO_GPDCLEAR_GPIO97)
 #define RS485_RX_EN_TOGGLE                      (HWREG(GPIODATA_BASE + GPIO_O_GPDTOGGLE)= GPIO_GPDTOGGLE_GPIO97)
-#define RS485_RX_ENABLE                         RS485_RX_EN_CLEAR
-#define RS485_RX_DISABLE                        RS485_RX_EN_SET
 #define RS485_TX_EN_NUM                         (94)
 #define RS485_TX_EN_CFG                         GPIO_94_GPIO94
 #define RS485_TX_EN_SET                         (HWREG(GPIODATA_BASE + GPIO_O_GPCSET)   = GPIO_GPCSET_GPIO94)
 #define RS485_TX_EN_CLEAR                       (HWREG(GPIODATA_BASE + GPIO_O_GPCCLEAR) = GPIO_GPCCLEAR_GPIO94)
 #define RS485_TX_EN_TOGGLE                      (HWREG(GPIODATA_BASE + GPIO_O_GPCTOGGLE)= GPIO_GPCTOGGLE_GPIO94)
 
-#define CAN_ENABLE                              CAN_SHDN_EN_SET
-#define CAN_DISABLE                             CAN_SHDN_EN_CLEAR
+#define CAN_ENABLE                              CAN_SHDN_EN_CLEAR
+#define CAN_DISABLE                             CAN_SHDN_EN_SET
+#define RS485_RX_ENABLE                         RS485_RX_EN_CLEAR
+#define RS485_RX_DISABLE                        RS485_RX_EN_SET
 #define RS485_TX_ENABLE                         RS485_TX_EN_SET
 #define RS485_TX_DISABLE                        RS485_TX_EN_CLEAR
-#define RS485_TRANSMIT                          RS485_RX_DISABLE; \
+#define RS485_TRANSMIT                          CAN_DISABLE; \
+                                                RS485_RX_DISABLE; \
                                                 RS485_TX_ENABLE
-#define RS485_RECEIVE                           RS485_TX_DISABLE; \
+#define RS485_RECEIVE                           CAN_DISABLE; \
+                                                RS485_TX_DISABLE; \
                                                 RS485_RX_ENABLE
-#define RS485_HIGH_Z                            RS485_TX_DISABLE; \
+#define RS485_HIGH_Z                            CAN_DISABLE; \
+                                                RS485_TX_DISABLE; \
                                                 RS485_RX_DISABLE
 #endif
 
