@@ -40,10 +40,10 @@ slv2mst_msg_t           tx_swap;
 uint16_t                led_msg[LED_MSG_TX_16BIT_LENGTH];
 #pragma DATA_ALIGN(rs485_rx_msg, 4)
 #pragma DATA_SECTION(rs485_rx_msg, "ramgs0")
-uint16_t                rs485_rx_msg[64];
+uint16_t                rs485_rx_msg[140];
 #pragma DATA_ALIGN(rs485_tx_msg, 4)
 #pragma DATA_SECTION(rs485_tx_msg, "ramgs0")
-uint16_t                rs485_tx_msg[64];
+uint16_t                rs485_tx_msg[35];
 
 // Local variables
 uint16_t                tx_msg_cr = 0U;
@@ -70,14 +70,14 @@ void main(void)
 {
     // uOmodri low level device initialization
     MCU_ini();
-    // Shared structure initialization used by CLA & C28
+    // Initialization of the shared structure used by CLA & C28 for Motor_1 & Motor_2
     MOT_initStruct(&motor_m1, MOTOR_1);
     MOT_initStruct(&motor_m2, MOTOR_2);
-    // Hardware Abstraction Layer initialization
-    HAL_ini(&hal);
-    // Force a reset on intermediate command structure
+    // Reset the command structure for CLA.
     COM_resetCmdStruct(&cmd_uomodri[MOTOR_1]);
     COM_resetCmdStruct(&cmd_uomodri[MOTOR_2]);
+    // Hardware Abstraction Layer initialization
+    HAL_ini(&hal);
     // DRV8353 initialization
     cmd_uomodri[MOTOR_1].statusField.drv_initErr = !DRV_ini(&drv_cfg[MOTOR_1], &drv_reg[MOTOR_1]);
     cmd_uomodri[MOTOR_2].statusField.drv_initErr = !DRV_ini(&drv_cfg[MOTOR_2], &drv_reg[MOTOR_2]);
@@ -85,7 +85,7 @@ void main(void)
     CLA_forceTasks(CLA1_BASE, CLA_ADC_CALIB_TASK_FLAG);
     // Interrupts initialization
     HAL_INT_ini(InterruptList);
-    // Enable RS485 message reception on THVD2450
+    // Enable RS485 message reception on THVD2450 & disable CAN.
     RS485_RECEIVE;
     // Infinite loop
     while(1);
@@ -129,9 +129,9 @@ static void MCU_ini(void)
     SysCtl_allocateSharedPeripheral(SYSCTL_PALLOCATE_USBA, 1);
 #endif
     /* Boot CM core */
-#if (defined _FLASH) && (defined CM_CORE_ENABLE)
+#if (defined _FLASH) && (CM_CORE_ENABLE)
     Device_bootCM(BOOTMODE_BOOT_TO_FLASH_SECTOR0);
-#elif (defined CM_CORE_ENABLE)
+#elif (CM_CORE_ENABLE)
     Device_bootCM(BOOTMODE_BOOT_TO_S0RAM);
 #endif
     // Initialize GPIO
@@ -292,24 +292,30 @@ __attribute__((interrupt)) void dma_isrComRx(void)
 #endif
 }
 
-__attribute__((interrupt)) void rs485_isrRx(void)
+__attribute__((interrupt)) void sci_isrRx_RS485(void)
 {
+    static uint16_t i = 0;
+    if(SCI_getInterruptStatus(COM_SCI_BASE) & SCI_INT_ALL_ERR)
+        SCI_clearInterruptStatus(COM_SCI_BASE, SCI_INT_ALL_ERR);
 
-//    static uint16_t i = 0;
-
-//    SCI_readCharArray(COM_SCI_BASE, &rs485_rx_msg[i], (uint16_t)SCI_FIFO_RX8);
-//    i = (i < 4) ? (i + 1) : (0);
-
-    SCI_clearOverflowStatus(COM_SCI_BASE);
-    SCI_clearInterruptStatus(COM_SCI_BASE, SCI_INT_RXFF | SCI_INT_RXERR | SCI_INT_RXRDY_BRKDT | SCI_INT_FE | SCI_INT_OE | SCI_INT_PE);
-
-    // Clear IT flag
+    if(SCI_getInterruptStatus(COM_SCI_BASE) & SCI_INT_RXFF)
+    {
+//        static uint16_t i = 0;
+        SCI_readCharArray(COM_SCI_BASE, &rs485_rx_msg[i], 5U);
+        i  += 5;
+        i   = (i < 140) ? (i) : (0);
+        SCI_clearOverflowStatus(COM_SCI_BASE);
+        //    uint32_t it_flags = SCI_getInterruptStatus(COM_SCI_BASE);
+        SCI_clearInterruptStatus(COM_SCI_BASE, SCI_INT_RXFF);
+    }
+        // Clear IT flag
     Interrupt_clearACKGroup(INT_RS485_RX_MSG_GROUP);
 }
 
-__attribute__((interrupt)) void rs485_isrTx(void)
+__attribute__((interrupt)) void sci_isrTx_RS485(void)
 {
+    SCI_clearInterruptStatus(COM_SCI_BASE, SCI_INT_TXFF | SCI_INT_TXRDY);
     // Clear IT flag
-    Interrupt_clearACKGroup(INTERRUPT_ACK_GROUP8);
+    Interrupt_clearACKGroup(INT_RS485_TX_MSG_GROUP);
 }
 

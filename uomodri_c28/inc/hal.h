@@ -176,7 +176,7 @@ typedef struct __SCI_CFG_t__
     uint32_t                            sciMode;
     SCI_TxFIFOLevel                     txLevel;
     SCI_RxFIFOLevel                     rxLevel;
-    uint16_t                            intSrc;
+    uint32_t                            intSrc;
     bool_t                              intEnable;                  /*!< GPIO can be configured as IT source */
     SCI_MultiPrcessorCtrl_e             multiProcMode;
 } sci_cfg_t;

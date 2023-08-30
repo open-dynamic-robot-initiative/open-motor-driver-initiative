@@ -31,8 +31,8 @@ __attribute__((interrupt)) void cla_isrMotor1(void);
 __attribute__((interrupt)) void cla_isrMotor2(void);
 __attribute__((interrupt)) void tmr_isrLed(void);
 __attribute__((interrupt)) void dma_isrComRx(void);
-__attribute__((interrupt)) void rs485_isrRx(void);
-__attribute__((interrupt)) void rs485_isrTx(void);
+__attribute__((interrupt)) void sci_isrRx_RS485(void);
+__attribute__((interrupt)) void sci_isrTx_RS485(void);
 
 /***********************************************************************
  * VARIABLES
@@ -72,11 +72,11 @@ static const int_cfg_t InterruptList[] =
   .intAckGroup      = INT_RS485_RX_MSG_GROUP,
   .p_intHandler     = INT_RS485_RX_MSG_HANDLER
  },
- {
-   .intNum           = INT_RS485_TX_MSG,
-   .intAckGroup      = INT_RS485_TX_MSG_GROUP,
-   .p_intHandler     = INT_RS485_TX_MSG_HANDLER
- },
+// {
+//   .intNum           = INT_RS485_TX_MSG,
+//   .intAckGroup      = INT_RS485_TX_MSG_GROUP,
+//   .p_intHandler     = INT_RS485_TX_MSG_HANDLER
+// },
  // END OF ARRAY
  {.intNum           = UINT32_MAX},
 };

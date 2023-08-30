@@ -183,59 +183,59 @@
  * @{
  */
 #if (UOMODRI_V1_0_ENABLE)
-#define DBG_PIN4_NUM                            (149)
+#define DBG_PIN4_NUM                            (149U)
 #define DBG_PIN4_CFG                            GPIO_149_GPIO149
 #define DBG_PIN4_CORE                           GPIO_CORE_CPU1
 #define DBG_PIN4_SET                            (HWREG(GPIODATA_BASE + GPIO_O_GPESET)   = GPIO_GPESET_GPIO149)
 #define DBG_PIN4_CLEAR                          (HWREG(GPIODATA_BASE + GPIO_O_GPECLEAR) = GPIO_GPECLEAR_GPIO149)
 #define DBG_PIN4_TOGGLE                         (HWREG(GPIODATA_BASE + GPIO_O_GPETOGGLE)= GPIO_GPETOGGLE_GPIO149)
-#define DBG_PIN3_NUM                            (81)
+#define DBG_PIN3_NUM                            (81U)
 #define DBG_PIN3_CFG                            GPIO_81_GPIO81
 #define DBG_PIN3_CORE                           GPIO_CORE_CPU1
 #define DBG_PIN3_SET                            (HWREG(GPIODATA_BASE + GPIO_O_GPCSET)   = GPIO_GPCSET_GPIO81)
 #define DBG_PIN3_CLEAR                          (HWREG(GPIODATA_BASE + GPIO_O_GPCCLEAR) = GPIO_GPCCLEAR_GPIO81)
 #define DBG_PIN3_TOGGLE                         (HWREG(GPIODATA_BASE + GPIO_O_GPCTOGGLE)= GPIO_GPCTOGGLE_GPIO81)
-#define DBG_PIN2_NUM                            (82)
+#define DBG_PIN2_NUM                            (82U)
 #define DBG_PIN2_CFG                            GPIO_82_GPIO82
 #define DBG_PIN2_CORE                           GPIO_CORE_CPU1
 #define DBG_PIN2_SET                            (HWREG(GPIODATA_BASE + GPIO_O_GPCSET)   = GPIO_GPCSET_GPIO82)
 #define DBG_PIN2_CLEAR                          (HWREG(GPIODATA_BASE + GPIO_O_GPCCLEAR) = GPIO_GPCCLEAR_GPIO82)
 #define DBG_PIN2_TOGGLE                         (HWREG(GPIODATA_BASE + GPIO_O_GPCTOGGLE)= GPIO_GPCTOGGLE_GPIO82)
-#define DBG_PIN1_NUM                            (77)
+#define DBG_PIN1_NUM                            (77U)
 #define DBG_PIN1_CFG                            GPIO_77_GPIO77
 #define DBG_PIN1_CORE                           GPIO_CORE_CPU1
 #define DBG_PIN1_SET                            (HWREG(GPIODATA_BASE + GPIO_O_GPCSET)   = GPIO_GPCSET_GPIO77)
 #define DBG_PIN1_CLEAR                          (HWREG(GPIODATA_BASE + GPIO_O_GPCCLEAR) = GPIO_GPCCLEAR_GPIO77)
 #define DBG_PIN1_TOGGLE                         (HWREG(GPIODATA_BASE + GPIO_O_GPCTOGGLE)= GPIO_GPCTOGGLE_GPIO77)
-#define DBG_PIN0_NUM                            (78)
+#define DBG_PIN0_NUM                            (78U)
 #define DBG_PIN0_CFG                            GPIO_78_GPIO78
 #define DBG_PIN0_CORE                           GPIO_CORE_CM
 #define DBG_PIN0_SET                            (HWREG(GPIODATA_BASE + GPIO_O_GPCSET)   = GPIO_GPCSET_GPIO78)
 #define DBG_PIN0_CLEAR                          (HWREG(GPIODATA_BASE + GPIO_O_GPCCLEAR) = GPIO_GPCCLEAR_GPIO78)
 #define DBG_PIN0_TOGGLE                         (HWREG(GPIODATA_BASE + GPIO_O_GPCTOGGLE)= GPIO_GPCTOGGLE_GPIO78)
 #elif (UOMODRI_V2_0_ENABLE)
-#define DBG_PIN3_NUM                            (77)
+#define DBG_PIN3_NUM                            (77U)
 #define DBG_PIN3_CFG                            GPIO_77_GPIO77
 #define DBG_PIN3_CORE                           GPIO_CORE_CPU1
 #define DBG_PIN3_SET                            (HWREG(GPIODATA_BASE + GPIO_O_GPCSET)   = GPIO_GPCSET_GPIO77)
 #define DBG_PIN3_CLEAR                          (HWREG(GPIODATA_BASE + GPIO_O_GPCCLEAR) = GPIO_GPCCLEAR_GPIO77)
 #define DBG_PIN3_TOGGLE                         (HWREG(GPIODATA_BASE + GPIO_O_GPCTOGGLE)= GPIO_GPCTOGGLE_GPIO77)
 #define DBG_PIN3_READ                           (HWREG(GPIODATA_BASE + GPIO_O_GPCDAT) & GPIO_GPCDAT_GPIO77)
-#define DBG_PIN2_NUM                            (78)
+#define DBG_PIN2_NUM                            (78U)
 #define DBG_PIN2_CFG                            GPIO_78_GPIO78
 #define DBG_PIN2_CORE                           GPIO_CORE_CPU1
 #define DBG_PIN2_SET                            (HWREG(GPIODATA_BASE + GPIO_O_GPCSET)   = GPIO_GPCSET_GPIO78)
 #define DBG_PIN2_CLEAR                          (HWREG(GPIODATA_BASE + GPIO_O_GPCCLEAR) = GPIO_GPCCLEAR_GPIO78)
 #define DBG_PIN2_TOGGLE                         (HWREG(GPIODATA_BASE + GPIO_O_GPCTOGGLE)= GPIO_GPCTOGGLE_GPIO78)
 #define DBG_PIN2_READ                           (HWREG(GPIODATA_BASE + GPIO_O_GPCDAT) & GPIO_GPCDAT_GPIO78)
-#define DBG_PIN1_NUM                            (81)
+#define DBG_PIN1_NUM                            (81U)
 #define DBG_PIN1_CFG                            GPIO_81_GPIO81
 #define DBG_PIN1_CORE                           GPIO_CORE_CPU1_CLA1
 #define DBG_PIN1_SET                            (HWREG(GPIODATA_BASE + GPIO_O_GPCSET)   = GPIO_GPCSET_GPIO81)
 #define DBG_PIN1_CLEAR                          (HWREG(GPIODATA_BASE + GPIO_O_GPCCLEAR) = GPIO_GPCCLEAR_GPIO81)
 #define DBG_PIN1_TOGGLE                         (HWREG(GPIODATA_BASE + GPIO_O_GPCTOGGLE)= GPIO_GPCTOGGLE_GPIO81)
 #define DBG_PIN1_READ                           (HWREG(GPIODATA_BASE + GPIO_O_GPCDAT) & GPIO_GPCDAT_GPIO81)
-#define DBG_PIN0_NUM                            (82)
+#define DBG_PIN0_NUM                            (82U)
 #define DBG_PIN0_CFG                            GPIO_82_GPIO82
 #define DBG_PIN0_CORE                           GPIO_CORE_CPU1_CLA1
 #define DBG_PIN0_SET                            (HWREG(GPIODATA_BASE + GPIO_O_GPCSET)   = GPIO_GPCSET_GPIO82)
@@ -251,18 +251,18 @@
  * USB / UART ON USB connector
  ***********************************************************************/
 #if (UART_BUS_ENABLE) && (!USB_BUS_ENABLE) && (CM_CORE_ENABLE)
-#define UART_ON_USB_TX_NUM                      (42)
+#define UART_ON_USB_TX_NUM                      (42U)
 #define UART_ON_USB_TX_CFG                      GPIO_42_UARTA_TX
-#define UART_ON_USB_RX_NUM                      (43)
+#define UART_ON_USB_RX_NUM                      (43U)
 #define UART_ON_USB_RX_CFG                      GPIO_43_UARTA_RX
 #elif (!UART_BUS_ENABLE) && (USB_BUS_ENABLE) && (CM_CORE_ENABLE)
-#define USB_M_NUM                               (42)
+#define USB_M_NUM                               (42U)
 #define USB_M_CFG                               GPIO_42_GPIO42
-#define USB_P_NUM                               (43)
+#define USB_P_NUM                               (43U)
 #define USB_P_CFG                               GPIO_43_GPIO43
 #endif
 #if (UOMODRI_V2_0_ENABLE)
-#define USB_VBUS_DETECT_NUM                     (67)
+#define USB_VBUS_DETECT_NUM                     (67U)
 #define USB_VBUS_DETECT_CFG                     GPIO_67_GPIO67
 #define USB_VBUS_DETECT_READ                    (HWREG(GPIODATA_BASE + GPIO_O_GPCDAT) & GPIO_GPCDAT_GPIO67)
 #endif
@@ -275,16 +275,16 @@
  * @{
  */
 #if (UOMODRI_V2_0_ENABLE)
-#define SELECT_PIN_3_NUM                        (47)
+#define SELECT_PIN_3_NUM                        (47U)
 #define SELECT_PIN_3_CFG                        GPIO_47_GPIO47
 #define SELECT_PIN_3_READ                       (HWREG(GPIODATA_BASE + GPIO_O_GPBDAT) & GPIO_GPBDAT_GPIO47)
-#define SELECT_PIN_2_NUM                        (46)
+#define SELECT_PIN_2_NUM                        (46U)
 #define SELECT_PIN_2_CFG                        GPIO_46_GPIO46
 #define SELECT_PIN_2_READ                       (HWREG(GPIODATA_BASE + GPIO_O_GPBDAT) & GPIO_GPBDAT_GPIO46)
-#define SELECT_PIN_1_NUM                        (45)
+#define SELECT_PIN_1_NUM                        (45U)
 #define SELECT_PIN_1_CFG                        GPIO_45_GPIO45
 #define SELECT_PIN_1_READ                       (HWREG(GPIODATA_BASE + GPIO_O_GPBDAT) & GPIO_GPBDAT_GPIO45)
-#define SELECT_PIN_0_NUM                        (55)
+#define SELECT_PIN_0_NUM                        (55U)
 #define SELECT_PIN_0_CFG                        GPIO_55_GPIO55
 #define SELECT_PIN_0_READ                       (HWREG(GPIODATA_BASE + GPIO_O_GPBDAT) & GPIO_GPBDAT_GPIO55)
 #endif
@@ -296,28 +296,28 @@
  * CAN / RS-485 DEFINES
  ***********************************************************************/
 #if (CAN_BUS_ENABLE) && ((UOMODRI_V1_0_ENABLE) || ((!RS485_BUS_ENABLE) && (UOMODRI_V2_0_ENABLE)))
-#define CAN_RX_NUM                              (13)
+#define CAN_RX_NUM                              (13U)
 #define CAN_RX_CFG                              GPIO_13_CANB_RX
-#define CAN_TX_NUM                              (12)
+#define CAN_TX_NUM                              (12U)
 #define CAN_TX_CFG                              GPIO_12_CANB_TX
 #elif (RS485_BUS_ENABLE) && (!CAN_BUS_ENABLE) && (UOMODRI_V2_0_ENABLE)
-#define RS485_RX_NUM                            (13)
+#define RS485_RX_NUM                            (13U)
 #define RS485_RX_CFG                            GPIO_13_SCIC_RX
-#define RS485_TX_NUM                            (12)
+#define RS485_TX_NUM                            (12U)
 #define RS485_TX_CFG                            GPIO_12_SCIC_TX
 #endif
 #if (UOMODRI_V2_0_ENABLE)
-#define CAN_SHDN_EN_NUM                         (14)
+#define CAN_SHDN_EN_NUM                         (14U)
 #define CAN_SHDN_EN_CFG                         GPIO_14_GPIO14
 #define CAN_SHDN_EN_SET                         (HWREG(GPIODATA_BASE + GPIO_O_GPASET)   = GPIO_GPASET_GPIO14)
 #define CAN_SHDN_EN_CLEAR                       (HWREG(GPIODATA_BASE + GPIO_O_GPACLEAR) = GPIO_GPACLEAR_GPIO14)
 #define CAN_SHDN_EN_TOGGLE                      (HWREG(GPIODATA_BASE + GPIO_O_GPATOGGLE)= GPIO_GPATOGGLE_GPIO14)
-#define RS485_RX_EN_NUM                         (97)
+#define RS485_RX_EN_NUM                         (97U)
 #define RS485_RX_EN_CFG                         GPIO_97_GPIO97
 #define RS485_RX_EN_SET                         (HWREG(GPIODATA_BASE + GPIO_O_GPDSET)   = GPIO_GPDSET_GPIO97)
 #define RS485_RX_EN_CLEAR                       (HWREG(GPIODATA_BASE + GPIO_O_GPDCLEAR) = GPIO_GPDCLEAR_GPIO97)
 #define RS485_RX_EN_TOGGLE                      (HWREG(GPIODATA_BASE + GPIO_O_GPDTOGGLE)= GPIO_GPDTOGGLE_GPIO97)
-#define RS485_TX_EN_NUM                         (94)
+#define RS485_TX_EN_NUM                         (94U)
 #define RS485_TX_EN_CFG                         GPIO_94_GPIO94
 #define RS485_TX_EN_SET                         (HWREG(GPIODATA_BASE + GPIO_O_GPCSET)   = GPIO_GPCSET_GPIO94)
 #define RS485_TX_EN_CLEAR                       (HWREG(GPIODATA_BASE + GPIO_O_GPCCLEAR) = GPIO_GPCCLEAR_GPIO94)
@@ -329,15 +329,19 @@
 #define RS485_RX_DISABLE                        RS485_RX_EN_SET
 #define RS485_TX_ENABLE                         RS485_TX_EN_SET
 #define RS485_TX_DISABLE                        RS485_TX_EN_CLEAR
+
+#define RS485_DISABLE                           RS485_RX_DISABLE; \
+                                                RS485_TX_DISABLE
+#define CAN_READY                               RS485_DISABLE; \
+                                                CAN_ENABLE
 #define RS485_TRANSMIT                          CAN_DISABLE; \
                                                 RS485_RX_DISABLE; \
                                                 RS485_TX_ENABLE
 #define RS485_RECEIVE                           CAN_DISABLE; \
                                                 RS485_TX_DISABLE; \
                                                 RS485_RX_ENABLE
-#define RS485_HIGH_Z                            CAN_DISABLE; \
-                                                RS485_TX_DISABLE; \
-                                                RS485_RX_DISABLE
+#define ALL_SERIAL_DISABLE                      CAN_DISABLE; \
+                                                RS485_DISABLE
 #endif
 
 /***********************************************************************
@@ -369,6 +373,27 @@
  * SCI DEFINES
  ***********************************************************************/
 #define COM_SCI_BASE                            SCIC_BASE
+#define COM_SCI_CFG                             (SCI_CONFIG_WLEN_8 | \
+                                                 SCI_CONFIG_STOP_ONE | \
+                                                 SCI_CONFIG_PAR_NONE)
+#define COM_SCI_TX_FIFO_LVL                     SCI_FIFO_TX5
+#define COM_SCI_RX_FIFO_LVL                     SCI_FIFO_RX5
+#define COM_SCI_IT_SRC                          (SCI_INT_RXERR | \
+                                                 SCI_INT_RXFF)
+#define SCI_INT_ALL                             (SCI_INT_RXERR | \
+                                                 SCI_INT_RXRDY_BRKDT | \
+                                                 SCI_INT_TXRDY | \
+                                                 SCI_INT_TXFF | \
+                                                 SCI_INT_RXFF)
+#define SCI_INT_ALL_ERR                         (SCI_INT_RXERR | \
+                                                 SCI_INT_FE | \
+                                                 SCI_INT_OE | \
+                                                 SCI_INT_PE)
+//#define SCI_INT_ALL_RX                          (SCI_INT_RXERR | \
+//                                                 SCI_INT_RXRDY_BRKDT | \
+//                                                 SCI_INT_RXFF)
+//#define SCI_INT_ALL_TX                          (SCI_INT_TXRDY | \
+//                                                 SCI_INT_TXFF)
 
 /***********************************************************************
  * SPI DEFINES
@@ -423,30 +448,30 @@
  *  @brief    Configure GPIO pins associated to DRVs communication.
  * @{
  */
-#define DRV_SPI_SIMO_NUM                        (16)
+#define DRV_SPI_SIMO_NUM                        (16U)
 #define DRV_SPI_SIMO_CFG                        GPIO_16_SPIA_SIMO
-#define DRV_SPI_SOMI_NUM                        (17)
+#define DRV_SPI_SOMI_NUM                        (17U)
 #define DRV_SPI_SOMI_CFG                        GPIO_17_SPIA_SOMI
-#define DRV_SPI_CLK_NUM                         (18)
+#define DRV_SPI_CLK_NUM                         (18U)
 #define DRV_SPI_CLK_CFG                         GPIO_18_SPIA_CLK
 #if (UOMODRI_V1_0_ENABLE)
-#define MOTOR1_DRV_SPI_CS_NUM                   (19)
+#define MOTOR1_DRV_SPI_CS_NUM                   (19U)
 #define MOTOR1_DRV_SPI_CS_CFG                   GPIO_19_GPIO19
 #define MOTOR1_DRV_SPI_CS_SET                   (HWREG(GPIODATA_BASE + GPIO_O_GPASET)   = GPIO_GPASET_GPIO19)
 #define MOTOR1_DRV_SPI_CS_CLEAR                 (HWREG(GPIODATA_BASE + GPIO_O_GPACLEAR) = GPIO_GPACLEAR_GPIO19)
 #define MOTOR1_DRV_SPI_CS_TOGGLE                (HWREG(GPIODATA_BASE + GPIO_O_GPATOGGLE)= GPIO_GPATOGGLE_GPIO19)
-#define MOTOR2_DRV_SPI_CS_NUM                   (35)
+#define MOTOR2_DRV_SPI_CS_NUM                   (35U)
 #define MOTOR2_DRV_SPI_CS_CFG                   GPIO_35_GPIO35
 #define MOTOR2_DRV_SPI_CS_SET                   (HWREG(GPIODATA_BASE + GPIO_O_GPBSET)   = GPIO_GPBSET_GPIO35)
 #define MOTOR2_DRV_SPI_CS_CLEAR                 (HWREG(GPIODATA_BASE + GPIO_O_GPBCLEAR) = GPIO_GPBCLEAR_GPIO35)
 #define MOTOR2_DRV_SPI_CS_TOGGLE                (HWREG(GPIODATA_BASE + GPIO_O_GPBTOGGLE)= GPIO_GPBTOGGLE_GPIO35)
 #elif (UOMODRI_V2_0_ENABLE)
-#define MOTOR1_DRV_SPI_CS_NUM                   (93)
+#define MOTOR1_DRV_SPI_CS_NUM                   (93U)
 #define MOTOR1_DRV_SPI_CS_CFG                   GPIO_93_GPIO93
 #define MOTOR1_DRV_SPI_CS_SET                   (HWREG(GPIODATA_BASE + GPIO_O_GPCSET)   = GPIO_GPCSET_GPIO93)
 #define MOTOR1_DRV_SPI_CS_CLEAR                 (HWREG(GPIODATA_BASE + GPIO_O_GPCCLEAR) = GPIO_GPCCLEAR_GPIO93)
 #define MOTOR1_DRV_SPI_CS_TOGGLE                (HWREG(GPIODATA_BASE + GPIO_O_GPCTOGGLE)= GPIO_GPCTOGGLE_GPIO93)
-#define MOTOR2_DRV_SPI_CS_NUM                   (30)
+#define MOTOR2_DRV_SPI_CS_NUM                   (30U)
 #define MOTOR2_DRV_SPI_CS_CFG                   GPIO_30_GPIO30
 #define MOTOR2_DRV_SPI_CS_SET                   (HWREG(GPIODATA_BASE + GPIO_O_GPASET)   = GPIO_GPASET_GPIO30)
 #define MOTOR2_DRV_SPI_CS_CLEAR                 (HWREG(GPIODATA_BASE + GPIO_O_GPACLEAR) = GPIO_GPACLEAR_GPIO30)
@@ -460,18 +485,18 @@
  *  @brief    Configure GPIO pins associated to external communication.
  * @{
  */
-#define COM_SPI_SIMO_NUM                        (60)
+#define COM_SPI_SIMO_NUM                        (60U)
 #define COM_SPI_SIMO_CFG                        GPIO_60_SPIB_SIMO
-#define COM_SPI_SOMI_NUM                        (61)
+#define COM_SPI_SOMI_NUM                        (61U)
 #define COM_SPI_SOMI_CFG                        GPIO_61_SPIB_SOMI
-#define COM_SPI_CS_NUM                          (59)
+#define COM_SPI_CS_NUM                          (59U)
 #define COM_SPI_CS_CFG                          GPIO_59_SPIB_STEN
 #define COM_SPI_CS_READ                         (HWREG(GPIODATA_BASE + GPIO_O_GPBDAT) & GPIO_GPBDAT_GPIO59)
 #if (UOMODRI_V1_0_ENABLE)
-#define COM_SPI_CLK_NUM                         (65)
+#define COM_SPI_CLK_NUM                         (65U)
 #define COM_SPI_CLK_CFG                         GPIO_65_SPIB_CLK
 #elif (UOMODRI_V2_0_ENABLE)
-#define COM_SPI_CLK_NUM                         (58)
+#define COM_SPI_CLK_NUM                         (58U)
 #define COM_SPI_CLK_CFG                         GPIO_58_SPIB_CLK
 #endif
 /**
@@ -483,54 +508,54 @@
  * @{
  */
 #if (UOMODRI_V1_0_ENABLE)
-#define EXT_DBG_SPI_SIMO_NUM                    (69)
+#define EXT_DBG_SPI_SIMO_NUM                    (69U)
 #define EXT_DBG_SPI_SIMO_CFG                    GPIO_69_GPIO69//GPIO_69_SPIC_SIMO
 #define EXT_DBG_SPI_SIMO_SET                    (HWREG(GPIODATA_BASE + GPIO_O_GPCSET)   = GPIO_GPCSET_GPIO69)
 #define EXT_DBG_SPI_SIMO_CLEAR                  (HWREG(GPIODATA_BASE + GPIO_O_GPCCLEAR) = GPIO_GPCCLEAR_GPIO69)
 #define EXT_DBG_SPI_SIMO_TOGGLE                 (HWREG(GPIODATA_BASE + GPIO_O_GPCTOGGLE)= GPIO_GPCTOGGLE_GPIO69)
-#define EXT_DBG_SPI_SOMI_NUM                    (70)
+#define EXT_DBG_SPI_SOMI_NUM                    (70U)
 #define EXT_DBG_SPI_SOMI_CFG                    GPIO_70_GPIO70//GPIO_70_SPIC_SOMI
 #define EXT_DBG_SPI_SOMI_SET                    (HWREG(GPIODATA_BASE + GPIO_O_GPCSET)   = GPIO_GPCSET_GPIO70)
 #define EXT_DBG_SPI_SOMI_CLEAR                  (HWREG(GPIODATA_BASE + GPIO_O_GPCCLEAR) = GPIO_GPCCLEAR_GPIO70)
 #define EXT_DBG_SPI_SOMI_TOGGLE                 (HWREG(GPIODATA_BASE + GPIO_O_GPCTOGGLE)= GPIO_GPCTOGGLE_GPIO70)
-#define EXT_DBG_SPI_CLK_NUM                     (71)
+#define EXT_DBG_SPI_CLK_NUM                     (71U)
 #define EXT_DBG_SPI_CLK_CFG                     GPIO_71_GPIO71//GPIO_71_SPIC_CLK
 #define EXT_DBG_SPI_CLK_SET                     (HWREG(GPIODATA_BASE + GPIO_O_GPCSET)   = GPIO_GPCSET_GPIO71)
 #define EXT_DBG_SPI_CLK_CLEAR                   (HWREG(GPIODATA_BASE + GPIO_O_GPCCLEAR) = GPIO_GPCCLEAR_GPIO71)
 #define EXT_DBG_SPI_CLK_TOGGLE                  (HWREG(GPIODATA_BASE + GPIO_O_GPCTOGGLE)= GPIO_GPCTOGGLE_GPIO71)
-#define EXT_DBG_SPI_CS1_NUM                     (72)
+#define EXT_DBG_SPI_CS1_NUM                     (72U)
 #define EXT_DBG_SPI_CS1_CFG                     GPIO_72_GPIO72//SPIC_STEN
 #define EXT_DBG_SPI_CS1_SET                     (HWREG(GPIODATA_BASE + GPIO_O_GPCSET)   = GPIO_GPCSET_GPIO72)
 #define EXT_DBG_SPI_CS1_CLEAR                   (HWREG(GPIODATA_BASE + GPIO_O_GPCCLEAR) = GPIO_GPCCLEAR_GPIO72)
 #define EXT_DBG_SPI_CS1_TOGGLE                  (HWREG(GPIODATA_BASE + GPIO_O_GPCTOGGLE)= GPIO_GPCTOGGLE_GPIO72)
-#define EXT_SPI_CS2_NUM                         (125)
+#define EXT_SPI_CS2_NUM                         (125U)
 #define EXT_SPI_CS2_CFG                         GPIO_125_GPIO125
 #define EXT_SPI_CS2_SET                         (HWREG(GPIODATA_BASE + GPIO_O_GPDSET)   = GPIO_GPDSET_GPIO125)
 #define EXT_SPI_CS2_CLEAR                       (HWREG(GPIODATA_BASE + GPIO_O_GPDCLEAR) = GPIO_GPDCLEAR_GPIO125)
 #define EXT_SPI_CS2_TOGGLE                      (HWREG(GPIODATA_BASE + GPIO_O_GPDTOGGLE)= GPIO_GPDTOGGLE_GPIO125)
 #elif (UOMODRI_V2_0_ENABLE)
-#define IMU_EXT_DBG_SPI_SIMO_NUM                (69)
+#define IMU_EXT_DBG_SPI_SIMO_NUM                (69U)
 #define IMU_EXT_DBG_SPI_SIMO_CFG                GPIO_69_SPIC_SIMO
-#define IMU_EXT_DBG_SPI_SOMI_NUM                (70)
+#define IMU_EXT_DBG_SPI_SOMI_NUM                (70U)
 #define IMU_EXT_DBG_SPI_SOMI_CFG                GPIO_70_SPIC_SOMI
-#define IMU_EXT_DBG_SPI_CLK_NUM                 (71)
+#define IMU_EXT_DBG_SPI_CLK_NUM                 (71U)
 #define IMU_EXT_DBG_SPI_CLK_CFG                 GPIO_71_SPIC_CLK
-#define EXT_DBG_SPI_CS1_NUM                     (72)
+#define EXT_DBG_SPI_CS1_NUM                     (72U)
 #define EXT_DBG_SPI_CS1_CFG                     GPIO_72_GPIO72//SPIC_STEN
 #define EXT_DBG_SPI_CS1_SET                     (HWREG(GPIODATA_BASE + GPIO_O_GPCSET)   = GPIO_GPCSET_GPIO72)
 #define EXT_DBG_SPI_CS1_CLEAR                   (HWREG(GPIODATA_BASE + GPIO_O_GPCCLEAR) = GPIO_GPCCLEAR_GPIO72)
 #define EXT_DBG_SPI_CS1_TOGGLE                  (HWREG(GPIODATA_BASE + GPIO_O_GPCTOGGLE)= GPIO_GPCTOGGLE_GPIO72)
-#define EXT_SPI_CS2_NUM                         (28)
+#define EXT_SPI_CS2_NUM                         (28U)
 #define EXT_SPI_CS2_CFG                         GPIO_28_GPIO28
 #define EXT_SPI_CS2_SET                         (HWREG(GPIODATA_BASE + GPIO_O_GPASET)   = GPIO_GPASET_GPIO28)
 #define EXT_SPI_CS2_CLEAR                       (HWREG(GPIODATA_BASE + GPIO_O_GPACLEAR) = GPIO_GPACLEAR_GPIO28)
 #define EXT_SPI_CS2_TOGGLE                      (HWREG(GPIODATA_BASE + GPIO_O_GPATOGGLE)= GPIO_GPATOGGLE_GPIO28)
-#define IMU_SPI_ACCEL_CS_NUM                    (32)
+#define IMU_SPI_ACCEL_CS_NUM                    (32U)
 #define IMU_SPI_ACCEL_CS_CFG                    GPIO_32_GPIO32
 #define IMU_SPI_ACCEL_CS_SET                    (HWREG(GPIODATA_BASE + GPIO_O_GPBSET)   = GPIO_GPBSET_GPIO32)
 #define IMU_SPI_ACCEL_CS_CLEAR                  (HWREG(GPIODATA_BASE + GPIO_O_GPBCLEAR) = GPIO_GPBCLEAR_GPIO32)
 #define IMU_SPI_ACCEL_CS_TOGGLE                 (HWREG(GPIODATA_BASE + GPIO_O_GPBTOGGLE)= GPIO_GPBTOGGLE_GPIO32)
-#define IMU_SPI_GYRO_CS_NUM                     (120)
+#define IMU_SPI_GYRO_CS_NUM                     (120U)
 #define IMU_SPI_GYRO_CS_CFG                     GPIO_120_GPIO120
 #define IMU_SPI_GYRO_CS_SET                     (HWREG(GPIODATA_BASE + GPIO_O_GPDSET)   = GPIO_GPDSET_GPIO120)
 #define IMU_SPI_GYRO_CS_CLEAR                   (HWREG(GPIODATA_BASE + GPIO_O_GPDCLEAR) = GPIO_GPDCLEAR_GPIO120)
@@ -544,7 +569,7 @@
  *  @brief    Configure GPIO pins associated with RGB LED.
  * @{
  */
-#define LED_SPI_SIMO_NUM                        (91)
+#define LED_SPI_SIMO_NUM                        (91U)
 #define LED_SPI_SIMO_CFG                        GPIO_91_SPID_SIMO
 /**
  * @}
@@ -626,40 +651,40 @@
  */
 #if (UOMODRI_V1_0_ENABLE)
 // DRV1 SPI defines
-#define MOTOR1_DRV_EN_NUM                       (89)
+#define MOTOR1_DRV_EN_NUM                       (89U)
 #define MOTOR1_DRV_EN_CFG                       GPIO_89_GPIO89
 #define MOTOR1_DRV_EN_SET                       (HWREG(GPIODATA_BASE + GPIO_O_GPCSET)   = GPIO_GPCSET_GPIO89)
 #define MOTOR1_DRV_EN_CLEAR                     (HWREG(GPIODATA_BASE + GPIO_O_GPCCLEAR) = GPIO_GPCCLEAR_GPIO89)
 #define MOTOR1_DRV_EN_TOGGLE                    (HWREG(GPIODATA_BASE + GPIO_O_GPCTOGGLE)= GPIO_GPCTOGGLE_GPIO89)
-#define MOTOR1_DRV_FAULT_NUM                    (90)
+#define MOTOR1_DRV_FAULT_NUM                    (90U)
 #define MOTOR1_DRV_FAULT_CFG                    GPIO_90_GPIO90
 #define MOTOR1_DRV_FAULT_READ                   (HWREG(GPIODATA_BASE + GPIO_O_GPCDAT) & GPIO_GPCDAT_GPIO90)
 // DRV2 SPI defines
-#define MOTOR2_DRV_EN_NUM                       (37)
+#define MOTOR2_DRV_EN_NUM                       (37U)
 #define MOTOR2_DRV_EN_CFG                       GPIO_37_GPIO37
 #define MOTOR2_DRV_EN_SET                       (HWREG(GPIODATA_BASE + GPIO_O_GPBSET)   = GPIO_GPBSET_GPIO37)
 #define MOTOR2_DRV_EN_CLEAR                     (HWREG(GPIODATA_BASE + GPIO_O_GPBCLEAR) = GPIO_GPBCLEAR_GPIO37)
 #define MOTOR2_DRV_EN_TOGGLE                    (HWREG(GPIODATA_BASE + GPIO_O_GPBTOGGLE)= GPIO_GPBTOGGLE_GPIO37)
-#define MOTOR2_DRV_FAULT_NUM                    (36)
+#define MOTOR2_DRV_FAULT_NUM                    (36U)
 #define MOTOR2_DRV_FAULT_CFG                    GPIO_36_GPIO36
 #define MOTOR2_DRV_FAULT_READ                   (HWREG(GPIODATA_BASE + GPIO_O_GPBDAT) & GPIO_GPBDAT_GPIO36)
 #elif (UOMODRI_V2_0_ENABLE)
 // DRV1 SPI defines
-#define MOTOR1_DRV_EN_NUM                       (90)
+#define MOTOR1_DRV_EN_NUM                       (90U)
 #define MOTOR1_DRV_EN_CFG                       GPIO_90_GPIO90
 #define MOTOR1_DRV_EN_SET                       (HWREG(GPIODATA_BASE + GPIO_O_GPCSET)   = GPIO_GPCSET_GPIO90)
 #define MOTOR1_DRV_EN_CLEAR                     (HWREG(GPIODATA_BASE + GPIO_O_GPCCLEAR) = GPIO_GPCCLEAR_GPIO90)
 #define MOTOR1_DRV_EN_TOGGLE                    (HWREG(GPIODATA_BASE + GPIO_O_GPCTOGGLE)= GPIO_GPCTOGGLE_GPIO90)
-#define MOTOR1_DRV_FAULT_NUM                    (92)
+#define MOTOR1_DRV_FAULT_NUM                    (92U)
 #define MOTOR1_DRV_FAULT_CFG                    GPIO_92_GPIO92
 #define MOTOR1_DRV_FAULT_READ                   (HWREG(GPIODATA_BASE + GPIO_O_GPCDAT) & GPIO_GPCDAT_GPIO92)
 // DRV2 SPI defines
-#define MOTOR2_DRV_EN_NUM                       (31)
+#define MOTOR2_DRV_EN_NUM                       (31U)
 #define MOTOR2_DRV_EN_CFG                       GPIO_31_GPIO31
 #define MOTOR2_DRV_EN_SET                       (HWREG(GPIODATA_BASE + GPIO_O_GPASET)   = GPIO_GPASET_GPIO31)
 #define MOTOR2_DRV_EN_CLEAR                     (HWREG(GPIODATA_BASE + GPIO_O_GPACLEAR) = GPIO_GPACLEAR_GPIO31)
 #define MOTOR2_DRV_EN_TOGGLE                    (HWREG(GPIODATA_BASE + GPIO_O_GPATOGGLE)= GPIO_GPATOGGLE_GPIO31)
-#define MOTOR2_DRV_FAULT_NUM                    (118)
+#define MOTOR2_DRV_FAULT_NUM                    (118U)
 #define MOTOR2_DRV_FAULT_CFG                    GPIO_118_GPIO118
 #define MOTOR2_DRV_FAULT_READ                   (HWREG(GPIODATA_BASE + GPIO_O_GPDDAT) & GPIO_GPDDAT_GPIO118)
 #endif
@@ -880,29 +905,29 @@
  *  @brief    Configure GPIO pins associated to 12x ePWM (2 motors).
  * @{
  */
-#define MOTOR1_PWM1_CHA_NUM                     (0)
+#define MOTOR1_PWM1_CHA_NUM                     (0U)
 #define MOTOR1_PWM1_CHA_CFG                     GPIO_0_EPWM1A
-#define MOTOR1_PWM1_CHB_NUM                     (1)
+#define MOTOR1_PWM1_CHB_NUM                     (1U)
 #define MOTOR1_PWM1_CHB_CFG                     GPIO_1_EPWM1B
-#define MOTOR1_PWM2_CHA_NUM                     (2)
+#define MOTOR1_PWM2_CHA_NUM                     (2U)
 #define MOTOR1_PWM2_CHA_CFG                     GPIO_2_EPWM2A
-#define MOTOR1_PWM2_CHB_NUM                     (3)
+#define MOTOR1_PWM2_CHB_NUM                     (3U)
 #define MOTOR1_PWM2_CHB_CFG                     GPIO_3_EPWM2B
-#define MOTOR1_PWM3_CHA_NUM                     (4)
+#define MOTOR1_PWM3_CHA_NUM                     (4U)
 #define MOTOR1_PWM3_CHA_CFG                     GPIO_4_EPWM3A
-#define MOTOR1_PWM3_CHB_NUM                     (5)
+#define MOTOR1_PWM3_CHB_NUM                     (5U)
 #define MOTOR1_PWM3_CHB_CFG                     GPIO_5_EPWM3B
-#define MOTOR2_PWM1_CHA_NUM                     (6)
+#define MOTOR2_PWM1_CHA_NUM                     (6U)
 #define MOTOR2_PWM1_CHA_CFG                     GPIO_6_EPWM4A
-#define MOTOR2_PWM1_CHB_NUM                     (7)
+#define MOTOR2_PWM1_CHB_NUM                     (7U)
 #define MOTOR2_PWM1_CHB_CFG                     GPIO_7_EPWM4B
-#define MOTOR2_PWM2_CHA_NUM                     (8)
+#define MOTOR2_PWM2_CHA_NUM                     (8U)
 #define MOTOR2_PWM2_CHA_CFG                     GPIO_8_EPWM5A
-#define MOTOR2_PWM2_CHB_NUM                     (9)
+#define MOTOR2_PWM2_CHB_NUM                     (9U)
 #define MOTOR2_PWM2_CHB_CFG                     GPIO_9_EPWM5B
-#define MOTOR2_PWM3_CHA_NUM                     (10)
+#define MOTOR2_PWM3_CHA_NUM                     (10U)
 #define MOTOR2_PWM3_CHA_CFG                     GPIO_10_EPWM6A
-#define MOTOR2_PWM3_CHB_NUM                     (11)
+#define MOTOR2_PWM3_CHB_NUM                     (11U)
 #define MOTOR2_PWM3_CHB_CFG                     GPIO_11_EPWM6B
 /**
  * @}
@@ -968,30 +993,30 @@
  * @{
  */
 #if (UOMODRI_V1_0_ENABLE)
-#define MOTOR1_ENC_CHA_NUM                      (20)
+#define MOTOR1_ENC_CHA_NUM                      (20U)
 #define MOTOR1_ENC_CHA_CFG                      GPIO_20_EQEP1_A
-#define MOTOR1_ENC_CHB_NUM                      (21)
+#define MOTOR1_ENC_CHB_NUM                      (21U)
 #define MOTOR1_ENC_CHB_CFG                      GPIO_21_EQEP1_B
-#define MOTOR1_ENC_CHI_NUM                      (23)
+#define MOTOR1_ENC_CHI_NUM                      (23U)
 #define MOTOR1_ENC_CHI_CFG                      GPIO_23_EQEP1_INDEX
-#define MOTOR2_ENC_CHA_NUM                      (24)
+#define MOTOR2_ENC_CHA_NUM                      (24U)
 #define MOTOR2_ENC_CHA_CFG                      GPIO_24_EQEP2_A
-#define MOTOR2_ENC_CHB_NUM                      (25)
+#define MOTOR2_ENC_CHB_NUM                      (25U)
 #define MOTOR2_ENC_CHB_CFG                      GPIO_25_EQEP2_B
-#define MOTOR2_ENC_CHI_NUM                      (26)
+#define MOTOR2_ENC_CHI_NUM                      (26U)
 #define MOTOR2_ENC_CHI_CFG                      GPIO_26_EQEP2_INDEX
 #elif (UOMODRI_V2_0_ENABLE)
-#define MOTOR1_ENC_CHA_NUM                      (100)
+#define MOTOR1_ENC_CHA_NUM                      (100U)
 #define MOTOR1_ENC_CHA_CFG                      GPIO_100_EQEP2_A
-#define MOTOR1_ENC_CHB_NUM                      (101)
+#define MOTOR1_ENC_CHB_NUM                      (101U)
 #define MOTOR1_ENC_CHB_CFG                      GPIO_101_EQEP2_B
-#define MOTOR1_ENC_CHI_NUM                      (103)
+#define MOTOR1_ENC_CHI_NUM                      (103U)
 #define MOTOR1_ENC_CHI_CFG                      GPIO_103_EQEP2_INDEX
-#define MOTOR2_ENC_CHA_NUM                      (104)
+#define MOTOR2_ENC_CHA_NUM                      (104U)
 #define MOTOR2_ENC_CHA_CFG                      GPIO_104_EQEP3_A
-#define MOTOR2_ENC_CHB_NUM                      (105)
+#define MOTOR2_ENC_CHB_NUM                      (105U)
 #define MOTOR2_ENC_CHB_CFG                      GPIO_105_EQEP3_B
-#define MOTOR2_ENC_CHI_NUM                      (107)
+#define MOTOR2_ENC_CHI_NUM                      (107U)
 #define MOTOR2_ENC_CHI_CFG                      GPIO_107_EQEP3_INDEX
 #endif
 /**
@@ -1305,10 +1330,10 @@
 #define INT_DMA_RX_MSG_HANDLER                  &dma_isrComRx
 #define INT_RS485_RX_MSG                        INT_SCIC_RX
 #define INT_RS485_RX_MSG_GROUP                  INTERRUPT_ACK_GROUP8
-#define INT_RS485_RX_MSG_HANDLER                &rs485_isrRx
+#define INT_RS485_RX_MSG_HANDLER                &sci_isrRx_RS485
 #define INT_RS485_TX_MSG                        INT_SCIC_TX
 #define INT_RS485_TX_MSG_GROUP                  INTERRUPT_ACK_GROUP8
-#define INT_RS485_TX_MSG_HANDLER                &rs485_isrTx
+#define INT_RS485_TX_MSG_HANDLER                &sci_isrTx_RS485
 
 /***********************************************************************
  * COMMUNICATION DEFINES
