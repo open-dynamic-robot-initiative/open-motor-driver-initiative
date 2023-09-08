@@ -236,8 +236,16 @@
 			<value>$%7BC2000WARE_ROOT%7D/libraries/math/CLAmath/c28</value>
 		</variable>
 		<variable>
+			<name>CLB_SYSCFG_ROOT</name>
+			<value>$%7BC2000WARE_ROOT%7D/utilities/clb_tool/clb_syscfg</value>
+		</variable>
+		<variable>
 			<name>SYSCONFIG_TOOL</name>
 			<value>$%7BCCS_INSTALL_ROOT%7D/utils/sysconfig_1.17.0/sysconfig_cli.sh</value>
+		</variable>
+		<variable>
+			<name>SYSTEMC_INSTALL</name>
+			<value>$%7BCLB_SYSCFG_ROOT%7D/systemc-2.3.3</value>
 		</variable>
 		<variable>
 			<name>VCU_ROOT</name>

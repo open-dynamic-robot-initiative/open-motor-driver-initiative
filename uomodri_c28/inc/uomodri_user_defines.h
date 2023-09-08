@@ -171,7 +171,7 @@
  *  DEVICE INITIALIZATION DEFINES
  ***********************************************************************/
 // Redefine LSPCLK to run at 200MHz (for SPI & SCI bit clocks)
-#define UOMODRI_LSPCLK_FREQ                     (DEVICE_SYSCLK_FREQ / 1)
+#define UOMODRI_LSPCLK_FREQ                      DEVICE_SYSCLK_FREQ //DEVICE_LSPCLK_FREQ
 //#undef DEVICE_LSPCLK_FREQ
 //#define DEVICE_LSPCLK_FREQ          (DEVICE_SYSCLK_FREQ / 1)
 
@@ -378,8 +378,6 @@
                                                  SCI_CONFIG_PAR_NONE)
 #define COM_SCI_TX_FIFO_LVL                     SCI_FIFO_TX5
 #define COM_SCI_RX_FIFO_LVL                     SCI_FIFO_RX5
-#define COM_SCI_IT_SRC                          (SCI_INT_RXERR | \
-                                                 SCI_INT_RXFF)
 #define SCI_INT_ALL                             (SCI_INT_RXERR | \
                                                  SCI_INT_RXRDY_BRKDT | \
                                                  SCI_INT_TXRDY | \
@@ -389,6 +387,8 @@
                                                  SCI_INT_FE | \
                                                  SCI_INT_OE | \
                                                  SCI_INT_PE)
+#define COM_SCI_IT_SRC                          (SCI_INT_RXERR | \
+                                                 SCI_INT_RXFF)//SCI_INT_ALL_ERR | \SCI_INT_RXRDY_BRKDT | \
 //#define SCI_INT_ALL_RX                          (SCI_INT_RXERR | \
 //                                                 SCI_INT_RXRDY_BRKDT | \
 //                                                 SCI_INT_RXFF)
