@@ -368,7 +368,7 @@ static const sci_cfg_t  sciCfgList[] =
 {
  {
   .sciBase          = COM_SCI_BASE,
-  .bitRate          = 3125000,//6250000,//12500000,//3125000
+  .bitRate          = 12500000,//6250000,//12500000,//3125000
   .sciMode          = COM_SCI_CFG,
   .txLevel          = COM_SCI_TX_FIFO_LVL,
   .rxLevel          = COM_SCI_RX_FIFO_LVL,
