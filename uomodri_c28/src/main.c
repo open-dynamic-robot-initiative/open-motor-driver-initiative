@@ -40,7 +40,7 @@ slv2mst_msg_t           tx_swap;
 uint16_t                led_msg[LED_MSG_TX_16BIT_LENGTH];
 #pragma DATA_ALIGN(rs485_rx_msg, 4)
 #pragma DATA_SECTION(rs485_rx_msg, "ramgs0")
-uint16_t                rs485_rx_msg[34];
+uint16_t                rs485_rx_msg[40];
 #pragma DATA_ALIGN(rs485_tx_msg, 4)
 #pragma DATA_SECTION(rs485_tx_msg, "ramgs0")
 uint16_t                rs485_tx_msg[34];
@@ -311,40 +311,36 @@ __attribute__((interrupt)) void sci_isrRx_RS485(void)
 {
     static uint16_t i       = 0;
     int16_t fifo_rx_status  = (uint16_t)SCI_getRxFIFOStatus(COM_SCI_BASE);
-//    int16_t uart_rx_status  = SCI_getInterruptStatus(COM_SCI_BASE);
 
-//    if(SCI_getInterruptStatus(COM_SCI_BASE) & SCI_INT_RXRDY_BRKDT)
-//        SCI_clearInterruptStatus(COM_SCI_BASE, SCI_INT_RXRDY_BRKDT);
-
-//    if(SCI_getInterruptStatus(COM_SCI_BASE) & (SCI_INT_PE | SCI_INT_OE | SCI_INT_FE))
-//    {
-//        DBG_PIN3_SET;
-//        fifo_rx_status      = (uint16_t)SCI_getRxFIFOStatus(COM_SCI_BASE);
-//        fifo_rx_status      = (fifo_rx_status > 0) ? (fifo_rx_status - 1) : (0);
-//        while(fifo_rx_status)
-//        {
-//            rs485_rx_msg[i] = (uint16_t)(HWREGH(COM_SCI_BASE + SCI_O_RXBUF) & SCI_RXBUF_SAR_M);
-//            i               = (i < 139) ? (i + 1) : (0);
-//            fifo_rx_status -= 1;
-//        }
-//        SCI_resetRxFIFO(COM_SCI_BASE);
-//        SCI_clearInterruptStatus(COM_SCI_BASE, SCI_INT_RXERR);
-//        DBG_PIN3_CLEAR;
-//    }
+    if(HWREGH(COM_SCI_BASE + SCI_O_CTL1) & SCI_CTL1_SLEEP)
+    {
+        SCI_disableSleepMode(COM_SCI_BASE);
+        i = 0;
+    }
 
     if(SCI_getInterruptStatus(COM_SCI_BASE) & SCI_INT_RXFF)
     {
         DBG_PIN2_SET;
-        //        static uint16_t i = 0;
+//        if(HWREGH(COM_SCI_BASE + SCI_O_RXST) & SCI_RXST_RXWAKE)
+//        {
+//            DBG_PIN3_SET;
+//            i = 0;
+//            DBG_PIN3_CLEAR;
+//        }
         while(fifo_rx_status)
         {
             rs485_rx_msg[i] = (uint16_t)(HWREGH(COM_SCI_BASE + SCI_O_RXBUF) & SCI_RXBUF_SAR_M);
-            i               = (i < 33) ? (i + 1) : (0);
+//            i               = (i < 33) ? (i + 1) : (0);
+            i              += 1;
             fifo_rx_status -= 1;
+            if(i > 33)
+            {
+                SCI_enableSleepMode(COM_SCI_BASE);
+                SCI_resetRxFIFO(COM_SCI_BASE);
+                fifo_rx_status = 0;
+                i = 0;
+            }
         }
-//        SCI_readCharArray(COM_SCI_BASE, &rs485_rx_msg[i], 5U);
-//        i  += 5;
-//        i   = (i < 499) ? (i) : (0);
         SCI_clearOverflowStatus(COM_SCI_BASE);
         SCI_clearInterruptStatus(COM_SCI_BASE, SCI_INT_RXFF);
         DBG_PIN2_CLEAR;
@@ -365,9 +361,6 @@ __attribute__((interrupt)) void sci_isrRx_RS485(void)
         SCI_clearInterruptStatus(COM_SCI_BASE, SCI_INT_RXERR);
         DBG_PIN3_CLEAR;
     }
-
-//    SCI_clearOverflowStatus(COM_SCI_BASE);
-//    SCI_clearInterruptStatus(COM_SCI_BASE, (SCI_INT_ALL_ERR | SCI_INT_RXFF));
     // Clear IT flag
     Interrupt_clearACKGroup(INT_RS485_RX_MSG_GROUP);
 }

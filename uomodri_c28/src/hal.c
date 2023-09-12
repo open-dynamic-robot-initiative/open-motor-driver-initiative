@@ -506,6 +506,15 @@ void HAL_SCI_ini(const sci_cfg_t* p_sciCfg)
             SCI_disableLoopback(sciBase);
             SCI_performSoftwareReset(sciBase);
 
+            /* Multiprocessor mode */
+            SCI_enableSleepMode(sciBase);
+            if(p_sciCfg->multiProcMode == SCI_MULTI_PROC_ADDR)
+                SCI_setAddrMultiProcessorMode(sciBase);
+            else if(p_sciCfg->multiProcMode == SCI_MULTI_PROC_IDLE)
+                SCI_setIdleMultiProcessorMode(sciBase);
+            else
+                SCI_disableSleepMode(sciBase);
+
             /* Enable selected interrupts */
             if(p_sciCfg->intEnable)
                 SCI_enableInterrupt(sciBase, (p_sciCfg->intSrc & (SCI_INT_RXFF | SCI_INT_TXFF)));
