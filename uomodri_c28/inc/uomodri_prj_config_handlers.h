@@ -33,6 +33,7 @@ __attribute__((interrupt)) void tmr_isrLed(void);
 __attribute__((interrupt)) void dma_isrComRx(void);
 __attribute__((interrupt)) void sci_isrRx_RS485(void);
 __attribute__((interrupt)) void sci_isrTx_RS485(void);
+__attribute__((interrupt)) void clb_isrRxTx_RS485(void);
 
 /***********************************************************************
  * VARIABLES
@@ -72,11 +73,16 @@ static const int_cfg_t InterruptList[] =
   .intAckGroup      = INT_RS485_RX_MSG_GROUP,
   .p_intHandler     = INT_RS485_RX_MSG_HANDLER
  },
-// {
-//   .intNum           = INT_RS485_TX_MSG,
-//   .intAckGroup      = INT_RS485_TX_MSG_GROUP,
-//   .p_intHandler     = INT_RS485_TX_MSG_HANDLER
-// },
+ {
+  .intNum           = INT_RS485_TX_MSG,
+  .intAckGroup      = INT_RS485_TX_MSG_GROUP,
+  .p_intHandler     = INT_RS485_TX_MSG_HANDLER
+ },
+ {
+  .intNum           = INT_RS485_Rx_Tx_CLB,
+  .intAckGroup      = INT_RS485_RX_Tx_CLB_GROUP,
+  .p_intHandler     = INT_RS485_RX_Tx_CLB_HANDLER
+ },
  // END OF ARRAY
  {.intNum           = UINT32_MAX},
 };

@@ -8,6 +8,7 @@
  ***********************************************************************/
 #include "device.h"
 #include "hal.h"
+#include "board.h"
 
 /***********************************************************************
  * FUNCTIONS DECLARATION
@@ -22,6 +23,7 @@ void HAL_TMR_ini(const tmr_cfg_t*);
 void HAL_DMA_rst(void);
 void HAL_IPC_ini(const ipc_cfg_t*);
 void HAL_CLA_ini(const cla_cfg_t*);
+void HAL_CLB_ini(const clb_cfg_t*);
 
 /***********************************************************************
  * FUNCTIONS DEFINITIONS
@@ -54,6 +56,8 @@ void HAL_ini(const hal_cfg_t* p_hal)
         HAL_DMA_ini(p_hal->p_dmaHandle);
         // Initialize SPI
         HAL_SPI_ini(p_hal->p_spiHandle);
+        // Initialize CLB
+        HAL_CLB_ini(p_hal->p_clbHandle);
         // Initialize CLA
         HAL_CLA_ini(p_hal->p_claHandle);
         EDIS;
@@ -182,7 +186,7 @@ void HAL_ePWM_ini(const epwm_cfg_t* p_pwmCfg)
          */
         SysCtl_disablePeripheral(SYSCTL_PERIPH_CLK_TBCLKSYNC);
         // Set correct frequency for EPWMCLK (max = PLLSYSCLK / 2)
-        SysCtl_setEPWMClockDivider(SYSCTL_EPWMCLK_DIV_2);
+        SysCtl_setEPWMClockDivider(PLLSYSCLK_TO_EPWMCLK_DIV);
 
         while(pwmBase != UINT32_MAX)
         {
@@ -647,6 +651,21 @@ void HAL_IPC_ini(const ipc_cfg_t* p_ipcCfg)
     }
 
     return;
+}
+
+/**
+ * @brief       CLB initialization function.
+ * @param[in]   *p_clbCfg   Pointer on the CLB configuration structure
+ */
+void HAL_CLB_ini(const clb_cfg_t* p_clbCfg)
+{
+    CLB_init();
+    // Input CLB Xbar config
+    CLB_INPUTXBAR_init();
+    // output CLB Xbar config
+    CLB_OUTPUTXBAR_init();
+
+    CLB_enableCLB(RS485_Rx_Tx_CLB_BASE);
 }
 
 /**

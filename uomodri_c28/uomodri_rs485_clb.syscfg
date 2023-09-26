@@ -1,0 +1,132 @@
+/**
+ * These arguments were used when this file was generated. They will be automatically applied on subsequent loads
+ * via the GUI or CLI. Run CLI with '--help' for additional information on how to override these arguments.
+ * @cliArgs --device "F2838x" --package "337bga" --part "F2838x_337bga" --context "CPU1" --product "C2000WARE@5.00.00.00"
+ * @versions {"tool":"1.17.0+3128"}
+ */
+
+/**
+ * Import the modules used in this configuration.
+ */
+const clb                              = scripting.addModule("/driverlib/clb.js", {}, false);
+const clb1                             = clb.addInstance();
+const clb_inputxbar_input              = scripting.addModule("/driverlib/clb_inputxbar_input.js", {}, false);
+const clb_inputxbar_input1             = clb_inputxbar_input.addInstance();
+const clb_inputxbar_input2             = clb_inputxbar_input.addInstance();
+const clb_outputxbar                   = scripting.addModule("/driverlib/clb_outputxbar.js", {}, false);
+const clb_outputxbar1                  = clb_outputxbar.addInstance();
+const clb_outputxbar2                  = clb_outputxbar.addInstance();
+const TILE                             = scripting.addModule("/utilities/clb_tool/clb_syscfg/source/TILE", {}, false);
+const TILE1                            = TILE.addInstance();
+const clb_run_dynamic_template_clb_c   = scripting.addModule("/utilities/clb_tool/clb_syscfg/source/clb_run_dynamic_template_clb_c.js");
+const clb_run_dynamic_template_clb_dot = scripting.addModule("/utilities/clb_tool/clb_syscfg/source/clb_run_dynamic_template_clb_dot.js");
+const clb_run_dynamic_template_clb_h   = scripting.addModule("/utilities/clb_tool/clb_syscfg/source/clb_run_dynamic_template_clb_h.js");
+const clb_run_dynamic_template_clb_sim = scripting.addModule("/utilities/clb_tool/clb_syscfg/source/clb_run_dynamic_template_clb_sim.js");
+
+/**
+ * Write custom configuration values to the imported modules.
+ */
+clb1.prescale           = 8;
+clb1.attachTile         = true;
+clb1.$name              = "RS485_Rx_Tx_CLB";
+clb1.inputsUsed         = ["CLB_IN0","CLB_IN1","CLB_IN2"];
+clb1.inputTypeCLB_IN0   = "LOCAL";
+clb1.localConfigCLB_IN0 = "CLB_LOCAL_IN_MUX_INPUT1";
+clb1.synchronizeCLB_IN0 = true;
+clb1.inputTypeCLB_IN1   = "LOCAL";
+clb1.localConfigCLB_IN1 = "CLB_LOCAL_IN_MUX_INPUT2";
+clb1.synchronizeCLB_IN1 = true;
+clb1.initTile           = true;
+
+clb_inputxbar_input1.inputxbarGpio = "GPIO13";
+clb_inputxbar_input1.$name         = "SCI_RX_CLB_INPUT_XBAR_IN1";
+
+clb_inputxbar_input2.inputxbarInput = "XBAR_INPUT2";
+clb_inputxbar_input2.inputxbarGpio  = "GPIO12";
+clb_inputxbar_input2.$name          = "SCI_TX_CLB_INPUT_XBAR_IN2";
+
+clb_outputxbar1.muxesUsed                                = ["XBAR_MUX00"];
+clb_outputxbar1.$name                                    = "THVD_TX_EN_CLB_OUTPUT_XBAR0";
+clb_outputxbar1.clb_outputxbar.$assign                   = "CLB_OUTPUTXBAR4";
+clb_outputxbar1.clb_outputxbar.clb_outputxbarPin.$assign = "GPIO94";
+
+clb_outputxbar2.$name                                    = "THVD_RX_EN_CLB_OUTPUT_XBAR0";
+clb_outputxbar2.clb_outputxbar.$assign                   = "CLB_OUTPUTXBAR7";
+clb_outputxbar2.clb_outputxbar.clb_outputxbarPin.$assign = "GPIO97";
+
+TILE1.$name                        = "TILE0";
+clb1.tile                          = TILE1;
+TILE1.BOUNDARY.$name               = "BOUNDARY0";
+TILE1.LUT_0.$name                  = "LUT_0";
+TILE1.LUT_0.i0                     = "BOUNDARY.in0";
+TILE1.LUT_0.i1                     = "BOUNDARY.in1";
+TILE1.LUT_0.lutDescription         = "RS485_Rx_Tx_LUT_RESET_COUNTER";
+TILE1.LUT_0.eqn                    = "(!i0) | (!i1) | i2";
+TILE1.LUT_0.i2                     = "COUNTER_0.count_match2";
+TILE1.LUT_1.$name                  = "LUT_1";
+TILE1.LUT_1.i0                     = "FSM_1.S0";
+TILE1.LUT_1.i1                     = "COUNTER_0.count_match1";
+TILE1.LUT_1.eqn                    = "(!i0) & i1";
+TILE1.LUT_1.lutDescription         = "RS485_Rx_LUT_HLC_IT";
+TILE1.LUT_2.$name                  = "LUT_2";
+TILE1.LUT_2.lutDescription         = "RS485_Tx_LUT_HLC_IT";
+TILE1.LUT_2.eqn                    = "i0 & i1";
+TILE1.LUT_2.i0                     = "FSM_1.S0";
+TILE1.LUT_2.i1                     = "COUNTER_0.count_match1";
+TILE1.FSM_0.$name                  = "FSM_0";
+TILE1.FSM_0.e0                     = "LUT_0.OUT";
+TILE1.FSM_0.fsmDescription         = "RS485_Rx_Tx_FSM_CNT0_ENABLE";
+TILE1.FSM_0.eqn_s1                 = "0";
+TILE1.FSM_0.eqn_s0                 = "((!s0) & e0) | (s0 & (!e1))";
+TILE1.FSM_0.e1                     = "COUNTER_0.count_match2";
+TILE1.FSM_0.eqn_out                = "0";
+TILE1.FSM_1.$name                  = "FSM_1";
+TILE1.FSM_1.e1                     = "COUNTER_0.count_match1";
+TILE1.FSM_1.eqn_s0                 = "((!s0) & e0) | (s0 & (!e1))";
+TILE1.FSM_1.eqn_s1                 = "0";
+TILE1.FSM_1.fsmDescription         = "RS485_Rx_Tx_FSM_SWITCH";
+TILE1.FSM_1.e0                     = "BOUNDARY.in2";
+TILE1.FSM_1.eqn_out                = "0";
+TILE1.FSM_2.$name                  = "FSM_2";
+TILE1.COUNTER_0.$name              = "COUNTER_0";
+TILE1.COUNTER_0.mode1              = "1";
+TILE1.COUNTER_0.counterDescription = "RS485_Rx_Tx_CNT_EOT_DETECT";
+TILE1.COUNTER_0.match1_val         = "77";
+TILE1.COUNTER_0.reset              = "LUT_0.OUT";
+TILE1.COUNTER_0.match2_val         = "78";
+TILE1.COUNTER_0.mode0              = "FSM_0.S0";
+TILE1.COUNTER_1.$name              = "COUNTER_1";
+TILE1.COUNTER_2.$name              = "COUNTER_2";
+TILE1.COUNTER_2.serializer_en      = true;
+TILE1.OUTLUT_0.$name               = "OUTLUT_0";
+TILE1.OUTLUT_0.i0                  = "FSM_1.S0";
+TILE1.OUTLUT_0.eqn                 = "i0";
+TILE1.OUTLUT_0.outlutDescription   = "RS485_RxTx_PIN";
+TILE1.OUTLUT_1.$name               = "OUTLUT_1";
+TILE1.OUTLUT_1.i0                  = "FSM_1.S0";
+TILE1.OUTLUT_1.outlutDescription   = "RS485_Rx_PIN";
+TILE1.OUTLUT_1.eqn                 = "i0";
+TILE1.OUTLUT_2.$name               = "OUTLUT_2";
+TILE1.OUTLUT_3.$name               = "OUTLUT_3";
+TILE1.OUTLUT_4.$name               = "OUTLUT_4";
+TILE1.OUTLUT_5.$name               = "OUTLUT_5";
+TILE1.OUTLUT_6.$name               = "OUTLUT_6";
+TILE1.OUTLUT_7.$name               = "OUTLUT_7";
+TILE1.HLC.$name                    = "HLC_0";
+TILE1.HLC.hlcDescription           = "RS485_Rx_Tx_HLC_EOT_IT";
+TILE1.HLC.e0                       = "LUT_1.OUT";
+TILE1.HLC.e1                       = "LUT_2.OUT";
+TILE1.HLC.program0.$name           = "HLCP_0";
+TILE1.HLC.program0.instruct0       = "INTR 0x01";
+TILE1.HLC.program1.$name           = "HLCP_1";
+TILE1.HLC.program1.instruct0       = "INTR 0x02";
+TILE1.HLC.program2.$name           = "HLCP_2";
+TILE1.HLC.program3.$name           = "HLCP_3";
+TILE1.AOC_0.$name                  = "AOC_0";
+TILE1.AOC_1.$name                  = "AOC_1";
+TILE1.AOC_2.$name                  = "AOC_2";
+TILE1.AOC_3.$name                  = "AOC_3";
+TILE1.AOC_4.$name                  = "AOC_4";
+TILE1.AOC_5.$name                  = "AOC_5";
+TILE1.AOC_6.$name                  = "AOC_6";
+TILE1.AOC_7.$name                  = "AOC_7";

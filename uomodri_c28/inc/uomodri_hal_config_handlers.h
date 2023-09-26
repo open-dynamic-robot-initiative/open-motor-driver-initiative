@@ -374,7 +374,7 @@ static const sci_cfg_t  sciCfgList[] =
   .rxLevel          = COM_SCI_RX_FIFO_LVL,
   .intSrc           = COM_SCI_IT_SRC,
   .intEnable        = true,
-  .multiProcMode    = SCI_MULTI_PROC_IDLE,
+  .multiProcMode    = SCI_MULTI_PROC_NONE,
  },
   // END OF ARRAY
  {.sciBase          = UINT32_MAX},

@@ -8,6 +8,7 @@
  ***********************************************************************/
 #include "driverlib.h"
 #include "device.h"
+#include "board.h"
 
 #include "main.h"
 #include "hal.h"
@@ -43,12 +44,14 @@ uint16_t                led_msg[LED_MSG_TX_16BIT_LENGTH];
 uint16_t                rs485_rx_msg[40];
 #pragma DATA_ALIGN(rs485_tx_msg, 4)
 #pragma DATA_SECTION(rs485_tx_msg, "ramgs0")
-uint16_t                rs485_tx_msg[34];
+uint16_t                rs485_tx_msg[40];
 
 // Local variables
-uint16_t                tx_msg_cr = 0U;
-uint16_t                tx_msg_nx = 1U;
-uint16_t                fifo_status = 0;
+uint16_t                tx_msg_cr           = 0U;
+uint16_t                tx_msg_nx           = 1U;
+uint16_t                rs485_rx_msg_index  = 0;
+uint16_t                rs485_tx_msg_index  = 0;
+uint16_t                rs485_tx_msg_remaining = 34;
 // External variables
 extern motor_t          motor_m1;
 extern motor_t          motor_m2;
@@ -87,7 +90,7 @@ void main(void)
     // Interrupts initialization
     HAL_INT_ini(InterruptList);
     // Enable RS485 message reception on THVD2450 & disable CAN.
-    RS485_RECEIVE;
+//    RS485_RECEIVE;
     // Infinite loop
 //    uint16_t i;
     while(1);
@@ -117,21 +120,7 @@ void main(void)
  */
 static void MCU_ini(void)
 {
-#if (defined USB_BUS_ENABLE_ON_CPU1) || ((defined USB_BUS_ENABLE_ON_CM) && (defined CM_CORE_ENABLE))
-    /* Redefined to pass to SysCtl_setAuxClock(). Will configure the clock as follows:
-     * AUXPLLCLK = 25MHz (XTAL_OSC) * 48 (IMULT) / (2 (REFDIV) * 5 (ODIV) * 2(AUXPLLDIV) )
-     * AUXPLLCLK require a 60MHz clock for USB. AUPLLRAWCLK require a 120MHz clock for CM. */
-#undef DEVICE_AUXSETCLOCK_CFG
-#define DEVICE_AUXSETCLOCK_CFG      (SYSCTL_AUXPLL_OSCSRC_XTAL  | \
-                                     SYSCTL_AUXPLL_IMULT(48)    | \
-                                     SYSCTL_AUXPLL_REFDIV(2U)   | \
-                                     SYSCTL_AUXPLL_ODIV(5U)     | \
-                                     SYSCTL_AUXPLL_DIV_2        | \
-                                     SYSCTL_AUXPLL_ENABLE       | \
-                                     SYSCTL_DCC_BASE_0)
-#undef DEVICE_AUXCLK_FREQ
-#define DEVICE_AUXCLK_FREQ          ((DEVICE_OSCSRC_FREQ * 48) / (2 * 5 * 2))
-#endif
+//#if (defined USB_BUS_ENABLE_ON_CPU1) || ((defined USB_BUS_ENABLE_ON_CM) && (defined CM_CORE_ENABLE))
     /* Initialize clock and peripherals */
     Device_init();
     /* Modify LSPCLK divider previously defined @ DEVICE_SYSCLK_FREQ / 4 */
@@ -139,6 +128,24 @@ static void MCU_ini(void)
     SysCtl_setLowSpeedClock(SYSCTL_LSPCLK_PRESCALE_1);
     ASSERT(SysCtl_getLowSpeedClock(DEVICE_OSCSRC_FREQ) == UOMODRI_LSPCLK_FREQ);
 #endif
+    /* Set the CLB/tile clock */
+#if (CLB_TILE_ENABLE)
+    /* Redefined to pass to SysCtl_setAuxClock(). Will configure the clock as follows:
+     * AUXPLLCLK = 25MHz (XTAL_OSC) * 48 (IMULT) / (2 (REFDIV) * 5 (ODIV) * 2(AUXPLLDIV) )
+     * AUXPLLCLK require a 60MHz clock for USB. AUPLLRAWCLK require a 120MHz clock for CM. */
+//#undef DEVICE_AUXSETCLOCK_CFG
+//#define DEVICE_AUXSETCLOCK_CFG      (SYSCTL_AUXPLL_OSCSRC_XTAL  | \
+//                                     SYSCTL_AUXPLL_IMULT(48)    | \
+//                                     SYSCTL_AUXPLL_REFDIV(2U)   | \
+//                                     SYSCTL_AUXPLL_ODIV(5U)     | \
+//                                     SYSCTL_AUXPLL_DIV_2        | \
+//                                     SYSCTL_AUXPLL_ENABLE       | \
+//                                     SYSCTL_DCC_BASE_0)
+//#undef DEVICE_AUXCLK_FREQ
+//#define DEVICE_AUXCLK_FREQ          ((DEVICE_OSCSRC_FREQ * 48) / (2 * 5 * 2))
+#endif
+
+
 #if ((defined USB_BUS_ENABLE_ON_CM) && (defined CM_CORE_ENABLE))
     /* Allocate Shared Peripheral USB to the CM Side. */
     SysCtl_allocateSharedPeripheral(SYSCTL_PALLOCATE_USBA, 1);
@@ -309,18 +316,17 @@ __attribute__((interrupt)) void dma_isrComRx(void)
 
 __attribute__((interrupt)) void sci_isrRx_RS485(void)
 {
-    static uint16_t i       = 0;
-    int16_t fifo_rx_status  = (uint16_t)SCI_getRxFIFOStatus(COM_SCI_BASE);
+    uint16_t fifo_rx_status  = 0;
 
-    if(HWREGH(COM_SCI_BASE + SCI_O_CTL1) & SCI_CTL1_SLEEP)
-    {
-        SCI_disableSleepMode(COM_SCI_BASE);
-        i = 0;
-    }
-
+//    if(HWREGH(COM_SCI_BASE + SCI_O_CTL1) & SCI_CTL1_SLEEP)
+//    {
+//        SCI_disableSleepMode(COM_SCI_BASE);
+//        i = 0;
+//    }
     if(SCI_getInterruptStatus(COM_SCI_BASE) & SCI_INT_RXFF)
     {
         DBG_PIN2_SET;
+        fifo_rx_status  = (uint16_t)SCI_getRxFIFOStatus(COM_SCI_BASE);
 //        if(HWREGH(COM_SCI_BASE + SCI_O_RXST) & SCI_RXST_RXWAKE)
 //        {
 //            DBG_PIN3_SET;
@@ -329,18 +335,20 @@ __attribute__((interrupt)) void sci_isrRx_RS485(void)
 //        }
         while(fifo_rx_status)
         {
-            rs485_rx_msg[i] = (uint16_t)(HWREGH(COM_SCI_BASE + SCI_O_RXBUF) & SCI_RXBUF_SAR_M);
-//            i               = (i < 33) ? (i + 1) : (0);
-            i              += 1;
-            fifo_rx_status -= 1;
-            if(i > 33)
-            {
-                SCI_enableSleepMode(COM_SCI_BASE);
-                SCI_resetRxFIFO(COM_SCI_BASE);
-                fifo_rx_status = 0;
-                i = 0;
-            }
+            rs485_rx_msg[rs485_rx_msg_index]    = (uint16_t)(HWREGH(COM_SCI_BASE + SCI_O_RXBUF) & SCI_RXBUF_SAR_M);
+            rs485_tx_msg[rs485_rx_msg_index]    = rs485_rx_msg[rs485_rx_msg_index];
+            rs485_rx_msg_index                 += 1;
+            fifo_rx_status                     -= 1;
         }
+//
+//            if(i > 33)
+//            {
+//                SCI_enableSleepMode(COM_SCI_BASE);
+//                SCI_resetRxFIFO(COM_SCI_BASE);
+//                fifo_rx_status = 0;
+//                i = 0;
+//            }
+//        }
         SCI_clearOverflowStatus(COM_SCI_BASE);
         SCI_clearInterruptStatus(COM_SCI_BASE, SCI_INT_RXFF);
         DBG_PIN2_CLEAR;
@@ -348,65 +356,114 @@ __attribute__((interrupt)) void sci_isrRx_RS485(void)
 
     if(SCI_getInterruptStatus(COM_SCI_BASE) & (SCI_INT_PE | SCI_INT_OE | SCI_INT_FE))
     {
-        DBG_PIN3_SET;
-        fifo_rx_status      = (uint16_t)SCI_getRxFIFOStatus(COM_SCI_BASE);
-        fifo_rx_status      = (fifo_rx_status > 0) ? (fifo_rx_status - 1) : (0);
+        DBG_PIN2_SET;
+        fifo_rx_status          = (uint16_t)SCI_getRxFIFOStatus(COM_SCI_BASE);
+        fifo_rx_status          = (fifo_rx_status > 0) ? (fifo_rx_status - 1) : (0);
         while(fifo_rx_status)
         {
-            rs485_rx_msg[i] = (uint16_t)(HWREGH(COM_SCI_BASE + SCI_O_RXBUF) & SCI_RXBUF_SAR_M);
-            i               = (i < 33) ? (i + 1) : (0);
-            fifo_rx_status -= 1;
+            rs485_rx_msg[rs485_rx_msg_index]    = (uint16_t)(HWREGH(COM_SCI_BASE + SCI_O_RXBUF) & SCI_RXBUF_SAR_M);
+//            i               = (i < 33) ? (i + 1) : (0);
+            rs485_rx_msg_index                 += 1;
+            fifo_rx_status                     -= 1;
         }
-        SCI_resetRxFIFO(COM_SCI_BASE);
+        //SCI_resetRxFIFO(COM_SCI_BASE);
         SCI_clearInterruptStatus(COM_SCI_BASE, SCI_INT_RXERR);
-        DBG_PIN3_CLEAR;
+        DBG_PIN2_CLEAR;
     }
+
     // Clear IT flag
     Interrupt_clearACKGroup(INT_RS485_RX_MSG_GROUP);
 }
 
-
-//__attribute__((interrupt)) void sci_isrRx_RS485(void)
-//{
-//    static uint16_t i = 0;
-////    if(SCI_getInterruptStatus(COM_SCI_BASE) & (SCI_INT_RXERR | SCI_INT_FE | SCI_INT_OE | SCI_INT_PE))
-////    {
-////        SCI_resetRxFIFO(COM_SCI_BASE);
-//////        i = 0;
-//////        //i = (SCI_getRxStatus(COM_SCI_BASE) & SCI_RXST_BRKDT) ? (0) : (i);
-//////        SCI_clearInterruptStatus(COM_SCI_BASE, (SCI_INT_RXERR | SCI_INT_FE | SCI_INT_OE | SCI_INT_PE));
-////    }
-//    if(HWREGH(COM_SCI_BASE + SCI_O_RXBUF) & (SCI_RXBUF_SCIFFFE | SCI_RXBUF_SCIFFPE))
-//    {
-//        SCI_resetRxFIFO(COM_SCI_BASE);
-//////        i = 0;
-//////        //SCI_clearInterruptStatus(COM_SCI_BASE, SCI_INT_ALL_ERR | SCI_INT_RXFF);
-//    }
-//    if(SCI_getInterruptStatus(COM_SCI_BASE) & SCI_INT_RXFF)
-//    {
-//        uint16_t fifo_status = (uint16_t)SCI_getRxFIFOStatus(COM_SCI_BASE);
-////        static uint16_t i = 0;
-//        while(fifo_status)
-//        {
-//            rs485_rx_msg[i] = (uint16_t)(HWREGH(COM_SCI_BASE + SCI_O_RXBUF) & SCI_RXBUF_SAR_M);
-//            i               = (i < 139) ? (i + 1) : (0);
-//            fifo_status    -= 1;
-//        }
-////        SCI_readCharArray(COM_SCI_BASE, &rs485_rx_msg[i], (uint16_t)COM_SCI_RX_FIFO_LVL);//fifo_status);
-////        i  += (uint16_t)SCI_FIFO_RX14;//fifo_status;
-////        i   = (i < 140) ? (i + (uint16_t)COM_SCI_RX_FIFO_LVL) : (0);
-//        //SCI_clearOverflowStatus(COM_SCI_BASE);
-//        //    uint32_t it_flags = SCI_getInterruptStatus(COM_SCI_BASE);
-//    }
-//    SCI_clearInterruptStatus(COM_SCI_BASE, (SCI_INT_RXERR | SCI_INT_FE | SCI_INT_OE | SCI_INT_PE | SCI_INT_RXFF | SCI_INT_TXFF));
-//    // Clear IT flag
-//    Interrupt_clearACKGroup(INT_RS485_RX_MSG_GROUP);
-//}
-
 __attribute__((interrupt)) void sci_isrTx_RS485(void)
 {
-    SCI_clearInterruptStatus(COM_SCI_BASE, SCI_INT_TXFF | SCI_INT_TXRDY);
+//    CLB_setGPREG(CLB1_BASE, 1UL);
+    uint16_t fifo_tx_status = 0;
+    DBG_PIN2_SET;
+    if(SCI_getInterruptStatus(COM_SCI_BASE) & SCI_INT_TXFF)
+    {
+        fifo_tx_status  = 16 - (uint16_t)SCI_getTxFIFOStatus(COM_SCI_BASE);
+//__min(fifo_tx_status, rs485_tx_msg_remaining) &&
+        while(fifo_tx_status && rs485_tx_msg_remaining)
+        {
+            HWREGH(COM_SCI_BASE + SCI_O_TXBUF)  = rs485_tx_msg[rs485_tx_msg_index];
+            rs485_tx_msg_index                 += 1;
+            rs485_tx_msg_remaining             -= 1;
+            fifo_tx_status                     -= 1;
+        }
+        if(rs485_tx_msg_remaining)
+//            HWREGH(COM_SCI_BASE + SCI_O_FFTX) &= ~SCI_FFTX_TXFFIENA;
+//            SCI_disableInterrupt(COM_SCI_BASE, SCI_INT_TXFF);
+//        HWREGH(base + SCI_O_FFTX) |= SCI_FFTX_TXFFINTCLR;
+            SCI_clearInterruptStatus(COM_SCI_BASE, SCI_INT_TXFF);
+    }
+
+//    if(SCI_getInterruptStatus(COM_SCI_BASE) & SCI_INT_TXRDY)
+//        SCI_clearInterruptStatus(COM_SCI_BASE, SCI_INT_TXRDY);
+    DBG_PIN2_CLEAR;
     // Clear IT flag
     Interrupt_clearACKGroup(INT_RS485_TX_MSG_GROUP);
+//    CLB_setGPREG(CLB1_BASE, 0UL);
+}
+
+__attribute__((interrupt)) void clb_isrRxTx_RS485(void)
+{
+    DBG_PIN3_SET;
+    uint16_t fifo_status = 0;
+    if(CLB_getInterruptTag(CLB1_BASE) == 0x01)
+    {
+        fifo_status = (uint16_t)SCI_getRxFIFOStatus(COM_SCI_BASE);
+
+        while(fifo_status)
+        {
+            rs485_rx_msg[rs485_rx_msg_index]    = (uint16_t)(HWREGH(COM_SCI_BASE + SCI_O_RXBUF) & SCI_RXBUF_SAR_M);
+            rs485_tx_msg[rs485_rx_msg_index]    = rs485_rx_msg[rs485_rx_msg_index];
+            rs485_rx_msg_index                 += 1;
+            fifo_status                        -= 1;
+        }
+        SCI_resetRxFIFO(COM_SCI_BASE);
+        SCI_clearOverflowStatus(COM_SCI_BASE);
+        SCI_clearInterruptStatus(COM_SCI_BASE, SCI_INT_RXFF);
+        SCI_disableRxModule(COM_SCI_BASE);
+
+//    SCI_resetRxFIFO(COM_SCI_BASE);
+        rs485_rx_msg_index      = 0;
+        rs485_tx_msg_index      = 0;
+        rs485_tx_msg_remaining  = 34;
+
+//    if(fifo_status)
+        CLB_setGPREG(CLB1_BASE, 4UL);
+        CLB_setGPREG(CLB1_BASE, 0UL);
+
+        SCI_enableTxModule(COM_SCI_BASE);
+//    SCI_enableInterrupt(COM_SCI_BASE, SCI_INT_TXFF);
+        SCI_resetTxFIFO(COM_SCI_BASE);
+        fifo_status = 16 - (uint16_t)SCI_getTxFIFOStatus(COM_SCI_BASE);//(uint16_t)SCI_FIFO_TX16;//
+
+        while(fifo_status)
+        {
+            HWREGH(COM_SCI_BASE + SCI_O_TXBUF)  = rs485_tx_msg[rs485_tx_msg_index];
+            rs485_tx_msg_index                 += 1;
+            rs485_tx_msg_remaining             -= 1;
+            fifo_status                        -= 1;
+        }
+
+        SCI_clearInterruptStatus(COM_SCI_BASE, SCI_INT_TXFF);
+    }
+    if(CLB_getInterruptTag(CLB1_BASE) == 0x02)
+    {
+        SCI_resetRxFIFO(COM_SCI_BASE);
+        SCI_enableRxModule(COM_SCI_BASE);
+        SCI_resetTxFIFO(COM_SCI_BASE);
+        SCI_disableTxModule(COM_SCI_BASE);
+    }
+//        SCI_disableTxModule(COM_SCI_BASE);
+
+    DBG_PIN3_CLEAR;
+
+//    uint16_t tag = CLB_getInterruptTag(RS485_Rx_Tx_CLB_BASE);
+    CLB_clearInterruptTag(RS485_Rx_Tx_CLB_BASE);
+    // Clear IT flag
+    Interrupt_clearACKGroup(INT_RS485_RX_Tx_CLB_GROUP);
 }
 

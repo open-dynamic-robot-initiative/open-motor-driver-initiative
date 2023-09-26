@@ -36,6 +36,7 @@
 #define CPU2_CORE_ENABLE                        (0)
 #define CM_CORE_ENABLE                          (0)
 #define CLA_CORE_ENABLE                         (1)
+#define CLB_TILE_ENABLE                         (1)
 // CM peripherals ENABLE/DISABLE
 #define USB_BUS_ENABLE                          (0)
 #define UART_BUS_ENABLE                         (0)
@@ -313,35 +314,35 @@
 #define CAN_SHDN_EN_CLEAR                       (HWREG(GPIODATA_BASE + GPIO_O_GPACLEAR) = GPIO_GPACLEAR_GPIO14)
 #define CAN_SHDN_EN_TOGGLE                      (HWREG(GPIODATA_BASE + GPIO_O_GPATOGGLE)= GPIO_GPATOGGLE_GPIO14)
 #define RS485_RX_EN_NUM                         (97U)
-#define RS485_RX_EN_CFG                         GPIO_97_GPIO97
+#define RS485_RX_EN_CFG                         GPIO_97_CLB_OUTPUTXBAR7//GPIO_97_GPIO97
 #define RS485_RX_EN_SET                         (HWREG(GPIODATA_BASE + GPIO_O_GPDSET)   = GPIO_GPDSET_GPIO97)
 #define RS485_RX_EN_CLEAR                       (HWREG(GPIODATA_BASE + GPIO_O_GPDCLEAR) = GPIO_GPDCLEAR_GPIO97)
 #define RS485_RX_EN_TOGGLE                      (HWREG(GPIODATA_BASE + GPIO_O_GPDTOGGLE)= GPIO_GPDTOGGLE_GPIO97)
 #define RS485_TX_EN_NUM                         (94U)
-#define RS485_TX_EN_CFG                         GPIO_94_GPIO94
+#define RS485_TX_EN_CFG                         GPIO_94_CLB_OUTPUTXBAR4//GPIO_94_GPIO94
 #define RS485_TX_EN_SET                         (HWREG(GPIODATA_BASE + GPIO_O_GPCSET)   = GPIO_GPCSET_GPIO94)
 #define RS485_TX_EN_CLEAR                       (HWREG(GPIODATA_BASE + GPIO_O_GPCCLEAR) = GPIO_GPCCLEAR_GPIO94)
 #define RS485_TX_EN_TOGGLE                      (HWREG(GPIODATA_BASE + GPIO_O_GPCTOGGLE)= GPIO_GPCTOGGLE_GPIO94)
 
-#define CAN_ENABLE                              CAN_SHDN_EN_CLEAR
-#define CAN_DISABLE                             CAN_SHDN_EN_SET
-#define RS485_RX_ENABLE                         RS485_RX_EN_CLEAR
-#define RS485_RX_DISABLE                        RS485_RX_EN_SET
-#define RS485_TX_ENABLE                         RS485_TX_EN_SET
-#define RS485_TX_DISABLE                        RS485_TX_EN_CLEAR
-
-#define RS485_DISABLE                           RS485_RX_DISABLE; \
-                                                RS485_TX_DISABLE
-#define CAN_READY                               RS485_DISABLE; \
-                                                CAN_ENABLE
-#define RS485_TRANSMIT                          CAN_DISABLE; \
-                                                RS485_RX_DISABLE; \
-                                                RS485_TX_ENABLE
-#define RS485_RECEIVE                           CAN_DISABLE; \
-                                                RS485_TX_DISABLE; \
-                                                RS485_RX_ENABLE
-#define ALL_SERIAL_DISABLE                      CAN_DISABLE; \
-                                                RS485_DISABLE
+//#define CAN_ENABLE                              CAN_SHDN_EN_CLEAR
+//#define CAN_DISABLE                             CAN_SHDN_EN_SET
+//#define RS485_RX_ENABLE                         RS485_RX_EN_CLEAR
+//#define RS485_RX_DISABLE                        RS485_RX_EN_SET
+//#define RS485_TX_ENABLE                         RS485_TX_EN_SET
+//#define RS485_TX_DISABLE                        RS485_TX_EN_CLEAR
+//
+//#define RS485_DISABLE                           RS485_RX_DISABLE; \
+//                                                RS485_TX_DISABLE
+//#define CAN_READY                               RS485_DISABLE; \
+//                                                CAN_ENABLE
+//#define RS485_TRANSMIT                          CAN_DISABLE; \
+//                                                RS485_RX_DISABLE; \
+//                                                RS485_TX_ENABLE
+//#define RS485_RECEIVE                           CAN_DISABLE; \
+//                                                RS485_TX_DISABLE; \
+//                                                RS485_RX_ENABLE
+//#define ALL_SERIAL_DISABLE                      CAN_DISABLE; \
+//                                                RS485_DISABLE
 #endif
 
 /***********************************************************************
@@ -376,8 +377,8 @@
 #define COM_SCI_CFG                             (SCI_CONFIG_WLEN_8 | \
                                                  SCI_CONFIG_STOP_ONE | \
                                                  SCI_CONFIG_PAR_NONE)
-#define COM_SCI_TX_FIFO_LVL                     SCI_FIFO_TX5
-#define COM_SCI_RX_FIFO_LVL                     SCI_FIFO_RX5
+#define COM_SCI_TX_FIFO_LVL                     SCI_FIFO_TX8
+#define COM_SCI_RX_FIFO_LVL                     SCI_FIFO_RX8
 #define SCI_INT_ALL                             (SCI_INT_RXERR | \
                                                  SCI_INT_RXRDY_BRKDT | \
                                                  SCI_INT_TXRDY | \
@@ -388,7 +389,8 @@
                                                  SCI_INT_OE | \
                                                  SCI_INT_PE)
 #define COM_SCI_IT_SRC                          (SCI_INT_RXERR | \
-                                                 SCI_INT_RXFF)//SCI_INT_ALL_ERR | \SCI_INT_RXRDY_BRKDT | \
+                                                 SCI_INT_RXFF  | \
+                                                 SCI_INT_TXFF)//SCI_INT_ALL_ERR | \SCI_INT_RXRDY_BRKDT | \
 //#define SCI_INT_ALL_RX                          (SCI_INT_RXERR | \
 //                                                 SCI_INT_RXRDY_BRKDT | \
 //                                                 SCI_INT_RXFF)
@@ -1311,6 +1313,12 @@
 #define CLA_MOTOR2_TASK_HANDLER                 &motor2_Task
 
 /***********************************************************************
+ * CLB DEFINES
+ ***********************************************************************/
+//#define CLBCLK_SRC                              DEVICE_SYSCLK_FREQ AUXPLLCLK
+#define CLBCLK_FREQ                             EPWMCLK_FREQ
+
+/***********************************************************************
  * INTERRUPTS DEFINES
  ***********************************************************************/
 #define INT_CLA_ADC_CALIB                       INT_CLA1_1
@@ -1334,6 +1342,9 @@
 #define INT_RS485_TX_MSG                        INT_SCIC_TX
 #define INT_RS485_TX_MSG_GROUP                  INTERRUPT_ACK_GROUP8
 #define INT_RS485_TX_MSG_HANDLER                &sci_isrTx_RS485
+#define INT_RS485_Rx_Tx_CLB                     INT_CLB1
+#define INT_RS485_RX_Tx_CLB_GROUP               INTERRUPT_ACK_GROUP5
+#define INT_RS485_RX_Tx_CLB_HANDLER             &clb_isrRxTx_RS485
 
 /***********************************************************************
  * COMMUNICATION DEFINES
