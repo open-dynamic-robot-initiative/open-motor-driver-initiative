@@ -193,3 +193,41 @@ uint32_t COM_vcrc32(uint16_t* p_msg, uint16_t length)
     crc.run(&crc);
     return(crc.crcResult);
 }
+
+void RS485_msgRxInit(rs485_rx_t* p_msg_rx)
+{
+    p_msg_rx->index = 0;
+}
+
+void RS485_msgRx(uint32_t sci_base, rs485_rx_t* p_msg_rx)
+{
+    uint16_t fifo_rx_status  = (uint16_t)SCI_getRxFIFOStatus(sci_base);
+    while(fifo_rx_status)
+    {
+        p_msg_rx->msg[p_msg_rx->index] = (uint16_t)(HWREGH(sci_base + SCI_O_RXBUF) & SCI_RXBUF_SAR_M);
+        p_msg_rx->index++;
+        fifo_rx_status--;
+    }
+
+    return;
+}
+
+void RS485_msgTxInit(rs485_tx_t* p_msg_tx)
+{
+    p_msg_tx->index = 0;
+    p_msg_tx->remaining = 34;
+}
+
+void RS485_msgTx(uint32_t sci_base, rs485_tx_t* p_msg_tx)
+{
+    uint16_t fifo_tx_status = (uint16_t)(SCI_FIFO_TX16 - SCI_getTxFIFOStatus(sci_base));
+    while(fifo_tx_status && p_msg_tx->remaining)
+    {
+        HWREGH(sci_base + SCI_O_TXBUF) = p_msg_tx->msg[p_msg_tx->index];
+        p_msg_tx->index++;
+        p_msg_tx->remaining--;
+        fifo_tx_status--;
+    }
+
+    return;
+}

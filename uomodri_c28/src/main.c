@@ -41,17 +41,17 @@ slv2mst_msg_t           tx_swap;
 uint16_t                led_msg[LED_MSG_TX_16BIT_LENGTH];
 #pragma DATA_ALIGN(rs485_rx_msg, 4)
 #pragma DATA_SECTION(rs485_rx_msg, "ramgs0")
-uint16_t                rs485_rx_msg[40];
+rs485_rx_t              rs485_rx_msg = {.index = 0};
 #pragma DATA_ALIGN(rs485_tx_msg, 4)
 #pragma DATA_SECTION(rs485_tx_msg, "ramgs0")
-uint16_t                rs485_tx_msg[40];
+rs485_tx_t              rs485_tx_msg = {.index = 0, .remaining = 34};
 
 // Local variables
 uint16_t                tx_msg_cr           = 0U;
 uint16_t                tx_msg_nx           = 1U;
-uint16_t                rs485_rx_msg_index  = 0;
-uint16_t                rs485_tx_msg_index  = 0;
-uint16_t                rs485_tx_msg_remaining = 34;
+//uint16_t                rs485_rx_msg_index  = 0;
+//uint16_t                rs485_tx_msg_index  = 0;
+//uint16_t                rs485_tx_msg_remaining = 34;
 // External variables
 extern motor_t          motor_m1;
 extern motor_t          motor_m2;
@@ -316,7 +316,7 @@ __attribute__((interrupt)) void dma_isrComRx(void)
 
 __attribute__((interrupt)) void sci_isrRx_RS485(void)
 {
-    uint16_t fifo_rx_status  = 0;
+//    uint16_t fifo_rx_status  = 0;
 
 //    if(HWREGH(COM_SCI_BASE + SCI_O_CTL1) & SCI_CTL1_SLEEP)
 //    {
@@ -326,29 +326,16 @@ __attribute__((interrupt)) void sci_isrRx_RS485(void)
     if(SCI_getInterruptStatus(COM_SCI_BASE) & SCI_INT_RXFF)
     {
         DBG_PIN2_SET;
-        fifo_rx_status  = (uint16_t)SCI_getRxFIFOStatus(COM_SCI_BASE);
-//        if(HWREGH(COM_SCI_BASE + SCI_O_RXST) & SCI_RXST_RXWAKE)
+        RS485_msgRx(COM_SCI_BASE, &rs485_rx_msg);
+//        fifo_rx_status  = (uint16_t)SCI_getRxFIFOStatus(COM_SCI_BASE);
+//        while(fifo_rx_status)
 //        {
-//            DBG_PIN3_SET;
-//            i = 0;
-//            DBG_PIN3_CLEAR;
+//            rs485_rx_msg[rs485_rx_msg_index]    = (uint16_t)(HWREGH(COM_SCI_BASE + SCI_O_RXBUF) & SCI_RXBUF_SAR_M);
+//            rs485_tx_msg[rs485_rx_msg_index]    = rs485_rx_msg[rs485_rx_msg_index];
+//            rs485_rx_msg_index                 += 1;
+//            fifo_rx_status                     -= 1;
 //        }
-        while(fifo_rx_status)
-        {
-            rs485_rx_msg[rs485_rx_msg_index]    = (uint16_t)(HWREGH(COM_SCI_BASE + SCI_O_RXBUF) & SCI_RXBUF_SAR_M);
-            rs485_tx_msg[rs485_rx_msg_index]    = rs485_rx_msg[rs485_rx_msg_index];
-            rs485_rx_msg_index                 += 1;
-            fifo_rx_status                     -= 1;
-        }
 //
-//            if(i > 33)
-//            {
-//                SCI_enableSleepMode(COM_SCI_BASE);
-//                SCI_resetRxFIFO(COM_SCI_BASE);
-//                fifo_rx_status = 0;
-//                i = 0;
-//            }
-//        }
         SCI_clearOverflowStatus(COM_SCI_BASE);
         SCI_clearInterruptStatus(COM_SCI_BASE, SCI_INT_RXFF);
         DBG_PIN2_CLEAR;
@@ -357,15 +344,17 @@ __attribute__((interrupt)) void sci_isrRx_RS485(void)
     if(SCI_getInterruptStatus(COM_SCI_BASE) & (SCI_INT_PE | SCI_INT_OE | SCI_INT_FE))
     {
         DBG_PIN2_SET;
-        fifo_rx_status          = (uint16_t)SCI_getRxFIFOStatus(COM_SCI_BASE);
-        fifo_rx_status          = (fifo_rx_status > 0) ? (fifo_rx_status - 1) : (0);
-        while(fifo_rx_status)
-        {
-            rs485_rx_msg[rs485_rx_msg_index]    = (uint16_t)(HWREGH(COM_SCI_BASE + SCI_O_RXBUF) & SCI_RXBUF_SAR_M);
-//            i               = (i < 33) ? (i + 1) : (0);
-            rs485_rx_msg_index                 += 1;
-            fifo_rx_status                     -= 1;
-        }
+        RS485_msgRx(COM_SCI_BASE, &rs485_rx_msg);
+        rs485_rx_msg.index--;
+//        fifo_rx_status          = (uint16_t)SCI_getRxFIFOStatus(COM_SCI_BASE);
+//        fifo_rx_status          = (fifo_rx_status > 0) ? (fifo_rx_status - 1) : (0);
+//        while(fifo_rx_status)
+//        {
+//            rs485_rx_msg[rs485_rx_msg_index]    = (uint16_t)(HWREGH(COM_SCI_BASE + SCI_O_RXBUF) & SCI_RXBUF_SAR_M);
+////            i               = (i < 33) ? (i + 1) : (0);
+//            rs485_rx_msg_index                 += 1;
+//            fifo_rx_status                     -= 1;
+//        }
         //SCI_resetRxFIFO(COM_SCI_BASE);
         SCI_clearInterruptStatus(COM_SCI_BASE, SCI_INT_RXERR);
         DBG_PIN2_CLEAR;
@@ -378,20 +367,21 @@ __attribute__((interrupt)) void sci_isrRx_RS485(void)
 __attribute__((interrupt)) void sci_isrTx_RS485(void)
 {
 //    CLB_setGPREG(CLB1_BASE, 1UL);
-    uint16_t fifo_tx_status = 0;
+//    uint16_t fifo_tx_status = 0;
     DBG_PIN2_SET;
     if(SCI_getInterruptStatus(COM_SCI_BASE) & SCI_INT_TXFF)
     {
-        fifo_tx_status  = 16 - (uint16_t)SCI_getTxFIFOStatus(COM_SCI_BASE);
-//__min(fifo_tx_status, rs485_tx_msg_remaining) &&
-        while(fifo_tx_status && rs485_tx_msg_remaining)
-        {
-            HWREGH(COM_SCI_BASE + SCI_O_TXBUF)  = rs485_tx_msg[rs485_tx_msg_index];
-            rs485_tx_msg_index                 += 1;
-            rs485_tx_msg_remaining             -= 1;
-            fifo_tx_status                     -= 1;
-        }
-        if(rs485_tx_msg_remaining)
+        RS485_msgTx(COM_SCI_BASE, &rs485_tx_msg);
+//        fifo_tx_status  = 16 - (uint16_t)SCI_getTxFIFOStatus(COM_SCI_BASE);
+////__min(fifo_tx_status, rs485_tx_msg_remaining) &&
+//        while(fifo_tx_status && rs485_tx_msg_remaining)
+//        {
+//            HWREGH(COM_SCI_BASE + SCI_O_TXBUF)  = rs485_tx_msg[rs485_tx_msg_index];
+//            rs485_tx_msg_index                 += 1;
+//            rs485_tx_msg_remaining             -= 1;
+//            fifo_tx_status                     -= 1;
+//        }
+        if(rs485_tx_msg.remaining)
 //            HWREGH(COM_SCI_BASE + SCI_O_FFTX) &= ~SCI_FFTX_TXFFIENA;
 //            SCI_disableInterrupt(COM_SCI_BASE, SCI_INT_TXFF);
 //        HWREGH(base + SCI_O_FFTX) |= SCI_FFTX_TXFFINTCLR;
@@ -409,27 +399,45 @@ __attribute__((interrupt)) void sci_isrTx_RS485(void)
 __attribute__((interrupt)) void clb_isrRxTx_RS485(void)
 {
     DBG_PIN3_SET;
-    uint16_t fifo_status = 0;
+//    uint16_t fifo_status = 0;
     if(CLB_getInterruptTag(CLB1_BASE) == 0x01)
     {
-        fifo_status = (uint16_t)SCI_getRxFIFOStatus(COM_SCI_BASE);
+        RS485_msgRx(COM_SCI_BASE, &rs485_rx_msg);
+//        fifo_status = (uint16_t)SCI_getRxFIFOStatus(COM_SCI_BASE);
 
-        while(fifo_status)
-        {
-            rs485_rx_msg[rs485_rx_msg_index]    = (uint16_t)(HWREGH(COM_SCI_BASE + SCI_O_RXBUF) & SCI_RXBUF_SAR_M);
-            rs485_tx_msg[rs485_rx_msg_index]    = rs485_rx_msg[rs485_rx_msg_index];
-            rs485_rx_msg_index                 += 1;
-            fifo_status                        -= 1;
-        }
+//        while(fifo_status)
+//        {
+//            rs485_rx_msg[rs485_rx_msg_index]    = (uint16_t)(HWREGH(COM_SCI_BASE + SCI_O_RXBUF) & SCI_RXBUF_SAR_M);
+//            rs485_tx_msg[rs485_rx_msg_index]    = rs485_rx_msg[rs485_rx_msg_index];
+//            rs485_rx_msg_index                 += 1;
+//            fifo_status                        -= 1;
+//        }
         SCI_resetRxFIFO(COM_SCI_BASE);
         SCI_clearOverflowStatus(COM_SCI_BASE);
         SCI_clearInterruptStatus(COM_SCI_BASE, SCI_INT_RXFF);
         SCI_disableRxModule(COM_SCI_BASE);
 
 //    SCI_resetRxFIFO(COM_SCI_BASE);
-        rs485_rx_msg_index      = 0;
-        rs485_tx_msg_index      = 0;
-        rs485_tx_msg_remaining  = 34;
+
+        RS485_msgRxInit(&rs485_rx_msg);
+        RS485_msgTxInit(&rs485_tx_msg);
+//        rs485_rx_msg.index      = 0;
+//        rs485_tx_msg.index      = 0;
+//        rs485_tx_msg.remaining  = 34;
+
+        while(rs485_tx_msg.remaining)
+            rs485_tx_msg.msg[rs485_tx_msg.index++] = rs485_rx_msg.msg[rs485_rx_msg.index++];
+
+//        rs485_rx_msg.index      = 0;
+//        rs485_tx_msg.index      = 0;
+//        rs485_tx_msg.remaining  = 34;
+
+        RS485_msgRxInit(&rs485_rx_msg);
+        RS485_msgTxInit(&rs485_tx_msg);
+
+//        rs485_rx_msg_index      = 0;
+//        rs485_tx_msg_index      = 0;
+//        rs485_tx_msg_remaining  = 34;
 
 //    if(fifo_status)
         CLB_setGPREG(CLB1_BASE, 4UL);
@@ -438,15 +446,16 @@ __attribute__((interrupt)) void clb_isrRxTx_RS485(void)
         SCI_enableTxModule(COM_SCI_BASE);
 //    SCI_enableInterrupt(COM_SCI_BASE, SCI_INT_TXFF);
         SCI_resetTxFIFO(COM_SCI_BASE);
-        fifo_status = 16 - (uint16_t)SCI_getTxFIFOStatus(COM_SCI_BASE);//(uint16_t)SCI_FIFO_TX16;//
-
-        while(fifo_status)
-        {
-            HWREGH(COM_SCI_BASE + SCI_O_TXBUF)  = rs485_tx_msg[rs485_tx_msg_index];
-            rs485_tx_msg_index                 += 1;
-            rs485_tx_msg_remaining             -= 1;
-            fifo_status                        -= 1;
-        }
+        RS485_msgTx(COM_SCI_BASE, &rs485_tx_msg);
+//        fifo_status = 16 - (uint16_t)SCI_getTxFIFOStatus(COM_SCI_BASE);//(uint16_t)SCI_FIFO_TX16;//
+//
+//        while(fifo_status)
+//        {
+//            HWREGH(COM_SCI_BASE + SCI_O_TXBUF)  = rs485_tx_msg[rs485_tx_msg_index];
+//            rs485_tx_msg_index                 += 1;
+//            rs485_tx_msg_remaining             -= 1;
+//            fifo_status                        -= 1;
+//        }
 
         SCI_clearInterruptStatus(COM_SCI_BASE, SCI_INT_TXFF);
     }
