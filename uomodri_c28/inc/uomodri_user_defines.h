@@ -388,9 +388,10 @@
                                                  SCI_INT_FE | \
                                                  SCI_INT_OE | \
                                                  SCI_INT_PE)
-#define COM_SCI_IT_SRC                          (SCI_INT_RXERR | \
-                                                 SCI_INT_RXFF  | \
-                                                 SCI_INT_TXFF)//SCI_INT_ALL_ERR | \SCI_INT_RXRDY_BRKDT | \
+#define COM_SCI_IT_SRC                          (SCI_INT_RXFF | \
+                                                 SCI_INT_TXFF)
+//                                                 SCI_INT_RXRDY_BRKDT)// | \
+//                                                 SCI_INT_TXFF)//SCI_INT_RXERR | \SCI_INT_ALL_ERR | \SCI_INT_RXRDY_BRKDT | \
 //#define SCI_INT_ALL_RX                          (SCI_INT_RXERR | \
 //                                                 SCI_INT_RXRDY_BRKDT | \
 //                                                 SCI_INT_RXFF)

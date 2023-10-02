@@ -89,25 +89,8 @@ void main(void)
     CLA_forceTasks(CLA1_BASE, CLA_ADC_CALIB_TASK_FLAG);
     // Interrupts initialization
     HAL_INT_ini(InterruptList);
-    // Enable RS485 message reception on THVD2450 & disable CAN.
-//    RS485_RECEIVE;
     // Infinite loop
-//    uint16_t i;
     while(1);
-//    {
-////        fifo_status = (uint16_t)SCI_getRxFIFOStatus(COM_SCI_BASE);
-//        fifo_status = (uint16_t)((HWREGH(COM_SCI_BASE + SCI_O_FFRX) & SCI_FFRX_RXFFST_M) >> SCI_FFRX_RXFFST_S);
-// //        static uint16_t i = 0;
-//         while(fifo_status)
-//         {
-//             rs485_rx_msg[i] = (uint16_t)(HWREGH(COM_SCI_BASE + SCI_O_RXBUF) & SCI_RXBUF_SAR_M);
-//             i               = (i < 139) ? (i + 1) : (0);
-//             fifo_status    -= 1;
-//         }
-//
-//     SCI_clearInterruptStatus(COM_SCI_BASE, (SCI_INT_RXERR | SCI_INT_FE | SCI_INT_OE | SCI_INT_PE | SCI_INT_RXFF | SCI_INT_TXFF));
-//
-//    }
 }
 
 /**
@@ -316,163 +299,114 @@ __attribute__((interrupt)) void dma_isrComRx(void)
 
 __attribute__((interrupt)) void sci_isrRx_RS485(void)
 {
-//    uint16_t fifo_rx_status  = 0;
+    // FIFO IT source test.
+    uint32_t sci_it_src_test = SCI_getInterruptStatus(COM_SCI_BASE);
 
-//    if(HWREGH(COM_SCI_BASE + SCI_O_CTL1) & SCI_CTL1_SLEEP)
-//    {
-//        SCI_disableSleepMode(COM_SCI_BASE);
-//        i = 0;
-//    }
-    if(SCI_getInterruptStatus(COM_SCI_BASE) & SCI_INT_RXFF)
+    DBG_PIN2_SET;
+    // FIFO RX IT?
+    if(sci_it_src_test & SCI_INT_RXFF)
     {
-        DBG_PIN2_SET;
-        RS485_msgRx(COM_SCI_BASE, &rs485_rx_msg);
-//        fifo_rx_status  = (uint16_t)SCI_getRxFIFOStatus(COM_SCI_BASE);
-//        while(fifo_rx_status)
-//        {
-//            rs485_rx_msg[rs485_rx_msg_index]    = (uint16_t)(HWREGH(COM_SCI_BASE + SCI_O_RXBUF) & SCI_RXBUF_SAR_M);
-//            rs485_tx_msg[rs485_rx_msg_index]    = rs485_rx_msg[rs485_rx_msg_index];
-//            rs485_rx_msg_index                 += 1;
-//            fifo_rx_status                     -= 1;
-//        }
-//
+        // Is first element a valid address ?
+        if(SCI_getRxStatus(COM_SCI_BASE) & SCI_RXSTATUS_WAKE)
+        {
+            uint16_t addr_test = SCI_readCharNonBlocking(COM_SCI_BASE);
+            if((addr_test == 0x61) || (addr_test == 0x6E))
+            {
+                CLB_setGPREG(RS485_RX_TX_CLB_BASE, 8UL);
+                rs485_rx_msg.msg[0] = addr_test;
+                rs485_rx_msg.index  = 1;
+            }
+            else
+                CLB_setGPREG(RS485_RX_TX_CLB_BASE, 0UL);
+        }
+        // Valid address ?
+        if(CLB_getGPREG(RS485_RX_TX_CLB_BASE) & 8UL)
+            RS485_msgReceive(COM_SCI_BASE, &rs485_rx_msg);
+        else
+        {
+            SCI_resetRxFIFO(COM_SCI_BASE);
+            SCI_disableInterrupt(COM_SCI_BASE, SCI_INT_RXFF);
+        }
+        // Clear IT source
         SCI_clearOverflowStatus(COM_SCI_BASE);
         SCI_clearInterruptStatus(COM_SCI_BASE, SCI_INT_RXFF);
-        DBG_PIN2_CLEAR;
     }
-
-    if(SCI_getInterruptStatus(COM_SCI_BASE) & (SCI_INT_PE | SCI_INT_OE | SCI_INT_FE))
-    {
-        DBG_PIN2_SET;
-        RS485_msgRx(COM_SCI_BASE, &rs485_rx_msg);
-        rs485_rx_msg.index--;
-//        fifo_rx_status          = (uint16_t)SCI_getRxFIFOStatus(COM_SCI_BASE);
-//        fifo_rx_status          = (fifo_rx_status > 0) ? (fifo_rx_status - 1) : (0);
-//        while(fifo_rx_status)
-//        {
-//            rs485_rx_msg[rs485_rx_msg_index]    = (uint16_t)(HWREGH(COM_SCI_BASE + SCI_O_RXBUF) & SCI_RXBUF_SAR_M);
-////            i               = (i < 33) ? (i + 1) : (0);
-//            rs485_rx_msg_index                 += 1;
-//            fifo_rx_status                     -= 1;
-//        }
-        //SCI_resetRxFIFO(COM_SCI_BASE);
-        SCI_clearInterruptStatus(COM_SCI_BASE, SCI_INT_RXERR);
-        DBG_PIN2_CLEAR;
-    }
-
-    // Clear IT flag
-    Interrupt_clearACKGroup(INT_RS485_RX_MSG_GROUP);
-}
-
-__attribute__((interrupt)) void sci_isrTx_RS485(void)
-{
-//    CLB_setGPREG(CLB1_BASE, 1UL);
-//    uint16_t fifo_tx_status = 0;
-    DBG_PIN2_SET;
-    if(SCI_getInterruptStatus(COM_SCI_BASE) & SCI_INT_TXFF)
-    {
-        RS485_msgTx(COM_SCI_BASE, &rs485_tx_msg);
-//        fifo_tx_status  = 16 - (uint16_t)SCI_getTxFIFOStatus(COM_SCI_BASE);
-////__min(fifo_tx_status, rs485_tx_msg_remaining) &&
-//        while(fifo_tx_status && rs485_tx_msg_remaining)
-//        {
-//            HWREGH(COM_SCI_BASE + SCI_O_TXBUF)  = rs485_tx_msg[rs485_tx_msg_index];
-//            rs485_tx_msg_index                 += 1;
-//            rs485_tx_msg_remaining             -= 1;
-//            fifo_tx_status                     -= 1;
-//        }
-        if(rs485_tx_msg.remaining)
-//            HWREGH(COM_SCI_BASE + SCI_O_FFTX) &= ~SCI_FFTX_TXFFIENA;
-//            SCI_disableInterrupt(COM_SCI_BASE, SCI_INT_TXFF);
-//        HWREGH(base + SCI_O_FFTX) |= SCI_FFTX_TXFFINTCLR;
-            SCI_clearInterruptStatus(COM_SCI_BASE, SCI_INT_TXFF);
-    }
-
-//    if(SCI_getInterruptStatus(COM_SCI_BASE) & SCI_INT_TXRDY)
-//        SCI_clearInterruptStatus(COM_SCI_BASE, SCI_INT_TXRDY);
     DBG_PIN2_CLEAR;
-    // Clear IT flag
-    Interrupt_clearACKGroup(INT_RS485_TX_MSG_GROUP);
-//    CLB_setGPREG(CLB1_BASE, 0UL);
+
+    // Clear global IT flag
+    Interrupt_clearACKGroup(INT_RS485_RX_MSG_GROUP);
 }
 
 __attribute__((interrupt)) void clb_isrRxTx_RS485(void)
 {
-    DBG_PIN3_SET;
-//    uint16_t fifo_status = 0;
-    if(CLB_getInterruptTag(CLB1_BASE) == 0x01)
-    {
-        RS485_msgRx(COM_SCI_BASE, &rs485_rx_msg);
-//        fifo_status = (uint16_t)SCI_getRxFIFOStatus(COM_SCI_BASE);
+    uint16_t clb_tag_test   = CLB_getInterruptTag(RS485_RX_TX_CLB_BASE);
 
-//        while(fifo_status)
-//        {
-//            rs485_rx_msg[rs485_rx_msg_index]    = (uint16_t)(HWREGH(COM_SCI_BASE + SCI_O_RXBUF) & SCI_RXBUF_SAR_M);
-//            rs485_tx_msg[rs485_rx_msg_index]    = rs485_rx_msg[rs485_rx_msg_index];
-//            rs485_rx_msg_index                 += 1;
-//            fifo_status                        -= 1;
-//        }
-        SCI_resetRxFIFO(COM_SCI_BASE);
+    if(clb_tag_test == 0x01)
+    {
+        DBG_PIN3_SET;
+        // Valid address ?
+        if(CLB_getGPREG(RS485_RX_TX_CLB_BASE) & 8UL)
+        {
+            RS485_msgReceive(COM_SCI_BASE, &rs485_rx_msg);
+            //-----------------------------------
+//            rs485_rx_msg.index = 0;
+//            rs485_tx_msg.index = 0;
+//            rs485_tx_msg.remaining = 34;
+//            while(rs485_tx_msg.remaining--)
+//                rs485_tx_msg.msg[rs485_tx_msg.index++] = rs485_rx_msg.msg[rs485_rx_msg.index++];
+//            rs485_tx_msg.index = 0;
+//            rs485_tx_msg.remaining = 34;
+//            SCI_resetTxFIFO(COM_SCI_BASE);
+//            SCI_clearInterruptStatus(COM_SCI_BASE, SCI_INT_TXFF);
+//            SCI_enableTxModule(COM_SCI_BASE);
+//            RS485_msgTransmit(COM_SCI_BASE, &rs485_tx_msg);
+            //-----------------------------------
+        }
+        else
+        {
+            SCI_resetRxFIFO(COM_SCI_BASE);
+            SCI_enableInterrupt(COM_SCI_BASE, SCI_INT_RXFF);
+        }
+        rs485_rx_msg.index = 0;
+        CLB_setGPREG(RS485_RX_TX_CLB_BASE, 0UL);
+        // Clear IT source
         SCI_clearOverflowStatus(COM_SCI_BASE);
         SCI_clearInterruptStatus(COM_SCI_BASE, SCI_INT_RXFF);
-        SCI_disableRxModule(COM_SCI_BASE);
 
-//    SCI_resetRxFIFO(COM_SCI_BASE);
-
-        RS485_msgRxInit(&rs485_rx_msg);
-        RS485_msgTxInit(&rs485_tx_msg);
-//        rs485_rx_msg.index      = 0;
-//        rs485_tx_msg.index      = 0;
-//        rs485_tx_msg.remaining  = 34;
-
-        while(rs485_tx_msg.remaining)
-            rs485_tx_msg.msg[rs485_tx_msg.index++] = rs485_rx_msg.msg[rs485_rx_msg.index++];
-
-//        rs485_rx_msg.index      = 0;
-//        rs485_tx_msg.index      = 0;
-//        rs485_tx_msg.remaining  = 34;
-
-        RS485_msgRxInit(&rs485_rx_msg);
-        RS485_msgTxInit(&rs485_tx_msg);
-
-//        rs485_rx_msg_index      = 0;
-//        rs485_tx_msg_index      = 0;
-//        rs485_tx_msg_remaining  = 34;
-
-//    if(fifo_status)
-        CLB_setGPREG(CLB1_BASE, 4UL);
-        CLB_setGPREG(CLB1_BASE, 0UL);
-
-        SCI_enableTxModule(COM_SCI_BASE);
-//    SCI_enableInterrupt(COM_SCI_BASE, SCI_INT_TXFF);
-        SCI_resetTxFIFO(COM_SCI_BASE);
-        RS485_msgTx(COM_SCI_BASE, &rs485_tx_msg);
-//        fifo_status = 16 - (uint16_t)SCI_getTxFIFOStatus(COM_SCI_BASE);//(uint16_t)SCI_FIFO_TX16;//
-//
-//        while(fifo_status)
-//        {
-//            HWREGH(COM_SCI_BASE + SCI_O_TXBUF)  = rs485_tx_msg[rs485_tx_msg_index];
-//            rs485_tx_msg_index                 += 1;
-//            rs485_tx_msg_remaining             -= 1;
-//            fifo_status                        -= 1;
-//        }
-
-        SCI_clearInterruptStatus(COM_SCI_BASE, SCI_INT_TXFF);
+        DBG_PIN3_CLEAR;
     }
-    if(CLB_getInterruptTag(CLB1_BASE) == 0x02)
+    if(clb_tag_test == 0x02)
     {
-        SCI_resetRxFIFO(COM_SCI_BASE);
-        SCI_enableRxModule(COM_SCI_BASE);
         SCI_resetTxFIFO(COM_SCI_BASE);
+        SCI_clearInterruptStatus(COM_SCI_BASE, SCI_INT_TXFF);
         SCI_disableTxModule(COM_SCI_BASE);
+//        SCI_txDisable(COM_SCI_BASE);
+//        SCI_rxEnable(COM_SCI_BASE);
+//        DBG_PIN3_CLEAR;
     }
-//        SCI_disableTxModule(COM_SCI_BASE);
 
-    DBG_PIN3_CLEAR;
-
-//    uint16_t tag = CLB_getInterruptTag(RS485_Rx_Tx_CLB_BASE);
-    CLB_clearInterruptTag(RS485_Rx_Tx_CLB_BASE);
+    CLB_clearInterruptTag(RS485_RX_TX_CLB_BASE);
     // Clear IT flag
     Interrupt_clearACKGroup(INT_RS485_RX_Tx_CLB_GROUP);
 }
 
+__attribute__((interrupt)) void sci_isrTx_RS485(void)
+{
+    uint32_t sci_it_src_test = SCI_getInterruptStatus(COM_SCI_BASE);
+    if(sci_it_src_test & SCI_INT_TXFF)
+    {
+//        DBG_PIN2_SET;
+        RS485_msgTransmit(COM_SCI_BASE, &rs485_tx_msg);
+        SCI_clearInterruptStatus(COM_SCI_BASE, SCI_INT_TXFF);
+//        DBG_PIN2_CLEAR;
+    }
+    // Clear IT flag
+    Interrupt_clearACKGroup(INT_RS485_TX_MSG_GROUP);
+}
+
+
+//                    (addr_test == 'c') || (addr_test == 'e') || \
+                    (addr_test == 'g') || (addr_test == 'i') || (addr_test == 'k') || \
+                    (addr_test == 'm') || (addr_test == 'o') || (addr_test == 'q') || \
+                    (addr_test == 's') || (addr_test == 'u') || (addr_test == 'w') || \
+                    (addr_test == 'y'))

@@ -499,7 +499,7 @@ void HAL_SCI_ini(const sci_cfg_t* p_sciCfg)
         while(sciBase != UINT32_MAX)
         {
             /* Reset all elements of SCI peripherals */
-            SCI_clearInterruptStatus(sciBase, (SCI_INT_RXFF | SCI_INT_TXFF | SCI_INT_ALL_ERR | SCI_INT_RXRDY_BRKDT | SCI_INT_TXRDY));
+            SCI_clearInterruptStatus(sciBase, (SCI_INT_RXFF | SCI_INT_TXFF | SCI_INT_RXERR));
             SCI_clearOverflowStatus(sciBase);
             SCI_resetTxFIFO(sciBase);
             SCI_resetRxFIFO(sciBase);
@@ -520,18 +520,20 @@ void HAL_SCI_ini(const sci_cfg_t* p_sciCfg)
                 SCI_disableSleepMode(sciBase);
 
             /* Enable selected interrupts */
-            if(p_sciCfg->intEnable)
-                SCI_enableInterrupt(sciBase, (p_sciCfg->intSrc & (SCI_INT_RXFF | SCI_INT_TXFF)));
+//            if(p_sciCfg->intEnable)
+//                SCI_enableInterrupt(sciBase, (p_sciCfg->intSrc & (SCI_INT_RXFF | SCI_INT_TXFF)));
 
             /* Configure FIFO if required. */
             if((p_sciCfg->rxLevel != SCI_FIFO_RX0) || (p_sciCfg->txLevel != SCI_FIFO_TX0))
                 SCI_setFIFOInterruptLevel(sciBase, p_sciCfg->txLevel, p_sciCfg->rxLevel);
 
             if(p_sciCfg->intEnable)
-                SCI_enableInterrupt(sciBase, p_sciCfg->intSrc & SCI_INT_ALL_ERR);
+                SCI_enableInterrupt(sciBase, p_sciCfg->intSrc);// & SCI_INT_ALL_ERR);
 
             SCI_enableFIFO(sciBase);
+//            SCI_enableTxModule(sciBase);
             SCI_enableModule(sciBase);
+
 //
 //            /* Set SPI configuration, disable loopback */
 //            SCI_setConfig(sciBase, UOMODRI_LSPCLK_FREQ, p_sciCfg->bitRate, p_sciCfg->sciMode);
@@ -665,7 +667,7 @@ void HAL_CLB_ini(const clb_cfg_t* p_clbCfg)
     // output CLB Xbar config
     CLB_OUTPUTXBAR_init();
 
-    CLB_enableCLB(RS485_Rx_Tx_CLB_BASE);
+    CLB_enableCLB(RS485_RX_TX_CLB_BASE);
 }
 
 /**

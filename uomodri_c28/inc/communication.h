@@ -175,13 +175,13 @@ typedef enum
  ***********************************************************************/
 typedef struct __rs485_rx_t__
 {
-    uint16_t    msg[100];
+    uint16_t    msg[64];
     uint16_t    index;
 } rs485_rx_t;
 
 typedef struct __rs485_tx_t__
 {
-    uint16_t    msg[100];
+    uint16_t    msg[64];
     uint16_t    index;
     uint16_t    remaining;
 } rs485_tx_t;
@@ -686,10 +686,14 @@ bool_t COM_msgCreate(motor_t*, slv2mst_msg_t*, slv2mst_msg_t*);
 void COM_msgSwapEndian(uint16_t*, uint16_t*, uint16_t);
 void COM_resetCmdStruct(cmd_t*);
 uint32_t COM_vcrc32(uint16_t*, uint16_t);
-void RS485_msgRxInit(rs485_rx_t*);
-void RS485_msgRx(uint32_t, rs485_rx_t*);
-void RS485_msgTxInit(rs485_tx_t*);
-void RS485_msgTx(uint32_t, rs485_tx_t*);
+void RS485_msgReceiveInit(rs485_rx_t*);
+void RS485_msgReceive(uint32_t, rs485_rx_t*);
+void RS485_msgTransmitInit(rs485_tx_t*);
+void RS485_msgTransmit(uint32_t, rs485_tx_t*);
+void SCI_rxDisable(uint32_t);
+void SCI_rxEnable(uint32_t);
+void SCI_txDisable(uint32_t);
+void SCI_txEnable(uint32_t);
 #else
 void COM_msgDbgTx(dbg_uart_addr_t*, dbg_uart_msg_t*);
 void COM_msgDbgRx(com_dbg_rx_msg_t*, uint8_t);
