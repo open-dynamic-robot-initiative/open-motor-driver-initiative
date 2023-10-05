@@ -667,7 +667,7 @@ void HAL_CLB_ini(const clb_cfg_t* p_clbCfg)
     // output CLB Xbar config
     CLB_OUTPUTXBAR_init();
 
-    CLB_enableCLB(RS485_RX_TX_CLB_BASE);
+    CLB_enableCLB(RS485_RX_TX_CLB_EOT_BASE);
 }
 
 /**

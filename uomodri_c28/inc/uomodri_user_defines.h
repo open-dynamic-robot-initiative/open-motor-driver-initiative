@@ -1318,6 +1318,8 @@
  ***********************************************************************/
 //#define CLBCLK_SRC                              DEVICE_SYSCLK_FREQ AUXPLLCLK
 #define CLBCLK_FREQ                             EPWMCLK_FREQ
+#define CLB_GPREG_ADDR_VALID                    (1 << 3)
+#define CLB_GPREG_TX_ENABLE                     (1 << 2)
 
 /***********************************************************************
  * INTERRUPTS DEFINES

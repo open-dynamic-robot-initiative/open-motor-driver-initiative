@@ -309,18 +309,19 @@ __attribute__((interrupt)) void sci_isrRx_RS485(void)
         // Is first element a valid address ?
         if(SCI_getRxStatus(COM_SCI_BASE) & SCI_RXSTATUS_WAKE)
         {
-            uint16_t addr_test = SCI_readCharNonBlocking(COM_SCI_BASE);
-            if((addr_test == 0x61) || (addr_test == 0x6E))
+            uint32_t clb_gpreg  = CLB_getGPREG(RS485_RX_TX_CLB_EOT_BASE);
+            uint16_t addr_test  = SCI_readCharNonBlocking(COM_SCI_BASE);
+            if((addr_test == 0x61) || (addr_test == 0x6E)) // For test
             {
-                CLB_setGPREG(RS485_RX_TX_CLB_BASE, 8UL);
+                CLB_setGPREG(RS485_RX_TX_CLB_EOT_BASE, (clb_gpreg | CLB_GPREG_ADDR_VALID));
                 rs485_rx_msg.msg[0] = addr_test;
                 rs485_rx_msg.index  = 1;
             }
             else
-                CLB_setGPREG(RS485_RX_TX_CLB_BASE, 0UL);
+                CLB_setGPREG(RS485_RX_TX_CLB_EOT_BASE, (clb_gpreg & (~CLB_GPREG_ADDR_VALID)));
         }
         // Valid address ?
-        if(CLB_getGPREG(RS485_RX_TX_CLB_BASE) & 8UL)
+        if(CLB_getGPREG(RS485_RX_TX_CLB_EOT_BASE) & CLB_GPREG_ADDR_VALID)
             RS485_msgReceive(COM_SCI_BASE, &rs485_rx_msg);
         else
         {
@@ -339,13 +340,13 @@ __attribute__((interrupt)) void sci_isrRx_RS485(void)
 
 __attribute__((interrupt)) void clb_isrRxTx_RS485(void)
 {
-    uint16_t clb_tag_test   = CLB_getInterruptTag(RS485_RX_TX_CLB_BASE);
+    uint16_t clb_tag_test   = CLB_getInterruptTag(RS485_RX_TX_CLB_EOT_BASE);
 
     if(clb_tag_test == 0x01)
     {
         DBG_PIN3_SET;
         // Valid address ?
-        if(CLB_getGPREG(RS485_RX_TX_CLB_BASE) & 8UL)
+        if(CLB_getGPREG(RS485_RX_TX_CLB_EOT_BASE) & 8UL)
         {
             RS485_msgReceive(COM_SCI_BASE, &rs485_rx_msg);
             //-----------------------------------
@@ -368,7 +369,7 @@ __attribute__((interrupt)) void clb_isrRxTx_RS485(void)
             SCI_enableInterrupt(COM_SCI_BASE, SCI_INT_RXFF);
         }
         rs485_rx_msg.index = 0;
-        CLB_setGPREG(RS485_RX_TX_CLB_BASE, 0UL);
+        CLB_setGPREG(RS485_RX_TX_CLB_EOT_BASE, 0UL);
         // Clear IT source
         SCI_clearOverflowStatus(COM_SCI_BASE);
         SCI_clearInterruptStatus(COM_SCI_BASE, SCI_INT_RXFF);
@@ -385,7 +386,7 @@ __attribute__((interrupt)) void clb_isrRxTx_RS485(void)
 //        DBG_PIN3_CLEAR;
     }
 
-    CLB_clearInterruptTag(RS485_RX_TX_CLB_BASE);
+    CLB_clearInterruptTag(RS485_RX_TX_CLB_EOT_BASE);
     // Clear IT flag
     Interrupt_clearACKGroup(INT_RS485_RX_Tx_CLB_GROUP);
 }
@@ -410,3 +411,41 @@ __attribute__((interrupt)) void sci_isrTx_RS485(void)
                     (addr_test == 'm') || (addr_test == 'o') || (addr_test == 'q') || \
                     (addr_test == 's') || (addr_test == 'u') || (addr_test == 'w') || \
                     (addr_test == 'y'))
+
+//111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111
+//
+//00000000 // start
+//11111111
+//00000000
+//00000000
+//00000000
+//00000000
+//11111111
+//11111111
+//00000000
+//11111111 // Stop
+//
+//00000000 // start
+//00000000
+//00000000
+//00000000
+//00000000
+//00000000
+//00000000
+//00000000
+//00000000
+//11111111 // Stop
+//
+//00000000 // start
+//10101010
+//01010101
+//10101010
+//01010101
+//10101010
+//01010101
+//10101010
+//01010101
+//11111111 // Stop
+//
+//111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111
+
