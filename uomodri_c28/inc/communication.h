@@ -177,6 +177,9 @@ typedef struct __rs485_rx_t__
 {
     uint16_t    msg[64];
     uint16_t    index;
+#ifdef CPU1
+    bool_t      addr_valid;
+#endif
 } rs485_rx_t;
 
 typedef struct __rs485_tx_t__
