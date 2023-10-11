@@ -670,7 +670,7 @@ void HAL_CLB_ini(const clb_cfg_t* p_clbCfg)
     CLBXBAR_init();
 
     CLB_enableCLB(RS485_RX_TX_CLB_EOT_BASE);
-    CLB_enableCLB(RS485_RX_CLB_ADDR_TEST_BASE);
+    CLB_enableCLB(RS485_RX_CLB_ADDR_VALID_BASE);
 }
 
 /**
