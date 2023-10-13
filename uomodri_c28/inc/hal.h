@@ -224,6 +224,10 @@ typedef struct __CLA_CFG_t__
     bool_t                  claForceTask;
 } cla_cfg_t;
 
+/**
+ * @struct  clb_cfg_t
+ * @brief   CLB global Hardware Abstraction Layer structure
+ */
 typedef struct __CLB_CFG_t__
 {
     const uint32_t                      clbBase;
@@ -366,19 +370,8 @@ typedef struct __HAL_CFG_t__
     const dma_cfg_t*    const           p_dmaHandle;
     const tmr_cfg_t*    const           p_timerHandle;
     const cla_cfg_t*    const           p_claHandle;
-    const clb_cfg_t*    const           p_clbHandle;
+//    const clb_cfg_t*    const           p_clbHandle;
 } hal_cfg_t;
-
-/**
- * @struct  periph_motor_cfg_t
- * @brief   General Motor Hardware Abstraction Layer structure
- */
-typedef struct __PERIPH_MOTOR_CFG_t__
-{
-    const epwm_cc_t*    const           p_pwmCntCmp[3];
-    const adc_acq_t*    const           p_iAcq[3];
-    const adc_int_t*    const           p_intAcq;
-} periph_motor_cfg_t;
 
 /***********************************************************************
  * FUNCTIONS DECLARATION

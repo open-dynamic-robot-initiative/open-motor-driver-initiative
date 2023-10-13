@@ -73,11 +73,11 @@ static const int_cfg_t InterruptList[] =
   .intAckGroup      = INT_RS485_RX_MSG_GROUP,
   .p_intHandler     = INT_RS485_RX_MSG_HANDLER
  },
- {
-  .intNum           = INT_RS485_TX_MSG,
-  .intAckGroup      = INT_RS485_TX_MSG_GROUP,
-  .p_intHandler     = INT_RS485_TX_MSG_HANDLER
- },
+// {
+//  .intNum           = INT_RS485_TX_MSG,
+//  .intAckGroup      = INT_RS485_TX_MSG_GROUP,
+//  .p_intHandler     = INT_RS485_TX_MSG_HANDLER
+// },
  {
   .intNum           = INT_RS485_Rx_Tx_CLB,
   .intAckGroup      = INT_RS485_RX_Tx_CLB_GROUP,
@@ -200,10 +200,10 @@ cmd_t cmd_uomodri[2];
  *  @brief  General structure array configuration structure for the Hardware Abstraction Layer.
  */
 #pragma DATA_ALIGN(motor_m1, 4)
-#pragma DATA_SECTION(motor_m1, "ClaDataRam0");
+#pragma DATA_SECTION(motor_m1, "ClaDataMotor1");
 motor_t motor_m1;
 #pragma DATA_ALIGN(motor_m2, 4)
-#pragma DATA_SECTION(motor_m2, "ClaDataRam1");
+#pragma DATA_SECTION(motor_m2, "ClaDataMotor2");
 motor_t motor_m2;
 
 #endif  /*__UOMODRI_PRJ_CONFIG_HANDLERS_H__*/

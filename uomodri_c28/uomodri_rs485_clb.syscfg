@@ -2,7 +2,7 @@
  * These arguments were used when this file was generated. They will be automatically applied on subsequent loads
  * via the GUI or CLI. Run CLI with '--help' for additional information on how to override these arguments.
  * @cliArgs --device "F2838x" --package "337bga" --part "F2838x_337bga" --context "CPU1" --product "C2000WARE@5.00.00.00"
- * @versions {"tool":"1.18.0+3266"}
+ * @versions {"tool":"1.17.0+3128"}
  */
 
 /**
@@ -17,10 +17,6 @@ const clb_inputxbar_input2             = clb_inputxbar_input.addInstance();
 const clb_outputxbar                   = scripting.addModule("/driverlib/clb_outputxbar.js", {}, false);
 const clb_outputxbar1                  = clb_outputxbar.addInstance();
 const clb_outputxbar2                  = clb_outputxbar.addInstance();
-const clbxbar                          = scripting.addModule("/driverlib/clbxbar.js", {}, false);
-const clbxbar1                         = clbxbar.addInstance();
-const clbxbar2                         = clbxbar.addInstance();
-const clbxbar3                         = clbxbar.addInstance();
 const TILE                             = scripting.addModule("/utilities/clb_tool/clb_syscfg/source/TILE");
 const TILE1                            = TILE.addInstance();
 const TILE2                            = TILE.addInstance();
@@ -46,22 +42,22 @@ clb1.inputPipelineConfigCLB_IN2 = true;
 clb1.inputTypeCLB_IN4           = "GLOBAL";
 clb1.inputTypeCLB_IN3           = "GLOBAL";
 clb1.synchronizeCLB_IN0         = true;
-clb1.globalConfigCLB_IN3        = "CLB_GLOBAL_IN_MUX_CLB_AUXSIG0";
-clb1.synchronizeCLB_IN3         = true;
-clb1.globalConfigCLB_IN4        = "CLB_GLOBAL_IN_MUX_CLB_AUXSIG1";
-clb1.synchronizeCLB_IN4         = true;
+clb1.inputPipelineConfigCLB_IN3 = true;
+clb1.inputPipelineConfigCLB_IN4 = true;
+clb1.globalConfigCLB_IN3        = "CLB_GLOBAL_IN_MUX_CLB2_OUT20";
+clb1.globalConfigCLB_IN4        = "CLB_GLOBAL_IN_MUX_CLB2_OUT21";
 
-clb2.clbBase             = "CLB2_BASE";
-clb2.inputTypeCLB_IN0    = "LOCAL";
-clb2.synchronizeCLB_IN0  = true;
-clb2.localConfigCLB_IN0  = "CLB_LOCAL_IN_MUX_INPUT1";
-clb2.attachTile          = true;
-clb2.initTile            = true;
-clb2.$name               = "RS485_RX_CLB_ADDR_VALID";
-clb2.inputsUsed          = ["CLB_IN0","CLB_IN1"];
-clb2.inputTypeCLB_IN1    = "GLOBAL";
-clb2.globalConfigCLB_IN1 = "CLB_GLOBAL_IN_MUX_CLB_AUXSIG2";
-clb2.synchronizeCLB_IN1  = true;
+clb2.inputTypeCLB_IN0           = "LOCAL";
+clb2.synchronizeCLB_IN0         = true;
+clb2.localConfigCLB_IN0         = "CLB_LOCAL_IN_MUX_INPUT1";
+clb2.attachTile                 = true;
+clb2.initTile                   = true;
+clb2.$name                      = "RS485_RX_CLB_ADDR_VALID";
+clb2.inputsUsed                 = ["CLB_IN0","CLB_IN1"];
+clb2.inputTypeCLB_IN1           = "GLOBAL";
+clb2.inputPipelineConfigCLB_IN1 = true;
+clb2.globalConfigCLB_IN1        = "CLB_GLOBAL_IN_MUX_CLB1_OUT20";
+clb2.clbBase                    = "CLB2_BASE";
 
 clb_inputxbar_input1.inputxbarGpio = "GPIO13";
 clb_inputxbar_input1.$name         = "SCI_RX_CLB_INPUT_XBAR_IN1";
@@ -78,24 +74,6 @@ clb_outputxbar1.clb_outputxbar.clb_outputxbarPin.$assign = "GPIO94";
 clb_outputxbar2.$name                                    = "THVD_RX_EN_CLB_OUTPUT_XBAR0";
 clb_outputxbar2.clb_outputxbar.$assign                   = "CLB_OUTPUTXBAR7";
 clb_outputxbar2.clb_outputxbar.clb_outputxbarPin.$assign = "GPIO97";
-
-clbxbar1.$name      = "ADDR1_CLBXBAR0";
-clbxbar1.mux1Config = "XBAR_CLB_MUX01_CLB1_OUT4";
-clbxbar1.muxesUsed  = ["XBAR_MUX05"];
-clbxbar1.mux5Config = "XBAR_CLB_MUX05_CLB2_OUT4";
-
-clbxbar2.$name      = "ADDR2_CLBXBAR0";
-clbxbar2.auxInput   = "XBAR_AUXSIG1";
-clbxbar2.mux1Config = "XBAR_CLB_MUX01_CLB1_OUT4";
-clbxbar2.mux3Config = "XBAR_CLB_MUX03_CLB1_OUT5";
-clbxbar2.mux5Config = "XBAR_CLB_MUX05_CLB2_OUT4";
-clbxbar2.mux7Config = "XBAR_CLB_MUX07_CLB2_OUT5";
-clbxbar2.muxesUsed  = ["XBAR_MUX07"];
-
-clbxbar3.$name      = "EOT_DETECT_CLBXBAR0";
-clbxbar3.auxInput   = "XBAR_AUXSIG2";
-clbxbar3.mux1Config = "XBAR_CLB_MUX01_CLB1_OUT4";
-clbxbar3.muxesUsed  = ["XBAR_MUX01"];
 
 TILE.generateSimulation = true;
 TILE.clock_period       = 10000;
@@ -242,6 +220,8 @@ TILE2.OUTLUT_0.$name               = "OUTLUT_16";
 TILE2.OUTLUT_1.$name               = "OUTLUT_17";
 TILE2.OUTLUT_2.$name               = "OUTLUT_18";
 TILE2.OUTLUT_3.$name               = "OUTLUT_19";
+TILE2.OUTLUT_3.i0                  = "BOUNDARY.in0";
+TILE2.OUTLUT_3.eqn                 = "i0";
 TILE2.OUTLUT_4.$name               = "OUTLUT_20";
 TILE2.OUTLUT_4.outlutDescription   = "RS485_ADDR1_VALID";
 TILE2.OUTLUT_4.eqn                 = "i0 & i1";

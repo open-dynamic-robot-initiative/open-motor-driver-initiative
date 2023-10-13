@@ -574,16 +574,8 @@ static const hal_cfg_t hal =
  .p_epwmHandle              = PwmCfgList,
  .p_eqepHandle              = QepCfgList,
  .p_dmaHandle               = dmaCfgList,
-#if (CM_CORE_ENABLE)
  .p_ipcHandle               = ipcCfgList,
-#else
- .p_ipcHandle               = NULL,
-#endif
-#if (RS485_BUS_ENABLE)
  .p_sciHandle               = sciCfgList,
-#else
- .p_sciHandle               = NULL,
-#endif
  .p_spiHandle               = spiCfgList,
  .p_timerHandle             = timerCfgList,
  .p_claHandle               = claCfgList,

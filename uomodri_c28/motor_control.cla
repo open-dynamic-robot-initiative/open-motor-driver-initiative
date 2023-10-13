@@ -39,7 +39,7 @@ __attribute__((interrupt)) void Cla1Task8(void);
 __attribute__((interrupt)) void adcCalib_Task(void)
 {
 #ifdef DEBUG
-    DBG_PIN1_SET;
+//    DBG_PIN1_SET;
 //    __mdebugstop();
 #endif
     // Start ADC calibration
@@ -48,7 +48,7 @@ __attribute__((interrupt)) void adcCalib_Task(void)
     // Enable float rounding
     __asm(" MSETFLG RNDF32 = 1");
 #ifdef DEBUG
-    DBG_PIN1_CLEAR;
+//    DBG_PIN1_CLEAR;
 #endif
 }
 

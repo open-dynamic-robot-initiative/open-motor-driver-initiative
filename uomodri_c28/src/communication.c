@@ -194,7 +194,7 @@ uint32_t COM_vcrc32(uint16_t* p_msg, uint16_t length)
     return(crc.crcResult);
 }
 
-void RS485_msgReceive(uint32_t sci_base, rs485_rx_t* p_msg_rx)
+inline void RS485_msgReceive(uint32_t sci_base, rs485_rx_t* p_msg_rx)
 {
     uint16_t fifo_rx_status = (uint16_t)SCI_getRxFIFOStatus(sci_base);
     while(fifo_rx_status--)

@@ -52,10 +52,10 @@ typedef union __error_reg_u__
     struct
     {
         uint16_t                enc_indexErr    : 1;    /*!< Bits 0   : R/W - Encoder error too high */
-        uint16_t                pos_rollover    : 1;    /*!< Bits 1   : R/W - Position roll-over occurred */
-        uint16_t                drv_fault       : 1;    /*!< Bits 2   : R/W - Motor DRV nFault error */
-        uint16_t                com_timeout     : 1;    /*!< Bits 3   : R/W - Communication timeout error */
-        uint16_t                enc_alignErr    : 1;    /*!< Bits 4   : R/W - encoder failure during alignment. */
+        uint16_t                enc_alignErr    : 1;    /*!< Bits 1   : R/W - Encoder failure during alignment. */
+        uint16_t                pos_rollover    : 1;    /*!< Bits 2   : R/W - Position roll-over occurred */
+        uint16_t                drv_fault       : 1;    /*!< Bits 3   : R/W - Motor DRV nFault error */
+        uint16_t                com_timeout     : 1;    /*!< Bits 4   : R/W - Communication timeout error */
         uint16_t                error_RSV1      : 11;   /*!< Bits 5-15: R/W - Reserved */
     };
 } error_reg_u;

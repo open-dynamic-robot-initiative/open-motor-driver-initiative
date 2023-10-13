@@ -114,70 +114,70 @@ SECTIONS
    MSGRAM_DMA_TO_CLA	: > DMA_CLA1_MSGRAM, type=NOINIT
 
 /* CLA specific sections */
-   ClaDataRam0     	: > RAMLS0 /*>> RAMLS0 | RAMLS1*/
-   ClaDataRam1     	: > RAMLS1 /*>> RAMLS0 | RAMLS1*/
-   CLAscratch		:
-                     { *.obj(CLAscratch)
-                     . += CLA_SCRATCHPAD_SIZE;
-                     *.obj(CLAscratch_end) } >  RAMLS2
-   .scratchpad      : > RAMLS2//RAMLS3
-   .bss_cla         : > RAMLS2//RAMLS3
-   cla_shared       : > RAMLS2
-   CLA1mathTables   : > RAMLS2
+   ClaDataMotor1    	: > RAMLS0 /*>> RAMLS0 | RAMLS1*/
+   ClaDataMotor2     	: > RAMLS1 /*>> RAMLS0 | RAMLS1*/
+   CLAscratch			:
+                     		{ *.obj(CLAscratch)
+                     		. += CLA_SCRATCHPAD_SIZE;
+                     		*.obj(CLAscratch_end) } >  RAMLS2
+   .scratchpad      	: > RAMLS2//RAMLS3
+   .bss_cla         	: > RAMLS2//RAMLS3
+   cla_shared       	: > RAMLS2
+   CLA1mathTables   	: > RAMLS2
    //CLA1mathTables	: load = CLA1_DATAROM//, run = CLA1_DATAROM_RUN
 
 #if defined(__TI_EABI__)
-   Cla1Prog         :   LOAD = FLASH2_3,
-                        RUN = RAMLS3_7,
-                        LOAD_START(Cla1funcsLoadStart),
-                        LOAD_END(Cla1funcsLoadEnd),
-                        RUN_START(Cla1funcsRunStart),
-                        LOAD_SIZE(Cla1funcsLoadSize),
-                        ALIGN(4)
+   Cla1Prog         	:   LOAD = FLASH2_3,
+                        	RUN = RAMLS3_7,
+                        	LOAD_START(Cla1funcsLoadStart),
+                        	LOAD_END(Cla1funcsLoadEnd),
+                        	RUN_START(Cla1funcsRunStart),
+                        	LOAD_SIZE(Cla1funcsLoadSize),
+                        	ALIGN(4)
 #else
-   Cla1Prog			:	LOAD = FLASH2_3,
-                        RUN = RAMLS3_7,
-                        LOAD_START(_Cla1funcsLoadStart),
-                        LOAD_END(_Cla1funcsLoadEnd),
-                        RUN_START(_Cla1funcsRunStart),
-                        LOAD_SIZE(_Cla1funcsLoadSize),
-                        ALIGN(4)
+   Cla1Prog				:	LOAD = FLASH2_3,
+                        	RUN = RAMLS3_7,
+                        	LOAD_START(_Cla1funcsLoadStart),
+                        	LOAD_END(_Cla1funcsLoadEnd),
+                        	RUN_START(_Cla1funcsRunStart),
+                        	LOAD_SIZE(_Cla1funcsLoadSize),
+                        	ALIGN(4)
 #endif
 
 #if defined(__TI_EABI__)
-   .const_cla       :   LOAD = FLASH1,
-                        RUN = RAMLS2,
-                        RUN_START(Cla1ConstRunStart),
-                        LOAD_START(Cla1ConstLoadStart),
-                        LOAD_SIZE(Cla1ConstLoadSize)
+   .const_cla       	:   LOAD = FLASH1,
+                        	RUN = RAMLS2,
+                        	RUN_START(Cla1ConstRunStart),
+                        	LOAD_START(Cla1ConstLoadStart),
+                        	LOAD_SIZE(Cla1ConstLoadSize)
 #else
-   .const_cla       :   LOAD = FLASH1,
-                        RUN = RAMLS2,
-                        RUN_START(_Cla1ConstRunStart),
-                        LOAD_START(_Cla1ConstLoadStart),
-                        LOAD_SIZE(_Cla1ConstLoadSize)
+   .const_cla       	:   LOAD = FLASH1,
+                        	RUN = RAMLS2,
+                        	RUN_START(_Cla1ConstRunStart),
+                        	LOAD_START(_Cla1ConstLoadStart),
+                        	LOAD_SIZE(_Cla1ConstLoadSize)
 #endif
 
 #if defined(__TI_EABI__)
-	.TI.ramfunc : {}	LOAD = FLASH1,
-                        RUN = RAMD0,
-                        LOAD_START(RamfuncsLoadStart),
-                        LOAD_SIZE(RamfuncsLoadSize),
-                        LOAD_END(RamfuncsLoadEnd),
-                        RUN_START(RamfuncsRunStart),
-                        RUN_SIZE(RamfuncsRunSize),
-                        RUN_END(RamfuncsRunEnd),
-                        ALIGN(4)
+	.TI.ramfunc 		: {}	LOAD = FLASH1,
+                        		RUN = RAMD0,
+                        		LOAD_START(RamfuncsLoadStart),
+                        		LOAD_SIZE(RamfuncsLoadSize),
+                        		LOAD_END(RamfuncsLoadEnd),
+                        		RUN_START(RamfuncsRunStart),
+                        		RUN_SIZE(RamfuncsRunSize),
+                        		RUN_END(RamfuncsRunEnd),
+                        		ALIGN(4)
 #else
-	.TI.ramfunc : {} 	LOAD = FLASH1,
-                        RUN = RAMD0,
-                        LOAD_START(_RamfuncsLoadStart),
-                        LOAD_SIZE(_RamfuncsLoadSize),
-                        LOAD_END(_RamfuncsLoadEnd),
-                        RUN_START(_RamfuncsRunStart),
-                        RUN_SIZE(_RamfuncsRunSize),
-                        RUN_END(_RamfuncsRunEnd),
-                        ALIGN(4)
+	.TI.ramfunc 		: {} 	LOAD = FLASH1,
+                        		RUN = RAMD0,
+                        		LOAD_START(_RamfuncsLoadStart),
+                        		LOAD_SIZE(_RamfuncsLoadSize),
+                        		LOAD_END(_RamfuncsLoadEnd),
+                        		RUN_START(_RamfuncsRunStart),
+                        		RUN_SIZE(_RamfuncsRunSize),
+                        		RUN_END(_RamfuncsRunEnd),
+                        		ALIGN(4)
 #endif
 }
 

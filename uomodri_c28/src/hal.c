@@ -20,10 +20,10 @@ void HAL_eQEP_ini(const eqep_cfg_t*);
 void HAL_SPI_ini(const spi_cfg_t*);
 void HAL_SCI_ini(const sci_cfg_t*);
 void HAL_TMR_ini(const tmr_cfg_t*);
-void HAL_DMA_rst(void);
+//void HAL_DMA_rst(void);
 void HAL_IPC_ini(const ipc_cfg_t*);
 void HAL_CLA_ini(const cla_cfg_t*);
-void HAL_CLB_ini(const clb_cfg_t*);
+void HAL_CLB_ini(void);
 
 /***********************************************************************
  * FUNCTIONS DEFINITIONS
@@ -45,21 +45,24 @@ void HAL_ini(const hal_cfg_t* p_hal)
         HAL_ePWM_ini(p_hal->p_epwmHandle);
         // Initialize eQEP
         HAL_eQEP_ini(p_hal->p_eqepHandle);
-        // Initialize IPC communication
-        HAL_IPC_ini(p_hal->p_ipcHandle);
-        // Initialize CPU TIMERS
-        HAL_TMR_ini(p_hal->p_timerHandle);
-        // Initialize SCI/UART debug
-        HAL_SCI_ini(p_hal->p_sciHandle);
+        // Initialize CLA
+        HAL_CLA_ini(p_hal->p_claHandle);
         // Initialize DMA
-        HAL_DMA_rst();
         HAL_DMA_ini(p_hal->p_dmaHandle);
         // Initialize SPI
         HAL_SPI_ini(p_hal->p_spiHandle);
+        // Initialize CPU TIMERS
+        HAL_TMR_ini(p_hal->p_timerHandle);
+#if (CM_CORE_ENABLE)
+        // Initialize IPC communication
+        HAL_IPC_ini(p_hal->p_ipcHandle);
+#endif
+#if (RS485_BUS_ENABLE)
+        // Initialize SCI/UART
+        HAL_SCI_ini(p_hal->p_sciHandle);
         // Initialize CLB
-        HAL_CLB_ini(p_hal->p_clbHandle);
-        // Initialize CLA
-        HAL_CLA_ini(p_hal->p_claHandle);
+        HAL_CLB_ini();
+#endif
         EDIS;
     }
 
@@ -185,8 +188,6 @@ void HAL_ePWM_ini(const epwm_cfg_t* p_pwmCfg)
          * only for multiple core devices.
          */
         SysCtl_disablePeripheral(SYSCTL_PERIPH_CLK_TBCLKSYNC);
-        // Set correct frequency for EPWMCLK (max = PLLSYSCLK / 2)
-        SysCtl_setEPWMClockDivider(PLLSYSCLK_TO_EPWMCLK_DIV);
 
         while(pwmBase != UINT32_MAX)
         {
@@ -575,14 +576,14 @@ void HAL_SCI_ini(const sci_cfg_t* p_sciCfg)
 /**
  * @brief       Force a hard reset of all DMA peripherals
  */
-void HAL_DMA_rst(void)
-{
-    /* Global hardware reset of the DMA controller. */
-    DMA_initController();
-    DMA_setEmulationMode(DMA_EMULATION_FREE_RUN);
-
-    return;
-}
+//void HAL_DMA_rst(void)
+//{
+//    /* Global hardware reset of the DMA controller. */
+//    DMA_initController();
+//    DMA_setEmulationMode(DMA_EMULATION_FREE_RUN);
+//
+//    return;
+//}
 
 /**
  * @brief       DMA initialization function.
@@ -592,6 +593,10 @@ void HAL_DMA_ini(const dma_cfg_t* p_dmaCfg)
 {
     if(p_dmaCfg != NULL)
     {
+        /* Global hardware reset of the DMA controller. */
+        DMA_initController();
+        DMA_setEmulationMode(DMA_EMULATION_FREE_RUN);
+
         uint32_t dmaChBase = p_dmaCfg->dmaChBase;
         while(dmaChBase != UINT32_MAX)
         {
@@ -659,7 +664,7 @@ void HAL_IPC_ini(const ipc_cfg_t* p_ipcCfg)
  * @brief       CLB initialization function.
  * @param[in]   *p_clbCfg   Pointer on the CLB configuration structure
  */
-void HAL_CLB_ini(const clb_cfg_t* p_clbCfg)
+void HAL_CLB_ini(void)
 {
     CLB_init();
     // Input CLB Xbar config
@@ -667,7 +672,7 @@ void HAL_CLB_ini(const clb_cfg_t* p_clbCfg)
     // output CLB Xbar config
     CLB_OUTPUTXBAR_init();
     // internal CLB Xbar config
-    CLBXBAR_init();
+//    CLBXBAR_init();
 
     CLB_enableCLB(RS485_RX_TX_CLB_EOT_BASE);
     CLB_enableCLB(RS485_RX_CLB_ADDR_VALID_BASE);
