@@ -21,9 +21,9 @@ extern __attribute__((interrupt)) void motor2_Task(void);
 /***********************************************************************
  * VARIABLE DECLARATION
  ***********************************************************************/
-extern mst2slv_msg_t        rx_msg;
-extern slv2mst_msg_t        tx_msg[];
-extern uint16_t             led_msg[LED_MSG_TX_16BIT_LENGTH];
+extern mst2slv_msg_t        com_spi_rx_msg;
+extern slv2mst_msg_t        com_spi_tx_msg[];
+extern uint16_t             led_spi_tx_msg[LED_MSG_TX_16BIT_LENGTH];
 
 /***********************************************************************
  * STRUCTURES DECLARATION & INITIALIZATION
@@ -285,7 +285,7 @@ static const dma_cfg_t  dmaCfgList[] =
  {
   .dmaChBase        = DMA_COM_SPI_TX_BASE_ADDR,
   .p_dstAddr        = (uint16_t *) COM_SPI_TX_BASE_REG_ADDR,
-  .p_srcAddr        = (uint16_t *) &tx_msg[0].timeStamp,
+  .p_srcAddr        = (uint16_t *) &com_spi_tx_msg[0].timeStamp,
   .burstSize        = DMA_COM_SPI_TX_16BIT_BURST_EVT,
   .transferSize     = DMA_COM_SPI_TX_16BIT_TRANSFER_EVT,
   .dstWrapSize      = DMA_NO_WRAP,
@@ -302,7 +302,7 @@ static const dma_cfg_t  dmaCfgList[] =
  // DMA for SPI communication Rx
  {
   .dmaChBase        = DMA_COM_SPI_RX_BASE_ADDR,
-  .p_dstAddr        = (uint16_t *) &rx_msg,
+  .p_dstAddr        = (uint16_t *) &com_spi_rx_msg,
   .p_srcAddr        = (uint16_t *) COM_SPI_RX_BASE_REG_ADDR,
   .burstSize        = DMA_COM_SPI_RX_16BIT_BURST_EVT,
   .transferSize     = DMA_COM_SPI_RX_16BIT_TRANSFER_EVT,
@@ -321,7 +321,7 @@ static const dma_cfg_t  dmaCfgList[] =
  {
   .dmaChBase        = DMA_LED_SPI_TX_BASE_ADDR,
   .p_dstAddr        = (uint16_t *) LED_SPI_TX_BASE_REG_ADDR,
-  .p_srcAddr        = (uint16_t *) &led_msg[0],
+  .p_srcAddr        = (uint16_t *) &led_spi_tx_msg[0],
   .burstSize        = DMA_LED_SPI_TX_16BIT_BURST_EVT,
   .transferSize     = DMA_LED_SPI_TX_16BIT_TRANSFER_EVT,
   .dstWrapSize      = DMA_NO_WRAP,//0,//

@@ -171,25 +171,6 @@ typedef enum
 #endif
 
 /***********************************************************************
- * COMMUNICATION FOR RS485
- ***********************************************************************/
-typedef struct __rs485_rx_t__
-{
-    uint16_t    msg[64];
-    uint16_t    index;
-#ifdef CPU1
-    bool_t      addr_valid;
-#endif
-} rs485_rx_t;
-
-typedef struct __rs485_tx_t__
-{
-    uint16_t    msg[64];
-    uint16_t    index;
-    uint16_t    remaining;
-} rs485_tx_t;
-
-/***********************************************************************
  * COMMUNICATION STRUCTURES \& UNIONS BIT FILEDS
  ***********************************************************************/
 /**
@@ -310,6 +291,65 @@ typedef struct __cmd_uomodri_t__
     uint16_t        index;
     bool            cmdAccesValid;
 } cmd_uomodri_t;
+
+/***********************************************************************
+ * COMMUNICATION FOR RS485
+ ***********************************************************************/
+typedef union __rs485_rx_msg_u__
+{
+    uint16_t                msg_raw[64];
+    struct
+    {
+        union
+        {
+            uint16_t        msg_info;
+            struct
+            {
+                uint16_t    size   : 5;    /*!< Bits 4-0   : R/W - Timeout disable system after no valid command in milliseconds           */
+                uint16_t    type   : 3;    /*!< Bits 7-5   : R/W - Timeout disable system after no valid command in milliseconds           */
+                uint16_t    addr   : 8;    /*!< Bits 15-8  : R/W - Timeout disable system after no valid command in milliseconds           */
+            };
+        };
+        mst2slv_msg_t       msg_playload;
+    };
+} rs485_rx_msg_u;
+
+typedef union __rs485_tx_msg_u__
+{
+    uint16_t                msg_raw[64];
+    struct
+    {
+        union
+        {
+            uint16_t        msg_info;
+            struct
+            {
+                uint16_t    size   : 5;    /*!< Bits 4-0   : R/W - Timeout disable system after no valid command in milliseconds           */
+                uint16_t    type   : 3;    /*!< Bits 7-5   : R/W - Timeout disable system after no valid command in milliseconds           */
+                uint16_t    addr   : 8;    /*!< Bits 15-8  : R/W - Timeout disable system after no valid command in milliseconds           */
+            };
+        };
+        slv2mst_msg_t       msg_payload;
+    };
+} rs485_tx_msg_u;
+
+typedef struct __rs485_rx_t__
+{
+    rs485_rx_msg_u      msg;
+    uint16_t            index;
+//#ifdef CPU1
+    bool_t              addr_valid;
+    bool_t              data_highByte;
+//    bool_t      data_lsb;
+//#endif
+} rs485_rx_t;
+
+typedef struct __rs485_tx_t__
+{
+    rs485_tx_msg_u      msg;
+    uint16_t            index;
+    uint16_t            remaining;
+} rs485_tx_t;
 
 /***********************************************************************
  * COMMUNICATION STRUCTURES FOR SHARED DATA EXCHANGE (CPU1<->CM)
@@ -684,11 +724,16 @@ typedef struct __com_dbg_rx_msg_t__
  * FUNCTIONS DECLARATION
  ***********************************************************************/
 #ifdef CPU1
+#if (COM_CRC_TEST == 0)
 bool_t COM_msgExtract(mst2slv_msg_t*, mst2slv_msg_t*, cmd_t*, cmd_t*);
+#elif (COM_CRC_TEST == 1)
+bool_t COM_msgExtract(mst2slv_msg_t*, cmd_t*, cmd_t*, uint32_t);
+#endif
 bool_t COM_msgCreate(motor_t*, slv2mst_msg_t*, slv2mst_msg_t*);
 void COM_msgSwapEndian(uint16_t*, uint16_t*, uint16_t);
 void COM_resetCmdStruct(cmd_t*);
 uint32_t COM_vcrc32(uint16_t*, uint16_t);
+uint32_t COM_msgCrc(uint16_t*, uint16_t);
 void RS485_msgReceiveInit(rs485_rx_t*);
 void RS485_msgReceive(uint32_t, rs485_rx_t*);
 void RS485_msgTransmitInit(rs485_tx_t*);

@@ -89,7 +89,7 @@ SECTIONS
    .init_array      : > FLASH0, ALIGN(4)	/* Table of C++ constructors called at startup -	Initalized */
    .const           : > FLASH1, ALIGN(4)	/* Initialized constants -							Initalized */
    .data            : > RAMLS2				/* Initialized global variables -					Initalized */
-   .sysmem          : > RAMLS2				/* Malloc heap -									Not Initalized */
+   .sysmem          : > RAMGS2				/* Malloc heap -									Not Initalized */
    .bss             : > RAMLS2 //RAMLS3				/* Not initialized global variables -				Not Initalized */
    .bss:output      : > RAMLS2 //RAMLS3
    .bss:cio			: > RAMLS2 //RAMLS3

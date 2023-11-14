@@ -23,6 +23,7 @@
  *  @brief    Special configurations definitions.
  * @{
  */
+#define COM_CRC_TEST                            (1)
 // UOMODRI revision
 #define UOMODRI_V1_0_ENABLE                     (0)
 #define UOMODRI_V2_0_ENABLE                     (1)
@@ -48,8 +49,8 @@
 #endif
 // Communication peripherals ENABLE/DISABLE
 #define CAN_BUS_ENABLE                          (0)
-#define RS485_BUS_ENABLE                        (1)
-#define SPI_BUS_ENABLE                          (0)
+#define RS485_BUS_ENABLE                        (0)
+#define SPI_BUS_ENABLE                          (1)
 #if (RS485_BUS_ENABLE) && (CAN_BUS_ENABLE)
 #error "RS-485 & CAN share the same pins. They cannot run @ the same time"
 #elif ((RS485_BUS_ENABLE) || (CAN_BUS_ENABLE) ) && (SPI_BUS_ENABLE)
@@ -1352,12 +1353,19 @@
 /***********************************************************************
  * COMMUNICATION DEFINES
  ***********************************************************************/
-#define COM_MSG_TX_RX_8BIT_FULL_LENGTH          (34)
-#define COM_MSG_TX_RX_16BIT_FULL_LENGTH         (COM_MSG_TX_RX_8BIT_FULL_LENGTH / 2)
-#define COM_MSG_TX_RX_8BIT_CRC_LENGTH           (4)
-#define COM_MSG_TX_RX_16BIT_CRC_LENGTH          (COM_MSG_TX_RX_8BIT_CRC_LENGTH / 2)
-#define COM_MSG_TX_RX_16BIT_PAYLOAD_LENGTH      (COM_MSG_TX_RX_16BIT_FULL_LENGTH - COM_MSG_TX_RX_16BIT_CRC_LENGTH)
-#define COM_MSG_TX_RX_8BIT_PAYLOAD_LENGTH       (COM_MSG_TX_RX_8BIT_FULL_LENGTH - COM_MSG_TX_RX_8BIT_CRC_LENGTH)
+#define COM_MSG_SPI_TX_RX_8BIT_FULL_LENGTH      (34)
+#define COM_MSG_SPI_TX_RX_16BIT_FULL_LENGTH     (COM_MSG_SPI_TX_RX_8BIT_FULL_LENGTH / 2)
+#define COM_MSG_SPI_TX_RX_8BIT_CRC_LENGTH       (4)
+#define COM_MSG_SPI_TX_RX_16BIT_CRC_LENGTH      (COM_MSG_SPI_TX_RX_8BIT_CRC_LENGTH / 2)
+#define COM_MSG_SPI_TX_RX_16BIT_PAYLOAD_LENGTH  (COM_MSG_SPI_TX_RX_16BIT_FULL_LENGTH - COM_MSG_SPI_TX_RX_16BIT_CRC_LENGTH)
+#define COM_MSG_SPI_TX_RX_8BIT_PAYLOAD_LENGTH   (COM_MSG_SPI_TX_RX_8BIT_FULL_LENGTH - COM_MSG_SPI_TX_RX_8BIT_CRC_LENGTH)
+
+#define COM_MSG_RS485_TX_RX_8BIT_FULL_LENGTH    (2 + COM_MSG_SPI_TX_RX_8BIT_FULL_LENGTH)
+#define COM_MSG_RS485_TX_RX_16BIT_FULL_LENGTH   (COM_MSG_RS485_TX_RX_8BIT_FULL_LENGTH / 2)
+#define COM_MSG_RS485_TX_RX_8BIT_CRC_LENGTH     (COM_MSG_SPI_TX_RX_8BIT_CRC_LENGTH)
+#define COM_MSG_RS485_TX_RX_16BIT_CRC_LENGTH    (COM_MSG_RS485_TX_RX_8BIT_CRC_LENGTH / 2)
+#define COM_MSG_RS485_TX_RX_16BIT_PAYLOAD_LENGTH (COM_MSG_RS485_TX_RX_16BIT_FULL_LENGTH - COM_MSG_RS485_TX_RX_16BIT_CRC_LENGTH)
+#define COM_MSG_RS485_TX_RX_8BIT_PAYLOAD_LENGTH (COM_MSG_RS485_TX_RX_8BIT_FULL_LENGTH - COM_MSG_RS485_TX_RX_8BIT_CRC_LENGTH)
 
 #define LED_MSG_TX_16BIT_LENGTH                 (6)
 
