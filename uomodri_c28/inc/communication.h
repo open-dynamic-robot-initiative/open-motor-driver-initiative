@@ -171,8 +171,18 @@ typedef enum
 #endif
 
 /***********************************************************************
- * COMMUNICATION STRUCTURES \& UNIONS BIT FILEDS
+ * COMMUNICATION UNIONS BIT FILEDS
  ***********************************************************************/
+/**
+ * @union  U32toU16_reg_u
+ * @brief   32bits to 16bits down conversion.
+ */
+typedef struct __U32toU16_reg_t__
+{
+    uint16_t        u16_msb;
+    uint16_t        u16_lsb;
+} U32toU16_reg_t;
+
 /**
  * @union   mst2slv_reg_u
  * @brief   Master to Slave command union (bits definition) for uOmodri. Access to bit field.
@@ -182,14 +192,14 @@ typedef union __mst2slv_reg_u__
     uint16_t        all;                /*!< Short (16bits) type access */
     struct
     {
-        uint16_t    TIMEOUT     : 8;    /*!< Bits 7-0   : R/W - Timeout disable system after no valid command in milliseconds           */
-        uint16_t    CMD_RSV1    : 2;    /*!< Bits 9-8   : R/W - Reserved                                                                */
-        uint16_t    EI2OC       : 1;    /*!< Bits 10    : R/W - Enable/Disable incremental encoder index offset compensation - MOTOR_2  */
-        uint16_t    EI1OC       : 1;    /*!< Bits 11    : R/W - Enable/Disable incremental encoder index offset compensation - MOTOR_1  */
-        uint16_t    EPRE        : 1;    /*!< Bits 12    : R/W - Enable/Disable position rollover error - position range : -128 to +128  */
-        uint16_t    EM2         : 1;    /*!< Bits 13    : R/W - Enable(calibration procedure, alignment \& run)/Disable - MOTOR_2       */
-        uint16_t    EM1         : 1;    /*!< Bits 14    : R/W - Enable(calibration procedure, alignment \& run)/Disable - MOTOR_1       */
-        uint16_t    ES          : 1;    /*!< Bits 15    : R/W - Enable/Disable System                                                   */
+        uint16_t    TIMEOUT     : 8;    /*!< Bits 7-0   : Timeout disable system after no valid command in milliseconds           */
+        uint16_t    CMD_RSV1    : 2;    /*!< Bits 9-8   : Reserved                                                                */
+        uint16_t    EI2OC       : 1;    /*!< Bits 10    : Enable/Disable incremental encoder index offset compensation - MOTOR_2  */
+        uint16_t    EI1OC       : 1;    /*!< Bits 11    : Enable/Disable incremental encoder index offset compensation - MOTOR_1  */
+        uint16_t    EPRE        : 1;    /*!< Bits 12    : Enable/Disable position rollover error - position range : -128 to +128  */
+        uint16_t    EM2         : 1;    /*!< Bits 13    : Enable(calibration procedure, alignment \& run)/Disable - MOTOR_2       */
+        uint16_t    EM1         : 1;    /*!< Bits 14    : Enable(calibration procedure, alignment \& run)/Disable - MOTOR_1       */
+        uint16_t    ES          : 1;    /*!< Bits 15    : Enable/Disable System                                                   */
     };
 } mst2slv_reg_u;
 
@@ -202,29 +212,34 @@ typedef union __slv2mst_reg_u__
     uint16_t        all;                /*!< Short (16bits) type access */
     struct
     {
-        uint16_t    ERROR_CODE  : 4;    /*!< Bits 3-0   : R/W - Timeout disable system after no valid command               */
-        uint16_t    STATUS_RSV1 : 3;    /*!< Bits 6-4   : R/W - Reserved                                                    */
-        uint16_t    IDX2T       : 1;    /*!< Bits 7     : R/W - incremental encoder status toggle on index detect - MOTOR_2 */
-        uint16_t    IDX1T       : 1;    /*!< Bits 8     : R/W - incremental encoder status toggle on index detect - MOTOR_1 */
-        uint16_t    IDX2D       : 1;    /*!< Bits 9     : R/W - incremental encoder status index detected - MOTOR_2         */
-        uint16_t    IDX1D       : 1;    /*!< Bits 10    : R/W - incremental encoder status index detected - MOTOR_1         */
-        uint16_t    M2R         : 1;    /*!< Bits 11    : R/W - MOTOR_2 ready/not ready                                     */
-        uint16_t    M2E         : 1;    /*!< Bits 12    : R/W - MOTOR_2 enabled/not enabled                                 */
-        uint16_t    M1R         : 1;    /*!< Bits 13    : R/W - MOTOR_1 ready/not ready                                     */
-        uint16_t    M1E         : 1;    /*!< Bits 14    : R/W - MOTOR_1 enabled/not enabled                                 */
-        uint16_t    SE          : 1;    /*!< Bits 15    : R/W - System enabled/disabled                                     */
+        uint16_t    ERROR_CODE  : 4;    /*!< Bits 3-0   : Timeout disable system after no valid command               */
+        uint16_t    STATUS_RSV1 : 3;    /*!< Bits 6-4   : Reserved                                                    */
+        uint16_t    IDX2T       : 1;    /*!< Bits 7     : incremental encoder status toggle on index detect - MOTOR_2 */
+        uint16_t    IDX1T       : 1;    /*!< Bits 8     : incremental encoder status toggle on index detect - MOTOR_1 */
+        uint16_t    IDX2D       : 1;    /*!< Bits 9     : incremental encoder status index detected - MOTOR_2         */
+        uint16_t    IDX1D       : 1;    /*!< Bits 10    : incremental encoder status index detected - MOTOR_1         */
+        uint16_t    M2R         : 1;    /*!< Bits 11    : MOTOR_2 ready/not ready                                     */
+        uint16_t    M2E         : 1;    /*!< Bits 12    : MOTOR_2 enabled/not enabled                                 */
+        uint16_t    M1R         : 1;    /*!< Bits 13    : MOTOR_1 ready/not ready                                     */
+        uint16_t    M1E         : 1;    /*!< Bits 14    : MOTOR_1 enabled/not enabled                                 */
+        uint16_t    SE          : 1;    /*!< Bits 15    : System enabled/disabled                                     */
     };
 } slv2mst_reg_u;
 
 /**
- * @struct  U32toU16_reg_t
- * @brief   32bits to 16bits down conversion.
+ * @union   header_reg_u
+ * @brief   Slave to Master header structure for RS485 communication.
  */
-typedef struct __U32toU16_reg_t__
+typedef union __header_reg_u__
 {
-    uint16_t        u16_msb;
-    uint16_t        u16_lsb;
-} U32toU16_reg_t;
+    uint16_t        header;
+    struct
+    {
+        uint16_t    size : 5;   /*!< Bits 4-0   : R/W - Number message elements expressed in bytes.  */
+        uint16_t    type : 3;   /*!< Bits 7-5   : R/W - Type of message (TBD).                       */
+        uint16_t    addr : 8;   /*!< Bits 15-8  : R/W - Target address                               */
+    };
+} header_reg_u;
 
 /***********************************************************************
  * MAIN COMMUNICATION STRUCTURES
@@ -243,19 +258,7 @@ typedef struct __mst2slv_msg_t__
     uint16_t        kdCoeff[2];
     uint16_t        iSat;
     uint16_t        index;
-    U32toU16_reg_t  crc;
 } mst2slv_msg_t;
-
-/**
- * @struct  mst2slv_msg_otf_t
- * @brief   Master 2 Slave structure associated with COM_msgExtractOnTheFly (state machine)
- */
-typedef struct __mst2slv_msg_otf_t__
-{
-    com_rx_state_e  msg_rx_state;
-    uint32_t        msg_crc32;
-    uint16_t        msg_tmp;
-} mst2slv_msg_otf_t;
 
 /**
  * @struct  slv2mst_msg_t
@@ -271,7 +274,6 @@ typedef struct __slv2mst_msg_t__
     uint16_t        coilRes[2];
     uint16_t        adcSamples[2];
     uint16_t        lastCmdIndex;
-    U32toU16_reg_t  crc;
 } slv2mst_msg_t;
 
 /**
@@ -289,50 +291,88 @@ typedef struct __cmd_uomodri_t__
     float           iSat[2];
     uint32_t        cptTimeout;
     uint16_t        index;
-    bool            cmdAccesValid;
 } cmd_uomodri_t;
+
+/***********************************************************************
+ * COMMUNICATION FOR SPI
+ ***********************************************************************/
+/**
+ * @struct  spi_rx_msg_t
+ * @brief   SPI reception message structure.
+ */
+typedef struct __spi_rx_msg_t__
+{
+    mst2slv_msg_t   data;
+    U32toU16_reg_t  crc;
+} spi_rx_msg_t;
+
+/**
+ * @struct  spi_tx_msg_t
+ * @brief   SPI transmission message structure.
+ */
+typedef struct __spi_tx_msg_t__
+{
+    slv2mst_msg_t   data;
+    U32toU16_reg_t  crc;
+} spi_tx_msg_t;
+
+/**
+ * @struct  spi_rx_t
+ * @brief   SPI global reception structure
+ */
+typedef struct __spi_rx_t__
+{
+    spi_rx_msg_t    msg;
+} spi_rx_t;
+
+/**
+ * @struct  spi_tx_t
+ * @brief   SPI global transmission structure
+ */
+typedef struct __spi_tx_t__
+{
+    spi_tx_msg_t    msg[2];
+    uint16_t        msg_cr;
+    uint16_t        msg_nx;
+} spi_tx_t;
 
 /***********************************************************************
  * COMMUNICATION FOR RS485
  ***********************************************************************/
+/**
+ * @union   rs485_tx_msg_u
+ * @brief   RS485 reception message structure
+ */
 typedef union __rs485_rx_msg_u__
 {
-    uint16_t                msg_raw[64];
+    uint16_t            raw[COM_MSG_RS485_TX_RX_MAX_SIZE];
     struct
     {
-        union
-        {
-            uint16_t        msg_info;
-            struct
-            {
-                uint16_t    size   : 5;    /*!< Bits 4-0   : R/W - Timeout disable system after no valid command in milliseconds           */
-                uint16_t    type   : 3;    /*!< Bits 7-5   : R/W - Timeout disable system after no valid command in milliseconds           */
-                uint16_t    addr   : 8;    /*!< Bits 15-8  : R/W - Timeout disable system after no valid command in milliseconds           */
-            };
-        };
-        mst2slv_msg_t       msg_playload;
+        header_reg_u    header;
+        mst2slv_msg_t   data;
+        U32toU16_reg_t  crc;
     };
 } rs485_rx_msg_u;
 
+/**
+ * @union   rs485_tx_msg_u
+ * @brief   RS485 transmission message structure
+ */
 typedef union __rs485_tx_msg_u__
 {
-    uint16_t                msg_raw[64];
+    uint16_t            raw[COM_MSG_RS485_TX_RX_MAX_SIZE];
     struct
     {
-        union
-        {
-            uint16_t        msg_info;
-            struct
-            {
-                uint16_t    size   : 5;    /*!< Bits 4-0   : R/W - Timeout disable system after no valid command in milliseconds           */
-                uint16_t    type   : 3;    /*!< Bits 7-5   : R/W - Timeout disable system after no valid command in milliseconds           */
-                uint16_t    addr   : 8;    /*!< Bits 15-8  : R/W - Timeout disable system after no valid command in milliseconds           */
-            };
-        };
-        slv2mst_msg_t       msg_payload;
+        header_reg_u    header;
+        slv2mst_msg_t   data;
+        U32toU16_reg_t  crc;
     };
 } rs485_tx_msg_u;
 
+/**
+ * @struct  rs485_rx_t
+ * @brief   RS485 global reception structure
+ */
 typedef struct __rs485_rx_t__
 {
     rs485_rx_msg_u      msg;
@@ -344,11 +384,17 @@ typedef struct __rs485_rx_t__
 //#endif
 } rs485_rx_t;
 
+/**
+ * @struct  rs485_tx_t
+ * @brief   RS485 global transmission structure
+ */
 typedef struct __rs485_tx_t__
 {
-    rs485_tx_msg_u      msg;
+    rs485_tx_msg_u      msg[2];
     uint16_t            index;
     uint16_t            remaining;
+    uint16_t            msg_cr;
+    uint16_t            msg_nx;
 } rs485_tx_t;
 
 /***********************************************************************
@@ -724,16 +770,13 @@ typedef struct __com_dbg_rx_msg_t__
  * FUNCTIONS DECLARATION
  ***********************************************************************/
 #ifdef CPU1
-#if (COM_CRC_TEST == 0)
-bool_t COM_msgExtract(mst2slv_msg_t*, mst2slv_msg_t*, cmd_t*, cmd_t*);
-#elif (COM_CRC_TEST == 1)
-bool_t COM_msgExtract(mst2slv_msg_t*, cmd_t*, cmd_t*, uint32_t);
-#endif
-bool_t COM_msgCreate(motor_t*, slv2mst_msg_t*, slv2mst_msg_t*);
-void COM_msgSwapEndian(uint16_t*, uint16_t*, uint16_t);
+//bool_t COM_msgExtract(uint32_t, mst2slv_msg_t*, cmd_t*, cmd_t*);
+void COM_msgExtract(mst2slv_msg_t*, cmd_t*, cmd_t*);
+bool_t COM_msgCreate(motor_t*, slv2mst_msg_t*);
+void COM_msgSwapBytes(uint16_t*, uint16_t*, uint16_t);
 void COM_resetCmdStruct(cmd_t*);
-uint32_t COM_vcrc32(uint16_t*, uint16_t);
-uint32_t COM_msgCrc(uint16_t*, uint16_t);
+uint32_t COM_vCRC32(uint16_t*, uint16_t);
+uint32_t COM_msgCRC(uint16_t*, uint16_t);
 void RS485_msgReceiveInit(rs485_rx_t*);
 void RS485_msgReceive(uint32_t, rs485_rx_t*);
 void RS485_msgTransmitInit(rs485_tx_t*);

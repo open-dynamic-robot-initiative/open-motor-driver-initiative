@@ -157,6 +157,13 @@
 #define LSB_64(x)                               ((x) & 0xFFFFFFFF)
 #define MSB_64(x)                               (((x) >> 32) & 0xFFFFFFFF)
 
+//#define SWAP(x,y)                               do {                \
+//                                                typeof(x) _x = x;   \
+//                                                typeof(y) _y = y;   \
+//                                                x = _y;             \
+//                                                y = _x;             \
+//                                                } while(0)
+
 #define MIN                                     (0)
 #define MAX                                     (1)
 #define FW                                      (0)     /*!< Forward direction */
@@ -1339,7 +1346,7 @@
 #define INT_TIMER_LED_HANDLER                   &tmr_isrLed
 #define INT_DMA_RX_MSG                          INT_DMA_CH6
 #define INT_DMA_RX_MSG_GROUP                    INTERRUPT_ACK_GROUP7
-#define INT_DMA_RX_MSG_HANDLER                  &dma_isrComRx
+#define INT_DMA_RX_MSG_HANDLER                  &dma_isrSpiComRx
 #define INT_RS485_RX_MSG                        INT_SCIC_RX
 #define INT_RS485_RX_MSG_GROUP                  INTERRUPT_ACK_GROUP8
 #define INT_RS485_RX_MSG_HANDLER                &sci_isrRx_RS485
@@ -1353,6 +1360,8 @@
 /***********************************************************************
  * COMMUNICATION DEFINES
  ***********************************************************************/
+#define COM_MSG_EXTRACT_TX_RX_MAX_SIZE          (64)
+
 #define COM_MSG_SPI_TX_RX_8BIT_FULL_LENGTH      (34)
 #define COM_MSG_SPI_TX_RX_16BIT_FULL_LENGTH     (COM_MSG_SPI_TX_RX_8BIT_FULL_LENGTH / 2)
 #define COM_MSG_SPI_TX_RX_8BIT_CRC_LENGTH       (4)
@@ -1360,6 +1369,7 @@
 #define COM_MSG_SPI_TX_RX_16BIT_PAYLOAD_LENGTH  (COM_MSG_SPI_TX_RX_16BIT_FULL_LENGTH - COM_MSG_SPI_TX_RX_16BIT_CRC_LENGTH)
 #define COM_MSG_SPI_TX_RX_8BIT_PAYLOAD_LENGTH   (COM_MSG_SPI_TX_RX_8BIT_FULL_LENGTH - COM_MSG_SPI_TX_RX_8BIT_CRC_LENGTH)
 
+#define COM_MSG_RS485_TX_RX_MAX_SIZE            (64)
 #define COM_MSG_RS485_TX_RX_8BIT_FULL_LENGTH    (2 + COM_MSG_SPI_TX_RX_8BIT_FULL_LENGTH)
 #define COM_MSG_RS485_TX_RX_16BIT_FULL_LENGTH   (COM_MSG_RS485_TX_RX_8BIT_FULL_LENGTH / 2)
 #define COM_MSG_RS485_TX_RX_8BIT_CRC_LENGTH     (COM_MSG_SPI_TX_RX_8BIT_CRC_LENGTH)

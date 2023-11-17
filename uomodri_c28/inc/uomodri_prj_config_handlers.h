@@ -30,7 +30,7 @@ __attribute__((interrupt)) void cla_ClearTask(void);
 __attribute__((interrupt)) void cla_isrMotor1(void);
 __attribute__((interrupt)) void cla_isrMotor2(void);
 __attribute__((interrupt)) void tmr_isrLed(void);
-__attribute__((interrupt)) void dma_isrComRx(void);
+__attribute__((interrupt)) void dma_isrSpiComRx(void);
 __attribute__((interrupt)) void sci_isrRx_RS485(void);
 __attribute__((interrupt)) void sci_isrTx_RS485(void);
 __attribute__((interrupt)) void clb_isrRxTx_RS485(void);
