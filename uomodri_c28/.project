@@ -225,7 +225,7 @@
 	<variableList>
 		<variable>
 			<name>C2000WARE_ROOT</name>
-			<value>file:/home/jmanhes/ti/c2000/C2000Ware_5_00_00_00</value>
+			<value>file:/home/jmanhes/ti/c2000/C2000Ware_5_01_00_00</value>
 		</variable>
 		<variable>
 			<name>CLA_DATA_ROM_ROOT</name>
@@ -241,7 +241,11 @@
 		</variable>
 		<variable>
 			<name>SYSCONFIG_TOOL</name>
-			<value>$%7BCCS_INSTALL_ROOT%7D/utils/sysconfig_1.17.0/sysconfig_cli.sh</value>
+			<value>$%7BSYSCONFIG_TOOL_ROOT%7D/sysconfig_cli.sh</value>
+		</variable>
+		<variable>
+			<name>SYSCONFIG_TOOL_ROOT</name>
+			<value>file:/home/jmanhes/ti/ccs1240/ccs/utils/sysconfig_1.18.0</value>
 		</variable>
 		<variable>
 			<name>SYSTEMC_INSTALL</name>

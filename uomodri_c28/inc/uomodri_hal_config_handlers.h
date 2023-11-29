@@ -79,7 +79,7 @@ static const gpio_cfg_t GpioPinsCfgList[] =
  {.pinNum = IMU_SPI_GYRO_CS_NUM,        .fctMux = IMU_SPI_GYRO_CS_CFG,      .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 1,  .intEnable = false},
  // CAN/RS-485 BUS IO pins
  {.pinNum = CAN_SHDN_EN_NUM,            .fctMux = CAN_SHDN_EN_CFG,          .pinType = GPIO_PIN_TYPE_OD,    .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 1,  .intEnable = false},
- {.pinNum = RS485_RX_EN_NUM,            .fctMux = RS485_RX_EN_CFG,          .pinType = GPIO_PIN_TYPE_OD,    .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 1,  .intEnable = false},
+ {.pinNum = RS485_RX_EN_NUM,            .fctMux = RS485_RX_EN_CFG,          .pinType = GPIO_PIN_TYPE_OD,    .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0,  .intEnable = false},
  {.pinNum = RS485_TX_EN_NUM,            .fctMux = RS485_TX_EN_CFG,          .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = GPIO_CORE_CPU1,   .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_ASYNC,  .setValue = 0,  .intEnable = false},
 #endif
  {.pinNum = DBG_PIN0_NUM,               .fctMux = DBG_PIN0_CFG,             .pinType = GPIO_PIN_TYPE_STD,   .coreSelect = DBG_PIN0_CORE,    .direction = GPIO_DIR_MODE_OUT, .samplingInMode = GPIO_QUAL_SYNC,   .setValue = 0,  .intEnable = false},
@@ -369,12 +369,12 @@ static const sci_cfg_t  sciCfgList[] =
 {
  {
   .sciBase          = COM_SCI_BASE,
-  .bitRate          = 12500000,//6250000,//12500000,//3125000
+  .bitRate          = 12500000,
   .sciMode          = COM_SCI_CFG,
   .txLevel          = COM_SCI_TX_FIFO_LVL,
   .rxLevel          = COM_SCI_RX_FIFO_LVL,
   .intSrc           = COM_SCI_IT_SRC,
-  .intEnable        = true,
+  .intEnable        = false,
   .multiProcMode    = SCI_MULTI_PROC_NONE,
  },
   // END OF ARRAY

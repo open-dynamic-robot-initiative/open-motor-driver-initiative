@@ -33,7 +33,7 @@ __attribute__((interrupt)) void tmr_isrLed(void);
 __attribute__((interrupt)) void dma_isrSpiComRx(void);
 __attribute__((interrupt)) void sci_isrRx_RS485(void);
 __attribute__((interrupt)) void sci_isrTx_RS485(void);
-__attribute__((interrupt)) void clb_isrRxTx_RS485(void);
+__attribute__((interrupt)) void clb_isrTxRx_RS485(void);
 
 /***********************************************************************
  * VARIABLES
@@ -69,15 +69,15 @@ static const int_cfg_t InterruptList[] =
   .p_intHandler     = INT_DMA_RX_MSG_HANDLER
  },
  {
+  .intNum           = INT_RS485_TX_MSG,
+  .intAckGroup      = INT_RS485_TX_MSG_GROUP,
+  .p_intHandler     = INT_RS485_TX_MSG_HANDLER
+ },
+ {
   .intNum           = INT_RS485_RX_MSG,
   .intAckGroup      = INT_RS485_RX_MSG_GROUP,
   .p_intHandler     = INT_RS485_RX_MSG_HANDLER
  },
-// {
-//  .intNum           = INT_RS485_TX_MSG,
-//  .intAckGroup      = INT_RS485_TX_MSG_GROUP,
-//  .p_intHandler     = INT_RS485_TX_MSG_HANDLER
-// },
  {
   .intNum           = INT_RS485_Rx_Tx_CLB,
   .intAckGroup      = INT_RS485_RX_Tx_CLB_GROUP,

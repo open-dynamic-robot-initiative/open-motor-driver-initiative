@@ -49,8 +49,8 @@
 #endif
 // Communication peripherals ENABLE/DISABLE
 #define CAN_BUS_ENABLE                          (0)
-#define RS485_BUS_ENABLE                        (0)
-#define SPI_BUS_ENABLE                          (1)
+#define RS485_BUS_ENABLE                        (1)
+#define SPI_BUS_ENABLE                          (0)
 #if (RS485_BUS_ENABLE) && (CAN_BUS_ENABLE)
 #error "RS-485 & CAN share the same pins. They cannot run @ the same time"
 #elif ((RS485_BUS_ENABLE) || (CAN_BUS_ENABLE) ) && (SPI_BUS_ENABLE)
@@ -322,7 +322,7 @@
 #define CAN_SHDN_EN_CLEAR                       (HWREG(GPIODATA_BASE + GPIO_O_GPACLEAR) = GPIO_GPACLEAR_GPIO14)
 #define CAN_SHDN_EN_TOGGLE                      (HWREG(GPIODATA_BASE + GPIO_O_GPATOGGLE)= GPIO_GPATOGGLE_GPIO14)
 #define RS485_RX_EN_NUM                         (97U)
-#define RS485_RX_EN_CFG                         GPIO_97_CLB_OUTPUTXBAR7//GPIO_97_GPIO97
+#define RS485_RX_EN_CFG                         GPIO_97_GPIO97//GPIO_97_CLB_OUTPUTXBAR7//
 #define RS485_RX_EN_SET                         (HWREG(GPIODATA_BASE + GPIO_O_GPDSET)   = GPIO_GPDSET_GPIO97)
 #define RS485_RX_EN_CLEAR                       (HWREG(GPIODATA_BASE + GPIO_O_GPDCLEAR) = GPIO_GPDCLEAR_GPIO97)
 #define RS485_RX_EN_TOGGLE                      (HWREG(GPIODATA_BASE + GPIO_O_GPDTOGGLE)= GPIO_GPDTOGGLE_GPIO97)
@@ -396,8 +396,9 @@
                                                  SCI_INT_FE | \
                                                  SCI_INT_OE | \
                                                  SCI_INT_PE)
-#define COM_SCI_IT_SRC                          (SCI_INT_RXFF | \
-                                                 SCI_INT_TXFF)
+#define COM_SCI_IT_SRC                          (0)
+//                                                (SCI_INT_RXFF | \
+//                                                 SCI_INT_TXFF)
 //                                                 SCI_INT_RXRDY_BRKDT)// | \
 //                                                 SCI_INT_TXFF)//SCI_INT_RXERR | \SCI_INT_ALL_ERR | \SCI_INT_RXRDY_BRKDT | \
 //#define SCI_INT_ALL_RX                          (SCI_INT_RXERR | \
@@ -1329,6 +1330,11 @@
 #define CLB_GPREG_ADDR_VALID                    (1 << 3)
 #define CLB_GPREG_TX_ENABLE                     (1 << 2)
 
+#define CLB_INT_RS485_RX_ADDRESS_1_VALID        (0x10)
+#define CLB_INT_RS485_RX_ADDRESS_2_VALID        (0x20)
+#define CLB_INT_RS485_RX_END_OF_RECEPTION       (0x01)
+#define CLB_INT_RS485_TX_END_OF_TRANSMISSION    (0x02)
+
 /***********************************************************************
  * INTERRUPTS DEFINES
  ***********************************************************************/
@@ -1355,31 +1361,65 @@
 #define INT_RS485_TX_MSG_HANDLER                &sci_isrTx_RS485
 #define INT_RS485_Rx_Tx_CLB                     INT_CLB1
 #define INT_RS485_RX_Tx_CLB_GROUP               INTERRUPT_ACK_GROUP5
-#define INT_RS485_RX_Tx_CLB_HANDLER             &clb_isrRxTx_RS485
+#define INT_RS485_RX_Tx_CLB_HANDLER             &clb_isrTxRx_RS485
 
 /***********************************************************************
  * COMMUNICATION DEFINES
  ***********************************************************************/
 #define COM_MSG_EXTRACT_TX_RX_MAX_SIZE          (64)
+#define COM_MSG_RS485_TX_RX_MAX_SIZE            (20)
+#define COM_MSG_RS485_RX_ADDRESS_1              (0x42)
+#define COM_MSG_RS485_RX_ADDRESS_2              (0x00)
+#define COM_MSG_RS485_TX_ADDRESS                (0xFF)
+#define COM_MSG_RS485_TX_TYPE_STANDARD          (0x00)
 
-#define COM_MSG_SPI_TX_RX_8BIT_FULL_LENGTH      (34)
-#define COM_MSG_SPI_TX_RX_16BIT_FULL_LENGTH     (COM_MSG_SPI_TX_RX_8BIT_FULL_LENGTH / 2)
-#define COM_MSG_SPI_TX_RX_8BIT_CRC_LENGTH       (4)
-#define COM_MSG_SPI_TX_RX_16BIT_CRC_LENGTH      (COM_MSG_SPI_TX_RX_8BIT_CRC_LENGTH / 2)
-#define COM_MSG_SPI_TX_RX_16BIT_PAYLOAD_LENGTH  (COM_MSG_SPI_TX_RX_16BIT_FULL_LENGTH - COM_MSG_SPI_TX_RX_16BIT_CRC_LENGTH)
-#define COM_MSG_SPI_TX_RX_8BIT_PAYLOAD_LENGTH   (COM_MSG_SPI_TX_RX_8BIT_FULL_LENGTH - COM_MSG_SPI_TX_RX_8BIT_CRC_LENGTH)
+//#define COM_MSG_SPI_TX_RX_8BIT_FULL_LENGTH      (34)
+//#define COM_MSG_SPI_TX_RX_16BIT_FULL_LENGTH     (COM_MSG_SPI_TX_RX_8BIT_FULL_LENGTH / 2)
+//#define COM_MSG_SPI_TX_RX_8BIT_CRC_LENGTH       (4)
+//#define COM_MSG_SPI_TX_RX_16BIT_CRC_LENGTH      (COM_MSG_SPI_TX_RX_8BIT_CRC_LENGTH / 2)
+//#define COM_MSG_SPI_TX_RX_16BIT_PAYLOAD_LENGTH  (COM_MSG_SPI_TX_RX_16BIT_FULL_LENGTH - COM_MSG_SPI_TX_RX_16BIT_CRC_LENGTH)
+//#define COM_MSG_SPI_TX_RX_8BIT_PAYLOAD_LENGTH   (COM_MSG_SPI_TX_RX_8BIT_FULL_LENGTH - COM_MSG_SPI_TX_RX_8BIT_CRC_LENGTH)
 
-#define COM_MSG_RS485_TX_RX_MAX_SIZE            (64)
-#define COM_MSG_RS485_TX_RX_8BIT_FULL_LENGTH    (2 + COM_MSG_SPI_TX_RX_8BIT_FULL_LENGTH)
-#define COM_MSG_RS485_TX_RX_16BIT_FULL_LENGTH   (COM_MSG_RS485_TX_RX_8BIT_FULL_LENGTH / 2)
-#define COM_MSG_RS485_TX_RX_8BIT_CRC_LENGTH     (COM_MSG_SPI_TX_RX_8BIT_CRC_LENGTH)
-#define COM_MSG_RS485_TX_RX_16BIT_CRC_LENGTH    (COM_MSG_RS485_TX_RX_8BIT_CRC_LENGTH / 2)
-#define COM_MSG_RS485_TX_RX_16BIT_PAYLOAD_LENGTH (COM_MSG_RS485_TX_RX_16BIT_FULL_LENGTH - COM_MSG_RS485_TX_RX_16BIT_CRC_LENGTH)
-#define COM_MSG_RS485_TX_RX_8BIT_PAYLOAD_LENGTH (COM_MSG_RS485_TX_RX_8BIT_FULL_LENGTH - COM_MSG_RS485_TX_RX_8BIT_CRC_LENGTH)
+//#define COM_MSG_RS485_TX_RX_8BIT_FULL_LENGTH    (2 + COM_MSG_SPI_TX_RX_8BIT_FULL_LENGTH)
+//#define COM_MSG_RS485_TX_RX_16BIT_FULL_LENGTH   (COM_MSG_RS485_TX_RX_8BIT_FULL_LENGTH / 2)
+//#define COM_MSG_RS485_TX_RX_8BIT_CRC_LENGTH     (COM_MSG_SPI_TX_RX_8BIT_CRC_LENGTH)
+//#define COM_MSG_RS485_TX_RX_16BIT_CRC_LENGTH    (COM_MSG_RS485_TX_RX_8BIT_CRC_LENGTH / 2)
+//#define COM_MSG_RS485_TX_RX_16BIT_PAYLOAD_LENGTH (COM_MSG_RS485_TX_RX_16BIT_FULL_LENGTH - COM_MSG_RS485_TX_RX_16BIT_CRC_LENGTH)
+//#define COM_MSG_RS485_TX_RX_8BIT_PAYLOAD_LENGTH (COM_MSG_RS485_TX_RX_8BIT_FULL_LENGTH - COM_MSG_RS485_TX_RX_8BIT_CRC_LENGTH)
+
+#define COM_MSG_SPI_TX_16BIT_FULL_LENGTH        (sizeof(slv2mst_msg_t) + \
+                                                 sizeof(crc_reg_t))
+#define COM_MSG_SPI_TX_16BIT_PAYLOAD_LENGTH     (sizeof(slv2mst_msg_t))
+#define COM_MSG_SPI_TX_8BIT_FULL_LENGTH         (COM_MSG_SPI_TX_16BIT_FULL_LENGTH * 2)
+#define COM_MSG_SPI_TX_8BIT_PAYLOAD_LENGTH      (COM_MSG_SPI_TX_16BIT_PAYLOAD_LENGTH * 2)
+
+#define COM_MSG_SPI_RX_16BIT_FULL_LENGTH        (sizeof(mst2slv_msg_t) + \
+                                                 sizeof(crc_reg_t))
+#define COM_MSG_SPI_RX_16BIT_PAYLOAD_LENGTH     (sizeof(mst2slv_msg_t))
+#define COM_MSG_SPI_RX_8BIT_FULL_LENGTH         (COM_MSG_SPI_RX_16BIT_FULL_LENGTH * 2)
+#define COM_MSG_SPI_RX_8BIT_PAYLOAD_LENGTH      (COM_MSG_SPI_RX_16BIT_PAYLOAD_LENGTH * 2)
+
+#define COM_MSG_RS485_TX_16BIT_FULL_LENGTH      (sizeof(header_reg_u) + \
+                                                 sizeof(slv2mst_msg_t) + \
+                                                 sizeof(crc_reg_t))
+#define COM_MSG_RS485_TX_16BIT_PAYLOAD_LENGTH   (sizeof(header_reg_u) + \
+                                                 sizeof(slv2mst_msg_t))
+#define COM_MSG_RS485_TX_8BIT_FULL_LENGTH       (COM_MSG_RS485_TX_16BIT_FULL_LENGTH * 2)
+#define COM_MSG_RS485_TX_8BIT_PAYLOAD_LENGTH    (COM_MSG_RS485_TX_16BIT_PAYLOAD_LENGTH * 2)
+
+#define COM_MSG_RS485_RX_16BIT_FULL_LENGTH      (sizeof(header_reg_u) + \
+                                                 sizeof(mst2slv_msg_t) + \
+                                                 sizeof(crc_reg_t))
+#define COM_MSG_RS485_RX_16BIT_PAYLOAD_LENGTH   (sizeof(header_reg_u) + \
+                                                 sizeof(mst2slv_msg_t))
+#define COM_MSG_RS485_RX_8BIT_FULL_LENGTH       (COM_MSG_RS485_RX_16BIT_FULL_LENGTH * 2)
+#define COM_MSG_RS485_RX_8BIT_PAYLOAD_LENGTH    (COM_MSG_RS485_RX_16BIT_PAYLOAD_LENGTH * 2)
 
 #define LED_MSG_TX_16BIT_LENGTH                 (6)
 
-/*** Communication constants ***/
+/***********************************************************************
+ * COMMUNICATION CONSTANTS
+ ***********************************************************************/
 #define POSITION_LSB                            (5.960464477539063e-08f)    // 2**(-24)
 #define VELOCITY_LSB                            (4.8828125e-04f)            // 2**(-11)
 #define IQ_LSB                                  (9.765625e-04f)             // 2**(-10)

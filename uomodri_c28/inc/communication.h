@@ -183,6 +183,8 @@ typedef struct __U32toU16_reg_t__
     uint16_t        u16_lsb;
 } U32toU16_reg_t;
 
+typedef U32toU16_reg_t crc_reg_t;
+
 /**
  * @union   mst2slv_reg_u
  * @brief   Master to Slave command union (bits definition) for uOmodri. Access to bit field.
@@ -232,11 +234,11 @@ typedef union __slv2mst_reg_u__
  */
 typedef union __header_reg_u__
 {
-    uint16_t        header;
+    uint16_t        all;
     struct
     {
-        uint16_t    size : 5;   /*!< Bits 4-0   : R/W - Number message elements expressed in bytes.  */
-        uint16_t    type : 3;   /*!< Bits 7-5   : R/W - Type of message (TBD).                       */
+        uint16_t    size : 6;   /*!< Bits 5-0   : R/W - Number message elements expressed in bytes.  */
+        uint16_t    type : 2;   /*!< Bits 7-6   : R/W - Type of message (TBD).                       */
         uint16_t    addr : 8;   /*!< Bits 15-8  : R/W - Target address                               */
     };
 } header_reg_u;
@@ -334,6 +336,12 @@ typedef struct __spi_tx_t__
     spi_tx_msg_t    msg[2];
     uint16_t        msg_cr;
     uint16_t        msg_nx;
+//    struct
+//    {
+//        uint16_t    msg_cr  : 1;
+//        uint16_t    msg_nx  : 1;
+//        uint16_t    msg_RSV :14;
+//    };
 } spi_tx_t;
 
 /***********************************************************************
@@ -377,11 +385,12 @@ typedef struct __rs485_rx_t__
 {
     rs485_rx_msg_u      msg;
     uint16_t            index;
-//#ifdef CPU1
-    bool_t              addr_valid;
-    bool_t              data_highByte;
-//    bool_t      data_lsb;
-//#endif
+    struct
+    {
+        uint16_t        addr1   : 1;
+        uint16_t        addr2   : 1;
+        uint16_t        rsv     : 14;
+    };
 } rs485_rx_t;
 
 /**
@@ -392,9 +401,14 @@ typedef struct __rs485_tx_t__
 {
     rs485_tx_msg_u      msg[2];
     uint16_t            index;
-    uint16_t            remaining;
     uint16_t            msg_cr;
     uint16_t            msg_nx;
+//    struct
+//    {
+//        uint16_t    msg_cr  : 1;
+//        uint16_t    msg_nx  : 1;
+//        uint16_t    msg_RSV :14;
+//    };
 } rs485_tx_t;
 
 /***********************************************************************
@@ -777,8 +791,8 @@ void COM_msgSwapBytes(uint16_t*, uint16_t*, uint16_t);
 void COM_resetCmdStruct(cmd_t*);
 uint32_t COM_vCRC32(uint16_t*, uint16_t);
 uint32_t COM_msgCRC(uint16_t*, uint16_t);
-void RS485_msgReceiveInit(rs485_rx_t*);
-void RS485_msgReceive(uint32_t, rs485_rx_t*);
+inline void RS485_msgReceiveInit(rs485_rx_t*);
+inline void RS485_msgReceive(uint32_t, rs485_rx_t*);
 void RS485_msgTransmitInit(rs485_tx_t*);
 void RS485_msgTransmit(uint32_t, rs485_tx_t*);
 void SCI_rxDisable(uint32_t);
