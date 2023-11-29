@@ -1,3 +1,4 @@
+/Generated Source/
 /Debug/
 /Debug_Flash/
 /Release/
@@ -7,6 +8,4 @@
 /device/source/
 /html/
 /uOmodri_c28.doxyfile
-/inc/fifo.h
-/src/fifo.c
-/inc/cla_shared.h
+/stimulus.txt

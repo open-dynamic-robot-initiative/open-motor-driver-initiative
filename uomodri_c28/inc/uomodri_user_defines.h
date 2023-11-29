@@ -24,6 +24,7 @@
  * @{
  */
 #define COM_CRC_TEST                            (1)
+#define USE_FCT                                 (0)
 // UOMODRI revision
 #define UOMODRI_V1_0_ENABLE                     (0)
 #define UOMODRI_V2_0_ENABLE                     (1)
