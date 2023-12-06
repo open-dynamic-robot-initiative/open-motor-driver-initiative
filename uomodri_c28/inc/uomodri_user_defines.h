@@ -1339,30 +1339,39 @@
 /***********************************************************************
  * INTERRUPTS DEFINES
  ***********************************************************************/
-#define INT_CLA_ADC_CALIB                       INT_CLA1_1
-#define INT_CLA_ADC_CALIB_GROUP                 INTERRUPT_ACK_GROUP11
-#define INT_CLA_ADC_HANDLER_HANDLER             &cla_ClearTask
-#define INT_CLA_MOTOR1                          INT_CLA1_3
-#define INT_CLA_MOTOR1_GROUP                    INTERRUPT_ACK_GROUP11
-#define INT_CLA_MOTOR1_HANDLER                  &cla_isrMotor1
-#define INT_CLA_MOTOR2                          INT_CLA1_4
-#define INT_CLA_MOTOR2_GROUP                    INTERRUPT_ACK_GROUP11
-#define INT_CLA_MOTOR2_HANDLER                  &cla_isrMotor2
 #define INT_TIMER_LED                           INT_TIMER0
 #define INT_TIMER_LED_GROUP                     INTERRUPT_ACK_GROUP1
 #define INT_TIMER_LED_HANDLER                   &tmr_isrLed
-#define INT_DMA_RX_MSG                          INT_DMA_CH6
-#define INT_DMA_RX_MSG_GROUP                    INTERRUPT_ACK_GROUP7
-#define INT_DMA_RX_MSG_HANDLER                  &dma_isrSpiComRx
-#define INT_RS485_RX_MSG                        INT_SCIC_RX
-#define INT_RS485_RX_MSG_GROUP                  INTERRUPT_ACK_GROUP8
-#define INT_RS485_RX_MSG_HANDLER                &sci_isrRx_RS485
-#define INT_RS485_TX_MSG                        INT_SCIC_TX
-#define INT_RS485_TX_MSG_GROUP                  INTERRUPT_ACK_GROUP8
-#define INT_RS485_TX_MSG_HANDLER                &sci_isrTx_RS485
+
 #define INT_RS485_Rx_Tx_CLB                     INT_CLB1
 #define INT_RS485_RX_Tx_CLB_GROUP               INTERRUPT_ACK_GROUP5
 #define INT_RS485_RX_Tx_CLB_HANDLER             &clb_isrTxRx_RS485
+
+#define INT_DMA_RX_MSG                          INT_DMA_CH6
+#define INT_DMA_RX_MSG_GROUP                    INTERRUPT_ACK_GROUP7
+#define INT_DMA_RX_MSG_HANDLER                  &dma_isrSpiComRx
+
+#define INT_RS485_RX_PIE_FLAG                   PIE_IFR8_INTX5
+#define INT_RS485_RX_MSG                        INT_SCIC_RX
+#define INT_RS485_RX_MSG_GROUP                  INTERRUPT_ACK_GROUP8
+#define INT_RS485_RX_MSG_HANDLER                &sci_isrRx_RS485
+
+#define INT_RS485_TX_PIE_FLAG                   PIE_IFR8_INTX6
+#define INT_RS485_TX_MSG                        INT_SCIC_TX
+#define INT_RS485_TX_MSG_GROUP                  INTERRUPT_ACK_GROUP8
+#define INT_RS485_TX_MSG_HANDLER                &sci_isrTx_RS485
+
+#define INT_CLA_ADC_CALIB                       INT_CLA1_1
+#define INT_CLA_ADC_CALIB_GROUP                 INTERRUPT_ACK_GROUP11
+#define INT_CLA_ADC_HANDLER_HANDLER             &cla_ClearTask
+
+#define INT_CLA_MOTOR1                          INT_CLA1_3
+#define INT_CLA_MOTOR1_GROUP                    INTERRUPT_ACK_GROUP11
+#define INT_CLA_MOTOR1_HANDLER                  &cla_isrMotor1
+
+#define INT_CLA_MOTOR2                          INT_CLA1_4
+#define INT_CLA_MOTOR2_GROUP                    INTERRUPT_ACK_GROUP11
+#define INT_CLA_MOTOR2_HANDLER                  &cla_isrMotor2
 
 /***********************************************************************
  * COMMUNICATION DEFINES

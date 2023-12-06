@@ -363,10 +363,12 @@ __attribute__((interrupt)) void dma_isrSpiComRx(void)
  */
 __attribute__((interrupt)) void sci_isrTx_RS485(void)
 {
+    DBG_PIN2_SET;
+    // FIFO IT source test.
     uint32_t sci_it_src_test = SCI_getInterruptStatus(COM_SCI_BASE);
+    // FIFO TX IT?
     if(sci_it_src_test & SCI_INT_TXFF)
     {
-        DBG_PIN2_SET;
         RS485_msgTransmit(COM_SCI_BASE, &com_rs485_tx);
         if(com_rs485_tx.index >= COM_MSG_RS485_TX_8BIT_FULL_LENGTH)
         {
@@ -382,10 +384,10 @@ __attribute__((interrupt)) void sci_isrTx_RS485(void)
 #else
         HWREGH(COM_SCI_BASE + SCI_O_FFTX) |= SCI_FFTX_TXFFINTCLR;
 #endif
-        DBG_PIN2_CLEAR;
     }
     // Clear IT flag
     Interrupt_clearACKGroup(INT_RS485_TX_MSG_GROUP);
+    DBG_PIN2_CLEAR;
 }
 
 /**
@@ -409,6 +411,22 @@ __attribute__((interrupt)) void sci_isrRx_RS485(void)
          HWREGH(COM_SCI_BASE + SCI_O_FFRX) |= (SCI_FFRX_RXFFOVRCLR | SCI_FFRX_RXFFINTCLR);
 #endif
     }
+    /*
+     * RX ERROR :
+     * FE - SCI framing-error flag.
+     * OE - SCI overrun-error flag.
+     * PE - SCI parity-error flag.
+     */
+    if(sci_it_src_test & SCI_INT_RXERR)
+    {
+#if USE_FCT
+        SCI_performSoftwareReset(COM_SCI_BASE);
+#else
+        HWREGH(COM_SCI_BASE + SCI_O_CTL1)  &= ~SCI_CTL1_SWRESET;
+        HWREGH(COM_SCI_BASE + SCI_O_CTL1)  |= SCI_CTL1_SWRESET;
+#endif
+//        error();
+    }
     // Clear global IT flag
     Interrupt_clearACKGroup(INT_RS485_RX_MSG_GROUP);
     DBG_PIN2_CLEAR;
@@ -426,11 +444,10 @@ __attribute__((interrupt)) void clb_isrTxRx_RS485(void)
     uint16_t clb_tag_test   = HWREGH(RS485_RX_TX_CLB_EOT_BASE + CLB_LOGICCTL + CLB_O_INTR_TAG_REG);
 #endif
 
-    /*
-     * RS485 address #1 valid -> Enable SCI ITs
-     */
-    if(clb_tag_test == CLB_INT_RS485_RX_ADDRESS_1_VALID)
+    switch (clb_tag_test)
     {
+    case CLB_INT_RS485_RX_ADDRESS_1_VALID:
+        // RS485 address #1 valid -> Enable SCI ITs
         com_rs485_rx.index  = 0;
         com_rs485_rx.addr1  = true;
         com_rs485_rx.addr2  = false;
@@ -439,16 +456,15 @@ __attribute__((interrupt)) void clb_isrTxRx_RS485(void)
 #if USE_FCT
         SCI_clearOverflowStatus(COM_SCI_BASE);
         SCI_clearInterruptStatus(COM_SCI_BASE, SCI_INT_RXFF);
+        SCI_enableInterrupt(COM_SCI_BASE, SCI_INT_RXERR | SCI_INT_RXFF);
 #else
-        HWREGH(COM_SCI_BASE + SCI_O_FFRX) |= (SCI_FFRX_RXFFIENA | SCI_FFRX_RXFFINTCLR);
+        HWREGH(COM_SCI_BASE + SCI_O_FFRX)  |= (SCI_FFRX_RXFFIENA | SCI_FFRX_RXFFINTCLR | SCI_FFRX_RXFFOVRCLR);
+        HWREGH(COM_SCI_BASE + SCI_O_CTL1)  |= SCI_CTL1_RXERRINTENA;
 #endif
-    }
+        break;
 
-    /*
-     * RS485 address #2 valid -> Enable SCI ITs
-     */
-    if(clb_tag_test == CLB_INT_RS485_RX_ADDRESS_2_VALID)
-    {
+    case CLB_INT_RS485_RX_ADDRESS_2_VALID:
+        // RS485 address #2 valid -> Enable SCI ITs
         com_rs485_rx.index  = 0;
         com_rs485_rx.addr1  = false;
         com_rs485_rx.addr2  = true;
@@ -457,16 +473,15 @@ __attribute__((interrupt)) void clb_isrTxRx_RS485(void)
 #if USE_FCT
         SCI_clearOverflowStatus(COM_SCI_BASE);
         SCI_clearInterruptStatus(COM_SCI_BASE, SCI_INT_RXFF);
+        SCI_enableInterrupt(COM_SCI_BASE, SCI_INT_RXERR | SCI_INT_RXFF);
 #else
-        HWREGH(COM_SCI_BASE + SCI_O_FFRX) |= (SCI_FFRX_RXFFIENA | SCI_FFRX_RXFFINTCLR);
+        HWREGH(COM_SCI_BASE + SCI_O_FFRX)  |= (SCI_FFRX_RXFFIENA | SCI_FFRX_RXFFINTCLR | SCI_FFRX_RXFFOVRCLR);
+        HWREGH(COM_SCI_BASE + SCI_O_CTL1)  |= SCI_CTL1_RXERRINTENA;
 #endif
-    }
+        break;
 
-    /*
-     * RS485 End-Of-Reception detection
-     */
-    if(clb_tag_test == CLB_INT_RS485_RX_END_OF_RECEPTION)
-    {
+    case CLB_INT_RS485_RX_END_OF_RECEPTION:
+        // RS485 End-Of-Reception detection
         if(com_rs485_rx.addr1 || com_rs485_rx.addr2) // Valid address ?
         {
             RS485_msgReceive(COM_SCI_BASE, &com_rs485_rx);
@@ -479,13 +494,15 @@ __attribute__((interrupt)) void clb_isrTxRx_RS485(void)
                 CLA_forceTasks(CLA1_BASE, CLA_CMD_NEW_TASK_FLAG);
                 // prepare reply to master - reset transmit index
                 com_rs485_tx.index  = 0;
-                // prepare reply to master - reset RS485 transmit FIFO
-#if (0)
+                // prepare reply to master - reset RS485 transmit FIFO & enable RS485 SCI Tx ITs.
+#if (1)
 #if USE_FCT
                 SCI_resetTxFIFO(COM_SCI_BASE);
+                SCI_clearInterruptStatus(COM_SCI_BASE, SCI_INT_TXFF);
+                SCI_enableInterrupt(COM_SCI_BASE, SCI_INT_TXFF);
 #else
                 HWREGH(COM_SCI_BASE + SCI_O_FFTX) &= ~SCI_FFTX_TXFIFORESET;
-                HWREGH(COM_SCI_BASE + SCI_O_FFTX) |= SCI_FFTX_TXFIFORESET;
+                HWREGH(COM_SCI_BASE + SCI_O_FFTX) |= (SCI_FFTX_TXFIFORESET | SCI_FFTX_TXFFIENA | SCI_FFTX_TXFFINTCLR);
 #endif
                 // Inform CLB that next message is transmitted by slave
 #if USE_FCT
@@ -494,13 +511,6 @@ __attribute__((interrupt)) void clb_isrTxRx_RS485(void)
                 CLB_setGPREG(RS485_RX_TX_CLB_EOT_BASE, clb_gpreg);
 #else
                 HWREG(RS485_RX_TX_CLB_EOT_BASE + CLB_LOGICCTL + CLB_O_GP_REG) |= CLB_GPREG_TX_ENABLE;
-#endif
-                // Enable RS485 SCI Tx ITs.
-#if USE_FCT
-                SCI_clearInterruptStatus(COM_SCI_BASE, SCI_INT_TXFF);
-                SCI_enableInterrupt(COM_SCI_BASE, SCI_INT_TXFF);
-#else
-                HWREGH(COM_SCI_BASE + SCI_O_FFTX) |= (SCI_FFTX_TXFFIENA | SCI_FFTX_TXFFINTCLR);
 #endif
                 // Toggle GP reg.
 #if USE_FCT
@@ -512,48 +522,178 @@ __attribute__((interrupt)) void clb_isrTxRx_RS485(void)
 #endif
             }
         }
-        // Force a reset of SCI Rx FIFO.
+        /*
+         * Force a reset of SCI Rx FIFO & disable SCI Rx ITs while a valid address is not received.
+         * Clear IT sources.
+         */
 #if USE_FCT
         SCI_resetRxFIFO(COM_SCI_BASE);
-#else
-        HWREGH(COM_SCI_BASE + SCI_O_FFRX) &= ~SCI_FFRX_RXFIFORESET;
-        HWREGH(COM_SCI_BASE + SCI_O_FFRX) |= SCI_FFRX_RXFIFORESET;
-#endif
-        // Disable SCI Rx ITs while a valid address is not received.
-        // Clear IT source
-#if USE_FCT
-        SCI_disableInterrupt(COM_SCI_BASE, SCI_INT_RXFF);
         SCI_clearOverflowStatus(COM_SCI_BASE);
         SCI_clearInterruptStatus(COM_SCI_BASE, SCI_INT_RXFF);
+        SCI_disableInterrupt(COM_SCI_BASE, SCI_INT_RXFF);
 #else
-        HWREGH(COM_SCI_BASE + SCI_O_FFRX) &= ~SCI_FFRX_RXFFIENA;
-        HWREGH(COM_SCI_BASE + SCI_O_FFRX) |= (SCI_FFRX_RXFFOVRCLR | SCI_FFRX_RXFFINTCLR);
+        HWREGH(COM_SCI_BASE + SCI_O_FFRX)  &= ~(SCI_FFRX_RXFIFORESET | SCI_FFRX_RXFFIENA);
+        HWREGH(COM_SCI_BASE + SCI_O_FFRX)  |= (SCI_FFRX_RXFIFORESET | SCI_FFRX_RXFFOVRCLR | SCI_FFRX_RXFFINTCLR);
 #endif
+        // Purge pending SCI Rx ITs.
+        HWREGH(PIECTRL_BASE + PIE_O_IFR8)  &= ~((uint16_t)INT_RS485_RX_PIE_FLAG);
+        HWREGH(PIECTRL_BASE + PIE_O_ACK)    = INT_RS485_RX_MSG_GROUP;
+        IFR                                &= ~((uint16_t)INT_RS485_RX_MSG_GROUP);
         // Reset flags & index. Waiting for a new valid message.
         com_rs485_rx.index  = 0;
         com_rs485_rx.addr1  = false;
         com_rs485_rx.addr2  = false;
-    }
+        break;
 
-    /*
-     * RS485 End-Of-Transmission detection
-     */
-    if(clb_tag_test == CLB_INT_RS485_TX_END_OF_TRANSMISSION)
-    {
+    case CLB_INT_RS485_TX_END_OF_TRANSMISSION:
+        // RS485 End-Of-Transmission detection
 #if USE_FCT
         SCI_resetTxFIFO(COM_SCI_BASE);
 #else
         HWREGH(COM_SCI_BASE + SCI_O_FFTX) &= ~SCI_FFTX_TXFIFORESET;
         HWREGH(COM_SCI_BASE + SCI_O_FFTX) |= SCI_FFTX_TXFIFORESET;
 #endif
-#if USE_FCT
-        SCI_clearInterruptStatus(COM_SCI_BASE, SCI_INT_TXFF);
-#else
-        HWREGH(COM_SCI_BASE + SCI_O_FFTX) &= ~SCI_FFTX_TXFFIENA;
-        HWREGH(COM_SCI_BASE + SCI_O_FFTX) |= SCI_FFTX_TXFFINTCLR;
-#endif
         com_rs485_tx.index = 0;
+//        // Purge pending SCI Rx ITs.
+//        HWREGH(PIECTRL_BASE + PIE_O_IFR8)  &= ~((uint16_t)INT_RS485_RX_PIE_FLAG);
+//        HWREGH(PIECTRL_BASE + PIE_O_ACK)    = INT_RS485_RX_MSG_GROUP;
+//        IFR                                &= ~((uint16_t)INT_RS485_RX_MSG_GROUP);
+        break;
+
+    default:
+        break;
     }
+//
+//    /*
+//     * RS485 address #1 valid -> Enable SCI ITs
+//     */
+//    if(clb_tag_test == CLB_INT_RS485_RX_ADDRESS_1_VALID)
+//    {
+//        com_rs485_rx.index  = 0;
+//        com_rs485_rx.addr1  = true;
+//        com_rs485_rx.addr2  = false;
+//        RS485_msgReceive(COM_SCI_BASE, &com_rs485_rx);
+//        // Clear IT source & Enable FIFO Rx IT source
+//#if USE_FCT
+//        SCI_clearOverflowStatus(COM_SCI_BASE);
+//        SCI_clearInterruptStatus(COM_SCI_BASE, SCI_INT_RXFF);
+//        SCI_enableInterrupt(COM_SCI_BASE, SCI_INT_RXERR | SCI_INT_RXFF);
+//#else
+//        HWREGH(COM_SCI_BASE + SCI_O_FFRX)  |= (SCI_FFRX_RXFFIENA | SCI_FFRX_RXFFINTCLR | SCI_FFRX_RXFFOVRCLR);
+//        HWREGH(COM_SCI_BASE + SCI_O_CTL1)  |= SCI_CTL1_RXERRINTENA;
+//#endif
+//    }
+//
+//    /*
+//     * RS485 address #2 valid -> Enable SCI ITs
+//     */
+//    if(clb_tag_test == CLB_INT_RS485_RX_ADDRESS_2_VALID)
+//    {
+//        com_rs485_rx.index  = 0;
+//        com_rs485_rx.addr1  = false;
+//        com_rs485_rx.addr2  = true;
+//        RS485_msgReceive(COM_SCI_BASE, &com_rs485_rx);
+//        // Clear IT source & Enable FIFO Rx IT source
+//#if USE_FCT
+//        SCI_clearOverflowStatus(COM_SCI_BASE);
+//        SCI_clearInterruptStatus(COM_SCI_BASE, SCI_INT_RXFF);
+//        SCI_enableInterrupt(COM_SCI_BASE, SCI_INT_RXERR | SCI_INT_RXFF);
+//#else
+//        HWREGH(COM_SCI_BASE + SCI_O_FFRX)  |= (SCI_FFRX_RXFFIENA | SCI_FFRX_RXFFINTCLR | SCI_FFRX_RXFFOVRCLR);
+//        HWREGH(COM_SCI_BASE + SCI_O_CTL1)  |= SCI_CTL1_RXERRINTENA;
+//#endif
+//    }
+//
+//    /*
+//     * RS485 End-Of-Reception detection
+//     */
+//    if(clb_tag_test == CLB_INT_RS485_RX_END_OF_RECEPTION)
+//    {
+//        if(com_rs485_rx.addr1 || com_rs485_rx.addr2) // Valid address ?
+//        {
+//            RS485_msgReceive(COM_SCI_BASE, &com_rs485_rx);
+//            rs485_rx_msg_u* p_msg   = &com_rs485_rx.msg;
+//            uint32_t crc            = COM_msgCRC((uint16_t *) &p_msg->header, COM_MSG_RS485_RX_16BIT_PAYLOAD_LENGTH);
+//            if((p_msg->crc.u16_msb == MSB_32(crc)) && (p_msg->crc.u16_lsb == LSB_32(crc)))
+//            {
+//                // Message valid - Extract it & transfer to motors structures.
+//                COM_msgExtract(&p_msg->data, &cmd_uomodri[MOTOR_1], &cmd_uomodri[MOTOR_2]);
+//                CLA_forceTasks(CLA1_BASE, CLA_CMD_NEW_TASK_FLAG);
+//                // prepare reply to master - reset transmit index
+//                com_rs485_tx.index  = 0;
+//                // prepare reply to master - reset RS485 transmit FIFO & enable RS485 SCI Tx ITs.
+//#if (1)
+//#if USE_FCT
+//                SCI_resetTxFIFO(COM_SCI_BASE);
+//                SCI_clearInterruptStatus(COM_SCI_BASE, SCI_INT_TXFF);
+//                SCI_enableInterrupt(COM_SCI_BASE, SCI_INT_TXFF);
+//#else
+//                HWREGH(COM_SCI_BASE + SCI_O_FFTX) &= ~SCI_FFTX_TXFIFORESET;
+//                HWREGH(COM_SCI_BASE + SCI_O_FFTX) |= (SCI_FFTX_TXFIFORESET | SCI_FFTX_TXFFIENA | SCI_FFTX_TXFFINTCLR);
+//#endif
+//                // Inform CLB that next message is transmitted by slave
+//#if USE_FCT
+//                uint32_t clb_gpreg  = CLB_getGPREG(RS485_RX_TX_CLB_EOT_BASE);
+//                clb_gpreg          |= CLB_GPREG_TX_ENABLE;
+//                CLB_setGPREG(RS485_RX_TX_CLB_EOT_BASE, clb_gpreg);
+//#else
+//                HWREG(RS485_RX_TX_CLB_EOT_BASE + CLB_LOGICCTL + CLB_O_GP_REG) |= CLB_GPREG_TX_ENABLE;
+//#endif
+//                // Toggle GP reg.
+//#if USE_FCT
+//                clb_gpreg          &= ~CLB_GPREG_TX_ENABLE;
+//                CLB_setGPREG(RS485_RX_TX_CLB_EOT_BASE, clb_gpreg);
+//#else
+//                HWREG(RS485_RX_TX_CLB_EOT_BASE + CLB_LOGICCTL + CLB_O_GP_REG) &= ~CLB_GPREG_TX_ENABLE;
+//#endif
+//#endif
+//            }
+//        }
+//        /*
+//         * Force a reset of SCI Rx FIFO & disable SCI Rx ITs while a valid address is not received.
+//         * Clear IT sources.
+//         */
+//#if USE_FCT
+//        SCI_resetRxFIFO(COM_SCI_BASE);
+//        SCI_clearOverflowStatus(COM_SCI_BASE);
+//        SCI_clearInterruptStatus(COM_SCI_BASE, SCI_INT_RXFF);
+//        SCI_disableInterrupt(COM_SCI_BASE, SCI_INT_RXFF);
+//#else
+//        HWREGH(COM_SCI_BASE + SCI_O_FFRX)  &= ~(SCI_FFRX_RXFIFORESET | SCI_FFRX_RXFFIENA);
+//        HWREGH(COM_SCI_BASE + SCI_O_FFRX)  |= (SCI_FFRX_RXFIFORESET | SCI_FFRX_RXFFOVRCLR | SCI_FFRX_RXFFINTCLR);
+//#endif
+//        // Purge pending SCI Rx ITs.
+//        HWREGH(PIECTRL_BASE + PIE_O_IFR8)  &= ~((uint16_t)INT_RS485_RX_PIE_FLAG);
+//        HWREGH(PIECTRL_BASE + PIE_O_ACK)    = INT_RS485_RX_MSG_GROUP;
+//        IFR                                &= ~((uint16_t)INT_RS485_RX_MSG_GROUP);
+//
+//        // Reset flags & index. Waiting for a new valid message.
+//        com_rs485_rx.index  = 0;
+//        com_rs485_rx.addr1  = false;
+//        com_rs485_rx.addr2  = false;
+//    }
+//
+//    /*
+//     * RS485 End-Of-Transmission detection
+//     */
+//    if(clb_tag_test == CLB_INT_RS485_TX_END_OF_TRANSMISSION)
+//    {
+//#if USE_FCT
+//        SCI_resetTxFIFO(COM_SCI_BASE);
+//#else
+//        HWREGH(COM_SCI_BASE + SCI_O_FFTX) &= ~SCI_FFTX_TXFIFORESET;
+//        HWREGH(COM_SCI_BASE + SCI_O_FFTX) |= SCI_FFTX_TXFIFORESET;
+//#endif
+////#if USE_FCT
+////        SCI_disableInterrupt(COM_SCI_BASE, SCI_INT_TXFF);
+////        SCI_clearInterruptStatus(COM_SCI_BASE, SCI_INT_TXFF);
+////#else
+////        HWREGH(COM_SCI_BASE + SCI_O_FFTX) &= ~SCI_FFTX_TXFFIENA;
+////        HWREGH(COM_SCI_BASE + SCI_O_FFTX) |= SCI_FFTX_TXFFINTCLR;
+////#endif
+//        com_rs485_tx.index = 0;
+//    }
+
     // Clear CLB Flag
     CLB_clearInterruptTag(RS485_RX_TX_CLB_EOT_BASE);
     // Clear IT flag

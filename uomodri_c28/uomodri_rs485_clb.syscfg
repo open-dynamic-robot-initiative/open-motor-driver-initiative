@@ -154,7 +154,6 @@ TILE1.HLC.program1.instruct0       = "INTR 0x02";
 TILE1.HLC.program2.$name           = "HLCP_2";
 TILE1.HLC.program2.instruct0       = "INTR 0x10";
 TILE1.HLC.program3.$name           = "HLCP_3";
-TILE1.HLC.program3.instruct0       = "INTR 0x20";
 TILE1.AOC_0.$name                  = "AOC_0";
 TILE1.AOC_1.$name                  = "AOC_1";
 TILE1.AOC_2.$name                  = "AOC_2";
