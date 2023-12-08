@@ -398,6 +398,9 @@
                                                  SCI_INT_OE | \
                                                  SCI_INT_PE)
 #define COM_SCI_IT_SRC                          (0)
+#define COM_SCI_FIFO_TX_REG_ADDR                (COM_SCI_BASE + SCI_O_FFTX)
+#define COM_SCI_FIFO_RX_REG_ADDR                (COM_SCI_BASE + SCI_O_FFRX)
+#define COM_SCI_CTRL1_REG_ADDR                  (COM_SCI_BASE + SCI_O_CTL1)
 //                                                (SCI_INT_RXFF | \
 //                                                 SCI_INT_TXFF)
 //                                                 SCI_INT_RXRDY_BRKDT)// | \
@@ -1328,8 +1331,10 @@
  ***********************************************************************/
 //#define CLBCLK_SRC                              DEVICE_SYSCLK_FREQ AUXPLLCLK
 #define CLBCLK_FREQ                             EPWMCLK_FREQ
-#define CLB_GPREG_ADDR_VALID                    (1 << 3)
-#define CLB_GPREG_TX_ENABLE                     (1 << 2)
+//#define CLB_GPREG_ADDR_VALID                    (1 << 3)
+#define CLB_GPREG_RS485_TX_ENABLE               (1 << 2)
+#define CLB_GP_REG_ADDR                         (RS485_RX_TX_CLB_EOT_BASE + CLB_LOGICCTL + CLB_O_GP_REG)
+#define CLB_INT_REG_ADDR                        (RS485_RX_TX_CLB_EOT_BASE + CLB_LOGICCTL + CLB_O_INTR_TAG_REG)
 
 #define CLB_INT_RS485_RX_ADDRESS_1_VALID        (0x10)
 #define CLB_INT_RS485_RX_ADDRESS_2_VALID        (0x20)
