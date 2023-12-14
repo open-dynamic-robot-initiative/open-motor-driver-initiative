@@ -42,6 +42,9 @@ rs485_tx_t              com_rs485_tx = {.index = 0, .msg_cr = 1U, .msg_nx = 0U};
 #pragma DATA_ALIGN(led_spi_tx, 4)
 #pragma DATA_SECTION(led_spi_tx, "ramgs0")
 uint16_t                led_spi_tx[LED_MSG_TX_16BIT_LENGTH];
+#pragma DATA_ALIGN(global_1ms_tmr_cnt, 4)
+#pragma DATA_SECTION(global_1ms_tmr_cnt, "ramgs0")
+uint32_t                global_1ms_tmr_cnt = 0U;
 
 // External variables
 extern motor_t          motor_m1;
@@ -245,7 +248,7 @@ __attribute__((interrupt)) void cla_isrMotor1(void)
     p_msg->header.addr      = COM_MSG_RS485_TX_ADDRESS;
     p_msg->header.type      = COM_MSG_RS485_TX_TYPE_STANDARD;
     p_msg->header.size      = COM_MSG_RS485_TX_8BIT_FULL_LENGTH;
-    COM_msgCreate(&motor_m1, &p_msg->data);
+    COM_msgCreate(&motor_m1, &p_msg->data, global_1ms_tmr_cnt);
 #endif
     // Clear IT
     Interrupt_clearACKGroup(INT_CLA_MOTOR1_GROUP);
@@ -286,7 +289,7 @@ __attribute__((interrupt)) void cla_isrMotor2(void)
 #elif RS485_BUS_ENABLE
     // Finalize the Tx message for RS485. Aggregate MOTOR_2 values + computed CRC
     rs485_tx_msg_u* p_msg   = &com_rs485_tx.msg[com_rs485_tx.msg_nx];
-    COM_msgCreate(&motor_m2, &p_msg->data);
+    COM_msgCreate(&motor_m2, &p_msg->data, global_1ms_tmr_cnt);
     uint32_t crc            = COM_msgCRC((uint16_t *) &p_msg->header, COM_MSG_RS485_TX_16BIT_PAYLOAD_LENGTH);
     // swap words in message - Required for Solo
     p_msg->crc.u16_msb      = LSB_32(crc);
@@ -314,6 +317,7 @@ __attribute__((interrupt)) void tmr_isrLed(void)
 #ifdef DEBUG
 //    DBG_PIN2_SET;
 #endif
+    global_1ms_tmr_cnt = (global_1ms_tmr_cnt < UINT32_MAX) ? (global_1ms_tmr_cnt + 1) : (0);
     // LED dimming control
     if(!DMA_getRunStatusFlag(DMA_LED_SPI_TX_BASE_ADDR))
     {
@@ -376,6 +380,7 @@ __attribute__((interrupt)) void sci_isrTx_RS485(void)
             SCI_disableInterrupt(COM_SCI_BASE, SCI_INT_TXFF);
 #else
             HWREGH(COM_SCI_FIFO_TX_REG_ADDR)   &= ~SCI_FFTX_TXFFIENA;
+//            Interrupt_disable(INT_RS485_TX_MSG);
 #endif
             com_rs485_tx.index = 0;
         }
@@ -401,8 +406,14 @@ __attribute__((interrupt)) void sci_isrRx_RS485(void)
     // FIFO RX IT?
     if(sci_it_src_test & SCI_INT_RXFF)
     {
-        // Get contain of FIFO Rx
-         RS485_msgReceive(COM_SCI_BASE, &com_rs485_rx);
+        if(com_rs485_rx.addr1 || com_rs485_rx.addr2)
+            // Get contain of FIFO Rx
+            RS485_msgReceive(COM_SCI_BASE, &com_rs485_rx);
+        else
+        {
+            HWREGH(COM_SCI_FIFO_RX_REG_ADDR)   &= ~(SCI_FFRX_RXFIFORESET | SCI_FFRX_RXFFIENA);
+            HWREGH(COM_SCI_FIFO_RX_REG_ADDR)   |= (SCI_FFRX_RXFIFORESET);
+        }
         // Clear IT sources (FIFO IT source + FIFO overflow IT source)
 #if USE_FCT
          SCI_clearOverflowStatus(COM_SCI_BASE);
@@ -450,37 +461,36 @@ __attribute__((interrupt)) void clb_isrTxRx_RS485(void)
         // RS485 address #1 valid -> Enable SCI ITs
         com_rs485_rx.index  = 0;
         com_rs485_rx.addr1  = true;
-        com_rs485_rx.addr2  = false;
+        com_rs485_rx.addr2  = !com_rs485_rx.addr1;
         RS485_msgReceive(COM_SCI_BASE, &com_rs485_rx);
-        // Clear IT source & Enable FIFO Rx IT source
-#if USE_FCT
-        SCI_clearOverflowStatus(COM_SCI_BASE);
-        SCI_clearInterruptStatus(COM_SCI_BASE, SCI_INT_RXFF);
-        SCI_enableInterrupt(COM_SCI_BASE, SCI_INT_RXERR | SCI_INT_RXFF);
-#else
+        // Clear IT source & Enable FIFO Rx & Rx error IT sources.
         HWREGH(COM_SCI_FIFO_RX_REG_ADDR)   |= (SCI_FFRX_RXFFIENA | SCI_FFRX_RXFFINTCLR | SCI_FFRX_RXFFOVRCLR);
         HWREGH(COM_SCI_CTRL1_REG_ADDR)     |= SCI_CTL1_RXERRINTENA;
-#endif
+//        Interrupt_register(INT_RS485_RX_MSG, INT_RS485_RX_MSG_HANDLER);
+//        Interrupt_enable(INT_RS485_RX_MSG);
+//        Interrupt_enableInCPU(INTERRUPT_CPU_INT8);
         break;
 
-    case CLB_INT_RS485_RX_ADDRESS_2_VALID:
-        // RS485 address #2 valid -> Enable SCI ITs
-        com_rs485_rx.index  = 0;
-        com_rs485_rx.addr1  = false;
-        com_rs485_rx.addr2  = true;
-        RS485_msgReceive(COM_SCI_BASE, &com_rs485_rx);
-        // Clear IT source & Enable FIFO Rx IT source
-#if USE_FCT
-        SCI_clearOverflowStatus(COM_SCI_BASE);
-        SCI_clearInterruptStatus(COM_SCI_BASE, SCI_INT_RXFF);
-        SCI_enableInterrupt(COM_SCI_BASE, SCI_INT_RXERR | SCI_INT_RXFF);
-#else
-        HWREGH(COM_SCI_FIFO_RX_REG_ADDR)   |= (SCI_FFRX_RXFFIENA | SCI_FFRX_RXFFINTCLR | SCI_FFRX_RXFFOVRCLR);
-        HWREGH(COM_SCI_CTRL1_REG_ADDR)     |= SCI_CTL1_RXERRINTENA;
-#endif
-        break;
+//    case CLB_INT_RS485_RX_ADDRESS_2_VALID:
+//        // RS485 address #2 valid -> Enable SCI ITs
+//        com_rs485_rx.index  = 0;
+//        com_rs485_rx.addr1  = false;
+//        com_rs485_rx.addr2  = true;
+//        RS485_msgReceive(COM_SCI_BASE, &com_rs485_rx);
+//        // Clear IT source & Enable FIFO Rx IT source
+//#if USE_FCT
+//        SCI_clearOverflowStatus(COM_SCI_BASE);
+//        SCI_clearInterruptStatus(COM_SCI_BASE, SCI_INT_RXFF);
+//        SCI_enableInterrupt(COM_SCI_BASE, SCI_INT_RXERR | SCI_INT_RXFF);
+//#else
+//        HWREGH(COM_SCI_FIFO_RX_REG_ADDR)   |= (SCI_FFRX_RXFFIENA | SCI_FFRX_RXFFINTCLR | SCI_FFRX_RXFFOVRCLR);
+//        HWREGH(COM_SCI_CTRL1_REG_ADDR)     |= SCI_CTL1_RXERRINTENA;
+//#endif
+//        Interrupt_enable(INT_RS485_RX_MSG);
+//        break;
 
     case CLB_INT_RS485_RX_END_OF_RECEPTION:
+
         // RS485 End-Of-Reception detection
         if(com_rs485_rx.addr1 || com_rs485_rx.addr2) // Valid address ?
         {
@@ -494,69 +504,66 @@ __attribute__((interrupt)) void clb_isrTxRx_RS485(void)
                 CLA_forceTasks(CLA1_BASE, CLA_CMD_NEW_TASK_FLAG);
                 // prepare reply to master - reset transmit index
                 com_rs485_tx.index  = 0;
-#if (1)
-#if USE_FCT
-                // prepare reply to master - reset RS485 transmit FIFO & enable RS485 SCI Tx ITs.
-                SCI_resetTxFIFO(COM_SCI_BASE);
-                SCI_clearInterruptStatus(COM_SCI_BASE, SCI_INT_TXFF);
-                SCI_enableInterrupt(COM_SCI_BASE, SCI_INT_TXFF);
-                // Inform CLB that next message is transmitted by slave
-                uint32_t clb_gpreg  = CLB_getGPREG(RS485_RX_TX_CLB_EOT_BASE);
-                clb_gpreg          |= CLB_GPREG_TX_ENABLE;
-                CLB_setGPREG(RS485_RX_TX_CLB_EOT_BASE, clb_gpreg);
-                clb_gpreg          &= ~CLB_GPREG_TX_ENABLE;
-                CLB_setGPREG(RS485_RX_TX_CLB_EOT_BASE, clb_gpreg);
-#else
+                p_msg->crc.u16_lsb  = 0;
+                p_msg->crc.u16_msb  = 0;
                 // prepare reply to master - reset RS485 transmit FIFO & enable RS485 SCI Tx ITs.
                 HWREGH(COM_SCI_FIFO_TX_REG_ADDR)   &= ~SCI_FFTX_TXFIFORESET;
                 HWREGH(COM_SCI_FIFO_TX_REG_ADDR)   |= (SCI_FFTX_TXFIFORESET | SCI_FFTX_TXFFIENA | SCI_FFTX_TXFFINTCLR);
                 // Inform CLB that next message is transmitted by slave
                 HWREG(CLB_GP_REG_ADDR)             |= CLB_GPREG_RS485_TX_ENABLE;
                 HWREG(CLB_GP_REG_ADDR)             &= ~CLB_GPREG_RS485_TX_ENABLE;
-#endif
-#endif
             }
         }
         /*
          * Force a reset of SCI Rx FIFO & disable SCI Rx ITs while a valid address is not received.
          * Clear IT sources.
          */
-#if USE_FCT
-        SCI_resetRxFIFO(COM_SCI_BASE);
-        SCI_clearOverflowStatus(COM_SCI_BASE);
-        SCI_clearInterruptStatus(COM_SCI_BASE, SCI_INT_RXFF);
-        SCI_disableInterrupt(COM_SCI_BASE, SCI_INT_RXFF);
-#else
         HWREGH(COM_SCI_FIFO_RX_REG_ADDR)           &= ~(SCI_FFRX_RXFIFORESET | SCI_FFRX_RXFFIENA);
         HWREGH(COM_SCI_FIFO_RX_REG_ADDR)           |= (SCI_FFRX_RXFIFORESET | SCI_FFRX_RXFFOVRCLR | SCI_FFRX_RXFFINTCLR);
-#endif
+        HWREGH(COM_SCI_CTRL1_REG_ADDR)             &= ~(SCI_CTL1_RXERRINTENA | SCI_CTL1_SWRESET);
+        HWREGH(COM_SCI_CTRL1_REG_ADDR)             |= SCI_CTL1_SWRESET;
         // Purge pending SCI Rx ITs.
-        HWREGH(PIECTRL_BASE + PIE_O_IFR8)          &= ~((uint16_t)INT_RS485_RX_PIE_FLAG);
-        HWREGH(PIECTRL_BASE + PIE_O_ACK)            = INT_RS485_RX_MSG_GROUP;
-        IFR                                        &= ~((uint16_t)INT_RS485_RX_MSG_GROUP);
+//        HWREGH(PIECTRL_BASE + PIE_O_IFR8)          &= ~((uint16_t)INT_RS485_RX_PIE_FLAG);
+//        HWREGH(PIECTRL_BASE + PIE_O_ACK)            = INT_RS485_RX_MSG_GROUP;
         // Reset flags & index. Waiting for a new valid message.
         com_rs485_rx.index                          = 0;
         com_rs485_rx.addr1                          = false;
         com_rs485_rx.addr2                          = false;
         break;
 
-    case CLB_INT_RS485_TX_END_OF_TRANSMISSION:
-        // RS485 End-Of-Transmission detection
-#if USE_FCT
-        SCI_resetTxFIFO(COM_SCI_BASE);
-#else
-        HWREGH(COM_SCI_FIFO_TX_REG_ADDR)           &= ~SCI_FFTX_TXFIFORESET;
-        HWREGH(COM_SCI_FIFO_TX_REG_ADDR)           |= SCI_FFTX_TXFIFORESET;
-//
+//    case CLB_INT_RS485_TX_END_OF_TRANSMISSION:
+//        // RS485 End-Of-Transmission detection
+//#if USE_FCT
+//        SCI_resetTxFIFO(COM_SCI_BASE);
+//        SCI_resetRxFIFO(COM_SCI_BASE);
+//        SCI_clearOverflowStatus(COM_SCI_BASE);
+//        SCI_clearInterruptStatus(COM_SCI_BASE, SCI_INT_RXFF);
+//        SCI_disableInterrupt(COM_SCI_BASE, SCI_INT_RXFF);
+//#else
+//        // Force a reset of SCI Tx FIFO
+//        HWREGH(COM_SCI_FIFO_TX_REG_ADDR)           &= ~SCI_FFTX_TXFIFORESET;
+//        HWREGH(COM_SCI_FIFO_TX_REG_ADDR)           |= SCI_FFTX_TXFIFORESET;
+//        /*
+//         * Force a reset of SCI Rx FIFO & disable SCI Rx ITs while a valid address is not received.
+//         * Clear IT sources.
+//         */
 //        HWREGH(COM_SCI_FIFO_RX_REG_ADDR)           &= ~(SCI_FFRX_RXFIFORESET | SCI_FFRX_RXFFIENA);
 //        HWREGH(COM_SCI_FIFO_RX_REG_ADDR)           |= (SCI_FFRX_RXFIFORESET | SCI_FFRX_RXFFOVRCLR | SCI_FFRX_RXFFINTCLR);
-#endif
-        com_rs485_tx.index                          = 0;
 //        // Purge pending SCI Rx ITs.
-//        HWREGH(PIECTRL_BASE + PIE_O_IFR8)  &= ~((uint16_t)INT_RS485_RX_PIE_FLAG);
-//        HWREGH(PIECTRL_BASE + PIE_O_ACK)    = INT_RS485_RX_MSG_GROUP;
-//        IFR                                &= ~((uint16_t)INT_RS485_RX_MSG_GROUP);
-        break;
+////        HWREGH(PIECTRL_BASE + PIE_O_IFR8)          &= ~((uint16_t)INT_RS485_RX_PIE_FLAG);
+////        HWREGH(PIECTRL_BASE + PIE_O_ACK)            = INT_RS485_RX_MSG_GROUP;
+////        IFR                                        &= ~((uint16_t)INT_RS485_RX_MSG_GROUP);
+//#endif
+//        // Reset flags & index. Waiting for a new valid message.
+//        com_rs485_tx.index                          = 0;
+//        com_rs485_rx.index                          = 0;
+//        com_rs485_rx.addr1                          = false;
+//        com_rs485_rx.addr2                          = false;
+////        // Purge pending SCI Rx ITs.
+////        HWREGH(PIECTRL_BASE + PIE_O_IFR8)  &= ~((uint16_t)INT_RS485_RX_PIE_FLAG);
+////        HWREGH(PIECTRL_BASE + PIE_O_ACK)    = INT_RS485_RX_MSG_GROUP;
+////        IFR                                &= ~((uint16_t)INT_RS485_RX_MSG_GROUP);
+//        break;
 
     default:
         break;

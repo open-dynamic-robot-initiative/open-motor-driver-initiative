@@ -386,7 +386,7 @@
 #define COM_SCI_CFG                             (SCI_CONFIG_WLEN_8 | \
                                                  SCI_CONFIG_STOP_ONE | \
                                                  SCI_CONFIG_PAR_NONE)
-#define COM_SCI_TX_FIFO_LVL                     SCI_FIFO_TX8
+#define COM_SCI_TX_FIFO_LVL                     SCI_FIFO_TX6
 #define COM_SCI_RX_FIFO_LVL                     SCI_FIFO_RX8
 #define SCI_INT_ALL                             (SCI_INT_RXERR | \
                                                  SCI_INT_RXRDY_BRKDT | \
@@ -1332,7 +1332,7 @@
 //#define CLBCLK_SRC                              DEVICE_SYSCLK_FREQ AUXPLLCLK
 #define CLBCLK_FREQ                             EPWMCLK_FREQ
 //#define CLB_GPREG_ADDR_VALID                    (1 << 3)
-#define CLB_GPREG_RS485_TX_ENABLE               (1 << 2)
+#define CLB_GPREG_RS485_TX_ENABLE               (1 << 1)
 #define CLB_GP_REG_ADDR                         (RS485_RX_TX_CLB_EOT_BASE + CLB_LOGICCTL + CLB_O_GP_REG)
 #define CLB_INT_REG_ADDR                        (RS485_RX_TX_CLB_EOT_BASE + CLB_LOGICCTL + CLB_O_INTR_TAG_REG)
 

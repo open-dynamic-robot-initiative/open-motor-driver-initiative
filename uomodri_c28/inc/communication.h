@@ -786,7 +786,7 @@ typedef struct __com_dbg_rx_msg_t__
 #ifdef CPU1
 //bool_t COM_msgExtract(uint32_t, mst2slv_msg_t*, cmd_t*, cmd_t*);
 void COM_msgExtract(mst2slv_msg_t*, cmd_t*, cmd_t*);
-bool_t COM_msgCreate(motor_t*, slv2mst_msg_t*);
+bool_t COM_msgCreate(motor_t*, slv2mst_msg_t*, uint32_t);
 void COM_msgSwapBytes(uint16_t*, uint16_t*, uint16_t);
 void COM_resetCmdStruct(cmd_t*);
 uint32_t COM_vCRC32(uint16_t*, uint16_t);

@@ -64,7 +64,7 @@ void COM_msgExtract(mst2slv_msg_t* p_msg, cmd_t* p_cmd_m1, cmd_t* p_cmd_m2)
  * @param[in]       *p_motor    Pointer on current data structure used for control.
  * @param[inout]    *p_msg      Pointer on the message to transmit to the Master board.
  */
-bool_t COM_msgCreate(motor_t* p_motor, slv2mst_msg_t* p_msg)
+bool_t COM_msgCreate(motor_t* p_motor, slv2mst_msg_t* p_msg, uint32_t tmr_cnt)
 {
     foc_t* p_foc                        = &p_motor->foc;
     encoder_t* p_enc                    = &p_foc->enc;
@@ -110,8 +110,8 @@ bool_t COM_msgCreate(motor_t* p_motor, slv2mst_msg_t* p_msg)
         p_msg->status.SE                = motor_cmd.systemEnable;   // System enabled
         p_msg->status.STATUS_RSV1       = 0;
         p_msg->lastCmdIndex             = p_foc->cmd.index;
-        p_msg->timeStamp                = (uint16_t)CPUTimer_getTimerCount(CPU_TIMER_0_BASE);
-
+        p_msg->timeStamp                = (uint16_t)tmr_cnt;
+//(p_msg->timeStamp < 0xFFFF) ? (p_msg->timeStamp + 1) : (0);//
         p_msg->status.ERROR_CODE        = (motor_err.com_timeout)   ? (STATUS_ERROR_SPI_RECV_TIMEOUT)   : (p_msg->status.ERROR_CODE);
         p_msg->status.ERROR_CODE        = (motor_err.pos_rollover)  ? (STATUS_ERROR_POS_ROLLOVER)       : (p_msg->status.ERROR_CODE);
         p_msg->status.ERROR_CODE        = (motor_err.drv_fault)     ? (STATUS_ERROR_DRV_FAULT)          : (p_msg->status.ERROR_CODE);

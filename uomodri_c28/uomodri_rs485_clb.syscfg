@@ -1,7 +1,7 @@
 /**
  * These arguments were used when this file was generated. They will be automatically applied on subsequent loads
  * via the GUI or CLI. Run CLI with '--help' for additional information on how to override these arguments.
- * @cliArgs --device "F2838x" --package "337bga" --part "F2838x_337bga" --context "CPU1" --product "C2000WARE@5.00.00.00"
+ * @cliArgs --device "F2838x" --package "337bga" --part "F2838x_337bga" --context "CPU1" --product "C2000WARE@5.01.00.00"
  * @versions {"tool":"1.18.0+3266"}
  */
 
@@ -98,8 +98,8 @@ TILE1.LUT_0.i1                     = "COUNTER_0.count_match1";
 TILE1.LUT_1.$name                  = "LUT_1";
 TILE1.LUT_1.i0                     = "FSM_1.S0";
 TILE1.LUT_1.lutDescription         = "RS485_Rx_LUT_HLC_IT";
-TILE1.LUT_1.i1                     = "COUNTER_0.count_match1";
 TILE1.LUT_1.eqn                    = "(!i0) & i1";
+TILE1.LUT_1.i1                     = "COUNTER_0.count_match1";
 TILE1.LUT_2.$name                  = "LUT_2";
 TILE1.LUT_2.lutDescription         = "RS485_Tx_LUT_HLC_IT";
 TILE1.LUT_2.eqn                    = "i0 & i1";
@@ -111,10 +111,10 @@ TILE1.FSM_0.eqn_s0                 = "((!s0) & e0) | (s0 & (!e1))";
 TILE1.FSM_0.fsmDescription         = "RS485_RxTx_FSM_CNT0_ENABLE";
 TILE1.FSM_0.e1                     = "COUNTER_0.count_match1";
 TILE1.FSM_1.$name                  = "FSM_1";
-TILE1.FSM_1.e1                     = "COUNTER_0.count_match1";
 TILE1.FSM_1.eqn_s0                 = "((!s0) & e0) | (s0 & (!e1))";
 TILE1.FSM_1.fsmDescription         = "RS485_RxTx_FSM_SWITCH";
 TILE1.FSM_1.e0                     = "BOUNDARY.in1";
+TILE1.FSM_1.e1                     = "COUNTER_0.count_match1";
 TILE1.FSM_2.$name                  = "FSM_2";
 TILE1.COUNTER_0.$name              = "COUNTER_0";
 TILE1.COUNTER_0.mode1              = "1";
@@ -142,14 +142,12 @@ TILE1.OUTLUT_6.$name               = "OUTLUT_6";
 TILE1.OUTLUT_7.$name               = "OUTLUT_7";
 TILE1.HLC.$name                    = "HLC_0";
 TILE1.HLC.hlcDescription           = "RS485_Rx_Tx_HLC_EOT_IT";
-TILE1.HLC.e0                       = "LUT_1.OUT";
-TILE1.HLC.e1                       = "LUT_2.OUT";
 TILE1.HLC.e2                       = "BOUNDARY.in2";
 TILE1.HLC.e3                       = "BOUNDARY.in3";
+TILE1.HLC.e0                       = "COUNTER_0.count_match1";
 TILE1.HLC.program0.$name           = "HLCP_0";
 TILE1.HLC.program0.instruct0       = "INTR 0x01";
 TILE1.HLC.program1.$name           = "HLCP_1";
-TILE1.HLC.program1.instruct0       = "INTR 0x02";
 TILE1.HLC.program2.$name           = "HLCP_2";
 TILE1.HLC.program2.instruct0       = "INTR 0x10";
 TILE1.HLC.program3.$name           = "HLCP_3";

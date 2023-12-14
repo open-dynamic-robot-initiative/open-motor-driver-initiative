@@ -762,6 +762,7 @@ void HAL_TMR_ini(const tmr_cfg_t* p_TimerCfg)
             (p_TimerCfg->intEnable) ? (CPUTimer_enableInterrupt(cpuTimerBase)) : (CPUTimer_disableInterrupt(cpuTimerBase));
             /* Reload & start CPU-Timer */
             CPUTimer_reloadTimerCounter(cpuTimerBase);
+            CPUTimer_clearOverflowFlag(cpuTimerBase);
             CPUTimer_startTimer(cpuTimerBase);
             cpuTimerBase = (++p_TimerCfg)->cpuTimerBase;
         }
