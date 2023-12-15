@@ -631,6 +631,13 @@ void HAL_IPC_ini(const ipc_cfg_t* p_ipcCfg)
 void HAL_CLB_ini(void)
 {
     CLB_init();
+
+//    uint32_t addr1;
+//    addr1   = 0x43000000;
+//    addr1   = addr1 >> 1;
+//    //addr1 <<= 23;
+//    addr1  |= 0x80000000;
+//    CLB_configCounterLoadMatch(RS485_RX_CLB_ADDR_VALID_BASE, CLB_CTR2, TILE2_COUNTER_2_LOAD_VAL, addr1, 0);
     // Input CLB Xbar config
     CLB_INPUTXBAR_init();
     // output CLB Xbar config

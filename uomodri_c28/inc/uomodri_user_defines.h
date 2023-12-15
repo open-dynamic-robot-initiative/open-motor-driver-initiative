@@ -1339,7 +1339,6 @@
 #define CLB_INT_RS485_RX_ADDRESS_1_VALID        (0x10)
 #define CLB_INT_RS485_RX_ADDRESS_2_VALID        (0x20)
 #define CLB_INT_RS485_RX_END_OF_RECEPTION       (0x01)
-#define CLB_INT_RS485_TX_END_OF_TRANSMISSION    (0x02)
 
 /***********************************************************************
  * INTERRUPTS DEFINES
