@@ -31,14 +31,12 @@ spi_rx_t                com_spi_rx;
 #pragma DATA_ALIGN(com_spi_tx, 4)
 #pragma DATA_SECTION(com_spi_tx, "ramgs0")
 spi_tx_t                com_spi_tx = {.msg_cr = 0U, .msg_nx = 1U};
-//#elif (RS485_BUS_ENABLE)
 #pragma DATA_ALIGN(com_rs485_rx, 4)
 #pragma DATA_SECTION(com_rs485_rx, "ramgs0")
 rs485_rx_t              com_rs485_rx = {.index = 0, .addr1 = false, .addr2 = false};//, .highByte = true};
 #pragma DATA_ALIGN(com_rs485_tx, 4)
 #pragma DATA_SECTION(com_rs485_tx, "ramgs0")
 rs485_tx_t              com_rs485_tx = {.index = 0, .msg_cr = 1U, .msg_nx = 0U};
-//#endif
 #pragma DATA_ALIGN(led_spi_tx, 4)
 #pragma DATA_SECTION(led_spi_tx, "ramgs0")
 uint16_t                led_spi_tx[LED_MSG_TX_16BIT_LENGTH];
@@ -490,7 +488,12 @@ __attribute__((interrupt)) void clb_isrTxRx_RS485(void)
 //        break;
 
     case CLB_INT_RS485_RX_END_OF_RECEPTION:
-
+        // Disable immediately SCI Rx & errors ITs.
+        HWREGH(COM_SCI_FIFO_RX_REG_ADDR)   &= ~SCI_FFRX_RXFFIENA;
+        HWREGH(COM_SCI_CTRL1_REG_ADDR)     &= ~SCI_CTL1_RXERRINTENA;
+        // Purge pending ITs.
+        HWREGH(PIECTRL_BASE + PIE_O_IFR8)  &= ~((uint16_t)INT_RS485_RX_PIE_FLAG);
+        HWREGH(PIECTRL_BASE + PIE_O_ACK)    = INT_RS485_RX_MSG_GROUP;
         // RS485 End-Of-Reception detection
         if(com_rs485_rx.addr1 || com_rs485_rx.addr2) // Valid address ?
         {
@@ -518,13 +521,10 @@ __attribute__((interrupt)) void clb_isrTxRx_RS485(void)
          * Force a reset of SCI Rx FIFO & disable SCI Rx ITs while a valid address is not received.
          * Clear IT sources.
          */
-        HWREGH(COM_SCI_FIFO_RX_REG_ADDR)           &= ~(SCI_FFRX_RXFIFORESET | SCI_FFRX_RXFFIENA);
+        HWREGH(COM_SCI_FIFO_RX_REG_ADDR)           &= ~(SCI_FFRX_RXFIFORESET);
         HWREGH(COM_SCI_FIFO_RX_REG_ADDR)           |= (SCI_FFRX_RXFIFORESET | SCI_FFRX_RXFFOVRCLR | SCI_FFRX_RXFFINTCLR);
-        HWREGH(COM_SCI_CTRL1_REG_ADDR)             &= ~(SCI_CTL1_RXERRINTENA | SCI_CTL1_SWRESET);
+        HWREGH(COM_SCI_CTRL1_REG_ADDR)             &= ~SCI_CTL1_SWRESET;
         HWREGH(COM_SCI_CTRL1_REG_ADDR)             |= SCI_CTL1_SWRESET;
-        // Purge pending SCI Rx ITs.
-//        HWREGH(PIECTRL_BASE + PIE_O_IFR8)          &= ~((uint16_t)INT_RS485_RX_PIE_FLAG);
-//        HWREGH(PIECTRL_BASE + PIE_O_ACK)            = INT_RS485_RX_MSG_GROUP;
         // Reset flags & index. Waiting for a new valid message.
         com_rs485_rx.index                          = 0;
         com_rs485_rx.addr1                          = false;
