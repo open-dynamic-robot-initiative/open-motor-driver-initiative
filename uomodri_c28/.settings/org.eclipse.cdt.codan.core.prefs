@@ -1,6 +1,5 @@
 eclipse.preferences.version=1
 inEditor=false
-onBuild=false
 org.eclipse.cdt.codan.checkers.errnoreturn=Warning
 org.eclipse.cdt.codan.checkers.errnoreturn.params={launchModes\=>{RUN_ON_FULL_BUILD\=>true,RUN_ON_INC_BUILD\=>true,RUN_ON_FILE_OPEN\=>false,RUN_ON_FILE_SAVE\=>false,RUN_AS_YOU_TYPE\=>true,RUN_ON_DEMAND\=>true},suppression_comment\=>"@suppress(\\"No return\\")",implicit\=>false}
 org.eclipse.cdt.codan.checkers.errreturnvalue=Error
@@ -24,7 +23,7 @@ org.eclipse.cdt.codan.internal.checkers.AssignmentToItselfProblem.params={launch
 org.eclipse.cdt.codan.internal.checkers.BlacklistProblem=-Warning
 org.eclipse.cdt.codan.internal.checkers.BlacklistProblem.params={launchModes\=>{RUN_ON_FULL_BUILD\=>true,RUN_ON_INC_BUILD\=>true,RUN_ON_FILE_OPEN\=>false,RUN_ON_FILE_SAVE\=>false,RUN_AS_YOU_TYPE\=>true,RUN_ON_DEMAND\=>true},suppression_comment\=>"@suppress(\\"Function or method is blacklisted\\")",blacklist\=>()}
 org.eclipse.cdt.codan.internal.checkers.CStyleCastProblem=-Warning
-org.eclipse.cdt.codan.internal.checkers.CStyleCastProblem.params={launchModes\=>{RUN_ON_FULL_BUILD\=>true,RUN_ON_INC_BUILD\=>true,RUN_ON_FILE_OPEN\=>false,RUN_ON_FILE_SAVE\=>false,RUN_AS_YOU_TYPE\=>true,RUN_ON_DEMAND\=>true},suppression_comment\=>"@suppress(\\"C-Style cast instead of C++ cast\\")"}
+org.eclipse.cdt.codan.internal.checkers.CStyleCastProblem.params={launchModes\=>{RUN_ON_FULL_BUILD\=>true,RUN_ON_INC_BUILD\=>true,RUN_ON_FILE_OPEN\=>false,RUN_ON_FILE_SAVE\=>false,RUN_AS_YOU_TYPE\=>true,RUN_ON_DEMAND\=>true},suppression_comment\=>"@suppress(\\"C-Style cast instead of C++ cast\\")",checkMacro\=>true}
 org.eclipse.cdt.codan.internal.checkers.CaseBreakProblem=Warning
 org.eclipse.cdt.codan.internal.checkers.CaseBreakProblem.params={launchModes\=>{RUN_ON_FULL_BUILD\=>true,RUN_ON_INC_BUILD\=>true,RUN_ON_FILE_OPEN\=>false,RUN_ON_FILE_SAVE\=>false,RUN_AS_YOU_TYPE\=>true,RUN_ON_DEMAND\=>true},suppression_comment\=>"@suppress(\\"No break at end of case\\")",no_break_comment\=>"no break",last_case_param\=>false,empty_case_param\=>false,enable_fallthrough_quickfix_param\=>false}
 org.eclipse.cdt.codan.internal.checkers.CatchByReference=Warning
@@ -51,6 +50,8 @@ org.eclipse.cdt.codan.internal.checkers.InvalidTemplateArgumentsProblem=Error
 org.eclipse.cdt.codan.internal.checkers.InvalidTemplateArgumentsProblem.params={launchModes\=>{RUN_ON_FULL_BUILD\=>true,RUN_ON_INC_BUILD\=>true,RUN_ON_FILE_OPEN\=>false,RUN_ON_FILE_SAVE\=>false,RUN_AS_YOU_TYPE\=>true,RUN_ON_DEMAND\=>true},suppression_comment\=>"@suppress(\\"Invalid template argument\\")"}
 org.eclipse.cdt.codan.internal.checkers.LabelStatementNotFoundProblem=Error
 org.eclipse.cdt.codan.internal.checkers.LabelStatementNotFoundProblem.params={launchModes\=>{RUN_ON_FULL_BUILD\=>true,RUN_ON_INC_BUILD\=>true,RUN_ON_FILE_OPEN\=>false,RUN_ON_FILE_SAVE\=>false,RUN_AS_YOU_TYPE\=>true,RUN_ON_DEMAND\=>true},suppression_comment\=>"@suppress(\\"Label statement not found\\")"}
+org.eclipse.cdt.codan.internal.checkers.MagicNumberProblem=-Warning
+org.eclipse.cdt.codan.internal.checkers.MagicNumberProblem.params={launchModes\=>{RUN_ON_FULL_BUILD\=>true,RUN_ON_INC_BUILD\=>true,RUN_ON_FILE_OPEN\=>false,RUN_ON_FILE_SAVE\=>false,RUN_AS_YOU_TYPE\=>true,RUN_ON_DEMAND\=>true},suppression_comment\=>"@suppress(\\"Avoid magic numbers\\")",checkArray\=>true,checkOperatorParen\=>true,exceptions\=>(1,0,-1,2,1.0,0.0,-1.0)}
 org.eclipse.cdt.codan.internal.checkers.MemberDeclarationNotFoundProblem=Error
 org.eclipse.cdt.codan.internal.checkers.MemberDeclarationNotFoundProblem.params={launchModes\=>{RUN_ON_FULL_BUILD\=>true,RUN_ON_INC_BUILD\=>true,RUN_ON_FILE_OPEN\=>false,RUN_ON_FILE_SAVE\=>false,RUN_AS_YOU_TYPE\=>true,RUN_ON_DEMAND\=>true},suppression_comment\=>"@suppress(\\"Member declaration not found\\")"}
 org.eclipse.cdt.codan.internal.checkers.MethodResolutionProblem=Error
@@ -67,6 +68,8 @@ org.eclipse.cdt.codan.internal.checkers.MultipleDeclarationsProblem=-Warning
 org.eclipse.cdt.codan.internal.checkers.MultipleDeclarationsProblem.params={launchModes\=>{RUN_ON_FULL_BUILD\=>true,RUN_ON_INC_BUILD\=>true,RUN_ON_FILE_OPEN\=>false,RUN_ON_FILE_SAVE\=>false,RUN_AS_YOU_TYPE\=>true,RUN_ON_DEMAND\=>true},suppression_comment\=>"@suppress(\\"Multiple variable declaration\\")"}
 org.eclipse.cdt.codan.internal.checkers.NamingConventionFunctionChecker=-Info
 org.eclipse.cdt.codan.internal.checkers.NamingConventionFunctionChecker.params={launchModes\=>{RUN_ON_FULL_BUILD\=>true,RUN_ON_INC_BUILD\=>true,RUN_ON_FILE_OPEN\=>false,RUN_ON_FILE_SAVE\=>false,RUN_AS_YOU_TYPE\=>true,RUN_ON_DEMAND\=>true},suppression_comment\=>"@suppress(\\"Name convention for function\\")",pattern\=>"^[a-z]",macro\=>true,exceptions\=>()}
+org.eclipse.cdt.codan.internal.checkers.NoDiscardProblem=Warning
+org.eclipse.cdt.codan.internal.checkers.NoDiscardProblem.params={launchModes\=>{RUN_ON_FULL_BUILD\=>true,RUN_ON_INC_BUILD\=>true,RUN_ON_FILE_OPEN\=>false,RUN_ON_FILE_SAVE\=>false,RUN_AS_YOU_TYPE\=>true,RUN_ON_DEMAND\=>true},suppression_comment\=>"@suppress(\\"Return value not evaluated\\")",macro\=>true}
 org.eclipse.cdt.codan.internal.checkers.NonVirtualDestructorProblem=Warning
 org.eclipse.cdt.codan.internal.checkers.NonVirtualDestructorProblem.params={launchModes\=>{RUN_ON_FULL_BUILD\=>true,RUN_ON_INC_BUILD\=>true,RUN_ON_FILE_OPEN\=>false,RUN_ON_FILE_SAVE\=>false,RUN_AS_YOU_TYPE\=>true,RUN_ON_DEMAND\=>true},suppression_comment\=>"@suppress(\\"Class has a virtual method and non-virtual destructor\\")"}
 org.eclipse.cdt.codan.internal.checkers.OverloadProblem=Error
@@ -79,6 +82,8 @@ org.eclipse.cdt.codan.internal.checkers.ReturnStyleProblem=-Warning
 org.eclipse.cdt.codan.internal.checkers.ReturnStyleProblem.params={launchModes\=>{RUN_ON_FULL_BUILD\=>true,RUN_ON_INC_BUILD\=>true,RUN_ON_FILE_OPEN\=>false,RUN_ON_FILE_SAVE\=>false,RUN_AS_YOU_TYPE\=>true,RUN_ON_DEMAND\=>true},suppression_comment\=>"@suppress(\\"Return with parenthesis\\")"}
 org.eclipse.cdt.codan.internal.checkers.ScanfFormatStringSecurityProblem=-Warning
 org.eclipse.cdt.codan.internal.checkers.ScanfFormatStringSecurityProblem.params={launchModes\=>{RUN_ON_FULL_BUILD\=>true,RUN_ON_INC_BUILD\=>true,RUN_ON_FILE_OPEN\=>false,RUN_ON_FILE_SAVE\=>false,RUN_AS_YOU_TYPE\=>true,RUN_ON_DEMAND\=>true},suppression_comment\=>"@suppress(\\"Format String Vulnerability\\")"}
+org.eclipse.cdt.codan.internal.checkers.ShallowCopyProblem=-Warning
+org.eclipse.cdt.codan.internal.checkers.ShallowCopyProblem.params={launchModes\=>{RUN_ON_FULL_BUILD\=>true,RUN_ON_INC_BUILD\=>true,RUN_ON_FILE_OPEN\=>false,RUN_ON_FILE_SAVE\=>false,RUN_AS_YOU_TYPE\=>true,RUN_ON_DEMAND\=>true},suppression_comment\=>"@suppress(\\"Miss copy constructor or assignment operator\\")",onlynew\=>false}
 org.eclipse.cdt.codan.internal.checkers.StatementHasNoEffectProblem=Warning
 org.eclipse.cdt.codan.internal.checkers.StatementHasNoEffectProblem.params={launchModes\=>{RUN_ON_FULL_BUILD\=>true,RUN_ON_INC_BUILD\=>true,RUN_ON_FILE_OPEN\=>false,RUN_ON_FILE_SAVE\=>false,RUN_AS_YOU_TYPE\=>true,RUN_ON_DEMAND\=>true},suppression_comment\=>"@suppress(\\"Statement has no effect\\")",macro\=>true,exceptions\=>()}
 org.eclipse.cdt.codan.internal.checkers.StaticVariableInHeaderProblem=-Warning
@@ -87,6 +92,8 @@ org.eclipse.cdt.codan.internal.checkers.SuggestedParenthesisProblem=Warning
 org.eclipse.cdt.codan.internal.checkers.SuggestedParenthesisProblem.params={launchModes\=>{RUN_ON_FULL_BUILD\=>true,RUN_ON_INC_BUILD\=>true,RUN_ON_FILE_OPEN\=>false,RUN_ON_FILE_SAVE\=>false,RUN_AS_YOU_TYPE\=>true,RUN_ON_DEMAND\=>true},suppression_comment\=>"@suppress(\\"Suggested parenthesis around expression\\")",paramNot\=>false}
 org.eclipse.cdt.codan.internal.checkers.SuspiciousSemicolonProblem=Warning
 org.eclipse.cdt.codan.internal.checkers.SuspiciousSemicolonProblem.params={launchModes\=>{RUN_ON_FULL_BUILD\=>true,RUN_ON_INC_BUILD\=>true,RUN_ON_FILE_OPEN\=>false,RUN_ON_FILE_SAVE\=>false,RUN_AS_YOU_TYPE\=>true,RUN_ON_DEMAND\=>true},suppression_comment\=>"@suppress(\\"Suspicious semicolon\\")",else\=>false,afterelse\=>false}
+org.eclipse.cdt.codan.internal.checkers.SymbolShadowingProblem=-Warning
+org.eclipse.cdt.codan.internal.checkers.SymbolShadowingProblem.params={launchModes\=>{RUN_ON_FULL_BUILD\=>true,RUN_ON_INC_BUILD\=>true,RUN_ON_FILE_OPEN\=>false,RUN_ON_FILE_SAVE\=>false,RUN_AS_YOU_TYPE\=>true,RUN_ON_DEMAND\=>true},suppression_comment\=>"@suppress(\\"Symbol shadowing\\")",paramFuncParameters\=>true}
 org.eclipse.cdt.codan.internal.checkers.TypeResolutionProblem=Error
 org.eclipse.cdt.codan.internal.checkers.TypeResolutionProblem.params={launchModes\=>{RUN_ON_FULL_BUILD\=>true,RUN_ON_INC_BUILD\=>true,RUN_ON_FILE_OPEN\=>false,RUN_ON_FILE_SAVE\=>false,RUN_AS_YOU_TYPE\=>true,RUN_ON_DEMAND\=>true},suppression_comment\=>"@suppress(\\"Type cannot be resolved\\")"}
 org.eclipse.cdt.codan.internal.checkers.UnusedFunctionDeclarationProblem=Warning

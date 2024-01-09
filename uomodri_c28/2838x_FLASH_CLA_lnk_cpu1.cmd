@@ -72,6 +72,9 @@ MEMORY
    CLA1_DMA_MSGRAM  : origin = 0x001680, length = 0x000080
    DMA_CLA1_MSGRAM  : origin = 0x001700, length = 0x000080
 
+   UID_UNIQUE		: origin = 0x07020C, length = 0x000002
+   CPU_ID			: origin = 0x070223, length = 0x000001
+
    /*CLA1_DATAROM_RESERVED    : origin = 0x01001000, length = 0x000070 //, fill = 0xFFFF
    CLA1_DATAROM             : origin = 0x01001870, length = 0x00078a //, fill = 0xFFFF*/
 }
@@ -112,6 +115,9 @@ SECTIONS
    MSGRAM_CPU_TO_CLA	: > CPU_CLA1_MSGRAM, type=NOINIT
    MSGRAM_CLA_TO_DMA	: > CLA1_DMA_MSGRAM, type=NOINIT
    MSGRAM_DMA_TO_CLA	: > DMA_CLA1_MSGRAM, type=NOINIT
+
+   .UID_UNIQUE			: > UID_UNIQUE, type=NOINIT
+   .CPU_ID				: > CPU_ID, 	type=NOINIT
 
 /* CLA specific sections */
    ClaDataMotor1    	: > RAMLS0 /*>> RAMLS0 | RAMLS1*/

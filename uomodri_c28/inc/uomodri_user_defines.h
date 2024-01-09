@@ -13,6 +13,7 @@
 #include <f2838x_device.h>
 #include <driverlib.h>
 #include <device.h>
+#include <board.h>
 
 #include "drv8353.h"
 
@@ -51,11 +52,11 @@
 // Communication peripherals ENABLE/DISABLE
 #define CAN_BUS_ENABLE                          (0)
 #define RS485_BUS_ENABLE                        (1)
-#define SPI_BUS_ENABLE                          (0)
+#define SPI_BUS_ENABLE                          (1)
 #if (RS485_BUS_ENABLE) && (CAN_BUS_ENABLE)
 #error "RS-485 & CAN share the same pins. They cannot run @ the same time"
-#elif ((RS485_BUS_ENABLE) || (CAN_BUS_ENABLE) ) && (SPI_BUS_ENABLE)
-#error "RS-485, CAN & SPI share the same data. They cannot run @ the same time"
+//#elif ((RS485_BUS_ENABLE) || (CAN_BUS_ENABLE) ) && (SPI_BUS_ENABLE)
+//#error "RS-485, CAN & SPI share the same data. They cannot run @ the same time"
 #endif
 // Filters definition
 #define UOMODRI_IABC_FLT(flt_coef, y, x)        LPF_FILTER_1(flt_coef, y, x)

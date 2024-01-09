@@ -114,32 +114,18 @@ static unsigned char const crc8_table[] =
 };
 
 /***********************************************************************
- * COMMUNICATION ERROR FLAGS
+ * COMMUNICATION BUS IDENTIFIER
  ***********************************************************************/
 /**
- * @enum    com_rx_state_e
- * @brief   States of the state machine in COM_msgExtract_cla for message extraction.
+ * @enum    com_bus_e
+ * @brief   Define which peripheral bus has been used for communication.
  */
 typedef enum
 {
-    COM_RX_STATE_MODE               = 0, //!< COM_RX_STATE_MODE
-    COM_RX_STATE_POS_MSB_MOT1       = 1, //!< COM_RX_STATE_POS_MSB_MOT1
-    COM_RX_STATE_POS_LSB_MOT1       = 2, //!< COM_RX_STATE_POS_LSB_MOT1
-    COM_RX_STATE_POS_MSB_MOT2       = 3, //!< COM_RX_STATE_POS_MSB_MOT2
-    COM_RX_STATE_POS_LSB_MOT2       = 4, //!< COM_RX_STATE_POS_LSB_MOT2
-    COM_RX_STATE_VEL_MOT1           = 5, //!< COM_RX_STATE_VEL_MOT1
-    COM_RX_STATE_VEL_MOT2           = 6, //!< COM_RX_STATE_VEL_MOT2
-    COM_RX_STATE_IQ_MOT1            = 7, //!< COM_RX_STATE_IQ_MOT1
-    COM_RX_STATE_IQ_MOT2            = 8, //!< COM_RX_STATE_IQ_MOT2
-    COM_RX_STATE_KP_MOT1            = 9, //!< COM_RX_STATE_KP_MOT1
-    COM_RX_STATE_KP_MOT2            = 10,//!< COM_RX_STATE_KP_MOT2
-    COM_RX_STATE_KD_MOT1            = 11,//!< COM_RX_STATE_KD_MOT1
-    COM_RX_STATE_KD_MOT2            = 12,//!< COM_RX_STATE_KD_MOT2
-    COM_RX_STATE_ISAT_MOT12         = 13,//!< COM_RX_STATE_ISAT_MOT12
-    COM_RX_STATE_INDEX              = 14,//!< COM_RX_STATE_INDEX
-    COM_RX_STATE_CRC_MSB            = 15,//!< COM_RX_STATE_CRC_MSB
-    COM_RX_STATE_CRC_LSB            = 16,//!< COM_RX_STATE_CRC_LSB
-} com_rx_state_e;
+    COM_NO_BUS_DEFINED  = 0,
+    COM_USE_SPI_BUS     = 1,
+    COM_USE_RS485_BUS   = 2,
+} com_bus_e;
 
 /***********************************************************************
  * COMMUNICATION STATE MACHINES FOR CM CORE
@@ -182,8 +168,6 @@ typedef struct __U32toU16_reg_t__
     uint16_t        u16_msb;
     uint16_t        u16_lsb;
 } U32toU16_reg_t;
-
-typedef U32toU16_reg_t crc_reg_t;
 
 /**
  * @union   mst2slv_reg_u
@@ -247,13 +231,25 @@ typedef union __header_reg_u__
  * MAIN COMMUNICATION STRUCTURES
  ***********************************************************************/
 /**
+ * @struct  pos_reg_t
+ *  @brief  32bits position value managed as 2x 16bits registers.
+ */
+typedef U32toU16_reg_t pos_reg_t;
+
+/**
+ * @struct  crc_reg_t
+ *  @brief  32bits CRC value managed as 2x 16bits registers.
+ */
+typedef U32toU16_reg_t crc_reg_t;
+
+/**
  * @struct  mst2slv_msg_t
  * @brief   Master 2 Slave full command message including CRC for uOmodri
  */
 typedef struct __mst2slv_msg_t__
 {
     mst2slv_reg_u   mode;
-    U32toU16_reg_t  position[2];
+    pos_reg_t       position[2];
     int16_t         velocity[2];
     int16_t         current[2];
     uint16_t        kpCoeff[2];
@@ -270,7 +266,7 @@ typedef struct __slv2mst_msg_t__
 {
     slv2mst_reg_u   status;
     uint16_t        timeStamp;
-    U32toU16_reg_t  position[2];
+    pos_reg_t       position[2];
     int16_t         velocity[2];
     int16_t         current[2];
     uint16_t        coilRes[2];
@@ -305,7 +301,7 @@ typedef struct __cmd_uomodri_t__
 typedef struct __spi_rx_msg_t__
 {
     mst2slv_msg_t   data;
-    U32toU16_reg_t  crc;
+    crc_reg_t       crc;
 } spi_rx_msg_t;
 
 /**
@@ -315,7 +311,7 @@ typedef struct __spi_rx_msg_t__
 typedef struct __spi_tx_msg_t__
 {
     slv2mst_msg_t   data;
-    U32toU16_reg_t  crc;
+    crc_reg_t       crc;
 } spi_tx_msg_t;
 
 /**
@@ -358,7 +354,7 @@ typedef union __rs485_rx_msg_u__
     {
         header_reg_u    header;
         mst2slv_msg_t   data;
-        U32toU16_reg_t  crc;
+        crc_reg_t       crc;
     };
 } rs485_rx_msg_u;
 
@@ -373,7 +369,7 @@ typedef union __rs485_tx_msg_u__
     {
         header_reg_u    header;
         slv2mst_msg_t   data;
-        U32toU16_reg_t  crc;
+        crc_reg_t       crc;
     };
 } rs485_tx_msg_u;
 

@@ -137,20 +137,65 @@ static const gpio_cfg_t GpioPinsCfgList[] =
 static const adc_ini_t  AdcInitList[] =
 {
  /* ADCA - Ia_M1, Ia_M2 */
- {.adcBase = MOTOR1_IA_ADC_CFG_ADDR,    .adcChannel = MOTOR1_IA_CH, .adcSOCNum = MOTOR1_IABC_SOC_NUM,   .adcTrigSrc = MOTOR1_ADC_SOC_TRIGGER_EVT},
- {.adcBase = MOTOR2_IA_ADC_CFG_ADDR,    .adcChannel = MOTOR2_IA_CH, .adcSOCNum = MOTOR2_IABC_SOC_NUM,   .adcTrigSrc = MOTOR2_ADC_SOC_TRIGGER_EVT},
+ {
+  .adcBase          = MOTOR1_IA_ADC_CFG_ADDR,
+  .adcChannel       = MOTOR1_IA_CH,
+  .adcSOCNum        = MOTOR1_IABC_SOC_NUM,
+  .adcTrigSrc       = MOTOR1_ADC_SOC_TRIGGER_EVT,
+ },
+ {
+  .adcBase          = MOTOR2_IA_ADC_CFG_ADDR,
+  .adcChannel       = MOTOR2_IA_CH,
+  .adcSOCNum        = MOTOR2_IABC_SOC_NUM,
+  .adcTrigSrc       = MOTOR2_ADC_SOC_TRIGGER_EVT,
+ },
  /* ADCB - Ib_M1, Ib_M2 */
- {.adcBase = MOTOR1_IB_ADC_CFG_ADDR,    .adcChannel = MOTOR1_IB_CH, .adcSOCNum = MOTOR1_IABC_SOC_NUM,   .adcTrigSrc = MOTOR1_ADC_SOC_TRIGGER_EVT},
- {.adcBase = MOTOR2_IB_ADC_CFG_ADDR,    .adcChannel = MOTOR2_IB_CH, .adcSOCNum = MOTOR2_IABC_SOC_NUM,   .adcTrigSrc = MOTOR2_ADC_SOC_TRIGGER_EVT},
+ {
+  .adcBase          = MOTOR1_IB_ADC_CFG_ADDR,
+  .adcChannel       = MOTOR1_IB_CH,
+  .adcSOCNum        = MOTOR1_IABC_SOC_NUM,
+  .adcTrigSrc       = MOTOR1_ADC_SOC_TRIGGER_EVT,
+ },
+ {
+  .adcBase          = MOTOR2_IB_ADC_CFG_ADDR,
+  .adcChannel       = MOTOR2_IB_CH,
+  .adcSOCNum        = MOTOR2_IABC_SOC_NUM,
+  .adcTrigSrc       = MOTOR2_ADC_SOC_TRIGGER_EVT,
+ },
  /* ADCD (UOMODRI_V1_0_ENABLE): Ic_M1, Ic_M2 / ADCC (UOMODRI_V2_0_ENABLE): Ic_M1, Ic_M2 */
- {.adcBase = MOTOR1_IC_ADC_CFG_ADDR,    .adcChannel = MOTOR1_IC_CH, .adcSOCNum = MOTOR1_IABC_SOC_NUM,   .adcTrigSrc = MOTOR1_ADC_SOC_TRIGGER_EVT},
- {.adcBase = MOTOR2_IC_ADC_CFG_ADDR,    .adcChannel = MOTOR2_IC_CH, .adcSOCNum = MOTOR2_IABC_SOC_NUM,   .adcTrigSrc = MOTOR2_ADC_SOC_TRIGGER_EVT},
+ {
+  .adcBase          = MOTOR1_IC_ADC_CFG_ADDR,
+  .adcChannel       = MOTOR1_IC_CH,
+  .adcSOCNum        = MOTOR1_IABC_SOC_NUM,
+  .adcTrigSrc       = MOTOR1_ADC_SOC_TRIGGER_EVT,
+ },
+ {
+  .adcBase          = MOTOR2_IC_ADC_CFG_ADDR,
+  .adcChannel       = MOTOR2_IC_CH,
+  .adcSOCNum        = MOTOR2_IABC_SOC_NUM,
+  .adcTrigSrc       = MOTOR2_ADC_SOC_TRIGGER_EVT,
+ },
  /* ADCC (UOMODRI_V1_0_ENABLE): VBUS, VEXT1, VEXT2 / ADCD (UOMODRI_V2_0_ENABLE): VBUS, VEXT1, VEXT2 */
- {.adcBase = VBUS_ADC_CFG_ADDR,         .adcChannel = VBUS_CH,      .adcSOCNum = VBUS_SOC_NUM,          .adcTrigSrc = VBUS_ADC_SOC_TRIGGER_EVT},
- {.adcBase = VEXT1_ADC_CFG_ADDR,        .adcChannel = VEXT1_CH,     .adcSOCNum = VEXT1_SOC_NUM,         .adcTrigSrc = VEXT1_ADC_SOC_TRIGGER_EVT},
- {.adcBase = VEXT2_ADC_CFG_ADDR,        .adcChannel = VEXT2_CH,     .adcSOCNum = VEXT2_SOC_NUM,         .adcTrigSrc = VEXT2_ADC_SOC_TRIGGER_EVT},
+ {
+  .adcBase          = VBUS_ADC_CFG_ADDR,
+  .adcChannel       = VBUS_CH,
+  .adcSOCNum        = VBUS_SOC_NUM,
+  .adcTrigSrc       = VBUS_ADC_SOC_TRIGGER_EVT,
+ },
+ {
+  .adcBase          = VEXT1_ADC_CFG_ADDR,
+  .adcChannel       = VEXT1_CH,
+  .adcSOCNum        = VEXT1_SOC_NUM,
+  .adcTrigSrc       = VEXT1_ADC_SOC_TRIGGER_EVT,
+ },
+ {
+  .adcBase          = VEXT2_ADC_CFG_ADDR,
+  .adcChannel       = VEXT2_CH,
+  .adcSOCNum        = VEXT2_SOC_NUM,
+  .adcTrigSrc       = VEXT2_ADC_SOC_TRIGGER_EVT,
+ },
  // END OF ARRAY
- {.adcBase = UINT32_MAX},
+ {.adcBase          = UINT32_MAX},
 };
 
 /** @var    ADC_PPB_TypeDef AdcAcqList[]
@@ -159,20 +204,65 @@ static const adc_ini_t  AdcInitList[] =
 static const adc_acq_t  AdcAcqList[] =
 {
  /* ADCA : Ia_M1, Ia_M2 */
- {.adcBase = MOTOR1_IA_ADC_CFG_ADDR,    .adcResultBase = MOTOR1_IA_ADC_RESULT_ADDR, .adcSOCNum = MOTOR1_IABC_SOC_NUM,   .adcPPBNum = MOTOR1_IABC_PPB_NUM},
- {.adcBase = MOTOR2_IA_ADC_CFG_ADDR,    .adcResultBase = MOTOR2_IA_ADC_RESULT_ADDR, .adcSOCNum = MOTOR2_IABC_SOC_NUM,   .adcPPBNum = MOTOR2_IABC_PPB_NUM},
+ {
+  .adcBase          = MOTOR1_IA_ADC_CFG_ADDR,
+  .adcResultBase    = MOTOR1_IA_ADC_RESULT_ADDR,
+  .adcSOCNum        = MOTOR1_IABC_SOC_NUM,
+  .adcPPBNum        = MOTOR1_IABC_PPB_NUM,
+ },
+ {
+  .adcBase          = MOTOR2_IA_ADC_CFG_ADDR,
+  .adcResultBase    = MOTOR2_IA_ADC_RESULT_ADDR,
+  .adcSOCNum        = MOTOR2_IABC_SOC_NUM,
+  .adcPPBNum        = MOTOR2_IABC_PPB_NUM,
+ },
  /* ADCB : Ib_M1, Ib_M2 */
- {.adcBase = MOTOR1_IB_ADC_CFG_ADDR,    .adcResultBase = MOTOR1_IB_ADC_RESULT_ADDR, .adcSOCNum = MOTOR1_IABC_SOC_NUM,   .adcPPBNum = MOTOR1_IABC_PPB_NUM},
- {.adcBase = MOTOR2_IB_ADC_CFG_ADDR,    .adcResultBase = MOTOR2_IB_ADC_RESULT_ADDR, .adcSOCNum = MOTOR2_IABC_SOC_NUM,   .adcPPBNum = MOTOR2_IABC_PPB_NUM},
+ {
+  .adcBase          = MOTOR1_IB_ADC_CFG_ADDR,
+  .adcResultBase    = MOTOR1_IB_ADC_RESULT_ADDR,
+  .adcSOCNum        = MOTOR1_IABC_SOC_NUM,
+  .adcPPBNum        = MOTOR1_IABC_PPB_NUM,
+ },
+ {
+  .adcBase          = MOTOR2_IB_ADC_CFG_ADDR,
+  .adcResultBase    = MOTOR2_IB_ADC_RESULT_ADDR,
+  .adcSOCNum        = MOTOR2_IABC_SOC_NUM,
+  .adcPPBNum        = MOTOR2_IABC_PPB_NUM,
+ },
  /* ADCD (UOMODRI_V1_0_ENABLE): Ic_M1, Ic_M2 / ADCC (UOMODRI_V2_0_ENABLE): Ic_M1, Ic_M2 */
- {.adcBase = MOTOR1_IC_ADC_CFG_ADDR,    .adcResultBase = MOTOR1_IC_ADC_RESULT_ADDR, .adcSOCNum = MOTOR1_IABC_SOC_NUM,   .adcPPBNum = MOTOR1_IABC_PPB_NUM},
- {.adcBase = MOTOR2_IC_ADC_CFG_ADDR,    .adcResultBase = MOTOR2_IC_ADC_RESULT_ADDR, .adcSOCNum = MOTOR2_IABC_SOC_NUM,   .adcPPBNum = MOTOR2_IABC_PPB_NUM},
+ {
+  .adcBase          = MOTOR1_IC_ADC_CFG_ADDR,
+  .adcResultBase    = MOTOR1_IC_ADC_RESULT_ADDR,
+  .adcSOCNum        = MOTOR1_IABC_SOC_NUM,
+  .adcPPBNum        = MOTOR1_IABC_PPB_NUM,
+ },
+ {
+  .adcBase          = MOTOR2_IC_ADC_CFG_ADDR,
+  .adcResultBase    = MOTOR2_IC_ADC_RESULT_ADDR,
+  .adcSOCNum        = MOTOR2_IABC_SOC_NUM,
+  .adcPPBNum        = MOTOR2_IABC_PPB_NUM,
+ },
  /* ADCC (UOMODRI_V1_0_ENABLE): VBUS, VEXT1, VEXT2 / ADCD (UOMODRI_V2_0_ENABLE): VBUS, VEXT1, VEXT2 */
- {.adcBase = VBUS_ADC_CFG_ADDR,         .adcResultBase = VBUS_ADC_RESULT_ADDR,      .adcSOCNum = VBUS_SOC_NUM,          .adcPPBNum = VBUS_PPB_NUM},
- {.adcBase = VEXT1_ADC_CFG_ADDR,        .adcResultBase = VEXT1_ADC_RESULT_ADDR,     .adcSOCNum = VEXT1_SOC_NUM,         .adcPPBNum = VEXT1_PPB_NUM},
- {.adcBase = VEXT2_ADC_CFG_ADDR,        .adcResultBase = VEXT2_ADC_RESULT_ADDR,     .adcSOCNum = VEXT2_SOC_NUM,         .adcPPBNum = VEXT2_PPB_NUM},
+ {
+  .adcBase          = VBUS_ADC_CFG_ADDR,
+  .adcResultBase    = VBUS_ADC_RESULT_ADDR,
+  .adcSOCNum        = VBUS_SOC_NUM,
+  .adcPPBNum        = VBUS_PPB_NUM,
+ },
+ {
+  .adcBase          = VEXT1_ADC_CFG_ADDR,
+  .adcResultBase    = VEXT1_ADC_RESULT_ADDR,
+  .adcSOCNum        = VEXT1_SOC_NUM,
+  .adcPPBNum        = VEXT1_PPB_NUM,
+ },
+ {
+  .adcBase          = VEXT2_ADC_CFG_ADDR,
+  .adcResultBase    = VEXT2_ADC_RESULT_ADDR,
+  .adcSOCNum        = VEXT2_SOC_NUM,
+  .adcPPBNum        = VEXT2_PPB_NUM,
+ },
  // END OF ARRAY
- {.adcBase = UINT32_MAX}
+ {.adcBase          = UINT32_MAX}
 };
 
 /** @var    ADC_IT_TypeDef AdcIntList[]
@@ -180,10 +270,18 @@ static const adc_acq_t  AdcAcqList[] =
  */
 static const adc_int_t  AdcIntList[] =
 {
- {.adcBase = MOTOR1_IA_ADC_CFG_ADDR,    .intTrig = MOTOR1_IABC_SOC_NUM, .adcIntNum = MOTOR1_IA_INT_NUM},
- {.adcBase = MOTOR2_IA_ADC_CFG_ADDR,    .intTrig = MOTOR2_IABC_SOC_NUM, .adcIntNum = MOTOR2_IA_INT_NUM},
+ {
+  .adcBase          = MOTOR1_IA_ADC_CFG_ADDR,
+  .intTrig          = MOTOR1_IABC_SOC_NUM,
+  .adcIntNum        = MOTOR1_IA_INT_NUM,
+ },
+ {
+  .adcBase          = MOTOR2_IA_ADC_CFG_ADDR,
+  .intTrig          = MOTOR2_IABC_SOC_NUM,
+  .adcIntNum        = MOTOR2_IA_INT_NUM,
+ },
  // END OF ARRAY
- {.adcBase = UINT32_MAX}
+ {.adcBase          = UINT32_MAX}
 };
 
 /** @var    ADC_TypeDef AdcCfgList[]
@@ -191,12 +289,32 @@ static const adc_int_t  AdcIntList[] =
  */
 static const adc_cfg_t  AdcCfgList[] =
 {
- {.adcBase = MOTOR12_IA_ADC_CFG_ADDR,   .p_adcIni = &AdcInitList[0],.p_adcAcq = &AdcAcqList[0], .p_adcInt = &AdcIntList[0]},
- {.adcBase = MOTOR12_IB_ADC_CFG_ADDR,   .p_adcIni = &AdcInitList[2],.p_adcAcq = &AdcAcqList[2], .p_adcInt = NULL},
- {.adcBase = MOTOR12_IC_ADC_CFG_ADDR,   .p_adcIni = &AdcInitList[4],.p_adcAcq = &AdcAcqList[4], .p_adcInt = NULL},
- {.adcBase = VBUS_VEXT12_ADC_CFG_ADDR,  .p_adcIni = &AdcInitList[6],.p_adcAcq = &AdcAcqList[6], .p_adcInt = NULL},
+ {
+  .adcBase          = MOTOR12_IA_ADC_CFG_ADDR,
+  .p_adcIni         = &AdcInitList[0],
+  .p_adcAcq         = &AdcAcqList[0],
+  .p_adcInt         = &AdcIntList[0],
+ },
+ {
+  .adcBase          = MOTOR12_IB_ADC_CFG_ADDR,
+  .p_adcIni         = &AdcInitList[2],
+  .p_adcAcq         = &AdcAcqList[2],
+  .p_adcInt         = NULL,
+ },
+ {
+  .adcBase          = MOTOR12_IC_ADC_CFG_ADDR,
+  .p_adcIni         = &AdcInitList[4],
+  .p_adcAcq         = &AdcAcqList[4],
+  .p_adcInt         = NULL,
+ },
+ {
+  .adcBase          = VBUS_VEXT12_ADC_CFG_ADDR,
+  .p_adcIni         = &AdcInitList[6],
+  .p_adcAcq         = &AdcAcqList[6],
+  .p_adcInt         = NULL,
+ },
  // END OF ARRAY
- {.adcBase = UINT32_MAX},
+ {.adcBase          = UINT32_MAX},
 };
 
 /** @var    eQEP_TypeDef QepCfgList[]
@@ -209,14 +327,14 @@ static const eqep_cfg_t QepCfgList[] =
   .eqepMaxResolution    = MOTOR1_ENC_QUADRATURE_SCALE_MAX,
   .eqepUnitTimerPeriod  = MOTOR1_ENC_SPEED_HIGH_SAMPLE_TICKS_MAX,
   .eqepConfig           = MOTOR1_ENC_CONFIG,
-  .eqepStrobeSrc        = EQEP_STROBE_OR_ADCSOCA
+  .eqepStrobeSrc        = EQEP_STROBE_OR_ADCSOCA,
  },
  {
   .eqepBase             = MOTOR2_QEP_BASE,
   .eqepMaxResolution    = MOTOR2_ENC_QUADRATURE_SCALE_MAX,
   .eqepUnitTimerPeriod  = MOTOR2_ENC_SPEED_HIGH_SAMPLE_TICKS_MAX,
   .eqepConfig           = MOTOR2_ENC_CONFIG,
-  .eqepStrobeSrc        = EQEP_STROBE_OR_ADCSOCB
+  .eqepStrobeSrc        = EQEP_STROBE_OR_ADCSOCB,
  },
  // END OF ARRAY
  {.eqepBase             = UINT32_MAX},
@@ -237,7 +355,7 @@ static const spi_cfg_t  spiCfgList[] =
   .rxLevel          = SPI_FIFO_RXEMPTY,
   .intSrc           = 0,
   .highSpeedMode    = false,
-  .intEnable        = false
+  .intEnable        = false,
  },
  {
   .spiBase          = COM_SPI_BASE,
@@ -249,7 +367,7 @@ static const spi_cfg_t  spiCfgList[] =
   .rxLevel          = SPI_FIFO_RX1,
   .intSrc           = 0,
   .highSpeedMode    = false,
-  .intEnable        = false
+  .intEnable        = false,
  },
  {
   .spiBase          = DBG_SPI_BASE,
@@ -261,7 +379,7 @@ static const spi_cfg_t  spiCfgList[] =
   .rxLevel          = SPI_FIFO_RX8,
   .intSrc           = 0,
   .highSpeedMode    = false,
-  .intEnable        = false
+  .intEnable        = false,
  },
  {
   .spiBase          = LED_SPI_BASE,
@@ -273,10 +391,10 @@ static const spi_cfg_t  spiCfgList[] =
   .rxLevel          = SPI_FIFO_RXEMPTY,
   .intSrc           = 0,
   .highSpeedMode    = false,
-  .intEnable        = false
+  .intEnable        = false,
  },
   // END OF ARRAY
-  {.spiBase = UINT32_MAX},
+  {.spiBase         = UINT32_MAX},
 };
 
 static const dma_cfg_t  dmaCfgList[] =
@@ -337,7 +455,7 @@ static const dma_cfg_t  dmaCfgList[] =
   .intEnable        = false,
  },
  // END OF ARRAY
- {.dmaChBase     = UINT32_MAX},
+ {.dmaChBase        = UINT32_MAX},
 };
 
 static const ipc_cfg_t  ipcCfgList[] =
@@ -431,14 +549,44 @@ static const cla_cfg_t  claCfgList[] =
  */
 static const epwm_tb_t  PwmTimeBaseCfgList[] =
 {
- {.epwmBase = MOTOR1_PWM1_BASE, .phaseCount = PWM_INITIAL_PHASE_0,  .syncOutputMode = EPWM_SYNC_OUT_PULSE_ON_CNTR_ZERO, .syncInputSrc = EPWM_SYNC_IN_PULSE_SRC_DISABLE},
- {.epwmBase = MOTOR1_PWM2_BASE, .phaseCount = PWM_INITIAL_PHASE_0,  .syncOutputMode = EPWM_SYNC_OUT_PULSE_ON_SOFTWARE,  .syncInputSrc = EPWM_SYNC_IN_PULSE_SRC_SYNCOUT_EPWM1},
- {.epwmBase = MOTOR1_PWM3_BASE, .phaseCount = PWM_INITIAL_PHASE_0,  .syncOutputMode = EPWM_SYNC_OUT_PULSE_ON_SOFTWARE,  .syncInputSrc = EPWM_SYNC_IN_PULSE_SRC_SYNCOUT_EPWM1},
- {.epwmBase = MOTOR2_PWM1_BASE, .phaseCount = PWM_INITIAL_PHASE_180,.syncOutputMode = EPWM_SYNC_OUT_PULSE_ON_SOFTWARE,  .syncInputSrc = EPWM_SYNC_IN_PULSE_SRC_SYNCOUT_EPWM1},
- {.epwmBase = MOTOR2_PWM2_BASE, .phaseCount = PWM_INITIAL_PHASE_180,.syncOutputMode = EPWM_SYNC_OUT_PULSE_ON_SOFTWARE,  .syncInputSrc = EPWM_SYNC_IN_PULSE_SRC_SYNCOUT_EPWM1},
- {.epwmBase = MOTOR2_PWM3_BASE, .phaseCount = PWM_INITIAL_PHASE_180,.syncOutputMode = EPWM_SYNC_OUT_PULSE_ON_SOFTWARE,  .syncInputSrc = EPWM_SYNC_IN_PULSE_SRC_SYNCOUT_EPWM1},
+ {
+  .epwmBase         = MOTOR1_PWM1_BASE,
+  .phaseCount       = PWM_INITIAL_PHASE_0,
+  .syncOutputMode   = EPWM_SYNC_OUT_PULSE_ON_CNTR_ZERO,
+  .syncInputSrc     = EPWM_SYNC_IN_PULSE_SRC_DISABLE,
+ },
+ {
+  .epwmBase         = MOTOR1_PWM2_BASE,
+  .phaseCount       = PWM_INITIAL_PHASE_0,
+  .syncOutputMode   = EPWM_SYNC_OUT_PULSE_ON_SOFTWARE,
+  .syncInputSrc     = EPWM_SYNC_IN_PULSE_SRC_SYNCOUT_EPWM1,
+ },
+ {
+  .epwmBase         = MOTOR1_PWM3_BASE,
+  .phaseCount       = PWM_INITIAL_PHASE_0,
+  .syncOutputMode   = EPWM_SYNC_OUT_PULSE_ON_SOFTWARE,
+  .syncInputSrc     = EPWM_SYNC_IN_PULSE_SRC_SYNCOUT_EPWM1,
+ },
+ {
+  .epwmBase         = MOTOR2_PWM1_BASE,
+  .phaseCount       = PWM_INITIAL_PHASE_180,
+  .syncOutputMode   = EPWM_SYNC_OUT_PULSE_ON_SOFTWARE,
+  .syncInputSrc     = EPWM_SYNC_IN_PULSE_SRC_SYNCOUT_EPWM1,
+ },
+ {
+  .epwmBase         = MOTOR2_PWM2_BASE,
+  .phaseCount       = PWM_INITIAL_PHASE_180,.
+  syncOutputMode    = EPWM_SYNC_OUT_PULSE_ON_SOFTWARE,
+  .syncInputSrc     = EPWM_SYNC_IN_PULSE_SRC_SYNCOUT_EPWM1,
+ },
+ {
+  .epwmBase         = MOTOR2_PWM3_BASE,
+  .phaseCount       = PWM_INITIAL_PHASE_180,
+  .syncOutputMode   = EPWM_SYNC_OUT_PULSE_ON_SOFTWARE,
+  .syncInputSrc     = EPWM_SYNC_IN_PULSE_SRC_SYNCOUT_EPWM1,
+ },
  // END OF ARRAY
- {.epwmBase = UINT32_MAX},
+ {.epwmBase         = UINT32_MAX},
 };
 
 /** @var    ePWM_CC_TypeDef PwmCounterCompareCfgList[]
@@ -446,14 +594,38 @@ static const epwm_tb_t  PwmTimeBaseCfgList[] =
  */
 static const epwm_cc_t  PwmCounterCompareCfgList[] =
 {
- {.epwmBase = MOTOR1_PWM1_BASE, .compCount = PWM_INITIAL_COMP_VAL,  .compModule = EPWM_COUNTER_COMPARE_A},
- {.epwmBase = MOTOR1_PWM2_BASE, .compCount = PWM_INITIAL_COMP_VAL,  .compModule = EPWM_COUNTER_COMPARE_A},
- {.epwmBase = MOTOR1_PWM3_BASE, .compCount = PWM_INITIAL_COMP_VAL,  .compModule = EPWM_COUNTER_COMPARE_A},
- {.epwmBase = MOTOR2_PWM1_BASE, .compCount = PWM_INITIAL_COMP_VAL,  .compModule = EPWM_COUNTER_COMPARE_A},
- {.epwmBase = MOTOR2_PWM2_BASE, .compCount = PWM_INITIAL_COMP_VAL,  .compModule = EPWM_COUNTER_COMPARE_A},
- {.epwmBase = MOTOR2_PWM3_BASE, .compCount = PWM_INITIAL_COMP_VAL,  .compModule = EPWM_COUNTER_COMPARE_A},
+ {
+  .epwmBase         = MOTOR1_PWM1_BASE,
+  .compCount        = PWM_INITIAL_COMP_VAL,
+  .compModule       = EPWM_COUNTER_COMPARE_A,
+ },
+ {
+  .epwmBase         = MOTOR1_PWM2_BASE,
+  .compCount        = PWM_INITIAL_COMP_VAL,
+  .compModule       = EPWM_COUNTER_COMPARE_A,
+ },
+ {
+  .epwmBase         = MOTOR1_PWM3_BASE,
+  .compCount        = PWM_INITIAL_COMP_VAL,
+  .compModule       = EPWM_COUNTER_COMPARE_A,
+ },
+ {
+  .epwmBase         = MOTOR2_PWM1_BASE,
+  .compCount        = PWM_INITIAL_COMP_VAL,
+  .compModule       = EPWM_COUNTER_COMPARE_A,
+ },
+ {
+  .epwmBase         = MOTOR2_PWM2_BASE,
+  .compCount        = PWM_INITIAL_COMP_VAL,
+  .compModule       = EPWM_COUNTER_COMPARE_A,
+ },
+ {
+  .epwmBase         = MOTOR2_PWM3_BASE,
+  .compCount        = PWM_INITIAL_COMP_VAL,
+  .compModule       = EPWM_COUNTER_COMPARE_A,
+ },
  // END OF ARRAY
- {.epwmBase = UINT32_MAX},
+ {.epwmBase         = UINT32_MAX},
 };
 
 /** @var    ePWM_AQ_TypeDef PwmActionQualifierCfgList[]
@@ -461,14 +633,38 @@ static const epwm_cc_t  PwmCounterCompareCfgList[] =
  */
 static const epwm_aq_t  PwmActionQualifierCfgList[] =
 {
- {.epwmBase = MOTOR1_PWM1_BASE, .actionsEvt = (EPWM_AQ_OUTPUT_HIGH_UP_CMPA | EPWM_AQ_OUTPUT_LOW_DOWN_CMPA), .epwmOutput = EPWM_AQ_OUTPUT_A},
- {.epwmBase = MOTOR1_PWM2_BASE, .actionsEvt = (EPWM_AQ_OUTPUT_HIGH_UP_CMPA | EPWM_AQ_OUTPUT_LOW_DOWN_CMPA), .epwmOutput = EPWM_AQ_OUTPUT_A},
- {.epwmBase = MOTOR1_PWM3_BASE, .actionsEvt = (EPWM_AQ_OUTPUT_HIGH_UP_CMPA | EPWM_AQ_OUTPUT_LOW_DOWN_CMPA), .epwmOutput = EPWM_AQ_OUTPUT_A},
- {.epwmBase = MOTOR2_PWM1_BASE, .actionsEvt = (EPWM_AQ_OUTPUT_HIGH_UP_CMPA | EPWM_AQ_OUTPUT_LOW_DOWN_CMPA), .epwmOutput = EPWM_AQ_OUTPUT_A},
- {.epwmBase = MOTOR2_PWM2_BASE, .actionsEvt = (EPWM_AQ_OUTPUT_HIGH_UP_CMPA | EPWM_AQ_OUTPUT_LOW_DOWN_CMPA), .epwmOutput = EPWM_AQ_OUTPUT_A},
- {.epwmBase = MOTOR2_PWM3_BASE, .actionsEvt = (EPWM_AQ_OUTPUT_HIGH_UP_CMPA | EPWM_AQ_OUTPUT_LOW_DOWN_CMPA), .epwmOutput = EPWM_AQ_OUTPUT_A},
+ {
+  .epwmBase         = MOTOR1_PWM1_BASE,
+  .actionsEvt       = (EPWM_AQ_OUTPUT_HIGH_UP_CMPA | EPWM_AQ_OUTPUT_LOW_DOWN_CMPA),
+  .epwmOutput       = EPWM_AQ_OUTPUT_A,
+ },
+ {
+  .epwmBase         = MOTOR1_PWM2_BASE,
+  .actionsEvt       = (EPWM_AQ_OUTPUT_HIGH_UP_CMPA | EPWM_AQ_OUTPUT_LOW_DOWN_CMPA),
+  .epwmOutput       = EPWM_AQ_OUTPUT_A,
+ },
+ {
+  .epwmBase         = MOTOR1_PWM3_BASE,
+  .actionsEvt       = (EPWM_AQ_OUTPUT_HIGH_UP_CMPA | EPWM_AQ_OUTPUT_LOW_DOWN_CMPA),
+  .epwmOutput       = EPWM_AQ_OUTPUT_A,
+ },
+ {
+  .epwmBase         = MOTOR2_PWM1_BASE,
+  .actionsEvt       = (EPWM_AQ_OUTPUT_HIGH_UP_CMPA | EPWM_AQ_OUTPUT_LOW_DOWN_CMPA),
+  .epwmOutput       = EPWM_AQ_OUTPUT_A,
+ },
+ {
+  .epwmBase         = MOTOR2_PWM2_BASE,
+  .actionsEvt       = (EPWM_AQ_OUTPUT_HIGH_UP_CMPA | EPWM_AQ_OUTPUT_LOW_DOWN_CMPA),
+  .epwmOutput       = EPWM_AQ_OUTPUT_A,
+ },
+ {
+  .epwmBase         = MOTOR2_PWM3_BASE,
+  .actionsEvt       = (EPWM_AQ_OUTPUT_HIGH_UP_CMPA | EPWM_AQ_OUTPUT_LOW_DOWN_CMPA),
+  .epwmOutput       = EPWM_AQ_OUTPUT_A,
+ },
  // END OF ARRAY
- {.epwmBase = UINT32_MAX},
+ {.epwmBase         = UINT32_MAX},
 };
 
 /** @var    ePWM_DB_TypeDef PwmDeadBandCfgList[]
@@ -476,14 +672,44 @@ static const epwm_aq_t  PwmActionQualifierCfgList[] =
  */
 static const epwm_db_t  PwmDeadBandCfgList[] =
 {
- {.epwmBase = MOTOR1_PWM1_BASE, .redCount = PWM_DEADBAND_RISING_EDGE_DELAY, .fedCount = PWM_DEADBAND_FALLING_EDGE_DELAY,    .DelayMode = EPWM_DELAY_ENABLE},
- {.epwmBase = MOTOR1_PWM2_BASE, .redCount = PWM_DEADBAND_RISING_EDGE_DELAY, .fedCount = PWM_DEADBAND_FALLING_EDGE_DELAY,    .DelayMode = EPWM_DELAY_ENABLE},
- {.epwmBase = MOTOR1_PWM3_BASE, .redCount = PWM_DEADBAND_RISING_EDGE_DELAY, .fedCount = PWM_DEADBAND_FALLING_EDGE_DELAY,    .DelayMode = EPWM_DELAY_ENABLE},
- {.epwmBase = MOTOR2_PWM1_BASE, .redCount = PWM_DEADBAND_RISING_EDGE_DELAY, .fedCount = PWM_DEADBAND_FALLING_EDGE_DELAY,    .DelayMode = EPWM_DELAY_ENABLE},
- {.epwmBase = MOTOR2_PWM2_BASE, .redCount = PWM_DEADBAND_RISING_EDGE_DELAY, .fedCount = PWM_DEADBAND_FALLING_EDGE_DELAY,    .DelayMode = EPWM_DELAY_ENABLE},
- {.epwmBase = MOTOR2_PWM3_BASE, .redCount = PWM_DEADBAND_RISING_EDGE_DELAY, .fedCount = PWM_DEADBAND_FALLING_EDGE_DELAY,    .DelayMode = EPWM_DELAY_ENABLE},
+ {
+  .epwmBase         = MOTOR1_PWM1_BASE,
+  .redCount         = PWM_DEADBAND_RISING_EDGE_DELAY,
+  .fedCount         = PWM_DEADBAND_FALLING_EDGE_DELAY,
+  .DelayMode        = EPWM_DELAY_ENABLE,
+ },
+ {
+  .epwmBase         = MOTOR1_PWM2_BASE,
+  .redCount         = PWM_DEADBAND_RISING_EDGE_DELAY,
+  .fedCount         = PWM_DEADBAND_FALLING_EDGE_DELAY,
+  .DelayMode        = EPWM_DELAY_ENABLE,
+ },
+ {
+  .epwmBase         = MOTOR1_PWM3_BASE,
+  .redCount         = PWM_DEADBAND_RISING_EDGE_DELAY,
+  .fedCount         = PWM_DEADBAND_FALLING_EDGE_DELAY,
+  .DelayMode        = EPWM_DELAY_ENABLE,
+ },
+ {
+  .epwmBase         = MOTOR2_PWM1_BASE,
+  .redCount         = PWM_DEADBAND_RISING_EDGE_DELAY,
+  .fedCount         = PWM_DEADBAND_FALLING_EDGE_DELAY,
+  .DelayMode        = EPWM_DELAY_ENABLE,
+ },
+ {
+  .epwmBase         = MOTOR2_PWM2_BASE,
+  .redCount         = PWM_DEADBAND_RISING_EDGE_DELAY,
+  .fedCount         = PWM_DEADBAND_FALLING_EDGE_DELAY,
+  .DelayMode        = EPWM_DELAY_ENABLE,
+ },
+ {
+  .epwmBase         = MOTOR2_PWM3_BASE,
+  .redCount         = PWM_DEADBAND_RISING_EDGE_DELAY,
+  .fedCount         = PWM_DEADBAND_FALLING_EDGE_DELAY,
+  .DelayMode        = EPWM_DELAY_ENABLE,
+ },
  // END OF ARRAY
- {.epwmBase = UINT32_MAX},
+ {.epwmBase         = UINT32_MAX},
 };
 
 /** @var    ePWM_ET_TypeDef PwmAdcSocEventTriggerCfgList[]
@@ -491,10 +717,20 @@ static const epwm_db_t  PwmDeadBandCfgList[] =
  */
 static const epwm_et_t  PwmAdcSocEventTriggerCfgList[] =
 {
- {.epwmBase = MOTOR1_PWM1_BASE, .adcSOCEvtCount = 1, .adcSOCType = EPWM_SOC_A, .adcSOCSource = EPWM_SOC_TBCTR_ZERO},
- {.epwmBase = MOTOR2_PWM1_BASE, .adcSOCEvtCount = 1, .adcSOCType = EPWM_SOC_B, .adcSOCSource = EPWM_SOC_TBCTR_ZERO},
+ {
+  .epwmBase         = MOTOR1_PWM1_BASE,
+  .adcSOCEvtCount   = 1,
+  .adcSOCType       = EPWM_SOC_A,
+  .adcSOCSource     = EPWM_SOC_TBCTR_ZERO,
+ },
+ {
+  .epwmBase         = MOTOR2_PWM1_BASE,
+  .adcSOCEvtCount   = 1,
+  .adcSOCType       = EPWM_SOC_B,
+  .adcSOCSource     = EPWM_SOC_TBCTR_ZERO,
+ },
  // END OF ARRAY
- {.epwmBase = UINT32_MAX},
+ {.epwmBase         = UINT32_MAX},
 };
 
 /** @var    ePWM_TypeDef PwmCfgList[]

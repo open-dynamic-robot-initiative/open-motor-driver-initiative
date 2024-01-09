@@ -11,6 +11,12 @@
 #include "board.h"
 
 /***********************************************************************
+ * VARIABLES
+ ***********************************************************************/
+#pragma DATA_SECTION(uid_unique,".UID_UNIQUE");
+volatile uint32_t       uid_unique;
+
+/***********************************************************************
  * FUNCTIONS DECLARATION
  ***********************************************************************/
 void HAL_GPIO_ini(const gpio_cfg_t*);
@@ -26,7 +32,7 @@ void HAL_CLA_ini(const cla_cfg_t*);
 void HAL_CLB_ini(void);
 
 /***********************************************************************
- * FUNCTIONS DEFINITIONS
+ * FUNCTIONS DEFINITION
  ***********************************************************************/
 /**
  * @brief       Initialize all peripherals necessaries.
@@ -538,18 +544,6 @@ void HAL_SCI_ini(const sci_cfg_t* p_sciCfg)
 }
 
 /**
- * @brief       Force a hard reset of all DMA peripherals
- */
-//void HAL_DMA_rst(void)
-//{
-//    /* Global hardware reset of the DMA controller. */
-//    DMA_initController();
-//    DMA_setEmulationMode(DMA_EMULATION_FREE_RUN);
-//
-//    return;
-//}
-
-/**
  * @brief       DMA initialization function.
  * @param[in]   *p_dmaCfg   Pointer on the DMA configuration structure
  */
@@ -631,20 +625,14 @@ void HAL_IPC_ini(const ipc_cfg_t* p_ipcCfg)
 void HAL_CLB_ini(void)
 {
     CLB_init();
-
-//    uint32_t addr1;
-//    addr1   = 0x43000000;
-//    addr1   = addr1 >> 1;
-//    //addr1 <<= 23;
-//    addr1  |= 0x80000000;
-//    CLB_configCounterLoadMatch(RS485_RX_CLB_ADDR_VALID_BASE, CLB_CTR2, TILE2_COUNTER_2_LOAD_VAL, addr1, 0);
+    uint32_t address_test_1 = (uid_unique >> 24) ^ (uid_unique >> 16) ^ (uid_unique >> 8) ^ uid_unique;
+    address_test_1          = ((address_test_1 & 0xff) << 23) | 0x80000000;
+    CLB_configCounterLoadMatch(RS485_RX_CLB_ADDR_VALID_BASE, CLB_CTR2, TILE2_COUNTER_2_LOAD_VAL, address_test_1, 0);
     // Input CLB Xbar config
     CLB_INPUTXBAR_init();
     // output CLB Xbar config
     CLB_OUTPUTXBAR_init();
-    // internal CLB Xbar config
-//    CLBXBAR_init();
-
+    // enable each tile
     CLB_enableCLB(RS485_RX_TX_CLB_EOT_BASE);
     CLB_enableCLB(RS485_RX_CLB_ADDR_VALID_BASE);
 }

@@ -23,26 +23,35 @@
 /***********************************************************************
  * VARIABLES
  ***********************************************************************/
-// Variable in GS0
-//#if (SPI_BUS_ENABLE)
 #pragma DATA_ALIGN(com_spi_rx, 4)
 #pragma DATA_SECTION(com_spi_rx, "ramgs0")
 spi_rx_t                com_spi_rx;
 #pragma DATA_ALIGN(com_spi_tx, 4)
 #pragma DATA_SECTION(com_spi_tx, "ramgs0")
-spi_tx_t                com_spi_tx = {.msg_cr = 0U, .msg_nx = 1U};
+spi_tx_t                com_spi_tx          = {.msg_cr = 0U, .msg_nx = 1U,
+                                               .msg[0].crc.u16_msb = 0xDFFF, .msg[0].crc.u16_lsb = 0x5283,
+                                               .msg[1].crc.u16_msb = 0xDFFF, .msg[1].crc.u16_lsb = 0x5283};
 #pragma DATA_ALIGN(com_rs485_rx, 4)
 #pragma DATA_SECTION(com_rs485_rx, "ramgs0")
-rs485_rx_t              com_rs485_rx = {.index = 0, .addr1 = false, .addr2 = false};//, .highByte = true};
+rs485_rx_t              com_rs485_rx        = {.index = 0U,
+                                               .addr1 = false, .addr2 = false};
 #pragma DATA_ALIGN(com_rs485_tx, 4)
 #pragma DATA_SECTION(com_rs485_tx, "ramgs0")
-rs485_tx_t              com_rs485_tx = {.index = 0, .msg_cr = 1U, .msg_nx = 0U};
+rs485_tx_t              com_rs485_tx        = {.index = 0U,
+                                               .msg_cr = 0U, .msg_nx = 1U,
+                                               .msg[0].crc.u16_msb = 0x8CA0, .msg[0].crc.u16_lsb = 0x22CF,
+                                               .msg[1].crc.u16_msb = 0x8CA0, .msg[1].crc.u16_lsb = 0x22CF};
 #pragma DATA_ALIGN(led_spi_tx, 4)
 #pragma DATA_SECTION(led_spi_tx, "ramgs0")
 uint16_t                led_spi_tx[LED_MSG_TX_16BIT_LENGTH];
-#pragma DATA_ALIGN(global_1ms_tmr_cnt, 4)
+#pragma DATA_ALIGN(com_bus_select, 2)
+#pragma DATA_SECTION(com_bus_select, "ramgs0")
+com_bus_e               com_bus_select      = COM_NO_BUS_DEFINED; //COM_USE_SPI_BUS
+#pragma DATA_ALIGN(global_1ms_tmr_cnt, 2)
 #pragma DATA_SECTION(global_1ms_tmr_cnt, "ramgs0")
-uint32_t                global_1ms_tmr_cnt = 0U;
+uint32_t                global_1ms_tmr_cnt  = 0U;
+//#pragma DATA_SECTION(uid_unique,".UID_UNIQUE");
+//volatile uint32_t       uid_unique;
 
 // External variables
 extern motor_t          motor_m1;
@@ -82,18 +91,20 @@ void main(void)
     CLA_forceTasks(CLA1_BASE, CLA_ADC_CALIB_TASK_FLAG);
     // Interrupts initialization
     HAL_INT_ini(InterruptList);
+
+//    uint32_t address_test_1 = (((uid_unique >> 16) ^ uid_unique) << 23) | 0x80000000;
+//
+//    CLB_configCounterLoadMatch(RS485_RX_CLB_ADDR_VALID_BASE, CLB_CTR2, TILE2_COUNTER_2_LOAD_VAL, address_test_1, 0);
+//    CLB_enableCLB(RS485_RX_TX_CLB_EOT_BASE);
+//    CLB_enableCLB(RS485_RX_CLB_ADDR_VALID_BASE);
+
+    // Wait first communication
+//    while(com_bus_select == COM_NO_BUS_DEFINED);
+    // Remove ITs of unused communication peripherals
+//    uint32_t int_to_disable = (com_bus_select == COM_USE_SPI_BUS) ? (INT_RS485_Rx_Tx_CLB) : (INT_DMA_RX_MSG);
+//    Interrupt_disable(int_to_disable);
     // Infinite loop
     while(1);
-//    {
-//#if (COM_CRC_TEST == 1)
-//        if(COM_msgExtract(&rx_msg, &cmd_uomodri[MOTOR_1], &cmd_uomodri[MOTOR_2], crc))
-//        {
-//            cmd_uomodri[MOTOR_1].cptTimeout = 0U;
-//            cmd_uomodri[MOTOR_2].cptTimeout = 0U;
-//            CLA_forceTasks(CLA1_BASE, CLA_CMD_NEW_TASK_FLAG);
-//        }
-//#endif
-//    }
 }
 
 /**
@@ -234,25 +245,22 @@ __attribute__((interrupt)) void cla_ClearTask(void)
  */
 __attribute__((interrupt)) void cla_isrMotor1(void)
 {
-#ifdef DEBUG
-//    DBG_PIN2_SET;
-#endif
-    // Create partially the Tx message
-#if SPI_BUS_ENABLE
-    spi_tx_msg_t* p_msg = &com_spi_tx.msg[com_spi_tx.msg_nx];
-    COM_msgCreate(&motor_m1, &p_msg->data);
-#elif RS485_BUS_ENABLE
-    rs485_tx_msg_u* p_msg   = &com_rs485_tx.msg[com_rs485_tx.msg_nx];
-    p_msg->header.addr      = COM_MSG_RS485_TX_ADDRESS;
-    p_msg->header.type      = COM_MSG_RS485_TX_TYPE_STANDARD;
-    p_msg->header.size      = COM_MSG_RS485_TX_8BIT_FULL_LENGTH;
-    COM_msgCreate(&motor_m1, &p_msg->data, global_1ms_tmr_cnt);
-#endif
+    // Fill of the M1 motor's elements in the Tx message
+    if((com_bus_select == COM_USE_SPI_BUS) && (!DMA_getRunStatusFlag(DMA_COM_SPI_TX_BASE_ADDR)) && COM_SPI_CS_READ)
+    {
+        spi_tx_msg_t* p_msg_spi     = &com_spi_tx.msg[com_spi_tx.msg_nx];
+        COM_msgCreate(&motor_m1, &p_msg_spi->data, global_1ms_tmr_cnt);
+    }
+    else if((com_bus_select == COM_USE_RS485_BUS) && (!com_rs485_tx.index))
+    {
+        rs485_tx_msg_u* p_msg_rs485 = &com_rs485_tx.msg[com_rs485_tx.msg_nx];
+        p_msg_rs485->header.addr    = COM_MSG_RS485_TX_ADDRESS;
+        p_msg_rs485->header.type    = COM_MSG_RS485_TX_TYPE_STANDARD;
+        p_msg_rs485->header.size    = COM_MSG_RS485_TX_8BIT_FULL_LENGTH;
+        COM_msgCreate(&motor_m1, &p_msg_rs485->data, global_1ms_tmr_cnt);
+    }
     // Clear IT
     Interrupt_clearACKGroup(INT_CLA_MOTOR1_GROUP);
-#ifdef DEBUG
-//    DBG_PIN2_CLEAR;
-#endif
 }
 
 /**
@@ -260,51 +268,53 @@ __attribute__((interrupt)) void cla_isrMotor1(void)
  */
 __attribute__((interrupt)) void cla_isrMotor2(void)
 {
-#ifdef DEBUG
-//    DBG_PIN2_SET;
-#endif
-#if SPI_BUS_ENABLE
-    // Finalize the Tx message for SPI. Aggregate MOTOR_2 values + computed CRC
-    spi_tx_msg_t* p_msg     = &com_spi_tx.msg[com_spi_tx.msg_nx];
-    COM_msgCreate(&motor_m2, &p_msg->data);
-    uint32_t crc            = COM_msgCRC((uint16_t *) &p_msg->data, COM_MSG_SPI_TX_16BIT_PAYLOAD_LENGTH);
-    // swap words in message - Required for Solo
-    p_msg->crc.u16_msb      = LSB_32(crc);
-    p_msg->crc.u16_lsb      = MSB_32(crc);
-    // New message complete
-    // Is SPI ready to transmit?
-    if(!DMA_getRunStatusFlag(DMA_COM_SPI_TX_BASE_ADDR) && COM_SPI_CS_READ)
+    // Finalize the Tx message. Aggregate MOTOR_2 values + computed CRC
+    if((com_bus_select == COM_USE_SPI_BUS) && (!DMA_getRunStatusFlag(DMA_COM_SPI_TX_BASE_ADDR)) && COM_SPI_CS_READ)
     {
-        // swap active message array
-        com_spi_tx.msg_cr   = !com_spi_tx.msg_cr;
-        com_spi_tx.msg_nx   = !com_spi_tx.msg_cr;
+        spi_tx_msg_t* p_msg_spi     = &com_spi_tx.msg[com_spi_tx.msg_nx];
+        COM_msgCreate(&motor_m2, &p_msg_spi->data, global_1ms_tmr_cnt);
+        uint32_t msg_crc            = COM_msgCRC((uint16_t *) &p_msg_spi->data, COM_MSG_SPI_TX_16BIT_PAYLOAD_LENGTH);
+        // swap words in message - Required for Solo
+        p_msg_spi->crc.u16_msb      = LSB_32(msg_crc);
+        p_msg_spi->crc.u16_lsb      = MSB_32(msg_crc);
+        // New message complete
+        // Is SPI already transmitting (SPI Tx is slave - no control when Tx start)?
+        if(!DMA_getRunStatusFlag(DMA_COM_SPI_TX_BASE_ADDR) && COM_SPI_CS_READ)
+        {
+            // swap active message array
+            com_spi_tx.msg_cr       = !com_spi_tx.msg_cr;
+            com_spi_tx.msg_nx       = !com_spi_tx.msg_cr;
+            SPI_resetTxFIFO(COM_SPI_BASE);
+            // Force first write in SPI_O_DAT register
+            COM_SPI_DAT(p_msg_spi->data.status.all);
+            DMA_configAddresses(DMA_COM_SPI_TX_BASE_ADDR, (uint16_t *) COM_SPI_TX_BASE_REG_ADDR, (uint16_t *) &p_msg_spi->data.timeStamp);
+            DMA_startChannel(DMA_COM_SPI_TX_BASE_ADDR);
+        }
+    }
+    else if((com_bus_select == COM_USE_RS485_BUS) && (!com_rs485_tx.index))
+    {
+        rs485_tx_msg_u* p_msg_rs485 = &com_rs485_tx.msg[com_rs485_tx.msg_nx];
+        COM_msgCreate(&motor_m2, &p_msg_rs485->data, global_1ms_tmr_cnt);
+        uint32_t msg_crc            = COM_msgCRC((uint16_t *) &p_msg_rs485->header, COM_MSG_RS485_TX_16BIT_PAYLOAD_LENGTH);
+        // swap words in message - Required for Solo
+        p_msg_rs485->crc.u16_msb    = LSB_32(msg_crc);
+        p_msg_rs485->crc.u16_lsb    = MSB_32(msg_crc);
+        // New message complete
+        // If we are here RS485 has not started.
+        com_rs485_tx.msg_cr         = !com_rs485_tx.msg_cr;
+        com_rs485_tx.msg_nx         = !com_rs485_tx.msg_cr;
+    }
+    else if(!DMA_getRunStatusFlag(DMA_COM_SPI_TX_BASE_ADDR) && COM_SPI_CS_READ)
+    {
+        spi_tx_msg_t* p_msg_spi     = &com_spi_tx.msg[0];
         SPI_resetTxFIFO(COM_SPI_BASE);
         // Force first write in SPI_O_DAT register
-        COM_SPI_DAT(p_msg->data.status.all);
-        DMA_configAddresses(DMA_COM_SPI_TX_BASE_ADDR, (uint16_t *) COM_SPI_TX_BASE_REG_ADDR, (uint16_t *) &p_msg->data.timeStamp);
+        COM_SPI_DAT(p_msg_spi->data.status.all);
+        DMA_configAddresses(DMA_COM_SPI_TX_BASE_ADDR, (uint16_t *) COM_SPI_TX_BASE_REG_ADDR, (uint16_t *) &p_msg_spi->data.timeStamp);
         DMA_startChannel(DMA_COM_SPI_TX_BASE_ADDR);
     }
-#elif RS485_BUS_ENABLE
-    // Finalize the Tx message for RS485. Aggregate MOTOR_2 values + computed CRC
-    rs485_tx_msg_u* p_msg   = &com_rs485_tx.msg[com_rs485_tx.msg_nx];
-    COM_msgCreate(&motor_m2, &p_msg->data, global_1ms_tmr_cnt);
-    uint32_t crc            = COM_msgCRC((uint16_t *) &p_msg->header, COM_MSG_RS485_TX_16BIT_PAYLOAD_LENGTH);
-    // swap words in message - Required for Solo
-    p_msg->crc.u16_msb      = LSB_32(crc);
-    p_msg->crc.u16_lsb      = MSB_32(crc);
-    // New message complete
-    // swap active message array
-    if(!com_rs485_tx.index)
-    {
-        com_rs485_tx.msg_cr = !com_rs485_tx.msg_cr;
-        com_rs485_tx.msg_nx = !com_rs485_tx.msg_cr;
-    }
-#endif
     // Clear IT
     Interrupt_clearACKGroup(INT_CLA_MOTOR2_GROUP);
-#ifdef DEBUG
-//    DBG_PIN2_CLEAR;
-#endif
 }
 
 /**
@@ -337,27 +347,21 @@ __attribute__((interrupt)) void tmr_isrLed(void)
  */
 __attribute__((interrupt)) void dma_isrSpiComRx(void)
 {
-#ifdef DEBUG
-//    DBG_PIN3_SET;
-#endif
     // Compare computed CRC with the one received in message.
-    spi_rx_msg_t* p_msg = &com_spi_rx.msg;
-    uint32_t crc = COM_msgCRC((uint16_t *)&p_msg->data, COM_MSG_SPI_RX_16BIT_PAYLOAD_LENGTH);
-    if((p_msg->crc.u16_msb == MSB_32(crc)) && (p_msg->crc.u16_lsb == LSB_32(crc)))
+    spi_rx_msg_t* p_msg_spi = &com_spi_rx.msg;
+    uint32_t msg_crc        = COM_msgCRC((uint16_t *)&p_msg_spi->data, COM_MSG_SPI_RX_16BIT_PAYLOAD_LENGTH);
+    if((com_bus_select != COM_USE_RS485_BUS) && (p_msg_spi->crc.u16_msb == MSB_32(msg_crc)) && (p_msg_spi->crc.u16_lsb == LSB_32(msg_crc)))
     {
-        // Extract received message & send new commands to FOC structures if valid
-        COM_msgExtract(&p_msg->data, &cmd_uomodri[MOTOR_1], &cmd_uomodri[MOTOR_2]);
+        // Extract received message & send new commands to FOC structures. Define SPI as communication bus by default.
+        COM_msgExtract(&p_msg_spi->data, &cmd_uomodri[MOTOR_1], &cmd_uomodri[MOTOR_2]);
         CLA_forceTasks(CLA1_BASE, CLA_CMD_NEW_TASK_FLAG);
+        com_bus_select      = COM_USE_SPI_BUS;
     }
-    // Restart DMA reception
+    // Restart DMA reception & reset the SPI Rx fifo.
     DMA_startChannel(DMA_COM_SPI_RX_BASE_ADDR);
-    // Reset the SPI Rx fifo
     SPI_resetRxFIFO(COM_SPI_BASE);
     // Clear IT flag
     Interrupt_clearACKGroup(INT_DMA_RX_MSG_GROUP);
-#ifdef DEBUG
-//    DBG_PIN3_CLEAR;
-#endif
 }
 
 /**
@@ -434,7 +438,6 @@ __attribute__((interrupt)) void sci_isrRx_RS485(void)
         HWREGH(COM_SCI_CTRL1_REG_ADDR)     &= ~SCI_CTL1_SWRESET;
         HWREGH(COM_SCI_CTRL1_REG_ADDR)     |= SCI_CTL1_SWRESET;
 #endif
-//        error();
     }
     // Clear global IT flag
     Interrupt_clearACKGroup(INT_RS485_RX_MSG_GROUP);
@@ -494,17 +497,19 @@ __attribute__((interrupt)) void clb_isrTxRx_RS485(void)
         {
             // Last FIFO read.
             RS485_msgReceive(COM_SCI_BASE, &com_rs485_rx);
-            rs485_rx_msg_u* p_msg   = &com_rs485_rx.msg;
-            uint32_t crc            = COM_msgCRC((uint16_t *) &p_msg->header, COM_MSG_RS485_RX_16BIT_PAYLOAD_LENGTH);
-            if((p_msg->crc.u16_msb == MSB_32(crc)) && (p_msg->crc.u16_lsb == LSB_32(crc)))
+            rs485_rx_msg_u* p_msg_rs485     = &com_rs485_rx.msg;
+            uint32_t msg_crc                = COM_msgCRC((uint16_t *) &p_msg_rs485->header, COM_MSG_RS485_RX_16BIT_PAYLOAD_LENGTH);
+            if((com_bus_select != COM_USE_SPI_BUS) && (p_msg_rs485->crc.u16_msb == MSB_32(msg_crc)) && (p_msg_rs485->crc.u16_lsb == LSB_32(msg_crc)))
             {
                 // Message valid - Extract it & transfer to motors structures.
-                COM_msgExtract(&p_msg->data, &cmd_uomodri[MOTOR_1], &cmd_uomodri[MOTOR_2]);
+                COM_msgExtract(&p_msg_rs485->data, &cmd_uomodri[MOTOR_1], &cmd_uomodri[MOTOR_2]);
                 CLA_forceTasks(CLA1_BASE, CLA_CMD_NEW_TASK_FLAG);
+                // use RS485 as communication bus
+                com_bus_select              = COM_USE_RS485_BUS;
                 // prepare reply to master - reset transmit index
-                com_rs485_tx.index  = 0;
-                p_msg->crc.u16_lsb  = 0;
-                p_msg->crc.u16_msb  = 0;
+                com_rs485_tx.index          = 0;
+                p_msg_rs485->crc.u16_lsb    = 0;
+                p_msg_rs485->crc.u16_msb    = 0;
                 // prepare reply to master - reset RS485 transmit FIFO & enable RS485 SCI Tx ITs.
                 HWREGH(COM_SCI_FIFO_TX_REG_ADDR)   &= ~SCI_FFTX_TXFIFORESET;
                 HWREGH(COM_SCI_FIFO_TX_REG_ADDR)   |= (SCI_FFTX_TXFIFORESET | SCI_FFTX_TXFFIENA | SCI_FFTX_TXFFINTCLR);
