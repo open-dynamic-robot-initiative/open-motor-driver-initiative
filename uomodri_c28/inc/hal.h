@@ -31,7 +31,14 @@ typedef enum
     SCI_MULTI_PROC_NONE = 0,
     SCI_MULTI_PROC_ADDR = 1,
     SCI_MULTI_PROC_IDLE = 2
-} SCI_MultiPrcessorCtrl_e;
+} SCI_MultiProcessorCtrl_e;
+
+typedef enum
+{
+    RS485_CLB_USE_NO_ADDRESS    = 0,
+    RS485_CLB_USE_UID_ADDRESS   = 1,
+    RS485_CLB_FORCE_ADDRESS     = 2
+} CLB_RS485AddressDef_e;
 
 /***********************************************************************
  * HARDWARE ABSTRACTION LAYER (HAL) CONTROL STRUCTURES
@@ -178,7 +185,7 @@ typedef struct __SCI_CFG_t__
     SCI_RxFIFOLevel                     rxLevel;
     uint32_t                            intSrc;
     bool_t                              intEnable;                  /*!< GPIO can be configured as IT source */
-    SCI_MultiPrcessorCtrl_e             multiProcMode;
+    SCI_MultiProcessorCtrl_e            multiProcMode;
 } sci_cfg_t;
 
 /**
@@ -230,7 +237,11 @@ typedef struct __CLA_CFG_t__
  */
 typedef struct __CLB_CFG_t__
 {
-    const uint32_t                      clbBase;
+//    uint32_t                clb_AddrBase;
+    CLB_RS485AddressDef_e   clb_Addr1Spec;
+    CLB_RS485AddressDef_e   clb_Addr2Spec;
+    uint32_t                clb_Addr1Force;
+    uint32_t                clb_Addr2Force;
 } clb_cfg_t;
 
 /**
@@ -370,7 +381,7 @@ typedef struct __HAL_CFG_t__
     const dma_cfg_t*    const           p_dmaHandle;
     const tmr_cfg_t*    const           p_timerHandle;
     const cla_cfg_t*    const           p_claHandle;
-//    const clb_cfg_t*    const           p_clbHandle;
+    const clb_cfg_t*    const           p_clbHandle;
 } hal_cfg_t;
 
 /***********************************************************************

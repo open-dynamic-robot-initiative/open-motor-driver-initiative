@@ -46,12 +46,10 @@ rs485_tx_t              com_rs485_tx        = {.index = 0U,
 uint16_t                led_spi_tx[LED_MSG_TX_16BIT_LENGTH];
 #pragma DATA_ALIGN(com_bus_select, 2)
 #pragma DATA_SECTION(com_bus_select, "ramgs0")
-com_bus_e               com_bus_select      = COM_NO_BUS_DEFINED; //COM_USE_SPI_BUS
+com_bus_e               com_bus_select      = COM_NO_BUS_DEFINED;
 #pragma DATA_ALIGN(global_1ms_tmr_cnt, 2)
 #pragma DATA_SECTION(global_1ms_tmr_cnt, "ramgs0")
 uint32_t                global_1ms_tmr_cnt  = 0U;
-//#pragma DATA_SECTION(uid_unique,".UID_UNIQUE");
-//volatile uint32_t       uid_unique;
 
 // External variables
 extern motor_t          motor_m1;
@@ -91,18 +89,6 @@ void main(void)
     CLA_forceTasks(CLA1_BASE, CLA_ADC_CALIB_TASK_FLAG);
     // Interrupts initialization
     HAL_INT_ini(InterruptList);
-
-//    uint32_t address_test_1 = (((uid_unique >> 16) ^ uid_unique) << 23) | 0x80000000;
-//
-//    CLB_configCounterLoadMatch(RS485_RX_CLB_ADDR_VALID_BASE, CLB_CTR2, TILE2_COUNTER_2_LOAD_VAL, address_test_1, 0);
-//    CLB_enableCLB(RS485_RX_TX_CLB_EOT_BASE);
-//    CLB_enableCLB(RS485_RX_CLB_ADDR_VALID_BASE);
-
-    // Wait first communication
-//    while(com_bus_select == COM_NO_BUS_DEFINED);
-    // Remove ITs of unused communication peripherals
-//    uint32_t int_to_disable = (com_bus_select == COM_USE_SPI_BUS) ? (INT_RS485_Rx_Tx_CLB) : (INT_DMA_RX_MSG);
-//    Interrupt_disable(int_to_disable);
     // Infinite loop
     while(1);
 }

@@ -26,10 +26,9 @@ void HAL_eQEP_ini(const eqep_cfg_t*);
 void HAL_SPI_ini(const spi_cfg_t*);
 void HAL_SCI_ini(const sci_cfg_t*);
 void HAL_TMR_ini(const tmr_cfg_t*);
-//void HAL_DMA_rst(void);
 void HAL_IPC_ini(const ipc_cfg_t*);
 void HAL_CLA_ini(const cla_cfg_t*);
-void HAL_CLB_ini(void);
+void HAL_CLB_ini(const clb_cfg_t*);
 
 /***********************************************************************
  * FUNCTIONS DEFINITION
@@ -67,7 +66,7 @@ void HAL_ini(const hal_cfg_t* p_hal)
         // Initialize SCI/UART
         HAL_SCI_ini(p_hal->p_sciHandle);
         // Initialize CLB
-        HAL_CLB_ini();
+        HAL_CLB_ini(p_hal->p_clbHandle);
 #endif
         EDIS;
     }
@@ -622,12 +621,53 @@ void HAL_IPC_ini(const ipc_cfg_t* p_ipcCfg)
  * @brief       CLB initialization function.
  * @param[in]   *p_clbCfg   Pointer on the CLB configuration structure
  */
-void HAL_CLB_ini(void)
+void HAL_CLB_ini(const clb_cfg_t* p_clbCfg)
 {
     CLB_init();
-    uint32_t address_test_1 = (uid_unique >> 24) ^ (uid_unique >> 16) ^ (uid_unique >> 8) ^ uid_unique;
-    address_test_1          = ((address_test_1 & 0xff) << 23) | 0x80000000;
-    CLB_configCounterLoadMatch(RS485_RX_CLB_ADDR_VALID_BASE, CLB_CTR2, TILE2_COUNTER_2_LOAD_VAL, address_test_1, 0);
+
+    uint32_t outLutCfg  = 0;
+    uint32_t addr_test1 = uid_unique;
+    uint32_t addr_test2 = uid_unique;
+
+    switch (p_clbCfg->clb_Addr1Spec)
+    {
+        case RS485_CLB_USE_NO_ADDRESS:
+        default:
+            outLutCfg       = TILE2_CFG_OUTLUT_4 & 0xFFFF83FF;
+            addr_test1      = 0;
+            break;
+        case RS485_CLB_USE_UID_ADDRESS:
+            outLutCfg       = TILE2_CFG_OUTLUT_4;
+            addr_test1     ^= (uid_unique >> 24) ^ (uid_unique >> 16) ^ (uid_unique >> 8);
+            addr_test1      = ((addr_test1 & 0x000000FF) << 23) | 0x80000000;
+            break;
+        case RS485_CLB_FORCE_ADDRESS:
+            outLutCfg       = TILE2_CFG_OUTLUT_4;
+            addr_test1      = ((p_clbCfg->clb_Addr1Force & 0x000000FF) << 23) | 0x80000000;
+            break;
+    }
+    CLB_configOutputLUT(RS485_RX_CLB_ADDR_VALID_BASE, CLB_OUT4, outLutCfg);
+
+    switch (p_clbCfg->clb_Addr2Spec)
+    {
+        case RS485_CLB_USE_NO_ADDRESS:
+        default:
+            outLutCfg       = TILE2_CFG_OUTLUT_5 & 0xFFFF83FF;
+            addr_test2      = 0;
+            break;
+        case RS485_CLB_USE_UID_ADDRESS:
+            outLutCfg       = TILE2_CFG_OUTLUT_5;
+            addr_test2     ^= (uid_unique >> 24) ^ (uid_unique >> 16) ^ (uid_unique >> 8);
+            addr_test2      = ((addr_test2 & 0x000000FF) << 23) | 0x80000000;
+            break;
+        case RS485_CLB_FORCE_ADDRESS:
+            outLutCfg       = TILE2_CFG_OUTLUT_5;
+            addr_test2      = ((p_clbCfg->clb_Addr2Force & 0x000000FF) << 23) | 0x80000000;
+            break;
+    }
+    CLB_configOutputLUT(RS485_RX_CLB_ADDR_VALID_BASE, CLB_OUT5, outLutCfg);
+    CLB_configCounterLoadMatch(RS485_RX_CLB_ADDR_VALID_BASE, CLB_CTR2, TILE2_COUNTER_2_LOAD_VAL, addr_test1, addr_test2);
+
     // Input CLB Xbar config
     CLB_INPUTXBAR_init();
     // output CLB Xbar config
