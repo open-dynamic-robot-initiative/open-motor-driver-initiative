@@ -1,5 +1,6 @@
 {
   "board": {
+    "3dviewports": [],
     "design_settings": {
       "defaults": {
         "board_outline_line_width": 0.049999999999999996,
@@ -26,10 +27,10 @@
         "fab_text_size_v": 0.6,
         "fab_text_thickness": 0.09999999999999999,
         "fab_text_upright": true,
-        "other_line_width": 0.15,
+        "other_line_width": 0.12,
         "other_text_italic": false,
-        "other_text_size_h": 0.7999999999999999,
-        "other_text_size_v": 0.7999999999999999,
+        "other_text_size_h": 0.6,
+        "other_text_size_v": 0.6,
         "other_text_thickness": 0.12,
         "other_text_upright": true,
         "pads": {
@@ -45,7 +46,7 @@
         "silk_text_upright": true,
         "zones": {
           "45_degree_only": false,
-          "min_clearance": 0.0
+          "min_clearance": 0.11
         }
       },
       "diff_pair_dimensions": [
@@ -62,20 +63,26 @@
       "rule_severities": {
         "annular_width": "error",
         "clearance": "error",
+        "connection_width": "warning",
         "copper_edge_clearance": "error",
+        "copper_sliver": "warning",
         "courtyards_overlap": "error",
         "diff_pair_gap_out_of_range": "error",
         "diff_pair_uncoupled_length_too_long": "error",
         "drill_out_of_range": "error",
         "duplicate_footprints": "warning",
         "extra_footprint": "warning",
+        "footprint": "error",
         "footprint_type_mismatch": "error",
         "hole_clearance": "error",
         "hole_near_hole": "error",
         "invalid_outline": "error",
+        "isolated_copper": "warning",
         "item_on_disabled_layer": "error",
         "items_not_allowed": "error",
         "length_out_of_range": "error",
+        "lib_footprint_issues": "warning",
+        "lib_footprint_mismatch": "warning",
         "malformed_courtyard": "error",
         "microvia_drill_out_of_range": "error",
         "missing_courtyard": "ignore",
@@ -85,9 +92,14 @@
         "padstack": "error",
         "pth_inside_courtyard": "ignore",
         "shorting_items": "error",
+        "silk_edge_clearance": "warning",
         "silk_over_copper": "warning",
         "silk_overlap": "warning",
         "skew_out_of_range": "error",
+        "solder_mask_bridge": "error",
+        "starved_thermal": "error",
+        "text_height": "warning",
+        "text_thickness": "warning",
         "through_hole_pad_without_hole": "error",
         "too_many_vias": "error",
         "track_dangling": "warning",
@@ -96,7 +108,6 @@
         "unconnected_items": "error",
         "unresolved_variable": "error",
         "via_dangling": "warning",
-        "zone_has_empty_net": "error",
         "zones_intersect": "error"
       },
       "rule_severitieslegacy_courtyards_overlap": true,
@@ -106,22 +117,67 @@
         "allow_microvias": false,
         "max_error": 0.005,
         "min_clearance": 0.102,
+        "min_connection": 0.0,
         "min_copper_edge_clearance": 0.15,
         "min_hole_clearance": 0.25,
         "min_hole_to_hole": 0.3,
         "min_microvia_diameter": 0.19999999999999998,
         "min_microvia_drill": 0.09999999999999999,
+        "min_resolved_spokes": 2,
         "min_silk_clearance": 0.0,
+        "min_text_height": 0.6,
+        "min_text_thickness": 0.09999999999999999,
         "min_through_hole_diameter": 0.09999999999999999,
         "min_track_width": 0.102,
         "min_via_annular_width": 0.125,
         "min_via_diameter": 0.44999999999999996,
         "solder_mask_clearance": 0.05,
         "solder_mask_min_width": 0.0,
+        "solder_mask_to_copper_clearance": 0.0,
         "solder_paste_clearance": 0.0,
         "solder_paste_margin_ratio": -0.0,
         "use_height_for_length_calcs": true
       },
+      "teardrop_options": [
+        {
+          "td_allow_use_two_tracks": true,
+          "td_curve_segcount": 5,
+          "td_on_pad_in_zone": false,
+          "td_onpadsmd": true,
+          "td_onroundshapesonly": false,
+          "td_ontrackend": false,
+          "td_onviapad": true
+        }
+      ],
+      "teardrop_parameters": [
+        {
+          "td_curve_segcount": 0,
+          "td_height_ratio": 1.0,
+          "td_length_ratio": 0.5,
+          "td_maxheight": 2.0,
+          "td_maxlen": 1.0,
+          "td_target_name": "td_round_shape",
+          "td_width_to_size_filter_ratio": 0.9
+        },
+        {
+          "td_curve_segcount": 0,
+          "td_height_ratio": 1.0,
+          "td_length_ratio": 0.5,
+          "td_maxheight": 2.0,
+          "td_maxlen": 1.0,
+          "td_target_name": "td_rect_shape",
+          "td_width_to_size_filter_ratio": 0.9
+        },
+        {
+          "td_curve_segcount": 0,
+          "td_height_ratio": 1.0,
+          "td_length_ratio": 0.5,
+          "td_maxheight": 2.0,
+          "td_maxlen": 1.0,
+          "td_target_name": "td_track_end",
+          "td_width_to_size_filter_ratio": 0.9
+        }
+      ],
       "track_widths": [
         0.0,
         0.125,
@@ -141,7 +197,8 @@
       "zones_allow_external_fillets": true,
       "zones_use_no_outline": true
     },
-    "layer_presets": []
+    "layer_presets": [],
+    "viewports": []
   },
   "boards": [],
   "cvpcb": {
@@ -325,18 +382,23 @@
     "rule_severities": {
       "bus_definition_conflict": "error",
       "bus_entry_needed": "error",
-      "bus_label_syntax": "error",
       "bus_to_bus_conflict": "error",
       "bus_to_net_conflict": "error",
+      "conflicting_netclasses": "error",
       "different_unit_footprint": "error",
       "different_unit_net": "error",
       "duplicate_reference": "error",
       "duplicate_sheet_names": "error",
+      "endpoint_off_grid": "warning",
       "extra_units": "error",
       "global_label_dangling": "warning",
       "hier_label_mismatch": "error",
       "label_dangling": "error",
       "lib_symbol_issues": "warning",
+      "missing_bidi_pin": "warning",
+      "missing_input_pin": "warning",
+      "missing_power_pin": "error",
+      "missing_unit": "warning",
       "multiple_net_names": "warning",
       "net_not_bus_member": "warning",
       "no_connect_connected": "warning",
@@ -346,6 +408,7 @@
       "pin_to_pin": "warning",
       "power_pin_not_driven": "error",
       "similar_labels": "warning",
+      "simulation_model_issue": "ignore",
       "unannotated": "error",
       "unit_value_mismatch": "error",
       "unresolved_variable": "error",
@@ -353,8 +416,12 @@
     }
   },
   "libraries": {
-    "pinned_footprint_libs": [],
-    "pinned_symbol_libs": []
+    "pinned_footprint_libs": [
+      "udriver3"
+    ],
+    "pinned_symbol_libs": [
+      "omodri_lib"
+    ]
   },
   "meta": {
     "filename": "omodri_laas.kicad_pro",
@@ -363,7 +430,7 @@
   "net_settings": {
     "classes": [
       {
-        "bus_width": 12.0,
+        "bus_width": 12,
         "clearance": 0.102,
         "diff_pair_gap": 0.15,
         "diff_pair_via_gap": 0.25,
@@ -377,10 +444,10 @@
         "track_width": 0.102,
         "via_diameter": 0.45,
         "via_drill": 0.1,
-        "wire_width": 6.0
+        "wire_width": 6
       },
       {
-        "bus_width": 12.0,
+        "bus_width": 12,
         "clearance": 0.102,
         "diff_pair_gap": 0.15,
         "diff_pair_via_gap": 0.25,
@@ -389,73 +456,15 @@
         "microvia_diameter": 0.2,
         "microvia_drill": 0.1,
         "name": "Analog_sig",
-        "nets": [
-          "/JTAG + CLOCK + RESET/25MHz_OSC_SRC",
-          "/JTAG + CLOCK + RESET/ERRORSTS",
-          "/JTAG + CLOCK + RESET/F2838x_CLK_25MHz",
-          "/JTAG + CLOCK + RESET/TCK",
-          "/JTAG + CLOCK + RESET/TDI",
-          "/JTAG + CLOCK + RESET/TDO",
-          "/JTAG + CLOCK + RESET/TMS",
-          "/JTAG + CLOCK + RESET/~{TRSTn}",
-          "/JTAG + CLOCK + RESET/~{XRSn}",
-          "/OMODRI_FSI_RX/RX_CLK_LVDS_N",
-          "/OMODRI_FSI_RX/RX_CLK_LVDS_P",
-          "/OMODRI_FSI_RX/RX_D0_LVDS_N",
-          "/OMODRI_FSI_RX/RX_D0_LVDS_P",
-          "/OMODRI_FSI_RX/RX_D1_LVDS_N",
-          "/OMODRI_FSI_RX/RX_D1_LVDS_P",
-          "/OMODRI_FSI_TX/TX_CLK_LVDS_N",
-          "/OMODRI_FSI_TX/TX_CLK_LVDS_P",
-          "/OMODRI_FSI_TX/TX_D0_LVDS_N",
-          "/OMODRI_FSI_TX/TX_D0_LVDS_P",
-          "/OMODRI_FSI_TX/TX_D1_LVDS_N",
-          "/OMODRI_FSI_TX/TX_D1_LVDS_P",
-          "/OMODRI_GPIO/ANALOG_IN1",
-          "/OMODRI_GPIO/ANALOG_IN2",
-          "/OMODRI_GPIO/M1_Ia",
-          "/OMODRI_GPIO/M1_Ib",
-          "/OMODRI_GPIO/M1_Ic",
-          "/OMODRI_GPIO/M1_Vbus",
-          "/OMODRI_GPIO/M2_Ia",
-          "/OMODRI_GPIO/M2_Ib",
-          "/OMODRI_GPIO/M2_Ic",
-          "/OMODRI_QuadEncod/ENC1_A",
-          "/OMODRI_QuadEncod/ENC1_B",
-          "/OMODRI_QuadEncod/ENC1_I",
-          "/OMODRI_QuadEncod/ENC2_A",
-          "/OMODRI_QuadEncod/ENC2_B",
-          "/OMODRI_QuadEncod/ENC2_I",
-          "/OMODRI_driver_M1/SNA",
-          "/OMODRI_driver_M1/SNB",
-          "/OMODRI_driver_M1/SNC",
-          "/OMODRI_driver_M1/SOA_out",
-          "/OMODRI_driver_M1/SOB_out",
-          "/OMODRI_driver_M1/SOC_out",
-          "/OMODRI_driver_M1/SPA",
-          "/OMODRI_driver_M1/SPB",
-          "/OMODRI_driver_M1/SPC",
-          "/OMODRI_driver_M2/SNA",
-          "/OMODRI_driver_M2/SNB",
-          "/OMODRI_driver_M2/SNC",
-          "/OMODRI_driver_M2/SOA_out",
-          "/OMODRI_driver_M2/SOB_out",
-          "/OMODRI_driver_M2/SOC_out",
-          "/OMODRI_driver_M2/SPA",
-          "/OMODRI_driver_M2/SPB",
-          "/OMODRI_driver_M2/SPC",
-          "/analog1",
-          "/analog2"
-        ],
         "pcb_color": "rgba(0, 0, 0, 0.000)",
         "schematic_color": "rgba(0, 0, 0, 0.000)",
         "track_width": 0.125,
         "via_diameter": 0.45,
         "via_drill": 0.1,
-        "wire_width": 6.0
+        "wire_width": 6
       },
       {
-        "bus_width": 12.0,
+        "bus_width": 12,
         "clearance": 0.102,
         "diff_pair_gap": 0.15,
         "diff_pair_via_gap": 0.25,
@@ -464,24 +473,15 @@
         "microvia_diameter": 0.2,
         "microvia_drill": 0.1,
         "name": "Gnd_Vdd",
-        "nets": [
-          "12V0",
-          "5V0",
-          "GND",
-          "REF_3V0_BUF",
-          "VDDA_3V3",
-          "VDD_1V2",
-          "VDD_3V3"
-        ],
         "pcb_color": "rgba(0, 0, 0, 0.000)",
         "schematic_color": "rgba(0, 0, 0, 0.000)",
         "track_width": 0.25,
         "via_diameter": 0.45,
         "via_drill": 0.1,
-        "wire_width": 6.0
+        "wire_width": 6
       },
       {
-        "bus_width": 12.0,
+        "bus_width": 12,
         "clearance": 0.2,
         "diff_pair_gap": 0.1,
         "diff_pair_via_gap": 0.25,
@@ -490,30 +490,15 @@
         "microvia_diameter": 0.2,
         "microvia_drill": 0.1,
         "name": "Power_Plan",
-        "nets": [
-          "/OMODRI_driver_M1/MOTOR_CH1",
-          "/OMODRI_driver_M1/MOTOR_CH2",
-          "/OMODRI_driver_M1/MOTOR_CH3",
-          "/OMODRI_driver_M1/OUT_M1_CH1",
-          "/OMODRI_driver_M1/OUT_M1_CH2",
-          "/OMODRI_driver_M1/OUT_M1_CH3",
-          "/OMODRI_driver_M2/MOTOR_CH1",
-          "/OMODRI_driver_M2/MOTOR_CH2",
-          "/OMODRI_driver_M2/MOTOR_CH3",
-          "/OMODRI_driver_M2/OUT_M1_CH1",
-          "/OMODRI_driver_M2/OUT_M1_CH2",
-          "/OMODRI_driver_M2/OUT_M1_CH3",
-          "VPOWER"
-        ],
         "pcb_color": "rgba(0, 0, 0, 0.000)",
         "schematic_color": "rgba(0, 0, 0, 0.000)",
         "track_width": 0.25,
         "via_diameter": 0.7,
         "via_drill": 0.35,
-        "wire_width": 6.0
+        "wire_width": 6
       },
       {
-        "bus_width": 12.0,
+        "bus_width": 12,
         "clearance": 0.15,
         "diff_pair_gap": 0.127,
         "diff_pair_via_gap": 0.25,
@@ -522,50 +507,20 @@
         "microvia_diameter": 0.2,
         "microvia_drill": 0.1,
         "name": "Power_sig",
-        "nets": [
-          "/OMODRI_driver_M1/CPH",
-          "/OMODRI_driver_M1/CPL",
-          "/OMODRI_driver_M1/DVDD",
-          "/OMODRI_driver_M1/GHA",
-          "/OMODRI_driver_M1/GHB",
-          "/OMODRI_driver_M1/GHC",
-          "/OMODRI_driver_M1/GLA",
-          "/OMODRI_driver_M1/GLB",
-          "/OMODRI_driver_M1/GLC",
-          "/OMODRI_driver_M1/SHA",
-          "/OMODRI_driver_M1/SHB",
-          "/OMODRI_driver_M1/SHC",
-          "/OMODRI_driver_M1/VCP_DRV",
-          "/OMODRI_driver_M1/VGLS",
-          "/OMODRI_driver_M2/CPH",
-          "/OMODRI_driver_M2/CPL",
-          "/OMODRI_driver_M2/GHA",
-          "/OMODRI_driver_M2/GHB",
-          "/OMODRI_driver_M2/GHC",
-          "/OMODRI_driver_M2/GLA",
-          "/OMODRI_driver_M2/GLB",
-          "/OMODRI_driver_M2/GLC",
-          "/OMODRI_driver_M2/SHA",
-          "/OMODRI_driver_M2/SHB",
-          "/OMODRI_driver_M2/SHC",
-          "/OMODRI_driver_M2/VCP_DRV",
-          "/OMODRI_driver_M2/VGLS",
-          "/Power distribution/OMODRI_Alim_1V2/FB_1V2",
-          "/Power distribution/OMODRI_Alim_3V3/FB_3V3",
-          "/Power distribution/OMODRI_Alim_5V/V5V_5V0"
-        ],
         "pcb_color": "rgba(0, 0, 0, 0.000)",
         "schematic_color": "rgba(0, 0, 0, 0.000)",
         "track_width": 0.25,
         "via_diameter": 0.45,
         "via_drill": 0.1,
-        "wire_width": 6.0
+        "wire_width": 6
       }
     ],
     "meta": {
-      "version": 2
+      "version": 3
     },
-    "net_colors": null
+    "net_colors": null,
+    "netclass_assignments": null,
+    "netclass_patterns": []
   },
   "pcbnew": {
     "last_paths": {
@@ -581,6 +536,8 @@
   "schematic": {
     "annotate_start_num": 0,
     "drawing": {
+      "dashed_lines_dash_length_ratio": 12.0,
+      "dashed_lines_gap_length_ratio": 3.0,
       "default_line_thickness": 6.0,
       "default_text_size": 50.0,
       "field_names": [],
@@ -612,7 +569,11 @@
     "page_layout_descr_file": "",
     "plot_directory": "./",
     "spice_adjust_passive_values": false,
+    "spice_current_sheet_as_root": false,
     "spice_external_command": "spice \"%I\"",
+    "spice_model_current_sheet_as_root": true,
+    "spice_save_all_currents": false,
+    "spice_save_all_voltages": false,
     "subpart_first_id": 65,
     "subpart_id_separator": 0
   },
@@ -632,6 +593,10 @@
     [
       "00000000-0000-0000-0000-00005f5b5760",
       "OMODRI_FSI_RX"
+    ],
+    [
+      "f886a7a6-33d7-48db-abbb-6951d00de62d",
+      "OMODRI_CAN_RS485"
     ],
     [
       "00000000-0000-0000-0000-00005f9fcb8c",
@@ -696,10 +661,6 @@
     [
       "9d19598c-7de4-4233-be03-ce9dcceb57b9",
       "OMODRI_IMU_DBG"
-    ],
-    [
-      "0e6ff59e-7792-4e05-911e-0611053fd35a",
-      "OMODRI_CAN_RS485"
     ],
     [
       "c53e2d2b-e3ea-4ea7-9c8d-a18dc2ab02ee",
