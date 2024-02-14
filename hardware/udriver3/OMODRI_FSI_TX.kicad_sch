@@ -7,7 +7,7 @@
   (title_block
     (title "Open MOtor DRiver Initiative (OMODRI)")
     (date "2022-11-24")
-    (rev "2.0")
+    (rev "3.0")
     (company "LAAS/CNRS")
   )
 
@@ -1897,7 +1897,7 @@
     (property "Footprint" "Resistor_SMD:R_0201_0603Metric" (at 46.482 115.57 90)
       (effects (font (size 1.27 1.27)) hide)
     )
-    (property "Datasheet" "~" (at 48.26 115.57 0)
+    (property "Datasheet" "https://industrial.panasonic.com/cdbs/www-data/pdf/RDA0000/AOA0000C304.pdf" (at 48.26 115.57 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "DigiKey" "P122655CT-ND" (at 48.26 115.57 0)

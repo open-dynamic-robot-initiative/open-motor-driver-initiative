@@ -7,7 +7,7 @@
   (title_block
     (title "Open MOtor DRiver Initiative (OMODRI)")
     (date "2022-11-24")
-    (rev "2.0")
+    (rev "3.0")
     (company "LAAS/CNRS")
   )
 
@@ -1135,7 +1135,7 @@
     (property "Value" "SolderJumper_3_Open" (at 78.74 62.23 0)
       (effects (font (size 1.27 1.27)) (justify left) hide)
     )
-    (property "Footprint" "Jumper:SolderJumper-3_P2.0mm_Open_TrianglePad1.0x1.5mm_NumberLabels" (at 82.55 55.88 0)
+    (property "Footprint" "udriver3:SolderJumper-3_P2.0mm_Open_TrianglePad1.0x1.5mm_NumberLabels" (at 82.55 55.88 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "~" (at 82.55 55.88 0)
@@ -1162,7 +1162,7 @@
     (property "Value" "SolderJumper_3_Open" (at 85.09 78.74 0)
       (effects (font (size 1.27 1.27)) (justify left) hide)
     )
-    (property "Footprint" "Jumper:SolderJumper-3_P2.0mm_Open_TrianglePad1.0x1.5mm_NumberLabels" (at 88.9 68.58 0)
+    (property "Footprint" "udriver3:SolderJumper-3_P2.0mm_Open_TrianglePad1.0x1.5mm_NumberLabels" (at 88.9 68.58 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "~" (at 88.9 68.58 0)
