@@ -27,8 +27,8 @@
 #define COM_CRC_TEST                            (1)
 #define USE_FCT                                 (0)
 // UOMODRI revision
-#define UOMODRI_V1_0_ENABLE                     (0)
-#define UOMODRI_V2_0_ENABLE                     (1)
+#define UOMODRI_V1_0_ENABLE                     (1)
+#define UOMODRI_V2_0_ENABLE                     (0)
 #if (UOMODRI_V1_0_ENABLE) && (UOMODRI_V2_0_ENABLE)
 #error "Only one config must be set @ a time."
 #elif (!UOMODRI_V1_0_ENABLE) && (!UOMODRI_V2_0_ENABLE)
@@ -39,7 +39,7 @@
 #define CPU2_CORE_ENABLE                        (0)
 #define CM_CORE_ENABLE                          (0)
 #define CLA_CORE_ENABLE                         (1)
-#define CLB_TILE_ENABLE                         (1)
+#define CLB_TILE_ENABLE                         (0)
 // CM peripherals ENABLE/DISABLE
 #define USB_BUS_ENABLE                          (0)
 #define UART_BUS_ENABLE                         (0)
@@ -51,7 +51,7 @@
 #endif
 // Communication peripherals ENABLE/DISABLE
 #define CAN_BUS_ENABLE                          (0)
-#define RS485_BUS_ENABLE                        (1)
+#define RS485_BUS_ENABLE                        (0)
 #define SPI_BUS_ENABLE                          (1)
 #if (RS485_BUS_ENABLE) && (CAN_BUS_ENABLE)
 #error "RS-485 & CAN share the same pins. They cannot run @ the same time"
@@ -220,7 +220,7 @@
 #define DBG_PIN1_TOGGLE                         (HWREG(GPIODATA_BASE + GPIO_O_GPCTOGGLE)= GPIO_GPCTOGGLE_GPIO77)
 #define DBG_PIN0_NUM                            (78U)
 #define DBG_PIN0_CFG                            GPIO_78_GPIO78
-#define DBG_PIN0_CORE                           GPIO_CORE_CM
+#define DBG_PIN0_CORE                           GPIO_CORE_CPU1
 #define DBG_PIN0_SET                            (HWREG(GPIODATA_BASE + GPIO_O_GPCSET)   = GPIO_GPCSET_GPIO78)
 #define DBG_PIN0_CLEAR                          (HWREG(GPIODATA_BASE + GPIO_O_GPCCLEAR) = GPIO_GPCCLEAR_GPIO78)
 #define DBG_PIN0_TOGGLE                         (HWREG(GPIODATA_BASE + GPIO_O_GPCTOGGLE)= GPIO_GPCTOGGLE_GPIO78)
@@ -402,15 +402,6 @@
 #define COM_SCI_FIFO_TX_REG_ADDR                (COM_SCI_BASE + SCI_O_FFTX)
 #define COM_SCI_FIFO_RX_REG_ADDR                (COM_SCI_BASE + SCI_O_FFRX)
 #define COM_SCI_CTRL1_REG_ADDR                  (COM_SCI_BASE + SCI_O_CTL1)
-//                                                (SCI_INT_RXFF | \
-//                                                 SCI_INT_TXFF)
-//                                                 SCI_INT_RXRDY_BRKDT)// | \
-//                                                 SCI_INT_TXFF)//SCI_INT_RXERR | \SCI_INT_ALL_ERR | \SCI_INT_RXRDY_BRKDT | \
-//#define SCI_INT_ALL_RX                          (SCI_INT_RXERR | \
-//                                                 SCI_INT_RXRDY_BRKDT | \
-//                                                 SCI_INT_RXFF)
-//#define SCI_INT_ALL_TX                          (SCI_INT_TXRDY | \
-//                                                 SCI_INT_TXFF)
 
 /***********************************************************************
  * SPI DEFINES
@@ -841,29 +832,21 @@
 #define MOTOR12_IA_ADC_CFG_ADDR                 ADCA_BASE
 #define MOTOR12_IB_ADC_CFG_ADDR                 ADCB_BASE
 #if (UOMODRI_V1_0_ENABLE)
-#define VBUS_VEXT12_ADC_ADDR                    ADCC_BASE
-#define MOTOR12_IC_ADC_ADDR                     ADCD_BASE
+#define MOTOR12_IC_ADC_CFG_ADDR                 ADCD_BASE
+#define VBUS_VEXT12_ADC_CFG_ADDR                ADCC_BASE
 #elif (UOMODRI_V2_0_ENABLE)
 #define MOTOR12_IC_ADC_CFG_ADDR                 ADCC_BASE
 #define VBUS_VEXT12_ADC_CFG_ADDR                ADCD_BASE
 #endif
-#define MOTOR1_IA_ADC_CFG_ADDR                  ADCA_BASE
-#define MOTOR2_IA_ADC_CFG_ADDR                  ADCA_BASE
-#define MOTOR1_IB_ADC_CFG_ADDR                  ADCB_BASE
-#define MOTOR2_IB_ADC_CFG_ADDR                  ADCB_BASE
-#if (UOMODRI_V1_0_ENABLE)
-#define MOTOR1_IC_ADC_CFG_ADDR                  ADCD_BASE
-#define MOTOR2_IC_ADC_CFG_ADDR                  ADCD_BASE
-#define VBUS_ADC_CFG_ADDR                       ADCC_BASE
-#define VEXT1_ADC_CFG_ADDR                      ADCC_BASE
-#define VEXT2_ADC_CFG_ADDR                      ADCC_BASE
-#elif (UOMODRI_V2_0_ENABLE)
-#define MOTOR1_IC_ADC_CFG_ADDR                  ADCC_BASE
-#define MOTOR2_IC_ADC_CFG_ADDR                  ADCC_BASE
-#define VBUS_ADC_CFG_ADDR                       ADCD_BASE
-#define VEXT1_ADC_CFG_ADDR                      ADCD_BASE
-#define VEXT2_ADC_CFG_ADDR                      ADCD_BASE
-#endif
+#define MOTOR1_IA_ADC_CFG_ADDR                  MOTOR12_IA_ADC_CFG_ADDR
+#define MOTOR2_IA_ADC_CFG_ADDR                  MOTOR12_IA_ADC_CFG_ADDR
+#define MOTOR1_IB_ADC_CFG_ADDR                  MOTOR12_IB_ADC_CFG_ADDR
+#define MOTOR2_IB_ADC_CFG_ADDR                  MOTOR12_IB_ADC_CFG_ADDR
+#define MOTOR1_IC_ADC_CFG_ADDR                  MOTOR12_IC_ADC_CFG_ADDR
+#define MOTOR2_IC_ADC_CFG_ADDR                  MOTOR12_IC_ADC_CFG_ADDR
+#define VBUS_ADC_CFG_ADDR                       VBUS_VEXT12_ADC_CFG_ADDR
+#define VEXT1_ADC_CFG_ADDR                      VBUS_VEXT12_ADC_CFG_ADDR
+#define VEXT2_ADC_CFG_ADDR                      VBUS_VEXT12_ADC_CFG_ADDR
 /**
  * @}
  */
@@ -872,23 +855,24 @@
  *  @brief    Define the ADC results base address for all the conversion to be performed.
  * @{
  */
-#define MOTOR1_IA_ADC_RESULT_ADDR               ADCARESULT_BASE
-#define MOTOR2_IA_ADC_RESULT_ADDR               ADCARESULT_BASE
-#define MOTOR1_IB_ADC_RESULT_ADDR               ADCBRESULT_BASE
-#define MOTOR2_IB_ADC_RESULT_ADDR               ADCBRESULT_BASE
+#define MOTOR12_IA_ADC_RESULT_ADDR              ADCARESULT_BASE
+#define MOTOR12_IB_ADC_RESULT_ADDR              ADCBRESULT_BASE
 #if (UOMODRI_V1_0_ENABLE)
-#define MOTOR1_IC_ADC_RESULT_ADDR               ADCDRESULT_BASE
-#define MOTOR2_IC_ADC_RESULT_ADDR               ADCDRESULT_BASE
-#define VBUS_ADC_RESULT_ADDR                    ADCCRESULT_BASE
-#define VEXT1_ADC_RESULT_ADDR                   ADCCRESULT_BASE
-#define VEXT2_ADC_RESULT_ADDR                   ADCCRESULT_BASE
+#define MOTOR12_IC_ADC_RESULT_ADDR              ADCDRESULT_BASE
+#define VBUS_VEXT12_ADC_RESULT_ADDR             ADCCRESULT_BASE
 #elif (UOMODRI_V2_0_ENABLE)
-#define MOTOR1_IC_ADC_RESULT_ADDR               ADCCRESULT_BASE
-#define MOTOR2_IC_ADC_RESULT_ADDR               ADCCRESULT_BASE
-#define VBUS_ADC_RESULT_ADDR                    ADCDRESULT_BASE
-#define VEXT1_ADC_RESULT_ADDR                   ADCDRESULT_BASE
-#define VEXT2_ADC_RESULT_ADDR                   ADCDRESULT_BASE
+#define MOTOR12_IC_ADC_RESULT_ADDR              ADCCRESULT_BASE
+#define VBUS_VEXT12_ADC_RESULT_ADDR             ADCDRESULT_BASE
 #endif
+#define MOTOR1_IA_ADC_RESULT_ADDR               MOTOR12_IA_ADC_RESULT_ADDR
+#define MOTOR2_IA_ADC_RESULT_ADDR               MOTOR12_IA_ADC_RESULT_ADDR
+#define MOTOR1_IB_ADC_RESULT_ADDR               MOTOR12_IB_ADC_RESULT_ADDR
+#define MOTOR2_IB_ADC_RESULT_ADDR               MOTOR12_IB_ADC_RESULT_ADDR
+#define MOTOR1_IC_ADC_RESULT_ADDR               MOTOR12_IC_ADC_RESULT_ADDR
+#define MOTOR2_IC_ADC_RESULT_ADDR               MOTOR12_IC_ADC_RESULT_ADDR
+#define VBUS_ADC_RESULT_ADDR                    VBUS_VEXT12_ADC_RESULT_ADDR
+#define VEXT1_ADC_RESULT_ADDR                   VBUS_VEXT12_ADC_RESULT_ADDR
+#define VEXT2_ADC_RESULT_ADDR                   VBUS_VEXT12_ADC_RESULT_ADDR
 /**
  * @}
  */

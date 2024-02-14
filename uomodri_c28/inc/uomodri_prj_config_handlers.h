@@ -68,6 +68,7 @@ static const int_cfg_t InterruptList[] =
   .intAckGroup      = INT_DMA_RX_MSG_GROUP,
   .p_intHandler     = INT_DMA_RX_MSG_HANDLER
  },
+#if (RS485_BUS_ENABLE) && (!UOMODRI_V1_0_ENABLE)
  {
   .intNum           = INT_RS485_TX_MSG,
   .intAckGroup      = INT_RS485_TX_MSG_GROUP,
@@ -83,6 +84,7 @@ static const int_cfg_t InterruptList[] =
   .intAckGroup      = INT_RS485_RX_Tx_CLB_GROUP,
   .p_intHandler     = INT_RS485_RX_Tx_CLB_HANDLER
  },
+#endif
  // END OF ARRAY
  {.intNum           = UINT32_MAX},
 };

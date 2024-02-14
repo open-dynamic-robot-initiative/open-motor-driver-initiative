@@ -62,7 +62,7 @@ void HAL_ini(const hal_cfg_t* p_hal)
         // Initialize IPC communication
         HAL_IPC_ini(p_hal->p_ipcHandle);
 #endif
-#if (RS485_BUS_ENABLE)
+#if (RS485_BUS_ENABLE) && (!UOMODRI_V1_0_ENABLE)
         // Initialize SCI/UART
         HAL_SCI_ini(p_hal->p_sciHandle);
         // Initialize CLB
