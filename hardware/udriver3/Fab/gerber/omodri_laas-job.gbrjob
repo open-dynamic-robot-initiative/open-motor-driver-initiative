@@ -5,13 +5,13 @@
       "Application": "Pcbnew",
       "Version": "7.0.10-7.0.10~ubuntu22.04.1"
     },
-    "CreationDate": "2024-02-16T17:15:37+01:00"
+    "CreationDate": "2024-02-26T13:47:47+01:00"
   },
   "GeneralSpecs": {
     "ProjectId": {
       "Name": "omodri_laas",
       "GUID": "6f6d6f64-7269-45f6-9c61-61732e6b6963",
-      "Revision": "2.0"
+      "Revision": "3.0"
     },
     "Size": {
       "X": 50.05,

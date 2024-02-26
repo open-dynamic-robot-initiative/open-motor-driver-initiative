@@ -851,7 +851,7 @@
     (property "Footprint" "Inductor_SMD:L_0603_1608Metric" (at 176.53 90.678 90)
       (effects (font (size 1.27 1.27)) hide)
     )
-    (property "Datasheet" "~" (at 176.53 88.9 0)
+    (property "Datasheet" "https://www.murata.com/en-eu/api/pdfdownloadapi?cate=cgsubChipFerriBead&partno=BLM18SG221TN1%23" (at 176.53 88.9 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "DigiKey" "490-5225-1-ND" (at 176.53 88.9 0)

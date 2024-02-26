@@ -937,7 +937,7 @@
     (property "Footprint" "Resistor_SMD:R_0201_0603Metric" (at 177.292 87.63 90)
       (effects (font (size 1.27 1.27)) hide)
     )
-    (property "Datasheet" "~" (at 179.07 87.63 0)
+    (property "Datasheet" "https://industrial.panasonic.com/cdbs/www-data/pdf/RDA0000/AOA0000C304.pdf" (at 179.07 87.63 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "DigiKey" "P122414CT-ND" (at 179.07 87.63 0)
