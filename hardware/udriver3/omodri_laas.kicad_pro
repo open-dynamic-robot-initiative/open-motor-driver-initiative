@@ -3,6 +3,9 @@
     "3dviewports": [],
     "design_settings": {
       "defaults": {
+        "apply_defaults_to_fp_fields": false,
+        "apply_defaults_to_fp_shapes": false,
+        "apply_defaults_to_fp_text": false,
         "board_outline_line_width": 0.049999999999999996,
         "copper_line_width": 0.19999999999999998,
         "copper_text_italic": false,
@@ -46,7 +49,7 @@
         "silk_text_upright": true,
         "zones": {
           "45_degree_only": false,
-          "min_clearance": 0.11
+          "min_clearance": 0.105
         }
       },
       "diff_pair_dimensions": [
@@ -78,6 +81,7 @@
         "duplicate_footprints": "warning",
         "extra_footprint": "warning",
         "footprint": "error",
+        "footprint_symbol_mismatch": "warning",
         "footprint_type_mismatch": "error",
         "hole_clearance": "error",
         "hole_near_hole": "error",
@@ -123,8 +127,8 @@
         "max_error": 0.005,
         "min_clearance": 0.102,
         "min_connection": 0.0,
-        "min_copper_edge_clearance": 0.15,
-        "min_hole_clearance": 0.25,
+        "min_copper_edge_clearance": 0.19999999999999998,
+        "min_hole_clearance": 0.19999999999999998,
         "min_hole_to_hole": 0.3,
         "min_microvia_diameter": 0.19999999999999998,
         "min_microvia_drill": 0.09999999999999999,
@@ -132,9 +136,9 @@
         "min_silk_clearance": 0.0,
         "min_text_height": 0.6,
         "min_text_thickness": 0.09999999999999999,
-        "min_through_hole_diameter": 0.09999999999999999,
+        "min_through_hole_diameter": 0.19999999999999998,
         "min_track_width": 0.102,
-        "min_via_annular_width": 0.125,
+        "min_via_annular_width": 0.09999999999999999,
         "min_via_diameter": 0.44999999999999996,
         "solder_mask_clearance": 0.05,
         "solder_mask_min_width": 0.0,
@@ -145,9 +149,6 @@
       },
       "teardrop_options": [
         {
-          "td_allow_use_two_tracks": true,
-          "td_curve_segcount": 5,
-          "td_on_pad_in_zone": false,
           "td_onpadsmd": true,
           "td_onroundshapesonly": false,
           "td_ontrackend": false,
@@ -156,29 +157,35 @@
       ],
       "teardrop_parameters": [
         {
+          "td_allow_use_two_tracks": true,
           "td_curve_segcount": 0,
           "td_height_ratio": 1.0,
           "td_length_ratio": 0.5,
           "td_maxheight": 2.0,
           "td_maxlen": 1.0,
+          "td_on_pad_in_zone": false,
           "td_target_name": "td_round_shape",
           "td_width_to_size_filter_ratio": 0.9
         },
         {
+          "td_allow_use_two_tracks": true,
           "td_curve_segcount": 0,
           "td_height_ratio": 1.0,
           "td_length_ratio": 0.5,
           "td_maxheight": 2.0,
           "td_maxlen": 1.0,
+          "td_on_pad_in_zone": false,
           "td_target_name": "td_rect_shape",
           "td_width_to_size_filter_ratio": 0.9
         },
         {
+          "td_allow_use_two_tracks": true,
           "td_curve_segcount": 0,
           "td_height_ratio": 1.0,
           "td_length_ratio": 0.5,
           "td_maxheight": 2.0,
           "td_maxlen": 1.0,
+          "td_on_pad_in_zone": false,
           "td_target_name": "td_track_end",
           "td_width_to_size_filter_ratio": 0.9
         }
@@ -189,10 +196,40 @@
         0.25,
         0.35
       ],
+      "tuning_pattern_settings": {
+        "diff_pair_defaults": {
+          "corner_radius_percentage": 80,
+          "corner_style": 1,
+          "max_amplitude": 1.0,
+          "min_amplitude": 0.2,
+          "single_sided": false,
+          "spacing": 1.0
+        },
+        "diff_pair_skew_defaults": {
+          "corner_radius_percentage": 80,
+          "corner_style": 1,
+          "max_amplitude": 1.0,
+          "min_amplitude": 0.2,
+          "single_sided": false,
+          "spacing": 0.6
+        },
+        "single_track_defaults": {
+          "corner_radius_percentage": 80,
+          "corner_style": 1,
+          "max_amplitude": 1.0,
+          "min_amplitude": 0.2,
+          "single_sided": false,
+          "spacing": 0.6
+        }
+      },
       "via_dimensions": [
         {
           "diameter": 0.0,
           "drill": 0.0
+        },
+        {
+          "diameter": 0.45,
+          "drill": 0.2
         },
         {
           "diameter": 0.6,
@@ -201,6 +238,13 @@
       ],
       "zones_allow_external_fillets": true,
       "zones_use_no_outline": true
+    },
+    "ipc2581": {
+      "dist": "",
+      "distpn": "",
+      "internal_id": "",
+      "mfg": "",
+      "mpn": ""
     },
     "layer_presets": [],
     "viewports": []
@@ -410,7 +454,7 @@
       "no_connect_dangling": "warning",
       "pin_not_connected": "error",
       "pin_not_driven": "error",
-      "pin_to_pin": "warning",
+      "pin_to_pin": "error",
       "power_pin_not_driven": "error",
       "similar_labels": "warning",
       "simulation_model_issue": "ignore",
@@ -448,7 +492,7 @@
         "schematic_color": "rgba(0, 0, 0, 0.000)",
         "track_width": 0.102,
         "via_diameter": 0.45,
-        "via_drill": 0.1,
+        "via_drill": 0.2,
         "wire_width": 6
       },
       {
@@ -465,7 +509,7 @@
         "schematic_color": "rgba(0, 0, 0, 0.000)",
         "track_width": 0.125,
         "via_diameter": 0.45,
-        "via_drill": 0.1,
+        "via_drill": 0.2,
         "wire_width": 6
       },
       {
@@ -482,7 +526,7 @@
         "schematic_color": "rgba(0, 0, 0, 0.000)",
         "track_width": 0.25,
         "via_diameter": 0.45,
-        "via_drill": 0.1,
+        "via_drill": 0.2,
         "wire_width": 6
       },
       {
@@ -498,7 +542,7 @@
         "pcb_color": "rgba(0, 0, 0, 0.000)",
         "schematic_color": "rgba(0, 0, 0, 0.000)",
         "track_width": 0.25,
-        "via_diameter": 0.7,
+        "via_diameter": 0.6,
         "via_drill": 0.35,
         "wire_width": 6
       },
@@ -516,7 +560,7 @@
         "schematic_color": "rgba(0, 0, 0, 0.000)",
         "track_width": 0.25,
         "via_diameter": 0.45,
-        "via_drill": 0.1,
+        "via_drill": 0.2,
         "wire_width": 6
       }
     ],
@@ -525,21 +569,561 @@
     },
     "net_colors": null,
     "netclass_assignments": null,
-    "netclass_patterns": []
+    "netclass_patterns": [
+      {
+        "netclass": "Analog_sig",
+        "pattern": "/JTAG + CLOCK + RESET/25MHz_OSC_SRC"
+      },
+      {
+        "netclass": "Analog_sig",
+        "pattern": "/JTAG + CLOCK + RESET/ERRORSTS"
+      },
+      {
+        "netclass": "Analog_sig",
+        "pattern": "/JTAG + CLOCK + RESET/F2838x_CLK_25MHz"
+      },
+      {
+        "netclass": "Analog_sig",
+        "pattern": "/JTAG + CLOCK + RESET/TCK"
+      },
+      {
+        "netclass": "Analog_sig",
+        "pattern": "/JTAG + CLOCK + RESET/TDI"
+      },
+      {
+        "netclass": "Analog_sig",
+        "pattern": "/JTAG + CLOCK + RESET/TDO"
+      },
+      {
+        "netclass": "Analog_sig",
+        "pattern": "/JTAG + CLOCK + RESET/TMS"
+      },
+      {
+        "netclass": "Analog_sig",
+        "pattern": "/JTAG + CLOCK + RESET/~{TRSTn}"
+      },
+      {
+        "netclass": "Analog_sig",
+        "pattern": "/JTAG + CLOCK + RESET/~{XRSn}"
+      },
+      {
+        "netclass": "Analog_sig",
+        "pattern": "/OMODRI_FSI_RX/RX_CLK_LVDS_N"
+      },
+      {
+        "netclass": "Analog_sig",
+        "pattern": "/OMODRI_FSI_RX/RX_CLK_LVDS_P"
+      },
+      {
+        "netclass": "Analog_sig",
+        "pattern": "/OMODRI_FSI_RX/RX_D0_LVDS_N"
+      },
+      {
+        "netclass": "Analog_sig",
+        "pattern": "/OMODRI_FSI_RX/RX_D0_LVDS_P"
+      },
+      {
+        "netclass": "Analog_sig",
+        "pattern": "/OMODRI_FSI_RX/RX_D1_LVDS_N"
+      },
+      {
+        "netclass": "Analog_sig",
+        "pattern": "/OMODRI_FSI_RX/RX_D1_LVDS_P"
+      },
+      {
+        "netclass": "Analog_sig",
+        "pattern": "/OMODRI_FSI_TX/TX_CLK_LVDS_N"
+      },
+      {
+        "netclass": "Analog_sig",
+        "pattern": "/OMODRI_FSI_TX/TX_CLK_LVDS_P"
+      },
+      {
+        "netclass": "Analog_sig",
+        "pattern": "/OMODRI_FSI_TX/TX_D0_LVDS_N"
+      },
+      {
+        "netclass": "Analog_sig",
+        "pattern": "/OMODRI_FSI_TX/TX_D0_LVDS_P"
+      },
+      {
+        "netclass": "Analog_sig",
+        "pattern": "/OMODRI_FSI_TX/TX_D1_LVDS_N"
+      },
+      {
+        "netclass": "Analog_sig",
+        "pattern": "/OMODRI_FSI_TX/TX_D1_LVDS_P"
+      },
+      {
+        "netclass": "Analog_sig",
+        "pattern": "/OMODRI_GPIO/ANALOG_IN1"
+      },
+      {
+        "netclass": "Analog_sig",
+        "pattern": "/OMODRI_GPIO/ANALOG_IN2"
+      },
+      {
+        "netclass": "Analog_sig",
+        "pattern": "/OMODRI_GPIO/M1_Ia"
+      },
+      {
+        "netclass": "Analog_sig",
+        "pattern": "/OMODRI_GPIO/M1_Ib"
+      },
+      {
+        "netclass": "Analog_sig",
+        "pattern": "/OMODRI_GPIO/M1_Ic"
+      },
+      {
+        "netclass": "Analog_sig",
+        "pattern": "/OMODRI_GPIO/M1_Vbus"
+      },
+      {
+        "netclass": "Analog_sig",
+        "pattern": "/OMODRI_GPIO/M2_Ia"
+      },
+      {
+        "netclass": "Analog_sig",
+        "pattern": "/OMODRI_GPIO/M2_Ib"
+      },
+      {
+        "netclass": "Analog_sig",
+        "pattern": "/OMODRI_GPIO/M2_Ic"
+      },
+      {
+        "netclass": "Analog_sig",
+        "pattern": "/OMODRI_QuadEncod/ENC1_A"
+      },
+      {
+        "netclass": "Analog_sig",
+        "pattern": "/OMODRI_QuadEncod/ENC1_B"
+      },
+      {
+        "netclass": "Analog_sig",
+        "pattern": "/OMODRI_QuadEncod/ENC1_I"
+      },
+      {
+        "netclass": "Analog_sig",
+        "pattern": "/OMODRI_QuadEncod/ENC2_A"
+      },
+      {
+        "netclass": "Analog_sig",
+        "pattern": "/OMODRI_QuadEncod/ENC2_B"
+      },
+      {
+        "netclass": "Analog_sig",
+        "pattern": "/OMODRI_QuadEncod/ENC2_I"
+      },
+      {
+        "netclass": "Analog_sig",
+        "pattern": "/OMODRI_driver_M1/SNA"
+      },
+      {
+        "netclass": "Analog_sig",
+        "pattern": "/OMODRI_driver_M1/SNB"
+      },
+      {
+        "netclass": "Analog_sig",
+        "pattern": "/OMODRI_driver_M1/SNC"
+      },
+      {
+        "netclass": "Analog_sig",
+        "pattern": "/OMODRI_driver_M1/SOA_out"
+      },
+      {
+        "netclass": "Analog_sig",
+        "pattern": "/OMODRI_driver_M1/SOB_out"
+      },
+      {
+        "netclass": "Analog_sig",
+        "pattern": "/OMODRI_driver_M1/SOC_out"
+      },
+      {
+        "netclass": "Analog_sig",
+        "pattern": "/OMODRI_driver_M1/SPA"
+      },
+      {
+        "netclass": "Analog_sig",
+        "pattern": "/OMODRI_driver_M1/SPB"
+      },
+      {
+        "netclass": "Analog_sig",
+        "pattern": "/OMODRI_driver_M1/SPC"
+      },
+      {
+        "netclass": "Analog_sig",
+        "pattern": "/OMODRI_driver_M2/SNA"
+      },
+      {
+        "netclass": "Analog_sig",
+        "pattern": "/OMODRI_driver_M2/SNB"
+      },
+      {
+        "netclass": "Analog_sig",
+        "pattern": "/OMODRI_driver_M2/SNC"
+      },
+      {
+        "netclass": "Analog_sig",
+        "pattern": "/OMODRI_driver_M2/SOA_out"
+      },
+      {
+        "netclass": "Analog_sig",
+        "pattern": "/OMODRI_driver_M2/SOB_out"
+      },
+      {
+        "netclass": "Analog_sig",
+        "pattern": "/OMODRI_driver_M2/SOC_out"
+      },
+      {
+        "netclass": "Analog_sig",
+        "pattern": "/OMODRI_driver_M2/SPA"
+      },
+      {
+        "netclass": "Analog_sig",
+        "pattern": "/OMODRI_driver_M2/SPB"
+      },
+      {
+        "netclass": "Analog_sig",
+        "pattern": "/OMODRI_driver_M2/SPC"
+      },
+      {
+        "netclass": "Analog_sig",
+        "pattern": "/analog1"
+      },
+      {
+        "netclass": "Analog_sig",
+        "pattern": "/analog2"
+      },
+      {
+        "netclass": "Gnd_Vdd",
+        "pattern": "12V0"
+      },
+      {
+        "netclass": "Gnd_Vdd",
+        "pattern": "5V0"
+      },
+      {
+        "netclass": "Gnd_Vdd",
+        "pattern": "GND"
+      },
+      {
+        "netclass": "Gnd_Vdd",
+        "pattern": "REF_3V0_BUF"
+      },
+      {
+        "netclass": "Gnd_Vdd",
+        "pattern": "VDDA_3V3"
+      },
+      {
+        "netclass": "Gnd_Vdd",
+        "pattern": "VDD_1V2"
+      },
+      {
+        "netclass": "Gnd_Vdd",
+        "pattern": "VDD_3V3"
+      },
+      {
+        "netclass": "Power_Plan",
+        "pattern": "/OMODRI_driver_M1/MOTOR_CH1"
+      },
+      {
+        "netclass": "Power_Plan",
+        "pattern": "/OMODRI_driver_M1/MOTOR_CH2"
+      },
+      {
+        "netclass": "Power_Plan",
+        "pattern": "/OMODRI_driver_M1/MOTOR_CH3"
+      },
+      {
+        "netclass": "Power_Plan",
+        "pattern": "/OMODRI_driver_M1/OUT_M1_CH1"
+      },
+      {
+        "netclass": "Power_Plan",
+        "pattern": "/OMODRI_driver_M1/OUT_M1_CH2"
+      },
+      {
+        "netclass": "Power_Plan",
+        "pattern": "/OMODRI_driver_M1/OUT_M1_CH3"
+      },
+      {
+        "netclass": "Power_Plan",
+        "pattern": "/OMODRI_driver_M2/MOTOR_CH1"
+      },
+      {
+        "netclass": "Power_Plan",
+        "pattern": "/OMODRI_driver_M2/MOTOR_CH2"
+      },
+      {
+        "netclass": "Power_Plan",
+        "pattern": "/OMODRI_driver_M2/MOTOR_CH3"
+      },
+      {
+        "netclass": "Power_Plan",
+        "pattern": "/OMODRI_driver_M2/OUT_M1_CH1"
+      },
+      {
+        "netclass": "Power_Plan",
+        "pattern": "/OMODRI_driver_M2/OUT_M1_CH2"
+      },
+      {
+        "netclass": "Power_Plan",
+        "pattern": "/OMODRI_driver_M2/OUT_M1_CH3"
+      },
+      {
+        "netclass": "Power_Plan",
+        "pattern": "VPOWER"
+      },
+      {
+        "netclass": "Power_sig",
+        "pattern": "/OMODRI_driver_M1/CPH"
+      },
+      {
+        "netclass": "Power_sig",
+        "pattern": "/OMODRI_driver_M1/CPL"
+      },
+      {
+        "netclass": "Power_sig",
+        "pattern": "/OMODRI_driver_M1/DVDD"
+      },
+      {
+        "netclass": "Power_sig",
+        "pattern": "/OMODRI_driver_M1/GHA"
+      },
+      {
+        "netclass": "Power_sig",
+        "pattern": "/OMODRI_driver_M1/GHB"
+      },
+      {
+        "netclass": "Power_sig",
+        "pattern": "/OMODRI_driver_M1/GHC"
+      },
+      {
+        "netclass": "Power_sig",
+        "pattern": "/OMODRI_driver_M1/GLA"
+      },
+      {
+        "netclass": "Power_sig",
+        "pattern": "/OMODRI_driver_M1/GLB"
+      },
+      {
+        "netclass": "Power_sig",
+        "pattern": "/OMODRI_driver_M1/GLC"
+      },
+      {
+        "netclass": "Power_sig",
+        "pattern": "/OMODRI_driver_M1/SHA"
+      },
+      {
+        "netclass": "Power_sig",
+        "pattern": "/OMODRI_driver_M1/SHB"
+      },
+      {
+        "netclass": "Power_sig",
+        "pattern": "/OMODRI_driver_M1/SHC"
+      },
+      {
+        "netclass": "Power_sig",
+        "pattern": "/OMODRI_driver_M1/VCP_DRV"
+      },
+      {
+        "netclass": "Power_sig",
+        "pattern": "/OMODRI_driver_M1/VGLS"
+      },
+      {
+        "netclass": "Power_sig",
+        "pattern": "/OMODRI_driver_M2/CPH"
+      },
+      {
+        "netclass": "Power_sig",
+        "pattern": "/OMODRI_driver_M2/CPL"
+      },
+      {
+        "netclass": "Power_sig",
+        "pattern": "/OMODRI_driver_M2/GHA"
+      },
+      {
+        "netclass": "Power_sig",
+        "pattern": "/OMODRI_driver_M2/GHB"
+      },
+      {
+        "netclass": "Power_sig",
+        "pattern": "/OMODRI_driver_M2/GHC"
+      },
+      {
+        "netclass": "Power_sig",
+        "pattern": "/OMODRI_driver_M2/GLA"
+      },
+      {
+        "netclass": "Power_sig",
+        "pattern": "/OMODRI_driver_M2/GLB"
+      },
+      {
+        "netclass": "Power_sig",
+        "pattern": "/OMODRI_driver_M2/GLC"
+      },
+      {
+        "netclass": "Power_sig",
+        "pattern": "/OMODRI_driver_M2/SHA"
+      },
+      {
+        "netclass": "Power_sig",
+        "pattern": "/OMODRI_driver_M2/SHB"
+      },
+      {
+        "netclass": "Power_sig",
+        "pattern": "/OMODRI_driver_M2/SHC"
+      },
+      {
+        "netclass": "Power_sig",
+        "pattern": "/OMODRI_driver_M2/VCP_DRV"
+      },
+      {
+        "netclass": "Power_sig",
+        "pattern": "/OMODRI_driver_M2/VGLS"
+      },
+      {
+        "netclass": "Power_sig",
+        "pattern": "/Power distribution/OMODRI_Alim_1V2/FB_1V2"
+      },
+      {
+        "netclass": "Power_sig",
+        "pattern": "/Power distribution/OMODRI_Alim_3V3/FB_3V3"
+      },
+      {
+        "netclass": "Power_sig",
+        "pattern": "/Power distribution/OMODRI_Alim_5V/V5V_5V0"
+      }
+    ]
   },
   "pcbnew": {
     "last_paths": {
       "gencad": "",
       "idf": "",
       "netlist": "omodri_laas.net",
+      "plot": "Fab/gerber/",
+      "pos_files": "Fab/gerber/",
       "specctra_dsn": "",
       "step": "omodri_laas.step",
+      "svg": "",
       "vrml": ""
     },
     "page_layout_descr_file": ""
   },
   "schematic": {
     "annotate_start_num": 0,
+    "bom_fmt_presets": [],
+    "bom_fmt_settings": {
+      "field_delimiter": ",",
+      "keep_line_breaks": false,
+      "keep_tabs": false,
+      "name": "CSV",
+      "ref_delimiter": ",",
+      "ref_range_delimiter": "",
+      "string_delimiter": "\""
+    },
+    "bom_presets": [],
+    "bom_settings": {
+      "exclude_dnp": false,
+      "fields_ordered": [
+        {
+          "group_by": false,
+          "label": "Reference",
+          "name": "Reference",
+          "show": true
+        },
+        {
+          "group_by": true,
+          "label": "Value",
+          "name": "Value",
+          "show": false
+        },
+        {
+          "group_by": false,
+          "label": "Datasheet",
+          "name": "Datasheet",
+          "show": false
+        },
+        {
+          "group_by": true,
+          "label": "Footprint",
+          "name": "Footprint",
+          "show": true
+        },
+        {
+          "group_by": false,
+          "label": "Qty",
+          "name": "${QUANTITY}",
+          "show": true
+        },
+        {
+          "group_by": true,
+          "label": "DNP",
+          "name": "${DNP}",
+          "show": false
+        },
+        {
+          "group_by": false,
+          "label": "#",
+          "name": "${ITEM_NUMBER}",
+          "show": false
+        },
+        {
+          "group_by": false,
+          "label": "DigiKey",
+          "name": "DigiKey",
+          "show": false
+        },
+        {
+          "group_by": false,
+          "label": "Farnell",
+          "name": "Farnell",
+          "show": false
+        },
+        {
+          "group_by": false,
+          "label": "LCSC",
+          "name": "LCSC",
+          "show": true
+        },
+        {
+          "group_by": false,
+          "label": "Mouser",
+          "name": "Mouser",
+          "show": false
+        },
+        {
+          "group_by": false,
+          "label": "Part No",
+          "name": "Part No",
+          "show": true
+        },
+        {
+          "group_by": false,
+          "label": "RS",
+          "name": "RS",
+          "show": false
+        },
+        {
+          "group_by": false,
+          "label": "Rated Voltage",
+          "name": "Rated Voltage",
+          "show": false
+        },
+        {
+          "group_by": false,
+          "label": "Description",
+          "name": "Description",
+          "show": false
+        }
+      ],
+      "filter_string": "",
+      "group_symbols": true,
+      "name": "",
+      "sort_asc": true,
+      "sort_field": "Reference"
+    },
+    "connection_grid_size": 50.0,
     "drawing": {
       "dashed_lines_dash_length_ratio": 12.0,
       "dashed_lines_gap_length_ratio": 3.0,
@@ -553,6 +1137,11 @@
       "intersheets_ref_suffix": "",
       "junction_size_choice": 3,
       "label_size_ratio": 0.25,
+      "operating_point_overlay_i_precision": 3,
+      "operating_point_overlay_i_range": "~A",
+      "operating_point_overlay_v_precision": 3,
+      "operating_point_overlay_v_range": "~V",
+      "overbar_offset_ratio": 1.23,
       "pin_symbol_size": 0.0,
       "text_offset_ratio": 0.08
     },
@@ -578,6 +1167,7 @@
     "spice_external_command": "spice \"%I\"",
     "spice_model_current_sheet_as_root": true,
     "spice_save_all_currents": false,
+    "spice_save_all_dissipations": false,
     "spice_save_all_voltages": false,
     "subpart_first_id": 65,
     "subpart_id_separator": 0
@@ -585,7 +1175,7 @@
   "sheets": [
     [
       "de5b13f0-933a-4c4d-9979-13dc57b13241",
-      ""
+      "Root"
     ],
     [
       "00000000-0000-0000-0000-00005f5a1016",
