@@ -2442,7 +2442,7 @@
 				(hide yes)
 			)
 		)
-		(property "DigiKey" "490-14571-1-ND"
+		(property "DigiKey" "490-12686-1-ND"
 			(at 182.88 124.46 0)
 			(effects
 				(font
@@ -2451,7 +2451,7 @@
 				(hide yes)
 			)
 		)
-		(property "Farnell" "3790414"
+		(property "Farnell" "2990693"
 			(at 182.88 124.46 0)
 			(effects
 				(font
@@ -2460,7 +2460,7 @@
 				(hide yes)
 			)
 		)
-		(property "Mouser" "81-GRM033R61E104KE4J"
+		(property "Mouser" "81-GRM033R61E104KE4D"
 			(at 182.88 124.46 0)
 			(effects
 				(font
@@ -2469,7 +2469,7 @@
 				(hide yes)
 			)
 		)
-		(property "Part No" "GRM033R61E104KE14J"
+		(property "Part No" "GRM033R61E104KE14D"
 			(at 182.88 124.46 0)
 			(effects
 				(font
@@ -2478,7 +2478,7 @@
 				(hide yes)
 			)
 		)
-		(property "RS" "185-2066"
+		(property "RS" ""
 			(at 182.88 124.46 0)
 			(effects
 				(font
@@ -2496,7 +2496,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC" "C2649540"
+		(property "LCSC" "C76939"
 			(at 182.88 124.46 0)
 			(effects
 				(font
@@ -3050,7 +3050,7 @@
 				(hide yes)
 			)
 		)
-		(property "DigiKey" "490-14571-1-ND"
+		(property "DigiKey" "490-12686-1-ND"
 			(at 171.45 124.46 0)
 			(effects
 				(font
@@ -3059,7 +3059,7 @@
 				(hide yes)
 			)
 		)
-		(property "Farnell" "3790414"
+		(property "Farnell" "2990693"
 			(at 171.45 124.46 0)
 			(effects
 				(font
@@ -3068,7 +3068,7 @@
 				(hide yes)
 			)
 		)
-		(property "Mouser" "81-GRM033R61E104KE4J"
+		(property "Mouser" "81-GRM033R61E104KE4D"
 			(at 171.45 124.46 0)
 			(effects
 				(font
@@ -3077,7 +3077,7 @@
 				(hide yes)
 			)
 		)
-		(property "Part No" "GRM033R61E104KE14J"
+		(property "Part No" "GRM033R61E104KE14D"
 			(at 171.45 124.46 0)
 			(effects
 				(font
@@ -3086,7 +3086,7 @@
 				(hide yes)
 			)
 		)
-		(property "RS" "185-2066"
+		(property "RS" ""
 			(at 171.45 124.46 0)
 			(effects
 				(font
@@ -3104,7 +3104,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC" "C2649540"
+		(property "LCSC" "C76939"
 			(at 171.45 124.46 0)
 			(effects
 				(font
@@ -3198,7 +3198,7 @@
 		(at 82.55 55.88 90)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(uuid "838222b4-631c-4d43-a7db-2aa61cc638fd")
@@ -3280,7 +3280,7 @@
 		(at 88.9 68.58 90)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(uuid "9f2a3bcd-2ea2-4cec-a029-26fb2b3f6ee3")

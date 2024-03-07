@@ -3675,7 +3675,7 @@
 				(hide yes)
 			)
 		)
-		(property "DigiKey" "490-14571-1-ND"
+		(property "DigiKey" "490-12686-1-ND"
 			(at 88.9 144.78 0)
 			(effects
 				(font
@@ -3684,7 +3684,7 @@
 				(hide yes)
 			)
 		)
-		(property "Farnell" "3790414"
+		(property "Farnell" "2990693"
 			(at 88.9 144.78 0)
 			(effects
 				(font
@@ -3693,7 +3693,7 @@
 				(hide yes)
 			)
 		)
-		(property "Mouser" "81-GRM033R61E104KE4J"
+		(property "Mouser" "81-GRM033R61E104KE4D"
 			(at 88.9 144.78 0)
 			(effects
 				(font
@@ -3702,7 +3702,7 @@
 				(hide yes)
 			)
 		)
-		(property "Part No" "GRM033R61E104KE14J"
+		(property "Part No" "GRM033R61E104KE14D"
 			(at 88.9 144.78 0)
 			(effects
 				(font
@@ -3711,7 +3711,7 @@
 				(hide yes)
 			)
 		)
-		(property "RS" "185-2066"
+		(property "RS" ""
 			(at 88.9 144.78 0)
 			(effects
 				(font
@@ -3729,7 +3729,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC" "C2649540"
+		(property "LCSC" "C76939"
 			(at 88.9 144.78 0)
 			(effects
 				(font
@@ -3872,7 +3872,7 @@
 				(hide yes)
 			)
 		)
-		(property "DigiKey" "490-14571-1-ND"
+		(property "DigiKey" "490-12686-1-ND"
 			(at 105.41 49.53 0)
 			(effects
 				(font
@@ -3881,7 +3881,7 @@
 				(hide yes)
 			)
 		)
-		(property "Farnell" "3790414"
+		(property "Farnell" "2990693"
 			(at 105.41 49.53 0)
 			(effects
 				(font
@@ -3890,7 +3890,7 @@
 				(hide yes)
 			)
 		)
-		(property "Mouser" "81-GRM033R61E104KE4J"
+		(property "Mouser" "81-GRM033R61E104KE4D"
 			(at 105.41 49.53 0)
 			(effects
 				(font
@@ -3899,7 +3899,7 @@
 				(hide yes)
 			)
 		)
-		(property "Part No" "GRM033R61E104KE14J"
+		(property "Part No" "GRM033R61E104KE14D"
 			(at 105.41 49.53 0)
 			(effects
 				(font
@@ -3908,7 +3908,7 @@
 				(hide yes)
 			)
 		)
-		(property "RS" "185-2066"
+		(property "RS" ""
 			(at 105.41 49.53 0)
 			(effects
 				(font
@@ -3926,7 +3926,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC" "C2649540"
+		(property "LCSC" "C76939"
 			(at 105.41 49.53 0)
 			(effects
 				(font
@@ -4134,7 +4134,7 @@
 				(hide yes)
 			)
 		)
-		(property "DigiKey" "490-14571-1-ND"
+		(property "DigiKey" "490-12686-1-ND"
 			(at 187.96 111.76 0)
 			(effects
 				(font
@@ -4143,7 +4143,7 @@
 				(hide yes)
 			)
 		)
-		(property "Farnell" "3790414"
+		(property "Farnell" "2990693"
 			(at 187.96 111.76 0)
 			(effects
 				(font
@@ -4152,7 +4152,7 @@
 				(hide yes)
 			)
 		)
-		(property "Mouser" "81-GRM033R61E104KE4J"
+		(property "Mouser" "81-GRM033R61E104KE4D"
 			(at 187.96 111.76 0)
 			(effects
 				(font
@@ -4161,7 +4161,7 @@
 				(hide yes)
 			)
 		)
-		(property "Part No" "GRM033R61E104KE14J"
+		(property "Part No" "GRM033R61E104KE14D"
 			(at 187.96 111.76 0)
 			(effects
 				(font
@@ -4170,7 +4170,7 @@
 				(hide yes)
 			)
 		)
-		(property "RS" "185-2066"
+		(property "RS" ""
 			(at 187.96 111.76 0)
 			(effects
 				(font
@@ -4188,7 +4188,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC" "C2649540"
+		(property "LCSC" "C76939"
 			(at 187.96 111.76 0)
 			(effects
 				(font

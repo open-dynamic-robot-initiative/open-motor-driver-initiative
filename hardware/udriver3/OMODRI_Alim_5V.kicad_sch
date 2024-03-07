@@ -1901,7 +1901,7 @@
 				(hide yes)
 			)
 		)
-		(property "DigiKey" "296-TPSM5601R5RDARTR-ND"
+		(property "DigiKey" "296-TPSM5601R5SRDARCT-ND"
 			(at 140.97 87.63 0)
 			(effects
 				(font
@@ -1919,7 +1919,7 @@
 				(hide yes)
 			)
 		)
-		(property "Part No" "TPSM5601R5RDAR"
+		(property "Part No" "TPSM5601R5SRDAR"
 			(at 140.97 87.63 0)
 			(effects
 				(font

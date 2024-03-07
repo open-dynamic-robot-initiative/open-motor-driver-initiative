@@ -4037,7 +4037,7 @@
 				(hide yes)
 			)
 		)
-		(property "Part No" "GRM033R61E104KE14J"
+		(property "Part No" "GRM033R61E104KE14D"
 			(at 60.96 114.3 0)
 			(effects
 				(font
@@ -4055,7 +4055,7 @@
 				(hide yes)
 			)
 		)
-		(property "Farnell" "3790414"
+		(property "Farnell" "2990693"
 			(at 60.96 114.3 0)
 			(effects
 				(font
@@ -4064,7 +4064,7 @@
 				(hide yes)
 			)
 		)
-		(property "RS" "185-2066"
+		(property "RS" ""
 			(at 60.96 114.3 0)
 			(effects
 				(font
@@ -4073,7 +4073,7 @@
 				(hide yes)
 			)
 		)
-		(property "Mouser" "81-GRM033R61E104KE4J"
+		(property "Mouser" "81-GRM033R61E104KE4D"
 			(at 60.96 114.3 0)
 			(effects
 				(font
@@ -4082,7 +4082,7 @@
 				(hide yes)
 			)
 		)
-		(property "DigiKey" "490-14571-1-ND"
+		(property "DigiKey" "490-12686-1-ND"
 			(at 60.96 114.3 0)
 			(effects
 				(font
@@ -4091,7 +4091,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC" "C2649540"
+		(property "LCSC" "C76939"
 			(at 60.96 114.3 0)
 			(effects
 				(font
@@ -5449,7 +5449,7 @@
 				(justify right)
 			)
 		)
-		(property "Footprint" "udriver3:DFN1006-2"
+		(property "Footprint" "Diode_SMD:D_SOD-882"
 			(at 249.555 68.58 0)
 			(effects
 				(font
@@ -5458,7 +5458,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://assets.nexperia.com/documents/data-sheet/BAT54J.pdf"
+		(property "Datasheet" "https://assets.nexperia.com/documents/data-sheet/BAT54L.pdf"
 			(at 245.11 68.58 0)
 			(effects
 				(font
@@ -5467,7 +5467,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "30V 200mA Schottky diode, SOD-323F"
+		(property "Description" "30V 200mA Schottky diode, SOD882 (DFN1006-2)"
 			(at 245.11 68.58 0)
 			(effects
 				(font

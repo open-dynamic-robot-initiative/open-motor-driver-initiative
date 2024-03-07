@@ -3742,7 +3742,7 @@
 				(hide yes)
 			)
 		)
-		(property "DigiKey" "490-GRM033R61C224KE14JTR-ND"
+		(property "DigiKey" "490-17040-1-ND"
 			(at 127 160.02 0)
 			(effects
 				(font
@@ -3751,7 +3751,7 @@
 				(hide yes)
 			)
 		)
-		(property "Farnell" "3785715"
+		(property "Farnell" "3582770"
 			(at 127 160.02 0)
 			(effects
 				(font
@@ -3760,7 +3760,7 @@
 				(hide yes)
 			)
 		)
-		(property "Mouser" "81-GRM033R61C224KE4J"
+		(property "Mouser" "81-GRM033R61C224KE4D"
 			(at 127 160.02 0)
 			(effects
 				(font
@@ -3769,7 +3769,7 @@
 				(hide yes)
 			)
 		)
-		(property "Part No" "GRM033R61C224KE14J"
+		(property "Part No" "GRM033R61C224KE14D"
 			(at 127 160.02 0)
 			(effects
 				(font
@@ -3796,7 +3796,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC" ""
+		(property "LCSC" "C161474"
 			(at 127 160.02 0)
 			(effects
 				(font
@@ -4127,7 +4127,7 @@
 				(hide yes)
 			)
 		)
-		(property "DigiKey" "490-GRM033R61C224KE14JTR-ND"
+		(property "DigiKey" "490-17040-1-ND"
 			(at 127 177.8 0)
 			(effects
 				(font
@@ -4136,7 +4136,7 @@
 				(hide yes)
 			)
 		)
-		(property "Farnell" "3785715"
+		(property "Farnell" "3582770"
 			(at 127 177.8 0)
 			(effects
 				(font
@@ -4145,7 +4145,7 @@
 				(hide yes)
 			)
 		)
-		(property "Mouser" "81-GRM033R61C224KE4J"
+		(property "Mouser" "81-GRM033R61C224KE4D"
 			(at 127 177.8 0)
 			(effects
 				(font
@@ -4154,7 +4154,7 @@
 				(hide yes)
 			)
 		)
-		(property "Part No" "GRM033R61C224KE14J"
+		(property "Part No" "GRM033R61C224KE14D"
 			(at 127 177.8 0)
 			(effects
 				(font
@@ -4181,7 +4181,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC" ""
+		(property "LCSC" "C161474"
 			(at 127 177.8 0)
 			(effects
 				(font
@@ -4678,7 +4678,7 @@
 		(at 160.02 138.43 0)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(fields_autoplaced yes)
@@ -4756,7 +4756,7 @@
 		(at 166.37 133.35 0)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(fields_autoplaced yes)
@@ -5212,7 +5212,7 @@
 		(at 166.37 143.51 0)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(fields_autoplaced yes)
@@ -5614,7 +5614,7 @@
 		(at 160.02 128.27 0)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(fields_autoplaced yes)

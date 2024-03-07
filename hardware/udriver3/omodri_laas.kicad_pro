@@ -38,8 +38,8 @@
         "other_text_upright": true,
         "pads": {
           "drill": 0.0,
-          "height": 0.4,
-          "width": 0.46
+          "height": 1.4,
+          "width": 1.025
         },
         "silk_line_width": 0.12,
         "silk_text_italic": false,
@@ -59,9 +59,9 @@
           "width": 0.0
         },
         {
-          "gap": 0.15,
+          "gap": 0.3,
           "via_gap": 0.3,
-          "width": 0.15
+          "width": 0.102
         }
       ],
       "drc_exclusions": [],
@@ -481,9 +481,9 @@
       {
         "bus_width": 12,
         "clearance": 0.102,
-        "diff_pair_gap": 0.15,
+        "diff_pair_gap": 0.127,
         "diff_pair_via_gap": 0.25,
-        "diff_pair_width": 0.15,
+        "diff_pair_width": 0.127,
         "line_style": 0,
         "microvia_diameter": 0.2,
         "microvia_drill": 0.1,
@@ -1030,13 +1030,13 @@
           "group_by": false,
           "label": "Reference",
           "name": "Reference",
-          "show": true
+          "show": false
         },
         {
           "group_by": true,
           "label": "Value",
           "name": "Value",
-          "show": false
+          "show": true
         },
         {
           "group_by": false,
@@ -1057,7 +1057,7 @@
           "show": true
         },
         {
-          "group_by": true,
+          "group_by": false,
           "label": "DNP",
           "name": "${DNP}",
           "show": false
@@ -1072,13 +1072,13 @@
           "group_by": false,
           "label": "DigiKey",
           "name": "DigiKey",
-          "show": false
+          "show": true
         },
         {
           "group_by": false,
           "label": "Farnell",
           "name": "Farnell",
-          "show": false
+          "show": true
         },
         {
           "group_by": false,
@@ -1090,7 +1090,7 @@
           "group_by": false,
           "label": "Mouser",
           "name": "Mouser",
-          "show": false
+          "show": true
         },
         {
           "group_by": false,
@@ -1102,13 +1102,13 @@
           "group_by": false,
           "label": "RS",
           "name": "RS",
-          "show": false
+          "show": true
         },
         {
           "group_by": false,
           "label": "Rated Voltage",
           "name": "Rated Voltage",
-          "show": false
+          "show": true
         },
         {
           "group_by": false,
