@@ -6057,7 +6057,7 @@
 				(hide yes)
 			)
 		)
-		(property "Mouser" "595-DRV8353SRTAT"
+		(property "Mouser" "595-DRV8353SRTAR"
 			(at 124.46 85.09 0)
 			(effects
 				(font
@@ -6066,7 +6066,7 @@
 				(hide yes)
 			)
 		)
-		(property "Part No" "DRV8353SRTAT"
+		(property "Part No" "DRV8353SRTAR"
 			(at 124.46 85.09 0)
 			(effects
 				(font
@@ -6075,7 +6075,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC" "C701785"
+		(property "LCSC" ""
 			(at 124.46 85.09 0)
 			(effects
 				(font
