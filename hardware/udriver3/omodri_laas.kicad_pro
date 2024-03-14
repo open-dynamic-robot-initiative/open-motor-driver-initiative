@@ -1118,7 +1118,7 @@
         }
       ],
       "filter_string": "",
-      "group_symbols": true,
+      "group_symbols": false,
       "name": "",
       "sort_asc": true,
       "sort_field": "Reference"
@@ -1175,7 +1175,7 @@
   "sheets": [
     [
       "de5b13f0-933a-4c4d-9979-13dc57b13241",
-      "Root"
+      "Racine"
     ],
     [
       "00000000-0000-0000-0000-00005f5a1016",
