@@ -6465,14 +6465,6 @@
 		(uuid "b865543b-91d7-4dfd-b91c-612d956ff70f")
 	)
 	(no_connect
-		(at 182.88 147.32)
-		(uuid "b91de478-fe4e-4e35-beb2-c2158865849b")
-	)
-	(no_connect
-		(at 182.88 149.86)
-		(uuid "b91de478-fe4e-4e35-beb2-c2158865849c")
-	)
-	(no_connect
 		(at 54.61 69.85)
 		(uuid "bd97d159-e69c-4370-83d4-59ad94c3f270")
 	)
@@ -6483,6 +6475,10 @@
 	(no_connect
 		(at 114.3 142.24)
 		(uuid "bf372c8e-8676-4559-86d0-39f87d229240")
+	)
+	(no_connect
+		(at 54.61 111.76)
+		(uuid "c12766d9-175a-40e7-a942-6c827c3fb4ad")
 	)
 	(no_connect
 		(at 114.3 106.68)
@@ -7335,16 +7331,6 @@
 			(type default)
 		)
 		(uuid "83001caa-44dc-4610-b2f1-611ac6a4eb5c")
-	)
-	(wire
-		(pts
-			(xy 54.61 111.76) (xy 55.88 111.76)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "836a69f9-6cd7-4f97-a41a-7afef9cf71f1")
 	)
 	(wire
 		(pts
@@ -9326,7 +9312,7 @@
 		)
 		(uuid "530da9ab-61a5-4931-b96b-bd1bfc8300e4")
 	)
-	(hierarchical_label "IMU_GPIO_INT1"
+	(hierarchical_label "IMU_GPIO_INT"
 		(shape input)
 		(at 55.88 119.38 0)
 		(fields_autoplaced yes)
@@ -9578,18 +9564,6 @@
 		)
 		(uuid "8f7094aa-4ccc-4de5-9f5a-98d6b6c8549d")
 	)
-	(hierarchical_label "IMU_INT4"
-		(shape input)
-		(at 182.88 149.86 0)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "8fd63b9b-7cb8-44e5-b718-777ee53d22da")
-	)
 	(hierarchical_label "BOOT_MODE_0"
 		(shape passive)
 		(at 115.57 69.85 0)
@@ -9649,18 +9623,6 @@
 			(justify left)
 		)
 		(uuid "a056111e-8029-454b-a12c-b77f776bfbb9")
-	)
-	(hierarchical_label "IMU_GPIO_INT3"
-		(shape input)
-		(at 55.88 111.76 0)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "a1900141-d755-4823-a787-3b584add0acc")
 	)
 	(hierarchical_label "M1_Ib"
 		(shape input)
@@ -10009,18 +9971,6 @@
 			(justify left)
 		)
 		(uuid "fc78602c-dfd8-4cf3-8d5c-2a9904b171f8")
-	)
-	(hierarchical_label "IMU_INT2"
-		(shape input)
-		(at 182.88 147.32 0)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "fe6e0511-46e6-476e-86a8-818c196fbbae")
 	)
 	(symbol
 		(lib_id "omodri_lib:TMS320F28388D")

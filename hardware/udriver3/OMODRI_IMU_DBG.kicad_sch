@@ -1390,6 +1390,10 @@
 		(color 0 0 0 0)
 		(uuid "ea75657c-df6b-4dbf-a0c9-b860a7fe9c7e")
 	)
+	(no_connect
+		(at 160.02 111.76)
+		(uuid "cf8a2c51-5e51-4175-997b-d901859100f4")
+	)
 	(wire
 		(pts
 			(xy 129.54 111.76) (xy 129.54 109.22)
@@ -1409,6 +1413,16 @@
 			(type default)
 		)
 		(uuid "06389f2d-3d19-49b2-b356-67ebb95e1ed0")
+	)
+	(wire
+		(pts
+			(xy 171.45 104.14) (xy 171.45 109.22)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "07008bda-bc05-4434-836d-c765e1702f0d")
 	)
 	(wire
 		(pts
@@ -1512,16 +1526,6 @@
 	)
 	(wire
 		(pts
-			(xy 160.02 111.76) (xy 171.45 111.76)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "31560274-bc6c-43b5-9095-8fdf5cf560e9")
-	)
-	(wire
-		(pts
 			(xy 182.88 116.84) (xy 186.69 116.84)
 		)
 		(stroke
@@ -1612,7 +1616,7 @@
 	)
 	(wire
 		(pts
-			(xy 160.02 106.68) (xy 171.45 106.68)
+			(xy 160.02 106.68) (xy 177.8 106.68)
 		)
 		(stroke
 			(width 0)
@@ -1831,6 +1835,17 @@
 		)
 		(uuid "812c97c0-aeee-4760-8cb1-ceffcb7b396f")
 	)
+	(label "IMU_SYNC"
+		(at 161.29 104.14 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "06feeed1-fe05-4f85-8b57-7e7ef38e6542")
+	)
 	(label "BOOT_1"
 		(at 95.25 68.58 0)
 		(fields_autoplaced yes)
@@ -1965,30 +1980,6 @@
 			)
 		)
 	)
-	(hierarchical_label "IMU_INT3"
-		(shape output)
-		(at 171.45 109.22 0)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "0b3face8-62c7-46d6-8a1a-3ebe7945b348")
-	)
-	(hierarchical_label "IMU_INT4"
-		(shape output)
-		(at 171.45 111.76 0)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "0e602818-4b75-407d-9ae6-82333f71bed9")
-	)
 	(hierarchical_label "~{DBG_SPI_CSn}"
 		(shape input)
 		(at 182.88 67.31 180)
@@ -2049,18 +2040,6 @@
 		)
 		(uuid "61e482dd-4bfb-490b-a11c-c46908583461")
 	)
-	(hierarchical_label "IMU_INT1"
-		(shape output)
-		(at 171.45 104.14 0)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "660e4661-d1d7-4a7e-b9f3-3f32af5c74c0")
-	)
 	(hierarchical_label "BOOT_MODE_1"
 		(shape passive)
 		(at 114.3 68.58 0)
@@ -2085,9 +2064,9 @@
 		)
 		(uuid "731a57a9-a4be-4a7c-be1e-5a3fc277baad")
 	)
-	(hierarchical_label "IMU_INT2"
+	(hierarchical_label "IMU_INT"
 		(shape output)
-		(at 171.45 106.68 0)
+		(at 177.8 106.68 0)
 		(fields_autoplaced yes)
 		(effects
 			(font

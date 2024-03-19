@@ -407,45 +407,39 @@
 				)
 			)
 		)
-		(symbol "omodri_lib:TCAN3413"
+		(symbol "Interface_CAN_LIN:TCAN330G"
 			(exclude_from_sim no)
 			(in_bom yes)
 			(on_board yes)
 			(property "Reference" "U"
-				(at 2.54 11.43 0)
+				(at -10.16 8.89 0)
 				(effects
 					(font
 						(size 1.27 1.27)
 					)
+					(justify left)
 				)
 			)
-			(property "Value" "TCAN3413"
-				(at 6.35 8.89 0)
+			(property "Value" "TCAN330G"
+				(at 2.54 8.89 0)
 				(effects
 					(font
 						(size 1.27 1.27)
 					)
+					(justify left)
 				)
 			)
-			(property "Footprint" "udriver3:VSON-8-1EP_3.0x3.0mm_P0.65mm_EP1.65x2.4mm"
-				(at 0 -21.59 0)
+			(property "Footprint" ""
+				(at 0 -12.7 0)
 				(effects
 					(font
 						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(property "Datasheet" "https://www.ti.com/lit/ds/symlink/tcan3413.pdf"
-				(at 0 -19.05 0)
-				(effects
-					(font
-						(size 1.27 1.27)
+						(italic yes)
 					)
 					(hide yes)
 				)
 			)
-			(property "Description" "3.3-V CAN FD transceiver with flexible IO and standby mode"
+			(property "Datasheet" "http://www.ti.com/lit/ds/symlink/tcan337.pdf"
 				(at 0 0 0)
 				(effects
 					(font
@@ -454,7 +448,34 @@
 					(hide yes)
 				)
 			)
-			(symbol "TCAN3413_0_1"
+			(property "Description" "High-Speed CAN Transceiver with CAN FD, 5Mbps, 3.3V supply, silent mode, shutdown mode, SOT-23-8/SOIC-8"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_keywords" "High-Speed CAN Transceiver"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_fp_filters" "*TSOT?23* *SOIC*3.9x4.9mm*P1.27mm*"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "TCAN330G_0_1"
 				(rectangle
 					(start -10.16 7.62)
 					(end 10.16 -7.62)
@@ -467,7 +488,7 @@
 					)
 				)
 			)
-			(symbol "TCAN3413_1_1"
+			(symbol "TCAN330G_1_1"
 				(pin input line
 					(at -12.7 5.08 0)
 					(length 2.54)
@@ -486,8 +507,8 @@
 						)
 					)
 				)
-				(pin passive line
-					(at -1.27 -10.16 90)
+				(pin power_in line
+					(at 0 -10.16 90)
 					(length 2.54)
 					(name "GND"
 						(effects
@@ -504,7 +525,7 @@
 						)
 					)
 				)
-				(pin passive line
+				(pin power_in line
 					(at 0 10.16 270)
 					(length 2.54)
 					(name "VCC"
@@ -605,24 +626,6 @@
 						)
 					)
 					(number "8"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin passive line
-					(at 1.27 -10.16 90)
-					(length 2.54)
-					(name "GND"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "9"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -1703,12 +1706,6 @@
 		(uuid "203a1fe6-532b-4de9-9629-349c9d85f927")
 	)
 	(junction
-		(at 100.33 74.93)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "2898daa8-92d4-4c35-91c2-791513393860")
-	)
-	(junction
 		(at 73.66 129.54)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -1758,16 +1755,6 @@
 	)
 	(wire
 		(pts
-			(xy 101.6 73.66) (xy 101.6 74.93)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "02e37238-af1c-47cb-b1c4-e122f65845f5")
-	)
-	(wire
-		(pts
 			(xy 222.25 82.55) (xy 234.95 82.55)
 		)
 		(stroke
@@ -1775,6 +1762,16 @@
 			(type default)
 		)
 		(uuid "055fec83-7c3c-4884-8dc9-8f641c2a0170")
+	)
+	(wire
+		(pts
+			(xy 100.33 73.66) (xy 100.33 74.93)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "20333250-d8a9-4421-b1c2-dd7d259d2615")
 	)
 	(wire
 		(pts
@@ -2188,16 +2185,6 @@
 	)
 	(wire
 		(pts
-			(xy 99.06 74.93) (xy 100.33 74.93)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "ad6a14fe-3f77-4776-8cd0-a096f9efa427")
-	)
-	(wire
-		(pts
 			(xy 179.07 97.79) (xy 204.47 97.79)
 		)
 		(stroke
@@ -2255,16 +2242,6 @@
 			(type default)
 		)
 		(uuid "c8ac90cb-6d48-4ba7-8fb0-2dd720f62b60")
-	)
-	(wire
-		(pts
-			(xy 101.6 74.93) (xy 100.33 74.93)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "cd1fea63-324e-46ff-a72c-dd052815c1eb")
 	)
 	(wire
 		(pts
@@ -2365,16 +2342,6 @@
 			(type default)
 		)
 		(uuid "ef73786e-604f-4018-9aff-2e3bfa371ca8")
-	)
-	(wire
-		(pts
-			(xy 99.06 73.66) (xy 99.06 74.93)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "f3cfbd0e-b9da-4b57-ba3c-da14be094743")
 	)
 	(wire
 		(pts
@@ -3048,6 +3015,94 @@
 		)
 	)
 	(symbol
+		(lib_id "Interface_CAN_LIN:TCAN330G")
+		(at 100.33 63.5 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "2a26ad7c-0f8f-404c-bce7-395bba6f1516")
+		(property "Reference" "U17"
+			(at 89.916 72.39 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "TCAN330G"
+			(at 88.9 54.61 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Package_TO_SOT_SMD:SOT-23-8"
+			(at 100.33 76.2 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+					(italic yes)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "http://www.ti.com/lit/ds/symlink/tcan337.pdf"
+			(at 100.33 63.5 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "High-Speed CAN Transceiver with CAN FD, 5Mbps, 3.3V supply, silent mode, shutdown mode, SOT-23-8/SOIC-8"
+			(at 100.33 63.5 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "2"
+			(uuid "fadd7d6c-f5a8-41d9-a704-3827d7e75131")
+		)
+		(pin "5"
+			(uuid "390b7c66-8c96-4a5d-b207-7d50b681ef0f")
+		)
+		(pin "3"
+			(uuid "b3b38956-2842-4067-9b9a-6f2e021d9b6b")
+		)
+		(pin "1"
+			(uuid "21acabaf-fe97-40c4-9e0e-5a64c6e08dab")
+		)
+		(pin "8"
+			(uuid "fe4fff99-5780-4075-aa79-fc67dcafd203")
+		)
+		(pin "7"
+			(uuid "6dcaf6b0-3f32-4370-9d0e-2cd41e349a5f")
+		)
+		(pin "6"
+			(uuid "354e70e3-8f85-4c85-bbb2-39d861ebc7ef")
+		)
+		(pin "4"
+			(uuid "6ad8fccf-e5f7-4ba6-952a-ec1cde9ede70")
+		)
+		(instances
+			(project "omodri_laas"
+				(path "/de5b13f0-933a-4c4d-9979-13dc57b13241/f886a7a6-33d7-48db-abbb-6951d00de62d"
+					(reference "U17")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "power:GND")
 		(at 111.76 149.86 0)
 		(unit 1)
@@ -3499,123 +3554,6 @@
 			(project "omodri_laas"
 				(path "/de5b13f0-933a-4c4d-9979-13dc57b13241/f886a7a6-33d7-48db-abbb-6951d00de62d"
 					(reference "U18")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "omodri_lib:TCAN3413")
-		(at 100.33 63.5 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "52bb9fae-d7de-46e5-add6-a00deb4298b5")
-		(property "Reference" "U17"
-			(at 87.63 52.07 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "TCAN3413"
-			(at 87.63 54.61 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "udriver3:VSON-8-1EP_3.0x3.0mm_P0.65mm_EP1.65x2.4mm"
-			(at 100.33 63.5 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "https://www.ti.com/lit/ds/symlink/tcan3413.pdf"
-			(at 100.33 82.55 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "3.3-V CAN FD transceiver with flexible IO and standby mode"
-			(at 100.33 63.5 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Mouser" " 595-PTCAN3413DRBR"
-			(at 100.33 63.5 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Part No" "PTCAN3413DRBR"
-			(at 100.33 63.5 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "LCSC" ""
-			(at 100.33 63.5 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "3"
-			(uuid "5e866e35-2c22-44d4-9553-3fce031cc1d6")
-		)
-		(pin "4"
-			(uuid "3acec0e0-8d20-45e3-baf8-a0a1c7c1598a")
-		)
-		(pin "7"
-			(uuid "9d01e058-cb10-4aaf-9758-fdaeec40ecac")
-		)
-		(pin "8"
-			(uuid "0635acad-9357-46d4-87cc-3d1e544b9019")
-		)
-		(pin "6"
-			(uuid "45c90a24-5278-422b-aa3b-565449b29fb9")
-		)
-		(pin "5"
-			(uuid "e0e40559-2fd8-4dbc-8ad3-3bcf253523c2")
-		)
-		(pin "2"
-			(uuid "67fb61a2-c406-40a2-b9f1-83514fb29b02")
-		)
-		(pin "1"
-			(uuid "562efc08-6aea-48b3-b62d-8bcccdc942d5")
-		)
-		(pin "9"
-			(uuid "b745cc06-34fb-48a1-8c23-e653534605f6")
-		)
-		(instances
-			(project "omodri_laas"
-				(path "/de5b13f0-933a-4c4d-9979-13dc57b13241/f886a7a6-33d7-48db-abbb-6951d00de62d"
-					(reference "U17")
 					(unit 1)
 				)
 			)

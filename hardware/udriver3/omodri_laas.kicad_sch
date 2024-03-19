@@ -1399,6 +1399,16 @@
 	)
 	(wire
 		(pts
+			(xy 54.61 123.19) (xy 73.66 123.19)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "20d1e7ed-53b7-45b1-8adf-5ebf66097006")
+	)
+	(wire
+		(pts
 			(xy 147.32 125.73) (xy 147.32 128.27)
 		)
 		(stroke
@@ -1939,16 +1949,6 @@
 	)
 	(wire
 		(pts
-			(xy 54.61 120.65) (xy 73.66 120.65)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "856699f4-bf3f-472d-979e-c66bcc336b30")
-	)
-	(wire
-		(pts
 			(xy 54.61 127) (xy 73.66 127)
 		)
 		(stroke
@@ -2329,16 +2329,6 @@
 	)
 	(wire
 		(pts
-			(xy 54.61 123.19) (xy 73.66 123.19)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "c5b56e48-2005-4492-9c28-1ba3b61fc21e")
-	)
-	(wire
-		(pts
 			(xy 241.3 53.34) (xy 241.3 58.42)
 		)
 		(stroke
@@ -2416,16 +2406,6 @@
 			(type default)
 		)
 		(uuid "dcbb77bf-9b52-4a9c-9017-7df4becb2cf3")
-	)
-	(wire
-		(pts
-			(xy 54.61 115.57) (xy 73.66 115.57)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "de5648a7-35a0-45d2-b5bb-2fb41e6b883a")
 	)
 	(wire
 		(pts
@@ -2546,16 +2526,6 @@
 			(type default)
 		)
 		(uuid "f3def34d-7ba4-48ce-9bf6-eb12984b4f64")
-	)
-	(wire
-		(pts
-			(xy 54.61 118.11) (xy 73.66 118.11)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "f559058e-d2d1-4d5f-8907-55839f350ad7")
 	)
 	(wire
 		(pts
@@ -6607,26 +6577,6 @@
 			)
 			(uuid "10c7bfa4-36e3-46bc-b1d8-e4666deb814c")
 		)
-		(pin "IMU_INT2" input
-			(at 73.66 120.65 180)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-			(uuid "3773598f-2604-478b-a1d0-e2013b77c644")
-		)
-		(pin "IMU_INT4" input
-			(at 73.66 115.57 180)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-			(uuid "52616e1b-fa3c-4834-b3e2-ce45019bae0e")
-		)
 		(pin "WS2812B_CMD_SIMO" output
 			(at 73.66 160.02 180)
 			(effects
@@ -6647,16 +6597,6 @@
 			)
 			(uuid "9eab10c4-75ed-4bde-8fe4-ecd51957ecfa")
 		)
-		(pin "IMU_GPIO_INT3" input
-			(at 73.66 118.11 180)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-			(uuid "75f5b2bb-8981-4455-8241-6f9a9dc8795f")
-		)
 		(pin "~{IMU_GPIO_SPI_ACCEL_CSn}" output
 			(at 73.66 129.54 180)
 			(effects
@@ -6667,7 +6607,7 @@
 			)
 			(uuid "b2599a3e-e5da-4cf7-b357-7f582b480b9a")
 		)
-		(pin "IMU_GPIO_INT1" input
+		(pin "IMU_GPIO_INT" input
 			(at 73.66 123.19 180)
 			(effects
 				(font
@@ -7679,26 +7619,6 @@
 			)
 			(uuid "e6e29b30-533d-4d14-9cec-2bf621a0dad8")
 		)
-		(pin "IMU_INT2" output
-			(at 54.61 120.65 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-			)
-			(uuid "016be787-4a7b-46e8-8e77-8d33a3794a20")
-		)
-		(pin "IMU_INT4" output
-			(at 54.61 115.57 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-			)
-			(uuid "dd044561-5907-4839-b811-ef1e8eb1a96c")
-		)
 		(pin "~{IMU_SPI_GYRO_CSn}" input
 			(at 54.61 127 0)
 			(effects
@@ -7728,26 +7648,6 @@
 				(justify right)
 			)
 			(uuid "0e463543-42d8-4f9b-99cb-3b201243abea")
-		)
-		(pin "IMU_INT3" output
-			(at 54.61 118.11 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-			)
-			(uuid "8677d669-5cd3-4537-bbaa-5b73be15d47b")
-		)
-		(pin "IMU_INT1" output
-			(at 54.61 123.19 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-			)
-			(uuid "45f0614c-9922-4757-8ddc-c2644c96b628")
 		)
 		(pin "DBG_GPIO_1" bidirectional
 			(at 54.61 109.22 0)
@@ -7808,6 +7708,16 @@
 				(justify right)
 			)
 			(uuid "bbb153c6-1207-4491-960d-1b363e5d15c0")
+		)
+		(pin "IMU_INT" output
+			(at 54.61 123.19 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+			(uuid "1954794c-e32c-4797-8704-f9fd85d93156")
 		)
 		(instances
 			(project "omodri_laas"

@@ -3,9 +3,9 @@
     "GenerationSoftware": {
       "Vendor": "KiCad",
       "Application": "Pcbnew",
-      "Version": "8.0.0-8.0.0-1~ubuntu22.04.1"
+      "Version": "8.0.1-8.0.1-1~ubuntu22.04.1"
     },
-    "CreationDate": "2024-03-14T15:19:03+01:00"
+    "CreationDate": "2024-03-19T10:53:44+01:00"
   },
   "GeneralSpecs": {
     "ProjectId": {
