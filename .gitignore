@@ -28,6 +28,7 @@ fp-info-cache
 # Exported BOM files
 *.xml
 *.csv
+*.xls
 /hardware/udriver3/doc
 /hardware/udriver3_sa.zip
 /hardware/udriver3_sa/
