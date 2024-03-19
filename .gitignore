@@ -27,7 +27,7 @@ fp-info-cache
 
 # Exported BOM files
 *.xml
-*.csv
+omodri_laas.csv
 *.xls
 /hardware/udriver3/doc
 /hardware/udriver3_sa.zip

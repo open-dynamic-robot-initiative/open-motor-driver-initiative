@@ -1,7 +1,7 @@
 (export (version "E")
   (design
     (source "/home/jmanhes/laas/Actionneur/github/open-motor-driver-initiative/hardware/udriver3/omodri_laas.kicad_sch")
-    (date "2024-03-19T10:46:43+0100")
+    (date "2024-03-19T15:56:10+0100")
     (tool "Eeschema 8.0.1-8.0.1-1~ubuntu22.04.1")
     (sheet (number "1") (name "/") (tstamps "/")
       (title_block
@@ -2119,10 +2119,18 @@
       (datasheet "http://www.ti.com/lit/ds/symlink/tcan337.pdf")
       (description "High-Speed CAN Transceiver with CAN FD, 5Mbps, 3.3V supply, silent mode, shutdown mode, SOT-23-8/SOIC-8")
       (fields
+        (field (name "DigiKey") "296-TCAN330GDCNRCT-ND")
+        (field (name "Part No") "TCAN330GDCNR")
+        (field (name "Mouser") "  595-TCAN330GDCNR")
+        (field (name "LCSC") "C191006")
         (field (name "Footprint") "Package_TO_SOT_SMD:SOT-23-8")
         (field (name "Datasheet") "http://www.ti.com/lit/ds/symlink/tcan337.pdf")
         (field (name "Description") "High-Speed CAN Transceiver with CAN FD, 5Mbps, 3.3V supply, silent mode, shutdown mode, SOT-23-8/SOIC-8"))
       (libsource (lib "Interface_CAN_LIN") (part "TCAN330G") (description "High-Speed CAN Transceiver with CAN FD, 5Mbps, 3.3V supply, silent mode, shutdown mode, SOT-23-8/SOIC-8"))
+      (property (name "DigiKey") (value "296-TCAN330GDCNRCT-ND"))
+      (property (name "Part No") (value "TCAN330GDCNR"))
+      (property (name "Mouser") (value "  595-TCAN330GDCNR"))
+      (property (name "LCSC") (value "C191006"))
       (property (name "Sheetname") (value "OMODRI_CAN_RS485"))
       (property (name "Sheetfile") (value "OMODRI_CAN_RS845.kicad_sch"))
       (property (name "ki_keywords") (value "High-Speed CAN Transceiver"))

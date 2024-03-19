@@ -1030,7 +1030,7 @@
           "group_by": false,
           "label": "Reference",
           "name": "Reference",
-          "show": false
+          "show": true
         },
         {
           "group_by": true,
@@ -1102,23 +1102,23 @@
           "group_by": false,
           "label": "RS",
           "name": "RS",
-          "show": true
+          "show": false
         },
         {
           "group_by": false,
           "label": "Rated Voltage",
           "name": "Rated Voltage",
-          "show": true
+          "show": false
         },
         {
           "group_by": false,
           "label": "Description",
           "name": "Description",
-          "show": false
+          "show": true
         }
       ],
       "filter_string": "",
-      "group_symbols": false,
+      "group_symbols": true,
       "name": "",
       "sort_asc": true,
       "sort_field": "Reference"
