@@ -6,8 +6,8 @@
 	(paper "A4")
 	(title_block
 		(title "Open MOtor DRiver Initiative (OMODRI)")
-		(date "2022-11-24")
-		(rev "3.0")
+		(date "2024-05-03")
+		(rev "3.1")
 		(company "LAAS/CNRS")
 	)
 	(lib_symbols
@@ -673,7 +673,7 @@
 				(hide yes)
 			)
 		)
-		(property "Part No" "SK6805-E-J"
+		(property "Part No" "SK6805-EC15"
 			(at 123.19 104.14 0)
 			(effects
 				(font
@@ -682,7 +682,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC" "C17701801"
+		(property "LCSC" "C2890035"
 			(at 123.19 104.14 0)
 			(effects
 				(font
@@ -848,7 +848,7 @@
 				(hide yes)
 			)
 		)
-		(property "Part No" "SK6805-E-J"
+		(property "Part No" "SK6805-EC15"
 			(at 154.94 104.14 0)
 			(effects
 				(font
@@ -857,7 +857,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC" "C17701801"
+		(property "LCSC" "C2890035"
 			(at 154.94 104.14 0)
 			(effects
 				(font
@@ -958,7 +958,7 @@
 				(hide yes)
 			)
 		)
-		(property "Part No" "SK6805-E-J"
+		(property "Part No" "SK6805-EC15"
 			(at 91.44 104.14 0)
 			(effects
 				(font
@@ -967,7 +967,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC" "C17701801"
+		(property "LCSC" "C2890035"
 			(at 91.44 104.14 0)
 			(effects
 				(font

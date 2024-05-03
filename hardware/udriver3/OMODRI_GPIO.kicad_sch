@@ -6,8 +6,8 @@
 	(paper "A4")
 	(title_block
 		(title "Open MOtor DRiver Initiative (OMODRI)")
-		(date "2022-11-24")
-		(rev "3.0")
+		(date "2024-05-03")
+		(rev "3.1")
 		(company "LAAS/CNRS")
 	)
 	(lib_symbols
@@ -9050,7 +9050,7 @@
 	)
 	(hierarchical_label "ENC1_CHI"
 		(shape input)
-		(at 115.57 134.62 0)
+		(at 115.57 124.46 0)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -9372,6 +9372,18 @@
 		)
 		(uuid "67dc5f52-24f1-410f-85d7-18f074167cea")
 	)
+	(hierarchical_label "ENC1_CHA"
+		(shape input)
+		(at 115.57 116.84 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "684c3b9c-709c-48cd-8f61-8596e93072f0")
+	)
 	(hierarchical_label "M2_PWM3_CHB"
 		(shape output)
 		(at 55.88 46.99 0)
@@ -9504,21 +9516,9 @@
 		)
 		(uuid "8988a0c4-1c7b-418f-a225-d964fc309578")
 	)
-	(hierarchical_label "ENC1_CHA"
-		(shape input)
-		(at 115.57 127 0)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "8abc73d8-a08d-42ab-9a3d-5d10ff21c30d")
-	)
 	(hierarchical_label "ENC2_CHB"
 		(shape input)
-		(at 115.57 119.38 0)
+		(at 115.57 129.54 0)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -9539,18 +9539,6 @@
 			(justify left)
 		)
 		(uuid "8d435314-f301-47f1-a32e-db2519afe6a6")
-	)
-	(hierarchical_label "ENC2_CHA"
-		(shape input)
-		(at 115.57 116.84 0)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "8eb89a93-0a71-4018-a3bf-ef75bcef7bc1")
 	)
 	(hierarchical_label "~{DRV2_GPIO_CSn}"
 		(shape output)
@@ -9600,9 +9588,21 @@
 		)
 		(uuid "970db6bd-9a42-4943-8ae8-8ac81445e599")
 	)
+	(hierarchical_label "ENC2_CHA"
+		(shape input)
+		(at 115.57 127 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "987758a5-b574-48a9-aee6-f4211c0e054e")
+	)
 	(hierarchical_label "ENC1_CHB"
 		(shape input)
-		(at 115.57 129.54 0)
+		(at 115.57 119.38 0)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -9758,7 +9758,7 @@
 	)
 	(hierarchical_label "ENC2_CHI"
 		(shape input)
-		(at 115.57 124.46 0)
+		(at 115.57 134.62 0)
 		(fields_autoplaced yes)
 		(effects
 			(font

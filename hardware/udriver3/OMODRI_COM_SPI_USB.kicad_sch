@@ -6,8 +6,8 @@
 	(paper "A4")
 	(title_block
 		(title "Open MOtor DRiver Initiative (OMODRI)")
-		(date "2022-11-24")
-		(rev "3.0")
+		(date "2024-05-03")
+		(rev "3.1")
 		(company "LAAS/CNRS")
 	)
 	(lib_symbols
@@ -1417,6 +1417,12 @@
 		(uuid "0cfed3f5-74c1-465e-9b86-452d9fe9d200")
 	)
 	(junction
+		(at 190.5 120.65)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "1c89d066-7a21-4308-afa0-caa74a20ca3a")
+	)
+	(junction
 		(at 167.64 109.22)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -1427,12 +1433,6 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "6239119f-47fe-4b07-9148-16e6916d4fd9")
-	)
-	(junction
-		(at 191.77 119.38)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "92fb7f2c-3b79-4531-87ab-086fd455b8de")
 	)
 	(junction
 		(at 179.07 106.68)
@@ -1447,6 +1447,36 @@
 	(no_connect
 		(at 182.88 111.76)
 		(uuid "2cab0ce4-b8af-40d6-8930-b07846ee3e3e")
+	)
+	(wire
+		(pts
+			(xy 193.04 120.65) (xy 193.04 116.84)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "0d75eab3-8e50-4b71-8590-3cd0d9002e66")
+	)
+	(wire
+		(pts
+			(xy 190.5 116.84) (xy 190.5 120.65)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "14a4e018-443e-42c6-9ead-098ad3481ab4")
+	)
+	(wire
+		(pts
+			(xy 190.5 120.65) (xy 190.5 127)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "1c8c5b6d-7016-4e84-b2ab-09ccf7e48374")
 	)
 	(wire
 		(pts
@@ -1527,6 +1557,16 @@
 			(type default)
 		)
 		(uuid "46682f36-a0bb-4a60-8ddc-06ee65d21dde")
+	)
+	(wire
+		(pts
+			(xy 190.5 120.65) (xy 193.04 120.65)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "497841c3-4fb4-4d95-9645-5d1d04863eb4")
 	)
 	(wire
 		(pts
@@ -1640,16 +1680,6 @@
 	)
 	(wire
 		(pts
-			(xy 190.5 119.38) (xy 190.5 116.84)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "7f82461a-a56d-4e80-bdb8-64d258e4a3ce")
-	)
-	(wire
-		(pts
 			(xy 163.83 71.12) (xy 163.83 78.74)
 		)
 		(stroke
@@ -1667,16 +1697,6 @@
 			(type default)
 		)
 		(uuid "90dd47fe-17fc-46a7-948e-0e53cf2083fe")
-	)
-	(wire
-		(pts
-			(xy 193.04 119.38) (xy 191.77 119.38)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "922f0dd5-e168-48a9-b0eb-f5e1fb342b27")
 	)
 	(wire
 		(pts
@@ -1730,16 +1750,6 @@
 	)
 	(wire
 		(pts
-			(xy 191.77 119.38) (xy 190.5 119.38)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "b6a8431d-aa71-4a56-8555-6c1a2aef0d89")
-	)
-	(wire
-		(pts
 			(xy 151.13 101.6) (xy 182.88 101.6)
 		)
 		(stroke
@@ -1757,16 +1767,6 @@
 			(type default)
 		)
 		(uuid "ca10b494-eb21-40f7-be8c-2adf585b6272")
-	)
-	(wire
-		(pts
-			(xy 193.04 116.84) (xy 193.04 119.38)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "cab99339-3514-4351-b01e-bddf24dcbbba")
 	)
 	(wire
 		(pts
@@ -3252,7 +3252,7 @@
 				)
 			)
 		)
-		(property "Footprint" "udriver3:USB_Micro-B_Molex_47346-0001"
+		(property "Footprint" "Connector_USB:USB_Micro-B_Molex-105017-0001"
 			(at 186.69 107.95 0)
 			(effects
 				(font
@@ -3261,7 +3261,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://www.molex.com/en-us/products/part-detail/1050170001"
 			(at 186.69 107.95 0)
 			(effects
 				(font
@@ -3279,7 +3279,7 @@
 				(hide yes)
 			)
 		)
-		(property "DigiKey" "WM17141CT-ND"
+		(property "DigiKey" "WM1399CT-ND"
 			(at 190.5 106.68 0)
 			(effects
 				(font
@@ -3288,7 +3288,7 @@
 				(hide yes)
 			)
 		)
-		(property "Farnell" "1568026"
+		(property "Farnell" "3500663"
 			(at 190.5 106.68 0)
 			(effects
 				(font
@@ -3297,7 +3297,7 @@
 				(hide yes)
 			)
 		)
-		(property "Mouser" "538-47346-0001"
+		(property "Mouser" "538-105017-0001"
 			(at 190.5 106.68 0)
 			(effects
 				(font
@@ -3306,7 +3306,7 @@
 				(hide yes)
 			)
 		)
-		(property "Part No" "473460001"
+		(property "Part No" "1050170001"
 			(at 190.5 106.68 0)
 			(effects
 				(font
@@ -3315,7 +3315,7 @@
 				(hide yes)
 			)
 		)
-		(property "RS" "702-5475"
+		(property "RS" "848-6764"
 			(at 190.5 106.68 0)
 			(effects
 				(font
@@ -3324,7 +3324,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC" "C132560"
+		(property "LCSC" "C136000"
 			(at 190.5 106.68 0)
 			(effects
 				(font
@@ -4013,7 +4013,7 @@
 	)
 	(symbol
 		(lib_id "power:GND")
-		(at 191.77 119.38 0)
+		(at 190.5 127 0)
 		(mirror y)
 		(unit 1)
 		(exclude_from_sim no)
@@ -4022,7 +4022,7 @@
 		(dnp no)
 		(uuid "e90725b1-6c87-4f57-8103-0c99a1aa32ff")
 		(property "Reference" "#PWR0167"
-			(at 191.77 125.73 0)
+			(at 190.5 133.35 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4031,7 +4031,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 191.77 124.46 90)
+			(at 190.5 132.08 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4039,7 +4039,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 191.77 119.38 0)
+			(at 190.5 127 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4048,7 +4048,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 191.77 119.38 0)
+			(at 190.5 127 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4057,7 +4057,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 191.77 119.38 0)
+			(at 190.5 127 0)
 			(effects
 				(font
 					(size 1.27 1.27)

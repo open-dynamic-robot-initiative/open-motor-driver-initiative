@@ -362,7 +362,7 @@
 		(remove_unused_layers no)
 		(uuid "4ed7b696-406c-469b-8345-9f95087aeba2")
 	)
-	(model "${KIPRJMOD}/3D/Amass MR30PW-FB.STEP"
+	(model "${KIPRJMOD}/3D/AMASS_MR30PW-FB.STEP"
 		(offset
 			(xyz 0 7.5 2.75)
 		)

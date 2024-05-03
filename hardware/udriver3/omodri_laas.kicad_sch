@@ -6,8 +6,8 @@
 	(paper "A4")
 	(title_block
 		(title "Open MOtor DRiver Initiative (OMODRI)")
-		(date "2024-02-29")
-		(rev "3.0")
+		(date "2024-05-03")
+		(rev "3.1")
 		(company "LAAS/CNRS")
 	)
 	(lib_symbols
@@ -5282,7 +5282,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "udriver3:Hirose_DF13_04P-1.25H_1x05_P1.25mm_Right_angle"
+		(property "Footprint" "udriver3:Hirose_DF13_04P-1.25H_1x04_P1.25mm_Right_angle"
 			(at 158.75 166.37 0)
 			(effects
 				(font

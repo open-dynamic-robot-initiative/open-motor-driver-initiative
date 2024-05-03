@@ -481,9 +481,9 @@
       {
         "bus_width": 12,
         "clearance": 0.102,
-        "diff_pair_gap": 0.127,
+        "diff_pair_gap": 0.15,
         "diff_pair_via_gap": 0.25,
-        "diff_pair_width": 0.127,
+        "diff_pair_width": 0.15,
         "line_style": 0,
         "microvia_diameter": 0.2,
         "microvia_drill": 0.1,
@@ -1042,7 +1042,7 @@
           "group_by": false,
           "label": "Datasheet",
           "name": "Datasheet",
-          "show": false
+          "show": true
         },
         {
           "group_by": true,
@@ -1066,7 +1066,7 @@
           "group_by": false,
           "label": "#",
           "name": "${ITEM_NUMBER}",
-          "show": false
+          "show": true
         },
         {
           "group_by": false,
@@ -1102,13 +1102,13 @@
           "group_by": false,
           "label": "RS",
           "name": "RS",
-          "show": false
+          "show": true
         },
         {
           "group_by": false,
           "label": "Rated Voltage",
           "name": "Rated Voltage",
-          "show": false
+          "show": true
         },
         {
           "group_by": false,
