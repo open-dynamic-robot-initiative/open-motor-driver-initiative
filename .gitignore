@@ -17,6 +17,7 @@ _autosave-*
 *-save.pro
 *-save.kicad_pcb
 fp-info-cache
+fp-lib-table
 
 # Netlist files (exported from Eeschema)
 *.net
@@ -29,6 +30,11 @@ fp-info-cache
 *.xml
 omodri_laas.csv
 *.xls
+*.xlsx
 /hardware/udriver3/doc
 /hardware/udriver3_sa.zip
-/hardware/udriver3_sa/
+/hardware/udriver3_sa/omodri_laas.zip
+/hardware/udriver3_sa/simu
+/hardware/udriver3_sa/Fab
+/hardware/udriver3_sa/bom
+/hardware/udriver3_sa/Driver_Motor.dcm

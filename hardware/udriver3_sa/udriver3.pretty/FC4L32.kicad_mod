@@ -1,0 +1,211 @@
+(footprint "FC4L32"
+	(version 20240108)
+	(generator "pcbnew")
+	(generator_version "8.0")
+	(layer "F.Cu")
+	(descr "FC4L Four Terminal Current Sense Metal Foil Construction")
+	(tags "current sense resistor")
+	(property "Reference" "REF**"
+		(at 0 -2.65 0)
+		(layer "F.SilkS")
+		(uuid "febc9251-c0a3-4bcc-b8ef-7ac475ee78d3")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Value" "FC4L32"
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "90d45f16-3cd5-418a-9476-13ac3f90fb07")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Footprint" ""
+		(at 0 0 0)
+		(unlocked yes)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "068dfb5a-20e2-42f7-9134-f4f93a88edeb")
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+	)
+	(property "Datasheet" ""
+		(at 0 0 0)
+		(unlocked yes)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "bf648cbf-dc38-4222-95d7-46940c0a96f9")
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+	)
+	(property "Description" ""
+		(at 0 0 0)
+		(unlocked yes)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "d5e53fa4-6046-44dd-bf7f-cb50ea6dcabd")
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+	)
+	(property "DigiKey" "FC4L64R005FERCT-ND"
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "353c1572-f2b9-450a-aa01-c21fea25bbaf")
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+	)
+	(property "Farnell" "2363991"
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "8989b0ba-e744-407d-b787-68ad33611797")
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+	)
+	(property "Mouser" "588-FC4L64R005FER"
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "243618e4-18a2-4ff0-ab0c-35e3b72c67ad")
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+	)
+	(property "Part No" "FC4L64R005FER"
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "9324fff3-eaa2-4038-b68c-e90f5153b8b2")
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+	)
+	(property "RS" "126-0365"
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "7916665d-45a2-49f7-a37d-10c5ba7620f3")
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+	)
+	(attr smd)
+	(fp_line
+		(start -0.1 -1.6)
+		(end 0.1 -1.6)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "3af10c4e-d6bc-4350-ae74-d9978af1cd73")
+	)
+	(fp_line
+		(start -0.1 1.6)
+		(end 0.1 1.6)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "cbb94fac-fa3a-4ecb-a514-808ad4c0d3b0")
+	)
+	(fp_rect
+		(start -1.45 -1.75)
+		(end 1.45 1.75)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(fill none)
+		(layer "F.CrtYd")
+		(uuid "62826e45-e5da-4252-965a-7eebb0a03688")
+	)
+	(fp_rect
+		(start -0.8 -1.6)
+		(end 0.8 1.6)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(fill none)
+		(layer "F.Fab")
+		(uuid "13983f92-f9ff-40a8-9c51-9fe3b270c55e")
+	)
+	(fp_text user "${REFERENCE}"
+		(at 0 -2.65 0)
+		(layer "F.Fab")
+		(uuid "b5693efe-4ddf-420d-b627-54a7af49ada4")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(pad "1" smd rect
+		(at -0.775 0.325)
+		(size 1.15 2.7)
+		(layers "F.Cu" "F.Paste" "F.Mask")
+		(uuid "ba811fe0-3cd3-4d1e-be49-69a05acfa88e")
+	)
+	(pad "2" smd rect
+		(at -0.775 -1.5 90)
+		(size 0.35 1.15)
+		(layers "F.Cu" "F.Paste" "F.Mask")
+		(uuid "e9bc5cd7-94c4-4ffa-a180-549988331191")
+	)
+	(pad "3" smd rect
+		(at 0.775 -1.5 90)
+		(size 0.35 1.15)
+		(layers "F.Cu" "F.Paste" "F.Mask")
+		(uuid "b910768a-993c-4cf9-858b-f78407788b2c")
+	)
+	(pad "4" smd rect
+		(at 0.775 0.325)
+		(size 1.15 2.7)
+		(layers "F.Cu" "F.Paste" "F.Mask")
+		(uuid "699fd391-d989-42e2-a3c5-16204b530f35")
+	)
+	(model "${KIPRJMOD}/3D/FC4L32R050FER.stp"
+		(offset
+			(xyz 0 0 0)
+		)
+		(scale
+			(xyz 1 1 1)
+		)
+		(rotate
+			(xyz 0 0 0)
+		)
+	)
+)

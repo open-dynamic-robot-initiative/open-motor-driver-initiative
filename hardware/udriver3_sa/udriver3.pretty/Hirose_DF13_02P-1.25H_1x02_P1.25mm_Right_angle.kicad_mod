@@ -1,0 +1,285 @@
+(footprint "Hirose_DF13_02P-1.25H_1x02_P1.25mm_Right_angle"
+	(version 20240108)
+	(generator "pcbnew")
+	(generator_version "8.0")
+	(layer "F.Cu")
+	(descr "Hirose DF13 SMD right angle, DF13-2P-1.25H(75)-2, 2 Pins per row.")
+	(tags "connector Hirose DF13 smd right angle")
+	(property "Reference" "REF**"
+		(at 0 -4 180)
+		(layer "F.SilkS")
+		(uuid "e4444e9d-4207-4865-8c46-31c65c277caa")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Value" "Hirose_DF13_02P-1.25H_1x02_P1.25mm_Right_angle"
+		(at 0 1.25 180)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "bd0df208-e28a-4236-8e45-52cbf5de13d2")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Footprint" ""
+		(at 0 0 0)
+		(unlocked yes)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "c617b0b4-7c03-4f3d-83b9-77280e3a2492")
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+	)
+	(property "Datasheet" ""
+		(at 0 0 0)
+		(unlocked yes)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "da951228-fb6e-4174-9b3e-2a1ff665da0e")
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+	)
+	(property "Description" ""
+		(at 0 0 0)
+		(unlocked yes)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "1b02e601-89cf-4ee0-9fc7-85bca6898c88")
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+	)
+	(property "DigiKey" "H2191-ND"
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "c1591ab0-73db-44c8-a74e-14a952b1f73d")
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+	)
+	(property "Farnell" "2427585"
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "d8959fb4-a74e-4c61-a2be-a08c1d8976f5")
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+	)
+	(property "Mouser" "798-DF13-2P-1.25DSA"
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "aa513606-0cf7-4fd0-b152-86af74481bba")
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+	)
+	(property "Part No" "DF13-2P-1.25DSA"
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "6e2ed49f-a5c2-41a5-80f2-c04a26d00660")
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+	)
+	(property "RS" ""
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "e036c6b7-d508-4c4a-93fd-0180a10de441")
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+	)
+	(attr smd)
+	(fp_line
+		(start -2.75 2.75)
+		(end -2.75 1.75)
+		(stroke
+			(width 0.15)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "7951251f-d8a4-42d8-9028-7e3bfdb95498")
+	)
+	(fp_line
+		(start -2.5 -1.5)
+		(end -2.5 -2.5)
+		(stroke
+			(width 0.15)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "74912c0f-f16b-449c-9f00-1aa22e247e74")
+	)
+	(fp_line
+		(start -2.5 2.5)
+		(end -2.5 1.5)
+		(stroke
+			(width 0.15)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "961166e5-b5d4-4911-b42a-ae6189bfce51")
+	)
+	(fp_line
+		(start -1.75 2.75)
+		(end -2.75 2.75)
+		(stroke
+			(width 0.15)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "9936a024-bb2d-47a2-bf3f-7b51f8dc91f0")
+	)
+	(fp_line
+		(start -1.5 2.5)
+		(end -2.5 2.5)
+		(stroke
+			(width 0.15)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "68859665-bf95-4397-80ca-0a689add6d8f")
+	)
+	(fp_line
+		(start 1.5 2.5)
+		(end 2.5 2.5)
+		(stroke
+			(width 0.15)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "6c701ac4-6250-431a-be5a-300fdb42997c")
+	)
+	(fp_line
+		(start 2.5 -2.5)
+		(end 2.5 -1.5)
+		(stroke
+			(width 0.15)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "025331e2-4bdc-4fa2-bb00-86f3645a06ab")
+	)
+	(fp_line
+		(start 2.5 2.5)
+		(end 2.5 1.5)
+		(stroke
+			(width 0.15)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "51f3efaa-1c11-40fe-8b44-a09a5330f845")
+	)
+	(fp_rect
+		(start -4 -2.8)
+		(end 4 4.3)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(fill none)
+		(layer "F.CrtYd")
+		(uuid "3a12aa3e-7680-4d4a-ad79-89f1f5db93df")
+	)
+	(fp_rect
+		(start -3 -2.8)
+		(end 3 2.5)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(fill none)
+		(layer "F.Fab")
+		(uuid "a9fd107a-1c0e-4767-87ae-acd277dd201f")
+	)
+	(fp_text user "${REFERENCE}"
+		(at 0 0 180)
+		(layer "F.Fab")
+		(uuid "492147ea-203b-494f-acd1-f4304b14e2f5")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(pad "" np_thru_hole circle
+		(at -1.675 1.9)
+		(size 0.9 0.9)
+		(drill 0.9)
+		(layers "F&B.Cu" "*.Mask")
+		(uuid "014cf6a2-0f4a-4c45-ba14-3d2be5660df7")
+	)
+	(pad "" np_thru_hole circle
+		(at 1.675 1.9)
+		(size 0.9 0.9)
+		(drill 0.9)
+		(layers "F&B.Cu" "*.Mask")
+		(uuid "f44e8dc7-574c-4fbd-8773-1051d4dc0f52")
+	)
+	(pad "1" smd rect
+		(at -0.625 3.3)
+		(size 0.7 1.8)
+		(layers "F.Cu" "F.Paste" "F.Mask")
+		(uuid "85e60094-a2b1-47df-9d8e-e1a361916642")
+	)
+	(pad "2" smd rect
+		(at 0.625 3.3)
+		(size 0.7 1.8)
+		(layers "F.Cu" "F.Paste" "F.Mask")
+		(uuid "38aa84c9-b748-444c-baaa-fbb24e5bdcf1")
+	)
+	(pad "MP1" smd rect
+		(at -2.875 0)
+		(size 1.6 2.2)
+		(layers "F.Cu" "F.Paste" "F.Mask")
+		(uuid "f9a9f714-05b9-46ad-9d7e-4cd859b190b9")
+	)
+	(pad "MP2" smd rect
+		(at 2.875 0)
+		(size 1.6 2.2)
+		(layers "F.Cu" "F.Paste" "F.Mask")
+		(uuid "c908b0aa-dd3c-4ef8-896a-4dd6f3beafdd")
+	)
+	(model "${KIPRJMOD}/3D/HIROSE_DF13-2P-1.25H.stp"
+		(offset
+			(xyz 11.9 -0.05 -22.6)
+		)
+		(scale
+			(xyz 1 1 1)
+		)
+		(rotate
+			(xyz 0 90 0)
+		)
+	)
+)

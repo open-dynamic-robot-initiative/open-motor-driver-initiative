@@ -1,0 +1,382 @@
+(kicad_sch
+	(version 20231120)
+	(generator "eeschema")
+	(generator_version "8.0")
+	(uuid "07c27aa0-81d0-44dc-a814-4d9b85a21a00")
+	(paper "A4")
+	(title_block
+		(title "Open MOtor DRiver Initiative  - Single Axis (OMODRI_SA)")
+		(date "2024-03-20")
+		(rev "1.0")
+		(company "LAAS/CNRS")
+	)
+	(lib_symbols)
+	(junction
+		(at 158.75 83.82)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "609e776e-b106-4c9a-af1f-5dba14ed2561")
+	)
+	(wire
+		(pts
+			(xy 152.4 83.82) (xy 158.75 83.82)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "044e996c-14e5-49e4-9c69-80a5c9ffdc0c")
+	)
+	(wire
+		(pts
+			(xy 158.75 83.82) (xy 158.75 90.17)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "1cb6d52f-9807-46b8-bef3-3d7fe0ef298b")
+	)
+	(wire
+		(pts
+			(xy 158.75 83.82) (xy 165.1 83.82)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "680f1ba1-12a1-4531-a82a-d36d65f73812")
+	)
+	(wire
+		(pts
+			(xy 184.15 102.87) (xy 190.5 102.87)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "699ff2d7-6b88-461a-ab64-19d9d81069e9")
+	)
+	(wire
+		(pts
+			(xy 114.3 83.82) (xy 127 83.82)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "a6d8382c-6e45-48d7-8197-52fa9f7e680a")
+	)
+	(wire
+		(pts
+			(xy 158.75 90.17) (xy 165.1 90.17)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "cef7840d-4b86-4802-8e06-9b39e6972de0")
+	)
+	(hierarchical_label "V_Bus"
+		(shape output)
+		(at 190.5 102.87 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "247747b7-20bc-44e1-b6de-981c2cb71ee9")
+	)
+	(sheet
+		(at 127 82.55)
+		(size 25.4 3.81)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0.0000)
+		)
+		(uuid "00000000-0000-0000-0000-00005f5bd908")
+		(property "Sheetname" "OMODRI_SA_Alim_5V"
+			(at 127 81.8384 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "OMODRI_Alim_5V.kicad_sch"
+			(at 127 86.9446 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+				(hide yes)
+			)
+		)
+		(pin "EN_5V0" input
+			(at 127 83.82 180)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+			(uuid "dc5df318-ebf5-4002-88f0-9c7b4880bb7d")
+		)
+		(pin "PG_5V0" output
+			(at 152.4 83.82 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+			(uuid "9f1617e1-f84a-480c-9365-261dc9c2eb2c")
+		)
+		(instances
+			(project "omodri_sa_laas"
+				(path "/de5b13f0-933a-4c4d-9979-13dc57b13241/00000000-0000-0000-0000-00005f3a3f16"
+					(page "21")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 165.1 82.55)
+		(size 19.05 3.81)
+		(stroke
+			(width 0)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0.0000)
+		)
+		(uuid "00000000-0000-0000-0000-00005f5be68b")
+		(property "Sheetname" "OMODRI_SA_Alim_3V3"
+			(at 165.1 82.042 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "OMODRI_Alim_3V3.kicad_sch"
+			(at 165.1 86.36 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+				(hide yes)
+			)
+		)
+		(pin "EN_3V3" input
+			(at 165.1 83.82 180)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+			(uuid "7eae29ac-83a2-4761-a957-df7f39d00135")
+		)
+		(instances
+			(project "omodri_sa_laas"
+				(path "/de5b13f0-933a-4c4d-9979-13dc57b13241/00000000-0000-0000-0000-00005f3a3f16"
+					(page "22")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 165.1 88.9)
+		(size 19.05 3.81)
+		(stroke
+			(width 0)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0.0000)
+		)
+		(uuid "00000000-0000-0000-0000-00005f5bf412")
+		(property "Sheetname" "OMODRI_SA_Alim_1V2"
+			(at 165.1 88.392 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "OMODRI_Alim_1V2.kicad_sch"
+			(at 165.1 93.9296 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+				(hide yes)
+			)
+		)
+		(pin "EN_1V2" input
+			(at 165.1 90.17 180)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+			(uuid "23e40a22-05cd-4fc7-bee6-6fd45735ab9f")
+		)
+		(instances
+			(project "omodri_sa_laas"
+				(path "/de5b13f0-933a-4c4d-9979-13dc57b13241/00000000-0000-0000-0000-00005f3a3f16"
+					(page "23")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 165.1 95.25)
+		(size 19.05 3.81)
+		(stroke
+			(width 0)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0.0000)
+		)
+		(uuid "00000000-0000-0000-0000-00005f5c0183")
+		(property "Sheetname" "OMODRI_SA_Alim_REF"
+			(at 165.1 94.742 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "OMODRI_Alim_REF.kicad_sch"
+			(at 165.1 99.06 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "omodri_sa_laas"
+				(path "/de5b13f0-933a-4c4d-9979-13dc57b13241/00000000-0000-0000-0000-00005f3a3f16"
+					(page "24")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 165.1 101.6)
+		(size 19.05 3.81)
+		(stroke
+			(width 0)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0.0000)
+		)
+		(uuid "ad1c315f-0cb6-4641-918d-19b8fecb440d")
+		(property "Sheetname" "OMODRI_SA_VBUS_CAP"
+			(at 165.1 101.092 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "OMODRI_POWER_CAP.kicad_sch"
+			(at 165.1 105.41 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+				(hide yes)
+			)
+		)
+		(pin "V_Bus" output
+			(at 184.15 102.87 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+			(uuid "2d0edeb0-31d5-42db-9385-642df1bcb596")
+		)
+		(instances
+			(project "omodri_sa_laas"
+				(path "/de5b13f0-933a-4c4d-9979-13dc57b13241/00000000-0000-0000-0000-00005f3a3f16"
+					(page "19")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 95.25 82.55)
+		(size 19.05 3.81)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0.0000)
+		)
+		(uuid "f2e4b637-b410-4c88-a5bd-ca173e5a2c6b")
+		(property "Sheetname" "OMODRI_SA_Alim_12V"
+			(at 95.25 81.8384 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "OMODRI_Alim_12V.kicad_sch"
+			(at 95.25 86.9446 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+				(hide yes)
+			)
+		)
+		(pin "PG_12V0" output
+			(at 114.3 83.82 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+			(uuid "3ff151e8-b124-4ac3-ab51-1eae50fa06db")
+		)
+		(instances
+			(project "omodri_sa_laas"
+				(path "/de5b13f0-933a-4c4d-9979-13dc57b13241/00000000-0000-0000-0000-00005f3a3f16"
+					(page "20")
+				)
+			)
+		)
+	)
+)

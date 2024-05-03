@@ -1,0 +1,308 @@
+(footprint "USB_Micro-B_Molex_47346-0001"
+	(version 20240108)
+	(generator "pcbnew")
+	(generator_version "8.0")
+	(layer "F.Cu")
+	(descr "Micro USB B receptable with flange, bottom-mount, SMD, right-angle (http://www.molex.com/pdm_docs/sd/473460001_sd.pdf)")
+	(tags "Micro B USB SMD")
+	(property "Reference" "REF**"
+		(at 0 -3.3 180)
+		(layer "F.SilkS")
+		(uuid "5ecac471-f4a5-49fb-bf8b-c5bc6969c61d")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Value" "USB_Micro-B_Molex_47346-0001"
+		(at 0 4.6 180)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "7f40fac5-4b4a-4aa3-be70-4ebe62f43ddd")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Footprint" ""
+		(at 0 0 0)
+		(unlocked yes)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "83200f82-b77a-4437-9dad-7c8135d247c1")
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+	)
+	(property "Datasheet" ""
+		(at 0 0 0)
+		(unlocked yes)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "b7898671-610a-4e97-bbe3-c05dc0d4ab4d")
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+	)
+	(property "Description" ""
+		(at 0 0 0)
+		(unlocked yes)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "97a7b68b-4f51-49e3-912f-5d3fc6227814")
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+	)
+	(attr smd)
+	(fp_line
+		(start -4.06 -1.96)
+		(end -3.68 -1.96)
+		(stroke
+			(width 0.15)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "09a34ee1-19cd-4c66-a227-1cb483750555")
+	)
+	(fp_line
+		(start -4.06 -0.19)
+		(end -4.06 -1.96)
+		(stroke
+			(width 0.15)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "73e69a63-9df8-484e-9a8a-60d7bbc7dd87")
+	)
+	(fp_line
+		(start -3.81 -1.71)
+		(end -3.43 -1.71)
+		(stroke
+			(width 0.15)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "ee208655-042a-47ce-98c2-cbb9fad751c0")
+	)
+	(fp_line
+		(start -3.81 0.06)
+		(end -3.81 -1.71)
+		(stroke
+			(width 0.15)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "5a5d25f7-03b4-491f-bbcb-4509a6b8bfe1")
+	)
+	(fp_line
+		(start -3.81 2.8)
+		(end -3.81 2.2)
+		(stroke
+			(width 0.15)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "d233d76d-af17-4914-bbfa-04993ee8dd24")
+	)
+	(fp_line
+		(start 3.81 -1.71)
+		(end 3.43 -1.71)
+		(stroke
+			(width 0.15)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "703cb985-d157-486c-9f8a-dd15498920f1")
+	)
+	(fp_line
+		(start 3.81 -1.71)
+		(end 3.81 0.06)
+		(stroke
+			(width 0.15)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "b5e71cab-2b7c-4744-bccb-82ac1914608a")
+	)
+	(fp_line
+		(start 3.81 2.2)
+		(end 3.81 2.8)
+		(stroke
+			(width 0.15)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "8decd455-a8cf-4ef8-89d2-7aa1a2be8c70")
+	)
+	(fp_rect
+		(start -4.3 -2.3)
+		(end 4.3 3.2)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(fill none)
+		(layer "F.CrtYd")
+		(uuid "2f4d5985-65a6-4aff-9728-74ad1b2fda7d")
+	)
+	(fp_line
+		(start -3.75 -1.65)
+		(end 3.75 -1.65)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "278719be-512b-46bd-9596-34a230de948f")
+	)
+	(fp_line
+		(start -3.75 3.2)
+		(end -3.75 -1.65)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "fdcd8fcc-299c-4c6a-a0b2-40e94b60f4bc")
+	)
+	(fp_line
+		(start -3.25 2.65)
+		(end 3.25 2.65)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "aca4bde1-881e-4380-a4f8-eb083dc577c0")
+	)
+	(fp_line
+		(start 3.75 -1.65)
+		(end 3.75 3.2)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "e634ee5a-03eb-4453-9452-606d7022cb93")
+	)
+	(fp_line
+		(start 3.75 3.2)
+		(end -3.75 3.2)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "f2ae7790-a4b0-4271-a2bd-8258db0d8153")
+	)
+	(fp_text user "PCB Edge"
+		(at 0 2.67 180)
+		(layer "Dwgs.User")
+		(uuid "903d8460-1f4c-4ab8-b74c-1ebe86e9c637")
+		(effects
+			(font
+				(size 0.4 0.4)
+				(thickness 0.04)
+			)
+		)
+	)
+	(fp_text user "${REFERENCE}"
+		(at 0 1.2 0)
+		(layer "F.Fab")
+		(uuid "4d230082-c59d-4907-a2ab-9e3f4a52ff02")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(pad "1" smd rect
+		(at -1.3 -1.46)
+		(size 0.45 1.38)
+		(layers "F.Cu" "F.Paste" "F.Mask")
+		(uuid "26a1b117-9080-4962-a972-49f154520478")
+	)
+	(pad "2" smd rect
+		(at -0.65 -1.46)
+		(size 0.45 1.38)
+		(layers "F.Cu" "F.Paste" "F.Mask")
+		(uuid "922c4c6c-2283-400a-974c-8373a3973bc7")
+	)
+	(pad "3" smd rect
+		(at 0 -1.46)
+		(size 0.45 1.38)
+		(layers "F.Cu" "F.Paste" "F.Mask")
+		(uuid "8eb9ff78-457b-4fd9-8e48-141c8d3d0fc8")
+	)
+	(pad "4" smd rect
+		(at 0.65 -1.46)
+		(size 0.45 1.38)
+		(layers "F.Cu" "F.Paste" "F.Mask")
+		(uuid "a24a74f0-66bd-4ee7-9b1f-ec79846624e1")
+	)
+	(pad "5" smd rect
+		(at 1.3 -1.46)
+		(size 0.45 1.38)
+		(layers "F.Cu" "F.Paste" "F.Mask")
+		(uuid "3942c51e-c63c-4583-8255-22f65ad5ae51")
+	)
+	(pad "6" smd rect
+		(at -3.375 1.2)
+		(size 1.65 1.3)
+		(layers "F.Cu" "F.Paste" "F.Mask")
+		(uuid "3b7d8f01-1202-41b7-86c4-8e3375196e97")
+	)
+	(pad "6" smd rect
+		(at -2.4875 -1.375)
+		(size 1.425 1.55)
+		(layers "F.Cu" "F.Paste" "F.Mask")
+		(uuid "891709d3-b45f-4199-80f7-a7eeff4abe65")
+	)
+	(pad "6" smd rect
+		(at -1.15 1.2)
+		(size 1.8 1.9)
+		(layers "F.Cu" "F.Paste" "F.Mask")
+		(uuid "d0613a69-44d4-4841-bf41-da9bc3a900c2")
+	)
+	(pad "6" smd rect
+		(at 1.55 1.2)
+		(size 1 1.9)
+		(layers "F.Cu" "F.Paste" "F.Mask")
+		(uuid "eeb19770-95e0-4288-af8e-731a436c866b")
+	)
+	(pad "6" smd rect
+		(at 2.4875 -1.375)
+		(size 1.425 1.55)
+		(layers "F.Cu" "F.Paste" "F.Mask")
+		(uuid "86cea948-1614-493c-a99c-01d2da78edcd")
+	)
+	(pad "6" smd rect
+		(at 3.375 1.2)
+		(size 1.65 1.3)
+		(layers "F.Cu" "F.Paste" "F.Mask")
+		(uuid "739911dc-8891-430e-9523-109780c4d1c7")
+	)
+	(model "${KIPRJMOD}/3D/MOLEX_microUSB_B_473460001.stp"
+		(offset
+			(xyz 0 -1 1.2)
+		)
+		(scale
+			(xyz 1 1 1)
+		)
+		(rotate
+			(xyz 90 180 180)
+		)
+	)
+)
