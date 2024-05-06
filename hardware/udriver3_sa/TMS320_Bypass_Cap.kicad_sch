@@ -492,6 +492,12 @@
 		(uuid "1b05a2fa-d997-4f22-a302-b72942ad79c2")
 	)
 	(junction
+		(at 114.3 127)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "259706fd-d78d-4bc5-85ad-411e9c62e615")
+	)
+	(junction
 		(at 215.9 25.4)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -534,7 +540,7 @@
 		(uuid "3df46074-23f7-4dcf-b0e9-eeefbbdfc14f")
 	)
 	(junction
-		(at 114.3 127)
+		(at 127 127)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "4fcfadbc-66a4-4c5a-8df9-8eda6f82a572")
@@ -678,7 +684,7 @@
 		(uuid "efa2996b-a25a-41b2-988a-7ef7d1117628")
 	)
 	(junction
-		(at 127 127)
+		(at 139.7 127)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "f19fbb33-1097-442b-90a3-af158890b5ed")
@@ -807,7 +813,7 @@
 	)
 	(wire
 		(pts
-			(xy 127 137.16) (xy 127 139.7)
+			(xy 139.7 137.16) (xy 139.7 139.7)
 		)
 		(stroke
 			(width 0)
@@ -834,6 +840,16 @@
 			(type default)
 		)
 		(uuid "1197e194-5984-4689-a66a-145bc4abdb1a")
+	)
+	(wire
+		(pts
+			(xy 114.3 127) (xy 127 127)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "129a7543-4a7e-43fc-b8f3-dc67fb5695ca")
 	)
 	(wire
 		(pts
@@ -864,6 +880,16 @@
 			(type default)
 		)
 		(uuid "17829dad-ae68-4098-a50c-ea0680dd4b96")
+	)
+	(wire
+		(pts
+			(xy 114.3 137.16) (xy 114.3 139.7)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "17869b6e-02d0-4574-bee7-7a241c84de4e")
 	)
 	(wire
 		(pts
@@ -1097,7 +1123,7 @@
 	)
 	(wire
 		(pts
-			(xy 127 127) (xy 127 129.54)
+			(xy 139.7 127) (xy 139.7 129.54)
 		)
 		(stroke
 			(width 0)
@@ -1137,7 +1163,7 @@
 	)
 	(wire
 		(pts
-			(xy 127 127) (xy 139.7 127)
+			(xy 139.7 127) (xy 152.4 127)
 		)
 		(stroke
 			(width 0)
@@ -1164,6 +1190,16 @@
 			(type default)
 		)
 		(uuid "4d42e425-da04-4c11-803f-531ae9fb1a92")
+	)
+	(wire
+		(pts
+			(xy 114.3 127) (xy 114.3 129.54)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "4e35b98c-5a29-4760-93f8-f391be0a5600")
 	)
 	(wire
 		(pts
@@ -1247,7 +1283,7 @@
 	)
 	(wire
 		(pts
-			(xy 114.3 127) (xy 127 127)
+			(xy 127 127) (xy 139.7 127)
 		)
 		(stroke
 			(width 0)
@@ -1267,7 +1303,7 @@
 	)
 	(wire
 		(pts
-			(xy 114.3 127) (xy 114.3 129.54)
+			(xy 127 127) (xy 127 129.54)
 		)
 		(stroke
 			(width 0)
@@ -1547,7 +1583,7 @@
 	)
 	(wire
 		(pts
-			(xy 114.3 137.16) (xy 114.3 139.7)
+			(xy 127 137.16) (xy 127 139.7)
 		)
 		(stroke
 			(width 0)
@@ -1817,7 +1853,7 @@
 	)
 	(wire
 		(pts
-			(xy 139.7 137.16) (xy 139.7 139.7)
+			(xy 152.4 137.16) (xy 152.4 139.7)
 		)
 		(stroke
 			(width 0)
@@ -1897,7 +1933,7 @@
 	)
 	(wire
 		(pts
-			(xy 139.7 127) (xy 139.7 129.54)
+			(xy 152.4 127) (xy 152.4 129.54)
 		)
 		(stroke
 			(width 0)
@@ -5957,7 +5993,7 @@
 	)
 	(symbol
 		(lib_id "power:GNDA")
-		(at 127 139.7 0)
+		(at 139.7 139.7 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -5965,7 +6001,7 @@
 		(dnp no)
 		(uuid "1c6764a5-b26f-4320-b1e6-8f9534c59359")
 		(property "Reference" "#PWR063"
-			(at 127 146.05 0)
+			(at 139.7 146.05 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5974,7 +6010,7 @@
 			)
 		)
 		(property "Value" "GNDA"
-			(at 127.127 144.0942 0)
+			(at 139.827 144.0942 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5982,7 +6018,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 127 139.7 0)
+			(at 139.7 139.7 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5991,7 +6027,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 127 139.7 0)
+			(at 139.7 139.7 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6000,7 +6036,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"GNDA\" , analog ground"
-			(at 127 139.7 0)
+			(at 139.7 139.7 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6163,7 +6199,7 @@
 	)
 	(symbol
 		(lib_id "power:GNDA")
-		(at 139.7 139.7 0)
+		(at 152.4 139.7 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -6171,7 +6207,7 @@
 		(dnp no)
 		(uuid "21407d14-668d-47ae-80e1-138dffe8fa47")
 		(property "Reference" "#PWR064"
-			(at 139.7 146.05 0)
+			(at 152.4 146.05 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6180,7 +6216,7 @@
 			)
 		)
 		(property "Value" "GNDA"
-			(at 139.827 144.0942 0)
+			(at 152.527 144.0942 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6188,7 +6224,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 139.7 139.7 0)
+			(at 152.4 139.7 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6197,7 +6233,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 139.7 139.7 0)
+			(at 152.4 139.7 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6206,7 +6242,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"GNDA\" , analog ground"
-			(at 139.7 139.7 0)
+			(at 152.4 139.7 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7659,6 +7695,147 @@
 	)
 	(symbol
 		(lib_id "Device:C")
+		(at 114.3 133.35 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "79242644-3777-4e36-93ae-68f480ba66d9")
+		(property "Reference" "C88"
+			(at 117.221 132.1816 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "100n"
+			(at 117.221 134.493 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_0201_0603Metric"
+			(at 115.2652 137.16 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://www.murata.com/en-eu/products/productdetail?partno=GRM033R61E104KE14%23"
+			(at 114.3 133.35 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "0201, 100nf, 25V,  ±10%, X5R, SMD MLCC"
+			(at 114.3 133.35 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "DigiKey" "490-12686-1-ND"
+			(at 114.3 133.35 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Farnell" "2990693"
+			(at 114.3 133.35 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Mouser" "81-GRM033R61E104KE4D"
+			(at 114.3 133.35 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Part No" "GRM033R61E104KE14D"
+			(at 114.3 133.35 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "RS" "185-2066"
+			(at 114.3 133.35 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C76939"
+			(at 114.3 133.35 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer" "MURATA"
+			(at 114.3 133.35 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Assembling" "SMD"
+			(at 114.3 133.35 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "c4f1eac9-d370-4346-bce9-e6449e0b15c9")
+		)
+		(pin "2"
+			(uuid "176e1db1-a8c4-4f95-bba9-4ee9063e820a")
+		)
+		(instances
+			(project "omodri_sa_laas"
+				(path "/de5b13f0-933a-4c4d-9979-13dc57b13241/3df2ca62-85b2-4979-b739-c6d2bcf6d697/890623f4-b518-4673-b497-6e388dc0c8e9"
+					(reference "C88")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:C")
 		(at 241.3 57.15 0)
 		(unit 1)
 		(exclude_from_sim no)
@@ -8331,7 +8508,7 @@
 	)
 	(symbol
 		(lib_id "Device:C")
-		(at 114.3 133.35 0)
+		(at 127 133.35 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -8339,7 +8516,7 @@
 		(dnp no)
 		(uuid "8f32b459-bbc5-4d72-ab1a-1a96234031a5")
 		(property "Reference" "C41"
-			(at 117.221 132.1816 0)
+			(at 129.921 132.1816 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8348,7 +8525,7 @@
 			)
 		)
 		(property "Value" "100n"
-			(at 117.221 134.493 0)
+			(at 129.921 134.493 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8357,7 +8534,7 @@
 			)
 		)
 		(property "Footprint" "Capacitor_SMD:C_0201_0603Metric"
-			(at 115.2652 137.16 0)
+			(at 127.9652 137.16 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8366,7 +8543,7 @@
 			)
 		)
 		(property "Datasheet" "https://www.murata.com/en-eu/products/productdetail?partno=GRM033R61E104KE14%23"
-			(at 114.3 133.35 0)
+			(at 127 133.35 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8375,7 +8552,7 @@
 			)
 		)
 		(property "Description" "0201, 100nf, 25V,  ±10%, X5R, SMD MLCC"
-			(at 114.3 133.35 0)
+			(at 127 133.35 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8384,7 +8561,7 @@
 			)
 		)
 		(property "DigiKey" "490-12686-1-ND"
-			(at 114.3 133.35 0)
+			(at 127 133.35 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8393,7 +8570,7 @@
 			)
 		)
 		(property "Farnell" "2990693"
-			(at 114.3 133.35 0)
+			(at 127 133.35 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8402,7 +8579,7 @@
 			)
 		)
 		(property "Mouser" "81-GRM033R61E104KE4D"
-			(at 114.3 133.35 0)
+			(at 127 133.35 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8411,7 +8588,7 @@
 			)
 		)
 		(property "Part No" "GRM033R61E104KE14D"
-			(at 114.3 133.35 0)
+			(at 127 133.35 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8420,7 +8597,7 @@
 			)
 		)
 		(property "RS" "185-2066"
-			(at 114.3 133.35 0)
+			(at 127 133.35 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8429,7 +8606,7 @@
 			)
 		)
 		(property "LCSC" "C76939"
-			(at 114.3 133.35 0)
+			(at 127 133.35 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8438,7 +8615,7 @@
 			)
 		)
 		(property "Manufacturer" "MURATA"
-			(at 114.3 133.35 0)
+			(at 127 133.35 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8447,7 +8624,7 @@
 			)
 		)
 		(property "Assembling" "SMD"
-			(at 114.3 133.35 0)
+			(at 127 133.35 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8602,7 +8779,7 @@
 	)
 	(symbol
 		(lib_id "Device:C")
-		(at 127 133.35 0)
+		(at 139.7 133.35 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -8610,7 +8787,7 @@
 		(dnp no)
 		(uuid "952dc994-4df1-49eb-b38a-87fa2d73f8a1")
 		(property "Reference" "C42"
-			(at 129.921 132.1816 0)
+			(at 142.621 132.1816 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8619,7 +8796,7 @@
 			)
 		)
 		(property "Value" "1u"
-			(at 129.921 134.493 0)
+			(at 142.621 134.493 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8628,7 +8805,7 @@
 			)
 		)
 		(property "Footprint" "Capacitor_SMD:C_0201_0603Metric"
-			(at 127.9652 137.16 0)
+			(at 140.6652 137.16 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8637,7 +8814,7 @@
 			)
 		)
 		(property "Datasheet" "https://www.murata.com/en-eu/products/productdetail?partno=GRM033C81A105ME05%23"
-			(at 127 133.35 0)
+			(at 139.7 133.35 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8646,7 +8823,7 @@
 			)
 		)
 		(property "Description" "0201, 1uf, 10V,  ±20%, X6S, SMD MLCC"
-			(at 127 133.35 0)
+			(at 139.7 133.35 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8655,7 +8832,7 @@
 			)
 		)
 		(property "DigiKey" "490-13219-1-ND"
-			(at 127 133.35 0)
+			(at 139.7 133.35 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8664,7 +8841,7 @@
 			)
 		)
 		(property "Farnell" "3243316"
-			(at 127 133.35 0)
+			(at 139.7 133.35 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8673,7 +8850,7 @@
 			)
 		)
 		(property "Mouser" "81-GRM033C81A105ME5D"
-			(at 127 133.35 0)
+			(at 139.7 133.35 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8682,7 +8859,7 @@
 			)
 		)
 		(property "Part No" "GRM033C81A105ME05D"
-			(at 127 133.35 0)
+			(at 139.7 133.35 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8691,7 +8868,7 @@
 			)
 		)
 		(property "RS" ""
-			(at 127 133.35 0)
+			(at 139.7 133.35 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8700,7 +8877,7 @@
 			)
 		)
 		(property "LCSC" "C237278"
-			(at 127 133.35 0)
+			(at 139.7 133.35 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8709,7 +8886,7 @@
 			)
 		)
 		(property "Manufacturer" "MURATA"
-			(at 127 133.35 0)
+			(at 139.7 133.35 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8718,7 +8895,7 @@
 			)
 		)
 		(property "Assembling" "SMD"
-			(at 127 133.35 0)
+			(at 139.7 133.35 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9144,7 +9321,7 @@
 	)
 	(symbol
 		(lib_id "power:GNDA")
-		(at 114.3 139.7 0)
+		(at 127 139.7 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -9152,7 +9329,7 @@
 		(dnp no)
 		(uuid "a3340dea-2e8a-4520-92ae-ce9aed0c11bc")
 		(property "Reference" "#PWR062"
-			(at 114.3 146.05 0)
+			(at 127 146.05 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9161,7 +9338,7 @@
 			)
 		)
 		(property "Value" "GNDA"
-			(at 114.427 144.0942 0)
+			(at 127.127 144.0942 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9169,7 +9346,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 114.3 139.7 0)
+			(at 127 139.7 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9178,7 +9355,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 114.3 139.7 0)
+			(at 127 139.7 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9187,7 +9364,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"GNDA\" , analog ground"
-			(at 114.3 139.7 0)
+			(at 127 139.7 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9332,6 +9509,71 @@
 			(project "omodri_sa_laas"
 				(path "/de5b13f0-933a-4c4d-9979-13dc57b13241/3df2ca62-85b2-4979-b739-c6d2bcf6d697/890623f4-b518-4673-b497-6e388dc0c8e9"
 					(reference "#PWR047")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:GNDA")
+		(at 114.3 139.7 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "a8dfdbfe-c092-48ee-a7a0-1fabbd2b9442")
+		(property "Reference" "#PWR010"
+			(at 114.3 146.05 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GNDA"
+			(at 114.427 144.0942 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 114.3 139.7 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 114.3 139.7 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"GNDA\" , analog ground"
+			(at 114.3 139.7 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "b281c8b6-ed9b-4e12-a74c-d047e75b9293")
+		)
+		(instances
+			(project "omodri_sa_laas"
+				(path "/de5b13f0-933a-4c4d-9979-13dc57b13241/3df2ca62-85b2-4979-b739-c6d2bcf6d697/890623f4-b518-4673-b497-6e388dc0c8e9"
+					(reference "#PWR010")
 					(unit 1)
 				)
 			)
@@ -10694,7 +10936,7 @@
 	)
 	(symbol
 		(lib_id "Device:C")
-		(at 139.7 133.35 0)
+		(at 152.4 133.35 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -10702,7 +10944,7 @@
 		(dnp no)
 		(uuid "ec184653-7ea8-4924-9ceb-b8d6c88a233c")
 		(property "Reference" "C43"
-			(at 142.621 132.1816 0)
+			(at 155.321 132.1816 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -10711,7 +10953,7 @@
 			)
 		)
 		(property "Value" "10u"
-			(at 142.621 134.493 0)
+			(at 155.321 134.493 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -10720,7 +10962,7 @@
 			)
 		)
 		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
-			(at 140.6652 137.16 0)
+			(at 153.3652 137.16 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -10729,7 +10971,7 @@
 			)
 		)
 		(property "Datasheet" "https://www.murata.com/en-eu/products/productdetail?partno=GRM155R61A106ME11%23"
-			(at 139.7 133.35 0)
+			(at 152.4 133.35 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -10738,7 +10980,7 @@
 			)
 		)
 		(property "Description" "0402, 10uf, 10V,  ±20%, X5R, SMD MLCC"
-			(at 139.7 133.35 0)
+			(at 152.4 133.35 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -10747,7 +10989,7 @@
 			)
 		)
 		(property "DigiKey" "490-GRM155R61A106ME11DCT-ND"
-			(at 139.7 133.35 0)
+			(at 152.4 133.35 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -10756,7 +10998,7 @@
 			)
 		)
 		(property "Farnell" "3785802"
-			(at 139.7 133.35 0)
+			(at 152.4 133.35 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -10765,7 +11007,7 @@
 			)
 		)
 		(property "Mouser" "81-GRM155R61A106ME1D"
-			(at 139.7 133.35 0)
+			(at 152.4 133.35 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -10774,7 +11016,7 @@
 			)
 		)
 		(property "Part No" "GRM155R61A106ME11D"
-			(at 139.7 133.35 0)
+			(at 152.4 133.35 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -10783,7 +11025,7 @@
 			)
 		)
 		(property "RS" "260-8765"
-			(at 139.7 133.35 0)
+			(at 152.4 133.35 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -10792,7 +11034,7 @@
 			)
 		)
 		(property "LCSC" "C408132"
-			(at 139.7 133.35 0)
+			(at 152.4 133.35 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -10801,7 +11043,7 @@
 			)
 		)
 		(property "Manufacturer" "MURATA"
-			(at 139.7 133.35 0)
+			(at 152.4 133.35 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -10810,7 +11052,7 @@
 			)
 		)
 		(property "Assembling" "SMD"
-			(at 139.7 133.35 0)
+			(at 152.4 133.35 0)
 			(effects
 				(font
 					(size 1.27 1.27)
