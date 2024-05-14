@@ -31,10 +31,9 @@ fp-lib-table
 omodri_laas.csv
 *.xls
 *.xlsx
+omodri_sa_laas.round-tracks-config
 /hardware/udriver3/doc
 /hardware/udriver3_sa.zip
 /hardware/udriver3_sa/omodri_laas.zip
 /hardware/udriver3_sa/simu
-/hardware/udriver3_sa/Fab
-/hardware/udriver3_sa/bom
 /hardware/udriver3_sa/Driver_Motor.dcm

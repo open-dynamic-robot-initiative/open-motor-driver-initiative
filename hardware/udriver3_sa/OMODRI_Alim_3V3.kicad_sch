@@ -11,6 +11,108 @@
 		(company "LAAS/CNRS")
 	)
 	(lib_symbols
+		(symbol "Connector:TestPoint"
+			(pin_numbers hide)
+			(pin_names
+				(offset 0.762) hide)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "TP"
+				(at 0 6.858 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "TestPoint"
+				(at 0 5.08 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 5.08 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" "~"
+				(at 5.08 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" "test point"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_keywords" "test point tp"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_fp_filters" "Pin* Test*"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "TestPoint_0_1"
+				(circle
+					(center 0 3.302)
+					(radius 0.762)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "TestPoint_1_1"
+				(pin passive line
+					(at 0 0 90)
+					(length 2.54)
+					(name "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+		)
 		(symbol "Device:C"
 			(pin_numbers hide)
 			(pin_names
@@ -801,6 +903,16 @@
 	)
 	(wire
 		(pts
+			(xy 139.7 85.09) (xy 139.7 88.9)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "01a1e4d4-d8e2-41f5-bdd0-31b6ef061266")
+	)
+	(wire
+		(pts
 			(xy 128.27 88.9) (xy 133.35 88.9)
 		)
 		(stroke
@@ -831,6 +943,16 @@
 	)
 	(wire
 		(pts
+			(xy 152.4 88.9) (xy 158.75 88.9)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "2a075ae3-cca5-48e2-b68b-462de5ca4d1d")
+	)
+	(wire
+		(pts
 			(xy 167.64 101.6) (xy 177.8 101.6)
 		)
 		(stroke
@@ -858,6 +980,16 @@
 			(type default)
 		)
 		(uuid "31757250-4e98-4fb3-95fa-593d3e39bddb")
+	)
+	(wire
+		(pts
+			(xy 133.35 88.9) (xy 139.7 88.9)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "48c740fe-f8d5-4909-bf09-5b4d6a78a541")
 	)
 	(wire
 		(pts
@@ -1011,13 +1143,13 @@
 	)
 	(wire
 		(pts
-			(xy 152.4 88.9) (xy 158.75 88.9)
+			(xy 167.64 76.2) (xy 177.8 76.2)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "ad7b57cc-6cae-4685-884f-2b95bbcae3a3")
+		(uuid "b1d94979-0e77-4547-9100-b60233a3fff8")
 	)
 	(wire
 		(pts
@@ -1061,16 +1193,6 @@
 	)
 	(wire
 		(pts
-			(xy 133.35 88.9) (xy 139.7 88.9)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "df9e58be-7075-4c85-868b-7d607bd4deb5")
-	)
-	(wire
-		(pts
 			(xy 102.87 91.44) (xy 101.6 91.44)
 		)
 		(stroke
@@ -1078,16 +1200,6 @@
 			(type default)
 		)
 		(uuid "ec581a16-bfcd-4eed-8d6c-9fd632050064")
-	)
-	(wire
-		(pts
-			(xy 167.64 76.2) (xy 177.8 76.2)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "f5d6f165-614c-4082-a1d2-f30aaaf3d935")
 	)
 	(label "FB_3V3"
 		(at 130.81 100.33 0)
@@ -1112,7 +1224,7 @@
 		(uuid "3464af08-8001-4bfa-8390-09f67fa36118")
 	)
 	(label "3V3"
-		(at 139.7 88.9 0)
+		(at 147.32 88.9 0)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -1991,6 +2103,73 @@
 			(project "omodri_sa_laas"
 				(path "/de5b13f0-933a-4c4d-9979-13dc57b13241/00000000-0000-0000-0000-00005f3a3f16/00000000-0000-0000-0000-00005f5be68b"
 					(reference "C99")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Connector:TestPoint")
+		(at 139.7 85.09 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom no)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "25baaca9-07e0-4cb0-9ad9-e1614ddcc15e")
+		(property "Reference" "TP3"
+			(at 142.24 80.5179 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "TestPoint"
+			(at 142.24 83.0579 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "TestPoint:TestPoint_Pad_D1.0mm"
+			(at 144.78 85.09 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 144.78 85.09 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "test point"
+			(at 139.7 85.09 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "01074c41-6948-4f3d-a450-ba37e9ad3cbc")
+		)
+		(instances
+			(project "omodri_sa_laas"
+				(path "/de5b13f0-933a-4c4d-9979-13dc57b13241/00000000-0000-0000-0000-00005f3a3f16/00000000-0000-0000-0000-00005f5be68b"
+					(reference "TP3")
 					(unit 1)
 				)
 			)

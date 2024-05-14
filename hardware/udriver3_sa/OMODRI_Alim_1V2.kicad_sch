@@ -11,6 +11,108 @@
 		(company "LAAS/CNRS")
 	)
 	(lib_symbols
+		(symbol "Connector:TestPoint"
+			(pin_numbers hide)
+			(pin_names
+				(offset 0.762) hide)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "TP"
+				(at 0 6.858 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "TestPoint"
+				(at 0 5.08 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 5.08 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" "~"
+				(at 5.08 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" "test point"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_keywords" "test point tp"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_fp_filters" "Pin* Test*"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "TestPoint_0_1"
+				(circle
+					(center 0 3.302)
+					(radius 0.762)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "TestPoint_1_1"
+				(pin passive line
+					(at 0 0 90)
+					(length 2.54)
+					(name "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+		)
 		(symbol "Device:C"
 			(pin_numbers hide)
 			(pin_names
@@ -770,6 +872,12 @@
 		(uuid "8d176dda-469d-4c9a-81e6-236ca6a57355")
 	)
 	(junction
+		(at 165.1 88.9)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "92d78173-3154-4cc2-8479-51e59366b10a")
+	)
+	(junction
 		(at 139.7 88.9)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -802,6 +910,16 @@
 			(type default)
 		)
 		(uuid "03cae9f4-5db0-4dfd-ad4f-26fde4e1532d")
+	)
+	(wire
+		(pts
+			(xy 165.1 88.9) (xy 177.8 88.9)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "184c1ceb-8c5b-4b33-bb27-7ca8b8ee504f")
 	)
 	(wire
 		(pts
@@ -1098,7 +1216,7 @@
 	)
 	(global_label "VDD_1V2"
 		(shape output)
-		(at 165.1 88.9 0)
+		(at 177.8 88.9 0)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -1108,7 +1226,7 @@
 		)
 		(uuid "da70812c-75e4-4d71-b722-833e72af6aea")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 165.1 88.9 0)
+			(at 177.8 88.9 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1117,7 +1235,7 @@
 			)
 		)
 		(property "Références Inter-Feuilles" "${INTERSHEET_REFS}"
-			(at -30.48 0 0)
+			(at -17.78 0 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1905,6 +2023,73 @@
 			(project "omodri_sa_laas"
 				(path "/de5b13f0-933a-4c4d-9979-13dc57b13241/00000000-0000-0000-0000-00005f3a3f16/00000000-0000-0000-0000-00005f5bf412"
 					(reference "C100")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Connector:TestPoint")
+		(at 165.1 88.9 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom no)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "73b7cd82-edcc-4feb-8edf-7bfa52bd351f")
+		(property "Reference" "TP2"
+			(at 167.64 84.3279 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "TestPoint"
+			(at 167.64 86.8679 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "TestPoint:TestPoint_Pad_D1.0mm"
+			(at 170.18 88.9 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 170.18 88.9 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "test point"
+			(at 165.1 88.9 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "672c7446-1cde-4672-80d0-c82d61147567")
+		)
+		(instances
+			(project "omodri_sa_laas"
+				(path "/de5b13f0-933a-4c4d-9979-13dc57b13241/00000000-0000-0000-0000-00005f3a3f16/00000000-0000-0000-0000-00005f5bf412"
+					(reference "TP2")
 					(unit 1)
 				)
 			)

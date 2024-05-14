@@ -568,7 +568,7 @@
 		(uuid "6ae77ca8-224a-4ddc-a6cb-e5a4f127a287")
 	)
 	(junction
-		(at 165.1 101.6)
+		(at 177.8 101.6)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "8261797f-ee20-4082-957a-b090611465ee")
@@ -643,7 +643,7 @@
 	)
 	(wire
 		(pts
-			(xy 156.21 101.6) (xy 165.1 101.6)
+			(xy 168.91 101.6) (xy 177.8 101.6)
 		)
 		(stroke
 			(width 0)
@@ -713,7 +713,7 @@
 	)
 	(wire
 		(pts
-			(xy 139.7 101.6) (xy 148.59 101.6)
+			(xy 139.7 101.6) (xy 161.29 101.6)
 		)
 		(stroke
 			(width 0)
@@ -773,7 +773,7 @@
 	)
 	(wire
 		(pts
-			(xy 165.1 101.6) (xy 177.8 101.6)
+			(xy 177.8 101.6) (xy 190.5 101.6)
 		)
 		(stroke
 			(width 0)
@@ -813,7 +813,7 @@
 	)
 	(wire
 		(pts
-			(xy 165.1 101.6) (xy 165.1 110.49)
+			(xy 177.8 101.6) (xy 177.8 110.49)
 		)
 		(stroke
 			(width 0)
@@ -833,7 +833,7 @@
 	)
 	(wire
 		(pts
-			(xy 165.1 118.11) (xy 165.1 127)
+			(xy 177.8 118.11) (xy 177.8 127)
 		)
 		(stroke
 			(width 0)
@@ -880,6 +880,28 @@
 			(type default)
 		)
 		(uuid "f0722b7f-6527-4439-9848-a5f185e54e7e")
+	)
+	(label "AMP_V-"
+		(at 104.14 104.14 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "ae11bc20-d0a4-438f-9c7d-06d03cff0561")
+	)
+	(label "AMP_Vout"
+		(at 139.7 101.6 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "ddb8720e-7420-4ed8-830f-c119fc5f4bf6")
 	)
 	(global_label "REF_3V0_BUF"
 		(shape input)
@@ -937,7 +959,7 @@
 	)
 	(hierarchical_label "V_THERM_OUT"
 		(shape output)
-		(at 177.8 101.6 0)
+		(at 190.5 101.6 0)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -1308,7 +1330,7 @@
 	)
 	(symbol
 		(lib_id "Device:R")
-		(at 152.4 101.6 90)
+		(at 165.1 101.6 90)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -1316,7 +1338,7 @@
 		(dnp no)
 		(uuid "58cd0835-449e-4d0d-8288-f07d38ff0df0")
 		(property "Reference" "R56"
-			(at 149.352 100.33 90)
+			(at 162.052 100.33 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1325,7 +1347,7 @@
 			)
 		)
 		(property "Value" "120"
-			(at 159.258 100.33 90)
+			(at 171.958 100.33 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1334,7 +1356,7 @@
 			)
 		)
 		(property "Footprint" "Resistor_SMD:R_0201_0603Metric"
-			(at 152.4 103.378 90)
+			(at 165.1 103.378 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1343,7 +1365,7 @@
 			)
 		)
 		(property "Datasheet" "https://industrial.panasonic.com/sa/products/pt/general-purpose-chip-resistors/models/ERJ1GNF1200C"
-			(at 152.4 101.6 0)
+			(at 165.1 101.6 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1352,7 +1374,7 @@
 			)
 		)
 		(property "Description" "0201,120Ω, 0.05W, ±1%, SMD  resistor"
-			(at 152.4 101.6 0)
+			(at 165.1 101.6 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1361,7 +1383,7 @@
 			)
 		)
 		(property "DigiKey" "P122692CT-ND"
-			(at 152.4 101.6 0)
+			(at 165.1 101.6 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1370,7 +1392,7 @@
 			)
 		)
 		(property "Farnell" "2396857"
-			(at 152.4 101.6 0)
+			(at 165.1 101.6 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1379,7 +1401,7 @@
 			)
 		)
 		(property "Mouser" "667-ERJ-1GNF1200C"
-			(at 152.4 101.6 0)
+			(at 165.1 101.6 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1388,7 +1410,7 @@
 			)
 		)
 		(property "Part No" "ERJ1GNF1200C"
-			(at 152.4 101.6 0)
+			(at 165.1 101.6 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1397,7 +1419,7 @@
 			)
 		)
 		(property "RS" ""
-			(at 152.4 101.6 0)
+			(at 165.1 101.6 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1406,7 +1428,7 @@
 			)
 		)
 		(property "LCSC" "C278569"
-			(at 152.4 101.6 0)
+			(at 165.1 101.6 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1415,7 +1437,7 @@
 			)
 		)
 		(property "Manufacturer" "PANASONIC"
-			(at 152.4 101.6 0)
+			(at 165.1 101.6 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1424,7 +1446,7 @@
 			)
 		)
 		(property "Assembling" "SMD"
-			(at 152.4 101.6 0)
+			(at 165.1 101.6 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1449,7 +1471,7 @@
 	)
 	(symbol
 		(lib_id "power:GND")
-		(at 165.1 127 0)
+		(at 177.8 127 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -1457,7 +1479,7 @@
 		(dnp no)
 		(uuid "5f2fe4d0-b1c0-4333-ac55-40d88640a919")
 		(property "Reference" "#PWR04"
-			(at 165.1 133.35 0)
+			(at 177.8 133.35 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1466,7 +1488,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 165.1 130.81 0)
+			(at 177.8 130.81 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1474,7 +1496,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 165.1 127 0)
+			(at 177.8 127 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1483,7 +1505,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 165.1 127 0)
+			(at 177.8 127 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1492,7 +1514,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 165.1 127 0)
+			(at 177.8 127 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2067,7 +2089,7 @@
 	)
 	(symbol
 		(lib_id "Device:C")
-		(at 165.1 114.3 0)
+		(at 177.8 114.3 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -2075,7 +2097,7 @@
 		(dnp no)
 		(uuid "dba48ae5-ba15-45d7-81a4-7fff7bf3f3f0")
 		(property "Reference" "C87"
-			(at 167.64 113.03 0)
+			(at 180.34 113.03 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2084,7 +2106,7 @@
 			)
 		)
 		(property "Value" "220n"
-			(at 167.64 115.57 0)
+			(at 180.34 115.57 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2093,7 +2115,7 @@
 			)
 		)
 		(property "Footprint" "Capacitor_SMD:C_0201_0603Metric"
-			(at 166.0652 118.11 0)
+			(at 178.7652 118.11 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2102,7 +2124,7 @@
 			)
 		)
 		(property "Datasheet" "https://www.murata.com/en-eu/products/productdetail?partno=GRM033R61C224KE14%23"
-			(at 165.1 114.3 0)
+			(at 177.8 114.3 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2111,7 +2133,7 @@
 			)
 		)
 		(property "Description" "0201, 220nf, 16V,  ±10%, X5R, SMD MLCC"
-			(at 165.1 114.3 0)
+			(at 177.8 114.3 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2120,7 +2142,7 @@
 			)
 		)
 		(property "DigiKey" "490-17040-1-ND"
-			(at 165.1 114.3 0)
+			(at 177.8 114.3 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2129,7 +2151,7 @@
 			)
 		)
 		(property "Farnell" "3582770"
-			(at 165.1 114.3 0)
+			(at 177.8 114.3 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2138,7 +2160,7 @@
 			)
 		)
 		(property "Mouser" "81-GRM033R61C224KE4D"
-			(at 165.1 114.3 0)
+			(at 177.8 114.3 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2147,7 +2169,7 @@
 			)
 		)
 		(property "Part No" "GRM033R61C224KE14D"
-			(at 165.1 114.3 0)
+			(at 177.8 114.3 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2156,7 +2178,7 @@
 			)
 		)
 		(property "RS" ""
-			(at 165.1 114.3 0)
+			(at 177.8 114.3 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2165,7 +2187,7 @@
 			)
 		)
 		(property "LCSC" "C161474"
-			(at 165.1 114.3 0)
+			(at 177.8 114.3 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2174,7 +2196,7 @@
 			)
 		)
 		(property "Manufacturer" "MURATA"
-			(at 165.1 114.3 0)
+			(at 177.8 114.3 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2183,7 +2205,7 @@
 			)
 		)
 		(property "Assembling" "SMD"
-			(at 165.1 114.3 0)
+			(at 177.8 114.3 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2457,7 +2479,79 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "Single 1.8V, microPower, CMOS Operational Amplifiers, Zero-Drift Series, SC-70-5"
+		(property "Description" "SC-70-5, Single 1.8V, microPower, CMOS Operational Amplifiers, Zero-Drift Series, SC-70-5"
+			(at 129.54 101.6 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer" "TEXAS INSTRUMENTS"
+			(at 129.54 101.6 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "DigiKey" "296-19547-1-ND"
+			(at 129.54 101.6 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Farnell" "3117524"
+			(at 129.54 101.6 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "  C44193"
+			(at 129.54 101.6 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Mouser" "595-OPA333AIDCKR"
+			(at 129.54 101.6 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Part No" "OPA333AIDCKR"
+			(at 129.54 101.6 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "RS" "660-9782"
+			(at 129.54 101.6 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Assembling" "SMD"
 			(at 129.54 101.6 0)
 			(effects
 				(font
