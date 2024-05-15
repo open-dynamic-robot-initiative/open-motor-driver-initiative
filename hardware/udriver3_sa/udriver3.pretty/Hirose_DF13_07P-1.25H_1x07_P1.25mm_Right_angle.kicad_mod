@@ -28,7 +28,7 @@
 			)
 		)
 	)
-	(property "Footprint" ""
+	(property "Footprint" "Hirose_DF13_07P-1.25H_1x07_P1.25mm_Right_angle"
 		(at 0 0 0)
 		(unlocked yes)
 		(layer "F.Fab")
@@ -281,7 +281,7 @@
 		(layers "F.Cu" "F.Paste" "F.Mask")
 		(uuid "349c3edf-8262-4105-a957-7e4311df2a55")
 	)
-	(model "${KIPRJMOD}/3D/DF13-7P-1.25H.stp"
+	(model "${KIPRJMOD}/3D/HIROSE_DF13-7P-1.25H.stp"
 		(offset
 			(xyz 8.75 -0 -22.6)
 		)

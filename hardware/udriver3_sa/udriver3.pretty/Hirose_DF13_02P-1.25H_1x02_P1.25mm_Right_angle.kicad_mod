@@ -28,7 +28,7 @@
 			)
 		)
 	)
-	(property "Footprint" ""
+	(property "Footprint" "Hirose_DF13_02P-1.25H_1x02_P1.25mm_Right_angle"
 		(at 0 0 0)
 		(unlocked yes)
 		(layer "F.Fab")

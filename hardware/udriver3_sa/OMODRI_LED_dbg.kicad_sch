@@ -449,7 +449,7 @@
 				)
 			)
 		)
-		(property "Footprint" "LED_SMD:LED_SK6812_EC15_1.5x1.5mm"
+		(property "Footprint" "udriver3:NeoPixel_SK6805_1.5x1.5mm"
 			(at 127 125.73 0)
 			(effects
 				(font

@@ -628,7 +628,7 @@
 				)
 			)
 		)
-		(property "Footprint" "LED_SMD:LED_SK6812_EC15_1.5x1.5mm"
+		(property "Footprint" "udriver3:NeoPixel_SK6805_1.5x1.5mm"
 			(at 123.19 121.92 0)
 			(effects
 				(font
@@ -803,7 +803,7 @@
 				)
 			)
 		)
-		(property "Footprint" "LED_SMD:LED_SK6812_EC15_1.5x1.5mm"
+		(property "Footprint" "udriver3:NeoPixel_SK6805_1.5x1.5mm"
 			(at 154.94 121.92 0)
 			(effects
 				(font
@@ -913,7 +913,7 @@
 				)
 			)
 		)
-		(property "Footprint" "LED_SMD:LED_SK6812_EC15_1.5x1.5mm"
+		(property "Footprint" "udriver3:NeoPixel_SK6805_1.5x1.5mm"
 			(at 91.44 121.92 0)
 			(effects
 				(font
