@@ -7,6 +7,7 @@
 #include "driverlib_cm.h"
 #include "cm.h"
 
+#include "communication.h"
 #include "hal_cm.h"
 #include "uomodri_cm_user_defines.h"
 

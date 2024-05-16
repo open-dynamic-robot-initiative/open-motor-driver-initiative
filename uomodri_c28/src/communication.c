@@ -128,10 +128,10 @@ bool_t COM_msgCreate(motor_t* p_motor, slv2mst_msg_t* p_msg, uint32_t tmr_cnt)
 }
 
 /**
- * @brief           Reset the command structure for a motor
+ * @brief           Initialize the command structure for a motor
  * @param[in]       p_cmd   Pointer on the command structure (actions to be realized by motor_foc)
  */
-void COM_resetCmdStruct(cmd_t* p_cmd)
+void COM_initCmdStruct(cmd_t* p_cmd)
 {
     p_cmd->posRef               = 0.0f;
     p_cmd->velRef               = 0.0f;

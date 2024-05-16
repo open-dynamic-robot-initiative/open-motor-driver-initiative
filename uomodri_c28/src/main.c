@@ -77,9 +77,9 @@ void main(void)
     // Initialization of the shared structure used by CLA & C28 for Motor_1 & Motor_2
     MOT_initStruct(&motor_m1, MOTOR_1);
     MOT_initStruct(&motor_m2, MOTOR_2);
-    // Reset the command structure for CLA.
-    COM_resetCmdStruct(&cmd_uomodri[MOTOR_1]);
-    COM_resetCmdStruct(&cmd_uomodri[MOTOR_2]);
+    // Initialization the command structure for CLA.
+    COM_initCmdStruct(&cmd_uomodri[MOTOR_1]);
+    COM_initCmdStruct(&cmd_uomodri[MOTOR_2]);
     // Hardware Abstraction Layer initialization
     HAL_ini(&hal);
     // DRV8353 initialization
@@ -306,7 +306,7 @@ __attribute__((interrupt)) void cla_isrMotor2(void)
 /**
  * @brief           Create the message for LED dimming + increment the timeout counter.
  */
-__attribute__((interrupt)) void tmr_isrLed(void)
+__attribute__((interrupt)) void tmr_isrLedCmd(void)
 {
 #ifdef DEBUG
 //    DBG_PIN2_SET;
@@ -322,7 +322,7 @@ __attribute__((interrupt)) void tmr_isrLed(void)
     cmd_uomodri[MOTOR_1].cptTimeout++;
     cmd_uomodri[MOTOR_2].cptTimeout++;
     CLA_forceTasks(CLA1_BASE, CLA_CMD_NEW_TASK_FLAG);
-    Interrupt_clearACKGroup(INT_TIMER_LED_GROUP);
+    Interrupt_clearACKGroup(INT_TIMER_LED_CMD_GROUP);
 #ifdef DEBUG
 //    DBG_PIN2_CLEAR;
 #endif
@@ -441,7 +441,6 @@ __attribute__((interrupt)) void clb_isrTxRx_RS485(void)
 #else
     uint16_t clb_tag_test   = HWREGH(CLB_INT_REG_ADDR);
 #endif
-
     switch (clb_tag_test)
     {
         // RS485 address #1 valid

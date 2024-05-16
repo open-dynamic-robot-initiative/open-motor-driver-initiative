@@ -29,7 +29,7 @@
 __attribute__((interrupt)) void cla_ClearTask(void);
 __attribute__((interrupt)) void cla_isrMotor1(void);
 __attribute__((interrupt)) void cla_isrMotor2(void);
-__attribute__((interrupt)) void tmr_isrLed(void);
+__attribute__((interrupt)) void tmr_isrLedCmd(void);
 __attribute__((interrupt)) void dma_isrSpiComRx(void);
 __attribute__((interrupt)) void sci_isrRx_RS485(void);
 __attribute__((interrupt)) void sci_isrTx_RS485(void);
@@ -60,8 +60,8 @@ static const int_cfg_t InterruptList[] =
  },
  {
   .intNum           = INT_TIMER_LED,
-  .intAckGroup      = INT_TIMER_LED_GROUP,
-  .p_intHandler     = INT_TIMER_LED_HANDLER
+  .intAckGroup      = INT_TIMER_LED_CMD_GROUP,
+  .p_intHandler     = INT_TIMER_LED_CMD_HANDLER
  },
  {
   .intNum           = INT_DMA_RX_MSG,

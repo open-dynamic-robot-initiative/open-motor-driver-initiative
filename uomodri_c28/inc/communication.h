@@ -12,6 +12,7 @@
 #include "motor.h"
 #else
 #include <stddef.h>
+#include "uomodri_cm_user_defines.h"
 #endif
 
 /***********************************************************************
@@ -784,7 +785,7 @@ typedef struct __com_dbg_rx_msg_t__
 void COM_msgExtract(mst2slv_msg_t*, cmd_t*, cmd_t*);
 bool_t COM_msgCreate(motor_t*, slv2mst_msg_t*, uint32_t);
 void COM_msgSwapBytes(uint16_t*, uint16_t*, uint16_t);
-void COM_resetCmdStruct(cmd_t*);
+void COM_initCmdStruct(cmd_t*);
 uint32_t COM_vCRC32(uint16_t*, uint16_t);
 uint32_t COM_msgCRC(uint16_t*, uint16_t);
 inline void RS485_msgReceiveInit(rs485_rx_t*);

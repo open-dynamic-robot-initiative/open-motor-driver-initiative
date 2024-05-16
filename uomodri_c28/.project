@@ -225,7 +225,7 @@
 	<variableList>
 		<variable>
 			<name>C2000WARE_ROOT</name>
-			<value>file:/home/jmanhes/ti/c2000/C2000Ware_5_01_00_00</value>
+			<value>file:/home/jmanhes/ti/c2000/C2000Ware_5_02_00_00</value>
 		</variable>
 		<variable>
 			<name>CLA_DATA_ROM_ROOT</name>
@@ -240,12 +240,16 @@
 			<value>$%7BC2000WARE_ROOT%7D/utilities/clb_tool/clb_syscfg</value>
 		</variable>
 		<variable>
+			<name>FLASH_API_ROOT</name>
+			<value>$%7BC2000WARE_ROOT%7D/libraries/flash_api/f2838x/c28x</value>
+		</variable>
+		<variable>
 			<name>SYSCONFIG_TOOL</name>
 			<value>$%7BSYSCONFIG_TOOL_ROOT%7D/sysconfig_cli.sh</value>
 		</variable>
 		<variable>
 			<name>SYSCONFIG_TOOL_ROOT</name>
-			<value>file:/home/jmanhes/ti/ccs1240/ccs/utils/sysconfig_1.18.0</value>
+			<value>file:/home/jmanhes/ti/ccs1270/ccs/utils/sysconfig_1.20.0</value>
 		</variable>
 		<variable>
 			<name>SYSTEMC_INSTALL</name>
