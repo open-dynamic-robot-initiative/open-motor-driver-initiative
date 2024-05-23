@@ -144,7 +144,7 @@
 		(layers "F.Cu" "F.Paste" "F.Mask")
 		(uuid "370a863e-187c-4a94-9cb4-a097c3b05299")
 	)
-	(model "${KIPRJMOD}/3D/NeoPixel_1515_SK6805.step"
+	(model "${KIPRJMOD}/3D/NEOPIXEL_SK6805-EC15.step"
 		(offset
 			(xyz 0 0 0)
 		)

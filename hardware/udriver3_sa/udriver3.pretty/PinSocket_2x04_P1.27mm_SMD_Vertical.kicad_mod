@@ -27,7 +27,7 @@
 			)
 		)
 	)
-	(property "Footprint" ""
+	(property "Footprint" "PinSocket_2x04_P1.27mm_SMD_Vertical"
 		(at 0 -1.85 0)
 		(unlocked yes)
 		(layer "F.Fab")
