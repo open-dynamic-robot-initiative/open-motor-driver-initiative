@@ -1,12 +1,12 @@
 %TF.GenerationSoftware,KiCad,Pcbnew,8.0.2-8.0.2-0~ubuntu22.04.1*%
-%TF.CreationDate,2024-05-23T15:32:45+02:00*%
+%TF.CreationDate,2024-05-23T17:41:41+02:00*%
 %TF.ProjectId,omodri_sa_laas,6f6d6f64-7269-45f7-9361-5f6c6161732e,1.0*%
 %TF.SameCoordinates,Original*%
 %TF.FileFunction,Soldermask,Top*%
 %TF.FilePolarity,Negative*%
 %FSLAX46Y46*%
 G04 Gerber Fmt 4.6, Leading zero omitted, Abs format (unit mm)*
-G04 Created by KiCad (PCBNEW 8.0.2-8.0.2-0~ubuntu22.04.1) date 2024-05-23 15:32:45*
+G04 Created by KiCad (PCBNEW 8.0.2-8.0.2-0~ubuntu22.04.1) date 2024-05-23 17:41:41*
 %MOMM*%
 %LPD*%
 G01*
