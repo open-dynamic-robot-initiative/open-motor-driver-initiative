@@ -5,7 +5,7 @@
       "Application": "Pcbnew",
       "Version": "8.0.2-8.0.2-0~ubuntu22.04.1"
     },
-    "CreationDate": "2024-05-15T09:40:56+02:00"
+    "CreationDate": "2024-05-23T15:53:43+02:00"
   },
   "GeneralSpecs": {
     "ProjectId": {
@@ -17,7 +17,7 @@
       "X": 50.05,
       "Y": 50.05
     },
-    "LayerNumber": 6,
+    "LayerNumber": 8,
     "BoardThickness": 1.6,
     "Finish": "ENIG"
   },
@@ -58,18 +58,28 @@
       "FilePolarity": "Positive"
     },
     {
-      "Path": "omodri_laas-In3_sig_Cu.g4",
+      "Path": "omodri_laas-In3_GND_Cu.g4",
       "FileFunction": "Copper,L4,Inr",
       "FilePolarity": "Positive"
     },
     {
-      "Path": "omodri_laas-In4_PWR_Cu.g5",
+      "Path": "omodri_laas-In4_sigCu.g5",
       "FileFunction": "Copper,L5,Inr",
       "FilePolarity": "Positive"
     },
     {
+      "Path": "omodri_laas-In5__PWRCu.g6",
+      "FileFunction": "Copper,L6,Inr",
+      "FilePolarity": "Positive"
+    },
+    {
+      "Path": "omodri_laas-In6_GND_Cu.g7",
+      "FileFunction": "Copper,L7,Inr",
+      "FilePolarity": "Positive"
+    },
+    {
       "Path": "omodri_laas-B_Cu.gbl",
-      "FileFunction": "Copper,L6,Bot",
+      "FileFunction": "Copper,L8,Bot",
       "FilePolarity": "Positive"
     },
     {
@@ -129,7 +139,7 @@
     },
     {
       "Type": "Dielectric",
-      "Thickness": 0.274,
+      "Thickness": 0.1,
       "Material": "FR4",
       "Name": "F.Cu/In1_GND.Cu",
       "Notes": "Type: dielectric layer 1 (from F.Cu to In1_GND.Cu)"
@@ -141,7 +151,7 @@
     },
     {
       "Type": "Dielectric",
-      "Thickness": 0.274,
+      "Thickness": 0.3,
       "Material": "FR4",
       "Name": "In1_GND.Cu/In2_sig.Cu",
       "Notes": "Type: dielectric layer 2 (from In1_GND.Cu to In2_sig.Cu)"
@@ -153,34 +163,58 @@
     },
     {
       "Type": "Dielectric",
-      "Thickness": 0.274,
+      "Thickness": 0.1,
       "Material": "FR4",
-      "Name": "In2_sig.Cu/In3_sig.Cu",
-      "Notes": "Type: dielectric layer 3 (from In2_sig.Cu to In3_sig.Cu)"
+      "Name": "In2_sig.Cu/In3_GND.Cu",
+      "Notes": "Type: dielectric layer 3 (from In2_sig.Cu to In3_GND.Cu)"
     },
     {
       "Type": "Copper",
       "Thickness": 0.035,
-      "Name": "In3_sig.Cu"
+      "Name": "In3_GND.Cu"
     },
     {
       "Type": "Dielectric",
-      "Thickness": 0.274,
+      "Thickness": 0.3,
       "Material": "FR4",
-      "Name": "In3_sig.Cu/In4_PWR.Cu",
-      "Notes": "Type: dielectric layer 4 (from In3_sig.Cu to In4_PWR.Cu)"
+      "Name": "In3_GND.Cu/In4_sigCu",
+      "Notes": "Type: dielectric layer 4 (from In3_GND.Cu to In4_sigCu)"
     },
     {
       "Type": "Copper",
       "Thickness": 0.035,
-      "Name": "In4_PWR.Cu"
+      "Name": "In4_sigCu"
     },
     {
       "Type": "Dielectric",
-      "Thickness": 0.274,
+      "Thickness": 0.1,
       "Material": "FR4",
-      "Name": "In4_PWR.Cu/B.Cu",
-      "Notes": "Type: dielectric layer 5 (from In4_PWR.Cu to B.Cu)"
+      "Name": "In4_sigCu/In5._PWRCu",
+      "Notes": "Type: dielectric layer 5 (from In4_sigCu to In5._PWRCu)"
+    },
+    {
+      "Type": "Copper",
+      "Thickness": 0.035,
+      "Name": "In5._PWRCu"
+    },
+    {
+      "Type": "Dielectric",
+      "Thickness": 0.3,
+      "Material": "FR4",
+      "Name": "In5._PWRCu/In6_GND.Cu",
+      "Notes": "Type: dielectric layer 6 (from In5._PWRCu to In6_GND.Cu)"
+    },
+    {
+      "Type": "Copper",
+      "Thickness": 0.035,
+      "Name": "In6_GND.Cu"
+    },
+    {
+      "Type": "Dielectric",
+      "Thickness": 0.1,
+      "Material": "FR4",
+      "Name": "In6_GND.Cu/B.Cu",
+      "Notes": "Type: dielectric layer 7 (from In6_GND.Cu to B.Cu)"
     },
     {
       "Type": "Copper",
