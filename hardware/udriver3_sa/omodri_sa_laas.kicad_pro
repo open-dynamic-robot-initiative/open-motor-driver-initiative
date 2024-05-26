@@ -37,9 +37,9 @@
         "other_text_thickness": 0.12,
         "other_text_upright": true,
         "pads": {
-          "drill": 0.6,
-          "height": 1.4,
-          "width": 1.0
+          "drill": 2.2,
+          "height": 3.4,
+          "width": 3.4
         },
         "silk_line_width": 0.12,
         "silk_text_italic": false,
@@ -49,7 +49,7 @@
         "silk_text_upright": true,
         "zones": {
           "45_degree_only": false,
-          "min_clearance": 0.15
+          "min_clearance": 0.25
         }
       },
       "diff_pair_dimensions": [
@@ -127,7 +127,7 @@
         "max_error": 0.005,
         "min_clearance": 0.11,
         "min_connection": 0.11,
-        "min_copper_edge_clearance": 0.2,
+        "min_copper_edge_clearance": 0.4,
         "min_hole_clearance": 0.2,
         "min_hole_to_hole": 0.3,
         "min_microvia_diameter": 0.2,

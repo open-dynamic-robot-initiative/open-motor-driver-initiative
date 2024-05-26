@@ -337,8 +337,14 @@
 			)
 		)
 	)
+	(junction
+		(at 88.9 95.25)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "a5e2a95d-5329-40f9-ab97-78242215efbc")
+	)
 	(no_connect
-		(at 119.38 107.95)
+		(at 81.28 107.95)
 		(uuid "ccc865c5-f534-4ed1-bb44-afb3956a0057")
 	)
 	(wire
@@ -363,7 +369,17 @@
 	)
 	(wire
 		(pts
-			(xy 120.65 95.25) (xy 127 95.25)
+			(xy 88.9 95.25) (xy 88.9 100.33)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "52d62433-e9d1-47b4-a293-1b6babcd0d0f")
+	)
+	(wire
+		(pts
+			(xy 76.2 95.25) (xy 88.9 95.25)
 		)
 		(stroke
 			(width 0)
@@ -381,9 +397,50 @@
 		)
 		(uuid "89d380e5-abdb-45bf-95ba-2216072cb50c")
 	)
+	(wire
+		(pts
+			(xy 88.9 95.25) (xy 127 95.25)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "92693f6a-3bd4-4327-b280-138dfbed3768")
+	)
+	(wire
+		(pts
+			(xy 96.52 107.95) (xy 119.38 107.95)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "b13f8665-60dd-4512-96fb-52edbf28fec5")
+	)
+	(wire
+		(pts
+			(xy 88.9 115.57) (xy 88.9 120.65)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "f4791c64-bbd8-4e11-a725-d458526a3430")
+	)
+	(label "led_connect"
+		(at 101.6 107.95 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "d348b1f3-1349-4f61-ac97-6ef312360383")
+	)
 	(global_label "VDD_3V3"
 		(shape input)
-		(at 120.65 95.25 180)
+		(at 76.2 95.25 180)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -393,7 +450,7 @@
 		)
 		(uuid "276c3bda-c1c1-449b-8f76-25bd67294cc1")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 120.65 95.25 0)
+			(at 76.2 95.25 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -402,7 +459,7 @@
 			)
 		)
 		(property "Références Inter-Feuilles" "${INTERSHEET_REFS}"
-			(at -19.05 6.35 0)
+			(at -63.5 6.35 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -611,6 +668,199 @@
 			(project "omodri_sa_laas"
 				(path "/de5b13f0-933a-4c4d-9979-13dc57b13241/00000000-0000-0000-0000-00005f9fcb8c"
 					(reference "#PWR0110")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "omodri_lib:NeoPixel_1515_SK6805")
+		(at 88.9 107.95 0)
+		(mirror y)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "6a598281-61ae-4f31-82e6-c2c74eb4652a")
+		(property "Reference" "D5"
+			(at 91.44 99.06 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "NeoPixel_1515"
+			(at 100.33 101.6 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "udriver3:NeoPixel_SK6805_1.5x1.5mm"
+			(at 88.9 125.73 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://cdn-shop.adafruit.com/product-files/4492/Datasheet.pdf"
+			(at 88.9 128.27 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "0606, NeoPixel Addressable LED (1.5mm x 1.5mm)"
+			(at 88.9 107.95 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "DigiKey" "1528-4492-ND"
+			(at 88.9 107.95 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Mouser" "485-4492"
+			(at 88.9 107.95 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Part No" "SK6805-EC15"
+			(at 88.9 107.95 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C17701801"
+			(at 88.9 107.95 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer" "IPIXEL LED LIGHT CO "
+			(at 88.9 107.95 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Assembling" "SMD"
+			(at 88.9 107.95 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "cdcdb131-38fe-4ba7-a584-d526280ba123")
+		)
+		(pin "2"
+			(uuid "3e4ca089-e8c4-4607-971b-ddca295100ec")
+		)
+		(pin "3"
+			(uuid "7466fff6-50df-4b16-b7b5-f3960b124473")
+		)
+		(pin "4"
+			(uuid "ab7c0b57-b33e-4cde-870b-29908a6dc09e")
+		)
+		(instances
+			(project "omodri_sa_laas"
+				(path "/de5b13f0-933a-4c4d-9979-13dc57b13241/00000000-0000-0000-0000-00005f9fcb8c"
+					(reference "D5")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 88.9 120.65 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "94be3ee0-3167-42bb-9cd4-b5d8fe2f456f")
+		(property "Reference" "#PWR011"
+			(at 88.9 127 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 89.027 125.0442 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 88.9 120.65 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 88.9 120.65 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
+			(at 88.9 120.65 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "a097011f-127f-48a0-9159-644c77a4489e")
+		)
+		(instances
+			(project "omodri_sa_laas"
+				(path "/de5b13f0-933a-4c4d-9979-13dc57b13241/00000000-0000-0000-0000-00005f9fcb8c"
+					(reference "#PWR011")
 					(unit 1)
 				)
 			)

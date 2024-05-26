@@ -26,8 +26,8 @@
 			)
 		)
 	)
-	(property "Footprint" ""
-		(at 0 0 0)
+	(property "Footprint" "USON_6"
+		(at 0 2 0)
 		(unlocked yes)
 		(layer "F.Fab")
 		(hide yes)
@@ -567,7 +567,7 @@
 		(start -0.884 -1.004)
 		(end 0.884 -1.004)
 		(stroke
-			(width 0.1524)
+			(width 0.05)
 			(type solid)
 		)
 		(layer "F.CrtYd")
@@ -577,7 +577,7 @@
 		(start -0.884 1.004)
 		(end -0.884 -1.004)
 		(stroke
-			(width 0.1524)
+			(width 0.05)
 			(type solid)
 		)
 		(layer "F.CrtYd")
@@ -587,7 +587,7 @@
 		(start 0.884 -1.004)
 		(end 0.884 1.004)
 		(stroke
-			(width 0.1524)
+			(width 0.05)
 			(type solid)
 		)
 		(layer "F.CrtYd")
@@ -597,7 +597,7 @@
 		(start 0.884 1.004)
 		(end -0.884 1.004)
 		(stroke
-			(width 0.1524)
+			(width 0.05)
 			(type solid)
 		)
 		(layer "F.CrtYd")
@@ -677,7 +677,7 @@
 		)
 	)
 	(fp_text user "${REFERENCE}"
-		(at 0 0 0)
+		(at 0 3.6 0)
 		(layer "F.Fab")
 		(uuid "dde6ed8a-7ce8-4ed7-a38c-1b578cd31854")
 		(effects

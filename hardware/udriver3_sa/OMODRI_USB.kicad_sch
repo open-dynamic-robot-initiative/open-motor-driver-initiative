@@ -2316,7 +2316,7 @@
 				)
 			)
 		)
-		(property "Footprint" "udriver3:USON_6"
+		(property "Footprint" "udriver3:SOT886_USON_6_1.45x1.0mm_P0.5mm"
 			(at 162.56 96.52 0)
 			(effects
 				(font
