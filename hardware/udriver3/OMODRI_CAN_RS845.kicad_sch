@@ -4530,7 +4530,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Connector_PinHeader_1.27mm:PinHeader_1x02_P1.27mm_Vertical"
+		(property "Footprint" "udriver3:SAMTEC_TMS-102-02-G-S-RA"
 			(at 217.17 99.06 0)
 			(effects
 				(font
@@ -4557,7 +4557,7 @@
 				(hide yes)
 			)
 		)
-		(property "DigiKey" "SAM10237-ND"
+		(property "DigiKey" "SAM12200-ND"
 			(at 217.17 99.06 0)
 			(effects
 				(font
@@ -4566,7 +4566,7 @@
 				(hide yes)
 			)
 		)
-		(property "Farnell" "2779618"
+		(property "Farnell" "3662449"
 			(at 217.17 99.06 0)
 			(effects
 				(font
@@ -4575,7 +4575,7 @@
 				(hide yes)
 			)
 		)
-		(property "Mouser" "200-TMS10202LS"
+		(property "Mouser" "200-TMS10202GSRA"
 			(at 217.17 99.06 0)
 			(effects
 				(font
@@ -4584,7 +4584,7 @@
 				(hide yes)
 			)
 		)
-		(property "Part No" "TMS-102-02-L-S"
+		(property "Part No" " TMS-102-02-G-S-RA"
 			(at 217.17 99.06 0)
 			(effects
 				(font
@@ -4593,7 +4593,7 @@
 				(hide yes)
 			)
 		)
-		(property "RS" "180-0622"
+		(property "RS" "1982925"
 			(at 217.17 99.06 0)
 			(effects
 				(font
@@ -4602,7 +4602,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC" ""
+		(property "LCSC" "C6885801"
 			(at 217.17 99.06 0)
 			(effects
 				(font

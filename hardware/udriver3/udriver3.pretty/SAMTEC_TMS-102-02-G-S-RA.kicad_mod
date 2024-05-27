@@ -1,0 +1,224 @@
+(footprint "SAMTEC_TMS-102-02-G-S-RA"
+	(version 20240108)
+	(generator "pcbnew")
+	(generator_version "8.0")
+	(layer "F.Cu")
+	(property "Reference" "REF**"
+		(at 0 -7.62 0)
+		(layer "F.SilkS")
+		(uuid "621902b5-d6b8-4c9f-967f-b677d2f82d9c")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Value" "SAMTEC_TMS-102-02-G-S-RA"
+		(at 0 2.1 0)
+		(layer "F.Fab")
+		(uuid "0b3ecc0e-45d1-425f-b434-46452d1856c3")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Footprint" "SAMTEC_TMS-102-02-G-S-RA"
+		(at 0 0 0)
+		(unlocked yes)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "16847abc-1b28-4aa9-b3b3-a50499915cf1")
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+	)
+	(property "Datasheet" ""
+		(at 0 0 0)
+		(unlocked yes)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "26956571-d528-4645-ad53-20d995c84424")
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+	)
+	(property "Description" ""
+		(at 0 0 0)
+		(unlocked yes)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "0c6420d8-9144-4684-be03-b5794ecc9bfe")
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+	)
+	(attr through_hole)
+	(fp_line
+		(start -0.635 -4.064)
+		(end 1.905 -4.064)
+		(stroke
+			(width 0.2)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "084d1c22-7877-468e-84d9-3d557ebe5c71")
+	)
+	(fp_line
+		(start -0.635 -1.524)
+		(end -0.635 -4.064)
+		(stroke
+			(width 0.2)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "1cfb5a92-8439-4727-84b9-0b71709336eb")
+	)
+	(fp_line
+		(start -0.635 -1.524)
+		(end 1.905 -1.524)
+		(stroke
+			(width 0.2)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "8fcb1d1b-5e09-453d-b2e3-c1aec27a56ee")
+	)
+	(fp_line
+		(start 1.905 -1.524)
+		(end 1.905 -4.064)
+		(stroke
+			(width 0.2)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "859086b0-5348-4697-b85e-580d1c834de0")
+	)
+	(fp_line
+		(start -0.885 -6.854)
+		(end 2.155 -6.854)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(layer "F.CrtYd")
+		(uuid "7879d413-c9b6-4df4-a66b-a19373125017")
+	)
+	(fp_line
+		(start -0.885 0.755)
+		(end -0.885 -6.854)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(layer "F.CrtYd")
+		(uuid "5ea39dc8-6cde-4cff-9443-e5d5525514f9")
+	)
+	(fp_line
+		(start -0.885 0.755)
+		(end 2.155 0.755)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(layer "F.CrtYd")
+		(uuid "1dfd719d-1c84-466b-859e-783b103e07ca")
+	)
+	(fp_line
+		(start 2.155 0.755)
+		(end 2.155 -6.854)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(layer "F.CrtYd")
+		(uuid "4bfb2123-fb89-475f-a853-613c663160b7")
+	)
+	(fp_line
+		(start -0.635 -6.604)
+		(end 1.905 -6.604)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "64511c4a-0789-4999-9a8c-74c319779107")
+	)
+	(fp_line
+		(start -0.635 -4.064)
+		(end 1.905 -4.064)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "8c988212-fa18-4253-a5d0-268ed83f6577")
+	)
+	(fp_line
+		(start -0.635 -1.524)
+		(end -0.635 -6.604)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "4fd06be0-5870-48a5-bcbe-f91f3372049d")
+	)
+	(fp_line
+		(start -0.635 -1.524)
+		(end 1.905 -1.524)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "6f316060-9ae0-4518-b8bf-7a52e827851c")
+	)
+	(fp_line
+		(start 1.905 -1.524)
+		(end 1.905 -6.604)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "f0bbd96e-c36d-4ce5-a061-afe8dcca8ec7")
+	)
+	(pad "1" thru_hole rect
+		(at 0 0)
+		(size 1 1)
+		(drill 0.65)
+		(layers "*.Cu" "*.Mask")
+		(remove_unused_layers no)
+		(solder_mask_margin 0.102)
+		(uuid "53f83614-e01e-4e60-a042-8ae54818b409")
+	)
+	(pad "2" thru_hole circle
+		(at 1.27 0)
+		(size 1 1)
+		(drill 0.65)
+		(layers "*.Cu" "*.Mask")
+		(remove_unused_layers no)
+		(solder_mask_margin 0.102)
+		(uuid "29d1fa22-8c5e-4239-942e-902509b54638")
+	)
+	(model "${KIPRJMOD}/3D/SAMTEC_TMS-102-02-G-S-RA.stp"
+		(offset
+			(xyz 0.635 1.5 1.25)
+		)
+		(scale
+			(xyz 1 1 1)
+		)
+		(rotate
+			(xyz 0 0 0)
+		)
+	)
+)
