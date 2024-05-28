@@ -11749,7 +11749,7 @@
 				)
 			)
 		)
-		(property "Value" "B3U-3100P-B"
+		(property "Value" "B3U-1000P-B"
 			(at 115.7224 138.43 0)
 			(effects
 				(font

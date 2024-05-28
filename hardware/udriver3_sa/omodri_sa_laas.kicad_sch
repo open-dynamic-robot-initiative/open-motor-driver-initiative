@@ -3334,7 +3334,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "MountingHole:MountingHole_2.2mm_M2"
+		(property "Footprint" "MountingHole:MountingHole_2.2mm_M2_ISO7380_Pad_TopBottom"
 			(at 260.35 25.4 0)
 			(effects
 				(font
@@ -3424,7 +3424,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "MountingHole:MountingHole_2.2mm_M2"
+		(property "Footprint" "MountingHole:MountingHole_2.2mm_M2_ISO7380_Pad_TopBottom"
 			(at 260.35 30.48 0)
 			(effects
 				(font
@@ -3514,7 +3514,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "MountingHole:MountingHole_2.2mm_M2"
+		(property "Footprint" "MountingHole:MountingHole_2.2mm_M2_ISO7380_Pad_TopBottom"
 			(at 260.35 35.56 0)
 			(effects
 				(font
@@ -3604,7 +3604,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "MountingHole:MountingHole_2.2mm_M2"
+		(property "Footprint" "MountingHole:MountingHole_2.2mm_M2_ISO7380_Pad_TopBottom"
 			(at 260.35 40.64 0)
 			(effects
 				(font
@@ -4559,7 +4559,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "TestPoint:TestPoint_Keystone_5019_Minature"
+		(property "Footprint" "TestPoint:TestPoint_Keystone_5015_Micro-Minature"
 			(at 265.43 50.8 0)
 			(effects
 				(font
@@ -4568,7 +4568,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.keyelco.com/product.cfm/Miniature/5019/product_id/1357"
+		(property "Datasheet" "https://www.keyelco.com/product.cfm/Micro-Miniature/5015/product_id/1353"
 			(at 265.43 50.8 0)
 			(effects
 				(font
@@ -4595,7 +4595,7 @@
 				(hide yes)
 			)
 		)
-		(property "DigiKey" "36-5019CT-ND"
+		(property "DigiKey" "36-5015CT-ND "
 			(at 260.35 50.8 0)
 			(effects
 				(font
@@ -4604,7 +4604,7 @@
 				(hide yes)
 			)
 		)
-		(property "Farnell" "2529475"
+		(property "Farnell" "3858030"
 			(at 260.35 50.8 0)
 			(effects
 				(font
@@ -4613,7 +4613,7 @@
 				(hide yes)
 			)
 		)
-		(property "Mouser" "534-5019"
+		(property "Mouser" "534-5015"
 			(at 260.35 50.8 0)
 			(effects
 				(font
@@ -4631,7 +4631,16 @@
 				(hide yes)
 			)
 		)
-		(property "Part No" "5019"
+		(property "Part No" "5015"
+			(at 260.35 50.8 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C2906768"
 			(at 260.35 50.8 0)
 			(effects
 				(font

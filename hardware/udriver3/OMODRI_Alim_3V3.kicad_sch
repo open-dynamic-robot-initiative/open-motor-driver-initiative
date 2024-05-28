@@ -1922,7 +1922,7 @@
 				)
 			)
 		)
-		(property "Value" "MPM3804GG"
+		(property "Value" "MPM3804GG-Z"
 			(at 110.49 85.09 0)
 			(effects
 				(font
@@ -1984,7 +1984,7 @@
 				(hide yes)
 			)
 		)
-		(property "Part No" "MPM3804GG"
+		(property "Part No" "MPM3804GG-Z"
 			(at 113.03 93.98 0)
 			(effects
 				(font

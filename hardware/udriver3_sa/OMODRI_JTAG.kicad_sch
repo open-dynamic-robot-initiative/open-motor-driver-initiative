@@ -908,7 +908,7 @@
 				)
 			)
 		)
-		(property "Footprint" "udriver3:PinSocket_2x04_P1.27mm_SMD_Vertical"
+		(property "Footprint" "udriver3:SAMTEC_CLP-104-02-L-D-BE"
 			(at 144.78 100.33 0)
 			(effects
 				(font

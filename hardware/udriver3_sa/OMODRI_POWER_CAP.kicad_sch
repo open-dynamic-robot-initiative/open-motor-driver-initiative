@@ -1455,147 +1455,6 @@
 		(uuid "fa2554de-3471-4c9e-b2d7-4923ff37042d")
 	)
 	(symbol
-		(lib_id "Device:C")
-		(at 101.6 88.9 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "0e9d17dd-648b-4581-a83d-bd6240e1606d")
-		(property "Reference" "C75"
-			(at 102.87 86.36 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "10u"
-			(at 102.87 91.44 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "Capacitor_SMD:C_1210_3225Metric"
-			(at 102.5652 92.71 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "https://www.murata.com/en-eu/products/productdetail?partno=GRM32EC72A106KE05%23"
-			(at 101.6 88.9 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "1210, 10uf, 100V,  ±10%, X7S, SMD MLCC"
-			(at 101.6 88.9 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "DigiKey" "490-16266-1-ND"
-			(at 101.6 88.9 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Farnell" "3581425"
-			(at 101.6 88.9 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Mouser" "81-GRM32EC72A106KE05"
-			(at 101.6 88.9 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Part No" "GRM32EC72A106KE05L"
-			(at 101.6 88.9 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "LCSC" "C576517"
-			(at 101.6 88.9 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "RS" "247-8166"
-			(at 101.6 88.9 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Manufacturer" "MURATA"
-			(at 101.6 88.9 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Assembling" "SMD"
-			(at 101.6 88.9 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "49613d19-4292-4a4e-a544-209deb49f3e2")
-		)
-		(pin "2"
-			(uuid "9e598bc7-5512-45f4-bbcf-b3ef52df70dd")
-		)
-		(instances
-			(project "omodri_sa_laas"
-				(path "/de5b13f0-933a-4c4d-9979-13dc57b13241/00000000-0000-0000-0000-00005f3a3f16/ad1c315f-0cb6-4641-918d-19b8fecb440d"
-					(reference "C75")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
 		(lib_id "power:GND")
 		(at 254 101.6 0)
 		(unit 1)
@@ -2166,7 +2025,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "10u"
+		(property "Value" "4.7u"
 			(at 39.37 91.44 0)
 			(effects
 				(font
@@ -2175,7 +2034,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_1210_3225Metric"
+		(property "Footprint" "Capacitor_SMD:C_1206_3216Metric"
 			(at 39.0652 92.71 0)
 			(effects
 				(font
@@ -2184,7 +2043,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.murata.com/en-eu/products/productdetail?partno=GRM32EC72A106KE05%23"
+		(property "Datasheet" "https://www.murata.com/en-eu/products/productdetail?partno=GRM31CC72A475KE11%23"
 			(at 38.1 88.9 0)
 			(effects
 				(font
@@ -2193,7 +2052,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "1210, 10uf, 100V,  ±10%, X7S, SMD MLCC"
+		(property "Description" "1206, 4.7uf, 100V,  ±10%, X7S, SMD MLCC"
 			(at 38.1 88.9 0)
 			(effects
 				(font
@@ -2202,7 +2061,7 @@
 				(hide yes)
 			)
 		)
-		(property "DigiKey" "490-16266-1-ND"
+		(property "DigiKey" "490-18620-1-ND"
 			(at 38.1 88.9 0)
 			(effects
 				(font
@@ -2211,7 +2070,7 @@
 				(hide yes)
 			)
 		)
-		(property "Farnell" "3581425"
+		(property "Farnell" "3790450"
 			(at 38.1 88.9 0)
 			(effects
 				(font
@@ -2220,7 +2079,7 @@
 				(hide yes)
 			)
 		)
-		(property "Mouser" "81-GRM32EC72A106KE05"
+		(property "Mouser" "81-GRM31CC72A475KE1L"
 			(at 38.1 88.9 0)
 			(effects
 				(font
@@ -2229,7 +2088,7 @@
 				(hide yes)
 			)
 		)
-		(property "Part No" "GRM32EC72A106KE05L"
+		(property "Part No" "GRM31CC72A475KE11#"
 			(at 38.1 88.9 0)
 			(effects
 				(font
@@ -2238,7 +2097,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC" "C576517"
+		(property "LCSC" "  C237304"
 			(at 38.1 88.9 0)
 			(effects
 				(font
@@ -2247,7 +2106,7 @@
 				(hide yes)
 			)
 		)
-		(property "RS" "247-8166"
+		(property "RS" "2478147"
 			(at 38.1 88.9 0)
 			(effects
 				(font
@@ -2432,288 +2291,6 @@
 	)
 	(symbol
 		(lib_id "Device:C")
-		(at 50.8 88.9 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "373ec618-af9e-4d7b-8126-7de52331ed9b")
-		(property "Reference" "C71"
-			(at 52.07 86.36 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "10u"
-			(at 52.07 91.44 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "Capacitor_SMD:C_1210_3225Metric"
-			(at 51.7652 92.71 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "https://www.murata.com/en-eu/products/productdetail?partno=GRM32EC72A106KE05%23"
-			(at 50.8 88.9 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "1210, 10uf, 100V,  ±10%, X7S, SMD MLCC"
-			(at 50.8 88.9 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "DigiKey" "490-16266-1-ND"
-			(at 50.8 88.9 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Farnell" "3581425"
-			(at 50.8 88.9 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Mouser" "81-GRM32EC72A106KE05"
-			(at 50.8 88.9 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Part No" "GRM32EC72A106KE05L"
-			(at 50.8 88.9 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "LCSC" "C576517"
-			(at 50.8 88.9 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "RS" "247-8166"
-			(at 50.8 88.9 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Manufacturer" "MURATA"
-			(at 50.8 88.9 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Assembling" "SMD"
-			(at 50.8 88.9 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "c98dc002-a77d-431c-92df-adb0dd6a4092")
-		)
-		(pin "2"
-			(uuid "985718cb-f0cd-49eb-99d4-47e7da2fb1dd")
-		)
-		(instances
-			(project "omodri_sa_laas"
-				(path "/de5b13f0-933a-4c4d-9979-13dc57b13241/00000000-0000-0000-0000-00005f3a3f16/ad1c315f-0cb6-4641-918d-19b8fecb440d"
-					(reference "C71")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Device:C")
-		(at 88.9 88.9 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "43f676b0-41dc-465e-b0c2-e9617b3d2284")
-		(property "Reference" "C74"
-			(at 90.17 86.36 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "10u"
-			(at 90.17 91.44 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "Capacitor_SMD:C_1210_3225Metric"
-			(at 89.8652 92.71 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "https://www.murata.com/en-eu/products/productdetail?partno=GRM32EC72A106KE05%23"
-			(at 88.9 88.9 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "1210, 10uf, 100V,  ±10%, X7S, SMD MLCC"
-			(at 88.9 88.9 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "DigiKey" "490-16266-1-ND"
-			(at 88.9 88.9 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Farnell" "3581425"
-			(at 88.9 88.9 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Mouser" "81-GRM32EC72A106KE05"
-			(at 88.9 88.9 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Part No" "GRM32EC72A106KE05L"
-			(at 88.9 88.9 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "LCSC" "C576517"
-			(at 88.9 88.9 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "RS" "247-8166"
-			(at 88.9 88.9 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Manufacturer" "MURATA"
-			(at 88.9 88.9 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Assembling" "SMD"
-			(at 88.9 88.9 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "169addb0-045b-464a-ba01-fe3c367a2a9b")
-		)
-		(pin "2"
-			(uuid "f40ea410-8d6f-4363-a23e-058818907176")
-		)
-		(instances
-			(project "omodri_sa_laas"
-				(path "/de5b13f0-933a-4c4d-9979-13dc57b13241/00000000-0000-0000-0000-00005f3a3f16/ad1c315f-0cb6-4641-918d-19b8fecb440d"
-					(reference "C74")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Device:C")
 		(at 114.3 88.9 0)
 		(unit 1)
 		(exclude_from_sim no)
@@ -2848,6 +2425,147 @@
 			(project "omodri_sa_laas"
 				(path "/de5b13f0-933a-4c4d-9979-13dc57b13241/00000000-0000-0000-0000-00005f3a3f16/ad1c315f-0cb6-4641-918d-19b8fecb440d"
 					(reference "C76")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:C")
+		(at 50.8 88.9 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "45e2e2ac-6357-411e-b4c4-cba15cb884ef")
+		(property "Reference" "C71"
+			(at 52.07 86.36 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "4.7u"
+			(at 52.07 91.44 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_1206_3216Metric"
+			(at 51.7652 92.71 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://www.murata.com/en-eu/products/productdetail?partno=GRM31CC72A475KE11%23"
+			(at 50.8 88.9 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "1206, 4.7uf, 100V,  ±10%, X7S, SMD MLCC"
+			(at 50.8 88.9 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "DigiKey" "490-18620-1-ND"
+			(at 50.8 88.9 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Farnell" "3790450"
+			(at 50.8 88.9 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Mouser" "81-GRM31CC72A475KE1L"
+			(at 50.8 88.9 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Part No" "GRM31CC72A475KE11#"
+			(at 50.8 88.9 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "  C237304"
+			(at 50.8 88.9 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "RS" "2478147"
+			(at 50.8 88.9 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer" "MURATA"
+			(at 50.8 88.9 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Assembling" "SMD"
+			(at 50.8 88.9 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "3cdf836a-3456-498e-a438-def93acf02b7")
+		)
+		(pin "2"
+			(uuid "7ff43208-f166-4d19-aaa7-b75e967b07e6")
+		)
+		(instances
+			(project "omodri_sa_laas"
+				(path "/de5b13f0-933a-4c4d-9979-13dc57b13241/00000000-0000-0000-0000-00005f3a3f16/ad1c315f-0cb6-4641-918d-19b8fecb440d"
+					(reference "C71")
 					(unit 1)
 				)
 			)
@@ -3110,6 +2828,147 @@
 			(project "omodri_sa_laas"
 				(path "/de5b13f0-933a-4c4d-9979-13dc57b13241/00000000-0000-0000-0000-00005f3a3f16/ad1c315f-0cb6-4641-918d-19b8fecb440d"
 					(reference "#PWR0121")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:C")
+		(at 88.9 88.9 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "547195c8-2b9a-4409-8728-175e1280d466")
+		(property "Reference" "C74"
+			(at 90.17 86.36 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "4.7u"
+			(at 90.17 91.44 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_1206_3216Metric"
+			(at 89.8652 92.71 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://www.murata.com/en-eu/products/productdetail?partno=GRM31CC72A475KE11%23"
+			(at 88.9 88.9 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "1206, 4.7uf, 100V,  ±10%, X7S, SMD MLCC"
+			(at 88.9 88.9 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "DigiKey" "490-18620-1-ND"
+			(at 88.9 88.9 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Farnell" "3790450"
+			(at 88.9 88.9 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Mouser" "81-GRM31CC72A475KE1L"
+			(at 88.9 88.9 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Part No" "GRM31CC72A475KE11#"
+			(at 88.9 88.9 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "  C237304"
+			(at 88.9 88.9 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "RS" "2478147"
+			(at 88.9 88.9 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer" "MURATA"
+			(at 88.9 88.9 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Assembling" "SMD"
+			(at 88.9 88.9 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "71ea96a0-4f75-4095-979c-74bbc23ab32d")
+		)
+		(pin "2"
+			(uuid "2c953cd6-1467-485b-a29e-5a16f53445bd")
+		)
+		(instances
+			(project "omodri_sa_laas"
+				(path "/de5b13f0-933a-4c4d-9979-13dc57b13241/00000000-0000-0000-0000-00005f3a3f16/ad1c315f-0cb6-4641-918d-19b8fecb440d"
+					(reference "C74")
 					(unit 1)
 				)
 			)
@@ -3518,15 +3377,15 @@
 	)
 	(symbol
 		(lib_id "Device:C")
-		(at 63.5 88.9 0)
+		(at 101.6 88.9 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "6898ecb5-a29e-4203-819a-cc0c8708a283")
-		(property "Reference" "C72"
-			(at 64.77 86.36 0)
+		(uuid "659f6dea-9ff3-4bb7-8819-ef913ae4048c")
+		(property "Reference" "C75"
+			(at 102.87 86.36 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3534,8 +3393,8 @@
 				(justify left)
 			)
 		)
-		(property "Value" "10u"
-			(at 64.77 91.44 0)
+		(property "Value" "4.7u"
+			(at 102.87 91.44 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3543,8 +3402,8 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_1210_3225Metric"
-			(at 64.4652 92.71 0)
+		(property "Footprint" "Capacitor_SMD:C_1206_3216Metric"
+			(at 102.5652 92.71 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3552,8 +3411,8 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.murata.com/en-eu/products/productdetail?partno=GRM32EC72A106KE05%23"
-			(at 63.5 88.9 0)
+		(property "Datasheet" "https://www.murata.com/en-eu/products/productdetail?partno=GRM31CC72A475KE11%23"
+			(at 101.6 88.9 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3561,8 +3420,8 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "1210, 10uf, 100V,  ±10%, X7S, SMD MLCC"
-			(at 63.5 88.9 0)
+		(property "Description" "1206, 4.7uf, 100V,  ±10%, X7S, SMD MLCC"
+			(at 101.6 88.9 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3570,8 +3429,8 @@
 				(hide yes)
 			)
 		)
-		(property "DigiKey" "490-16266-1-ND"
-			(at 63.5 88.9 0)
+		(property "DigiKey" "490-18620-1-ND"
+			(at 101.6 88.9 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3579,8 +3438,8 @@
 				(hide yes)
 			)
 		)
-		(property "Farnell" "3581425"
-			(at 63.5 88.9 0)
+		(property "Farnell" "3790450"
+			(at 101.6 88.9 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3588,8 +3447,8 @@
 				(hide yes)
 			)
 		)
-		(property "Mouser" "81-GRM32EC72A106KE05"
-			(at 63.5 88.9 0)
+		(property "Mouser" "81-GRM31CC72A475KE1L"
+			(at 101.6 88.9 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3597,8 +3456,8 @@
 				(hide yes)
 			)
 		)
-		(property "Part No" "GRM32EC72A106KE05L"
-			(at 63.5 88.9 0)
+		(property "Part No" "GRM31CC72A475KE11#"
+			(at 101.6 88.9 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3606,8 +3465,8 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC" "C576517"
-			(at 63.5 88.9 0)
+		(property "LCSC" "  C237304"
+			(at 101.6 88.9 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3615,8 +3474,8 @@
 				(hide yes)
 			)
 		)
-		(property "RS" "247-8166"
-			(at 63.5 88.9 0)
+		(property "RS" "2478147"
+			(at 101.6 88.9 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3625,7 +3484,7 @@
 			)
 		)
 		(property "Manufacturer" "MURATA"
-			(at 63.5 88.9 0)
+			(at 101.6 88.9 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3634,7 +3493,7 @@
 			)
 		)
 		(property "Assembling" "SMD"
-			(at 63.5 88.9 0)
+			(at 101.6 88.9 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3643,15 +3502,15 @@
 			)
 		)
 		(pin "1"
-			(uuid "44a3d3ed-7292-4943-b469-d38b10eee9f5")
+			(uuid "d7472d05-ffa5-4ce5-b41f-58b70aa78dce")
 		)
 		(pin "2"
-			(uuid "e7186c9a-7c7a-49fc-a43f-44865b97f271")
+			(uuid "0aaea2a6-ce2b-437c-966a-71b1375d02e6")
 		)
 		(instances
 			(project "omodri_sa_laas"
 				(path "/de5b13f0-933a-4c4d-9979-13dc57b13241/00000000-0000-0000-0000-00005f3a3f16/ad1c315f-0cb6-4641-918d-19b8fecb440d"
-					(reference "C72")
+					(reference "C75")
 					(unit 1)
 				)
 			)
@@ -4140,6 +3999,147 @@
 			(project "omodri_sa_laas"
 				(path "/de5b13f0-933a-4c4d-9979-13dc57b13241/00000000-0000-0000-0000-00005f3a3f16/ad1c315f-0cb6-4641-918d-19b8fecb440d"
 					(reference "C79")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:C")
+		(at 76.2 88.9 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "77da478b-14f9-4f8e-bbb4-c4230a63702c")
+		(property "Reference" "C73"
+			(at 77.47 86.36 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "4.7u"
+			(at 77.47 91.44 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_1206_3216Metric"
+			(at 77.1652 92.71 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://www.murata.com/en-eu/products/productdetail?partno=GRM31CC72A475KE11%23"
+			(at 76.2 88.9 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "1206, 4.7uf, 100V,  ±10%, X7S, SMD MLCC"
+			(at 76.2 88.9 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "DigiKey" "490-18620-1-ND"
+			(at 76.2 88.9 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Farnell" "3790450"
+			(at 76.2 88.9 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Mouser" "81-GRM31CC72A475KE1L"
+			(at 76.2 88.9 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Part No" "GRM31CC72A475KE11#"
+			(at 76.2 88.9 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "  C237304"
+			(at 76.2 88.9 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "RS" "2478147"
+			(at 76.2 88.9 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer" "MURATA"
+			(at 76.2 88.9 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Assembling" "SMD"
+			(at 76.2 88.9 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "ba619977-db21-46fb-a8b4-bad52e0f8f86")
+		)
+		(pin "2"
+			(uuid "ce1a73bb-ed18-4d5f-b882-032b9f91bbfc")
+		)
+		(instances
+			(project "omodri_sa_laas"
+				(path "/de5b13f0-933a-4c4d-9979-13dc57b13241/00000000-0000-0000-0000-00005f3a3f16/ad1c315f-0cb6-4641-918d-19b8fecb440d"
+					(reference "C73")
 					(unit 1)
 				)
 			)
@@ -4895,15 +4895,15 @@
 	)
 	(symbol
 		(lib_id "Device:C")
-		(at 76.2 88.9 0)
+		(at 63.5 88.9 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "c2a7540a-acff-4e4c-91e9-73a28293b3ae")
-		(property "Reference" "C73"
-			(at 77.47 86.36 0)
+		(uuid "c3cbb680-2785-4851-9988-f7f8d2abf925")
+		(property "Reference" "C72"
+			(at 64.77 86.36 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4911,8 +4911,8 @@
 				(justify left)
 			)
 		)
-		(property "Value" "10u"
-			(at 77.47 91.44 0)
+		(property "Value" "4.7u"
+			(at 64.77 91.44 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4920,8 +4920,8 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_1210_3225Metric"
-			(at 77.1652 92.71 0)
+		(property "Footprint" "Capacitor_SMD:C_1206_3216Metric"
+			(at 64.4652 92.71 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4929,8 +4929,8 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.murata.com/en-eu/products/productdetail?partno=GRM32EC72A106KE05%23"
-			(at 76.2 88.9 0)
+		(property "Datasheet" "https://www.murata.com/en-eu/products/productdetail?partno=GRM31CC72A475KE11%23"
+			(at 63.5 88.9 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4938,8 +4938,8 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "1210, 10uf, 100V,  ±10%, X7S, SMD MLCC"
-			(at 76.2 88.9 0)
+		(property "Description" "1206, 4.7uf, 100V,  ±10%, X7S, SMD MLCC"
+			(at 63.5 88.9 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4947,8 +4947,8 @@
 				(hide yes)
 			)
 		)
-		(property "DigiKey" "490-16266-1-ND"
-			(at 76.2 88.9 0)
+		(property "DigiKey" "490-18620-1-ND"
+			(at 63.5 88.9 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4956,8 +4956,8 @@
 				(hide yes)
 			)
 		)
-		(property "Farnell" "3581425"
-			(at 76.2 88.9 0)
+		(property "Farnell" "3790450"
+			(at 63.5 88.9 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4965,8 +4965,8 @@
 				(hide yes)
 			)
 		)
-		(property "Mouser" "81-GRM32EC72A106KE05"
-			(at 76.2 88.9 0)
+		(property "Mouser" "81-GRM31CC72A475KE1L"
+			(at 63.5 88.9 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4974,8 +4974,8 @@
 				(hide yes)
 			)
 		)
-		(property "Part No" "GRM32EC72A106KE05L"
-			(at 76.2 88.9 0)
+		(property "Part No" "GRM31CC72A475KE11#"
+			(at 63.5 88.9 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4983,8 +4983,8 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC" "C576517"
-			(at 76.2 88.9 0)
+		(property "LCSC" "  C237304"
+			(at 63.5 88.9 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4992,8 +4992,8 @@
 				(hide yes)
 			)
 		)
-		(property "RS" "247-8166"
-			(at 76.2 88.9 0)
+		(property "RS" "2478147"
+			(at 63.5 88.9 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5002,7 +5002,7 @@
 			)
 		)
 		(property "Manufacturer" "MURATA"
-			(at 76.2 88.9 0)
+			(at 63.5 88.9 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5011,7 +5011,7 @@
 			)
 		)
 		(property "Assembling" "SMD"
-			(at 76.2 88.9 0)
+			(at 63.5 88.9 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5020,15 +5020,15 @@
 			)
 		)
 		(pin "1"
-			(uuid "e0347fb2-b1bc-4f46-9ee1-5e1ca8730dd3")
+			(uuid "bf84df79-58e7-4753-8744-ef2cf2179b99")
 		)
 		(pin "2"
-			(uuid "af80f77d-1832-4315-89fc-e8318039af91")
+			(uuid "de0bdb7c-3aaa-4056-ab8f-618420415933")
 		)
 		(instances
 			(project "omodri_sa_laas"
 				(path "/de5b13f0-933a-4c4d-9979-13dc57b13241/00000000-0000-0000-0000-00005f3a3f16/ad1c315f-0cb6-4641-918d-19b8fecb440d"
-					(reference "C73")
+					(reference "C72")
 					(unit 1)
 				)
 			)
