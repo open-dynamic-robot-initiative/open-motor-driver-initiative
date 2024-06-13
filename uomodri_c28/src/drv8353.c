@@ -10,7 +10,7 @@
 /***********************************************************************
  * FUNCTIONS DECLARATION
  ***********************************************************************/
-static bool_t   DRV_Enable(const drv_cfg_t*);
+static uint32_t DRV_Enable(const drv_cfg_t*);
 static bool_t   DRV_SetConfig(const drv_cfg_t*, drv_reg_t*);
 static void     DRV_Calibration(const drv_cfg_t*, drv_reg_t*);
 uint16_t        DRV_readOne(const drv_cfg_t*, DRV_Address_e);
@@ -25,44 +25,67 @@ void            DRV_writeOne(const drv_cfg_t*, DRV_Address_e, uint16_t);
  */
 bool_t DRV_ini(const drv_cfg_t* p_drvCfg, drv_reg_t* p_drvReg)
 {
-    bool_t drv_test     = false;
+    bool_t drv_err      = true;
     if((p_drvCfg != NULL) && (p_drvReg != NULL))
     {
-        if(DRV_Enable(p_drvCfg))
+        if(DRV_Enable(p_drvCfg) == 0)
         {
             if(DRV_SetConfig(p_drvCfg, p_drvReg))
             {
                 DRV_Calibration(p_drvCfg, p_drvReg);
-                drv_test= true;
+                drv_err = false;
             }
         }
     }
 
-    return(drv_test);
+    return(drv_err);
 }
 
 /**
  * @brief       Enable the DRV IC pin.
  * @param[in]   *p_drv      Pointer on the DRV definition structure
- * @return      bool_t      True if DRV is enable else DRV is in fault state.
+ * @return      uint32_t    0 if DRV is enable else DRV is in fault state.
  */
-static bool_t DRV_Enable(const drv_cfg_t* p_drvCfg)
+static uint32_t DRV_Enable(const drv_cfg_t* p_drvCfg)
 {
+    drv_stat0x_u drv_status = {.all = 0};
     uint16_t cpt_time_out   = 0;
-    bool_t drv_enable       = true;
+//    uint16_t test_status        = 1;
+//    bool_t drv_enable       = true;
     // Enable the DRV8353
     GPIO_writePin(p_drvCfg->gpioNumber_EN, 1);
     // Wait 1ms
     DEVICE_DELAY_US(1000U);
     // Make sure the FAULT bit is not set during startup
-    while(drv_enable && (DRV_readOne(p_drvCfg, DRV_ADDRESS_STATUS_0) & FLT_STATUS_FAULT_Msk))
-        drv_enable  = (++cpt_time_out < 1000) ? (true) : (false);
+//    while(drv_enable && (DRV_readOne(p_drvCfg, DRV_ADDRESS_STATUS_0) & FLT_STATUS_FAULT_Msk))
+//        drv_enable  = (++cpt_time_out < 1000) ? (true) : (false);
+    while((++cpt_time_out < 1000) && DRV_readOne(p_drvCfg, DRV_ADDRESS_STATUS_0));
+//            drv_enable  = (++cpt_time_out < 1000) ? (true) : (false);
+
+    drv_status.stat00.all   = DRV_readOne(p_drvCfg, DRV_ADDRESS_STATUS_0);
+    drv_status.stat01.all   = DRV_readOne(p_drvCfg, DRV_ADDRESS_STATUS_1);
+
+    //    if((DRV_readOne(p_drvCfg, DRV_ADDRESS_STATUS_0) & FLT_STATUS_FAULT_Msk) == 0)
+//        drv_enable = true;
+//    if(DRV_readOne(p_drvCfg, DRV_ADDRESS_STATUS_0))
+//        return (1);
+
+//    test_status = DRV_readOne(p_drvCfg, DRV_ADDRESS_CONTROL_2);
+//    if (test_status == 0)
+//        test_status = DRV_readOne(p_drvCfg, DRV_ADDRESS_STATUS_1);
+//    test_status = DRV_readOne(p_drvCfg, DRV_ADDRESS_STATUS_1);
     // Wait for the DRV8353 to go through start up sequence
     DEVICE_DELAY_US(1000U);
+//    test_status = GPIO_readPin(p_drvCfg->gpioNumber_FAULT) ;
+//    test_status = 1;
     // Check that fault pin is similar as register bit. FAULT is active low.
-    drv_enable      = drv_enable && GPIO_readPin(p_drvCfg->gpioNumber_FAULT);
+    //drv_enable      = drv_enable && GPIO_readPin(p_drvCfg->gpioNumber_FAULT);
+    drv_status.stat00.FAULT = !GPIO_readPin(p_drvCfg->gpioNumber_FAULT);
 
-    return(drv_enable);
+
+//    if (GPIO_readPin(p_drvCfg->gpioNumber_FAULT))
+//        return (2);
+    return(drv_status.all);
 }
 
 /**
@@ -123,15 +146,19 @@ static void DRV_Calibration(const drv_cfg_t* p_drvCfg, drv_reg_t* p_drvReg)
  * @brief       Read the DRV8353 status registers
  * @param[in]   *p_drv      Pointer on the DRV definition structure
  */
-void DRV_readStatus(const drv_cfg_t* p_drvCfg, drv_reg_t* p_drvReg)
+uint32_t DRV_readStatus(const drv_cfg_t* p_drvCfg, drv_reg_t* p_drvReg)
 {
+    drv_stat0x_u drv_err_status = {.all = 0};
+
     if((p_drvCfg != NULL) && (p_drvReg != NULL))
     {
         p_drvReg->stat_reg_00.all   = DRV_readOne(p_drvCfg, DRV_ADDRESS_STATUS_0); // Read Status Register 0
         p_drvReg->stat_reg_01.all   = DRV_readOne(p_drvCfg, DRV_ADDRESS_STATUS_1); // Read Status Register 1
     }
+    drv_err_status.stat00.all       = p_drvReg->stat_reg_00.all;
+    drv_err_status.stat01.all       = p_drvReg->stat_reg_01.all;
 
-    return;
+    return(drv_err_status.all);
 }
 
 /**

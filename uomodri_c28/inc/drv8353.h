@@ -363,6 +363,20 @@ typedef union __drv_stat01_u__
 } drv_stat01_u;
 
 /**
+ * @union   drv_stat0x_u
+ * @brief   Object for read/write operations associated with DRV8353 STATUS00 &STATUS01 registers
+ */
+typedef union __drv_stat0x_u__
+{
+    uint32_t        all;                /*!< Long (32bits) type access */
+    struct
+    {
+        drv_stat00_u stat00;
+        drv_stat01_u stat01;
+    };
+} drv_stat0x_u;
+
+/**
  * @union   drv_ctrl02_u
  * @brief   Object for read/write operations associated with DRV8353 CTRL02 register
  */
@@ -535,7 +549,7 @@ typedef union _drv_msg_u_
  * FUNCTIONS DECLARATION
  ***********************************************************************/
 bool_t DRV_ini(const drv_cfg_t*, drv_reg_t*);
-void DRV_readStatus(const drv_cfg_t*, drv_reg_t*);
+uint32_t DRV_readStatus(const drv_cfg_t*, drv_reg_t*);
 void DRV_readAll(const drv_cfg_t*, drv_reg_t*);
 void DRV_writeAll(const drv_cfg_t*, drv_reg_t*);
 

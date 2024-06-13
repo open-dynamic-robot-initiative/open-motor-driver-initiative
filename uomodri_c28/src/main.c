@@ -83,8 +83,8 @@ void main(void)
     // Hardware Abstraction Layer initialization
     HAL_ini(&hal);
     // DRV8353 initialization
-    cmd_uomodri[MOTOR_1].statusField.drv_initErr = !DRV_ini(&drv_cfg[MOTOR_1], &drv_reg[MOTOR_1]);
-    cmd_uomodri[MOTOR_2].statusField.drv_initErr = !DRV_ini(&drv_cfg[MOTOR_2], &drv_reg[MOTOR_2]);
+    cmd_uomodri[MOTOR_1].statusField.drv_initErr = DRV_ini(&drv_cfg[MOTOR_1], &drv_reg[MOTOR_1]);
+    cmd_uomodri[MOTOR_2].statusField.drv_initErr = DRV_ini(&drv_cfg[MOTOR_2], &drv_reg[MOTOR_2]);
     // Start ADC offset calibration on CLA
     CLA_forceTasks(CLA1_BASE, CLA_ADC_CALIB_TASK_FLAG);
     // Interrupts initialization
