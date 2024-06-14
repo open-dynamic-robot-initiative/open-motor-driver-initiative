@@ -4,7 +4,7 @@
 #include "f2838x_device.h"
 #include "driverlib.h"
 #include "device.h"
-#include "uomodri_user_defines.h"
+#include "config/uomodri_user_defines.h"
 #include "drv8353.h"
 
 /***********************************************************************

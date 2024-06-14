@@ -8,7 +8,8 @@
 #include <string.h>
 #include <hw_types.h>
 
-
+#include "f2838x_device.h"        // F2838x Headerfile Include File
+#include "f2838x_examples.h"      // F2838x Examples Include File
 /***********************************************************************
  * ENUM TYPES
  ***********************************************************************/

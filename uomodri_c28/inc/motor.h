@@ -9,7 +9,7 @@
 #include "f2838x_device.h"
 
 #include "foc.h"
-#include "uomodri_user_defines.h"
+#include "config/uomodri_user_defines.h"
 
 /***********************************************************************
  * ENUM TYPES

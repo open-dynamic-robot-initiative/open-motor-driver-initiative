@@ -7,7 +7,7 @@
 #include <stdint.h>
 #include <hw_types.h>
 #ifdef CPU1
-#include "uomodri_user_defines.h"
+#include "config/uomodri_user_defines.h"
 #else
 #include "driverlib_cm.h"
 #include "cm.h"

@@ -8,7 +8,7 @@
 #include <hw_types.h>
 #ifdef CPU1
 #include <f2838x_device.h>
-#include "uomodri_user_defines.h"
+#include "config/uomodri_user_defines.h"
 #else
 #include "uomodri_cm_user_defines.h"
 #endif

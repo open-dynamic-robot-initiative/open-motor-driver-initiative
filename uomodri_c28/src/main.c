@@ -16,9 +16,9 @@
 #include "ws2812b.h"
 #include "motor.h"
 #include "communication.h"
-#include "uomodri_user_defines.h"
-#include "uomodri_hal_config_handlers.h"
-#include "uomodri_prj_config_handlers.h"
+#include "config/uomodri_user_defines.h"
+//#include "uomodri_hal_config_handlers.h"
+//#include "uomodri_prj_config_handlers.h"
 
 /***********************************************************************
  * VARIABLES

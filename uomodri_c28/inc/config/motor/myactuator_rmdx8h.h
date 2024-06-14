@@ -14,12 +14,12 @@
 /***********************************************************************
  * MOTORS DEFINES
  ***********************************************************************/
-#define MYACTUATOR_RMDX8H_KV                                (300.0f)    // Motor constant (rpm/V)
+#define MYACTUATOR_RMDX8H_KV                                (33.0f)     // Motor constant (rpm/V)
 #define MYACTUATOR_RMDX8H_KE                                (FM_SQRT3 / (MYACTUATOR_RMDX8H_KV * FM_RPM2RADPS)) // Motor back EMF constant (V/rad/s)
-#define MYACTUATOR_RMDX8H_KI                                (0.1f)      // Motor torque constant (N.m/A)
-#define MYACTUATOR_RMDX8H_RS                                (0.40f)     // Stator resistance (ohm)
-#define MYACTUATOR_RMDX8H_LS                                (210e-6f)   // Stator d-axis inductance (H)
-#define MYACTUATOR_RMDX8H_POLES_PAIRS                       (12.0f)     // Number of poles
+#define MYACTUATOR_RMDX8H_KI                                (0.3f)      // Motor torque constant (N.m/A)
+#define MYACTUATOR_RMDX8H_RS                                (0.52f)     // Stator resistance (ohm)
+#define MYACTUATOR_RMDX8H_LS                                (260e-6)    // Stator d-axis inductance (H)
+#define MYACTUATOR_RMDX8H_POLES_PAIRS                       (20.0f)     // Number of poles
 #define MYACTUATOR_RMDX8H_CURRENT_INIT_MAX                  (2.0f)      // Current on d-axis for motor alignment (A)
 #define MYACTUATOR_RMDX8H_CURRENT_CMD_SAT_MAX               (10.0f)
 

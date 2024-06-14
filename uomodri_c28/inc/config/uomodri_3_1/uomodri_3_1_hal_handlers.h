@@ -12,7 +12,7 @@
 //#include "f2838x_cla_typedefs.h"
 //#include "driverlib.h"
 //#include "f2838x_device.h"
-#include "device.h"
+//#include "/home/jmanhes/ti/c2000/C2000Ware_5_02_00_00/device_support/f2838x/common/include/device.h"
 //#include <board.h>
 
 #include "../../hal.h"
