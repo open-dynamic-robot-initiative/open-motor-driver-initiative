@@ -4,24 +4,28 @@
 /***********************************************************************
  * INCLUDES
  ***********************************************************************/
-#include <stdint.h>
-#if (CLA_CORE_ENABLE)
+////#include <stdint.h>
+#ifdef __TMS320C28XX_CLA__
 #include "CLAmath.h"
 #else
-#include <hw_types.h>
 #include <math.h>
 #endif
-#include "driverlib.h"
+
+////#include "driverlib.h"
 #include "f2838x_device.h"
+#include "device.h"
+
 #include "foc.h"
-#include "motor.h"
+////#include "motor.h"
 #include "encoder.h"
-#include "uomodri_user_defines.h"
+#include "drv8353.h"
+#include "main.h"
+#include "config/uomodri_user_defines.h"
 
 /***********************************************************************
  * DEFINES
  ***********************************************************************/
-#if (CLA_CORE_ENABLE)
+#ifdef __TMS320C28XX_CLA__
 #define MMAX3(x, y, z)                          (__mmaxf32(__mmaxf32((x), (y)), (z)))
 #define MMIN3(x, y, z)                          (__mminf32(__mminf32((x), (y)), (z)))
 #define MSATF32(x, y, z)                        (__mmaxf32(__mminf32((x), (y)), (z)))
@@ -34,9 +38,11 @@
 /***********************************************************************
  * VARIABLES
  ***********************************************************************/
-#if (CLA_CORE_ENABLE)
+#ifdef __TMS320C28XX_CLA__
 extern motor_t  motor_m1;
+#if (USE_SINGLE_AXIS_CONFIG == false)
 extern motor_t  motor_m2;
+#endif
 #else
 extern static motor_t   motor[];
 #endif
@@ -44,7 +50,7 @@ extern static motor_t   motor[];
 /***********************************************************************
  * FUNCTIONS DECLARATION
  ***********************************************************************/
-#if (CLA_CORE_ENABLE)
+#ifdef __TMS320C28XX_CLA__
 extern float32_t __mminf32(float32_t, float32_t);
 extern float32_t __mmaxf32(float32_t, float32_t);
 extern float32_t __mfracf32(float32_t);
@@ -63,6 +69,7 @@ __attribute__((interrupt)) void Cla1Task8(void);
 
 inline float32_t __msatf32(float32_t, float32_t, float32_t);
 #endif
+
 void ADC_offsetCalib(motor_t*);
 inline void ENC_resetStruct(encoder_t*);
 inline void ENC_resetPeriph(encoder_t*);
@@ -86,7 +93,7 @@ bool_t MOT_runControl(motor_t*);
 /***********************************************************************
  * FUNCTIONS DEFINITIONS
  ***********************************************************************/
-#if (CLA_CORE_ENABLE)
+#ifdef __TMS320C28XX_CLA__
 /**
  * @brief           Saturation function.
  *                  out = a, if sat_min < a < sat_max,
@@ -222,12 +229,14 @@ inline void ENC_getPosition(encoder_t* p_enc)
     // Compute electrical angle (each pole pair is normalized between 0 and 1)
     float32_t thetaElec     = (float32_t)p_enc->polePairs * p_enc->thetaMech[NEW];
     // Compute electrical & mechanical angle (in rad)
-#if (defined CPU1) && (CLA_CORE_ENABLE)
+#ifdef CPU1
+#ifdef __TMS320C28XX_CLA__
     p_enc->thetaElec        = FM_ROUND2RAD * __mfracf32(thetaElec);
     p_enc->thetaMech[NEW]   = FM_ROUND2RAD * p_enc->thetaMech[NEW];
-#elif (defined CPU1)
+#else
     p_enc->thetaElec        = __mpy2pif32(__fracf32(thetaElec));
     p_enc->thetaMech[NEW]   = __mpy2pif32(p_enc->thetaMech[NEW]);
+#endif
 #else
     p_enc->thetaElec        = __mpy2pif32(p_enc->thetaElec - (float32_t)((int32_t)thetaElec));
     p_enc->thetaMech[NEW]   = __mpy2pif32(p_enc->thetaMech[NEW]);
@@ -252,7 +261,7 @@ inline void ENC_getSpeed(encoder_t* p_enc)
     if(EQEP_getInterruptStatus(p_enc->eqepBase) & EQEP_INT_UNIT_TIME_OUT)
     {
         p_speed->theta[OLD]     = p_speed->theta[NEW];
-#if (CLA_CORE_ENABLE)
+#ifdef __TMS320C28XX_CLA__
         p_speed->theta[NEW]     = FM_ROUND2RAD * (float32_t)EQEP_getPositionLatch(eqepBase) * p_enc->thetaMechScaler;
 #else
         p_speed->theta[NEW]     = __mpy2pif32((float32_t)EQEP_getPositionLatch(eqepBase) * p_enc->thetaMechScaler);
@@ -340,7 +349,7 @@ inline void ENC_getTheta(encoder_t* p_enc)
     // Saturate turnNb between -128 and 127
     p_enc->turnNb                   = (maxRollOver) ? (MIN_ROLLOVER) : (p_enc->turnNb);
     p_enc->turnNb                   = (minRollOver) ? (MAX_ROLLOVER) : (p_enc->turnNb);
-#if (CLA_CORE_ENABLE)
+#ifdef __TMS320C28XX_CLA__
     float32_t turnNbRad             = FM_ROUND2RAD * (float32_t)p_enc->turnNb;
 #else
     float32_t turnNbRad             = __mpy2pif32((float32_t)p_enc->turnNb);
@@ -351,7 +360,7 @@ inline void ENC_getTheta(encoder_t* p_enc)
     if(EQEP_getInterruptStatus(eqepBase) & EQEP_INT_INDEX_EVNT_LATCH)
     {
         // Compute indexed mechanical angle normalized between 0 and 2 x PI
-#if (CLA_CORE_ENABLE)
+#ifdef __TMS320C28XX_CLA__
         float32_t thetaIndex        = FM_ROUND2RAD * (float32_t)EQEP_getIndexPositionLatch(eqepBase) * p_enc->thetaMechScaler;
 #else
         float32_t thetaIndex        = __mpy2pif32((float32_t)EQEP_getIndexPositionLatch(eqepBase) * p_enc->thetaMechScaler);
@@ -363,7 +372,7 @@ inline void ENC_getTheta(encoder_t* p_enc)
         // Set index detection flag.
         p_enc->flags.indexDetect    = true;
         // Check if current index capture match the first index capture
-#if (CLA_CORE_ENABLE)
+#ifdef __TMS320C28XX_CLA__
         float32_t tmp               = FM_ROUND2RAD * 4.0f / p_enc->thetaMechScaler;
 //        p_enc->flags.indexError     = (abs(p_enc->thetaIndexRelative - thetaIndex) < tmp) ? (false) : (true);
 #else
@@ -513,7 +522,7 @@ inline void FOC_getMeasures(acq_t* p_acq)
  */
 inline float32_t FOC_runPI(pi_t* p_pi)
 {
-#if (CLA_CORE_ENABLE)
+#ifdef __TMS320C28XX_CLA__
     float32_t sat_max   = 0.5f  * (*(float32_t *)p_pi->p_sat.ptr);
     float32_t sat_min   = -1.0f * sat_max;
     p_pi->err           = (*(float32_t *)p_pi->p_set.ptr) - (*(float32_t *)p_pi->p_fb.ptr);
@@ -541,7 +550,7 @@ inline float32_t FOC_runPI(pi_t* p_pi)
  */
 inline float32_t FOC_runPD(pd_t* p_pd)
 {
-#if (CLA_CORE_ENABLE)
+#ifdef __TMS320C28XX_CLA__
     float32_t sat_max   = 1.0f  * (*(float32_t *)p_pd->p_sat.ptr);
     float32_t sat_min   = -1.0f * sat_max;
     p_pd->errTheta      = (*(float32_t *)p_pd->p_setTheta.ptr) - (*(float32_t *)p_pd->p_fbTheta.ptr);
@@ -575,14 +584,14 @@ inline void FOC_svpwm1(foc_t* p_foc)
     p_foc->ub               = (-0.5f * p_foc->ualpha) + (FM_SQRT3DIV2 * p_foc->ubeta);
     p_foc->uc               = (-0.5f * p_foc->ualpha) - (FM_SQRT3DIV2 * p_foc->ubeta);
     // Compute middle voltage to center PWM duty cycles around it
-#if (CLA_CORE_ENABLE)
+#ifdef __TMS320C28XX_CLA__
     float32_t   uOffset     = 0.5f * (MMIN3(p_foc->ua, p_foc->ub, p_foc->uc) + MMAX3(p_foc->ua, p_foc->ub, p_foc->uc));
 #else
     float32_t   uOffset     = 0.5f * (FMIN3(p_foc->ua, p_foc->ub, p_foc->uc) + FMAX3(p_foc->ua, p_foc->ub, p_foc->uc));
 #endif
     float32_t   uMidPoint   = 0.5f * (p_foc->dtcMax + p_foc->dtcMin);
     // Compute duty cycles
-#if (CLA_CORE_ENABLE)
+#ifdef __TMS320C28XX_CLA__
     p_foc->dtc_u            = __msatf32((((p_foc->ua - uOffset) / p_foc->acq.vBus) + uMidPoint), p_foc->dtcMax, p_foc->dtcMin);
     p_foc->dtc_v            = __msatf32((((p_foc->ub - uOffset) / p_foc->acq.vBus) + uMidPoint), p_foc->dtcMax, p_foc->dtcMin);
     p_foc->dtc_w            = __msatf32((((p_foc->uc - uOffset) / p_foc->acq.vBus) + uMidPoint), p_foc->dtcMax, p_foc->dtcMin);
@@ -604,7 +613,7 @@ void FOC_runControl(foc_t* p_foc)
     acq_t*          p_acq   = &p_foc->acq;
     encoder_t*      p_enc   = &p_foc->enc;
     /* Compute sine and cosine from the electrical angle */
-#if (CLA_CORE_ENABLE)
+#ifdef __TMS320C28XX_CLA__
 //    p_foc->sinTheta         = CLAsin(p_enc->thetaElec);
 //    p_foc->cosTheta         = CLAcos(p_enc->thetaElec);
     CLAsincos(p_enc->thetaElec, &p_foc->sinTheta, &p_foc->cosTheta);
