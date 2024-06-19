@@ -6375,7 +6375,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://www.broadcom.com/products/leds-and-displays/chip-leds/0402-1.0-x-0.5mm-top-mount/hsmc-c280"
 			(at 104.14 144.78 0)
 			(effects
 				(font
@@ -6429,7 +6429,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC" ""
+		(property "LCSC" "C5730909"
 			(at 104.14 144.78 0)
 			(effects
 				(font
