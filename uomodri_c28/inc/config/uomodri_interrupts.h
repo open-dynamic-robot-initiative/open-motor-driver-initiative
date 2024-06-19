@@ -19,7 +19,10 @@
 //#include "../main.h"
 //#include "../hal.h"
 //#include "../foc.h"
+
+
 #include "uomodri_user_defines.h"
+#include "../hal.h"
 
 /***********************************************************************
  * FUNCTIONS DECLARATION
