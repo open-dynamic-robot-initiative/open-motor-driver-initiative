@@ -725,7 +725,12 @@
 #define ADC_CLK_FREQ                            (DEVICE_SYSCLK_FREQ / ((PERxSYSCLK_TO_ADCCLK_DIV / 2) + 1))
 // ADC defines
 #define ADC_SAMPLING_WINDOW                     (119U)   // From data sheet Table 20-12
+#define ADC_RESOLUTION_BIT                      ADC_RESOLUTION_16BIT
+#if (ADC_RESOLUTION_BIT == ADC_RESOLUTION_16BIT)
 #define ADC_RESOLUTION_MAX                      (65536U)
+#else
+#define ADC_RESOLUTION_MAX                      (4096U)
+#endif
 #define ADC_SIGNAL_MODE                         ADC_MODE_SINGLE_ENDED
 #define ADC_PULSE_END_MODE                      ADC_PULSE_END_OF_CONV
 #define ADC_SOC_PRIORITY                        ADC_PRI_ALL_ROUND_ROBIN
@@ -1400,7 +1405,7 @@
  */
 #define COM_SPI_BASE                            SPIB_BASE
 #define COM_SPI_DAT_REG_ADDR                    (COM_SPI_BASE + SPI_O_DAT)
-#define COM_SPI_DAT(x)                          (HWREGH(COM_SPI_DAT_REG_ADDR) = (uint16_t)(x))
+#define COM_SPI_DAT(x)                          (HWREGH(COM_SPI_DAT_REG_ADDR) = (Uint16)(x))
 #define COM_SPI_TX_BASE_REG_ADDR                (COM_SPI_BASE + SPI_O_TXBUF)
 #define COM_SPI_RX_BASE_REG_ADDR                (COM_SPI_BASE + SPI_O_RXBUF)
 /**
@@ -1535,8 +1540,8 @@
 
 #define DMA_LED_SPI_TX_DEF                      { \
                                                     .dmaChBase        = DMA_LED_SPI_TX_BASE_ADDR, \
-                                                    .p_dstAddr        = (uint16_t *) LED_SPI_TX_BASE_REG_ADDR, \
-                                                    .p_srcAddr        = (uint16_t *) &led_spi_tx[0], \
+                                                    .p_dstAddr        = (Uint16 *) LED_SPI_TX_BASE_REG_ADDR, \
+                                                    .p_srcAddr        = (Uint16 *) &led_spi_tx[0], \
                                                     .burstSize        = DMA_LED_SPI_TX_16BIT_BURST_EVT, \
                                                     .transferSize     = DMA_LED_SPI_TX_16BIT_TRANSFER_EVT, \
                                                     .dstWrapSize      = DMA_NO_WRAP, \
@@ -1552,8 +1557,8 @@
                                                 }
 #define DMA_COM_SPI_TX_DEF                      { \
                                                     .dmaChBase        = DMA_COM_SPI_TX_BASE_ADDR, \
-                                                    .p_dstAddr        = (uint16_t *) COM_SPI_TX_BASE_REG_ADDR, \
-                                                    .p_srcAddr        = (uint16_t *) &com_spi_tx.msg[0].data.timeStamp, \
+                                                    .p_dstAddr        = (Uint16 *) COM_SPI_TX_BASE_REG_ADDR, \
+                                                    .p_srcAddr        = (Uint16 *) &com_spi_tx.msg[0].data.timeStamp, \
                                                     .burstSize        = DMA_COM_SPI_TX_16BIT_BURST_EVT, \
                                                     .transferSize     = DMA_COM_SPI_TX_16BIT_TRANSFER_EVT, \
                                                     .dstWrapSize      = DMA_NO_WRAP, \
@@ -1569,8 +1574,8 @@
                                                 }
 #define DMA_COM_SPI_RX_DEF                      { \
                                                     .dmaChBase        = DMA_COM_SPI_RX_BASE_ADDR, \
-                                                    .p_dstAddr        = (uint16_t *) &com_spi_rx, \
-                                                    .p_srcAddr        = (uint16_t *) COM_SPI_RX_BASE_REG_ADDR, \
+                                                    .p_dstAddr        = (Uint16 *) &com_spi_rx, \
+                                                    .p_srcAddr        = (Uint16 *) COM_SPI_RX_BASE_REG_ADDR, \
                                                     .burstSize        = DMA_COM_SPI_RX_16BIT_BURST_EVT, \
                                                     .transferSize     = DMA_COM_SPI_RX_16BIT_TRANSFER_EVT, \
                                                     .dstWrapSize      = DMA_NO_WRAP, \

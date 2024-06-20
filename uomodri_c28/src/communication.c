@@ -1,11 +1,12 @@
 /***********************************************************************
  * INCLUDES
  ***********************************************************************/
-#include <stdlib.h>
+//#include <stdlib.h>
 #include "vcu2/vcu2_crc.h"
 
-#include "uomodri_user_defines.h"
 #include "communication.h"
+#include "config/uomodri_user_defines.h"
+#include "encoder.h"
 
 /***********************************************************************
  * FUNCTIONS DEFINITIONS
@@ -20,17 +21,17 @@
  */
 void COM_msgExtract(mst2slv_msg_t* p_msg, cmd_t* p_cmd_m1, cmd_t* p_cmd_m2)
 {
-    int32_t pos_s32                     = (int32_t)FUS_16_TO_32(p_msg->position[MOTOR_1].u16_msb, p_msg->position[MOTOR_1].u16_lsb);
+    int32 pos_s32                       = (int32)FUS_16_TO_32(p_msg->position[MOTOR_1].u16_msb, p_msg->position[MOTOR_1].u16_lsb);
     cmd_reg_u* p_cmd_reg                = &p_cmd_m1->cmdField;
-    p_cmd_m1->posRef                    = (float32_t)(pos_s32                   * POSITION_LSB      * FM_ROUND2RAD);
-    p_cmd_m1->velRef                    = (float32_t)(p_msg->velocity[MOTOR_1]  * VELOCITY_LSB      * FM_KRPM2RADPS);
-    p_cmd_m1->iqff                      = (float32_t)(p_msg->current[MOTOR_1]   * IQ_LSB);
-    p_cmd_m1->kpCoeff                   = (float32_t)(p_msg->kpCoeff[MOTOR_1]   * KP_LSB            * FM_RAD2ROUND);
-    p_cmd_m1->kdCoeff                   = (float32_t)(p_msg->kdCoeff[MOTOR_1]   * KD_LSB            * FM_RADPS2KRPM);
-    float32_t isat                      = (float32_t)(MSB_16(p_msg->iSat)       * CURRENT_SAT_LSB);
+    p_cmd_m1->posRef                    = (float32)(pos_s32                   * POSITION_LSB      * FM_ROUND2RAD);
+    p_cmd_m1->velRef                    = (float32)(p_msg->velocity[MOTOR_1]  * VELOCITY_LSB      * FM_KRPM2RADPS);
+    p_cmd_m1->iqff                      = (float32)(p_msg->current[MOTOR_1]   * IQ_LSB);
+    p_cmd_m1->kpCoeff                   = (float32)(p_msg->kpCoeff[MOTOR_1]   * KP_LSB            * FM_RAD2ROUND);
+    p_cmd_m1->kdCoeff                   = (float32)(p_msg->kdCoeff[MOTOR_1]   * KD_LSB            * FM_RADPS2KRPM);
+    float32 isat                        = (float32)(MSB_16(p_msg->iSat)       * CURRENT_SAT_LSB);
     p_cmd_m1->iSat                      = (isat < MOTOR1_CURRENT_CMD_SAT_MAX)   ? (isat)            : (MOTOR1_CURRENT_CMD_SAT_MAX);
     p_cmd_m1->iSat                      = (p_cmd_m1->iSat > 0.0f)               ? (p_cmd_m1->iSat)  : (MOTOR1_CURRENT_CMD_SAT_MAX);
-    p_cmd_m1->timeoutRef                = (uint16_t)p_msg->mode.TIMEOUT;
+    p_cmd_m1->timeoutRef                = (Uint16)p_msg->mode.TIMEOUT;
     p_cmd_m1->cptTimeout                = 0U;
     p_cmd_m1->index                     = p_msg->index;
     p_cmd_reg->encOffsetEnable          = (bool_t)p_msg->mode.EI1OC;
@@ -38,17 +39,17 @@ void COM_msgExtract(mst2slv_msg_t* p_msg, cmd_t* p_cmd_m1, cmd_t* p_cmd_m2)
     p_cmd_reg->motorEnable              = (bool_t)p_msg->mode.EM1;
     p_cmd_reg->systemEnable             = (bool_t)p_msg->mode.ES;
 
-    pos_s32                             = (int32_t)FUS_16_TO_32(p_msg->position[MOTOR_2].u16_msb, p_msg->position[MOTOR_2].u16_lsb);
+    pos_s32                             = (int32)FUS_16_TO_32(p_msg->position[MOTOR_2].u16_msb, p_msg->position[MOTOR_2].u16_lsb);
     p_cmd_reg                           = &p_cmd_m2->cmdField;
-    p_cmd_m2->posRef                    = (float32_t)(pos_s32                   * POSITION_LSB      * FM_ROUND2RAD);
-    p_cmd_m2->velRef                    = (float32_t)(p_msg->velocity[MOTOR_2]  * VELOCITY_LSB      * FM_KRPM2RADPS);
-    p_cmd_m2->iqff                      = (float32_t)(p_msg->current[MOTOR_2]   * IQ_LSB);
-    p_cmd_m2->kpCoeff                   = (float32_t)(p_msg->kpCoeff[MOTOR_2]   * KP_LSB            * FM_RAD2ROUND);
-    p_cmd_m2->kdCoeff                   = (float32_t)(p_msg->kdCoeff[MOTOR_2]   * KD_LSB            * FM_RADPS2KRPM);
-    isat                                = (float32_t)(LSB_16(p_msg->iSat)       * CURRENT_SAT_LSB);
+    p_cmd_m2->posRef                    = (float32)(pos_s32                   * POSITION_LSB      * FM_ROUND2RAD);
+    p_cmd_m2->velRef                    = (float32)(p_msg->velocity[MOTOR_2]  * VELOCITY_LSB      * FM_KRPM2RADPS);
+    p_cmd_m2->iqff                      = (float32)(p_msg->current[MOTOR_2]   * IQ_LSB);
+    p_cmd_m2->kpCoeff                   = (float32)(p_msg->kpCoeff[MOTOR_2]   * KP_LSB            * FM_RAD2ROUND);
+    p_cmd_m2->kdCoeff                   = (float32)(p_msg->kdCoeff[MOTOR_2]   * KD_LSB            * FM_RADPS2KRPM);
+    isat                                = (float32)(LSB_16(p_msg->iSat)       * CURRENT_SAT_LSB);
     p_cmd_m2->iSat                      = (isat < MOTOR2_CURRENT_CMD_SAT_MAX)   ? (isat)            : (MOTOR2_CURRENT_CMD_SAT_MAX);
     p_cmd_m2->iSat                      = (p_cmd_m2->iSat > 0.0f)               ? (p_cmd_m2->iSat)  : (MOTOR2_CURRENT_CMD_SAT_MAX);
-    p_cmd_m2->timeoutRef                = (uint16_t)p_msg->mode.TIMEOUT;
+    p_cmd_m2->timeoutRef                = (Uint16)p_msg->mode.TIMEOUT;
     p_cmd_m2->cptTimeout                = 0U;
     p_cmd_m2->index                     = p_msg->index;
     p_cmd_reg->encOffsetEnable          = (bool_t)p_msg->mode.EI2OC;
@@ -64,24 +65,24 @@ void COM_msgExtract(mst2slv_msg_t* p_msg, cmd_t* p_cmd_m1, cmd_t* p_cmd_m2)
  * @param[in]       *p_motor    Pointer on current data structure used for control.
  * @param[inout]    *p_msg      Pointer on the message to transmit to the Master board.
  */
-bool_t COM_msgCreate(motor_t* p_motor, slv2mst_msg_t* p_msg, uint32_t tmr_cnt)
+bool_t COM_msgCreate(motor_t* p_motor, slv2mst_msg_t* p_msg, Uint32 tmr_cnt)
 {
     foc_t* p_foc                        = &p_motor->foc;
     encoder_t* p_enc                    = &p_foc->enc;
     error_reg_u motor_err               = p_motor->error;
     cmd_reg_u motor_cmd                 = {.all = p_foc->cmd.cmdField.all};
-    float32_t theta_index_comp          = (motor_cmd.encOffsetEnable) ? (p_enc->thetaIndexAbsolute) : (0.0f);
-    float32_t pos_offset                = p_enc->thetaAbsolute - theta_index_comp;
-    int32_t pos                         = (int32_t)(pos_offset                  / POSITION_LSB      * FM_RAD2ROUND);
-    uint16_t motor_id                   = p_motor->id;
+    float32 theta_index_comp            = (motor_cmd.encOffsetEnable) ? (p_enc->thetaIndexAbsolute) : (0.0f);
+    float32 pos_offset                  = p_enc->thetaAbsolute - theta_index_comp;
+    int32 pos                           = (int32)(pos_offset                  / POSITION_LSB      * FM_RAD2ROUND);
+    Uint16 motor_id                     = p_motor->id;
     bool_t align_done                   = (p_motor->state == MOTOR_STATE_READY) || (p_motor->state == MOTOR_STATE_STOP);
 
     p_msg->position[motor_id].u16_msb   = MSB_32(pos);
     p_msg->position[motor_id].u16_lsb   = LSB_32(pos);
-    p_msg->velocity[motor_id]           = (int16_t)(p_enc->speed.speedMech[0]   / VELOCITY_LSB      * FM_RADPS2KRPM);
-    p_msg->current[motor_id]            = (int16_t)(p_foc->iq                   / IQ_LSB);
-    p_msg->coilRes[motor_id]            = (uint16_t)(p_foc->resEst              / RESISTANCE_LSB);
-    p_msg->adcSamples[motor_id]         = (uint16_t)(p_foc->acq.vExt            / VOLTAGE_LSB);
+    p_msg->velocity[motor_id]           = (int16)(p_enc->speed.speedMech[0]   / VELOCITY_LSB      * FM_RADPS2KRPM);
+    p_msg->current[motor_id]            = (int16)(p_foc->iq                   / IQ_LSB);
+    p_msg->coilRes[motor_id]            = (Uint16)(p_foc->resEst              / RESISTANCE_LSB);
+    p_msg->adcSamples[motor_id]         = (Uint16)(p_foc->acq.vExt            / VOLTAGE_LSB);
 
     if(motor_id == MOTOR_1)
     {
@@ -110,7 +111,7 @@ bool_t COM_msgCreate(motor_t* p_motor, slv2mst_msg_t* p_msg, uint32_t tmr_cnt)
         p_msg->status.SE                = motor_cmd.systemEnable;   // System enabled
         p_msg->status.STATUS_RSV1       = 0;
         p_msg->lastCmdIndex             = p_foc->cmd.index;
-        p_msg->timeStamp                = (uint16_t)tmr_cnt;
+        p_msg->timeStamp                = (Uint16)tmr_cnt;
 //(p_msg->timeStamp < 0xFFFF) ? (p_msg->timeStamp + 1) : (0);//
         p_msg->status.ERROR_CODE        = (motor_err.com_timeout)   ? (STATUS_ERROR_SPI_RECV_TIMEOUT)   : (p_msg->status.ERROR_CODE);
         p_msg->status.ERROR_CODE        = (motor_err.pos_rollover)  ? (STATUS_ERROR_POS_ROLLOVER)       : (p_msg->status.ERROR_CODE);
@@ -119,7 +120,7 @@ bool_t COM_msgCreate(motor_t* p_motor, slv2mst_msg_t* p_msg, uint32_t tmr_cnt)
         p_msg->status.ERROR_CODE        = (motor_err.enc_alignErr)  ? (STATUS_ERROR_ENCODER2)           : (p_msg->status.ERROR_CODE);
 
 //        // Compute CRC
-//        uint32_t crc                    = COM_msgCrc((uint16_t *)p_msg, COM_MSG_SPI_TX_RX_16BIT_PAYLOAD_LENGTH);
+//        Uint32 crc                    = COM_msgCrc((Uint16 *)p_msg, COM_MSG_SPI_TX_RX_16BIT_PAYLOAD_LENGTH);
 //        p_msg->crc.u16_msb              = LSB_32(crc);              // required for Solo
 //        p_msg->crc.u16_lsb              = MSB_32(crc);
 
@@ -153,9 +154,9 @@ void COM_initCmdStruct(cmd_t* p_cmd)
  * @param[out]      *p_swap Pointer on the swapped message.
  * @param[in]       length  Number of elements to be swapped.
  */
-void COM_msgSwapBytes(uint16_t* p_msg, uint16_t* p_swap, uint16_t length)
+void COM_msgSwapBytes(Uint16* p_msg, Uint16* p_swap, Uint16 length)
 {
-    uint16_t i;
+    Uint16 i;
 
     for(i = 0; i < length; i++)
         *p_swap++ = (*p_msg << 8) | (*p_msg++ >> 8);
@@ -169,7 +170,7 @@ void COM_msgSwapBytes(uint16_t* p_msg, uint16_t* p_swap, uint16_t length)
  * @param[in]       length  Number of elements necessary for CRC computation.
  * @return          New CRC result.
  */
-uint32_t COM_vCRC32(uint16_t* p_msg, uint16_t length)
+Uint32 COM_vCRC32(Uint16* p_msg, Uint16 length)
 {
     CRC_Obj crc;
     // Initialize the CRC object
@@ -177,7 +178,7 @@ uint32_t COM_vCRC32(uint16_t* p_msg, uint16_t length)
     crc.nMsgBytes   = 2 * length;
     crc.parity      = CRC_parity_even;
     crc.crcResult   = 0;
-    crc.pMsgBuffer  = (uint16_t *)p_msg;
+    crc.pMsgBuffer  = (Uint16 *)p_msg;
     crc.init        = (void (*)(void *))CRC_init32Bit;
     crc.run         = (void (*)(void *))CRC_run32BitPoly1;
     // Run the CRC module with the VCRC assembly code
@@ -192,11 +193,11 @@ uint32_t COM_vCRC32(uint16_t* p_msg, uint16_t length)
  * @param[in]       length  Number of elements to be swapped.
  * return           The 32bit CRC result.
  */
-uint32_t COM_msgCRC(uint16_t* p_msg, uint16_t length)
+Uint32 COM_msgCRC(Uint16* p_msg, Uint16 length)
 {
-    uint16_t swap[COM_MSG_EXTRACT_TX_RX_MAX_SIZE];
+    Uint16 swap[COM_MSG_EXTRACT_TX_RX_MAX_SIZE];
     COM_msgSwapBytes(p_msg, swap, length);
-    uint32_t crcResult  = COM_vCRC32(swap, length);
+    Uint32 crcResult  = COM_vCRC32(swap, length);
     return(crcResult);
 }
 
@@ -205,15 +206,15 @@ uint32_t COM_msgCRC(uint16_t* p_msg, uint16_t length)
  * @param[in]       sci-base    SCI peripheral identifier.
  * @param[out]      *p_msg_rx   Pointer on the RS485 reception structure.
  */
-inline void RS485_msgReceive(uint32_t sci_base, rs485_rx_t* p_msg_rx)
+inline void RS485_msgReceive(Uint32 sci_base, rs485_rx_t* p_msg_rx)
 {
-//    uint16_t fifo_rx_status = (uint16_t)SCI_getRxFIFOStatus(sci_base);
-    uint16_t fifo_rx_status = (uint16_t)((HWREGH(sci_base + SCI_O_FFRX) & SCI_FFRX_RXFFST_M) >> SCI_FFRX_RXFFST_S);
+//    Uint16 fifo_rx_status = (Uint16)SCI_getRxFIFOStatus(sci_base);
+    Uint16 fifo_rx_status = (Uint16)((HWREGH(sci_base + SCI_O_FFRX) & SCI_FFRX_RXFFST_M) >> SCI_FFRX_RXFFST_S);
     while(fifo_rx_status--)
     {
-        uint16_t* p_msg     = &p_msg_rx->msg.raw[p_msg_rx->index >> 1];
-//        uint16_t tmp        = SCI_readCharNonBlocking(sci_base);
-        uint16_t tmp        = (uint16_t)(HWREGH(sci_base + SCI_O_RXBUF) & SCI_RXBUF_SAR_M);
+        Uint16* p_msg     = &p_msg_rx->msg.raw[p_msg_rx->index >> 1];
+//        Uint16 tmp        = SCI_readCharNonBlocking(sci_base);
+        Uint16 tmp        = (Uint16)(HWREGH(sci_base + SCI_O_RXBUF) & SCI_RXBUF_SAR_M);
         *p_msg              = (p_msg_rx->index & 0x0001) ? (*p_msg | (tmp & 0x00FF)) : ((tmp << 8) & 0xFF00);
         p_msg_rx->index++;
 //        *p_msg              = (p_msg_rx->highByte) ? ((tmp << 8) & 0xFF00) : (*p_msg | (tmp & 0xFF00));
@@ -230,15 +231,15 @@ inline void RS485_msgReceive(uint32_t sci_base, rs485_rx_t* p_msg_rx)
  * @param[in]       length  Number of elements to be swapped.
  * return           The 32bit CRC result.
  */
-inline void RS485_msgTransmit(uint32_t sci_base, rs485_tx_t* p_msg_tx)
+inline void RS485_msgTransmit(Uint32 sci_base, rs485_tx_t* p_msg_tx)
 {
-//    uint16_t fifo_tx_status = (uint16_t)(SCI_FIFO_TX16 - SCI_getTxFIFOStatus(sci_base));
+//    Uint16 fifo_tx_status = (Uint16)(SCI_FIFO_TX16 - SCI_getTxFIFOStatus(sci_base));
     SCI_TxFIFOLevel fifo_tx_status  = SCI_FIFO_TX16;
     fifo_tx_status                 -= (SCI_TxFIFOLevel)((HWREGH(sci_base + SCI_O_FFTX) & SCI_FFTX_TXFFST_M) >> SCI_FFTX_TXFFST_S);
 
-    while((uint16_t)fifo_tx_status && (COM_MSG_RS485_TX_8BIT_FULL_LENGTH - p_msg_tx->index))//p_msg_tx->remaining)
+    while((Uint16)fifo_tx_status && (COM_MSG_RS485_TX_8BIT_FULL_LENGTH - p_msg_tx->index))//p_msg_tx->remaining)
     {
-        uint16_t* p_msg = &p_msg_tx->msg[p_msg_tx->msg_cr].raw[p_msg_tx->index >> 1];//&p_msg_tx->msg[p_msg_tx->msg_cr].raw[p_msg_tx->index];
+        Uint16* p_msg = &p_msg_tx->msg[p_msg_tx->msg_cr].raw[p_msg_tx->index >> 1];//&p_msg_tx->msg[p_msg_tx->msg_cr].raw[p_msg_tx->index];
 //        SCI_writeCharNonBlocking(sci_base, (((p_msg_tx->index >> 1) ? (*p_msg): (*p_msg >> 8)) & 0x00FF));
         HWREGH(sci_base + SCI_O_TXBUF) = ((p_msg_tx->index & 0x0001) ? (*p_msg): (*p_msg >> 8)) & 0x00FF;
         //p_msg_tx->msg[p_msg_tx->msg_cr].raw[p_msg_tx->index];
@@ -249,7 +250,7 @@ inline void RS485_msgTransmit(uint32_t sci_base, rs485_tx_t* p_msg_tx)
     return;
 }
 
-//void SCI_rxDisable(uint32_t sci_base)
+//void SCI_rxDisable(Uint32 sci_base)
 //{
 //    SCI_resetRxFIFO(sci_base);
 //    SCI_clearOverflowStatus(sci_base);
@@ -257,7 +258,7 @@ inline void RS485_msgTransmit(uint32_t sci_base, rs485_tx_t* p_msg_tx)
 //    SCI_disableRxModule(sci_base);
 //}
 
-//void SCI_rxEnable(uint32_t sci_base)
+//void SCI_rxEnable(Uint32 sci_base)
 //{
 //    SCI_resetRxFIFO(sci_base);
 //    SCI_clearOverflowStatus(sci_base);
@@ -265,7 +266,7 @@ inline void RS485_msgTransmit(uint32_t sci_base, rs485_tx_t* p_msg_tx)
 //    SCI_enableRxModule(sci_base);
 //}
 
-void SCI_txDisable(uint32_t sci_base)
+void SCI_txDisable(Uint32 sci_base)
 {
     SCI_resetTxFIFO(sci_base);
     SCI_clearInterruptStatus(sci_base, SCI_INT_TXRDY | SCI_INT_TXFF);
@@ -273,7 +274,7 @@ void SCI_txDisable(uint32_t sci_base)
 //    SCI_disableTxModule(sci_base);
 }
 
-void SCI_txEnable(uint32_t sci_base)
+void SCI_txEnable(Uint32 sci_base)
 {
     SCI_resetTxFIFO(sci_base);
     SCI_clearInterruptStatus(sci_base, SCI_INT_TXRDY | SCI_INT_TXFF);

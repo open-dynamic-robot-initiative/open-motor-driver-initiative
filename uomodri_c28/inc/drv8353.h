@@ -4,8 +4,9 @@
 /***********************************************************************
  * INCLUDES
  ***********************************************************************/
-#include <stdbool.h>
-#include <stdint.h>
+//#include <stdbool.h>
+//#include <stdint.h>
+#include "f2838x_device.h"
 
 /***********************************************************************
  * DEFINES
@@ -320,21 +321,21 @@ typedef enum
  */
 typedef union __drv_stat00_u__
 {
-    uint16_t        all;                /*!< Short (16bits) type access */
+    Uint16          all;                /*!< Short (16bits) type access */
     struct
     {
-        uint16_t    VDS_LC      : 1;    /*!< Bits 0     : R/0b - Indicates VDS overcurrent fault on the C low-side MOSFET   */
-        uint16_t    VDS_HC      : 1;    /*!< Bits 1     : R/0b - Indicates VDS overcurrent fault on the C high-side MOSFET  */
-        uint16_t    VDS_LB      : 1;    /*!< Bits 2     : R/0b - Indicates VDS overcurrent fault on the B low-side MOSFET   */
-        uint16_t    VDS_HB      : 1;    /*!< Bits 3     : R/0b - Indicates VDS overcurrent fault on the B high-side MOSFET  */
-        uint16_t    VDS_LA      : 1;    /*!< Bits 4     : R/0b - Indicates VDS overcurrent fault on the A low-side MOSFET   */
-        uint16_t    VDS_HA      : 1;    /*!< Bits 5     : R/0b - Indicates VDS overcurrent fault on the A high-side MOSFET  */
-        uint16_t    OTSD        : 1;    /*!< Bits 6     : R/0b - Indicates overtemperature shutdown                         */
-        uint16_t    UVLO        : 1;    /*!< Bits 7     : R/0b - Indicates undervoltage lockout fault condition             */
-        uint16_t    GDF         : 1;    /*!< Bits 8     : R/0b - Indicates gate drive fault condition                       */
-        uint16_t    VDS_OCP     : 1;    /*!< Bits 9     : R/0b - Indicates VDS monitor overcurrent fault condition          */
-        uint16_t    FAULT       : 1;    /*!< Bits 10    : R/0b - Logic OR of FAULT status registers. Mirrors nFAULT pin.    */
-        uint16_t    STAT00_RSV1 : 5;    /*!< Bits 15-11 :  R/00000b - Reserved                                              */
+        Uint16      VDS_LC      : 1;    /*!< Bits 0     : R/0b - Indicates VDS overcurrent fault on the C low-side MOSFET   */
+        Uint16      VDS_HC      : 1;    /*!< Bits 1     : R/0b - Indicates VDS overcurrent fault on the C high-side MOSFET  */
+        Uint16      VDS_LB      : 1;    /*!< Bits 2     : R/0b - Indicates VDS overcurrent fault on the B low-side MOSFET   */
+        Uint16      VDS_HB      : 1;    /*!< Bits 3     : R/0b - Indicates VDS overcurrent fault on the B high-side MOSFET  */
+        Uint16      VDS_LA      : 1;    /*!< Bits 4     : R/0b - Indicates VDS overcurrent fault on the A low-side MOSFET   */
+        Uint16      VDS_HA      : 1;    /*!< Bits 5     : R/0b - Indicates VDS overcurrent fault on the A high-side MOSFET  */
+        Uint16      OTSD        : 1;    /*!< Bits 6     : R/0b - Indicates overtemperature shutdown                         */
+        Uint16      UVLO        : 1;    /*!< Bits 7     : R/0b - Indicates undervoltage lockout fault condition             */
+        Uint16      GDF         : 1;    /*!< Bits 8     : R/0b - Indicates gate drive fault condition                       */
+        Uint16      VDS_OCP     : 1;    /*!< Bits 9     : R/0b - Indicates VDS monitor overcurrent fault condition          */
+        Uint16      FAULT       : 1;    /*!< Bits 10    : R/0b - Logic OR of FAULT status registers. Mirrors nFAULT pin.    */
+        Uint16      STAT00_RSV1 : 5;    /*!< Bits 15-11 :  R/00000b - Reserved                                              */
     };
 } drv_stat00_u;
 
@@ -344,21 +345,21 @@ typedef union __drv_stat00_u__
  */
 typedef union __drv_stat01_u__
 {
-    uint16_t        all;                /*!< Short (16bits) type access */
+    Uint16          all;                /*!< Short (16bits) type access */
     struct
     {
-        uint16_t    VGS_LC      : 1;    /*!< Bits 0     : R/0b - Indicates gate drive fault on the C low-side MOSFET                */
-        uint16_t    VGS_HC      : 1;    /*!< Bits 1     : R/0b - Indicates gate drive fault on the C high-side MOSFET               */
-        uint16_t    VGS_LB      : 1;    /*!< Bits 2     : R/0b - Indicates gate drive fault on the B low-side MOSFET                */
-        uint16_t    VGS_HB      : 1;    /*!< Bits 3     : R/0b - Indicates gate drive fault on the B high-side MOSFET               */
-        uint16_t    VGS_LA      : 1;    /*!< Bits 4     : R/0b - Indicates gate drive fault on the A low-side MOSFET                */
-        uint16_t    VGS_HA      : 1;    /*!< Bits 5     : R/0b - Indicates gate drive fault on the A high-side MOSFET               */
-        uint16_t    GDUV        : 1;    /*!< Bits 6     : R/0b - Indicates VCP charge pump and/or VGLS undervoltage fault condition */
-        uint16_t    OTW         : 1;    /*!< Bits 7     : R/0b - Indicates overtemperature warning                                  */
-        uint16_t    SC_OC       : 1;    /*!< Bits 8     : R/0b - Indicates overcurrent on phase C sense amplifier (DRV8353xS)       */
-        uint16_t    SB_OC       : 1;    /*!< Bits 9     : R/0b - Indicates overcurrent on phase B sense amplifier (DRV8353xS)       */
-        uint16_t    SA_OC       : 1;    /*!< Bits 10    : R/0b - Indicates overcurrent on phase A sense amplifier (DRV8353xS)       */
-        uint16_t    STAT01_RSV1 : 5;    /*!< Bits 15-11 : R/00000b  - Reserved                                                      */
+        Uint16      VGS_LC      : 1;    /*!< Bits 0     : R/0b - Indicates gate drive fault on the C low-side MOSFET                */
+        Uint16      VGS_HC      : 1;    /*!< Bits 1     : R/0b - Indicates gate drive fault on the C high-side MOSFET               */
+        Uint16      VGS_LB      : 1;    /*!< Bits 2     : R/0b - Indicates gate drive fault on the B low-side MOSFET                */
+        Uint16      VGS_HB      : 1;    /*!< Bits 3     : R/0b - Indicates gate drive fault on the B high-side MOSFET               */
+        Uint16      VGS_LA      : 1;    /*!< Bits 4     : R/0b - Indicates gate drive fault on the A low-side MOSFET                */
+        Uint16      VGS_HA      : 1;    /*!< Bits 5     : R/0b - Indicates gate drive fault on the A high-side MOSFET               */
+        Uint16      GDUV        : 1;    /*!< Bits 6     : R/0b - Indicates VCP charge pump and/or VGLS undervoltage fault condition */
+        Uint16      OTW         : 1;    /*!< Bits 7     : R/0b - Indicates overtemperature warning                                  */
+        Uint16      SC_OC       : 1;    /*!< Bits 8     : R/0b - Indicates overcurrent on phase C sense amplifier (DRV8353xS)       */
+        Uint16      SB_OC       : 1;    /*!< Bits 9     : R/0b - Indicates overcurrent on phase B sense amplifier (DRV8353xS)       */
+        Uint16      SA_OC       : 1;    /*!< Bits 10    : R/0b - Indicates overcurrent on phase A sense amplifier (DRV8353xS)       */
+        Uint16      STAT01_RSV1 : 5;    /*!< Bits 15-11 : R/00000b  - Reserved                                                      */
     };
 } drv_stat01_u;
 
@@ -368,7 +369,7 @@ typedef union __drv_stat01_u__
  */
 typedef union __drv_stat0x_u__
 {
-    uint32_t        all;                /*!< Long (32bits) type access */
+    Uint32          all;                /*!< Long (32bits) type access */
     struct
     {
         drv_stat00_u stat00;
@@ -382,20 +383,20 @@ typedef union __drv_stat0x_u__
  */
 typedef union __drv_ctrl02_u__
 {
-    uint16_t        all;                /*!< Short (16bits) type access */
+    Uint16          all;                /*!< Short (16bits) type access */
     struct
     {
-        uint16_t    CLR_FLT     : 1;    /*!< Bits 0     :   R/W/0b  - Write a 1 to this bit to clear latched fault bits. This bit automatically resets after being written.     */
-        uint16_t    BRAKE       : 1;    /*!< Bits 1     :   R/W/0b  - Write a 1 to this bit to turn on all three low-side MOSFETs in 1x PWM mode.                               */
-        uint16_t    COAST       : 1;    /*!< Bits 2     :   R/W/0b  - Write a 1 to this bit to put all MOSFETs in the Hi-Z state                                                */
-        uint16_t    PWM1_DIR    : 1;    /*!< Bits 3     :   R/W/0b  - In 1x PWM mode this bit is ORed with the INHC (DIR) input                                                 */
-        uint16_t    PWM1_COM    : 1;    /*!< Bits 4     :   R/W/0b  - (0b) 1x PWM mode uses sync rectification / (1b) 1x PWM mode uses async rectification (diode freewheeling) */
-        uint16_t    PWM_MODE    : 2;    /*!< Bits 6-5   :   R/W/00b - (00b) 6x PWM Mode, (01b) 3x PWM mode, (10b) 1x PWM mode, (11b) Independent PWM mode                       */
-        uint16_t    OTW_REP     : 1;    /*!< Bits 7     :   R/W/0b  - (0b) OTW is not reported on nFAULT or the FAULT bit / (1b) OTW is reported on nFAULT and the FAULT bit    */
-        uint16_t    DIS_GDF     : 1;    /*!< Bits 8     :   R/W/0b  - Gate drive fault is enabled(0b) / disabled(1b)                                                            */
-        uint16_t    DIS_GDUV    : 1;    /*!< Bits 9     :   R/W/0b  - VCP and VGLS undervoltage lockout fault is enabled(0b) / disabled(1b)                                     */
-        uint16_t    OCP_ACT     : 1;    /*!< Bits 10    :   R/W/0b  - Associated(0b) or all (1b) half-bridge is/are shutdown in response to VDS_OCP and SEN_OCP                 */
-        uint16_t    CTRL02_RSV1 : 5;    /*!< Bits 15-11 :   R/W/00000b - Reserved                                                                                               */
+        Uint16      CLR_FLT     : 1;    /*!< Bits 0     :   R/W/0b  - Write a 1 to this bit to clear latched fault bits. This bit automatically resets after being written.     */
+        Uint16      BRAKE       : 1;    /*!< Bits 1     :   R/W/0b  - Write a 1 to this bit to turn on all three low-side MOSFETs in 1x PWM mode.                               */
+        Uint16      COAST       : 1;    /*!< Bits 2     :   R/W/0b  - Write a 1 to this bit to put all MOSFETs in the Hi-Z state                                                */
+        Uint16      PWM1_DIR    : 1;    /*!< Bits 3     :   R/W/0b  - In 1x PWM mode this bit is ORed with the INHC (DIR) input                                                 */
+        Uint16      PWM1_COM    : 1;    /*!< Bits 4     :   R/W/0b  - (0b) 1x PWM mode uses sync rectification / (1b) 1x PWM mode uses async rectification (diode freewheeling) */
+        Uint16      PWM_MODE    : 2;    /*!< Bits 6-5   :   R/W/00b - (00b) 6x PWM Mode, (01b) 3x PWM mode, (10b) 1x PWM mode, (11b) Independent PWM mode                       */
+        Uint16      OTW_REP     : 1;    /*!< Bits 7     :   R/W/0b  - (0b) OTW is not reported on nFAULT or the FAULT bit / (1b) OTW is reported on nFAULT and the FAULT bit    */
+        Uint16      DIS_GDF     : 1;    /*!< Bits 8     :   R/W/0b  - Gate drive fault is enabled(0b) / disabled(1b)                                                            */
+        Uint16      DIS_GDUV    : 1;    /*!< Bits 9     :   R/W/0b  - VCP and VGLS undervoltage lockout fault is enabled(0b) / disabled(1b)                                     */
+        Uint16      OCP_ACT     : 1;    /*!< Bits 10    :   R/W/0b  - Associated(0b) or all (1b) half-bridge is/are shutdown in response to VDS_OCP and SEN_OCP                 */
+        Uint16      CTRL02_RSV1 : 5;    /*!< Bits 15-11 :   R/W/00000b - Reserved                                                                                               */
     };
 } drv_ctrl02_u;
 
@@ -405,13 +406,13 @@ typedef union __drv_ctrl02_u__
  */
 typedef union __drv_ctrl03_u__
 {
-    uint16_t        all;                /*!< Short (16bits) type access */
+    Uint16          all;                /*!< Short (16bits) type access */
     struct
     {
-        uint16_t    IDRIVEN_HS  : 4;    /*!< Bits 3-0   */
-        uint16_t    IDRIVEP_HS  : 4;    /*!< Bits 7-4   */
-        uint16_t    LOCK        : 3;    /*!< Bits 10-8  */
-        uint16_t    CTRL03_RSV1 : 5;    /*!< Bits 15-11 */
+        Uint16      IDRIVEN_HS  : 4;    /*!< Bits 3-0   */
+        Uint16      IDRIVEP_HS  : 4;    /*!< Bits 7-4   */
+        Uint16      LOCK        : 3;    /*!< Bits 10-8  */
+        Uint16      CTRL03_RSV1 : 5;    /*!< Bits 15-11 */
     };
 } drv_ctrl03_u;
 
@@ -421,14 +422,14 @@ typedef union __drv_ctrl03_u__
  */
 typedef union __drv_ctrl04_u__
 {
-    uint16_t        all;                /*!< Short (16bits) type access */
+    Uint16          all;                /*!< Short (16bits) type access */
     struct
     {
-        uint16_t    IDRIVEN_LS  : 4;    /*!< Bits 3-0   */
-        uint16_t    IDRIVEP_LS  : 4;    /*!< Bits 7-4   */
-        uint16_t    TDRIVE      : 2;    /*!< Bits 9-8   */
-        uint16_t    CBC         : 1;    /*!< Bits 10    */
-        uint16_t    CTRL04_RSV1 : 5;    /*!< Bits 15-11 */
+        Uint16      IDRIVEN_LS  : 4;    /*!< Bits 3-0   */
+        Uint16      IDRIVEP_LS  : 4;    /*!< Bits 7-4   */
+        Uint16      TDRIVE      : 2;    /*!< Bits 9-8   */
+        Uint16      CBC         : 1;    /*!< Bits 10    */
+        Uint16      CTRL04_RSV1 : 5;    /*!< Bits 15-11 */
     };
 } drv_ctrl04_u;
 
@@ -438,15 +439,15 @@ typedef union __drv_ctrl04_u__
  */
 typedef union __drv_ctrl05_u__
 {
-    uint16_t        all;                /*!< Short (16bits) type access */
+    Uint16          all;                /*!< Short (16bits) type access */
     struct
     {
-        uint16_t    VDS_LVL     : 4;    /*!< Bits 3-0   */
-        uint16_t    OCP_DEG     : 2;    /*!< Bits 5-4   */
-        uint16_t    OCP_MODE    : 2;    /*!< Bits 7-6   */
-        uint16_t    DEAD_TIME   : 2;    /*!< Bits 9-8   */
-        uint16_t    TRETRY      : 1;    /*!< Bits 10    */
-        uint16_t    CTRL05_RSV1 : 5;    /*!< Bits 15-11 */
+        Uint16      VDS_LVL     : 4;    /*!< Bits 3-0   */
+        Uint16      OCP_DEG     : 2;    /*!< Bits 5-4   */
+        Uint16      OCP_MODE    : 2;    /*!< Bits 7-6   */
+        Uint16      DEAD_TIME   : 2;    /*!< Bits 9-8   */
+        Uint16      TRETRY      : 1;    /*!< Bits 10    */
+        Uint16      CTRL05_RSV1 : 5;    /*!< Bits 15-11 */
     };
 } drv_ctrl05_u;
 
@@ -456,19 +457,19 @@ typedef union __drv_ctrl05_u__
  */
 typedef union __drv_ctrl06_u__
 {
-    uint16_t        all;                /*!< Short (16bits) type access */
+    Uint16          all;                /*!< Short (16bits) type access */
     struct
     {
-        uint16_t    SEN_LVL     : 2;    /*!< Bits 1-0   */
-        uint16_t    CSA_CAL_C   : 1;    /*!< Bits 2     */
-        uint16_t    CSA_CAL_B   : 1;    /*!< Bits 3     */
-        uint16_t    CSA_CAL_A   : 1;    /*!< Bits 4     */
-        uint16_t    DIS_SEN     : 1;    /*!< Bits 5     */
-        uint16_t    CSA_GAIN    : 2;    /*!< Bits 7-6   */
-        uint16_t    LS_REF      : 1;    /*!< Bits 8     */
-        uint16_t    VREF_DIV    : 1;    /*!< Bits 9     */
-        uint16_t    CSA_FET     : 1;    /*!< Bits 10    */
-        uint16_t    CTRL06_RSV1 : 5;    /*!< Bits 15-11 */
+        Uint16      SEN_LVL     : 2;    /*!< Bits 1-0   */
+        Uint16      CSA_CAL_C   : 1;    /*!< Bits 2     */
+        Uint16      CSA_CAL_B   : 1;    /*!< Bits 3     */
+        Uint16      CSA_CAL_A   : 1;    /*!< Bits 4     */
+        Uint16      DIS_SEN     : 1;    /*!< Bits 5     */
+        Uint16      CSA_GAIN    : 2;    /*!< Bits 7-6   */
+        Uint16      LS_REF      : 1;    /*!< Bits 8     */
+        Uint16      VREF_DIV    : 1;    /*!< Bits 9     */
+        Uint16      CSA_FET     : 1;    /*!< Bits 10    */
+        Uint16      CTRL06_RSV1 : 5;    /*!< Bits 15-11 */
     };
 } drv_ctrl06_u;
 
@@ -478,11 +479,11 @@ typedef union __drv_ctrl06_u__
  */
 typedef union __drv_ctrl07_u__
 {
-    uint16_t        all;                /*!< Short (16bits) type access */
+    Uint16          all;                /*!< Short (16bits) type access */
     struct
     {
-        uint16_t    CAL_MODE    : 1;    /*!< Bits 0     */
-        uint16_t    CTRL07_RSV1 : 15;   /*!< Bits 15-1  */
+        Uint16      CAL_MODE    : 1;    /*!< Bits 0     */
+        Uint16      CTRL07_RSV1 : 15;   /*!< Bits 15-1  */
     };
 } drv_ctrl07_u;
 
@@ -495,10 +496,10 @@ typedef union __drv_ctrl07_u__
  */
 typedef struct __drv_cfg_t__
 {
-    uint32_t  spiHandle;            /*!< handle for the serial peripheral interface */
-    uint32_t  gpioNumber_CS;        /*!< GPIO connected to the DRV8353 CS pin       */
-    uint32_t  gpioNumber_EN;        /*!< GPIO connected to the DRV8353 enable pin   */
-    uint32_t  gpioNumber_FAULT;     /*!< GPIO connected to the DRV8353 fault pin    */
+    Uint32          spiHandle;            /*!< handle for the serial peripheral interface */
+    Uint32          gpioNumber_CS;        /*!< GPIO connected to the DRV8353 CS pin       */
+    Uint32          gpioNumber_EN;        /*!< GPIO connected to the DRV8353 enable pin   */
+    Uint32          gpioNumber_FAULT;     /*!< GPIO connected to the DRV8353 fault pin    */
 } drv_cfg_t;
 
 /**
@@ -536,12 +537,12 @@ typedef struct __drv8353_t__
  */
 typedef union _drv_msg_u_
 {
-    uint16_t        all;                /*!< Short (16bits) type access */
+    Uint16          all;                /*!< Short (16bits) type access */
     struct
     {
-        uint16_t    data    : 11;       /*!< Bits 10-0 : According Status registers (0 \& 1) or Control registers (2 -> 6)  */
-        uint16_t    addr    : 4;        /*!< Bits 14-11 : @see drv_Address_e                                                */
-        uint16_t    rw_cmd  : 1;        /*!< Bits 15 : @see drv_CtrlMode_e                                                  */
+        Uint16      data    : 11;       /*!< Bits 10-0 : According Status registers (0 \& 1) or Control registers (2 -> 6)  */
+        Uint16      addr    : 4;        /*!< Bits 14-11 : @see drv_Address_e                                                */
+        Uint16      rw_cmd  : 1;        /*!< Bits 15 : @see drv_CtrlMode_e                                                  */
     };
 } drv_msg_u;
 
@@ -549,7 +550,7 @@ typedef union _drv_msg_u_
  * FUNCTIONS DECLARATION
  ***********************************************************************/
 bool_t DRV_ini(const drv_cfg_t*, drv_reg_t*);
-uint32_t DRV_readStatus(const drv_cfg_t*, drv_reg_t*);
+Uint32 DRV_readStatus(const drv_cfg_t*, drv_reg_t*);
 void DRV_readAll(const drv_cfg_t*, drv_reg_t*);
 void DRV_writeAll(const drv_cfg_t*, drv_reg_t*);
 

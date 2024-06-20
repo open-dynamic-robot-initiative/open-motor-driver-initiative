@@ -1,7 +1,7 @@
 /***********************************************************************
  * INCLUDE FILES
  ***********************************************************************/
-#include "f2838x_device.h"
+//#include "f2838x_device.h"
 #include "driverlib.h"
 #include "device.h"
 #include "config/uomodri_user_defines.h"
@@ -10,11 +10,11 @@
 /***********************************************************************
  * FUNCTIONS DECLARATION
  ***********************************************************************/
-static uint32_t DRV_Enable(const drv_cfg_t*);
+static Uint32   DRV_Enable(const drv_cfg_t*);
 static bool_t   DRV_SetConfig(const drv_cfg_t*, drv_reg_t*);
 static void     DRV_Calibration(const drv_cfg_t*, drv_reg_t*);
-uint16_t        DRV_readOne(const drv_cfg_t*, DRV_Address_e);
-void            DRV_writeOne(const drv_cfg_t*, DRV_Address_e, uint16_t);
+Uint16          DRV_readOne(const drv_cfg_t*, DRV_Address_e);
+void            DRV_writeOne(const drv_cfg_t*, DRV_Address_e, Uint16);
 
 /***********************************************************************
  * FUNCTIONS DEFINITIONS
@@ -44,26 +44,35 @@ bool_t DRV_ini(const drv_cfg_t* p_drvCfg, drv_reg_t* p_drvReg)
 /**
  * @brief       Enable the DRV IC pin.
  * @param[in]   *p_drv      Pointer on the DRV definition structure
- * @return      uint32_t    0 if DRV is enable else DRV is in fault state.
+ * @return      Uint32    0 if DRV is enable else DRV is in fault state.
  */
-static uint32_t DRV_Enable(const drv_cfg_t* p_drvCfg)
+static Uint32 DRV_Enable(const drv_cfg_t* p_drvCfg)
 {
-    drv_stat0x_u drv_status = {.all = 0};
-    uint16_t cpt_time_out   = 0;
-//    uint16_t test_status        = 1;
-//    bool_t drv_enable       = true;
+    drv_reg_t drv_status        = {.stat_reg_00 = 0, .stat_reg_01 = 0, .ctrl_reg_02 = 0,
+                                   .ctrl_reg_03 = 0, .ctrl_reg_04 = 0, .ctrl_reg_05 = 0,
+                                   .ctrl_reg_06 = 0, .ctrl_reg_07 = 0};
+    drv_stat0x_u drv_status_s   = {.all = 0};
+    Uint16 cpt_time_out         = 0;
+//    Uint16 test_status        = 1;
+    bool_t drv_enable           = true;
     // Enable the DRV8353
     GPIO_writePin(p_drvCfg->gpioNumber_EN, 1);
     // Wait 1ms
     DEVICE_DELAY_US(1000U);
     // Make sure the FAULT bit is not set during startup
-//    while(drv_enable && (DRV_readOne(p_drvCfg, DRV_ADDRESS_STATUS_0) & FLT_STATUS_FAULT_Msk))
-//        drv_enable  = (++cpt_time_out < 1000) ? (true) : (false);
-    while((++cpt_time_out < 1000) && DRV_readOne(p_drvCfg, DRV_ADDRESS_STATUS_0));
+    while(drv_enable && (DRV_readOne(p_drvCfg, DRV_ADDRESS_STATUS_0) & FLT_STATUS_FAULT_Msk))
+        drv_enable  = (++cpt_time_out < 1000) ? (true) : (false);
+//    while((++cpt_time_out < 1000) && DRV_readOne(p_drvCfg, DRV_ADDRESS_STATUS_0));
 //            drv_enable  = (++cpt_time_out < 1000) ? (true) : (false);
 
-    drv_status.stat00.all   = DRV_readOne(p_drvCfg, DRV_ADDRESS_STATUS_0);
-    drv_status.stat01.all   = DRV_readOne(p_drvCfg, DRV_ADDRESS_STATUS_1);
+    drv_status.stat_reg_00.all  = DRV_readOne(p_drvCfg, DRV_ADDRESS_STATUS_0);
+    drv_status.stat_reg_01.all  = DRV_readOne(p_drvCfg, DRV_ADDRESS_STATUS_1);
+    drv_status.ctrl_reg_02.all  = DRV_readOne(p_drvCfg, DRV_ADDRESS_CONTROL_2);
+    drv_status.ctrl_reg_03.all  = DRV_readOne(p_drvCfg, DRV_ADDRESS_CONTROL_3);
+    drv_status.ctrl_reg_04.all  = DRV_readOne(p_drvCfg, DRV_ADDRESS_CONTROL_4);
+    drv_status.ctrl_reg_05.all  = DRV_readOne(p_drvCfg, DRV_ADDRESS_CONTROL_5);
+    drv_status.ctrl_reg_06.all  = DRV_readOne(p_drvCfg, DRV_ADDRESS_CONTROL_6);
+    drv_status.ctrl_reg_07.all  = DRV_readOne(p_drvCfg, DRV_ADDRESS_CONTROL_7);
 
     //    if((DRV_readOne(p_drvCfg, DRV_ADDRESS_STATUS_0) & FLT_STATUS_FAULT_Msk) == 0)
 //        drv_enable = true;
@@ -80,13 +89,16 @@ static uint32_t DRV_Enable(const drv_cfg_t* p_drvCfg)
 //    test_status = 1;
     // Check that fault pin is similar as register bit. FAULT is active low.
     //drv_enable      = drv_enable && GPIO_readPin(p_drvCfg->gpioNumber_FAULT);
-    drv_status.stat00.FAULT = !GPIO_readPin(p_drvCfg->gpioNumber_FAULT);
+//    drv_status.stat_reg_00.FAULT = !GPIO_readPin(p_drvCfg->gpioNumber_FAULT);
 
-
+    drv_status_s.stat00         = drv_status.stat_reg_00;
+    drv_status_s.stat01         = drv_status.stat_reg_01;
+    drv_status_s.stat00.FAULT   = !GPIO_readPin(p_drvCfg->gpioNumber_FAULT);
 //    if (GPIO_readPin(p_drvCfg->gpioNumber_FAULT))
 //        return (2);
-    return(drv_status.all);
+    return(drv_status_s.all);
 }
+
 
 /**
  * @brief       Initialize the DRV registers with defined structures.
@@ -146,9 +158,9 @@ static void DRV_Calibration(const drv_cfg_t* p_drvCfg, drv_reg_t* p_drvReg)
  * @brief       Read the DRV8353 status registers
  * @param[in]   *p_drv      Pointer on the DRV definition structure
  */
-uint32_t DRV_readStatus(const drv_cfg_t* p_drvCfg, drv_reg_t* p_drvReg)
+Uint32 DRV_readStatus(const drv_cfg_t* p_drvCfg, drv_reg_t* p_drvReg)
 {
-    drv_stat0x_u drv_err_status = {.all = 0};
+    drv_stat0x_u drv_err_status     = {.stat00 = 0, .stat01 = 0};
 
     if((p_drvCfg != NULL) && (p_drvReg != NULL))
     {
@@ -210,10 +222,10 @@ void DRV_writeAll(const drv_cfg_t* p_drvCfg, drv_reg_t* p_drvReg)
  * @param[in]   addr        Address of the register to read
  * @return      The value contained in the specified register
  */
-uint16_t DRV_readOne(const drv_cfg_t* p_drvCfg, DRV_Address_e addr)
+Uint16 DRV_readOne(const drv_cfg_t* p_drvCfg, DRV_Address_e addr)
 {
-    uint32_t spi_base   = p_drvCfg->spiHandle;
-    uint32_t pin_spi_cs = p_drvCfg->gpioNumber_CS;
+    Uint32 spi_base     = p_drvCfg->spiHandle;
+    Uint32 pin_spi_cs   = p_drvCfg->gpioNumber_CS;
     drv_msg_u msg       = {.rw_cmd = DRV_CTRLMODE_READ, .addr = addr, .data = 0};
 
     // Select chip
@@ -238,10 +250,10 @@ uint16_t DRV_readOne(const drv_cfg_t* p_drvCfg, DRV_Address_e addr)
  * @param[in]   addr        Address of the register to write
  * @param[in]   data        Data to be written to the specified register
  */
-void DRV_writeOne(const drv_cfg_t* p_drvCfg, DRV_Address_e addr, uint16_t data)
+void DRV_writeOne(const drv_cfg_t* p_drvCfg, DRV_Address_e addr, Uint16 data)
 {
-    uint32_t spi_base   = p_drvCfg->spiHandle;
-    uint32_t pin_spi_cs = p_drvCfg->gpioNumber_CS;
+    Uint32 spi_base     = p_drvCfg->spiHandle;
+    Uint32 pin_spi_cs   = p_drvCfg->gpioNumber_CS;
     drv_msg_u msg       = {.rw_cmd = DRV_CTRLMODE_WRITE, .addr = addr, .data = data};
 
     // Select chip

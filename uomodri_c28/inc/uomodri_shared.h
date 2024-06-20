@@ -51,12 +51,12 @@ extern static motor_t   motor[];
  * FUNCTIONS DECLARATION
  ***********************************************************************/
 #ifdef __TMS320C28XX_CLA__
-extern float32_t __mminf32(float32_t, float32_t);
-extern float32_t __mmaxf32(float32_t, float32_t);
-extern float32_t __mfracf32(float32_t);
-//extern float32_t CLAcos(float32_t);
-//extern float32_t CLAsin(float32_t);
-extern void CLAsincos(float32_t, float32_t*, float32_t*);
+extern float32 __mminf32(float32, float32);
+extern float32 __mmaxf32(float32, float32);
+extern float32 __mfracf32(float32);
+//extern float32 CLAcos(float32);
+//extern float32 CLAsin(float32);
+extern void CLAsincos(float32, float32*, float32*);
 
 __attribute__((interrupt)) void adcCalib_Task(void);
 __attribute__((interrupt)) void cmdNew_Task(void);
@@ -67,7 +67,7 @@ __attribute__((interrupt)) void Cla1Task6(void);
 __attribute__((interrupt)) void Cla1Task7(void);
 __attribute__((interrupt)) void Cla1Task8(void);
 
-inline float32_t __msatf32(float32_t, float32_t, float32_t);
+inline float32 __msatf32(float32, float32, float32);
 #endif
 
 void ADC_offsetCalib(motor_t*);
@@ -82,12 +82,12 @@ inline void FOC_resetStructCmd(cmd_t*);
 inline void FOC_resetStructMeasures(acq_t*);
 inline void FOC_resetStruct(foc_t*);
 inline void FOC_getMeasures(acq_t*);
-inline float32_t FOC_runPI(pi_t*);
-inline float32_t FOC_runPD(pd_t*);
+inline float32 FOC_runPI(pi_t*);
+inline float32 FOC_runPD(pd_t*);
 inline void FOC_svpwm1(foc_t*);
 void FOC_runControl(foc_t*);
-void MOT_runCommand(uint32_t, float32_t);
-void MOT_stopCommand(uint32_t);
+void MOT_runCommand(Uint32, float32);
+void MOT_stopCommand(Uint32);
 bool_t MOT_runControl(motor_t*);
 
 /***********************************************************************
@@ -104,7 +104,7 @@ bool_t MOT_runControl(motor_t*);
  * @param sat_min   Min level for saturation.
  * @return
  */
-inline float32_t __msatf32(float32_t a, float32_t sat_max, float32_t sat_min)
+inline float32 __msatf32(float32 a, float32 sat_max, float32 sat_min)
 {
     return(__mmaxf32(__mminf32(a, sat_max), sat_min));
 }
@@ -118,10 +118,10 @@ void ADC_offsetCalib(motor_t* p_motor)
 {
     acq_t*      p_acq       = &p_motor->foc.acq;
     lpf_t       fltCalibCoef= {.a = 0.998f, .one_minus_a = 0.002f};
-    float32_t   ia_calib    = 0.0f;
-    float32_t   ib_calib    = 0.0f;
-    float32_t   ic_calib    = 0.0f;
-    uint16_t    calibCnt    = 0;
+    float32     ia_calib    = 0.0f;
+    float32     ib_calib    = 0.0f;
+    float32     ic_calib    = 0.0f;
+    Uint16      calibCnt    = 0;
 
     MOT_stopCommand(p_motor->epwmBase[CHANNEL_1]);
     MOT_stopCommand(p_motor->epwmBase[CHANNEL_2]);
@@ -132,9 +132,9 @@ void ADC_offsetCalib(motor_t* p_motor)
         // Wait IT flag event. Blocking.
         while(ADC_getInterruptStatus(p_acq->iabcCfgBase[CHANNEL_1], p_acq->intNum.adcInt) == false);
         // Get current results
-        p_acq->ia       = (float32_t)ADC_readResult(p_acq->iabcResultBase[CHANNEL_1], (ADC_SOCNumber)p_acq->socNum.ia);
-        p_acq->ib       = (float32_t)ADC_readResult(p_acq->iabcResultBase[CHANNEL_2], (ADC_SOCNumber)p_acq->socNum.ib);
-        p_acq->ic       = (float32_t)ADC_readResult(p_acq->iabcResultBase[CHANNEL_3], (ADC_SOCNumber)p_acq->socNum.ic);
+        p_acq->ia       = (float32)ADC_readResult(p_acq->iabcResultBase[CHANNEL_1], (ADC_SOCNumber)p_acq->socNum.ia);
+        p_acq->ib       = (float32)ADC_readResult(p_acq->iabcResultBase[CHANNEL_2], (ADC_SOCNumber)p_acq->socNum.ib);
+        p_acq->ic       = (float32)ADC_readResult(p_acq->iabcResultBase[CHANNEL_3], (ADC_SOCNumber)p_acq->socNum.ic);
         // filter
         if(calibCnt < 1000)
         {
@@ -154,9 +154,9 @@ void ADC_offsetCalib(motor_t* p_motor)
     }
     // Set offsets in PPBs
     // Sets the post processing block reference offset for tensions
-    ADC_setPPBReferenceOffset(p_acq->iabcCfgBase[CHANNEL_1], (ADC_PPBNumber)p_acq->ppbNum.ia, (uint16_t)ia_calib);
-    ADC_setPPBReferenceOffset(p_acq->iabcCfgBase[CHANNEL_2], (ADC_PPBNumber)p_acq->ppbNum.ib, (uint16_t)ib_calib);
-    ADC_setPPBReferenceOffset(p_acq->iabcCfgBase[CHANNEL_3], (ADC_PPBNumber)p_acq->ppbNum.ic, (uint16_t)ic_calib);
+    ADC_setPPBReferenceOffset(p_acq->iabcCfgBase[CHANNEL_1], (ADC_PPBNumber)p_acq->ppbNum.ia, (Uint16)ia_calib);
+    ADC_setPPBReferenceOffset(p_acq->iabcCfgBase[CHANNEL_2], (ADC_PPBNumber)p_acq->ppbNum.ib, (Uint16)ib_calib);
+    ADC_setPPBReferenceOffset(p_acq->iabcCfgBase[CHANNEL_3], (ADC_PPBNumber)p_acq->ppbNum.ic, (Uint16)ic_calib);
 //    CLA_clearTaskFlags(CLA1_BASE, CLA_TASKFLAG_ALL);
 }
 
@@ -195,7 +195,7 @@ inline void ENC_resetStruct(encoder_t* p_enc)
  */
 inline void ENC_resetPeriph(encoder_t* p_enc)
 {
-    uint32_t eqepBase       = p_enc->eqepBase;
+    Uint32 eqepBase = p_enc->eqepBase;
     // Reset encoder position
     EQEP_setPosition(eqepBase, 0);
     /* Reset the time base for edge capture unit */
@@ -220,14 +220,14 @@ inline void ENC_resetPeriph(encoder_t* p_enc)
  */
 inline void ENC_getPosition(encoder_t* p_enc)
 {
-    uint32_t eqepBase       = p_enc->eqepBase;
+    Uint32 eqepBase         = p_enc->eqepBase;
     p_enc->thetaMech[OLD]   = p_enc->thetaMech[NEW];
     // Compute mechanical angle normalized between 0 and 1
-    p_enc->thetaMech[NEW]   = (float32_t)EQEP_getStrobePositionLatch(eqepBase) * p_enc->thetaMechScaler;
+    p_enc->thetaMech[NEW]   = (float32)EQEP_getStrobePositionLatch(eqepBase) * p_enc->thetaMechScaler;
     // Get direction : -1 = CCW/reverse, 1 = CW/forward
     p_enc->thetaDir         = EQEP_getDirection(eqepBase);
     // Compute electrical angle (each pole pair is normalized between 0 and 1)
-    float32_t thetaElec     = (float32_t)p_enc->polePairs * p_enc->thetaMech[NEW];
+    float32 thetaElec       = (float32)p_enc->polePairs * p_enc->thetaMech[NEW];
     // Compute electrical & mechanical angle (in rad)
 #ifdef CPU1
 #ifdef __TMS320C28XX_CLA__
@@ -238,7 +238,7 @@ inline void ENC_getPosition(encoder_t* p_enc)
     p_enc->thetaMech[NEW]   = __mpy2pif32(p_enc->thetaMech[NEW]);
 #endif
 #else
-    p_enc->thetaElec        = __mpy2pif32(p_enc->thetaElec - (float32_t)((int32_t)thetaElec));
+    p_enc->thetaElec        = __mpy2pif32(p_enc->thetaElec - (float32)((int32)thetaElec));
     p_enc->thetaMech[NEW]   = __mpy2pif32(p_enc->thetaMech[NEW]);
 #endif
 
@@ -251,7 +251,7 @@ inline void ENC_getPosition(encoder_t* p_enc)
  */
 inline void ENC_getSpeed(encoder_t* p_enc)
 {
-    uint32_t eqepBase           = p_enc->eqepBase;
+    Uint32 eqepBase             = p_enc->eqepBase;
     speed_t* p_speed            = &p_enc->speed;
 //    bool_t newSpeedHigh         = false;
 //    bool_t newSpeedLow          = false;
@@ -262,13 +262,13 @@ inline void ENC_getSpeed(encoder_t* p_enc)
     {
         p_speed->theta[OLD]     = p_speed->theta[NEW];
 #ifdef __TMS320C28XX_CLA__
-        p_speed->theta[NEW]     = FM_ROUND2RAD * (float32_t)EQEP_getPositionLatch(eqepBase) * p_enc->thetaMechScaler;
+        p_speed->theta[NEW]     = FM_ROUND2RAD * (float32)EQEP_getPositionLatch(eqepBase) * p_enc->thetaMechScaler;
 #else
-        p_speed->theta[NEW]     = __mpy2pif32((float32_t)EQEP_getPositionLatch(eqepBase) * p_enc->thetaMechScaler);
+        p_speed->theta[NEW]     = __mpy2pif32((float32)EQEP_getPositionLatch(eqepBase) * p_enc->thetaMechScaler);
 #endif
         EQEP_clearInterruptStatus(eqepBase, (EQEP_INT_UNIT_TIME_OUT));// | EQEP_INT_OVERFLOW | EQEP_INT_UNDERFLOW));
         // Compute angle difference
-        float32_t deltaTheta    = p_speed->theta[NEW] - p_speed->theta[OLD];
+        float32 deltaTheta      = p_speed->theta[NEW] - p_speed->theta[OLD];
         // Saturate it between -pi and pi
         deltaTheta              = (deltaTheta > UOMODRI_PI) ? (deltaTheta - FM_2MULTPI) : (deltaTheta);
         deltaTheta              = (deltaTheta < -UOMODRI_PI)? (deltaTheta + FM_2MULTPI) : (deltaTheta);
@@ -282,9 +282,9 @@ inline void ENC_getSpeed(encoder_t* p_enc)
     // Check if unit position event occurred for low speed calculation
 //    if(EQEP_getStatus(eqepBase) & EQEP_STS_UNIT_POS_EVNT)//if(p_qepRegs->QEPSTS.all & EQEP_STS_UNIT_POS_EVNT)
 //    {
-//        uint16_t period         = EQEP_getCapturePeriodLatch(eqepBase);
-//        p_speed->speedLow       = (period != 0xFFFF) ? ((float32_t)(p_enc->thetaDir) * p_speed->speedLowScaler / (float32_t)period) : (p_speed->speedLow);
-////        p_speed->speedLow       = (float32_t)(p_enc->thetaDir) * p_speed->speedLowScaler / (float32_t)EQEP_getCapturePeriodLatch(eqepBase);
+//        Uint16 period         = EQEP_getCapturePeriodLatch(eqepBase);
+//        p_speed->speedLow       = (period != 0xFFFF) ? ((float32)(p_enc->thetaDir) * p_speed->speedLowScaler / (float32)period) : (p_speed->speedLow);
+////        p_speed->speedLow       = (float32)(p_enc->thetaDir) * p_speed->speedLowScaler / (float32)EQEP_getCapturePeriodLatch(eqepBase);
 //        // Speed is very close to zero because direction changed or the rotor doesn't move fast enough
 //        p_speed->speedLow       = (EQEP_getStatus(eqepBase) & (EQEP_STS_CAP_OVRFLW_ERROR | EQEP_STS_CAP_DIR_ERROR)) ? (0.0f) : (p_speed->speedLow);
 //        // Clear position event, direction change and timer overflow flags (even if direction and timer overflow are not set)
@@ -315,14 +315,14 @@ inline void ENC_getSpeed(encoder_t* p_enc)
 // Compute speed reference // TODO merge high & low speed - CSDT
 // see : http://www.diegm.uniud.it/petrella/Azionamenti%20Elettrici%20II/Tesine/Petrella%20et%20al.%20-%20Speed%20Measurement%20Algorithms%20for%20Low-Resolution%20Incremental%20Encoder%20Equipped%20Drives_a%20Comparative%20Analysis.pdf
     // Compute merge coefficient
-//    p_speed->alpha              = __fsat((float32_t)(0.05f * (fabs(p_speed->speedHigh) - SPEED_ESTIMATION_THRESHOLD)), 1.0f, 0.0f);
+//    p_speed->alpha              = __fsat((float32)(0.05f * (fabs(p_speed->speedHigh) - SPEED_ESTIMATION_THRESHOLD)), 1.0f, 0.0f);
 //    if(newSpeedHigh)
 //    {
-    float32_t speedFusion   = p_speed->speedHigh;//    p_enc->speedEst.speedRef = (1.0f - p_enc->speedEst.alpha) * p_enc->speedEst.lowMechSpeedEst + p_enc->speedEst.alpha * p_enc->speedEst.highMechSpeedEst;
+    float32 speedFusion     = p_speed->speedHigh;//    p_enc->speedEst.speedRef = (1.0f - p_enc->speedEst.alpha) * p_enc->speedEst.lowMechSpeedEst + p_enc->speedEst.alpha * p_enc->speedEst.highMechSpeedEst;
     UOMODRI_SPEED_FLT(p_speed->speedFlt[0], p_speed->speedMech[0], speedFusion);
     UOMODRI_SPEED_FLT(p_speed->speedFlt[1], p_speed->speedMech[1], speedFusion);
     //    p_speed->speedMech         = p_speed->speedHigh;//speedFusion;
-    p_speed->speedElec      = (float32_t)p_enc->polePairs * p_speed->speedMech[0];
+    p_speed->speedElec      = (float32)p_enc->polePairs * p_speed->speedMech[0];
 //    }
 
     return;
@@ -334,11 +334,11 @@ inline void ENC_getSpeed(encoder_t* p_enc)
  */
 inline void ENC_getTheta(encoder_t* p_enc)
 {
-    uint32_t eqepBase               = p_enc->eqepBase;
+    Uint32 eqepBase                 = p_enc->eqepBase;
     //-------------------------------------------------------------------
     //     TURN CONTROL
     //-------------------------------------------------------------------
-    float32_t deltaThetaMech        = p_enc->thetaMech[NEW] - p_enc->thetaMech[OLD];
+    float32 deltaThetaMech          = p_enc->thetaMech[NEW] - p_enc->thetaMech[OLD];
     // Update turnNb
     p_enc->turnNb                   = (deltaThetaMech > UOMODRI_PI) ? (p_enc->turnNb - 1) : (p_enc->turnNb);
     p_enc->turnNb                   = (deltaThetaMech < -UOMODRI_PI)? (p_enc->turnNb + 1) : (p_enc->turnNb);
@@ -350,9 +350,9 @@ inline void ENC_getTheta(encoder_t* p_enc)
     p_enc->turnNb                   = (maxRollOver) ? (MIN_ROLLOVER) : (p_enc->turnNb);
     p_enc->turnNb                   = (minRollOver) ? (MAX_ROLLOVER) : (p_enc->turnNb);
 #ifdef __TMS320C28XX_CLA__
-    float32_t turnNbRad             = FM_ROUND2RAD * (float32_t)p_enc->turnNb;
+    float32 turnNbRad               = FM_ROUND2RAD * (float32)p_enc->turnNb;
 #else
-    float32_t turnNbRad             = __mpy2pif32((float32_t)p_enc->turnNb);
+    float32 turnNbRad               = __mpy2pif32((float32)p_enc->turnNb);
 #endif
     //-------------------------------------------------------------------
     //     INDEX HANDLING
@@ -361,9 +361,9 @@ inline void ENC_getTheta(encoder_t* p_enc)
     {
         // Compute indexed mechanical angle normalized between 0 and 2 x PI
 #ifdef __TMS320C28XX_CLA__
-        float32_t thetaIndex        = FM_ROUND2RAD * (float32_t)EQEP_getIndexPositionLatch(eqepBase) * p_enc->thetaMechScaler;
+        float32 thetaIndex          = FM_ROUND2RAD * (float32)EQEP_getIndexPositionLatch(eqepBase) * p_enc->thetaMechScaler;
 #else
-        float32_t thetaIndex        = __mpy2pif32((float32_t)EQEP_getIndexPositionLatch(eqepBase) * p_enc->thetaMechScaler);
+        float32 thetaIndex        = __mpy2pif32((float32)EQEP_getIndexPositionLatch(eqepBase) * p_enc->thetaMechScaler);
 #endif
         // Save first indexed mechanical angle normalized between 0 and 2 x PI
         p_enc->thetaIndexRelative   = (!p_enc->flags.indexDetect) ? (thetaIndex)            : (p_enc->thetaIndexRelative);
@@ -373,10 +373,10 @@ inline void ENC_getTheta(encoder_t* p_enc)
         p_enc->flags.indexDetect    = true;
         // Check if current index capture match the first index capture
 #ifdef __TMS320C28XX_CLA__
-        float32_t tmp               = FM_ROUND2RAD * 4.0f / p_enc->thetaMechScaler;
+        float32 tmp                 = FM_ROUND2RAD * 4.0f / p_enc->thetaMechScaler;
 //        p_enc->flags.indexError     = (abs(p_enc->thetaIndexRelative - thetaIndex) < tmp) ? (false) : (true);
 #else
-        float32_t tmp               = __mpy2pif32(4.0f / p_enc->thetaMechScaler);
+        float32 tmp               = __mpy2pif32(4.0f / p_enc->thetaMechScaler);
 //        p_enc->flags.indexError     = (fabsf(p_enc->thetaIndexRelative - thetaIndex) < tmp) ? (false) : (true);
 #endif
         p_enc->flags.indexError     = (fabsf(p_enc->thetaIndexRelative - thetaIndex) < tmp) ? (false) : (true);
@@ -502,14 +502,14 @@ inline void FOC_resetStruct(foc_t* p_foc)
 inline void FOC_getMeasures(acq_t* p_acq)
 {
     // Get the latest current values in Amps
-    p_acq->ia       = ((float32_t)ADC_readPPBResult(p_acq->iabcResultBase[CHANNEL_1], (ADC_PPBNumber)p_acq->ppbNum.ia)) * ADC_MOTOR_CURRENT_SCALE;
-    p_acq->ib       = ((float32_t)ADC_readPPBResult(p_acq->iabcResultBase[CHANNEL_2], (ADC_PPBNumber)p_acq->ppbNum.ib)) * ADC_MOTOR_CURRENT_SCALE;
-    p_acq->ic       = ((float32_t)ADC_readPPBResult(p_acq->iabcResultBase[CHANNEL_3], (ADC_PPBNumber)p_acq->ppbNum.ic)) * ADC_MOTOR_CURRENT_SCALE;
+    p_acq->ia       = ((float32)ADC_readPPBResult(p_acq->iabcResultBase[CHANNEL_1], (ADC_PPBNumber)p_acq->ppbNum.ia)) * ADC_MOTOR_CURRENT_SCALE;
+    p_acq->ib       = ((float32)ADC_readPPBResult(p_acq->iabcResultBase[CHANNEL_2], (ADC_PPBNumber)p_acq->ppbNum.ib)) * ADC_MOTOR_CURRENT_SCALE;
+    p_acq->ic       = ((float32)ADC_readPPBResult(p_acq->iabcResultBase[CHANNEL_3], (ADC_PPBNumber)p_acq->ppbNum.ic)) * ADC_MOTOR_CURRENT_SCALE;
     // Get voltage of supply bus in Volt (minimum is one to avoid dividing by zero later)
-    float32_t vbus  = (float32_t)ADC_readPPBResult(p_acq->vBusResultBase, (ADC_PPBNumber)p_acq->ppbNum.vBus) * ADC_VBUS_VOLTAGE_SCALE;
+    float32 vbus    = (float32)ADC_readPPBResult(p_acq->vBusResultBase, (ADC_PPBNumber)p_acq->ppbNum.vBus) * ADC_VBUS_VOLTAGE_SCALE;
     UOMODRI_VBUS_FLT(p_acq->vBusFlt, p_acq->vBus, __mmaxf32(vbus, 1.0f));
     // Get voltage of external input in Volt (minimum is one to avoid dividing by zero later)
-    float32_t vext  = (float32_t)ADC_readPPBResult(p_acq->vExtResultBase, (ADC_PPBNumber)p_acq->ppbNum.vExt) * ADC_VEXT12_VOLTAGE_SCALE;
+    float32 vext    = (float32)ADC_readPPBResult(p_acq->vExtResultBase, (ADC_PPBNumber)p_acq->ppbNum.vExt) * ADC_VEXT12_VOLTAGE_SCALE;
     UOMODRI_VEXT_FLT(p_acq->vExtFlt, p_acq->vExt, vext);
 
     return;
@@ -520,21 +520,21 @@ inline void FOC_getMeasures(acq_t* p_acq)
  * @param[inout]    *p_pi   Pointer on the PI control structure.
  * @return          out     Command of PI controller
  */
-inline float32_t FOC_runPI(pi_t* p_pi)
+inline float32 FOC_runPI(pi_t* p_pi)
 {
 #ifdef __TMS320C28XX_CLA__
-    float32_t sat_max   = 0.5f  * (*(float32_t *)p_pi->p_sat.ptr);
-    float32_t sat_min   = -1.0f * sat_max;
-    p_pi->err           = (*(float32_t *)p_pi->p_set.ptr) - (*(float32_t *)p_pi->p_fb.ptr);
-    p_pi->integral     += (p_pi->ki * p_pi->err * (float32_t)PWM_PERIOD);
+    float32 sat_max     = 0.5f  * (*(float32 *)p_pi->p_sat.ptr);
+    float32 sat_min     = -1.0f * sat_max;
+    p_pi->err           = (*(float32 *)p_pi->p_set.ptr) - (*(float32 *)p_pi->p_fb.ptr);
+    p_pi->integral     += (p_pi->ki * p_pi->err * (float32)PWM_PERIOD);
     p_pi->integral      = __msatf32(p_pi->integral, sat_max, sat_min);
     p_pi->out           = (p_pi->kp * p_pi->err) + p_pi->integral + p_pi->ff;
     p_pi->out           =__msatf32(p_pi->out, sat_max, sat_min);
 #else
-    float32_t sat_max   = 0.5f  * (*p_pi->p_sat);
-    float32_t sat_min   = -1.0f * sat_max;
+    float32 sat_max     = 0.5f  * (*p_pi->p_sat);
+    float32 sat_min     = -1.0f * sat_max;
     p_pi->err           = (*p_pi->p_set) - (*p_pi->p_fb);
-    p_pi->integral     += (p_pi->ki * p_pi->err * (float32_t)PWM_PERIOD);
+    p_pi->integral     += (p_pi->ki * p_pi->err * (float32)PWM_PERIOD);
     p_pi->integral      = __fsat(p_pi->integral, sat_max, sat_min);
     p_pi->out           = (p_pi->kp * p_pi->err) + p_pi->integral + p_pi->ff;
     p_pi->out           = __fsat(p_pi->out, sat_max, sat_min);
@@ -548,20 +548,20 @@ inline float32_t FOC_runPI(pi_t* p_pi)
  * @param[inout]    *p_pd   Pointer on the PD control structure.
  * @return          out     Command of PD controller
  */
-inline float32_t FOC_runPD(pd_t* p_pd)
+inline float32 FOC_runPD(pd_t* p_pd)
 {
 #ifdef __TMS320C28XX_CLA__
-    float32_t sat_max   = 1.0f  * (*(float32_t *)p_pd->p_sat.ptr);
-    float32_t sat_min   = -1.0f * sat_max;
-    p_pd->errTheta      = (*(float32_t *)p_pd->p_setTheta.ptr) - (*(float32_t *)p_pd->p_fbTheta.ptr);
-    p_pd->errSpeed      = (*(float32_t *)p_pd->p_setSpeed.ptr) - (*(float32_t *)p_pd->p_fbSpeed.ptr);
-    p_pd->derivative    = (*(float32_t *)p_pd->p_kd.ptr) * p_pd->errSpeed;
+    float32 sat_max     = 1.0f  * (*(float32 *)p_pd->p_sat.ptr);
+    float32 sat_min     = -1.0f * sat_max;
+    p_pd->errTheta      = (*(float32 *)p_pd->p_setTheta.ptr) - (*(float32 *)p_pd->p_fbTheta.ptr);
+    p_pd->errSpeed      = (*(float32 *)p_pd->p_setSpeed.ptr) - (*(float32 *)p_pd->p_fbSpeed.ptr);
+    p_pd->derivative    = (*(float32 *)p_pd->p_kd.ptr) * p_pd->errSpeed;
     // Compute PID and clamp output.
-    p_pd->out           = ((*(float32_t *)p_pd->p_kp.ptr) * p_pd->errTheta) + p_pd->derivative + (*(float32_t *)p_pd->p_ff.ptr);
+    p_pd->out           = ((*(float32 *)p_pd->p_kp.ptr) * p_pd->errTheta) + p_pd->derivative + (*(float32 *)p_pd->p_ff.ptr);
     p_pd->out           = __msatf32(p_pd->out, sat_max, sat_min);
 #else
-    float32_t sat_max   = 1.0f  * (*p_pd->p_sat);
-    float32_t sat_min   = -1.0f * sat_max;
+    float32 sat_max     = 1.0f  * (*p_pd->p_sat);
+    float32 sat_min     = -1.0f * sat_max;
     p_pd->errTheta      = (*p_pd->p_setTheta) - (*p_pd->p_fbTheta);
     p_pd->errSpeed      = (*p_pd->p_setSpeed) - (*p_pd->p_fbSpeed);
     p_pd->derivative    = (*p_pd->p_kd) * p_pd->errSpeed;
@@ -585,11 +585,11 @@ inline void FOC_svpwm1(foc_t* p_foc)
     p_foc->uc               = (-0.5f * p_foc->ualpha) - (FM_SQRT3DIV2 * p_foc->ubeta);
     // Compute middle voltage to center PWM duty cycles around it
 #ifdef __TMS320C28XX_CLA__
-    float32_t   uOffset     = 0.5f * (MMIN3(p_foc->ua, p_foc->ub, p_foc->uc) + MMAX3(p_foc->ua, p_foc->ub, p_foc->uc));
+    float32   uOffset       = 0.5f * (MMIN3(p_foc->ua, p_foc->ub, p_foc->uc) + MMAX3(p_foc->ua, p_foc->ub, p_foc->uc));
 #else
-    float32_t   uOffset     = 0.5f * (FMIN3(p_foc->ua, p_foc->ub, p_foc->uc) + FMAX3(p_foc->ua, p_foc->ub, p_foc->uc));
+    float32   uOffset       = 0.5f * (FMIN3(p_foc->ua, p_foc->ub, p_foc->uc) + FMAX3(p_foc->ua, p_foc->ub, p_foc->uc));
 #endif
-    float32_t   uMidPoint   = 0.5f * (p_foc->dtcMax + p_foc->dtcMin);
+    float32   uMidPoint     = 0.5f * (p_foc->dtcMax + p_foc->dtcMin);
     // Compute duty cycles
 #ifdef __TMS320C28XX_CLA__
     p_foc->dtc_u            = __msatf32((((p_foc->ua - uOffset) / p_foc->acq.vBus) + uMidPoint), p_foc->dtcMax, p_foc->dtcMin);
@@ -625,9 +625,9 @@ void FOC_runControl(foc_t* p_foc)
     p_foc->ialpha           = ((2.0f * p_acq->ia) - p_acq->ib - p_acq->ic) * FM_1DIV3;
     p_foc->ibeta            = (p_acq->ib - p_acq->ic) * FM_1DIVSQRT3;
     // Park transform + filtering
-    float32_t id            = (p_foc->sinTheta * p_foc->ibeta) + (p_foc->cosTheta * p_foc->ialpha);
+    float32 id              = (p_foc->sinTheta * p_foc->ibeta) + (p_foc->cosTheta * p_foc->ialpha);
     UOMODRI_IDQ_FLT(p_foc->iParkFlt, p_foc->id, id);
-    float32_t iq            = (p_foc->cosTheta * p_foc->ibeta) - (p_foc->sinTheta * p_foc->ialpha);
+    float32 iq              = (p_foc->cosTheta * p_foc->ibeta) - (p_foc->sinTheta * p_foc->ialpha);
     UOMODRI_IDQ_FLT(p_foc->iParkFlt, p_foc->iq, iq);
     // Compute decoupling feed-forward terms
 #if (UOMODRI_FEED_FORWARD_ENABLE)
@@ -645,7 +645,7 @@ void FOC_runControl(foc_t* p_foc)
 //    p_foc->vmax             = p_acq->vbus * FM_1DIVSQRT3;
 //    p_foc->udMax            = p_foc->vmax;
 //    p_foc->uqMax            = __sqrt((p_foc->vmax * p_foc->vmax) - (p_foc->ud * p_foc->ud));
-//    float32_t v_ref         = __sqrt((p_foc->ud * p_foc->ud) + (p_foc->uq * p_foc->uq));
+//    float32 v_ref         = __sqrt((p_foc->ud * p_foc->ud) + (p_foc->uq * p_foc->uq));
 //    limit_norm(&p_foc->ud, &p_foc->uq, p_foc->vmax);
     // Inverse Park transform
     p_foc->ualpha           = (p_foc->cosTheta * p_foc->ud) - (p_foc->sinTheta * p_foc->uq);
@@ -663,9 +663,9 @@ void FOC_runControl(foc_t* p_foc)
  * @param[in]       cmd_b   Normalized command on PWM channel B (between 0 and 1)
  * @param[in]       cmd_c   Normalized command on PWM channel C (between 0 and 1)
  */
-void MOT_runCommand(uint32_t epwm_base, float32_t cmd)
+void MOT_runCommand(Uint32 epwm_base, float32 cmd)
 {
-    EPWM_setCounterCompareValue(epwm_base, EPWM_COUNTER_COMPARE_A, (uint16_t)(cmd * PWM_TIMEBASE_CNT));
+    EPWM_setCounterCompareValue(epwm_base, EPWM_COUNTER_COMPARE_A, (Uint16)(cmd * PWM_TIMEBASE_CNT));
 
     return;
 }
@@ -674,9 +674,9 @@ void MOT_runCommand(uint32_t epwm_base, float32_t cmd)
  * @brief           Force a hard stop on the 3 phases of the ePWM (low side active)
  * @param[out]      p_motor Pointer on the associated motor structure
  */
-void MOT_stopCommand(uint32_t epwm_base)
+void MOT_stopCommand(Uint32 epwm_base)
 {
-    EPWM_setCounterCompareValue(epwm_base, EPWM_COUNTER_COMPARE_A, (uint16_t)PWM_TIMEBASE_CNT);
+    EPWM_setCounterCompareValue(epwm_base, EPWM_COUNTER_COMPARE_A, (Uint16)PWM_TIMEBASE_CNT);
 
     return;
 }
@@ -695,7 +695,7 @@ bool_t MOT_runControl(motor_t* p_motor)
     cmd_t*          p_cmd       = &p_foc->cmd;
     cmd_reg_u       cmd_reg     = {.all = p_cmd->cmdField.all};
     status_reg_u    status_reg  = {.all = p_cmd->statusField.all};
-    uint16_t        motor_id    = p_motor->id;
+    Uint16        motor_id    = p_motor->id;
     bool_t          evt_flag    = false;
     bool_t          start       = cmd_reg.motorEnable && cmd_reg.systemEnable;
     p_enc->flags.indexOffset    = cmd_reg.encOffsetEnable;
@@ -829,7 +829,7 @@ bool_t MOT_runControl(motor_t* p_motor)
     cmd_t*          p_cmd           = &p_foc->cmd;
     cmd_reg_u       cmd_reg         = {.all = p_cmd->cmdField.all};
     status_reg_u    status_reg      = {.all = p_cmd->statusField.all};
-    uint16_t        motor_id        = p_motor->id;
+    Uint16        motor_id          = p_motor->id;
     bool_t          start           = cmd_reg.motorEnable && cmd_reg.systemEnable;
     p_enc->flags.indexOffset        = cmd_reg.encOffsetEnable;
 

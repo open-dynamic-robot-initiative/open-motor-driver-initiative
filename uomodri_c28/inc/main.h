@@ -17,16 +17,16 @@
 /***********************************************************************
  * UNION TYPES
  ***********************************************************************/
-typedef union __uart_addr_u__
-{
-    uint8_t             addr;
-    struct
-    {
-        uint8_t         addr_0          : 1;    /*!< Bit 0      : R/W - Address bit 0. */
-        uint8_t         addr_1          : 1;    /*!< Bit 1      : R/W - Address bit 1. */
-        uint8_t         addr_2          : 1;    /*!< Bit 2      : R/W - Address bit 2. */
-    };
-} uart_addr_u;
+//typedef union __uart_addr_u__
+//{
+//    uint8_t             addr;
+//    struct
+//    {
+//        uint8_t         addr_0          : 1;    /*!< Bit 0      : R/W - Address bit 0. */
+//        uint8_t         addr_1          : 1;    /*!< Bit 1      : R/W - Address bit 1. */
+//        uint8_t         addr_2          : 1;    /*!< Bit 2      : R/W - Address bit 2. */
+//    };
+//} uart_addr_u;
 
 /***********************************************************************
  * DEFINES

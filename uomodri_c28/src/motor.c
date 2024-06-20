@@ -12,7 +12,7 @@
  * @param           *p_motor    Pointer on the associated motor structure
  * @param           motor_id    Motor identifier.
  */
-void MOT_initStruct(motor_t* p_motor, uint16_t motor_id)
+void MOT_initStruct(motor_t* p_motor, Uint16 motor_id)
 {
     if(motor_id == MOTOR_1)
     {
@@ -46,13 +46,13 @@ void MOT_initStruct(motor_t* p_motor, uint16_t motor_id)
         //--- MOTOR ENCORDER STRUCTURE ------------------------------------------
         p_motor->foc.enc.eqepBase                       = MOTOR1_QEP_BASE;
         p_motor->foc.enc.polePairs                      = MOTOR1_POLES_PAIRS;
-        p_motor->foc.enc.thetaMechScaler                = (float32_t)MOTOR1_ENC_RESOLUTION_SCALE;
-        p_motor->foc.enc.speed.speedHighScaler          = (float32_t)MOTOR1_ENC_SPEED_HIGH_SCALE;
-        p_motor->foc.enc.speed.speedLowScaler           = (float32_t)MOTOR1_ENC_SPEED_LOW_SCALE;
-        p_motor->foc.enc.speed.speedFlt[0].a            = (float32_t)MOTOR1_ENC_SPEED_LPF_ALPHA;
-        p_motor->foc.enc.speed.speedFlt[0].one_minus_a  = (float32_t)MOTOR1_ENC_SPEED_LPF_ONE_M_ALPHA;
-        p_motor->foc.enc.speed.speedFlt[1].a            = (float32_t)MOTOR1_ENC_SPEED_LOCAL_LPF_ALPHA;
-        p_motor->foc.enc.speed.speedFlt[1].one_minus_a  = (float32_t)MOTOR1_ENC_SPEED_LOCAL_LPF_ONE_M_ALPHA;
+        p_motor->foc.enc.thetaMechScaler                = (float32)MOTOR1_ENC_RESOLUTION_SCALE;
+        p_motor->foc.enc.speed.speedHighScaler          = (float32)MOTOR1_ENC_SPEED_HIGH_SCALE;
+        p_motor->foc.enc.speed.speedLowScaler           = (float32)MOTOR1_ENC_SPEED_LOW_SCALE;
+        p_motor->foc.enc.speed.speedFlt[0].a            = (float32)MOTOR1_ENC_SPEED_LPF_ALPHA;
+        p_motor->foc.enc.speed.speedFlt[0].one_minus_a  = (float32)MOTOR1_ENC_SPEED_LPF_ONE_M_ALPHA;
+        p_motor->foc.enc.speed.speedFlt[1].a            = (float32)MOTOR1_ENC_SPEED_LOCAL_LPF_ALPHA;
+        p_motor->foc.enc.speed.speedFlt[1].one_minus_a  = (float32)MOTOR1_ENC_SPEED_LOCAL_LPF_ONE_M_ALPHA;
         //--- MOTOR COMMAND STRUCTURE -------------------------------------------
         p_motor->foc.cmd.iSat                           = MOTOR1_CURRENT_CMD_SAT_MAX;
         //-----------------------------------------------------------------------
@@ -67,11 +67,11 @@ void MOT_initStruct(motor_t* p_motor, uint16_t motor_id)
         p_motor->foc.initErr[MIN]                       = MOTOR1_POSITION_INIT_ERR_MIN;
         p_motor->foc.initErr[MAX]                       = MOTOR1_POSITION_INIT_ERR_MAX;
         //--- FOC - Initialize PI controller (Id) -------------------------------
-        p_motor->foc.piId.kp                            = (float32_t)MOTOR1_PI_ID_KP_COEF;
-        p_motor->foc.piId.ki                            = (float32_t)MOTOR1_PI_ID_KI_COEF;
+        p_motor->foc.piId.kp                            = (float32)MOTOR1_PI_ID_KP_COEF;
+        p_motor->foc.piId.ki                            = (float32)MOTOR1_PI_ID_KI_COEF;
         //--- FOC - Initialize PI controller (Iq) -------------------------------
-        p_motor->foc.piIq.kp                            = (float32_t)MOTOR1_PI_IQ_KP_COEF;
-        p_motor->foc.piIq.ki                            = (float32_t)MOTOR1_PI_IQ_KI_COEF;
+        p_motor->foc.piIq.kp                            = (float32)MOTOR1_PI_IQ_KP_COEF;
+        p_motor->foc.piIq.ki                            = (float32)MOTOR1_PI_IQ_KI_COEF;
         //--- DRV IO Config -----------------------------------------------------
         p_motor->drvFaultNum                            = MOTOR1_DRV_FAULT_NUM;
         p_motor->drvEnNum                               = MOTOR1_DRV_EN_NUM;
@@ -112,13 +112,13 @@ void MOT_initStruct(motor_t* p_motor, uint16_t motor_id)
         //--- MOTOR ENCORDER STRUCTURE ------------------------------------------
         p_motor->foc.enc.eqepBase                       = MOTOR2_QEP_BASE;
         p_motor->foc.enc.polePairs                      = MOTOR2_POLES_PAIRS;
-        p_motor->foc.enc.thetaMechScaler                = (float32_t)MOTOR2_ENC_RESOLUTION_SCALE;
-        p_motor->foc.enc.speed.speedHighScaler          = (float32_t)MOTOR2_ENC_SPEED_HIGH_SCALE;
-        p_motor->foc.enc.speed.speedLowScaler           = (float32_t)MOTOR2_ENC_SPEED_LOW_SCALE;
-        p_motor->foc.enc.speed.speedFlt[0].a            = (float32_t)MOTOR2_ENC_SPEED_LPF_ALPHA;
-        p_motor->foc.enc.speed.speedFlt[0].one_minus_a  = (float32_t)MOTOR2_ENC_SPEED_LPF_ONE_M_ALPHA;
-        p_motor->foc.enc.speed.speedFlt[1].a            = (float32_t)MOTOR2_ENC_SPEED_LOCAL_LPF_ALPHA;
-        p_motor->foc.enc.speed.speedFlt[1].one_minus_a  = (float32_t)MOTOR2_ENC_SPEED_LOCAL_LPF_ONE_M_ALPHA;
+        p_motor->foc.enc.thetaMechScaler                = (float32)MOTOR2_ENC_RESOLUTION_SCALE;
+        p_motor->foc.enc.speed.speedHighScaler          = (float32)MOTOR2_ENC_SPEED_HIGH_SCALE;
+        p_motor->foc.enc.speed.speedLowScaler           = (float32)MOTOR2_ENC_SPEED_LOW_SCALE;
+        p_motor->foc.enc.speed.speedFlt[0].a            = (float32)MOTOR2_ENC_SPEED_LPF_ALPHA;
+        p_motor->foc.enc.speed.speedFlt[0].one_minus_a  = (float32)MOTOR2_ENC_SPEED_LPF_ONE_M_ALPHA;
+        p_motor->foc.enc.speed.speedFlt[1].a            = (float32)MOTOR2_ENC_SPEED_LOCAL_LPF_ALPHA;
+        p_motor->foc.enc.speed.speedFlt[1].one_minus_a  = (float32)MOTOR2_ENC_SPEED_LOCAL_LPF_ONE_M_ALPHA;
         //--- MOTOR COMMAND STRUCTURE -------------------------------------------
         p_motor->foc.cmd.iSat                           = MOTOR2_CURRENT_CMD_SAT_MAX;
         //-----------------------------------------------------------------------
@@ -133,11 +133,11 @@ void MOT_initStruct(motor_t* p_motor, uint16_t motor_id)
         p_motor->foc.initErr[MIN]                       = MOTOR2_POSITION_INIT_ERR_MIN;
         p_motor->foc.initErr[MAX]                       = MOTOR2_POSITION_INIT_ERR_MAX;
         //--- FOC - Initialize PI controller (Id) -------------------------------
-        p_motor->foc.piId.kp                            = (float32_t)MOTOR2_PI_ID_KP_COEF;
-        p_motor->foc.piId.ki                            = (float32_t)MOTOR2_PI_ID_KI_COEF;
+        p_motor->foc.piId.kp                            = (float32)MOTOR2_PI_ID_KP_COEF;
+        p_motor->foc.piId.ki                            = (float32)MOTOR2_PI_ID_KI_COEF;
         //--- FOC - Initialize PI controller (Iq) -------------------------------
-        p_motor->foc.piIq.kp                            = (float32_t)MOTOR2_PI_IQ_KP_COEF;
-        p_motor->foc.piIq.ki                            = (float32_t)MOTOR2_PI_IQ_KI_COEF;
+        p_motor->foc.piIq.kp                            = (float32)MOTOR2_PI_IQ_KP_COEF;
+        p_motor->foc.piIq.ki                            = (float32)MOTOR2_PI_IQ_KI_COEF;
         //--- DRV IO Config -----------------------------------------------------
         p_motor->drvFaultNum                            = MOTOR2_DRV_FAULT_NUM;
         p_motor->drvEnNum                               = MOTOR2_DRV_EN_NUM;
@@ -184,33 +184,33 @@ void MOT_initStruct(motor_t* p_motor, uint16_t motor_id)
     p_motor->foc.initPosEnc[FW]                         = 0.0f;
     p_motor->foc.initPosEnc[REV]                        = 0.0f;
     //--- FOC - Initialize PI controller (Id) -----------------------------------
-    p_motor->foc.piId.p_fb.ptr                          = (float32_t *)(&p_motor->foc.id);
-    p_motor->foc.piId.p_set.ptr                         = (float32_t *)(&p_motor->foc.idRef);
-    p_motor->foc.piId.p_sat.ptr                         = (float32_t *)(&p_motor->foc.acq.vBus);
+    p_motor->foc.piId.p_fb.ptr                          = (float32 *)(&p_motor->foc.id);
+    p_motor->foc.piId.p_set.ptr                         = (float32 *)(&p_motor->foc.idRef);
+    p_motor->foc.piId.p_sat.ptr                         = (float32 *)(&p_motor->foc.acq.vBus);
     p_motor->foc.piId.err                               = 0.0f;
     p_motor->foc.piId.integral                          = 0.0f;
     p_motor->foc.piId.ff                                = 0.0f;
     p_motor->foc.piId.out                               = 0.0f;
     //--- FOC - Initialize PI controller (Iq) -----------------------------------
-    p_motor->foc.piIq.p_fb.ptr                          = (float32_t *)(&p_motor->foc.iq);
-    p_motor->foc.piIq.p_set.ptr                         = (float32_t *)(&p_motor->foc.iqRef);
-    p_motor->foc.piIq.p_sat.ptr                         = (float32_t *)(&p_motor->foc.acq.vBus);
+    p_motor->foc.piIq.p_fb.ptr                          = (float32 *)(&p_motor->foc.iq);
+    p_motor->foc.piIq.p_set.ptr                         = (float32 *)(&p_motor->foc.iqRef);
+    p_motor->foc.piIq.p_sat.ptr                         = (float32 *)(&p_motor->foc.acq.vBus);
     p_motor->foc.piIq.err                               = 0.0f;
     p_motor->foc.piIq.integral                          = 0.0f;
     p_motor->foc.piIq.ff                                = 0.0f;
     p_motor->foc.piIq.out                               = 0.0f;
     //--- FOC - Initialize PD controller (Speed & position) ---------------------
-    p_motor->foc.pdPosVel.p_fbTheta.ptr                 = (float32_t *)(&p_motor->foc.enc.thetaAbsolute);
-    p_motor->foc.pdPosVel.p_setTheta.ptr                = (float32_t *)(&p_motor->foc.cmd.posRef);
+    p_motor->foc.pdPosVel.p_fbTheta.ptr                 = (float32 *)(&p_motor->foc.enc.thetaAbsolute);
+    p_motor->foc.pdPosVel.p_setTheta.ptr                = (float32 *)(&p_motor->foc.cmd.posRef);
     p_motor->foc.pdPosVel.errTheta                      = 0.0f;
-    p_motor->foc.pdPosVel.p_fbSpeed.ptr                 = (float32_t *)(&p_motor->foc.enc.speed.speedMech[0]);
-    p_motor->foc.pdPosVel.p_setSpeed.ptr                = (float32_t *)(&p_motor->foc.cmd.velRef);
+    p_motor->foc.pdPosVel.p_fbSpeed.ptr                 = (float32 *)(&p_motor->foc.enc.speed.speedMech[0]);
+    p_motor->foc.pdPosVel.p_setSpeed.ptr                = (float32 *)(&p_motor->foc.cmd.velRef);
     p_motor->foc.pdPosVel.errSpeed                      = 0.0f;
-    p_motor->foc.pdPosVel.p_kp.ptr                      = (float32_t *)(&p_motor->foc.cmd.kpCoeff);
-    p_motor->foc.pdPosVel.p_kd.ptr                      = (float32_t *)(&p_motor->foc.cmd.kdCoeff);
+    p_motor->foc.pdPosVel.p_kp.ptr                      = (float32 *)(&p_motor->foc.cmd.kpCoeff);
+    p_motor->foc.pdPosVel.p_kd.ptr                      = (float32 *)(&p_motor->foc.cmd.kdCoeff);
     p_motor->foc.pdPosVel.derivative                    = 0.0f;
-    p_motor->foc.pdPosVel.p_ff.ptr                      = (float32_t *)(&p_motor->foc.cmd.iqff);
-    p_motor->foc.pdPosVel.p_sat.ptr                     = (float32_t *)(&p_motor->foc.cmd.iSat);
+    p_motor->foc.pdPosVel.p_ff.ptr                      = (float32 *)(&p_motor->foc.cmd.iqff);
+    p_motor->foc.pdPosVel.p_sat.ptr                     = (float32 *)(&p_motor->foc.cmd.iSat);
     p_motor->foc.pdPosVel.out                           = 0.0f;
     //--- FSM motor initial state -----------------------------------------------
     p_motor->state                                      = MOTOR_STATE_IDLE;

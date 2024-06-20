@@ -4,14 +4,12 @@
 /***********************************************************************
  * INCLUDE FILES
  ***********************************************************************/
-#include <stdbool.h>
-#include <stdint.h>
-#include <math.h>
+#include "f2838x_device.h"
 
 /***********************************************************************
  * RGB LED CONTROL
  ***********************************************************************/
-static const uint16_t ws2812_color_table_l_justified[256][2] =
+static const Uint16 ws2812_color_table_l_justified[256][2] =
 {
  {0x0092, 0x4924}, {0x0092, 0x4926}, {0x0092, 0x4934}, {0x0092, 0x4936}, {0x0092, 0x49A4}, {0x0092, 0x49A6}, {0x0092, 0x49B4}, {0x0092, 0x49B6},
  {0x0092, 0x4D24}, {0x0092, 0x4D26}, {0x0092, 0x4D34}, {0x0092, 0x4D36}, {0x0092, 0x4DA4}, {0x0092, 0x4DA6}, {0x0092, 0x4DB4}, {0x0092, 0x4DB6},
@@ -47,7 +45,7 @@ static const uint16_t ws2812_color_table_l_justified[256][2] =
  {0x00DB, 0x6D24}, {0x00DB, 0x6D26}, {0x00DB, 0x6D34}, {0x00DB, 0x6D36}, {0x00DB, 0x6DA4}, {0x00DB, 0x6DA6}, {0x00DB, 0x6DB4}, {0x00DB, 0x6DB6},
 };
 
-static const uint16_t ws2812_color_table_r_justified[256][2] =
+static const Uint16 ws2812_color_table_r_justified[256][2] =
 {
  {0x9249, 0x2400}, {0x9249, 0x2600}, {0x9249, 0x3400}, {0x9249, 0x3600}, {0x9249, 0xA400}, {0x9249, 0xA600}, {0x9249, 0xB400}, {0x9249, 0xB600},
  {0x924D, 0x2400}, {0x924D, 0x2600}, {0x924D, 0x3400}, {0x924D, 0x3600}, {0x924D, 0xA400}, {0x924D, 0xA600}, {0x924D, 0xB400}, {0x924D, 0xB600},
@@ -86,6 +84,6 @@ static const uint16_t ws2812_color_table_r_justified[256][2] =
 /***********************************************************************
  * FUNCTIONS DECLARATION
  ***********************************************************************/
-void ws2812b_writeLed(uint16_t, uint16_t, uint16_t, uint16_t*);
+void ws2812b_writeLed(Uint16, Uint16, Uint16, Uint16*);
 
 #endif /* __WS2812B_H__ */

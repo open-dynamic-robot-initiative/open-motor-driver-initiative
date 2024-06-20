@@ -27,6 +27,21 @@
 	</natures>
 	<linkedResources>
 		<link>
+			<name>inc/device/device.h</name>
+			<type>1</type>
+			<locationURI>C2000WARE_ROOT/device_support/f2838x/common/include/device.h</locationURI>
+		</link>
+		<link>
+			<name>inc/device/driverlib.h</name>
+			<type>1</type>
+			<locationURI>C2000WARE_ROOT/device_support/f2838x/common/include/driverlib.h</locationURI>
+		</link>
+		<link>
+			<name>inc/device/f2838x_device.h</name>
+			<type>1</type>
+			<locationURI>C2000WARE_ROOT/device_support/f2838x/headers/include/f2838x_device.h</locationURI>
+		</link>
+		<link>
 			<name>src/device/device.c</name>
 			<type>1</type>
 			<locationURI>$%7BC2000WARE_ROOT%7D/device_support/f2838x/common/source/device.c</locationURI>

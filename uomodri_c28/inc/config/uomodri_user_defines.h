@@ -29,15 +29,24 @@
 
 // Cores activation ENABLE/DISABLE
 #define CPU1_CORE_ENABLE                        (1)
+#if (CPU1_CORE_ENABLE) && (!defined CPU1)
+#define CPU1
+#endif
 #define CPU2_CORE_ENABLE                        (0)
+#if (CPU2_CORE_ENABLE) && (!defined CPU2)
+#define CPU2
+#endif
 #define CM_CORE_ENABLE                          (0)
+#if (CM_CORE_ENABLE) && (!defined CM)
+#define CM
+#endif
 #define CLA_CORE_ENABLE                         (1)
 #define CLB_TILE_ENABLE                         (1)
-#if (CLA_CORE_ENABLE)
-//#define __TMS320C28XX_CLA__
-//#define _TMS320C28XX_CLA_
+#if (CLA_CORE_ENABLE) && (!defined __TMS320C28XX_CLA__)
+#define __TMS320C28XX_CLA__
+#endif//#define _TMS320C28XX_CLA_
 //#define __TMS320C28XX_CLA2__
-#endif
+//#endif
 // CM peripherals ENABLE/DISABLE
 #define USB_BUS_ENABLE                          (0)
 #define UART_BUS_ENABLE                         (0)
@@ -117,10 +126,12 @@
 /************************************************************************
  * INCLUDES
  ************************************************************************/
-#include "motor/tmotor_mn4004_kv300.h"
-#include "motor/myactuator_rmdx8h.h"
-#include "encoder/broadcom_aedt_9810_z00.h"
-#include "encoder/cui_amt112s_4096_5000_s.h"
+#include "f2838x_cla_typedefs.h"  // F2838x CLA Type definitions
+
+#include "tmotor_mn4004_kv300.h"
+#include "myactuator_rmdx8h.h"
+#include "broadcom_aedt_9810_z00.h"
+#include "cui_amt112s_4096_5000_s.h"
 
 //#if(SPI_BUS_ENABLE) || (RS485_BUS_ENABLE)
 //#include "uomodri_communication_defines.h"
@@ -132,8 +143,8 @@
 #elif (USE_UOMODRI_REV == USE_UOMODRI_V2)
 //
 #elif (USE_UOMODRI_REV == USE_UOMODRI_V3)
-#include "uomodri_3_1/uomodri_3_1_hal_defines.h"
-#include "uomodri_3_1/uomodri_3_1_hal_handlers.h"
+#include "uomodri_3_1_hal_defines.h"
+#include "uomodri_3_1_hal_handlers.h"
 #elif (USE_UOMODRI_REV == USE_UOMODRI_SA_V1)
 //
 #else
@@ -141,17 +152,18 @@
 #endif
 #include "hw_types.h"
 
-#include "f2838x_cla_typedefs.h"  // F2838x CLA Type definitions
+
 #include "f2838x_device.h"        // F2838x Headerfile Include File
+#include "driverlib.h"
 #include "f2838x_examples.h"      // F2838x Examples Include File
 
-///***********************************************************************
-// * STRUCTURES
-// ***********************************************************************/
-//typedef struct __lowPassFilter_t__
-//{
-//    float32_t a;
-//    float32_t one_minus_a;
-//} lpf_t;
+/***********************************************************************
+ * STRUCTURES
+ ***********************************************************************/
+typedef struct __lowPassFilter_t__
+{
+    float32     a;
+    float32     one_minus_a;
+} lpf_t;
 
 #endif /* __UOMODRI_USER_DEFINES_H__ */

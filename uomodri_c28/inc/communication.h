@@ -4,13 +4,14 @@
 /***********************************************************************
  * INCLUDES
  ***********************************************************************/
+#if defined(CPU1) || defined(CPU2)
+#include "f2838x_device.h"
+#include "foc.h"
+#include "motor.h"
+#else
 #include <stdbool.h>
 #include <stdint.h>
 #include <math.h>
-#ifdef CPU1
-#include "f2838x_device.h"
-#include "motor.h"
-#else
 #include <stddef.h>
 #include "uomodri_cm_user_defines.h"
 #endif
@@ -102,7 +103,8 @@
 /***********************************************************************
  * COMMUNICATION CRC TABLE
  ***********************************************************************/
-static const uint32_t crc32_table[] =
+#if (defined CPU1) || (defined CPU2)
+static const Uint32 crc32_table[] =
 {
  0x00000000, 0x04c11db7, 0x09823b6e, 0x0d4326d9, 0x130476dc, 0x17c56b6b, 0x1a864db2, 0x1e475005,
  0x2608edb8, 0x22c9f00f, 0x2f8ad6d6, 0x2b4bcb61, 0x350c9b64, 0x31cd86d3, 0x3c8ea00a, 0x384fbdbd,
@@ -138,6 +140,26 @@ static const uint32_t crc32_table[] =
  0xafb010b1, 0xab710d06, 0xa6322bdf, 0xa2f33668, 0xbcb4666d, 0xb8757bda, 0xb5365d03, 0xb1f740b4
 };
 
+static Uint8 const crc8_table[] =
+{
+ 0x00, 0x5E, 0xBC, 0xE2, 0x61, 0x3F, 0xDD, 0x83, 0xC2, 0x9C, 0x7E, 0x20, 0xA3, 0xFD, 0x1F, 0x41,
+ 0x9D, 0xC3, 0x21, 0x7F, 0xFC, 0xA2, 0x40, 0x1E, 0x5F, 0x01, 0xE3, 0xBD, 0x3E, 0x60, 0x82, 0xDC,
+ 0x23, 0x7D, 0x9F, 0xC1, 0x42, 0x1C, 0xFE, 0xA0, 0xE1, 0xBF, 0x5D, 0x03, 0x80, 0xDE, 0x3C, 0x62,
+ 0xBE, 0xE0, 0x02, 0x5C, 0xDF, 0x81, 0x63, 0x3D, 0x7C, 0x22, 0xC0, 0x9E, 0x1D, 0x43, 0xA1, 0xFF,
+ 0x46, 0x18, 0xFA, 0xA4, 0x27, 0x79, 0x9B, 0xC5, 0x84, 0xDA, 0x38, 0x66, 0xE5, 0xBB, 0x59, 0x07,
+ 0xDB, 0x85, 0x67, 0x39, 0xBA, 0xE4, 0x06, 0x58, 0x19, 0x47, 0xA5, 0xFB, 0x78, 0x26, 0xC4, 0x9A,
+ 0x65, 0x3B, 0xD9, 0x87, 0x04, 0x5A, 0xB8, 0xE6, 0xA7, 0xF9, 0x1B, 0x45, 0xC6, 0x98, 0x7A, 0x24,
+ 0xF8, 0xA6, 0x44, 0x1A, 0x99, 0xC7, 0x25, 0x7B, 0x3A, 0x64, 0x86, 0xD8, 0x5B, 0x05, 0xE7, 0xB9,
+ 0x8C, 0xD2, 0x30, 0x6E, 0xED, 0xB3, 0x51, 0x0F, 0x4E, 0x10, 0xF2, 0xAC, 0x2F, 0x71, 0x93, 0xCD,
+ 0x11, 0x4F, 0xAD, 0xF3, 0x70, 0x2E, 0xCC, 0x92, 0xD3, 0x8D, 0x6F, 0x31, 0xB2, 0xEC, 0x0E, 0x50,
+ 0xAF, 0xF1, 0x13, 0x4D, 0xCE, 0x90, 0x72, 0x2C, 0x6D, 0x33, 0xD1, 0x8F, 0x0C, 0x52, 0xB0, 0xEE,
+ 0x32, 0x6C, 0x8E, 0xD0, 0x53, 0x0D, 0xEF, 0xB1, 0xF0, 0xAE, 0x4C, 0x12, 0x91, 0xCF, 0x2D, 0x73,
+ 0xCA, 0x94, 0x76, 0x28, 0xAB, 0xF5, 0x17, 0x49, 0x08, 0x56, 0xB4, 0xEA, 0x69, 0x37, 0xD5, 0x8B,
+ 0x57, 0x09, 0xEB, 0xB5, 0x36, 0x68, 0x8A, 0xD4, 0x95, 0xCB, 0x29, 0x77, 0xF4, 0xAA, 0x48, 0x16,
+ 0xE9, 0xB7, 0x55, 0x0B, 0x88, 0xD6, 0x34, 0x6A, 0x2B, 0x75, 0x97, 0xC9, 0x4A, 0x14, 0xF6, 0xA8,
+ 0x74, 0x2A, 0xC8, 0x96, 0x15, 0x4B, 0xA9, 0xF7, 0xB6, 0xE8, 0x0A, 0x54, 0xD7, 0x89, 0x6B, 0x35
+};
+#else
 static unsigned char const crc8_table[] =
 {
  0x00, 0x5E, 0xBC, 0xE2, 0x61, 0x3F, 0xDD, 0x83, 0xC2, 0x9C, 0x7E, 0x20, 0xA3, 0xFD, 0x1F, 0x41,
@@ -157,6 +179,7 @@ static unsigned char const crc8_table[] =
  0xE9, 0xB7, 0x55, 0x0B, 0x88, 0xD6, 0x34, 0x6A, 0x2B, 0x75, 0x97, 0xC9, 0x4A, 0x14, 0xF6, 0xA8,
  0x74, 0x2A, 0xC8, 0x96, 0x15, 0x4B, 0xA9, 0xF7, 0xB6, 0xE8, 0x0A, 0x54, 0xD7, 0x89, 0x6B, 0x35
 };
+#endif
 
 /***********************************************************************
  * COMMUNICATION BUS IDENTIFIER
@@ -175,7 +198,7 @@ typedef enum
 /***********************************************************************
  * COMMUNICATION STATE MACHINES FOR CM CORE
  ***********************************************************************/
-#ifndef CPU1
+#if (!defined CPU1) && (!defined CPU2)
 typedef enum
 {
     COM_DBG_RX_WORD_A               = 0,    //!< COM_RX_STATE_MODE
@@ -210,8 +233,8 @@ typedef enum
  */
 typedef struct __U32toU16_reg_t__
 {
-    uint16_t        u16_msb;
-    uint16_t        u16_lsb;
+    Uint16          u16_msb;
+    Uint16          u16_lsb;
 } U32toU16_reg_t;
 
 /**
@@ -220,17 +243,17 @@ typedef struct __U32toU16_reg_t__
  */
 typedef union __mst2slv_reg_u__
 {
-    uint16_t        all;                /*!< Short (16bits) type access */
+    Uint16          all;                /*!< Short (16bits) type access */
     struct
     {
-        uint16_t    TIMEOUT     : 8;    /*!< Bits 7-0   : Timeout disable system after no valid command in milliseconds           */
-        uint16_t    CMD_RSV1    : 2;    /*!< Bits 9-8   : Reserved                                                                */
-        uint16_t    EI2OC       : 1;    /*!< Bits 10    : Enable/Disable incremental encoder index offset compensation - MOTOR_2  */
-        uint16_t    EI1OC       : 1;    /*!< Bits 11    : Enable/Disable incremental encoder index offset compensation - MOTOR_1  */
-        uint16_t    EPRE        : 1;    /*!< Bits 12    : Enable/Disable position rollover error - position range : -128 to +128  */
-        uint16_t    EM2         : 1;    /*!< Bits 13    : Enable(calibration procedure, alignment \& run)/Disable - MOTOR_2       */
-        uint16_t    EM1         : 1;    /*!< Bits 14    : Enable(calibration procedure, alignment \& run)/Disable - MOTOR_1       */
-        uint16_t    ES          : 1;    /*!< Bits 15    : Enable/Disable System                                                   */
+        Uint16      TIMEOUT     : 8;    /*!< Bits 7-0   : Timeout disable system after no valid command in milliseconds           */
+        Uint16      CMD_RSV1    : 2;    /*!< Bits 9-8   : Reserved                                                                */
+        Uint16      EI2OC       : 1;    /*!< Bits 10    : Enable/Disable incremental encoder index offset compensation - MOTOR_2  */
+        Uint16      EI1OC       : 1;    /*!< Bits 11    : Enable/Disable incremental encoder index offset compensation - MOTOR_1  */
+        Uint16      EPRE        : 1;    /*!< Bits 12    : Enable/Disable position rollover error - position range : -128 to +128  */
+        Uint16      EM2         : 1;    /*!< Bits 13    : Enable(calibration procedure, alignment \& run)/Disable - MOTOR_2       */
+        Uint16      EM1         : 1;    /*!< Bits 14    : Enable(calibration procedure, alignment \& run)/Disable - MOTOR_1       */
+        Uint16      ES          : 1;    /*!< Bits 15    : Enable/Disable System                                                   */
     };
 } mst2slv_reg_u;
 
@@ -240,20 +263,20 @@ typedef union __mst2slv_reg_u__
  */
 typedef union __slv2mst_reg_u__
 {
-    uint16_t        all;                /*!< Short (16bits) type access */
+    Uint16          all;                /*!< Short (16bits) type access */
     struct
     {
-        uint16_t    ERROR_CODE  : 4;    /*!< Bits 3-0   : Timeout disable system after no valid command               */
-        uint16_t    STATUS_RSV1 : 3;    /*!< Bits 6-4   : Reserved                                                    */
-        uint16_t    IDX2T       : 1;    /*!< Bits 7     : incremental encoder status toggle on index detect - MOTOR_2 */
-        uint16_t    IDX1T       : 1;    /*!< Bits 8     : incremental encoder status toggle on index detect - MOTOR_1 */
-        uint16_t    IDX2D       : 1;    /*!< Bits 9     : incremental encoder status index detected - MOTOR_2         */
-        uint16_t    IDX1D       : 1;    /*!< Bits 10    : incremental encoder status index detected - MOTOR_1         */
-        uint16_t    M2R         : 1;    /*!< Bits 11    : MOTOR_2 ready/not ready                                     */
-        uint16_t    M2E         : 1;    /*!< Bits 12    : MOTOR_2 enabled/not enabled                                 */
-        uint16_t    M1R         : 1;    /*!< Bits 13    : MOTOR_1 ready/not ready                                     */
-        uint16_t    M1E         : 1;    /*!< Bits 14    : MOTOR_1 enabled/not enabled                                 */
-        uint16_t    SE          : 1;    /*!< Bits 15    : System enabled/disabled                                     */
+        Uint16      ERROR_CODE  : 4;    /*!< Bits 3-0   : Timeout disable system after no valid command               */
+        Uint16      STATUS_RSV1 : 3;    /*!< Bits 6-4   : Reserved                                                    */
+        Uint16      IDX2T       : 1;    /*!< Bits 7     : incremental encoder status toggle on index detect - MOTOR_2 */
+        Uint16      IDX1T       : 1;    /*!< Bits 8     : incremental encoder status toggle on index detect - MOTOR_1 */
+        Uint16      IDX2D       : 1;    /*!< Bits 9     : incremental encoder status index detected - MOTOR_2         */
+        Uint16      IDX1D       : 1;    /*!< Bits 10    : incremental encoder status index detected - MOTOR_1         */
+        Uint16      M2R         : 1;    /*!< Bits 11    : MOTOR_2 ready/not ready                                     */
+        Uint16      M2E         : 1;    /*!< Bits 12    : MOTOR_2 enabled/not enabled                                 */
+        Uint16      M1R         : 1;    /*!< Bits 13    : MOTOR_1 ready/not ready                                     */
+        Uint16      M1E         : 1;    /*!< Bits 14    : MOTOR_1 enabled/not enabled                                 */
+        Uint16      SE          : 1;    /*!< Bits 15    : System enabled/disabled                                     */
     };
 } slv2mst_reg_u;
 
@@ -263,12 +286,12 @@ typedef union __slv2mst_reg_u__
  */
 typedef union __header_reg_u__
 {
-    uint16_t        all;
+    Uint16          all;
     struct
     {
-        uint16_t    size : 6;   /*!< Bits 5-0   : R/W - Number message elements expressed in bytes.  */
-        uint16_t    type : 2;   /*!< Bits 7-6   : R/W - Type of message (TBD).                       */
-        uint16_t    addr : 8;   /*!< Bits 15-8  : R/W - Target address                               */
+        Uint16      size : 6;   /*!< Bits 5-0   : R/W - Number message elements expressed in bytes.  */
+        Uint16      type : 2;   /*!< Bits 7-6   : R/W - Type of message (TBD).                       */
+        Uint16      addr : 8;   /*!< Bits 15-8  : R/W - Target address                               */
     };
 } header_reg_u;
 
@@ -295,12 +318,12 @@ typedef struct __mst2slv_msg_t__
 {
     mst2slv_reg_u   mode;
     pos_reg_t       position[2];
-    int16_t         velocity[2];
-    int16_t         current[2];
-    uint16_t        kpCoeff[2];
-    uint16_t        kdCoeff[2];
-    uint16_t        iSat;
-    uint16_t        index;
+    int16           velocity[2];
+    int16           current[2];
+    Uint16          kpCoeff[2];
+    Uint16          kdCoeff[2];
+    Uint16          iSat;
+    Uint16          index;
 } mst2slv_msg_t;
 
 /**
@@ -310,19 +333,33 @@ typedef struct __mst2slv_msg_t__
 typedef struct __slv2mst_msg_t__
 {
     slv2mst_reg_u   status;
-    uint16_t        timeStamp;
+    Uint16          timeStamp;
     pos_reg_t       position[2];
-    int16_t         velocity[2];
-    int16_t         current[2];
-    uint16_t        coilRes[2];
-    uint16_t        adcSamples[2];
-    uint16_t        lastCmdIndex;
+    int16           velocity[2];
+    int16           current[2];
+    Uint16          coilRes[2];
+    Uint16          adcSamples[2];
+    Uint16          lastCmdIndex;
 } slv2mst_msg_t;
 
 /**
  * @struct  cmd_uomodri_t
  * @brief   Structure of all commands necessaries for uOmodri
  */
+#if (defined CPU1) || (defined CPU2)
+typedef struct __cmd_uomodri_t__
+{
+    mst2slv_reg_u   mode;
+    float32         posRef[2];
+    float32         velRef[2];
+    float32         iqRef[2];
+    float32         kpCoeff[2];
+    float32         kdCoeff[2];
+    float32         iSat[2];
+    Uint32          cptTimeout;
+    Uint16          index;
+} cmd_uomodri_t;
+#else
 typedef struct __cmd_uomodri_t__
 {
     mst2slv_reg_u   mode;
@@ -335,6 +372,7 @@ typedef struct __cmd_uomodri_t__
     uint32_t        cptTimeout;
     uint16_t        index;
 } cmd_uomodri_t;
+#endif
 
 /***********************************************************************
  * COMMUNICATION FOR SPI
@@ -375,13 +413,13 @@ typedef struct __spi_rx_t__
 typedef struct __spi_tx_t__
 {
     spi_tx_msg_t    msg[2];
-    uint16_t        msg_cr;
-    uint16_t        msg_nx;
+    Uint16          msg_cr;
+    Uint16          msg_nx;
 //    struct
 //    {
-//        uint16_t    msg_cr  : 1;
-//        uint16_t    msg_nx  : 1;
-//        uint16_t    msg_RSV :14;
+//        Uint16    msg_cr  : 1;
+//        Uint16    msg_nx  : 1;
+//        Uint16    msg_RSV :14;
 //    };
 } spi_tx_t;
 
@@ -394,7 +432,7 @@ typedef struct __spi_tx_t__
  */
 typedef union __rs485_rx_msg_u__
 {
-    uint16_t            raw[COM_MSG_RS485_TX_RX_MAX_SIZE];
+    Uint16              raw[COM_MSG_RS485_TX_RX_MAX_SIZE];
     struct
     {
         header_reg_u    header;
@@ -409,7 +447,7 @@ typedef union __rs485_rx_msg_u__
  */
 typedef union __rs485_tx_msg_u__
 {
-    uint16_t            raw[COM_MSG_RS485_TX_RX_MAX_SIZE];
+    Uint16              raw[COM_MSG_RS485_TX_RX_MAX_SIZE];
     struct
     {
         header_reg_u    header;
@@ -425,12 +463,12 @@ typedef union __rs485_tx_msg_u__
 typedef struct __rs485_rx_t__
 {
     rs485_rx_msg_u      msg;
-    uint16_t            index;
+    Uint16              index;
     struct
     {
-        uint16_t        addr1   : 1;
-        uint16_t        addr2   : 1;
-        uint16_t        rsv     : 14;
+        Uint16          addr1   : 1;
+        Uint16          addr2   : 1;
+        Uint16          rsv     : 14;
     };
 } rs485_rx_t;
 
@@ -441,43 +479,43 @@ typedef struct __rs485_rx_t__
 typedef struct __rs485_tx_t__
 {
     rs485_tx_msg_u      msg[2];
-    uint16_t            index;
-    uint16_t            msg_cr;
-    uint16_t            msg_nx;
+    Uint16              index;
+    Uint16              msg_cr;
+    Uint16              msg_nx;
 //    struct
 //    {
-//        uint16_t    msg_cr  : 1;
-//        uint16_t    msg_nx  : 1;
-//        uint16_t    msg_RSV :14;
+//        Uint16    msg_cr  : 1;
+//        Uint16    msg_nx  : 1;
+//        Uint16    msg_RSV :14;
 //    };
 } rs485_tx_t;
 
 /***********************************************************************
  * COMMUNICATION STRUCTURES FOR SHARED DATA EXCHANGE (CPU1<->CM)
  ***********************************************************************/
-typedef union __uint64_u__
+typedef union __Uint64_u__
 {
-    uint64_t        uint64b;
-    uint8_t         byte[sizeof(uint64_t)];
-} uint64_u;
+    Uint64          Uint64b;
+    Uint8           byte[sizeof(Uint64)];
+} Uint64_u;
 
-typedef union __uint32_u__
+typedef union __Uint32_u__
 {
-    uint32_t        uint32b;
-    uint8_t         byte[sizeof(uint32_t)];
-} uint32_u;
+    Uint32          Uint32b;
+    Uint8           byte[sizeof(Uint32)];
+} Uint32_u;
 
-#ifdef CPU1
+#if (defined CPU1) || (defined CPU2)
 typedef union __float32_u__
 {
-    float32_t       float32b;
-    uint8_t         byte[sizeof(float32_t)];
+    float32       float32b;
+    Uint8         byte[sizeof(float32)];
 } float32_u;
 #else
 typedef union __float32_u__
 {
-    float_t         float32b;
-    uint8_t         byte[sizeof(float_t)];
+    float           float32b;
+    uint8_t         byte[sizeof(float)];
 } float32_u;
 #endif
 
@@ -487,7 +525,7 @@ typedef union __float32_u__
  */
 typedef struct __com_cpu_2_cm_t__
 {
-    uint32_u    itcnt;
+    Uint32_u    itcnt;
     float32_u   ia;
     float32_u   ib;
     float32_u   ic;
@@ -512,182 +550,182 @@ typedef struct __com_cpu_2_cm_t__
     float32_u   pd_kd;
     float32_u   iqff;
     float32_u   isat;
-    uint32_u    status;
+    Uint32_u    status;
 } com_cpu_2_cm_t;
 
 typedef union __word_32b_u__
 {
-#ifdef CPU1
-    float32_t       float_32b;
+#if (defined CPU1) || (defined CPU2)
+    float32       float_32b;
 #else
-    float_t         float_32b;
+    float           float_32b;
 #endif
-    uint32_t        uint_32b;
-    uint16_t        uint_16b[2];
-    uint8_t         uint_8b[4];    /*!< */
+    Uint32          Uint_32b;
+    Uint16          Uint_16b[2];
+    Uint8           Uint_8b[4];    /*!< */
 } word_32b_u;
 
-#ifndef CPU1
+#if (!defined CPU1) && (!defined CPU2)
 typedef struct __bit_config_t__
 {
-    uint64_t        m1_ia       : 1;    /*!< Bit 0      : R/W - Enable system to start. No power on motors.         */
-    uint64_t        m1_ib       : 1;    /*!< Bit 1      : R/W - Enable power on motor.                              */
-    uint64_t        m1_ic       : 1;    /*!< Bit 2      : R/W - Limit the rotations to +/- 128 rounds.              */
-    uint64_t        m1_vbus     : 1;    /*!< Bit 3      : R/W - Use encoder index in position computation.          */
-    uint64_t        m1_ialpha   : 1;    /*!< Bit 4      : R/W - Enable system to start. No power on motors.         */
-    uint64_t        m1_ibeta    : 1;    /*!< Bit 5      : R/W - Enable power on motor.                              */
-    uint64_t        m1_id       : 1;    /*!< Bit 6      : R/W - Enable power on motor.                              */
-    uint64_t        m1_iq       : 1;    /*!< Bit 7      : R/W - Enable power on motor.                              */
-    uint64_t        m1_iqref    : 1;    /*!< Bit 8      : R/W - Enable power on motor.                              */
-    uint64_t        m1_ud       : 1;    /*!< Bit 9      : R/W - Enable power on motor.                              */
-    uint64_t        m1_uq       : 1;    /*!< Bit 10     : R/W - Enable power on motor.                              */
-    uint64_t        m1_ualpha   : 1;    /*!< Bit 11     : R/W - Enable system to start. No power on motors.         */
-    uint64_t        m1_ubeta    : 1;    /*!< Bit 12     : R/W - Enable power on motor.                              */
-    uint64_t        m1_ua       : 1;    /*!< Bit 13     : R/W - Enable system to start. No power on motors.         */
-    uint64_t        m1_ub       : 1;    /*!< Bit 14     : R/W - Enable power on motor.                              */
-    uint64_t        m1_uc       : 1;    /*!< Bit 15     : R/W - Limit the rotations to +/- 128 rounds.              */
-    uint64_t        m1_pos      : 1;    /*!< Bit 16     : R/W - Enable system to start. No power on motors.         */
-    uint64_t        m1_posref   : 1;    /*!< Bit 17     : R/W - Enable power on motor.                              */
-    uint64_t        m1_vel      : 1;    /*!< Bit 18     : R/W - Enable system to start. No power on motors.         */
-    uint64_t        m1_velref   : 1;    /*!< Bit 19     : R/W - Enable power on motor.                              */
-    uint64_t        m1_itcnt    : 1;    /*!< Bit 20     : R/W - Limit the rotations to +/- 128 rounds.              */
-    uint64_t        m1_pd_kp    : 1;    /*!< Bit 21     : R/W - Enable system to start. No power on motors.         */
-    uint64_t        m1_pd_kd    : 1;    /*!< Bit 22     : R/W - Enable power on motor.                              */
-    uint64_t        m1_iqff     : 1;    /*!< Bit 23     : R/W - Limit the rotations to +/- 128 rounds.              */
-    uint64_t        m1_isat     : 1;    /*!< Bit 24     : R/W - Limit the rotations to +/- 128 rounds.              */
-    uint64_t        m1_status   : 1;    /*!< Bit 25     : R -                                                       */
-    uint64_t        DISP_RSV1   : 6;    /*!< Bit 26-31  : R/W - Reserved                                            */
-    uint64_t        m2_ia       : 1;    /*!< Bit 32     : R/W - Enable system to start. No power on motors.         */
-    uint64_t        m2_ib       : 1;    /*!< Bit 33     : R/W - Enable power on motor.                              */
-    uint64_t        m2_ic       : 1;    /*!< Bit 34     : R/W - Limit the rotations to +/- 128 rounds.              */
-    uint64_t        m2_vbus     : 1;    /*!< Bit 35     : R/W - Use encoder index in position computation.          */
-    uint64_t        m2_ialpha   : 1;    /*!< Bit 36     : R/W - Enable system to start. No power on motors.         */
-    uint64_t        m2_ibeta    : 1;    /*!< Bit 37     : R/W - Enable power on motor.                              */
-    uint64_t        m2_id       : 1;    /*!< Bit 38     : R/W - Enable power on motor.                              */
-    uint64_t        m2_iq       : 1;    /*!< Bit 39     : R/W - Enable power on motor.                              */
-    uint64_t        m2_iqref    : 1;    /*!< Bit 40     : R/W - Enable power on motor.                              */
-    uint64_t        m2_ud       : 1;    /*!< Bit 41     : R/W - Enable power on motor.                              */
-    uint64_t        m2_uq       : 1;    /*!< Bit 42     : R/W - Enable power on motor.                              */
-    uint64_t        m2_ualpha   : 1;    /*!< Bit 43     : R/W - Enable system to start. No power on motors.         */
-    uint64_t        m2_ubeta    : 1;    /*!< Bit 44     : R/W - Enable power on motor.                              */
-    uint64_t        m2_ua       : 1;    /*!< Bit 45     : R/W - Enable system to start. No power on motors.         */
-    uint64_t        m2_ub       : 1;    /*!< Bit 46     : R/W - Enable power on motor.                              */
-    uint64_t        m2_uc       : 1;    /*!< Bit 47     : R/W - Limit the rotations to +/- 128 rounds.              */
-    uint64_t        m2_pos      : 1;    /*!< Bit 48     : R/W - Enable system to start. No power on motors.         */
-    uint64_t        m2_posref   : 1;    /*!< Bit 49     : R/W - Enable power on motor.                              */
-    uint64_t        m2_vel      : 1;    /*!< Bit 50     : R/W - Enable system to start. No power on motors.         */
-    uint64_t        m2_velref   : 1;    /*!< Bit 51     : R/W - Enable power on motor.                              */
-    uint64_t        m2_itcnt    : 1;    /*!< Bit 52     : R/W - Limit the rotations to +/- 128 rounds.              */
-    uint64_t        m2_pd_kp    : 1;    /*!< Bit 53     : R/W - Enable system to start. No power on motors.         */
-    uint64_t        m2_pd_kd    : 1;    /*!< Bit 54     : R/W - Enable power on motor.                              */
-    uint64_t        m2_iqff     : 1;    /*!< Bit 55     : R/W - Limit the rotations to +/- 128 rounds.              */
-    uint64_t        m2_isat     : 1;    /*!< Bit 56     : R/W - Limit the rotations to +/- 128 rounds.              */
-    uint64_t        m2_status   : 1;    /*!< Bit 57     : R -                                                       */
-    uint64_t        DISP_RSV2   : 6;    /*!< Bit 58-63  : R/W - Reserved                                            */
+    Uint64_t          m1_ia       : 1;    /*!< Bit 0      : R/W - Enable system to start. No power on motors.         */
+    Uint64_t        m1_ib       : 1;    /*!< Bit 1      : R/W - Enable power on motor.                              */
+    Uint64_t        m1_ic       : 1;    /*!< Bit 2      : R/W - Limit the rotations to +/- 128 rounds.              */
+    Uint64_t        m1_vbus     : 1;    /*!< Bit 3      : R/W - Use encoder index in position computation.          */
+    Uint64_t        m1_ialpha   : 1;    /*!< Bit 4      : R/W - Enable system to start. No power on motors.         */
+    Uint64_t        m1_ibeta    : 1;    /*!< Bit 5      : R/W - Enable power on motor.                              */
+    Uint64_t        m1_id       : 1;    /*!< Bit 6      : R/W - Enable power on motor.                              */
+    Uint64_t        m1_iq       : 1;    /*!< Bit 7      : R/W - Enable power on motor.                              */
+    Uint64_t        m1_iqref    : 1;    /*!< Bit 8      : R/W - Enable power on motor.                              */
+    Uint64_t        m1_ud       : 1;    /*!< Bit 9      : R/W - Enable power on motor.                              */
+    Uint64_t        m1_uq       : 1;    /*!< Bit 10     : R/W - Enable power on motor.                              */
+    Uint64_t        m1_ualpha   : 1;    /*!< Bit 11     : R/W - Enable system to start. No power on motors.         */
+    Uint64_t        m1_ubeta    : 1;    /*!< Bit 12     : R/W - Enable power on motor.                              */
+    Uint64_t        m1_ua       : 1;    /*!< Bit 13     : R/W - Enable system to start. No power on motors.         */
+    Uint64_t        m1_ub       : 1;    /*!< Bit 14     : R/W - Enable power on motor.                              */
+    Uint64_t        m1_uc       : 1;    /*!< Bit 15     : R/W - Limit the rotations to +/- 128 rounds.              */
+    Uint64_t        m1_pos      : 1;    /*!< Bit 16     : R/W - Enable system to start. No power on motors.         */
+    Uint64_t        m1_posref   : 1;    /*!< Bit 17     : R/W - Enable power on motor.                              */
+    Uint64_t        m1_vel      : 1;    /*!< Bit 18     : R/W - Enable system to start. No power on motors.         */
+    Uint64_t        m1_velref   : 1;    /*!< Bit 19     : R/W - Enable power on motor.                              */
+    Uint64_t        m1_itcnt    : 1;    /*!< Bit 20     : R/W - Limit the rotations to +/- 128 rounds.              */
+    Uint64_t        m1_pd_kp    : 1;    /*!< Bit 21     : R/W - Enable system to start. No power on motors.         */
+    Uint64_t        m1_pd_kd    : 1;    /*!< Bit 22     : R/W - Enable power on motor.                              */
+    Uint64_t        m1_iqff     : 1;    /*!< Bit 23     : R/W - Limit the rotations to +/- 128 rounds.              */
+    Uint64_t        m1_isat     : 1;    /*!< Bit 24     : R/W - Limit the rotations to +/- 128 rounds.              */
+    Uint64_t        m1_status   : 1;    /*!< Bit 25     : R -                                                       */
+    Uint64_t        DISP_RSV1   : 6;    /*!< Bit 26-31  : R/W - Reserved                                            */
+    Uint64_t        m2_ia       : 1;    /*!< Bit 32     : R/W - Enable system to start. No power on motors.         */
+    Uint64_t        m2_ib       : 1;    /*!< Bit 33     : R/W - Enable power on motor.                              */
+    Uint64_t        m2_ic       : 1;    /*!< Bit 34     : R/W - Limit the rotations to +/- 128 rounds.              */
+    Uint64_t        m2_vbus     : 1;    /*!< Bit 35     : R/W - Use encoder index in position computation.          */
+    Uint64_t        m2_ialpha   : 1;    /*!< Bit 36     : R/W - Enable system to start. No power on motors.         */
+    Uint64_t        m2_ibeta    : 1;    /*!< Bit 37     : R/W - Enable power on motor.                              */
+    Uint64_t        m2_id       : 1;    /*!< Bit 38     : R/W - Enable power on motor.                              */
+    Uint64_t        m2_iq       : 1;    /*!< Bit 39     : R/W - Enable power on motor.                              */
+    Uint64_t        m2_iqref    : 1;    /*!< Bit 40     : R/W - Enable power on motor.                              */
+    Uint64_t        m2_ud       : 1;    /*!< Bit 41     : R/W - Enable power on motor.                              */
+    Uint64_t        m2_uq       : 1;    /*!< Bit 42     : R/W - Enable power on motor.                              */
+    Uint64_t        m2_ualpha   : 1;    /*!< Bit 43     : R/W - Enable system to start. No power on motors.         */
+    Uint64_t        m2_ubeta    : 1;    /*!< Bit 44     : R/W - Enable power on motor.                              */
+    Uint64_t        m2_ua       : 1;    /*!< Bit 45     : R/W - Enable system to start. No power on motors.         */
+    Uint64_t        m2_ub       : 1;    /*!< Bit 46     : R/W - Enable power on motor.                              */
+    Uint64_t        m2_uc       : 1;    /*!< Bit 47     : R/W - Limit the rotations to +/- 128 rounds.              */
+    Uint64_t        m2_pos      : 1;    /*!< Bit 48     : R/W - Enable system to start. No power on motors.         */
+    Uint64_t        m2_posref   : 1;    /*!< Bit 49     : R/W - Enable power on motor.                              */
+    Uint64_t        m2_vel      : 1;    /*!< Bit 50     : R/W - Enable system to start. No power on motors.         */
+    Uint64_t        m2_velref   : 1;    /*!< Bit 51     : R/W - Enable power on motor.                              */
+    Uint64_t        m2_itcnt    : 1;    /*!< Bit 52     : R/W - Limit the rotations to +/- 128 rounds.              */
+    Uint64_t        m2_pd_kp    : 1;    /*!< Bit 53     : R/W - Enable system to start. No power on motors.         */
+    Uint64_t        m2_pd_kd    : 1;    /*!< Bit 54     : R/W - Enable power on motor.                              */
+    Uint64_t        m2_iqff     : 1;    /*!< Bit 55     : R/W - Limit the rotations to +/- 128 rounds.              */
+    Uint64_t        m2_isat     : 1;    /*!< Bit 56     : R/W - Limit the rotations to +/- 128 rounds.              */
+    Uint64_t        m2_status   : 1;    /*!< Bit 57     : R -                                                       */
+    Uint64_t        DISP_RSV2   : 6;    /*!< Bit 58-63  : R/W - Reserved                                            */
 } bit_config_t;
 //typedef struct __bit_config_t__
 //{
-//    uint32_t        ia          : 1;    /*!< Bit 0      : R/W - Enable system to start. No power on motors.         */
-//    uint32_t        ib          : 1;    /*!< Bit 1      : R/W - Enable power on motor.                              */
-//    uint32_t        ic          : 1;    /*!< Bit 2      : R/W - Limit the rotations to +/- 128 rounds.              */
-//    uint32_t        vbus        : 1;    /*!< Bit 3      : R/W - Use encoder index in position computation.          */
-//    uint32_t        ialpha      : 1;    /*!< Bit 4      : R/W - Enable system to start. No power on motors.         */
-//    uint32_t        ibeta       : 1;    /*!< Bit 5      : R/W - Enable power on motor.                              */
-//    uint32_t        id          : 1;    /*!< Bit 6      : R/W - Enable power on motor.                              */
-//    uint32_t        iq          : 1;    /*!< Bit 7      : R/W - Enable power on motor.                              */
-//    uint32_t        iqref       : 1;    /*!< Bit 8      : R/W - Enable power on motor.                              */
-//    uint32_t        ud          : 1;    /*!< Bit 9      : R/W - Enable power on motor.                              */
-//    uint32_t        uq          : 1;    /*!< Bit 10     : R/W - Enable power on motor.                              */
-//    uint32_t        ualpha      : 1;    /*!< Bit 11     : R/W - Enable system to start. No power on motors.         */
-//    uint32_t        ubeta       : 1;    /*!< Bit 12     : R/W - Enable power on motor.                              */
-//    uint32_t        ua          : 1;    /*!< Bit 13     : R/W - Enable system to start. No power on motors.         */
-//    uint32_t        ub          : 1;    /*!< Bit 14     : R/W - Enable power on motor.                              */
-//    uint32_t        uc          : 1;    /*!< Bit 15     : R/W - Limit the rotations to +/- 128 rounds.              */
-//    uint32_t        pos         : 1;    /*!< Bit 16     : R/W - Enable system to start. No power on motors.         */
-//    uint32_t        posref      : 1;    /*!< Bit 17     : R/W - Enable power on motor.                              */
-//    uint32_t        vel         : 1;    /*!< Bit 18     : R/W - Enable system to start. No power on motors.         */
-//    uint32_t        velref      : 1;    /*!< Bit 19     : R/W - Enable power on motor.                              */
-//    uint32_t        itcnt       : 1;    /*!< Bit 20     : R/W - Limit the rotations to +/- 128 rounds.              */
-//    uint32_t        pd_kp       : 1;    /*!< Bit 21     : R/W - Enable system to start. No power on motors.         */
-//    uint32_t        pd_kd       : 1;    /*!< Bit 22     : R/W - Enable power on motor.                              */
-//    uint32_t        iqff        : 1;    /*!< Bit 23     : R/W - Limit the rotations to +/- 128 rounds.              */
-//    uint32_t        isat        : 1;    /*!< Bit 24     : R/W - Limit the rotations to +/- 128 rounds.              */
-//    uint32_t        DISP_RSV1   : 7;    /*!< Bit 25-31  : R/W - Reserved                                            */
+//    Uint32        ia          : 1;    /*!< Bit 0      : R/W - Enable system to start. No power on motors.         */
+//    Uint32        ib          : 1;    /*!< Bit 1      : R/W - Enable power on motor.                              */
+//    Uint32        ic          : 1;    /*!< Bit 2      : R/W - Limit the rotations to +/- 128 rounds.              */
+//    Uint32        vbus        : 1;    /*!< Bit 3      : R/W - Use encoder index in position computation.          */
+//    Uint32        ialpha      : 1;    /*!< Bit 4      : R/W - Enable system to start. No power on motors.         */
+//    Uint32        ibeta       : 1;    /*!< Bit 5      : R/W - Enable power on motor.                              */
+//    Uint32        id          : 1;    /*!< Bit 6      : R/W - Enable power on motor.                              */
+//    Uint32        iq          : 1;    /*!< Bit 7      : R/W - Enable power on motor.                              */
+//    Uint32        iqref       : 1;    /*!< Bit 8      : R/W - Enable power on motor.                              */
+//    Uint32        ud          : 1;    /*!< Bit 9      : R/W - Enable power on motor.                              */
+//    Uint32        uq          : 1;    /*!< Bit 10     : R/W - Enable power on motor.                              */
+//    Uint32        ualpha      : 1;    /*!< Bit 11     : R/W - Enable system to start. No power on motors.         */
+//    Uint32        ubeta       : 1;    /*!< Bit 12     : R/W - Enable power on motor.                              */
+//    Uint32        ua          : 1;    /*!< Bit 13     : R/W - Enable system to start. No power on motors.         */
+//    Uint32        ub          : 1;    /*!< Bit 14     : R/W - Enable power on motor.                              */
+//    Uint32        uc          : 1;    /*!< Bit 15     : R/W - Limit the rotations to +/- 128 rounds.              */
+//    Uint32        pos         : 1;    /*!< Bit 16     : R/W - Enable system to start. No power on motors.         */
+//    Uint32        posref      : 1;    /*!< Bit 17     : R/W - Enable power on motor.                              */
+//    Uint32        vel         : 1;    /*!< Bit 18     : R/W - Enable system to start. No power on motors.         */
+//    Uint32        velref      : 1;    /*!< Bit 19     : R/W - Enable power on motor.                              */
+//    Uint32        itcnt       : 1;    /*!< Bit 20     : R/W - Limit the rotations to +/- 128 rounds.              */
+//    Uint32        pd_kp       : 1;    /*!< Bit 21     : R/W - Enable system to start. No power on motors.         */
+//    Uint32        pd_kd       : 1;    /*!< Bit 22     : R/W - Enable power on motor.                              */
+//    Uint32        iqff        : 1;    /*!< Bit 23     : R/W - Limit the rotations to +/- 128 rounds.              */
+//    Uint32        isat        : 1;    /*!< Bit 24     : R/W - Limit the rotations to +/- 128 rounds.              */
+//    Uint32        DISP_RSV1   : 7;    /*!< Bit 25-31  : R/W - Reserved                                            */
 //} bit_config_t;
 
 typedef struct __bit_command_t__
 {
-    uint32_t        m1_pd_kp    : 1;    /*!< Bit 0      : R/W - */
-    uint32_t        m1_pd_ki    : 1;    /*!< Bit 1      : R/W - */
-    uint32_t        m1_posref   : 1;    /*!< Bit 2      : R/W - */
-    uint32_t        m1_velref   : 1;    /*!< Bit 3      : R/W - */
-    uint32_t        m1_iqff     : 1;    /*!< Bit 4      : R/W - */
-    uint32_t        m1_isat     : 1;    /*!< Bit 5      : R/W - */
-    uint32_t        m1_cmd      : 1;    /*!< Bit 6      : R/W - */
-    uint32_t        m1_pi_kp_id : 1;    /*!< Bit 7      : R/W - */
-    uint32_t        m1_pi_ki_id : 1;    /*!< Bit 8      : R/W - */
-    uint32_t        m1_pi_kp_iq : 1;    /*!< Bit 9      : R/W - */
-    uint32_t        m1_pi_ki_iq : 1;    /*!< Bit 10     : R/W - */
-    uint32_t        DISP_RSV1   : 5;    /*!< Bit 11-15  : R/W - */
-    uint32_t        m2_pd_kp    : 1;    /*!< Bit 16     : R/W - */
-    uint32_t        m2_pd_ki    : 1;    /*!< Bit 17     : R/W - */
-    uint32_t        m2_posref   : 1;    /*!< Bit 18     : R/W - */
-    uint32_t        m2_velref   : 1;    /*!< Bit 19     : R/W - */
-    uint32_t        m2_iqff     : 1;    /*!< Bit 20     : R/W - */
-    uint32_t        m2_isat     : 1;    /*!< Bit 21     : R/W - */
-    uint32_t        m2_cmd      : 1;    /*!< Bit 22     : R/W - */
-    uint32_t        m2_pi_kp_id : 1;    /*!< Bit 23     : R/W - */
-    uint32_t        m2_pi_ki_id : 1;    /*!< Bit 24     : R/W - */
-    uint32_t        m2_pi_kp_iq : 1;    /*!< Bit 25     : R/W - */
-    uint32_t        m2_pi_ki_iq : 1;    /*!< Bit 26     : R/W - */
-    uint32_t        DISP_RSV2   : 5;    /*!< Bit 27-31  : R/W - Reserved*/
+    Uint32        m1_pd_kp    : 1;    /*!< Bit 0      : R/W - */
+    Uint32        m1_pd_ki    : 1;    /*!< Bit 1      : R/W - */
+    Uint32        m1_posref   : 1;    /*!< Bit 2      : R/W - */
+    Uint32        m1_velref   : 1;    /*!< Bit 3      : R/W - */
+    Uint32        m1_iqff     : 1;    /*!< Bit 4      : R/W - */
+    Uint32        m1_isat     : 1;    /*!< Bit 5      : R/W - */
+    Uint32        m1_cmd      : 1;    /*!< Bit 6      : R/W - */
+    Uint32        m1_pi_kp_id : 1;    /*!< Bit 7      : R/W - */
+    Uint32        m1_pi_ki_id : 1;    /*!< Bit 8      : R/W - */
+    Uint32        m1_pi_kp_iq : 1;    /*!< Bit 9      : R/W - */
+    Uint32        m1_pi_ki_iq : 1;    /*!< Bit 10     : R/W - */
+    Uint32        DISP_RSV1   : 5;    /*!< Bit 11-15  : R/W - */
+    Uint32        m2_pd_kp    : 1;    /*!< Bit 16     : R/W - */
+    Uint32        m2_pd_ki    : 1;    /*!< Bit 17     : R/W - */
+    Uint32        m2_posref   : 1;    /*!< Bit 18     : R/W - */
+    Uint32        m2_velref   : 1;    /*!< Bit 19     : R/W - */
+    Uint32        m2_iqff     : 1;    /*!< Bit 20     : R/W - */
+    Uint32        m2_isat     : 1;    /*!< Bit 21     : R/W - */
+    Uint32        m2_cmd      : 1;    /*!< Bit 22     : R/W - */
+    Uint32        m2_pi_kp_id : 1;    /*!< Bit 23     : R/W - */
+    Uint32        m2_pi_ki_id : 1;    /*!< Bit 24     : R/W - */
+    Uint32        m2_pi_kp_iq : 1;    /*!< Bit 25     : R/W - */
+    Uint32        m2_pi_ki_iq : 1;    /*!< Bit 26     : R/W - */
+    Uint32        DISP_RSV2   : 5;    /*!< Bit 27-31  : R/W - Reserved*/
 } bit_command_t;
 //typedef struct __bit_command_t__
 //{
-//    uint16_t        pd_kp       : 1;    /*!< Bit 0      : R/W - */
-//    uint16_t        pd_ki       : 1;    /*!< Bit 1      : R/W - */
-//    uint16_t        posref      : 1;    /*!< Bit 2      : R/W - */
-//    uint16_t        velref      : 1;    /*!< Bit 3      : R/W - */
-//    uint16_t        iqff        : 1;    /*!< Bit 4      : R/W - */
-//    uint16_t        isat        : 1;    /*!< Bit 5      : R/W - */
-//    uint16_t        cmd         : 1;    /*!< Bit 6      : R/W - */
-//    uint16_t        pi_kp_id    : 1;    /*!< Bit 7      : R/W - */
-//    uint16_t        pi_ki_id    : 1;    /*!< Bit 8      : R/W - */
-//    uint16_t        pi_kp_iq    : 1;    /*!< Bit 9      : R/W - */
-//    uint16_t        pi_ki_iq    : 1;    /*!< Bit 10     : R/W - */
-//    uint16_t        DISP_RSV1   : 5;    /*!< Bit 11-15  : R/W - */
+//    Uint16        pd_kp       : 1;    /*!< Bit 0      : R/W - */
+//    Uint16        pd_ki       : 1;    /*!< Bit 1      : R/W - */
+//    Uint16        posref      : 1;    /*!< Bit 2      : R/W - */
+//    Uint16        velref      : 1;    /*!< Bit 3      : R/W - */
+//    Uint16        iqff        : 1;    /*!< Bit 4      : R/W - */
+//    Uint16        isat        : 1;    /*!< Bit 5      : R/W - */
+//    Uint16        cmd         : 1;    /*!< Bit 6      : R/W - */
+//    Uint16        pi_kp_id    : 1;    /*!< Bit 7      : R/W - */
+//    Uint16        pi_ki_id    : 1;    /*!< Bit 8      : R/W - */
+//    Uint16        pi_kp_iq    : 1;    /*!< Bit 9      : R/W - */
+//    Uint16        pi_ki_iq    : 1;    /*!< Bit 10     : R/W - */
+//    Uint16        DISP_RSV1   : 5;    /*!< Bit 11-15  : R/W - */
 //} bit_command_t;
 
 typedef union __counter_u__
 {
-    uint32_t        all;        /*!< Short (16bits) type access */
-    uint8_t         byte[4];    /*!< @see command_mode_t        */
+    Uint32        all;        /*!< Short (16bits) type access */
+    Uint8         byte[4];    /*!< @see command_mode_t        */
 } counter_u;
 
 typedef union __config_u__
 {
     bit_config_t    bit;
-    uint64_t        all;        /*!< Short (16bits) type access */
-    uint8_t         byte[8];    /*!< @see command_mode_t        */
+    Uint64        all;        /*!< Short (16bits) type access */
+    Uint8         byte[8];    /*!< @see command_mode_t        */
 } config_u;
 //typedef union __config_u__
 //{
 //    bit_display_t   bit;
-//    uint32_t        display;    /*!< Short (16bits) type access */
-//    uint8_t         byte[4];    /*!< @see command_mode_t        */
+//    Uint32        display;    /*!< Short (16bits) type access */
+//    Uint8         byte[4];    /*!< @see command_mode_t        */
 //} config_u;
 
 typedef union __command_u__
 {
     bit_command_t   bit;
-    uint32_t        all;        /*!< Short (16bits) type access */
-    uint8_t         byte[4];    /*!< @see command_mode_t        */
+    Uint32        all;        /*!< Short (16bits) type access */
+    Uint8         byte[4];    /*!< @see command_mode_t        */
 } command_u;
 //typedef union __command_u__
 //{
 //    bit_command_t   bit;
-//    uint16_t        command;    /*!< Short (16bits) type access */
-//    uint8_t         byte[2];    /*!< @see command_mode_t        */
+//    Uint16        command;    /*!< Short (16bits) type access */
+//    Uint8         byte[2];    /*!< @see command_mode_t        */
 //} command_u;
 
 typedef struct __bit_command_mem_t__
@@ -732,9 +770,9 @@ typedef struct __bit_command_mem_t__
 
 typedef struct __attribute__((__packed__)) __dbg_uart_msg_t__
 {
-    uint8_t         header[2];
-//    uint32_t        counter;
-//    uint8_t         msgtype;
+    Uint8         header[2];
+//    Uint32        counter;
+//    Uint8         msgtype;
 
     float_t         ia;
     float_t         ib;
@@ -756,9 +794,9 @@ typedef struct __attribute__((__packed__)) __dbg_uart_msg_t__
 //    float_t         posref;
     float_t         vel;
 //    float_t         velref;
-//    uint32_t        itcnt;
-    uint8_t         crc;
-//    uint8_t         padding;
+//    Uint32        itcnt;
+    Uint8         crc;
+//    Uint8         padding;
 } dbg_uart_msg_t;
 
 typedef struct __attribute__((__packed__)) __dbg_uart_addr_t__
@@ -788,7 +826,7 @@ typedef struct __attribute__((__packed__)) __dbg_uart_addr_t__
 //    float_t*        p_iqff;
 //    float_t*        p_isat;
 //    float_t*        p_status;
-//    uint64_t*       p_itcnt;
+//    Uint64*       p_itcnt;
 } dbg_uart_addr_t;
 
 typedef struct __com_dbg_tx_msg_t__
@@ -802,8 +840,8 @@ typedef struct __com_dbg_tx_msg_t__
     counter_u           counter;
     config_u            cfg_lst;
     command_u           cmd_lst;
-    uint8_t             msg[200];
-    uint8_t             msg_size;
+    Uint8             msg[200];
+    Uint8             msg_size;
     bool                valid;
 } com_dbg_tx_msg_t;
 
@@ -814,8 +852,8 @@ typedef struct __com_dbg_rx_msg_t__
     counter_u           counter;
     config_u            cfg_lst;
     command_u           cmd_lst;
-    uint8_t             msgType;
-    uint8_t             crc;
+    Uint8             msgType;
+    Uint8             crc;
     bool                valid;
 } com_dbg_rx_msg_t;
 
@@ -824,28 +862,28 @@ typedef struct __com_dbg_rx_msg_t__
 /***********************************************************************
  * FUNCTIONS DECLARATION
  ***********************************************************************/
-#ifdef CPU1
-//bool_t COM_msgExtract(uint32_t, mst2slv_msg_t*, cmd_t*, cmd_t*);
+#if (defined CPU1) || (defined CPU2)
+//bool_t COM_msgExtract(Uint32, mst2slv_msg_t*, cmd_t*, cmd_t*);
 void COM_msgExtract(mst2slv_msg_t*, cmd_t*, cmd_t*);
-bool_t COM_msgCreate(motor_t*, slv2mst_msg_t*, uint32_t);
-void COM_msgSwapBytes(uint16_t*, uint16_t*, uint16_t);
+bool_t COM_msgCreate(motor_t*, slv2mst_msg_t*, Uint32);
+void COM_msgSwapBytes(Uint16*, Uint16*, Uint16);
 void COM_initCmdStruct(cmd_t*);
-uint32_t COM_vCRC32(uint16_t*, uint16_t);
-uint32_t COM_msgCRC(uint16_t*, uint16_t);
+Uint32 COM_vCRC32(Uint16*, Uint16);
+Uint32 COM_msgCRC(Uint16*, Uint16);
 inline void RS485_msgReceiveInit(rs485_rx_t*);
-inline void RS485_msgReceive(uint32_t, rs485_rx_t*);
+inline void RS485_msgReceive(Uint32, rs485_rx_t*);
 void RS485_msgTransmitInit(rs485_tx_t*);
-void RS485_msgTransmit(uint32_t, rs485_tx_t*);
-void SCI_rxDisable(uint32_t);
-void SCI_rxEnable(uint32_t);
-void SCI_txDisable(uint32_t);
-void SCI_txEnable(uint32_t);
+void RS485_msgTransmit(Uint32, rs485_tx_t*);
+void SCI_rxDisable(Uint32);
+void SCI_rxEnable(Uint32);
+void SCI_txDisable(Uint32);
+void SCI_txEnable(Uint32);
 #else
 void COM_msgDbgTx(dbg_uart_addr_t*, dbg_uart_msg_t*);
-void COM_msgDbgRx(com_dbg_rx_msg_t*, uint8_t);
-uint32_t COM_crc32(uint16_t*, size_t);
-uint8_t COM_crc8(uint8_t*, size_t);
-uint8_t COM_crc8Fast(uint8_t, uint8_t*, size_t);
+void COM_msgDbgRx(com_dbg_rx_msg_t*, Uint8);
+Uint32 COM_crc32(Uint16*, size_t);
+Uint8 COM_crc8(Uint8*, size_t);
+Uint8 COM_crc8Fast(Uint8, Uint8*, size_t);
 #endif
 
 #endif /*__COMMUNICATION_H__*/

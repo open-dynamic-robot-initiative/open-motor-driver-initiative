@@ -6,7 +6,7 @@
 /***********************************************************************
  * INCLUDES
  ***********************************************************************/
-#include "driverlib.h"
+#include "f2838x_device.h"
 #include "device.h"
 #include "board.h"
 
@@ -43,13 +43,13 @@ rs485_tx_t              com_rs485_tx        = {.index = 0U,
                                                .msg[1].crc.u16_msb = 0x8CA0, .msg[1].crc.u16_lsb = 0x22CF};
 #pragma DATA_ALIGN(led_spi_tx, 4)
 #pragma DATA_SECTION(led_spi_tx, "ramgs0")
-uint16_t                led_spi_tx[LED_MSG_TX_16BIT_LENGTH];
+Uint16                led_spi_tx[LED_MSG_TX_16BIT_LENGTH];
 #pragma DATA_ALIGN(com_bus_select, 2)
 #pragma DATA_SECTION(com_bus_select, "ramgs0")
 com_bus_e               com_bus_select      = COM_NO_BUS_DEFINED;
 #pragma DATA_ALIGN(global_1ms_tmr_cnt, 2)
 #pragma DATA_SECTION(global_1ms_tmr_cnt, "ramgs0")
-uint32_t                global_1ms_tmr_cnt  = 0U;
+Uint32                global_1ms_tmr_cnt    = 0U;
 
 // External variables
 extern motor_t          motor_m1;
@@ -62,7 +62,7 @@ extern cmd_t            cmd_uomodri[2];
  ***********************************************************************/
 void main(void);
 static void MCU_ini(void);
-inline void LED_dimming(motor_t*, motor_t*, uint16_t*);
+inline void LED_dimming(motor_t*, motor_t*, Uint16*);
 
 /***********************************************************************
  * FUNCTIONS DEFINITION
@@ -169,14 +169,14 @@ static void MCU_ini(void)
  * @param[in]       p_motor Pointer on data structure array used for motor control.
  * @param[out]      p_msg   Pointer on the message to be sent to led via SPI.
  */
-inline void LED_dimming(motor_t* p_motor1, motor_t* p_motor2, uint16_t* p_msg)
+inline void LED_dimming(motor_t* p_motor1, motor_t* p_motor2, Uint16* p_msg)
 {
-    static uint16_t timer_cpt_ms        = 0;
-    float32_t       timer_fade_blink    = (float32_t)((timer_cpt_ms < 500)  ? (timer_cpt_ms)    : (1000 - timer_cpt_ms)) / 500.0f;
-    float32_t       timer_blink         = (timer_cpt_ms < 500)              ? (0.0f)            : (1.0f);
+    static Uint16 timer_cpt_ms          = 0;
+    float32       timer_fade_blink      = (float32)((timer_cpt_ms < 500)    ? (timer_cpt_ms)    : (1000 - timer_cpt_ms)) / 500.0f;
+    float32       timer_blink           = (timer_cpt_ms < 500)              ? (0.0f)            : (1.0f);
     timer_cpt_ms                        = (timer_cpt_ms < 1000)             ? (timer_cpt_ms + 1): (0);
-    uint16_t        motor_state         = MOTOR_STATE_IDLE;
-    uint16_t        u16_timer_fade_blink= (uint16_t)(0xff * timer_fade_blink);
+    Uint16        motor_state           = MOTOR_STATE_IDLE;
+    Uint16        u16_timer_fade_blink  = (Uint16)(0xff * timer_fade_blink);
 
     if((p_motor1->state & MOTOR_STATE_BOOT)     || (p_motor2->state & MOTOR_STATE_BOOT))
         motor_state = MOTOR_STATE_IDLE;
@@ -200,7 +200,7 @@ inline void LED_dimming(motor_t* p_motor1, motor_t* p_motor2, uint16_t* p_msg)
         ws2812b_writeLed(0, u16_timer_fade_blink, 0, p_msg);//Green fade, Active control
         break;
     case MOTOR_STATE_ERROR:
-        ws2812b_writeLed((uint16_t)(0xff * timer_blink), 0, 0, p_msg);//red fade, error control
+        ws2812b_writeLed((Uint16)(0xff * timer_blink), 0, 0, p_msg);//red fade, error control
         break;
 //    case MOTOR_STATE_WAIT_SYNC:
 //    case MOTOR_STATE_ADC_CALIB:
@@ -259,7 +259,7 @@ __attribute__((interrupt)) void cla_isrMotor2(void)
     {
         spi_tx_msg_t* p_msg_spi     = &com_spi_tx.msg[com_spi_tx.msg_nx];
         COM_msgCreate(&motor_m2, &p_msg_spi->data, global_1ms_tmr_cnt);
-        uint32_t msg_crc            = COM_msgCRC((uint16_t *) &p_msg_spi->data, COM_MSG_SPI_TX_16BIT_PAYLOAD_LENGTH);
+        Uint32 msg_crc              = COM_msgCRC((Uint16 *) &p_msg_spi->data, COM_MSG_SPI_TX_16BIT_PAYLOAD_LENGTH);
         // swap words in message - Required for Solo
         p_msg_spi->crc.u16_msb      = LSB_32(msg_crc);
         p_msg_spi->crc.u16_lsb      = MSB_32(msg_crc);
@@ -273,7 +273,7 @@ __attribute__((interrupt)) void cla_isrMotor2(void)
             SPI_resetTxFIFO(COM_SPI_BASE);
             // Force first write in SPI_O_DAT register
             COM_SPI_DAT(p_msg_spi->data.status.all);
-            DMA_configAddresses(DMA_COM_SPI_TX_BASE_ADDR, (uint16_t *) COM_SPI_TX_BASE_REG_ADDR, (uint16_t *) &p_msg_spi->data.timeStamp);
+            DMA_configAddresses(DMA_COM_SPI_TX_BASE_ADDR, (Uint16 *) COM_SPI_TX_BASE_REG_ADDR, (Uint16 *) &p_msg_spi->data.timeStamp);
             DMA_startChannel(DMA_COM_SPI_TX_BASE_ADDR);
         }
     }
@@ -281,7 +281,7 @@ __attribute__((interrupt)) void cla_isrMotor2(void)
     {
         rs485_tx_msg_u* p_msg_rs485 = &com_rs485_tx.msg[com_rs485_tx.msg_nx];
         COM_msgCreate(&motor_m2, &p_msg_rs485->data, global_1ms_tmr_cnt);
-        uint32_t msg_crc            = COM_msgCRC((uint16_t *) &p_msg_rs485->header, COM_MSG_RS485_TX_16BIT_PAYLOAD_LENGTH);
+        Uint32 msg_crc              = COM_msgCRC((Uint16 *) &p_msg_rs485->header, COM_MSG_RS485_TX_16BIT_PAYLOAD_LENGTH);
         // swap words in message - Required for Solo
         p_msg_rs485->crc.u16_msb    = LSB_32(msg_crc);
         p_msg_rs485->crc.u16_lsb    = MSB_32(msg_crc);
@@ -296,7 +296,7 @@ __attribute__((interrupt)) void cla_isrMotor2(void)
         SPI_resetTxFIFO(COM_SPI_BASE);
         // Force first write in SPI_O_DAT register
         COM_SPI_DAT(p_msg_spi->data.status.all);
-        DMA_configAddresses(DMA_COM_SPI_TX_BASE_ADDR, (uint16_t *) COM_SPI_TX_BASE_REG_ADDR, (uint16_t *) &p_msg_spi->data.timeStamp);
+        DMA_configAddresses(DMA_COM_SPI_TX_BASE_ADDR, (Uint16 *) COM_SPI_TX_BASE_REG_ADDR, (Uint16 *) &p_msg_spi->data.timeStamp);
         DMA_startChannel(DMA_COM_SPI_TX_BASE_ADDR);
     }
     // Clear IT
@@ -335,7 +335,7 @@ __attribute__((interrupt)) void dma_isrSpiComRx(void)
 {
     // Compare computed CRC with the one received in message.
     spi_rx_msg_t* p_msg_spi = &com_spi_rx.msg;
-    uint32_t msg_crc        = COM_msgCRC((uint16_t *)&p_msg_spi->data, COM_MSG_SPI_RX_16BIT_PAYLOAD_LENGTH);
+    Uint32 msg_crc          = COM_msgCRC((Uint16 *)&p_msg_spi->data, COM_MSG_SPI_RX_16BIT_PAYLOAD_LENGTH);
     if((com_bus_select != COM_USE_RS485_BUS) && (p_msg_spi->crc.u16_msb == MSB_32(msg_crc)) && (p_msg_spi->crc.u16_lsb == LSB_32(msg_crc)))
     {
         // Extract received message & send new commands to FOC structures. Define SPI as communication bus by default.
@@ -357,7 +357,7 @@ __attribute__((interrupt)) void sci_isrTx_RS485(void)
 {
     DBG_PIN2_SET;
     // FIFO IT source test.
-    uint32_t sci_it_src_test = SCI_getInterruptStatus(COM_SCI_BASE);
+    Uint32 sci_it_src_test = SCI_getInterruptStatus(COM_SCI_BASE);
     // FIFO TX IT?
     if(sci_it_src_test & SCI_INT_TXFF)
     {
@@ -390,7 +390,7 @@ __attribute__((interrupt)) void sci_isrRx_RS485(void)
 {
     DBG_PIN2_SET;
     // FIFO IT source test.
-    uint32_t sci_it_src_test = SCI_getInterruptStatus(COM_SCI_BASE);
+    Uint32 sci_it_src_test = SCI_getInterruptStatus(COM_SCI_BASE);
     // FIFO RX IT?
     if(sci_it_src_test & SCI_INT_RXFF)
     {
@@ -437,9 +437,9 @@ __attribute__((interrupt)) void clb_isrTxRx_RS485(void)
 {
     DBG_PIN3_SET;
 #if USE_FCT
-    uint16_t clb_tag_test   = CLB_getInterruptTag(RS485_RX_TX_CLB_EOT_BASE);
+    Uint16 clb_tag_test   = CLB_getInterruptTag(RS485_RX_TX_CLB_EOT_BASE);
 #else
-    uint16_t clb_tag_test   = HWREGH(CLB_INT_REG_ADDR);
+    Uint16 clb_tag_test     = HWREGH(CLB_INT_REG_ADDR);
 #endif
     switch (clb_tag_test)
     {
@@ -475,7 +475,7 @@ __attribute__((interrupt)) void clb_isrTxRx_RS485(void)
         HWREGH(COM_SCI_FIFO_RX_REG_ADDR)   &= ~SCI_FFRX_RXFFIENA;
         HWREGH(COM_SCI_CTRL1_REG_ADDR)     &= ~SCI_CTL1_RXERRINTENA;
         // Purge pending ITs.
-        HWREGH(PIECTRL_BASE + PIE_O_IFR8)  &= ~((uint16_t)INT_RS485_RX_PIE_FLAG);
+        HWREGH(PIECTRL_BASE + PIE_O_IFR8)  &= ~((Uint16)INT_RS485_RX_PIE_FLAG);
         HWREGH(PIECTRL_BASE + PIE_O_ACK)    = INT_RS485_RX_MSG_GROUP;
         // Is it a valid address ?
         if(com_rs485_rx.addr1 || com_rs485_rx.addr2)
@@ -483,7 +483,7 @@ __attribute__((interrupt)) void clb_isrTxRx_RS485(void)
             // Last FIFO read.
             RS485_msgReceive(COM_SCI_BASE, &com_rs485_rx);
             rs485_rx_msg_u* p_msg_rs485     = &com_rs485_rx.msg;
-            uint32_t msg_crc                = COM_msgCRC((uint16_t *) &p_msg_rs485->header, COM_MSG_RS485_RX_16BIT_PAYLOAD_LENGTH);
+            Uint32 msg_crc                  = COM_msgCRC((Uint16 *) &p_msg_rs485->header, COM_MSG_RS485_RX_16BIT_PAYLOAD_LENGTH);
             if((com_bus_select != COM_USE_SPI_BUS) && (p_msg_rs485->crc.u16_msb == MSB_32(msg_crc)) && (p_msg_rs485->crc.u16_lsb == LSB_32(msg_crc)))
             {
                 // Message valid - Extract it & transfer to motors structures.
