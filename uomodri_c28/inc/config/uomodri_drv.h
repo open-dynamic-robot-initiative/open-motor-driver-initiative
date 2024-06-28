@@ -10,7 +10,6 @@
 
 //#include "f2838x_device.h"
 //#include "uomodri_3_1/uomodri_3_1_hal_defines.h"
-
 #include "uomodri_user_defines.h"
 #include "drv8353.h"
 

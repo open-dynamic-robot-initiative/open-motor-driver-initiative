@@ -4,9 +4,10 @@
 /***********************************************************************
  * INCLUDE FILES
  ***********************************************************************/
-#include "f2838x_device.h"
+//#include "f2838x_device.h"
+#include "config/uomodri_user_defines.h"
+#include "main.h"
 #include "foc.h"
-#include "uomodri_user_defines.h"
 
 /***********************************************************************
  * ENUM TYPES
@@ -45,15 +46,15 @@ typedef enum __motor_state__
  */
 typedef union __error_reg_u__
 {
-    Uint16          all;
+    uint16_t        all;
     struct
     {
-        Uint16      enc_indexErr    : 1;    /*!< Bits 0   : R/W - Encoder error too high */
-        Uint16      enc_alignErr    : 1;    /*!< Bits 1   : R/W - Encoder failure during alignment. */
-        Uint16      pos_rollover    : 1;    /*!< Bits 2   : R/W - Position roll-over occurred */
-        Uint16      drv_fault       : 1;    /*!< Bits 3   : R/W - Motor DRV nFault error */
-        Uint16      com_timeout     : 1;    /*!< Bits 4   : R/W - Communication timeout error */
-        Uint16      error_RSV1      : 11;   /*!< Bits 5-15: R/W - Reserved */
+        uint16_t    enc_indexErr    : 1;    /*!< Bits 0   : R/W - Encoder error too high */
+        uint16_t    enc_alignErr    : 1;    /*!< Bits 1   : R/W - Encoder failure during alignment. */
+        uint16_t    pos_rollover    : 1;    /*!< Bits 2   : R/W - Position roll-over occurred */
+        uint16_t    drv_fault       : 1;    /*!< Bits 3   : R/W - Motor DRV nFault error */
+        uint16_t    com_timeout     : 1;    /*!< Bits 4   : R/W - Communication timeout error */
+        uint16_t    error_RSV1      : 11;   /*!< Bits 5-15: R/W - Reserved */
     };
 } error_reg_u;
 
@@ -67,17 +68,17 @@ typedef union __error_reg_u__
 typedef struct __motor_t__
 {
     foc_t           foc;                    /*!< FOC structure associated to the motor */
-    Uint32          itCnt;                  /*!< Event counter incrementing on every IT call */
-    Uint32          epwmBase[3];            /*!< Address array for the PWM peripherals associated to the motor control */
-    Uint32          drvFaultNum;            /*!< GPIO associated to the DRV fault line */
-    Uint32          drvEnNum;               /*!< GPIO associated to the DRV enable line */
-    Uint32          clCycleNb;
+    uint32_t        itCnt;                  /*!< Event counter incrementing on every IT call */
+    uint32_t        epwmBase[3];            /*!< Address array for the PWM peripherals associated to the motor control */
+    uint32_t        drvFaultNum;            /*!< GPIO associated to the DRV fault line */
+    uint32_t        drvEnNum;               /*!< GPIO associated to the DRV enable line */
+    uint32_t        clCycleNb;
     struct
     {
-        float32     statorResEst;           /*!< Q-axis resistance estimation. [Ohm] */
+        float32_t   statorResEst;           /*!< Q-axis resistance estimation. [Ohm] */
         lpf_t       statorResEstFlt;        /*!< Resistance estimation low-pass filter */
     };
-    Uint16          id;                     /*!< Motor identification */
+    uint16_t        id;                     /*!< Motor identification */
     error_reg_u     error;                  /*!< Bit field for the error sources. */
     motor_state     state;                  /*!< Current motor state for the FSM. */
 } motor_t;
@@ -85,6 +86,6 @@ typedef struct __motor_t__
 /***********************************************************************
  * FUNCTIONS DECLARATION
  ***********************************************************************/
-void MOT_initStruct(motor_t*, Uint16);
+//void MOT_initStruct(motor_t*, uint16_t);
 
 #endif /* __MOTOR_H__ */

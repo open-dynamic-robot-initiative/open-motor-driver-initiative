@@ -2,19 +2,18 @@
  * INCLUDE FILES
  ***********************************************************************/
 //#include "f2838x_device.h"
-#include "driverlib.h"
 #include "device.h"
-#include "config/uomodri_user_defines.h"
+#include "uomodri_user_defines.h"
 #include "drv8353.h"
 
 /***********************************************************************
  * FUNCTIONS DECLARATION
  ***********************************************************************/
-static Uint32   DRV_Enable(const drv_cfg_t*);
+static uint32_t DRV_Enable(const drv_cfg_t*);
 static bool_t   DRV_SetConfig(const drv_cfg_t*, drv_reg_t*);
 static void     DRV_Calibration(const drv_cfg_t*, drv_reg_t*);
-Uint16          DRV_readOne(const drv_cfg_t*, DRV_Address_e);
-void            DRV_writeOne(const drv_cfg_t*, DRV_Address_e, Uint16);
+uint16_t        DRV_readOne(const drv_cfg_t*, DRV_Address_e);
+void            DRV_writeOne(const drv_cfg_t*, DRV_Address_e, uint16_t);
 
 /***********************************************************************
  * FUNCTIONS DEFINITIONS
@@ -44,16 +43,15 @@ bool_t DRV_ini(const drv_cfg_t* p_drvCfg, drv_reg_t* p_drvReg)
 /**
  * @brief       Enable the DRV IC pin.
  * @param[in]   *p_drv      Pointer on the DRV definition structure
- * @return      Uint32    0 if DRV is enable else DRV is in fault state.
+ * @return      uint32_t    0 if DRV is enable else DRV is in fault state.
  */
-static Uint32 DRV_Enable(const drv_cfg_t* p_drvCfg)
+static uint32_t DRV_Enable(const drv_cfg_t* p_drvCfg)
 {
-    drv_reg_t drv_status        = {.stat_reg_00 = 0, .stat_reg_01 = 0, .ctrl_reg_02 = 0,
-                                   .ctrl_reg_03 = 0, .ctrl_reg_04 = 0, .ctrl_reg_05 = 0,
-                                   .ctrl_reg_06 = 0, .ctrl_reg_07 = 0};
+    drv_reg_t drv_status        = {.stat_reg_00 = 0, .stat_reg_01 = 0, .ctrl_reg_02 = 0, .ctrl_reg_03 = 0,
+                                   .ctrl_reg_04 = 0, .ctrl_reg_05 = 0, .ctrl_reg_06 = 0, .ctrl_reg_07 = 0};
     drv_stat0x_u drv_status_s   = {.all = 0};
-    Uint16 cpt_time_out         = 0;
-//    Uint16 test_status        = 1;
+    uint16_t cpt_time_out       = 0;
+//    uint16_t test_status        = 1;
     bool_t drv_enable           = true;
     // Enable the DRV8353
     GPIO_writePin(p_drvCfg->gpioNumber_EN, 1);
@@ -158,7 +156,7 @@ static void DRV_Calibration(const drv_cfg_t* p_drvCfg, drv_reg_t* p_drvReg)
  * @brief       Read the DRV8353 status registers
  * @param[in]   *p_drv      Pointer on the DRV definition structure
  */
-Uint32 DRV_readStatus(const drv_cfg_t* p_drvCfg, drv_reg_t* p_drvReg)
+uint32_t DRV_readStatus(const drv_cfg_t* p_drvCfg, drv_reg_t* p_drvReg)
 {
     drv_stat0x_u drv_err_status     = {.stat00 = 0, .stat01 = 0};
 
@@ -222,10 +220,10 @@ void DRV_writeAll(const drv_cfg_t* p_drvCfg, drv_reg_t* p_drvReg)
  * @param[in]   addr        Address of the register to read
  * @return      The value contained in the specified register
  */
-Uint16 DRV_readOne(const drv_cfg_t* p_drvCfg, DRV_Address_e addr)
+uint16_t DRV_readOne(const drv_cfg_t* p_drvCfg, DRV_Address_e addr)
 {
-    Uint32 spi_base     = p_drvCfg->spiHandle;
-    Uint32 pin_spi_cs   = p_drvCfg->gpioNumber_CS;
+    uint32_t spi_base   = p_drvCfg->spiHandle;
+    uint32_t pin_spi_cs = p_drvCfg->gpioNumber_CS;
     drv_msg_u msg       = {.rw_cmd = DRV_CTRLMODE_READ, .addr = addr, .data = 0};
 
     // Select chip
@@ -250,10 +248,10 @@ Uint16 DRV_readOne(const drv_cfg_t* p_drvCfg, DRV_Address_e addr)
  * @param[in]   addr        Address of the register to write
  * @param[in]   data        Data to be written to the specified register
  */
-void DRV_writeOne(const drv_cfg_t* p_drvCfg, DRV_Address_e addr, Uint16 data)
+void DRV_writeOne(const drv_cfg_t* p_drvCfg, DRV_Address_e addr, uint16_t data)
 {
-    Uint32 spi_base     = p_drvCfg->spiHandle;
-    Uint32 pin_spi_cs   = p_drvCfg->gpioNumber_CS;
+    uint32_t spi_base   = p_drvCfg->spiHandle;
+    uint32_t pin_spi_cs = p_drvCfg->gpioNumber_CS;
     drv_msg_u msg       = {.rw_cmd = DRV_CTRLMODE_WRITE, .addr = addr, .data = data};
 
     // Select chip

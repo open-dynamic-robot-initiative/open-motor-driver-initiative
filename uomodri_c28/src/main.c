@@ -6,17 +6,21 @@
 /***********************************************************************
  * INCLUDES
  ***********************************************************************/
-#include "f2838x_device.h"
+#include "f2838x_cla_typedefs.h"
+//#include "f2838x_device.h"
 #include "device.h"
 #include "board.h"
 
+#include "communication.h"
+#include "motor.h"
+#include "drv8353.h"
+
 #include "main.h"
 #include "hal.h"
-#include "drv8353.h"
+
 #include "ws2812b.h"
-#include "motor.h"
-#include "communication.h"
-#include "config/uomodri_user_defines.h"
+
+#include "uomodri_user_defines.h"
 //#include "uomodri_hal_config_handlers.h"
 //#include "uomodri_prj_config_handlers.h"
 
@@ -43,13 +47,13 @@ rs485_tx_t              com_rs485_tx        = {.index = 0U,
                                                .msg[1].crc.u16_msb = 0x8CA0, .msg[1].crc.u16_lsb = 0x22CF};
 #pragma DATA_ALIGN(led_spi_tx, 4)
 #pragma DATA_SECTION(led_spi_tx, "ramgs0")
-Uint16                led_spi_tx[LED_MSG_TX_16BIT_LENGTH];
+uint16_t                led_spi_tx[LED_MSG_TX_16BIT_LENGTH];
 #pragma DATA_ALIGN(com_bus_select, 2)
 #pragma DATA_SECTION(com_bus_select, "ramgs0")
 com_bus_e               com_bus_select      = COM_NO_BUS_DEFINED;
 #pragma DATA_ALIGN(global_1ms_tmr_cnt, 2)
 #pragma DATA_SECTION(global_1ms_tmr_cnt, "ramgs0")
-Uint32                global_1ms_tmr_cnt    = 0U;
+uint32_t                global_1ms_tmr_cnt  = 0U;
 
 // External variables
 extern motor_t          motor_m1;
@@ -62,7 +66,8 @@ extern cmd_t            cmd_uomodri[2];
  ***********************************************************************/
 void main(void);
 static void MCU_ini(void);
-inline void LED_dimming(motor_t*, motor_t*, Uint16*);
+inline void LED_dimming(motor_t*, motor_t*, uint16_t*);
+void MOT_initMotorStruct(motor_t*, uint16_t);
 
 /***********************************************************************
  * FUNCTIONS DEFINITION
@@ -75,8 +80,8 @@ void main(void)
     // uOmodri low level device initialization
     MCU_ini();
     // Initialization of the shared structure used by CLA & C28 for Motor_1 & Motor_2
-    MOT_initStruct(&motor_m1, MOTOR_1);
-    MOT_initStruct(&motor_m2, MOTOR_2);
+    MOT_initMotorStruct(&motor_m1, MOTOR_1);
+    MOT_initMotorStruct(&motor_m2, MOTOR_2);
     // Initialization the command structure for CLA.
     COM_initCmdStruct(&cmd_uomodri[MOTOR_1]);
     COM_initCmdStruct(&cmd_uomodri[MOTOR_2]);
@@ -169,14 +174,14 @@ static void MCU_ini(void)
  * @param[in]       p_motor Pointer on data structure array used for motor control.
  * @param[out]      p_msg   Pointer on the message to be sent to led via SPI.
  */
-inline void LED_dimming(motor_t* p_motor1, motor_t* p_motor2, Uint16* p_msg)
+inline void LED_dimming(motor_t* p_motor1, motor_t* p_motor2, uint16_t* p_msg)
 {
-    static Uint16 timer_cpt_ms          = 0;
-    float32       timer_fade_blink      = (float32)((timer_cpt_ms < 500)    ? (timer_cpt_ms)    : (1000 - timer_cpt_ms)) / 500.0f;
-    float32       timer_blink           = (timer_cpt_ms < 500)              ? (0.0f)            : (1.0f);
+    static uint16_t timer_cpt_ms        = 0;
+    float32_t       timer_fade_blink    = (float32_t)((timer_cpt_ms < 500)  ? (timer_cpt_ms)    : (1000 - timer_cpt_ms)) / 500.0f;
+    float32_t       timer_blink         = (timer_cpt_ms < 500)              ? (0.0f)            : (1.0f);
     timer_cpt_ms                        = (timer_cpt_ms < 1000)             ? (timer_cpt_ms + 1): (0);
-    Uint16        motor_state           = MOTOR_STATE_IDLE;
-    Uint16        u16_timer_fade_blink  = (Uint16)(0xff * timer_fade_blink);
+    uint16_t        motor_state         = MOTOR_STATE_IDLE;
+    uint16_t        u16_timer_fade_blink= (uint16_t)(0xff * timer_fade_blink);
 
     if((p_motor1->state & MOTOR_STATE_BOOT)     || (p_motor2->state & MOTOR_STATE_BOOT))
         motor_state = MOTOR_STATE_IDLE;
@@ -200,7 +205,7 @@ inline void LED_dimming(motor_t* p_motor1, motor_t* p_motor2, Uint16* p_msg)
         ws2812b_writeLed(0, u16_timer_fade_blink, 0, p_msg);//Green fade, Active control
         break;
     case MOTOR_STATE_ERROR:
-        ws2812b_writeLed((Uint16)(0xff * timer_blink), 0, 0, p_msg);//red fade, error control
+        ws2812b_writeLed((uint16_t)(0xff * timer_blink), 0, 0, p_msg);//red fade, error control
         break;
 //    case MOTOR_STATE_WAIT_SYNC:
 //    case MOTOR_STATE_ADC_CALIB:
@@ -208,6 +213,221 @@ inline void LED_dimming(motor_t* p_motor1, motor_t* p_motor2, Uint16* p_msg)
     default:
         ws2812b_writeLed(0,  0, u16_timer_fade_blink, p_msg);//blue fade
     }
+
+    return;
+}
+
+/**
+ * @brief           Global structure initialization for MOTOR_1 \& MOTOR_2
+ * @param           *p_motor    Pointer on the associated motor structure
+ * @param           motor_id    Motor identifier.
+ */
+void MOT_initMotorStruct(motor_t* p_motor, uint16_t motor_id)
+{
+    if(motor_id == MOTOR_1)
+    {
+        //--- MOTOR_1 -----------------------------------------------------------
+        p_motor->id                                     = MOTOR_1;
+        //--- FOC structure -----------------------------------------------------
+        //--- MOTOR PARAMS STRUCTURE --------------------------------------------
+        p_motor->foc.cfg.Rs                             = MOTOR1_RS;
+        p_motor->foc.cfg.Ls                             = MOTOR1_LS;
+        p_motor->foc.cfg.kv                             = MOTOR1_KV;
+        p_motor->foc.cfg.ke                             = MOTOR1_KE;
+        p_motor->foc.cfg.ki                             = MOTOR1_KI;
+        p_motor->foc.cfg.polePairs                      = MOTOR1_POLES_PAIRS;
+        //--- MOTOR ACQUISITION STRUCTURE ---------------------------------------
+        p_motor->foc.acq.iabcCfgBase[CHANNEL_1]         = MOTOR1_IA_ADC_CFG_ADDR;
+        p_motor->foc.acq.iabcCfgBase[CHANNEL_2]         = MOTOR1_IB_ADC_CFG_ADDR;
+        p_motor->foc.acq.iabcCfgBase[CHANNEL_3]         = MOTOR1_IC_ADC_CFG_ADDR;
+        p_motor->foc.acq.iabcResultBase[CHANNEL_1]      = MOTOR1_IA_ADC_RESULT_ADDR;
+        p_motor->foc.acq.iabcResultBase[CHANNEL_2]      = MOTOR1_IB_ADC_RESULT_ADDR;
+        p_motor->foc.acq.iabcResultBase[CHANNEL_3]      = MOTOR1_IC_ADC_RESULT_ADDR;
+        p_motor->foc.acq.vExtResultBase                 = VEXT1_ADC_RESULT_ADDR;
+        p_motor->foc.acq.ppbNum.ia                      = MOTOR1_IABC_PPB_NUM;
+        p_motor->foc.acq.ppbNum.ib                      = MOTOR1_IABC_PPB_NUM;
+        p_motor->foc.acq.ppbNum.ic                      = MOTOR1_IABC_PPB_NUM;
+        p_motor->foc.acq.ppbNum.vExt                    = VEXT1_PPB_NUM;
+        p_motor->foc.acq.socNum.ia                      = MOTOR1_IABC_SOC_NUM;
+        p_motor->foc.acq.socNum.ib                      = MOTOR1_IABC_SOC_NUM;
+        p_motor->foc.acq.socNum.ic                      = MOTOR1_IABC_SOC_NUM;
+        p_motor->foc.acq.socNum.vExt                    = VEXT1_SOC_NUM;
+        p_motor->foc.acq.intNum.adcInt                  = MOTOR1_IA_INT_NUM;
+        //--- MOTOR ENCORDER STRUCTURE ------------------------------------------
+        p_motor->foc.enc.eqepBase                       = MOTOR1_QEP_BASE;
+        p_motor->foc.enc.polePairs                      = MOTOR1_POLES_PAIRS;
+        p_motor->foc.enc.thetaMechScaler                = (float32_t)MOTOR1_ENC_RESOLUTION_SCALE;
+        p_motor->foc.enc.speed.speedHighScaler          = (float32_t)MOTOR1_ENC_SPEED_HIGH_SCALE;
+        p_motor->foc.enc.speed.speedLowScaler           = (float32_t)MOTOR1_ENC_SPEED_LOW_SCALE;
+        p_motor->foc.enc.speed.speedFlt[0].a            = (float32_t)MOTOR1_ENC_SPEED_LPF_ALPHA;
+        p_motor->foc.enc.speed.speedFlt[0].one_minus_a  = (float32_t)MOTOR1_ENC_SPEED_LPF_ONE_M_ALPHA;
+        p_motor->foc.enc.speed.speedFlt[1].a            = (float32_t)MOTOR1_ENC_SPEED_LOCAL_LPF_ALPHA;
+        p_motor->foc.enc.speed.speedFlt[1].one_minus_a  = (float32_t)MOTOR1_ENC_SPEED_LOCAL_LPF_ONE_M_ALPHA;
+        //--- MOTOR COMMAND STRUCTURE -------------------------------------------
+        p_motor->foc.cmd.iSat                           = MOTOR1_CURRENT_CMD_SAT_MAX;
+        //-----------------------------------------------------------------------
+        p_motor->foc.iParkFlt.a                         = MOTOR1_CURRENT_LPF_ALPHA;
+        p_motor->foc.iParkFlt.one_minus_a               = MOTOR1_CURRENT_LPF_ONE_M_ALPHA;
+        //--- FOC - Initialize duty cycle saturation ----------------------------
+        p_motor->foc.dtcMax                             = MOTOR1_DTC_MAX;
+        p_motor->foc.dtcMin                             = MOTOR1_DTC_MIN;
+        //--- FOC - Encoder test ------------------------------------------------
+        p_motor->foc.initPosCnt                         = (uint32_t)MOTOR1_POSITION_INIT_EVT;
+        p_motor->foc.initFixCnt                         = (uint32_t)MOTOR1_FIX_INIT_EVT;
+        p_motor->foc.initErr[MIN]                       = MOTOR1_POSITION_INIT_ERR_MIN;
+        p_motor->foc.initErr[MAX]                       = MOTOR1_POSITION_INIT_ERR_MAX;
+        //--- FOC - Initialize PI controller (Id) -------------------------------
+        p_motor->foc.piId.kp                            = (float32_t)MOTOR1_PI_ID_KP_COEF;
+        p_motor->foc.piId.ki                            = (float32_t)MOTOR1_PI_ID_KI_COEF;
+        //--- FOC - Initialize PI controller (Iq) -------------------------------
+        p_motor->foc.piIq.kp                            = (float32_t)MOTOR1_PI_IQ_KP_COEF;
+        p_motor->foc.piIq.ki                            = (float32_t)MOTOR1_PI_IQ_KI_COEF;
+        //--- DRV IO Config -----------------------------------------------------
+        p_motor->drvFaultNum                            = MOTOR1_DRV_FAULT_NUM;
+        p_motor->drvEnNum                               = MOTOR1_DRV_EN_NUM;
+        //---- PWM config address -----------------------------------------------
+        p_motor->epwmBase[CHANNEL_1]                    = MOTOR1_PWM1_BASE;
+        p_motor->epwmBase[CHANNEL_2]                    = MOTOR1_PWM2_BASE;
+        p_motor->epwmBase[CHANNEL_3]                    = MOTOR1_PWM3_BASE;
+    }
+    else
+    {
+        //--- MOTOR_2 -----------------------------------------------------------
+        p_motor->id                                     = MOTOR_2;
+        //--- FOC structure -----------------------------------------------------
+        //--- MOTOR PARAMS STRUCTURE --------------------------------------------
+        p_motor->foc.cfg.Rs                             = MOTOR2_RS;
+        p_motor->foc.cfg.Ls                             = MOTOR2_LS;
+        p_motor->foc.cfg.kv                             = MOTOR2_KV;
+        p_motor->foc.cfg.ke                             = MOTOR2_KE;
+        p_motor->foc.cfg.ki                             = MOTOR2_KI;
+        p_motor->foc.cfg.polePairs                      = MOTOR2_POLES_PAIRS;
+        //--- MOTOR ACQUISITION STRUCTURE ---------------------------------------
+        p_motor->foc.acq.iabcCfgBase[CHANNEL_1]         = MOTOR2_IA_ADC_CFG_ADDR;
+        p_motor->foc.acq.iabcCfgBase[CHANNEL_2]         = MOTOR2_IB_ADC_CFG_ADDR;
+        p_motor->foc.acq.iabcCfgBase[CHANNEL_3]         = MOTOR2_IC_ADC_CFG_ADDR;
+        p_motor->foc.acq.iabcResultBase[CHANNEL_1]      = MOTOR2_IA_ADC_RESULT_ADDR;
+        p_motor->foc.acq.iabcResultBase[CHANNEL_2]      = MOTOR2_IB_ADC_RESULT_ADDR;
+        p_motor->foc.acq.iabcResultBase[CHANNEL_3]      = MOTOR2_IC_ADC_RESULT_ADDR;
+        p_motor->foc.acq.vExtResultBase                 = VEXT2_ADC_RESULT_ADDR;
+        p_motor->foc.acq.ppbNum.ia                      = MOTOR2_IABC_PPB_NUM;
+        p_motor->foc.acq.ppbNum.ib                      = MOTOR2_IABC_PPB_NUM;
+        p_motor->foc.acq.ppbNum.ic                      = MOTOR2_IABC_PPB_NUM;
+        p_motor->foc.acq.ppbNum.vExt                    = VEXT2_PPB_NUM;
+        p_motor->foc.acq.socNum.ia                      = MOTOR2_IABC_SOC_NUM;
+        p_motor->foc.acq.socNum.ib                      = MOTOR2_IABC_SOC_NUM;
+        p_motor->foc.acq.socNum.ic                      = MOTOR2_IABC_SOC_NUM;
+        p_motor->foc.acq.socNum.vExt                    = VEXT2_SOC_NUM;
+        p_motor->foc.acq.intNum.adcInt                  = MOTOR2_IA_INT_NUM;
+        //--- MOTOR ENCORDER STRUCTURE ------------------------------------------
+        p_motor->foc.enc.eqepBase                       = MOTOR2_QEP_BASE;
+        p_motor->foc.enc.polePairs                      = MOTOR2_POLES_PAIRS;
+        p_motor->foc.enc.thetaMechScaler                = (float32_t)MOTOR2_ENC_RESOLUTION_SCALE;
+        p_motor->foc.enc.speed.speedHighScaler          = (float32_t)MOTOR2_ENC_SPEED_HIGH_SCALE;
+        p_motor->foc.enc.speed.speedLowScaler           = (float32_t)MOTOR2_ENC_SPEED_LOW_SCALE;
+        p_motor->foc.enc.speed.speedFlt[0].a            = (float32_t)MOTOR2_ENC_SPEED_LPF_ALPHA;
+        p_motor->foc.enc.speed.speedFlt[0].one_minus_a  = (float32_t)MOTOR2_ENC_SPEED_LPF_ONE_M_ALPHA;
+        p_motor->foc.enc.speed.speedFlt[1].a            = (float32_t)MOTOR2_ENC_SPEED_LOCAL_LPF_ALPHA;
+        p_motor->foc.enc.speed.speedFlt[1].one_minus_a  = (float32_t)MOTOR2_ENC_SPEED_LOCAL_LPF_ONE_M_ALPHA;
+        //--- MOTOR COMMAND STRUCTURE -------------------------------------------
+        p_motor->foc.cmd.iSat                           = MOTOR2_CURRENT_CMD_SAT_MAX;
+        //-----------------------------------------------------------------------
+        p_motor->foc.iParkFlt.a                         = MOTOR2_CURRENT_LPF_ALPHA;
+        p_motor->foc.iParkFlt.one_minus_a               = MOTOR2_CURRENT_LPF_ONE_M_ALPHA;
+        //--- FOC - Initialize duty cycle saturation ----------------------------
+        p_motor->foc.dtcMax                             = MOTOR2_DTC_MAX;
+        p_motor->foc.dtcMin                             = MOTOR2_DTC_MIN;
+        //--- FOC - Encoder test ------------------------------------------------
+        p_motor->foc.initPosCnt                         = (uint32_t)MOTOR2_POSITION_INIT_EVT;
+        p_motor->foc.initFixCnt                         = (uint32_t)MOTOR2_FIX_INIT_EVT;
+        p_motor->foc.initErr[MIN]                       = MOTOR2_POSITION_INIT_ERR_MIN;
+        p_motor->foc.initErr[MAX]                       = MOTOR2_POSITION_INIT_ERR_MAX;
+        //--- FOC - Initialize PI controller (Id) -------------------------------
+        p_motor->foc.piId.kp                            = (float32_t)MOTOR2_PI_ID_KP_COEF;
+        p_motor->foc.piId.ki                            = (float32_t)MOTOR2_PI_ID_KI_COEF;
+        //--- FOC - Initialize PI controller (Iq) -------------------------------
+        p_motor->foc.piIq.kp                            = (float32_t)MOTOR2_PI_IQ_KP_COEF;
+        p_motor->foc.piIq.ki                            = (float32_t)MOTOR2_PI_IQ_KI_COEF;
+        //--- DRV IO Config -----------------------------------------------------
+        p_motor->drvFaultNum                            = MOTOR2_DRV_FAULT_NUM;
+        p_motor->drvEnNum                               = MOTOR2_DRV_EN_NUM;
+        //---- PWM config address -----------------------------------------------
+        p_motor->epwmBase[CHANNEL_1]                    = MOTOR2_PWM1_BASE;
+        p_motor->epwmBase[CHANNEL_2]                    = MOTOR2_PWM2_BASE;
+        p_motor->epwmBase[CHANNEL_3]                    = MOTOR2_PWM3_BASE;
+    }
+    //--- MOTOR ACQUISITION STRUCTURE -------------------------------------------
+    p_motor->foc.acq.vBusResultBase                     = VBUS_ADC_RESULT_ADDR;
+    p_motor->foc.acq.ppbNum.vBus                        = VBUS_PPB_NUM;
+    p_motor->foc.acq.socNum.vBus                        = VBUS_SOC_NUM;
+    p_motor->foc.acq.vBusFlt.a                          = VBUS_LPF_ALPHA;
+    p_motor->foc.acq.vBusFlt.one_minus_a                = VBUS_LPF_ONE_M_ALPHA;
+    p_motor->foc.acq.vExtFlt.a                          = VEXT_LPF_ALPHA;
+    p_motor->foc.acq.vExtFlt.one_minus_a                = VEXT_LPF_ONE_M_ALPHA;
+    //--- MOTOR ENCORDER STRUCTURE ----------------------------------------------
+    p_motor->foc.enc.thetaMech[NEW]                     = 0.0f;
+    p_motor->foc.enc.thetaMech[OLD]                     = 0.0f;
+    p_motor->foc.enc.thetaIndexRelative                 = 0.0f;
+    p_motor->foc.enc.thetaIndexAbsolute                 = 0.0f;
+    p_motor->foc.enc.turnNb                             = 0;
+    p_motor->foc.enc.flags.all                          = 0U;
+    p_motor->foc.enc.speed.speedMech[0]                 = 0.0f;
+    p_motor->foc.enc.speed.speedMech[1]                 = 0.0f;
+    p_motor->foc.enc.speed.theta[NEW]                   = 0.0f;
+    p_motor->foc.enc.speed.theta[OLD]                   = 0.0f;
+    //--- MOTOR COMMAND STRUCTURE -----------------------------------------------
+    p_motor->foc.cmd.posRef                             = 0.0f;
+    p_motor->foc.cmd.velRef                             = 0.0f;
+    p_motor->foc.cmd.iqff                               = 0.0f;
+    p_motor->foc.cmd.kpCoeff                            = 0.0f;
+    p_motor->foc.cmd.kdCoeff                            = 0.0f;
+    p_motor->foc.cmd.timeoutRef                         = 0U;
+    p_motor->foc.cmd.cptTimeout                         = 0U;
+    p_motor->foc.cmd.index                              = 0U;
+    p_motor->foc.cmd.cmdField.all                       = 0U;
+    p_motor->foc.cmd.statusField.all                    = 0U;
+    //--- FOC - Park transform results ------------------------------------------
+    p_motor->foc.id                                     = 0.0f;
+    p_motor->foc.iq                                     = 0.0f;
+    //--- FOC - Encoder test ----------------------------------------------------
+    p_motor->foc.initPosStep                            = 0.0f;
+    p_motor->foc.initPosEnc[FW]                         = 0.0f;
+    p_motor->foc.initPosEnc[REV]                        = 0.0f;
+    //--- FOC - Initialize PI controller (Id) -----------------------------------
+    p_motor->foc.piId.p_fb.ptr                          = (float32_t *)(&p_motor->foc.id);
+    p_motor->foc.piId.p_set.ptr                         = (float32_t *)(&p_motor->foc.idRef);
+    p_motor->foc.piId.p_sat.ptr                         = (float32_t *)(&p_motor->foc.acq.vBus);
+    p_motor->foc.piId.err                               = 0.0f;
+    p_motor->foc.piId.integral                          = 0.0f;
+    p_motor->foc.piId.ff                                = 0.0f;
+    p_motor->foc.piId.out                               = 0.0f;
+    //--- FOC - Initialize PI controller (Iq) -----------------------------------
+    p_motor->foc.piIq.p_fb.ptr                          = (float32_t *)(&p_motor->foc.iq);
+    p_motor->foc.piIq.p_set.ptr                         = (float32_t *)(&p_motor->foc.iqRef);
+    p_motor->foc.piIq.p_sat.ptr                         = (float32_t *)(&p_motor->foc.acq.vBus);
+    p_motor->foc.piIq.err                               = 0.0f;
+    p_motor->foc.piIq.integral                          = 0.0f;
+    p_motor->foc.piIq.ff                                = 0.0f;
+    p_motor->foc.piIq.out                               = 0.0f;
+    //--- FOC - Initialize PD controller (Speed & position) ---------------------
+    p_motor->foc.pdPosVel.p_fbTheta.ptr                 = (float32_t *)(&p_motor->foc.enc.thetaAbsolute);
+    p_motor->foc.pdPosVel.p_setTheta.ptr                = (float32_t *)(&p_motor->foc.cmd.posRef);
+    p_motor->foc.pdPosVel.errTheta                      = 0.0f;
+    p_motor->foc.pdPosVel.p_fbSpeed.ptr                 = (float32_t *)(&p_motor->foc.enc.speed.speedMech[0]);
+    p_motor->foc.pdPosVel.p_setSpeed.ptr                = (float32_t *)(&p_motor->foc.cmd.velRef);
+    p_motor->foc.pdPosVel.errSpeed                      = 0.0f;
+    p_motor->foc.pdPosVel.p_kp.ptr                      = (float32_t *)(&p_motor->foc.cmd.kpCoeff);
+    p_motor->foc.pdPosVel.p_kd.ptr                      = (float32_t *)(&p_motor->foc.cmd.kdCoeff);
+    p_motor->foc.pdPosVel.derivative                    = 0.0f;
+    p_motor->foc.pdPosVel.p_ff.ptr                      = (float32_t *)(&p_motor->foc.cmd.iqff);
+    p_motor->foc.pdPosVel.p_sat.ptr                     = (float32_t *)(&p_motor->foc.cmd.iSat);
+    p_motor->foc.pdPosVel.out                           = 0.0f;
+    //--- FSM motor initial state -----------------------------------------------
+    p_motor->state                                      = MOTOR_STATE_IDLE;
+    //--- Error message ---------------------------------------------------------
+    p_motor->error.all                                  = 0U;
+    //---------------------------------------------------------------------------
+    //---------------------------------------------------------------------------
 
     return;
 }
@@ -259,7 +479,7 @@ __attribute__((interrupt)) void cla_isrMotor2(void)
     {
         spi_tx_msg_t* p_msg_spi     = &com_spi_tx.msg[com_spi_tx.msg_nx];
         COM_msgCreate(&motor_m2, &p_msg_spi->data, global_1ms_tmr_cnt);
-        Uint32 msg_crc              = COM_msgCRC((Uint16 *) &p_msg_spi->data, COM_MSG_SPI_TX_16BIT_PAYLOAD_LENGTH);
+        uint32_t msg_crc              = COM_msgCRC((uint16_t *) &p_msg_spi->data, COM_MSG_SPI_TX_16BIT_PAYLOAD_LENGTH);
         // swap words in message - Required for Solo
         p_msg_spi->crc.u16_msb      = LSB_32(msg_crc);
         p_msg_spi->crc.u16_lsb      = MSB_32(msg_crc);
@@ -273,7 +493,7 @@ __attribute__((interrupt)) void cla_isrMotor2(void)
             SPI_resetTxFIFO(COM_SPI_BASE);
             // Force first write in SPI_O_DAT register
             COM_SPI_DAT(p_msg_spi->data.status.all);
-            DMA_configAddresses(DMA_COM_SPI_TX_BASE_ADDR, (Uint16 *) COM_SPI_TX_BASE_REG_ADDR, (Uint16 *) &p_msg_spi->data.timeStamp);
+            DMA_configAddresses(DMA_COM_SPI_TX_BASE_ADDR, (uint16_t *) COM_SPI_TX_BASE_REG_ADDR, (uint16_t *) &p_msg_spi->data.timeStamp);
             DMA_startChannel(DMA_COM_SPI_TX_BASE_ADDR);
         }
     }
@@ -281,7 +501,7 @@ __attribute__((interrupt)) void cla_isrMotor2(void)
     {
         rs485_tx_msg_u* p_msg_rs485 = &com_rs485_tx.msg[com_rs485_tx.msg_nx];
         COM_msgCreate(&motor_m2, &p_msg_rs485->data, global_1ms_tmr_cnt);
-        Uint32 msg_crc              = COM_msgCRC((Uint16 *) &p_msg_rs485->header, COM_MSG_RS485_TX_16BIT_PAYLOAD_LENGTH);
+        uint32_t msg_crc              = COM_msgCRC((uint16_t *) &p_msg_rs485->header, COM_MSG_RS485_TX_16BIT_PAYLOAD_LENGTH);
         // swap words in message - Required for Solo
         p_msg_rs485->crc.u16_msb    = LSB_32(msg_crc);
         p_msg_rs485->crc.u16_lsb    = MSB_32(msg_crc);
@@ -296,7 +516,7 @@ __attribute__((interrupt)) void cla_isrMotor2(void)
         SPI_resetTxFIFO(COM_SPI_BASE);
         // Force first write in SPI_O_DAT register
         COM_SPI_DAT(p_msg_spi->data.status.all);
-        DMA_configAddresses(DMA_COM_SPI_TX_BASE_ADDR, (Uint16 *) COM_SPI_TX_BASE_REG_ADDR, (Uint16 *) &p_msg_spi->data.timeStamp);
+        DMA_configAddresses(DMA_COM_SPI_TX_BASE_ADDR, (uint16_t *) COM_SPI_TX_BASE_REG_ADDR, (uint16_t *) &p_msg_spi->data.timeStamp);
         DMA_startChannel(DMA_COM_SPI_TX_BASE_ADDR);
     }
     // Clear IT
@@ -311,7 +531,7 @@ __attribute__((interrupt)) void tmr_isrLedCmd(void)
 #ifdef DEBUG
 //    DBG_PIN2_SET;
 #endif
-    global_1ms_tmr_cnt = (global_1ms_tmr_cnt < UINT32_MAX) ? (global_1ms_tmr_cnt + 1) : (0);
+    global_1ms_tmr_cnt = (global_1ms_tmr_cnt < uint32_t_MAX) ? (global_1ms_tmr_cnt + 1) : (0);
     // LED dimming control
     if(!DMA_getRunStatusFlag(DMA_LED_SPI_TX_BASE_ADDR))
     {
@@ -335,7 +555,7 @@ __attribute__((interrupt)) void dma_isrSpiComRx(void)
 {
     // Compare computed CRC with the one received in message.
     spi_rx_msg_t* p_msg_spi = &com_spi_rx.msg;
-    Uint32 msg_crc          = COM_msgCRC((Uint16 *)&p_msg_spi->data, COM_MSG_SPI_RX_16BIT_PAYLOAD_LENGTH);
+    uint32_t msg_crc          = COM_msgCRC((uint16_t *)&p_msg_spi->data, COM_MSG_SPI_RX_16BIT_PAYLOAD_LENGTH);
     if((com_bus_select != COM_USE_RS485_BUS) && (p_msg_spi->crc.u16_msb == MSB_32(msg_crc)) && (p_msg_spi->crc.u16_lsb == LSB_32(msg_crc)))
     {
         // Extract received message & send new commands to FOC structures. Define SPI as communication bus by default.
@@ -357,7 +577,7 @@ __attribute__((interrupt)) void sci_isrTx_RS485(void)
 {
     DBG_PIN2_SET;
     // FIFO IT source test.
-    Uint32 sci_it_src_test = SCI_getInterruptStatus(COM_SCI_BASE);
+    uint32_t sci_it_src_test = SCI_getInterruptStatus(COM_SCI_BASE);
     // FIFO TX IT?
     if(sci_it_src_test & SCI_INT_TXFF)
     {
@@ -390,7 +610,7 @@ __attribute__((interrupt)) void sci_isrRx_RS485(void)
 {
     DBG_PIN2_SET;
     // FIFO IT source test.
-    Uint32 sci_it_src_test = SCI_getInterruptStatus(COM_SCI_BASE);
+    uint32_t sci_it_src_test = SCI_getInterruptStatus(COM_SCI_BASE);
     // FIFO RX IT?
     if(sci_it_src_test & SCI_INT_RXFF)
     {
@@ -437,9 +657,9 @@ __attribute__((interrupt)) void clb_isrTxRx_RS485(void)
 {
     DBG_PIN3_SET;
 #if USE_FCT
-    Uint16 clb_tag_test   = CLB_getInterruptTag(RS485_RX_TX_CLB_EOT_BASE);
+    uint16_t clb_tag_test   = CLB_getInterruptTag(RS485_RX_TX_CLB_EOT_BASE);
 #else
-    Uint16 clb_tag_test     = HWREGH(CLB_INT_REG_ADDR);
+    uint16_t clb_tag_test     = HWREGH(CLB_INT_REG_ADDR);
 #endif
     switch (clb_tag_test)
     {
@@ -475,7 +695,7 @@ __attribute__((interrupt)) void clb_isrTxRx_RS485(void)
         HWREGH(COM_SCI_FIFO_RX_REG_ADDR)   &= ~SCI_FFRX_RXFFIENA;
         HWREGH(COM_SCI_CTRL1_REG_ADDR)     &= ~SCI_CTL1_RXERRINTENA;
         // Purge pending ITs.
-        HWREGH(PIECTRL_BASE + PIE_O_IFR8)  &= ~((Uint16)INT_RS485_RX_PIE_FLAG);
+        HWREGH(PIECTRL_BASE + PIE_O_IFR8)  &= ~((uint16_t)INT_RS485_RX_PIE_FLAG);
         HWREGH(PIECTRL_BASE + PIE_O_ACK)    = INT_RS485_RX_MSG_GROUP;
         // Is it a valid address ?
         if(com_rs485_rx.addr1 || com_rs485_rx.addr2)
@@ -483,7 +703,7 @@ __attribute__((interrupt)) void clb_isrTxRx_RS485(void)
             // Last FIFO read.
             RS485_msgReceive(COM_SCI_BASE, &com_rs485_rx);
             rs485_rx_msg_u* p_msg_rs485     = &com_rs485_rx.msg;
-            Uint32 msg_crc                  = COM_msgCRC((Uint16 *) &p_msg_rs485->header, COM_MSG_RS485_RX_16BIT_PAYLOAD_LENGTH);
+            uint32_t msg_crc                  = COM_msgCRC((uint16_t *) &p_msg_rs485->header, COM_MSG_RS485_RX_16BIT_PAYLOAD_LENGTH);
             if((com_bus_select != COM_USE_SPI_BUS) && (p_msg_rs485->crc.u16_msb == MSB_32(msg_crc)) && (p_msg_rs485->crc.u16_lsb == LSB_32(msg_crc)))
             {
                 // Message valid - Extract it & transfer to motors structures.

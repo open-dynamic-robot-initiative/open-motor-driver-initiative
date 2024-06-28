@@ -6,17 +6,14 @@
 /***********************************************************************
  * INCLUDE FILES
  ***********************************************************************/
-#include "f2838x_device.h"
-#include "device.h"
 #include "hal.h"
 #include "board.h"
-#include "config/uomodri_user_defines.h"
 
 /***********************************************************************
  * VARIABLES
  ***********************************************************************/
 #pragma DATA_SECTION(uid_unique,".UID_UNIQUE");
-volatile Uint32       uid_unique;
+volatile uint32_t   uid_unique;
 
 /***********************************************************************
  * FUNCTIONS DECLARATION
@@ -84,7 +81,7 @@ void HAL_GPIO_ini(const gpio_cfg_t* p_gpio)
 {
     if(p_gpio != NULL)
     {
-        Uint32 pinNum = p_gpio->pinNum;
+        uint32_t pinNum = p_gpio->pinNum;
 
         while(pinNum != UINT32_MAX)
         {
@@ -97,7 +94,7 @@ void HAL_GPIO_ini(const gpio_cfg_t* p_gpio)
                 if(p_gpio->direction == GPIO_DIR_MODE_IN)
                     GPIO_setQualificationMode(pinNum, p_gpio->samplingInMode);
                 else
-                    GPIO_writePin(pinNum, (Uint32) p_gpio->setValue);
+                    GPIO_writePin(pinNum, (uint32_t) p_gpio->setValue);
                 if(p_gpio->intEnable)
                 {
                     GPIO_setInterruptPin(pinNum, p_gpio->extIntNum);
@@ -122,7 +119,7 @@ void HAL_ADC_ini(const adc_cfg_t* p_adcCfg)
 {
     if((p_adcCfg != NULL) && (p_adcCfg->p_adcIni != NULL) && (p_adcCfg->p_adcAcq != NULL))
     {
-        Uint32 adcBase = p_adcCfg->adcBase;
+        uint32_t adcBase = p_adcCfg->adcBase;
         while(adcBase != UINT32_MAX)
         {
             const adc_ini_t* p_adcIni   = p_adcCfg->p_adcIni;
@@ -190,7 +187,7 @@ void HAL_ePWM_ini(const epwm_cfg_t* p_pwmCfg)
     if((p_pwmCfg != NULL) && (p_pwmCfg->p_epwmTimeBase != NULL) && (p_pwmCfg->p_epwmCounterCompare) &&
             (p_pwmCfg->p_epwmActionQualifier != NULL) && (p_pwmCfg->p_epwmDeadband != NULL))
     {
-        Uint32 pwmBase = p_pwmCfg->epwmBase;
+        uint32_t pwmBase = p_pwmCfg->epwmBase;
         /* Disable sync(Freeze clock to PWM as well). GTBCLKSYNC is applicable
          * only for multiple core devices.
          */
@@ -416,7 +413,7 @@ void HAL_eQEP_ini(const eqep_cfg_t* p_qepCfg)
 {
     if(p_qepCfg != NULL)
     {
-        Uint32 qepBase = p_qepCfg->eqepBase;
+        uint32_t qepBase = p_qepCfg->eqepBase;
         while(qepBase != UINT32_MAX)
         {
             // Configure the decoder for up-count mode, counting both on rising & falling edges (quadrature encoders)
@@ -456,7 +453,7 @@ void HAL_SPI_ini(const spi_cfg_t* p_spiCfg)
 {
     if(p_spiCfg != NULL)
     {
-        Uint32 spiBase = p_spiCfg->spiBase;
+        uint32_t spiBase = p_spiCfg->spiBase;
         while(spiBase != UINT32_MAX)
         {
             /* Disable SPI before configuration */
@@ -503,7 +500,7 @@ void HAL_SCI_ini(const sci_cfg_t* p_sciCfg)
 {
     if(p_sciCfg != NULL)
     {
-        Uint32 sciBase = p_sciCfg->sciBase;
+        uint32_t sciBase = p_sciCfg->sciBase;
         while(sciBase != UINT32_MAX)
         {
             /* Reset all elements of SCI peripherals */
@@ -556,7 +553,7 @@ void HAL_DMA_ini(const dma_cfg_t* p_dmaCfg)
         DMA_initController();
         DMA_setEmulationMode(DMA_EMULATION_FREE_RUN);
 
-        Uint32 dmaChBase = p_dmaCfg->dmaChBase;
+        uint32_t dmaChBase = p_dmaCfg->dmaChBase;
         while(dmaChBase != UINT32_MAX)
         {
             /* DMA channel initialization
@@ -594,7 +591,7 @@ void HAL_IPC_ini(const ipc_cfg_t* p_ipcCfg)
     {
         IPC_Type_t  ipcType = p_ipcCfg->ipcType;
         /* (0) - C_CPU1_L_CPU2_R, (1) - IPC_CPU1_L_CM_R, (2) - IPC_CPU2_L_CPU1_R, (3) - IPC_CPU2_L_CM_R*/
-        Uint8     ipcSyncDone = 0;
+        uint16_t    ipcSyncDone = 0;
         while(ipcType != IPC_TOTAL_NUM)
         {
             // Enable IPC interrupts
@@ -627,9 +624,9 @@ void HAL_CLB_ini(const clb_cfg_t* p_clbCfg)
 {
     CLB_init();
 
-    Uint32 outLutCfg        = 0;
-    Uint32 addr_test1       = uid_unique;
-    Uint32 addr_test2       = uid_unique;
+    uint32_t outLutCfg      = 0;
+    uint32_t addr_test1     = uid_unique;
+    uint32_t addr_test2     = uid_unique;
 
     switch (p_clbCfg->clb_Addr1Spec)
     {
@@ -689,11 +686,11 @@ void HAL_CLA_ini(const cla_cfg_t* p_clacCfg)
     if(p_clacCfg != NULL)
     {
 #ifdef _FLASH
-        extern Uint32 Cla1funcsRunStart, Cla1funcsLoadStart, Cla1funcsLoadSize;
-        extern Uint32 Cla1ConstRunStart, Cla1ConstLoadStart, Cla1ConstLoadSize;
+        extern uint32_t Cla1funcsRunStart, Cla1funcsLoadStart, Cla1funcsLoadSize;
+        extern uint32_t Cla1ConstRunStart, Cla1ConstLoadStart, Cla1ConstLoadSize;
         // Copy over code from FLASH to RAM
-        memcpy((Uint32 *)&Cla1funcsRunStart, (Uint32 *)&Cla1funcsLoadStart, (Uint32)&Cla1funcsLoadSize);
-        memcpy((Uint32 *)&Cla1ConstRunStart, (Uint32 *)&Cla1ConstLoadStart, (Uint32)&Cla1ConstLoadSize);
+        memcpy((uint32_t *)&Cla1funcsRunStart, (uint32_t *)&Cla1funcsLoadStart, (uint32_t)&Cla1funcsLoadSize);
+        memcpy((uint32_t *)&Cla1ConstRunStart, (uint32_t *)&Cla1ConstLoadStart, (uint32_t)&Cla1ConstLoadSize);
 #endif //_FLASH
 
         // Initialize RAMs (CLA1ToCPUMsgRAM)
@@ -708,18 +705,18 @@ void HAL_CLA_ini(const cla_cfg_t* p_clacCfg)
         /* Enable the IACK instruction to start a task on CLA in software for all 8 CLA tasks */
         CLA_enableIACK(CLA1_BASE);
 
-        Uint16 i;
+        uint16_t i;
         while(p_clacCfg->p_claFunc != NULL)
         {
 #pragma diag_suppress=770
-            CLA_mapTaskVector(CLA1_BASE, p_clacCfg->claIntVect, (Uint16)p_clacCfg->p_claFunc);
+            CLA_mapTaskVector(CLA1_BASE, p_clacCfg->claIntVect, (uint16_t)p_clacCfg->p_claFunc);
 #pragma diag_warning=770
             CLA_setTriggerSource(p_clacCfg->claTaskNum, p_clacCfg->claTrigSrc);
 
             // Configure LSRAMs
             for(i = 0; i < 8; i++)
             {
-                Uint32 memcfg_sect_lsx = MEMCFG_SECT_TYPE_LS | (1 << i);
+                uint32_t memcfg_sect_lsx = MEMCFG_SECT_TYPE_LS | (1 << i);
                 /* Select LSxRAM to be the programming space for the CLA
                  * First configure the CLA to be the master for LSx and then
                  * set the space to be a program block */
@@ -758,7 +755,7 @@ void HAL_INT_ini(const int_cfg_t* p_intCfg)
 {
     if(p_intCfg != NULL)
     {
-        Uint32 intNum = p_intCfg->intNum;
+        uint32_t intNum = p_intCfg->intNum;
         // Clear & set IT flags & enable IT bits in a known state.
 
         // Setup Interrupts
@@ -785,7 +782,7 @@ void HAL_TMR_ini(const tmr_cfg_t* p_TimerCfg)
 {
     if(p_TimerCfg != NULL)
     {
-        Uint32 cpuTimerBase = p_TimerCfg->cpuTimerBase;
+        uint32_t cpuTimerBase = p_TimerCfg->cpuTimerBase;
         while(cpuTimerBase != UINT32_MAX)
         {
             /* Make sure timer is stopped */

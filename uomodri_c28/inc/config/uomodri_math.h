@@ -9,13 +9,19 @@
 /************************************************************************
  * INCLUDES
  ************************************************************************/
+#ifdef __TMS320C28XX_CLA__
+#include "f2838x_cla_typedefs.h"
+#include "CLAmath.h"
+#else
+#include <math.h>
+#endif
 //#include "f2838x_cla_typedefs.h"
 //#include "hw_types.h"
 //#include <stdint.h>
 //#include "driverlib.h"
 //#include "device.h"
-#include "f2838x_device.h"
-#include "device.h"
+//#include "f2838x_device.h"
+//#include "device.h"
 //#include "uomodri_user_defines.h"
 
 /***********************************************************************
@@ -46,36 +52,33 @@
 #endif
 
 #ifdef __TMS320C28XX_CLA__
-#include "f2838x_cla_typedefs.h"
-#include "CLAmath.h"
 #define UOMODRI_PI                      (CLAMATH_PI)
 #else
-#include <math.h>
 #define UOMODRI_PI                      (M_PI)
 #endif
 
 #ifndef FM_ROUND2RAD
-#define FM_ROUND2RAD                    ((float32)(2.0f * UOMODRI_PI))
+#define FM_ROUND2RAD                    ((float32_t)(2.0f * UOMODRI_PI))
 #endif
 
 #ifndef FM_RPM2RADPS
-#define FM_RPM2RADPS                    ((float32)(FM_ROUND2RAD / 60.0f))
+#define FM_RPM2RADPS                    ((float32_t)(FM_ROUND2RAD / 60.0f))
 #endif
 
 #ifndef FM_RADPS2RPM
-#define FM_RADPS2RPM                    ((float32)(1.0f / FM_RPM2RADPS))
+#define FM_RADPS2RPM                    ((float32_t)(1.0f / FM_RPM2RADPS))
 #endif
 
 #ifndef FM_RAD2ROUND
-#define FM_RAD2ROUND                    ((float32)(1.0f / FM_ROUND2RAD))
+#define FM_RAD2ROUND                    ((float32_t)(1.0f / FM_ROUND2RAD))
 #endif
 
 #ifndef FM_KRPM2RADPS
-#define FM_KRPM2RADPS                   ((float32)(1000.0f * FM_RPM2RADPS))
+#define FM_KRPM2RADPS                   ((float32_t)(1000.0f * FM_RPM2RADPS))
 #endif
 
 #ifndef FM_RADPS2KRPM
-#define FM_RADPS2KRPM                   ((float32)(1.0f / FM_KRPM2RADPS))
+#define FM_RADPS2KRPM                   ((float32_t)(1.0f / FM_KRPM2RADPS))
 #endif
 
 #ifndef FM_ABS
@@ -118,7 +121,7 @@
 // 16 bits macros
 #define LSB_16(x)                       ((x) & 0xFF)
 #define MSB_16(x)                       (((x) >> 8) & 0xFF)
-#define FUS_16_TO_32(x, y)              (((Uint32)(x) << 16) | (Uint32)(y))
+#define FUS_16_TO_32(x, y)              (((uint32_t)(x) << 16) | (uint32_t)(y))
 //#define SEP_32_TO_16(x, y)
 // 32 bits macros
 #define LSB_32(x)                       ((x) & 0xFFFF)

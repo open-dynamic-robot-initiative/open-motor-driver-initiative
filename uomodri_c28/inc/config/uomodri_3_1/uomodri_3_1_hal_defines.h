@@ -7,6 +7,24 @@
 #define __UOMODRI_3_1_HAL_DEFINES_H__
 
 /***********************************************************************
+ * INCLUDES
+ ***********************************************************************/
+//#include "f2838x_cla_typedefs.h"  // F2838x CLA Type definitions
+//#include "f2838x_device.h"        // F2838x Headerfile Include File
+//#include "f2838x_examples.h"      // F2838x Examples Include File
+
+//#include "device.h"                 // F2838x Headerfile Include File
+#include "driverlib.h"
+//#include "adc.h"
+//#include "epwm.h"
+//#include "hw_dma.h"
+//#include "dma.h"
+//#include "f2838x_device.h"
+//#include "uomodri_3_1/uomodri_3_1_hal_defines.h"
+//#include "uomodri_user_defines.h"
+//#include "drv8353.h"
+
+/***********************************************************************
  * GPIO DEFINES
  ***********************************************************************/
 #define MOTOR1_PWM1_CHA_NUM                     (0U)
@@ -1405,7 +1423,7 @@
  */
 #define COM_SPI_BASE                            SPIB_BASE
 #define COM_SPI_DAT_REG_ADDR                    (COM_SPI_BASE + SPI_O_DAT)
-#define COM_SPI_DAT(x)                          (HWREGH(COM_SPI_DAT_REG_ADDR) = (Uint16)(x))
+#define COM_SPI_DAT(x)                          (HWREGH(COM_SPI_DAT_REG_ADDR) = (uint16_t)(x))
 #define COM_SPI_TX_BASE_REG_ADDR                (COM_SPI_BASE + SPI_O_TXBUF)
 #define COM_SPI_RX_BASE_REG_ADDR                (COM_SPI_BASE + SPI_O_RXBUF)
 /**
@@ -1540,8 +1558,8 @@
 
 #define DMA_LED_SPI_TX_DEF                      { \
                                                     .dmaChBase        = DMA_LED_SPI_TX_BASE_ADDR, \
-                                                    .p_dstAddr        = (Uint16 *) LED_SPI_TX_BASE_REG_ADDR, \
-                                                    .p_srcAddr        = (Uint16 *) &led_spi_tx[0], \
+                                                    .p_dstAddr        = (uint16_t *) LED_SPI_TX_BASE_REG_ADDR, \
+                                                    .p_srcAddr        = (uint16_t *) &led_spi_tx[0], \
                                                     .burstSize        = DMA_LED_SPI_TX_16BIT_BURST_EVT, \
                                                     .transferSize     = DMA_LED_SPI_TX_16BIT_TRANSFER_EVT, \
                                                     .dstWrapSize      = DMA_NO_WRAP, \
@@ -1557,8 +1575,8 @@
                                                 }
 #define DMA_COM_SPI_TX_DEF                      { \
                                                     .dmaChBase        = DMA_COM_SPI_TX_BASE_ADDR, \
-                                                    .p_dstAddr        = (Uint16 *) COM_SPI_TX_BASE_REG_ADDR, \
-                                                    .p_srcAddr        = (Uint16 *) &com_spi_tx.msg[0].data.timeStamp, \
+                                                    .p_dstAddr        = (uint16_t *) COM_SPI_TX_BASE_REG_ADDR, \
+                                                    .p_srcAddr        = (uint16_t *) &com_spi_tx.msg[0].data.timeStamp, \
                                                     .burstSize        = DMA_COM_SPI_TX_16BIT_BURST_EVT, \
                                                     .transferSize     = DMA_COM_SPI_TX_16BIT_TRANSFER_EVT, \
                                                     .dstWrapSize      = DMA_NO_WRAP, \
@@ -1574,8 +1592,8 @@
                                                 }
 #define DMA_COM_SPI_RX_DEF                      { \
                                                     .dmaChBase        = DMA_COM_SPI_RX_BASE_ADDR, \
-                                                    .p_dstAddr        = (Uint16 *) &com_spi_rx, \
-                                                    .p_srcAddr        = (Uint16 *) COM_SPI_RX_BASE_REG_ADDR, \
+                                                    .p_dstAddr        = (uint16_t *) &com_spi_rx, \
+                                                    .p_srcAddr        = (uint16_t *) COM_SPI_RX_BASE_REG_ADDR, \
                                                     .burstSize        = DMA_COM_SPI_RX_16BIT_BURST_EVT, \
                                                     .transferSize     = DMA_COM_SPI_RX_16BIT_TRANSFER_EVT, \
                                                     .dstWrapSize      = DMA_NO_WRAP, \

@@ -27,6 +27,10 @@
 #define USE_DUAL_AXIS_CONFIG                    (1)
 #endif
 
+#ifndef __TMS320C28XX__
+#define __TMS320C28XX__  // These enums are only accessible by C28x
+#endif
+
 // Cores activation ENABLE/DISABLE
 #define CPU1_CORE_ENABLE                        (1)
 #if (CPU1_CORE_ENABLE) && (!defined CPU1)
@@ -126,36 +130,46 @@
 /************************************************************************
  * INCLUDES
  ************************************************************************/
-#include "f2838x_cla_typedefs.h"  // F2838x CLA Type definitions
-
-#include "tmotor_mn4004_kv300.h"
-#include "myactuator_rmdx8h.h"
-#include "broadcom_aedt_9810_z00.h"
-#include "cui_amt112s_4096_5000_s.h"
-
-//#if(SPI_BUS_ENABLE) || (RS485_BUS_ENABLE)
-//#include "uomodri_communication_defines.h"
-//#endif
-#include "uomodri_math.h"
+#include "f2838x_cla_typedefs.h"        //
+#include "f2838x_device.h"              // F2838x Headerfile Include File
+//#include "f2838x_examples.h"          // F2838x Examples Include File
+//#include "driverlib.h"
+#include "device.h"                     // F2838x Headerfile Include File
+#include "board.h"                      //
 
 #if (USE_UOMODRI_REV == USE_UOMODRI_V1)
 //
 #elif (USE_UOMODRI_REV == USE_UOMODRI_V2)
 //
 #elif (USE_UOMODRI_REV == USE_UOMODRI_V3)
-#include "uomodri_3_1_hal_defines.h"
-#include "uomodri_3_1_hal_handlers.h"
+#include "uomodri_3_1_hal_defines.h"    // uOmodri v3.1 definitions
+#include "uomodri_3_1_hal_handlers.h"   // uOmodri v3.1 configuration include file
 #elif (USE_UOMODRI_REV == USE_UOMODRI_SA_V1)
 //
 #else
 #error "@ least one config must be set @ a time."
 #endif
-#include "hw_types.h"
+
+#include "tmotor_mn4004_kv300.h"        // T-MOTOR MN4000 KV300 motor definitions
+#include "myactuator_rmdx8h.h"          // MYACTUATOR RMDX8H motor definitions
+#include "broadcom_aedt_9810_z00.h"     // BROADCOM AEDT-9810-Z00 encoder definitions
+#include "cui_amt112s_4096_5000_s.h"    // CUI AMT112S-4096-5000-s encoder definitions
+
+#include "uomodri_drv.h"                // uOmodri DRV configuration include file
+#include "uomodri_math.h"               // uOmodri math parameters include file
+#include "uomodri_interrupts.h"         // uOmodri interrupts configuration include file
+
+//#if(SPI_BUS_ENABLE) || (RS485_BUS_ENABLE)
+//#include "uomodri_communication_defines.h"
+//#endif
+//#include "uomodri_math.h"
+
+//#include "hw_types.h"
 
 
-#include "f2838x_device.h"        // F2838x Headerfile Include File
-#include "driverlib.h"
-#include "f2838x_examples.h"      // F2838x Examples Include File
+//#include "f2838x_device.h"        // F2838x Headerfile Include File
+//#include "driverlib.h"
+//#include "f2838x_examples.h"      // F2838x Examples Include File
 
 /***********************************************************************
  * STRUCTURES

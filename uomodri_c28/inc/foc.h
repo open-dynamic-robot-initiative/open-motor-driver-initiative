@@ -4,9 +4,10 @@
 /***********************************************************************
  * INCLUDES
  ***********************************************************************/
-#ifdef CPU1
-#include "f2838x_device.h"
-#include "uomodri_user_defines.h"
+#if (defined CPU1) || (defined CPU2)
+//#include "device.h"
+#include "config/uomodri_user_defines.h"
+#include "main.h"
 #else
 #include <stdint.h>
 #include <hw_types.h>
@@ -46,16 +47,16 @@ typedef enum
 typedef union __ptr_32b_u__
 {
     void*               ptr;
-    Uint32              addr32b;
+    uint32_t            addr32b;
 } ptr_32b_u;
 
 typedef union __status_reg_u__
 {
-    Uint16              all;
+    uint16_t            all;
     struct
     {
-        Uint16          drv_initErr     : 1;    /*!< Bits 0   : R/W - DRV initialization went wrong */
-        Uint16          status_RSV1     : 15;   /*!< Bits 1-15: R/W - Reserved */
+        uint16_t        drv_initErr     : 1;    /*!< Bits 0   : R/W - DRV initialization went wrong */
+        uint16_t        status_RSV1     : 15;   /*!< Bits 1-15: R/W - Reserved */
     };
 } status_reg_u;
 
@@ -65,49 +66,49 @@ typedef union __status_reg_u__
  */
 typedef union __cmd_reg_u__
 {
-    Uint16              all;
+    uint16_t            all;
     struct
     {
-        Uint16          systemEnable    : 1;    /*!< Bit 0      : R/W - Enable system to start. No power on motors.         */
-        Uint16          motorEnable     : 1;    /*!< Bit 1      : R/W - Enable power on motor.                              */
-        Uint16          rollOverEnable  : 1;    /*!< Bit 2      : R/W - Limit the rotations to +/- 128 rounds.              */
-        Uint16          encOffsetEnable : 1;    /*!< Bit 3      : R/W - Use encoder index in position computation.          */
-//        Uint16        calibEnable     : 1;    /*!< Bit 4      : R/W - Ready for ADC calibration. (Offset compensation).   */
-        Uint16          CMD_RSV1        : 12;   /*!< Bit 5-15   : R/W - Reserved                                            */
+        uint16_t        systemEnable    : 1;    /*!< Bit 0      : R/W - Enable system to start. No power on motors.         */
+        uint16_t        motorEnable     : 1;    /*!< Bit 1      : R/W - Enable power on motor.                              */
+        uint16_t        rollOverEnable  : 1;    /*!< Bit 2      : R/W - Limit the rotations to +/- 128 rounds.              */
+        uint16_t        encOffsetEnable : 1;    /*!< Bit 3      : R/W - Use encoder index in position computation.          */
+//        uint16_t        calibEnable     : 1;    /*!< Bit 4      : R/W - Ready for ADC calibration. (Offset compensation).   */
+        uint16_t        CMD_RSV1        : 12;   /*!< Bit 5-15   : R/W - Reserved                                            */
     };
 } cmd_reg_u;
 
 typedef union __ppb_num_u__
 {
-    Uint16              all;
+    uint16_t            all;
     struct
     {
-        Uint16          ia              : 2;    /*!< Bit 0-1    : R/W - Post Processing Block for ia current measure.   */
-        Uint16          ib              : 2;    /*!< Bit 2-3    : R/W - Post Processing Block for ib current measure.   */
-        Uint16          ic              : 2;    /*!< Bit 4-5    : R/W - Post Processing Block for ic current measure.   */
-        Uint16          vBus            : 2;    /*!< Bit 6-7    : R/W - Post Processing Block for Vbus tension measure. */
-        Uint16          vExt            : 2;    /*!< Bit 8-9    : R/W - Post Processing Block for Vext tension measure. */
-        Uint16          PPB_RSV1        : 6;    /*!< Bit 10-15  : R/W - Reserved                                        */
+        uint16_t        ia              : 2;    /*!< Bit 0-1    : R/W - Post Processing Block for ia current measure.   */
+        uint16_t        ib              : 2;    /*!< Bit 2-3    : R/W - Post Processing Block for ib current measure.   */
+        uint16_t        ic              : 2;    /*!< Bit 4-5    : R/W - Post Processing Block for ic current measure.   */
+        uint16_t        vBus            : 2;    /*!< Bit 6-7    : R/W - Post Processing Block for Vbus tension measure. */
+        uint16_t        vExt            : 2;    /*!< Bit 8-9    : R/W - Post Processing Block for Vext tension measure. */
+        uint16_t        PPB_RSV1        : 6;    /*!< Bit 10-15  : R/W - Reserved                                        */
     };
 } ppb_num_u;
 
 typedef union __soc_num_u__
 {
-    Uint32              all;
+    uint32_t            all;
     struct
     {
-        Uint32          ia              : 4;    /*!< Bit 0-3    : R/W - Start Of Conversion (SOC) Block for ia current measure.     */
-        Uint32          ib              : 4;    /*!< Bit 4-7    : R/W - Start Of Conversion (SOC) Block for ib current measure.     */
-        Uint32          ic              : 4;    /*!< Bit 8-11   : R/W - Start Of Conversion (SOC) Block for ic current measure.     */
-        Uint32          vBus            : 4;    /*!< Bit 12-15  : R/W - Start Of Conversion (SOC) Block for Vbus tension measure.   */
-        Uint32          vExt            : 4;    /*!< Bit 16-19  : R/W - Start Of Conversion (SOC) Block for Vext tension measure.   */
-        Uint32          SOC_RSV1        : 12;   /*!< Bit 20-31  : R/W - Reserved                                                    */
+        uint32_t        ia              : 4;    /*!< Bit 0-3    : R/W - Start Of Conversion (SOC) Block for ia current measure.     */
+        uint32_t        ib              : 4;    /*!< Bit 4-7    : R/W - Start Of Conversion (SOC) Block for ib current measure.     */
+        uint32_t        ic              : 4;    /*!< Bit 8-11   : R/W - Start Of Conversion (SOC) Block for ic current measure.     */
+        uint32_t        vBus            : 4;    /*!< Bit 12-15  : R/W - Start Of Conversion (SOC) Block for Vbus tension measure.   */
+        uint32_t        vExt            : 4;    /*!< Bit 16-19  : R/W - Start Of Conversion (SOC) Block for Vext tension measure.   */
+        uint32_t        SOC_RSV1        : 12;   /*!< Bit 20-31  : R/W - Reserved                                                    */
     };
 } soc_num_u;
 
 typedef union __int_num_u__
 {
-    Uint32              all;
+    uint32_t            all;
     ADC_IntNumber       adcInt;
 } int_num_u;
 
@@ -123,12 +124,12 @@ typedef struct __pi_t__
     ptr_32b_u           p_fb;           /*!< Pointer on the feedback current */
     ptr_32b_u           p_set;          /*!< Pointer on the setpoint current */
     ptr_32b_u           p_sat;          /*!< Pointer on the saturation value to use */
-    float32             err;            /*!< Current error */
-    float32             kp;             /*!< Proportional gain */
-    float32             ki;             /*!< Integral gain */
-    float32             integral;       /*!< Integral term partial computation */
-    float32             ff;             /*!< Feed-forward term */
-    float32             out;            /*!< Controller output */
+    float32_t           err;            /*!< Current error */
+    float32_t           kp;             /*!< Proportional gain */
+    float32_t           ki;             /*!< Integral gain */
+    float32_t           integral;       /*!< Integral term partial computation */
+    float32_t           ff;             /*!< Feed-forward term */
+    float32_t           out;            /*!< Controller output */
 } pi_t;
 
 /**
@@ -145,10 +146,10 @@ typedef struct __pd_t__
     ptr_32b_u           p_kd;           /*!< Pointer on the Derivative gain */
     ptr_32b_u           p_ff;           /*!< Pointer on the feed-forward term */
     ptr_32b_u           p_sat;          /*!< Pointer on the controller saturation */
-    float32             errTheta;       /*!< Error position */
-    float32             errSpeed;       /*!< Error speed */
-    float32             derivative;     /*!< Derivative term partial computation */
-    float32             out;            /*!< Controller output */
+    float32_t           errTheta;       /*!< Error position */
+    float32_t           errSpeed;       /*!< Error speed */
+    float32_t           derivative;     /*!< Derivative term partial computation */
+    float32_t           out;            /*!< Controller output */
 
 } pd_t;
 
@@ -158,12 +159,12 @@ typedef struct __pd_t__
  */
 typedef struct __params_t__
 {
-    float32             Rs;             /*!< Stator resistance [Ohm] */
-    float32             Ls;             /*!< Stator inductance [H] */
-    float32             kv;             /*!< Motor speed constant [RPM/V or rad/s/V] */
-    float32             ke;             /*!< Motor back EMF constant [V/rad/s] (electrical radians) = 1/kv */
-    float32             ki;             /*!< Motor torque constant [N.m/A] */
-    float32             polePairs;      /*!< Number of pole pairs */
+    float32_t           Rs;             /*!< Stator resistance [Ohm] */
+    float32_t           Ls;             /*!< Stator inductance [H] */
+    float32_t           kv;             /*!< Motor speed constant [RPM/V or rad/s/V] */
+    float32_t           ke;             /*!< Motor back EMF constant [V/rad/s] (electrical radians) = 1/kv */
+    float32_t           ki;             /*!< Motor torque constant [N.m/A] */
+    float32_t           polePairs;      /*!< Number of pole pairs */
 } params_t;
 
 /**
@@ -173,11 +174,11 @@ typedef struct __params_t__
 typedef struct __acquisitions_t__
 {
     // ADC values scaled
-    float32             ia;                 // [A]
-    float32             ib;                 // [A]
-    float32             ic;                 // [A]
-    float32             vBus;               // [V]
-    float32             vExt;               // [V]
+    float32_t           ia;                 // [A]
+    float32_t           ib;                 // [A]
+    float32_t           ic;                 // [A]
+    float32_t           vBus;               // [V]
+    float32_t           vExt;               // [V]
     struct
     {
         lpf_t           vBusFlt;            // Low Pass Vbus filter parameters
@@ -185,10 +186,10 @@ typedef struct __acquisitions_t__
     };
     struct
     {
-        Uint32          iabcCfgBase[3];
-        Uint32          iabcResultBase[3];  // ADC phase current result registers
-        Uint32          vBusResultBase;     // ADC Vbus result register
-        Uint32          vExtResultBase;     // ADC external voltage result register
+        uint32_t        iabcCfgBase[3];
+        uint32_t        iabcResultBase[3];  // ADC phase current result registers
+        uint32_t        vBusResultBase;     // ADC Vbus result register
+        uint32_t        vExtResultBase;     // ADC external voltage result register
         soc_num_u       socNum;
         int_num_u       intNum;
         ppb_num_u       ppbNum;
@@ -201,15 +202,15 @@ typedef struct __acquisitions_t__
  */
 typedef struct __cmd_t__
 {
-    float32             posRef;
-    float32             velRef;
-    float32             iqff;
-    float32             kpCoeff;
-    float32             kdCoeff;
-    float32             iSat;
-    Uint16              timeoutRef;
-    Uint16              cptTimeout;
-    Uint16              index;
+    float32_t           posRef;
+    float32_t           velRef;
+    float32_t           iqff;
+    float32_t           kpCoeff;
+    float32_t           kdCoeff;
+    float32_t           iSat;
+    uint16_t            timeoutRef;
+    uint16_t            cptTimeout;
+    uint16_t            index;
     cmd_reg_u           cmdField;
     status_reg_u        statusField;
 } cmd_t;
@@ -227,41 +228,41 @@ typedef struct __foc_t__
     lpf_t               iParkFlt;       /*!< Low-pass filter parameters affected to park transform */
     struct
     {
-        float32         sinTheta;       /*!< Sinus of the electrical rotor angle */
-        float32         cosTheta;       /*!< Cosine of the electrical rotor angle */
-        float32         ialpha;         /*!< Direct Clarke transform result - [A] */
-        float32         ibeta;          /*!< Direct Clarke transform result - [A] */
-        float32         id;             /*!< Filtered Direct Park transform result - [A] */
-        float32         iq;             /*!< Filtered Quadrature Park transform result - [A] */
-        float32         ud;             /*!< Inverse Park transform result - [V] */
-        float32         uq;             /*!< Inverse Park transform result - [V] */
-        float32         ualpha;         /*!< Inverse Clarke transform result - [V] */
-        float32         ubeta;          /*!< Inverse Clarke transform result - [V] */
-        float32         ua;             /*!< Phase commands - Channel a - [V] */
-        float32         ub;             /*!< Phase commands - Channel b - [V] */
-        float32         uc;             /*!< Phase commands - Channel c - [V] */
-//        float32       vmax;           /*!< Bus voltage saturation - [V] */
-        float32         dtcMax;         /*!< Max saturation duty-cycle */
-        float32         dtcMin;         /*!< Min saturation duty-cycle */
-        float32         dtc_u;          /*!< Duty cycles on channel u - [pu] between -0.5 and 0.5 */
-        float32         dtc_v;          /*!< Duty cycles on channel v - [pu] between -0.5 and 0.5 */
-        float32         dtc_w;          /*!< Duty cycles on channel w - [pu] between -0.5 and 0.5 */
-        float32         idRef;          /*!< PI controller set point values for D-axis current - [A] */
-        float32         iqRef;          /*!< PI controller set point values for Q-axis current - [A] */
+        float32_t       sinTheta;       /*!< Sinus of the electrical rotor angle */
+        float32_t       cosTheta;       /*!< Cosine of the electrical rotor angle */
+        float32_t       ialpha;         /*!< Direct Clarke transform result - [A] */
+        float32_t       ibeta;          /*!< Direct Clarke transform result - [A] */
+        float32_t       id;             /*!< Filtered Direct Park transform result - [A] */
+        float32_t       iq;             /*!< Filtered Quadrature Park transform result - [A] */
+        float32_t       ud;             /*!< Inverse Park transform result - [V] */
+        float32_t       uq;             /*!< Inverse Park transform result - [V] */
+        float32_t       ualpha;         /*!< Inverse Clarke transform result - [V] */
+        float32_t       ubeta;          /*!< Inverse Clarke transform result - [V] */
+        float32_t       ua;             /*!< Phase commands - Channel a - [V] */
+        float32_t       ub;             /*!< Phase commands - Channel b - [V] */
+        float32_t       uc;             /*!< Phase commands - Channel c - [V] */
+//        float32_t       vmax;           /*!< Bus voltage saturation - [V] */
+        float32_t       dtcMax;         /*!< Max saturation duty-cycle */
+        float32_t       dtcMin;         /*!< Min saturation duty-cycle */
+        float32_t       dtc_u;          /*!< Duty cycles on channel u - [pu] between -0.5 and 0.5 */
+        float32_t       dtc_v;          /*!< Duty cycles on channel v - [pu] between -0.5 and 0.5 */
+        float32_t       dtc_w;          /*!< Duty cycles on channel w - [pu] between -0.5 and 0.5 */
+        float32_t       idRef;          /*!< PI controller set point values for D-axis current - [A] */
+        float32_t       iqRef;          /*!< PI controller set point values for Q-axis current - [A] */
     };
     struct
     {
-        float32         initPosStep;    /*!< Initial position to force a rotor movement during alignment - [RAD] */
-        Uint32          initPosCnt;     /*!< Initial position to force a rotor movement during alignment - [RAD] */
-        Uint32          initFixCnt;     /*!< Initial position to force a rotor movement during alignment - [RAD] */
-        float32         initPosEnc[2];  /*!< Initial positions of theta electric during alignment (forward \& reverse) - [RAD] */
-        float32         initDiff;
-        float32         initErr[2];
+        float32_t       initPosStep;    /*!< Initial position to force a rotor movement during alignment - [RAD] */
+        uint32_t        initPosCnt;     /*!< Initial position to force a rotor movement during alignment - [RAD] */
+        uint32_t        initFixCnt;     /*!< Initial position to force a rotor movement during alignment - [RAD] */
+        float32_t       initPosEnc[2];  /*!< Initial positions of theta electric during alignment (forward \& reverse) - [RAD] */
+        float32_t       initDiff;
+        float32_t       initErr[2];
     };
     pi_t                piId;           /*!< PI controller structure for current control */
     pi_t                piIq;           /*!< PI controller structure for current control */
     pd_t                pdPosVel;       /*!< PD controller structure for position/velocity control */
-    float32             resEst;         /*!< Q-axis resistance estimation - [Ohm] */
+    float32_t           resEst;         /*!< Q-axis resistance estimation - [Ohm] */
     lpf_t               resEstFlt;      /*!< Q-axis resistance estimation filter structure */
 } foc_t;
 

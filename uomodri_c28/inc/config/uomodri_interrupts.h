@@ -10,10 +10,12 @@
 //#include "/home/jmanhes/ti/c2000/C2000Ware_5_02_00_00/device_support/f2838x/common/include/f2838x_examples.h"      // F2838x Examples Include File
 
 //#include "f2838x_cla_typedefs.h"  // F2838x CLA Type definitions
-//#include "f2838x_device.h"        // F2838x Headerfile Include File
+//#include "f2838x_device.h"
 //#include "f2838x_examples.h"      // F2838x Examples Include File
 
-#include "f2838x_device.h"
+#include "uomodri_user_defines.h"   // uOmodri Headerfile Include File
+//#include "f2838x_device.h"          // F2838x Headerfile Include File
+#include "device.h"
 //#include "driverlib.h"
 //#include "device.h"
 
@@ -24,9 +26,9 @@
 //#include "device.h"
 //#include "board.h"
 //#include "c2000ware_libraries.h"
-#include "uomodri_user_defines.h"
+
 //#include "driverlib.h"
-#include "hal.h"
+#include "../hal.h"
 
 /***********************************************************************
  * FUNCTIONS DECLARATION

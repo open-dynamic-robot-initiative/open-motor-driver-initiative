@@ -12,10 +12,11 @@
 //#include <stdbool.h>
 //#include <stdint.h>
 //#include <hw_types.h>
-//#include "f2838x_device.h"
-//#include "driverlib.h"
-#include "f2838x_cla_typedefs.h"  // F2838x CLA Type definitions
 #include "f2838x_device.h"
+//#include "driverlib.h"
+//#include "f2838x_cla_typedefs.h"  // F2838x CLA Type definitions
+//#include "f2838x_device.h"
+#include "device.h"
 #include "uomodri_user_defines.h"
 
 /***********************************************************************
@@ -50,9 +51,9 @@ typedef enum
  */
 typedef struct __EPWM_TIME_BASE_t__
 {
-    Uint32                              epwmBase;                   /*!< ePWM peripheral address. */
-    Uint16                              phaseCount;                 /*!< Phase counter. Sets offset (min value). */
-    Uint16                              syncOutputMode;             /*!< Output sync signal generation. \see EPWM_SyncOutPulseMode */
+    uint32_t                            epwmBase;                   /*!< ePWM peripheral address. */
+    uint16_t                            phaseCount;                 /*!< Phase counter. Sets offset (min value). */
+    uint16_t                            syncOutputMode;             /*!< Output sync signal generation. \see EPWM_SyncOutPulseMode */
     EPWM_SyncInPulseSource              syncInputSrc;               /*!< Select the sync input signal.*/
 } epwm_tb_t;
 
@@ -62,8 +63,8 @@ typedef struct __EPWM_TIME_BASE_t__
  */
 typedef struct __EPWM_COUNTER_COMPARE_t__
 {
-    Uint32                              epwmBase;                   /*!< ePWM peripheral address. */
-    Uint16                              compCount;                  /*!< Compare reference register. */
+    uint32_t                            epwmBase;                   /*!< ePWM peripheral address. */
+    uint16_t                            compCount;                  /*!< Compare reference register. */
     EPWM_CounterCompareModule           compModule;                 /*!< Compare module (A, B, C or D). \see EPWM_CounterCompareModule */
 } epwm_cc_t;
 
@@ -73,8 +74,8 @@ typedef struct __EPWM_COUNTER_COMPARE_t__
  */
 typedef struct __EPWM_ACTION_QUALIFIER_t__
 {
-    Uint32                              epwmBase;                   /*!< ePWM peripheral address. */
-    Uint16                              actionsEvt;                 /*!< Actions associated to events matching detection. \see EPWM_ActionQualifierEventAction */
+    uint32_t                            epwmBase;                   /*!< ePWM peripheral address. */
+    uint16_t                            actionsEvt;                 /*!< Actions associated to events matching detection. \see EPWM_ActionQualifierEventAction */
     EPWM_ActionQualifierOutputModule    epwmOutput;                 /*!< Output channel output (A or B). \see EPWM_ActionQualifierOutputModule */
 } epwm_aq_t;
 
@@ -84,9 +85,9 @@ typedef struct __EPWM_ACTION_QUALIFIER_t__
  */
 typedef struct __EPWM_DEADBAND_t__
 {
-    Uint32                              epwmBase;                   /*!< ePWM peripheral address. */
-    Uint16                              redCount;                   /*!< Rising Edge Delay counter. */
-    Uint16                              fedCount;                   /*!< Falling Edge Delay counter. */
+    uint32_t                            epwmBase;                   /*!< ePWM peripheral address. */
+    uint16_t                            redCount;                   /*!< Rising Edge Delay counter. */
+    uint16_t                            fedCount;                   /*!< Falling Edge Delay counter. */
     bool_t                              DelayMode;                  /*!< Enable deadband unit. */
 } epwm_db_t;
 
@@ -96,10 +97,10 @@ typedef struct __EPWM_DEADBAND_t__
  */
 typedef struct __EPWM_CHOPPER_t__
 {
-    Uint32                              epwmBase;                   /*!< ePWM peripheral address. */
-    Uint16                              dutyCycleCount;             /*!< Programmable chopping (carrier) frequency */
-    Uint16                              freqDiv;
-    Uint16                              firstPulseWidth;            /*!< Programmable duty cycle of second and subsequent pulses */
+    uint32_t                            epwmBase;                   /*!< ePWM peripheral address. */
+    uint16_t                            dutyCycleCount;             /*!< Programmable chopping (carrier) frequency */
+    uint16_t                            freqDiv;
+    uint16_t                            firstPulseWidth;            /*!< Programmable duty cycle of second and subsequent pulses */
 } epwm_pc_t;
 
 /**
@@ -108,8 +109,8 @@ typedef struct __EPWM_CHOPPER_t__
  */
 typedef struct __EPWM_ADC_SOC_EVENT_TRIGGER_t__
 {
-    Uint32                              epwmBase;                   /*!< ePWM peripheral address. */
-    Uint16                              adcSOCEvtCount;             /*!< Delays by N events before generating an ADC SOC event. */
+    uint32_t                            epwmBase;                   /*!< ePWM peripheral address. */
+    uint16_t                            adcSOCEvtCount;             /*!< Delays by N events before generating an ADC SOC event. */
     EPWM_ADCStartOfConversionType       adcSOCType;                 /*!< ADC Start of Conversion (SOC) target \em EPWM_SOC_A or \em EPWM_SOC_B */
     EPWM_ADCStartOfConversionSource     adcSOCSource;               /*!< PWM events source for a ADC SOC. \see EPWM_ADCStartOfConversionSource */
 } epwm_et_t;
@@ -120,9 +121,9 @@ typedef struct __EPWM_ADC_SOC_EVENT_TRIGGER_t__
  */
 typedef struct __EPWM_INTERRUPT_EVENTS_t__
 {
-    Uint32                              epwmBase;                   /*!< ePWM peripheral address. */
-    Uint16                              intEvtCount;                /*!< Delays by N events before generating an IT. */
-    Uint16                              intSource;                  /*!< PWM events source IT. <em> EPWM_INT_TBCTR_ZERO, _PERIOD, _ZERO_OR_PERIOD, _U_CMPx, _D_CMPx,...</em>  */
+    uint32_t                            epwmBase;                   /*!< ePWM peripheral address. */
+    uint16_t                            intEvtCount;                /*!< Delays by N events before generating an IT. */
+    uint16_t                            intSource;                  /*!< PWM events source IT. <em> EPWM_INT_TBCTR_ZERO, _PERIOD, _ZERO_OR_PERIOD, _U_CMPx, _D_CMPx,...</em>  */
 } epwm_it_t;
 
 /**
@@ -131,7 +132,7 @@ typedef struct __EPWM_INTERRUPT_EVENTS_t__
  */
 typedef struct __EPWM_CFG_t__
 {
-    const Uint32                        epwmBase;                   /*!< ePWM peripheral address. */
+    const uint32_t                      epwmBase;                   /*!< ePWM peripheral address. */
     const epwm_tb_t*    const           p_epwmTimeBase;
     const epwm_cc_t*    const           p_epwmCounterCompare;
     const epwm_aq_t*    const           p_epwmActionQualifier;
@@ -139,7 +140,7 @@ typedef struct __EPWM_CFG_t__
     const epwm_pc_t*    const           p_epwmProgChopper;
     const epwm_et_t*    const           p_epwmAdcSocEventTrigger;
     const epwm_it_t*    const           p_epwmInterruptsEvent;
-    const Uint32                        epwmAdcSocSrcExtern;
+    const uint32_t                      epwmAdcSocSrcExtern;
 } epwm_cfg_t;
 
 /**
@@ -148,10 +149,10 @@ typedef struct __EPWM_CFG_t__
  */
 typedef struct __EQEP_CFG_t__
 {
-    const Uint32                        eqepBase;                   /*!< eQEP peripheral address. */
-    const Uint32                        eqepMaxResolution;
-    const Uint32                        eqepUnitTimerPeriod;
-    const Uint16                        eqepConfig;
+    const uint32_t                      eqepBase;                   /*!< eQEP peripheral address. */
+    const uint32_t                      eqepMaxResolution;
+    const uint32_t                      eqepUnitTimerPeriod;
+    const uint16_t                      eqepConfig;
     const EQEP_StrobeSource             eqepStrobeSrc;
 } eqep_cfg_t;
 
@@ -161,14 +162,14 @@ typedef struct __EQEP_CFG_t__
  */
 typedef struct __SPI_CFG_t__
 {
-    const Uint32                        spiBase;                    /*!< ADC peripheral address. */
-    const Uint32                        bitRate;
-    const Uint16                        dataWidth;
+    const uint32_t                      spiBase;                    /*!< ADC peripheral address. */
+    const uint32_t                      bitRate;
+    const uint16_t                      dataWidth;
     const SPI_Mode                      mode;
     const SPI_TransferProtocol          protocol;
     const SPI_TxFIFOLevel               txLevel;
     const SPI_RxFIFOLevel               rxLevel;
-    const Uint16                        intSrc;
+    const uint16_t                      intSrc;
     const bool_t                        highSpeedMode;
     const bool_t                        intEnable;                  /*!< GPIO can be configured as IT source */
 } spi_cfg_t;
@@ -179,12 +180,12 @@ typedef struct __SPI_CFG_t__
  */
 typedef struct __SCI_CFG_t__
 {
-    Uint32                              sciBase;                    /*!< ADC peripheral address. */
-    Uint32                              bitRate;
-    Uint32                              sciMode;
+    uint32_t                            sciBase;                    /*!< ADC peripheral address. */
+    uint32_t                            bitRate;
+    uint32_t                            sciMode;
     SCI_TxFIFOLevel                     txLevel;
     SCI_RxFIFOLevel                     rxLevel;
-    Uint32                              intSrc;
+    uint32_t                            intSrc;
     bool_t                              intEnable;                  /*!< GPIO can be configured as IT source */
     SCI_MultiProcessorCtrl_e            multiProcMode;
 } sci_cfg_t;
@@ -195,22 +196,22 @@ typedef struct __SCI_CFG_t__
  */
 typedef struct __DMA_CFG_t__
 {
-    const Uint32                        dmaChBase;
+    const uint32_t                      dmaChBase;
     const void*                         p_srcAddr;
     const void*                         p_dstAddr;
-    const Uint32                        transferSize;
-    const Uint32                        srcWrapSize;
-    const Uint32                        dstWrapSize;
-    const Uint32                        config;
-    const Uint16                        burstSize;
-    const int16                         srcStep;
-    const int16                         dstStep;
-//    int16             srcTransferStep;
-//    int16             dstTransferStep;
-//    int16             srcBurstStep;
-//    int16             dstBurstStep;
-    const int16                         srcWrapStep;
-    const int16                         dstWrapStep;
+    const uint32_t                      transferSize;
+    const uint32_t                      srcWrapSize;
+    const uint32_t                      dstWrapSize;
+    const uint32_t                      config;
+    const uint16_t                      burstSize;
+    const int16_t                       srcStep;
+    const int16_t                       dstStep;
+//    int16_t             srcTransferStep;
+//    int16_t             dstTransferStep;
+//    int16_t             srcBurstStep;
+//    int16_t             dstBurstStep;
+    const int16_t                       srcWrapStep;
+    const int16_t                       dstWrapStep;
     const DMA_Trigger                   trigger;
     const DMA_InterruptMode             intMode;
     const bool_t                        intEnable;
@@ -222,14 +223,14 @@ typedef struct __DMA_CFG_t__
  */
 typedef struct __CLA_CFG_t__
 {
-    Uint32                  progRAM;
-    Uint32                  dataRAM;
-    Uint16                  claTaskFlg;
-    CLA_TaskNumber          claTaskNum;
-    CLA_MVECTNumber         claIntVect;
-    CLA_Trigger             claTrigSrc;
-    void                    (*p_claFunc)(void);
-    bool_t                  claForceTask;
+    uint32_t                            progRAM;
+    uint32_t                            dataRAM;
+    uint16_t                            claTaskFlg;
+    CLA_TaskNumber                      claTaskNum;
+    CLA_MVECTNumber                     claIntVect;
+    CLA_Trigger                         claTrigSrc;
+    void                                (*p_claFunc)(void);
+    bool_t                              claForceTask;
 } cla_cfg_t;
 
 /**
@@ -238,11 +239,11 @@ typedef struct __CLA_CFG_t__
  */
 typedef struct __CLB_CFG_t__
 {
-//    Uint32                clb_AddrBase;
-    CLB_RS485AddressDef_e   clb_Addr1Spec;
-    CLB_RS485AddressDef_e   clb_Addr2Spec;
-    Uint32                  clb_Addr1Force;
-    Uint32                  clb_Addr2Force;
+//    uint32_t                clb_AddrBase;
+    CLB_RS485AddressDef_e               clb_Addr1Spec;
+    CLB_RS485AddressDef_e               clb_Addr2Spec;
+    uint32_t                            clb_Addr1Force;
+    uint32_t                            clb_Addr2Force;
 } clb_cfg_t;
 
 /**
@@ -251,9 +252,9 @@ typedef struct __CLB_CFG_t__
  */
 typedef struct __GPIO_CFG_t__
 {
-    const Uint32                        pinNum;                     /*!< GPIO pin number (GPIO0 - GPIO168). */
-    const Uint32                        fctMux;                     /*!< GPIO configuration functions (peripheral affectation matrix). \see pin_map.h */
-    const Uint32                        pinType;                    /*!< GPIO pad configuration :
+    const uint32_t                      pinNum;                     /*!< GPIO pin number (GPIO0 - GPIO168). */
+    const uint32_t                      fctMux;                     /*!< GPIO configuration functions (peripheral affectation matrix). \see pin_map.h */
+    const uint32_t                      pinType;                    /*!< GPIO pad configuration :
                                                                         - \em GPIO_PIN_TYPE_STD (Push-pull output or floating input),
                                                                         - \em GPIO_PIN_TYPE_PULLUP (Pull-up enable for input),
                                                                         - \em GPIO_PIN_TYPE_INVERT (Invert polarity on input),
@@ -284,7 +285,7 @@ typedef struct __GPIO_CFG_t__
  */
 typedef struct __ADC_INITIALIZATION_t__
 {
-    const Uint32                        adcBase;                    /*!< ADC peripheral address. */
+    const uint32_t                      adcBase;                    /*!< ADC peripheral address. */
     const ADC_Channel                   adcChannel;                 /*!< ADC sampling channel. */
     const ADC_SOCNumber                 adcSOCNum;                  /*!< ADC Start-Of-Conversion (SOC) number (0-15). */
     const ADC_Trigger                   adcTrigSrc;                 /*!< ADC SOC trigger source. */
@@ -296,8 +297,8 @@ typedef struct __ADC_INITIALIZATION_t__
  */
 typedef struct __ADC_ACQUISITIONS_RESULTS_t__
 {
-    const Uint32                        adcBase;                    /*!< ADC peripheral address. */
-    const Uint32                        adcResultBase;
+    const uint32_t                      adcBase;                    /*!< ADC peripheral address. */
+    const uint32_t                      adcResultBase;
     const ADC_SOCNumber                 adcSOCNum;
     const ADC_PPBNumber                 adcPPBNum;
 } adc_acq_t;
@@ -308,7 +309,7 @@ typedef struct __ADC_ACQUISITIONS_RESULTS_t__
  */
 typedef struct __ADC_INTERRUPT_EVENTS_t__
 {
-    const Uint32                        adcBase;                    /*!< ADC peripheral address. */
+    const uint32_t                      adcBase;                    /*!< ADC peripheral address. */
     const ADC_SOCNumber                 intTrig;                    /*!< ADC End-Of-Conversion (EOC) number (0-15). */
     const ADC_IntNumber                 adcIntNum;                  /*!< IT source (0-3) associated to ADC \& SOC number. */
 } adc_int_t;
@@ -319,7 +320,7 @@ typedef struct __ADC_INTERRUPT_EVENTS_t__
  */
 typedef struct __ADC_CFG_t__
 {
-    const Uint32                        adcBase;                    /*!< ADC peripheral address. */
+    const uint32_t                      adcBase;                    /*!< ADC peripheral address. */
     const adc_ini_t*    const           p_adcIni;                   /*!< Pointer on ADC start-of-conversion configuration handler */
     const adc_acq_t*    const           p_adcAcq;                   /*!< Pointer on ADC result configuration handler */
     const adc_int_t*    const           p_adcInt;                   /*!< Pointer on ADC Interrupt source configuration handler */
@@ -331,8 +332,8 @@ typedef struct __ADC_CFG_t__
  */
 typedef struct __INT_CFG_t__
 {
-    Uint32                              intNum;
-    Uint16                              intAckGroup;
+    uint32_t                            intNum;
+    uint16_t                            intAckGroup;
     void                                (*p_intHandler)(void);
 } int_cfg_t;
 
@@ -343,12 +344,12 @@ typedef struct __INT_CFG_t__
 typedef struct __IPC_CFG_t__
 {
     IPC_Type_t                          ipcType;
-    Uint32                              ipcBase;
+    uint32_t                            ipcBase;
     volatile IPC_MessageQueue_t*        p_ipcMsgQ;
-    Uint32                              ipcIntMsgQL;
-    Uint32                              ipcIntMsgQR;
-    Uint32                              ipcFlag;
-    Uint32                              ipcInt;
+    uint32_t                            ipcIntMsgQL;
+    uint32_t                            ipcIntMsgQR;
+    uint32_t                            ipcFlag;
+    uint32_t                            ipcInt;
     void                                (*p_ipcIntHandler)(void);
     bool_t                              ipcMsgQEnable;
     bool_t                              ipcIntEnable;
@@ -360,9 +361,9 @@ typedef struct __IPC_CFG_t__
  */
 typedef struct __CPU_TMR_CFG_t__
 {
-    Uint32                              cpuTimerBase;
-    Uint32                              periodCount;                /*!< in uSeconds */
-    Uint16                              prescaler;
+    uint32_t                            cpuTimerBase;
+    uint32_t                            periodCount;                /*!< in uSeconds */
+    uint16_t                            prescaler;
     bool_t                              intEnable;
 } tmr_cfg_t;
 
