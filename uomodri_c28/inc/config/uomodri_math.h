@@ -9,8 +9,9 @@
 /************************************************************************
  * INCLUDES
  ************************************************************************/
-#ifdef __TMS320C28XX_CLA__
-#include "f2838x_cla_typedefs.h"
+//#ifdef __TMS320C28XX_CLA__
+#if (CLA_CORE_ENABLE)
+//#include "f2838x_cla_typedefs.h"
 #include "CLAmath.h"
 #else
 #include <math.h>

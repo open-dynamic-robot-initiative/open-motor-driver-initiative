@@ -1,9 +1,10 @@
 /***********************************************************************
  * INCLUDE FILES
  ***********************************************************************/
-//#include "uomodri_user_defines.h"
+#include "config/uomodri_math.h"
+
 #include "motor.h"
-//#include "encoder.h"
+#include "encoder.h"
 
 /***********************************************************************
  * FUNCTIONS DEFINITIONS

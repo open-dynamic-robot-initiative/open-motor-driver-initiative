@@ -1,0 +1,1508 @@
+#ifndef __UOMODRI_HAL_CONFIG_HANDLERS_H__
+#define __UOMODRI_HAL_CONFIG_HANDLERS_H__
+
+/***********************************************************************
+ * INCLUDE FILES
+ ***********************************************************************/
+#include "driverlib.h"
+
+#include "hal.h"
+#include "communication.h"
+#include "uomodri_user_defines.h"
+
+/***********************************************************************
+ * CLA FUNCTIONS DECLARATION
+ ***********************************************************************/
+extern __attribute__((interrupt)) void adcCalib_Task(void);
+extern __attribute__((interrupt)) void cmdNew_Task(void);
+extern __attribute__((interrupt)) void motor1_Task(void);
+extern __attribute__((interrupt)) void motor2_Task(void);
+
+/***********************************************************************
+ * VARIABLE DECLARATION
+ ***********************************************************************/
+extern spi_rx_t         com_spi_rx;
+extern spi_tx_t         com_spi_tx;
+extern uint16_t         led_spi_tx[LED_MSG_TX_16BIT_LENGTH];
+
+/***********************************************************************
+ * STRUCTURES DECLARATION & INITIALIZATION
+ ***********************************************************************/
+/** @var    GPIO_TypeDef GpioPinsCfgList[]
+ *  @brief  List all the GPIO definitions except the analog pins.
+ */
+static const gpio_cfg_t GpioPinsCfgList[] =
+{
+#if (USB_BUS_ENABLE) && (!UART_BUS_ENABLE) && (CM_CORE_ENABLE)
+ /*
+  * USB Pins
+  */
+ {
+  .pinNum           = USB_M_NUM,
+  .fctMux           = USB_M_CFG,
+  .pinType          = GPIO_PIN_TYPE_STD,
+  .coreSelect       = GPIO_CORE_CM,
+  .analogModeEnable = GPIO_ANALOG_ENABLED
+ },
+ {
+  .pinNum           = USB_P_NUM,
+  .fctMux           = USB_P_CFG,
+  .pinType          = GPIO_PIN_TYPE_STD,
+  .coreSelect       = GPIO_CORE_CM,
+  .analogModeEnable = GPIO_ANALOG_ENABLED
+ },
+#elif (!USB_BUS_ENABLE) && (UART_BUS_ENABLE) && (CM_CORE_ENABLE)
+ /*
+  * UART Pins
+  */
+ {
+  .pinNum           = UART_ON_USB_TX_NUM,
+  .fctMux           = UART_ON_USB_TX_CFG,
+  .pinType          = GPIO_PIN_TYPE_STD,
+  .coreSelect       = GPIO_CORE_CM,
+  .direction        = GPIO_DIR_MODE_OUT,
+  .samplingInMode   = GPIO_QUAL_ASYNC,
+  .setValue         = 0,
+  .intEnable        = false,
+ },
+ {
+  .pinNum           = UART_ON_USB_RX_NUM,
+  .fctMux           = UART_ON_USB_RX_CFG,
+  .pinType          = GPIO_PIN_TYPE_STD,
+  .coreSelect       = GPIO_CORE_CM,
+  .direction        = GPIO_DIR_MODE_IN,
+  .samplingInMode   = GPIO_QUAL_ASYNC,
+  .setValue         = 0,
+  .intEnable        = false,
+ },
+#endif
+#if (CAN_BUS_ENABLE) && ((UOMODRI_V1_0_ENABLE) || ((!RS485_BUS_ENABLE) && (UOMODRI_V2_0_ENABLE)))
+ /*
+  * CAN BUS IO pins
+  */
+ {
+  .pinNum           = CAN_RX_NUM,
+  .fctMux           = CAN_RX_CFG,
+  .pinType          = GPIO_PIN_TYPE_STD,
+  .coreSelect       = GPIO_CORE_CPU1,
+  .direction        = GPIO_DIR_MODE_IN,
+  .samplingInMode   = GPIO_QUAL_ASYNC,
+  .setValue         = 0,
+  .intEnable        = false,
+ },
+ {
+  .pinNum           = CAN_TX_NUM,
+  .fctMux           = CAN_TX_CFG,
+  .pinType          = GPIO_PIN_TYPE_STD,
+  .coreSelect       = GPIO_CORE_CPU1,
+  .direction        = GPIO_DIR_MODE_OUT,
+  .samplingInMode   = GPIO_QUAL_SYNC,
+  .setValue         = 0,
+  .intEnable        = false,
+ },
+#elif (RS485_BUS_ENABLE) && (!CAN_BUS_ENABLE) && ((UOMODRI_V2_0_ENABLE) || (UOMODRI_V3_0_ENABLE))
+ /*
+  * RS485 BUS IO pins
+  */
+ {
+  .pinNum           = RS485_RX_NUM,
+  .fctMux           = RS485_RX_CFG,
+  .pinType          = GPIO_PIN_TYPE_STD,//GPIO_PIN_TYPE_INVERT,//
+  .coreSelect       = GPIO_CORE_CPU1,
+  .direction        = GPIO_DIR_MODE_IN,
+  .samplingInMode   = GPIO_QUAL_ASYNC,
+  .setValue         = 0,
+  .intEnable        = false,
+ },
+ {
+  .pinNum           = RS485_TX_NUM,
+  .fctMux           = RS485_TX_CFG,
+  .pinType          = GPIO_PIN_TYPE_STD,
+  .coreSelect       = GPIO_CORE_CPU1,
+  .direction        = GPIO_DIR_MODE_OUT,
+  .samplingInMode   = GPIO_QUAL_ASYNC,
+  .setValue         = 0,
+  .intEnable        = false,
+ },
+ {
+  .pinNum           = CAN_SHDN_EN_NUM,
+  .fctMux           = CAN_SHDN_EN_CFG,
+  .pinType          = GPIO_PIN_TYPE_OD,
+  .coreSelect       = GPIO_CORE_CPU1,
+  .direction        = GPIO_DIR_MODE_OUT,
+  .samplingInMode   = GPIO_QUAL_ASYNC,
+  .setValue         = 1,
+  .intEnable        = false,
+ },
+ {
+  .pinNum           = CAN_RS485_MUX_SEL_NUM,
+  .fctMux           = CAN_RS485_MUX_SEL_CFG,
+  .pinType          = GPIO_PIN_TYPE_STD,
+  .coreSelect       = GPIO_CORE_CPU1,
+  .direction        = GPIO_DIR_MODE_OUT,
+  .samplingInMode   = GPIO_QUAL_ASYNC,
+  .setValue         = 1,
+  .intEnable        = false,
+ },
+ {
+  .pinNum           = RS485_TX_EN_NUM,
+  .fctMux           = RS485_TX_EN_CFG,
+  .pinType          = GPIO_PIN_TYPE_STD,
+  .coreSelect       = GPIO_CORE_CPU1,
+  .direction        = GPIO_DIR_MODE_OUT,
+  .samplingInMode   = GPIO_QUAL_ASYNC,
+  .setValue         = 0,
+  .intEnable        = false,
+ },
+#endif
+#if (UOMODRI_V1_0_ENABLE)
+ /*
+  * GPIO Debug pins
+  */
+ {
+  .pinNum           = DBG_PIN4_NUM,
+  .fctMux           = DBG_PIN4_CFG,
+  .pinType          = GPIO_PIN_TYPE_STD,
+  .coreSelect       = DBG_PIN4_CORE,
+  .direction        = GPIO_DIR_MODE_OUT,
+  .samplingInMode   = GPIO_QUAL_ASYNC,
+  .setValue         = 0,
+  .intEnable        = false,
+ },
+ /*
+  * IMU & DEBUG communication
+  */
+ {
+  .pinNum           = EXT_DBG_SPI_SIMO_NUM,
+  .fctMux           = EXT_DBG_SPI_SIMO_CFG,
+  .pinType          = GPIO_PIN_TYPE_STD,
+  .coreSelect       = GPIO_CORE_CPU1,
+  .direction        = GPIO_DIR_MODE_OUT,
+  .samplingInMode   = GPIO_QUAL_ASYNC,
+  .setValue         = 1,
+  .intEnable        = false,
+ },
+ {
+  .pinNum           = EXT_DBG_SPI_SOMI_NUM,
+  .fctMux           = EXT_DBG_SPI_SOMI_CFG,
+  .pinType          = GPIO_PIN_TYPE_STD,
+  .coreSelect       = GPIO_CORE_CPU1,
+  .direction        = GPIO_DIR_MODE_OUT,
+  .samplingInMode   = GPIO_QUAL_ASYNC,
+  .setValue         = 1,
+  .intEnable        = false,
+ },
+ {
+  .pinNum           = EXT_DBG_SPI_CLK_NUM,
+  .fctMux           = EXT_DBG_SPI_CLK_CFG,
+  .pinType          = GPIO_PIN_TYPE_STD,
+  .coreSelect       = GPIO_CORE_CPU1,
+  .direction        = GPIO_DIR_MODE_OUT,
+  .samplingInMode   = GPIO_QUAL_ASYNC,
+  .setValue         = 1,
+  .intEnable        = false,
+ },
+ {
+  .pinNum           = EXT_DBG_SPI_CS1_NUM,
+  .fctMux           = EXT_DBG_SPI_CS1_CFG,
+  .pinType          = GPIO_PIN_TYPE_OD,
+  .coreSelect       = GPIO_CORE_CPU1,
+  .direction        = GPIO_DIR_MODE_OUT,
+  .samplingInMode   = GPIO_QUAL_ASYNC,
+  .setValue         = 1,
+  .intEnable        = false,
+ },
+ {
+  .pinNum           = EXT_SPI_CS2_NUM,
+  .fctMux           = EXT_SPI_CS2_CFG,
+  .pinType          = GPIO_PIN_TYPE_STD,
+  .coreSelect       = GPIO_CORE_CPU1,
+  .direction        = GPIO_DIR_MODE_OUT,
+  .samplingInMode   = GPIO_QUAL_ASYNC,
+  .setValue         = 0,
+  .intEnable        = false,
+ },
+#elif (UOMODRI_V2_0_ENABLE)
+ /*
+  * GPIO/USB VBUS detection
+  */
+ {
+  .pinNum           = USB_VBUS_DETECT_NUM,
+  .fctMux           = USB_VBUS_DETECT_CFG,
+  .pinType          = GPIO_PIN_TYPE_STD,
+  .coreSelect       = GPIO_CORE_CPU1,
+  .direction        = GPIO_DIR_MODE_IN,
+  .samplingInMode   = GPIO_QUAL_3SAMPLE,
+  .setValue         = 0,
+  .intEnable        = false,
+ },
+ /*
+  * GPIO Select pins
+  */
+ {
+  .pinNum           = SELECT_PIN_0_NUM,
+  .fctMux           = SELECT_PIN_0_CFG,
+  .pinType          = GPIO_PIN_TYPE_STD,
+  .coreSelect       = GPIO_CORE_CPU1,
+  .direction        = GPIO_DIR_MODE_IN,
+  .samplingInMode   = GPIO_QUAL_6SAMPLE,
+  .setValue         = 0,
+  .intEnable        = false,
+ },
+ {
+  .pinNum           = SELECT_PIN_1_NUM,
+  .fctMux           = SELECT_PIN_1_CFG,
+  .pinType          = GPIO_PIN_TYPE_STD,
+  .coreSelect       = GPIO_CORE_CPU1,
+  .direction        = GPIO_DIR_MODE_IN,
+  .samplingInMode   = GPIO_QUAL_6SAMPLE,
+  .setValue         = 0,
+  .intEnable        = false,
+ },
+ {
+  .pinNum           = SELECT_PIN_2_NUM,
+  .fctMux           = SELECT_PIN_2_CFG,
+  .pinType          = GPIO_PIN_TYPE_STD,
+  .coreSelect       = GPIO_CORE_CPU1,
+  .direction        = GPIO_DIR_MODE_IN,
+  .samplingInMode   = GPIO_QUAL_6SAMPLE,
+  .setValue         = 0,
+  .intEnable        = false,
+ },
+ {
+  .pinNum           = SELECT_PIN_3_NUM,
+  .fctMux           = SELECT_PIN_3_CFG,
+  .pinType          = GPIO_PIN_TYPE_STD,
+  .coreSelect       = GPIO_CORE_CPU1,
+  .direction        = GPIO_DIR_MODE_IN,
+  .samplingInMode   = GPIO_QUAL_6SAMPLE,
+  .setValue         = 0,
+  .intEnable        = false,
+ },
+ /*
+  * IMU, EXTENSION & DEBUG communication
+  */
+ {
+  .pinNum           = IMU_EXT_DBG_SPI_SIMO_NUM,
+  .fctMux           = IMU_EXT_DBG_SPI_SIMO_CFG,
+  .pinType          = GPIO_PIN_TYPE_STD,
+  .coreSelect       = GPIO_CORE_CPU1,
+  .direction        = GPIO_DIR_MODE_OUT,
+  .samplingInMode   = GPIO_QUAL_ASYNC,
+  .setValue         = 1,
+  .intEnable        = false,
+ },
+ {
+  .pinNum           = IMU_EXT_DBG_SPI_SOMI_NUM,
+  .fctMux           = IMU_EXT_DBG_SPI_SOMI_CFG,
+  .pinType          = GPIO_PIN_TYPE_STD,
+  .coreSelect       = GPIO_CORE_CPU1,
+  .direction        = GPIO_DIR_MODE_IN,
+  .samplingInMode   = GPIO_QUAL_ASYNC,
+  .setValue         = 1,
+  .intEnable        = false,
+ },
+ {
+  .pinNum           = IMU_EXT_DBG_SPI_CLK_NUM,
+  .fctMux           = IMU_EXT_DBG_SPI_CLK_CFG,
+  .pinType          = GPIO_PIN_TYPE_STD,
+  .coreSelect       = GPIO_CORE_CPU1,
+  .direction        = GPIO_DIR_MODE_OUT,
+  .samplingInMode   = GPIO_QUAL_ASYNC,
+  .setValue         = 1,
+  .intEnable        = false,
+ },
+ {
+  .pinNum           = EXT_DBG_SPI_CS1_NUM,
+  .fctMux           = EXT_DBG_SPI_CS1_CFG,
+  .pinType          = GPIO_PIN_TYPE_STD,
+  .coreSelect       = GPIO_CORE_CPU1,
+  .direction        = GPIO_DIR_MODE_OUT,
+  .samplingInMode   = GPIO_QUAL_ASYNC,
+  .setValue         = 1,
+  .intEnable        = false,
+ },
+ {
+  .pinNum           = EXT_SPI_CS2_NUM,
+  .fctMux           = EXT_SPI_CS2_CFG,
+  .pinType          = GPIO_PIN_TYPE_STD,
+  .coreSelect       = GPIO_CORE_CPU1,
+  .direction        = GPIO_DIR_MODE_OUT,
+  .samplingInMode   = GPIO_QUAL_ASYNC,
+  .setValue         = 0,
+  .intEnable        = false,
+ },
+ {
+  .pinNum           = IMU_SPI_ACCEL_CS_NUM,
+  .fctMux           = IMU_SPI_ACCEL_CS_CFG,
+  .pinType          = GPIO_PIN_TYPE_STD,
+  .coreSelect       = GPIO_CORE_CPU1,
+  .direction        = GPIO_DIR_MODE_OUT,
+  .samplingInMode   = GPIO_QUAL_ASYNC,
+  .setValue         = 1,
+  .intEnable        = false,
+ },
+ {
+  .pinNum           = IMU_SPI_GYRO_CS_NUM,
+  .fctMux           = IMU_SPI_GYRO_CS_CFG,
+  .pinType          = GPIO_PIN_TYPE_STD,
+  .coreSelect       = GPIO_CORE_CPU1,
+  .direction        = GPIO_DIR_MODE_OUT,
+  .samplingInMode   = GPIO_QUAL_ASYNC,
+  .setValue         = 1,
+  .intEnable        = false,
+ },
+/*
+ * CAN/RS-485 BUS IO pins
+ */
+ {
+  .pinNum           = CAN_SHDN_EN_NUM,
+  .fctMux           = CAN_SHDN_EN_CFG,
+  .pinType          = GPIO_PIN_TYPE_OD,
+  .coreSelect       = GPIO_CORE_CPU1,
+  .direction        = GPIO_DIR_MODE_OUT,
+  .samplingInMode   = GPIO_QUAL_ASYNC,
+  .setValue         = 1,
+  .intEnable        = false,
+ },
+ {
+  .pinNum           = RS485_RX_EN_NUM,
+  .fctMux           = RS485_RX_EN_CFG,
+  .pinType          = GPIO_PIN_TYPE_OD,
+  .coreSelect       = GPIO_CORE_CPU1,
+  .direction        = GPIO_DIR_MODE_OUT,
+  .samplingInMode   = GPIO_QUAL_ASYNC,
+  .setValue         = 0,
+  .intEnable        = false,
+ },
+ {
+  .pinNum           = RS485_TX_EN_NUM,
+  .fctMux           = RS485_TX_EN_CFG,
+  .pinType          = GPIO_PIN_TYPE_STD,
+  .coreSelect       = GPIO_CORE_CPU1,
+  .direction        = GPIO_DIR_MODE_OUT,
+  .samplingInMode   = GPIO_QUAL_ASYNC,
+  .setValue         = 0,
+  .intEnable        = false,
+ },
+#endif
+ {
+  .pinNum           = DBG_PIN0_NUM,
+  .fctMux           = DBG_PIN0_CFG,
+  .pinType          = GPIO_PIN_TYPE_STD,
+  .coreSelect       = DBG_PIN0_CORE,
+  .direction        = GPIO_DIR_MODE_OUT,
+  .samplingInMode   = GPIO_QUAL_SYNC,
+  .setValue         = 0,
+  .intEnable        = false,
+ },
+ {
+  .pinNum           = DBG_PIN1_NUM,
+  .fctMux           = DBG_PIN1_CFG,
+  .pinType          = GPIO_PIN_TYPE_STD,
+  .coreSelect       = DBG_PIN1_CORE,
+  .direction        = GPIO_DIR_MODE_OUT,
+  .samplingInMode   = GPIO_QUAL_SYNC,
+  .setValue         = 0,
+  .intEnable        = false,
+ },
+ {
+  .pinNum           = DBG_PIN2_NUM,
+  .fctMux           = DBG_PIN2_CFG,
+  .pinType          = GPIO_PIN_TYPE_STD,
+  .coreSelect       = DBG_PIN2_CORE,
+  .direction        = GPIO_DIR_MODE_OUT,
+  .samplingInMode   = GPIO_QUAL_SYNC,
+  .setValue         = 0,
+  .intEnable        = false,
+ },
+ {
+  .pinNum           = DBG_PIN3_NUM,
+  .fctMux           = DBG_PIN3_CFG,
+  .pinType          = GPIO_PIN_TYPE_STD,
+  .coreSelect       = DBG_PIN3_CORE,
+  .direction        = GPIO_DIR_MODE_OUT,
+  .samplingInMode   = GPIO_QUAL_SYNC,
+  .setValue         = 0,
+  .intEnable        = false,
+ },
+ /*
+  * Quadrature encoder #1
+  */
+ {
+  .pinNum           = MOTOR1_ENC_CHA_NUM,
+  .fctMux           = MOTOR1_ENC_CHA_CFG,
+  .pinType          = GPIO_PIN_TYPE_STD,
+  .coreSelect       = GPIO_CORE_CPU1,
+  .direction        = GPIO_DIR_MODE_IN,
+  .samplingInMode   = GPIO_QUAL_6SAMPLE,
+  .setValue         = 0,
+  .intEnable        = false,
+ },
+ {
+  .pinNum           = MOTOR1_ENC_CHB_NUM,
+  .fctMux           = MOTOR1_ENC_CHB_CFG,
+  .pinType          = GPIO_PIN_TYPE_STD,
+  .coreSelect       = GPIO_CORE_CPU1,
+  .direction        = GPIO_DIR_MODE_IN,
+  .samplingInMode   = GPIO_QUAL_6SAMPLE,
+  .setValue         = 0,
+  .intEnable        = false,
+ },
+ {
+  .pinNum           = MOTOR1_ENC_CHI_NUM,
+  .fctMux           = MOTOR1_ENC_CHI_CFG,
+  .pinType          = GPIO_PIN_TYPE_STD,
+  .coreSelect       = GPIO_CORE_CPU1,
+  .direction        = GPIO_DIR_MODE_IN,
+  .samplingInMode   = GPIO_QUAL_6SAMPLE,
+  .setValue         = 0,
+  .intEnable        = false,
+ },
+ /*
+  * Quadrature encoder #2
+  */
+ {
+  .pinNum           = MOTOR2_ENC_CHA_NUM,
+  .fctMux           = MOTOR2_ENC_CHA_CFG,
+  .pinType          = GPIO_PIN_TYPE_STD,
+  .coreSelect       = GPIO_CORE_CPU1,
+  .direction        = GPIO_DIR_MODE_IN,
+  .samplingInMode   = GPIO_QUAL_6SAMPLE,
+  .setValue         = 0,
+  .intEnable        = false,
+ },
+ {
+  .pinNum           = MOTOR2_ENC_CHB_NUM,
+  .fctMux           = MOTOR2_ENC_CHB_CFG,
+  .pinType          = GPIO_PIN_TYPE_STD,
+  .coreSelect       = GPIO_CORE_CPU1,
+  .direction        = GPIO_DIR_MODE_IN,
+  .samplingInMode   = GPIO_QUAL_6SAMPLE,
+  .setValue         = 0,
+  .intEnable        = false,
+ },
+ {
+  .pinNum           = MOTOR2_ENC_CHI_NUM,
+  .fctMux           = MOTOR2_ENC_CHI_CFG,
+  .pinType          = GPIO_PIN_TYPE_STD,
+  .coreSelect       = GPIO_CORE_CPU1,
+  .direction        = GPIO_DIR_MODE_IN,
+  .samplingInMode   = GPIO_QUAL_6SAMPLE,
+  .setValue         = 0,
+  .intEnable        = false,
+ },
+ /*
+  * DRV communication
+  */
+ {
+  .pinNum           = DRV_SPI_SIMO_NUM,
+  .fctMux           = DRV_SPI_SIMO_CFG,
+  .pinType          = GPIO_PIN_TYPE_STD,
+  .coreSelect       = GPIO_CORE_CPU1,
+  .direction        = GPIO_DIR_MODE_OUT,
+  .samplingInMode   = GPIO_QUAL_ASYNC,
+  .setValue         = 1,
+  .intEnable        = false,
+ },
+ {
+  .pinNum           = DRV_SPI_SOMI_NUM,
+  .fctMux           = DRV_SPI_SOMI_CFG,
+  .pinType          = GPIO_PIN_TYPE_STD,
+  .coreSelect       = GPIO_CORE_CPU1,
+  .direction        = GPIO_DIR_MODE_IN,
+  .samplingInMode   = GPIO_QUAL_SYNC,
+  .setValue         = 0,
+  .intEnable        = false,
+ },
+ {
+  .pinNum           = DRV_SPI_CLK_NUM,
+  .fctMux           = DRV_SPI_CLK_CFG,
+  .pinType          = GPIO_PIN_TYPE_STD,
+  .coreSelect       = GPIO_CORE_CPU1,
+  .direction        = GPIO_DIR_MODE_OUT,
+  .samplingInMode   = GPIO_QUAL_ASYNC,
+  .setValue         = 1,
+  .intEnable        = false,
+ },
+ /*
+  * OMODRI communication
+  */
+ {
+  .pinNum           = COM_SPI_SIMO_NUM,
+  .fctMux           = COM_SPI_SIMO_CFG,
+  .pinType          = GPIO_PIN_TYPE_STD,
+  .coreSelect       = GPIO_CORE_CPU1,
+  .direction        = GPIO_DIR_MODE_IN,
+  .samplingInMode   = GPIO_QUAL_ASYNC,
+  .setValue         = 0,
+  .intEnable        = false,
+ },
+ {
+  .pinNum           = COM_SPI_SOMI_NUM,
+  .fctMux           = COM_SPI_SOMI_CFG,
+  .pinType          = GPIO_PIN_TYPE_STD,
+  .coreSelect       = GPIO_CORE_CPU1,
+  .direction        = GPIO_DIR_MODE_OUT,
+  .samplingInMode   = GPIO_QUAL_ASYNC,
+  .setValue         = 0,
+  .intEnable        = false,
+ },
+ {
+  .pinNum           = COM_SPI_CLK_NUM,
+  .fctMux           = COM_SPI_CLK_CFG,
+  .pinType          = GPIO_PIN_TYPE_STD,
+  .coreSelect       = GPIO_CORE_CPU1,
+  .direction        = GPIO_DIR_MODE_IN,
+  .samplingInMode   = GPIO_QUAL_ASYNC,
+  .setValue         = 0,
+  .intEnable        = false,
+ },
+ {
+  .pinNum           = COM_SPI_CS_NUM,
+  .fctMux           = COM_SPI_CS_CFG,
+  .pinType          = GPIO_PIN_TYPE_STD,
+  .coreSelect       = GPIO_CORE_CPU1,
+  .direction        = GPIO_DIR_MODE_IN,
+  .samplingInMode   = GPIO_QUAL_ASYNC,
+  .setValue         = 0,
+  .intEnable        = false,
+ },
+ /*
+  * RGB LED communication
+  */
+ {
+  .pinNum           = LED_SPI_SIMO_NUM,
+  .fctMux           = LED_SPI_SIMO_CFG,
+  .pinType          = GPIO_PIN_TYPE_STD,
+  .coreSelect       = GPIO_CORE_CPU1,
+  .direction        = GPIO_DIR_MODE_OUT,
+  .samplingInMode   = GPIO_QUAL_ASYNC,
+  .setValue         = 1,
+  .intEnable        = false,
+ },
+ /*
+  * DRV1 configuration pins
+  */
+ {
+  .pinNum           = MOTOR1_DRV_EN_NUM,
+  .fctMux           = MOTOR1_DRV_EN_CFG,
+  .pinType          = GPIO_PIN_TYPE_STD,
+  .coreSelect       = GPIO_CORE_CPU1,
+  .direction        = GPIO_DIR_MODE_OUT,
+  .samplingInMode   = GPIO_QUAL_ASYNC,
+  .setValue         = 0,
+  .intEnable        = false,
+ },
+ {
+  .pinNum           = MOTOR1_DRV_SPI_CS_NUM,
+  .fctMux           = MOTOR1_DRV_SPI_CS_CFG,
+  .pinType          = GPIO_PIN_TYPE_STD,
+  .coreSelect       = GPIO_CORE_CPU1,
+  .direction        = GPIO_DIR_MODE_OUT,
+  .samplingInMode   = GPIO_QUAL_ASYNC,
+  .setValue         = 1,
+  .intEnable        = false,
+ },
+ {
+  .pinNum           = MOTOR1_DRV_FAULT_NUM,
+  .fctMux           = MOTOR1_DRV_FAULT_CFG,
+  .pinType          = GPIO_PIN_TYPE_STD,
+  .coreSelect       = GPIO_CORE_CPU1,
+  .direction        = GPIO_DIR_MODE_IN,
+  .samplingInMode   = GPIO_QUAL_3SAMPLE,
+  .setValue         = 0,
+  .intEnable        = false,
+ },
+ /*
+  * DRV2 configuration pins
+  */
+ {
+  .pinNum           = MOTOR2_DRV_EN_NUM,
+  .fctMux           = MOTOR2_DRV_EN_CFG,
+  .pinType          = GPIO_PIN_TYPE_STD,
+  .coreSelect       = GPIO_CORE_CPU1,
+  .direction        = GPIO_DIR_MODE_OUT,
+  .samplingInMode   = GPIO_QUAL_ASYNC,
+  .setValue         = 0,
+  .intEnable        = false,
+ },
+ {
+  .pinNum           = MOTOR2_DRV_SPI_CS_NUM,
+  .fctMux           = MOTOR2_DRV_SPI_CS_CFG,
+  .pinType          = GPIO_PIN_TYPE_STD,
+  .coreSelect       = GPIO_CORE_CPU1,
+  .direction        = GPIO_DIR_MODE_OUT,
+  .samplingInMode   = GPIO_QUAL_ASYNC,
+  .setValue         = 1,
+  .intEnable        = false,
+ },
+ {
+  .pinNum           = MOTOR2_DRV_FAULT_NUM,
+  .fctMux           = MOTOR2_DRV_FAULT_CFG,
+  .pinType          = GPIO_PIN_TYPE_STD,
+  .coreSelect       = GPIO_CORE_CPU1,
+  .direction        = GPIO_DIR_MODE_IN,
+  .samplingInMode   = GPIO_QUAL_3SAMPLE,
+  .setValue         = 0,
+  .intEnable        = false,
+ },
+ /*
+  * PWM MOTOR_1 configuration pins
+  */
+ {
+  .pinNum           = MOTOR1_PWM1_CHA_NUM,
+  .fctMux           = MOTOR1_PWM1_CHA_CFG,
+  .pinType          = GPIO_PIN_TYPE_STD,
+  .coreSelect       = GPIO_CORE_CPU1,
+  .direction        = GPIO_DIR_MODE_OUT,
+  .samplingInMode   = GPIO_QUAL_ASYNC,
+  .setValue         = 0,
+  .intEnable        = false,
+ },
+ {
+  .pinNum           = MOTOR1_PWM1_CHB_NUM,
+  .fctMux           = MOTOR1_PWM1_CHB_CFG,
+  .pinType          = GPIO_PIN_TYPE_STD,
+  .coreSelect       = GPIO_CORE_CPU1,
+  .direction        = GPIO_DIR_MODE_OUT,
+  .samplingInMode   = GPIO_QUAL_ASYNC,
+  .setValue         = 1,
+  .intEnable        = false,
+ },
+ {
+  .pinNum           = MOTOR1_PWM2_CHA_NUM,
+  .fctMux           = MOTOR1_PWM2_CHA_CFG,
+  .pinType          = GPIO_PIN_TYPE_STD,
+  .coreSelect       = GPIO_CORE_CPU1,
+  .direction        = GPIO_DIR_MODE_OUT,
+  .samplingInMode   = GPIO_QUAL_ASYNC,
+  .setValue         = 0,
+  .intEnable        = false,
+ },
+ {
+  .pinNum           = MOTOR1_PWM2_CHB_NUM,
+  .fctMux           = MOTOR1_PWM2_CHB_CFG,
+  .pinType          = GPIO_PIN_TYPE_STD,
+  .coreSelect       = GPIO_CORE_CPU1,
+  .direction        = GPIO_DIR_MODE_OUT,
+  .samplingInMode   = GPIO_QUAL_ASYNC,
+  .setValue         = 1,
+  .intEnable        = false,
+ },
+ {
+  .pinNum           = MOTOR1_PWM3_CHA_NUM,
+  .fctMux           = MOTOR1_PWM3_CHA_CFG,
+  .pinType          = GPIO_PIN_TYPE_STD,
+  .coreSelect       = GPIO_CORE_CPU1,
+  .direction        = GPIO_DIR_MODE_OUT,
+  .samplingInMode   = GPIO_QUAL_ASYNC,
+  .setValue         = 0,
+  .intEnable        = false,
+ },
+ {
+  .pinNum           = MOTOR1_PWM3_CHB_NUM,
+  .fctMux           = MOTOR1_PWM3_CHB_CFG,
+  .pinType          = GPIO_PIN_TYPE_STD,
+  .coreSelect       = GPIO_CORE_CPU1,
+  .direction        = GPIO_DIR_MODE_OUT,
+  .samplingInMode   = GPIO_QUAL_ASYNC,
+  .setValue         = 1,
+  .intEnable        = false,
+ },
+ /*
+  * PWM MOTOR_2 configuration pins
+  */
+ {
+  .pinNum           = MOTOR2_PWM1_CHA_NUM,
+  .fctMux           = MOTOR2_PWM1_CHA_CFG,
+  .pinType          = GPIO_PIN_TYPE_STD,
+  .coreSelect       = GPIO_CORE_CPU1,
+  .direction        = GPIO_DIR_MODE_OUT,
+  .samplingInMode   = GPIO_QUAL_ASYNC,
+  .setValue         = 0,
+  .intEnable        = false,
+ },
+ {
+  .pinNum           = MOTOR2_PWM1_CHB_NUM,
+  .fctMux           = MOTOR2_PWM1_CHB_CFG,
+  .pinType          = GPIO_PIN_TYPE_STD,
+  .coreSelect       = GPIO_CORE_CPU1,
+  .direction        = GPIO_DIR_MODE_OUT,
+  .samplingInMode   = GPIO_QUAL_ASYNC,
+  .setValue         = 1,
+  .intEnable        = false,
+ },
+ {
+  .pinNum           = MOTOR2_PWM2_CHA_NUM,
+  .fctMux           = MOTOR2_PWM2_CHA_CFG,
+  .pinType          = GPIO_PIN_TYPE_STD,
+  .coreSelect       = GPIO_CORE_CPU1,
+  .direction        = GPIO_DIR_MODE_OUT,
+  .samplingInMode   = GPIO_QUAL_ASYNC,
+  .setValue         = 0,
+  .intEnable        = false,
+ },
+ {
+  .pinNum           = MOTOR2_PWM2_CHB_NUM,
+  .fctMux           = MOTOR2_PWM2_CHB_CFG,
+  .pinType          = GPIO_PIN_TYPE_STD,
+  .coreSelect       = GPIO_CORE_CPU1,
+  .direction        = GPIO_DIR_MODE_OUT,
+  .samplingInMode   = GPIO_QUAL_ASYNC,
+  .setValue         = 1,
+  .intEnable        = false,
+ },
+ {
+  .pinNum           = MOTOR2_PWM3_CHA_NUM,
+  .fctMux           = MOTOR2_PWM3_CHA_CFG,
+  .pinType          = GPIO_PIN_TYPE_STD,
+  .coreSelect       = GPIO_CORE_CPU1,
+  .direction        = GPIO_DIR_MODE_OUT,
+  .samplingInMode   = GPIO_QUAL_ASYNC,
+  .setValue         = 0,
+  .intEnable        = false,
+ },
+ {
+  .pinNum           = MOTOR2_PWM3_CHB_NUM,
+  .fctMux           = MOTOR2_PWM3_CHB_CFG,
+  .pinType          = GPIO_PIN_TYPE_STD,
+  .coreSelect       = GPIO_CORE_CPU1,
+  .direction        = GPIO_DIR_MODE_OUT,
+  .samplingInMode   = GPIO_QUAL_ASYNC,
+  .setValue         = 1,
+  .intEnable        = false,
+ },
+ // END OF ARRAY
+ {.pinNum           = UINT32_MAX},
+};
+
+ /** @var    ADC_Init_TypeDef AdcInitList[]
+  *  @brief  List all the configurations defined
+  *  for ADC Start-Of-Conversion (SOC) submodule.
+  */
+static const adc_ini_t  AdcInitList[] =
+{
+ /* ADCA - Ia_M1, Ia_M2 */
+ {
+  .adcBase          = MOTOR1_IA_ADC_CFG_ADDR,
+  .adcChannel       = MOTOR1_IA_CH,
+  .adcSOCNum        = MOTOR1_IABC_SOC_NUM,
+  .adcTrigSrc       = MOTOR1_ADC_SOC_TRIGGER_EVT,
+ },
+ {
+  .adcBase          = MOTOR2_IA_ADC_CFG_ADDR,
+  .adcChannel       = MOTOR2_IA_CH,
+  .adcSOCNum        = MOTOR2_IABC_SOC_NUM,
+  .adcTrigSrc       = MOTOR2_ADC_SOC_TRIGGER_EVT,
+ },
+ /* ADCB - Ib_M1, Ib_M2 */
+ {
+  .adcBase          = MOTOR1_IB_ADC_CFG_ADDR,
+  .adcChannel       = MOTOR1_IB_CH,
+  .adcSOCNum        = MOTOR1_IABC_SOC_NUM,
+  .adcTrigSrc       = MOTOR1_ADC_SOC_TRIGGER_EVT,
+ },
+ {
+  .adcBase          = MOTOR2_IB_ADC_CFG_ADDR,
+  .adcChannel       = MOTOR2_IB_CH,
+  .adcSOCNum        = MOTOR2_IABC_SOC_NUM,
+  .adcTrigSrc       = MOTOR2_ADC_SOC_TRIGGER_EVT,
+ },
+ /*
+  * ADCD (UOMODRI_V1_0_ENABLE):
+  * Ic_M1, Ic_M2
+  * ADCC (UOMODRI_V2_0_ENABLE):
+  * Ic_M1, Ic_M2
+  */
+ {
+  .adcBase          = MOTOR1_IC_ADC_CFG_ADDR,
+  .adcChannel       = MOTOR1_IC_CH,
+  .adcSOCNum        = MOTOR1_IABC_SOC_NUM,
+  .adcTrigSrc       = MOTOR1_ADC_SOC_TRIGGER_EVT,
+ },
+ {
+  .adcBase          = MOTOR2_IC_ADC_CFG_ADDR,
+  .adcChannel       = MOTOR2_IC_CH,
+  .adcSOCNum        = MOTOR2_IABC_SOC_NUM,
+  .adcTrigSrc       = MOTOR2_ADC_SOC_TRIGGER_EVT,
+ },
+ /*
+  * ADCC (UOMODRI_V1_0_ENABLE):
+  * VBUS, VEXT1, VEXT2
+  * ADCD (UOMODRI_V2_0_ENABLE):
+  * VBUS, VEXT1, VEXT2
+  */
+ {
+  .adcBase          = VBUS_ADC_CFG_ADDR,
+  .adcChannel       = VBUS_CH,
+  .adcSOCNum        = VBUS_SOC_NUM,
+  .adcTrigSrc       = VBUS_ADC_SOC_TRIGGER_EVT,
+ },
+ {
+  .adcBase          = VEXT1_ADC_CFG_ADDR,
+  .adcChannel       = VEXT1_CH,
+  .adcSOCNum        = VEXT1_SOC_NUM,
+  .adcTrigSrc       = VEXT1_ADC_SOC_TRIGGER_EVT,
+ },
+ {
+  .adcBase          = VEXT2_ADC_CFG_ADDR,
+  .adcChannel       = VEXT2_CH,
+  .adcSOCNum        = VEXT2_SOC_NUM,
+  .adcTrigSrc       = VEXT2_ADC_SOC_TRIGGER_EVT,
+ },
+ // END OF ARRAY
+ {.adcBase          = UINT32_MAX},
+};
+
+/** @var    ADC_PPB_TypeDef AdcAcqList[]
+ *  @brief  List all the configurations defined for ADC Post-Processing Block (PPB) submodule.
+ */
+static const adc_acq_t  AdcAcqList[] =
+{
+ /* ADCA : Ia_M1, Ia_M2 */
+ {
+  .adcBase          = MOTOR1_IA_ADC_CFG_ADDR,
+  .adcResultBase    = MOTOR1_IA_ADC_RESULT_ADDR,
+  .adcSOCNum        = MOTOR1_IABC_SOC_NUM,
+  .adcPPBNum        = MOTOR1_IABC_PPB_NUM,
+ },
+ {
+  .adcBase          = MOTOR2_IA_ADC_CFG_ADDR,
+  .adcResultBase    = MOTOR2_IA_ADC_RESULT_ADDR,
+  .adcSOCNum        = MOTOR2_IABC_SOC_NUM,
+  .adcPPBNum        = MOTOR2_IABC_PPB_NUM,
+ },
+ /* ADCB : Ib_M1, Ib_M2 */
+ {
+  .adcBase          = MOTOR1_IB_ADC_CFG_ADDR,
+  .adcResultBase    = MOTOR1_IB_ADC_RESULT_ADDR,
+  .adcSOCNum        = MOTOR1_IABC_SOC_NUM,
+  .adcPPBNum        = MOTOR1_IABC_PPB_NUM,
+ },
+ {
+  .adcBase          = MOTOR2_IB_ADC_CFG_ADDR,
+  .adcResultBase    = MOTOR2_IB_ADC_RESULT_ADDR,
+  .adcSOCNum        = MOTOR2_IABC_SOC_NUM,
+  .adcPPBNum        = MOTOR2_IABC_PPB_NUM,
+ },
+ /*
+  * ADCD (UOMODRI_V1_0_ENABLE):
+  * Ic_M1, Ic_M2
+  * ADCC (UOMODRI_V2_0_ENABLE):
+  * Ic_M1, Ic_M2
+  */
+ {
+  .adcBase          = MOTOR1_IC_ADC_CFG_ADDR,
+  .adcResultBase    = MOTOR1_IC_ADC_RESULT_ADDR,
+  .adcSOCNum        = MOTOR1_IABC_SOC_NUM,
+  .adcPPBNum        = MOTOR1_IABC_PPB_NUM,
+ },
+ {
+  .adcBase          = MOTOR2_IC_ADC_CFG_ADDR,
+  .adcResultBase    = MOTOR2_IC_ADC_RESULT_ADDR,
+  .adcSOCNum        = MOTOR2_IABC_SOC_NUM,
+  .adcPPBNum        = MOTOR2_IABC_PPB_NUM,
+ },
+ /*
+  * ADCC (UOMODRI_V1_0_ENABLE):
+  * VBUS, VEXT1, VEXT2
+  * ADCD (UOMODRI_V2_0_ENABLE):
+  * VBUS, VEXT1, VEXT2
+  */
+ {
+  .adcBase          = VBUS_ADC_CFG_ADDR,
+  .adcResultBase    = VBUS_ADC_RESULT_ADDR,
+  .adcSOCNum        = VBUS_SOC_NUM,
+  .adcPPBNum        = VBUS_PPB_NUM,
+ },
+ {
+  .adcBase          = VEXT1_ADC_CFG_ADDR,
+  .adcResultBase    = VEXT1_ADC_RESULT_ADDR,
+  .adcSOCNum        = VEXT1_SOC_NUM,
+  .adcPPBNum        = VEXT1_PPB_NUM,
+ },
+ {
+  .adcBase          = VEXT2_ADC_CFG_ADDR,
+  .adcResultBase    = VEXT2_ADC_RESULT_ADDR,
+  .adcSOCNum        = VEXT2_SOC_NUM,
+  .adcPPBNum        = VEXT2_PPB_NUM,
+ },
+ // END OF ARRAY
+ {.adcBase          = UINT32_MAX}
+};
+
+/** @var    ADC_IT_TypeDef AdcIntList[]
+ *  @brief  List all the interrupts source generated by ADC modules.
+ */
+static const adc_int_t  AdcIntList[] =
+{
+ {
+  .adcBase          = MOTOR1_IA_ADC_CFG_ADDR,
+  .intTrig          = MOTOR1_IABC_SOC_NUM,
+  .adcIntNum        = MOTOR1_IA_INT_NUM,
+ },
+ {
+  .adcBase          = MOTOR2_IA_ADC_CFG_ADDR,
+  .intTrig          = MOTOR2_IABC_SOC_NUM,
+  .adcIntNum        = MOTOR2_IA_INT_NUM,
+ },
+ // END OF ARRAY
+ {.adcBase          = UINT32_MAX}
+};
+
+/** @var    ADC_TypeDef AdcCfgList[]
+ *  @brief  List all the configurations defined for each ADC modules.
+ */
+static const adc_cfg_t  AdcCfgList[] =
+{
+ {
+  .adcBase          = MOTOR12_IA_ADC_CFG_ADDR,
+  .p_adcIni         = &AdcInitList[0],
+  .p_adcAcq         = &AdcAcqList[0],
+  .p_adcInt         = &AdcIntList[0],
+ },
+ {
+  .adcBase          = MOTOR12_IB_ADC_CFG_ADDR,
+  .p_adcIni         = &AdcInitList[2],
+  .p_adcAcq         = &AdcAcqList[2],
+  .p_adcInt         = NULL,
+ },
+ {
+  .adcBase          = MOTOR12_IC_ADC_CFG_ADDR,
+  .p_adcIni         = &AdcInitList[4],
+  .p_adcAcq         = &AdcAcqList[4],
+  .p_adcInt         = NULL,
+ },
+ {
+  .adcBase          = VBUS_VEXT12_ADC_CFG_ADDR,
+  .p_adcIni         = &AdcInitList[6],
+  .p_adcAcq         = &AdcAcqList[6],
+  .p_adcInt         = NULL,
+ },
+ // END OF ARRAY
+ {.adcBase          = UINT32_MAX},
+};
+
+/** @var    eQEP_TypeDef QepCfgList[]
+ *  @brief  List all the configurations defined for each Quadrature Encoders modules.
+ */
+static const eqep_cfg_t QepCfgList[] =
+{
+ {
+  .eqepBase             = MOTOR1_QEP_BASE,
+  .eqepMaxResolution    = MOTOR1_ENC_QUADRATURE_SCALE_MAX,
+  .eqepUnitTimerPeriod  = MOTOR1_ENC_SPEED_HIGH_SAMPLE_TICKS_MAX,
+  .eqepConfig           = MOTOR1_ENC_CONFIG,
+  .eqepStrobeSrc        = EQEP_STROBE_OR_ADCSOCA,
+ },
+ {
+  .eqepBase             = MOTOR2_QEP_BASE,
+  .eqepMaxResolution    = MOTOR2_ENC_QUADRATURE_SCALE_MAX,
+  .eqepUnitTimerPeriod  = MOTOR2_ENC_SPEED_HIGH_SAMPLE_TICKS_MAX,
+  .eqepConfig           = MOTOR2_ENC_CONFIG,
+  .eqepStrobeSrc        = EQEP_STROBE_OR_ADCSOCB,
+ },
+ // END OF ARRAY
+ {.eqepBase             = UINT32_MAX},
+};
+
+/** @var    SPI_TypeDef spiCfgList[]
+ *  @brief  List all the configurations defined for each SPI communication modules.
+ */
+static const spi_cfg_t  spiCfgList[] =
+{
+ {
+  .spiBase          = DRV_SPI_BASE,
+  .bitRate          = 2.0e6,
+  .dataWidth        = 16U,
+  .mode             = SPI_MODE_MASTER,
+  .protocol         = SPI_PROT_POL0PHA0,
+  .txLevel          = SPI_FIFO_TXEMPTY,
+  .rxLevel          = SPI_FIFO_RXEMPTY,
+  .intSrc           = 0,
+  .highSpeedMode    = false,
+  .intEnable        = false,
+ },
+ {
+  .spiBase          = COM_SPI_BASE,
+  .bitRate          = 6.0e6,
+  .dataWidth        = 16U,
+  .mode             = SPI_MODE_SLAVE,
+  .protocol         = SPI_PROT_POL0PHA1,
+  .txLevel          = SPI_FIFO_TXFULL,
+  .rxLevel          = SPI_FIFO_RX1,
+  .intSrc           = 0,
+  .highSpeedMode    = false,
+  .intEnable        = false,
+ },
+ {
+  .spiBase          = DBG_SPI_BASE,
+  .bitRate          = 10.0e6,
+  .dataWidth        = 16U,
+  .mode             = SPI_MODE_MASTER,
+  .protocol         = SPI_PROT_POL0PHA0,
+  .txLevel          = SPI_FIFO_TX8,
+  .rxLevel          = SPI_FIFO_RX8,
+  .intSrc           = 0,
+  .highSpeedMode    = false,
+  .intEnable        = false,
+ },
+ {
+  .spiBase          = LED_SPI_BASE,
+  .bitRate          = 2.38e6,
+  .dataWidth        = 16U,
+  .mode             = SPI_MODE_MASTER,
+  .protocol         = SPI_PROT_POL0PHA0,
+  .txLevel          = SPI_FIFO_TX6,
+  .rxLevel          = SPI_FIFO_RXEMPTY,
+  .intSrc           = 0,
+  .highSpeedMode    = false,
+  .intEnable        = false,
+ },
+  // END OF ARRAY
+  {.spiBase         = UINT32_MAX},
+};
+
+/** @var    DMA_TypeDef dmaCfgList[]
+ *  @brief  List all the DMA used for communication.
+ */
+static const dma_cfg_t  dmaCfgList[] =
+{
+ /*
+  * DMA for SPI communication Tx
+  */
+ {
+  .dmaChBase        = DMA_COM_SPI_TX_BASE_ADDR,
+  .p_dstAddr        = (uint16_t *) COM_SPI_TX_BASE_REG_ADDR,
+  .p_srcAddr        = (uint16_t *) &com_spi_tx.msg[0].data.timeStamp,
+  .burstSize        = DMA_COM_SPI_TX_16BIT_BURST_EVT,
+  .transferSize     = DMA_COM_SPI_TX_16BIT_TRANSFER_EVT,
+  .dstWrapSize      = DMA_NO_WRAP,
+  .srcWrapSize      = DMA_NO_WRAP,
+  .dstStep          = 0,
+  .srcStep          = DMA_COM_SPI_TX_16BIT_INC_STEP,
+  .dstWrapStep      = 0,
+  .srcWrapStep      = 0,
+  .config           = DMA_COM_SPI_TX_16BIT_CONFIG,
+  .trigger          = DMA_COM_SPI_TX_TRIGGER_SRC,
+  .intMode          = DMA_INT_AT_END,
+  .intEnable        = false,
+ },
+ /*
+  * DMA for SPI communication Rx
+  */
+ {
+  .dmaChBase        = DMA_COM_SPI_RX_BASE_ADDR,
+  .p_dstAddr        = (uint16_t *) &com_spi_rx,
+  .p_srcAddr        = (uint16_t *) COM_SPI_RX_BASE_REG_ADDR,
+  .burstSize        = DMA_COM_SPI_RX_16BIT_BURST_EVT,
+  .transferSize     = DMA_COM_SPI_RX_16BIT_TRANSFER_EVT,
+  .dstWrapSize      = DMA_NO_WRAP,
+  .srcWrapSize      = DMA_NO_WRAP,
+  .dstStep          = DMA_COM_SPI_RX_16BIT_INC_STEP,
+  .srcStep          = 0,
+  .dstWrapStep      = 0,
+  .srcWrapStep      = 0,
+  .config           = DMA_COM_SPI_RX_16BIT_CONFIG,
+  .trigger          = DMA_COM_SPI_RX_TRIGGER_SRC,
+  .intMode          = DMA_INT_AT_END,
+  .intEnable        = true,
+ },
+ /*
+  * DMA for the RGB LED
+  */
+ {
+  .dmaChBase        = DMA_LED_SPI_TX_BASE_ADDR,
+  .p_dstAddr        = (uint16_t *) LED_SPI_TX_BASE_REG_ADDR,
+  .p_srcAddr        = (uint16_t *) &led_spi_tx[0],
+  .burstSize        = DMA_LED_SPI_TX_16BIT_BURST_EVT,
+  .transferSize     = DMA_LED_SPI_TX_16BIT_TRANSFER_EVT,
+  .dstWrapSize      = DMA_NO_WRAP,//0,//
+  .srcWrapSize      = DMA_NO_WRAP,//DMA_COM_SPI_TX_RX_TRANSFER_EVT,//
+  .dstStep          = 0,
+  .srcStep          = DMA_COM_SPI_TX_16BIT_INC_STEP,
+  .dstWrapStep      = 0,
+  .srcWrapStep      = 0,//-(DMA_COM_SPI_TX_RX_TRANSFER_EVT - 1),//
+  .config           = DMA_LED_SPI_TX_16BIT_CONFIG,
+  .trigger          = DMA_LED_SPI_TX_TRIGGER_SRC,
+  .intMode          = DMA_INT_AT_END,
+  .intEnable        = false,
+ },
+ // END OF ARRAY
+ {.dmaChBase        = UINT32_MAX},
+};
+
+static const ipc_cfg_t  ipcCfgList[] =
+{
+ {
+  .ipcType          = IPC_CPU1_L_CM_R,
+  .ipcFlag          = IPC_CPU1_TO_CM_FLAG,
+  .ipcMsgQEnable    = false,
+  .ipcIntEnable     = false,
+ },
+  // END OF ARRAY
+ {.ipcType          = IPC_TOTAL_NUM},
+};
+
+static const tmr_cfg_t  timerCfgList[] =
+{
+ {
+  // CPU timer 0
+  .cpuTimerBase     = CPU_TIMER_0_BASE,
+  .periodCount      = CPU_TIMER_0_PERIOD,
+  .prescaler        = CPU_TIMER_0_PRESCALER,
+  .intEnable        = true,
+ },
+ // END OF ARRAY
+ {.cpuTimerBase     = UINT32_MAX},
+};
+
+static const sci_cfg_t  sciCfgList[] =
+{
+ {
+  .sciBase          = COM_SCI_BASE,
+  .bitRate          = 12500000,
+  .sciMode          = COM_SCI_CFG,
+  .txLevel          = COM_SCI_TX_FIFO_LVL,
+  .rxLevel          = COM_SCI_RX_FIFO_LVL,
+  .intSrc           = COM_SCI_IT_SRC,
+  .intEnable        = false,
+  .multiProcMode    = SCI_MULTI_PROC_NONE,
+ },
+  // END OF ARRAY
+ {.sciBase          = UINT32_MAX},
+};
+
+static const cla_cfg_t  claCfgList[] =
+{
+ {
+  .progRAM          = CLA_PROG_RAM,
+  .dataRAM          = CLA_DATA_RAM,
+  .claTaskFlg       = CLA_ADC_CALIB_TASK_FLAG,
+  .claTaskNum       = CLA_ADC_CALIB_TASK_NUMBER,
+  .claIntVect       = CLA_ADC_CALIB_INTERRUPT_VECTOR,
+  .claTrigSrc       = CLA_ADC_CALIB_TRIGGER_SRC,
+  .p_claFunc        = CLA_ADC_CALIB_TASK_HANDLER,
+  .claForceTask     = false,
+ },
+ {
+  .progRAM          = CLA_PROG_RAM,
+  .dataRAM          = CLA_DATA_RAM,
+  .claTaskFlg       = CLA_CMD_NEW_TASK_FLAG,
+  .claTaskNum       = CLA_CMD_NEW_TASK_NUMBER,
+  .claIntVect       = CLA_CMD_NEW_INTERRUPT_VECTOR,
+  .claTrigSrc       = CLA_CMD_NEW_TRIGGER_SRC,
+  .p_claFunc        = CLA_CMD_NEW_TASK_HANDLER,
+  .claForceTask     = false,
+ },
+ {
+  .progRAM          = CLA_PROG_RAM,
+  .dataRAM          = CLA_DATA_RAM,
+  .claTaskFlg       = CLA_MOTOR1_TASK_FLAG,
+  .claTaskNum       = CLA_MOTOR1_TASK_NUMBER,
+  .claIntVect       = CLA_MOTOR1_INTERRUPT_VECTOR,
+  .claTrigSrc       = CLA_MOTOR1_TRIGGER_SRC,
+  .p_claFunc        = CLA_MOTOR1_TASK_HANDLER,
+  .claForceTask     = false,
+ },
+ {
+  .progRAM          = CLA_PROG_RAM,
+  .dataRAM          = CLA_DATA_RAM,
+  .claTaskFlg       = CLA_MOTOR2_TASK_FLAG,
+  .claTaskNum       = CLA_MOTOR2_TASK_NUMBER,
+  .claIntVect       = CLA_MOTOR2_INTERRUPT_VECTOR,
+  .claTrigSrc       = CLA_MOTOR2_TRIGGER_SRC,
+  .p_claFunc        = CLA_MOTOR2_TASK_HANDLER,
+  .claForceTask     = false,
+ },
+ // END OF ARRAY
+ {.p_claFunc        = NULL},
+};
+
+static const clb_cfg_t  clbCfgList[] =
+{
+ {
+ .clb_Addr1Spec     = RS485_CLB_USE_UID_ADDRESS,
+ .clb_Addr2Spec     = RS485_CLB_USE_NO_ADDRESS,
+ .clb_Addr1Force    = 0,
+ .clb_Addr2Force    = 0,
+ }
+};
+
+/** @var    ePWM_TB_TypeDef PwmTimeBaseCfgList[]
+ *  @brief  List all the configurations necessaries for ePWM Time Base submodule.
+ */
+static const epwm_tb_t  PwmTimeBaseCfgList[] =
+{
+ {
+  .epwmBase         = MOTOR1_PWM1_BASE,
+  .phaseCount       = PWM_INITIAL_PHASE_0,
+  .syncOutputMode   = EPWM_SYNC_OUT_PULSE_ON_CNTR_ZERO,
+  .syncInputSrc     = EPWM_SYNC_IN_PULSE_SRC_DISABLE,
+ },
+ {
+  .epwmBase         = MOTOR1_PWM2_BASE,
+  .phaseCount       = PWM_INITIAL_PHASE_0,
+  .syncOutputMode   = EPWM_SYNC_OUT_PULSE_ON_SOFTWARE,
+  .syncInputSrc     = EPWM_SYNC_IN_PULSE_SRC_SYNCOUT_EPWM1,
+ },
+ {
+  .epwmBase         = MOTOR1_PWM3_BASE,
+  .phaseCount       = PWM_INITIAL_PHASE_0,
+  .syncOutputMode   = EPWM_SYNC_OUT_PULSE_ON_SOFTWARE,
+  .syncInputSrc     = EPWM_SYNC_IN_PULSE_SRC_SYNCOUT_EPWM1,
+ },
+ {
+  .epwmBase         = MOTOR2_PWM1_BASE,
+  .phaseCount       = PWM_INITIAL_PHASE_180,
+  .syncOutputMode   = EPWM_SYNC_OUT_PULSE_ON_SOFTWARE,
+  .syncInputSrc     = EPWM_SYNC_IN_PULSE_SRC_SYNCOUT_EPWM1,
+ },
+ {
+  .epwmBase         = MOTOR2_PWM2_BASE,
+  .phaseCount       = PWM_INITIAL_PHASE_180,.
+  syncOutputMode    = EPWM_SYNC_OUT_PULSE_ON_SOFTWARE,
+  .syncInputSrc     = EPWM_SYNC_IN_PULSE_SRC_SYNCOUT_EPWM1,
+ },
+ {
+  .epwmBase         = MOTOR2_PWM3_BASE,
+  .phaseCount       = PWM_INITIAL_PHASE_180,
+  .syncOutputMode   = EPWM_SYNC_OUT_PULSE_ON_SOFTWARE,
+  .syncInputSrc     = EPWM_SYNC_IN_PULSE_SRC_SYNCOUT_EPWM1,
+ },
+ // END OF ARRAY
+ {.epwmBase         = UINT32_MAX},
+};
+
+/** @var    ePWM_CC_TypeDef PwmCounterCompareCfgList[]
+ *  @brief  List all the configurations necessaries for ePWM Capture/Compare submodule.
+ */
+static const epwm_cc_t  PwmCounterCompareCfgList[] =
+{
+ {
+  .epwmBase         = MOTOR1_PWM1_BASE,
+  .compCount        = PWM_INITIAL_COMP_VAL,
+  .compModule       = EPWM_COUNTER_COMPARE_A,
+ },
+ {
+  .epwmBase         = MOTOR1_PWM2_BASE,
+  .compCount        = PWM_INITIAL_COMP_VAL,
+  .compModule       = EPWM_COUNTER_COMPARE_A,
+ },
+ {
+  .epwmBase         = MOTOR1_PWM3_BASE,
+  .compCount        = PWM_INITIAL_COMP_VAL,
+  .compModule       = EPWM_COUNTER_COMPARE_A,
+ },
+ {
+  .epwmBase         = MOTOR2_PWM1_BASE,
+  .compCount        = PWM_INITIAL_COMP_VAL,
+  .compModule       = EPWM_COUNTER_COMPARE_A,
+ },
+ {
+  .epwmBase         = MOTOR2_PWM2_BASE,
+  .compCount        = PWM_INITIAL_COMP_VAL,
+  .compModule       = EPWM_COUNTER_COMPARE_A,
+ },
+ {
+  .epwmBase         = MOTOR2_PWM3_BASE,
+  .compCount        = PWM_INITIAL_COMP_VAL,
+  .compModule       = EPWM_COUNTER_COMPARE_A,
+ },
+ // END OF ARRAY
+ {.epwmBase         = UINT32_MAX},
+};
+
+/** @var    ePWM_AQ_TypeDef PwmActionQualifierCfgList[]
+ *  @brief  List all the configurations necessaries for ePWM Action Qualifier submodule.
+ */
+static const epwm_aq_t  PwmActionQualifierCfgList[] =
+{
+ {
+  .epwmBase         = MOTOR1_PWM1_BASE,
+  .actionsEvt       = (EPWM_AQ_OUTPUT_HIGH_UP_CMPA | EPWM_AQ_OUTPUT_LOW_DOWN_CMPA),
+  .epwmOutput       = EPWM_AQ_OUTPUT_A,
+ },
+ {
+  .epwmBase         = MOTOR1_PWM2_BASE,
+  .actionsEvt       = (EPWM_AQ_OUTPUT_HIGH_UP_CMPA | EPWM_AQ_OUTPUT_LOW_DOWN_CMPA),
+  .epwmOutput       = EPWM_AQ_OUTPUT_A,
+ },
+ {
+  .epwmBase         = MOTOR1_PWM3_BASE,
+  .actionsEvt       = (EPWM_AQ_OUTPUT_HIGH_UP_CMPA | EPWM_AQ_OUTPUT_LOW_DOWN_CMPA),
+  .epwmOutput       = EPWM_AQ_OUTPUT_A,
+ },
+ {
+  .epwmBase         = MOTOR2_PWM1_BASE,
+  .actionsEvt       = (EPWM_AQ_OUTPUT_HIGH_UP_CMPA | EPWM_AQ_OUTPUT_LOW_DOWN_CMPA),
+  .epwmOutput       = EPWM_AQ_OUTPUT_A,
+ },
+ {
+  .epwmBase         = MOTOR2_PWM2_BASE,
+  .actionsEvt       = (EPWM_AQ_OUTPUT_HIGH_UP_CMPA | EPWM_AQ_OUTPUT_LOW_DOWN_CMPA),
+  .epwmOutput       = EPWM_AQ_OUTPUT_A,
+ },
+ {
+  .epwmBase         = MOTOR2_PWM3_BASE,
+  .actionsEvt       = (EPWM_AQ_OUTPUT_HIGH_UP_CMPA | EPWM_AQ_OUTPUT_LOW_DOWN_CMPA),
+  .epwmOutput       = EPWM_AQ_OUTPUT_A,
+ },
+ // END OF ARRAY
+ {.epwmBase         = UINT32_MAX},
+};
+
+/** @var    ePWM_DB_TypeDef PwmDeadBandCfgList[]
+ *  @brief  List all the configurations necessaries for ePWM DeadBand Unit submodule.
+ */
+static const epwm_db_t  PwmDeadBandCfgList[] =
+{
+ {
+  .epwmBase         = MOTOR1_PWM1_BASE,
+  .redCount         = PWM_DEADBAND_RISING_EDGE_DELAY,
+  .fedCount         = PWM_DEADBAND_FALLING_EDGE_DELAY,
+  .DelayMode        = EPWM_DELAY_ENABLE,
+ },
+ {
+  .epwmBase         = MOTOR1_PWM2_BASE,
+  .redCount         = PWM_DEADBAND_RISING_EDGE_DELAY,
+  .fedCount         = PWM_DEADBAND_FALLING_EDGE_DELAY,
+  .DelayMode        = EPWM_DELAY_ENABLE,
+ },
+ {
+  .epwmBase         = MOTOR1_PWM3_BASE,
+  .redCount         = PWM_DEADBAND_RISING_EDGE_DELAY,
+  .fedCount         = PWM_DEADBAND_FALLING_EDGE_DELAY,
+  .DelayMode        = EPWM_DELAY_ENABLE,
+ },
+ {
+  .epwmBase         = MOTOR2_PWM1_BASE,
+  .redCount         = PWM_DEADBAND_RISING_EDGE_DELAY,
+  .fedCount         = PWM_DEADBAND_FALLING_EDGE_DELAY,
+  .DelayMode        = EPWM_DELAY_ENABLE,
+ },
+ {
+  .epwmBase         = MOTOR2_PWM2_BASE,
+  .redCount         = PWM_DEADBAND_RISING_EDGE_DELAY,
+  .fedCount         = PWM_DEADBAND_FALLING_EDGE_DELAY,
+  .DelayMode        = EPWM_DELAY_ENABLE,
+ },
+ {
+  .epwmBase         = MOTOR2_PWM3_BASE,
+  .redCount         = PWM_DEADBAND_RISING_EDGE_DELAY,
+  .fedCount         = PWM_DEADBAND_FALLING_EDGE_DELAY,
+  .DelayMode        = EPWM_DELAY_ENABLE,
+ },
+ // END OF ARRAY
+ {.epwmBase         = UINT32_MAX},
+};
+
+/** @var    ePWM_ET_TypeDef PwmAdcSocEventTriggerCfgList[]
+ *  @brief  List all the configurations necessaries for ePWM Event Trigger submodule.
+ */
+static const epwm_et_t  PwmAdcSocEventTriggerCfgList[] =
+{
+ {
+  .epwmBase         = MOTOR1_PWM1_BASE,
+  .adcSOCEvtCount   = 1,
+  .adcSOCType       = EPWM_SOC_A,
+  .adcSOCSource     = EPWM_SOC_TBCTR_ZERO,
+ },
+ {
+  .epwmBase         = MOTOR2_PWM1_BASE,
+  .adcSOCEvtCount   = 1,
+  .adcSOCType       = EPWM_SOC_B,
+  .adcSOCSource     = EPWM_SOC_TBCTR_ZERO,
+ },
+ // END OF ARRAY
+ {.epwmBase         = UINT32_MAX},
+};
+
+/** @var    ePWM_TypeDef PwmCfgList[]
+ *  @brief  List all the configurations necessaries for PWM module.
+ */
+static const epwm_cfg_t PwmCfgList[] =
+{
+ {.epwmBase                 = MOTOR1_PWM1_BASE,
+  .p_epwmTimeBase           = &PwmTimeBaseCfgList[0],
+  .p_epwmCounterCompare     = &PwmCounterCompareCfgList[0],
+  .p_epwmActionQualifier    = &PwmActionQualifierCfgList[0],
+  .p_epwmDeadband           = &PwmDeadBandCfgList[0],
+  .p_epwmProgChopper        = NULL,
+  .p_epwmAdcSocEventTrigger = &PwmAdcSocEventTriggerCfgList[0],
+  .p_epwmInterruptsEvent    = NULL,
+  .epwmAdcSocSrcExtern      = SYSCTL_ADCSOC_SRC_PWM1SOCA,
+ },
+ {.epwmBase                 = MOTOR1_PWM2_BASE,
+  .p_epwmTimeBase           = &PwmTimeBaseCfgList[1],
+  .p_epwmCounterCompare     = &PwmCounterCompareCfgList[1],
+  .p_epwmActionQualifier    = &PwmActionQualifierCfgList[1],
+  .p_epwmDeadband           = &PwmDeadBandCfgList[1],
+  .p_epwmProgChopper        = NULL,
+  .p_epwmAdcSocEventTrigger = NULL,
+  .p_epwmInterruptsEvent    = NULL,
+  .epwmAdcSocSrcExtern      = 0,
+ },
+ {.epwmBase                 = MOTOR1_PWM3_BASE,
+  .p_epwmTimeBase           = &PwmTimeBaseCfgList[2],
+  .p_epwmCounterCompare     = &PwmCounterCompareCfgList[2],
+  .p_epwmActionQualifier    = &PwmActionQualifierCfgList[2],
+  .p_epwmDeadband           = &PwmDeadBandCfgList[2],
+  .p_epwmProgChopper        = NULL,
+  .p_epwmAdcSocEventTrigger = NULL,
+  .p_epwmInterruptsEvent    = NULL,
+  .epwmAdcSocSrcExtern      = 0,
+ },
+ {.epwmBase                 = MOTOR2_PWM1_BASE,
+  .p_epwmTimeBase           = &PwmTimeBaseCfgList[3],
+  .p_epwmCounterCompare     = &PwmCounterCompareCfgList[3],
+  .p_epwmActionQualifier    = &PwmActionQualifierCfgList[3],
+  .p_epwmDeadband           = &PwmDeadBandCfgList[3],
+  .p_epwmProgChopper        = NULL,
+  .p_epwmAdcSocEventTrigger = &PwmAdcSocEventTriggerCfgList[1],
+  .p_epwmInterruptsEvent    = NULL,
+  .epwmAdcSocSrcExtern      = SYSCTL_ADCSOC_SRC_PWM4SOCB,
+ },
+ {.epwmBase                 = MOTOR2_PWM2_BASE,
+  .p_epwmTimeBase           = &PwmTimeBaseCfgList[4],
+  .p_epwmCounterCompare     = &PwmCounterCompareCfgList[4],
+  .p_epwmActionQualifier    = &PwmActionQualifierCfgList[4],
+  .p_epwmDeadband           = &PwmDeadBandCfgList[4],
+  .p_epwmProgChopper        = NULL,
+  .p_epwmAdcSocEventTrigger = NULL,
+  .p_epwmInterruptsEvent    = NULL,
+  .epwmAdcSocSrcExtern      = 0,
+ },
+ {.epwmBase                 = MOTOR2_PWM3_BASE,
+  .p_epwmTimeBase           = &PwmTimeBaseCfgList[5],
+  .p_epwmCounterCompare     = &PwmCounterCompareCfgList[5],
+  .p_epwmActionQualifier    = &PwmActionQualifierCfgList[5],
+  .p_epwmDeadband           = &PwmDeadBandCfgList[5],
+  .p_epwmProgChopper        = NULL,
+  .p_epwmAdcSocEventTrigger = NULL,
+  .p_epwmInterruptsEvent    = NULL,
+  .epwmAdcSocSrcExtern      = 0,
+ },
+ // END OF ARRAY
+ {.epwmBase                 = UINT32_MAX},
+};
+
+/** @var    HAL     hal
+ *  @brief  General configuration structure for the Hardware Abstraction Layer.
+ */
+static const hal_cfg_t hal =
+{.p_gpioHandle              = GpioPinsCfgList,
+ .p_adcHandle               = AdcCfgList,
+ .p_epwmHandle              = PwmCfgList,
+ .p_eqepHandle              = QepCfgList,
+ .p_dmaHandle               = dmaCfgList,
+ .p_ipcHandle               = ipcCfgList,
+ .p_sciHandle               = sciCfgList,
+ .p_spiHandle               = spiCfgList,
+ .p_timerHandle             = timerCfgList,
+ .p_claHandle               = claCfgList,
+ .p_clbHandle               = clbCfgList,
+};
+
+#endif  /*__UOMODRI_HAL_CONFIG_HANDLERS_H__*/

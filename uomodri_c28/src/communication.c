@@ -1,25 +1,12 @@
 /***********************************************************************
  * INCLUDES
  ***********************************************************************/
-#include "communication.h"
+#include <stdlib.h>
 #include "vcu2/vcu2_crc.h"
-//#include "uomodri_user_defines.h"
-//#include "uomodri_math.h"
-//#include "encoder.h"
 
-/***********************************************************************
- * FUNCTIONS DECLARATION
- ***********************************************************************/
-#if (defined CPU1) || (defined CPU2)
-void COM_msgSwapBytes(uint16_t*, uint16_t*, uint16_t);
-uint32_t COM_vCRC32(uint16_t*, uint16_t);
-//inline void RS485_msgReceive(uint32_t, rs485_rx_t*);
-//void RS485_msgTransmit(uint32_t, rs485_tx_t*);
-//void SCI_rxDisable(uint32_t);
-//void SCI_rxEnable(uint32_t);
-void SCI_txDisable(uint32_t);
-void SCI_txEnable(uint32_t);
-#endif
+#include "config/uomodri_math.h"
+#include "uomodri_user_defines.h"
+#include "communication.h"
 
 /***********************************************************************
  * FUNCTIONS DEFINITIONS
@@ -35,7 +22,7 @@ void SCI_txEnable(uint32_t);
 void COM_msgExtract(mst2slv_msg_t* p_msg, cmd_t* p_cmd_m1, cmd_t* p_cmd_m2)
 {
     int32_t pos_s32                     = (int32_t)FUS_16_TO_32(p_msg->position[MOTOR_1].u16_msb, p_msg->position[MOTOR_1].u16_lsb);
-//    cmd_reg_u* p_cmd_reg                = &p_cmd_m1->cmdField;
+    cmd_reg_u* p_cmd_reg                = &p_cmd_m1->cmdField;
     p_cmd_m1->posRef                    = (float32_t)(pos_s32                   * POSITION_LSB      * FM_ROUND2RAD);
     p_cmd_m1->velRef                    = (float32_t)(p_msg->velocity[MOTOR_1]  * VELOCITY_LSB      * FM_KRPM2RADPS);
     p_cmd_m1->iqff                      = (float32_t)(p_msg->current[MOTOR_1]   * IQ_LSB);
@@ -47,17 +34,13 @@ void COM_msgExtract(mst2slv_msg_t* p_msg, cmd_t* p_cmd_m1, cmd_t* p_cmd_m2)
     p_cmd_m1->timeoutRef                = (uint16_t)p_msg->mode.TIMEOUT;
     p_cmd_m1->cptTimeout                = 0U;
     p_cmd_m1->index                     = p_msg->index;
-    p_cmd_m1->cmdField.encOffsetEnable  = (bool_t)p_msg->mode.EI1OC;
-    p_cmd_m1->cmdField.rollOverEnable   = (bool_t)p_msg->mode.EPRE;
-    p_cmd_m1->cmdField.motorEnable      = (bool_t)p_msg->mode.EM1;
-    p_cmd_m1->cmdField.systemEnable     = (bool_t)p_msg->mode.ES;
-//    p_cmd_reg->encOffsetEnable          = (bool_t)p_msg->mode.EI1OC;
-//    p_cmd_reg->rollOverEnable           = (bool_t)p_msg->mode.EPRE;
-//    p_cmd_reg->motorEnable              = (bool_t)p_msg->mode.EM1;
-//    p_cmd_reg->systemEnable             = (bool_t)p_msg->mode.ES;
+    p_cmd_reg->encOffsetEnable          = (bool_t)p_msg->mode.EI1OC;
+    p_cmd_reg->rollOverEnable           = (bool_t)p_msg->mode.EPRE;
+    p_cmd_reg->motorEnable              = (bool_t)p_msg->mode.EM1;
+    p_cmd_reg->systemEnable             = (bool_t)p_msg->mode.ES;
 
     pos_s32                             = (int32_t)FUS_16_TO_32(p_msg->position[MOTOR_2].u16_msb, p_msg->position[MOTOR_2].u16_lsb);
-//    p_cmd_reg                           = &p_cmd_m2->cmdField;
+    p_cmd_reg                           = &p_cmd_m2->cmdField;
     p_cmd_m2->posRef                    = (float32_t)(pos_s32                   * POSITION_LSB      * FM_ROUND2RAD);
     p_cmd_m2->velRef                    = (float32_t)(p_msg->velocity[MOTOR_2]  * VELOCITY_LSB      * FM_KRPM2RADPS);
     p_cmd_m2->iqff                      = (float32_t)(p_msg->current[MOTOR_2]   * IQ_LSB);
@@ -69,10 +52,10 @@ void COM_msgExtract(mst2slv_msg_t* p_msg, cmd_t* p_cmd_m1, cmd_t* p_cmd_m2)
     p_cmd_m2->timeoutRef                = (uint16_t)p_msg->mode.TIMEOUT;
     p_cmd_m2->cptTimeout                = 0U;
     p_cmd_m2->index                     = p_msg->index;
-    p_cmd_m2->cmdField.encOffsetEnable  = (bool_t)p_msg->mode.EI2OC;
-    p_cmd_m2->cmdField.rollOverEnable   = (bool_t)p_msg->mode.EPRE;
-    p_cmd_m2->cmdField.motorEnable      = (bool_t)p_msg->mode.EM2;
-    p_cmd_m2->cmdField.systemEnable     = (bool_t)p_msg->mode.ES;
+    p_cmd_reg->encOffsetEnable          = (bool_t)p_msg->mode.EI2OC;
+    p_cmd_reg->rollOverEnable           = (bool_t)p_msg->mode.EPRE;
+    p_cmd_reg->motorEnable              = (bool_t)p_msg->mode.EM2;
+    p_cmd_reg->systemEnable             = (bool_t)p_msg->mode.ES;
 
     return;
 }
@@ -85,19 +68,18 @@ void COM_msgExtract(mst2slv_msg_t* p_msg, cmd_t* p_cmd_m1, cmd_t* p_cmd_m2)
 bool_t COM_msgCreate(motor_t* p_motor, slv2mst_msg_t* p_msg, uint32_t tmr_cnt)
 {
     foc_t* p_foc                        = &p_motor->foc;
-//    encoder_t* p_enc                    = &p_foc->enc;
-//    error_reg_u motor_err               = p_motor->error;
-//    cmd_reg_u motor_cmd                 = {.all = p_foc->cmd.cmdField.all};
-    float32_t theta_index_comp          = (p_foc->cmd.cmdField.encOffsetEnable) ? (p_foc->enc.thetaIndexAbsolute) : (0.0f);
-//    float32_t theta_index_comp          = (motor_cmd.encOffsetEnable) ? (p_enc->thetaIndexAbsolute) : (0.0f);
-    float32_t pos_offset                = p_foc->enc.thetaAbsolute - theta_index_comp;
+    encoder_t* p_enc                    = &p_foc->enc;
+    error_reg_u motor_err               = p_motor->error;
+    cmd_reg_u motor_cmd                 = {.all = p_foc->cmd.cmdField.all};
+    float32_t theta_index_comp          = (motor_cmd.encOffsetEnable) ? (p_enc->thetaIndexAbsolute) : (0.0f);
+    float32_t pos_offset                = p_enc->thetaAbsolute - theta_index_comp;
     int32_t pos                         = (int32_t)(pos_offset                  / POSITION_LSB      * FM_RAD2ROUND);
     uint16_t motor_id                   = p_motor->id;
     bool_t align_done                   = (p_motor->state == MOTOR_STATE_READY) || (p_motor->state == MOTOR_STATE_STOP);
 
     p_msg->position[motor_id].u16_msb   = MSB_32(pos);
     p_msg->position[motor_id].u16_lsb   = LSB_32(pos);
-    p_msg->velocity[motor_id]           = (int16_t)(p_foc->enc.speed.speedMech[0]/ VELOCITY_LSB      * FM_RADPS2KRPM);
+    p_msg->velocity[motor_id]           = (int16_t)(p_enc->speed.speedMech[0]   / VELOCITY_LSB      * FM_RADPS2KRPM);
     p_msg->current[motor_id]            = (int16_t)(p_foc->iq                   / IQ_LSB);
     p_msg->coilRes[motor_id]            = (uint16_t)(p_foc->resEst              / RESISTANCE_LSB);
     p_msg->adcSamples[motor_id]         = (uint16_t)(p_foc->acq.vExt            / VOLTAGE_LSB);
@@ -105,37 +87,37 @@ bool_t COM_msgCreate(motor_t* p_motor, slv2mst_msg_t* p_msg, uint32_t tmr_cnt)
     if(motor_id == MOTOR_1)
     {
         // Update status field - MOTOR_1
-        p_msg->status.M1E               = p_foc->cmd.cmdField.motorEnable;    // MOTOR_1 enabled
+        p_msg->status.M1E               = motor_cmd.motorEnable;    // MOTOR_1 enabled
         p_msg->status.M1R               = align_done;               // MOTOR_1 ready
-        p_msg->status.IDX1T             = p_foc->enc.flags.indexToggle; // MOTOR_1 index toggle
-        p_msg->status.IDX1D             = p_foc->enc.flags.indexDetect; // MOTOR_1 index detected
+        p_msg->status.IDX1T             = p_enc->flags.indexToggle; // MOTOR_1 index toggle
+        p_msg->status.IDX1D             = p_enc->flags.indexDetect; // MOTOR_1 index detected
 
-        p_msg->status.ERROR_CODE        = (p_motor->error.com_timeout)  ? (STATUS_ERROR_SPI_RECV_TIMEOUT)   : (STATUS_ERROR_NO_ERROR);
-        p_msg->status.ERROR_CODE        = (p_motor->error.pos_rollover) ? (STATUS_ERROR_POS_ROLLOVER)       : (p_msg->status.ERROR_CODE);
-        p_msg->status.ERROR_CODE        = (p_motor->error.drv_fault)    ? (STATUS_ERROR_DRV_FAULT)          : (p_msg->status.ERROR_CODE);
-        p_msg->status.ERROR_CODE        = (p_motor->error.enc_indexErr) ? (STATUS_ERROR_ENCODER1)           : (p_msg->status.ERROR_CODE);
-        p_msg->status.ERROR_CODE        = (p_motor->error.enc_alignErr) ? (STATUS_ERROR_ENCODER1)           : (p_msg->status.ERROR_CODE);
+        p_msg->status.ERROR_CODE        = (motor_err.com_timeout)   ? (STATUS_ERROR_SPI_RECV_TIMEOUT)   : (STATUS_ERROR_NO_ERROR);
+        p_msg->status.ERROR_CODE        = (motor_err.pos_rollover)  ? (STATUS_ERROR_POS_ROLLOVER)       : (p_msg->status.ERROR_CODE);
+        p_msg->status.ERROR_CODE        = (motor_err.drv_fault)     ? (STATUS_ERROR_DRV_FAULT)          : (p_msg->status.ERROR_CODE);
+        p_msg->status.ERROR_CODE        = (motor_err.enc_indexErr)  ? (STATUS_ERROR_ENCODER1)           : (p_msg->status.ERROR_CODE);
+        p_msg->status.ERROR_CODE        = (motor_err.enc_alignErr)  ? (STATUS_ERROR_ENCODER1)           : (p_msg->status.ERROR_CODE);
 
         return(false);
     }
     else
     {
         // Update status field - MOTOR_2
-        p_msg->status.M2E               = p_foc->cmd.cmdField.motorEnable;    // MOTOR_2 enabled
+        p_msg->status.M2E               = motor_cmd.motorEnable;    // MOTOR_2 enabled
         p_msg->status.M2R               = align_done;               // MOTOR_2 ready
-        p_msg->status.IDX2T             = p_foc->enc.flags.indexToggle; // MOTOR_2 index toggle
-        p_msg->status.IDX2D             = p_foc->enc.flags.indexDetect; // MOTOR_2 index detected
+        p_msg->status.IDX2T             = p_enc->flags.indexToggle; // MOTOR_2 index toggle
+        p_msg->status.IDX2D             = p_enc->flags.indexDetect; // MOTOR_2 index detected
 
-        p_msg->status.SE                = p_foc->cmd.cmdField.systemEnable;   // System enabled
+        p_msg->status.SE                = motor_cmd.systemEnable;   // System enabled
         p_msg->status.STATUS_RSV1       = 0;
         p_msg->lastCmdIndex             = p_foc->cmd.index;
         p_msg->timeStamp                = (uint16_t)tmr_cnt;
 //(p_msg->timeStamp < 0xFFFF) ? (p_msg->timeStamp + 1) : (0);//
-        p_msg->status.ERROR_CODE        = (p_motor->error.com_timeout)  ? (STATUS_ERROR_SPI_RECV_TIMEOUT)   : (p_msg->status.ERROR_CODE);
-        p_msg->status.ERROR_CODE        = (p_motor->error.pos_rollover) ? (STATUS_ERROR_POS_ROLLOVER)       : (p_msg->status.ERROR_CODE);
-        p_msg->status.ERROR_CODE        = (p_motor->error.drv_fault)    ? (STATUS_ERROR_DRV_FAULT)          : (p_msg->status.ERROR_CODE);
-        p_msg->status.ERROR_CODE        = (p_motor->error.enc_indexErr) ? (STATUS_ERROR_ENCODER2)           : (p_msg->status.ERROR_CODE);
-        p_msg->status.ERROR_CODE        = (p_motor->error.enc_alignErr) ? (STATUS_ERROR_ENCODER2)           : (p_msg->status.ERROR_CODE);
+        p_msg->status.ERROR_CODE        = (motor_err.com_timeout)   ? (STATUS_ERROR_SPI_RECV_TIMEOUT)   : (p_msg->status.ERROR_CODE);
+        p_msg->status.ERROR_CODE        = (motor_err.pos_rollover)  ? (STATUS_ERROR_POS_ROLLOVER)       : (p_msg->status.ERROR_CODE);
+        p_msg->status.ERROR_CODE        = (motor_err.drv_fault)     ? (STATUS_ERROR_DRV_FAULT)          : (p_msg->status.ERROR_CODE);
+        p_msg->status.ERROR_CODE        = (motor_err.enc_indexErr)  ? (STATUS_ERROR_ENCODER2)           : (p_msg->status.ERROR_CODE);
+        p_msg->status.ERROR_CODE        = (motor_err.enc_alignErr)  ? (STATUS_ERROR_ENCODER2)           : (p_msg->status.ERROR_CODE);
 
 //        // Compute CRC
 //        uint32_t crc                    = COM_msgCrc((uint16_t *)p_msg, COM_MSG_SPI_TX_RX_16BIT_PAYLOAD_LENGTH);
@@ -144,6 +126,26 @@ bool_t COM_msgCreate(motor_t* p_motor, slv2mst_msg_t* p_msg, uint32_t tmr_cnt)
 
         return(true);
     }
+}
+
+/**
+ * @brief           Initialize the command structure for a motor
+ * @param[in]       p_cmd   Pointer on the command structure (actions to be realized by motor_foc)
+ */
+void COM_initCmdStruct(cmd_t* p_cmd)
+{
+    p_cmd->posRef               = 0.0f;
+    p_cmd->velRef               = 0.0f;
+    p_cmd->iqff                 = 0.0f;
+    p_cmd->kpCoeff              = 0.0f;
+    p_cmd->kdCoeff              = 0.0f;
+//    p_cmd->iSat                 = 0.0f;
+    p_cmd->timeoutRef           = 0U;
+    p_cmd->cptTimeout           = 0U;
+    p_cmd->index                = 0U;
+    p_cmd->cmdField.all         = 0U;
+
+    return;
 }
 
 /**

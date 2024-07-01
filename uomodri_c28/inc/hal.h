@@ -9,18 +9,13 @@
 /***********************************************************************
  * INCLUDES
  ***********************************************************************/
-//#include <stdbool.h>
-//#include <stdint.h>
-//#include <hw_types.h>
-//#include "f2838x_device.h"
-//#include "driverlib.h"
-//#include "f2838x_cla_typedefs.h"  // F2838x CLA Type definitions
-//#include "f2838x_device.h"
-//#include "device.h"
+#include <stdbool.h>
+#include <stdint.h>
+#include <hw_types.h>
 #include "f2838x_device.h"
-#include "device.h"
+#include "driverlib.h"
 
-//#include "config/uomodri_user_defines.h"
+#include "uomodri_user_defines.h"
 
 /***********************************************************************
  * DEFINES
@@ -226,14 +221,14 @@ typedef struct __DMA_CFG_t__
  */
 typedef struct __CLA_CFG_t__
 {
-    uint32_t                            progRAM;
-    uint32_t                            dataRAM;
-    uint16_t                            claTaskFlg;
-    CLA_TaskNumber                      claTaskNum;
-    CLA_MVECTNumber                     claIntVect;
-    CLA_Trigger                         claTrigSrc;
-    void                                (*p_claFunc)(void);
-    bool_t                              claForceTask;
+    uint32_t                progRAM;
+    uint32_t                dataRAM;
+    uint16_t                claTaskFlg;
+    CLA_TaskNumber          claTaskNum;
+    CLA_MVECTNumber         claIntVect;
+    CLA_Trigger             claTrigSrc;
+    void                    (*p_claFunc)(void);
+    bool_t                  claForceTask;
 } cla_cfg_t;
 
 /**
@@ -243,10 +238,10 @@ typedef struct __CLA_CFG_t__
 typedef struct __CLB_CFG_t__
 {
 //    uint32_t                clb_AddrBase;
-    CLB_RS485AddressDef_e               clb_Addr1Spec;
-    CLB_RS485AddressDef_e               clb_Addr2Spec;
-    uint32_t                            clb_Addr1Force;
-    uint32_t                            clb_Addr2Force;
+    CLB_RS485AddressDef_e   clb_Addr1Spec;
+    CLB_RS485AddressDef_e   clb_Addr2Spec;
+    uint32_t                clb_Addr1Force;
+    uint32_t                clb_Addr2Force;
 } clb_cfg_t;
 
 /**
@@ -394,5 +389,6 @@ typedef struct __HAL_CFG_t__
  ***********************************************************************/
 void HAL_ini(const hal_cfg_t*);
 void HAL_INT_ini(const int_cfg_t*);
+void HAL_DMA_ini(const dma_cfg_t*);
 
 #endif

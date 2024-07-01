@@ -6,6 +6,7 @@
 /***********************************************************************
  * INCLUDE FILES
  ***********************************************************************/
+#include "device.h"
 #include "hal.h"
 #include "board.h"
 
@@ -13,7 +14,7 @@
  * VARIABLES
  ***********************************************************************/
 #pragma DATA_SECTION(uid_unique,".UID_UNIQUE");
-volatile uint32_t   uid_unique;
+volatile uint32_t       uid_unique;
 
 /***********************************************************************
  * FUNCTIONS DECLARATION
@@ -24,7 +25,6 @@ void HAL_ePWM_ini(const epwm_cfg_t*);
 void HAL_eQEP_ini(const eqep_cfg_t*);
 void HAL_SPI_ini(const spi_cfg_t*);
 void HAL_SCI_ini(const sci_cfg_t*);
-void HAL_DMA_ini(const dma_cfg_t*);
 void HAL_TMR_ini(const tmr_cfg_t*);
 void HAL_IPC_ini(const ipc_cfg_t*);
 void HAL_CLA_ini(const cla_cfg_t*);
@@ -62,7 +62,7 @@ void HAL_ini(const hal_cfg_t* p_hal)
         // Initialize IPC communication
         HAL_IPC_ini(p_hal->p_ipcHandle);
 #endif
-#if (RS485_BUS_ENABLE) && (USE_UOMODRI_REV != UOMODRI_V1_0_ENABLE)
+#if (RS485_BUS_ENABLE) && (!UOMODRI_V1_0_ENABLE)
         // Initialize SCI/UART
         HAL_SCI_ini(p_hal->p_sciHandle);
         // Initialize CLB
@@ -120,7 +120,7 @@ void HAL_ADC_ini(const adc_cfg_t* p_adcCfg)
 {
     if((p_adcCfg != NULL) && (p_adcCfg->p_adcIni != NULL) && (p_adcCfg->p_adcAcq != NULL))
     {
-        uint32_t adcBase = p_adcCfg->adcBase;
+        uint32_t adcBase    = p_adcCfg->adcBase;
         while(adcBase != UINT32_MAX)
         {
             const adc_ini_t* p_adcIni   = p_adcCfg->p_adcIni;
@@ -188,7 +188,7 @@ void HAL_ePWM_ini(const epwm_cfg_t* p_pwmCfg)
     if((p_pwmCfg != NULL) && (p_pwmCfg->p_epwmTimeBase != NULL) && (p_pwmCfg->p_epwmCounterCompare) &&
             (p_pwmCfg->p_epwmActionQualifier != NULL) && (p_pwmCfg->p_epwmDeadband != NULL))
     {
-        uint32_t pwmBase = p_pwmCfg->epwmBase;
+        uint32_t pwmBase    = p_pwmCfg->epwmBase;
         /* Disable sync(Freeze clock to PWM as well). GTBCLKSYNC is applicable
          * only for multiple core devices.
          */
@@ -590,9 +590,9 @@ void HAL_IPC_ini(const ipc_cfg_t* p_ipcCfg)
 {
     if(p_ipcCfg != NULL)
     {
-        IPC_Type_t  ipcType = p_ipcCfg->ipcType;
+        IPC_Type_t  ipcType     = p_ipcCfg->ipcType;
         /* (0) - C_CPU1_L_CPU2_R, (1) - IPC_CPU1_L_CM_R, (2) - IPC_CPU2_L_CPU1_R, (3) - IPC_CPU2_L_CM_R*/
-        uint16_t    ipcSyncDone = 0;
+        uint8_t     ipcSyncDone = 0;
         while(ipcType != IPC_TOTAL_NUM)
         {
             // Enable IPC interrupts
@@ -625,9 +625,9 @@ void HAL_CLB_ini(const clb_cfg_t* p_clbCfg)
 {
     CLB_init();
 
-    uint32_t outLutCfg      = 0;
-    uint32_t addr_test1     = uid_unique;
-    uint32_t addr_test2     = uid_unique;
+    uint32_t outLutCfg  = 0;
+    uint32_t addr_test1 = uid_unique;
+    uint32_t addr_test2 = uid_unique;
 
     switch (p_clbCfg->clb_Addr1Spec)
     {
@@ -706,7 +706,7 @@ void HAL_CLA_ini(const cla_cfg_t* p_clacCfg)
         /* Enable the IACK instruction to start a task on CLA in software for all 8 CLA tasks */
         CLA_enableIACK(CLA1_BASE);
 
-        uint16_t i;
+        uint8_t i;
         while(p_clacCfg->p_claFunc != NULL)
         {
 #pragma diag_suppress=770

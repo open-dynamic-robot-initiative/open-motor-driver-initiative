@@ -6,10 +6,11 @@
 /***********************************************************************
 * INCLUDES
 ***********************************************************************/
-#include "inc/config/uomodri_user_defines.h"
-#include "inc/uomodri_shared.h"
-#include "inc/motor.h"
-#include "inc/foc.h"
+#include "f2838x_cla_typedefs.h"
+
+#include "foc.h"
+#include "uomodri_shared.h"
+#include "uomodri_user_defines.h"
 
 /***********************************************************************
  * VARIABLES

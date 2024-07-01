@@ -4,15 +4,11 @@
 /***********************************************************************
  * INCLUDES
  ***********************************************************************/
-#if (defined CPU1) || (defined CPU2)
-//#include "device.h"
-#include "f2838x_device.h"
-#include "driverlib.h"
-#include "config/uomodri_user_defines.h"
-//#include "main.h"
-#else
 #include <stdint.h>
 #include <hw_types.h>
+#ifdef CPU1
+#include "uomodri_user_defines.h"
+#else
 #include "driverlib_cm.h"
 #include "cm.h"
 
@@ -285,5 +281,9 @@ typedef struct __foc_t__
 //#define CMD_TIMEOUT_EN_POS          (4)
 //#define CMD_TIMEOUT_EN_MASK         (1 << CMD_TIMEOUT_EN_POS)
 #define CMD_POSITION_OFFSET_COMP    (CMD_SYSTEM_EN_MASK | CMD_MOTOR_EN_MASK | CMD_ENCODER_OFFSET_MASK)
+
+/***********************************************************************
+ * FUNCTIONS DECLARATION
+ ***********************************************************************/
 
 #endif /* __FOC_H__ */
