@@ -4,10 +4,12 @@
 /***********************************************************************
  * INCLUDES
  ***********************************************************************/
-#ifdef CPU1
-//#include "f2838x_device.h"
-//#include "driverlib.h"
+#if (defined CPU1) || (defined CPU2)
 #include "config/uomodri_user_defines.h"
+#include "f2838x_device.h"
+
+//#include "driverlib.h"
+//#include "config/uomodri_user_defines.h"
 #else
 #include <hw_types.h>
 #include <stdint.h>
@@ -19,16 +21,16 @@
  ***********************************************************************/
 typedef union __enc_test_u__
 {
-    Uint16              all;
+    uint16_t            all;
     struct
     {
-        Uint16          indexDetect     : 1;    /*!< Bit 0      : R/W - Has index been detected? */
-        Uint16          indexOffset     : 1;    /*!< Bit 1      : R/W - Is index compensation activated? */
-        Uint16          indexToggle     : 1;    /*!< Bit 2      : R/W - Toggle flag each time index is seen. */
-        Uint16          indexError      : 1;    /*!< Bit 3      : R/W - Mismatch between index and mechanical angle capture. */
-        Uint16          rollOverError   : 1;    /*!< Bit 4      : R/W - Roll-over error flag. */
-        Uint16          alignError      : 1;    /*!< Bit 5      : R/W - Detect an error on encoder (pole pairs mismatch, phases errors...) */
-        Uint16          ENC_TEST_RSV1   : 10;   /*!< Bit 6-15   : R/W - Reserved */
+        uint16_t        indexDetect     : 1;    /*!< Bit 0      : R/W - Has index been detected? */
+        uint16_t        indexOffset     : 1;    /*!< Bit 1      : R/W - Is index compensation activated? */
+        uint16_t        indexToggle     : 1;    /*!< Bit 2      : R/W - Toggle flag each time index is seen. */
+        uint16_t        indexError      : 1;    /*!< Bit 3      : R/W - Mismatch between index and mechanical angle capture. */
+        uint16_t        rollOverError   : 1;    /*!< Bit 4      : R/W - Roll-over error flag. */
+        uint16_t        alignError      : 1;    /*!< Bit 5      : R/W - Detect an error on encoder (pole pairs mismatch, phases errors...) */
+        uint16_t        ENC_TEST_RSV1   : 10;   /*!< Bit 6-15   : R/W - Reserved */
     };
 } enc_test_u;
 
@@ -38,15 +40,15 @@ typedef union __enc_test_u__
  */
 typedef struct __speed_t__
 {
-    float32             speedHighScaler;    /*!< High speed estimation - [rad/s/pu] - diff_angular * scaler = velocity */
-    float32             speedHigh;          /*!< High speed estimation -  [rad/s] - diff_angular * scaler = velocity */
-    float32             speedLowScaler;     /*!< Low speed estimation - [rad.register] - scaler / dtRegister = velocity */
-    float32             speedLow;           /*!< Low speed estimation - [rad/s] - scaler / dtRegister = velocity */
-    float32             alpha;              /*!< Speed merge coefficient */
+    float32_t           speedHighScaler;    /*!< High speed estimation - [rad/s/pu] - diff_angular * scaler = velocity */
+    float32_t           speedHigh;          /*!< High speed estimation -  [rad/s] - diff_angular * scaler = velocity */
+    float32_t           speedLowScaler;     /*!< Low speed estimation - [rad.register] - scaler / dtRegister = velocity */
+    float32_t           speedLow;           /*!< Low speed estimation - [rad/s] - scaler / dtRegister = velocity */
+    float32_t           alpha;              /*!< Speed merge coefficient */
     lpf_t               speedFlt[2];        /*!< Filter structure for speed filtering */
-    float32             speedMech[2];       /*!< Mechanical output speed - [rad/s] */
-    float32             speedElec;          /*!< Electrical output speed (pole pairs integration) - [rad/s] */
-    float32             theta[2];           /*!< Angular position of rotor - [pu] */
+    float32_t           speedMech[2];       /*!< Mechanical output speed - [rad/s] */
+    float32_t           speedElec;          /*!< Electrical output speed (pole pairs integration) - [rad/s] */
+    float32_t           theta[2];           /*!< Angular position of rotor - [pu] */
 } speed_t;
 
 /**
@@ -55,17 +57,17 @@ typedef struct __speed_t__
  */
 typedef struct __encoder_t__
 {
-    Uint32              eqepBase;           /*!< Address of EQEP peripheral used in HAL structure */
-    float32             polePairs;          /*!< Number of motor pole pairs */
-    float32             thetaElec;          /*!< Angular electrical position  - [pu] */
-    float32             thetaMech[2];       /*!< Angular mechanical position  - [pu] */
-    float32             thetaMechScaler;    /*!< Angular mechanical scaler - [pu/register] */
-    float32             thetaIndexRelative; /*!< Index mechanical angle */
-    float32             thetaIndexAbsolute; /*!< First index mechanical angle */
-    float32             thetaAbsolute;      /*!< Absolute angular position - [turns] */
+    uint32_t            eqepBase;           /*!< Address of EQEP peripheral used in HAL structure */
+    float32_t           polePairs;          /*!< Number of motor pole pairs */
+    float32_t           thetaElec;          /*!< Angular electrical position  - [pu] */
+    float32_t           thetaMech[2];       /*!< Angular mechanical position  - [pu] */
+    float32_t           thetaMechScaler;    /*!< Angular mechanical scaler - [pu/register] */
+    float32_t           thetaIndexRelative; /*!< Index mechanical angle */
+    float32_t           thetaIndexAbsolute; /*!< First index mechanical angle */
+    float32_t           thetaAbsolute;      /*!< Absolute angular position - [turns] */
     speed_t             speed;              /*!< Speed estimation structure */
-    int16               turnNb;             /*!< Number of full turns (signed) */
-    int16               thetaDir;           /*!< Rotor direction - -1 = CCW/reverse, 1 = CW/forward */
+    int16_t             turnNb;             /*!< Number of full turns (signed) */
+    int16_t             thetaDir;           /*!< Rotor direction - -1 = CCW/reverse, 1 = CW/forward */
     enc_test_u          flags;
 } encoder_t;
 
@@ -74,9 +76,5 @@ typedef struct __encoder_t__
  ***********************************************************************/
 #define MAX_ROLLOVER    (127)
 #define MIN_ROLLOVER    (-128)
-
-/***********************************************************************
- * FUNCTIONS DECLARATION
- ***********************************************************************/
 
 #endif /* __ENCODER_H__ */

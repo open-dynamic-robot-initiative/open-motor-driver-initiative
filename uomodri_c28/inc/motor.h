@@ -4,7 +4,7 @@
 /***********************************************************************
  * INCLUDE FILES
  ***********************************************************************/
-//#include "f2838x_device.h"
+#include "f2838x_device.h"
 #include "config/uomodri_user_defines.h"
 //#include "main.h"
 #include "foc.h"
@@ -82,10 +82,5 @@ typedef struct __motor_t__
     error_reg_u     error;                  /*!< Bit field for the error sources. */
     motor_state     state;                  /*!< Current motor state for the FSM. */
 } motor_t;
-
-/***********************************************************************
- * FUNCTIONS DECLARATION
- ***********************************************************************/
-//void MOT_initStruct(motor_t*, uint16_t);
 
 #endif /* __MOTOR_H__ */

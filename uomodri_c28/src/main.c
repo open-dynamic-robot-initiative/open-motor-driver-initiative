@@ -15,7 +15,10 @@
 
 //#include "communication.h"
 //#include "motor.h"
-#include "main.h"
+//#include "main.h"
+#include "communication.h"
+#include "foc.h"
+#include "motor.h"
 #include "hal.h"
 #include "drv8353.h"
 #include "ws2812b.h"

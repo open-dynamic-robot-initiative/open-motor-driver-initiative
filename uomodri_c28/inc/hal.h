@@ -17,7 +17,10 @@
 //#include "f2838x_cla_typedefs.h"  // F2838x CLA Type definitions
 //#include "f2838x_device.h"
 //#include "device.h"
-#include "config/uomodri_user_defines.h"
+#include "f2838x_device.h"
+#include "device.h"
+
+//#include "config/uomodri_user_defines.h"
 
 /***********************************************************************
  * DEFINES

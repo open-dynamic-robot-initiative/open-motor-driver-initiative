@@ -5,8 +5,11 @@
  * INCLUDES
  ***********************************************************************/
 #if defined(CPU1) || defined(CPU2)
-//#include "f2838x_device.h"
-#include "config/uomodri_user_defines.h"
+#include "f2838x_device.h"
+#include "motor.h"
+#include "foc.h"
+
+//#include "config/uomodri_user_defines.h"
 //#include "foc.h"
 //#include "motor.h"
 #else

@@ -1,10 +1,8 @@
 /***********************************************************************
  * INCLUDES
  ***********************************************************************/
-//#include <stdlib.h>
-#include "vcu2/vcu2_crc.h"
-
 #include "communication.h"
+#include "vcu2/vcu2_crc.h"
 //#include "uomodri_user_defines.h"
 //#include "uomodri_math.h"
 //#include "encoder.h"

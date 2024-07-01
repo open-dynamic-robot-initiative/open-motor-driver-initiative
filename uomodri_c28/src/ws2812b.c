@@ -14,7 +14,7 @@
  * @brief       Start \& configure the DRV ICs.
  * @param[in]   *p_drv      Pointer on the DRV definition structure
  */
-void ws2812b_writeLed(Uint16 red, Uint16 green, Uint16 blue, Uint16* p_led_colors)
+void ws2812b_writeLed(uint16_t red, uint16_t green, uint16_t blue, uint16_t* p_led_colors)
 {
     *p_led_colors++ = 0x0000;
     *p_led_colors++ = ws2812_color_table_r_justified[green][0];

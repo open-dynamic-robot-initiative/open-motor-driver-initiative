@@ -6,14 +6,19 @@
  ***********************************************************************/
 ////#include <stdint.h>
 #ifdef __TMS320C28XX_CLA__
-//#include "f2838x_cla_typedefs.h"
-//#include "CLAmath.h"
+#include "f2838x_cla_typedefs.h"
+#include "CLAmath.h"
+
+#include "f2838x_device.h"
+#include "device.h"
+
 #else
 #include <math.h>
 #endif
 
 ////#include "driverlib.h"
 #include "config/uomodri_user_defines.h"
+
 //#include "f2838x_device.h"
 //#include "device.h"
 
