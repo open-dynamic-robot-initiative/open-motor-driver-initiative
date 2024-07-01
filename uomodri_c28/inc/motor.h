@@ -6,7 +6,7 @@
  ***********************************************************************/
 //#include "f2838x_device.h"
 #include "config/uomodri_user_defines.h"
-#include "main.h"
+//#include "main.h"
 #include "foc.h"
 
 /***********************************************************************

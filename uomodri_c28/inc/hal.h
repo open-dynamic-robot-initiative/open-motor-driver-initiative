@@ -12,12 +12,12 @@
 //#include <stdbool.h>
 //#include <stdint.h>
 //#include <hw_types.h>
-#include "f2838x_device.h"
+//#include "f2838x_device.h"
 //#include "driverlib.h"
 //#include "f2838x_cla_typedefs.h"  // F2838x CLA Type definitions
 //#include "f2838x_device.h"
-#include "device.h"
-#include "uomodri_user_defines.h"
+//#include "device.h"
+#include "config/uomodri_user_defines.h"
 
 /***********************************************************************
  * DEFINES
@@ -391,6 +391,5 @@ typedef struct __HAL_CFG_t__
  ***********************************************************************/
 void HAL_ini(const hal_cfg_t*);
 void HAL_INT_ini(const int_cfg_t*);
-void HAL_DMA_ini(const dma_cfg_t*);
 
 #endif

@@ -6,22 +6,23 @@
  ***********************************************************************/
 ////#include <stdint.h>
 #ifdef __TMS320C28XX_CLA__
-#include "f2838x_cla_typedefs.h"
-#include "CLAmath.h"
+//#include "f2838x_cla_typedefs.h"
+//#include "CLAmath.h"
 #else
 #include <math.h>
 #endif
 
 ////#include "driverlib.h"
-#include "f2838x_device.h"
-#include "device.h"
+#include "config/uomodri_user_defines.h"
+//#include "f2838x_device.h"
+//#include "device.h"
 
 #include "foc.h"
 #include "encoder.h"
 #include "drv8353.h"
 #include "motor.h"
-#include "config/uomodri_math.h"
-#include "config/uomodri_user_defines.h"
+//#include "config/uomodri_math.h"
+
 
 /***********************************************************************
  * DEFINES

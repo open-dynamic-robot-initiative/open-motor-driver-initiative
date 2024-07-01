@@ -2,8 +2,8 @@
  * INCLUDE FILES
  ***********************************************************************/
 //#include "f2838x_device.h"
-#include "device.h"
-#include "uomodri_user_defines.h"
+//#include "device.h"
+#include "config/uomodri_user_defines.h"
 #include "drv8353.h"
 
 /***********************************************************************
@@ -96,7 +96,6 @@ static uint32_t DRV_Enable(const drv_cfg_t* p_drvCfg)
 //        return (2);
     return(drv_status_s.all);
 }
-
 
 /**
  * @brief       Initialize the DRV registers with defined structures.

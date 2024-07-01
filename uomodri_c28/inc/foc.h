@@ -7,7 +7,7 @@
 #if (defined CPU1) || (defined CPU2)
 //#include "device.h"
 #include "config/uomodri_user_defines.h"
-#include "main.h"
+//#include "main.h"
 #else
 #include <stdint.h>
 #include <hw_types.h>

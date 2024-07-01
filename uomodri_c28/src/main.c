@@ -6,68 +6,72 @@
 /***********************************************************************
  * INCLUDES
  ***********************************************************************/
-#include "f2838x_cla_typedefs.h"
+//#include "f2838x_cla_typedefs.h"
 //#include "f2838x_device.h"
-#include "device.h"
-#include "board.h"
+//#include "device.h"
+//#include "board.h"
 
-#include "communication.h"
-#include "motor.h"
-#include "drv8353.h"
+#include "config/uomodri_user_defines.h"
 
+//#include "communication.h"
+//#include "motor.h"
 #include "main.h"
 #include "hal.h"
-
+#include "drv8353.h"
 #include "ws2812b.h"
 
-#include "uomodri_user_defines.h"
 //#include "uomodri_hal_config_handlers.h"
 //#include "uomodri_prj_config_handlers.h"
 
 /***********************************************************************
- * VARIABLES
+ * EXTERNAL VARIABLES
  ***********************************************************************/
-#pragma DATA_ALIGN(com_spi_rx, 4)
-#pragma DATA_SECTION(com_spi_rx, "ramgs0")
-spi_rx_t                com_spi_rx;
-#pragma DATA_ALIGN(com_spi_tx, 4)
-#pragma DATA_SECTION(com_spi_tx, "ramgs0")
-spi_tx_t                com_spi_tx          = {.msg_cr = 0U, .msg_nx = 1U,
-                                               .msg[0].crc.u16_msb = 0xDFFF, .msg[0].crc.u16_lsb = 0x5283,
-                                               .msg[1].crc.u16_msb = 0xDFFF, .msg[1].crc.u16_lsb = 0x5283};
-#pragma DATA_ALIGN(com_rs485_rx, 4)
-#pragma DATA_SECTION(com_rs485_rx, "ramgs0")
-rs485_rx_t              com_rs485_rx        = {.index = 0U,
-                                               .addr1 = false, .addr2 = false};
-#pragma DATA_ALIGN(com_rs485_tx, 4)
-#pragma DATA_SECTION(com_rs485_tx, "ramgs0")
-rs485_tx_t              com_rs485_tx        = {.index = 0U,
-                                               .msg_cr = 0U, .msg_nx = 1U,
-                                               .msg[0].crc.u16_msb = 0x8CA0, .msg[0].crc.u16_lsb = 0x22CF,
-                                               .msg[1].crc.u16_msb = 0x8CA0, .msg[1].crc.u16_lsb = 0x22CF};
-#pragma DATA_ALIGN(led_spi_tx, 4)
-#pragma DATA_SECTION(led_spi_tx, "ramgs0")
-uint16_t                led_spi_tx[LED_MSG_TX_16BIT_LENGTH];
-#pragma DATA_ALIGN(com_bus_select, 2)
-#pragma DATA_SECTION(com_bus_select, "ramgs0")
-com_bus_e               com_bus_select      = COM_NO_BUS_DEFINED;
-#pragma DATA_ALIGN(global_1ms_tmr_cnt, 2)
-#pragma DATA_SECTION(global_1ms_tmr_cnt, "ramgs0")
-uint32_t                global_1ms_tmr_cnt  = 0U;
+//#pragma DATA_ALIGN(com_spi_rx, 4)
+//#pragma DATA_SECTION(com_spi_rx, "ramgs0")
+//spi_rx_t                com_spi_rx;
+//#pragma DATA_ALIGN(com_spi_tx, 4)
+//#pragma DATA_SECTION(com_spi_tx, "ramgs0")
+//spi_tx_t                com_spi_tx          = {.msg_cr = 0U, .msg_nx = 1U,
+//                                               .msg[0].crc.u16_msb = 0xDFFF, .msg[0].crc.u16_lsb = 0x5283,
+//                                               .msg[1].crc.u16_msb = 0xDFFF, .msg[1].crc.u16_lsb = 0x5283};
+//#pragma DATA_ALIGN(com_rs485_rx, 4)
+//#pragma DATA_SECTION(com_rs485_rx, "ramgs0")
+//rs485_rx_t              com_rs485_rx        = {.index = 0U,
+//                                               .addr1 = false, .addr2 = false};
+//#pragma DATA_ALIGN(com_rs485_tx, 4)
+//#pragma DATA_SECTION(com_rs485_tx, "ramgs0")
+//rs485_tx_t              com_rs485_tx        = {.index = 0U,
+//                                               .msg_cr = 0U, .msg_nx = 1U,
+//                                               .msg[0].crc.u16_msb = 0x8CA0, .msg[0].crc.u16_lsb = 0x22CF,
+//                                               .msg[1].crc.u16_msb = 0x8CA0, .msg[1].crc.u16_lsb = 0x22CF};
+//#pragma DATA_ALIGN(led_spi_tx, 4)
+//#pragma DATA_SECTION(led_spi_tx, "ramgs0")
+//uint16_t                led_spi_tx[LED_MSG_TX_16BIT_LENGTH];
+//#pragma DATA_ALIGN(com_bus_select, 2)
+//#pragma DATA_SECTION(com_bus_select, "ramgs0")
+//com_bus_e               com_bus_select      = COM_NO_BUS_DEFINED;
+//#pragma DATA_ALIGN(global_1ms_tmr_cnt, 2)
+//#pragma DATA_SECTION(global_1ms_tmr_cnt, "ramgs0")
+//uint32_t                global_1ms_tmr_cnt  = 0U;
 
 // External variables
-extern motor_t          motor_m1;
-extern motor_t          motor_m2;
-extern const hal_cfg_t  hal;
-extern cmd_t            cmd_uomodri[2];
+//extern motor_t          motor_m1;
+//extern motor_t          motor_m2;
+extern static const hal_cfg_t hal;
+extern static const int_cfg_t interruptList[];
+extern static const drv_cfg_t drv_cfg[];
+extern static       drv_reg_t drv_reg[];
+
+//extern cmd_t            cmd_uomodri[2];
 
 /***********************************************************************
  * FUNCTIONS DECLARATION
  ***********************************************************************/
 void main(void);
-static void MCU_ini(void);
-inline void LED_dimming(motor_t*, motor_t*, uint16_t*);
-void MOT_initMotorStruct(motor_t*, uint16_t);
+static void MAIN_initMCU(void);
+inline void MAIN_ledDimming(motor_t*, motor_t*, uint16_t*);
+void MAIN_initMotorStruct(motor_t*, uint16_t);
+void MAIN_initCmdStruct(cmd_t*);
 
 /***********************************************************************
  * FUNCTIONS DEFINITION
@@ -78,13 +82,13 @@ void MOT_initMotorStruct(motor_t*, uint16_t);
 void main(void)
 {
     // uOmodri low level device initialization
-    MCU_ini();
+    MAIN_initMCU();
     // Initialization of the shared structure used by CLA & C28 for Motor_1 & Motor_2
-    MOT_initMotorStruct(&motor_m1, MOTOR_1);
-    MOT_initMotorStruct(&motor_m2, MOTOR_2);
+    MAIN_initMotorStruct(&motor_m1, MOTOR_1);
+    MAIN_initMotorStruct(&motor_m2, MOTOR_2);
     // Initialization the command structure for CLA.
-    COM_initCmdStruct(&cmd_uomodri[MOTOR_1]);
-    COM_initCmdStruct(&cmd_uomodri[MOTOR_2]);
+    MAIN_initCmdStruct(&cmd_uomodri[MOTOR_1]);
+    MAIN_initCmdStruct(&cmd_uomodri[MOTOR_2]);
     // Hardware Abstraction Layer initialization
     HAL_ini(&hal);
     // DRV8353 initialization
@@ -93,7 +97,7 @@ void main(void)
     // Start ADC offset calibration on CLA
     CLA_forceTasks(CLA1_BASE, CLA_ADC_CALIB_TASK_FLAG);
     // Interrupts initialization
-    HAL_INT_ini(InterruptList);
+    HAL_INT_ini(interruptList);
     // Infinite loop
     while(1);
 }
@@ -106,7 +110,7 @@ void main(void)
  *                  - Configure the interruption vector table
  *                  - Boot CM from flash or RAM
  */
-static void MCU_ini(void)
+static void MAIN_initMCU(void)
 {
     /* Initialize clock and peripherals */
     Device_init();
@@ -174,7 +178,7 @@ static void MCU_ini(void)
  * @param[in]       p_motor Pointer on data structure array used for motor control.
  * @param[out]      p_msg   Pointer on the message to be sent to led via SPI.
  */
-inline void LED_dimming(motor_t* p_motor1, motor_t* p_motor2, uint16_t* p_msg)
+inline void MAIN_ledDimming(motor_t* p_motor1, motor_t* p_motor2, uint16_t* p_msg)
 {
     static uint16_t timer_cpt_ms        = 0;
     float32_t       timer_fade_blink    = (float32_t)((timer_cpt_ms < 500)  ? (timer_cpt_ms)    : (1000 - timer_cpt_ms)) / 500.0f;
@@ -222,7 +226,7 @@ inline void LED_dimming(motor_t* p_motor1, motor_t* p_motor2, uint16_t* p_msg)
  * @param           *p_motor    Pointer on the associated motor structure
  * @param           motor_id    Motor identifier.
  */
-void MOT_initMotorStruct(motor_t* p_motor, uint16_t motor_id)
+void MAIN_initMotorStruct(motor_t* p_motor, uint16_t motor_id)
 {
     if(motor_id == MOTOR_1)
     {
@@ -432,6 +436,26 @@ void MOT_initMotorStruct(motor_t* p_motor, uint16_t motor_id)
     return;
 }
 
+/**
+ * @brief           Command structure initialization for MOTOR_1 \& MOTOR_2
+ * @param[in]       p_cmd   Pointer on the command structure (actions to be realized by motor_foc)
+ */
+void MAIN_initCmdStruct(cmd_t* p_cmd)
+{
+    p_cmd->posRef           = 0.0f;
+    p_cmd->velRef           = 0.0f;
+    p_cmd->iqff             = 0.0f;
+    p_cmd->kpCoeff          = 0.0f;
+    p_cmd->kdCoeff          = 0.0f;
+//    p_cmd->iSat                 = 0.0f;
+    p_cmd->timeoutRef       = 0U;
+    p_cmd->cptTimeout       = 0U;
+    p_cmd->index            = 0U;
+    p_cmd->cmdField.all     = 0U;
+
+    return;
+}
+
 /***********************************************************************
  * INTERRUPT HANDLING FUNCTIONS DEFINITIONS
  ***********************************************************************/
@@ -531,11 +555,11 @@ __attribute__((interrupt)) void tmr_isrLedCmd(void)
 #ifdef DEBUG
 //    DBG_PIN2_SET;
 #endif
-    global_1ms_tmr_cnt = (global_1ms_tmr_cnt < uint32_t_MAX) ? (global_1ms_tmr_cnt + 1) : (0);
+    global_1ms_tmr_cnt = (global_1ms_tmr_cnt < UINT32_MAX) ? (global_1ms_tmr_cnt + 1) : (0);
     // LED dimming control
     if(!DMA_getRunStatusFlag(DMA_LED_SPI_TX_BASE_ADDR))
     {
-        LED_dimming(&motor_m1, &motor_m2, &led_spi_tx[0]);
+        MAIN_ledDimming(&motor_m1, &motor_m2, &led_spi_tx[0]);
         DMA_startChannel(DMA_LED_SPI_TX_BASE_ADDR);
     }
     // Timeout management

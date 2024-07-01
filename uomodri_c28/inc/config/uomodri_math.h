@@ -129,6 +129,7 @@
 #define LSB_64(x)                       ((x) & 0xFFFFFFFF)
 #define MSB_64(x)                       (((x) >> 32) & 0xFFFFFFFF)
 
+
 #define SWAP(x,y)                       do { \
                                             typeof(x) _x = x; \
                                             typeof(y) _y = y; \

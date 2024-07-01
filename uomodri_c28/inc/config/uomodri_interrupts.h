@@ -15,7 +15,7 @@
 
 #include "uomodri_user_defines.h"   // uOmodri Headerfile Include File
 //#include "f2838x_device.h"          // F2838x Headerfile Include File
-#include "device.h"
+//#include "device.h"
 //#include "driverlib.h"
 //#include "device.h"
 
@@ -28,21 +28,21 @@
 //#include "c2000ware_libraries.h"
 
 //#include "driverlib.h"
-#include "../hal.h"
+//#include "../hal.h"
 
 /***********************************************************************
  * FUNCTIONS DECLARATION
  ***********************************************************************/
-extern __attribute__((interrupt)) void cla_ClearTask(void);
-extern __attribute__((interrupt)) void cla_isrMotor1(void);
+__attribute__((interrupt)) void cla_ClearTask(void);
+__attribute__((interrupt)) void cla_isrMotor1(void);
 #if (USE_DUAL_AXIS_CONFIG == true)
-extern __attribute__((interrupt)) void cla_isrMotor2(void);
+__attribute__((interrupt)) void cla_isrMotor2(void);
 #endif
-extern __attribute__((interrupt)) void tmr_isrLedCmd(void);
-extern __attribute__((interrupt)) void dma_isrSpiComRx(void);
-extern __attribute__((interrupt)) void sci_isrRx_RS485(void);
-extern __attribute__((interrupt)) void sci_isrTx_RS485(void);
-extern __attribute__((interrupt)) void clb_isrTxRx_RS485(void);
+__attribute__((interrupt)) void tmr_isrLedCmd(void);
+__attribute__((interrupt)) void dma_isrSpiComRx(void);
+__attribute__((interrupt)) void sci_isrRx_RS485(void);
+__attribute__((interrupt)) void sci_isrTx_RS485(void);
+__attribute__((interrupt)) void clb_isrTxRx_RS485(void);
 
 /***********************************************************************
  * INTERRUPTS DEFINES
@@ -84,10 +84,10 @@ extern __attribute__((interrupt)) void clb_isrTxRx_RS485(void);
 /***********************************************************************
  * VARIABLES
  ***********************************************************************/
-/** @var    int_cfg_t   InterruptList[]
+/** @var    int_cfg_t   interruptList[]
  *  @brief  List all required interrupts configurations.
  */
-static const int_cfg_t InterruptList[] =
+static const int_cfg_t interruptList[] =
 {
  {
   .intNum           = INT_CLA_ADC_CALIB,

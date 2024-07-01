@@ -17,9 +17,9 @@
 
 //#include "uomodri_3_1_hal_defines.h"
 
-#include "../uomodri_user_defines.h"
-#include "../../communication.h"
-#include "../../hal.h"
+//#include "../uomodri_user_defines.h"
+//#include "../../communication.h"
+//#include "../../hal.h"
 
 //#include "uomodri_user_defines.h"
 //#include "hal.h"
@@ -37,12 +37,16 @@ extern uint16_t     led_spi_tx[LED_MSG_TX_16BIT_LENGTH];
 /***********************************************************************
  * FUNCTIONS DECLARATION
  ***********************************************************************/
-extern __attribute__((interrupt)) void adcCalib_Task(void);
-extern __attribute__((interrupt)) void cmdNew_Task(void);
-extern __attribute__((interrupt)) void motor1_Task(void);
+__attribute__((interrupt)) void adcCalib_Task(void);
+__attribute__((interrupt)) void cmdNew_Task(void);
+__attribute__((interrupt)) void motor1_Task(void);
 #if (USE_DUAL_AXIS_CONFIG == true)
-extern __attribute__((interrupt)) void motor2_Task(void);
+__attribute__((interrupt)) void motor2_Task(void);
 #endif
+__attribute__((interrupt)) void Cla1Task5(void);
+__attribute__((interrupt)) void Cla1Task6(void);
+__attribute__((interrupt)) void Cla1Task7(void);
+__attribute__((interrupt)) void Cla1Task8(void);
 
 /***********************************************************************
  * GPIOs STRUCTURE DECLARATION & INITIALIZATION

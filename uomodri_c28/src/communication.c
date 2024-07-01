@@ -22,6 +22,7 @@ uint32_t COM_vCRC32(uint16_t*, uint16_t);
 void SCI_txDisable(uint32_t);
 void SCI_txEnable(uint32_t);
 #endif
+
 /***********************************************************************
  * FUNCTIONS DEFINITIONS
  ***********************************************************************/
@@ -145,26 +146,6 @@ bool_t COM_msgCreate(motor_t* p_motor, slv2mst_msg_t* p_msg, uint32_t tmr_cnt)
 
         return(true);
     }
-}
-
-/**
- * @brief           Initialize the command structure for a motor
- * @param[in]       p_cmd   Pointer on the command structure (actions to be realized by motor_foc)
- */
-void COM_initCmdStruct(cmd_t* p_cmd)
-{
-    p_cmd->posRef           = 0.0f;
-    p_cmd->velRef           = 0.0f;
-    p_cmd->iqff             = 0.0f;
-    p_cmd->kpCoeff          = 0.0f;
-    p_cmd->kdCoeff          = 0.0f;
-//    p_cmd->iSat                 = 0.0f;
-    p_cmd->timeoutRef       = 0U;
-    p_cmd->cptTimeout       = 0U;
-    p_cmd->index            = 0U;
-    p_cmd->cmdField.all     = 0U;
-
-    return;
 }
 
 /**
