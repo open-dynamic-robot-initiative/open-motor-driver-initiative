@@ -355,8 +355,6 @@
 					</fileInfo>
 					<sourceEntries>
 						<entry excluding="src/motor.c|inc/configure" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name=""/>
-						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="inc/configure/motor"/>
-						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="inc/configure/encoder"/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>

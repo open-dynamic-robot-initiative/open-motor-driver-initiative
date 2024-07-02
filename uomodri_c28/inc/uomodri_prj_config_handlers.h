@@ -15,7 +15,8 @@
 #include "motor.h"
 #include "communication.h"
 #include "uomodri_user_defines.h"
-#include "uomodri_hal_config_handlers.h"
+//#include "uomodri_hal_config_handlers.h"
+#include "config/uomodri_3_1/uomodri_3_1_hal_handlers.h"
 
 /***********************************************************************
  * DEFINES
