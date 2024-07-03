@@ -9,7 +9,9 @@
 #include <math.h>
 #ifdef CPU1
 #include "f2838x_device.h"
-#include "motor.h"
+//#include "motor.h"
+#include "uomodri_shared.h"
+#include "uomodri_user_defines.h"
 #else
 #include <stddef.h>
 #include "uomodri_cm_user_defines.h"

@@ -9,24 +9,50 @@
 #include "driverlib.h"
 #include "device.h"
 #include "board.h"
+#include "CLAmath.h"
 
 #include "main.h"
 #include "hal.h"
 #include "drv8353.h"
 #include "ws2812b.h"
-#include "motor.h"
+//#include "motor.h"
 #include "communication.h"
 
+#include "uomodri_shared.h"
 #include "config/uomodri_math.h"
-
 #include "uomodri_user_defines.h"
 //#include "uomodri_hal_config_handlers.h"
 #include "config/uomodri_3_1/uomodri_3_1_hal_handlers.h"
-#include "uomodri_prj_config_handlers.h"
+//#include "uomodri_prj_config_handlers.h"
+#include "config/uomodri_interrupts.h"
+#include "config/uomodri_drv.h"
 
 /***********************************************************************
  * VARIABLES
  ***********************************************************************/
+
+/***********************************************************************
+ * GLOBAL VARIABLES
+ ***********************************************************************/
+//#pragma DATA_ALIGN(status_tmp_msg, 4)
+//#pragma DATA_SECTION(status_tmp_msg, "ramgs1")
+//slv2mst_msg_t   status_tmp_msg;
+
+/** @var    MOTOR_STRUCT    motor[]
+ *  @brief  General structure array configuration structure for the Hardware Abstraction Layer.
+ */
+#pragma DATA_ALIGN(motor_m1, 4)
+#pragma DATA_SECTION(motor_m1, "ClaDataMotor1");
+motor_t                 motor_m1;
+
+#pragma DATA_ALIGN(motor_m2, 4)
+#pragma DATA_SECTION(motor_m2, "ClaDataMotor2");
+motor_t                 motor_m2;
+
+#pragma DATA_ALIGN(cmd_uomodri, 4)
+#pragma DATA_SECTION(cmd_uomodri, "MSGRAM_CPU_TO_CLA")
+cmd_t                   cmd_uomodri[2];
+
 #pragma DATA_ALIGN(com_spi_rx, 4)
 #pragma DATA_SECTION(com_spi_rx, "ramgs0")
 spi_rx_t                com_spi_rx;
@@ -56,10 +82,10 @@ com_bus_e               com_bus_select      = COM_NO_BUS_DEFINED;
 uint32_t                global_1ms_tmr_cnt  = 0U;
 
 // External variables
-extern motor_t          motor_m1;
-extern motor_t          motor_m2;
+//extern motor_t          motor_m1;
+//extern motor_t          motor_m2;
 extern const hal_cfg_t  hal;
-extern cmd_t            cmd_uomodri[2];
+//extern cmd_t            cmd_uomodri[2];
 
 /***********************************************************************
  * FUNCTIONS DECLARATION
@@ -67,6 +93,7 @@ extern cmd_t            cmd_uomodri[2];
 void main(void);
 static void MCU_ini(void);
 inline void LED_dimming(motor_t*, motor_t*, uint16_t*);
+void MOT_initStruct(motor_t*, uint16_t);
 
 /***********************************************************************
  * FUNCTIONS DEFINITION
@@ -92,7 +119,7 @@ void main(void)
     // Start ADC offset calibration on CLA
     CLA_forceTasks(CLA1_BASE, CLA_ADC_CALIB_TASK_FLAG);
     // Interrupts initialization
-    HAL_INT_ini(InterruptList);
+    HAL_INT_ini(interruptList);
     // Infinite loop
     while(1);
 }

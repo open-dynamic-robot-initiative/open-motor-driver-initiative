@@ -8,6 +8,8 @@
 #include <string.h>
 #include <hw_types.h>
 
+#include "uomodri_user_defines.h"
+
 
 /***********************************************************************
  * ENUM TYPES
