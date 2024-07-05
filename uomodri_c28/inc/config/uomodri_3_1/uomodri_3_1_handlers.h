@@ -9,28 +9,18 @@
 /************************************************************************
  * INCLUDES
  ************************************************************************/
-//#include "f2838x_cla_typedefs.h"
-//#include "driverlib.h"
-//#include "f2838x_device.h"
-//#include "/home/jmanhes/ti/c2000/C2000Ware_5_02_00_00/device_support/f2838x/common/include/device.h"
-//#include <board.h>
+//#define "f2838x_device.h"
+//#define "device.h"
 
-//#include "uomodri_3_1_hal_defines.h"
-
-//#include "../uomodri_user_defines.h"
-//#include "../../communication.h"
-//#include "../../hal.h"
-
-//#include "uomodri_user_defines.h"
-//#include "hal.h"
-//#include "communication.h"
-
-//#include "uomodri_3_1_hal_defines.h"
-#include "hal.h"
-#include "communication.h"
-#include "../../uomodri_shared.h"
 #include "uomodri_3_1_hal_defines.h"
+#include "../../communication.h"
+#include "../../hal.h"
+#include "../../drv8353.h"
+#include "../../uomodri_user_defines.h"
+#include "../../uomodri_shared.h"
 
+//
+//#include "uomodri_3_1_hal_defines.h"
 
 /***********************************************************************
  * VARIABLES
@@ -45,9 +35,7 @@ extern uint16_t     led_spi_tx[LED_MSG_TX_16BIT_LENGTH];
 __attribute__((interrupt)) void adcCalib_Task(void);
 __attribute__((interrupt)) void cmdNew_Task(void);
 __attribute__((interrupt)) void motor1_Task(void);
-#if (USE_DUAL_AXIS_CONFIG == true)
 __attribute__((interrupt)) void motor2_Task(void);
-#endif
 __attribute__((interrupt)) void Cla1Task5(void);
 __attribute__((interrupt)) void Cla1Task6(void);
 __attribute__((interrupt)) void Cla1Task7(void);
@@ -468,7 +456,6 @@ static const drv_cfg_t  drv_cfg[] =
   .gpioNumber_EN            = MOTOR2_DRV_EN_NUM,
   .gpioNumber_FAULT         = MOTOR2_DRV_FAULT_NUM,
  },
-#endif
 };
 
 /** @var    drv_reg_t   drv_reg[]

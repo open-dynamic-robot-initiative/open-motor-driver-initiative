@@ -9,15 +9,20 @@ extern "C" {
  * INCLUDES
  ***********************************************************************/
 #include "f2838x_device.h"
-#include "driverlib.h"
+#include "device.h"
+//#include "driverlib.h"
 
+#include "config/uomodri_math.h"
 #include "uomodri_user_defines.h"
+#include "drv8353.h"
+
 //#include "config/uomodri_math.h"
 
 //#include "config/uomodri_3_1/uomodri_3_1_hal_defines.h"
 
-#include <stdint.h>
-#if (CLA_CORE_ENABLE)
+//#include <stdint.h>
+//#if (CLA_CORE_ENABLE)
+#ifdef __TMS320C28XX_CLA__
 //#include "f2838x_cla_typedefs.h"
 #include "CLAmath.h"
 #else
@@ -29,11 +34,11 @@ extern "C" {
 //#include "motor.h"
 //#include "encoder.h"
 
-
 /***********************************************************************
  * DEFINES
  ***********************************************************************/
-#if (CLA_CORE_ENABLE)
+//#if (CLA_CORE_ENABLE)
+#ifdef __TMS320C28XX_CLA__
 #define MMAX3(x, y, z)              (__mmaxf32(__mmaxf32((x), (y)), (z)))
 #define MMIN3(x, y, z)              (__mminf32(__mminf32((x), (y)), (z)))
 #define MSATF32(x, y, z)            (__mmaxf32(__mminf32((x), (y)), (z)))
@@ -438,12 +443,14 @@ typedef struct __motor_t__
 /***********************************************************************
  * FUNCTIONS DECLARATION
  ***********************************************************************/
-#if (CLA_CORE_ENABLE)
-extern float32_t __mminf32(float32_t, float32_t);
-extern float32_t __mmaxf32(float32_t, float32_t);
-extern float32_t __mfracf32(float32_t);
+//#if (CLA_CORE_ENABLE)
+#ifdef __TMS320C28XX_CLA__
+//extern float32_t __mminf32(float32_t, float32_t);
+//extern float32_t __mmaxf32(float32_t, float32_t);
+//extern float32_t __mfracf32(float32_t);
+
 //extern short __mgtu(unsigned int x , unsigned int y);
-//extern int16_t __mgtu(uint32_t, uint32_t);
+extern int16_t __mgtu(uint32_t, uint32_t);
 //extern float32_t CLAcos(float32_t);
 //extern float32_t CLAsin(float32_t);
 //extern void CLAsincos(float32_t, float32_t*, float32_t*);
@@ -496,6 +503,7 @@ bool_t MOT_runControl(motor_t*);
 inline float32_t __msatf32(float32_t a, float32_t sat_max, float32_t sat_min)
 {
     return(__mmaxf32(__mminf32(a, sat_max), sat_min));
+//    return(fmaxf(fminf(a, sat_max), sat_min));
 }
 #endif
 
@@ -619,7 +627,7 @@ inline void ENC_getPosition(encoder_t* p_enc)
     float32_t thetaElec     = (float32_t)p_enc->polePairs * p_enc->thetaMech[NEW];
     // Compute electrical & mechanical angle (in rad)
 #if (defined CPU1) && (CLA_CORE_ENABLE)
-    p_enc->thetaElec        = FM_ROUND2RAD * __mfracf32(thetaElec);
+    p_enc->thetaElec        = FM_ROUND2RAD * __mfracf32(thetaElec);//__fracf32(thetaElec);//
     p_enc->thetaMech[NEW]   = FM_ROUND2RAD * p_enc->thetaMech[NEW];
 #elif (defined CPU1)
     p_enc->thetaElec        = __mpy2pif32(__fracf32(thetaElec));

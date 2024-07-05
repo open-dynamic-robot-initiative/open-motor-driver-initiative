@@ -29,8 +29,9 @@
 //#include "board.h"
 //#include "c2000ware_libraries.h"
 
-#include <stdint.h>
-#include <driverlib.h>
+#include "f2838x_device.h"
+#include "device.h"
+//#include "uomodri_3_1/uomodri_3_1_handlers.h"
 
 //#include "hal.h"
 //#include "drv8353.h"
@@ -39,7 +40,6 @@
 //#include "communication.h"
 #include "uomodri_user_defines.h"
 //#include "uomodri_hal_config_handlers.h"
-#include "config/uomodri_3_1/uomodri_3_1_hal_handlers.h"
 
 
 //#include "driverlib.h"

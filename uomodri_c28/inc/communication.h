@@ -4,58 +4,109 @@
 /***********************************************************************
  * INCLUDES
  ***********************************************************************/
-#include <stdbool.h>
-#include <stdint.h>
-#include <math.h>
 #ifdef CPU1
 #include "f2838x_device.h"
 //#include "motor.h"
 #include "uomodri_shared.h"
-#include "uomodri_user_defines.h"
+//#include "uomodri_user_defines.h"
 #else
+#include <stdbool.h>
+#include <stdint.h>
+#include <math.h>
+
 #include <stddef.h>
 #include "uomodri_cm_user_defines.h"
 #endif
 
+
 /***********************************************************************
  * DEFINES
  ***********************************************************************/
-#define POLYNOMIAL_32_P1                            0x04C11DB7
-#define CRC_INIT_CRC32                              0xFFFFFFFF
+#define POLYNOMIAL_32_P1                        (0x04C11DB7)
+#define CRC_INIT_CRC32                          (0xFFFFFFFF)
 
-#define MSG_RX_ES_POS                               (15)
-#define MSG_RX_ES_MASK                              (1U << MSG_RX_ES_POS)
-#define MSG_RX_EM1_POS                              (14)
-#define MSG_RX_EM1_MASK                             (1U << MSG_RX_EM1_POS)
-#define MSG_RX_EM2_POS                              (13)
-#define MSG_RX_EM2_MASK                             (1U << MSG_RX_EM2_POS)
-#define MSG_RX_EPRE_POS                             (12)
-#define MSG_RX_EPRE_MASK                            (1U << MSG_RX_EPRE_POS)
-#define MSG_RX_EI1OC_POS                            (11)
-#define MSG_RX_EI1OC_MASK                           (1U << MSG_RX_EI1OC_POS)
-#define MSG_RX_EI2OC_POS                            (10)
-#define MSG_RX_EI2OC_MASK                           (1U << MSG_RX_EI2OC_POS)
-#define MSG_RX_TIMEOUT_POS                          (0)
-#define MSG_RX_TIMEOUT_MASK                         (0xFFU << MSG_RX_TIMEOUT_POS)
+#define MSG_RX_ES_POS                           (15)
+#define MSG_RX_ES_MASK                          (1U << MSG_RX_ES_POS)
+#define MSG_RX_EM1_POS                          (14)
+#define MSG_RX_EM1_MASK                         (1U << MSG_RX_EM1_POS)
+#define MSG_RX_EM2_POS                          (13)
+#define MSG_RX_EM2_MASK                         (1U << MSG_RX_EM2_POS)
+#define MSG_RX_EPRE_POS                         (12)
+#define MSG_RX_EPRE_MASK                        (1U << MSG_RX_EPRE_POS)
+#define MSG_RX_EI1OC_POS                        (11)
+#define MSG_RX_EI1OC_MASK                       (1U << MSG_RX_EI1OC_POS)
+#define MSG_RX_EI2OC_POS                        (10)
+#define MSG_RX_EI2OC_MASK                       (1U << MSG_RX_EI2OC_POS)
+#define MSG_RX_TIMEOUT_POS                      (0)
+#define MSG_RX_TIMEOUT_MASK                     (0xFFU << MSG_RX_TIMEOUT_POS)
 
-#define MSG_RX_ES                                   (0x8000)
-#define MSG_RX_EM1                                  (0x4000)
-#define MSG_RX_EM2                                  (0x2000)
-#define MSG_RX_EPRE                                 (0x1000)
-#define MSG_RX_EI1OC                                (0x0800)
-#define MSG_RX_EI2OC                                (0x0400)
-#define MSG_RX_TIMEOUT                              (0x00FF)
+#define MSG_RX_ES                               (0x8000)
+#define MSG_RX_EM1                              (0x4000)
+#define MSG_RX_EM2                              (0x2000)
+#define MSG_RX_EPRE                             (0x1000)
+#define MSG_RX_EI1OC                            (0x0800)
+#define MSG_RX_EI2OC                            (0x0400)
+#define MSG_RX_TIMEOUT                          (0x00FF)
 
-#define STATUS_ERROR_NO_ERROR                       (0) /*!< No error */
-#define STATUS_ERROR_ENCODER1                       (1) /*!< Encoder_1 error too high */
-#define STATUS_ERROR_SPI_RECV_TIMEOUT               (2) /*!< Timeout for receiving current references exceeded */
-#define STATUS_ERROR_CRIT_TEMP                      (3) /*!< Motor temperature reached critical valued */
-#define STATUS_ERROR_POSCONV                        (4) /*!< Unused error */
-#define STATUS_ERROR_POS_ROLLOVER                   (5) /*!< Position roll-over occurred */
-#define STATUS_ERROR_ENCODER2                       (6) /*!< Encoder_2 error too high */
-#define STATUS_ERROR_DRV_FAULT                      (7) /*!< Motor DRV nFault error */
+#define STATUS_ERROR_NO_ERROR                   (0) /*!< No error */
+#define STATUS_ERROR_ENCODER1                   (1) /*!< Encoder_1 error too high */
+#define STATUS_ERROR_SPI_RECV_TIMEOUT           (2) /*!< Timeout for receiving current references exceeded */
+#define STATUS_ERROR_CRIT_TEMP                  (3) /*!< Motor temperature reached critical valued */
+#define STATUS_ERROR_POSCONV                    (4) /*!< Unused error */
+#define STATUS_ERROR_POS_ROLLOVER               (5) /*!< Position roll-over occurred */
+#define STATUS_ERROR_ENCODER2                   (6) /*!< Encoder_2 error too high */
+#define STATUS_ERROR_DRV_FAULT                  (7) /*!< Motor DRV nFault error */
 //#define STATUS_ERROR_DRV1_FAULT                     (7) /*!< Motor1 DRV Fault error */
 //#define STATUS_ERROR_DRV2_FAULT                     (8) /*!< Motor2 DRV Fault error */
+
+#define COM_MSG_EXTRACT_TX_RX_MAX_SIZE          (64)
+#define COM_MSG_RS485_TX_RX_MAX_SIZE            (20)
+#define COM_MSG_RS485_RX_ADDRESS_1              (0x42)
+#define COM_MSG_RS485_RX_ADDRESS_2              (0x00)
+#define COM_MSG_RS485_TX_ADDRESS                (0xFF)
+#define COM_MSG_RS485_TX_TYPE_STANDARD          (0x00)
+
+#define COM_MSG_SPI_TX_16BIT_FULL_LENGTH        (sizeof(slv2mst_msg_t) + \
+                                                 sizeof(crc_reg_t))
+#define COM_MSG_SPI_TX_16BIT_PAYLOAD_LENGTH     (sizeof(slv2mst_msg_t))
+#define COM_MSG_SPI_TX_8BIT_FULL_LENGTH         (COM_MSG_SPI_TX_16BIT_FULL_LENGTH * 2)
+#define COM_MSG_SPI_TX_8BIT_PAYLOAD_LENGTH      (COM_MSG_SPI_TX_16BIT_PAYLOAD_LENGTH * 2)
+
+#define COM_MSG_SPI_RX_16BIT_FULL_LENGTH        (sizeof(mst2slv_msg_t) + \
+                                                 sizeof(crc_reg_t))
+#define COM_MSG_SPI_RX_16BIT_PAYLOAD_LENGTH     (sizeof(mst2slv_msg_t))
+#define COM_MSG_SPI_RX_8BIT_FULL_LENGTH         (COM_MSG_SPI_RX_16BIT_FULL_LENGTH * 2)
+#define COM_MSG_SPI_RX_8BIT_PAYLOAD_LENGTH      (COM_MSG_SPI_RX_16BIT_PAYLOAD_LENGTH * 2)
+
+#define COM_MSG_RS485_TX_16BIT_FULL_LENGTH      (sizeof(header_reg_u) + \
+                                                 sizeof(slv2mst_msg_t) + \
+                                                 sizeof(crc_reg_t))
+#define COM_MSG_RS485_TX_16BIT_PAYLOAD_LENGTH   (sizeof(header_reg_u) + \
+                                                 sizeof(slv2mst_msg_t))
+#define COM_MSG_RS485_TX_8BIT_FULL_LENGTH       (COM_MSG_RS485_TX_16BIT_FULL_LENGTH * 2)
+#define COM_MSG_RS485_TX_8BIT_PAYLOAD_LENGTH    (COM_MSG_RS485_TX_16BIT_PAYLOAD_LENGTH * 2)
+
+#define COM_MSG_RS485_RX_16BIT_FULL_LENGTH      (sizeof(header_reg_u) + \
+                                                 sizeof(mst2slv_msg_t) + \
+                                                 sizeof(crc_reg_t))
+#define COM_MSG_RS485_RX_16BIT_PAYLOAD_LENGTH   (sizeof(header_reg_u) + \
+                                                 sizeof(mst2slv_msg_t))
+#define COM_MSG_RS485_RX_8BIT_FULL_LENGTH       (COM_MSG_RS485_RX_16BIT_FULL_LENGTH * 2)
+#define COM_MSG_RS485_RX_8BIT_PAYLOAD_LENGTH    (COM_MSG_RS485_RX_16BIT_PAYLOAD_LENGTH * 2)
+
+#define LED_MSG_TX_16BIT_LENGTH                 (6)
+
+/***********************************************************************
+ * COMMUNICATION CONSTANTS
+ ***********************************************************************/
+#define POSITION_LSB                            (5.960464477539063e-08f)    // 2**(-24)
+#define VELOCITY_LSB                            (4.8828125e-04f)            // 2**(-11)
+#define IQ_LSB                                  (9.765625e-04f)             // 2**(-10)
+#define CURRENT_SAT_LSB                         (1.25e-01f)                 // 2**(-3)
+#define RESISTANCE_LSB                          (3.0517578125e-05f)         // 2**(-15)
+#define VOLTAGE_LSB                             (6.103515625e-05f)          // 2**(-14)
+#define KP_LSB                                  (4.8828125e-04f)            // 2**(-11)
+#define KD_LSB                                  (9.765625e-04f)             // 2**(-10)
 
 /***********************************************************************
  * COMMUNICATION CRC TABLE
@@ -284,12 +335,12 @@ typedef struct __slv2mst_msg_t__
 typedef struct __cmd_uomodri_t__
 {
     mst2slv_reg_u   mode;
-    float           posRef[2];
-    float           velRef[2];
-    float           iqRef[2];
-    float           kpCoeff[2];
-    float           kdCoeff[2];
-    float           iSat[2];
+    float32_t       posRef[2];
+    float32_t       velRef[2];
+    float32_t       iqRef[2];
+    float32_t       kpCoeff[2];
+    float32_t       kdCoeff[2];
+    float32_t       iSat[2];
     uint32_t        cptTimeout;
     uint16_t        index;
 } cmd_uomodri_t;
@@ -342,6 +393,7 @@ typedef struct __spi_tx_t__
 //        uint16_t    msg_RSV :14;
 //    };
 } spi_tx_t;
+
 
 /***********************************************************************
  * COMMUNICATION FOR RS485
@@ -409,6 +461,7 @@ typedef struct __rs485_tx_t__
 //        uint16_t    msg_RSV :14;
 //    };
 } rs485_tx_t;
+
 
 /***********************************************************************
  * COMMUNICATION STRUCTURES FOR SHARED DATA EXCHANGE (CPU1<->CM)
@@ -484,7 +537,6 @@ typedef union __word_32b_u__
     uint16_t        uint_16b[2];
     uint8_t         uint_8b[4];    /*!< */
 } word_32b_u;
-
 #ifndef CPU1
 typedef struct __bit_config_t__
 {

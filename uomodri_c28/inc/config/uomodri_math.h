@@ -9,9 +9,11 @@
 /************************************************************************
  * INCLUDES
  ************************************************************************/
+#include "../uomodri_user_defines.h"
 //#ifdef __TMS320C28XX_CLA__
-#if (CLA_CORE_ENABLE)
-//#include "f2838x_cla_typedefs.h"
+//#if (CLA_CORE_ENABLE)
+#ifdef __TMS320C28XX_CLA__
+////#include "f2838x_cla_typedefs.h"
 #include "CLAmath.h"
 #else
 #include <math.h>

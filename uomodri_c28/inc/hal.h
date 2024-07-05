@@ -9,14 +9,14 @@
 /***********************************************************************
  * INCLUDES
  ***********************************************************************/
-#include <stdbool.h>
-#include <stdint.h>
-#include <hw_types.h>
+//#include <stdbool.h>
+//#include <stdint.h>
+//#include <hw_types.h>
 #include "f2838x_device.h"
 #include "driverlib.h"
 
 #include "uomodri_user_defines.h"
-#include "config/uomodri_3_1/uomodri_3_1_hal_defines.h"
+//#include "config/uomodri_3_1/uomodri_3_1_hal_defines.h"
 
 /***********************************************************************
  * DEFINES

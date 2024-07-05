@@ -41,6 +41,9 @@
 #define CPU2_CORE_ENABLE                        (0)
 #define CM_CORE_ENABLE                          (0)
 #define CLA_CORE_ENABLE                         (1)
+#if (CLA_CORE_ENABLE) && (!defined __TMS320C28XX_CLA__)
+#define __TMS320C28XX_CLA__
+#endif
 #define CLB_TILE_ENABLE                         (1)
 // CM peripherals ENABLE/DISABLE
 #define USB_BUS_ENABLE                          (0)
@@ -120,71 +123,71 @@
 #define VEXT_LPF_ALPHA                          (VEXT_CUTOFF_TIME_CONST / (1.0f + VEXT_CUTOFF_TIME_CONST))
 #define VEXT_LPF_ONE_M_ALPHA                    (1.0f - VEXT_LPF_ALPHA)
 
-/***********************************************************************
- * COMMUNICATION DEFINES
- ***********************************************************************/
-#define COM_MSG_EXTRACT_TX_RX_MAX_SIZE          (64)
-#define COM_MSG_RS485_TX_RX_MAX_SIZE            (20)
-#define COM_MSG_RS485_RX_ADDRESS_1              (0x42)
-#define COM_MSG_RS485_RX_ADDRESS_2              (0x00)
-#define COM_MSG_RS485_TX_ADDRESS                (0xFF)
-#define COM_MSG_RS485_TX_TYPE_STANDARD          (0x00)
-
-//#define COM_MSG_SPI_TX_RX_8BIT_FULL_LENGTH      (34)
-//#define COM_MSG_SPI_TX_RX_16BIT_FULL_LENGTH     (COM_MSG_SPI_TX_RX_8BIT_FULL_LENGTH / 2)
-//#define COM_MSG_SPI_TX_RX_8BIT_CRC_LENGTH       (4)
-//#define COM_MSG_SPI_TX_RX_16BIT_CRC_LENGTH      (COM_MSG_SPI_TX_RX_8BIT_CRC_LENGTH / 2)
-//#define COM_MSG_SPI_TX_RX_16BIT_PAYLOAD_LENGTH  (COM_MSG_SPI_TX_RX_16BIT_FULL_LENGTH - COM_MSG_SPI_TX_RX_16BIT_CRC_LENGTH)
-//#define COM_MSG_SPI_TX_RX_8BIT_PAYLOAD_LENGTH   (COM_MSG_SPI_TX_RX_8BIT_FULL_LENGTH - COM_MSG_SPI_TX_RX_8BIT_CRC_LENGTH)
-
-//#define COM_MSG_RS485_TX_RX_8BIT_FULL_LENGTH    (2 + COM_MSG_SPI_TX_RX_8BIT_FULL_LENGTH)
-//#define COM_MSG_RS485_TX_RX_16BIT_FULL_LENGTH   (COM_MSG_RS485_TX_RX_8BIT_FULL_LENGTH / 2)
-//#define COM_MSG_RS485_TX_RX_8BIT_CRC_LENGTH     (COM_MSG_SPI_TX_RX_8BIT_CRC_LENGTH)
-//#define COM_MSG_RS485_TX_RX_16BIT_CRC_LENGTH    (COM_MSG_RS485_TX_RX_8BIT_CRC_LENGTH / 2)
-//#define COM_MSG_RS485_TX_RX_16BIT_PAYLOAD_LENGTH (COM_MSG_RS485_TX_RX_16BIT_FULL_LENGTH - COM_MSG_RS485_TX_RX_16BIT_CRC_LENGTH)
-//#define COM_MSG_RS485_TX_RX_8BIT_PAYLOAD_LENGTH (COM_MSG_RS485_TX_RX_8BIT_FULL_LENGTH - COM_MSG_RS485_TX_RX_8BIT_CRC_LENGTH)
-
-#define COM_MSG_SPI_TX_16BIT_FULL_LENGTH        (sizeof(slv2mst_msg_t) + \
-                                                 sizeof(crc_reg_t))
-#define COM_MSG_SPI_TX_16BIT_PAYLOAD_LENGTH     (sizeof(slv2mst_msg_t))
-#define COM_MSG_SPI_TX_8BIT_FULL_LENGTH         (COM_MSG_SPI_TX_16BIT_FULL_LENGTH * 2)
-#define COM_MSG_SPI_TX_8BIT_PAYLOAD_LENGTH      (COM_MSG_SPI_TX_16BIT_PAYLOAD_LENGTH * 2)
-
-#define COM_MSG_SPI_RX_16BIT_FULL_LENGTH        (sizeof(mst2slv_msg_t) + \
-                                                 sizeof(crc_reg_t))
-#define COM_MSG_SPI_RX_16BIT_PAYLOAD_LENGTH     (sizeof(mst2slv_msg_t))
-#define COM_MSG_SPI_RX_8BIT_FULL_LENGTH         (COM_MSG_SPI_RX_16BIT_FULL_LENGTH * 2)
-#define COM_MSG_SPI_RX_8BIT_PAYLOAD_LENGTH      (COM_MSG_SPI_RX_16BIT_PAYLOAD_LENGTH * 2)
-
-#define COM_MSG_RS485_TX_16BIT_FULL_LENGTH      (sizeof(header_reg_u) + \
-                                                 sizeof(slv2mst_msg_t) + \
-                                                 sizeof(crc_reg_t))
-#define COM_MSG_RS485_TX_16BIT_PAYLOAD_LENGTH   (sizeof(header_reg_u) + \
-                                                 sizeof(slv2mst_msg_t))
-#define COM_MSG_RS485_TX_8BIT_FULL_LENGTH       (COM_MSG_RS485_TX_16BIT_FULL_LENGTH * 2)
-#define COM_MSG_RS485_TX_8BIT_PAYLOAD_LENGTH    (COM_MSG_RS485_TX_16BIT_PAYLOAD_LENGTH * 2)
-
-#define COM_MSG_RS485_RX_16BIT_FULL_LENGTH      (sizeof(header_reg_u) + \
-                                                 sizeof(mst2slv_msg_t) + \
-                                                 sizeof(crc_reg_t))
-#define COM_MSG_RS485_RX_16BIT_PAYLOAD_LENGTH   (sizeof(header_reg_u) + \
-                                                 sizeof(mst2slv_msg_t))
-#define COM_MSG_RS485_RX_8BIT_FULL_LENGTH       (COM_MSG_RS485_RX_16BIT_FULL_LENGTH * 2)
-#define COM_MSG_RS485_RX_8BIT_PAYLOAD_LENGTH    (COM_MSG_RS485_RX_16BIT_PAYLOAD_LENGTH * 2)
-
-#define LED_MSG_TX_16BIT_LENGTH                 (6)
-
-/***********************************************************************
- * COMMUNICATION CONSTANTS
- ***********************************************************************/
-#define POSITION_LSB                            (5.960464477539063e-08f)    // 2**(-24)
-#define VELOCITY_LSB                            (4.8828125e-04f)            // 2**(-11)
-#define IQ_LSB                                  (9.765625e-04f)             // 2**(-10)
-#define CURRENT_SAT_LSB                         (1.25e-01f)                 // 2**(-3)
-#define RESISTANCE_LSB                          (3.0517578125e-05f)         // 2**(-15)
-#define VOLTAGE_LSB                             (6.103515625e-05f)          // 2**(-14)
-#define KP_LSB                                  (4.8828125e-04f)            // 2**(-11)
-#define KD_LSB                                  (9.765625e-04f)             // 2**(-10)
+///***********************************************************************
+// * COMMUNICATION DEFINES
+// ***********************************************************************/
+//#define COM_MSG_EXTRACT_TX_RX_MAX_SIZE          (64)
+//#define COM_MSG_RS485_TX_RX_MAX_SIZE            (20)
+//#define COM_MSG_RS485_RX_ADDRESS_1              (0x42)
+//#define COM_MSG_RS485_RX_ADDRESS_2              (0x00)
+//#define COM_MSG_RS485_TX_ADDRESS                (0xFF)
+//#define COM_MSG_RS485_TX_TYPE_STANDARD          (0x00)
+//
+////#define COM_MSG_SPI_TX_RX_8BIT_FULL_LENGTH      (34)
+////#define COM_MSG_SPI_TX_RX_16BIT_FULL_LENGTH     (COM_MSG_SPI_TX_RX_8BIT_FULL_LENGTH / 2)
+////#define COM_MSG_SPI_TX_RX_8BIT_CRC_LENGTH       (4)
+////#define COM_MSG_SPI_TX_RX_16BIT_CRC_LENGTH      (COM_MSG_SPI_TX_RX_8BIT_CRC_LENGTH / 2)
+////#define COM_MSG_SPI_TX_RX_16BIT_PAYLOAD_LENGTH  (COM_MSG_SPI_TX_RX_16BIT_FULL_LENGTH - COM_MSG_SPI_TX_RX_16BIT_CRC_LENGTH)
+////#define COM_MSG_SPI_TX_RX_8BIT_PAYLOAD_LENGTH   (COM_MSG_SPI_TX_RX_8BIT_FULL_LENGTH - COM_MSG_SPI_TX_RX_8BIT_CRC_LENGTH)
+//
+////#define COM_MSG_RS485_TX_RX_8BIT_FULL_LENGTH    (2 + COM_MSG_SPI_TX_RX_8BIT_FULL_LENGTH)
+////#define COM_MSG_RS485_TX_RX_16BIT_FULL_LENGTH   (COM_MSG_RS485_TX_RX_8BIT_FULL_LENGTH / 2)
+////#define COM_MSG_RS485_TX_RX_8BIT_CRC_LENGTH     (COM_MSG_SPI_TX_RX_8BIT_CRC_LENGTH)
+////#define COM_MSG_RS485_TX_RX_16BIT_CRC_LENGTH    (COM_MSG_RS485_TX_RX_8BIT_CRC_LENGTH / 2)
+////#define COM_MSG_RS485_TX_RX_16BIT_PAYLOAD_LENGTH (COM_MSG_RS485_TX_RX_16BIT_FULL_LENGTH - COM_MSG_RS485_TX_RX_16BIT_CRC_LENGTH)
+////#define COM_MSG_RS485_TX_RX_8BIT_PAYLOAD_LENGTH (COM_MSG_RS485_TX_RX_8BIT_FULL_LENGTH - COM_MSG_RS485_TX_RX_8BIT_CRC_LENGTH)
+//
+//#define COM_MSG_SPI_TX_16BIT_FULL_LENGTH        (sizeof(slv2mst_msg_t) + \
+//                                                 sizeof(crc_reg_t))
+//#define COM_MSG_SPI_TX_16BIT_PAYLOAD_LENGTH     (sizeof(slv2mst_msg_t))
+//#define COM_MSG_SPI_TX_8BIT_FULL_LENGTH         (COM_MSG_SPI_TX_16BIT_FULL_LENGTH * 2)
+//#define COM_MSG_SPI_TX_8BIT_PAYLOAD_LENGTH      (COM_MSG_SPI_TX_16BIT_PAYLOAD_LENGTH * 2)
+//
+//#define COM_MSG_SPI_RX_16BIT_FULL_LENGTH        (sizeof(mst2slv_msg_t) + \
+//                                                 sizeof(crc_reg_t))
+//#define COM_MSG_SPI_RX_16BIT_PAYLOAD_LENGTH     (sizeof(mst2slv_msg_t))
+//#define COM_MSG_SPI_RX_8BIT_FULL_LENGTH         (COM_MSG_SPI_RX_16BIT_FULL_LENGTH * 2)
+//#define COM_MSG_SPI_RX_8BIT_PAYLOAD_LENGTH      (COM_MSG_SPI_RX_16BIT_PAYLOAD_LENGTH * 2)
+//
+//#define COM_MSG_RS485_TX_16BIT_FULL_LENGTH      (sizeof(header_reg_u) + \
+//                                                 sizeof(slv2mst_msg_t) + \
+//                                                 sizeof(crc_reg_t))
+//#define COM_MSG_RS485_TX_16BIT_PAYLOAD_LENGTH   (sizeof(header_reg_u) + \
+//                                                 sizeof(slv2mst_msg_t))
+//#define COM_MSG_RS485_TX_8BIT_FULL_LENGTH       (COM_MSG_RS485_TX_16BIT_FULL_LENGTH * 2)
+//#define COM_MSG_RS485_TX_8BIT_PAYLOAD_LENGTH    (COM_MSG_RS485_TX_16BIT_PAYLOAD_LENGTH * 2)
+//
+//#define COM_MSG_RS485_RX_16BIT_FULL_LENGTH      (sizeof(header_reg_u) + \
+//                                                 sizeof(mst2slv_msg_t) + \
+//                                                 sizeof(crc_reg_t))
+//#define COM_MSG_RS485_RX_16BIT_PAYLOAD_LENGTH   (sizeof(header_reg_u) + \
+//                                                 sizeof(mst2slv_msg_t))
+//#define COM_MSG_RS485_RX_8BIT_FULL_LENGTH       (COM_MSG_RS485_RX_16BIT_FULL_LENGTH * 2)
+//#define COM_MSG_RS485_RX_8BIT_PAYLOAD_LENGTH    (COM_MSG_RS485_RX_16BIT_PAYLOAD_LENGTH * 2)
+//
+//#define LED_MSG_TX_16BIT_LENGTH                 (6)
+//
+///***********************************************************************
+// * COMMUNICATION CONSTANTS
+// ***********************************************************************/
+//#define POSITION_LSB                            (5.960464477539063e-08f)    // 2**(-24)
+//#define VELOCITY_LSB                            (4.8828125e-04f)            // 2**(-11)
+//#define IQ_LSB                                  (9.765625e-04f)             // 2**(-10)
+//#define CURRENT_SAT_LSB                         (1.25e-01f)                 // 2**(-3)
+//#define RESISTANCE_LSB                          (3.0517578125e-05f)         // 2**(-15)
+//#define VOLTAGE_LSB                             (6.103515625e-05f)          // 2**(-14)
+//#define KP_LSB                                  (4.8828125e-04f)            // 2**(-11)
+//#define KD_LSB                                  (9.765625e-04f)             // 2**(-10)
 
 /************************************************************************
  * INCLUDES
@@ -203,17 +206,17 @@
 #include "config/encoder/broadcom_aedt_9810_z00.h"      // BROADCOM AEDT-9810-Z00 encoder definitions
 #include "config/encoder/cui_amt112s_4096_5000_s.h"     // CUI AMT112S-4096-5000-s encoder definitions
 
-#if (USE_UOMODRI_REV == USE_UOMODRI_V1)
-//
-#elif (USE_UOMODRI_REV == USE_UOMODRI_V2)
-//
-#elif (USE_UOMODRI_REV == USE_UOMODRI_V3)
-#include "config/uomodri_3_1/uomodri_3_1_hal_defines.h"    // uOmodri v3.1 definitions
-#include "config/uomodri_3_1/uomodri_3_1_hal_handlers.h"   // uOmodri v3.1 configuration include file
-#elif (USE_UOMODRI_REV == USE_UOMODRI_SA_V1)
-//
-#else
-#error "@ least one config must be set @ a time."
-#endif
+//#if (USE_UOMODRI_REV == USE_UOMODRI_V1)
+////
+//#elif (USE_UOMODRI_REV == USE_UOMODRI_V2)
+////
+//#elif (USE_UOMODRI_REV == USE_UOMODRI_V3)
+//#include "config/uomodri_3_1/uomodri_3_1_hal_defines.h"    // uOmodri v3.1 definitions
+//#include "config/uomodri_3_1/uomodri_3_1_handlers.h"   // uOmodri v3.1 configuration include file
+//#elif (USE_UOMODRI_REV == USE_UOMODRI_SA_V1)
+////
+//#else
+//#error "@ least one config must be set @ a time."
+//#endif
 
 #endif /* __UOMODRI_USER_DEFINES_H__ */
