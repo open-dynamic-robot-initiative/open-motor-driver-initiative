@@ -12,20 +12,12 @@
 #include "../uomodri_user_defines.h"
 //#ifdef __TMS320C28XX_CLA__
 //#if (CLA_CORE_ENABLE)
-#ifdef __TMS320C28XX_CLA__
+//#ifdef __TMS320C28XX_CLA__
 ////#include "f2838x_cla_typedefs.h"
-#include "CLAmath.h"
-#else
-#include <math.h>
-#endif
-//#include "f2838x_cla_typedefs.h"
-//#include "hw_types.h"
-//#include <stdint.h>
-//#include "driverlib.h"
-//#include "device.h"
-//#include "f2838x_device.h"
-//#include "device.h"
-//#include "uomodri_user_defines.h"
+//#include "CLAmath.h"
+//#else
+//#include <math.h>
+//#endif
 
 /***********************************************************************
  * GLOBAL MACROS

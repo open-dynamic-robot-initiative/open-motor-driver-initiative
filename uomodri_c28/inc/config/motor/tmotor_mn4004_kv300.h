@@ -32,8 +32,7 @@
 #define TMOTOR_MN4004_KV300_FIX_INIT_DELAY                  (2.0f)      // in seconds
 #define TMOTOR_MN4004_KV300_FIX_INIT_EVT                    (TMOTOR_MN4004_KV300_FIX_INIT_DELAY * PWM_FREQ)
 #define TMOTOR_MN4004_KV300_CURRENT_INIT_DELAY              (0.5f)      // in seconds
-#define TMOTOR_MN4004_KV300_CURRENT_INIT_EVT                (TMOTOR_MN4004_KV300_CURRENT_INIT_DELAY * \
-                                                             PWM_FREQ)
+#define TMOTOR_MN4004_KV300_CURRENT_INIT_EVT                (TMOTOR_MN4004_KV300_CURRENT_INIT_DELAY * PWM_FREQ)
 #define TMOTOR_MN4004_KV300_CURRENT_INIT_STEP               (TMOTOR_MN4004_KV300_CURRENT_INIT_MAX / \
                                                              TMOTOR_MN4004_KV300_CURRENT_INIT_EVT)
 #define TMOTOR_MN4004_KV300_POSITION_INIT_MAX               FM_2MULTPI

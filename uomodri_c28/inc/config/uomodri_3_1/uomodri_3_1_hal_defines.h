@@ -15,14 +15,6 @@
 
 //#include "device.h"                 // F2838x Headerfile Include File
 #include "driverlib.h"
-//#include "adc.h"
-//#include "epwm.h"
-//#include "hw_dma.h"
-//#include "dma.h"
-//#include "f2838x_device.h"
-//#include "uomodri_3_1/uomodri_3_1_hal_defines.h"
-//#include "uomodri_user_defines.h"
-//#include "drv8353.h"
 
 /***********************************************************************
  * GPIO DEFINES
@@ -34,8 +26,8 @@
                                                     .fctMux         = (uint32_t)MOTOR1_PWM1_CHA_CFG, \
                                                     .direction      = (GPIO_Direction)GPIO_DIR_MODE_OUT, \
                                                     .samplingInMode = (GPIO_QualificationMode)GPIO_QUAL_ASYNC, \
-                                                    .setValue       = 0, \
-                                                    .intEnable      = false, \
+                                                    .setValue       = (bool_t)false, \
+                                                    .intEnable      = (bool_t)false, \
                                                 }
 
 #define MOTOR1_PWM1_CHB_NUM                     (1U)
@@ -45,8 +37,8 @@
                                                     .fctMux         = (uint32_t)MOTOR1_PWM1_CHB_CFG, \
                                                     .direction      = (GPIO_Direction)GPIO_DIR_MODE_OUT, \
                                                     .samplingInMode = (GPIO_QualificationMode)GPIO_QUAL_ASYNC, \
-                                                    .setValue       = 1, \
-                                                    .intEnable      = false, \
+                                                    .setValue       = (bool_t)true, \
+                                                    .intEnable      = (bool_t)false, \
                                                 }
 
 #define MOTOR1_PWM2_CHA_NUM                     (2U)
@@ -56,8 +48,8 @@
                                                     .fctMux         = (uint32_t)MOTOR1_PWM2_CHA_CFG, \
                                                     .direction      = (GPIO_Direction)GPIO_DIR_MODE_OUT, \
                                                     .samplingInMode = (GPIO_QualificationMode)GPIO_QUAL_ASYNC, \
-                                                    .setValue       = 0, \
-                                                    .intEnable      = false, \
+                                                    .setValue       = (bool_t)false, \
+                                                    .intEnable      = (bool_t)false, \
                                                 }
 
 #define MOTOR1_PWM2_CHB_NUM                     (3U)
@@ -67,8 +59,8 @@
                                                     .fctMux         = (uint32_t)MOTOR1_PWM2_CHB_CFG, \
                                                     .direction      = (GPIO_Direction)GPIO_DIR_MODE_OUT, \
                                                     .samplingInMode = (GPIO_QualificationMode)GPIO_QUAL_ASYNC, \
-                                                    .setValue       = 1, \
-                                                    .intEnable      = false, \
+                                                    .setValue       = (bool_t)true, \
+                                                    .intEnable      = (bool_t)false, \
                                                 }
 
 #define MOTOR1_PWM3_CHA_NUM                     (4U)
@@ -78,8 +70,8 @@
                                                     .fctMux         = (uint32_t)MOTOR1_PWM3_CHA_CFG, \
                                                     .direction      = (GPIO_Direction)GPIO_DIR_MODE_OUT, \
                                                     .samplingInMode = (GPIO_QualificationMode)GPIO_QUAL_ASYNC, \
-                                                    .setValue       = 0, \
-                                                    .intEnable      = false, \
+                                                    .setValue       = (bool_t)false, \
+                                                    .intEnable      = (bool_t)false, \
                                                 }
 
 #define MOTOR1_PWM3_CHB_NUM                     (5U)
@@ -89,8 +81,8 @@
                                                     .fctMux         = (uint32_t)MOTOR1_PWM3_CHB_CFG, \
                                                     .direction      = (GPIO_Direction)GPIO_DIR_MODE_OUT, \
                                                     .samplingInMode = (GPIO_QualificationMode)GPIO_QUAL_ASYNC, \
-                                                    .setValue       = 1, \
-                                                    .intEnable      = false, \
+                                                    .setValue       = (bool_t)true, \
+                                                    .intEnable      = (bool_t)false, \
                                                 }
 
 #define MOTOR2_PWM1_CHA_NUM                     (6U)
@@ -100,8 +92,8 @@
                                                     .fctMux         = (uint32_t)MOTOR2_PWM1_CHA_CFG, \
                                                     .direction      = (GPIO_Direction)GPIO_DIR_MODE_OUT, \
                                                     .samplingInMode = (GPIO_QualificationMode)GPIO_QUAL_ASYNC, \
-                                                    .setValue       = 0, \
-                                                    .intEnable      = false, \
+                                                    .setValue       = (bool_t)false, \
+                                                    .intEnable      = (bool_t)false, \
                                                 }
 
 #define MOTOR2_PWM1_CHB_NUM                     (7U)
@@ -111,8 +103,8 @@
                                                     .fctMux         = (uint32_t)MOTOR2_PWM1_CHB_CFG, \
                                                     .direction      = (GPIO_Direction)GPIO_DIR_MODE_OUT, \
                                                     .samplingInMode = (GPIO_QualificationMode)GPIO_QUAL_ASYNC, \
-                                                    .setValue       = 1, \
-                                                    .intEnable      = false, \
+                                                    .setValue       = (bool_t)true, \
+                                                    .intEnable      = (bool_t)false, \
                                                 }
 
 #define MOTOR2_PWM2_CHA_NUM                     (8U)
@@ -122,8 +114,8 @@
                                                     .fctMux         = (uint32_t)MOTOR2_PWM2_CHA_CFG, \
                                                     .direction      = (GPIO_Direction)GPIO_DIR_MODE_OUT, \
                                                     .samplingInMode = (GPIO_QualificationMode)GPIO_QUAL_ASYNC, \
-                                                    .setValue       = 0, \
-                                                    .intEnable      = false, \
+                                                    .setValue       = (bool_t)false, \
+                                                    .intEnable      = (bool_t)false, \
                                                 }
 
 #define MOTOR2_PWM2_CHB_NUM                     (9U)
@@ -133,8 +125,8 @@
                                                     .fctMux         = (uint32_t)MOTOR2_PWM2_CHB_CFG, \
                                                     .direction      = (GPIO_Direction)GPIO_DIR_MODE_OUT, \
                                                     .samplingInMode = (GPIO_QualificationMode)GPIO_QUAL_ASYNC, \
-                                                    .setValue       = 1, \
-                                                    .intEnable      = false, \
+                                                    .setValue       = (bool_t)true, \
+                                                    .intEnable      = (bool_t)false, \
                                                 }
 
 #define MOTOR2_PWM3_CHA_NUM                     (10U)
@@ -144,8 +136,8 @@
                                                     .fctMux         = (uint32_t)MOTOR2_PWM3_CHA_CFG, \
                                                     .direction      = (GPIO_Direction)GPIO_DIR_MODE_OUT, \
                                                     .samplingInMode = (GPIO_QualificationMode)GPIO_QUAL_ASYNC, \
-                                                    .setValue       = 0, \
-                                                    .intEnable      = false, \
+                                                    .setValue       = (bool_t)false, \
+                                                    .intEnable      = (bool_t)false, \
                                                 }
 
 #define MOTOR2_PWM3_CHB_NUM                     (11U)
@@ -155,8 +147,8 @@
                                                     .fctMux         = (uint32_t)MOTOR2_PWM3_CHB_CFG, \
                                                     .direction      = (GPIO_Direction)GPIO_DIR_MODE_OUT, \
                                                     .samplingInMode = (GPIO_QualificationMode)GPIO_QUAL_ASYNC, \
-                                                    .setValue       = 1, \
-                                                    .intEnable      = false, \
+                                                    .setValue       = (bool_t)true, \
+                                                    .intEnable      = (bool_t)false, \
                                                 }
 
 #define RS485_TX_NUM                            (12U)
@@ -166,8 +158,8 @@
                                                     .fctMux         = (uint32_t)RS485_TX_CFG, \
                                                     .direction      = (GPIO_Direction)GPIO_DIR_MODE_OUT, \
                                                     .samplingInMode = (GPIO_QualificationMode)GPIO_QUAL_ASYNC, \
-                                                    .setValue       = 0, \
-                                                    .intEnable      = false, \
+                                                    .setValue       = (bool_t)false, \
+                                                    .intEnable      = (bool_t)false, \
                                                 }
 
 #define RS485_RX_NUM                            (13U)
@@ -177,8 +169,8 @@
                                                     .fctMux         = (uint32_t)RS485_RX_CFG, \
                                                     .direction      = (GPIO_Direction)GPIO_DIR_MODE_IN, \
                                                     .samplingInMode = (GPIO_QualificationMode)GPIO_QUAL_ASYNC, \
-                                                    .setValue       = 0, \
-                                                    .intEnable      = false, \
+                                                    .setValue       = (bool_t)false, \
+                                                    .intEnable      = (bool_t)false, \
                                                 }
 
 #define DRV_SPI_SIMO_NUM                        (16U)
@@ -188,8 +180,8 @@
                                                     .fctMux         = (uint32_t)GPIO_16_SPIA_SIMO, \
                                                     .direction      = (GPIO_Direction)GPIO_DIR_MODE_OUT, \
                                                     .samplingInMode = (GPIO_QualificationMode)GPIO_QUAL_ASYNC, \
-                                                    .setValue       = 1, \
-                                                    .intEnable      = false, \
+                                                    .setValue       = (bool_t)true, \
+                                                    .intEnable      = (bool_t)false, \
                                                 }
 
 #define DRV_SPI_SOMI_NUM                        (17U)
@@ -199,8 +191,8 @@
                                                     .fctMux         = (uint32_t)GPIO_17_SPIA_SOMI, \
                                                     .direction      = (GPIO_Direction)GPIO_DIR_MODE_IN, \
                                                     .samplingInMode = (GPIO_QualificationMode)GPIO_QUAL_SYNC, \
-                                                    .setValue       = 0, \
-                                                    .intEnable      = false, \
+                                                    .setValue       = (bool_t)false, \
+                                                    .intEnable      = (bool_t)false, \
                                                 }
 
 #define DRV_SPI_CLK_NUM                         (18U)
@@ -210,8 +202,8 @@
                                                     .fctMux         = (uint32_t)DRV_SPI_CLK_CFG, \
                                                     .direction      = (GPIO_Direction)GPIO_DIR_MODE_OUT, \
                                                     .samplingInMode = (GPIO_QualificationMode)GPIO_QUAL_ASYNC, \
-                                                    .setValue       = 1, \
-                                                    .intEnable      = false, \
+                                                    .setValue       = (bool_t)true, \
+                                                    .intEnable      = (bool_t)false, \
                                                 }
 
 #define CAN_FD_TX_NUM                           (22U)
@@ -233,8 +225,8 @@
                                                     .fctMux         = (uint32_t)MOTOR2_DRV_SPI_CS_CFG, \
                                                     .direction      = (GPIO_Direction)GPIO_DIR_MODE_OUT, \
                                                     .samplingInMode = (GPIO_QualificationMode)GPIO_QUAL_ASYNC, \
-                                                    .setValue       = 1, \
-                                                    .intEnable      = false, \
+                                                    .setValue       = (bool_t)true, \
+                                                    .intEnable      = (bool_t)false, \
                                                 }
 #define MOTOR2_DRV_SPI_CS_SET                   (HWREG(GPIODATA_BASE + GPIO_O_GPASET)   = GPIO_GPASET_GPIO30)
 #define MOTOR2_DRV_SPI_CS_CLEAR                 (HWREG(GPIODATA_BASE + GPIO_O_GPACLEAR) = GPIO_GPACLEAR_GPIO30)
@@ -247,8 +239,8 @@
                                                     .fctMux         = (uint32_t)MOTOR2_DRV_EN_CFG, \
                                                     .direction      = (GPIO_Direction)GPIO_DIR_MODE_OUT, \
                                                     .samplingInMode = (GPIO_QualificationMode)GPIO_QUAL_ASYNC, \
-                                                    .setValue       = 0, \
-                                                    .intEnable      = false, \
+                                                    .setValue       = (bool_t)false, \
+                                                    .intEnable      = (bool_t)false, \
                                                 }
 #define MOTOR2_DRV_EN_SET                       (HWREG(GPIODATA_BASE + GPIO_O_GPASET)   = GPIO_GPASET_GPIO31)
 #define MOTOR2_DRV_EN_CLEAR                     (HWREG(GPIODATA_BASE + GPIO_O_GPACLEAR) = GPIO_GPACLEAR_GPIO31)
@@ -302,8 +294,8 @@
                                                     .fctMux         = (uint32_t)COM_SPI_SIMO_CFG, \
                                                     .direction      = (GPIO_Direction)GPIO_DIR_MODE_IN, \
                                                     .samplingInMode = (GPIO_QualificationMode)GPIO_QUAL_ASYNC, \
-                                                    .setValue       = 0, \
-                                                    .intEnable      = false, \
+                                                    .setValue       = (bool_t)false, \
+                                                    .intEnable      = (bool_t)false, \
                                                 }
 
 #define COM_SPI_SOMI_NUM                        (64U)
@@ -313,8 +305,8 @@
                                                     .fctMux         = (uint32_t)COM_SPI_SOMI_CFG, \
                                                     .direction      = (GPIO_Direction)GPIO_DIR_MODE_OUT, \
                                                     .samplingInMode = (GPIO_QualificationMode)GPIO_QUAL_ASYNC, \
-                                                    .setValue       = 0, \
-                                                    .intEnable      = false, \
+                                                    .setValue       = (bool_t)false, \
+                                                    .intEnable      = (bool_t)false, \
                                                 }
 
 #define COM_SPI_CLK_NUM                         (65U)
@@ -324,8 +316,8 @@
                                                     .fctMux         = (uint32_t)COM_SPI_CLK_CFG, \
                                                     .direction      = (GPIO_Direction)GPIO_DIR_MODE_IN, \
                                                     .samplingInMode = (GPIO_QualificationMode)GPIO_QUAL_ASYNC, \
-                                                    .setValue       = 0, \
-                                                    .intEnable      = false, \
+                                                    .setValue       = (bool_t)false, \
+                                                    .intEnable      = (bool_t)false, \
                                                 }
 
 #define COM_SPI_CS_NUM                          (66U)
@@ -335,8 +327,8 @@
                                                     .fctMux         = (uint32_t)COM_SPI_CS_CFG, \
                                                     .direction      = (GPIO_Direction)GPIO_DIR_MODE_IN, \
                                                     .samplingInMode = (GPIO_QualificationMode)GPIO_QUAL_ASYNC, \
-                                                    .setValue       = 0, \
-                                                    .intEnable      = false, \
+                                                    .setValue       = (bool_t)false, \
+                                                    .intEnable      = (bool_t)false, \
                                                 }
 #define COM_SPI_CS_READ                         (HWREG(GPIODATA_BASE + GPIO_O_GPCDAT) & GPIO_GPCDAT_GPIO66)
 
@@ -360,13 +352,13 @@
 #define DBG_PIN3_CFG                            GPIO_77_GPIO77
 #define DBG_PIN3_CORE                           GPIO_CORE_CPU1
 #define DBG_PIN3_DEF                            { \
-                                                    .pinNum           = DBG_PIN3_NUM, \
-                                                    .fctMux           = DBG_PIN3_CFG, \
-                                                    .coreSelect       = DBG_PIN3_CORE, \
-                                                    .direction        = GPIO_DIR_MODE_OUT, \
-                                                    .samplingInMode   = GPIO_QUAL_SYNC, \
-                                                    .setValue         = 0, \
-                                                    .intEnable        = false, \
+                                                    .pinNum         = (uint32_t)DBG_PIN3_NUM, \
+                                                    .fctMux         = (uint32_t)DBG_PIN3_CFG, \
+                                                    .coreSelect     = DBG_PIN3_CORE, \
+                                                    .direction      = (GPIO_Direction)GPIO_DIR_MODE_OUT, \
+                                                    .samplingInMode = (GPIO_QualificationMode)GPIO_QUAL_SYNC, \
+                                                    .setValue       = (bool_t)false, \
+                                                    .intEnable      = (bool_t)false, \
                                                 }
 #define DBG_PIN3_SET                            (HWREG(GPIODATA_BASE + GPIO_O_GPCSET)   = GPIO_GPCSET_GPIO77)
 #define DBG_PIN3_CLEAR                          (HWREG(GPIODATA_BASE + GPIO_O_GPCCLEAR) = GPIO_GPCCLEAR_GPIO77)
@@ -377,13 +369,13 @@
 #define DBG_PIN2_CFG                            GPIO_78_GPIO78
 #define DBG_PIN2_CORE                           GPIO_CORE_CPU1
 #define DBG_PIN2_DEF                            { \
-                                                    .pinNum         = DBG_PIN2_NUM, \
-                                                    .fctMux         = DBG_PIN2_CFG, \
+                                                    .pinNum         = (uint32_t)DBG_PIN2_NUM, \
+                                                    .fctMux         = (uint32_t)DBG_PIN2_CFG, \
                                                     .coreSelect     = DBG_PIN2_CORE, \
-                                                    .direction      = GPIO_DIR_MODE_OUT, \
-                                                    .samplingInMode = GPIO_QUAL_SYNC, \
-                                                    .setValue       = 0, \
-                                                    .intEnable      = false, \
+                                                    .direction      = (GPIO_Direction)GPIO_DIR_MODE_OUT, \
+                                                    .samplingInMode = (GPIO_QualificationMode)GPIO_QUAL_SYNC, \
+                                                    .setValue       = (bool_t)false, \
+                                                    .intEnable      = (bool_t)false, \
                                                 }
 #define DBG_PIN2_SET                            (HWREG(GPIODATA_BASE + GPIO_O_GPCSET)   = GPIO_GPCSET_GPIO78)
 #define DBG_PIN2_CLEAR                          (HWREG(GPIODATA_BASE + GPIO_O_GPCCLEAR) = GPIO_GPCCLEAR_GPIO78)
@@ -394,13 +386,13 @@
 #define DBG_PIN1_CFG                            GPIO_81_GPIO81
 #define DBG_PIN1_CORE                           GPIO_CORE_CPU1_CLA1
 #define DBG_PIN1_DEF                            { \
-                                                    .pinNum           = DBG_PIN1_NUM, \
-                                                    .fctMux           = DBG_PIN1_CFG, \
-                                                    .coreSelect       = DBG_PIN1_CORE, \
-                                                    .direction        = GPIO_DIR_MODE_OUT, \
-                                                    .samplingInMode   = GPIO_QUAL_SYNC, \
-                                                    .setValue         = 0, \
-                                                    .intEnable        = false, \
+                                                    .pinNum         = (uint32_t)DBG_PIN1_NUM, \
+                                                    .fctMux         = (uint32_t)DBG_PIN1_CFG, \
+                                                    .coreSelect     = DBG_PIN1_CORE, \
+                                                    .direction      = (GPIO_Direction)GPIO_DIR_MODE_OUT, \
+                                                    .samplingInMode = (GPIO_QualificationMode)GPIO_QUAL_SYNC, \
+                                                    .setValue       = (bool_t)false, \
+                                                    .intEnable      = (bool_t)false, \
                                                 }
 #define DBG_PIN1_SET                            (HWREG(GPIODATA_BASE + GPIO_O_GPCSET)   = GPIO_GPCSET_GPIO81)
 #define DBG_PIN1_CLEAR                          (HWREG(GPIODATA_BASE + GPIO_O_GPCCLEAR) = GPIO_GPCCLEAR_GPIO81)
@@ -411,13 +403,13 @@
 #define DBG_PIN0_CFG                            GPIO_82_GPIO82
 #define DBG_PIN0_CORE                           GPIO_CORE_CPU1_CLA1
 #define DBG_PIN0_DEF                            { \
-                                                    .pinNum           = DBG_PIN0_NUM, \
-                                                    .fctMux           = DBG_PIN0_CFG, \
-                                                    .coreSelect       = DBG_PIN0_CORE, \
-                                                    .direction        = GPIO_DIR_MODE_OUT, \
-                                                    .samplingInMode   = GPIO_QUAL_SYNC, \
-                                                    .setValue         = 0, \
-                                                    .intEnable        = false, \
+                                                    .pinNum         = (uint32_t)DBG_PIN0_NUM, \
+                                                    .fctMux         = (uint32_t)DBG_PIN0_CFG, \
+                                                    .coreSelect     = DBG_PIN0_CORE, \
+                                                    .direction      = (GPIO_Direction)GPIO_DIR_MODE_OUT, \
+                                                    .samplingInMode = (GPIO_QualificationMode)GPIO_QUAL_SYNC, \
+                                                    .setValue       = (bool_t)false, \
+                                                    .intEnable      = (bool_t)false, \
                                                 }
 #define DBG_PIN0_SET                            (HWREG(GPIODATA_BASE + GPIO_O_GPCSET)   = GPIO_GPCSET_GPIO82)
 #define DBG_PIN0_CLEAR                          (HWREG(GPIODATA_BASE + GPIO_O_GPCCLEAR) = GPIO_GPCCLEAR_GPIO82)
@@ -434,8 +426,8 @@
                                                     .fctMux         = (uint32_t)MOTOR1_DRV_EN_CFG, \
                                                     .direction      = (GPIO_Direction)GPIO_DIR_MODE_OUT, \
                                                     .samplingInMode = (GPIO_QualificationMode)GPIO_QUAL_ASYNC, \
-                                                    .setValue       = 0, \
-                                                    .intEnable      = false, \
+                                                    .setValue       = (bool_t)false, \
+                                                    .intEnable      = (bool_t)false, \
                                                 }
 #define MOTOR1_DRV_EN_SET                       (HWREG(GPIODATA_BASE + GPIO_O_GPCSET)   = GPIO_GPCSET_GPIO90)
 #define MOTOR1_DRV_EN_CLEAR                     (HWREG(GPIODATA_BASE + GPIO_O_GPCCLEAR) = GPIO_GPCCLEAR_GPIO90)
@@ -448,19 +440,19 @@
                                                     .fctMux         = (uint32_t)LED_SPI_SIMO_CFG, \
                                                     .direction      = (GPIO_Direction)GPIO_DIR_MODE_OUT, \
                                                     .samplingInMode = (GPIO_QualificationMode)GPIO_QUAL_ASYNC, \
-                                                    .setValue       = 1, \
-                                                    .intEnable      = false, \
+                                                    .setValue       = (bool_t)true, \
+                                                    .intEnable      = (bool_t)false, \
                                                 }
 
 #define MOTOR1_DRV_FAULT_NUM                    (92U)
 #define MOTOR1_DRV_FAULT_CFG                    GPIO_92_GPIO92
 #define MOTOR1_DRV_FAULT_DEF                    { \
-                                                    .pinNum           = MOTOR1_DRV_FAULT_NUM, \
-                                                    .fctMux           = MOTOR1_DRV_FAULT_CFG, \
-                                                    .direction        = GPIO_DIR_MODE_IN, \
-                                                    .samplingInMode   = GPIO_QUAL_3SAMPLE, \
-                                                    .setValue         = 0, \
-                                                    .intEnable        = false, \
+                                                    .pinNum         = (uint32_t)MOTOR1_DRV_FAULT_NUM, \
+                                                    .fctMux         = (uint32_t)MOTOR1_DRV_FAULT_CFG, \
+                                                    .direction      = (GPIO_Direction)GPIO_DIR_MODE_IN, \
+                                                    .samplingInMode = (GPIO_QualificationMode)GPIO_QUAL_3SAMPLE, \
+                                                    .setValue       = (bool_t)false, \
+                                                    .intEnable      = (bool_t)false, \
                                                 }
 #define MOTOR1_DRV_FAULT_READ                   (HWREG(GPIODATA_BASE + GPIO_O_GPCDAT) & GPIO_GPCDAT_GPIO92)
 
@@ -471,8 +463,8 @@
                                                     .fctMux         = (uint32_t)MOTOR1_DRV_SPI_CS_CFG, \
                                                     .direction      = (GPIO_Direction)GPIO_DIR_MODE_OUT, \
                                                     .samplingInMode = (GPIO_QualificationMode)GPIO_QUAL_ASYNC, \
-                                                    .setValue       = 1, \
-                                                    .intEnable      = false, \
+                                                    .setValue       = (bool_t)true, \
+                                                    .intEnable      = (bool_t)false, \
                                                 }
 #define MOTOR1_DRV_SPI_CS_SET                   (HWREG(GPIODATA_BASE + GPIO_O_GPCSET)   = GPIO_GPCSET_GPIO93)
 #define MOTOR1_DRV_SPI_CS_CLEAR                 (HWREG(GPIODATA_BASE + GPIO_O_GPCCLEAR) = GPIO_GPCCLEAR_GPIO93)
@@ -485,8 +477,8 @@
                                                     .fctMux         = (uint32_t)RS485_TX_EN_CFG, \
                                                     .direction      = (GPIO_Direction)GPIO_DIR_MODE_OUT, \
                                                     .samplingInMode = (GPIO_QualificationMode)GPIO_QUAL_ASYNC, \
-                                                    .setValue       = 0, \
-                                                    .intEnable      = false, \
+                                                    .setValue       = (bool_t)false, \
+                                                    .intEnable      = (bool_t)false, \
                                                 }
 #define RS485_TX_EN_SET                         (HWREG(GPIODATA_BASE + GPIO_O_GPCSET)   = GPIO_GPCSET_GPIO94)
 #define RS485_TX_EN_CLEAR                       (HWREG(GPIODATA_BASE + GPIO_O_GPCCLEAR) = GPIO_GPCCLEAR_GPIO94)
@@ -499,8 +491,8 @@
                                                     .fctMux         = (uint32_t)CAN_RS485_MUX_SEL_CFG, \
                                                     .direction      = (GPIO_Direction)GPIO_DIR_MODE_OUT, \
                                                     .samplingInMode = (GPIO_QualificationMode)GPIO_QUAL_ASYNC, \
-                                                    .setValue       = 1, \
-                                                    .intEnable      = false, \
+                                                    .setValue       = (bool_t)true, \
+                                                    .intEnable      = (bool_t)false, \
                                                 }
 #define CAN_RS485_MUX_SEL_SET                   (HWREG(GPIODATA_BASE + GPIO_O_GPDSET)   = GPIO_GPDSET_GPIO99)
 #define CAN_RS485_MUX_SEL_CLEAR                 (HWREG(GPIODATA_BASE + GPIO_O_GPDCLEAR) = GPIO_GPDCLEAR_GPIO99)
@@ -513,8 +505,8 @@
                                                     .fctMux         = (uint32_t)MOTOR1_ENC_CHA_CFG, \
                                                     .direction      = (GPIO_Direction)GPIO_DIR_MODE_IN, \
                                                     .samplingInMode = (GPIO_QualificationMode)GPIO_QUAL_6SAMPLE, \
-                                                    .setValue       = 0, \
-                                                    .intEnable      = false, \
+                                                    .setValue       = (bool_t)false, \
+                                                    .intEnable      = (bool_t)false, \
                                                 }
 
 #define MOTOR1_ENC_CHB_NUM                      (101U)
@@ -524,8 +516,8 @@
                                                     .fctMux         = (uint32_t)MOTOR1_ENC_CHB_CFG, \
                                                     .direction      = (GPIO_Direction)GPIO_DIR_MODE_IN, \
                                                     .samplingInMode = (GPIO_QualificationMode)GPIO_QUAL_6SAMPLE, \
-                                                    .setValue       = 0, \
-                                                    .intEnable      = false, \
+                                                    .setValue       = (bool_t)false, \
+                                                    .intEnable      = (bool_t)false, \
                                                 }
 
 #define MOTOR1_ENC_CHI_NUM                      (103U)
@@ -535,53 +527,53 @@
                                                     .fctMux         = (uint32_t)MOTOR1_ENC_CHI_CFG, \
                                                     .direction      = (GPIO_Direction)GPIO_DIR_MODE_IN, \
                                                     .samplingInMode = (GPIO_QualificationMode)GPIO_QUAL_6SAMPLE, \
-                                                    .setValue       = 0, \
-                                                    .intEnable      = false, \
+                                                    .setValue       = (bool_t)false, \
+                                                    .intEnable      = (bool_t)false, \
                                                 }
 
 #define MOTOR2_ENC_CHA_NUM                      (104U)
 #define MOTOR2_ENC_CHA_CFG                      GPIO_104_EQEP3_A
 #define MOTOR2_ENC_CHA_DEF                      { \
-                                                    .pinNum           = MOTOR2_ENC_CHA_NUM, \
-                                                    .fctMux           = MOTOR2_ENC_CHA_CFG, \
-                                                    .direction        = GPIO_DIR_MODE_IN, \
-                                                    .samplingInMode   = GPIO_QUAL_6SAMPLE, \
-                                                    .setValue         = 0, \
-                                                    .intEnable        = false, \
+                                                    .pinNum         = (uint32_t)MOTOR2_ENC_CHA_NUM, \
+                                                    .fctMux         = (uint32_t)MOTOR2_ENC_CHA_CFG, \
+                                                    .direction      = (GPIO_Direction)GPIO_DIR_MODE_IN, \
+                                                    .samplingInMode = (GPIO_QualificationMode)GPIO_QUAL_6SAMPLE, \
+                                                    .setValue       = (bool_t)false, \
+                                                    .intEnable      = (bool_t)false, \
                                                 }
 
 #define MOTOR2_ENC_CHB_NUM                      (105U)
 #define MOTOR2_ENC_CHB_CFG                      GPIO_105_EQEP3_B
 #define MOTOR2_ENC_CHB_DEF                      { \
-                                                    .pinNum           = MOTOR2_ENC_CHB_NUM, \
-                                                    .fctMux           = MOTOR2_ENC_CHB_CFG, \
-                                                    .direction        = GPIO_DIR_MODE_IN, \
-                                                    .samplingInMode   = GPIO_QUAL_6SAMPLE, \
-                                                    .setValue         = 0, \
-                                                    .intEnable        = false, \
+                                                    .pinNum         = (uint32_t)MOTOR2_ENC_CHB_NUM, \
+                                                    .fctMux         = (uint32_t)MOTOR2_ENC_CHB_CFG, \
+                                                    .direction      = (GPIO_Direction)GPIO_DIR_MODE_IN, \
+                                                    .samplingInMode = (GPIO_QualificationMode)GPIO_QUAL_6SAMPLE, \
+                                                    .setValue       = (bool_t)false, \
+                                                    .intEnable      = (bool_t)false, \
                                                 }
 
 #define MOTOR2_ENC_CHI_NUM                      (107U)
 #define MOTOR2_ENC_CHI_CFG                      GPIO_107_EQEP3_INDEX
 #define MOTOR2_ENC_CHI_DEF                      { \
-                                                    .pinNum           = MOTOR2_ENC_CHI_NUM, \
-                                                    .fctMux           = MOTOR2_ENC_CHI_CFG, \
-                                                    .direction        = GPIO_DIR_MODE_IN, \
-                                                    .samplingInMode   = GPIO_QUAL_6SAMPLE, \
-                                                    .setValue         = 0, \
-                                                    .intEnable        = false, \
+                                                    .pinNum         = (uint32_t)MOTOR2_ENC_CHI_NUM, \
+                                                    .fctMux         = (uint32_t)MOTOR2_ENC_CHI_CFG, \
+                                                    .direction      = (GPIO_Direction)GPIO_DIR_MODE_IN, \
+                                                    .samplingInMode = (GPIO_QualificationMode)GPIO_QUAL_6SAMPLE, \
+                                                    .setValue       = (bool_t)false, \
+                                                    .intEnable      = (bool_t)false, \
                                                 }
 
 #define CAN_SHDN_EN_NUM                         (108U)
 #define CAN_SHDN_EN_CFG                         GPIO_108_GPIO108
 #define CAN_SHDN_EN_DEF                         { \
-                                                    .pinNum         = (uint32_t)(108U), \
-                                                    .fctMux         = (uint32_t)GPIO_108_GPIO108, \
+                                                    .pinNum         = (uint32_t)CAN_SHDN_EN_NUM, \
+                                                    .fctMux         = (uint32_t)CAN_SHDN_EN_CFG, \
                                                     .pinType        = GPIO_PIN_TYPE_OD, \
                                                     .direction      = (GPIO_Direction)GPIO_DIR_MODE_OUT, \
                                                     .samplingInMode = (GPIO_QualificationMode)GPIO_QUAL_ASYNC, \
-                                                    .setValue         = 1, \
-                                                    .intEnable        = false, \
+                                                    .setValue       = (bool_t)true, \
+                                                    .intEnable      = (bool_t)false, \
                                                 }
 #define CAN_SHDN_EN_SET                         (HWREG(GPIODATA_BASE + GPIO_O_GPDSET)   = GPIO_GPDSET_GPIO108)
 #define CAN_SHDN_EN_CLEAR                       (HWREG(GPIODATA_BASE + GPIO_O_GPDCLEAR) = GPIO_GPDCLEAR_GPIO108)
@@ -599,12 +591,12 @@
 #define MOTOR2_DRV_FAULT_NUM                    (118U)
 #define MOTOR2_DRV_FAULT_CFG                    GPIO_118_GPIO118
 #define MOTOR2_DRV_FAULT_DEF                    { \
-                                                    .pinNum           = MOTOR2_DRV_FAULT_NUM, \
-                                                    .fctMux           = MOTOR2_DRV_FAULT_CFG, \
-                                                    .direction        = GPIO_DIR_MODE_IN, \
-                                                    .samplingInMode   = GPIO_QUAL_3SAMPLE, \
-                                                    .setValue         = 0, \
-                                                    .intEnable        = false, \
+                                                    .pinNum         = (uint32_t)MOTOR2_DRV_FAULT_NUM, \
+                                                    .fctMux         = (uint32_t)MOTOR2_DRV_FAULT_CFG, \
+                                                    .direction      = (GPIO_Direction)GPIO_DIR_MODE_IN, \
+                                                    .samplingInMode = (GPIO_QualificationMode)GPIO_QUAL_3SAMPLE, \
+                                                    .setValue       = (bool_t)false, \
+                                                    .intEnable      = (bool_t)false, \
                                                 }
 #define MOTOR2_DRV_FAULT_READ                   (HWREG(GPIODATA_BASE + GPIO_O_GPDDAT) & GPIO_GPDDAT_GPIO118)
 
@@ -765,7 +757,9 @@
 #define ADC_VEXT12_VOLTAGE_SCALE                (ADC_VREF / ADC_RESOLUTION_MAX)
 #define ADC_VBUS_VOLTAGE_SCALE                  (ADC_VREF * BRIDGE_DIVIDER / ADC_RESOLUTION_MAX)
 #define ADC_MOTOR_VOLTAGE_SCALE                 (ADC_VREF * BRIDGE_DIVIDER / ADC_RESOLUTION_MAX)
-#define ADC_MOTOR_CURRENT_SCALE                 (ADC_VREF * (-1.0f) / DRV_CSA_GAIN_VAL / R_SHUNT / ADC_RESOLUTION_MAX)
+#define ADC_MOTOR_CURRENT_SCALE                 (ADC_VREF * (-1.0f) / \
+                                                 DRV_CSA_GAIN_VAL / R_SHUNT / \
+                                                 ADC_RESOLUTION_MAX)
 /**
  * @}
  */
@@ -1142,15 +1136,15 @@
                                                     .adcSOCSource     = EPWM_SOC_TBCTR_ZERO, \
                                                 }
 #define MOTOR1_PWM1_DEF                         { \
-                                                    .epwmBase                 = MOTOR1_PWM1_BASE, \
-                                                    .p_epwmTimeBase           = &PwmTimeBaseCfgList[0], \
-                                                    .p_epwmCounterCompare     = &PwmCounterCompareCfgList[0], \
-                                                    .p_epwmActionQualifier    = &PwmActionQualifierCfgList[0], \
-                                                    .p_epwmDeadband           = &PwmDeadBandCfgList[0], \
-                                                    .p_epwmProgChopper        = NULL, \
-                                                    .p_epwmAdcSocEventTrigger = &PwmAdcSocEventTriggerCfgList[0], \
-                                                    .p_epwmInterruptsEvent    = NULL, \
-                                                    .epwmAdcSocSrcExtern      = SYSCTL_ADCSOC_SRC_PWM1SOCA, \
+                                                    .epwmBase                   = (uint32_t)MOTOR1_PWM1_BASE, \
+                                                    .p_epwmTimeBase             = (epwm_tb_t *)&PwmTimeBaseCfgList[0], \
+                                                    .p_epwmCounterCompare       = (epwm_cc_t *)&PwmCounterCompareCfgList[0], \
+                                                    .p_epwmActionQualifier      = (epwm_aq_t *)&PwmActionQualifierCfgList[0], \
+                                                    .p_epwmDeadband             = (epwm_db_t *)&PwmDeadBandCfgList[0], \
+                                                    .p_epwmProgChopper          = NULL, \
+                                                    .p_epwmAdcSocEventTrigger   = (epwm_et_t *)&PwmAdcSocEventTriggerCfgList[0], \
+                                                    .p_epwmInterruptsEvent      = NULL, \
+                                                    .epwmAdcSocSrcExtern        = (uint32_t)SYSCTL_ADCSOC_SRC_PWM1SOCA, \
                                                 }
 /* MOTOR1 - PWM2 Configs */
 #define MOTOR1_PWM2_TIME_BASE_DEF               { \
@@ -1176,15 +1170,15 @@
                                                     .DelayMode        = EPWM_DELAY_ENABLE, \
                                                 }
 #define MOTOR1_PWM2_DEF                         { \
-                                                    .epwmBase                 = MOTOR1_PWM2_BASE, \
-                                                    .p_epwmTimeBase           = &PwmTimeBaseCfgList[1], \
-                                                    .p_epwmCounterCompare     = &PwmCounterCompareCfgList[1], \
-                                                    .p_epwmActionQualifier    = &PwmActionQualifierCfgList[1], \
-                                                    .p_epwmDeadband           = &PwmDeadBandCfgList[1], \
-                                                    .p_epwmProgChopper        = NULL, \
-                                                    .p_epwmAdcSocEventTrigger = NULL, \
-                                                    .p_epwmInterruptsEvent    = NULL, \
-                                                    .epwmAdcSocSrcExtern      = 0, \
+                                                    .epwmBase                   = MOTOR1_PWM2_BASE, \
+                                                    .p_epwmTimeBase             = (epwm_tb_t *)&PwmTimeBaseCfgList[1], \
+                                                    .p_epwmCounterCompare       = (epwm_cc_t *)&PwmCounterCompareCfgList[1], \
+                                                    .p_epwmActionQualifier      = (epwm_aq_t *)&PwmActionQualifierCfgList[1], \
+                                                    .p_epwmDeadband             = (epwm_db_t *)&PwmDeadBandCfgList[1], \
+                                                    .p_epwmProgChopper          = NULL, \
+                                                    .p_epwmAdcSocEventTrigger   = NULL, \
+                                                    .p_epwmInterruptsEvent      = NULL, \
+                                                    .epwmAdcSocSrcExtern        = (uint32_t)0, \
                                                 }
 /* MOTOR1 - PWM3 Configs */
 #define MOTOR1_PWM3_TIME_BASE_DEF               { \
@@ -1210,15 +1204,15 @@
                                                     .DelayMode        = EPWM_DELAY_ENABLE, \
                                                 }
 #define MOTOR1_PWM3_DEF                         { \
-                                                    .epwmBase                 = MOTOR1_PWM3_BASE, \
-                                                    .p_epwmTimeBase           = &PwmTimeBaseCfgList[2], \
-                                                    .p_epwmCounterCompare     = &PwmCounterCompareCfgList[2], \
-                                                    .p_epwmActionQualifier    = &PwmActionQualifierCfgList[2], \
-                                                    .p_epwmDeadband           = &PwmDeadBandCfgList[2], \
-                                                    .p_epwmProgChopper        = NULL, \
-                                                    .p_epwmAdcSocEventTrigger = NULL, \
-                                                    .p_epwmInterruptsEvent    = NULL, \
-                                                    .epwmAdcSocSrcExtern      = 0, \
+                                                    .epwmBase                   = MOTOR1_PWM3_BASE, \
+                                                    .p_epwmTimeBase             = (epwm_tb_t *)&PwmTimeBaseCfgList[2], \
+                                                    .p_epwmCounterCompare       = (epwm_cc_t *)&PwmCounterCompareCfgList[2], \
+                                                    .p_epwmActionQualifier      = (epwm_aq_t *)&PwmActionQualifierCfgList[2], \
+                                                    .p_epwmDeadband             = (epwm_db_t *)&PwmDeadBandCfgList[2], \
+                                                    .p_epwmProgChopper          = NULL, \
+                                                    .p_epwmAdcSocEventTrigger   = NULL, \
+                                                    .p_epwmInterruptsEvent      = NULL, \
+                                                    .epwmAdcSocSrcExtern        = (uint32_t)0, \
                                                 }
 /* MOTOR2 - PWM1 Configs */
 #define MOTOR2_PWM1_TIME_BASE_DEF               { \
@@ -1250,15 +1244,15 @@
                                                     .adcSOCSource     = EPWM_SOC_TBCTR_ZERO, \
                                                 }
 #define MOTOR2_PWM1_DEF                         { \
-                                                    .epwmBase                 = MOTOR2_PWM1_BASE, \
-                                                    .p_epwmTimeBase           = &PwmTimeBaseCfgList[3], \
-                                                    .p_epwmCounterCompare     = &PwmCounterCompareCfgList[3], \
-                                                    .p_epwmActionQualifier    = &PwmActionQualifierCfgList[3], \
-                                                    .p_epwmDeadband           = &PwmDeadBandCfgList[3], \
-                                                    .p_epwmProgChopper        = NULL, \
-                                                    .p_epwmAdcSocEventTrigger = &PwmAdcSocEventTriggerCfgList[1], \
-                                                    .p_epwmInterruptsEvent    = NULL, \
-                                                    .epwmAdcSocSrcExtern      = SYSCTL_ADCSOC_SRC_PWM4SOCB, \
+                                                    .epwmBase                   = (uint32_t)MOTOR2_PWM1_BASE, \
+                                                    .p_epwmTimeBase             = (epwm_tb_t *)&PwmTimeBaseCfgList[3], \
+                                                    .p_epwmCounterCompare       = (epwm_cc_t *)&PwmCounterCompareCfgList[3], \
+                                                    .p_epwmActionQualifier      = (epwm_aq_t *)&PwmActionQualifierCfgList[3], \
+                                                    .p_epwmDeadband             = (epwm_db_t *)&PwmDeadBandCfgList[3], \
+                                                    .p_epwmProgChopper          = NULL, \
+                                                    .p_epwmAdcSocEventTrigger   = (epwm_et_t *)&PwmAdcSocEventTriggerCfgList[1], \
+                                                    .p_epwmInterruptsEvent      = NULL, \
+                                                    .epwmAdcSocSrcExtern        = (uint32_t)SYSCTL_ADCSOC_SRC_PWM4SOCB, \
                                                 }
 /* MOTOR2 - PWM2 Configs */
 #define MOTOR2_PWM2_TIME_BASE_DEF               { \
@@ -1284,15 +1278,15 @@
                                                     .DelayMode        = EPWM_DELAY_ENABLE, \
                                                 }
 #define MOTOR2_PWM2_DEF                         { \
-                                                    .epwmBase                 = MOTOR2_PWM2_BASE, \
-                                                    .p_epwmTimeBase           = &PwmTimeBaseCfgList[4], \
-                                                    .p_epwmCounterCompare     = &PwmCounterCompareCfgList[4], \
-                                                    .p_epwmActionQualifier    = &PwmActionQualifierCfgList[4], \
-                                                    .p_epwmDeadband           = &PwmDeadBandCfgList[4], \
-                                                    .p_epwmProgChopper        = NULL, \
-                                                    .p_epwmAdcSocEventTrigger = NULL, \
-                                                    .p_epwmInterruptsEvent    = NULL, \
-                                                    .epwmAdcSocSrcExtern      = 0, \
+                                                    .epwmBase                   = MOTOR2_PWM2_BASE, \
+                                                    .p_epwmTimeBase             = (epwm_tb_t *)&PwmTimeBaseCfgList[4], \
+                                                    .p_epwmCounterCompare       = (epwm_cc_t *)&PwmCounterCompareCfgList[4], \
+                                                    .p_epwmActionQualifier      = (epwm_aq_t *)&PwmActionQualifierCfgList[4], \
+                                                    .p_epwmDeadband             = (epwm_db_t *)&PwmDeadBandCfgList[4], \
+                                                    .p_epwmProgChopper          = NULL, \
+                                                    .p_epwmAdcSocEventTrigger   = NULL, \
+                                                    .p_epwmInterruptsEvent      = NULL, \
+                                                    .epwmAdcSocSrcExtern        = (uint32_t)0, \
                                                 }
 /* MOTOR2 - PWM3 Configs */
 #define MOTOR2_PWM3_TIME_BASE_DEF               { \
@@ -1318,15 +1312,15 @@
                                                     .DelayMode        = EPWM_DELAY_ENABLE, \
                                                 }
 #define MOTOR2_PWM3_DEF                         { \
-                                                    .epwmBase                 = MOTOR2_PWM3_BASE, \
-                                                    .p_epwmTimeBase           = &PwmTimeBaseCfgList[5], \
-                                                    .p_epwmCounterCompare     = &PwmCounterCompareCfgList[5], \
-                                                    .p_epwmActionQualifier    = &PwmActionQualifierCfgList[5], \
-                                                    .p_epwmDeadband           = &PwmDeadBandCfgList[5], \
-                                                    .p_epwmProgChopper        = NULL, \
-                                                    .p_epwmAdcSocEventTrigger = NULL, \
-                                                    .p_epwmInterruptsEvent    = NULL, \
-                                                    .epwmAdcSocSrcExtern      = 0, \
+                                                    .epwmBase                   = MOTOR2_PWM3_BASE, \
+                                                    .p_epwmTimeBase             = (epwm_tb_t *)&PwmTimeBaseCfgList[5], \
+                                                    .p_epwmCounterCompare       = (epwm_cc_t *)&PwmCounterCompareCfgList[5], \
+                                                    .p_epwmActionQualifier      = (epwm_aq_t *)&PwmActionQualifierCfgList[5], \
+                                                    .p_epwmDeadband             = (epwm_db_t *)&PwmDeadBandCfgList[5], \
+                                                    .p_epwmProgChopper          = NULL, \
+                                                    .p_epwmAdcSocEventTrigger   = NULL, \
+                                                    .p_epwmInterruptsEvent      = NULL, \
+                                                    .epwmAdcSocSrcExtern        = (uint32_t)0, \
                                                 }
 
 /***********************************************************************
@@ -1354,19 +1348,19 @@
  * @}
  */
 
-#define MOTOR1_QEP_DEF                          {\
-                                                    .eqepBase             = MOTOR1_QEP_BASE, \
-                                                    .eqepMaxResolution    = MOTOR1_ENC_QUADRATURE_SCALE_MAX, \
-                                                    .eqepUnitTimerPeriod  = MOTOR1_ENC_SPEED_HIGH_SAMPLE_TICKS_MAX, \
-                                                    .eqepConfig           = (MOTOR1_ENC_CONFIG | MOTOR1_QEP_SWAP), \
-                                                    .eqepStrobeSrc        = EQEP_STROBE_OR_ADCSOCA, \
+#define MOTOR1_QEP_DEF                          { \
+                                                    .eqepBase           = (uint32_t)MOTOR1_QEP_BASE, \
+                                                    .eqepMaxResolution  = (uint32_t)MOTOR1_ENC_QUADRATURE_SCALE_MAX, \
+                                                    .eqepUnitTimerPeriod= (uint32_t)MOTOR1_ENC_SPEED_HIGH_SAMPLE_TICKS_MAX, \
+                                                    .eqepConfig         = (uint16_t)(MOTOR1_ENC_CONFIG | MOTOR1_QEP_SWAP), \
+                                                    .eqepStrobeSrc      = (EQEP_StrobeSource)EQEP_STROBE_OR_ADCSOCA, \
                                                 }
 #define MOTOR2_QEP_DEF                          {\
-                                                    .eqepBase             = MOTOR2_QEP_BASE, \
-                                                    .eqepMaxResolution    = MOTOR2_ENC_QUADRATURE_SCALE_MAX, \
-                                                    .eqepUnitTimerPeriod  = MOTOR2_ENC_SPEED_HIGH_SAMPLE_TICKS_MAX, \
-                                                    .eqepConfig           = (MOTOR2_ENC_CONFIG | MOTOR2_QEP_SWAP), \
-                                                    .eqepStrobeSrc        = EQEP_STROBE_OR_ADCSOCB, \
+                                                    .eqepBase           = (uint32_t)MOTOR2_QEP_BASE, \
+                                                    .eqepMaxResolution  = (uint32_t)MOTOR2_ENC_QUADRATURE_SCALE_MAX, \
+                                                    .eqepUnitTimerPeriod= (uint32_t)MOTOR2_ENC_SPEED_HIGH_SAMPLE_TICKS_MAX, \
+                                                    .eqepConfig         = (uint16_t)(MOTOR2_ENC_CONFIG | MOTOR2_QEP_SWAP), \
+                                                    .eqepStrobeSrc      = (EQEP_StrobeSource)EQEP_STROBE_OR_ADCSOCB, \
                                                 }
 
 /***********************************************************************
@@ -1393,14 +1387,14 @@
 #define COM_SCI_CTRL1_REG_ADDR                  (COM_SCI_BASE + SCI_O_CTL1)
 
 #define COM_SCI_DEF                             { \
-                                                    .sciBase          = COM_SCI_BASE, \
-                                                    .bitRate          = 12500000, \
-                                                    .sciMode          = COM_SCI_CFG, \
-                                                    .txLevel          = COM_SCI_TX_FIFO_LVL, \
-                                                    .rxLevel          = COM_SCI_RX_FIFO_LVL, \
-                                                    .intSrc           = COM_SCI_IT_SRC, \
-                                                    .intEnable        = false, \
-                                                    .multiProcMode    = SCI_MULTI_PROC_NONE, \
+                                                    .sciBase        = (uint32_t)COM_SCI_BASE, \
+                                                    .bitRate        = (uint32_t)12500000U, \
+                                                    .sciMode        = (uint32_t)COM_SCI_CFG, \
+                                                    .txLevel        = (SCI_TxFIFOLevel)COM_SCI_TX_FIFO_LVL, \
+                                                    .rxLevel        = (SCI_RxFIFOLevel)COM_SCI_RX_FIFO_LVL, \
+                                                    .intSrc         = (uint32_t)COM_SCI_IT_SRC, \
+                                                    .intEnable      = (bool_t)false, \
+                                                    .multiProcMode  = (SCI_MultiProcessorCtrl_e)SCI_MULTI_PROC_NONE, \
                                                 }
 
 /***********************************************************************
@@ -1453,61 +1447,142 @@
  */
 
 #define DRV_SPI_DEF                             { \
-                                                    .spiBase          = DRV_SPI_BASE, \
-                                                    .bitRate          = 2.0e6, \
-                                                    .dataWidth        = 16U, \
-                                                    .mode             = SPI_MODE_MASTER, \
-                                                    .protocol         = SPI_PROT_POL0PHA0, \
-                                                    .txLevel          = SPI_FIFO_TXEMPTY, \
-                                                    .rxLevel          = SPI_FIFO_RXEMPTY, \
-                                                    .intSrc           = 0, \
-                                                    .highSpeedMode    = false, \
-                                                    .intEnable        = false, \
+                                                    .spiBase        = (uint32_t)DRV_SPI_BASE, \
+                                                    .bitRate        = (uint32_t)2000000U, \
+                                                    .dataWidth      = (uint16_t)16U, \
+                                                    .mode           = (SPI_Mode)SPI_MODE_MASTER, \
+                                                    .protocol       = (SPI_TransferProtocol)SPI_PROT_POL0PHA0, \
+                                                    .txLevel        = (SPI_TxFIFOLevel)SPI_FIFO_TXEMPTY, \
+                                                    .rxLevel        = (SPI_RxFIFOLevel)SPI_FIFO_RXEMPTY, \
+                                                    .intSrc         = (uint16_t)0, \
+                                                    .highSpeedMode  = (bool_t)false, \
+                                                    .intEnable      = (bool_t)false, \
                                                 }
 #define COM_SPI_DEF                             { \
-                                                    .spiBase          = COM_SPI_BASE, \
-                                                    .bitRate          = 6.0e6, \
-                                                    .dataWidth        = 16U, \
-                                                    .mode             = SPI_MODE_SLAVE, \
-                                                    .protocol         = SPI_PROT_POL0PHA1, \
-                                                    .txLevel          = SPI_FIFO_TXFULL, \
-                                                    .rxLevel          = SPI_FIFO_RX1, \
-                                                    .intSrc           = 0, \
-                                                    .highSpeedMode    = false, \
-                                                    .intEnable        = false, \
+                                                    .spiBase        = (uint32_t)COM_SPI_BASE, \
+                                                    .bitRate        = (uint32_t)6000000U, \
+                                                    .dataWidth      = (uint16_t)16U, \
+                                                    .mode           = (SPI_Mode)SPI_MODE_SLAVE, \
+                                                    .protocol       = (SPI_TransferProtocol)SPI_PROT_POL0PHA1, \
+                                                    .txLevel        = (SPI_TxFIFOLevel)SPI_FIFO_TXFULL, \
+                                                    .rxLevel        = (SPI_RxFIFOLevel)SPI_FIFO_RX1, \
+                                                    .intSrc         = (uint16_t)0, \
+                                                    .highSpeedMode  = (bool_t)false, \
+                                                    .intEnable      = (bool_t)false, \
                                                 }
 #define DBG_SPI_DEF                             { \
-                                                    .spiBase          = DBG_SPI_BASE, \
-                                                    .bitRate          = 10.0e6, \
-                                                    .dataWidth        = 16U, \
-                                                    .mode             = SPI_MODE_MASTER, \
-                                                    .protocol         = SPI_PROT_POL0PHA0, \
-                                                    .txLevel          = SPI_FIFO_TX8, \
-                                                    .rxLevel          = SPI_FIFO_RX8, \
-                                                    .intSrc           = 0, \
-                                                    .highSpeedMode    = false, \
-                                                    .intEnable        = false, \
+                                                    .spiBase        = (uint32_t)DBG_SPI_BASE, \
+                                                    .bitRate        = (uint32_t)10000000U, \
+                                                    .dataWidth      = (uint16_t)16U, \
+                                                    .mode           = (SPI_Mode)SPI_MODE_MASTER, \
+                                                    .protocol       = (SPI_TransferProtocol)SPI_PROT_POL0PHA0, \
+                                                    .txLevel        = (SPI_TxFIFOLevel)SPI_FIFO_TX8, \
+                                                    .rxLevel        = (SPI_RxFIFOLevel)SPI_FIFO_RX8, \
+                                                    .intSrc         = (uint16_t)0, \
+                                                    .highSpeedMode  = (bool_t)false, \
+                                                    .intEnable      = (bool_t)false, \
                                                 }
 #define LED_SPI_DEF                             { \
-                                                    .spiBase          = LED_SPI_BASE, \
-                                                    .bitRate          = 2.38e6, \
-                                                    .dataWidth        = 16U, \
-                                                    .mode             = SPI_MODE_MASTER, \
-                                                    .protocol         = SPI_PROT_POL0PHA0, \
-                                                    .txLevel          = SPI_FIFO_TX6, \
-                                                    .rxLevel          = SPI_FIFO_RXEMPTY, \
-                                                    .intSrc           = 0, \
-                                                    .highSpeedMode    = false, \
-                                                    .intEnable        = false, \
+                                                    .spiBase        = (uint32_t)LED_SPI_BASE, \
+                                                    .bitRate        = (uint32_t)2380000U, \
+                                                    .dataWidth      = (uint16_t)16U, \
+                                                    .mode           = (SPI_Mode)SPI_MODE_MASTER, \
+                                                    .protocol       = (SPI_TransferProtocol)SPI_PROT_POL0PHA0, \
+                                                    .txLevel        = (SPI_TxFIFOLevel)SPI_FIFO_TX6, \
+                                                    .rxLevel        = (SPI_RxFIFOLevel)SPI_FIFO_RXEMPTY, \
+                                                    .intSrc         = (uint16_t)0, \
+                                                    .highSpeedMode  = (bool_t)false, \
+                                                    .intEnable      = (bool_t)false, \
+                                                }
+
+/***********************************************************************
+ * DRV DEFINES
+ ***********************************************************************/
+#define MOTOR1_DRV_CFG_DEF                      { \
+                                                    .spiHandle          = DRV_SPI_BASE, \
+                                                    .gpioNumber_CS      = MOTOR1_DRV_SPI_CS_NUM, \
+                                                    .gpioNumber_EN      = MOTOR1_DRV_EN_NUM, \
+                                                    .gpioNumber_FAULT   = MOTOR1_DRV_FAULT_NUM, \
+                                                }
+#define MOTOR2_DRV_CFG_DEF                      { \
+                                                    .spiHandle          = DRV_SPI_BASE, \
+                                                    .gpioNumber_CS      = MOTOR2_DRV_SPI_CS_NUM, \
+                                                    .gpioNumber_EN      = MOTOR2_DRV_EN_NUM, \
+                                                    .gpioNumber_FAULT   = MOTOR2_DRV_FAULT_NUM, \
+                                                }
+
+#define MOTOR1_DRV_REG_DEF                      { \
+                                                    .ctrl_reg_02.CLR_FLT    = false, \
+                                                    .ctrl_reg_02.BRAKE      = false, \
+                                                    .ctrl_reg_02.COAST      = false, \
+                                                    .ctrl_reg_02.PWM1_DIR   = false, \
+                                                    .ctrl_reg_02.PWM1_COM   = false, \
+                                                    .ctrl_reg_02.PWM_MODE   = DRV_PWMMODE_6, \
+                                                    .ctrl_reg_02.OTW_REP    = true, \
+                                                    .ctrl_reg_02.DIS_GDF    = false, \
+                                                    .ctrl_reg_02.DIS_GDUV   = false, \
+                                                    .ctrl_reg_02.OCP_ACT    = true, \
+                                                    .ctrl_reg_03.IDRIVEN_HS = DRV_ISINK_HS_0P300_A, \
+                                                    .ctrl_reg_03.IDRIVEP_HS = DRV_ISOUR_HS_0P150_A, \
+                                                    .ctrl_reg_03.LOCK       = DRV_REG_UNLOCK, \
+                                                    .ctrl_reg_04.IDRIVEN_LS = DRV_ISINK_LS_0P300_A, \
+                                                    .ctrl_reg_04.IDRIVEP_LS = DRV_ISOUR_LS_0P150_A, \
+                                                    .ctrl_reg_04.TDRIVE     = DRV_TSOUR_1000_NS, \
+                                                    .ctrl_reg_04.CBC        = false, \
+                                                    .ctrl_reg_05.VDS_LVL    = DRV_VDS_LVL_0P080_V, \
+                                                    .ctrl_reg_05.OCP_DEG    = DRV_OCPDEG_4_US, \
+                                                    .ctrl_reg_05.OCP_MODE   = DRV_LATCHED_SHUTDOWN, \
+                                                    .ctrl_reg_05.DEAD_TIME  = DRV_DEADTIME_50_NS, \
+                                                    .ctrl_reg_05.TRETRY     = true, \
+                                                    .ctrl_reg_06.SEN_LVL    = DRV_SENLVL_0P25_V, \
+                                                    .ctrl_reg_06.CSA_CAL_C  = false, \
+                                                    .ctrl_reg_06.CSA_CAL_B  = false, \
+                                                    .ctrl_reg_06.CSA_CAL_A  = false, \
+                                                    .ctrl_reg_06.DIS_SEN    = false, \
+                                                    .ctrl_reg_06.CSA_GAIN   = DRV_CSA_GAIN_REG, \
+                                                    .ctrl_reg_06.LS_REF     = false, \
+                                                    .ctrl_reg_06.VREF_DIV   = true, \
+                                                    .ctrl_reg_06.CSA_FET    = false, \
+                                                    .ctrl_reg_07.CAL_MODE   = false, \
+                                                }
+#define MOTOR2_DRV_REG_DEF                      { \
+                                                    .ctrl_reg_02.CLR_FLT    = false, \
+                                                    .ctrl_reg_02.BRAKE      = false, \
+                                                    .ctrl_reg_02.COAST      = false, \
+                                                    .ctrl_reg_02.PWM1_DIR   = false, \
+                                                    .ctrl_reg_02.PWM1_COM   = false, \
+                                                    .ctrl_reg_02.PWM_MODE   = DRV_PWMMODE_6, \
+                                                    .ctrl_reg_02.OTW_REP    = true, \
+                                                    .ctrl_reg_02.DIS_GDF    = false, \
+                                                    .ctrl_reg_02.DIS_GDUV   = false, \
+                                                    .ctrl_reg_02.OCP_ACT    = true, \
+                                                    .ctrl_reg_03.IDRIVEN_HS = DRV_ISINK_HS_0P300_A, \
+                                                    .ctrl_reg_03.IDRIVEP_HS = DRV_ISOUR_HS_0P150_A, \
+                                                    .ctrl_reg_03.LOCK       = DRV_REG_UNLOCK, \
+                                                    .ctrl_reg_04.IDRIVEN_LS = DRV_ISINK_LS_0P300_A, \
+                                                    .ctrl_reg_04.IDRIVEP_LS = DRV_ISOUR_LS_0P150_A, \
+                                                    .ctrl_reg_04.TDRIVE     = DRV_TSOUR_1000_NS, \
+                                                    .ctrl_reg_04.CBC        = false, \
+                                                    .ctrl_reg_05.VDS_LVL    = DRV_VDS_LVL_0P080_V, \
+                                                    .ctrl_reg_05.OCP_DEG    = DRV_OCPDEG_4_US, \
+                                                    .ctrl_reg_05.OCP_MODE   = DRV_LATCHED_SHUTDOWN, \
+                                                    .ctrl_reg_05.DEAD_TIME  = DRV_DEADTIME_50_NS, \
+                                                    .ctrl_reg_05.TRETRY     = true, \
+                                                    .ctrl_reg_06.SEN_LVL    = DRV_SENLVL_0P25_V, \
+                                                    .ctrl_reg_06.CSA_CAL_C  = false, \
+                                                    .ctrl_reg_06.CSA_CAL_B  = false, \
+                                                    .ctrl_reg_06.CSA_CAL_A  = false, \
+                                                    .ctrl_reg_06.DIS_SEN    = false, \
+                                                    .ctrl_reg_06.CSA_GAIN   = DRV_CSA_GAIN_REG, \
+                                                    .ctrl_reg_06.LS_REF     = false, \
+                                                    .ctrl_reg_06.VREF_DIV   = true, \
+                                                    .ctrl_reg_06.CSA_FET    = false, \
+                                                    .ctrl_reg_07.CAL_MODE   = false, \
                                                 }
 
 /***********************************************************************
  * DMA DEFINES
  ***********************************************************************/
-//extern spi_rx_t         com_spi_rx;
-//extern spi_tx_t         com_spi_tx;
-//extern uint16_t         led_spi_tx[LED_MSG_TX_16BIT_LENGTH];
-
 /** @defgroup DMA configuration.
  *  @brief    Configure DMA channels associated to SPI communication.
  * @{
@@ -1526,26 +1601,34 @@
 #define DMA_COM_SPI_TX_TRIGGER_SRC              DMA_TRIGGER_SPIBTX
 #define DMA_COM_SPI_RX_TRIGGER_SRC              DMA_TRIGGER_SPIBRX
 
-#define DMA_LED_SPI_TX_8BIT_LENGTH              (12)
-#define DMA_LED_SPI_TX_16BIT_FULL_LENGTH        (DMA_LED_SPI_TX_8BIT_LENGTH / 2)
-#define DMA_LED_SPI_TX_16BIT_BURST_EVT          (3)
-#define DMA_LED_SPI_TX_16BIT_TRANSFER_EVT       (DMA_LED_SPI_TX_16BIT_FULL_LENGTH / DMA_LED_SPI_TX_16BIT_BURST_EVT)
-#define DMA_LED_SPI_TX_16BIT_CONFIG             (DMA_CFG_ONESHOT_DISABLE | DMA_CFG_CONTINUOUS_DISABLE | DMA_CFG_SIZE_16BIT)
+#define DMA_LED_SPI_TX_FULL_LENGTH              (6)
+#define DMA_LED_SPI_TX_BURST_EVT                (3)
+#define DMA_LED_SPI_TX_TRANSFER_EVT             (DMA_LED_SPI_TX_FULL_LENGTH / \
+                                                 DMA_LED_SPI_TX_BURST_EVT)
+#define DMA_LED_SPI_TX_CONFIG                   (DMA_CFG_ONESHOT_DISABLE | \
+                                                 DMA_CFG_CONTINUOUS_DISABLE | \
+                                                 DMA_CFG_SIZE_16BIT)
 
-#define DMA_COM_SPI_TX_RX_8BIT_LENGTH           (34)
-#define DMA_COM_SPI_TX_RX_16BIT_FULL_LENGTH     (DMA_COM_SPI_TX_RX_8BIT_LENGTH / 2)
-#define DMA_COM_SPI_TX_RX_16BIT_CRC_LENGTH      (2)
-#define DMA_COM_SPI_TX_RX_16BIT_PAYLOAD_LENGTH  (DMA_COM_SPI_TX_RX_16BIT_FULL_LENGTH - DMA_COM_SPI_TX_RX_16BIT_CRC_LENGTH)
-#define DMA_COM_SPI_TX_16BIT_BURST_EVT          (8)
-#define DMA_COM_SPI_TX_16BIT_TRANSFER_EVT       ((DMA_COM_SPI_TX_RX_16BIT_FULL_LENGTH - 1) / DMA_COM_SPI_TX_16BIT_BURST_EVT)
+#define DMA_COM_SPI_TX_RX_FULL_LENGTH           (17)
+#define DMA_COM_SPI_TX_RX_CRC_LENGTH            (2)
+#define DMA_COM_SPI_TX_RX_PAYLOAD_LENGTH        (DMA_COM_SPI_TX_RX_FULL_LENGTH - \
+                                                 DMA_COM_SPI_TX_RX_CRC_LENGTH)
+#define DMA_COM_SPI_TX_BURST_EVT                (8)
+#define DMA_COM_SPI_TX_TRANSFER_EVT             ((DMA_COM_SPI_TX_RX_FULL_LENGTH - 1) / \
+                                                 DMA_COM_SPI_TX_BURST_EVT)
 #define DMA_COM_SPI_RX_16BIT_BURST_EVT          (1)
-#define DMA_COM_SPI_RX_16BIT_TRANSFER_EVT       (DMA_COM_SPI_TX_RX_16BIT_FULL_LENGTH / DMA_COM_SPI_RX_16BIT_BURST_EVT)
-#define DMA_COM_SPI_TX_16BIT_CONFIG             (DMA_CFG_ONESHOT_DISABLE | DMA_CFG_CONTINUOUS_DISABLE | DMA_CFG_SIZE_16BIT)
-#define DMA_COM_SPI_RX_16BIT_CONFIG             (DMA_CFG_ONESHOT_DISABLE | DMA_CFG_CONTINUOUS_DISABLE | DMA_CFG_SIZE_16BIT)
-#if ((DMA_COM_SPI_TX_16BIT_CONFIG & DMA_MODE_DATASIZE) == DMA_CFG_SIZE_16BIT)
-#define DMA_COM_SPI_TX_16BIT_INC_STEP           (1)
+#define DMA_COM_SPI_RX_16BIT_TRANSFER_EVT       (DMA_COM_SPI_TX_RX_FULL_LENGTH / \
+                                                 DMA_COM_SPI_RX_16BIT_BURST_EVT)
+#define DMA_COM_SPI_TX_CONFIG                   (DMA_CFG_ONESHOT_DISABLE | \
+                                                 DMA_CFG_CONTINUOUS_DISABLE | \
+                                                 DMA_CFG_SIZE_16BIT)
+#define DMA_COM_SPI_RX_16BIT_CONFIG             (DMA_CFG_ONESHOT_DISABLE | \
+                                                 DMA_CFG_CONTINUOUS_DISABLE | \
+                                                 DMA_CFG_SIZE_16BIT)
+#if ((DMA_COM_SPI_TX_CONFIG & DMA_MODE_DATASIZE) == DMA_CFG_SIZE_16BIT)
+#define DMA_COM_SPI_TX_INC_STEP           (1)
 #else
-#define DMA_COM_SPI_TX_16BIT_INC_STEP           (2)
+#define DMA_COM_SPI_TX_INC_STEP           (2)
 #endif
 #if ((DMA_COM_SPI_RX_16BIT_CONFIG & DMA_MODE_DATASIZE) == DMA_CFG_SIZE_16BIT)
 #define DMA_COM_SPI_RX_16BIT_INC_STEP           (1)
@@ -1557,55 +1640,55 @@
  */
 
 #define DMA_LED_SPI_TX_DEF                      { \
-                                                    .dmaChBase        = DMA_LED_SPI_TX_BASE_ADDR, \
-                                                    .p_dstAddr        = (uint16_t *) LED_SPI_TX_BASE_REG_ADDR, \
-                                                    .p_srcAddr        = (uint16_t *) &led_spi_tx[0], \
-                                                    .burstSize        = DMA_LED_SPI_TX_16BIT_BURST_EVT, \
-                                                    .transferSize     = DMA_LED_SPI_TX_16BIT_TRANSFER_EVT, \
-                                                    .dstWrapSize      = DMA_NO_WRAP, \
-                                                    .srcWrapSize      = DMA_NO_WRAP, \
-                                                    .dstStep          = 0, \
-                                                    .srcStep          = DMA_COM_SPI_TX_16BIT_INC_STEP, \
-                                                    .dstWrapStep      = 0, \
-                                                    .srcWrapStep      = 0, \
-                                                    .config           = DMA_LED_SPI_TX_16BIT_CONFIG, \
-                                                    .trigger          = DMA_LED_SPI_TX_TRIGGER_SRC, \
-                                                    .intMode          = DMA_INT_AT_END, \
-                                                    .intEnable        = false, \
+                                                    .dmaChBase      = (uint32_t)DMA_LED_SPI_TX_BASE_ADDR, \
+                                                    .p_dstAddr      = (uint16_t *) LED_SPI_TX_BASE_REG_ADDR, \
+                                                    .p_srcAddr      = (uint16_t *) &led_spi_tx[0], \
+                                                    .burstSize      = (uint16_t)DMA_LED_SPI_TX_BURST_EVT, \
+                                                    .transferSize   = (uint32_t)DMA_LED_SPI_TX_TRANSFER_EVT, \
+                                                    .dstWrapSize    = (uint32_t)DMA_NO_WRAP, \
+                                                    .srcWrapSize    = (uint32_t)DMA_NO_WRAP, \
+                                                    .dstStep        = (int16_t)0, \
+                                                    .srcStep        = (int16_t)DMA_COM_SPI_TX_INC_STEP, \
+                                                    .dstWrapStep    = (int16_t)0, \
+                                                    .srcWrapStep    = (int16_t)0, \
+                                                    .config         = (uint32_t)DMA_LED_SPI_TX_CONFIG, \
+                                                    .trigger        = (DMA_Trigger)DMA_LED_SPI_TX_TRIGGER_SRC, \
+                                                    .intMode        = (DMA_InterruptMode)DMA_INT_AT_END, \
+                                                    .intEnable      = (bool_t)false, \
                                                 }
 #define DMA_COM_SPI_TX_DEF                      { \
-                                                    .dmaChBase        = DMA_COM_SPI_TX_BASE_ADDR, \
-                                                    .p_dstAddr        = (uint16_t *) COM_SPI_TX_BASE_REG_ADDR, \
-                                                    .p_srcAddr        = (uint16_t *) &com_spi_tx.msg[0].data.timeStamp, \
-                                                    .burstSize        = DMA_COM_SPI_TX_16BIT_BURST_EVT, \
-                                                    .transferSize     = DMA_COM_SPI_TX_16BIT_TRANSFER_EVT, \
-                                                    .dstWrapSize      = DMA_NO_WRAP, \
-                                                    .srcWrapSize      = DMA_NO_WRAP, \
-                                                    .dstStep          = 0, \
-                                                    .srcStep          = DMA_COM_SPI_TX_16BIT_INC_STEP, \
-                                                    .dstWrapStep      = 0, \
-                                                    .srcWrapStep      = 0, \
-                                                    .config           = DMA_COM_SPI_TX_16BIT_CONFIG, \
-                                                    .trigger          = DMA_COM_SPI_TX_TRIGGER_SRC, \
-                                                    .intMode          = DMA_INT_AT_END, \
-                                                    .intEnable        = false, \
+                                                    .dmaChBase      = (uint32_t)DMA_COM_SPI_TX_BASE_ADDR, \
+                                                    .p_dstAddr      = (uint16_t *) COM_SPI_TX_BASE_REG_ADDR, \
+                                                    .p_srcAddr      = (uint16_t *) &com_spi_tx.msg[0].data.timeStamp, \
+                                                    .burstSize      = (uint16_t)DMA_COM_SPI_TX_BURST_EVT, \
+                                                    .transferSize   = (uint32_t)DMA_COM_SPI_TX_TRANSFER_EVT, \
+                                                    .dstWrapSize    = (uint32_t)DMA_NO_WRAP, \
+                                                    .srcWrapSize    = (uint32_t)DMA_NO_WRAP, \
+                                                    .dstStep        = (int16_t)0, \
+                                                    .srcStep        = (int16_t)DMA_COM_SPI_TX_INC_STEP, \
+                                                    .dstWrapStep    = (int16_t)0, \
+                                                    .srcWrapStep    = (int16_t)0, \
+                                                    .config         = (uint32_t)DMA_COM_SPI_TX_CONFIG, \
+                                                    .trigger        = (DMA_Trigger)DMA_COM_SPI_TX_TRIGGER_SRC, \
+                                                    .intMode        = (DMA_InterruptMode)DMA_INT_AT_END, \
+                                                    .intEnable      = (bool_t)false, \
                                                 }
 #define DMA_COM_SPI_RX_DEF                      { \
-                                                    .dmaChBase        = DMA_COM_SPI_RX_BASE_ADDR, \
-                                                    .p_dstAddr        = (uint16_t *) &com_spi_rx, \
-                                                    .p_srcAddr        = (uint16_t *) COM_SPI_RX_BASE_REG_ADDR, \
-                                                    .burstSize        = DMA_COM_SPI_RX_16BIT_BURST_EVT, \
-                                                    .transferSize     = DMA_COM_SPI_RX_16BIT_TRANSFER_EVT, \
-                                                    .dstWrapSize      = DMA_NO_WRAP, \
-                                                    .srcWrapSize      = DMA_NO_WRAP, \
-                                                    .dstStep          = DMA_COM_SPI_RX_16BIT_INC_STEP, \
-                                                    .srcStep          = 0, \
-                                                    .dstWrapStep      = 0, \
-                                                    .srcWrapStep      = 0, \
-                                                    .config           = DMA_COM_SPI_RX_16BIT_CONFIG, \
-                                                    .trigger          = DMA_COM_SPI_RX_TRIGGER_SRC, \
-                                                    .intMode          = DMA_INT_AT_END, \
-                                                    .intEnable        = true, \
+                                                    .dmaChBase      = (uint32_t)DMA_COM_SPI_RX_BASE_ADDR, \
+                                                    .p_dstAddr      = (uint16_t *) &com_spi_rx, \
+                                                    .p_srcAddr      = (uint16_t *) COM_SPI_RX_BASE_REG_ADDR, \
+                                                    .burstSize      = (uint16_t)DMA_COM_SPI_RX_16BIT_BURST_EVT, \
+                                                    .transferSize   = (uint32_t)DMA_COM_SPI_RX_16BIT_TRANSFER_EVT, \
+                                                    .dstWrapSize    = (uint32_t)DMA_NO_WRAP, \
+                                                    .srcWrapSize    = (uint32_t)DMA_NO_WRAP, \
+                                                    .dstStep        = (int16_t)DMA_COM_SPI_RX_16BIT_INC_STEP, \
+                                                    .srcStep        = (int16_t)0, \
+                                                    .dstWrapStep    = (int16_t)0, \
+                                                    .srcWrapStep    = (int16_t)0, \
+                                                    .config         = (uint32_t)DMA_COM_SPI_RX_16BIT_CONFIG, \
+                                                    .trigger        = (DMA_Trigger)DMA_COM_SPI_RX_TRIGGER_SRC, \
+                                                    .intMode        = (DMA_InterruptMode)DMA_INT_AT_END, \
+                                                    .intEnable      = (bool_t)true, \
                                                 }
 
 /***********************************************************************
@@ -1646,44 +1729,44 @@
 #define CLA_MOTOR2_TASK_HANDLER                 &motor2_Task
 
 #define CLA_ADC_CALIB_DEF                       { \
-                                                    .progRAM          = CLA_PROG_RAM, \
-                                                    .dataRAM          = CLA_DATA_RAM, \
-                                                    .claTaskFlg       = CLA_ADC_CALIB_TASK_FLAG, \
-                                                    .claTaskNum       = CLA_ADC_CALIB_TASK_NUMBER, \
-                                                    .claIntVect       = CLA_ADC_CALIB_INTERRUPT_VECTOR, \
-                                                    .claTrigSrc       = CLA_ADC_CALIB_TRIGGER_SRC, \
-                                                    .p_claFunc        = CLA_ADC_CALIB_TASK_HANDLER, \
-                                                    .claForceTask     = false, \
+                                                    .progRAM        = (uint32_t)CLA_PROG_RAM, \
+                                                    .dataRAM        = (uint32_t)CLA_DATA_RAM, \
+                                                    .claTaskFlg     = (uint16_t)CLA_ADC_CALIB_TASK_FLAG, \
+                                                    .claTaskNum     = (CLA_TaskNumber)CLA_ADC_CALIB_TASK_NUMBER, \
+                                                    .claIntVect     = (CLA_MVECTNumber)CLA_ADC_CALIB_INTERRUPT_VECTOR, \
+                                                    .claTrigSrc     = (CLA_Trigger)CLA_ADC_CALIB_TRIGGER_SRC, \
+                                                    .p_claFunc      = CLA_ADC_CALIB_TASK_HANDLER, \
+                                                    .claForceTask   = (bool_t)false, \
                                                 }
 #define CLA_CMD_NEW_DEF                         { \
-                                                    .progRAM          = CLA_PROG_RAM, \
-                                                    .dataRAM          = CLA_DATA_RAM, \
-                                                    .claTaskFlg       = CLA_CMD_NEW_TASK_FLAG, \
-                                                    .claTaskNum       = CLA_CMD_NEW_TASK_NUMBER, \
-                                                    .claIntVect       = CLA_CMD_NEW_INTERRUPT_VECTOR, \
-                                                    .claTrigSrc       = CLA_CMD_NEW_TRIGGER_SRC, \
-                                                    .p_claFunc        = CLA_CMD_NEW_TASK_HANDLER, \
-                                                    .claForceTask     = false, \
+                                                    .progRAM        = (uint32_t)CLA_PROG_RAM, \
+                                                    .dataRAM        = (uint32_t)CLA_DATA_RAM, \
+                                                    .claTaskFlg     = (uint16_t)CLA_CMD_NEW_TASK_FLAG, \
+                                                    .claTaskNum     = (CLA_TaskNumber)CLA_CMD_NEW_TASK_NUMBER, \
+                                                    .claIntVect     = (CLA_MVECTNumber)CLA_CMD_NEW_INTERRUPT_VECTOR, \
+                                                    .claTrigSrc     = (CLA_Trigger)CLA_CMD_NEW_TRIGGER_SRC, \
+                                                    .p_claFunc      = CLA_CMD_NEW_TASK_HANDLER, \
+                                                    .claForceTask   = (bool_t)false, \
                                                 }
 #define CLA_MOTOR1_DEF                          { \
-                                                    .progRAM          = CLA_PROG_RAM, \
-                                                    .dataRAM          = CLA_DATA_RAM, \
-                                                    .claTaskFlg       = CLA_MOTOR1_TASK_FLAG, \
-                                                    .claTaskNum       = CLA_MOTOR1_TASK_NUMBER, \
-                                                    .claIntVect       = CLA_MOTOR1_INTERRUPT_VECTOR, \
-                                                    .claTrigSrc       = CLA_MOTOR1_TRIGGER_SRC, \
-                                                    .p_claFunc        = CLA_MOTOR1_TASK_HANDLER, \
-                                                    .claForceTask     = false, \
+                                                    .progRAM        = (uint32_t)CLA_PROG_RAM, \
+                                                    .dataRAM        = (uint32_t)CLA_DATA_RAM, \
+                                                    .claTaskFlg     = (uint16_t)CLA_MOTOR1_TASK_FLAG, \
+                                                    .claTaskNum     = (CLA_TaskNumber)CLA_MOTOR1_TASK_NUMBER, \
+                                                    .claIntVect     = (CLA_MVECTNumber)CLA_MOTOR1_INTERRUPT_VECTOR, \
+                                                    .claTrigSrc     = (CLA_Trigger)CLA_MOTOR1_TRIGGER_SRC, \
+                                                    .p_claFunc      = CLA_MOTOR1_TASK_HANDLER, \
+                                                    .claForceTask   = (bool_t)false, \
                                                 }
 #define CLA_MOTOR2_DEF                          { \
-                                                    .progRAM          = CLA_PROG_RAM, \
-                                                    .dataRAM          = CLA_DATA_RAM, \
-                                                    .claTaskFlg       = CLA_MOTOR2_TASK_FLAG, \
-                                                    .claTaskNum       = CLA_MOTOR2_TASK_NUMBER, \
-                                                    .claIntVect       = CLA_MOTOR2_INTERRUPT_VECTOR, \
-                                                    .claTrigSrc       = CLA_MOTOR2_TRIGGER_SRC, \
-                                                    .p_claFunc        = CLA_MOTOR2_TASK_HANDLER, \
-                                                    .claForceTask     = false, \
+                                                    .progRAM        = (uint32_t)CLA_PROG_RAM, \
+                                                    .dataRAM        = (uint32_t)CLA_DATA_RAM, \
+                                                    .claTaskFlg     = (uint16_t)CLA_MOTOR2_TASK_FLAG, \
+                                                    .claTaskNum     = (CLA_TaskNumber)CLA_MOTOR2_TASK_NUMBER, \
+                                                    .claIntVect     = (CLA_MVECTNumber)CLA_MOTOR2_INTERRUPT_VECTOR, \
+                                                    .claTrigSrc     = (CLA_Trigger)CLA_MOTOR2_TRIGGER_SRC, \
+                                                    .p_claFunc      = CLA_MOTOR2_TASK_HANDLER, \
+                                                    .claForceTask   = (bool_t)false, \
                                                 }
 
 /***********************************************************************

@@ -15,7 +15,7 @@ extern "C" {
 #include "config/uomodri_math.h"
 #include "uomodri_user_defines.h"
 #include "drv8353.h"
-
+#include "main.h"
 //#include "config/uomodri_math.h"
 
 //#include "config/uomodri_3_1/uomodri_3_1_hal_defines.h"

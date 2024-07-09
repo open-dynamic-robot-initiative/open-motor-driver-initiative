@@ -201,10 +201,10 @@
 //#include "drv8353.h"
 //#include "uomodri_shared.h"
 
-#include "config/motor/tmotor_mn4004_kv300.h"           // T-MOTOR MN4000 KV300 motor definitions
-#include "config/motor/myactuator_rmdx8h.h"             // MYACTUATOR RMDX8H motor definitions
-#include "config/encoder/broadcom_aedt_9810_z00.h"      // BROADCOM AEDT-9810-Z00 encoder definitions
-#include "config/encoder/cui_amt112s_4096_5000_s.h"     // CUI AMT112S-4096-5000-s encoder definitions
+//#include "config/motor/tmotor_mn4004_kv300.h"           // T-MOTOR MN4000 KV300 motor definitions
+//#include "config/motor/myactuator_rmdx8h.h"             // MYACTUATOR RMDX8H motor definitions
+//#include "config/encoder/broadcom_aedt_9810_z00.h"      // BROADCOM AEDT-9810-Z00 encoder definitions
+//#include "config/encoder/cui_amt112s_4096_5000_s.h"     // CUI AMT112S-4096-5000-s encoder definitions
 
 //#if (USE_UOMODRI_REV == USE_UOMODRI_V1)
 ////

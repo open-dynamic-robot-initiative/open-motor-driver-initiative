@@ -23,7 +23,8 @@
                                                                  EQEP_CONFIG_QUADRATURE | \
                                                                  EQEP_CONFIG_IGATE_DISABLE)
 #define CUI_AMT112S_4096_5000_S_ENC_SPEED_HIGH_SAMPLE_FREQ      (1000U) // [Hz] Velocity computation frequency
-#define CUI_AMT112S_4096_5000_S_ENC_SPEED_HIGH_SAMPLE_TICKS     (DEVICE_SYSCLK_FREQ / CUI_AMT112S_4096_5000_S_ENC_SPEED_HIGH_SAMPLE_FREQ)
+#define CUI_AMT112S_4096_5000_S_ENC_SPEED_HIGH_SAMPLE_TICKS     (DEVICE_SYSCLK_FREQ / \
+                                                                 CUI_AMT112S_4096_5000_S_ENC_SPEED_HIGH_SAMPLE_FREQ)
 #define CUI_AMT112S_4096_5000_S_ENC_SPEED_HIGH_SAMPLE_TICKS_MAX (CUI_AMT112S_4096_5000_S_ENC_SPEED_HIGH_SAMPLE_TICKS - 1)
 #define CUI_AMT112S_4096_5000_S_ENC_SPEED_HIGH_SCALE            (CUI_AMT112S_4096_5000_S_ENC_SPEED_HIGH_SAMPLE_FREQ) // 2pi / dt
 #define CUI_AMT112S_4096_5000_S_ENC_SPEED_LOW_SCALE             (2.0f * UOMODRI_PI * DEVICE_SYSCLK_FREQ * \
@@ -31,10 +32,14 @@
                                                                  (1 << (QEP_CAPTURE_CLOCK_DIV >> 4)) / \
                                                                  CUI_AMT112S_4096_5000_S_ENC_RESOLUTION_SCALE)
 #define CUI_AMT112S_4096_5000_S_ENC_SPEED_CUTOFF_FREQ           (100.0f) // cutoff frequency for velocity estimation
-#define CUI_AMT112S_4096_5000_S_ENC_SPEED_TIME_CONST            (2.0f * UOMODRI_PI * CUI_AMT112S_4096_5000_S_ENC_SPEED_CUTOFF_FREQ * PWM_PERIOD)
-#define CUI_AMT112S_4096_5000_S_ENC_SPEED_LPF_ALPHA             (CUI_AMT112S_4096_5000_S_ENC_SPEED_TIME_CONST / (1.0f + CUI_AMT112S_4096_5000_S_ENC_SPEED_TIME_CONST))
+#define CUI_AMT112S_4096_5000_S_ENC_SPEED_TIME_CONST            (2.0f * UOMODRI_PI * \
+                                                                 CUI_AMT112S_4096_5000_S_ENC_SPEED_CUTOFF_FREQ * \
+                                                                 PWM_PERIOD)
+#define CUI_AMT112S_4096_5000_S_ENC_SPEED_LPF_ALPHA             (CUI_AMT112S_4096_5000_S_ENC_SPEED_TIME_CONST / \
+                                                                 (1.0f + CUI_AMT112S_4096_5000_S_ENC_SPEED_TIME_CONST))
 #define CUI_AMT112S_4096_5000_S_ENC_SPEED_LPF_ONE_M_ALPHA       (1.0f - CUI_AMT112S_4096_5000_S_ENC_SPEED_LPF_ALPHA)
-#define CUI_AMT112S_4096_5000_S_ENC_SPEED_LOCAL_LPF_ALPHA       (CUI_AMT112S_4096_5000_S_ENC_SPEED_TIME_CONST / (1.0f + CUI_AMT112S_4096_5000_S_ENC_SPEED_TIME_CONST))
+#define CUI_AMT112S_4096_5000_S_ENC_SPEED_LOCAL_LPF_ALPHA       (CUI_AMT112S_4096_5000_S_ENC_SPEED_TIME_CONST / \
+                                                                 (1.0f + CUI_AMT112S_4096_5000_S_ENC_SPEED_TIME_CONST))
 #define CUI_AMT112S_4096_5000_S_ENC_SPEED_LOCAL_LPF_ONE_M_ALPHA (1.0f - CUI_AMT112S_4096_5000_S_ENC_SPEED_LPF_ALPHA)
 
 /*** Encoder 1 constants ***/

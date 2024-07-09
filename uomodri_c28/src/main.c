@@ -24,7 +24,7 @@
 #include "uomodri_user_defines.h"
 //#include "uomodri_hal_config_handlers.h"
 #include "config/uomodri_interrupts.h"
-#include "config/uomodri_drv.h"
+//#include "config/uomodri_drv.h"
 
 /***********************************************************************
  * VARIABLES
