@@ -9,26 +9,12 @@
 /************************************************************************
  * INCLUDES
  ************************************************************************/
-//#define "f2838x_device.h"
-//#define "device.h"
-
 #include "uomodri_3_1_hal_defines.h"
+
 #include "../../communication.h"
 #include "../../drv8353.h"
 #include "../../hal.h"
 #include "../../main.h"
-
-//#include "config/motor/tmotor_mn4004_kv300.h"           // T-MOTOR MN4000 KV300 motor definitions
-//#include "config/motor/myactuator_rmdx8h.h"             // MYACTUATOR RMDX8H motor definitions
-//#include "../encoder/broadcom_aedt_9810_z00.h"      // BROADCOM AEDT-9810-Z00 encoder definitions
-//#include "../encoder/cui_amt112s_4096_5000_s.h"     // CUI AMT112S-4096-5000-s encoder definitions
-
-//#include "../../drv8353.h"
-//#include "../../uomodri_user_defines.h"
-//#include "../../uomodri_shared.h"
-
-//
-//#include "uomodri_3_1_hal_defines.h"
 
 /***********************************************************************
  * VARIABLES
@@ -165,21 +151,16 @@ static const gpio_cfg_t GpioPinsCfgList[] =
  */
 static const adc_ini_t  AdcInitList[] =
 {
- /* ADCA - Ia_M1, Ia_M2 */
- MOTOR1_IA_ADC_INIT_DEF,
- MOTOR2_IA_ADC_INIT_DEF,
- /* ADCB - Ib_M1, Ib_M2 */
- MOTOR1_IB_ADC_INIT_DEF,
- MOTOR2_IB_ADC_INIT_DEF,
- /* ADCC - Ic_M1, Ic_M2 */
- MOTOR1_IC_ADC_INIT_DEF,
- MOTOR2_IC_ADC_INIT_DEF,
- /* ADCD - VBUS, VEXT1, VEXT2 */
- VBUS_ADC_INIT_DEF,
- VEXT1_ADC_INIT_DEF,
- VEXT2_ADC_INIT_DEF,
- /* END OF ARRAY */
- {.adcBase = UINT32_MAX},
+ MOTOR1_IA_ADC_INIT_DEF,            /* ADCA - M1_Ia */
+ MOTOR2_IA_ADC_INIT_DEF,            /* ADCA - M2_Ia */
+ MOTOR1_IB_ADC_INIT_DEF,            /* ADCB - M1_Ib */
+ MOTOR2_IB_ADC_INIT_DEF,            /* ADCB - M2_Ib */
+ MOTOR1_IC_ADC_INIT_DEF,            /* ADCC - M1_Ic */
+ MOTOR2_IC_ADC_INIT_DEF,            /* ADCC - M2_Ic */
+ VBUS_ADC_INIT_DEF,                 /* ADCD - VBUS */
+ VEXT1_ADC_INIT_DEF,                /* ADCD - VEXT1 */
+ VEXT2_ADC_INIT_DEF,                /* ADCD - VEXT2 */
+ {.adcBase = UINT32_MAX},           /* END OF ARRAY */
 };
 
 /** @var    ADC_PPB_TypeDef AdcAcqList[]
@@ -187,21 +168,16 @@ static const adc_ini_t  AdcInitList[] =
  */
 static const adc_acq_t  AdcAcqList[] =
 {
- /* ADCA - Ia_M1, Ia_M2 */
- MOTOR1_IA_ADC_ACQ_DEF,
- MOTOR2_IA_ADC_ACQ_DEF,
- /* ADCB - Ib_M1, Ib_M2 */
- MOTOR1_IB_ADC_ACQ_DEF,
- MOTOR2_IB_ADC_ACQ_DEF,
- /* ADCC - Ic_M1, Ic_M2 */
- MOTOR1_IC_ADC_ACQ_DEF,
- MOTOR2_IC_ADC_ACQ_DEF,
- /* ADCD - VBUS, VEXT1, VEXT2 */
- VBUS_ADC_ACQ_DEF,
- VEXT1_ADC_ACQ_DEF,
- VEXT2_ADC_ACQ_DEF,
- /* END OF ARRAY */
- {.adcBase = UINT32_MAX}
+ MOTOR1_IA_ADC_ACQ_DEF,             /* ADCA - M1_Ia */
+ MOTOR2_IA_ADC_ACQ_DEF,             /* ADCA - M2_Ia */
+ MOTOR1_IB_ADC_ACQ_DEF,             /* ADCB - M1_Ib */
+ MOTOR2_IB_ADC_ACQ_DEF,             /* ADCB - M2_Ib */
+ MOTOR1_IC_ADC_ACQ_DEF,             /* ADCC - M1_Ic */
+ MOTOR2_IC_ADC_ACQ_DEF,             /* ADCC - M2_Ic */
+ VBUS_ADC_ACQ_DEF,                  /* ADCD - VBUS */
+ VEXT1_ADC_ACQ_DEF,                 /* ADCD - VEXT1 */
+ VEXT2_ADC_ACQ_DEF,                 /* ADCD - VEXT2 */
+ {.adcBase = UINT32_MAX}            /* END OF ARRAY */
 };
 
 /** @var    ADC_TypeDef AdcCfgList[]
@@ -209,16 +185,11 @@ static const adc_acq_t  AdcAcqList[] =
  */
 static const adc_cfg_t  AdcCfgList[] =
 {
- /* ADCA - Ia_M1, Ia_M2 */
- MOTOR12_IA_ADC_DEF,
- /* ADCB - Ib_M1, Ib_M2 */
- MOTOR12_IB_ADC_DEF,
- /* ADCC - Ic_M1, Ic_M2 */
- MOTOR12_IC_ADC_DEF,
- /* ADCD - VBUS, VEXT1, VEXT2 */
- VBUS_VEXT12_ADC_DEF,
- /* END OF ARRAY */
- {.adcBase = UINT32_MAX},
+ MOTOR12_IA_ADC_DEF,                /* ADCA - M1_Ia, M2_Ia */
+ MOTOR12_IB_ADC_DEF,                /* ADCB - M1_Ib, M2_Ib */
+ MOTOR12_IC_ADC_DEF,                /* ADCC - M1_Ic, M2_Ic */
+ VBUS_VEXT12_ADC_DEF,               /* ADCD - VBUS, VEXT1, VEXT2 */
+ {.adcBase = UINT32_MAX},           /* END OF ARRAY */
 };
 
 /***********************************************************************
@@ -229,16 +200,13 @@ static const adc_cfg_t  AdcCfgList[] =
  */
 static const epwm_tb_t  PwmTimeBaseCfgList[] =
 {
- /* MOTOR1 - PWM1/PWM2/PWM3 - Time Base config */
- MOTOR1_PWM1_TIME_BASE_DEF,
- MOTOR1_PWM2_TIME_BASE_DEF,
- MOTOR1_PWM3_TIME_BASE_DEF,
- /* MOTOR2 - PWM4/PWM5/PWM6 - Time Base config */
- MOTOR2_PWM1_TIME_BASE_DEF,
- MOTOR2_PWM2_TIME_BASE_DEF,
- MOTOR2_PWM3_TIME_BASE_DEF,
- /* END OF ARRAY */
- {.epwmBase = UINT32_MAX},
+ MOTOR1_PWM1_TIME_BASE_DEF,         /* M1 - PWM1 - Time Base config */
+ MOTOR1_PWM2_TIME_BASE_DEF,         /* M1 - PWM2 - Time Base config */
+ MOTOR1_PWM3_TIME_BASE_DEF,         /* M1 - PWM3 - Time Base config */
+ MOTOR2_PWM1_TIME_BASE_DEF,         /* M2 - PWM4 - Time Base config */
+ MOTOR2_PWM2_TIME_BASE_DEF,         /* M2 - PWM5 - Time Base config */
+ MOTOR2_PWM3_TIME_BASE_DEF,         /* M2 - PWM6 - Time Base config */
+ {.epwmBase = UINT32_MAX},          /* END OF ARRAY */
 };
 
 /** @var    ePWM_CC_TypeDef PwmCounterCompareCfgList[]
@@ -246,16 +214,13 @@ static const epwm_tb_t  PwmTimeBaseCfgList[] =
  */
 static const epwm_cc_t  PwmCounterCompareCfgList[] =
 {
- /* MOTOR1 - PWM1/PWM2/PWM3 - Capture/Compare config */
- MOTOR1_PWM1_CAPTURE_COMPARE_DEF,
- MOTOR1_PWM2_CAPTURE_COMPARE_DEF,
- MOTOR1_PWM3_CAPTURE_COMPARE_DEF,
- /* MOTOR2 - PWM4/PWM5/PWM6 - Capture/Compare config */
- MOTOR2_PWM1_CAPTURE_COMPARE_DEF,
- MOTOR2_PWM2_CAPTURE_COMPARE_DEF,
- MOTOR2_PWM3_CAPTURE_COMPARE_DEF,
- /* END OF ARRAY */
- {.epwmBase = UINT32_MAX},
+ MOTOR1_PWM1_CAPTURE_COMPARE_DEF,   /* M1 - PWM1 - Capture/Compare config */
+ MOTOR1_PWM2_CAPTURE_COMPARE_DEF,   /* M1 - PWM2 - Capture/Compare config */
+ MOTOR1_PWM3_CAPTURE_COMPARE_DEF,   /* M1 - PWM3 - Capture/Compare config */
+ MOTOR2_PWM1_CAPTURE_COMPARE_DEF,   /* M2 - PWM4 - Capture/Compare config */
+ MOTOR2_PWM2_CAPTURE_COMPARE_DEF,   /* M2 - PWM5 - Capture/Compare config */
+ MOTOR2_PWM3_CAPTURE_COMPARE_DEF,   /* M2 - PWM6 - Capture/Compare config */
+ {.epwmBase = UINT32_MAX},          /* END OF ARRAY */
 };
 
 /** @var    ePWM_AQ_TypeDef PwmActionQualifierCfgList[]
@@ -263,16 +228,13 @@ static const epwm_cc_t  PwmCounterCompareCfgList[] =
  */
 static const epwm_aq_t  PwmActionQualifierCfgList[] =
 {
- /* MOTOR1 - PWM1/PWM2/PWM3 - Action Qualifier config */
- MOTOR1_PWM1_ACTION_QUALIFIER_DEF,
- MOTOR1_PWM2_ACTION_QUALIFIER_DEF,
- MOTOR1_PWM3_ACTION_QUALIFIER_DEF,
- /* MOTOR2 - PWM4/PWM5/PWM6 - Action Qualifier config */
- MOTOR2_PWM1_ACTION_QUALIFIER_DEF,
- MOTOR2_PWM2_ACTION_QUALIFIER_DEF,
- MOTOR2_PWM3_ACTION_QUALIFIER_DEF,
- /* END OF ARRAY */
- {.epwmBase = UINT32_MAX},
+ MOTOR1_PWM1_ACTION_QUALIFIER_DEF,  /* M1 - PWM1 - Action Qualifier config */
+ MOTOR1_PWM2_ACTION_QUALIFIER_DEF,  /* M1 - PWM2 - Action Qualifier config */
+ MOTOR1_PWM3_ACTION_QUALIFIER_DEF,  /* M1 - PWM3 - Action Qualifier config */
+ MOTOR2_PWM1_ACTION_QUALIFIER_DEF,  /* M2 - PWM4 - Action Qualifier config */
+ MOTOR2_PWM2_ACTION_QUALIFIER_DEF,  /* M2 - PWM5 - Action Qualifier config */
+ MOTOR2_PWM3_ACTION_QUALIFIER_DEF,  /* M2 - PWM6 - Action Qualifier config */
+ {.epwmBase = UINT32_MAX},          /* END OF ARRAY */
 };
 
 /** @var    ePWM_DB_TypeDef PwmDeadBandCfgList[]
@@ -280,16 +242,13 @@ static const epwm_aq_t  PwmActionQualifierCfgList[] =
  */
 static const epwm_db_t  PwmDeadBandCfgList[] =
 {
- /* MOTOR1 - PWM1/PWM2/PWM3 - Dead Band config */
- MOTOR1_PWM1_DEAD_BAND_DEF,
- MOTOR1_PWM2_DEAD_BAND_DEF,
- MOTOR1_PWM3_DEAD_BAND_DEF,
- /* MOTOR2 - PWM4/PWM5/PWM6 - Dead Band config */
- MOTOR2_PWM1_DEAD_BAND_DEF,
- MOTOR2_PWM2_DEAD_BAND_DEF,
- MOTOR2_PWM3_DEAD_BAND_DEF,
- /* END OF ARRAY */
- {.epwmBase = UINT32_MAX},
+ MOTOR1_PWM1_DEAD_BAND_DEF,         /* M1 - PWM1 - Dead Band config */
+ MOTOR1_PWM2_DEAD_BAND_DEF,         /* M1 - PWM2 - Dead Band config */
+ MOTOR1_PWM3_DEAD_BAND_DEF,         /* M1 - PWM3 - Dead Band config */
+ MOTOR2_PWM1_DEAD_BAND_DEF,         /* M2 - PWM4 - Dead Band config */
+ MOTOR2_PWM2_DEAD_BAND_DEF,         /* M2 - PWM5 - Dead Band config */
+ MOTOR2_PWM3_DEAD_BAND_DEF,         /* M2 - PWM6 - Dead Band config */
+ {.epwmBase = UINT32_MAX},          /* END OF ARRAY */
 };
 
 /** @var    ePWM_ET_TypeDef PwmAdcSocEventTriggerCfgList[]
@@ -297,12 +256,9 @@ static const epwm_db_t  PwmDeadBandCfgList[] =
  */
 static const epwm_et_t  PwmAdcSocEventTriggerCfgList[] =
 {
- /* MOTOR1 - PWM1 - ADC SOC event sync config  */
- MOTOR1_PWM1_ADC_SOC_EVT_TRIGGER_DEF,
- /* MOTOR2 - PWM4 - ADC SOC event sync config  */
- MOTOR2_PWM1_ADC_SOC_EVT_TRIGGER_DEF,
- /* END OF ARRAY */
- {.epwmBase = UINT32_MAX},
+ MOTOR1_PWM1_ADC_SOC_EVT_TRIG_DEF,  /* M1 - PWM1 - ADC SOC event sync config  */
+ MOTOR2_PWM1_ADC_SOC_EVT_TRIG_DEF,  /* M2 - PWM4 - ADC SOC event sync config  */
+ {.epwmBase = UINT32_MAX},          /* END OF ARRAY */
 };
 
 /** @var    ePWM_TypeDef PwmCfgList[]
@@ -310,16 +266,13 @@ static const epwm_et_t  PwmAdcSocEventTriggerCfgList[] =
  */
 static const epwm_cfg_t PwmCfgList[] =
 {
- /* MOTOR1 - PWM1/PWM2/PWM3 - Global config */
- MOTOR1_PWM1_DEF,
- MOTOR1_PWM2_DEF,
- MOTOR1_PWM3_DEF,
- /* MOTOR2 - PWM4/PWM5/PWM6 - Global config */
- MOTOR2_PWM1_DEF,
- MOTOR2_PWM2_DEF,
- MOTOR2_PWM3_DEF,
- /* END OF ARRAY */
- {.epwmBase = UINT32_MAX},
+ MOTOR1_PWM1_DEF,                   /* M1 - PWM1 - Global config */
+ MOTOR1_PWM2_DEF,                   /* M1 - PWM2 - Global config */
+ MOTOR1_PWM3_DEF,                   /* M1 - PWM3 - Global config */
+ MOTOR2_PWM1_DEF,                   /* M2 - PWM4 - Global config */
+ MOTOR2_PWM2_DEF,                   /* M2 - PWM5 - Global config */
+ MOTOR2_PWM3_DEF,                   /* M2 - PWM6 - Global config */
+ {.epwmBase = UINT32_MAX},          /* END OF ARRAY */
 };
 
 /***********************************************************************
@@ -330,10 +283,9 @@ static const epwm_cfg_t PwmCfgList[] =
  */
 static const eqep_cfg_t QepCfgList[] =
 {
- MOTOR1_QEP_DEF,
- MOTOR2_QEP_DEF,
- /* END OF ARRAY */
- {.eqepBase = UINT32_MAX},
+ MOTOR1_QEP_DEF,                    /* M1 - Quadrature Encoder config */
+ MOTOR2_QEP_DEF,                    /* M2 - Quadrature Encoder config */
+ {.eqepBase = UINT32_MAX},          /* END OF ARRAY */
 };
 
 /***********************************************************************
@@ -341,9 +293,8 @@ static const eqep_cfg_t QepCfgList[] =
  ***********************************************************************/
 static const sci_cfg_t  sciCfgList[] =
 {
- COM_SCI_DEF,
- /* END OF ARRAY */
- {.sciBase = UINT32_MAX},
+ COM_SCI_DEF,                       /* SCI(UART)/RS485 Communication bus config */
+ {.sciBase = UINT32_MAX},           /* END OF ARRAY */
 };
 
 /***********************************************************************
@@ -354,12 +305,11 @@ static const sci_cfg_t  sciCfgList[] =
  */
 static const spi_cfg_t  spiCfgList[] =
 {
- DRV_SPI_DEF,
- COM_SPI_DEF,
- DBG_SPI_DEF,
- LED_SPI_DEF,
- /* END OF ARRAY */
- {.spiBase = UINT32_MAX},
+ DRV_SPI_DEF,                       /* SPI DRV8353 bus config */
+ COM_SPI_DEF,                       /* SPI COMMUNICATION bus config */
+ DBG_SPI_DEF,                       /* SPI DEBUG bus config */
+ LED_SPI_DEF,                       /* SPI LED DIMMING bus config */
+ {.spiBase = UINT32_MAX},           /* END OF ARRAY */
 };
 
 /***********************************************************************
@@ -370,14 +320,10 @@ static const spi_cfg_t  spiCfgList[] =
  */
 static const dma_cfg_t  dmaCfgList[] =
 {
- /* DMA for the RGB LED */
- DMA_LED_SPI_TX_DEF,
- /* DMA for SPI communication Tx */
- DMA_COM_SPI_TX_DEF,
- /* DMA for SPI communication Rx */
- DMA_COM_SPI_RX_DEF,
- /* END OF ARRAY */
- {.dmaChBase = UINT32_MAX},
+ DMA_LED_SPI_TX_DEF,                /* DMA for the RGB LED */
+ DMA_COM_SPI_TX_DEF,                /* DMA for SPI COMMUNICATION Tx */
+ DMA_COM_SPI_RX_DEF,                /* DMA for SPI COMMUNICATION Rx */
+ {.dmaChBase = UINT32_MAX},         /* END OF ARRAY */
 };
 
 /***********************************************************************
@@ -385,16 +331,12 @@ static const dma_cfg_t  dmaCfgList[] =
  ***********************************************************************/
 static const cla_cfg_t  claCfgList[] =
 {
- /* CLA structure for ADC startup calibration - One Call */
- CLA_ADC_CALIB_DEF,
- /* CLA structure for uOmodri command update - 1ms */
- CLA_CMD_NEW_DEF,
- /* CLA structure for MOTOR1 control - 20us (40kHz) */
- CLA_MOTOR1_DEF,
- /* CLA structure for MOTOR2 control - 20us (40kHz) */
- CLA_MOTOR2_DEF,
- /* END OF ARRAY */
- {.p_claFunc = NULL},
+
+ CLA_ADC_CALIB_DEF,                 /* CLA structure for ADC startup calibration - One Call */
+ CLA_CMD_NEW_DEF,                   /* CLA structure for uOmodri command update - 1ms */
+ CLA_MOTOR1_DEF,                    /* CLA structure for MOTOR1 control - 20us (40kHz) */
+ CLA_MOTOR2_DEF,                    /* CLA structure for MOTOR2 control - 20us (40kHz) */
+ {.p_claFunc = NULL},               /* END OF ARRAY */
 };
 
 /***********************************************************************
@@ -402,8 +344,7 @@ static const cla_cfg_t  claCfgList[] =
  ***********************************************************************/
 static const clb_cfg_t  clbCfgList[] =
 {
- /* CLB config for RS485 reception */
- CLB_RS485_DEF,
+  CLB_RS485_DEF,                    /* CLB config for RS485 reception */
 };
 
 /***********************************************************************
@@ -411,10 +352,9 @@ static const clb_cfg_t  clbCfgList[] =
  ***********************************************************************/
 static const ipc_cfg_t  ipcCfgList[] =
 {
- /* IPC between CPU1 & CM */
- IPC_CPU1_2_CM_DEF,
-  /* END OF ARRAY */
- {.ipcType = IPC_TOTAL_NUM},
+
+ IPC_CPU1_2_CM_DEF,                 /* IPC between CPU1 & CM */
+ {.ipcType = IPC_TOTAL_NUM},        /* END OF ARRAY */
 };
 
 /***********************************************************************
@@ -422,10 +362,8 @@ static const ipc_cfg_t  ipcCfgList[] =
  ***********************************************************************/
 static const tmr_cfg_t  timerCfgList[] =
 {
- /* CPU timer 0 config */
- CPU_TIMER0_DEF,
- /* END OF ARRAY */
- {.cpuTimerBase = UINT32_MAX},
+ CPU_TIMER0_DEF,                    /* CPU timer 0 config */
+ {.cpuTimerBase = UINT32_MAX},      /* END OF ARRAY */
 };
 
 /***********************************************************************

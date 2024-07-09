@@ -1129,7 +1129,7 @@
                                                     .fedCount         = PWM_DEADBAND_FALLING_EDGE_DELAY, \
                                                     .DelayMode        = EPWM_DELAY_ENABLE, \
                                                 }
-#define MOTOR1_PWM1_ADC_SOC_EVT_TRIGGER_DEF     { \
+#define MOTOR1_PWM1_ADC_SOC_EVT_TRIG_DEF        { \
                                                     .epwmBase         = MOTOR1_PWM1_BASE, \
                                                     .adcSOCEvtCount   = 1, \
                                                     .adcSOCType       = EPWM_SOC_A, \
@@ -1237,7 +1237,7 @@
                                                     .fedCount         = PWM_DEADBAND_FALLING_EDGE_DELAY, \
                                                     .DelayMode        = EPWM_DELAY_ENABLE, \
                                                 }
-#define MOTOR2_PWM1_ADC_SOC_EVT_TRIGGER_DEF     { \
+#define MOTOR2_PWM1_ADC_SOC_EVT_TRIG_DEF        { \
                                                     .epwmBase         = MOTOR2_PWM1_BASE, \
                                                     .adcSOCEvtCount   = 1, \
                                                     .adcSOCType       = EPWM_SOC_B, \
