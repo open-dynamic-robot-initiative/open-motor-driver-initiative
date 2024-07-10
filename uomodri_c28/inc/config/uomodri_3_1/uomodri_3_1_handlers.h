@@ -9,12 +9,14 @@
 /************************************************************************
  * INCLUDES
  ************************************************************************/
-#include "uomodri_3_1_hal_defines.h"
+#include "f2838x_device.h"              // F2838x headerfile include file
+#include "device.h"                     // F2838x headerfile include file
 
+#include "uomodri_3_1_hal_defines.h"    // uOmodri v3.1 configuration include file
 #include "../../communication.h"
-#include "../../drv8353.h"
 #include "../../hal.h"
-#include "../../main.h"
+//#include "../../main.h"
+#include "../../drv8353.h"
 
 /***********************************************************************
  * VARIABLES
@@ -26,14 +28,14 @@ extern uint16_t     led_spi_tx[LED_MSG_TX_16BIT_LENGTH];
 /***********************************************************************
  * FUNCTIONS DECLARATION
  ***********************************************************************/
-__attribute__((interrupt)) void adcCalib_Task(void);
-__attribute__((interrupt)) void cmdNew_Task(void);
-__attribute__((interrupt)) void motor1_Task(void);
-__attribute__((interrupt)) void motor2_Task(void);
-__attribute__((interrupt)) void Cla1Task5(void);
-__attribute__((interrupt)) void Cla1Task6(void);
-__attribute__((interrupt)) void Cla1Task7(void);
-__attribute__((interrupt)) void Cla1Task8(void);
+extern __attribute__((interrupt)) void adcCalib_Task(void);
+extern __attribute__((interrupt)) void cmdNew_Task(void);
+extern __attribute__((interrupt)) void motor1_Task(void);
+extern __attribute__((interrupt)) void motor2_Task(void);
+extern __attribute__((interrupt)) void Cla1Task5(void);
+extern __attribute__((interrupt)) void Cla1Task6(void);
+extern __attribute__((interrupt)) void Cla1Task7(void);
+extern __attribute__((interrupt)) void Cla1Task8(void);
 
 /***********************************************************************
  * GPIOs STRUCTURE DECLARATION & INITIALIZATION
@@ -41,7 +43,7 @@ __attribute__((interrupt)) void Cla1Task8(void);
 /** @var    GPIO_TypeDef GpioPinsCfgList[]
  *  @brief  List all the GPIO definitions except the analog pins.
  */
-static const gpio_cfg_t GpioPinsCfgList[] =
+static const gpio_cfg_t gpioPinsCfgList[] =
 {
 #if (USB_BUS_ENABLE) && (!UART_BUS_ENABLE) && (CM_CORE_ENABLE)
  /*
@@ -134,12 +136,11 @@ static const gpio_cfg_t GpioPinsCfgList[] =
  CAN_RS485_MUX_SEL_DEF,
  RS485_TX_EN_DEF,
  /* Debug pins */
- DBG_PIN3_DEF,
- DBG_PIN2_DEF,
- DBG_PIN1_DEF,
- DBG_PIN0_DEF,
- /* END OF ARRAY */
- {.pinNum = UINT32_MAX},
+ DBG_PIN3_DEF,                      /* Debug pin 3 */
+ DBG_PIN2_DEF,                      /* Debug pin 2 */
+ DBG_PIN1_DEF,                      /* Debug pin 1 */
+ DBG_PIN0_DEF,                      /* Debug pin 0 */
+ {.pinNum = UINT32_MAX},            /* END OF ARRAY */
 };
 
 /***********************************************************************
@@ -149,7 +150,7 @@ static const gpio_cfg_t GpioPinsCfgList[] =
  *  @brief  List all the configurations defined
  *  for ADC Start-Of-Conversion (SOC) submodule.
  */
-static const adc_ini_t  AdcInitList[] =
+static const adc_ini_t  adcInitList[] =
 {
  MOTOR1_IA_ADC_INIT_DEF,            /* ADCA - M1_Ia */
  MOTOR2_IA_ADC_INIT_DEF,            /* ADCA - M2_Ia */
@@ -166,7 +167,7 @@ static const adc_ini_t  AdcInitList[] =
 /** @var    ADC_PPB_TypeDef AdcAcqList[]
  *  @brief  List all the configurations defined for ADC Post-Processing Block (PPB) submodule.
  */
-static const adc_acq_t  AdcAcqList[] =
+static const adc_acq_t  adcAcqList[] =
 {
  MOTOR1_IA_ADC_ACQ_DEF,             /* ADCA - M1_Ia */
  MOTOR2_IA_ADC_ACQ_DEF,             /* ADCA - M2_Ia */
@@ -183,7 +184,7 @@ static const adc_acq_t  AdcAcqList[] =
 /** @var    ADC_TypeDef AdcCfgList[]
  *  @brief  List all the configurations defined for each ADC modules.
  */
-static const adc_cfg_t  AdcCfgList[] =
+static const adc_cfg_t  adcCfgList[] =
 {
  MOTOR12_IA_ADC_DEF,                /* ADCA - M1_Ia, M2_Ia */
  MOTOR12_IB_ADC_DEF,                /* ADCB - M1_Ib, M2_Ib */
@@ -198,7 +199,7 @@ static const adc_cfg_t  AdcCfgList[] =
 /** @var    ePWM_TB_TypeDef PwmTimeBaseCfgList[]
  *  @brief  List all the configurations necessaries for ePWM Time Base submodule.
  */
-static const epwm_tb_t  PwmTimeBaseCfgList[] =
+static const epwm_tb_t  pwmTimeBaseCfgList[] =
 {
  MOTOR1_PWM1_TIME_BASE_DEF,         /* M1 - PWM1 - Time Base config */
  MOTOR1_PWM2_TIME_BASE_DEF,         /* M1 - PWM2 - Time Base config */
@@ -212,7 +213,7 @@ static const epwm_tb_t  PwmTimeBaseCfgList[] =
 /** @var    ePWM_CC_TypeDef PwmCounterCompareCfgList[]
  *  @brief  List all the configurations necessaries for ePWM Capture/Compare submodule.
  */
-static const epwm_cc_t  PwmCounterCompareCfgList[] =
+static const epwm_cc_t  pwmCounterCompareCfgList[] =
 {
  MOTOR1_PWM1_CAPTURE_COMPARE_DEF,   /* M1 - PWM1 - Capture/Compare config */
  MOTOR1_PWM2_CAPTURE_COMPARE_DEF,   /* M1 - PWM2 - Capture/Compare config */
@@ -226,7 +227,7 @@ static const epwm_cc_t  PwmCounterCompareCfgList[] =
 /** @var    ePWM_AQ_TypeDef PwmActionQualifierCfgList[]
  *  @brief  List all the configurations necessaries for ePWM Action Qualifier submodule.
  */
-static const epwm_aq_t  PwmActionQualifierCfgList[] =
+static const epwm_aq_t  pwmActionQualifierCfgList[] =
 {
  MOTOR1_PWM1_ACTION_QUALIFIER_DEF,  /* M1 - PWM1 - Action Qualifier config */
  MOTOR1_PWM2_ACTION_QUALIFIER_DEF,  /* M1 - PWM2 - Action Qualifier config */
@@ -240,7 +241,7 @@ static const epwm_aq_t  PwmActionQualifierCfgList[] =
 /** @var    ePWM_DB_TypeDef PwmDeadBandCfgList[]
  *  @brief  List all the configurations necessaries for ePWM DeadBand Unit submodule.
  */
-static const epwm_db_t  PwmDeadBandCfgList[] =
+static const epwm_db_t  pwmDeadBandCfgList[] =
 {
  MOTOR1_PWM1_DEAD_BAND_DEF,         /* M1 - PWM1 - Dead Band config */
  MOTOR1_PWM2_DEAD_BAND_DEF,         /* M1 - PWM2 - Dead Band config */
@@ -254,7 +255,7 @@ static const epwm_db_t  PwmDeadBandCfgList[] =
 /** @var    ePWM_ET_TypeDef PwmAdcSocEventTriggerCfgList[]
  *  @brief  List all the configurations necessaries for ePWM Event Trigger submodule.
  */
-static const epwm_et_t  PwmAdcSocEventTriggerCfgList[] =
+static const epwm_et_t  pwmAdcSocEventTriggerCfgList[] =
 {
  MOTOR1_PWM1_ADC_SOC_EVT_TRIG_DEF,  /* M1 - PWM1 - ADC SOC event sync config  */
  MOTOR2_PWM1_ADC_SOC_EVT_TRIG_DEF,  /* M2 - PWM4 - ADC SOC event sync config  */
@@ -264,7 +265,7 @@ static const epwm_et_t  PwmAdcSocEventTriggerCfgList[] =
 /** @var    ePWM_TypeDef PwmCfgList[]
  *  @brief  List all the configurations necessaries for PWM module.
  */
-static const epwm_cfg_t PwmCfgList[] =
+static const epwm_cfg_t pwmCfgList[] =
 {
  MOTOR1_PWM1_DEF,                   /* M1 - PWM1 - Global config */
  MOTOR1_PWM2_DEF,                   /* M1 - PWM2 - Global config */
@@ -331,7 +332,6 @@ static const dma_cfg_t  dmaCfgList[] =
  ***********************************************************************/
 static const cla_cfg_t  claCfgList[] =
 {
-
  CLA_ADC_CALIB_DEF,                 /* CLA structure for ADC startup calibration - One Call */
  CLA_CMD_NEW_DEF,                   /* CLA structure for uOmodri command update - 1ms */
  CLA_MOTOR1_DEF,                    /* CLA structure for MOTOR1 control - 20us (40kHz) */
@@ -371,9 +371,9 @@ static const tmr_cfg_t  timerCfgList[] =
  ***********************************************************************/
 static const hal_cfg_t hal =
 {
- .p_gpioHandle  = GpioPinsCfgList,
- .p_adcHandle   = AdcCfgList,
- .p_epwmHandle  = PwmCfgList,
+ .p_gpioHandle  = gpioPinsCfgList,
+ .p_adcHandle   = adcCfgList,
+ .p_epwmHandle  = pwmCfgList,
  .p_eqepHandle  = QepCfgList,
  .p_dmaHandle   = dmaCfgList,
  .p_ipcHandle   = ipcCfgList,

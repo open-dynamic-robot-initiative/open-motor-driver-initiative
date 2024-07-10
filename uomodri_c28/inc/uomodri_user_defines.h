@@ -40,10 +40,10 @@
 #define CPU1_CORE_ENABLE                        (1)
 #define CPU2_CORE_ENABLE                        (0)
 #define CM_CORE_ENABLE                          (0)
-#define CLA_CORE_ENABLE                         (1)
-#if (CLA_CORE_ENABLE) && (!defined __TMS320C28XX_CLA__)
-#define __TMS320C28XX_CLA__
-#endif
+//#define CLA_CORE_ENABLE                         (1)
+//#if (CLA_CORE_ENABLE) && (!defined __TMS320C28XX_CLA__)
+//#define __TMS320C28XX_CLA__
+//#endif
 #define CLB_TILE_ENABLE                         (1)
 // CM peripherals ENABLE/DISABLE
 #define USB_BUS_ENABLE                          (0)
@@ -71,7 +71,8 @@
 #define UOMODRI_RES_ESTIM_FLT(flt_coef, y, x)   LPF_FILTER_1(flt_coef, y, x)
 #define UOMODRI_SPEED_FLT(flt_coef, y, x)       LPF_FILTER_1(flt_coef, y, x)
 #define UOMODRI_HAL_ADC_CALIB(flt_coef, y, x)   LPF_FILTER_1(flt_coef, y, x)
-#define UOMODRI_FEED_FORWARD_ENABLE             (0)
+
+#define USE_FEED_FORWARD                        (0)
 
 /*
  * Motors configs

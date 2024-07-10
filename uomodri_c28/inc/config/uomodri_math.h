@@ -9,7 +9,7 @@
 /************************************************************************
  * INCLUDES
  ************************************************************************/
-#include "../uomodri_user_defines.h"
+//#include "../uomodri_user_defines.h"
 //#ifdef __TMS320C28XX_CLA__
 //#if (CLA_CORE_ENABLE)
 //#ifdef __TMS320C28XX_CLA__

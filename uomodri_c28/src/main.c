@@ -6,11 +6,9 @@
 /***********************************************************************
  * INCLUDES
  ***********************************************************************/
-#include <config/uomodri_3_1/uomodri_3_1_handlers.h>
-#include "driverlib.h"
-#include "device.h"
-#include "board.h"
-#include "CLAmath.h"
+//#include "f2838x_cla_typedefs.h"
+//#include "CLAmath.h"
+//#include "board.h"
 
 #include "main.h"
 #include "hal.h"
@@ -19,16 +17,46 @@
 //#include "motor.h"
 #include "communication.h"
 
-#include "uomodri_shared.h"
-#include "config/uomodri_math.h"
-#include "uomodri_user_defines.h"
+//#include "uomodri_shared.h"
+//#include "config/uomodri_math.h"
+//#include "uomodri_user_defines.h"
+
 //#include "uomodri_hal_config_handlers.h"
-#include "config/uomodri_interrupts.h"
+//#include "config/uomodri_interrupts.h"
 //#include "config/uomodri_drv.h"
+
+/***********************************************************************
+ * FUNCTIONS DECLARATION
+ ***********************************************************************/
+__attribute__((interrupt)) void cla_ClearTask(void);
+__attribute__((interrupt)) void cla_isrMotor1(void);
+__attribute__((interrupt)) void cla_isrMotor2(void);
+__attribute__((interrupt)) void tmr_isrLedCmd(void);
+__attribute__((interrupt)) void dma_isrSpiComRx(void);
+__attribute__((interrupt)) void sci_isrRx_RS485(void);
+__attribute__((interrupt)) void sci_isrTx_RS485(void);
+__attribute__((interrupt)) void clb_isrTxRx_RS485(void);
 
 /***********************************************************************
  * VARIABLES
  ***********************************************************************/
+/** @var    int_cfg_t   interruptList[]
+ *  @brief  List all required interrupts configurations.
+ */
+static const int_cfg_t interruptList[] =
+{
+ INT_CLA_ADC_CALIB_DEF,
+ INT_CLA_MOTOR1_DEF,
+ INT_CLA_MOTOR2_DEF,
+ INT_TIMER_LED_DEF,
+ INT_DMA_RX_MSG_DEF,
+#if (RS485_BUS_ENABLE) && (USE_UOMODRI_REV != USE_UOMODRI_V1)
+ INT_RS485_TX_MSG_DEF,
+ INT_RS485_RX_MSG_DEF,
+ INT_RS485_Rx_Tx_CLB_DEF,
+#endif
+ {.intNum = UINT32_MAX},        /* END OF ARRAY */
+};
 
 /***********************************************************************
  * GLOBAL VARIABLES

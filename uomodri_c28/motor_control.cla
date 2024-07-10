@@ -29,14 +29,14 @@ extern cmd_t        cmd_uomodri[];
 /***********************************************************************
  * FUNCTIONS DECLARATION
  ***********************************************************************/
-__attribute__((interrupt)) void adcCalib_Task(void);
-__attribute__((interrupt)) void cmdNew_Task(void);
-__attribute__((interrupt)) void motor1_Task(void);
-__attribute__((interrupt)) void motor2_Task(void);
-__attribute__((interrupt)) void Cla1Task5(void);
-__attribute__((interrupt)) void Cla1Task6(void);
-__attribute__((interrupt)) void Cla1Task7(void);
-__attribute__((interrupt)) void Cla1Task8(void);
+extern __attribute__((interrupt)) void adcCalib_Task(void);
+extern __attribute__((interrupt)) void cmdNew_Task(void);
+extern __attribute__((interrupt)) void motor1_Task(void);
+extern __attribute__((interrupt)) void motor2_Task(void);
+extern __attribute__((interrupt)) void Cla1Task5(void);
+extern __attribute__((interrupt)) void Cla1Task6(void);
+extern __attribute__((interrupt)) void Cla1Task7(void);
+extern __attribute__((interrupt)) void Cla1Task8(void);
 
 /***********************************************************************
  * FUNCTIONS DEFINITION

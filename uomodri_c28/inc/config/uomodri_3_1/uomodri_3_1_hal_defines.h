@@ -12,9 +12,8 @@
 //#include "f2838x_cla_typedefs.h"  // F2838x CLA Type definitions
 //#include "f2838x_device.h"        // F2838x Headerfile Include File
 //#include "f2838x_examples.h"      // F2838x Examples Include File
-
 //#include "device.h"                 // F2838x Headerfile Include File
-#include "driverlib.h"
+#include "driverlib.h"  // F2838x Headerfile Include File
 
 /***********************************************************************
  * GPIO DEFINES
@@ -1010,29 +1009,29 @@
 /* MOTOR1 & MOTOR2 - Ia ADC Global Configs */
 #define MOTOR12_IA_ADC_DEF                      { \
                                                     .adcBase          = MOTOR12_IA_ADC_CFG_ADDR, \
-                                                    .p_adcIni         = &AdcInitList[0], \
-                                                    .p_adcAcq         = &AdcAcqList[0], \
+                                                    .p_adcIni         = &adcInitList[0], \
+                                                    .p_adcAcq         = &adcAcqList[0], \
                                                     .p_adcInt         = NULL, \
                                                 }
 /* MOTOR1 & MOTOR2 - Ib ADC Global Configs */
 #define MOTOR12_IB_ADC_DEF                      { \
                                                     .adcBase          = MOTOR12_IB_ADC_CFG_ADDR, \
-                                                    .p_adcIni         = &AdcInitList[2], \
-                                                    .p_adcAcq         = &AdcAcqList[2], \
+                                                    .p_adcIni         = &adcInitList[2], \
+                                                    .p_adcAcq         = &adcAcqList[2], \
                                                     .p_adcInt         = NULL, \
                                                 }
 /* MOTOR1 & MOTOR2 - Ic ADC Global Configs */
 #define MOTOR12_IC_ADC_DEF                      { \
                                                     .adcBase          = MOTOR12_IC_ADC_CFG_ADDR, \
-                                                    .p_adcIni         = &AdcInitList[4], \
-                                                    .p_adcAcq         = &AdcAcqList[4], \
+                                                    .p_adcIni         = &adcInitList[4], \
+                                                    .p_adcAcq         = &adcAcqList[4], \
                                                     .p_adcInt         = NULL, \
                                                 }
 /* MOTOR1 & MOTOR2 - Vbus, Vext1 &Vext2 ADC Global Configs */
 #define VBUS_VEXT12_ADC_DEF                     { \
                                                     .adcBase          = VBUS_VEXT12_ADC_CFG_ADDR, \
-                                                    .p_adcIni         = &AdcInitList[6], \
-                                                    .p_adcAcq         = &AdcAcqList[6], \
+                                                    .p_adcIni         = &adcInitList[6], \
+                                                    .p_adcAcq         = &adcAcqList[6], \
                                                     .p_adcInt         = NULL, \
                                                 }
 
@@ -1137,12 +1136,12 @@
                                                 }
 #define MOTOR1_PWM1_DEF                         { \
                                                     .epwmBase                   = (uint32_t)MOTOR1_PWM1_BASE, \
-                                                    .p_epwmTimeBase             = (epwm_tb_t *)&PwmTimeBaseCfgList[0], \
-                                                    .p_epwmCounterCompare       = (epwm_cc_t *)&PwmCounterCompareCfgList[0], \
-                                                    .p_epwmActionQualifier      = (epwm_aq_t *)&PwmActionQualifierCfgList[0], \
-                                                    .p_epwmDeadband             = (epwm_db_t *)&PwmDeadBandCfgList[0], \
+                                                    .p_epwmTimeBase             = (epwm_tb_t *)&pwmTimeBaseCfgList[0], \
+                                                    .p_epwmCounterCompare       = (epwm_cc_t *)&pwmCounterCompareCfgList[0], \
+                                                    .p_epwmActionQualifier      = (epwm_aq_t *)&pwmActionQualifierCfgList[0], \
+                                                    .p_epwmDeadband             = (epwm_db_t *)&pwmDeadBandCfgList[0], \
                                                     .p_epwmProgChopper          = NULL, \
-                                                    .p_epwmAdcSocEventTrigger   = (epwm_et_t *)&PwmAdcSocEventTriggerCfgList[0], \
+                                                    .p_epwmAdcSocEventTrigger   = (epwm_et_t *)&pwmAdcSocEventTriggerCfgList[0], \
                                                     .p_epwmInterruptsEvent      = NULL, \
                                                     .epwmAdcSocSrcExtern        = (uint32_t)SYSCTL_ADCSOC_SRC_PWM1SOCA, \
                                                 }
@@ -1171,10 +1170,10 @@
                                                 }
 #define MOTOR1_PWM2_DEF                         { \
                                                     .epwmBase                   = MOTOR1_PWM2_BASE, \
-                                                    .p_epwmTimeBase             = (epwm_tb_t *)&PwmTimeBaseCfgList[1], \
-                                                    .p_epwmCounterCompare       = (epwm_cc_t *)&PwmCounterCompareCfgList[1], \
-                                                    .p_epwmActionQualifier      = (epwm_aq_t *)&PwmActionQualifierCfgList[1], \
-                                                    .p_epwmDeadband             = (epwm_db_t *)&PwmDeadBandCfgList[1], \
+                                                    .p_epwmTimeBase             = (epwm_tb_t *)&pwmTimeBaseCfgList[1], \
+                                                    .p_epwmCounterCompare       = (epwm_cc_t *)&pwmCounterCompareCfgList[1], \
+                                                    .p_epwmActionQualifier      = (epwm_aq_t *)&pwmActionQualifierCfgList[1], \
+                                                    .p_epwmDeadband             = (epwm_db_t *)&pwmDeadBandCfgList[1], \
                                                     .p_epwmProgChopper          = NULL, \
                                                     .p_epwmAdcSocEventTrigger   = NULL, \
                                                     .p_epwmInterruptsEvent      = NULL, \
@@ -1205,10 +1204,10 @@
                                                 }
 #define MOTOR1_PWM3_DEF                         { \
                                                     .epwmBase                   = MOTOR1_PWM3_BASE, \
-                                                    .p_epwmTimeBase             = (epwm_tb_t *)&PwmTimeBaseCfgList[2], \
-                                                    .p_epwmCounterCompare       = (epwm_cc_t *)&PwmCounterCompareCfgList[2], \
-                                                    .p_epwmActionQualifier      = (epwm_aq_t *)&PwmActionQualifierCfgList[2], \
-                                                    .p_epwmDeadband             = (epwm_db_t *)&PwmDeadBandCfgList[2], \
+                                                    .p_epwmTimeBase             = (epwm_tb_t *)&pwmTimeBaseCfgList[2], \
+                                                    .p_epwmCounterCompare       = (epwm_cc_t *)&pwmCounterCompareCfgList[2], \
+                                                    .p_epwmActionQualifier      = (epwm_aq_t *)&pwmActionQualifierCfgList[2], \
+                                                    .p_epwmDeadband             = (epwm_db_t *)&pwmDeadBandCfgList[2], \
                                                     .p_epwmProgChopper          = NULL, \
                                                     .p_epwmAdcSocEventTrigger   = NULL, \
                                                     .p_epwmInterruptsEvent      = NULL, \
@@ -1245,12 +1244,12 @@
                                                 }
 #define MOTOR2_PWM1_DEF                         { \
                                                     .epwmBase                   = (uint32_t)MOTOR2_PWM1_BASE, \
-                                                    .p_epwmTimeBase             = (epwm_tb_t *)&PwmTimeBaseCfgList[3], \
-                                                    .p_epwmCounterCompare       = (epwm_cc_t *)&PwmCounterCompareCfgList[3], \
-                                                    .p_epwmActionQualifier      = (epwm_aq_t *)&PwmActionQualifierCfgList[3], \
-                                                    .p_epwmDeadband             = (epwm_db_t *)&PwmDeadBandCfgList[3], \
+                                                    .p_epwmTimeBase             = (epwm_tb_t *)&pwmTimeBaseCfgList[3], \
+                                                    .p_epwmCounterCompare       = (epwm_cc_t *)&pwmCounterCompareCfgList[3], \
+                                                    .p_epwmActionQualifier      = (epwm_aq_t *)&pwmActionQualifierCfgList[3], \
+                                                    .p_epwmDeadband             = (epwm_db_t *)&pwmDeadBandCfgList[3], \
                                                     .p_epwmProgChopper          = NULL, \
-                                                    .p_epwmAdcSocEventTrigger   = (epwm_et_t *)&PwmAdcSocEventTriggerCfgList[1], \
+                                                    .p_epwmAdcSocEventTrigger   = (epwm_et_t *)&pwmAdcSocEventTriggerCfgList[1], \
                                                     .p_epwmInterruptsEvent      = NULL, \
                                                     .epwmAdcSocSrcExtern        = (uint32_t)SYSCTL_ADCSOC_SRC_PWM4SOCB, \
                                                 }
@@ -1279,10 +1278,10 @@
                                                 }
 #define MOTOR2_PWM2_DEF                         { \
                                                     .epwmBase                   = MOTOR2_PWM2_BASE, \
-                                                    .p_epwmTimeBase             = (epwm_tb_t *)&PwmTimeBaseCfgList[4], \
-                                                    .p_epwmCounterCompare       = (epwm_cc_t *)&PwmCounterCompareCfgList[4], \
-                                                    .p_epwmActionQualifier      = (epwm_aq_t *)&PwmActionQualifierCfgList[4], \
-                                                    .p_epwmDeadband             = (epwm_db_t *)&PwmDeadBandCfgList[4], \
+                                                    .p_epwmTimeBase             = (epwm_tb_t *)&pwmTimeBaseCfgList[4], \
+                                                    .p_epwmCounterCompare       = (epwm_cc_t *)&pwmCounterCompareCfgList[4], \
+                                                    .p_epwmActionQualifier      = (epwm_aq_t *)&pwmActionQualifierCfgList[4], \
+                                                    .p_epwmDeadband             = (epwm_db_t *)&pwmDeadBandCfgList[4], \
                                                     .p_epwmProgChopper          = NULL, \
                                                     .p_epwmAdcSocEventTrigger   = NULL, \
                                                     .p_epwmInterruptsEvent      = NULL, \
@@ -1313,10 +1312,10 @@
                                                 }
 #define MOTOR2_PWM3_DEF                         { \
                                                     .epwmBase                   = MOTOR2_PWM3_BASE, \
-                                                    .p_epwmTimeBase             = (epwm_tb_t *)&PwmTimeBaseCfgList[5], \
-                                                    .p_epwmCounterCompare       = (epwm_cc_t *)&PwmCounterCompareCfgList[5], \
-                                                    .p_epwmActionQualifier      = (epwm_aq_t *)&PwmActionQualifierCfgList[5], \
-                                                    .p_epwmDeadband             = (epwm_db_t *)&PwmDeadBandCfgList[5], \
+                                                    .p_epwmTimeBase             = (epwm_tb_t *)&pwmTimeBaseCfgList[5], \
+                                                    .p_epwmCounterCompare       = (epwm_cc_t *)&pwmCounterCompareCfgList[5], \
+                                                    .p_epwmActionQualifier      = (epwm_aq_t *)&pwmActionQualifierCfgList[5], \
+                                                    .p_epwmDeadband             = (epwm_db_t *)&pwmDeadBandCfgList[5], \
                                                     .p_epwmProgChopper          = NULL, \
                                                     .p_epwmAdcSocEventTrigger   = NULL, \
                                                     .p_epwmInterruptsEvent      = NULL, \
@@ -1603,37 +1602,32 @@
 
 #define DMA_LED_SPI_TX_FULL_LENGTH              (6)
 #define DMA_LED_SPI_TX_BURST_EVT                (3)
-#define DMA_LED_SPI_TX_TRANSFER_EVT             (DMA_LED_SPI_TX_FULL_LENGTH / \
-                                                 DMA_LED_SPI_TX_BURST_EVT)
-#define DMA_LED_SPI_TX_CONFIG                   (DMA_CFG_ONESHOT_DISABLE | \
-                                                 DMA_CFG_CONTINUOUS_DISABLE | \
-                                                 DMA_CFG_SIZE_16BIT)
+#define DMA_LED_SPI_TX_TRANSFER_EVT             (DMA_LED_SPI_TX_FULL_LENGTH / DMA_LED_SPI_TX_BURST_EVT)
+#define DMA_LED_SPI_TX_16BIT_CONFIG             (DMA_CFG_ONESHOT_DISABLE | DMA_CFG_CONTINUOUS_DISABLE | DMA_CFG_SIZE_16BIT)
+#if ((DMA_LED_SPI_TX_16BIT_CONFIG & DMA_MODE_DATASIZE) == DMA_CFG_SIZE_16BIT)
+#define DMA_LED_SPI_TX_INC_STEP                 (1)
+#else
+#define DMA_LED_SPI_TX_INC_STEP                 (2)
+#endif
 
 #define DMA_COM_SPI_TX_RX_FULL_LENGTH           (17)
 #define DMA_COM_SPI_TX_RX_CRC_LENGTH            (2)
-#define DMA_COM_SPI_TX_RX_PAYLOAD_LENGTH        (DMA_COM_SPI_TX_RX_FULL_LENGTH - \
-                                                 DMA_COM_SPI_TX_RX_CRC_LENGTH)
+#define DMA_COM_SPI_TX_RX_PAYLOAD_LENGTH        (DMA_COM_SPI_TX_RX_FULL_LENGTH - DMA_COM_SPI_TX_RX_CRC_LENGTH)
 #define DMA_COM_SPI_TX_BURST_EVT                (8)
-#define DMA_COM_SPI_TX_TRANSFER_EVT             ((DMA_COM_SPI_TX_RX_FULL_LENGTH - 1) / \
-                                                 DMA_COM_SPI_TX_BURST_EVT)
-#define DMA_COM_SPI_RX_16BIT_BURST_EVT          (1)
-#define DMA_COM_SPI_RX_16BIT_TRANSFER_EVT       (DMA_COM_SPI_TX_RX_FULL_LENGTH / \
-                                                 DMA_COM_SPI_RX_16BIT_BURST_EVT)
-#define DMA_COM_SPI_TX_CONFIG                   (DMA_CFG_ONESHOT_DISABLE | \
-                                                 DMA_CFG_CONTINUOUS_DISABLE | \
-                                                 DMA_CFG_SIZE_16BIT)
-#define DMA_COM_SPI_RX_16BIT_CONFIG             (DMA_CFG_ONESHOT_DISABLE | \
-                                                 DMA_CFG_CONTINUOUS_DISABLE | \
-                                                 DMA_CFG_SIZE_16BIT)
-#if ((DMA_COM_SPI_TX_CONFIG & DMA_MODE_DATASIZE) == DMA_CFG_SIZE_16BIT)
-#define DMA_COM_SPI_TX_INC_STEP           (1)
+#define DMA_COM_SPI_TX_TRANSFER_EVT             ((DMA_COM_SPI_TX_RX_FULL_LENGTH - 1) / DMA_COM_SPI_TX_BURST_EVT)
+#define DMA_COM_SPI_RX_BURST_EVT                (1)
+#define DMA_COM_SPI_RX_TRANSFER_EVT             (DMA_COM_SPI_TX_RX_FULL_LENGTH / DMA_COM_SPI_RX_BURST_EVT)
+#define DMA_COM_SPI_TX_16BIT_CONFIG             (DMA_CFG_ONESHOT_DISABLE | DMA_CFG_CONTINUOUS_DISABLE | DMA_CFG_SIZE_16BIT)
+#define DMA_COM_SPI_RX_16BIT_CONFIG             (DMA_CFG_ONESHOT_DISABLE | DMA_CFG_CONTINUOUS_DISABLE | DMA_CFG_SIZE_16BIT)
+#if ((DMA_COM_SPI_TX_16BIT_CONFIG & DMA_MODE_DATASIZE) == DMA_CFG_SIZE_16BIT)
+#define DMA_COM_SPI_TX_INC_STEP                 (1)
 #else
-#define DMA_COM_SPI_TX_INC_STEP           (2)
+#define DMA_COM_SPI_TX_INC_STEP                 (2)
 #endif
 #if ((DMA_COM_SPI_RX_16BIT_CONFIG & DMA_MODE_DATASIZE) == DMA_CFG_SIZE_16BIT)
-#define DMA_COM_SPI_RX_16BIT_INC_STEP           (1)
+#define DMA_COM_SPI_RX_INC_STEP                 (1)
 #else
-#define DMA_COM_SPI_RX_16BIT_INC_STEP           (2)
+#define DMA_COM_SPI_RX_INC_STEP                 (2)
 #endif
 /**
  * @}
@@ -1648,10 +1642,10 @@
                                                     .dstWrapSize    = (uint32_t)DMA_NO_WRAP, \
                                                     .srcWrapSize    = (uint32_t)DMA_NO_WRAP, \
                                                     .dstStep        = (int16_t)0, \
-                                                    .srcStep        = (int16_t)DMA_COM_SPI_TX_INC_STEP, \
+                                                    .srcStep        = (int16_t)DMA_LED_SPI_TX_INC_STEP, \
                                                     .dstWrapStep    = (int16_t)0, \
                                                     .srcWrapStep    = (int16_t)0, \
-                                                    .config         = (uint32_t)DMA_LED_SPI_TX_CONFIG, \
+                                                    .config         = (uint32_t)DMA_LED_SPI_TX_16BIT_CONFIG, \
                                                     .trigger        = (DMA_Trigger)DMA_LED_SPI_TX_TRIGGER_SRC, \
                                                     .intMode        = (DMA_InterruptMode)DMA_INT_AT_END, \
                                                     .intEnable      = (bool_t)false, \
@@ -1668,7 +1662,7 @@
                                                     .srcStep        = (int16_t)DMA_COM_SPI_TX_INC_STEP, \
                                                     .dstWrapStep    = (int16_t)0, \
                                                     .srcWrapStep    = (int16_t)0, \
-                                                    .config         = (uint32_t)DMA_COM_SPI_TX_CONFIG, \
+                                                    .config         = (uint32_t)DMA_COM_SPI_TX_16BIT_CONFIG, \
                                                     .trigger        = (DMA_Trigger)DMA_COM_SPI_TX_TRIGGER_SRC, \
                                                     .intMode        = (DMA_InterruptMode)DMA_INT_AT_END, \
                                                     .intEnable      = (bool_t)false, \
@@ -1677,11 +1671,11 @@
                                                     .dmaChBase      = (uint32_t)DMA_COM_SPI_RX_BASE_ADDR, \
                                                     .p_dstAddr      = (uint16_t *) &com_spi_rx, \
                                                     .p_srcAddr      = (uint16_t *) COM_SPI_RX_BASE_REG_ADDR, \
-                                                    .burstSize      = (uint16_t)DMA_COM_SPI_RX_16BIT_BURST_EVT, \
-                                                    .transferSize   = (uint32_t)DMA_COM_SPI_RX_16BIT_TRANSFER_EVT, \
+                                                    .burstSize      = (uint16_t)DMA_COM_SPI_RX_BURST_EVT, \
+                                                    .transferSize   = (uint32_t)DMA_COM_SPI_RX_TRANSFER_EVT, \
                                                     .dstWrapSize    = (uint32_t)DMA_NO_WRAP, \
                                                     .srcWrapSize    = (uint32_t)DMA_NO_WRAP, \
-                                                    .dstStep        = (int16_t)DMA_COM_SPI_RX_16BIT_INC_STEP, \
+                                                    .dstStep        = (int16_t)DMA_COM_SPI_RX_INC_STEP, \
                                                     .srcStep        = (int16_t)0, \
                                                     .dstWrapStep    = (int16_t)0, \
                                                     .srcWrapStep    = (int16_t)0, \
