@@ -2,18 +2,19 @@
  * File name: motor_control.cla
  * Description: Source file containing motor control functions running on CLA processor.
  */
-#ifndef __MOTOR_CONTROL_CLA__
-#define __MOTOR_CONTROL_CLA__
+//#ifndef __MOTOR_CONTROL_CLA__
+//#define __MOTOR_CONTROL_CLA__
 
 /***********************************************************************
 * INCLUDES
 ***********************************************************************/
-#include "f2838x_cla_typedefs.h"
+//#include "f2838x_cla_typedefs.h"
 
 //#include "foc.h"
 #include "uomodri_shared.h"
-#include "uomodri_user_defines.h"
-#include "config/uomodri_3_1/uomodri_3_1_hal_defines.h"
+#include "main.h"
+//#include "uomodri_user_defines.h"
+//#include "config/uomodri_3_1/uomodri_3_1_hal_defines.h"
 
 /***********************************************************************
  * VARIABLES
@@ -29,14 +30,14 @@ extern cmd_t        cmd_uomodri[];
 /***********************************************************************
  * FUNCTIONS DECLARATION
  ***********************************************************************/
-extern __attribute__((interrupt)) void adcCalib_Task(void);
-extern __attribute__((interrupt)) void cmdNew_Task(void);
-extern __attribute__((interrupt)) void motor1_Task(void);
-extern __attribute__((interrupt)) void motor2_Task(void);
-extern __attribute__((interrupt)) void Cla1Task5(void);
-extern __attribute__((interrupt)) void Cla1Task6(void);
-extern __attribute__((interrupt)) void Cla1Task7(void);
-extern __attribute__((interrupt)) void Cla1Task8(void);
+__attribute__((interrupt)) void adcCalib_Task(void);
+__attribute__((interrupt)) void cmdNew_Task(void);
+__attribute__((interrupt)) void motor1_Task(void);
+__attribute__((interrupt)) void motor2_Task(void);
+__attribute__((interrupt)) void Cla1Task5(void);
+__attribute__((interrupt)) void Cla1Task6(void);
+__attribute__((interrupt)) void Cla1Task7(void);
+__attribute__((interrupt)) void Cla1Task8(void);
 
 /***********************************************************************
  * FUNCTIONS DEFINITION
@@ -143,5 +144,5 @@ __attribute__((interrupt)) void Cla1Task8(void)
 
 }
 
-#endif /* __MOTOR_CONTROL_CLA__ */
+//#endif /* __MOTOR_CONTROL_CLA__ */
 // End of file

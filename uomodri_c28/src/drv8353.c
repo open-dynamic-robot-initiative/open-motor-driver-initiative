@@ -1,8 +1,11 @@
 /***********************************************************************
  * INCLUDE FILES
  ***********************************************************************/
+//#include <stdbool.h>
+//#include <stddef.h>
+//#include <stdint.h>
 #include "f2838x_device.h"
-#include "driverlib.h"
+//#include "driverlib.h"
 #include "device.h"
 #include "uomodri_user_defines.h"
 #include "drv8353.h"

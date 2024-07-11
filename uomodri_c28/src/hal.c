@@ -7,6 +7,7 @@
  * INCLUDE FILES
  ***********************************************************************/
 #include "device.h"
+#include "main.h"
 #include "hal.h"
 #include "board.h"
 

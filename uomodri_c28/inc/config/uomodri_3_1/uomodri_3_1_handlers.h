@@ -9,10 +9,15 @@
 /************************************************************************
  * INCLUDES
  ************************************************************************/
-#include "f2838x_device.h"              // F2838x headerfile include file
+//#include <stdbool.h>
+//#include <stddef.h>
+//#include <stdint.h>
+//#include "f2838x_device.h"              // F2838x headerfile include file
+//#include "driverlib.h"
 #include "device.h"                     // F2838x headerfile include file
 
-#include "uomodri_3_1_hal_defines.h"    // uOmodri v3.1 configuration include file
+#include "../../uomodri_user_defines.h"
+//#include "uomodri_3_1_hal_defines.h"    // uOmodri v3.1 configuration include file
 #include "../../communication.h"
 #include "../../hal.h"
 //#include "../../main.h"

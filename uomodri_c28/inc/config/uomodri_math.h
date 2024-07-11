@@ -9,15 +9,14 @@
 /************************************************************************
  * INCLUDES
  ************************************************************************/
-//#include "../uomodri_user_defines.h"
-//#ifdef __TMS320C28XX_CLA__
-//#if (CLA_CORE_ENABLE)
+#include "../uomodri_user_defines.h"
+#if (CLA_CORE_ENABLE)
 //#ifdef __TMS320C28XX_CLA__
 ////#include "f2838x_cla_typedefs.h"
-//#include "CLAmath.h"
-//#else
-//#include <math.h>
-//#endif
+#include "CLAmath.h"
+#else
+#include <math.h>
+#endif
 
 /***********************************************************************
  * GLOBAL MACROS
@@ -46,7 +45,8 @@
 #define FM_2MULTPI                      (6.283185307179586476925286766559f) /* 2xPI */
 #endif
 
-#ifdef __TMS320C28XX_CLA__
+//#ifdef __TMS320C28XX_CLA__
+#if (CLA_CORE_ENABLE)
 #define UOMODRI_PI                      (CLAMATH_PI)
 #else
 #define UOMODRI_PI                      (M_PI)

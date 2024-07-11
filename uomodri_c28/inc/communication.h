@@ -5,6 +5,9 @@
  * INCLUDES
  ***********************************************************************/
 #ifdef CPU1
+//#include <stdbool.h>
+//#include <stddef.h>
+//#include <stdint.h>
 #include "f2838x_device.h"
 //#include "motor.h"
 #include "uomodri_shared.h"
@@ -331,6 +334,7 @@ typedef struct __slv2mst_msg_t__
  * @struct  cmd_uomodri_t
  * @brief   Structure of all commands necessaries for uOmodri
  */
+#ifdef CPU1
 typedef struct __cmd_uomodri_t__
 {
     mst2slv_reg_u   mode;
@@ -343,6 +347,20 @@ typedef struct __cmd_uomodri_t__
     uint32_t        cptTimeout;
     uint16_t        index;
 } cmd_uomodri_t;
+#else
+typedef struct __cmd_uomodri_t__
+{
+    mst2slv_reg_u   mode;
+    float           posRef[2];
+    float           velRef[2];
+    float           iqRef[2];
+    float           kpCoeff[2];
+    float           kdCoeff[2];
+    float           iSat[2];
+    uint32_t        cptTimeout;
+    uint16_t        index;
+} cmd_uomodri_t;
+#endif
 
 /***********************************************************************
  * COMMUNICATION FOR SPI
