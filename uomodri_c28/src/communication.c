@@ -1,12 +1,13 @@
 /***********************************************************************
  * INCLUDES
  ***********************************************************************/
-#include <stdlib.h>
 #include "vcu2/vcu2_crc.h"
+#include "device.h"
 
 #include "config/uomodri_math.h"
 #include "uomodri_user_defines.h"
 #include "communication.h"
+#include "main.h"
 
 /***********************************************************************
  * FUNCTIONS DEFINITIONS

@@ -6,17 +6,23 @@
 /***********************************************************************
  * INCLUDES
  ***********************************************************************/
-#include "f2838x_device.h"      // F2838x headerfile include file
-#include "device.h"             // F2838x headerfile include file
-#include "board.h"
 
-#include "uomodri_user_defines.h"
-#include "hal.h"
-#include "uomodri_shared.h"
-#include "main.h"
-#include "drv8353.h"
-#include "ws2812b.h"
-#include "communication.h"
+#include <board.h>
+#include <cla.h>
+#include <clb.h>
+#include <dma.h>
+#include <drv8353.h>
+#include <hal.h>
+#include <hw_memmap.h>
+#include <hw_sci.h>
+#include <interrupt.h>
+#include <machine/_stdint.h>
+#include <main.h>
+#include <sci.h>
+#include <spi.h>
+#include <sys/_stdint.h>
+#include <sysctl.h>
+#include <ws2812b.h>
 
 /***********************************************************************
  * FUNCTIONS DECLARATION

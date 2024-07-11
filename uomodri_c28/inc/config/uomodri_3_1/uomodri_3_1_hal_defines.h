@@ -13,7 +13,7 @@
 //#include "f2838x_device.h"        // F2838x Headerfile Include File
 //#include "f2838x_examples.h"      // F2838x Examples Include File
 //#include "device.h"                 // F2838x Headerfile Include File
-#include "driverlib.h"  // F2838x Headerfile Include File
+//#include "../../drv8353.h"
 
 /***********************************************************************
  * GPIO DEFINES
@@ -1354,7 +1354,7 @@
                                                     .eqepConfig         = (uint16_t)(MOTOR1_ENC_CONFIG | MOTOR1_QEP_SWAP), \
                                                     .eqepStrobeSrc      = (EQEP_StrobeSource)EQEP_STROBE_OR_ADCSOCA, \
                                                 }
-#define MOTOR2_QEP_DEF                          {\
+#define MOTOR2_QEP_DEF                          { \
                                                     .eqepBase           = (uint32_t)MOTOR2_QEP_BASE, \
                                                     .eqepMaxResolution  = (uint32_t)MOTOR2_ENC_QUADRATURE_SCALE_MAX, \
                                                     .eqepUnitTimerPeriod= (uint32_t)MOTOR2_ENC_SPEED_HIGH_SAMPLE_TICKS_MAX, \
@@ -1635,8 +1635,8 @@
 
 #define DMA_LED_SPI_TX_DEF                      { \
                                                     .dmaChBase      = (uint32_t)DMA_LED_SPI_TX_BASE_ADDR, \
-                                                    .p_dstAddr      = (uint16_t *) LED_SPI_TX_BASE_REG_ADDR, \
-                                                    .p_srcAddr      = (uint16_t *) &led_spi_tx[0], \
+                                                    .p_dstAddr      = (uint16_t *)LED_SPI_TX_BASE_REG_ADDR, \
+                                                    .p_srcAddr      = (uint16_t *)&led_spi_tx[0], \
                                                     .burstSize      = (uint16_t)DMA_LED_SPI_TX_BURST_EVT, \
                                                     .transferSize   = (uint32_t)DMA_LED_SPI_TX_TRANSFER_EVT, \
                                                     .dstWrapSize    = (uint32_t)DMA_NO_WRAP, \
@@ -1650,10 +1650,27 @@
                                                     .intMode        = (DMA_InterruptMode)DMA_INT_AT_END, \
                                                     .intEnable      = (bool_t)false, \
                                                 }
+//#define DMA_LED_SPI_TX_DEF                      { \
+//                                                    .dmaChBase      = DMA_LED_SPI_TX_BASE_ADDR, \
+//                                                    .p_dstAddr      = (uint16_t *)LED_SPI_TX_BASE_REG_ADDR, \
+//                                                    .p_srcAddr      = (uint16_t *)&led_spi_tx[0], \
+//                                                    .burstSize      = DMA_LED_SPI_TX_BURST_EVT, \
+//                                                    .transferSize   = DMA_LED_SPI_TX_TRANSFER_EVT, \
+//                                                    .dstWrapSize    = DMA_NO_WRAP, \
+//                                                    .srcWrapSize    = DMA_NO_WRAP, \
+//                                                    .dstStep        = 0, \
+//                                                    .srcStep        = DMA_LED_SPI_TX_INC_STEP, \
+//                                                    .dstWrapStep    = 0, \
+//                                                    .srcWrapStep    = 0, \
+//                                                    .config         = DMA_LED_SPI_TX_16BIT_CONFIG, \
+//                                                    .trigger        = DMA_LED_SPI_TX_TRIGGER_SRC, \
+//                                                    .intMode        = DMA_INT_AT_END, \
+//                                                    .intEnable      = false, \
+//                                                }
 #define DMA_COM_SPI_TX_DEF                      { \
                                                     .dmaChBase      = (uint32_t)DMA_COM_SPI_TX_BASE_ADDR, \
-                                                    .p_dstAddr      = (uint16_t *) COM_SPI_TX_BASE_REG_ADDR, \
-                                                    .p_srcAddr      = (uint16_t *) &com_spi_tx.msg[0].data.timeStamp, \
+                                                    .p_dstAddr      = (uint16_t *)COM_SPI_TX_BASE_REG_ADDR, \
+                                                    .p_srcAddr      = (uint16_t *)&com_spi_tx.msg[0].data.timeStamp, \
                                                     .burstSize      = (uint16_t)DMA_COM_SPI_TX_BURST_EVT, \
                                                     .transferSize   = (uint32_t)DMA_COM_SPI_TX_TRANSFER_EVT, \
                                                     .dstWrapSize    = (uint32_t)DMA_NO_WRAP, \
@@ -1669,8 +1686,8 @@
                                                 }
 #define DMA_COM_SPI_RX_DEF                      { \
                                                     .dmaChBase      = (uint32_t)DMA_COM_SPI_RX_BASE_ADDR, \
-                                                    .p_dstAddr      = (uint16_t *) &com_spi_rx, \
-                                                    .p_srcAddr      = (uint16_t *) COM_SPI_RX_BASE_REG_ADDR, \
+                                                    .p_dstAddr      = (uint16_t *)&com_spi_rx, \
+                                                    .p_srcAddr      = (uint16_t *)COM_SPI_RX_BASE_REG_ADDR, \
                                                     .burstSize      = (uint16_t)DMA_COM_SPI_RX_BURST_EVT, \
                                                     .transferSize   = (uint32_t)DMA_COM_SPI_RX_TRANSFER_EVT, \
                                                     .dstWrapSize    = (uint32_t)DMA_NO_WRAP, \

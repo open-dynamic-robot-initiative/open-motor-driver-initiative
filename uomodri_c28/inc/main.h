@@ -4,7 +4,11 @@
 /***********************************************************************
  * INCLUDES
  ***********************************************************************/
-#include "uomodri_user_defines.h"
+
+//#include "../../../../../ti/c2000/C2000Ware_5_02_00_00/driverlib/f2838x/driverlib/inc/hw_types.h"
+//#include "../../../../../ti/ccs1270/ccs/tools/compiler/ti-cgt-c2000_22.6.1.LTS/include/stdbool.h"
+
+
 //#ifdef __TMS320C28XX_CLA__
 #if (CLA_CORE_ENABLE)
 //#include "f2838x_cla_typedefs.h"
@@ -12,14 +16,16 @@
 #else
 #include <math.h>
 #endif
+
 #include "f2838x_device.h"                              // F2838x headerfile include file
 #include "device.h"                                     // F2838x headerfile include file
 
-//#include "config/motor/tmotor_mn4004_kv300.h"           // T-MOTOR MN4000 KV300 motor definitions
-//#include "config/motor/myactuator_rmdx8h.h"             // MYACTUATOR RMDX8H motor definitions
-//#include "config/encoder/broadcom_aedt_9810_z00.h"      // BROADCOM AEDT-9810-Z00 encoder definitions
-//#include "config/encoder/cui_amt112s_4096_5000_s.h"     // CUI AMT112S-4096-5000-s encoder definitions
+#include "config/motor/tmotor_mn4004_kv300.h"           // T-MOTOR MN4000 KV300 motor definitions
+#include "config/motor/myactuator_rmdx8h.h"             // MYACTUATOR RMDX8H motor definitions
+#include "config/encoder/broadcom_aedt_9810_z00.h"      // BROADCOM AEDT-9810-Z00 encoder definitions
+#include "config/encoder/cui_amt112s_4096_5000_s.h"     // CUI AMT112S-4096-5000-s encoder definitions
 
+#include "uomodri_user_defines.h"
 //#include "config/uomodri_math.h"
 #include "uomodri_shared.h"
 #include "communication.h"

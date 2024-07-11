@@ -6,10 +6,45 @@
 /***********************************************************************
  * INCLUDE FILES
  ***********************************************************************/
-#include "device.h"
+//#include "f2838x_device.h"
+//#include "device.h"
+
+#include "uomodri_user_defines.h"
+#include "board.h"
 #include "main.h"
 #include "hal.h"
-#include "board.h"
+
+#if (USE_UOMODRI_REV == USE_UOMODRI_V1)
+//
+#elif (USE_UOMODRI_REV == USE_UOMODRI_V2)
+//
+#elif (USE_UOMODRI_REV == USE_UOMODRI_V3)
+#include "config/uomodri_3_1/uomodri_3_1_hal_defines.h"    // uOmodri v3.1 definitions
+#include "config/uomodri_3_1/uomodri_3_1_handlers.h"   // uOmodri v3.1 configuration include file
+#elif (USE_UOMODRI_REV == USE_UOMODRI_SA_V1)
+//
+#else
+#error "@ least one config must be set @ a time."
+#endif
+
+//#include <board.h>
+//#include <clb.h>
+//#include <clb_config.h>
+//#include <cputimer.h>
+//#include <device.h>
+//#include <driver_inclusive_terminology_mapping.h>
+//#include <hal.h>
+//#include <hw_memmap.h>
+//#include <hw_types.h>
+//#include <interrupt.h>
+//#include <machine/_stdint.h>
+//#include <memcfg.h>
+//#include <stdbool.h>
+//#include <stddef.h>
+//#include <sysctl.h>
+//#include <uomodri_user_defines.h>
+
+//#include "../../../../../ti/ccs1270/ccs/tools/compiler/ti-cgt-c2000_22.6.1.LTS/include/string.h"
 
 /***********************************************************************
  * VARIABLES

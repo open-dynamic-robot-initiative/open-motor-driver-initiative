@@ -44,11 +44,12 @@
 #endif
 #define CPU2_CORE_ENABLE                        (0)
 #define CM_CORE_ENABLE                          (0)
-#if (defined __TMS320C28XX_CLA__) || (defined __TMS320C28XX_CLA0__) || (defined __TMS320C28XX_CLA1__) (defined __TMS320C28XX_CLA2__) || (defined __TMS320C28XX_FPU32__)
 #define CLA_CORE_ENABLE                         (1)
-#endif
-//#if (CLA_CORE_ENABLE) && (!defined __TMS320C28XX_CLA__)
-//#define __TMS320C28XX_CLA__
+//#ifndef __TMS320C28XX_CLA__
+////#define __TMS320C28XX_CLA__
+//#endif
+//#ifndef __TMS320C28XX_CLA2__
+////#define __TMS320C28XX_CLA2__
 //#endif
 #define CLB_TILE_ENABLE                         (1)
 // CM peripherals ENABLE/DISABLE
@@ -133,23 +134,38 @@
 /************************************************************************
  * INCLUDES
  ************************************************************************/
-#include "config/uomodri_math.h"
-#include "config/motor/tmotor_mn4004_kv300.h"           // T-MOTOR MN4000 KV300 motor definitions
-#include "config/motor/myactuator_rmdx8h.h"             // MYACTUATOR RMDX8H motor definitions
-#include "config/encoder/broadcom_aedt_9810_z00.h"      // BROADCOM AEDT-9810-Z00 encoder definitions
-#include "config/encoder/cui_amt112s_4096_5000_s.h"     // CUI AMT112S-4096-5000-s encoder definitions
+//#if (CLA_CORE_ENABLE)
+////#ifdef __TMS320C28XX_CLA__
+//////#include "f2838x_cla_typedefs.h"
+//#include "CLAmath.h"
+//#else
+//#include <math.h>
+//#endif
+//
+//#include "config/uomodri_math.h"
+//#include "config/motor/tmotor_mn4004_kv300.h"           // T-MOTOR MN4000 KV300 motor definitions
+//#include "config/motor/myactuator_rmdx8h.h"             // MYACTUATOR RMDX8H motor definitions
+//#include "config/encoder/broadcom_aedt_9810_z00.h"      // BROADCOM AEDT-9810-Z00 encoder definitions
+//#include "config/encoder/cui_amt112s_4096_5000_s.h"     // CUI AMT112S-4096-5000-s encoder definitions
+//
+//#include "f2838x_device.h"              // F2838x headerfile include file
+//#include "device.h"                     // F2838x headerfile include file
 
-#if (USE_UOMODRI_REV == USE_UOMODRI_V1)
-//
-#elif (USE_UOMODRI_REV == USE_UOMODRI_V2)
-//
-#elif (USE_UOMODRI_REV == USE_UOMODRI_V3)
-#include "config/uomodri_3_1/uomodri_3_1_hal_defines.h"    // uOmodri v3.1 definitions
-#include "config/uomodri_3_1/uomodri_3_1_handlers.h"   // uOmodri v3.1 configuration include file
-#elif (USE_UOMODRI_REV == USE_UOMODRI_SA_V1)
-//
-#else
-#error "@ least one config must be set @ a time."
-#endif
+//#if (USE_UOMODRI_REV == USE_UOMODRI_V1)
+////
+//#elif (USE_UOMODRI_REV == USE_UOMODRI_V2)
+////
+//#elif (USE_UOMODRI_REV == USE_UOMODRI_V3)
+//#include "config/uomodri_3_1/uomodri_3_1_hal_defines.h"    // uOmodri v3.1 definitions
+//#include "config/uomodri_3_1/uomodri_3_1_handlers.h"   // uOmodri v3.1 configuration include file
+//#elif (USE_UOMODRI_REV == USE_UOMODRI_SA_V1)
+////
+//#else
+//#error "@ least one config must be set @ a time."
+//#endif
 
+//#include "hal.h"
+//#include "drv8353.h"
+//#include "communication.h"
+//#include "uomodri_shared.h"
 #endif /* __UOMODRI_USER_DEFINES_H__ */
