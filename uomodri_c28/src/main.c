@@ -22,7 +22,7 @@
 
 #include "uomodri_user_defines.h"
 //#include "uomodri_hal_config_handlers.h"
-#include "uomodri_prj_config_handlers.h"
+//#include "uomodri_prj_config_handlers.h"
 
 /***********************************************************************
  * VARIABLES
@@ -37,6 +37,36 @@ void main(void);
 static void MCU_ini(void);
 inline void LED_dimming(motor_t*, motor_t*, uint16_t*);
 void MOT_initStruct(motor_t*, uint16_t);
+
+__attribute__((interrupt)) void cla_ClearTask(void);
+__attribute__((interrupt)) void cla_isrMotor1(void);
+__attribute__((interrupt)) void cla_isrMotor2(void);
+__attribute__((interrupt)) void tmr_isrLedCmd(void);
+__attribute__((interrupt)) void dma_isrSpiComRx(void);
+__attribute__((interrupt)) void sci_isrRx_RS485(void);
+__attribute__((interrupt)) void sci_isrTx_RS485(void);
+__attribute__((interrupt)) void clb_isrTxRx_RS485(void);
+
+/***********************************************************************
+ * VARIABLES
+ ***********************************************************************/
+/** @var    int_cfg_t   interruptList[]
+ *  @brief  List all required interrupts configurations.
+ */
+static const int_cfg_t interruptList[] =
+{
+ INT_CLA_ADC_CALIB_DEF,
+ INT_CLA_MOTOR1_DEF,
+ INT_CLA_MOTOR2_DEF,
+ INT_TIMER_LED_DEF,
+ INT_DMA_RX_MSG_DEF,
+#if (RS485_BUS_ENABLE) && (USE_UOMODRI_REV != USE_UOMODRI_V1)
+ INT_RS485_TX_MSG_DEF,
+ INT_RS485_RX_MSG_DEF,
+ INT_RS485_Rx_Tx_CLB_DEF,
+#endif
+ {.intNum = UINT32_MAX},        /* END OF ARRAY */
+};
 
 /***********************************************************************
  * FUNCTIONS DEFINITION
@@ -62,7 +92,7 @@ void main(void)
     // Start ADC offset calibration on CLA
     CLA_forceTasks(CLA1_BASE, CLA_ADC_CALIB_TASK_FLAG);
     // Interrupts initialization
-    HAL_INT_ini(InterruptList);
+    HAL_INT_ini(interruptList);
     // Infinite loop
     while(1);
 }
