@@ -9,22 +9,7 @@
 /************************************************************************
  * INCLUDES
  ************************************************************************/
-//#include "driverlib.h"
-//#include "device.h"
-//#include "../uomodri_math.h"
 #include "../../uomodri_user_defines.h"
-//#if (USE_UOMODRI_REV == USE_UOMODRI_V1)
-////
-//#elif (USE_UOMODRI_REV == USE_UOMODRI_V2)
-////
-//#elif (USE_UOMODRI_REV == USE_UOMODRI_V3)
-//#include "config/uomodri_3_1/uomodri_3_1_hal_defines.h" // uOmodri v3.1 definitions
-//#include "config/uomodri_3_1/uomodri_3_1_handlers.h"    // uOmodri v3.1 configuration include file
-//#elif (USE_UOMODRI_REV == USE_UOMODRI_SA_V1)
-////
-//#else
-//#error "@ least one config must be set @ a time."
-//#endif
 
 /***********************************************************************
  * ENCODERS DEFINES

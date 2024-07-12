@@ -12,14 +12,19 @@
 //#include <stdbool.h>
 //#include <stddef.h>
 //#include <stdint.h>
-#include "../../../../../../../ti/c2000/C2000Ware_5_02_00_00/driverlib/f2838x/driverlib/inc/hw_types.h"
-#include "../../../../../../../ti/c2000/C2000Ware_5_02_00_00/driverlib/f2838x/driverlib/ipc.h"
-#include "../../../../../../../ti/ccs1270/ccs/tools/compiler/ti-cgt-c2000_22.6.1.LTS/include/sys/_stdint.h"
+//#include "../../../../../../../ti/c2000/C2000Ware_5_02_00_00/driverlib/f2838x/driverlib/inc/hw_types.h"
+//#include "../../../../../../../ti/c2000/C2000Ware_5_02_00_00/driverlib/f2838x/driverlib/ipc.h"
+//#include "../../../../../../../ti/ccs1270/ccs/tools/compiler/ti-cgt-c2000_22.6.1.LTS/include/sys/_stdint.h"
+
+#include "f2838x_device.h"          // F2838x headerfile include file
+#include "device.h"                 // F2838x Headerfile Include File
+
+#include "../../uomodri_user_defines.h"
 #include "../../communication.h"
 #include "../../drv8353.h"
+#include "../../main.h"
 #include "../../hal.h"
-#include "../../uomodri_user_defines.h"
-#include "f2838x_device.h"              // F2838x headerfile include file
+
 #include "uomodri_3_1_hal_defines.h"    // uOmodri v3.1 configuration include file
 
 /***********************************************************************

@@ -1,13 +1,7 @@
 /***********************************************************************
  * INCLUDE FILES
  ***********************************************************************/
-//#include <stdbool.h>
-//#include <stddef.h>
-//#include <stdint.h>
-#include "f2838x_device.h"
-//#include "driverlib.h"
 #include "device.h"
-#include "uomodri_user_defines.h"
 #include "drv8353.h"
 
 /***********************************************************************
@@ -51,12 +45,14 @@ bool_t DRV_ini(const drv_cfg_t* p_drvCfg, drv_reg_t* p_drvReg)
  */
 static uint32_t DRV_Enable(const drv_cfg_t* p_drvCfg)
 {
-    drv_reg_t drv_status = {.stat_reg_00 = 0, .stat_reg_01 = 0, .ctrl_reg_02 = 0, .ctrl_reg_03 = 0,
-                            .ctrl_reg_04 = 0, .ctrl_reg_05 = 0, .ctrl_reg_06 = 0, .ctrl_reg_07 = 0};
-    drv_stat0x_u drv_status_s = {.all = 0};
-    uint16_t cpt_time_out   = 0;
+    drv_reg_t drv_all_regs      = {.stat_reg_00 = 0, .stat_reg_01 = 0,
+                                   .ctrl_reg_02 = 0, .ctrl_reg_03 = 0,
+                                   .ctrl_reg_04 = 0, .ctrl_reg_05 = 0,
+                                   .ctrl_reg_06 = 0, .ctrl_reg_07 = 0};
+    drv_stat0x_u drv_stat_regs  = {.all = 0};
+    uint16_t cpt_time_out       = 0;
 //    uint16_t test_status        = 1;
-    bool_t drv_enable       = true;
+    bool_t drv_enable           = true;
     // Enable the DRV8353
     GPIO_writePin(p_drvCfg->gpioNumber_EN, 1);
     // Wait 1ms
@@ -67,14 +63,14 @@ static uint32_t DRV_Enable(const drv_cfg_t* p_drvCfg)
 //    while((++cpt_time_out < 1000) && DRV_readOne(p_drvCfg, DRV_ADDRESS_STATUS_0));
 //            drv_enable  = (++cpt_time_out < 1000) ? (true) : (false);
 
-    drv_status.stat_reg_00.all  = DRV_readOne(p_drvCfg, DRV_ADDRESS_STATUS_0);
-    drv_status.stat_reg_01.all  = DRV_readOne(p_drvCfg, DRV_ADDRESS_STATUS_1);
-    drv_status.ctrl_reg_02.all  = DRV_readOne(p_drvCfg, DRV_ADDRESS_CONTROL_2);
-    drv_status.ctrl_reg_03.all  = DRV_readOne(p_drvCfg, DRV_ADDRESS_CONTROL_3);
-    drv_status.ctrl_reg_04.all  = DRV_readOne(p_drvCfg, DRV_ADDRESS_CONTROL_4);
-    drv_status.ctrl_reg_05.all  = DRV_readOne(p_drvCfg, DRV_ADDRESS_CONTROL_5);
-    drv_status.ctrl_reg_06.all  = DRV_readOne(p_drvCfg, DRV_ADDRESS_CONTROL_6);
-    drv_status.ctrl_reg_07.all  = DRV_readOne(p_drvCfg, DRV_ADDRESS_CONTROL_7);
+    drv_all_regs.stat_reg_00.all= DRV_readOne(p_drvCfg, DRV_ADDRESS_STATUS_0);
+    drv_all_regs.stat_reg_01.all= DRV_readOne(p_drvCfg, DRV_ADDRESS_STATUS_1);
+    drv_all_regs.ctrl_reg_02.all= DRV_readOne(p_drvCfg, DRV_ADDRESS_CONTROL_2);
+    drv_all_regs.ctrl_reg_03.all= DRV_readOne(p_drvCfg, DRV_ADDRESS_CONTROL_3);
+    drv_all_regs.ctrl_reg_04.all= DRV_readOne(p_drvCfg, DRV_ADDRESS_CONTROL_4);
+    drv_all_regs.ctrl_reg_05.all= DRV_readOne(p_drvCfg, DRV_ADDRESS_CONTROL_5);
+    drv_all_regs.ctrl_reg_06.all= DRV_readOne(p_drvCfg, DRV_ADDRESS_CONTROL_6);
+    drv_all_regs.ctrl_reg_07.all= DRV_readOne(p_drvCfg, DRV_ADDRESS_CONTROL_7);
 
     //    if((DRV_readOne(p_drvCfg, DRV_ADDRESS_STATUS_0) & FLT_STATUS_FAULT_Msk) == 0)
 //        drv_enable = true;
@@ -93,12 +89,12 @@ static uint32_t DRV_Enable(const drv_cfg_t* p_drvCfg)
     //drv_enable      = drv_enable && GPIO_readPin(p_drvCfg->gpioNumber_FAULT);
 //    drv_status.stat_reg_00.FAULT = !GPIO_readPin(p_drvCfg->gpioNumber_FAULT);
 
-    drv_status_s.stat00 = drv_status.stat_reg_00;
-    drv_status_s.stat01 = drv_status.stat_reg_01;
-    drv_status_s.stat00.FAULT = !GPIO_readPin(p_drvCfg->gpioNumber_FAULT);
+    drv_stat_regs.stat00       = drv_all_regs.stat_reg_00;
+    drv_stat_regs.stat01       = drv_all_regs.stat_reg_01;
+    drv_stat_regs.stat00.FAULT = !GPIO_readPin(p_drvCfg->gpioNumber_FAULT);
 //    if (GPIO_readPin(p_drvCfg->gpioNumber_FAULT))
 //        return (2);
-    return(drv_status_s.all);
+    return(drv_stat_regs.all);
 }
 
 /**
@@ -108,20 +104,23 @@ static uint32_t DRV_Enable(const drv_cfg_t* p_drvCfg)
  */
 static bool_t DRV_SetConfig(const drv_cfg_t* p_drvCfg, drv_reg_t* p_drvReg)
 {
-    drv_reg_t reg_test  = {.ctrl_reg_02 = p_drvReg->ctrl_reg_02, .ctrl_reg_03 = p_drvReg->ctrl_reg_03,
-                           .ctrl_reg_04 = p_drvReg->ctrl_reg_04, .ctrl_reg_05 = p_drvReg->ctrl_reg_05,
-                           .ctrl_reg_06 = p_drvReg->ctrl_reg_06, .ctrl_reg_07 = p_drvReg->ctrl_reg_07};
+    drv_reg_t drv_all_regs_test = {.ctrl_reg_02 = p_drvReg->ctrl_reg_02,
+                                   .ctrl_reg_03 = p_drvReg->ctrl_reg_03,
+                                   .ctrl_reg_04 = p_drvReg->ctrl_reg_04,
+                                   .ctrl_reg_05 = p_drvReg->ctrl_reg_05,
+                                   .ctrl_reg_06 = p_drvReg->ctrl_reg_06,
+                                   .ctrl_reg_07 = p_drvReg->ctrl_reg_07};
     // Write initialized data to device
     DRV_writeAll(p_drvCfg, p_drvReg);
     // Read it back to ensure it worked
     DRV_readAll(p_drvCfg, p_drvReg);
 
-    return(((reg_test.ctrl_reg_02.all   == p_drvReg->ctrl_reg_02.all) &&
-            (reg_test.ctrl_reg_03.all   == p_drvReg->ctrl_reg_03.all) &&
-            (reg_test.ctrl_reg_04.all   == p_drvReg->ctrl_reg_04.all) &&
-            (reg_test.ctrl_reg_05.all   == p_drvReg->ctrl_reg_05.all) &&
-            (reg_test.ctrl_reg_06.all   == p_drvReg->ctrl_reg_06.all) &&
-            (reg_test.ctrl_reg_07.all   == p_drvReg->ctrl_reg_07.all)) ? (true) : (false));
+    return(((drv_all_regs_test.ctrl_reg_02.all == p_drvReg->ctrl_reg_02.all) &&
+            (drv_all_regs_test.ctrl_reg_03.all == p_drvReg->ctrl_reg_03.all) &&
+            (drv_all_regs_test.ctrl_reg_04.all == p_drvReg->ctrl_reg_04.all) &&
+            (drv_all_regs_test.ctrl_reg_05.all == p_drvReg->ctrl_reg_05.all) &&
+            (drv_all_regs_test.ctrl_reg_06.all == p_drvReg->ctrl_reg_06.all) &&
+            (drv_all_regs_test.ctrl_reg_07.all == p_drvReg->ctrl_reg_07.all)) ? (true) : (false));
 }
 
 /**
@@ -161,17 +160,17 @@ static void DRV_Calibration(const drv_cfg_t* p_drvCfg, drv_reg_t* p_drvReg)
  */
 uint32_t DRV_readStatus(const drv_cfg_t* p_drvCfg, drv_reg_t* p_drvReg)
 {
-    drv_stat0x_u drv_err_status = {.all = 0};
+    drv_stat0x_u drv_stat_regs  = {.all = 0};
 
     if((p_drvCfg != NULL) && (p_drvReg != NULL))
     {
         p_drvReg->stat_reg_00.all   = DRV_readOne(p_drvCfg, DRV_ADDRESS_STATUS_0); // Read Status Register 0
         p_drvReg->stat_reg_01.all   = DRV_readOne(p_drvCfg, DRV_ADDRESS_STATUS_1); // Read Status Register 1
     }
-    drv_err_status.stat00.all       = p_drvReg->stat_reg_00.all;
-    drv_err_status.stat01.all       = p_drvReg->stat_reg_01.all;
+    drv_stat_regs.stat00.all        = p_drvReg->stat_reg_00.all;
+    drv_stat_regs.stat01.all        = p_drvReg->stat_reg_01.all;
 
-    return(drv_err_status.all);
+    return(drv_stat_regs.all);
 }
 
 /**

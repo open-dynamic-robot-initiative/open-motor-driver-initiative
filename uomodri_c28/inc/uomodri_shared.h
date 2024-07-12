@@ -20,10 +20,10 @@ extern "C" {
 //#include "../../../../../ti/ccs1270/ccs/tools/compiler/ti-cgt-c2000_22.6.1.LTS/include/stdbool.h"
 //#include "../../../../../ti/ccs1270/ccs/tools/compiler/ti-cgt-c2000_22.6.1.LTS/include/sys/_stdint.h"
 
-#include "f2838x_cla_typedefs.h"
+//#include "f2838x_cla_typedefs.h"
 
 #include "uomodri_user_defines.h"
-#include "config/uomodri_math.h"
+
 //#ifdef __TMS320C28XX_CLA__
 #if (CLA_CORE_ENABLE)
 //#include "f2838x_cla_typedefs.h"
@@ -32,22 +32,22 @@ extern "C" {
 #include <hw_types.h>
 #include <math.h>
 #endif
-#include "f2838x_device.h"
-#include "device.h"
+//#include "f2838x_device.h"
+//#include "device.h"
 //#include "hw_types.h"
-
-#if (USE_UOMODRI_REV == USE_UOMODRI_V1)
-//
-#elif (USE_UOMODRI_REV == USE_UOMODRI_V2)
-//
-#elif (USE_UOMODRI_REV == USE_UOMODRI_V3)
+#include "config/uomodri_math.h"
+//#if (USE_UOMODRI_REV == USE_UOMODRI_V1)
+////
+//#elif (USE_UOMODRI_REV == USE_UOMODRI_V2)
+////
+//#elif (USE_UOMODRI_REV == USE_UOMODRI_V3)
 #include "config/uomodri_3_1/uomodri_3_1_hal_defines.h" // uOmodri v3.1 definitions
 #include "config/uomodri_3_1/uomodri_3_1_handlers.h"    // uOmodri v3.1 configuration include file
-#elif (USE_UOMODRI_REV == USE_UOMODRI_SA_V1)
-//
-#else
-#error "@ least one config must be set @ a time."
-#endif
+//#elif (USE_UOMODRI_REV == USE_UOMODRI_SA_V1)
+////
+//#else
+//#error "@ least one config must be set @ a time."
+//#endif
 
 //#include "config/uomodri_3_1/uomodri_3_1_hal_defines.h"    // uOmodri v3.1 definitions
 #include "config/motor/tmotor_mn4004_kv300.h"           // T-MOTOR MN4000 KV300 motor definitions
@@ -55,7 +55,7 @@ extern "C" {
 #include "config/encoder/broadcom_aedt_9810_z00.h"      // BROADCOM AEDT-9810-Z00 encoder definitions
 #include "config/encoder/cui_amt112s_4096_5000_s.h"     // CUI AMT112S-4096-5000-s encoder definitions
 
-#include "drv8353.h"
+//#include "drv8353.h"
 //#include "main.h"
 
 /***********************************************************************

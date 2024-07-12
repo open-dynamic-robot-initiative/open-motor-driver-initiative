@@ -12,8 +12,6 @@
 #include "f2838x_device.h"
 #include "device.h"
 
-//#include "config/uomodri_3_1/uomodri_3_1_hal_defines.h"
-
 /***********************************************************************
  * DEFINES
  ***********************************************************************/
@@ -218,14 +216,14 @@ typedef struct __DMA_CFG_t__
  */
 typedef struct __CLA_CFG_t__
 {
-    const uint32_t                progRAM;
-    const uint32_t                dataRAM;
-    const uint16_t                claTaskFlg;
-    const CLA_TaskNumber          claTaskNum;
-    const CLA_MVECTNumber         claIntVect;
-    const CLA_Trigger             claTrigSrc;
+    uint32_t                progRAM;
+    uint32_t                dataRAM;
+    uint16_t                claTaskFlg;
+    CLA_TaskNumber          claTaskNum;
+    CLA_MVECTNumber         claIntVect;
+    CLA_Trigger             claTrigSrc;
     void                    (*p_claFunc)(void);
-    const bool_t                  claForceTask;
+    bool_t                  claForceTask;
 } cla_cfg_t;
 
 /**

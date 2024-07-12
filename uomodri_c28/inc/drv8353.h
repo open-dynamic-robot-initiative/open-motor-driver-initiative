@@ -5,10 +5,6 @@
  * INCLUDES
  ***********************************************************************/
 #include "f2838x_device.h"
-//#include "../../../../../ti/ccs1270/ccs/tools/compiler/ti-cgt-c2000_22.6.1.LTS/include/sys/_stdint.h"
-
-//#include <stdbool.h>
-//#include <stdint.h>
 
 /***********************************************************************
  * DEFINES
