@@ -54,6 +54,54 @@
 #define STATUS_ERROR_DRV_FAULT                      (7) /*!< Motor DRV nFault error */
 //#define STATUS_ERROR_DRV1_FAULT                     (7) /*!< Motor1 DRV Fault error */
 //#define STATUS_ERROR_DRV2_FAULT                     (8) /*!< Motor2 DRV Fault error */
+#define COM_MSG_EXTRACT_TX_RX_MAX_SIZE          (64)
+#define COM_MSG_RS485_TX_RX_MAX_SIZE            (20)
+#define COM_MSG_RS485_RX_ADDRESS_1              (0x42)
+#define COM_MSG_RS485_RX_ADDRESS_2              (0x00)
+#define COM_MSG_RS485_TX_ADDRESS                (0xFF)
+#define COM_MSG_RS485_TX_TYPE_STANDARD          (0x00)
+
+#define COM_MSG_SPI_TX_16BIT_FULL_LENGTH        (sizeof(slv2mst_msg_t) + \
+                                                 sizeof(crc_reg_t))
+#define COM_MSG_SPI_TX_16BIT_PAYLOAD_LENGTH     (sizeof(slv2mst_msg_t))
+#define COM_MSG_SPI_TX_8BIT_FULL_LENGTH         (COM_MSG_SPI_TX_16BIT_FULL_LENGTH * 2)
+#define COM_MSG_SPI_TX_8BIT_PAYLOAD_LENGTH      (COM_MSG_SPI_TX_16BIT_PAYLOAD_LENGTH * 2)
+
+#define COM_MSG_SPI_RX_16BIT_FULL_LENGTH        (sizeof(mst2slv_msg_t) + \
+                                                 sizeof(crc_reg_t))
+#define COM_MSG_SPI_RX_16BIT_PAYLOAD_LENGTH     (sizeof(mst2slv_msg_t))
+#define COM_MSG_SPI_RX_8BIT_FULL_LENGTH         (COM_MSG_SPI_RX_16BIT_FULL_LENGTH * 2)
+#define COM_MSG_SPI_RX_8BIT_PAYLOAD_LENGTH      (COM_MSG_SPI_RX_16BIT_PAYLOAD_LENGTH * 2)
+
+#define COM_MSG_RS485_TX_16BIT_FULL_LENGTH      (sizeof(header_reg_u) + \
+                                                 sizeof(slv2mst_msg_t) + \
+                                                 sizeof(crc_reg_t))
+#define COM_MSG_RS485_TX_16BIT_PAYLOAD_LENGTH   (sizeof(header_reg_u) + \
+                                                 sizeof(slv2mst_msg_t))
+#define COM_MSG_RS485_TX_8BIT_FULL_LENGTH       (COM_MSG_RS485_TX_16BIT_FULL_LENGTH * 2)
+#define COM_MSG_RS485_TX_8BIT_PAYLOAD_LENGTH    (COM_MSG_RS485_TX_16BIT_PAYLOAD_LENGTH * 2)
+
+#define COM_MSG_RS485_RX_16BIT_FULL_LENGTH      (sizeof(header_reg_u) + \
+                                                 sizeof(mst2slv_msg_t) + \
+                                                 sizeof(crc_reg_t))
+#define COM_MSG_RS485_RX_16BIT_PAYLOAD_LENGTH   (sizeof(header_reg_u) + \
+                                                 sizeof(mst2slv_msg_t))
+#define COM_MSG_RS485_RX_8BIT_FULL_LENGTH       (COM_MSG_RS485_RX_16BIT_FULL_LENGTH * 2)
+#define COM_MSG_RS485_RX_8BIT_PAYLOAD_LENGTH    (COM_MSG_RS485_RX_16BIT_PAYLOAD_LENGTH * 2)
+
+#define LED_MSG_TX_16BIT_LENGTH                 (6)
+
+/***********************************************************************
+ * COMMUNICATION CONSTANTS
+ ***********************************************************************/
+#define POSITION_LSB                            (5.960464477539063e-08f)    // 2**(-24)
+#define VELOCITY_LSB                            (4.8828125e-04f)            // 2**(-11)
+#define IQ_LSB                                  (9.765625e-04f)             // 2**(-10)
+#define CURRENT_SAT_LSB                         (1.25e-01f)                 // 2**(-3)
+#define RESISTANCE_LSB                          (3.0517578125e-05f)         // 2**(-15)
+#define VOLTAGE_LSB                             (6.103515625e-05f)          // 2**(-14)
+#define KP_LSB                                  (4.8828125e-04f)            // 2**(-11)
+#define KD_LSB                                  (9.765625e-04f)             // 2**(-10)
 
 /***********************************************************************
  * COMMUNICATION CRC TABLE
