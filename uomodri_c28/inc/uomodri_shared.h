@@ -76,19 +76,21 @@ extern "C" {
 #include "config/uomodri_math.h"
 #include "uomodri_user_defines.h"
 #include "main.h"
+#include "encoder.h"
 #include "motor.h"
+#include "foc.h"
 //#include "config/uomodri_3_1/uomodri_3_1_hal_defines.h"
 
 
 /***********************************************************************
  * DEFINES
  ***********************************************************************/
-////#ifdef __TMS320C28XX_CLA__
-//#if (CLA_CORE_ENABLE)
-//#define MMAX3(x, y, z)              (__mmaxf32(__mmaxf32((x), (y)), (z)))
-//#define MMIN3(x, y, z)              (__mminf32(__mminf32((x), (y)), (z)))
-//#define MSATF32(x, y, z)            (__mmaxf32(__mminf32((x), (y)), (z)))
-//#endif
+//#ifdef __TMS320C28XX_CLA__
+#if (CLA_CORE_ENABLE)
+#define MMAX3(x, y, z)              (__mmaxf32(__mmaxf32((x), (y)), (z)))
+#define MMIN3(x, y, z)              (__mminf32(__mminf32((x), (y)), (z)))
+#define MSATF32(x, y, z)            (__mmaxf32(__mminf32((x), (y)), (z)))
+#endif
 //
 //#define CMD_SYSTEM_EN_POS           (0)
 //#define CMD_SYSTEM_EN_MASK          (1 << CMD_SYSTEM_EN_POS)

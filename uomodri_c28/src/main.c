@@ -38,7 +38,9 @@
 //#include "motor.h"
 #include "communication.h"
 //#include "uomodri_shared.h"
+#include "encoder.h"
 #include "motor.h"
+#include "foc.h"
 #include "config/uomodri_math.h"
 
 #include "uomodri_user_defines.h"

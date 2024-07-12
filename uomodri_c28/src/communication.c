@@ -1,6 +1,7 @@
 /***********************************************************************
  * INCLUDES
  ***********************************************************************/
+#include <motor.h>
 #include "vcu2/vcu2_crc.h"
 #include "device.h"
 
@@ -9,7 +10,8 @@
 #include "communication.h"
 //#include "main.h"
 //#include "uomodri_shared.h"
-#include "motor.h"
+#include "encoder.h"
+#include "foc.h"
 /***********************************************************************
  * FUNCTIONS DEFINITIONS
  ***********************************************************************/

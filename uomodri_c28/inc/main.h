@@ -53,7 +53,11 @@
 #include <hw_types.h>
 #include "communication.h"
 //#include "uomodri_shared.h"
+//#include "motor.h"
+#include "encoder.h"
 #include "motor.h"
+#include "foc.h"
+
 /***********************************************************************
  * ENUM TYPES
  ***********************************************************************/
