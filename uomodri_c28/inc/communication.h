@@ -4,22 +4,15 @@
 /***********************************************************************
  * INCLUDES
  ***********************************************************************/
-#ifdef CPU1
-//#include <stdbool.h>
-//#include <stddef.h>
-//#include <stdint.h>
-#include "f2838x_device.h"
-//#include "hw_types.h"
-//#include "../../../../../ti/ccs1270/ccs/tools/compiler/ti-cgt-c2000_22.6.1.LTS/include/sys/_stdint.h"
-//#include "motor.h"
-#include "uomodri_shared.h"
-//#include "main.h"
-//#include "uomodri_user_defines.h"
-#else
 #include <stdbool.h>
 #include <stdint.h>
 #include <math.h>
-
+#ifdef CPU1
+#include "f2838x_device.h"
+//#include "uomodri_shared.h"
+#include "motor.h"
+//#include "motor.h"
+#else
 #include <stddef.h>
 #include "uomodri_cm_user_defines.h"
 #endif

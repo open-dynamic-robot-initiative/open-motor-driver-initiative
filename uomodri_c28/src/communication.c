@@ -7,8 +7,9 @@
 #include "config/uomodri_math.h"
 #include "uomodri_user_defines.h"
 #include "communication.h"
-#include "main.h"
-
+//#include "main.h"
+//#include "uomodri_shared.h"
+#include "motor.h"
 /***********************************************************************
  * FUNCTIONS DEFINITIONS
  ***********************************************************************/

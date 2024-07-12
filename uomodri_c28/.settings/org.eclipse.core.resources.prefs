@@ -1,8 +1,6 @@
 eclipse.preferences.version=1
 encoding//Debug_Flash/device/driverlib/subdir_rules.mk=UTF-8
 encoding//Debug_Flash/device/driverlib/subdir_vars.mk=UTF-8
-encoding//Debug_Flash/device/subdir_rules.mk=UTF-8
-encoding//Debug_Flash/device/subdir_vars.mk=UTF-8
 encoding//Debug_Flash/makefile=UTF-8
 encoding//Debug_Flash/objects.mk=UTF-8
 encoding//Debug_Flash/sources.mk=UTF-8

@@ -3,26 +3,46 @@
  * Description: Source file containing main function and IT running on CPU1 - C28 processor.
  */
 
+///***********************************************************************
+// * INCLUDES
+// ***********************************************************************/
+//
+//#include <board.h>
+//#include <cla.h>
+//#include <clb.h>
+//#include <dma.h>
+//#include <drv8353.h>
+//#include <hal.h>
+//#include <hw_memmap.h>
+//#include <hw_sci.h>
+//#include <interrupt.h>
+//#include <machine/_stdint.h>
+//#include <main.h>
+//#include <sci.h>
+//#include <spi.h>
+//#include <sys/_stdint.h>
+//#include <sysctl.h>
+//#include <ws2812b.h>
 /***********************************************************************
  * INCLUDES
  ***********************************************************************/
+#include <config/uomodri_3_1/uomodri_3_1_handlers.h>
+#include "driverlib.h"
+#include "device.h"
+#include "board.h"
 
-#include <board.h>
-#include <cla.h>
-#include <clb.h>
-#include <dma.h>
-#include <drv8353.h>
-#include <hal.h>
-#include <hw_memmap.h>
-#include <hw_sci.h>
-#include <interrupt.h>
-#include <machine/_stdint.h>
-#include <main.h>
-#include <sci.h>
-#include <spi.h>
-#include <sys/_stdint.h>
-#include <sysctl.h>
-#include <ws2812b.h>
+#include "main.h"
+#include "hal.h"
+#include "drv8353.h"
+#include "ws2812b.h"
+//#include "motor.h"
+#include "communication.h"
+//#include "uomodri_shared.h"
+#include "motor.h"
+#include "config/uomodri_math.h"
+
+#include "uomodri_user_defines.h"
+
 
 /***********************************************************************
  * FUNCTIONS DECLARATION
@@ -61,6 +81,48 @@ static const int_cfg_t interruptList[] =
 #endif
  {.intNum = UINT32_MAX},        /* END OF ARRAY */
 };
+
+#pragma DATA_ALIGN(motor_m1, 4)
+#pragma DATA_SECTION(motor_m1, "ClaDataMotor1");
+motor_t     motor_m1;
+
+#pragma DATA_ALIGN(motor_m2, 4)
+#pragma DATA_SECTION(motor_m2, "ClaDataMotor2");
+motor_t     motor_m2;
+
+#pragma DATA_ALIGN(cmd_uomodri, 4)
+#pragma DATA_SECTION(cmd_uomodri, "MSGRAM_CPU_TO_CLA")
+cmd_t       cmd_uomodri[2];
+
+#pragma DATA_ALIGN(com_spi_rx, 4)
+#pragma DATA_SECTION(com_spi_rx, "ramgs0")
+spi_rx_t    com_spi_rx;
+
+#pragma DATA_ALIGN(com_spi_tx, 4)
+#pragma DATA_SECTION(com_spi_tx, "ramgs0")
+spi_tx_t    com_spi_tx      = {.msg_cr = 0U, .msg_nx = 1U,
+                               .msg[0].crc.u16_msb = 0xDFFF,
+                               .msg[0].crc.u16_lsb = 0x5283,
+                               .msg[1].crc.u16_msb = 0xDFFF,
+                               .msg[1].crc.u16_lsb = 0x5283};
+#pragma DATA_ALIGN(com_rs485_rx, 4)
+#pragma DATA_SECTION(com_rs485_rx, "ramgs0")
+rs485_rx_t  com_rs485_rx    = {.index = 0U,
+                               .addr1 = false, .addr2 = false};
+
+#pragma DATA_ALIGN(com_rs485_tx, 4)
+#pragma DATA_SECTION(com_rs485_tx, "ramgs0")
+rs485_tx_t  com_rs485_tx    = {.index = 0U,
+                               .msg_cr = 0U, .msg_nx = 1U,
+                               .msg[0].crc.u16_msb = 0x8CA0,
+                               .msg[0].crc.u16_lsb = 0x22CF,
+                               .msg[1].crc.u16_msb = 0x8CA0,
+                               .msg[1].crc.u16_lsb = 0x22CF};
+
+#pragma DATA_ALIGN(led_spi_tx, 4)
+#pragma DATA_SECTION(led_spi_tx, "ramgs0")
+uint16_t    led_spi_tx[LED_MSG_TX_16BIT_LENGTH];
+
 
 /***********************************************************************
  * LOCAL VARIABLES

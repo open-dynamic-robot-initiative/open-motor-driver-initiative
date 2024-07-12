@@ -6,6 +6,18 @@
 #ifndef __UOMODRI_USER_DEFINES_H__
 #define __UOMODRI_USER_DEFINES_H__
 
+
+/************************************************************************
+ * INCLUDES
+ ************************************************************************/
+#include <CLAmath.h>
+#include <f2838x_device.h>
+#include <driverlib.h>
+#include <device.h>
+#include <board.h>
+
+#include "drv8353.h"
+
 /***********************************************************************
  * GLOBAL MACROS
  ***********************************************************************/
@@ -102,6 +114,31 @@
  * @}
  */
 
+/***********************************************************************
+ * MOTORS \& ENCODERS INCLUDES
+ ***********************************************************************/
+#include "config/motor/tmotor_mn4004_kv300.h"           // T-MOTOR MN4000 KV300 motor definitions
+#include "config/motor/myactuator_rmdx8h.h"             // MYACTUATOR RMDX8H motor definitions
+#include "config/encoder/broadcom_aedt_9810_z00.h"      // BROADCOM AEDT-9810-Z00 encoder definitions
+#include "config/encoder/cui_amt112s_4096_5000_s.h"     // CUI AMT112S-4096-5000-s encoder definitions
+
+//#if (USE_UOMODRI_REV == USE_UOMODRI_V1)
+////
+//#elif (USE_UOMODRI_REV == USE_UOMODRI_V2)
+////
+//#elif (USE_UOMODRI_REV == USE_UOMODRI_V3)
+#include "config/uomodri_3_1/uomodri_3_1_hal_defines.h" // uOmodri v3.1 definitions
+//#include "config/uomodri_3_1/uomodri_3_1_handlers.h"    // uOmodri v3.1 configuration include file
+//#elif (USE_UOMODRI_REV == USE_UOMODRI_SA_V1)
+////
+//#else
+//#error "@ least one config must be set @ a time."
+//#endif
+
+/***********************************************************************
+ * MOTORS DEFINES
+ ***********************************************************************/
+
 #define MIN                                     (0)
 #define MAX                                     (1)
 #define FW                                      (0)     /*!< Forward direction */
@@ -130,5 +167,15 @@
 #define VEXT_CUTOFF_TIME_CONST                  (2.0f * UOMODRI_PI * VEXT_CUTOFF_FREQ * PWM_PERIOD)
 #define VEXT_LPF_ALPHA                          (VEXT_CUTOFF_TIME_CONST / (1.0f + VEXT_CUTOFF_TIME_CONST))
 #define VEXT_LPF_ONE_M_ALPHA                    (1.0f - VEXT_LPF_ALPHA)
+
+/***********************************************************************
+ * STRUCTURES DEFINES
+ ***********************************************************************/
+typedef struct __lowPassFilter_t__
+{
+    float32_t a;
+    float32_t one_minus_a;
+} lpf_t;
+
 
 #endif /* __UOMODRI_USER_DEFINES_H__ */

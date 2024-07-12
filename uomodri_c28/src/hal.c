@@ -3,13 +3,21 @@
  * Description: Source file containing Hardware Abstraction Layer source code
  */
 
+///***********************************************************************
+// * INCLUDE FILES
+// ***********************************************************************/
+//#include "uomodri_user_defines.h"
+//#include "board.h"
+//#include "main.h"
+//#include "hal.h"
+
 /***********************************************************************
  * INCLUDE FILES
  ***********************************************************************/
 #include "uomodri_user_defines.h"
-#include "board.h"
-#include "main.h"
+#include "device.h"
 #include "hal.h"
+#include "board.h"
 
 /***********************************************************************
  * VARIABLES
