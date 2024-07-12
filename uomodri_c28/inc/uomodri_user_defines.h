@@ -168,14 +168,7 @@
 #define VEXT_LPF_ALPHA                          (VEXT_CUTOFF_TIME_CONST / (1.0f + VEXT_CUTOFF_TIME_CONST))
 #define VEXT_LPF_ONE_M_ALPHA                    (1.0f - VEXT_LPF_ALPHA)
 
-/***********************************************************************
- * STRUCTURES DEFINES
- ***********************************************************************/
-typedef struct __lowPassFilter_t__
-{
-    float32_t a;
-    float32_t one_minus_a;
-} lpf_t;
+
 
 
 #endif /* __UOMODRI_USER_DEFINES_H__ */
