@@ -195,18 +195,18 @@ static drv_reg_t drv_reg[] =
  },
 };
 
-#pragma DATA_ALIGN(cmd_uomodri, 4)
-#pragma DATA_SECTION(cmd_uomodri, "MSGRAM_CPU_TO_CLA")
-cmd_t cmd_uomodri[2];
+//#pragma DATA_ALIGN(cmd_uomodri, 4)
+//#pragma DATA_SECTION(cmd_uomodri, "MSGRAM_CPU_TO_CLA")
+//cmd_t cmd_uomodri[2];
 
-/** @var    MOTOR_STRUCT    motor[]
- *  @brief  General structure array configuration structure for the Hardware Abstraction Layer.
- */
-#pragma DATA_ALIGN(motor_m1, 4)
-#pragma DATA_SECTION(motor_m1, "ClaDataMotor1");
-motor_t motor_m1;
-#pragma DATA_ALIGN(motor_m2, 4)
-#pragma DATA_SECTION(motor_m2, "ClaDataMotor2");
-motor_t motor_m2;
+///** @var    MOTOR_STRUCT    motor[]
+// *  @brief  General structure array configuration structure for the Hardware Abstraction Layer.
+// */
+//#pragma DATA_ALIGN(motor_m1, 4)
+//#pragma DATA_SECTION(motor_m1, "ClaDataMotor1");
+//motor_t motor_m1;
+//#pragma DATA_ALIGN(motor_m2, 4)
+//#pragma DATA_SECTION(motor_m2, "ClaDataMotor2");
+//motor_t motor_m2;
 
 #endif  /*__UOMODRI_PRJ_CONFIG_HANDLERS_H__*/
