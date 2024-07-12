@@ -448,4 +448,31 @@ static const hal_cfg_t hal =
  .p_clbHandle   = clbCfgList,
 };
 
+/***********************************************************************
+ * DRV STRUCTURE IO DECLARATION & INITIALIZATION
+ ***********************************************************************/
+/** @var    drv_cfg_t   drv_cfg[]
+ *  @brief  List all IOs \& SPI peripherals used for DRV communication.
+ */
+#pragma DATA_SECTION(drv_cfg, "ramgs0")
+static const drv_cfg_t  drv_cfg[] =
+{
+ MOTOR1_DRV_CFG_DEF,
+ MOTOR2_DRV_CFG_DEF,
+};
+
+/***********************************************************************
+ * DRV STRUCTURE REGISTERS DECLARATION & INITIALIZATION
+ ***********************************************************************/
+/** @var    drv_reg_t   drv_reg[]
+ *  @brief  List all configuration registers for each DRVs.
+ */
+#pragma DATA_SECTION(drv_reg, "ramgs0")
+static drv_reg_t drv_reg[] =
+{
+ MOTOR1_DRV_REG_DEF,
+ MOTOR2_DRV_REG_DEF,
+};
+
+
 #endif /* __UOMODRI_3_1_HAL_HANDLERS_H__ */

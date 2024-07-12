@@ -6,6 +6,7 @@
 /***********************************************************************
  * INCLUDES
  ***********************************************************************/
+#include <config/uomodri_3_1/uomodri_3_1_handlers.h>
 #include "driverlib.h"
 #include "device.h"
 #include "board.h"
@@ -21,45 +22,13 @@
 
 #include "uomodri_user_defines.h"
 //#include "uomodri_hal_config_handlers.h"
-#include "config/uomodri_3_1/uomodri_3_1_hal_handlers.h"
 #include "uomodri_prj_config_handlers.h"
 
 /***********************************************************************
  * VARIABLES
  ***********************************************************************/
-//#pragma DATA_ALIGN(com_spi_rx, 4)
-//#pragma DATA_SECTION(com_spi_rx, "ramgs0")
-//spi_rx_t                com_spi_rx;
-//#pragma DATA_ALIGN(com_spi_tx, 4)
-//#pragma DATA_SECTION(com_spi_tx, "ramgs0")
-//spi_tx_t                com_spi_tx          = {.msg_cr = 0U, .msg_nx = 1U,
-//                                               .msg[0].crc.u16_msb = 0xDFFF, .msg[0].crc.u16_lsb = 0x5283,
-//                                               .msg[1].crc.u16_msb = 0xDFFF, .msg[1].crc.u16_lsb = 0x5283};
-//#pragma DATA_ALIGN(com_rs485_rx, 4)
-//#pragma DATA_SECTION(com_rs485_rx, "ramgs0")
-//rs485_rx_t              com_rs485_rx        = {.index = 0U,
-//                                               .addr1 = false, .addr2 = false};
-//#pragma DATA_ALIGN(com_rs485_tx, 4)
-//#pragma DATA_SECTION(com_rs485_tx, "ramgs0")
-//rs485_tx_t              com_rs485_tx        = {.index = 0U,
-//                                               .msg_cr = 0U, .msg_nx = 1U,
-//                                               .msg[0].crc.u16_msb = 0x8CA0, .msg[0].crc.u16_lsb = 0x22CF,
-//                                               .msg[1].crc.u16_msb = 0x8CA0, .msg[1].crc.u16_lsb = 0x22CF};
-//#pragma DATA_ALIGN(led_spi_tx, 4)
-//#pragma DATA_SECTION(led_spi_tx, "ramgs0")
-//uint16_t                led_spi_tx[LED_MSG_TX_16BIT_LENGTH];
-//#pragma DATA_ALIGN(com_bus_select, 2)
-//#pragma DATA_SECTION(com_bus_select, "ramgs0")
-//com_bus_e               com_bus_select      = COM_NO_BUS_DEFINED;
-//#pragma DATA_ALIGN(global_1ms_tmr_cnt, 2)
-//#pragma DATA_SECTION(global_1ms_tmr_cnt, "ramgs0")
-//uint32_t                global_1ms_tmr_cnt  = 0U;
-
 // External variables
-//extern motor_t          motor_m1;
-//extern motor_t          motor_m2;
 extern const hal_cfg_t  hal;
-//extern cmd_t            cmd_uomodri[2];
 
 /***********************************************************************
  * FUNCTIONS DECLARATION
@@ -67,6 +36,7 @@ extern const hal_cfg_t  hal;
 void main(void);
 static void MCU_ini(void);
 inline void LED_dimming(motor_t*, motor_t*, uint16_t*);
+void MOT_initStruct(motor_t*, uint16_t);
 
 /***********************************************************************
  * FUNCTIONS DEFINITION
