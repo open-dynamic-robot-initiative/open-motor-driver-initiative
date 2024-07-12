@@ -283,7 +283,6 @@
 									<listOptionValue builtIn="false" value="${VCU_ROOT}/include"/>
 									<listOptionValue builtIn="false" value="${C2000WARE_ROOT}/libraries/flash_api/f2838x/c28x/include/FlashAPI"/>
 									<listOptionValue builtIn="false" value="${C2000WARE_ROOT}/libraries/flash_api/f2838x/c28x/include/FlashAPI/Constants"/>
-									<listOptionValue builtIn="false" value="C2000WARE_ROOT/device_support/f2838x/common/include"/>
 								</option>
 								<option id="com.ti.ccstudio.buildDefinitions.C2000_22.6.compilerID.ADVICE__PERFORMANCE.1213534495" name="Provide advice on optimization techniques (--advice:performance)" superClass="com.ti.ccstudio.buildDefinitions.C2000_22.6.compilerID.ADVICE__PERFORMANCE" value="--advice:performance=all" valueType="string"/>
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="com.ti.ccstudio.buildDefinitions.C2000_22.6.compilerID.DEFINE.2069157200" name="Pre-define NAME (--define, -D)" superClass="com.ti.ccstudio.buildDefinitions.C2000_22.6.compilerID.DEFINE" valueType="definedSymbols">

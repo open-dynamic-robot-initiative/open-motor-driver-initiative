@@ -15,8 +15,6 @@
 //#include "/home/jmanhes/ti/c2000/C2000Ware_5_02_00_00/device_support/f2838x/common/include/device.h"
 //#include <board.h>
 
-//#include "uomodri_3_1_hal_defines.h"
-
 //#include "../uomodri_user_defines.h"
 //#include "../../communication.h"
 //#include "../../hal.h"
@@ -25,7 +23,6 @@
 //#include "hal.h"
 //#include "communication.h"
 
-//#include "uomodri_3_1_hal_defines.h"
 #include "hal.h"
 #include "communication.h"
 #include "uomodri_3_1_hal_defines.h"
