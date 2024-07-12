@@ -2,31 +2,11 @@
  * File name: motor_control.cla
  * Description: Source file containing motor control functions running on CLA processor.
  */
-//#ifndef __MOTOR_CONTROL_CLA__
-//#define __MOTOR_CONTROL_CLA__
 
-///***********************************************************************
-//* INCLUDES
-//***********************************************************************/
-////#include "f2838x_cla_typedefs.h"
-//
-////#include "foc.h"
-//#include <uomodri_shared.h>
-//#include <uomodri_user_defines.h>
-//
-////#include "uomodri_user_defines.h"
-////#include "config/uomodri_3_1/uomodri_3_1_hal_defines.h"
 /***********************************************************************
 * INCLUDES
 ***********************************************************************/
-//#include "f2838x_cla_typedefs.h"
-//#include "main.h"
-//#include "foc.h"
 #include "uomodri_shared.h"
-
-//#include "uomodri_user_defines.h"
-//#include "config/uomodri_3_1/uomodri_3_1_hal_defines.h"
-
 
 /***********************************************************************
  * VARIABLES

@@ -31,6 +31,9 @@
 #include "device.h"
 #include "board.h"
 
+#include "config/uomodri_math.h"
+#include "uomodri_user_defines.h"
+
 #include "main.h"
 #include "hal.h"
 #include "drv8353.h"
@@ -41,9 +44,8 @@
 #include "encoder.h"
 #include "motor.h"
 #include "foc.h"
-#include "config/uomodri_math.h"
 
-#include "uomodri_user_defines.h"
+
 
 
 /***********************************************************************
@@ -125,10 +127,6 @@ rs485_tx_t  com_rs485_tx    = {.index = 0U,
 #pragma DATA_SECTION(led_spi_tx, "ramgs0")
 uint16_t    led_spi_tx[LED_MSG_TX_16BIT_LENGTH];
 
-
-/***********************************************************************
- * LOCAL VARIABLES
- ***********************************************************************/
 #pragma DATA_ALIGN(com_bus_select, 2)
 #pragma DATA_SECTION(com_bus_select, "ramgs0")
 com_bus_e   com_bus_select      = COM_NO_BUS_DEFINED;

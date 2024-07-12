@@ -4,9 +4,7 @@
 /***********************************************************************
  * INCLUDES
  ***********************************************************************/
-#include <stdbool.h>
-#include <stdint.h>
-#include <math.h>
+
 #ifdef CPU1
 #include "f2838x_device.h"
 //#include "uomodri_shared.h"
@@ -15,6 +13,9 @@
 #include "foc.h"
 //#include "motor.h"
 #else
+#include <stdbool.h>
+#include <stdint.h>
+#include <math.h>
 #include <stddef.h>
 #include "uomodri_cm_user_defines.h"
 #endif

@@ -10,11 +10,11 @@
 /************************************************************************
  * INCLUDES
  ************************************************************************/
-#include <CLAmath.h>
-#include <f2838x_device.h>
-#include <driverlib.h>
-#include <device.h>
-#include <board.h>
+//#include "CLAmath.h"
+//#include "f2838x_device.h"
+//#include "driverlib.h"
+#include "device.h"
+//#include "board.h"
 
 #include "drv8353.h"
 
@@ -176,10 +176,5 @@ typedef struct __lowPassFilter_t__
 #define CHANNEL_1                               (0)     /*!< Select Channel_1 in PWM */
 #define CHANNEL_2                               (1)     /*!< Select Channel_2 in PWM */
 #define CHANNEL_3                               (2)     /*!< Select Channel_3 in PWM */
-
-
-
-
-
 
 #endif /* __UOMODRI_USER_DEFINES_H__ */

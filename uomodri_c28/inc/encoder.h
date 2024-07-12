@@ -4,12 +4,12 @@
 /***********************************************************************
  * INCLUDES
  ***********************************************************************/
+#ifdef CPU1
+#include "uomodri_user_defines.h"
+#include "drv8353.h"
+#else
 #include <stdint.h>
 #include <hw_types.h>
-#ifdef CPU1
-#include <f2838x_device.h>
-#include "uomodri_user_defines.h"
-#else
 #include "uomodri_cm_user_defines.h"
 #endif
 
@@ -71,11 +71,7 @@ typedef struct __encoder_t__
 /***********************************************************************
  * DEFINES
  ***********************************************************************/
-#define ENC_MAX_ROLLOVER                    (127)
-#define ENC_MIN_ROLLOVER                    (-128)
-
-/***********************************************************************
- * FUNCTIONS DECLARATION
- ***********************************************************************/
+#define ENC_MAX_ROLLOVER    (127)
+#define ENC_MIN_ROLLOVER    (-128)
 
 #endif /* __ENCODER_H__ */
