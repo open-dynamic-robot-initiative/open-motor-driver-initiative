@@ -1577,6 +1577,91 @@
                                                 }
 
 /***********************************************************************
+ * DRV DEFINES
+ ***********************************************************************/
+#define MOTOR1_DRV_CFG_DEF                      { \
+                                                    .spiHandle          = DRV_SPI_BASE, \
+                                                    .gpioNumber_CS      = MOTOR1_DRV_SPI_CS_NUM, \
+                                                    .gpioNumber_EN      = MOTOR1_DRV_EN_NUM, \
+                                                    .gpioNumber_FAULT   = MOTOR1_DRV_FAULT_NUM, \
+                                                }
+#define MOTOR2_DRV_CFG_DEF                      { \
+                                                    .spiHandle          = DRV_SPI_BASE, \
+                                                    .gpioNumber_CS      = MOTOR2_DRV_SPI_CS_NUM, \
+                                                    .gpioNumber_EN      = MOTOR2_DRV_EN_NUM, \
+                                                    .gpioNumber_FAULT   = MOTOR2_DRV_FAULT_NUM, \
+                                                }
+
+#define MOTOR1_DRV_REG_DEF                      { \
+                                                    .ctrl_reg_02.CLR_FLT    = false, \
+                                                    .ctrl_reg_02.BRAKE      = false, \
+                                                    .ctrl_reg_02.COAST      = false, \
+                                                    .ctrl_reg_02.PWM1_DIR   = false, \
+                                                    .ctrl_reg_02.PWM1_COM   = false, \
+                                                    .ctrl_reg_02.PWM_MODE   = DRV_PWMMODE_6, \
+                                                    .ctrl_reg_02.OTW_REP    = true, \
+                                                    .ctrl_reg_02.DIS_GDF    = false, \
+                                                    .ctrl_reg_02.DIS_GDUV   = false, \
+                                                    .ctrl_reg_02.OCP_ACT    = true, \
+                                                    .ctrl_reg_03.IDRIVEN_HS = DRV_ISINK_HS_0P300_A, \
+                                                    .ctrl_reg_03.IDRIVEP_HS = DRV_ISOUR_HS_0P150_A, \
+                                                    .ctrl_reg_03.LOCK       = DRV_REG_UNLOCK, \
+                                                    .ctrl_reg_04.IDRIVEN_LS = DRV_ISINK_LS_0P300_A, \
+                                                    .ctrl_reg_04.IDRIVEP_LS = DRV_ISOUR_LS_0P150_A, \
+                                                    .ctrl_reg_04.TDRIVE     = DRV_TSOUR_1000_NS, \
+                                                    .ctrl_reg_04.CBC        = false, \
+                                                    .ctrl_reg_05.VDS_LVL    = DRV_VDS_LVL_0P080_V, \
+                                                    .ctrl_reg_05.OCP_DEG    = DRV_OCPDEG_4_US, \
+                                                    .ctrl_reg_05.OCP_MODE   = DRV_LATCHED_SHUTDOWN, \
+                                                    .ctrl_reg_05.DEAD_TIME  = DRV_DEADTIME_50_NS, \
+                                                    .ctrl_reg_05.TRETRY     = true, \
+                                                    .ctrl_reg_06.SEN_LVL    = DRV_SENLVL_0P25_V, \
+                                                    .ctrl_reg_06.CSA_CAL_C  = false, \
+                                                    .ctrl_reg_06.CSA_CAL_B  = false, \
+                                                    .ctrl_reg_06.CSA_CAL_A  = false, \
+                                                    .ctrl_reg_06.DIS_SEN    = false, \
+                                                    .ctrl_reg_06.CSA_GAIN   = DRV_CSA_GAIN_REG, \
+                                                    .ctrl_reg_06.LS_REF     = false, \
+                                                    .ctrl_reg_06.VREF_DIV   = true, \
+                                                    .ctrl_reg_06.CSA_FET    = false, \
+                                                    .ctrl_reg_07.CAL_MODE   = false, \
+                                                }
+#define MOTOR2_DRV_REG_DEF                      { \
+                                                    .ctrl_reg_02.CLR_FLT    = false, \
+                                                    .ctrl_reg_02.BRAKE      = false, \
+                                                    .ctrl_reg_02.COAST      = false, \
+                                                    .ctrl_reg_02.PWM1_DIR   = false, \
+                                                    .ctrl_reg_02.PWM1_COM   = false, \
+                                                    .ctrl_reg_02.PWM_MODE   = DRV_PWMMODE_6, \
+                                                    .ctrl_reg_02.OTW_REP    = true, \
+                                                    .ctrl_reg_02.DIS_GDF    = false, \
+                                                    .ctrl_reg_02.DIS_GDUV   = false, \
+                                                    .ctrl_reg_02.OCP_ACT    = true, \
+                                                    .ctrl_reg_03.IDRIVEN_HS = DRV_ISINK_HS_0P300_A, \
+                                                    .ctrl_reg_03.IDRIVEP_HS = DRV_ISOUR_HS_0P150_A, \
+                                                    .ctrl_reg_03.LOCK       = DRV_REG_UNLOCK, \
+                                                    .ctrl_reg_04.IDRIVEN_LS = DRV_ISINK_LS_0P300_A, \
+                                                    .ctrl_reg_04.IDRIVEP_LS = DRV_ISOUR_LS_0P150_A, \
+                                                    .ctrl_reg_04.TDRIVE     = DRV_TSOUR_1000_NS, \
+                                                    .ctrl_reg_04.CBC        = false, \
+                                                    .ctrl_reg_05.VDS_LVL    = DRV_VDS_LVL_0P080_V, \
+                                                    .ctrl_reg_05.OCP_DEG    = DRV_OCPDEG_4_US, \
+                                                    .ctrl_reg_05.OCP_MODE   = DRV_LATCHED_SHUTDOWN, \
+                                                    .ctrl_reg_05.DEAD_TIME  = DRV_DEADTIME_50_NS, \
+                                                    .ctrl_reg_05.TRETRY     = true, \
+                                                    .ctrl_reg_06.SEN_LVL    = DRV_SENLVL_0P25_V, \
+                                                    .ctrl_reg_06.CSA_CAL_C  = false, \
+                                                    .ctrl_reg_06.CSA_CAL_B  = false, \
+                                                    .ctrl_reg_06.CSA_CAL_A  = false, \
+                                                    .ctrl_reg_06.DIS_SEN    = false, \
+                                                    .ctrl_reg_06.CSA_GAIN   = DRV_CSA_GAIN_REG, \
+                                                    .ctrl_reg_06.LS_REF     = false, \
+                                                    .ctrl_reg_06.VREF_DIV   = true, \
+                                                    .ctrl_reg_06.CSA_FET    = false, \
+                                                    .ctrl_reg_07.CAL_MODE   = false, \
+                                                }
+
+/***********************************************************************
  * DMA DEFINES
  ***********************************************************************/
 /** @defgroup DMA configuration.

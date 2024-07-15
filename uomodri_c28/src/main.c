@@ -6,6 +6,7 @@
 /***********************************************************************
  * INCLUDES
  ***********************************************************************/
+#include <config/uomodri_3_1/uomodri_3_1_handlers.h>
 #include "driverlib.h"
 #include "device.h"
 #include "board.h"

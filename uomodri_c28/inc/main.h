@@ -1,33 +1,6 @@
 #ifndef __MAIN_H__
 #define __MAIN_H__
 
-/***********************************************************************
- * INCLUDES
- ***********************************************************************/
-//#include "communication.h"
-////#include "uomodri_shared.h"
-////#include "motor.h"
-//#include "encoder.h"
-//#include "motor.h"
-//#include "foc.h"
-//#include "driverlib.h"
-//#include "device.h"
-//#include "board.h"
-
-//#include "config/uomodri_math.h"
-//#include "uomodri_user_defines.h"
-//#include "config/uomodri_3_1/uomodri_3_1_handlers.h"
-//#include "main.h"
-//#include "hal.h"
-//#include "drv8353.h"
-//#include "ws2812b.h"
-//#include "communication.h"
-//
-//#include "motor_ctrl.h"
-
-/***********************************************************************
- * ENUM TYPES
- ***********************************************************************/
 
 /***********************************************************************
  * UNION TYPES
@@ -43,9 +16,6 @@ typedef union __uart_addr_u__
     };
 } uart_addr_u;
 
-/***********************************************************************
- * DEFINES
- ***********************************************************************/
 
 /***********************************************************************
  * INTERRUPTS DEFINES
@@ -125,12 +95,10 @@ typedef union __uart_addr_u__
                                             .p_intHandler       = INT_CLA_MOTOR2_HANDLER \
                                          }
 
+
 /***********************************************************************
  * GLOBAL VARIABLES
  ***********************************************************************/
-
-
-
 #if (defined DEBUG) && (CM_CORE_ENABLE) && (0)
 #pragma DATA_SECTION(cpu2cm_dbg_msg, "MSGRAM_CPU_TO_CM");
 com_cpu_2_cm_t  cpu2cm_dbg_msg;

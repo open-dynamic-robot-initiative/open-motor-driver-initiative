@@ -3,8 +3,8 @@
  * Description: Header file containing the uomodri V3 structure for hal config.
  */
 
-#ifndef __UOMODRI_3_1_HAL_HANDLERS_H__
-#define __UOMODRI_3_1_HAL_HANDLERS_H__
+#ifndef __UOMODRI_3_1_HANDLERS_H__
+#define __UOMODRI_3_1_HANDLERS_H__
 
 /************************************************************************
  * INCLUDES
@@ -354,7 +354,6 @@ static const clb_cfg_t  clbCfgList[] =
  ***********************************************************************/
 static const ipc_cfg_t  ipcCfgList[] =
 {
-
  IPC_CPU1_2_CM_DEF,                 /* IPC between CPU1 & CM */
  {.ipcType = IPC_TOTAL_NUM},        /* END OF ARRAY */
 };
@@ -411,5 +410,6 @@ static drv_reg_t drv_reg[] =
  MOTOR1_DRV_REG_DEF,
  MOTOR2_DRV_REG_DEF,
 };
+
 
 #endif /* __UOMODRI_3_1_HANDLERS_H__ */
