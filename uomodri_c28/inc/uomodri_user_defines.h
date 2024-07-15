@@ -115,12 +115,12 @@
 #define USE_FEED_FORWARD                        (0)
 
 /*
- * Motors configs
+ * Motors config
  */
 #define USE_TMOTOR_MN4004_KV300                 (0)
 #define USE_MYACTUATOR_RMDX8H                   (1)
 /*
- * Encoders configs
+ * Encoders config
  */
 #define USE_BROADCOM_AEDT_9810_Z00              (-1)
 #define USE_CUI_AMT112S_4096_5000_S             (-2)
@@ -143,18 +143,18 @@
 #include "config/encoder/broadcom_aedt_9810_z00.h"      // BROADCOM AEDT-9810-Z00 encoder definitions
 #include "config/encoder/cui_amt112s_4096_5000_s.h"     // CUI AMT112S-4096-5000-s encoder definitions
 
-//#if (USE_UOMODRI_REV == USE_UOMODRI_V1)
-////
-//#elif (USE_UOMODRI_REV == USE_UOMODRI_V2)
-////
-//#elif (USE_UOMODRI_REV == USE_UOMODRI_V3)
+#if (USE_UOMODRI_REV == USE_UOMODRI_V1)
+//
+#elif (USE_UOMODRI_REV == USE_UOMODRI_V2)
+//
+#elif (USE_UOMODRI_REV == USE_UOMODRI_V3)
 #include "config/uomodri_3_1/uomodri_3_1_hal_defines.h" // uOmodri v3.1 definitions
 //#include "config/uomodri_3_1/uomodri_3_1_handlers.h"    // uOmodri v3.1 configuration include file
-//#elif (USE_UOMODRI_REV == USE_UOMODRI_SA_V1)
-////
-//#else
-//#error "@ least one config must be set @ a time."
-//#endif
+#elif (USE_UOMODRI_REV == USE_UOMODRI_SA_V1)
+//
+#else
+#error "@ least one config must be set @ a time."
+#endif
 
 /***********************************************************************
  * MOTORS DEFINES

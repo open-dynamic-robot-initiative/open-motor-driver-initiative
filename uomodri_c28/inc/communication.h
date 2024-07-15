@@ -452,18 +452,14 @@ uint8_t COM_crc8Fast(uint8_t, uint8_t*, size_t);
 #else
 void COM_msgExtract(mst2slv_msg_t*, cmd_t*, cmd_t*);
 bool_t COM_msgCreate(motor_t*, slv2mst_msg_t*, uint32_t);
-void COM_msgSwapBytes(uint16_t*, uint16_t*, uint16_t);
 void COM_initCmdStruct(cmd_t*);
-uint32_t COM_vCRC32(uint16_t*, uint16_t);
 uint32_t COM_msgCRC(uint16_t*, uint16_t);
-inline void RS485_msgReceiveInit(rs485_rx_t*);
 inline void RS485_msgReceive(uint32_t, rs485_rx_t*);
-void RS485_msgTransmitInit(rs485_tx_t*);
-void RS485_msgTransmit(uint32_t, rs485_tx_t*);
-void SCI_rxDisable(uint32_t);
-void SCI_rxEnable(uint32_t);
-void SCI_txDisable(uint32_t);
-void SCI_txEnable(uint32_t);
+inline void RS485_msgTransmit(uint32_t, rs485_tx_t*);
+//void SCI_rxDisable(uint32_t);
+//void SCI_rxEnable(uint32_t);
+//void SCI_txDisable(uint32_t);
+//void SCI_txEnable(uint32_t);
 #endif
 
 #endif /*__COMMUNICATION_H__*/

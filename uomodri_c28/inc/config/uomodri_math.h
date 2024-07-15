@@ -43,7 +43,7 @@
 #define FM_2MULTPI                      (6.283185307179586476925286766559f) /* 2xPI */
 #endif
 
-//#ifdef __TMS320C28XX_CLA__
+//#ifdef __TMS320C28XX_CLA2__
 #if (CLA_CORE_ENABLE)
 #define UOMODRI_PI                      (CLAMATH_PI)
 #else

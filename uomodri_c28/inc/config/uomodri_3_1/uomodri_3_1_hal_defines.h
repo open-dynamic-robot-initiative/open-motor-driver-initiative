@@ -1097,6 +1097,7 @@
 #define PWM_SHADOW_MODE_EVENT_DB_RED            EPWM_RED_LOAD_ON_CNTR_ZERO_PERIOD
 #define PWM_SHADOW_MODE_EVENT_DB_FED            EPWM_FED_LOAD_ON_CNTR_ZERO_PERIOD
 #define PWM_SHADOW_MODE_EVENT_GLOBAL            EPWM_GL_LOAD_PULSE_SYNC_CNTR_ZERO_PERIOD
+#define PWM_SHADOW_MODE_ENABLE                  (1) // Enable/Disable the PWM shadow mode register.
 /**
  * @}
  */
@@ -1122,7 +1123,7 @@
                                                     .epwmBase         = MOTOR1_PWM1_BASE, \
                                                     .redCount         = PWM_DEADBAND_RISING_EDGE_DELAY, \
                                                     .fedCount         = PWM_DEADBAND_FALLING_EDGE_DELAY, \
-                                                    .DelayMode        = EPWM_DELAY_ENABLE, \
+                                                    .DelayMode        = true, \
                                                 }
 #define MOTOR1_PWM1_ADC_SOC_EVT_TRIG_DEF        { \
                                                     .epwmBase         = MOTOR1_PWM1_BASE, \
@@ -1162,7 +1163,7 @@
                                                     .epwmBase         = MOTOR1_PWM2_BASE, \
                                                     .redCount         = PWM_DEADBAND_RISING_EDGE_DELAY, \
                                                     .fedCount         = PWM_DEADBAND_FALLING_EDGE_DELAY, \
-                                                    .DelayMode        = EPWM_DELAY_ENABLE, \
+                                                    .DelayMode        = true, \
                                                 }
 #define MOTOR1_PWM2_DEF                         { \
                                                     .epwmBase                   = MOTOR1_PWM2_BASE, \
@@ -1196,7 +1197,7 @@
                                                     .epwmBase         = MOTOR1_PWM3_BASE, \
                                                     .redCount         = PWM_DEADBAND_RISING_EDGE_DELAY, \
                                                     .fedCount         = PWM_DEADBAND_FALLING_EDGE_DELAY, \
-                                                    .DelayMode        = EPWM_DELAY_ENABLE, \
+                                                    .DelayMode        = true, \
                                                 }
 #define MOTOR1_PWM3_DEF                         { \
                                                     .epwmBase                   = MOTOR1_PWM3_BASE, \
@@ -1230,7 +1231,7 @@
                                                     .epwmBase         = MOTOR2_PWM1_BASE, \
                                                     .redCount         = PWM_DEADBAND_RISING_EDGE_DELAY, \
                                                     .fedCount         = PWM_DEADBAND_FALLING_EDGE_DELAY, \
-                                                    .DelayMode        = EPWM_DELAY_ENABLE, \
+                                                    .DelayMode        = true, \
                                                 }
 #define MOTOR2_PWM1_ADC_SOC_EVT_TRIG_DEF        { \
                                                     .epwmBase         = MOTOR2_PWM1_BASE, \
@@ -1270,7 +1271,7 @@
                                                     .epwmBase         = MOTOR2_PWM2_BASE, \
                                                     .redCount         = PWM_DEADBAND_RISING_EDGE_DELAY, \
                                                     .fedCount         = PWM_DEADBAND_FALLING_EDGE_DELAY, \
-                                                    .DelayMode        = EPWM_DELAY_ENABLE, \
+                                                    .DelayMode        = true, \
                                                 }
 #define MOTOR2_PWM2_DEF                         { \
                                                     .epwmBase                   = MOTOR2_PWM2_BASE, \
@@ -1304,7 +1305,7 @@
                                                     .epwmBase         = MOTOR2_PWM3_BASE, \
                                                     .redCount         = PWM_DEADBAND_RISING_EDGE_DELAY, \
                                                     .fedCount         = PWM_DEADBAND_FALLING_EDGE_DELAY, \
-                                                    .DelayMode        = EPWM_DELAY_ENABLE, \
+                                                    .DelayMode        = true, \
                                                 }
 #define MOTOR2_PWM3_DEF                         { \
                                                     .epwmBase                   = MOTOR2_PWM3_BASE, \

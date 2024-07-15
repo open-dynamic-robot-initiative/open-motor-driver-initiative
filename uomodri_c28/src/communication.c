@@ -1,17 +1,19 @@
 /***********************************************************************
  * INCLUDES
  ***********************************************************************/
-//#include <motor.h>
 #include "vcu2/vcu2_crc.h"
 #include "device.h"
 
 #include "config/uomodri_math.h"
 #include "uomodri_user_defines.h"
 #include "communication.h"
-//#include "main.h"
-//#include "uomodri_shared.h"
-//#include "encoder.h"
-//#include "foc.h"
+
+/***********************************************************************
+ * FUNCTIONS DECLARATION
+ ***********************************************************************/
+void COM_msgSwapBytes(uint16_t*, uint16_t*, uint16_t);
+uint32_t COM_vCRC32(uint16_t*, uint16_t);
+
 /***********************************************************************
  * FUNCTIONS DEFINITIONS
  ***********************************************************************/
@@ -68,6 +70,7 @@ void COM_msgExtract(mst2slv_msg_t* p_msg, cmd_t* p_cmd_m1, cmd_t* p_cmd_m2)
  * @brief           Slave to Master message creation/update. IT Call.
  * @param[in]       *p_motor    Pointer on current data structure used for control.
  * @param[inout]    *p_msg      Pointer on the message to transmit to the Master board.
+ * @param[in]       tmr_cnt     Current value of the timer counter.
  */
 bool_t COM_msgCreate(motor_t* p_motor, slv2mst_msg_t* p_msg, uint32_t tmr_cnt)
 {
@@ -116,17 +119,11 @@ bool_t COM_msgCreate(motor_t* p_motor, slv2mst_msg_t* p_msg, uint32_t tmr_cnt)
         p_msg->status.STATUS_RSV1       = 0;
         p_msg->lastCmdIndex             = p_foc->cmd.index;
         p_msg->timeStamp                = (uint16_t)tmr_cnt;
-//(p_msg->timeStamp < 0xFFFF) ? (p_msg->timeStamp + 1) : (0);//
         p_msg->status.ERROR_CODE        = (motor_err.com_timeout)   ? (STATUS_ERROR_SPI_RECV_TIMEOUT)   : (p_msg->status.ERROR_CODE);
         p_msg->status.ERROR_CODE        = (motor_err.pos_rollover)  ? (STATUS_ERROR_POS_ROLLOVER)       : (p_msg->status.ERROR_CODE);
         p_msg->status.ERROR_CODE        = (motor_err.drv_fault)     ? (STATUS_ERROR_DRV_FAULT)          : (p_msg->status.ERROR_CODE);
         p_msg->status.ERROR_CODE        = (motor_err.enc_indexErr)  ? (STATUS_ERROR_ENCODER2)           : (p_msg->status.ERROR_CODE);
         p_msg->status.ERROR_CODE        = (motor_err.enc_alignErr)  ? (STATUS_ERROR_ENCODER2)           : (p_msg->status.ERROR_CODE);
-
-//        // Compute CRC
-//        uint32_t crc                    = COM_msgCrc((uint16_t *)p_msg, COM_MSG_SPI_TX_RX_16BIT_PAYLOAD_LENGTH);
-//        p_msg->crc.u16_msb              = LSB_32(crc);              // required for Solo
-//        p_msg->crc.u16_lsb              = MSB_32(crc);
 
         return(true);
     }
@@ -156,7 +153,7 @@ void COM_initCmdStruct(cmd_t* p_cmd)
  * @brief           Swap bytes position in a message.
  * @param[in]       *p_msg  Pointer on the message to swap.
  * @param[out]      *p_swap Pointer on the swapped message.
- * @param[in]       length  Number of elements to be swapped.
+ * @param[in]       length  Number of elements to swap.
  */
 void COM_msgSwapBytes(uint16_t* p_msg, uint16_t* p_swap, uint16_t length)
 {
@@ -221,9 +218,6 @@ inline void RS485_msgReceive(uint32_t sci_base, rs485_rx_t* p_msg_rx)
         uint16_t tmp        = (uint16_t)(HWREGH(sci_base + SCI_O_RXBUF) & SCI_RXBUF_SAR_M);
         *p_msg              = (p_msg_rx->index & 0x0001) ? (*p_msg | (tmp & 0x00FF)) : ((tmp << 8) & 0xFF00);
         p_msg_rx->index++;
-//        *p_msg              = (p_msg_rx->highByte) ? ((tmp << 8) & 0xFF00) : (*p_msg | (tmp & 0xFF00));
-//        p_msg_rx->index     = (p_msg_rx->highByte) ? (p_msg_rx->index) : (p_msg_rx->index + 1);
-//        p_msg_rx->highByte != p_msg_rx->highByte;
     }
 
     return;
@@ -232,7 +226,7 @@ inline void RS485_msgReceive(uint32_t sci_base, rs485_rx_t* p_msg_rx)
 /*
  * @brief           Compute the CRC 32bits with bytes swapping first.
  * @param[in]       *p_msg  Pointer on the message to swap.
- * @param[in]       length  Number of elements to be swapped.
+ * @param[in]       length  Number of elements to swap.
  * return           The 32bit CRC result.
  */
 inline void RS485_msgTransmit(uint32_t sci_base, rs485_tx_t* p_msg_tx)
@@ -243,10 +237,9 @@ inline void RS485_msgTransmit(uint32_t sci_base, rs485_tx_t* p_msg_tx)
 
     while((uint16_t)fifo_tx_status && (COM_MSG_RS485_TX_8BIT_FULL_LENGTH - p_msg_tx->index))//p_msg_tx->remaining)
     {
-        uint16_t* p_msg = &p_msg_tx->msg[p_msg_tx->msg_cr].raw[p_msg_tx->index >> 1];//&p_msg_tx->msg[p_msg_tx->msg_cr].raw[p_msg_tx->index];
+        uint16_t* p_msg = &p_msg_tx->msg[p_msg_tx->msg_cr].raw[p_msg_tx->index >> 1];
 //        SCI_writeCharNonBlocking(sci_base, (((p_msg_tx->index >> 1) ? (*p_msg): (*p_msg >> 8)) & 0x00FF));
         HWREGH(sci_base + SCI_O_TXBUF) = ((p_msg_tx->index & 0x0001) ? (*p_msg): (*p_msg >> 8)) & 0x00FF;
-        //p_msg_tx->msg[p_msg_tx->msg_cr].raw[p_msg_tx->index];
         p_msg_tx->index++;
         fifo_tx_status--;
     }
@@ -270,18 +263,18 @@ inline void RS485_msgTransmit(uint32_t sci_base, rs485_tx_t* p_msg_tx)
 //    SCI_enableRxModule(sci_base);
 //}
 
-void SCI_txDisable(uint32_t sci_base)
-{
-    SCI_resetTxFIFO(sci_base);
-    SCI_clearInterruptStatus(sci_base, SCI_INT_TXRDY | SCI_INT_TXFF);
-    SCI_disableInterrupt(sci_base, SCI_INT_TXFF);
-//    SCI_disableTxModule(sci_base);
-}
+//void SCI_txDisable(uint32_t sci_base)
+//{
+//    SCI_resetTxFIFO(sci_base);
+//    SCI_clearInterruptStatus(sci_base, SCI_INT_TXRDY | SCI_INT_TXFF);
+//    SCI_disableInterrupt(sci_base, SCI_INT_TXFF);
+////    SCI_disableTxModule(sci_base);
+//}
 
-void SCI_txEnable(uint32_t sci_base)
-{
-    SCI_resetTxFIFO(sci_base);
-    SCI_clearInterruptStatus(sci_base, SCI_INT_TXRDY | SCI_INT_TXFF);
-    SCI_enableInterrupt(sci_base, SCI_INT_TXFF);
-//    SCI_enableTxModule(sci_base);
-}
+//void SCI_txEnable(uint32_t sci_base)
+//{
+//    SCI_resetTxFIFO(sci_base);
+//    SCI_clearInterruptStatus(sci_base, SCI_INT_TXRDY | SCI_INT_TXFF);
+//    SCI_enableInterrupt(sci_base, SCI_INT_TXFF);
+////    SCI_enableTxModule(sci_base);
+//}

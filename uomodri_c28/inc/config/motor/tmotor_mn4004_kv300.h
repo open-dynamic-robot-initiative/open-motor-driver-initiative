@@ -9,20 +9,7 @@
 /************************************************************************
  * INCLUDES
  ************************************************************************/
-//#include "../uomodri_math.h"
 #include "../../uomodri_user_defines.h"
-//#if (USE_UOMODRI_REV == USE_UOMODRI_V1)
-////
-//#elif (USE_UOMODRI_REV == USE_UOMODRI_V2)
-////
-//#elif (USE_UOMODRI_REV == USE_UOMODRI_V3)
-//#include "config/uomodri_3_1/uomodri_3_1_hal_defines.h" // uOmodri v3.1 definitions
-//#include "config/uomodri_3_1/uomodri_3_1_handlers.h"    // uOmodri v3.1 configuration include file
-//#elif (USE_UOMODRI_REV == USE_UOMODRI_SA_V1)
-////
-//#else
-//#error "@ least one config must be set @ a time."
-//#endif
 
 /***********************************************************************
  * MOTORS DEFINES
@@ -113,6 +100,7 @@
 #define MOTOR1_STATOR_RESISTOR_LPF_ALPHA                    TMOTOR_MN4004_KV300_STATOR_RESISTOR_LPF_ALPHA
 #define MOTOR1_STATOR_RESISTOR_LPF_ONE_M_ALPHA              TMOTOR_MN4004_KV300_STATOR_RESISTOR_LPF_ONE_M_ALPHA
 #endif /* USE_TMOTOR_MN4004_KV300_ON_MOTOR1 */
+
 /*** Motor 2 constants ***/
 #if (MOTOR2_PARAMS == USE_TMOTOR_MN4004_KV300)
 #define MOTOR2_KV                                           TMOTOR_MN4004_KV300_KV

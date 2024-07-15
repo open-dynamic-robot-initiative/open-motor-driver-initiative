@@ -9,22 +9,7 @@
 /************************************************************************
  * INCLUDES
  ************************************************************************/
-//#include "driverlib.h"
-//#include "device.h"
-//#include "../uomodri_math.h"
 #include "../../uomodri_user_defines.h"
-//#if (USE_UOMODRI_REV == USE_UOMODRI_V1)
-////
-//#elif (USE_UOMODRI_REV == USE_UOMODRI_V2)
-////
-//#elif (USE_UOMODRI_REV == USE_UOMODRI_V3)
-//#include "config/uomodri_3_1/uomodri_3_1_hal_defines.h" // uOmodri v3.1 definitions
-//#include "config/uomodri_3_1/uomodri_3_1_handlers.h"    // uOmodri v3.1 configuration include file
-//#elif (USE_UOMODRI_REV == USE_UOMODRI_SA_V1)
-////
-//#else
-//#error "@ least one config must be set @ a time."
-//#endif
 
 /***********************************************************************
  * ENCODERS DEFINES
@@ -77,6 +62,7 @@
 #define MOTOR1_ENC_SPEED_LOCAL_LPF_ALPHA                        CUI_AMT112S_4096_5000_S_ENC_SPEED_LOCAL_LPF_ALPHA
 #define MOTOR1_ENC_SPEED_LOCAL_LPF_ONE_M_ALPHA                  CUI_AMT112S_4096_5000_S_ENC_SPEED_LOCAL_LPF_ONE_M_ALPHA
 #endif /* USE_CUI_AMT112S_4096_5000_S_ON_MOTOR1 */
+
 /*** Encoder 2 constants ***/
 #if (ENCODER2_PARAMS == USE_CUI_AMT112S_4096_5000_S)
 #define MOTOR2_ENC_RESOLUTION                                   CUI_AMT112S_4096_5000_S_ENC_RESOLUTION
