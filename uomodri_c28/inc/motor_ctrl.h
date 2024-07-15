@@ -19,44 +19,18 @@ extern "C" {
 
 #include "uomodri_cm_user_defines.h"
 #endif
-//#include "encoder.h"
-
-//#ifdef __TMS320C28XX_CLA__
-//#include "f2838x_cla_typedefs.h"
-//#include "CLAmath.h"
-//#else
-//#include <hw_types.h>
-//#include <math.h>
-//#endif
-//
-//#include "f2838x_device.h"
-//#include "device.h"
-//
-//#include "config/uomodri_math.h"
-//#include "uomodri_user_defines.h"
-//
-//#include "config/uomodri_3_1/uomodri_3_1_hal_defines.h"    // uOmodri v3.1 definitions
-//#include "config/motor/tmotor_mn4004_kv300.h"           // T-MOTOR MN4000 KV300 motor definitions
-//#include "config/motor/myactuator_rmdx8h.h"             // MYACTUATOR RMDX8H motor definitions
-//#include "config/encoder/broadcom_aedt_9810_z00.h"      // BROADCOM AEDT-9810-Z00 encoder definitions
-//#include "config/encoder/cui_amt112s_4096_5000_s.h"     // CUI AMT112S-4096-5000-s encoder definitions
 
 #include "drv8353.h"
-
-//#include "main.h"
-
-//#include "foc.h"
-//#include "motor.h"
-//#include "encoder.h"
 
 /***********************************************************************
  * DEFINES
  ***********************************************************************/
 //#ifdef __TMS320C28XX_CLA__
-//#define MMAX3(x, y, z)              (__mmaxf32(__mmaxf32((x), (y)), (z)))
-//#define MMIN3(x, y, z)              (__mminf32(__mminf32((x), (y)), (z)))
-//#define MSATF32(x, y, z)            (__mmaxf32(__mminf32((x), (y)), (z)))
-//#endif
+#if (CLA_CORE_ENABLE)
+#define MMAX3(x, y, z)              (__mmaxf32(__mmaxf32((x), (y)), (z)))
+#define MMIN3(x, y, z)              (__mminf32(__mminf32((x), (y)), (z)))
+#define MSATF32(x, y, z)            (__mmaxf32(__mminf32((x), (y)), (z)))
+#endif
 
 #define CMD_SYSTEM_EN_POS           (0)
 #define CMD_SYSTEM_EN_MASK          (1 << CMD_SYSTEM_EN_POS)
@@ -442,62 +416,6 @@ typedef struct __motor_t__
     error_reg_u         error;                  /*!< Bit field for the error sources. */
     motor_state         state;                  /*!< Current motor state for the FSM. */
 } motor_t;
-
-/***********************************************************************
- * VARIABLES
- ***********************************************************************/
-//#if (CLA_CORE_ENABLE)
-extern motor_t  motor_m1;
-extern motor_t  motor_m2;
-//#else
-//extern static motor_t   motor[];
-//#endif
-
-/***********************************************************************
- * FUNCTIONS DECLARATION
- ***********************************************************************/
-#if (CLA_CORE_ENABLE)
-//#ifdef __TMS320C28XX_CLA__
-//extern float32_t __mminf32(float32_t, float32_t);
-//extern float32_t __mmaxf32(float32_t, float32_t);
-//extern float32_t __mfracf32(float32_t);
-
-//extern short __mgtu(unsigned int x , unsigned int y);
-//extern int16_t __mgtu(uint32_t, uint32_t);
-//extern float32_t CLAcos(float32_t);
-//extern float32_t CLAsin(float32_t);
-//extern void CLAsincos(float32_t, float32_t*, float32_t*);
-
-__attribute__((interrupt)) void adcCalib_Task(void);
-__attribute__((interrupt)) void cmdNew_Task(void);
-__attribute__((interrupt)) void motor1_Task(void);
-__attribute__((interrupt)) void motor2_Task(void);
-__attribute__((interrupt)) void Cla1Task5(void);
-__attribute__((interrupt)) void Cla1Task6(void);
-__attribute__((interrupt)) void Cla1Task7(void);
-__attribute__((interrupt)) void Cla1Task8(void);
-
-//extern inline float32_t __msatf32(float32_t, float32_t, float32_t);
-#endif
-void ADC_offsetCalib(motor_t*);
-inline void ENC_resetStruct(encoder_t*);
-inline void ENC_resetPeriph(encoder_t*);
-inline void ENC_getPosition(encoder_t*);
-inline void ENC_getSpeed(encoder_t*);
-inline void ENC_getTheta(encoder_t*);
-inline void FOC_resetStructPI(pi_t*);
-inline void FOC_resetStructPD(pd_t*);
-inline void FOC_resetStructCmd(cmd_t*);
-inline void FOC_resetStructMeasures(acq_t*);
-inline void FOC_resetStruct(foc_t*);
-inline void FOC_getMeasures(acq_t*);
-inline float32_t FOC_runPI(pi_t*);
-inline float32_t FOC_runPD(pd_t*);
-inline void FOC_svpwm1(foc_t*);
-void FOC_runControl(foc_t*);
-void MOT_runCommand(uint32_t, float32_t);
-void MOT_stopCommand(uint32_t);
-bool_t MOT_runControl(motor_t*);
 
 #ifdef __cplusplus
 }

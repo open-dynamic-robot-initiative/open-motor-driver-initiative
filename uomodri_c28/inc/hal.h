@@ -21,19 +21,19 @@
 /***********************************************************************
  * ENUMARATIONS
  ***********************************************************************/
-typedef enum
+typedef enum __SCI_MultiProcCtrl_enum__
 {
     SCI_MULTI_PROC_NONE = 0,
     SCI_MULTI_PROC_ADDR = 1,
     SCI_MULTI_PROC_IDLE = 2
-} SCI_MultiProcessorCtrl_e;
+} SCI_MultiProcCtrl_e;
 
-typedef enum
+typedef enum __CLB_RS485AddrDef_enum__
 {
     RS485_CLB_USE_NO_ADDRESS    = 0,
     RS485_CLB_USE_UID_ADDRESS   = 1,
     RS485_CLB_FORCE_ADDRESS     = 2
-} CLB_RS485AddressDef_e;
+} CLB_RS485AddrDef_e;
 
 /***********************************************************************
  * HARDWARE ABSTRACTION LAYER (HAL) CONTROL STRUCTURES
@@ -173,14 +173,14 @@ typedef struct __SPI_CFG_t__
  */
 typedef struct __SCI_CFG_t__
 {
-    uint32_t                            sciBase;                    /*!< ADC peripheral address. */
-    uint32_t                            bitRate;
-    uint32_t                            sciMode;
-    SCI_TxFIFOLevel                     txLevel;
-    SCI_RxFIFOLevel                     rxLevel;
-    uint32_t                            intSrc;
-    bool_t                              intEnable;                  /*!< GPIO can be configured as IT source */
-    SCI_MultiProcessorCtrl_e            multiProcMode;
+    uint32_t                sciBase;                    /*!< ADC peripheral address. */
+    uint32_t                bitRate;
+    uint32_t                sciMode;
+    SCI_TxFIFOLevel         txLevel;
+    SCI_RxFIFOLevel         rxLevel;
+    uint32_t                intSrc;
+    bool_t                  intEnable;                  /*!< GPIO can be configured as IT source */
+    SCI_MultiProcCtrl_e     multiProcMode;
 } sci_cfg_t;
 
 /**
@@ -233,10 +233,10 @@ typedef struct __CLA_CFG_t__
 typedef struct __CLB_CFG_t__
 {
 //    uint32_t                clb_AddrBase;
-    CLB_RS485AddressDef_e   clb_Addr1Spec;
-    CLB_RS485AddressDef_e   clb_Addr2Spec;
-    uint32_t                clb_Addr1Force;
-    uint32_t                clb_Addr2Force;
+    CLB_RS485AddrDef_e  clb_Addr1Spec;
+    CLB_RS485AddrDef_e  clb_Addr2Spec;
+    uint32_t            clb_Addr1Force;
+    uint32_t            clb_Addr2Force;
 } clb_cfg_t;
 
 /**

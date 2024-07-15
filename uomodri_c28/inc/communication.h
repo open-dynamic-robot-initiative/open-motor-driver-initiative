@@ -4,15 +4,9 @@
 /***********************************************************************
  * INCLUDES
  ***********************************************************************/
-
 #ifdef CPU1
 #include "f2838x_device.h"
-//#include "uomodri_shared.h"
 #include "motor_ctrl.h"
-//#include "encoder.h"
-//#include "motor.h"
-//#include "foc.h"
-//#include "motor.h"
 #else
 #include <stdbool.h>
 #include <stdint.h>
@@ -149,26 +143,6 @@ static const uint32_t crc32_table[] =
  0xafb010b1, 0xab710d06, 0xa6322bdf, 0xa2f33668, 0xbcb4666d, 0xb8757bda, 0xb5365d03, 0xb1f740b4
 };
 
-static unsigned char const crc8_table[] =
-{
- 0x00, 0x5E, 0xBC, 0xE2, 0x61, 0x3F, 0xDD, 0x83, 0xC2, 0x9C, 0x7E, 0x20, 0xA3, 0xFD, 0x1F, 0x41,
- 0x9D, 0xC3, 0x21, 0x7F, 0xFC, 0xA2, 0x40, 0x1E, 0x5F, 0x01, 0xE3, 0xBD, 0x3E, 0x60, 0x82, 0xDC,
- 0x23, 0x7D, 0x9F, 0xC1, 0x42, 0x1C, 0xFE, 0xA0, 0xE1, 0xBF, 0x5D, 0x03, 0x80, 0xDE, 0x3C, 0x62,
- 0xBE, 0xE0, 0x02, 0x5C, 0xDF, 0x81, 0x63, 0x3D, 0x7C, 0x22, 0xC0, 0x9E, 0x1D, 0x43, 0xA1, 0xFF,
- 0x46, 0x18, 0xFA, 0xA4, 0x27, 0x79, 0x9B, 0xC5, 0x84, 0xDA, 0x38, 0x66, 0xE5, 0xBB, 0x59, 0x07,
- 0xDB, 0x85, 0x67, 0x39, 0xBA, 0xE4, 0x06, 0x58, 0x19, 0x47, 0xA5, 0xFB, 0x78, 0x26, 0xC4, 0x9A,
- 0x65, 0x3B, 0xD9, 0x87, 0x04, 0x5A, 0xB8, 0xE6, 0xA7, 0xF9, 0x1B, 0x45, 0xC6, 0x98, 0x7A, 0x24,
- 0xF8, 0xA6, 0x44, 0x1A, 0x99, 0xC7, 0x25, 0x7B, 0x3A, 0x64, 0x86, 0xD8, 0x5B, 0x05, 0xE7, 0xB9,
- 0x8C, 0xD2, 0x30, 0x6E, 0xED, 0xB3, 0x51, 0x0F, 0x4E, 0x10, 0xF2, 0xAC, 0x2F, 0x71, 0x93, 0xCD,
- 0x11, 0x4F, 0xAD, 0xF3, 0x70, 0x2E, 0xCC, 0x92, 0xD3, 0x8D, 0x6F, 0x31, 0xB2, 0xEC, 0x0E, 0x50,
- 0xAF, 0xF1, 0x13, 0x4D, 0xCE, 0x90, 0x72, 0x2C, 0x6D, 0x33, 0xD1, 0x8F, 0x0C, 0x52, 0xB0, 0xEE,
- 0x32, 0x6C, 0x8E, 0xD0, 0x53, 0x0D, 0xEF, 0xB1, 0xF0, 0xAE, 0x4C, 0x12, 0x91, 0xCF, 0x2D, 0x73,
- 0xCA, 0x94, 0x76, 0x28, 0xAB, 0xF5, 0x17, 0x49, 0x08, 0x56, 0xB4, 0xEA, 0x69, 0x37, 0xD5, 0x8B,
- 0x57, 0x09, 0xEB, 0xB5, 0x36, 0x68, 0x8A, 0xD4, 0x95, 0xCB, 0x29, 0x77, 0xF4, 0xAA, 0x48, 0x16,
- 0xE9, 0xB7, 0x55, 0x0B, 0x88, 0xD6, 0x34, 0x6A, 0x2B, 0x75, 0x97, 0xC9, 0x4A, 0x14, 0xF6, 0xA8,
- 0x74, 0x2A, 0xC8, 0x96, 0x15, 0x4B, 0xA9, 0xF7, 0xB6, 0xE8, 0x0A, 0x54, 0xD7, 0x89, 0x6B, 0x35
-};
-
 /***********************************************************************
  * COMMUNICATION BUS IDENTIFIER
  ***********************************************************************/
@@ -176,7 +150,7 @@ static unsigned char const crc8_table[] =
  * @enum    com_bus_e
  * @brief   Define which peripheral bus has been used for communication.
  */
-typedef enum
+typedef enum __com_bus_enum__
 {
     COM_NO_BUS_DEFINED  = 0,
     COM_USE_SPI_BUS     = 1,
@@ -216,8 +190,8 @@ typedef enum
  * COMMUNICATION UNIONS BIT FILEDS
  ***********************************************************************/
 /**
- * @union  U32toU16_reg_u
- * @brief   32bits to 16bits down conversion.
+ * @union   U32toU16_reg_u
+ * @brief   32bits to 16bits type down conversion.
  */
 typedef struct __U32toU16_reg_t__
 {
@@ -254,17 +228,17 @@ typedef union __slv2mst_reg_u__
     uint16_t        all;                /*!< Short (16bits) type access */
     struct
     {
-        uint16_t    ERROR_CODE  : 4;    /*!< Bits 3-0   : Timeout disable system after no valid command               */
-        uint16_t    STATUS_RSV1 : 3;    /*!< Bits 6-4   : Reserved                                                    */
-        uint16_t    IDX2T       : 1;    /*!< Bits 7     : incremental encoder status toggle on index detect - MOTOR_2 */
-        uint16_t    IDX1T       : 1;    /*!< Bits 8     : incremental encoder status toggle on index detect - MOTOR_1 */
-        uint16_t    IDX2D       : 1;    /*!< Bits 9     : incremental encoder status index detected - MOTOR_2         */
-        uint16_t    IDX1D       : 1;    /*!< Bits 10    : incremental encoder status index detected - MOTOR_1         */
-        uint16_t    M2R         : 1;    /*!< Bits 11    : MOTOR_2 ready/not ready                                     */
-        uint16_t    M2E         : 1;    /*!< Bits 12    : MOTOR_2 enabled/not enabled                                 */
-        uint16_t    M1R         : 1;    /*!< Bits 13    : MOTOR_1 ready/not ready                                     */
-        uint16_t    M1E         : 1;    /*!< Bits 14    : MOTOR_1 enabled/not enabled                                 */
-        uint16_t    SE          : 1;    /*!< Bits 15    : System enabled/disabled                                     */
+        uint16_t    ERROR_CODE  : 4;    /*!< Bits 3-0   : Timeout disable system after no valid command         */
+        uint16_t    STATUS_RSV1 : 3;    /*!< Bits 6-4   : Reserved                                              */
+        uint16_t    IDX2T       : 1;    /*!< Bits 7     : incremental encoder toggle on index detect - MOTOR_2  */
+        uint16_t    IDX1T       : 1;    /*!< Bits 8     : incremental encoder toggle on index detect - MOTOR_1  */
+        uint16_t    IDX2D       : 1;    /*!< Bits 9     : incremental encoder index detected - MOTOR_2          */
+        uint16_t    IDX1D       : 1;    /*!< Bits 10    : incremental encoder index detected - MOTOR_1          */
+        uint16_t    M2R         : 1;    /*!< Bits 11    : MOTOR_2 ready/not ready                               */
+        uint16_t    M2E         : 1;    /*!< Bits 12    : MOTOR_2 enabled/not enabled                           */
+        uint16_t    M1R         : 1;    /*!< Bits 13    : MOTOR_1 ready/not ready                               */
+        uint16_t    M1E         : 1;    /*!< Bits 14    : MOTOR_1 enabled/not enabled                           */
+        uint16_t    SE          : 1;    /*!< Bits 15    : System enabled/disabled                               */
     };
 } slv2mst_reg_u;
 
@@ -274,12 +248,12 @@ typedef union __slv2mst_reg_u__
  */
 typedef union __header_reg_u__
 {
-    uint16_t        all;
+    uint16_t        all;        /*!< Short (16bits) type access */
     struct
     {
-        uint16_t    size : 6;   /*!< Bits 5-0   : R/W - Number message elements expressed in bytes.  */
-        uint16_t    type : 2;   /*!< Bits 7-6   : R/W - Type of message (TBD).                       */
-        uint16_t    addr : 8;   /*!< Bits 15-8  : R/W - Target address                               */
+        uint16_t    size : 6;   /*!< Bits 5-0   : R/W - Number of elements in the message expressed in bytes.   */
+        uint16_t    type : 2;   /*!< Bits 7-6   : R/W - Type of message (TBD).                                  */
+        uint16_t    addr : 8;   /*!< Bits 15-8  : R/W - Target address                                          */
     };
 } header_reg_u;
 
@@ -288,19 +262,19 @@ typedef union __header_reg_u__
  ***********************************************************************/
 /**
  * @struct  pos_reg_t
- *  @brief  32bits position value managed as 2x 16bits registers.
+ *  @brief  32bits position value managed as 2x16bits registers.
  */
 typedef U32toU16_reg_t pos_reg_t;
 
 /**
  * @struct  crc_reg_t
- *  @brief  32bits CRC value managed as 2x 16bits registers.
+ *  @brief  32bits CRC value managed as 2x16bits registers.
  */
 typedef U32toU16_reg_t crc_reg_t;
 
 /**
  * @struct  mst2slv_msg_t
- * @brief   Master 2 Slave full command message including CRC for uOmodri
+ * @brief   Master to Slave full command message including CRC for uOmodri.
  */
 typedef struct __mst2slv_msg_t__
 {
@@ -316,7 +290,7 @@ typedef struct __mst2slv_msg_t__
 
 /**
  * @struct  slv2mst_msg_t
- * @brief   Slave to master full status message including CRC from uOmodri
+ * @brief   Slave to master full status message including CRC from uOmodri.
  */
 typedef struct __slv2mst_msg_t__
 {
@@ -332,7 +306,7 @@ typedef struct __slv2mst_msg_t__
 
 /**
  * @struct  cmd_uomodri_t
- * @brief   Structure of all commands necessaries for uOmodri
+ * @brief   uOmodri internal structure command including mst2slv_msg + info status.
  */
 #ifdef CM_CORE
 typedef struct __cmd_uomodri_t__
@@ -367,7 +341,7 @@ typedef struct __cmd_uomodri_t__
  ***********************************************************************/
 /**
  * @struct  spi_rx_msg_t
- * @brief   SPI reception message structure.
+ * @brief   SPI reception message structure. Separating received values and CRC to be computed.
  */
 typedef struct __spi_rx_msg_t__
 {
@@ -377,7 +351,7 @@ typedef struct __spi_rx_msg_t__
 
 /**
  * @struct  spi_tx_msg_t
- * @brief   SPI transmission message structure.
+ * @brief   SPI transmission message structure. Separating values to transmit and computed CRC.
  */
 typedef struct __spi_tx_msg_t__
 {
@@ -387,7 +361,7 @@ typedef struct __spi_tx_msg_t__
 
 /**
  * @struct  spi_rx_t
- * @brief   SPI global reception structure
+ * @brief   SPI global reception structure.
  */
 typedef struct __spi_rx_t__
 {
@@ -396,19 +370,13 @@ typedef struct __spi_rx_t__
 
 /**
  * @struct  spi_tx_t
- * @brief   SPI global transmission structure
+ * @brief   SPI global transmission structure.
  */
 typedef struct __spi_tx_t__
 {
     spi_tx_msg_t    msg[2];
     uint16_t        msg_cr;
     uint16_t        msg_nx;
-//    struct
-//    {
-//        uint16_t    msg_cr  : 1;
-//        uint16_t    msg_nx  : 1;
-//        uint16_t    msg_RSV :14;
-//    };
 } spi_tx_t;
 
 /***********************************************************************
@@ -416,7 +384,7 @@ typedef struct __spi_tx_t__
  ***********************************************************************/
 /**
  * @union   rs485_tx_msg_u
- * @brief   RS485 reception message structure
+ * @brief   RS485 reception message structure. Separating header, received values and CRC to be computed.
  */
 typedef union __rs485_rx_msg_u__
 {
@@ -431,7 +399,7 @@ typedef union __rs485_rx_msg_u__
 
 /**
  * @union   rs485_tx_msg_u
- * @brief   RS485 transmission message structure
+ * @brief   RS485 transmission message structure. Separating header and values to transmit plus computed CRC.
  */
 typedef union __rs485_tx_msg_u__
 {
@@ -446,7 +414,7 @@ typedef union __rs485_tx_msg_u__
 
 /**
  * @struct  rs485_rx_t
- * @brief   RS485 global reception structure
+ * @brief   RS485 global reception structure.
  */
 typedef struct __rs485_rx_t__
 {
@@ -462,7 +430,7 @@ typedef struct __rs485_rx_t__
 
 /**
  * @struct  rs485_tx_t
- * @brief   RS485 global transmission structure
+ * @brief   RS485 global transmission structure.
  */
 typedef struct __rs485_tx_t__
 {
@@ -470,94 +438,7 @@ typedef struct __rs485_tx_t__
     uint16_t            index;
     uint16_t            msg_cr;
     uint16_t            msg_nx;
-//    struct
-//    {
-//        uint16_t    msg_cr  : 1;
-//        uint16_t    msg_nx  : 1;
-//        uint16_t    msg_RSV :14;
-//    };
 } rs485_tx_t;
-
-/***********************************************************************
- * COMMUNICATION STRUCTURES FOR SHARED DATA EXCHANGE (CPU1<->CM)
- ***********************************************************************/
-//typedef union __uint64_u__
-//{
-//    uint64_t        uint64b;
-//    uint8_t         byte[sizeof(uint64_t)];
-//} uint64_u;
-//
-//typedef union __uint32_u__
-//{
-//    uint32_t        uint32b;
-//    uint8_t         byte[sizeof(uint32_t)];
-//} uint32_u;
-//
-//#ifdef CM_CORE
-//typedef union __float32_u__
-//{
-//    float_t         float32b;
-//    uint8_t         byte[sizeof(float_t)];
-//} float32_u;
-//#else
-//typedef union __float32_u__
-//{
-//    float32_t       float32b;
-//    uint8_t         byte[sizeof(float32_t)];
-//} float32_u;
-//#endif
-//
-///**
-// * @struct  com_cpu1_to_cm_t
-// * @brief   Structure for address transfer between CPU (16bits) and CM(8bits)
-// */
-//typedef struct __com_cpu_2_cm_t__
-//{
-//    uint32_u    itcnt;
-//    float32_u   ia;
-//    float32_u   ib;
-//    float32_u   ic;
-//    float32_u   vbus;
-//    float32_u   ialpha;
-//    float32_u   ibeta;
-//    float32_u   id;
-//    float32_u   iq;
-//    float32_u   iqRef;
-//    float32_u   ud;
-//    float32_u   uq;
-//    float32_u   ualpha;
-//    float32_u   ubeta;
-//    float32_u   ua;
-//    float32_u   ub;
-//    float32_u   uc;
-//    float32_u   theta;
-//    float32_u   posRef;
-//    float32_u   speed;
-//    float32_u   velRef;
-//    float32_u   pd_kp;
-//    float32_u   pd_kd;
-//    float32_u   iqff;
-//    float32_u   isat;
-//    uint32_u    status;
-//} com_cpu_2_cm_t;
-
-//#ifdef CM_CORE
-//typedef union __word32b_u__
-//{
-//    float           float_32b;
-//    uint32_t        uint_32b;
-//    uint16_t        uint_16b[2];
-//    uint8_t         uint_8b[4];    /*!< */
-//} word32b_u;
-//#else
-//typedef union __word32b_u__
-//{
-//    float32_t       float32b;
-//    uint32_t        uint_32b;
-//    uint16_t        uint_16b[2];
-//    uint8_t         uint_8b[4];    /*!< */
-//} word32b_u;
-//#endif
 
 /***********************************************************************
  * FUNCTIONS DECLARATION
@@ -569,7 +450,6 @@ uint32_t COM_crc32(uint16_t*, size_t);
 uint8_t COM_crc8(uint8_t*, size_t);
 uint8_t COM_crc8Fast(uint8_t, uint8_t*, size_t);
 #else
-//bool_t COM_msgExtract(uint32_t, mst2slv_msg_t*, cmd_t*, cmd_t*);
 void COM_msgExtract(mst2slv_msg_t*, cmd_t*, cmd_t*);
 bool_t COM_msgCreate(motor_t*, slv2mst_msg_t*, uint32_t);
 void COM_msgSwapBytes(uint16_t*, uint16_t*, uint16_t);

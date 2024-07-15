@@ -6,6 +6,7 @@
 /***********************************************************************
 * INCLUDES
 ***********************************************************************/
+#include "f2838x_cla_typedefs.h"
 #include "uomodri_shared.h"
 
 /***********************************************************************
@@ -14,10 +15,6 @@
 extern motor_t      motor_m1;
 extern motor_t      motor_m2;
 extern cmd_t        cmd_uomodri[];
-
-/***********************************************************************
- * DEFINES
- ***********************************************************************/
 
 /***********************************************************************
  * FUNCTIONS DECLARATION
@@ -32,29 +29,33 @@ __attribute__((interrupt)) void Cla1Task7(void);
 __attribute__((interrupt)) void Cla1Task8(void);
 
 /***********************************************************************
- * FUNCTIONS DEFINITION
+ * TASKS DEFINITION
  ***********************************************************************/
+/**
+ * @brief   ADC Calibration task. Run once by motor at startup to compensate ADC offset.
+ */
 __attribute__((interrupt)) void adcCalib_Task(void)
 {
 #ifdef DEBUG
-//    DBG_PIN1_SET;
-//    __mdebugstop();
+    DBG_PIN1_SET;
 #endif
-    // Start ADC calibration
+    // Start ADC calibration on MOTOR_1 & MOTOR_2
     ADC_offsetCalib(&motor_m1);
     ADC_offsetCalib(&motor_m2);
     // Enable float rounding
     __asm(" MSETFLG RNDF32 = 1");
 #ifdef DEBUG
-//    DBG_PIN1_CLEAR;
+    DBG_PIN1_CLEAR;
 #endif
 }
 
+/**
+ * @brief   Command update task. Run each time a new command is received on C28 processor or in timeout case.
+ */
 __attribute__((interrupt)) void cmdNew_Task(void)
 {
 #ifdef DEBUG
     DBG_PIN1_SET;
-//    __mdebugstop();
 #endif
     if((cmd_uomodri[MOTOR_1].cmdField.all & CMD_POSITION_OFFSET_COMP) == CMD_POSITION_OFFSET_COMP)
         motor_m1.foc.cmd.posRef     = cmd_uomodri[MOTOR_1].posRef + motor_m1.foc.enc.thetaIndexAbsolute;
@@ -90,11 +91,16 @@ __attribute__((interrupt)) void cmdNew_Task(void)
 #endif
 }
 
+/**
+ * @brief   Motor_1 control task. Run @ 40kHz.
+ *          - Read ADC (phase and Vbus) and encoder,
+ *          - Perform FOC algorithm,
+ *          - Generate the PWM commands
+ */
 __attribute__((interrupt)) void motor1_Task(void)
 {
 #ifdef DEBUG
     DBG_PIN0_SET;
-//    __mdebugstop();
 #endif
     // Motor control
     MOT_runControl(&motor_m1);
@@ -103,11 +109,16 @@ __attribute__((interrupt)) void motor1_Task(void)
 #endif
 }
 
+/**
+ * @brief   Motor_2 control task. Run @ 40kHz.
+ *          - Read ADC (phase and Vbus) and encoder,
+ *          - Perform FOC algorithm,
+ *          - Generate the PWM commands
+ */
 __attribute__((interrupt)) void motor2_Task(void)
 {
 #ifdef DEBUG
     DBG_PIN0_SET;
-//    __mdebugstop();
 #endif
     // Motor control
     MOT_runControl(&motor_m2);
@@ -116,25 +127,36 @@ __attribute__((interrupt)) void motor2_Task(void)
 #endif
 }
 
+/**
+ * @brief   No task specified on task5
+ */
 __attribute__((interrupt)) void Cla1Task5(void)
 {
 
 }
 
+/**
+ * @brief   No task specified on task6
+ */
 __attribute__((interrupt)) void Cla1Task6(void)
 {
 
 }
 
+/**
+ * @brief   No task specified on task7
+ */
 __attribute__((interrupt)) void Cla1Task7(void)
 {
 
 }
 
+/**
+ * @brief   No task specified on task8
+ */
 __attribute__((interrupt)) void Cla1Task8(void)
 {
 
 }
 
-//#endif /* __MOTOR_CONTROL_CLA__ */
-// End of file
+/* __MOTOR_CONTROL_CLA__ */
