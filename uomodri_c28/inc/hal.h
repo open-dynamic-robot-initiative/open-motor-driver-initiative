@@ -375,4 +375,4 @@ void HAL_ini(const hal_cfg_t*);
 void HAL_INT_ini(const int_cfg_t*);
 void HAL_DMA_ini(const dma_cfg_t*);
 
-#endif
+#endif /* __HAL_H__ */

@@ -7,8 +7,11 @@
  * FUNCTIONS DEFINITIONS
  ***********************************************************************/
 /**
- * @brief       Start \& configure the DRV ICs.
- * @param[in]   *p_drv      Pointer on the DRV definition structure
+ * @brief       Create a message for WS2812b led control.
+ * @param[in]   red             Red brightness (0-255)
+ * @param[in]   green           Green brightness (0-255)
+ * @param[in]   blue            Blue brightness (0-255)
+ * @param[out]  *p_led_colors   Pointer on the led message created.
  */
 void ws2812b_writeLed(uint16_t red, uint16_t green, uint16_t blue, uint16_t* p_led_colors)
 {

@@ -70,7 +70,7 @@ __attribute__((interrupt)) void cmdNew_Task(void)
     motor_m1.foc.cmd.cptTimeout     = cmd_uomodri[MOTOR_1].cptTimeout;
     motor_m1.foc.cmd.index          = cmd_uomodri[MOTOR_1].index;
     motor_m1.foc.cmd.cmdField.all   = cmd_uomodri[MOTOR_1].cmdField.all;
-    motor_m1.foc.cmd.statusField.all= cmd_uomodri[MOTOR_1].statusField.all;
+    motor_m1.foc.cmd.periphField.all= cmd_uomodri[MOTOR_1].periphField.all;
 
     if((cmd_uomodri[MOTOR_2].cmdField.all & CMD_POSITION_OFFSET_COMP) == CMD_POSITION_OFFSET_COMP)
         motor_m2.foc.cmd.posRef     = cmd_uomodri[MOTOR_2].posRef + motor_m2.foc.enc.thetaIndexAbsolute;
@@ -85,7 +85,7 @@ __attribute__((interrupt)) void cmdNew_Task(void)
     motor_m2.foc.cmd.cptTimeout     = cmd_uomodri[MOTOR_2].cptTimeout;
     motor_m2.foc.cmd.index          = cmd_uomodri[MOTOR_2].index;
     motor_m2.foc.cmd.cmdField.all   = cmd_uomodri[MOTOR_2].cmdField.all;
-    motor_m2.foc.cmd.statusField.all= cmd_uomodri[MOTOR_2].statusField.all;
+    motor_m2.foc.cmd.periphField.all= cmd_uomodri[MOTOR_2].periphField.all;
 #ifdef DEBUG
     DBG_PIN1_CLEAR;
 #endif

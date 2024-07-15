@@ -10,6 +10,20 @@
 //#include "encoder.h"
 //#include "motor.h"
 //#include "foc.h"
+//#include "driverlib.h"
+//#include "device.h"
+//#include "board.h"
+
+//#include "config/uomodri_math.h"
+//#include "uomodri_user_defines.h"
+//#include "config/uomodri_3_1/uomodri_3_1_handlers.h"
+//#include "main.h"
+//#include "hal.h"
+//#include "drv8353.h"
+//#include "ws2812b.h"
+//#include "communication.h"
+//
+//#include "motor_ctrl.h"
 
 /***********************************************************************
  * ENUM TYPES

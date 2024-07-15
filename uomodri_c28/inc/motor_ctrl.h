@@ -40,21 +40,14 @@ extern "C" {
 #define CMD_ROLLOVER_EN_MASK        (1 << CMD_ROLLOVER_EN_POS)
 #define CMD_ENCODER_OFFSET_POS      (3)
 #define CMD_ENCODER_OFFSET_MASK     (1 << CMD_ENCODER_OFFSET_POS)
-//#define CMD_CALIBRATION_EN_POS      (4)
-//#define CMD_CALIBRATION_EN_MASK     (1 << CMD_CALIBRATION_EN_POS)
-//#define CMD_TIMEOUT_EN_POS          (4)
-//#define CMD_TIMEOUT_EN_MASK         (1 << CMD_TIMEOUT_EN_POS)
 #define CMD_POSITION_OFFSET_COMP    (CMD_SYSTEM_EN_MASK | CMD_MOTOR_EN_MASK | CMD_ENCODER_OFFSET_MASK)
 
 #define ENC_MAX_ROLLOVER            (127)
 #define ENC_MIN_ROLLOVER            (-128)
 
-#define MOTOR_STATE_OK              (MOTOR_STATE_READY | \
-                                     MOTOR_STATE_STOP)
-#define MOTOR_STATE_INIT            (MOTOR_STATE_INIT_FW | \
-                                     MOTOR_STATE_INIT_REV | \
-                                     MOTOR_STATE_INIT_TEST | \
-                                     MOTOR_STATE_INIT_FIX)
+#define MOTOR_STATE_OK              (MOTOR_STATE_READY | MOTOR_STATE_STOP)
+#define MOTOR_STATE_INIT            (MOTOR_STATE_INIT_FW | MOTOR_STATE_INIT_REV | \
+                                     MOTOR_STATE_INIT_TEST | MOTOR_STATE_INIT_FIX)
 #define MOTOR_STATE_BOOT            (MOTOR_STATE_IDLE)
 
 #define USE_ALTERNATIVE_SM          (0)
@@ -64,7 +57,7 @@ extern "C" {
  ***********************************************************************/
 /**
  * @enum    svm_sector_e
- * @brief   Space Vector Modulation (SVM) - Sectors definitions
+ * @brief   Space Vector Modulation (SVM) - Sectors definitions.
  */
 typedef enum __motor_svn_sector__
 {
@@ -78,6 +71,10 @@ typedef enum __motor_svn_sector__
     MOTOR_SVM_SECTOR_7      = 0x07, /*!< SECTOR_\#7 : Default sector state */
 } svm_sector_e;
 
+/**
+ * @enum    motor_state_e
+ * @brief   List all the states of the state machine for motor control.
+ */
 typedef enum __motor_state__
 {
     MOTOR_STATE_IDLE        = 0x0000,
@@ -88,7 +85,7 @@ typedef enum __motor_state__
     MOTOR_STATE_READY       = 0x0010,
     MOTOR_STATE_STOP        = 0x0020,
     MOTOR_STATE_ERROR       = 0xFFFF,
-} motor_state;
+} motor_state_e;
 
 /***********************************************************************
  * UNION TYPES
@@ -103,7 +100,11 @@ typedef union __ptr_32b_u__
     uint32_t            addr32b;
 } ptr_32b_u;
 
-typedef union __status_reg_u__
+/**
+ * @union   periph_u
+ * @brief   List extra peripherals components states not managed by the motor control loop.
+ */
+typedef union __periph_u__
 {
     uint16_t            all;
     struct
@@ -111,7 +112,7 @@ typedef union __status_reg_u__
         uint16_t        drv_initErr     : 1;    /*!< Bits 0   : R/W - DRV initialization went wrong */
         uint16_t        status_RSV1     : 15;   /*!< Bits 1-15: R/W - Reserved */
     };
-} status_reg_u;
+} periph_u;
 
 /**
  * @union   cmd_reg_u
@@ -182,7 +183,7 @@ typedef union __enc_test_u__
 
 /**
  * @union   error_reg_u
- * @brief   Bit field associated to all sources of motor errors.
+ * @brief   Bit field associated to all sources of motor errors (managed in motor control loop).
  */
 typedef union __error_reg_u__
 {
@@ -213,15 +214,15 @@ typedef struct __lowPassFilter_t__
  */
 typedef struct __pi_t__
 {
-    ptr_32b_u           p_fb;           /*!< Pointer on the feedback current */
-    ptr_32b_u           p_set;          /*!< Pointer on the setpoint current */
-    ptr_32b_u           p_sat;          /*!< Pointer on the saturation value to use */
-    float32_t           err;            /*!< Current error */
-    float32_t           kp;             /*!< Proportional gain */
-    float32_t           ki;             /*!< Integral gain */
-    float32_t           integral;       /*!< Integral term partial computation */
-    float32_t           ff;             /*!< Feed-forward term */
-    float32_t           out;            /*!< Controller output */
+    ptr_32b_u           p_fb;               /*!< Pointer on the feedback current */
+    ptr_32b_u           p_set;              /*!< Pointer on the setpoint current */
+    ptr_32b_u           p_sat;              /*!< Pointer on the saturation value to use */
+    float32_t           err;                /*!< Current error */
+    float32_t           kp;                 /*!< Proportional gain */
+    float32_t           ki;                 /*!< Integral gain */
+    float32_t           integral;           /*!< Integral term partial computation */
+    float32_t           ff;                 /*!< Feed-forward term */
+    float32_t           out;                /*!< Controller output */
 } pi_t;
 
 /**
@@ -230,18 +231,18 @@ typedef struct __pi_t__
  */
 typedef struct __pd_t__
 {
-    ptr_32b_u           p_fbTheta;      /*!< Pointer on the feedback position */
-    ptr_32b_u           p_setTheta;     /*!< Pointer on the setpoint position */
-    ptr_32b_u           p_fbSpeed;      /*!< Pointer on the feedback speed */
-    ptr_32b_u           p_setSpeed;     /*!< Pointer on the Set point speed */
-    ptr_32b_u           p_kp;           /*!< Pointer on the Proportional gain */
-    ptr_32b_u           p_kd;           /*!< Pointer on the Derivative gain */
-    ptr_32b_u           p_ff;           /*!< Pointer on the feed-forward term */
-    ptr_32b_u           p_sat;          /*!< Pointer on the controller saturation */
-    float32_t           errTheta;       /*!< Error position */
-    float32_t           errSpeed;       /*!< Error speed */
-    float32_t           derivative;     /*!< Derivative term partial computation */
-    float32_t           out;            /*!< Controller output */
+    ptr_32b_u           p_fbTheta;          /*!< Pointer on the feedback position */
+    ptr_32b_u           p_setTheta;         /*!< Pointer on the setpoint position */
+    ptr_32b_u           p_fbSpeed;          /*!< Pointer on the feedback speed */
+    ptr_32b_u           p_setSpeed;         /*!< Pointer on the Set point speed */
+    ptr_32b_u           p_kp;               /*!< Pointer on the Proportional gain */
+    ptr_32b_u           p_kd;               /*!< Pointer on the Derivative gain */
+    ptr_32b_u           p_ff;               /*!< Pointer on the feed-forward term */
+    ptr_32b_u           p_sat;              /*!< Pointer on the controller saturation */
+    float32_t           errTheta;           /*!< Error position */
+    float32_t           errSpeed;           /*!< Error speed */
+    float32_t           derivative;         /*!< Derivative term partial computation */
+    float32_t           out;                /*!< Controller output */
 
 } pd_t;
 
@@ -251,12 +252,12 @@ typedef struct __pd_t__
  */
 typedef struct __params_t__
 {
-    float32_t           Rs;             /*!< Stator resistance [Ohm] */
-    float32_t           Ls;             /*!< Stator inductance [H] */
-    float32_t           kv;             /*!< Motor speed constant [RPM/V or rad/s/V] */
-    float32_t           ke;             /*!< Motor back EMF constant [V/rad/s] (electrical radians) = 1/kv */
-    float32_t           ki;             /*!< Motor torque constant [N.m/A] */
-    float32_t           polePairs;      /*!< Number of pole pairs */
+    float32_t           Rs;                 /*!< Stator resistance [Ohm] */
+    float32_t           Ls;                 /*!< Stator inductance [H] */
+    float32_t           kv;                 /*!< Motor speed constant [RPM/V or rad/s/V] */
+    float32_t           ke;                 /*!< Motor back EMF constant [V/rad/s] (electrical radians) = 1/kv */
+    float32_t           ki;                 /*!< Motor torque constant [N.m/A] */
+    float32_t           polePairs;          /*!< Number of pole pairs */
 } params_t;
 
 /**
@@ -304,7 +305,7 @@ typedef struct __cmd_t__
     uint16_t            cptTimeout;
     uint16_t            index;
     cmd_reg_u           cmdField;
-    status_reg_u        statusField;
+    periph_u            periphField;
 } cmd_t;
 
 /**
@@ -350,49 +351,48 @@ typedef struct __encoder_t__
  */
 typedef struct __foc_t__
 {
-    params_t            cfg;            /*!< Motor configuration parameters */
-    acq_t               acq;            /*!< Current \& voltage acquisitions */
-    encoder_t           enc;            /*!< Encoder position & speed */
-    cmd_t               cmd;            /*!< Motor commands */
-    lpf_t               iParkFlt;       /*!< Low-pass filter parameters affected to park transform */
+    params_t            cfg;                /*!< Motor configuration parameters */
+    acq_t               acq;                /*!< Current \& voltage acquisitions */
+    encoder_t           enc;                /*!< Encoder position & speed */
+    cmd_t               cmd;                /*!< Motor commands */
+    lpf_t               iParkFlt;           /*!< Low-pass filter parameters affected to park transform */
     struct
     {
-        float32_t       sinTheta;       /*!< Sinus of the electrical rotor angle */
-        float32_t       cosTheta;       /*!< Cosine of the electrical rotor angle */
-        float32_t       ialpha;         /*!< Direct Clarke transform result - [A] */
-        float32_t       ibeta;          /*!< Direct Clarke transform result - [A] */
-        float32_t       id;             /*!< Filtered Direct Park transform result - [A] */
-        float32_t       iq;             /*!< Filtered Quadrature Park transform result - [A] */
-        float32_t       ud;             /*!< Inverse Park transform result - [V] */
-        float32_t       uq;             /*!< Inverse Park transform result - [V] */
-        float32_t       ualpha;         /*!< Inverse Clarke transform result - [V] */
-        float32_t       ubeta;          /*!< Inverse Clarke transform result - [V] */
-        float32_t       ua;             /*!< Phase commands - Channel a - [V] */
-        float32_t       ub;             /*!< Phase commands - Channel b - [V] */
-        float32_t       uc;             /*!< Phase commands - Channel c - [V] */
-//        float32_t       vmax;           /*!< Bus voltage saturation - [V] */
-        float32_t       dtcMax;         /*!< Max saturation duty-cycle */
-        float32_t       dtcMin;         /*!< Min saturation duty-cycle */
-        float32_t       dtc_u;          /*!< Duty cycles on channel u - [pu] between -0.5 and 0.5 */
-        float32_t       dtc_v;          /*!< Duty cycles on channel v - [pu] between -0.5 and 0.5 */
-        float32_t       dtc_w;          /*!< Duty cycles on channel w - [pu] between -0.5 and 0.5 */
-        float32_t       idRef;          /*!< PI controller set point values for D-axis current - [A] */
-        float32_t       iqRef;          /*!< PI controller set point values for Q-axis current - [A] */
+        float32_t       sinTheta;           /*!< Sinus of the electrical rotor angle */
+        float32_t       cosTheta;           /*!< Cosine of the electrical rotor angle */
+        float32_t       ialpha;             /*!< Direct Clarke transform result - [A] */
+        float32_t       ibeta;              /*!< Direct Clarke transform result - [A] */
+        float32_t       id;                 /*!< Filtered Direct Park transform result - [A] */
+        float32_t       iq;                 /*!< Filtered Quadrature Park transform result - [A] */
+        float32_t       ud;                 /*!< Inverse Park transform result - [V] */
+        float32_t       uq;                 /*!< Inverse Park transform result - [V] */
+        float32_t       ualpha;             /*!< Inverse Clarke transform result - [V] */
+        float32_t       ubeta;              /*!< Inverse Clarke transform result - [V] */
+        float32_t       ua;                 /*!< Phase commands - Channel a - [V] */
+        float32_t       ub;                 /*!< Phase commands - Channel b - [V] */
+        float32_t       uc;                 /*!< Phase commands - Channel c - [V] */
+        float32_t       dtcMax;             /*!< Max saturation duty-cycle */
+        float32_t       dtcMin;             /*!< Min saturation duty-cycle */
+        float32_t       dtc_u;              /*!< Duty cycles on channel u - [pu] between -0.5 and 0.5 */
+        float32_t       dtc_v;              /*!< Duty cycles on channel v - [pu] between -0.5 and 0.5 */
+        float32_t       dtc_w;              /*!< Duty cycles on channel w - [pu] between -0.5 and 0.5 */
+        float32_t       idRef;              /*!< PI controller set point values for D-axis current - [A] */
+        float32_t       iqRef;              /*!< PI controller set point values for Q-axis current - [A] */
     };
     struct
     {
-        float32_t       initPosStep;    /*!< Initial position to force a rotor movement during alignment - [RAD] */
-        uint32_t        initPosCnt;     /*!< Initial position to force a rotor movement during alignment - [RAD] */
-        uint32_t        initFixCnt;     /*!< Initial position to force a rotor movement during alignment - [RAD] */
-        float32_t       initPosEnc[2];  /*!< Initial positions of theta electric during alignment (forward \& reverse) - [RAD] */
+        float32_t       initPosStep;        /*!< Initial position to force a rotor movement during alignment - [RAD] */
+        uint32_t        initPosCnt;         /*!< Initial position to force a rotor movement during alignment - [RAD] */
+        uint32_t        initFixCnt;         /*!< Initial position to force a rotor movement during alignment - [RAD] */
+        float32_t       initPosEnc[2];      /*!< Initial positions of theta electric during alignment (forward \& reverse) - [RAD] */
         float32_t       initDiff;
         float32_t       initErr[2];
     };
-    pi_t                piId;           /*!< PI controller structure for current control */
-    pi_t                piIq;           /*!< PI controller structure for current control */
-    pd_t                pdPosVel;       /*!< PD controller structure for position/velocity control */
-    float32_t           resEst;         /*!< Q-axis resistance estimation - [Ohm] */
-    lpf_t               resEstFlt;      /*!< Q-axis resistance estimation filter structure */
+    pi_t                piId;               /*!< PI controller structure for current control */
+    pi_t                piIq;               /*!< PI controller structure for current control */
+    pd_t                pdPosVel;           /*!< PD controller structure for position/velocity control */
+    float32_t           resEst;             /*!< Q-axis resistance estimation - [Ohm] */
+    lpf_t               resEstFlt;          /*!< Q-axis resistance estimation filter structure */
 } foc_t;
 
 /**
@@ -401,20 +401,20 @@ typedef struct __foc_t__
  */
 typedef struct __motor_t__
 {
-    foc_t               foc;                    /*!< FOC structure associated to the motor */
-    uint32_t            itCnt;                  /*!< Event counter incrementing on every IT call */
-    uint32_t            epwmBase[3];            /*!< Address array for the PWM peripherals associated to the motor control */
-    uint32_t            drvFaultNum;            /*!< GPIO associated to the DRV fault line */
-    uint32_t            drvEnNum;               /*!< GPIO associated to the DRV enable line */
+    foc_t               foc;            /*!< FOC structure associated to the motor */
+    uint32_t            itCnt;          /*!< Event counter incrementing on every IT call */
+    uint32_t            epwmBase[3];    /*!< Address array for the PWM peripherals associated to the motor control */
+    uint32_t            drvFaultNum;    /*!< GPIO associated to the DRV fault line */
+    uint32_t            drvEnNum;       /*!< GPIO associated to the DRV enable line */
     uint32_t            clCycleNb;
     struct
     {
-        float32_t       statorResEst;           /*!< Q-axis resistance estimation. [Ohm] */
-        lpf_t           statorResEstFlt;        /*!< Resistance estimation low-pass filter */
+        float32_t       statorResEst;   /*!< Q-axis resistance estimation. [Ohm] */
+        lpf_t           statorResEstFlt;/*!< Resistance estimation low-pass filter */
     };
-    uint16_t            id;                     /*!< Motor identification */
-    error_reg_u         error;                  /*!< Bit field for the error sources. */
-    motor_state         state;                  /*!< Current motor state for the FSM. */
+    uint16_t            id;             /*!< Motor identification */
+    error_reg_u         error;          /*!< Bit field for the error sources. */
+    motor_state_e       state;          /*!< Current motor state for the FSM. */
 } motor_t;
 
 #ifdef __cplusplus

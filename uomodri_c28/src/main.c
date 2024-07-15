@@ -3,51 +3,32 @@
  * Description: Source file containing main function and IT running on CPU1 - C28 processor.
  */
 
-///***********************************************************************
-// * INCLUDES
-// ***********************************************************************/
-//
-//#include <board.h>
-//#include <cla.h>
-//#include <clb.h>
-//#include <dma.h>
-//#include <drv8353.h>
-//#include <hal.h>
-//#include <hw_memmap.h>
-//#include <hw_sci.h>
-//#include <interrupt.h>
-//#include <machine/_stdint.h>
-//#include <main.h>
-//#include <sci.h>
-//#include <spi.h>
-//#include <sys/_stdint.h>
-//#include <sysctl.h>
-//#include <ws2812b.h>
 /***********************************************************************
  * INCLUDES
  ***********************************************************************/
-#include <config/uomodri_3_1/uomodri_3_1_handlers.h>
 #include "driverlib.h"
 #include "device.h"
 #include "board.h"
 
-#include "config/uomodri_math.h"
 #include "uomodri_user_defines.h"
-
-#include "main.h"
-#include "hal.h"
+#include "config/uomodri_math.h"
+#if (USE_UOMODRI_REV == USE_UOMODRI_V1)
+//
+#elif (USE_UOMODRI_REV == USE_UOMODRI_V2)
+//
+#elif (USE_UOMODRI_REV == USE_UOMODRI_V3)
+#include "config/uomodri_3_1/uomodri_3_1_handlers.h"    // uOmodri v3.1 configuration include file
+#elif (USE_UOMODRI_REV == USE_UOMODRI_SA_V1)
+//
+#else
+#error "@ least one config must be set @ a time."
+#endif
+#include "communication.h"
+#include "motor_ctrl.h"
 #include "drv8353.h"
 #include "ws2812b.h"
-//#include "motor.h"
-#include "communication.h"
-//#include "uomodri_shared.h"
-#include "motor_ctrl.h"
-//#include "encoder.h"
-//#include "motor.h"
-//#include "foc.h"
-
-
-
+#include "main.h"
+#include "hal.h"
 
 /***********************************************************************
  * FUNCTIONS DECLARATION
@@ -145,7 +126,14 @@ extern const hal_cfg_t  hal;
  * FUNCTIONS DEFINITION
  ***********************************************************************/
 /**
- * @brief   Main function running on CPU1/C28. MCU init, DRV init, ADC init \& calibration, IT init.
+ * @brief   	Main function running on CPU1/C28.
+ *              - MCU init,
+ *              - motors structures init,
+ *              - communication structure init,
+ *              - MCU peripherals init,
+ *              - DRV init,
+ *              - ADC task calibration,
+ *              - IT init.
  */
 void main(void)
 {
@@ -160,8 +148,8 @@ void main(void)
     // Hardware Abstraction Layer initialization
     HAL_ini(&hal);
     // DRV8353 initialization
-    cmd_uomodri[MOTOR_1].statusField.drv_initErr = DRV_ini(&drv_cfg[MOTOR_1], &drv_reg[MOTOR_1]);
-    cmd_uomodri[MOTOR_2].statusField.drv_initErr = DRV_ini(&drv_cfg[MOTOR_2], &drv_reg[MOTOR_2]);
+    cmd_uomodri[MOTOR_1].periphField.drv_initErr = DRV_ini(&drv_cfg[MOTOR_1], &drv_reg[MOTOR_1]);
+    cmd_uomodri[MOTOR_2].periphField.drv_initErr = DRV_ini(&drv_cfg[MOTOR_2], &drv_reg[MOTOR_2]);
     // Start ADC offset calibration on CLA
     CLA_forceTasks(CLA1_BASE, CLA_ADC_CALIB_TASK_FLAG);
     // Interrupts initialization
@@ -171,7 +159,7 @@ void main(void)
 }
 
 /**
- * @brief           Microcontroller initialization function
+ * @brief       Microcontroller initialization function
  *                  - Configure master clock to 200MHz
  *                  - Configure auxiliary clock (CM core) to 125MHz (USB � 60MHz)
  *                  - Enable GPIO clocking
@@ -242,9 +230,9 @@ static void MCU_ini(void)
 }
 
 /**
- * @brief           Control the led dimming
- * @param[in]       p_motor Pointer on data structure array used for motor control.
- * @param[out]      p_msg   Pointer on the message to be sent to led via SPI.
+ * @brief       Control the led dimming
+ * @param[in]   p_motor Pointer on data structure array used for motor control.
+ * @param[out]  p_msg   Pointer on the message to be sent to led via SPI.
  */
 inline void LED_dimming(motor_t* p_motor1, motor_t* p_motor2, uint16_t* p_msg)
 {
@@ -290,12 +278,17 @@ inline void LED_dimming(motor_t* p_motor1, motor_t* p_motor2, uint16_t* p_msg)
 }
 
 /**
- * @brief           Global structure initialization for MOTOR_1 \& MOTOR_2
- * @param           *p_motor    Pointer on the associated motor structure
- * @param           motor_id    Motor identifier.
+ * @brief       Global structure initialization for MOTOR_1 \& MOTOR_2
+ * @param[in]   *p_motor    Pointer on the associated motor structure
+ * @param[in]   motor_id    Motor identifier.
  */
 void MOT_initStruct(motor_t* p_motor, uint16_t motor_id)
 {
+//    if(motor_id == MOTOR_1)
+//    {UOMODRI_MOTOR1_STRUCT_INIT_DEF}
+//    else
+//    {UOMODRI_MOTOR2_STRUCT_INIT_DEF}
+//    UOMODRI_MOTOR12_STRUCT_INIT_DEF
     if(motor_id == MOTOR_1)
     {
         //--- MOTOR_1 -----------------------------------------------------------
@@ -457,7 +450,7 @@ void MOT_initStruct(motor_t* p_motor, uint16_t motor_id)
     p_motor->foc.cmd.cptTimeout                         = 0U;
     p_motor->foc.cmd.index                              = 0U;
     p_motor->foc.cmd.cmdField.all                       = 0U;
-    p_motor->foc.cmd.statusField.all                    = 0U;
+    p_motor->foc.cmd.periphField.all                    = 0U;
     //--- FOC - Park transform results ------------------------------------------
     p_motor->foc.id                                     = 0.0f;
     p_motor->foc.iq                                     = 0.0f;
@@ -506,7 +499,7 @@ void MOT_initStruct(motor_t* p_motor, uint16_t motor_id)
  * INTERRUPT HANDLING FUNCTIONS DEFINITIONS
  ***********************************************************************/
 /**
- * @brief           Force a clear of all pending interrupts after ADC calibration.
+ * @brief       Force a clear of all pending interrupts after ADC calibration.
  */
 __attribute__((interrupt)) void cla_ClearTask(void)
 {
@@ -517,7 +510,7 @@ __attribute__((interrupt)) void cla_ClearTask(void)
 }
 
 /**
- * @brief           After MOTOR_1 control, generate a part of the Tx message associated to MOTOR_1.
+ * @brief       After MOTOR_1 control, generate a part of the Tx message associated to MOTOR_1.
  */
 __attribute__((interrupt)) void cla_isrMotor1(void)
 {
@@ -540,7 +533,7 @@ __attribute__((interrupt)) void cla_isrMotor1(void)
 }
 
 /**
- * @brief           After MOTOR_2 control, generate a part of the Tx message associated to the motor + message CRC.
+ * @brief       After MOTOR_2 control, generate a part of the Tx message associated to the motor + message CRC.
  */
 __attribute__((interrupt)) void cla_isrMotor2(void)
 {
@@ -594,7 +587,7 @@ __attribute__((interrupt)) void cla_isrMotor2(void)
 }
 
 /**
- * @brief           Create the message for LED dimming + increment the timeout counter.
+ * @brief       Create the message for LED dimming + increment the timeout counter.
  */
 __attribute__((interrupt)) void tmr_isrLedCmd(void)
 {
@@ -619,7 +612,7 @@ __attribute__((interrupt)) void tmr_isrLedCmd(void)
 }
 
 /**
- * @brief           Check & extract the received message from SPI.
+ * @brief       Check & extract the received message from SPI.
  */
 __attribute__((interrupt)) void dma_isrSpiComRx(void)
 {
@@ -641,7 +634,7 @@ __attribute__((interrupt)) void dma_isrSpiComRx(void)
 }
 
 /**
- * @brief           SCI Tx FIFO level reached - ready to receive new data.
+ * @brief       SCI Tx FIFO level reached - ready to receive new data.
  */
 __attribute__((interrupt)) void sci_isrTx_RS485(void)
 {
@@ -674,7 +667,7 @@ __attribute__((interrupt)) void sci_isrTx_RS485(void)
 }
 
 /**
- *@brief            SCI Rx FIFO level reached + slave address valid (IT enable).
+ *@brief        SCI Rx FIFO level reached + slave address valid (IT enable).
  */
 __attribute__((interrupt)) void sci_isrRx_RS485(void)
 {
@@ -721,7 +714,7 @@ __attribute__((interrupt)) void sci_isrRx_RS485(void)
 }
 
 /**
- * @brief           CLB - Valid address & EOT ITs.
+ * @brief       CLB - Valid address & EOT ITs.
  */
 __attribute__((interrupt)) void clb_isrTxRx_RS485(void)
 {
