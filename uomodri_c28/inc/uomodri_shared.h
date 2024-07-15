@@ -80,9 +80,10 @@ extern "C" {
 //#include "encoder.h"
 
 #include "main.h"
-#include "encoder.h"
-#include "motor.h"
-#include "foc.h"
+#include "motor_ctrl.h"
+//#include "encoder.h"
+//#include "motor.h"
+//#include "foc.h"
 //#include "config/uomodri_3_1/uomodri_3_1_hal_defines.h"
 
 

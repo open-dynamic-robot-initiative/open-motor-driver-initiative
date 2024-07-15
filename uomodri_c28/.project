@@ -29,12 +29,12 @@
 		<link>
 			<name>src/device/device.c</name>
 			<type>1</type>
-			<locationURI>C2000WARE_ROOT/device_support/f2838x/common/source/device.c</locationURI>
+			<locationURI>$%7BC2000WARE_ROOT%7D/device_support/f2838x/common/source/device.c</locationURI>
 		</link>
 		<link>
 			<name>src/device/f2838x_codestartbranch.asm</name>
 			<type>1</type>
-			<locationURI>C2000WARE_ROOT/device_support/f2838x/common/source/f2838x_codestartbranch.asm</locationURI>
+			<locationURI>$%7BC2000WARE_ROOT%7D/device_support/f2838x/common/source/f2838x_codestartbranch.asm</locationURI>
 		</link>
 	</linkedResources>
 	<variableList>
@@ -64,7 +64,7 @@
 		</variable>
 		<variable>
 			<name>SYSCONFIG_TOOL_ROOT</name>
-			<value>file:/home/jmanhes/ti/ccs1270/ccs/utils/sysconfig_1.20.0</value>
+			<value>$%7BSYSCONFIG_TOOL_ROOT%7D</value>
 		</variable>
 		<variable>
 			<name>SYSTEMC_INSTALL</name>

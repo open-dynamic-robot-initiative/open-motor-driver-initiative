@@ -41,9 +41,10 @@
 //#include "motor.h"
 #include "communication.h"
 //#include "uomodri_shared.h"
-#include "encoder.h"
-#include "motor.h"
-#include "foc.h"
+#include "motor_ctrl.h"
+//#include "encoder.h"
+//#include "motor.h"
+//#include "foc.h"
 
 
 

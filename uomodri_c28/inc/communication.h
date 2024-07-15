@@ -8,9 +8,10 @@
 #ifdef CPU1
 #include "f2838x_device.h"
 //#include "uomodri_shared.h"
-#include "encoder.h"
-#include "motor.h"
-#include "foc.h"
+#include "motor_ctrl.h"
+//#include "encoder.h"
+//#include "motor.h"
+//#include "foc.h"
 //#include "motor.h"
 #else
 #include <stdbool.h>
