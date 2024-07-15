@@ -227,11 +227,11 @@ typedef union __error_reg_u__
 /***********************************************************************
  * CONTROL STRUCTURES
  ***********************************************************************/
-//typedef struct __lowPassFilter_t__
-//{
-//    float32_t           a;
-//    float32_t           one_minus_a;
-//} lpf_t;
+typedef struct __lowPassFilter_t__
+{
+    float32_t           a;
+    float32_t           one_minus_a;
+} lpf_t;
 
 /**
  * @struct  pi_t

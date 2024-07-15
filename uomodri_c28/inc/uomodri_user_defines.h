@@ -111,11 +111,11 @@
 /***********************************************************************
  * STRUCTURES DEFINES
  ***********************************************************************/
-typedef struct __lowPassFilter_t__
-{
-    float32_t a;
-    float32_t one_minus_a;
-} lpf_t;
+//typedef struct __lowPassFilter_t__
+//{
+//    float32_t a;
+//    float32_t one_minus_a;
+//} lpf_t;
 
 #define USE_FEED_FORWARD                        (0)
 
