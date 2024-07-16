@@ -410,5 +410,4 @@ static drv_reg_t drv_reg[] =
  MOTOR2_DRV_REG_DEF,
 };
 
-
 #endif /* __UOMODRI_2_HANDLERS_H__ */

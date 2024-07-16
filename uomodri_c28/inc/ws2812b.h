@@ -84,6 +84,7 @@ static const uint16_t ws2812_color_table_r_justified[256][2] =
 /***********************************************************************
  * FUNCTIONS DECLARATION
  ***********************************************************************/
-void ws2812b_writeLed(uint16_t, uint16_t, uint16_t, uint16_t*);
+uint16_t* ws2812b_resetLed(uint16_t*);
+uint16_t* ws2812b_writeLed(uint16_t, uint16_t, uint16_t, uint16_t*);
 
 #endif /* __WS2812B_H__ */

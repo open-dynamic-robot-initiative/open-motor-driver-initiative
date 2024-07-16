@@ -254,26 +254,66 @@ inline void LED_dimming(motor_t* p_motor1, motor_t* p_motor2, uint16_t* p_msg)
     if((p_motor1->state == MOTOR_STATE_ERROR)   || (p_motor2->state == MOTOR_STATE_ERROR))
         motor_state = MOTOR_STATE_ERROR;
 
+    p_msg = ws2812b_resetLed(p_msg);
+    // Master LED
     switch(motor_state)
     {
     case MOTOR_STATE_INIT_FW:
     case MOTOR_STATE_INIT_REV:
     case MOTOR_STATE_INIT_TEST:
     case MOTOR_STATE_INIT_FIX:
-        ws2812b_writeLed(u16_timer_fade_blink, 0, u16_timer_fade_blink, p_msg); //Magenta fade,
+        p_msg = ws2812b_writeLed(u16_timer_fade_blink, 0, u16_timer_fade_blink, p_msg); //Magenta fade,
         break;
     case MOTOR_STATE_READY:
     case MOTOR_STATE_STOP:
-        ws2812b_writeLed(0, u16_timer_fade_blink, 0, p_msg);//Green fade, Active control
+        p_msg = ws2812b_writeLed(0, u16_timer_fade_blink, 0, p_msg);//Green fade, Active control
         break;
     case MOTOR_STATE_ERROR:
-        ws2812b_writeLed((uint16_t)(0xff * timer_blink), 0, 0, p_msg);//red fade, error control
+        p_msg = ws2812b_writeLed((uint16_t)(0xff * timer_blink), 0, 0, p_msg);//red fade, error control
         break;
-//    case MOTOR_STATE_WAIT_SYNC:
-//    case MOTOR_STATE_ADC_CALIB:
     case MOTOR_STATE_IDLE:
     default:
-        ws2812b_writeLed(0,  0, u16_timer_fade_blink, p_msg);//blue fade
+        p_msg = ws2812b_writeLed(0,  0, u16_timer_fade_blink, p_msg);//blue fade
+    }
+    //MOTOR_1 LED
+    switch(p_motor1->state)
+    {
+    case MOTOR_STATE_INIT_FW:
+    case MOTOR_STATE_INIT_REV:
+    case MOTOR_STATE_INIT_TEST:
+    case MOTOR_STATE_INIT_FIX:
+        p_msg = ws2812b_writeLed(u16_timer_fade_blink, 0, u16_timer_fade_blink, p_msg); //Magenta fade,
+        break;
+    case MOTOR_STATE_READY:
+    case MOTOR_STATE_STOP:
+        p_msg = ws2812b_writeLed(0, u16_timer_fade_blink, 0, p_msg);//Green fade, Active control
+        break;
+    case MOTOR_STATE_ERROR:
+        p_msg = ws2812b_writeLed((uint16_t)(0xff * timer_blink), 0, 0, p_msg);//red fade, error control
+        break;
+    case MOTOR_STATE_IDLE:
+    default:
+        p_msg = ws2812b_writeLed(0,  0, u16_timer_fade_blink, p_msg);//blue fade
+    }
+    //MOTOR_2 LED
+    switch(p_motor2->state)
+    {
+    case MOTOR_STATE_INIT_FW:
+    case MOTOR_STATE_INIT_REV:
+    case MOTOR_STATE_INIT_TEST:
+    case MOTOR_STATE_INIT_FIX:
+        p_msg = ws2812b_writeLed(u16_timer_fade_blink, 0, u16_timer_fade_blink, p_msg); //Magenta fade,
+        break;
+    case MOTOR_STATE_READY:
+    case MOTOR_STATE_STOP:
+        p_msg = ws2812b_writeLed(0, u16_timer_fade_blink, 0, p_msg);//Green fade, Active control
+        break;
+    case MOTOR_STATE_ERROR:
+        p_msg = ws2812b_writeLed((uint16_t)(0xff * timer_blink), 0, 0, p_msg);//red fade, error control
+        break;
+    case MOTOR_STATE_IDLE:
+    default:
+        p_msg = ws2812b_writeLed(0,  0, u16_timer_fade_blink, p_msg);//blue fade
     }
 
     return;
