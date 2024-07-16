@@ -239,7 +239,8 @@ inline void LED_dimming(motor_t* p_motor1, motor_t* p_motor2, uint16_t* p_msg)
 {
     static uint16_t timer_cpt_ms        = 0;
     float32_t       timer_fade_blink    = (float32_t)((timer_cpt_ms < 500)  ? (timer_cpt_ms)    : (1000 - timer_cpt_ms)) / 500.0f;
-    float32_t       timer_blink         = (timer_cpt_ms < 500)              ? (0.0f)            : (1.0f);
+//    float32_t       timer_blink         = (timer_cpt_ms < 500)              ? (0.0f)            : (1.0f);
+    bool_t          timer_blink         = (timer_cpt_ms < 500)              ? (false)           : (true);
     timer_cpt_ms                        = (timer_cpt_ms < 1000)             ? (timer_cpt_ms + 1): (0);
     uint16_t        motor_state         = MOTOR_STATE_IDLE;
     uint16_t        u16_timer_fade_blink= (uint16_t)(0xff * timer_fade_blink);

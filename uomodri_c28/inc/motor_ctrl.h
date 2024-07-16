@@ -26,12 +26,6 @@ extern "C" {
  * DEFINES
  ***********************************************************************/
 //#ifdef __TMS320C28XX_CLA__
-#if (CLA_CORE_ENABLE)
-#define MMAX3(x, y, z)              (__mmaxf32(__mmaxf32((x), (y)), (z)))
-#define MMIN3(x, y, z)              (__mminf32(__mminf32((x), (y)), (z)))
-#define MSATF32(x, y, z)            (__mmaxf32(__mminf32((x), (y)), (z)))
-#endif
-
 #define CMD_SYSTEM_EN_POS           (0)
 #define CMD_SYSTEM_EN_MASK          (1 << CMD_SYSTEM_EN_POS)
 #define CMD_MOTOR_EN_POS            (1)
@@ -49,8 +43,6 @@ extern "C" {
 #define MOTOR_STATE_INIT            (MOTOR_STATE_INIT_FW | MOTOR_STATE_INIT_REV | \
                                      MOTOR_STATE_INIT_TEST | MOTOR_STATE_INIT_FIX)
 #define MOTOR_STATE_BOOT            (MOTOR_STATE_IDLE)
-
-#define USE_ALTERNATIVE_SM          (0)
 
 /***********************************************************************
  * ENUM TYPES

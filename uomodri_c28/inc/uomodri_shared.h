@@ -18,6 +18,16 @@ extern "C" {
 #include "main.h"
 
 /***********************************************************************
+ * DEFINES
+ ***********************************************************************/
+#if (CLA_CORE_ENABLE)
+#define MMAX3(x, y, z)              (__mmaxf32(__mmaxf32((x), (y)), (z)))
+#define MMIN3(x, y, z)              (__mminf32(__mminf32((x), (y)), (z)))
+#define MSATF32(x, y, z)            (__mmaxf32(__mminf32((x), (y)), (z)))
+#endif
+#define USE_ALTERNATIVE_SM          (0)
+
+/***********************************************************************
  * FUNCTIONS DECLARATION
  ***********************************************************************/
 #if (CLA_CORE_ENABLE)
@@ -25,12 +35,10 @@ extern "C" {
 extern float32_t __mminf32(float32_t, float32_t);
 extern float32_t __mmaxf32(float32_t, float32_t);
 extern float32_t __mfracf32(float32_t);
-extern inline float32_t __msatf32(float32_t, float32_t, float32_t);
-//extern short __mgtu(unsigned int, unsigned int);
-//extern int16_t __mgtu(uint32_t, uint32_t);
 extern void CLAsincos(float32_t, float32_t*, float32_t*);
 #endif
 
+inline float32_t __msatf32(float32_t, float32_t, float32_t);
 void ADC_offsetCalib(motor_t*);
 inline void ENC_resetStruct(encoder_t*);
 inline void ENC_resetPeriph(encoder_t*);
@@ -54,7 +62,7 @@ bool_t MOT_runControl(motor_t*);
 /***********************************************************************
  * FUNCTIONS DEFINITIONS
  ***********************************************************************/
-//#ifdef __TMS320C28XX_CLA__
+//#ifdef __TMS320C28XX_CLA2__
 #if (CLA_CORE_ENABLE)
 /**
  * @brief           Saturation function.
@@ -69,7 +77,11 @@ bool_t MOT_runControl(motor_t*);
 inline float32_t __msatf32(float32_t a, float32_t sat_max, float32_t sat_min)
 {
     return(__mmaxf32(__mminf32(a, sat_max), sat_min));
-//    return(fmaxf(fminf(a, sat_max), sat_min));
+}
+#else
+inline float32_t __msatf32(float32_t a, float32_t sat_max, float32_t sat_min)
+{
+    return(fmaxf(fminf(a, sat_max), sat_min));
 }
 #endif
 
@@ -656,15 +668,16 @@ void MOT_stopCommand(uint32_t epwm_base)
  * @param[inout]    p_motor Pointer on the associated motor structure
  * @param[in]       p_cmd   Pointer on the command structure driving motor
  */
+#if (USE_ALTERNATIVE_SM)
 bool_t MOT_runControl(motor_t* p_motor)
 {
-#if (USE_ALTERNATIVE_SM)
+
     foc_t*          p_foc       = &p_motor->foc;
     error_reg_u*    p_err       = &p_motor->error;
     encoder_t*      p_enc       = &p_foc->enc;
     cmd_t*          p_cmd       = &p_foc->cmd;
     cmd_reg_u       cmd_reg     = {.all = p_cmd->cmdField.all};
-    status_reg_u    status_reg  = {.all = p_cmd->statusField.all};
+    periph_u        periph_reg  = {.all = p_cmd->periphField.all};
     uint16_t        motor_id    = p_motor->id;
     bool_t          evt_flag    = false;
     bool_t          start       = cmd_reg.motorEnable && cmd_reg.systemEnable;
@@ -681,7 +694,7 @@ bool_t MOT_runControl(motor_t* p_motor)
 
     // Save number of cycles elapsed since control loop startup
     p_motor->clCycleNb          = EPWM_getTimeBaseCounterValue(p_motor->epwmBase[CHANNEL_1]);
-    p_err->drv_fault            = !GPIO_readPin(p_motor->drvFaultNum) || status_reg.drv_initErr || p_err->drv_fault;
+    p_err->drv_fault            = !GPIO_readPin(p_motor->drvFaultNum) || periph_reg.drv_initErr || p_err->drv_fault;
     p_err->pos_rollover         = (p_enc->flags.rollOverError && cmd_reg.rollOverEnable)        || p_err->pos_rollover;
     p_err->com_timeout          = ((p_cmd->cptTimeout > p_cmd->timeoutRef) && p_cmd->timeoutRef)|| p_err->com_timeout;
     p_err->enc_indexErr         = (p_enc->flags.indexDetect && p_enc->flags.indexError)         || p_err->enc_indexErr;
@@ -792,7 +805,12 @@ bool_t MOT_runControl(motor_t* p_motor)
         MOT_stopCommand(p_motor->epwmBase[CHANNEL_3]);
         break;
     }
+
+    return(true);
+}
 #else
+bool_t MOT_runControl(motor_t* p_motor)
+{
     foc_t*          p_foc           = &p_motor->foc;
     error_reg_u*    p_err           = &p_motor->error;
     encoder_t*      p_enc           = &p_foc->enc;
@@ -816,7 +834,9 @@ bool_t MOT_runControl(motor_t* p_motor)
     p_motor->clCycleNb              = EPWM_getTimeBaseCounterValue(p_motor->epwmBase[CHANNEL_1]);
     p_err->drv_fault                = !GPIO_readPin(p_motor->drvFaultNum) || periph_reg.drv_initErr || p_err->drv_fault;
     p_err->pos_rollover             = (p_enc->flags.rollOverError && cmd_reg.rollOverEnable)        || p_err->pos_rollover;
-    p_err->com_timeout              = ((p_cmd->cptTimeout > p_cmd->timeoutRef) && p_cmd->timeoutRef)|| p_err->com_timeout;
+//    p_err->com_timeout              = ((p_cmd->cptTimeout > p_cmd->timeoutRef) && p_cmd->timeoutRef)|| p_err->com_timeout;
+    bool_t          time_test       = __mgtu(p_cmd->cptTimeout, p_cmd->timeoutRef);
+    p_err->com_timeout              = (time_test && p_cmd->timeoutRef)                              || p_err->com_timeout;
     p_err->enc_indexErr             = (p_enc->flags.indexDetect && p_enc->flags.indexError)         || p_err->enc_indexErr;
     p_err->enc_alignErr             = p_enc->flags.alignError                                       || p_err->enc_alignErr;
     if(p_err->all)
@@ -852,8 +872,8 @@ bool_t MOT_runControl(motor_t* p_motor)
             p_foc->idRef           += MOTOR2_CURRENT_INIT_STEP;
             p_foc->initPosStep     -= MOTOR2_POSITION_INIT_STEP;
         }
-        //if(__mgtu(p_motor->itCnt, p_foc->initPosCnt))
-        if(p_motor->itCnt > p_foc->initPosCnt)
+        if(__mgtu(p_motor->itCnt, p_foc->initPosCnt))
+//        if(p_motor->itCnt > p_foc->initPosCnt)
         {
             p_motor->state          = MOTOR_STATE_INIT_REV;
             p_motor->itCnt          = 0U;
@@ -885,8 +905,8 @@ bool_t MOT_runControl(motor_t* p_motor)
             p_foc->idRef            = MOTOR2_CURRENT_INIT_MAX;
             p_foc->initPosStep     += MOTOR2_POSITION_INIT_STEP;
         }
-//        if(__mgtu(p_motor->itCnt, p_foc->initPosCnt))
-        if(p_motor->itCnt > p_foc->initPosCnt)
+        if(__mgtu(p_motor->itCnt, p_foc->initPosCnt))
+//        if(p_motor->itCnt > p_foc->initPosCnt)
         {
             p_motor->state          = MOTOR_STATE_INIT_TEST;
             p_motor->itCnt          = 0U;
@@ -914,7 +934,11 @@ bool_t MOT_runControl(motor_t* p_motor)
             p_motor->state          = MOTOR_STATE_INIT_FIX;
         p_foc->idRef                = (motor_id == MOTOR_1) ? (MOTOR1_CURRENT_INIT_MAX) : (MOTOR2_CURRENT_INIT_MAX);
         p_foc->initDiff             = p_foc->initPosEnc[REV] - p_foc->initPosEnc[FW];
-        p_enc->flags.alignError     = ((p_foc->initDiff < p_foc->initErr[MIN]) || (p_foc->initDiff > p_foc->initErr[MAX])) ? (true) : (false);
+//        p_enc->flags.alignError     = ((p_foc->initDiff < p_foc->initErr[MIN]) || (p_foc->initDiff > p_foc->initErr[MAX])) ? (true) : (false);
+//        p_enc->flags.alignError     = (__mlt(p_foc->initDiff, p_foc->initErr[MIN]) || __mgt(p_foc->initDiff, p_foc->initErr[MAX])) ? (true) : (false);
+        time_test                   = __mlt(p_foc->initDiff, p_foc->initErr[MIN]);
+        time_test                  |= __mgt(p_foc->initDiff, p_foc->initErr[MAX]);
+        p_enc->flags.alignError     = (time_test) ? (true) : (false);
         FOC_runControl(p_foc);
         MOT_runCommand(p_motor->epwmBase[CHANNEL_1], p_foc->dtc_u);
         MOT_runCommand(p_motor->epwmBase[CHANNEL_2], p_foc->dtc_v);
@@ -972,10 +996,10 @@ bool_t MOT_runControl(motor_t* p_motor)
         MOT_stopCommand(p_motor->epwmBase[CHANNEL_3]);
         break;
     }
-#endif
 
     return(true);
 }
+#endif
 
 #ifdef __cplusplus
 }
