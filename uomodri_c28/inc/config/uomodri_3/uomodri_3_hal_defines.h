@@ -3,8 +3,8 @@
  * Description: Header file containing user definitions
  */
 
-#ifndef __UOMODRI_3_1_HAL_DEFINES_H__
-#define __UOMODRI_3_1_HAL_DEFINES_H__
+#ifndef __UOMODRI_3_HAL_DEFINES_H__
+#define __UOMODRI_3_HAL_DEFINES_H__
 
 /***********************************************************************
  * INCLUDES
@@ -17,188 +17,188 @@
 #define MOTOR1_PWM1_CHA_NUM                     (0U)
 #define MOTOR1_PWM1_CHA_CFG                     GPIO_0_EPWM1A
 #define MOTOR1_PWM1_CHA_DEF                     { \
-                                                    .pinNum         = (uint32_t)MOTOR1_PWM1_CHA_NUM, \
-                                                    .fctMux         = (uint32_t)MOTOR1_PWM1_CHA_CFG, \
-                                                    .direction      = (GPIO_Direction)GPIO_DIR_MODE_OUT, \
-                                                    .samplingInMode = (GPIO_QualificationMode)GPIO_QUAL_ASYNC, \
-                                                    .setValue       = (bool_t)false, \
-                                                    .intEnable      = (bool_t)false, \
+                                                    .pinNum         = MOTOR1_PWM1_CHA_NUM, \
+                                                    .fctMux         = MOTOR1_PWM1_CHA_CFG, \
+                                                    .direction      = GPIO_DIR_MODE_OUT, \
+                                                    .samplingInMode = GPIO_QUAL_ASYNC, \
+                                                    .setValue       = false, \
+                                                    .intEnable      = false, \
                                                 }
 
 #define MOTOR1_PWM1_CHB_NUM                     (1U)
 #define MOTOR1_PWM1_CHB_CFG                     GPIO_1_EPWM1B
 #define MOTOR1_PWM1_CHB_DEF                     { \
-                                                    .pinNum         = (uint32_t)MOTOR1_PWM1_CHB_NUM, \
-                                                    .fctMux         = (uint32_t)MOTOR1_PWM1_CHB_CFG, \
-                                                    .direction      = (GPIO_Direction)GPIO_DIR_MODE_OUT, \
-                                                    .samplingInMode = (GPIO_QualificationMode)GPIO_QUAL_ASYNC, \
-                                                    .setValue       = (bool_t)true, \
-                                                    .intEnable      = (bool_t)false, \
+                                                    .pinNum         = MOTOR1_PWM1_CHB_NUM, \
+                                                    .fctMux         = MOTOR1_PWM1_CHB_CFG, \
+                                                    .direction      = GPIO_DIR_MODE_OUT, \
+                                                    .samplingInMode = GPIO_QUAL_ASYNC, \
+                                                    .setValue       = true, \
+                                                    .intEnable      = false, \
                                                 }
 
 #define MOTOR1_PWM2_CHA_NUM                     (2U)
 #define MOTOR1_PWM2_CHA_CFG                     GPIO_2_EPWM2A
 #define MOTOR1_PWM2_CHA_DEF                     { \
-                                                    .pinNum         = (uint32_t)MOTOR1_PWM2_CHA_NUM, \
-                                                    .fctMux         = (uint32_t)MOTOR1_PWM2_CHA_CFG, \
-                                                    .direction      = (GPIO_Direction)GPIO_DIR_MODE_OUT, \
-                                                    .samplingInMode = (GPIO_QualificationMode)GPIO_QUAL_ASYNC, \
-                                                    .setValue       = (bool_t)false, \
-                                                    .intEnable      = (bool_t)false, \
+                                                    .pinNum         = MOTOR1_PWM2_CHA_NUM, \
+                                                    .fctMux         = MOTOR1_PWM2_CHA_CFG, \
+                                                    .direction      = GPIO_DIR_MODE_OUT, \
+                                                    .samplingInMode = GPIO_QUAL_ASYNC, \
+                                                    .setValue       = false, \
+                                                    .intEnable      = false, \
                                                 }
 
 #define MOTOR1_PWM2_CHB_NUM                     (3U)
 #define MOTOR1_PWM2_CHB_CFG                     GPIO_3_EPWM2B
 #define MOTOR1_PWM2_CHB_DEF                     { \
-                                                    .pinNum         = (uint32_t)MOTOR1_PWM2_CHB_NUM, \
-                                                    .fctMux         = (uint32_t)MOTOR1_PWM2_CHB_CFG, \
-                                                    .direction      = (GPIO_Direction)GPIO_DIR_MODE_OUT, \
-                                                    .samplingInMode = (GPIO_QualificationMode)GPIO_QUAL_ASYNC, \
-                                                    .setValue       = (bool_t)true, \
-                                                    .intEnable      = (bool_t)false, \
+                                                    .pinNum         = MOTOR1_PWM2_CHB_NUM, \
+                                                    .fctMux         = MOTOR1_PWM2_CHB_CFG, \
+                                                    .direction      = GPIO_DIR_MODE_OUT, \
+                                                    .samplingInMode = GPIO_QUAL_ASYNC, \
+                                                    .setValue       = true, \
+                                                    .intEnable      = false, \
                                                 }
 
 #define MOTOR1_PWM3_CHA_NUM                     (4U)
 #define MOTOR1_PWM3_CHA_CFG                     GPIO_4_EPWM3A
 #define MOTOR1_PWM3_CHA_DEF                     { \
-                                                    .pinNum         = (uint32_t)MOTOR1_PWM3_CHA_NUM, \
-                                                    .fctMux         = (uint32_t)MOTOR1_PWM3_CHA_CFG, \
-                                                    .direction      = (GPIO_Direction)GPIO_DIR_MODE_OUT, \
-                                                    .samplingInMode = (GPIO_QualificationMode)GPIO_QUAL_ASYNC, \
-                                                    .setValue       = (bool_t)false, \
-                                                    .intEnable      = (bool_t)false, \
+                                                    .pinNum         = MOTOR1_PWM3_CHA_NUM, \
+                                                    .fctMux         = MOTOR1_PWM3_CHA_CFG, \
+                                                    .direction      = GPIO_DIR_MODE_OUT, \
+                                                    .samplingInMode = GPIO_QUAL_ASYNC, \
+                                                    .setValue       = false, \
+                                                    .intEnable      = false, \
                                                 }
 
 #define MOTOR1_PWM3_CHB_NUM                     (5U)
 #define MOTOR1_PWM3_CHB_CFG                     GPIO_5_EPWM3B
 #define MOTOR1_PWM3_CHB_DEF                     { \
-                                                    .pinNum         = (uint32_t)MOTOR1_PWM3_CHB_NUM, \
-                                                    .fctMux         = (uint32_t)MOTOR1_PWM3_CHB_CFG, \
-                                                    .direction      = (GPIO_Direction)GPIO_DIR_MODE_OUT, \
-                                                    .samplingInMode = (GPIO_QualificationMode)GPIO_QUAL_ASYNC, \
-                                                    .setValue       = (bool_t)true, \
-                                                    .intEnable      = (bool_t)false, \
+                                                    .pinNum         = MOTOR1_PWM3_CHB_NUM, \
+                                                    .fctMux         = MOTOR1_PWM3_CHB_CFG, \
+                                                    .direction      = GPIO_DIR_MODE_OUT, \
+                                                    .samplingInMode = GPIO_QUAL_ASYNC, \
+                                                    .setValue       = true, \
+                                                    .intEnable      = false, \
                                                 }
 
 #define MOTOR2_PWM1_CHA_NUM                     (6U)
 #define MOTOR2_PWM1_CHA_CFG                     GPIO_6_EPWM4A
 #define MOTOR2_PWM1_CHA_DEF                     { \
-                                                    .pinNum         = (uint32_t)MOTOR2_PWM1_CHA_NUM, \
-                                                    .fctMux         = (uint32_t)MOTOR2_PWM1_CHA_CFG, \
-                                                    .direction      = (GPIO_Direction)GPIO_DIR_MODE_OUT, \
-                                                    .samplingInMode = (GPIO_QualificationMode)GPIO_QUAL_ASYNC, \
-                                                    .setValue       = (bool_t)false, \
-                                                    .intEnable      = (bool_t)false, \
+                                                    .pinNum         = MOTOR2_PWM1_CHA_NUM, \
+                                                    .fctMux         = MOTOR2_PWM1_CHA_CFG, \
+                                                    .direction      = GPIO_DIR_MODE_OUT, \
+                                                    .samplingInMode = GPIO_QUAL_ASYNC, \
+                                                    .setValue       = false, \
+                                                    .intEnable      = false, \
                                                 }
 
 #define MOTOR2_PWM1_CHB_NUM                     (7U)
 #define MOTOR2_PWM1_CHB_CFG                     GPIO_7_EPWM4B
 #define MOTOR2_PWM1_CHB_DEF                     { \
-                                                    .pinNum         = (uint32_t)MOTOR2_PWM1_CHB_NUM, \
-                                                    .fctMux         = (uint32_t)MOTOR2_PWM1_CHB_CFG, \
-                                                    .direction      = (GPIO_Direction)GPIO_DIR_MODE_OUT, \
-                                                    .samplingInMode = (GPIO_QualificationMode)GPIO_QUAL_ASYNC, \
-                                                    .setValue       = (bool_t)true, \
-                                                    .intEnable      = (bool_t)false, \
+                                                    .pinNum         = MOTOR2_PWM1_CHB_NUM, \
+                                                    .fctMux         = MOTOR2_PWM1_CHB_CFG, \
+                                                    .direction      = GPIO_DIR_MODE_OUT, \
+                                                    .samplingInMode = GPIO_QUAL_ASYNC, \
+                                                    .setValue       = true, \
+                                                    .intEnable      = false, \
                                                 }
 
 #define MOTOR2_PWM2_CHA_NUM                     (8U)
 #define MOTOR2_PWM2_CHA_CFG                     GPIO_8_EPWM5A
 #define MOTOR2_PWM2_CHA_DEF                     { \
-                                                    .pinNum         = (uint32_t)MOTOR2_PWM2_CHA_NUM, \
-                                                    .fctMux         = (uint32_t)MOTOR2_PWM2_CHA_CFG, \
-                                                    .direction      = (GPIO_Direction)GPIO_DIR_MODE_OUT, \
-                                                    .samplingInMode = (GPIO_QualificationMode)GPIO_QUAL_ASYNC, \
-                                                    .setValue       = (bool_t)false, \
-                                                    .intEnable      = (bool_t)false, \
+                                                    .pinNum         = MOTOR2_PWM2_CHA_NUM, \
+                                                    .fctMux         = MOTOR2_PWM2_CHA_CFG, \
+                                                    .direction      = GPIO_DIR_MODE_OUT, \
+                                                    .samplingInMode = GPIO_QUAL_ASYNC, \
+                                                    .setValue       = false, \
+                                                    .intEnable      = false, \
                                                 }
 
 #define MOTOR2_PWM2_CHB_NUM                     (9U)
 #define MOTOR2_PWM2_CHB_CFG                     GPIO_9_EPWM5B
 #define MOTOR2_PWM2_CHB_DEF                     { \
-                                                    .pinNum         = (uint32_t)MOTOR2_PWM2_CHB_NUM, \
-                                                    .fctMux         = (uint32_t)MOTOR2_PWM2_CHB_CFG, \
-                                                    .direction      = (GPIO_Direction)GPIO_DIR_MODE_OUT, \
-                                                    .samplingInMode = (GPIO_QualificationMode)GPIO_QUAL_ASYNC, \
-                                                    .setValue       = (bool_t)true, \
-                                                    .intEnable      = (bool_t)false, \
+                                                    .pinNum         = MOTOR2_PWM2_CHB_NUM, \
+                                                    .fctMux         = MOTOR2_PWM2_CHB_CFG, \
+                                                    .direction      = GPIO_DIR_MODE_OUT, \
+                                                    .samplingInMode = GPIO_QUAL_ASYNC, \
+                                                    .setValue       = true, \
+                                                    .intEnable      = false, \
                                                 }
 
 #define MOTOR2_PWM3_CHA_NUM                     (10U)
 #define MOTOR2_PWM3_CHA_CFG                     GPIO_10_EPWM6A
 #define MOTOR2_PWM3_CHA_DEF                     { \
-                                                    .pinNum         = (uint32_t)MOTOR2_PWM3_CHA_NUM, \
-                                                    .fctMux         = (uint32_t)MOTOR2_PWM3_CHA_CFG, \
-                                                    .direction      = (GPIO_Direction)GPIO_DIR_MODE_OUT, \
-                                                    .samplingInMode = (GPIO_QualificationMode)GPIO_QUAL_ASYNC, \
-                                                    .setValue       = (bool_t)false, \
-                                                    .intEnable      = (bool_t)false, \
+                                                    .pinNum         = MOTOR2_PWM3_CHA_NUM, \
+                                                    .fctMux         = MOTOR2_PWM3_CHA_CFG, \
+                                                    .direction      = GPIO_DIR_MODE_OUT, \
+                                                    .samplingInMode = GPIO_QUAL_ASYNC, \
+                                                    .setValue       = false, \
+                                                    .intEnable      = false, \
                                                 }
 
 #define MOTOR2_PWM3_CHB_NUM                     (11U)
 #define MOTOR2_PWM3_CHB_CFG                     GPIO_11_EPWM6B
 #define MOTOR2_PWM3_CHB_DEF                     { \
-                                                    .pinNum         = (uint32_t)MOTOR2_PWM3_CHB_NUM, \
-                                                    .fctMux         = (uint32_t)MOTOR2_PWM3_CHB_CFG, \
-                                                    .direction      = (GPIO_Direction)GPIO_DIR_MODE_OUT, \
-                                                    .samplingInMode = (GPIO_QualificationMode)GPIO_QUAL_ASYNC, \
-                                                    .setValue       = (bool_t)true, \
-                                                    .intEnable      = (bool_t)false, \
+                                                    .pinNum         = MOTOR2_PWM3_CHB_NUM, \
+                                                    .fctMux         = MOTOR2_PWM3_CHB_CFG, \
+                                                    .direction      = GPIO_DIR_MODE_OUT, \
+                                                    .samplingInMode = GPIO_QUAL_ASYNC, \
+                                                    .setValue       = true, \
+                                                    .intEnable      = false, \
                                                 }
 
 #define RS485_TX_NUM                            (12U)
 #define RS485_TX_CFG                            GPIO_12_SCIC_TX//GPIO_12_EPWM7A//
 #define RS485_TX_DEF                            { \
-                                                    .pinNum         = (uint32_t)RS485_TX_NUM, \
-                                                    .fctMux         = (uint32_t)RS485_TX_CFG, \
-                                                    .direction      = (GPIO_Direction)GPIO_DIR_MODE_OUT, \
-                                                    .samplingInMode = (GPIO_QualificationMode)GPIO_QUAL_ASYNC, \
-                                                    .setValue       = (bool_t)false, \
-                                                    .intEnable      = (bool_t)false, \
+                                                    .pinNum         = RS485_TX_NUM, \
+                                                    .fctMux         = RS485_TX_CFG, \
+                                                    .direction      = GPIO_DIR_MODE_OUT, \
+                                                    .samplingInMode = GPIO_QUAL_ASYNC, \
+                                                    .setValue       = false, \
+                                                    .intEnable      = false, \
                                                 }
 
 #define RS485_RX_NUM                            (13U)
 #define RS485_RX_CFG                            GPIO_13_SCIC_RX
 #define RS485_RX_DEF                            { \
-                                                    .pinNum         = (uint32_t)RS485_RX_NUM, \
-                                                    .fctMux         = (uint32_t)RS485_RX_CFG, \
-                                                    .direction      = (GPIO_Direction)GPIO_DIR_MODE_IN, \
-                                                    .samplingInMode = (GPIO_QualificationMode)GPIO_QUAL_ASYNC, \
-                                                    .setValue       = (bool_t)false, \
-                                                    .intEnable      = (bool_t)false, \
+                                                    .pinNum         = RS485_RX_NUM, \
+                                                    .fctMux         = RS485_RX_CFG, \
+                                                    .direction      = GPIO_DIR_MODE_IN, \
+                                                    .samplingInMode = GPIO_QUAL_ASYNC, \
+                                                    .setValue       = false, \
+                                                    .intEnable      = false, \
                                                 }
 
 #define DRV_SPI_SIMO_NUM                        (16U)
 #define DRV_SPI_SIMO_CFG                        GPIO_16_SPIA_SIMO
 #define DRV_SPI_SIMO_DEF                        { \
-                                                    .pinNum         = (uint32_t)(16U), \
-                                                    .fctMux         = (uint32_t)GPIO_16_SPIA_SIMO, \
-                                                    .direction      = (GPIO_Direction)GPIO_DIR_MODE_OUT, \
-                                                    .samplingInMode = (GPIO_QualificationMode)GPIO_QUAL_ASYNC, \
-                                                    .setValue       = (bool_t)true, \
-                                                    .intEnable      = (bool_t)false, \
+                                                    .pinNum         = DRV_SPI_SIMO_NUM, \
+                                                    .fctMux         = DRV_SPI_SIMO_CFG, \
+                                                    .direction      = GPIO_DIR_MODE_OUT, \
+                                                    .samplingInMode = GPIO_QUAL_ASYNC, \
+                                                    .setValue       = true, \
+                                                    .intEnable      = false, \
                                                 }
 
 #define DRV_SPI_SOMI_NUM                        (17U)
 #define DRV_SPI_SOMI_CFG                        GPIO_17_SPIA_SOMI
 #define DRV_SPI_SOMI_DEF                        { \
-                                                    .pinNum         = (uint32_t)(17U), \
-                                                    .fctMux         = (uint32_t)GPIO_17_SPIA_SOMI, \
-                                                    .direction      = (GPIO_Direction)GPIO_DIR_MODE_IN, \
-                                                    .samplingInMode = (GPIO_QualificationMode)GPIO_QUAL_SYNC, \
-                                                    .setValue       = (bool_t)false, \
-                                                    .intEnable      = (bool_t)false, \
+                                                    .pinNum         = DRV_SPI_SOMI_NUM, \
+                                                    .fctMux         = DRV_SPI_SOMI_CFG, \
+                                                    .direction      = GPIO_DIR_MODE_IN, \
+                                                    .samplingInMode = GPIO_QUAL_SYNC, \
+                                                    .setValue       = false, \
+                                                    .intEnable      = false, \
                                                 }
 
 #define DRV_SPI_CLK_NUM                         (18U)
 #define DRV_SPI_CLK_CFG                         GPIO_18_SPIA_CLK
 #define DRV_SPI_CLK_DEF                         { \
-                                                    .pinNum         = (uint32_t)DRV_SPI_CLK_NUM, \
-                                                    .fctMux         = (uint32_t)DRV_SPI_CLK_CFG, \
-                                                    .direction      = (GPIO_Direction)GPIO_DIR_MODE_OUT, \
-                                                    .samplingInMode = (GPIO_QualificationMode)GPIO_QUAL_ASYNC, \
-                                                    .setValue       = (bool_t)true, \
-                                                    .intEnable      = (bool_t)false, \
+                                                    .pinNum         = DRV_SPI_CLK_NUM, \
+                                                    .fctMux         = DRV_SPI_CLK_CFG, \
+                                                    .direction      = GPIO_DIR_MODE_OUT, \
+                                                    .samplingInMode = GPIO_QUAL_ASYNC, \
+                                                    .setValue       = true, \
+                                                    .intEnable      = false, \
                                                 }
 
 #define CAN_FD_TX_NUM                           (22U)
@@ -215,31 +215,31 @@
 
 #define MOTOR2_DRV_SPI_CS_NUM                   (30U)
 #define MOTOR2_DRV_SPI_CS_CFG                   GPIO_30_GPIO30
-#define MOTOR2_DRV_SPI_CS_DEF                   { \
-                                                    .pinNum         = (uint32_t)MOTOR2_DRV_SPI_CS_NUM, \
-                                                    .fctMux         = (uint32_t)MOTOR2_DRV_SPI_CS_CFG, \
-                                                    .direction      = (GPIO_Direction)GPIO_DIR_MODE_OUT, \
-                                                    .samplingInMode = (GPIO_QualificationMode)GPIO_QUAL_ASYNC, \
-                                                    .setValue       = (bool_t)true, \
-                                                    .intEnable      = (bool_t)false, \
-                                                }
 #define MOTOR2_DRV_SPI_CS_SET                   (HWREG(GPIODATA_BASE + GPIO_O_GPASET)   = GPIO_GPASET_GPIO30)
 #define MOTOR2_DRV_SPI_CS_CLEAR                 (HWREG(GPIODATA_BASE + GPIO_O_GPACLEAR) = GPIO_GPACLEAR_GPIO30)
 #define MOTOR2_DRV_SPI_CS_TOGGLE                (HWREG(GPIODATA_BASE + GPIO_O_GPATOGGLE)= GPIO_GPATOGGLE_GPIO30)
+#define MOTOR2_DRV_SPI_CS_DEF                   { \
+                                                    .pinNum         = MOTOR2_DRV_SPI_CS_NUM, \
+                                                    .fctMux         = MOTOR2_DRV_SPI_CS_CFG, \
+                                                    .direction      = GPIO_DIR_MODE_OUT, \
+                                                    .samplingInMode = GPIO_QUAL_ASYNC, \
+                                                    .setValue       = true, \
+                                                    .intEnable      = false, \
+                                                }
 
 #define MOTOR2_DRV_EN_NUM                       (31U)
 #define MOTOR2_DRV_EN_CFG                       GPIO_31_GPIO31
-#define MOTOR2_DRV_EN_DEF                       { \
-                                                    .pinNum         = (uint32_t)MOTOR2_DRV_EN_NUM, \
-                                                    .fctMux         = (uint32_t)MOTOR2_DRV_EN_CFG, \
-                                                    .direction      = (GPIO_Direction)GPIO_DIR_MODE_OUT, \
-                                                    .samplingInMode = (GPIO_QualificationMode)GPIO_QUAL_ASYNC, \
-                                                    .setValue       = (bool_t)false, \
-                                                    .intEnable      = (bool_t)false, \
-                                                }
 #define MOTOR2_DRV_EN_SET                       (HWREG(GPIODATA_BASE + GPIO_O_GPASET)   = GPIO_GPASET_GPIO31)
 #define MOTOR2_DRV_EN_CLEAR                     (HWREG(GPIODATA_BASE + GPIO_O_GPACLEAR) = GPIO_GPACLEAR_GPIO31)
 #define MOTOR2_DRV_EN_TOGGLE                    (HWREG(GPIODATA_BASE + GPIO_O_GPATOGGLE)= GPIO_GPATOGGLE_GPIO31)
+#define MOTOR2_DRV_EN_DEF                       { \
+                                                    .pinNum         = MOTOR2_DRV_EN_NUM, \
+                                                    .fctMux         = MOTOR2_DRV_EN_CFG, \
+                                                    .direction      = GPIO_DIR_MODE_OUT, \
+                                                    .samplingInMode = GPIO_QUAL_ASYNC, \
+                                                    .setValue       = false, \
+                                                    .intEnable      = false, \
+                                                }
 
 #define IMU_SPI_ACCEL_CS_NUM                    (32U)
 #define IMU_SPI_ACCEL_CS_CFG                    GPIO_32_GPIO32
@@ -251,11 +251,13 @@
 #define IMU_IT_CFG                              GPIO_37_GPIO37
 #define IMU_IT_READ                             (HWREG(GPIODATA_BASE + GPIO_O_GPBDAT) & GPIO_GPBDAT_GPIO37)
 
+#if UART_BUS_ENABLE
 #define UART_ON_USB_TX_NUM                      (42U)
 #define UART_ON_USB_TX_CFG                      GPIO_42_UARTA_TX
 
 #define UART_ON_USB_RX_NUM                      (43U)
 #define UART_ON_USB_RX_CFG                      GPIO_43_UARTA_RX
+#endif
 
 #define SELECT_PIN_1_NUM                        (45U)
 #define SELECT_PIN_1_CFG                        GPIO_45_GPIO45
@@ -285,51 +287,51 @@
 #define COM_SPI_SIMO_NUM                        (63U)
 #define COM_SPI_SIMO_CFG                        GPIO_63_SPIB_SIMO
 #define COM_SPI_SIMO_DEF                        { \
-                                                    .pinNum         = (uint32_t)COM_SPI_SIMO_NUM, \
-                                                    .fctMux         = (uint32_t)COM_SPI_SIMO_CFG, \
-                                                    .direction      = (GPIO_Direction)GPIO_DIR_MODE_IN, \
-                                                    .samplingInMode = (GPIO_QualificationMode)GPIO_QUAL_ASYNC, \
-                                                    .setValue       = (bool_t)false, \
-                                                    .intEnable      = (bool_t)false, \
+                                                    .pinNum         = COM_SPI_SIMO_NUM, \
+                                                    .fctMux         = COM_SPI_SIMO_CFG, \
+                                                    .direction      = GPIO_DIR_MODE_IN, \
+                                                    .samplingInMode = GPIO_QUAL_ASYNC, \
+                                                    .setValue       = false, \
+                                                    .intEnable      = false, \
                                                 }
 
 #define COM_SPI_SOMI_NUM                        (64U)
 #define COM_SPI_SOMI_CFG                        GPIO_64_SPIB_SOMI
 #define COM_SPI_SOMI_DEF                        { \
-                                                    .pinNum         = (uint32_t)COM_SPI_SOMI_NUM, \
-                                                    .fctMux         = (uint32_t)COM_SPI_SOMI_CFG, \
-                                                    .direction      = (GPIO_Direction)GPIO_DIR_MODE_OUT, \
-                                                    .samplingInMode = (GPIO_QualificationMode)GPIO_QUAL_ASYNC, \
-                                                    .setValue       = (bool_t)false, \
-                                                    .intEnable      = (bool_t)false, \
+                                                    .pinNum         = COM_SPI_SOMI_NUM, \
+                                                    .fctMux         = COM_SPI_SOMI_CFG, \
+                                                    .direction      = GPIO_DIR_MODE_OUT, \
+                                                    .samplingInMode = GPIO_QUAL_ASYNC, \
+                                                    .setValue       = false, \
+                                                    .intEnable      = false, \
                                                 }
 
 #define COM_SPI_CLK_NUM                         (65U)
 #define COM_SPI_CLK_CFG                         GPIO_65_SPIB_CLK
 #define COM_SPI_CLK_DEF                         { \
-                                                    .pinNum         = (uint32_t)COM_SPI_CLK_NUM, \
-                                                    .fctMux         = (uint32_t)COM_SPI_CLK_CFG, \
-                                                    .direction      = (GPIO_Direction)GPIO_DIR_MODE_IN, \
-                                                    .samplingInMode = (GPIO_QualificationMode)GPIO_QUAL_ASYNC, \
-                                                    .setValue       = (bool_t)false, \
-                                                    .intEnable      = (bool_t)false, \
+                                                    .pinNum         = COM_SPI_CLK_NUM, \
+                                                    .fctMux         = COM_SPI_CLK_CFG, \
+                                                    .direction      = GPIO_DIR_MODE_IN, \
+                                                    .samplingInMode = GPIO_QUAL_ASYNC, \
+                                                    .setValue       = false, \
+                                                    .intEnable      = false, \
                                                 }
 
 #define COM_SPI_CS_NUM                          (66U)
 #define COM_SPI_CS_CFG                          GPIO_66_SPIB_STEN
-#define COM_SPI_CS_DEF                          { \
-                                                    .pinNum         = (uint32_t)COM_SPI_CS_NUM, \
-                                                    .fctMux         = (uint32_t)COM_SPI_CS_CFG, \
-                                                    .direction      = (GPIO_Direction)GPIO_DIR_MODE_IN, \
-                                                    .samplingInMode = (GPIO_QualificationMode)GPIO_QUAL_ASYNC, \
-                                                    .setValue       = (bool_t)false, \
-                                                    .intEnable      = (bool_t)false, \
-                                                }
 #define COM_SPI_CS_READ                         (HWREG(GPIODATA_BASE + GPIO_O_GPCDAT) & GPIO_GPCDAT_GPIO66)
+#define COM_SPI_CS_DEF                          { \
+                                                    .pinNum         = COM_SPI_CS_NUM, \
+                                                    .fctMux         = COM_SPI_CS_CFG, \
+                                                    .direction      = GPIO_DIR_MODE_IN, \
+                                                    .samplingInMode = GPIO_QUAL_ASYNC, \
+                                                    .setValue       = false, \
+                                                    .intEnable      = false, \
+                                                }
 
-#define USB_VBUS_DETECT_NUM                     (67U)
-#define USB_VBUS_DETECT_CFG                     GPIO_67_GPIO67
-#define USB_VBUS_DETECT_READ                    (HWREG(GPIODATA_BASE + GPIO_O_GPCDAT) & GPIO_GPCDAT_GPIO67)
+#define USB_DETECT_NUM                          (67U)
+#define USB_DETECT_CFG                          GPIO_67_GPIO67
+#define USB_DETECT_READ                         (HWREG(GPIODATA_BASE + GPIO_O_GPCDAT) & GPIO_GPCDAT_GPIO67)
 
 #define ESC_PHY1_LINKSTATUS_NUM                 (68U)
 #define ESC_PHY1_LINKSTATUS_CFG                 GPIO_68_ESC_PHY1_LINKSTATUS
@@ -346,233 +348,233 @@
 #define DBG_PIN3_NUM                            (77U)
 #define DBG_PIN3_CFG                            GPIO_77_GPIO77
 #define DBG_PIN3_CORE                           GPIO_CORE_CPU1
-#define DBG_PIN3_DEF                            { \
-                                                    .pinNum         = (uint32_t)DBG_PIN3_NUM, \
-                                                    .fctMux         = (uint32_t)DBG_PIN3_CFG, \
-                                                    .coreSelect     = DBG_PIN3_CORE, \
-                                                    .direction      = (GPIO_Direction)GPIO_DIR_MODE_OUT, \
-                                                    .samplingInMode = (GPIO_QualificationMode)GPIO_QUAL_SYNC, \
-                                                    .setValue       = (bool_t)false, \
-                                                    .intEnable      = (bool_t)false, \
-                                                }
 #define DBG_PIN3_SET                            (HWREG(GPIODATA_BASE + GPIO_O_GPCSET)   = GPIO_GPCSET_GPIO77)
 #define DBG_PIN3_CLEAR                          (HWREG(GPIODATA_BASE + GPIO_O_GPCCLEAR) = GPIO_GPCCLEAR_GPIO77)
 #define DBG_PIN3_TOGGLE                         (HWREG(GPIODATA_BASE + GPIO_O_GPCTOGGLE)= GPIO_GPCTOGGLE_GPIO77)
 #define DBG_PIN3_READ                           (HWREG(GPIODATA_BASE + GPIO_O_GPCDAT) & GPIO_GPCDAT_GPIO77)
+#define DBG_PIN3_DEF                            { \
+                                                    .pinNum         = DBG_PIN3_NUM, \
+                                                    .fctMux         = DBG_PIN3_CFG, \
+                                                    .coreSelect     = DBG_PIN3_CORE, \
+                                                    .direction      = GPIO_DIR_MODE_OUT, \
+                                                    .samplingInMode = GPIO_QUAL_SYNC, \
+                                                    .setValue       = false, \
+                                                    .intEnable      = false, \
+                                                }
 
 #define DBG_PIN2_NUM                            (78U)
 #define DBG_PIN2_CFG                            GPIO_78_GPIO78
 #define DBG_PIN2_CORE                           GPIO_CORE_CPU1
-#define DBG_PIN2_DEF                            { \
-                                                    .pinNum         = (uint32_t)DBG_PIN2_NUM, \
-                                                    .fctMux         = (uint32_t)DBG_PIN2_CFG, \
-                                                    .coreSelect     = DBG_PIN2_CORE, \
-                                                    .direction      = (GPIO_Direction)GPIO_DIR_MODE_OUT, \
-                                                    .samplingInMode = (GPIO_QualificationMode)GPIO_QUAL_SYNC, \
-                                                    .setValue       = (bool_t)false, \
-                                                    .intEnable      = (bool_t)false, \
-                                                }
 #define DBG_PIN2_SET                            (HWREG(GPIODATA_BASE + GPIO_O_GPCSET)   = GPIO_GPCSET_GPIO78)
 #define DBG_PIN2_CLEAR                          (HWREG(GPIODATA_BASE + GPIO_O_GPCCLEAR) = GPIO_GPCCLEAR_GPIO78)
 #define DBG_PIN2_TOGGLE                         (HWREG(GPIODATA_BASE + GPIO_O_GPCTOGGLE)= GPIO_GPCTOGGLE_GPIO78)
 #define DBG_PIN2_READ                           (HWREG(GPIODATA_BASE + GPIO_O_GPCDAT) & GPIO_GPCDAT_GPIO78)
+#define DBG_PIN2_DEF                            { \
+                                                    .pinNum         = DBG_PIN2_NUM, \
+                                                    .fctMux         = DBG_PIN2_CFG, \
+                                                    .coreSelect     = DBG_PIN2_CORE, \
+                                                    .direction      = GPIO_DIR_MODE_OUT, \
+                                                    .samplingInMode = GPIO_QUAL_SYNC, \
+                                                    .setValue       = false, \
+                                                    .intEnable      = false, \
+                                                }
 
 #define DBG_PIN1_NUM                            (81U)
 #define DBG_PIN1_CFG                            GPIO_81_GPIO81
 #define DBG_PIN1_CORE                           GPIO_CORE_CPU1_CLA1
-#define DBG_PIN1_DEF                            { \
-                                                    .pinNum         = (uint32_t)DBG_PIN1_NUM, \
-                                                    .fctMux         = (uint32_t)DBG_PIN1_CFG, \
-                                                    .coreSelect     = DBG_PIN1_CORE, \
-                                                    .direction      = (GPIO_Direction)GPIO_DIR_MODE_OUT, \
-                                                    .samplingInMode = (GPIO_QualificationMode)GPIO_QUAL_SYNC, \
-                                                    .setValue       = (bool_t)false, \
-                                                    .intEnable      = (bool_t)false, \
-                                                }
 #define DBG_PIN1_SET                            (HWREG(GPIODATA_BASE + GPIO_O_GPCSET)   = GPIO_GPCSET_GPIO81)
 #define DBG_PIN1_CLEAR                          (HWREG(GPIODATA_BASE + GPIO_O_GPCCLEAR) = GPIO_GPCCLEAR_GPIO81)
 #define DBG_PIN1_TOGGLE                         (HWREG(GPIODATA_BASE + GPIO_O_GPCTOGGLE)= GPIO_GPCTOGGLE_GPIO81)
 #define DBG_PIN1_READ                           (HWREG(GPIODATA_BASE + GPIO_O_GPCDAT) & GPIO_GPCDAT_GPIO81)
+#define DBG_PIN1_DEF                            { \
+                                                    .pinNum         = DBG_PIN1_NUM, \
+                                                    .fctMux         = DBG_PIN1_CFG, \
+                                                    .coreSelect     = DBG_PIN1_CORE, \
+                                                    .direction      = GPIO_DIR_MODE_OUT, \
+                                                    .samplingInMode = GPIO_QUAL_SYNC, \
+                                                    .setValue       = false, \
+                                                    .intEnable      = false, \
+                                                }
 
 #define DBG_PIN0_NUM                            (82U)
 #define DBG_PIN0_CFG                            GPIO_82_GPIO82
 #define DBG_PIN0_CORE                           GPIO_CORE_CPU1_CLA1
-#define DBG_PIN0_DEF                            { \
-                                                    .pinNum         = (uint32_t)DBG_PIN0_NUM, \
-                                                    .fctMux         = (uint32_t)DBG_PIN0_CFG, \
-                                                    .coreSelect     = DBG_PIN0_CORE, \
-                                                    .direction      = (GPIO_Direction)GPIO_DIR_MODE_OUT, \
-                                                    .samplingInMode = (GPIO_QualificationMode)GPIO_QUAL_SYNC, \
-                                                    .setValue       = (bool_t)false, \
-                                                    .intEnable      = (bool_t)false, \
-                                                }
 #define DBG_PIN0_SET                            (HWREG(GPIODATA_BASE + GPIO_O_GPCSET)   = GPIO_GPCSET_GPIO82)
 #define DBG_PIN0_CLEAR                          (HWREG(GPIODATA_BASE + GPIO_O_GPCCLEAR) = GPIO_GPCCLEAR_GPIO82)
 #define DBG_PIN0_TOGGLE                         (HWREG(GPIODATA_BASE + GPIO_O_GPCTOGGLE)= GPIO_GPCTOGGLE_GPIO82)
 #define DBG_PIN0_READ                           (HWREG(GPIODATA_BASE + GPIO_O_GPCDAT) & GPIO_GPCDAT_GPIO82)
+#define DBG_PIN0_DEF                            { \
+                                                    .pinNum         = DBG_PIN0_NUM, \
+                                                    .fctMux         = DBG_PIN0_CFG, \
+                                                    .coreSelect     = DBG_PIN0_CORE, \
+                                                    .direction      = GPIO_DIR_MODE_OUT, \
+                                                    .samplingInMode = GPIO_QUAL_SYNC, \
+                                                    .setValue       = false, \
+                                                    .intEnable      = false, \
+                                                }
 
 #define ESC_INT0_NUM                            (86U)
 #define ESC_INT0_CFG                            GPIO_86_GPIO86
 
 #define MOTOR1_DRV_EN_NUM                       (90U)
 #define MOTOR1_DRV_EN_CFG                       GPIO_90_GPIO90
-#define MOTOR1_DRV_EN_DEF                       { \
-                                                    .pinNum         = (uint32_t)MOTOR1_DRV_EN_NUM, \
-                                                    .fctMux         = (uint32_t)MOTOR1_DRV_EN_CFG, \
-                                                    .direction      = (GPIO_Direction)GPIO_DIR_MODE_OUT, \
-                                                    .samplingInMode = (GPIO_QualificationMode)GPIO_QUAL_ASYNC, \
-                                                    .setValue       = (bool_t)false, \
-                                                    .intEnable      = (bool_t)false, \
-                                                }
 #define MOTOR1_DRV_EN_SET                       (HWREG(GPIODATA_BASE + GPIO_O_GPCSET)   = GPIO_GPCSET_GPIO90)
 #define MOTOR1_DRV_EN_CLEAR                     (HWREG(GPIODATA_BASE + GPIO_O_GPCCLEAR) = GPIO_GPCCLEAR_GPIO90)
 #define MOTOR1_DRV_EN_TOGGLE                    (HWREG(GPIODATA_BASE + GPIO_O_GPCTOGGLE)= GPIO_GPCTOGGLE_GPIO90)
+#define MOTOR1_DRV_EN_DEF                       { \
+                                                    .pinNum         = MOTOR1_DRV_EN_NUM, \
+                                                    .fctMux         = MOTOR1_DRV_EN_CFG, \
+                                                    .direction      = GPIO_DIR_MODE_OUT, \
+                                                    .samplingInMode = GPIO_QUAL_ASYNC, \
+                                                    .setValue       = false, \
+                                                    .intEnable      = false, \
+                                                }
 
 #define LED_SPI_SIMO_NUM                        (91U)
 #define LED_SPI_SIMO_CFG                        GPIO_91_SPID_SIMO
 #define LED_SPI_SIMO_DEF                        { \
-                                                    .pinNum         = (uint32_t)LED_SPI_SIMO_NUM, \
-                                                    .fctMux         = (uint32_t)LED_SPI_SIMO_CFG, \
-                                                    .direction      = (GPIO_Direction)GPIO_DIR_MODE_OUT, \
-                                                    .samplingInMode = (GPIO_QualificationMode)GPIO_QUAL_ASYNC, \
-                                                    .setValue       = (bool_t)true, \
-                                                    .intEnable      = (bool_t)false, \
+                                                    .pinNum         = LED_SPI_SIMO_NUM, \
+                                                    .fctMux         = LED_SPI_SIMO_CFG, \
+                                                    .direction      = GPIO_DIR_MODE_OUT, \
+                                                    .samplingInMode = GPIO_QUAL_ASYNC, \
+                                                    .setValue       = true, \
+                                                    .intEnable      = false, \
                                                 }
 
 #define MOTOR1_DRV_FAULT_NUM                    (92U)
 #define MOTOR1_DRV_FAULT_CFG                    GPIO_92_GPIO92
-#define MOTOR1_DRV_FAULT_DEF                    { \
-                                                    .pinNum         = (uint32_t)MOTOR1_DRV_FAULT_NUM, \
-                                                    .fctMux         = (uint32_t)MOTOR1_DRV_FAULT_CFG, \
-                                                    .direction      = (GPIO_Direction)GPIO_DIR_MODE_IN, \
-                                                    .samplingInMode = (GPIO_QualificationMode)GPIO_QUAL_3SAMPLE, \
-                                                    .setValue       = (bool_t)false, \
-                                                    .intEnable      = (bool_t)false, \
-                                                }
 #define MOTOR1_DRV_FAULT_READ                   (HWREG(GPIODATA_BASE + GPIO_O_GPCDAT) & GPIO_GPCDAT_GPIO92)
+#define MOTOR1_DRV_FAULT_DEF                    { \
+                                                    .pinNum         = MOTOR1_DRV_FAULT_NUM, \
+                                                    .fctMux         = MOTOR1_DRV_FAULT_CFG, \
+                                                    .direction      = GPIO_DIR_MODE_IN, \
+                                                    .samplingInMode = GPIO_QUAL_3SAMPLE, \
+                                                    .setValue       = false, \
+                                                    .intEnable      = false, \
+                                                }
 
 #define MOTOR1_DRV_SPI_CS_NUM                   (93U)
 #define MOTOR1_DRV_SPI_CS_CFG                   GPIO_93_GPIO93
-#define MOTOR1_DRV_SPI_CS_DEF                   { \
-                                                    .pinNum         = (uint32_t)MOTOR1_DRV_SPI_CS_NUM, \
-                                                    .fctMux         = (uint32_t)MOTOR1_DRV_SPI_CS_CFG, \
-                                                    .direction      = (GPIO_Direction)GPIO_DIR_MODE_OUT, \
-                                                    .samplingInMode = (GPIO_QualificationMode)GPIO_QUAL_ASYNC, \
-                                                    .setValue       = (bool_t)true, \
-                                                    .intEnable      = (bool_t)false, \
-                                                }
 #define MOTOR1_DRV_SPI_CS_SET                   (HWREG(GPIODATA_BASE + GPIO_O_GPCSET)   = GPIO_GPCSET_GPIO93)
 #define MOTOR1_DRV_SPI_CS_CLEAR                 (HWREG(GPIODATA_BASE + GPIO_O_GPCCLEAR) = GPIO_GPCCLEAR_GPIO93)
 #define MOTOR1_DRV_SPI_CS_TOGGLE                (HWREG(GPIODATA_BASE + GPIO_O_GPCTOGGLE)= GPIO_GPCTOGGLE_GPIO93)
+#define MOTOR1_DRV_SPI_CS_DEF                   { \
+                                                    .pinNum         = MOTOR1_DRV_SPI_CS_NUM, \
+                                                    .fctMux         = MOTOR1_DRV_SPI_CS_CFG, \
+                                                    .direction      = GPIO_DIR_MODE_OUT, \
+                                                    .samplingInMode = GPIO_QUAL_ASYNC, \
+                                                    .setValue       = true, \
+                                                    .intEnable      = false, \
+                                                }
 
 #define RS485_TX_EN_NUM                         (94U)
 #define RS485_TX_EN_CFG                         GPIO_94_CLB_OUTPUTXBAR4
-#define RS485_TX_EN_DEF                         { \
-                                                    .pinNum         = (uint32_t)RS485_TX_EN_NUM, \
-                                                    .fctMux         = (uint32_t)RS485_TX_EN_CFG, \
-                                                    .direction      = (GPIO_Direction)GPIO_DIR_MODE_OUT, \
-                                                    .samplingInMode = (GPIO_QualificationMode)GPIO_QUAL_ASYNC, \
-                                                    .setValue       = (bool_t)false, \
-                                                    .intEnable      = (bool_t)false, \
-                                                }
 #define RS485_TX_EN_SET                         (HWREG(GPIODATA_BASE + GPIO_O_GPCSET)   = GPIO_GPCSET_GPIO94)
 #define RS485_TX_EN_CLEAR                       (HWREG(GPIODATA_BASE + GPIO_O_GPCCLEAR) = GPIO_GPCCLEAR_GPIO94)
 #define RS485_TX_EN_TOGGLE                      (HWREG(GPIODATA_BASE + GPIO_O_GPCTOGGLE)= GPIO_GPCTOGGLE_GPIO94)
+#define RS485_TX_EN_DEF                         { \
+                                                    .pinNum         = RS485_TX_EN_NUM, \
+                                                    .fctMux         = RS485_TX_EN_CFG, \
+                                                    .direction      = GPIO_DIR_MODE_OUT, \
+                                                    .samplingInMode = GPIO_QUAL_ASYNC, \
+                                                    .setValue       = false, \
+                                                    .intEnable      = false, \
+                                                }
 
 #define CAN_RS485_MUX_SEL_NUM                   (99U)
 #define CAN_RS485_MUX_SEL_CFG                   GPIO_99_GPIO99
-#define CAN_RS485_MUX_SEL_DEF                   { \
-                                                    .pinNum         = (uint32_t)CAN_RS485_MUX_SEL_NUM, \
-                                                    .fctMux         = (uint32_t)CAN_RS485_MUX_SEL_CFG, \
-                                                    .direction      = (GPIO_Direction)GPIO_DIR_MODE_OUT, \
-                                                    .samplingInMode = (GPIO_QualificationMode)GPIO_QUAL_ASYNC, \
-                                                    .setValue       = (bool_t)true, \
-                                                    .intEnable      = (bool_t)false, \
-                                                }
 #define CAN_RS485_MUX_SEL_SET                   (HWREG(GPIODATA_BASE + GPIO_O_GPDSET)   = GPIO_GPDSET_GPIO99)
 #define CAN_RS485_MUX_SEL_CLEAR                 (HWREG(GPIODATA_BASE + GPIO_O_GPDCLEAR) = GPIO_GPDCLEAR_GPIO99)
 #define CAN_RS485_MUX_SEL_TOGGLE                (HWREG(GPIODATA_BASE + GPIO_O_GPDTOGGLE)= GPIO_GPDTOGGLE_GPIO99)
+#define CAN_RS485_MUX_SEL_DEF                   { \
+                                                    .pinNum         = CAN_RS485_MUX_SEL_NUM, \
+                                                    .fctMux         = CAN_RS485_MUX_SEL_CFG, \
+                                                    .direction      = GPIO_DIR_MODE_OUT, \
+                                                    .samplingInMode = GPIO_QUAL_ASYNC, \
+                                                    .setValue       = true, \
+                                                    .intEnable      = false, \
+                                                }
 
 #define MOTOR1_ENC_CHA_NUM                      (100U)
 #define MOTOR1_ENC_CHA_CFG                      GPIO_100_EQEP2_A
 #define MOTOR1_ENC_CHA_DEF                      { \
-                                                    .pinNum         = (uint32_t)MOTOR1_ENC_CHA_NUM, \
-                                                    .fctMux         = (uint32_t)MOTOR1_ENC_CHA_CFG, \
-                                                    .direction      = (GPIO_Direction)GPIO_DIR_MODE_IN, \
-                                                    .samplingInMode = (GPIO_QualificationMode)GPIO_QUAL_6SAMPLE, \
-                                                    .setValue       = (bool_t)false, \
-                                                    .intEnable      = (bool_t)false, \
+                                                    .pinNum         = MOTOR1_ENC_CHA_NUM, \
+                                                    .fctMux         = MOTOR1_ENC_CHA_CFG, \
+                                                    .direction      = GPIO_DIR_MODE_IN, \
+                                                    .samplingInMode = GPIO_QUAL_6SAMPLE, \
+                                                    .setValue       = false, \
+                                                    .intEnable      = false, \
                                                 }
 
 #define MOTOR1_ENC_CHB_NUM                      (101U)
 #define MOTOR1_ENC_CHB_CFG                      GPIO_101_EQEP2_B
 #define MOTOR1_ENC_CHB_DEF                      { \
-                                                    .pinNum         = (uint32_t)MOTOR1_ENC_CHB_NUM, \
-                                                    .fctMux         = (uint32_t)MOTOR1_ENC_CHB_CFG, \
-                                                    .direction      = (GPIO_Direction)GPIO_DIR_MODE_IN, \
-                                                    .samplingInMode = (GPIO_QualificationMode)GPIO_QUAL_6SAMPLE, \
-                                                    .setValue       = (bool_t)false, \
-                                                    .intEnable      = (bool_t)false, \
+                                                    .pinNum         = MOTOR1_ENC_CHB_NUM, \
+                                                    .fctMux         = MOTOR1_ENC_CHB_CFG, \
+                                                    .direction      = GPIO_DIR_MODE_IN, \
+                                                    .samplingInMode = GPIO_QUAL_6SAMPLE, \
+                                                    .setValue       = false, \
+                                                    .intEnable      = false, \
                                                 }
 
 #define MOTOR1_ENC_CHI_NUM                      (103U)
 #define MOTOR1_ENC_CHI_CFG                      GPIO_103_EQEP2_INDEX
 #define MOTOR1_ENC_CHI_DEF                      { \
-                                                    .pinNum         = (uint32_t)MOTOR1_ENC_CHI_NUM, \
-                                                    .fctMux         = (uint32_t)MOTOR1_ENC_CHI_CFG, \
-                                                    .direction      = (GPIO_Direction)GPIO_DIR_MODE_IN, \
-                                                    .samplingInMode = (GPIO_QualificationMode)GPIO_QUAL_6SAMPLE, \
-                                                    .setValue       = (bool_t)false, \
-                                                    .intEnable      = (bool_t)false, \
+                                                    .pinNum         = MOTOR1_ENC_CHI_NUM, \
+                                                    .fctMux         = MOTOR1_ENC_CHI_CFG, \
+                                                    .direction      = GPIO_DIR_MODE_IN, \
+                                                    .samplingInMode = GPIO_QUAL_6SAMPLE, \
+                                                    .setValue       = false, \
+                                                    .intEnable      = false, \
                                                 }
 
 #define MOTOR2_ENC_CHA_NUM                      (104U)
 #define MOTOR2_ENC_CHA_CFG                      GPIO_104_EQEP3_A
 #define MOTOR2_ENC_CHA_DEF                      { \
-                                                    .pinNum         = (uint32_t)MOTOR2_ENC_CHA_NUM, \
-                                                    .fctMux         = (uint32_t)MOTOR2_ENC_CHA_CFG, \
-                                                    .direction      = (GPIO_Direction)GPIO_DIR_MODE_IN, \
-                                                    .samplingInMode = (GPIO_QualificationMode)GPIO_QUAL_6SAMPLE, \
-                                                    .setValue       = (bool_t)false, \
-                                                    .intEnable      = (bool_t)false, \
+                                                    .pinNum         = MOTOR2_ENC_CHA_NUM, \
+                                                    .fctMux         = MOTOR2_ENC_CHA_CFG, \
+                                                    .direction      = GPIO_DIR_MODE_IN, \
+                                                    .samplingInMode = GPIO_QUAL_6SAMPLE, \
+                                                    .setValue       = false, \
+                                                    .intEnable      = false, \
                                                 }
 
 #define MOTOR2_ENC_CHB_NUM                      (105U)
 #define MOTOR2_ENC_CHB_CFG                      GPIO_105_EQEP3_B
 #define MOTOR2_ENC_CHB_DEF                      { \
-                                                    .pinNum         = (uint32_t)MOTOR2_ENC_CHB_NUM, \
-                                                    .fctMux         = (uint32_t)MOTOR2_ENC_CHB_CFG, \
-                                                    .direction      = (GPIO_Direction)GPIO_DIR_MODE_IN, \
-                                                    .samplingInMode = (GPIO_QualificationMode)GPIO_QUAL_6SAMPLE, \
-                                                    .setValue       = (bool_t)false, \
-                                                    .intEnable      = (bool_t)false, \
+                                                    .pinNum         = MOTOR2_ENC_CHB_NUM, \
+                                                    .fctMux         = MOTOR2_ENC_CHB_CFG, \
+                                                    .direction      = GPIO_DIR_MODE_IN, \
+                                                    .samplingInMode = GPIO_QUAL_6SAMPLE, \
+                                                    .setValue       = false, \
+                                                    .intEnable      = false, \
                                                 }
 
 #define MOTOR2_ENC_CHI_NUM                      (107U)
 #define MOTOR2_ENC_CHI_CFG                      GPIO_107_EQEP3_INDEX
 #define MOTOR2_ENC_CHI_DEF                      { \
-                                                    .pinNum         = (uint32_t)MOTOR2_ENC_CHI_NUM, \
-                                                    .fctMux         = (uint32_t)MOTOR2_ENC_CHI_CFG, \
-                                                    .direction      = (GPIO_Direction)GPIO_DIR_MODE_IN, \
-                                                    .samplingInMode = (GPIO_QualificationMode)GPIO_QUAL_6SAMPLE, \
-                                                    .setValue       = (bool_t)false, \
-                                                    .intEnable      = (bool_t)false, \
+                                                    .pinNum         = MOTOR2_ENC_CHI_NUM, \
+                                                    .fctMux         = MOTOR2_ENC_CHI_CFG, \
+                                                    .direction      = GPIO_DIR_MODE_IN, \
+                                                    .samplingInMode = GPIO_QUAL_6SAMPLE, \
+                                                    .setValue       = false, \
+                                                    .intEnable      = false, \
                                                 }
 
 #define CAN_SHDN_EN_NUM                         (108U)
 #define CAN_SHDN_EN_CFG                         GPIO_108_GPIO108
-#define CAN_SHDN_EN_DEF                         { \
-                                                    .pinNum         = (uint32_t)CAN_SHDN_EN_NUM, \
-                                                    .fctMux         = (uint32_t)CAN_SHDN_EN_CFG, \
-                                                    .pinType        = GPIO_PIN_TYPE_OD, \
-                                                    .direction      = (GPIO_Direction)GPIO_DIR_MODE_OUT, \
-                                                    .samplingInMode = (GPIO_QualificationMode)GPIO_QUAL_ASYNC, \
-                                                    .setValue       = (bool_t)true, \
-                                                    .intEnable      = (bool_t)false, \
-                                                }
 #define CAN_SHDN_EN_SET                         (HWREG(GPIODATA_BASE + GPIO_O_GPDSET)   = GPIO_GPDSET_GPIO108)
 #define CAN_SHDN_EN_CLEAR                       (HWREG(GPIODATA_BASE + GPIO_O_GPDCLEAR) = GPIO_GPDCLEAR_GPIO108)
 #define CAN_SHDN_EN_TOGGLE                      (HWREG(GPIODATA_BASE + GPIO_O_GPDTOGGLE)= GPIO_GPDTOGGLE_GPIO108)
+#define CAN_SHDN_EN_DEF                         { \
+                                                    .pinNum         = CAN_SHDN_EN_NUM, \
+                                                    .fctMux         = CAN_SHDN_EN_CFG, \
+                                                    .pinType        = GPIO_PIN_TYPE_OD, \
+                                                    .direction      = GPIO_DIR_MODE_OUT, \
+                                                    .samplingInMode = GPIO_QUAL_ASYNC, \
+                                                    .setValue       = true, \
+                                                    .intEnable      = false, \
+                                                }
 
 #define FSI_RX_D0_NUM                           (115U)
 #define FSI_RX_D0_CFG                           GPIO_115_FSIRXC_D0
@@ -585,15 +587,15 @@
 
 #define MOTOR2_DRV_FAULT_NUM                    (118U)
 #define MOTOR2_DRV_FAULT_CFG                    GPIO_118_GPIO118
-#define MOTOR2_DRV_FAULT_DEF                    { \
-                                                    .pinNum         = (uint32_t)MOTOR2_DRV_FAULT_NUM, \
-                                                    .fctMux         = (uint32_t)MOTOR2_DRV_FAULT_CFG, \
-                                                    .direction      = (GPIO_Direction)GPIO_DIR_MODE_IN, \
-                                                    .samplingInMode = (GPIO_QualificationMode)GPIO_QUAL_3SAMPLE, \
-                                                    .setValue       = (bool_t)false, \
-                                                    .intEnable      = (bool_t)false, \
-                                                }
 #define MOTOR2_DRV_FAULT_READ                   (HWREG(GPIODATA_BASE + GPIO_O_GPDDAT) & GPIO_GPDDAT_GPIO118)
+#define MOTOR2_DRV_FAULT_DEF                    { \
+                                                    .pinNum         = MOTOR2_DRV_FAULT_NUM, \
+                                                    .fctMux         = MOTOR2_DRV_FAULT_CFG, \
+                                                    .direction      = GPIO_DIR_MODE_IN, \
+                                                    .samplingInMode = GPIO_QUAL_3SAMPLE, \
+                                                    .setValue       = false, \
+                                                    .intEnable      = false, \
+                                                }
 
 #define IMU_SPI_GYRO_CS_NUM                     (120U)
 #define IMU_SPI_GYRO_CS_CFG                     GPIO_120_GPIO120
@@ -2075,4 +2077,4 @@
                                                     p_motor->state                                      = MOTOR_STATE_IDLE; \
                                                     p_motor->error.all                                  = 0U;
 
-#endif /* __UOMODRI_3_1_HAL_DEFINES_H__ */
+#endif /* __UOMODRI_3_HAL_DEFINES_H__ */

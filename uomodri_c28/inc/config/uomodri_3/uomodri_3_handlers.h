@@ -3,8 +3,8 @@
  * Description: Header file containing the uomodri V3 structure for hal config.
  */
 
-#ifndef __UOMODRI_3_1_HANDLERS_H__
-#define __UOMODRI_3_1_HANDLERS_H__
+#ifndef __UOMODRI_3_HANDLERS_H__
+#define __UOMODRI_3_HANDLERS_H__
 
 /************************************************************************
  * INCLUDES
@@ -18,7 +18,7 @@
 #include "../../main.h"
 #include "../../hal.h"
 
-#include "uomodri_3_1_hal_defines.h"    // uOmodri v3.1 configuration include file
+#include "uomodri_3_hal_defines.h"      // uOmodri v3.x configuration include file
 
 /***********************************************************************
  * VARIABLES
@@ -412,4 +412,4 @@ static drv_reg_t drv_reg[] =
 };
 
 
-#endif /* __UOMODRI_3_1_HANDLERS_H__ */
+#endif /* __UOMODRI_3_HANDLERS_H__ */

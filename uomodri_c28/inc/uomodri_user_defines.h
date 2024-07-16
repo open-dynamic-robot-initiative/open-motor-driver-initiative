@@ -6,7 +6,6 @@
 #ifndef __UOMODRI_USER_DEFINES_H__
 #define __UOMODRI_USER_DEFINES_H__
 
-
 /************************************************************************
  * INCLUDES
  ************************************************************************/
@@ -22,9 +21,9 @@
  */
 #define USE_FCT                                 (0)
 // UOMODRI revision
-#define UOMODRI_V1_0_ENABLE                     (0)
-#define UOMODRI_V2_0_ENABLE                     (0)
-#define UOMODRI_V3_0_ENABLE                     (1)
+//#define UOMODRI_V1_ENABLE                       (0)
+//#define UOMODRI_V2_ENABLE                       (1)
+//#define UOMODRI_V3_ENABLE                       (0)
 
 #define USE_UOMODRI_V1                          (1)
 #define USE_UOMODRI_V2                          (2)
@@ -37,12 +36,11 @@
 #else
 #define USE_DUAL_AXIS_CONFIG                    (1)
 #endif
-
-#if ((UOMODRI_V1_0_ENABLE) + (UOMODRI_V2_0_ENABLE) + (UOMODRI_V3_0_ENABLE) > 1)
-#error "Only one config must be set @ a time."
-#elif ((UOMODRI_V1_0_ENABLE) + (UOMODRI_V2_0_ENABLE) + (UOMODRI_V3_0_ENABLE) < 1)
-#error "@ least one config must be set @ a time."
-#endif
+//#if ((UOMODRI_V1_ENABLE) + (UOMODRI_V2_ENABLE) + (UOMODRI_V3_ENABLE) > 1)
+//#error "Only one config must be set @ a time."
+//#elif ((UOMODRI_V1_ENABLE) + (UOMODRI_V2_ENABLE) + (UOMODRI_V3_ENABLE) < 1)
+//#error "@ least one config must be set @ a time."
+//#endif
 // Cores activation ENABLE/DISABLE
 #ifdef CPU1
 #define CPU1_CORE_ENABLE                        (1)
@@ -140,9 +138,9 @@
 #if (USE_UOMODRI_REV == USE_UOMODRI_V1)
 //
 #elif (USE_UOMODRI_REV == USE_UOMODRI_V2)
-//
+#include "config/uomodri_2/uomodri_2_hal_defines.h" // uOmodri v2.x definitions
 #elif (USE_UOMODRI_REV == USE_UOMODRI_V3)
-#include "config/uomodri_3_1/uomodri_3_1_hal_defines.h" // uOmodri v3.1 definitions
+#include "config/uomodri_3/uomodri_3_hal_defines.h" // uOmodri v3.x definitions
 //#include "config/uomodri_3_1/uomodri_3_1_handlers.h"    // uOmodri v3.1 configuration include file
 #elif (USE_UOMODRI_REV == USE_UOMODRI_SA_V1)
 //
@@ -153,7 +151,6 @@
 /***********************************************************************
  * MOTORS DEFINES
  ***********************************************************************/
-
 #define MIN                                     (0)
 #define MAX                                     (1)
 #define FW                                      (0)     /*!< Forward direction */

@@ -6,7 +6,7 @@
 /***********************************************************************
  * INCLUDES
  ***********************************************************************/
-#include <config/uomodri_3_1/uomodri_3_1_handlers.h>
+//#include <config/uomodri_3_1/uomodri_3_1_handlers.h>
 #include "driverlib.h"
 #include "device.h"
 #include "board.h"
@@ -16,9 +16,9 @@
 #if (USE_UOMODRI_REV == USE_UOMODRI_V1)
 //
 #elif (USE_UOMODRI_REV == USE_UOMODRI_V2)
-//
+#include "config/uomodri_2/uomodri_2_handlers.h"    // uOmodri v2.x configuration include file
 #elif (USE_UOMODRI_REV == USE_UOMODRI_V3)
-#include "config/uomodri_3_1/uomodri_3_1_handlers.h"    // uOmodri v3.1 configuration include file
+#include "config/uomodri_3/uomodri_3_handlers.h"    // uOmodri v3.x configuration include file
 #elif (USE_UOMODRI_REV == USE_UOMODRI_SA_V1)
 //
 #else
