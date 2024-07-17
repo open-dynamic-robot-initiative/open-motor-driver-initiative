@@ -131,7 +131,6 @@
 #include "config/uomodri_2/uomodri_2_hal_defines.h" // uOmodri v2.x definitions
 #elif (USE_UOMODRI_REV == USE_UOMODRI_V3)
 #include "config/uomodri_3/uomodri_3_hal_defines.h" // uOmodri v3.x definitions
-//#include "config/uomodri_3_1/uomodri_3_1_handlers.h"    // uOmodri v3.1 configuration include file
 #elif (USE_UOMODRI_REV == USE_UOMODRI_SA_V1)
 //
 #else
