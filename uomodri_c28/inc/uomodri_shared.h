@@ -25,6 +25,8 @@ extern "C" {
 #define MMIN3(x, y, z)              (__mminf32(__mminf32((x), (y)), (z)))
 #define MSATF32(x, y, z)            (__mmaxf32(__mminf32((x), (y)), (z)))
 #endif
+
+#define USE_FEED_FORWARD            (0)
 #define USE_ALTERNATIVE_SM          (0)
 
 /***********************************************************************

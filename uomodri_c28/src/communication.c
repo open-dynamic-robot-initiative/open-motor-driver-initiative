@@ -235,7 +235,7 @@ inline void RS485_msgTransmit(uint32_t sci_base, rs485_tx_t* p_msg_tx)
     SCI_TxFIFOLevel fifo_tx_status  = SCI_FIFO_TX16;
     fifo_tx_status                 -= (SCI_TxFIFOLevel)((HWREGH(sci_base + SCI_O_FFTX) & SCI_FFTX_TXFFST_M) >> SCI_FFTX_TXFFST_S);
 
-    while((uint16_t)fifo_tx_status && (COM_MSG_RS485_TX_8BIT_FULL_LENGTH - p_msg_tx->index))//p_msg_tx->remaining)
+    while((uint16_t)fifo_tx_status && ((2 * COM_MSG_RS485_TX_16BIT_FULL_LENGTH) - p_msg_tx->index))//p_msg_tx->remaining)
     {
         uint16_t* p_msg = &p_msg_tx->msg[p_msg_tx->msg_cr].raw[p_msg_tx->index >> 1];
 //        SCI_writeCharNonBlocking(sci_base, (((p_msg_tx->index >> 1) ? (*p_msg): (*p_msg >> 8)) & 0x00FF));

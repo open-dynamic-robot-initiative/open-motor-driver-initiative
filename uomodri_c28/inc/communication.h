@@ -61,35 +61,25 @@
 #define COM_MSG_RS485_TX_ADDRESS                (0xFF)
 #define COM_MSG_RS485_TX_TYPE_STANDARD          (0x00)
 
-#define COM_MSG_SPI_TX_16BIT_FULL_LENGTH        (sizeof(slv2mst_msg_t) + \
-                                                 sizeof(crc_reg_t))
+
 #define COM_MSG_SPI_TX_16BIT_PAYLOAD_LENGTH     (sizeof(slv2mst_msg_t))
-#define COM_MSG_SPI_TX_8BIT_FULL_LENGTH         (COM_MSG_SPI_TX_16BIT_FULL_LENGTH * 2)
-#define COM_MSG_SPI_TX_8BIT_PAYLOAD_LENGTH      (COM_MSG_SPI_TX_16BIT_PAYLOAD_LENGTH * 2)
+#define COM_MSG_SPI_TX_16BIT_FULL_LENGTH        (COM_MSG_SPI_TX_16BIT_PAYLOAD_LENGTH + sizeof(crc_reg_t))
 
-#define COM_MSG_SPI_RX_16BIT_FULL_LENGTH        (sizeof(mst2slv_msg_t) + \
-                                                 sizeof(crc_reg_t))
 #define COM_MSG_SPI_RX_16BIT_PAYLOAD_LENGTH     (sizeof(mst2slv_msg_t))
-#define COM_MSG_SPI_RX_8BIT_FULL_LENGTH         (COM_MSG_SPI_RX_16BIT_FULL_LENGTH * 2)
-#define COM_MSG_SPI_RX_8BIT_PAYLOAD_LENGTH      (COM_MSG_SPI_RX_16BIT_PAYLOAD_LENGTH * 2)
+#define COM_MSG_SPI_RX_16BIT_FULL_LENGTH        (COM_MSG_SPI_RX_16BIT_PAYLOAD_LENGTH + sizeof(crc_reg_t))
 
-#define COM_MSG_RS485_TX_16BIT_FULL_LENGTH      (sizeof(header_reg_u) + \
-                                                 sizeof(slv2mst_msg_t) + \
-                                                 sizeof(crc_reg_t))
-#define COM_MSG_RS485_TX_16BIT_PAYLOAD_LENGTH   (sizeof(header_reg_u) + \
-                                                 sizeof(slv2mst_msg_t))
-#define COM_MSG_RS485_TX_8BIT_FULL_LENGTH       (COM_MSG_RS485_TX_16BIT_FULL_LENGTH * 2)
+#define COM_MSG_RS485_TX_16BIT_PAYLOAD_LENGTH   (sizeof(header_reg_u) + sizeof(slv2mst_msg_t))
 #define COM_MSG_RS485_TX_8BIT_PAYLOAD_LENGTH    (COM_MSG_RS485_TX_16BIT_PAYLOAD_LENGTH * 2)
+#define COM_MSG_RS485_TX_16BIT_FULL_LENGTH      (COM_MSG_RS485_TX_16BIT_PAYLOAD_LENGTH + sizeof(crc_reg_t))
+#define COM_MSG_RS485_TX_8BIT_FULL_LENGTH       (COM_MSG_RS485_TX_16BIT_FULL_LENGTH * 2)
 
-#define COM_MSG_RS485_RX_16BIT_FULL_LENGTH      (sizeof(header_reg_u) + \
-                                                 sizeof(mst2slv_msg_t) + \
-                                                 sizeof(crc_reg_t))
-#define COM_MSG_RS485_RX_16BIT_PAYLOAD_LENGTH   (sizeof(header_reg_u) + \
-                                                 sizeof(mst2slv_msg_t))
-#define COM_MSG_RS485_RX_8BIT_FULL_LENGTH       (COM_MSG_RS485_RX_16BIT_FULL_LENGTH * 2)
+#define COM_MSG_RS485_RX_16BIT_PAYLOAD_LENGTH   (sizeof(header_reg_u) + sizeof(mst2slv_msg_t))
 #define COM_MSG_RS485_RX_8BIT_PAYLOAD_LENGTH    (COM_MSG_RS485_RX_16BIT_PAYLOAD_LENGTH * 2)
+#define COM_MSG_RS485_RX_16BIT_FULL_LENGTH      (COM_MSG_RS485_RX_16BIT_PAYLOAD_LENGTH + sizeof(crc_reg_t))
+#define COM_MSG_RS485_RX_8BIT_FULL_LENGTH       (COM_MSG_RS485_RX_16BIT_FULL_LENGTH * 2)
 
-#define LED_MSG_TX_16BIT_LENGTH                 (16)//(6)
+
+#define LED_MSG_TX_16BIT_LENGTH                 (16)
 
 /***********************************************************************
  * COMMUNICATION CONSTANTS

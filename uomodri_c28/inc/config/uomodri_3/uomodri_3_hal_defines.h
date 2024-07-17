@@ -754,9 +754,7 @@
 #define ADC_VEXT12_VOLTAGE_SCALE                (ADC_VREF / ADC_RESOLUTION_MAX)
 #define ADC_VBUS_VOLTAGE_SCALE                  (ADC_VREF * BRIDGE_DIVIDER / ADC_RESOLUTION_MAX)
 #define ADC_MOTOR_VOLTAGE_SCALE                 (ADC_VREF * BRIDGE_DIVIDER / ADC_RESOLUTION_MAX)
-#define ADC_MOTOR_CURRENT_SCALE                 (ADC_VREF * (-1.0f) / \
-                                                 DRV_CSA_GAIN_VAL / R_SHUNT / \
-                                                 ADC_RESOLUTION_MAX)
+#define ADC_MOTOR_CURRENT_SCALE                 (ADC_VREF * (-1.0f) / DRV_CSA_GAIN_VAL / R_SHUNT / ADC_RESOLUTION_MAX)
 /**
  * @}
  */
@@ -1365,9 +1363,7 @@
  * SCI DEFINES
  ***********************************************************************/
 #define COM_SCI_BASE                            SCIC_BASE
-#define COM_SCI_CFG                             (SCI_CONFIG_WLEN_8 | \
-                                                 SCI_CONFIG_STOP_ONE | \
-                                                 SCI_CONFIG_PAR_NONE)
+#define COM_SCI_CFG                             (SCI_CONFIG_WLEN_8 | SCI_CONFIG_STOP_ONE | SCI_CONFIG_PAR_NONE)
 #define COM_SCI_TX_FIFO_LVL                     SCI_FIFO_TX6
 #define COM_SCI_RX_FIFO_LVL                     SCI_FIFO_RX8
 #define SCI_INT_ALL                             (SCI_INT_RXERR | \
@@ -1684,8 +1680,8 @@
 #define DMA_COM_SPI_TX_TRIGGER_SRC              DMA_TRIGGER_SPIBTX
 #define DMA_COM_SPI_RX_TRIGGER_SRC              DMA_TRIGGER_SPIBRX
 
-#define DMA_LED_SPI_TX_FULL_LENGTH              (16)//(6)
-#define DMA_LED_SPI_TX_BURST_EVT                (4)//(3)
+#define DMA_LED_SPI_TX_FULL_LENGTH              LED_MSG_TX_16BIT_LENGTH
+#define DMA_LED_SPI_TX_BURST_EVT                (LED_MSG_TX_16BIT_LENGTH / 2)
 #define DMA_LED_SPI_TX_TRANSFER_EVT             (DMA_LED_SPI_TX_FULL_LENGTH / DMA_LED_SPI_TX_BURST_EVT)
 #define DMA_LED_SPI_TX_16BIT_CONFIG             (DMA_CFG_ONESHOT_DISABLE | DMA_CFG_CONTINUOUS_DISABLE | DMA_CFG_SIZE_16BIT)
 #if ((DMA_LED_SPI_TX_16BIT_CONFIG & DMA_MODE_DATASIZE) == DMA_CFG_SIZE_16BIT)
@@ -1694,13 +1690,13 @@
 #define DMA_LED_SPI_TX_INC_STEP                 (2)
 #endif
 
-#define DMA_COM_SPI_TX_RX_FULL_LENGTH           (17)
-#define DMA_COM_SPI_TX_RX_CRC_LENGTH            (2)
-#define DMA_COM_SPI_TX_RX_PAYLOAD_LENGTH        (DMA_COM_SPI_TX_RX_FULL_LENGTH - DMA_COM_SPI_TX_RX_CRC_LENGTH)
+#define DMA_COM_SPI_TX_FULL_LENGTH              (COM_MSG_SPI_TX_16BIT_FULL_LENGTH - 1)
 #define DMA_COM_SPI_TX_BURST_EVT                (8)
-#define DMA_COM_SPI_TX_TRANSFER_EVT             ((DMA_COM_SPI_TX_RX_FULL_LENGTH - 1) / DMA_COM_SPI_TX_BURST_EVT)
+#define DMA_COM_SPI_TX_TRANSFER_EVT             (DMA_COM_SPI_TX_FULL_LENGTH / DMA_COM_SPI_TX_BURST_EVT)
+
+#define DMA_COM_SPI_RX_FULL_LENGTH              COM_MSG_SPI_RX_16BIT_FULL_LENGTH
 #define DMA_COM_SPI_RX_BURST_EVT                (1)
-#define DMA_COM_SPI_RX_TRANSFER_EVT             (DMA_COM_SPI_TX_RX_FULL_LENGTH / DMA_COM_SPI_RX_BURST_EVT)
+#define DMA_COM_SPI_RX_TRANSFER_EVT             (DMA_COM_SPI_RX_FULL_LENGTH / DMA_COM_SPI_RX_BURST_EVT)
 #define DMA_COM_SPI_TX_16BIT_CONFIG             (DMA_CFG_ONESHOT_DISABLE | DMA_CFG_CONTINUOUS_DISABLE | DMA_CFG_SIZE_16BIT)
 #define DMA_COM_SPI_RX_16BIT_CONFIG             (DMA_CFG_ONESHOT_DISABLE | DMA_CFG_CONTINUOUS_DISABLE | DMA_CFG_SIZE_16BIT)
 #if ((DMA_COM_SPI_TX_16BIT_CONFIG & DMA_MODE_DATASIZE) == DMA_CFG_SIZE_16BIT)

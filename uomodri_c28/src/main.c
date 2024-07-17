@@ -6,7 +6,6 @@
 /***********************************************************************
  * INCLUDES
  ***********************************************************************/
-//#include <config/uomodri_3_1/uomodri_3_1_handlers.h>
 #include "driverlib.h"
 #include "device.h"
 #include "board.h"
@@ -88,10 +87,8 @@ spi_rx_t    com_spi_rx;
 #pragma DATA_ALIGN(com_spi_tx, 4)
 #pragma DATA_SECTION(com_spi_tx, "ramgs0")
 spi_tx_t    com_spi_tx      = {.msg_cr = 0U, .msg_nx = 1U,
-                               .msg[0].crc.u16_msb = 0xDFFF,
-                               .msg[0].crc.u16_lsb = 0x5283,
-                               .msg[1].crc.u16_msb = 0xDFFF,
-                               .msg[1].crc.u16_lsb = 0x5283};
+                               .msg[0].crc.u16_msb = 0xDFFF, .msg[0].crc.u16_lsb = 0x5283,
+                               .msg[1].crc.u16_msb = 0xDFFF, .msg[1].crc.u16_lsb = 0x5283};
 #pragma DATA_ALIGN(com_rs485_rx, 4)
 #pragma DATA_SECTION(com_rs485_rx, "ramgs0")
 rs485_rx_t  com_rs485_rx    = {.index = 0U,
@@ -101,10 +98,8 @@ rs485_rx_t  com_rs485_rx    = {.index = 0U,
 #pragma DATA_SECTION(com_rs485_tx, "ramgs0")
 rs485_tx_t  com_rs485_tx    = {.index = 0U,
                                .msg_cr = 0U, .msg_nx = 1U,
-                               .msg[0].crc.u16_msb = 0x8CA0,
-                               .msg[0].crc.u16_lsb = 0x22CF,
-                               .msg[1].crc.u16_msb = 0x8CA0,
-                               .msg[1].crc.u16_lsb = 0x22CF};
+                               .msg[0].crc.u16_msb = 0x8CA0, .msg[0].crc.u16_lsb = 0x22CF,
+                               .msg[1].crc.u16_msb = 0x8CA0, .msg[1].crc.u16_lsb = 0x22CF};
 
 #pragma DATA_ALIGN(led_spi_tx, 4)
 #pragma DATA_SECTION(led_spi_tx, "ramgs0")
@@ -239,7 +234,6 @@ inline void LED_dimming(motor_t* p_motor1, motor_t* p_motor2, uint16_t* p_msg)
 {
     static uint16_t timer_cpt_ms        = 0;
     float32_t       timer_fade_blink    = (float32_t)((timer_cpt_ms < 500)  ? (timer_cpt_ms)    : (1000 - timer_cpt_ms)) / 500.0f;
-//    float32_t       timer_blink         = (timer_cpt_ms < 500)              ? (0.0f)            : (1.0f);
     bool_t          timer_blink         = (timer_cpt_ms < 500)              ? (false)           : (true);
     timer_cpt_ms                        = (timer_cpt_ms < 1000)             ? (timer_cpt_ms + 1): (0);
     uint16_t        motor_state         = MOTOR_STATE_IDLE;
@@ -254,6 +248,7 @@ inline void LED_dimming(motor_t* p_motor1, motor_t* p_motor2, uint16_t* p_msg)
     if((p_motor1->state == MOTOR_STATE_ERROR)   || (p_motor2->state == MOTOR_STATE_ERROR))
         motor_state = MOTOR_STATE_ERROR;
 
+    // Reset LEDs
     p_msg = ws2812b_resetLed(p_msg);
     // Master LED
     switch(motor_state)
