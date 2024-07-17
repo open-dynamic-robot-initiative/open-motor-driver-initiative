@@ -79,15 +79,15 @@
  ***********************************************************************/
 //#define MOTOR12_OVERMODULATION                  (1.15f)
 #define IABC_CUTOFF_FREQ                        (15000.0f)   // vbus voltage loop bandwidth (Hz)
-#define IABC_CUTOFF_TIME_CONST                  (2.0f * UOMODRI_PI * IABC_CUTOFF_FREQ * PWM_PERIOD)
+#define IABC_CUTOFF_TIME_CONST                  (FM_2MULTPI * IABC_CUTOFF_FREQ * PWM_PERIOD)
 #define IABC_LPF_ALPHA                          (IABC_CUTOFF_TIME_CONST / (1.0f + IABC_CUTOFF_TIME_CONST))
 #define IABC_LPF_ONE_M_ALPHA                    (1.0f - IABC_LPF_ALPHA)
 #define VBUS_CUTOFF_FREQ                        (400.0f)    // vbus voltage loop bandwidth (Hz)
-#define VBUS_CUTOFF_TIME_CONST                  (2.0f * UOMODRI_PI * VBUS_CUTOFF_FREQ * PWM_PERIOD)
+#define VBUS_CUTOFF_TIME_CONST                  (FM_2MULTPI * VBUS_CUTOFF_FREQ * PWM_PERIOD)
 #define VBUS_LPF_ALPHA                          (VBUS_CUTOFF_TIME_CONST / (1.0f + VBUS_CUTOFF_TIME_CONST))
 #define VBUS_LPF_ONE_M_ALPHA                    (1.0f - VBUS_LPF_ALPHA)
 #define VEXT_CUTOFF_FREQ                        (4000.0f)   // vbus voltage loop bandwidth (Hz)
-#define VEXT_CUTOFF_TIME_CONST                  (2.0f * UOMODRI_PI * VEXT_CUTOFF_FREQ * PWM_PERIOD)
+#define VEXT_CUTOFF_TIME_CONST                  (FM_2MULTPI * VEXT_CUTOFF_FREQ * PWM_PERIOD)
 #define VEXT_LPF_ALPHA                          (VEXT_CUTOFF_TIME_CONST / (1.0f + VEXT_CUTOFF_TIME_CONST))
 #define VEXT_LPF_ONE_M_ALPHA                    (1.0f - VEXT_LPF_ALPHA)
 

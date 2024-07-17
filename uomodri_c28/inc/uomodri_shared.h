@@ -244,8 +244,8 @@ inline void ENC_getSpeed(encoder_t* p_enc)
         // Compute angle difference
         float32_t deltaTheta    = p_speed->theta[NEW] - p_speed->theta[OLD];
         // Saturate it between -pi and pi
-        deltaTheta              = (deltaTheta > UOMODRI_PI) ? (deltaTheta - FM_2MULTPI) : (deltaTheta);
-        deltaTheta              = (deltaTheta < -UOMODRI_PI)? (deltaTheta + FM_2MULTPI) : (deltaTheta);
+        deltaTheta              = (deltaTheta > FM_PI)  ? (deltaTheta - FM_2MULTPI) : (deltaTheta);
+        deltaTheta              = (deltaTheta < -FM_PI) ? (deltaTheta + FM_2MULTPI) : (deltaTheta);
         // Compute high speed estimation
         p_speed->speedHigh      = deltaTheta * p_speed->speedHighScaler;
 //        newSpeedHigh            = true;
@@ -314,8 +314,8 @@ inline void ENC_getTheta(encoder_t* p_enc)
     //-------------------------------------------------------------------
     float32_t deltaThetaMech        = p_enc->thetaMech[NEW] - p_enc->thetaMech[OLD];
     // Update turnNb
-    p_enc->turnNb                   = (deltaThetaMech > UOMODRI_PI)     ? (p_enc->turnNb - 1) : (p_enc->turnNb);
-    p_enc->turnNb                   = (deltaThetaMech < -UOMODRI_PI)    ? (p_enc->turnNb + 1) : (p_enc->turnNb);
+    p_enc->turnNb                   = (deltaThetaMech > FM_PI)          ? (p_enc->turnNb - 1) : (p_enc->turnNb);
+    p_enc->turnNb                   = (deltaThetaMech < -FM_PI)         ? (p_enc->turnNb + 1) : (p_enc->turnNb);
     // If theta difference is high or low enough, we overflowed or underflowed
     bool_t maxRollOver              = (p_enc->turnNb > ENC_MAX_ROLLOVER)? (true) : (false);
     bool_t minRollOver              = (p_enc->turnNb < ENC_MIN_ROLLOVER)? (true) : (false);

@@ -39,19 +39,20 @@
 #define FM_1DIV3                        (0.33333333333333333333333333333333f) /* 1/3 */
 #endif
 
-#ifndef FM_2MULTPI
-#define FM_2MULTPI                      (6.283185307179586476925286766559f) /* 2xPI */
+#ifndef FM_PI
+#define FM_PI                           (3.1415926535897932384626433832795f) /* PI */
 #endif
 
-//#ifdef __TMS320C28XX_CLA2__
-#if (CLA_CORE_ENABLE)
-#define UOMODRI_PI                      (CLAMATH_PI)
-#else
-#define UOMODRI_PI                      (M_PI)
+#ifndef FM_2MULTPI
+#define FM_2MULTPI                      (6.2831853071795864769252867665590f) /* 2xPI */
+#endif
+
+#ifndef FM_2MULTPIDIV10
+#define FM_2MULTPIDIV10                 (0.6283185307179586476925286766559f) /* 2xPI/10 */
 #endif
 
 #ifndef FM_ROUND2RAD
-#define FM_ROUND2RAD                    ((float32_t)(2.0f * UOMODRI_PI))
+#define FM_ROUND2RAD                    FM_2MULTPI
 #endif
 
 #ifndef FM_RPM2RADPS
