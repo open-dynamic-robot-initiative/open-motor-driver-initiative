@@ -64,7 +64,7 @@
 		</variable>
 		<variable>
 			<name>SYSCONFIG_TOOL_ROOT</name>
-			<value>$%7BSYSCONFIG_TOOL_ROOT%7D</value>
+			<value>$%7BCCS_INSTALL_ROOT%7D/utils/sysconfig_1.20.0</value>
 		</variable>
 		<variable>
 			<name>SYSTEMC_INSTALL</name>

@@ -20,27 +20,17 @@
  * @{
  */
 #define USE_FCT                                 (0)
-// UOMODRI revision
-//#define UOMODRI_V1_ENABLE                       (0)
-//#define UOMODRI_V2_ENABLE                       (1)
-//#define UOMODRI_V3_ENABLE                       (0)
 
 #define USE_UOMODRI_V1                          (1)
 #define USE_UOMODRI_V2                          (2)
 #define USE_UOMODRI_V3                          (3)
 #define USE_UOMODRI_SA_V1                       (4)
-
 #define USE_UOMODRI_REV                         USE_UOMODRI_V3
 #if (USE_UOMODRI_REV == USE_UOMODRI_SA_V1)
 #define USE_DUAL_AXIS_CONFIG                    (0)
 #else
 #define USE_DUAL_AXIS_CONFIG                    (1)
 #endif
-//#if ((UOMODRI_V1_ENABLE) + (UOMODRI_V2_ENABLE) + (UOMODRI_V3_ENABLE) > 1)
-//#error "Only one config must be set @ a time."
-//#elif ((UOMODRI_V1_ENABLE) + (UOMODRI_V2_ENABLE) + (UOMODRI_V3_ENABLE) < 1)
-//#error "@ least one config must be set @ a time."
-//#endif
 // Cores activation ENABLE/DISABLE
 #ifdef CPU1
 #define CPU1_CORE_ENABLE                        (1)

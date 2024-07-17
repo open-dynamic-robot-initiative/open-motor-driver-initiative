@@ -114,7 +114,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="src/usb_hal.c|2838x_flash_lnk_cpu1.cmd|src/PID.c|src/usb_ex1_serial_structs.c|src/usb_ex1_dev_serial.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="src/usb_hal.c|src/PID.c|src/usb_ex1_serial_structs.c|src/usb_ex1_dev_serial.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -302,6 +302,8 @@
 								<option id="com.ti.ccstudio.buildDefinitions.C2000_22.6.compilerID.CLA_SIGNED_COMPARE_WORKAROUND.916460161" name="Workaround for CLA signed integer comparison (--cla_signed_compare_workaround)" superClass="com.ti.ccstudio.buildDefinitions.C2000_22.6.compilerID.CLA_SIGNED_COMPARE_WORKAROUND" value="com.ti.ccstudio.buildDefinitions.C2000_22.6.compilerID.CLA_SIGNED_COMPARE_WORKAROUND.on" valueType="enumerated"/>
 								<option id="com.ti.ccstudio.buildDefinitions.C2000_22.6.compilerID.ASM_LISTING.240153546" name="Generate listing file (--asm_listing, -al)" superClass="com.ti.ccstudio.buildDefinitions.C2000_22.6.compilerID.ASM_LISTING" value="true" valueType="boolean"/>
 								<option id="com.ti.ccstudio.buildDefinitions.C2000_22.6.compilerID.ASM_CROSS_REFERENCE_LISTING.1519293605" name="Generate cross reference assembly listing file (--asm_cross_reference_listing)" superClass="com.ti.ccstudio.buildDefinitions.C2000_22.6.compilerID.ASM_CROSS_REFERENCE_LISTING" value="true" valueType="boolean"/>
+								<option id="com.ti.ccstudio.buildDefinitions.C2000_22.6.compilerID.VERBOSE_DIAGNOSTICS.2109784354" name="Verbose diagnostics (--verbose_diagnostics, -pdv)" superClass="com.ti.ccstudio.buildDefinitions.C2000_22.6.compilerID.VERBOSE_DIAGNOSTICS" value="true" valueType="boolean"/>
+								<option id="com.ti.ccstudio.buildDefinitions.C2000_22.6.compilerID.GEN_PROFILE_INFO.620920656" name="Generate profile feedback data (--gen_profile_info)" superClass="com.ti.ccstudio.buildDefinitions.C2000_22.6.compilerID.GEN_PROFILE_INFO" value="false" valueType="boolean"/>
 								<inputType id="com.ti.ccstudio.buildDefinitions.C2000_22.6.compiler.inputType__C_SRCS.1933316384" name="C Sources" superClass="com.ti.ccstudio.buildDefinitions.C2000_22.6.compiler.inputType__C_SRCS"/>
 								<inputType id="com.ti.ccstudio.buildDefinitions.C2000_22.6.compiler.inputType__CPP_SRCS.2136956025" name="C++ Sources" superClass="com.ti.ccstudio.buildDefinitions.C2000_22.6.compiler.inputType__CPP_SRCS"/>
 								<inputType id="com.ti.ccstudio.buildDefinitions.C2000_22.6.compiler.inputType__ASM_SRCS.874314027" name="Assembly Sources" superClass="com.ti.ccstudio.buildDefinitions.C2000_22.6.compiler.inputType__ASM_SRCS"/>
@@ -354,7 +356,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="2838x_flash_lnk_cpu1.cmd" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name=""/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
