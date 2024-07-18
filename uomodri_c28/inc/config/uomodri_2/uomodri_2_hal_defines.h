@@ -11,6 +11,7 @@
  ***********************************************************************/
 #include "device.h"                 // F2838x Headerfile include File
 
+#if (USE_UOMODRI_REV == USE_UOMODRI_V2)
 /***********************************************************************
  * GPIO DEFINES
  ***********************************************************************/
@@ -190,6 +191,7 @@
                                                     .setValue       = false, \
                                                     .intEnable      = false, \
                                                 }
+#endif
 
 #define CAN_SHDN_EN_NUM                         (14U)
 #define CAN_SHDN_EN_CFG                         GPIO_14_GPIO14
@@ -205,7 +207,7 @@
                                                     .setValue       = true, \
                                                     .intEnable      = false, \
                                                 }
-#endif
+
 
 #define DRV_SPI_SIMO_NUM                        (16U)
 #define DRV_SPI_SIMO_CFG                        GPIO_16_SPIA_SIMO
@@ -2099,4 +2101,5 @@
                                                     p_motor->state                                      = MOTOR_STATE_IDLE; \
                                                     p_motor->error.all                                  = 0U;
 
+#endif /* USE_UOMODRI_REV == USE_UOMODRI_V2 */
 #endif /* __UOMODRI_2_HAL_DEFINES_H__ */

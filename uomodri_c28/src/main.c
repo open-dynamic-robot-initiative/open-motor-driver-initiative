@@ -12,17 +12,10 @@
 
 #include "uomodri_user_defines.h"
 #include "config/uomodri_math.h"
-#if (USE_UOMODRI_REV == USE_UOMODRI_V1)
-//
-#elif (USE_UOMODRI_REV == USE_UOMODRI_V2)
+
 #include "config/uomodri_2/uomodri_2_handlers.h"    // uOmodri v2.x configuration include file
-#elif (USE_UOMODRI_REV == USE_UOMODRI_V3)
 #include "config/uomodri_3/uomodri_3_handlers.h"    // uOmodri v3.x configuration include file
-#elif (USE_UOMODRI_REV == USE_UOMODRI_SA_V1)
-//
-#else
-#error "@ least one config must be set @ a time."
-#endif
+
 #include "communication.h"
 #include "motor_ctrl.h"
 #include "drv8353.h"
@@ -67,6 +60,9 @@ static const int_cfg_t interruptList[] =
 #endif
  {.intNum = UINT32_MAX},        /* END OF ARRAY */
 };
+#ifdef __TMS320C28XX_VCRC__
+motor_t     motor_m3;
+#endif
 
 #pragma DATA_ALIGN(motor_m1, 4)
 #pragma DATA_SECTION(motor_m1, "ClaDataMotor1");

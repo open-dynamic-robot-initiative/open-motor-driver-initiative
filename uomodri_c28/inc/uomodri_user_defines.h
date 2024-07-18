@@ -123,17 +123,8 @@
 #include "config/encoder/broadcom_aedt_9810_z00.h"      // BROADCOM AEDT-9810-Z00 encoder definitions
 #include "config/encoder/cui_amt112s_4096_5000_s.h"     // CUI AMT112S-4096-5000-s encoder definitions
 
-#if (USE_UOMODRI_REV == USE_UOMODRI_V1)
-//
-#elif (USE_UOMODRI_REV == USE_UOMODRI_V2)
-#include "config/uomodri_2/uomodri_2_hal_defines.h" // uOmodri v2.x definitions
-#elif (USE_UOMODRI_REV == USE_UOMODRI_V3)
-#include "config/uomodri_3/uomodri_3_hal_defines.h" // uOmodri v3.x definitions
-#elif (USE_UOMODRI_REV == USE_UOMODRI_SA_V1)
-//
-#else
-#error "@ least one config must be set @ a time."
-#endif
+#include "config/uomodri_2/uomodri_2_hal_defines.h"     // uOmodri v2.x definitions
+#include "config/uomodri_3/uomodri_3_hal_defines.h"     // uOmodri v3.x definitions
 
 /***********************************************************************
  * MOTORS DEFINES
