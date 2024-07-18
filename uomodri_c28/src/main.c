@@ -60,9 +60,6 @@ static const int_cfg_t interruptList[] =
 #endif
  {.intNum = UINT32_MAX},        /* END OF ARRAY */
 };
-#ifdef __TMS320C28XX_VCRC__
-motor_t     motor_m3;
-#endif
 
 #pragma DATA_ALIGN(motor_m1, 4)
 #pragma DATA_SECTION(motor_m1, "ClaDataMotor1");
