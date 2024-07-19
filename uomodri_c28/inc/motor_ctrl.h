@@ -187,7 +187,8 @@ typedef union __error_reg_u__
         uint16_t        pos_rollover    : 1;    /*!< Bits 2   : R/W - Position roll-over occurred */
         uint16_t        drv_fault       : 1;    /*!< Bits 3   : R/W - Motor DRV nFault error */
         uint16_t        com_timeout     : 1;    /*!< Bits 4   : R/W - Communication timeout error */
-        uint16_t        error_RSV1      : 11;   /*!< Bits 5-15: R/W - Reserved */
+        uint16_t        error_RSV1      : 10;   /*!< Bits 5-14: R/W - Reserved */
+        uint16_t        drv_initErr     : 1;    /*!< Bit15    : R/W - Motor DRV bad initialization */
     };
 } error_reg_u;
 

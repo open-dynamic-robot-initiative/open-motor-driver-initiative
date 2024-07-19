@@ -168,7 +168,7 @@ static void MCU_ini(void)
     SysCtl_setLowSpeedClock(SYSCTL_LSPCLK_PRESCALE_1);
 #ifdef DEBUG
     ASSERT(SysCtl_getLowSpeedClock(DEVICE_OSCSRC_FREQ) == UOMODRI_LSPCLK_FREQ);
-#endif
+#endif /* DEBUG */
 #endif
 
     /*
@@ -225,12 +225,8 @@ static void MCU_ini(void)
  */
 inline void LED_dimming(motor_t* p_motor1, motor_t* p_motor2, uint16_t* p_msg)
 {
-    static uint16_t timer_cpt_ms        = 0;
-    float32_t       timer_fade_blink    = (float32_t)((timer_cpt_ms < 500)  ? (timer_cpt_ms)    : (1000 - timer_cpt_ms)) / 500.0f;
-    bool_t          timer_blink         = (timer_cpt_ms < 500)              ? (false)           : (true);
-    timer_cpt_ms                        = (timer_cpt_ms < 1000)             ? (timer_cpt_ms + 1): (0);
-    uint16_t        motor_state         = MOTOR_STATE_IDLE;
-    uint16_t        u16_timer_fade_blink= (uint16_t)(0xff * timer_fade_blink);
+    static uint16_t timer_cpt_ms    = 0;
+    motor_state_e   motor_state     = MOTOR_STATE_IDLE;
 
     if((p_motor1->state & MOTOR_STATE_BOOT)     || (p_motor2->state & MOTOR_STATE_BOOT))
         motor_state = MOTOR_STATE_IDLE;
@@ -242,67 +238,15 @@ inline void LED_dimming(motor_t* p_motor1, motor_t* p_motor2, uint16_t* p_msg)
         motor_state = MOTOR_STATE_ERROR;
 
     // Reset LEDs
-    p_msg = ws2812b_resetLed(p_msg);
+    p_msg       = ws2812b_resetLed(p_msg);
     // Master LED
-    switch(motor_state)
-    {
-    case MOTOR_STATE_INIT_FW:
-    case MOTOR_STATE_INIT_REV:
-    case MOTOR_STATE_INIT_TEST:
-    case MOTOR_STATE_INIT_FIX:
-        p_msg = ws2812b_writeLed(u16_timer_fade_blink, 0, u16_timer_fade_blink, p_msg); //Magenta fade,
-        break;
-    case MOTOR_STATE_READY:
-    case MOTOR_STATE_STOP:
-        p_msg = ws2812b_writeLed(0, u16_timer_fade_blink, 0, p_msg);//Green fade, Active control
-        break;
-    case MOTOR_STATE_ERROR:
-        p_msg = ws2812b_writeLed((uint16_t)(0xff * timer_blink), 0, 0, p_msg);//red fade, error control
-        break;
-    case MOTOR_STATE_IDLE:
-    default:
-        p_msg = ws2812b_writeLed(0,  0, u16_timer_fade_blink, p_msg);//blue fade
-    }
+    //p_msg       = ws2812b_dimmingLed(motor_state, timer_cpt_ms, p_msg);
     //MOTOR_1 LED
-    switch(p_motor1->state)
-    {
-    case MOTOR_STATE_INIT_FW:
-    case MOTOR_STATE_INIT_REV:
-    case MOTOR_STATE_INIT_TEST:
-    case MOTOR_STATE_INIT_FIX:
-        p_msg = ws2812b_writeLed(u16_timer_fade_blink, 0, u16_timer_fade_blink, p_msg); //Magenta fade,
-        break;
-    case MOTOR_STATE_READY:
-    case MOTOR_STATE_STOP:
-        p_msg = ws2812b_writeLed(0, u16_timer_fade_blink, 0, p_msg);//Green fade, Active control
-        break;
-    case MOTOR_STATE_ERROR:
-        p_msg = ws2812b_writeLed((uint16_t)(0xff * timer_blink), 0, 0, p_msg);//red fade, error control
-        break;
-    case MOTOR_STATE_IDLE:
-    default:
-        p_msg = ws2812b_writeLed(0,  0, u16_timer_fade_blink, p_msg);//blue fade
-    }
+    //p_msg       = ws2812b_dimmingLed(p_motor1->state, timer_cpt_ms, p_msg);
     //MOTOR_2 LED
-    switch(p_motor2->state)
-    {
-    case MOTOR_STATE_INIT_FW:
-    case MOTOR_STATE_INIT_REV:
-    case MOTOR_STATE_INIT_TEST:
-    case MOTOR_STATE_INIT_FIX:
-        p_msg = ws2812b_writeLed(u16_timer_fade_blink, 0, u16_timer_fade_blink, p_msg); //Magenta fade,
-        break;
-    case MOTOR_STATE_READY:
-    case MOTOR_STATE_STOP:
-        p_msg = ws2812b_writeLed(0, u16_timer_fade_blink, 0, p_msg);//Green fade, Active control
-        break;
-    case MOTOR_STATE_ERROR:
-        p_msg = ws2812b_writeLed((uint16_t)(0xff * timer_blink), 0, 0, p_msg);//red fade, error control
-        break;
-    case MOTOR_STATE_IDLE:
-    default:
-        p_msg = ws2812b_writeLed(0,  0, u16_timer_fade_blink, p_msg);//blue fade
-    }
+    //p_msg       = ws2812b_dimmingLed(p_motor2->state, timer_cpt_ms, p_msg);
+    // millisecond timer increment
+    timer_cpt_ms= (timer_cpt_ms < 1000U) ? (timer_cpt_ms + 1): (0U);
 
     return;
 }
@@ -314,11 +258,6 @@ inline void LED_dimming(motor_t* p_motor1, motor_t* p_motor2, uint16_t* p_msg)
  */
 void MOT_initStruct(motor_t* p_motor, uint16_t motor_id)
 {
-//    if(motor_id == MOTOR_1)
-//    {UOMODRI_MOTOR1_STRUCT_INIT_DEF}
-//    else
-//    {UOMODRI_MOTOR2_STRUCT_INIT_DEF}
-//    UOMODRI_MOTOR12_STRUCT_INIT_DEF
     if(motor_id == MOTOR_1)
     {
         //--- MOTOR_1 -----------------------------------------------------------

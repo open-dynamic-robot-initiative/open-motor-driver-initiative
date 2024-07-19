@@ -25,7 +25,7 @@ bool_t DRV_ini(const drv_cfg_t* p_drvCfg, drv_reg_t* p_drvReg)
     bool_t drv_err      = true;
     if((p_drvCfg != NULL) && (p_drvReg != NULL))
     {
-        if(DRV_Enable(p_drvCfg) == 0)
+        if(!DRV_Enable(p_drvCfg))
         {
             if(DRV_SetConfig(p_drvCfg, p_drvReg))
             {
@@ -45,13 +45,8 @@ bool_t DRV_ini(const drv_cfg_t* p_drvCfg, drv_reg_t* p_drvReg)
  */
 static uint32_t DRV_Enable(const drv_cfg_t* p_drvCfg)
 {
-    drv_reg_t drv_all_regs      = {.stat_reg_00 = 0, .stat_reg_01 = 0,
-                                   .ctrl_reg_02 = 0, .ctrl_reg_03 = 0,
-                                   .ctrl_reg_04 = 0, .ctrl_reg_05 = 0,
-                                   .ctrl_reg_06 = 0, .ctrl_reg_07 = 0};
     drv_stat0x_u drv_stat_regs  = {.all = 0};
     uint16_t cpt_time_out       = 0;
-//    uint16_t test_status        = 1;
     bool_t drv_enable           = true;
     // Enable the DRV8353
     GPIO_writePin(p_drvCfg->gpioNumber_EN, 1);
@@ -60,40 +55,12 @@ static uint32_t DRV_Enable(const drv_cfg_t* p_drvCfg)
     // Make sure the FAULT bit is not set during startup
     while(drv_enable && (DRV_readOne(p_drvCfg, DRV_ADDRESS_STATUS_0) & FLT_STATUS_FAULT_Msk))
         drv_enable  = (++cpt_time_out < 1000) ? (true) : (false);
-//    while((++cpt_time_out < 1000) && DRV_readOne(p_drvCfg, DRV_ADDRESS_STATUS_0));
-//            drv_enable  = (++cpt_time_out < 1000) ? (true) : (false);
-
-    drv_all_regs.stat_reg_00.all= DRV_readOne(p_drvCfg, DRV_ADDRESS_STATUS_0);
-    drv_all_regs.stat_reg_01.all= DRV_readOne(p_drvCfg, DRV_ADDRESS_STATUS_1);
-    drv_all_regs.ctrl_reg_02.all= DRV_readOne(p_drvCfg, DRV_ADDRESS_CONTROL_2);
-    drv_all_regs.ctrl_reg_03.all= DRV_readOne(p_drvCfg, DRV_ADDRESS_CONTROL_3);
-    drv_all_regs.ctrl_reg_04.all= DRV_readOne(p_drvCfg, DRV_ADDRESS_CONTROL_4);
-    drv_all_regs.ctrl_reg_05.all= DRV_readOne(p_drvCfg, DRV_ADDRESS_CONTROL_5);
-    drv_all_regs.ctrl_reg_06.all= DRV_readOne(p_drvCfg, DRV_ADDRESS_CONTROL_6);
-    drv_all_regs.ctrl_reg_07.all= DRV_readOne(p_drvCfg, DRV_ADDRESS_CONTROL_7);
-
-    //    if((DRV_readOne(p_drvCfg, DRV_ADDRESS_STATUS_0) & FLT_STATUS_FAULT_Msk) == 0)
-//        drv_enable = true;
-//    if(DRV_readOne(p_drvCfg, DRV_ADDRESS_STATUS_0))
-//        return (1);
-
-//    test_status = DRV_readOne(p_drvCfg, DRV_ADDRESS_CONTROL_2);
-//    if (test_status == 0)
-//        test_status = DRV_readOne(p_drvCfg, DRV_ADDRESS_STATUS_1);
-//    test_status = DRV_readOne(p_drvCfg, DRV_ADDRESS_STATUS_1);
     // Wait for the DRV8353 to go through start up sequence
     DEVICE_DELAY_US(1000U);
-//    test_status = GPIO_readPin(p_drvCfg->gpioNumber_FAULT) ;
-//    test_status = 1;
-    // Check that fault pin is similar as register bit. FAULT is active low.
-    //drv_enable      = drv_enable && GPIO_readPin(p_drvCfg->gpioNumber_FAULT);
-//    drv_status.stat_reg_00.FAULT = !GPIO_readPin(p_drvCfg->gpioNumber_FAULT);
-
-    drv_stat_regs.stat00       = drv_all_regs.stat_reg_00;
-    drv_stat_regs.stat01       = drv_all_regs.stat_reg_01;
-    drv_stat_regs.stat00.FAULT = !GPIO_readPin(p_drvCfg->gpioNumber_FAULT);
-//    if (GPIO_readPin(p_drvCfg->gpioNumber_FAULT))
-//        return (2);
+    // Get the latest states of the status registers.
+    drv_stat_regs.stat00.all    = DRV_readOne(p_drvCfg, DRV_ADDRESS_STATUS_0);
+    drv_stat_regs.stat01.all    = DRV_readOne(p_drvCfg, DRV_ADDRESS_STATUS_1);
+    drv_stat_regs.stat00.FAULT  = !GPIO_readPin(p_drvCfg->gpioNumber_FAULT);
     return(drv_stat_regs.all);
 }
 
