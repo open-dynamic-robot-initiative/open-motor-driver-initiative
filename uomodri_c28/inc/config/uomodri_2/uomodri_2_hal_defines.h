@@ -11,7 +11,6 @@
  ***********************************************************************/
 #include "device.h"                 // F2838x Headerfile include File
 
-#if (USE_UOMODRI_REV == USE_UOMODRI_V2)
 /***********************************************************************
  * GPIO DEFINES
  ***********************************************************************/
@@ -2101,5 +2100,4 @@
                                                     p_motor->state                                      = MOTOR_STATE_IDLE; \
                                                     p_motor->error.all                                  = 0U;
 
-#endif /* USE_UOMODRI_REV == USE_UOMODRI_V2 */
 #endif /* __UOMODRI_2_HAL_DEFINES_H__ */

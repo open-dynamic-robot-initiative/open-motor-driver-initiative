@@ -73,7 +73,7 @@ uint16_t* ws2812b_dimmingLed(motor_t* p_motor, uint16_t timer_cpt_ms, uint16_t* 
         else if(p_motor->error.com_timeout)
             p_msg = ws2812b_writeLed(blink, 0, 0, p_msg);//red fade, error control
         else if(p_motor->error.drv_initErr)
-            p_msg = ws2812b_writeLed(blink, 0, 0, p_msg);//red fade, error contro
+            p_msg = ws2812b_writeLed(blink, 0, 0, p_msg);//red fade, error control
 //        p_msg = ws2812b_writeLed(blink, 0, 0, p_msg);//red fade, error control
         break;
     case MOTOR_STATE_IDLE:

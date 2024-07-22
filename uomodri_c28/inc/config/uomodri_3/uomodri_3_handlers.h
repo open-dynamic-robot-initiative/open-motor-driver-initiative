@@ -1,5 +1,5 @@
 /*
- * File name: uomodri_3_1_hal_handlers.h
+ * File name: uomodri_3_handlers.h
  * Description: Header file containing the uomodri V3 structure for hal config.
  */
 
@@ -20,7 +20,6 @@
 
 #include "uomodri_3_hal_defines.h"      // uOmodri v3.x configuration include file
 
-#if (USE_UOMODRI_REV == USE_UOMODRI_V3)
 /***********************************************************************
  * VARIABLES
  ***********************************************************************/
@@ -412,5 +411,4 @@ static drv_reg_t drv_reg[] =
  MOTOR2_DRV_REG_DEF,
 };
 
-#endif /* USE_UOMODRI_REV == USE_UOMODRI_V3 */
 #endif /* __UOMODRI_3_HANDLERS_H__ */

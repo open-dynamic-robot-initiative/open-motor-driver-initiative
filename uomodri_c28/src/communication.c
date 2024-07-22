@@ -1,7 +1,9 @@
 /***********************************************************************
  * INCLUDES
  ***********************************************************************/
+#ifdef __TMS320C28XX_VCRC__
 #include "vcu2/vcu2_crc.h"
+#endif
 #include "device.h"
 
 #include "config/uomodri_math.h"

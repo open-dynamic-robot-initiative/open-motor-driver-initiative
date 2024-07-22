@@ -11,7 +11,6 @@
  ***********************************************************************/
 #include "device.h"                 // F2838x Headerfile include File
 
-#if (USE_UOMODRI_REV == USE_UOMODRI_V3)
 /***********************************************************************
  * GPIO DEFINES
  ***********************************************************************/
@@ -1911,5 +1910,4 @@
 // Redefine LSPCLK to run at 200MHz (for SPI & SCI bit clocks)
 #define UOMODRI_LSPCLK_FREQ                      DEVICE_SYSCLK_FREQ
 
-#endif /* USE_UOMODRI_REV == USE_UOMODRI_V3 */
 #endif /* __UOMODRI_3_HAL_DEFINES_H__ */

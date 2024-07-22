@@ -13,8 +13,11 @@
 #include "uomodri_user_defines.h"
 #include "config/uomodri_math.h"
 
+#if (USE_UOMODRI_REV == USE_UOMODRI_V2)
 #include "config/uomodri_2/uomodri_2_handlers.h"    // uOmodri v2.x configuration include file
+#elif (USE_UOMODRI_REV == USE_UOMODRI_V3)
 #include "config/uomodri_3/uomodri_3_handlers.h"    // uOmodri v3.x configuration include file
+#endif
 
 #include "communication.h"
 #include "motor_ctrl.h"

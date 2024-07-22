@@ -118,13 +118,27 @@
 /***********************************************************************
  * MOTORS \& ENCODERS INCLUDES
  ***********************************************************************/
+#if (MOTOR1_PARAMS == USE_TMOTOR_MN4004_KV300) || (MOTOR2_PARAMS == USE_TMOTOR_MN4004_KV300)
 #include "config/motor/tmotor_mn4004_kv300.h"           // T-MOTOR MN4000 KV300 motor definitions
+#endif
+#if (MOTOR1_PARAMS == USE_MYACTUATOR_RMDX8H) || (MOTOR2_PARAMS == USE_MYACTUATOR_RMDX8H)
 #include "config/motor/myactuator_rmdx8h.h"             // MYACTUATOR RMDX8H motor definitions
-#include "config/encoder/broadcom_aedt_9810_z00.h"      // BROADCOM AEDT-9810-Z00 encoder definitions
-#include "config/encoder/cui_amt112s_4096_5000_s.h"     // CUI AMT112S-4096-5000-s encoder definitions
+#endif
 
+#if (ENCODER1_PARAMS == USE_BROADCOM_AEDT_9810_Z00) || (ENCODER2_PARAMS == USE_BROADCOM_AEDT_9810_Z00)
+#include "config/encoder/broadcom_aedt_9810_z00.h"      // BROADCOM AEDT-9810-Z00 encoder definitions
+#endif
+#if (ENCODER1_PARAMS == USE_CUI_AMT112S_4096_5000_S) || (ENCODER2_PARAMS == USE_CUI_AMT112S_4096_5000_S)
+#include "config/encoder/cui_amt112s_4096_5000_s.h"     // CUI AMT112S-4096-5000-s encoder definitions
+#endif
+
+#if (USE_UOMODRI_REV == USE_UOMODRI_V2)
 #include "config/uomodri_2/uomodri_2_hal_defines.h"     // uOmodri v2.x definitions
+#elif (USE_UOMODRI_REV == USE_UOMODRI_V3)
 #include "config/uomodri_3/uomodri_3_hal_defines.h"     // uOmodri v3.x definitions
+#else
+#error "@ least one config must be set @ a time."
+#endif
 
 /***********************************************************************
  * MOTORS DEFINES
