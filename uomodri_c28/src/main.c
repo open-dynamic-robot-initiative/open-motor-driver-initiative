@@ -109,6 +109,12 @@ com_bus_e   com_bus_select      = COM_NO_BUS_DEFINED;
 #pragma DATA_SECTION(global_1ms_tmr_cnt, "ramgs0")
 uint32_t    global_1ms_tmr_cnt  = 0U;
 
+//#pragma DATA_ALIGN(led_blink_ctrl, 2)
+//#pragma DATA_SECTION(led_blink_ctrl, "ramgs0")
+//led_blink   led_blink_ctrl[3]   = {{.fade_blink = 0U, .error_blink = 0U},
+//                                   {.fade_blink = 0U, .error_blink = 0U},
+//                                   {.fade_blink = 0U, .error_blink = 0U}};
+
 /***********************************************************************
  * EXTERNAL VARIABLES
  ***********************************************************************/
@@ -243,11 +249,11 @@ inline void LED_dimming(motor_t* p_motor1, motor_t* p_motor2, uint16_t* p_msg)
     // Reset LEDs
     p_msg       = ws2812b_resetLed(p_msg);
     // Master LED
-    //p_msg       = ws2812b_dimmingLed(motor_state, timer_cpt_ms, p_msg);
+    p_msg       = ws2812b_dimmingLed(motor_state, timer_cpt_ms, p_msg);
     //MOTOR_1 LED
-    //p_msg       = ws2812b_dimmingLed(p_motor1->state, timer_cpt_ms, p_msg);
+    p_msg       = ws2812b_dimmingLed(p_motor1->state, timer_cpt_ms, p_msg);
     //MOTOR_2 LED
-    //p_msg       = ws2812b_dimmingLed(p_motor2->state, timer_cpt_ms, p_msg);
+    p_msg       = ws2812b_dimmingLed(p_motor2->state, timer_cpt_ms, p_msg);
     // millisecond timer increment
     timer_cpt_ms= (timer_cpt_ms < 1000U) ? (timer_cpt_ms + 1): (0U);
 

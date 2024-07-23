@@ -683,6 +683,7 @@ bool_t MOT_runControl(motor_t* p_motor)
     uint16_t        motor_id    = p_motor->id;
     bool_t          evt_flag    = false;
     bool_t          start       = cmd_reg.motorEnable && cmd_reg.systemEnable;
+    bool_t          test        = __mgtu(p_cmd->cptTimeout, p_cmd->timeoutRef); //(p_cmd->cptTimeout > p_cmd->timeoutRef) ? (1) : (0);
     p_enc->flags.indexOffset    = cmd_reg.encOffsetEnable;
 
     // Read currents in 3 phases + Vbus
@@ -696,11 +697,12 @@ bool_t MOT_runControl(motor_t* p_motor)
 
     // Save number of cycles elapsed since control loop startup
     p_motor->clCycleNb          = EPWM_getTimeBaseCounterValue(p_motor->epwmBase[CHANNEL_1]);
-    p_err->drv_fault            = !GPIO_readPin(p_motor->drvFaultNum) || periph_reg.drv_initErr || p_err->drv_fault;
-    p_err->pos_rollover         = (p_enc->flags.rollOverError && cmd_reg.rollOverEnable)        || p_err->pos_rollover;
-    p_err->com_timeout          = ((p_cmd->cptTimeout > p_cmd->timeoutRef) && p_cmd->timeoutRef)|| p_err->com_timeout;
-    p_err->enc_indexErr         = (p_enc->flags.indexDetect && p_enc->flags.indexError)         || p_err->enc_indexErr;
-    p_err->enc_alignErr         = p_enc->flags.alignError                                       || p_err->enc_alignErr;
+    p_err->drv_fault            = !GPIO_readPin(p_motor->drvFaultNum)                   || p_err->drv_fault;
+    p_err->drv_initErr          = periph_reg.drv_initErr                                || p_err->drv_initErr;
+    p_err->pos_rollover         = (p_enc->flags.rollOverError && cmd_reg.rollOverEnable)|| p_err->pos_rollover;
+    p_err->com_timeout          = (test && p_cmd->timeoutRef)                           || p_err->com_timeout;
+    p_err->enc_indexErr         = (p_enc->flags.indexDetect && p_enc->flags.indexError) || p_err->enc_indexErr;
+    p_err->enc_alignErr         = p_enc->flags.alignError                               || p_err->enc_alignErr;
     p_motor->state              = (p_err->all)              ? (MOTOR_STATE_ERROR)           : (p_motor->state);
 
     switch(p_motor->state)
@@ -753,7 +755,10 @@ bool_t MOT_runControl(motor_t* p_motor)
 
     case MOTOR_STATE_INIT_TEST:
         p_foc->initDiff         = p_foc->initPosEnc[REV] - p_foc->initPosEnc[FW];
-        p_enc->flags.alignError = ((p_foc->initDiff < p_foc->initErr[MIN]) || (p_foc->initDiff > p_foc->initErr[MAX])) ? (true) : (false);
+//        p_enc->flags.alignError = ((p_foc->initDiff < p_foc->initErr[MIN]) || (p_foc->initDiff > p_foc->initErr[MAX])) ? (true) : (false);
+        test                    = __mlt(p_foc->initDiff, p_foc->initErr[MIN]); //(p_foc->initDiff < p_foc->initErr[MIN])
+        test                   |= __mgt(p_foc->initDiff, p_foc->initErr[MAX]); //(p_foc->initDiff > p_foc->initErr[MAX])
+        p_enc->flags.alignError = (test)                    ? (true)                        : (false);
         p_foc->idRef            = (motor_id == MOTOR_1)     ? (MOTOR1_CURRENT_INIT_MAX)     : (MOTOR2_CURRENT_INIT_MAX);
         p_motor->state          = (start)                   ? (MOTOR_STATE_INIT_FIX)        : (MOTOR_STATE_IDLE);
         FOC_runControl(p_foc);
@@ -821,7 +826,7 @@ bool_t MOT_runControl(motor_t* p_motor)
     periph_u        periph_reg      = {.all = p_cmd->periphField.all};
     uint16_t        motor_id        = p_motor->id;
     bool_t          start           = cmd_reg.motorEnable && cmd_reg.systemEnable;
-    bool_t          time_test       = __mgtu(p_cmd->cptTimeout, p_cmd->timeoutRef); //(p_cmd->cptTimeout > p_cmd->timeoutRef) ? (1) : (0);
+    bool_t          test            = __mgtu(p_cmd->cptTimeout, p_cmd->timeoutRef); //(p_cmd->cptTimeout > p_cmd->timeoutRef) ? (1) : (0);
     p_enc->flags.indexOffset        = cmd_reg.encOffsetEnable;
 
     //  Read currents in 3 phases + Vbus
@@ -838,7 +843,7 @@ bool_t MOT_runControl(motor_t* p_motor)
     p_err->drv_fault                = !GPIO_readPin(p_motor->drvFaultNum)                   || p_err->drv_fault;
     p_err->drv_initErr              = periph_reg.drv_initErr                                || p_err->drv_initErr;
     p_err->pos_rollover             = (p_enc->flags.rollOverError && cmd_reg.rollOverEnable)|| p_err->pos_rollover;
-    p_err->com_timeout              = (time_test && p_cmd->timeoutRef)                      || p_err->com_timeout;
+    p_err->com_timeout              = (test && p_cmd->timeoutRef)                           || p_err->com_timeout;
     p_err->enc_indexErr             = (p_enc->flags.indexDetect && p_enc->flags.indexError) || p_err->enc_indexErr;
     p_err->enc_alignErr             = p_enc->flags.alignError                               || p_err->enc_alignErr;
     if(p_err->all)
@@ -938,9 +943,9 @@ bool_t MOT_runControl(motor_t* p_motor)
         p_foc->initDiff             = p_foc->initPosEnc[REV] - p_foc->initPosEnc[FW];
 //        p_enc->flags.alignError     = ((p_foc->initDiff < p_foc->initErr[MIN]) || (p_foc->initDiff > p_foc->initErr[MAX])) ? (true) : (false);
 //        p_enc->flags.alignError     = (__mlt(p_foc->initDiff, p_foc->initErr[MIN]) || __mgt(p_foc->initDiff, p_foc->initErr[MAX])) ? (true) : (false);
-        time_test                   = __mlt(p_foc->initDiff, p_foc->initErr[MIN]);
-        time_test                  |= __mgt(p_foc->initDiff, p_foc->initErr[MAX]);
-        p_enc->flags.alignError     = (time_test) ? (true) : (false);
+        test                        = __mlt(p_foc->initDiff, p_foc->initErr[MIN]); //(p_foc->initDiff < p_foc->initErr[MIN])
+        test                       |= __mgt(p_foc->initDiff, p_foc->initErr[MAX]); //(p_foc->initDiff > p_foc->initErr[MAX])
+        p_enc->flags.alignError     = (test) ? (true) : (false);
         FOC_runControl(p_foc);
         MOT_runCommand(p_motor->epwmBase[CHANNEL_1], p_foc->dtc_u);
         MOT_runCommand(p_motor->epwmBase[CHANNEL_2], p_foc->dtc_v);

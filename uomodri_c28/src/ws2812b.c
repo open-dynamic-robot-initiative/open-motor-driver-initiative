@@ -43,13 +43,13 @@ uint16_t* ws2812b_writeLed(uint8_t red, uint8_t green, uint8_t blue, uint16_t* p
  * @param[in]   timer_cpt_ms    Current millisecond counter value.
  * @param[out]  *p_msg          Pointer on the led message created.
  */
-uint16_t* ws2812b_dimmingLed(motor_t* p_motor, uint16_t timer_cpt_ms, uint16_t* p_msg)
+uint16_t* ws2812b_dimmingLed(motor_state_e motor_state, uint16_t timer_cpt_ms, uint16_t* p_msg)
 {
     float32_t   fade_blink_f32  = (float32_t)((timer_cpt_ms < 500U) ? (timer_cpt_ms): (1000U - timer_cpt_ms)) / 500.0f;
     uint8_t     fade_blink_u8   = (uint8_t)(0x00FF * fade_blink_f32);
     uint8_t     blink           = (timer_cpt_ms < 500U)             ? (0x00)        : (0xFF);
 
-    switch(p_motor->state)
+    switch(motor_state)
     {
     case MOTOR_STATE_INIT_FW:
     case MOTOR_STATE_INIT_REV:
@@ -62,19 +62,7 @@ uint16_t* ws2812b_dimmingLed(motor_t* p_motor, uint16_t timer_cpt_ms, uint16_t* 
         p_msg = ws2812b_writeLed(0, fade_blink_u8, 0, p_msg);//Green fade, Active control
         break;
     case MOTOR_STATE_ERROR:
-        if(p_motor->error.enc_indexErr)
-            p_msg = ws2812b_writeLed(blink, 0, 0, p_msg);//red fade, error control
-        else if(p_motor->error.enc_alignErr)
-            p_msg = ws2812b_writeLed(blink, 0, 0, p_msg);//red fade, error control
-        else if(p_motor->error.pos_rollover)
-            p_msg = ws2812b_writeLed(blink, 0, 0, p_msg);//red fade, error control
-        else if(p_motor->error.drv_fault)
-            p_msg = ws2812b_writeLed(blink, 0, 0, p_msg);//red fade, error control
-        else if(p_motor->error.com_timeout)
-            p_msg = ws2812b_writeLed(blink, 0, 0, p_msg);//red fade, error control
-        else if(p_motor->error.drv_initErr)
-            p_msg = ws2812b_writeLed(blink, 0, 0, p_msg);//red fade, error control
-//        p_msg = ws2812b_writeLed(blink, 0, 0, p_msg);//red fade, error control
+        p_msg = ws2812b_writeLed(blink, 0, 0, p_msg);//red fade, error control
         break;
     case MOTOR_STATE_IDLE:
     default:
