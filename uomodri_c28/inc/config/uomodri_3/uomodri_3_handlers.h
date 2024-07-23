@@ -91,19 +91,19 @@ static const gpio_cfg_t gpioPinsCfgList[] =
  },
 #endif
  /* PWM MOTOR_1 configuration pins */
- MOTOR1_PWM1_CHA_DEF,
- MOTOR1_PWM1_CHB_DEF,
- MOTOR1_PWM2_CHA_DEF,
- MOTOR1_PWM2_CHB_DEF,
- MOTOR1_PWM3_CHA_DEF,
- MOTOR1_PWM3_CHB_DEF,
+ MOTOR1_PWM1_CHA_DEF,               /* MOTOR_1 - PWM1 ChA pin */
+ MOTOR1_PWM1_CHB_DEF,               /* MOTOR_1 - PWM1 ChB pin */
+ MOTOR1_PWM2_CHA_DEF,               /* MOTOR_1 - PWM2 ChA pin */
+ MOTOR1_PWM2_CHB_DEF,               /* MOTOR_1 - PWM2 ChB pin */
+ MOTOR1_PWM3_CHA_DEF,               /* MOTOR_1 - PWM3 ChA pin */
+ MOTOR1_PWM3_CHB_DEF,               /* MOTOR_1 - PWM3 ChB pin */
  /* PWM MOTOR_2 configuration pins */
- MOTOR2_PWM1_CHA_DEF,
- MOTOR2_PWM1_CHB_DEF,
- MOTOR2_PWM2_CHA_DEF,
- MOTOR2_PWM2_CHB_DEF,
- MOTOR2_PWM3_CHA_DEF,
- MOTOR2_PWM3_CHB_DEF,
+ MOTOR2_PWM1_CHA_DEF,               /* MOTOR_2 - PWM1 ChA pin */
+ MOTOR2_PWM1_CHB_DEF,               /* MOTOR_2 - PWM1 ChB pin */
+ MOTOR2_PWM2_CHA_DEF,               /* MOTOR_2 - PWM2 ChA pin */
+ MOTOR2_PWM2_CHB_DEF,               /* MOTOR_2 - PWM2 ChB pin */
+ MOTOR2_PWM3_CHA_DEF,               /* MOTOR_2 - PWM3 ChA pin */
+ MOTOR2_PWM3_CHB_DEF,               /* MOTOR_2 - PWM3 ChA pin */
  /* Quadrature encoder #1 */
  MOTOR1_ENC_CHA_DEF,
  MOTOR1_ENC_CHB_DEF,
@@ -113,30 +113,30 @@ static const gpio_cfg_t gpioPinsCfgList[] =
  MOTOR2_ENC_CHB_DEF,
  MOTOR2_ENC_CHI_DEF,
  /* DRV communication */
- DRV_SPI_SIMO_DEF,
- DRV_SPI_SOMI_DEF,
- DRV_SPI_CLK_DEF,
+ DRV_SPI_SIMO_DEF,                  /* DRV SPI SIMO (MCU -> DRV) pin */
+ DRV_SPI_SOMI_DEF,                  /* DRV SPI SOMI (DRV -> MCU) pin */
+ DRV_SPI_CLK_DEF,                   /* DRV SPI SCLK (MCU -> DRV) pin */
+ MOTOR1_DRV_SPI_CS_DEF,             /* MOTOR1 - DRV SPI CS\ (MCU -> DRV) pin */
+ MOTOR2_DRV_SPI_CS_DEF,             /* MOTOR2 - DRV SPI CS\ (MCU -> DRV) pin */
  /* DRV1 configuration pins */
- MOTOR1_DRV_EN_DEF,
- MOTOR1_DRV_SPI_CS_DEF,
- MOTOR1_DRV_FAULT_DEF,
+ MOTOR1_DRV_EN_DEF,                 /* MOTOR1 - DRV enable pin */
+ MOTOR1_DRV_FAULT_DEF,              /* MOTOR1 - DRV fault pin */
  /* DRV2 configuration pins */
- MOTOR2_DRV_EN_DEF,
- MOTOR2_DRV_SPI_CS_DEF,
- MOTOR2_DRV_FAULT_DEF,
+ MOTOR2_DRV_EN_DEF,                 /* MOTOR2 - DRV enable pin */
+ MOTOR2_DRV_FAULT_DEF,              /* MOTOR2 - DRV fault pin */
  /* OMODRI communication */
- COM_SPI_SIMO_DEF,
- COM_SPI_SOMI_DEF,
- COM_SPI_CLK_DEF,
- COM_SPI_CS_DEF,
+ COM_SPI_SIMO_DEF,                  /* COM SPI SIMO (MASTER -> MCU) pin */
+ COM_SPI_SOMI_DEF,                  /* COM SPI SOMI (MCU -> MASTER) pin */
+ COM_SPI_CLK_DEF,                   /* COM SPI SCLK (MASTER -> MCU) pin */
+ COM_SPI_CS_DEF,                    /* COM SPI CS\  (MASTER -> MCU) pin */
  /* RGB LED communication */
- LED_SPI_SIMO_DEF,
+ LED_SPI_SIMO_DEF,                  /* LED SPI SIMO (MCU -> LED) pin */
  /* RS485 BUS IO pins */
- RS485_TX_DEF,
- RS485_RX_DEF,
- CAN_SHDN_EN_DEF,
- CAN_RS485_MUX_SEL_DEF,
- RS485_TX_EN_DEF,
+ RS485_TX_DEF,                      /* RS485 Tx pin */
+ RS485_RX_DEF,                      /* RS485 Rx pin */
+ RS485_TX_EN_DEF,                   /* RS485 Tx enable pin */
+ CAN_SHDN_EN_DEF,                   /* CAN-FD shutdown pin */
+ CAN_RS485_MUX_SEL_DEF,             /* RS485/CAN-FD multiplexer command pin */
  /* Debug pins */
  DBG_PIN3_DEF,                      /* Debug pin 3 */
  DBG_PIN2_DEF,                      /* Debug pin 2 */

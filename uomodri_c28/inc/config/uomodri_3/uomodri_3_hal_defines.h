@@ -247,9 +247,9 @@
 #define IMU_SPI_ACCEL_CS_CLEAR                  (HWREG(GPIODATA_BASE + GPIO_O_GPBCLEAR) = GPIO_GPBCLEAR_GPIO32)
 #define IMU_SPI_ACCEL_CS_TOGGLE                 (HWREG(GPIODATA_BASE + GPIO_O_GPBTOGGLE)= GPIO_GPBTOGGLE_GPIO32)
 
-#define IMU_IT_NUM                              (37U)
-#define IMU_IT_CFG                              GPIO_37_GPIO37
-#define IMU_IT_READ                             (HWREG(GPIODATA_BASE + GPIO_O_GPBDAT) & GPIO_GPBDAT_GPIO37)
+#define IMU_IT1_NUM                             (37U)
+#define IMU_IT1_CFG                             GPIO_37_GPIO37
+#define IMU_IT1_READ                            (HWREG(GPIODATA_BASE + GPIO_O_GPBDAT) & GPIO_GPBDAT_GPIO37)
 
 #if UART_BUS_ENABLE
 #define UART_ON_USB_TX_NUM                      (42U)

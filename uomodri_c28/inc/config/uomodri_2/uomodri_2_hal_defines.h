@@ -207,7 +207,6 @@
                                                     .intEnable      = false, \
                                                 }
 
-
 #define DRV_SPI_SIMO_NUM                        (16U)
 #define DRV_SPI_SIMO_CFG                        GPIO_16_SPIA_SIMO
 #define DRV_SPI_SIMO_DEF                        { \
@@ -533,6 +532,7 @@
 #define RS485_RX_EN_DEF                         { \
                                                     .pinNum         = RS485_RX_EN_NUM, \
                                                     .fctMux         = RS485_RX_EN_CFG, \
+                                                    .pinType        = GPIO_PIN_TYPE_OD, \
                                                     .direction      = GPIO_DIR_MODE_OUT, \
                                                     .samplingInMode = GPIO_QUAL_ASYNC, \
                                                     .setValue       = false, \
