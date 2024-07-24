@@ -879,8 +879,7 @@ bool_t MOT_runControl(motor_t* p_motor)
             p_foc->idRef           += MOTOR2_CURRENT_INIT_STEP;
             p_foc->initPosStep     -= MOTOR2_POSITION_INIT_STEP;
         }
-        if(__mgtu(p_motor->itCnt, p_foc->initPosCnt))
-//        if(p_motor->itCnt > p_foc->initPosCnt)
+        if(__mgtu(p_motor->itCnt, p_foc->initPosCnt)) // (p_motor->itCnt > p_foc->initPosCnt)
         {
             p_motor->state          = MOTOR_STATE_INIT_REV;
             p_motor->itCnt          = 0U;
@@ -912,8 +911,7 @@ bool_t MOT_runControl(motor_t* p_motor)
             p_foc->idRef            = MOTOR2_CURRENT_INIT_MAX;
             p_foc->initPosStep     += MOTOR2_POSITION_INIT_STEP;
         }
-        if(__mgtu(p_motor->itCnt, p_foc->initPosCnt))
-//        if(p_motor->itCnt > p_foc->initPosCnt)
+        if(__mgtu(p_motor->itCnt, p_foc->initPosCnt)) // (p_motor->itCnt > p_foc->initPosCnt)
         {
             p_motor->state          = MOTOR_STATE_INIT_TEST;
             p_motor->itCnt          = 0U;
@@ -943,8 +941,9 @@ bool_t MOT_runControl(motor_t* p_motor)
         p_foc->initDiff             = p_foc->initPosEnc[REV] - p_foc->initPosEnc[FW];
 //        p_enc->flags.alignError     = ((p_foc->initDiff < p_foc->initErr[MIN]) || (p_foc->initDiff > p_foc->initErr[MAX])) ? (true) : (false);
 //        p_enc->flags.alignError     = (__mlt(p_foc->initDiff, p_foc->initErr[MIN]) || __mgt(p_foc->initDiff, p_foc->initErr[MAX])) ? (true) : (false);
-        test                        = __mlt(p_foc->initDiff, p_foc->initErr[MIN]); //(p_foc->initDiff < p_foc->initErr[MIN])
-        test                       |= __mgt(p_foc->initDiff, p_foc->initErr[MAX]); //(p_foc->initDiff > p_foc->initErr[MAX])
+        test                        = (p_foc->initDiff) ? (false) : (true);         // Verify that encoder has moved.
+        test                       |= __mlt(p_foc->initDiff, p_foc->initErr[MIN]);  //(p_foc->initDiff < p_foc->initErr[MIN])
+        test                       |= __mgt(p_foc->initDiff, p_foc->initErr[MAX]);  //(p_foc->initDiff > p_foc->initErr[MAX])
         p_enc->flags.alignError     = (test) ? (true) : (false);
         FOC_runControl(p_foc);
         MOT_runCommand(p_motor->epwmBase[CHANNEL_1], p_foc->dtc_u);

@@ -898,6 +898,11 @@
                                                     .adcSOCNum      = MOTOR1_IA_SOC_NUM, \
                                                     .adcPPBNum      = MOTOR1_IA_PPB_NUM, \
                                                 }
+#define MOTOR1_IA_ADC_INT_DEF                   { \
+                                                    .adcBase        = MOTOR1_IA_ADC_CFG_ADDR, \
+                                                    .intTrig        = MOTOR1_IA_SOC_NUM, \
+                                                    .adcIntNum      = MOTOR1_IA_INT_NUM, \
+                                                }
 /* MOTOR2 - Ia ADC Configs */
 #define MOTOR2_IA_ADC_INIT_DEF                  { \
                                                     .adcBase          = MOTOR2_IA_ADC_CFG_ADDR, \
@@ -910,6 +915,11 @@
                                                     .adcResultBase    = MOTOR2_IA_ADC_RESULT_ADDR, \
                                                     .adcSOCNum        = MOTOR2_IA_SOC_NUM, \
                                                     .adcPPBNum        = MOTOR2_IA_PPB_NUM, \
+                                                }
+#define MOTOR2_IA_ADC_INT_DEF                   { \
+                                                    .adcBase        = MOTOR2_IA_ADC_CFG_ADDR, \
+                                                    .intTrig        = MOTOR2_IA_SOC_NUM, \
+                                                    .adcIntNum      = MOTOR2_IA_INT_NUM, \
                                                 }
 /* MOTOR1 - Ib ADC Configs */
 #define MOTOR1_IB_ADC_INIT_DEF                  { \
@@ -1007,7 +1017,7 @@
                                                     .adcBase          = MOTOR12_IA_ADC_CFG_ADDR, \
                                                     .p_adcIni         = &adcInitList[0], \
                                                     .p_adcAcq         = &adcAcqList[0], \
-                                                    .p_adcInt         = NULL, \
+                                                    .p_adcInt         = &AdcIntList[0], \
                                                 }
 /* MOTOR1 & MOTOR2 - Ib ADC Global Configs */
 #define MOTOR12_IB_ADC_DEF                      { \

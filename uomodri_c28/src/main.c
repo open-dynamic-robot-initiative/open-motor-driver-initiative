@@ -109,12 +109,6 @@ com_bus_e   com_bus_select      = COM_NO_BUS_DEFINED;
 #pragma DATA_SECTION(global_1ms_tmr_cnt, "ramgs0")
 uint32_t    global_1ms_tmr_cnt  = 0U;
 
-//#pragma DATA_ALIGN(led_blink_ctrl, 2)
-//#pragma DATA_SECTION(led_blink_ctrl, "ramgs0")
-//led_blink   led_blink_ctrl[3]   = {{.fade_blink = 0U, .error_blink = 0U},
-//                                   {.fade_blink = 0U, .error_blink = 0U},
-//                                   {.fade_blink = 0U, .error_blink = 0U}};
-
 /***********************************************************************
  * EXTERNAL VARIABLES
  ***********************************************************************/
@@ -152,6 +146,11 @@ void main(void)
     CLA_forceTasks(CLA1_BASE, CLA_ADC_CALIB_TASK_FLAG);
     // Interrupts initialization
     HAL_INT_ini(interruptList);
+//    // SPI check parameters
+//    if((COM_MSG_SPI_TX_16BIT_PAYLOAD_LENGTH != COM_MSG_SPI_RX_16BIT_PAYLOAD_LENGTH) || \
+//            (COM_MSG_SPI_TX_16BIT_FULL_LENGTH != COM_MSG_SPI_RX_16BIT_FULL_LENGTH))
+//    error "Error : SPI Tx & Rx must have the same length."
+
     // Infinite loop
     while(1);
 }
@@ -597,7 +596,8 @@ __attribute__((interrupt)) void dma_isrSpiComRx(void)
     // Compare computed CRC with the one received in message.
     spi_rx_msg_t* p_msg_spi = &com_spi_rx.msg;
     uint32_t msg_crc        = COM_msgCRC((uint16_t *)&p_msg_spi->data, COM_MSG_SPI_RX_16BIT_PAYLOAD_LENGTH);
-    if((com_bus_select != COM_USE_RS485_BUS) && (p_msg_spi->crc.u16_msb == MSB_32(msg_crc)) && (p_msg_spi->crc.u16_lsb == LSB_32(msg_crc)))
+    if(((com_bus_select == COM_USE_SPI_BUS) || (com_bus_select == COM_NO_BUS_DEFINED)) && \
+            (p_msg_spi->crc.u16_msb == MSB_32(msg_crc)) && (p_msg_spi->crc.u16_lsb == LSB_32(msg_crc)))
     {
         // Extract received message & send new commands to FOC structures. Define SPI as communication bus by default.
         COM_msgExtract(&p_msg_spi->data, &cmd_uomodri[MOTOR_1], &cmd_uomodri[MOTOR_2]);
