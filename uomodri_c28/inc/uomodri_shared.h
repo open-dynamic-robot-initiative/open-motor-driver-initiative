@@ -21,13 +21,25 @@ extern "C" {
  * DEFINES
  ***********************************************************************/
 #if (CLA_CORE_ENABLE)
-#define MMAX3(x, y, z)              (__mmaxf32(__mmaxf32((x), (y)), (z)))
-#define MMIN3(x, y, z)              (__mminf32(__mminf32((x), (y)), (z)))
-#define MSATF32(x, y, z)            (__mmaxf32(__mminf32((x), (y)), (z)))
+#define MMAX3(x, y, z)                  (__mmaxf32(__mmaxf32((x), (y)), (z)))
+#define MMIN3(x, y, z)                  (__mminf32(__mminf32((x), (y)), (z)))
+#define MSATF32(x, y, z)                (__mmaxf32(__mminf32((x), (y)), (z)))
+
+#define IS_BIGGER_THAN_U32(x, y)        __mgtu(x, y)
+#define IS_BIGGER_THAN_I32(x, y)        __mgt(x, y)
+
+#define IS_SMALLER_THAN_U32(x, y)       __mltu(x, y)
+#define IS_SMALLER_THAN_I32(x, y)       __mlt(x, y)
+#else
+#define IS_BIGGER_THAN_U32(x, y)        ((x > y) ? (true) : (false))
+#define IS_BIGGER_THAN_I32(x, y)        ((x > y) ? (true) : (false))
+
+#define IS_SMALLER_THAN_U32(x, y)       ((x < y) ? (true) : (false))
+#define IS_SMALLER_THAN_I32(x, y)       ((x < y) ? (true) : (false))
 #endif
 
-#define USE_FEED_FORWARD            (0)
-#define USE_ALTERNATIVE_SM          (0)
+#define USE_FEED_FORWARD                (0)
+#define USE_ALTERNATIVE_SM              (0)
 
 /***********************************************************************
  * FUNCTIONS DECLARATION
@@ -113,13 +125,13 @@ void ADC_offsetCalib(motor_t* p_motor)
         p_acq->ib       = (float32_t)ADC_readResult(p_acq->iabcResultBase[CHANNEL_2], (ADC_SOCNumber)p_acq->socNum.ib);
         p_acq->ic       = (float32_t)ADC_readResult(p_acq->iabcResultBase[CHANNEL_3], (ADC_SOCNumber)p_acq->socNum.ic);
         // filter
-        if(calibCnt < 1000)
+        if(IS_SMALLER_THAN_U32(calibCnt, 1000U)) // calibCnt < 1000
         {
             ia_calib    = p_acq->ia;
             ib_calib    = p_acq->ib;
             ic_calib    = p_acq->ic;
         }
-        else if(calibCnt < 10000)
+        else if(IS_SMALLER_THAN_U32(calibCnt, 10000U)) // calibCnt < 10000
         {
             UOMODRI_HAL_ADC_CALIB(fltCalibCoef, ia_calib, p_acq->ia);
             UOMODRI_HAL_ADC_CALIB(fltCalibCoef, ib_calib, p_acq->ib);
@@ -135,6 +147,8 @@ void ADC_offsetCalib(motor_t* p_motor)
     ADC_setPPBReferenceOffset(p_acq->iabcCfgBase[CHANNEL_2], (ADC_PPBNumber)p_acq->ppbNum.ib, (uint16_t)ib_calib);
     ADC_setPPBReferenceOffset(p_acq->iabcCfgBase[CHANNEL_3], (ADC_PPBNumber)p_acq->ppbNum.ic, (uint16_t)ic_calib);
 //    CLA_clearTaskFlags(CLA1_BASE, CLA_TASKFLAG_ALL);
+
+    return;
 }
 
 /**
@@ -236,8 +250,7 @@ inline void ENC_getSpeed(encoder_t* p_enc)
     if(EQEP_getInterruptStatus(p_enc->eqepBase) & EQEP_INT_UNIT_TIME_OUT)
     {
         p_speed->theta[OLD]     = p_speed->theta[NEW];
-//#ifdef __TMS320C28XX_CLA__
-#if (CLA_CORE_ENABLE)
+#if (CLA_CORE_ENABLE)//#ifdef __TMS320C28XX_CLA__
         p_speed->theta[NEW]     = FM_ROUND2RAD * (float32_t)EQEP_getPositionLatch(eqepBase) * p_enc->thetaMechScaler;
 #else
         p_speed->theta[NEW]     = __mpy2pif32((float32_t)EQEP_getPositionLatch(eqepBase) * p_enc->thetaMechScaler);
@@ -316,12 +329,12 @@ inline void ENC_getTheta(encoder_t* p_enc)
     //-------------------------------------------------------------------
     float32_t deltaThetaMech        = p_enc->thetaMech[NEW] - p_enc->thetaMech[OLD];
     // Update turnNb
-    p_enc->turnNb                   = (deltaThetaMech > FM_PI)          ? (p_enc->turnNb - 1) : (p_enc->turnNb);
-    p_enc->turnNb                   = (deltaThetaMech < -FM_PI)         ? (p_enc->turnNb + 1) : (p_enc->turnNb);
+    p_enc->turnNb                   = (deltaThetaMech > FM_PI)  ? (p_enc->turnNb - 1) : (p_enc->turnNb);
+    p_enc->turnNb                   = (deltaThetaMech < -FM_PI) ? (p_enc->turnNb + 1) : (p_enc->turnNb);
     // If theta difference is high or low enough, we overflowed or underflowed
-    bool_t maxRollOver              = (p_enc->turnNb > ENC_MAX_ROLLOVER)? (true) : (false);
-    bool_t minRollOver              = (p_enc->turnNb < ENC_MIN_ROLLOVER)? (true) : (false);
-    p_enc->flags.rollOverError      = (maxRollOver || minRollOver)      ? (true) : (false);
+    bool_t maxRollOver              = IS_BIGGER_THAN_I32(p_enc->turnNb, ENC_MAX_ROLLOVER);
+    bool_t minRollOver              = IS_SMALLER_THAN_I32(p_enc->turnNb, ENC_MIN_ROLLOVER);
+    p_enc->flags.rollOverError      = (maxRollOver || minRollOver)  ? (true) : (false);
     // Saturate turnNb between -128 and 127
     p_enc->turnNb                   = (maxRollOver) ? (ENC_MIN_ROLLOVER) : (p_enc->turnNb);
     p_enc->turnNb                   = (minRollOver) ? (ENC_MAX_ROLLOVER) : (p_enc->turnNb);
@@ -683,7 +696,7 @@ bool_t MOT_runControl(motor_t* p_motor)
     uint16_t        motor_id    = p_motor->id;
     bool_t          evt_flag    = false;
     bool_t          start       = cmd_reg.motorEnable && cmd_reg.systemEnable;
-    bool_t          test        = __mgtu(p_cmd->cptTimeout, p_cmd->timeoutRef); //(p_cmd->cptTimeout > p_cmd->timeoutRef) ? (1) : (0);
+    bool_t          test        = IS_BIGGER_THAN_U32(p_cmd->cptTimeout, p_cmd->timeoutRef); // p_cmd->cptTimeout > p_cmd->timeoutRef
     p_enc->flags.indexOffset    = cmd_reg.encOffsetEnable;
 
     // Read currents in 3 phases + Vbus
@@ -724,7 +737,7 @@ bool_t MOT_runControl(motor_t* p_motor)
         break;
 
     case MOTOR_STATE_INIT_FW:
-        evt_flag                = __mgtu(p_motor->itCnt, p_foc->initPosCnt);
+        evt_flag                = IS_BIGGER_THAN_U32(p_motor->itCnt, p_foc->initPosCnt); // p_motor->itCnt > p_foc->initPosCnt
         p_motor->itCnt          = (evt_flag)                ? (0U)                          : (p_motor->itCnt + 1);
         p_foc->initPosEnc[FW]   = p_enc->thetaAbsolute;
         p_foc->idRef           += (motor_id == MOTOR_1)     ? (MOTOR1_CURRENT_INIT_STEP)    : (MOTOR2_CURRENT_INIT_STEP);
@@ -739,7 +752,7 @@ bool_t MOT_runControl(motor_t* p_motor)
         break;
 
     case MOTOR_STATE_INIT_REV:
-        evt_flag                = __mgtu(p_motor->itCnt, p_foc->initPosCnt);
+        evt_flag                = IS_BIGGER_THAN_U32(p_motor->itCnt, p_foc->initPosCnt); // p_motor->itCnt > p_foc->initPosCnt
         p_motor->itCnt          = (evt_flag)                ? (0U)                          : (p_motor->itCnt + 1);
         p_foc->initPosEnc[REV]  = p_enc->thetaAbsolute;
         p_foc->idRef            = (motor_id == MOTOR_1)     ? (MOTOR1_CURRENT_INIT_MAX)     : (MOTOR2_CURRENT_INIT_MAX);
@@ -756,9 +769,8 @@ bool_t MOT_runControl(motor_t* p_motor)
     case MOTOR_STATE_INIT_TEST:
         p_foc->initDiff         = p_foc->initPosEnc[REV] - p_foc->initPosEnc[FW];
 //        p_enc->flags.alignError = ((p_foc->initDiff < p_foc->initErr[MIN]) || (p_foc->initDiff > p_foc->initErr[MAX])) ? (true) : (false);
-        test                    = __mlt(p_foc->initDiff, p_foc->initErr[MIN]); //(p_foc->initDiff < p_foc->initErr[MIN])
-        test                   |= __mgt(p_foc->initDiff, p_foc->initErr[MAX]); //(p_foc->initDiff > p_foc->initErr[MAX])
-        p_enc->flags.alignError = (test)                    ? (true)                        : (false);
+        p_enc->flags.alignError = (p_foc->initDiff < p_foc->initErr[MIN])   ? (true) : (false);
+        p_enc->flags.alignError|= (p_foc->initDiff > p_foc->initErr[MAX])   ? (true) : (false);
         p_foc->idRef            = (motor_id == MOTOR_1)     ? (MOTOR1_CURRENT_INIT_MAX)     : (MOTOR2_CURRENT_INIT_MAX);
         p_motor->state          = (start)                   ? (MOTOR_STATE_INIT_FIX)        : (MOTOR_STATE_IDLE);
         FOC_runControl(p_foc);
@@ -768,7 +780,7 @@ bool_t MOT_runControl(motor_t* p_motor)
         break;
 
     case MOTOR_STATE_INIT_FIX:
-        evt_flag                = __mgtu(p_motor->itCnt, p_foc->initFixCnt);
+        evt_flag                = IS_BIGGER_THAN_U32(p_motor->itCnt, p_foc->initFixCnt); // p_motor->itCnt > p_foc->initFixCnt
         p_motor->itCnt         += 1U;
         p_foc->idRef            = (motor_id == MOTOR_1)     ? (MOTOR1_CURRENT_INIT_MAX)     : (MOTOR2_CURRENT_INIT_MAX);
         p_motor->state          = (evt_flag)                ? (MOTOR_STATE_READY)           : (MOTOR_STATE_INIT_FIX);
@@ -826,7 +838,7 @@ bool_t MOT_runControl(motor_t* p_motor)
     periph_u        periph_reg      = {.all = p_cmd->periphField.all};
     uint16_t        motor_id        = p_motor->id;
     bool_t          start           = cmd_reg.motorEnable && cmd_reg.systemEnable;
-    bool_t          test            = __mgtu(p_cmd->cptTimeout, p_cmd->timeoutRef); //(p_cmd->cptTimeout > p_cmd->timeoutRef) ? (1) : (0);
+    bool_t          test            = IS_BIGGER_THAN_U32(p_cmd->cptTimeout, p_cmd->timeoutRef); //(p_cmd->cptTimeout > p_cmd->timeoutRef) ? (1) : (0);
     p_enc->flags.indexOffset        = cmd_reg.encOffsetEnable;
 
     //  Read currents in 3 phases + Vbus
@@ -879,7 +891,7 @@ bool_t MOT_runControl(motor_t* p_motor)
             p_foc->idRef           += MOTOR2_CURRENT_INIT_STEP;
             p_foc->initPosStep     -= MOTOR2_POSITION_INIT_STEP;
         }
-        if(__mgtu(p_motor->itCnt, p_foc->initPosCnt)) // (p_motor->itCnt > p_foc->initPosCnt)
+        if(IS_BIGGER_THAN_U32(p_motor->itCnt, p_foc->initPosCnt)) // p_motor->itCnt > p_foc->initPosCnt
         {
             p_motor->state          = MOTOR_STATE_INIT_REV;
             p_motor->itCnt          = 0U;
@@ -911,7 +923,7 @@ bool_t MOT_runControl(motor_t* p_motor)
             p_foc->idRef            = MOTOR2_CURRENT_INIT_MAX;
             p_foc->initPosStep     += MOTOR2_POSITION_INIT_STEP;
         }
-        if(__mgtu(p_motor->itCnt, p_foc->initPosCnt)) // (p_motor->itCnt > p_foc->initPosCnt)
+        if(IS_BIGGER_THAN_U32(p_motor->itCnt, p_foc->initPosCnt)) // p_motor->itCnt > p_foc->initPosCnt
         {
             p_motor->state          = MOTOR_STATE_INIT_TEST;
             p_motor->itCnt          = 0U;
@@ -940,11 +952,8 @@ bool_t MOT_runControl(motor_t* p_motor)
         p_foc->idRef                = (motor_id == MOTOR_1) ? (MOTOR1_CURRENT_INIT_MAX) : (MOTOR2_CURRENT_INIT_MAX);
         p_foc->initDiff             = p_foc->initPosEnc[REV] - p_foc->initPosEnc[FW];
 //        p_enc->flags.alignError     = ((p_foc->initDiff < p_foc->initErr[MIN]) || (p_foc->initDiff > p_foc->initErr[MAX])) ? (true) : (false);
-//        p_enc->flags.alignError     = (__mlt(p_foc->initDiff, p_foc->initErr[MIN]) || __mgt(p_foc->initDiff, p_foc->initErr[MAX])) ? (true) : (false);
-        test                        = (p_foc->initDiff) ? (false) : (true);         // Verify that encoder has moved.
-        test                       |= __mlt(p_foc->initDiff, p_foc->initErr[MIN]);  //(p_foc->initDiff < p_foc->initErr[MIN])
-        test                       |= __mgt(p_foc->initDiff, p_foc->initErr[MAX]);  //(p_foc->initDiff > p_foc->initErr[MAX])
-        p_enc->flags.alignError     = (test) ? (true) : (false);
+        p_enc->flags.alignError     = (p_foc->initDiff < p_foc->initErr[MIN])   ? (true) : (false);
+        p_enc->flags.alignError    |= (p_foc->initDiff > p_foc->initErr[MAX])   ? (true) : (false);
         FOC_runControl(p_foc);
         MOT_runCommand(p_motor->epwmBase[CHANNEL_1], p_foc->dtc_u);
         MOT_runCommand(p_motor->epwmBase[CHANNEL_2], p_foc->dtc_v);
@@ -955,7 +964,7 @@ bool_t MOT_runControl(motor_t* p_motor)
         p_foc->idRef                = (motor_id == MOTOR_1) ? (MOTOR1_CURRENT_INIT_MAX) : (MOTOR2_CURRENT_INIT_MAX);
         if(!start)
             p_motor->state          = MOTOR_STATE_IDLE;
-        else if(__mgtu(p_motor->itCnt, p_foc->initFixCnt))
+        else if(IS_BIGGER_THAN_U32(p_motor->itCnt, p_foc->initFixCnt)) // p_motor->itCnt > p_foc->initFixCnt
             p_motor->state          = MOTOR_STATE_READY;
         p_motor->itCnt             += 1U;
         ENC_resetPeriph(p_enc);
@@ -1012,4 +1021,3 @@ bool_t MOT_runControl(motor_t* p_motor)
 #endif /* extern "C" */
 
 #endif /* __UOMODRI_SHARED_H__ */
-
