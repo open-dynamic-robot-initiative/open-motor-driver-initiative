@@ -4,8 +4,7 @@
 /***********************************************************************
  * INCLUDES
  ***********************************************************************/
-#include <stdbool.h>
-#include <stdint.h>
+#include "f2838x_device.h"
 
 /***********************************************************************
  * DEFINES
@@ -557,4 +556,4 @@ void DRV_writeAll(const drv_cfg_t*, drv_reg_t*);
 }
 #endif // extern "C"
 
-#endif // end of DRV_H definition
+#endif /* __DRV8353_H__ */

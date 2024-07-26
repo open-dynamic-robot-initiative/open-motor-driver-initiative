@@ -1,68 +1,57 @@
 #ifndef __UOMODRI_SHARED_H__
 #define __UOMODRI_SHARED_H__
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /***********************************************************************
  * INCLUDES
  ***********************************************************************/
-#include <stdint.h>
-#if (CLA_CORE_ENABLE)
-#include "CLAmath.h"
-#else
-#include <hw_types.h>
-#include <math.h>
-#endif
-#include "driverlib.h"
 #include "f2838x_device.h"
-#include "foc.h"
-#include "motor.h"
-#include "encoder.h"
+#include "device.h"
+
 #include "uomodri_user_defines.h"
+#include "config/uomodri_math.h"
+
+#include "motor_ctrl.h"
+#include "main.h"
 
 /***********************************************************************
  * DEFINES
  ***********************************************************************/
-#if (CLA_CORE_ENABLE)
-#define MMAX3(x, y, z)                          (__mmaxf32(__mmaxf32((x), (y)), (z)))
-#define MMIN3(x, y, z)                          (__mminf32(__mminf32((x), (y)), (z)))
-#define MSATF32(x, y, z)                        (__mmaxf32(__mminf32((x), (y)), (z)))
-#endif
+#ifdef __TMS320C28XX_CLA__
+#define MMAX3(x, y, z)                  (__mmaxf32(__mmaxf32((x), (y)), (z)))
+#define MMIN3(x, y, z)                  (__mminf32(__mminf32((x), (y)), (z)))
+#define MSATF32(x, y, z)                (__mmaxf32(__mminf32((x), (y)), (z)))
 
-/***********************************************************************
- * STRUCTURES
- ***********************************************************************/
+#define IS_BIGGER_THAN_U32(x, y)        __mgtu(x, y)
+#define IS_BIGGER_THAN_I32(x, y)        __mgt(x, y)
 
-/***********************************************************************
- * VARIABLES
- ***********************************************************************/
-#if (CLA_CORE_ENABLE)
-extern motor_t  motor_m1;
-extern motor_t  motor_m2;
+#define IS_SMALLER_THAN_U32(x, y)       __mltu(x, y)
+#define IS_SMALLER_THAN_I32(x, y)       __mlt(x, y)
 #else
-extern static motor_t   motor[];
+#define IS_BIGGER_THAN_U32(x, y)        ((x > y) ? (true) : (false))
+#define IS_BIGGER_THAN_I32(x, y)        ((x > y) ? (true) : (false))
+
+#define IS_SMALLER_THAN_U32(x, y)       ((x < y) ? (true) : (false))
+#define IS_SMALLER_THAN_I32(x, y)       ((x < y) ? (true) : (false))
 #endif
+
+#define USE_FEED_FORWARD                (0)
+#define USE_ALTERNATIVE_SM              (0)
 
 /***********************************************************************
  * FUNCTIONS DECLARATION
  ***********************************************************************/
-#if (CLA_CORE_ENABLE)
+#ifdef __TMS320C28XX_CLA__
 extern float32_t __mminf32(float32_t, float32_t);
 extern float32_t __mmaxf32(float32_t, float32_t);
 extern float32_t __mfracf32(float32_t);
-//extern float32_t CLAcos(float32_t);
-//extern float32_t CLAsin(float32_t);
 extern void CLAsincos(float32_t, float32_t*, float32_t*);
-
-__attribute__((interrupt)) void adcCalib_Task(void);
-__attribute__((interrupt)) void cmdNew_Task(void);
-__attribute__((interrupt)) void motor1_Task(void);
-__attribute__((interrupt)) void motor2_Task(void);
-__attribute__((interrupt)) void Cla1Task5(void);
-__attribute__((interrupt)) void Cla1Task6(void);
-__attribute__((interrupt)) void Cla1Task7(void);
-__attribute__((interrupt)) void Cla1Task8(void);
+#endif
 
 inline float32_t __msatf32(float32_t, float32_t, float32_t);
-#endif
 void ADC_offsetCalib(motor_t*);
 inline void ENC_resetStruct(encoder_t*);
 inline void ENC_resetPeriph(encoder_t*);
@@ -86,7 +75,6 @@ bool_t MOT_runControl(motor_t*);
 /***********************************************************************
  * FUNCTIONS DEFINITIONS
  ***********************************************************************/
-#if (CLA_CORE_ENABLE)
 /**
  * @brief           Saturation function.
  *                  out = a, if sat_min < a < sat_max,
@@ -97,9 +85,15 @@ bool_t MOT_runControl(motor_t*);
  * @param sat_min   Min level for saturation.
  * @return
  */
+#ifdef __TMS320C28XX_CLA__
 inline float32_t __msatf32(float32_t a, float32_t sat_max, float32_t sat_min)
 {
     return(__mmaxf32(__mminf32(a, sat_max), sat_min));
+}
+#else
+inline float32_t __msatf32(float32_t a, float32_t sat_max, float32_t sat_min)
+{
+    return(fmaxf(fminf(a, sat_max), sat_min));
 }
 #endif
 
@@ -129,13 +123,13 @@ void ADC_offsetCalib(motor_t* p_motor)
         p_acq->ib       = (float32_t)ADC_readResult(p_acq->iabcResultBase[CHANNEL_2], (ADC_SOCNumber)p_acq->socNum.ib);
         p_acq->ic       = (float32_t)ADC_readResult(p_acq->iabcResultBase[CHANNEL_3], (ADC_SOCNumber)p_acq->socNum.ic);
         // filter
-        if(calibCnt < 1000)
+        if(IS_SMALLER_THAN_U32(calibCnt, 1000U)) // calibCnt < 1000
         {
             ia_calib    = p_acq->ia;
             ib_calib    = p_acq->ib;
             ic_calib    = p_acq->ic;
         }
-        else if(calibCnt < 10000)
+        else if(IS_SMALLER_THAN_U32(calibCnt, 10000U)) // calibCnt < 10000
         {
             UOMODRI_HAL_ADC_CALIB(fltCalibCoef, ia_calib, p_acq->ia);
             UOMODRI_HAL_ADC_CALIB(fltCalibCoef, ib_calib, p_acq->ib);
@@ -151,6 +145,8 @@ void ADC_offsetCalib(motor_t* p_motor)
     ADC_setPPBReferenceOffset(p_acq->iabcCfgBase[CHANNEL_2], (ADC_PPBNumber)p_acq->ppbNum.ib, (uint16_t)ib_calib);
     ADC_setPPBReferenceOffset(p_acq->iabcCfgBase[CHANNEL_3], (ADC_PPBNumber)p_acq->ppbNum.ic, (uint16_t)ic_calib);
 //    CLA_clearTaskFlags(CLA1_BASE, CLA_TASKFLAG_ALL);
+
+    return;
 }
 
 /**
@@ -222,14 +218,14 @@ inline void ENC_getPosition(encoder_t* p_enc)
     // Compute electrical angle (each pole pair is normalized between 0 and 1)
     float32_t thetaElec     = (float32_t)p_enc->polePairs * p_enc->thetaMech[NEW];
     // Compute electrical & mechanical angle (in rad)
-#if (defined CPU1) && (CLA_CORE_ENABLE)
-    p_enc->thetaElec        = FM_ROUND2RAD * __mfracf32(thetaElec);
+#if (defined CPU1) && (defined __TMS320C28XX_CLA__)
+    p_enc->thetaElec        = FM_ROUND2RAD * __mfracf32(thetaElec);//__fracf32(thetaElec);//
     p_enc->thetaMech[NEW]   = FM_ROUND2RAD * p_enc->thetaMech[NEW];
 #elif (defined CPU1)
     p_enc->thetaElec        = __mpy2pif32(__fracf32(thetaElec));
     p_enc->thetaMech[NEW]   = __mpy2pif32(p_enc->thetaMech[NEW]);
 #else
-    p_enc->thetaElec        = __mpy2pif32(p_enc->thetaElec - (float32_t)((int32_t)thetaElec));
+    p_enc->thetaElec        = __mpy2pif32(p_enc->thetaElec - (float32_t)((int32_t_t)thetaElec));
     p_enc->thetaMech[NEW]   = __mpy2pif32(p_enc->thetaMech[NEW]);
 #endif
 
@@ -252,7 +248,7 @@ inline void ENC_getSpeed(encoder_t* p_enc)
     if(EQEP_getInterruptStatus(p_enc->eqepBase) & EQEP_INT_UNIT_TIME_OUT)
     {
         p_speed->theta[OLD]     = p_speed->theta[NEW];
-#if (CLA_CORE_ENABLE)
+#ifdef __TMS320C28XX_CLA__
         p_speed->theta[NEW]     = FM_ROUND2RAD * (float32_t)EQEP_getPositionLatch(eqepBase) * p_enc->thetaMechScaler;
 #else
         p_speed->theta[NEW]     = __mpy2pif32((float32_t)EQEP_getPositionLatch(eqepBase) * p_enc->thetaMechScaler);
@@ -261,8 +257,8 @@ inline void ENC_getSpeed(encoder_t* p_enc)
         // Compute angle difference
         float32_t deltaTheta    = p_speed->theta[NEW] - p_speed->theta[OLD];
         // Saturate it between -pi and pi
-        deltaTheta              = (deltaTheta > UOMODRI_PI) ? (deltaTheta - FM_2MULTPI) : (deltaTheta);
-        deltaTheta              = (deltaTheta < -UOMODRI_PI)? (deltaTheta + FM_2MULTPI) : (deltaTheta);
+        deltaTheta              = (deltaTheta > FM_PI)  ? (deltaTheta - FM_2MULTPI) : (deltaTheta);
+        deltaTheta              = (deltaTheta < -FM_PI) ? (deltaTheta + FM_2MULTPI) : (deltaTheta);
         // Compute high speed estimation
         p_speed->speedHigh      = deltaTheta * p_speed->speedHighScaler;
 //        newSpeedHigh            = true;
@@ -331,16 +327,16 @@ inline void ENC_getTheta(encoder_t* p_enc)
     //-------------------------------------------------------------------
     float32_t deltaThetaMech        = p_enc->thetaMech[NEW] - p_enc->thetaMech[OLD];
     // Update turnNb
-    p_enc->turnNb                   = (deltaThetaMech > UOMODRI_PI) ? (p_enc->turnNb - 1) : (p_enc->turnNb);
-    p_enc->turnNb                   = (deltaThetaMech < -UOMODRI_PI)? (p_enc->turnNb + 1) : (p_enc->turnNb);
+    p_enc->turnNb                   = (deltaThetaMech > FM_PI)  ? (p_enc->turnNb - 1) : (p_enc->turnNb);
+    p_enc->turnNb                   = (deltaThetaMech < -FM_PI) ? (p_enc->turnNb + 1) : (p_enc->turnNb);
     // If theta difference is high or low enough, we overflowed or underflowed
-    bool_t maxRollOver              = (p_enc->turnNb > MAX_ROLLOVER)? (true) : (false);
-    bool_t minRollOver              = (p_enc->turnNb < MIN_ROLLOVER)? (true) : (false);
+    bool_t maxRollOver              = IS_BIGGER_THAN_I32(p_enc->turnNb, ENC_MAX_ROLLOVER);
+    bool_t minRollOver              = IS_SMALLER_THAN_I32(p_enc->turnNb, ENC_MIN_ROLLOVER);
     p_enc->flags.rollOverError      = (maxRollOver || minRollOver)  ? (true) : (false);
     // Saturate turnNb between -128 and 127
-    p_enc->turnNb                   = (maxRollOver) ? (MIN_ROLLOVER) : (p_enc->turnNb);
-    p_enc->turnNb                   = (minRollOver) ? (MAX_ROLLOVER) : (p_enc->turnNb);
-#if (CLA_CORE_ENABLE)
+    p_enc->turnNb                   = (maxRollOver) ? (ENC_MIN_ROLLOVER) : (p_enc->turnNb);
+    p_enc->turnNb                   = (minRollOver) ? (ENC_MAX_ROLLOVER) : (p_enc->turnNb);
+#ifdef __TMS320C28XX_CLA__
     float32_t turnNbRad             = FM_ROUND2RAD * (float32_t)p_enc->turnNb;
 #else
     float32_t turnNbRad             = __mpy2pif32((float32_t)p_enc->turnNb);
@@ -351,7 +347,7 @@ inline void ENC_getTheta(encoder_t* p_enc)
     if(EQEP_getInterruptStatus(eqepBase) & EQEP_INT_INDEX_EVNT_LATCH)
     {
         // Compute indexed mechanical angle normalized between 0 and 2 x PI
-#if (CLA_CORE_ENABLE)
+#ifdef __TMS320C28XX_CLA__
         float32_t thetaIndex        = FM_ROUND2RAD * (float32_t)EQEP_getIndexPositionLatch(eqepBase) * p_enc->thetaMechScaler;
 #else
         float32_t thetaIndex        = __mpy2pif32((float32_t)EQEP_getIndexPositionLatch(eqepBase) * p_enc->thetaMechScaler);
@@ -363,7 +359,7 @@ inline void ENC_getTheta(encoder_t* p_enc)
         // Set index detection flag.
         p_enc->flags.indexDetect    = true;
         // Check if current index capture match the first index capture
-#if (CLA_CORE_ENABLE)
+#ifdef __TMS320C28XX_CLA__
         float32_t tmp               = FM_ROUND2RAD * 4.0f / p_enc->thetaMechScaler;
 //        p_enc->flags.indexError     = (abs(p_enc->thetaIndexRelative - thetaIndex) < tmp) ? (false) : (true);
 #else
@@ -513,7 +509,7 @@ inline void FOC_getMeasures(acq_t* p_acq)
  */
 inline float32_t FOC_runPI(pi_t* p_pi)
 {
-#if (CLA_CORE_ENABLE)
+#ifdef __TMS320C28XX_CLA__
     float32_t sat_max   = 0.5f  * (*(float32_t *)p_pi->p_sat.ptr);
     float32_t sat_min   = -1.0f * sat_max;
     p_pi->err           = (*(float32_t *)p_pi->p_set.ptr) - (*(float32_t *)p_pi->p_fb.ptr);
@@ -541,7 +537,7 @@ inline float32_t FOC_runPI(pi_t* p_pi)
  */
 inline float32_t FOC_runPD(pd_t* p_pd)
 {
-#if (CLA_CORE_ENABLE)
+#ifdef __TMS320C28XX_CLA__
     float32_t sat_max   = 1.0f  * (*(float32_t *)p_pd->p_sat.ptr);
     float32_t sat_min   = -1.0f * sat_max;
     p_pd->errTheta      = (*(float32_t *)p_pd->p_setTheta.ptr) - (*(float32_t *)p_pd->p_fbTheta.ptr);
@@ -575,14 +571,14 @@ inline void FOC_svpwm1(foc_t* p_foc)
     p_foc->ub               = (-0.5f * p_foc->ualpha) + (FM_SQRT3DIV2 * p_foc->ubeta);
     p_foc->uc               = (-0.5f * p_foc->ualpha) - (FM_SQRT3DIV2 * p_foc->ubeta);
     // Compute middle voltage to center PWM duty cycles around it
-#if (CLA_CORE_ENABLE)
+#ifdef __TMS320C28XX_CLA__
     float32_t   uOffset     = 0.5f * (MMIN3(p_foc->ua, p_foc->ub, p_foc->uc) + MMAX3(p_foc->ua, p_foc->ub, p_foc->uc));
 #else
     float32_t   uOffset     = 0.5f * (FMIN3(p_foc->ua, p_foc->ub, p_foc->uc) + FMAX3(p_foc->ua, p_foc->ub, p_foc->uc));
 #endif
     float32_t   uMidPoint   = 0.5f * (p_foc->dtcMax + p_foc->dtcMin);
     // Compute duty cycles
-#if (CLA_CORE_ENABLE)
+#ifdef __TMS320C28XX_CLA__
     p_foc->dtc_u            = __msatf32((((p_foc->ua - uOffset) / p_foc->acq.vBus) + uMidPoint), p_foc->dtcMax, p_foc->dtcMin);
     p_foc->dtc_v            = __msatf32((((p_foc->ub - uOffset) / p_foc->acq.vBus) + uMidPoint), p_foc->dtcMax, p_foc->dtcMin);
     p_foc->dtc_w            = __msatf32((((p_foc->uc - uOffset) / p_foc->acq.vBus) + uMidPoint), p_foc->dtcMax, p_foc->dtcMin);
@@ -604,9 +600,7 @@ void FOC_runControl(foc_t* p_foc)
     acq_t*          p_acq   = &p_foc->acq;
     encoder_t*      p_enc   = &p_foc->enc;
     /* Compute sine and cosine from the electrical angle */
-#if (CLA_CORE_ENABLE)
-//    p_foc->sinTheta         = CLAsin(p_enc->thetaElec);
-//    p_foc->cosTheta         = CLAcos(p_enc->thetaElec);
+#ifdef __TMS320C28XX_CLA__
     CLAsincos(p_enc->thetaElec, &p_foc->sinTheta, &p_foc->cosTheta);
 #else
     p_foc->sinTheta         = __sin(p_enc->thetaElec);
@@ -621,7 +615,7 @@ void FOC_runControl(foc_t* p_foc)
     float32_t iq            = (p_foc->cosTheta * p_foc->ibeta) - (p_foc->sinTheta * p_foc->ialpha);
     UOMODRI_IDQ_FLT(p_foc->iParkFlt, p_foc->iq, iq);
     // Compute decoupling feed-forward terms
-#if (UOMODRI_FEED_FORWARD_ENABLE)
+#if (USE_FEED_FORWARD)
     const params_t* p_cfg   = &p_foc->motor_cfg;
     speed_t*        p_speed = &p_enc->speed;
     p_foc->piId.ff          = -1.0f * p_speed->speedMech[0] * p_cfg->Ls * p_foc->iq;
@@ -677,18 +671,20 @@ void MOT_stopCommand(uint32_t epwm_base)
  * @param[inout]    p_motor Pointer on the associated motor structure
  * @param[in]       p_cmd   Pointer on the command structure driving motor
  */
+#if (USE_ALTERNATIVE_SM)
 bool_t MOT_runControl(motor_t* p_motor)
 {
-#if (USE_STATE_MACHINE_4_ELECTRONCS_ENGINEERS)
+
     foc_t*          p_foc       = &p_motor->foc;
     error_reg_u*    p_err       = &p_motor->error;
     encoder_t*      p_enc       = &p_foc->enc;
     cmd_t*          p_cmd       = &p_foc->cmd;
     cmd_reg_u       cmd_reg     = {.all = p_cmd->cmdField.all};
-    status_reg_u    status_reg  = {.all = p_cmd->statusField.all};
+    periph_u        periph_reg  = {.all = p_cmd->periphField.all};
     uint16_t        motor_id    = p_motor->id;
     bool_t          evt_flag    = false;
     bool_t          start       = cmd_reg.motorEnable && cmd_reg.systemEnable;
+    bool_t          test        = IS_BIGGER_THAN_U32(p_cmd->cptTimeout, p_cmd->timeoutRef); // p_cmd->cptTimeout > p_cmd->timeoutRef
     p_enc->flags.indexOffset    = cmd_reg.encOffsetEnable;
 
     // Read currents in 3 phases + Vbus
@@ -702,11 +698,12 @@ bool_t MOT_runControl(motor_t* p_motor)
 
     // Save number of cycles elapsed since control loop startup
     p_motor->clCycleNb          = EPWM_getTimeBaseCounterValue(p_motor->epwmBase[CHANNEL_1]);
-    p_err->drv_fault            = !GPIO_readPin(p_motor->drvFaultNum) || status_reg.drv_initErr || p_err->drv_fault;
-    p_err->pos_rollover         = (p_enc->flags.rollOverError && cmd_reg.rollOverEnable)        || p_err->pos_rollover;
-    p_err->com_timeout          = ((p_cmd->cptTimeout > p_cmd->timeoutRef) && p_cmd->timeoutRef)|| p_err->com_timeout;
-    p_err->enc_indexErr         = (p_enc->flags.indexDetect && p_enc->flags.indexError)         || p_err->enc_indexErr;
-    p_err->enc_alignErr         = p_enc->flags.alignError                                       || p_err->enc_alignErr;
+    p_err->drv_fault            = !GPIO_readPin(p_motor->drvFaultNum)                   || p_err->drv_fault;
+    p_err->drv_initErr          = periph_reg.drv_initErr                                || p_err->drv_initErr;
+    p_err->pos_rollover         = (p_enc->flags.rollOverError && cmd_reg.rollOverEnable)|| p_err->pos_rollover;
+    p_err->com_timeout          = (test && p_cmd->timeoutRef)                           || p_err->com_timeout;
+    p_err->enc_indexErr         = (p_enc->flags.indexDetect && p_enc->flags.indexError) || p_err->enc_indexErr;
+    p_err->enc_alignErr         = p_enc->flags.alignError                               || p_err->enc_alignErr;
     p_motor->state              = (p_err->all)              ? (MOTOR_STATE_ERROR)           : (p_motor->state);
 
     switch(p_motor->state)
@@ -728,7 +725,7 @@ bool_t MOT_runControl(motor_t* p_motor)
         break;
 
     case MOTOR_STATE_INIT_FW:
-        evt_flag                = __mgtu(p_motor->itCnt, p_foc->initPosCnt);
+        evt_flag                = IS_BIGGER_THAN_U32(p_motor->itCnt, p_foc->initPosCnt); // p_motor->itCnt > p_foc->initPosCnt
         p_motor->itCnt          = (evt_flag)                ? (0U)                          : (p_motor->itCnt + 1);
         p_foc->initPosEnc[FW]   = p_enc->thetaAbsolute;
         p_foc->idRef           += (motor_id == MOTOR_1)     ? (MOTOR1_CURRENT_INIT_STEP)    : (MOTOR2_CURRENT_INIT_STEP);
@@ -743,7 +740,7 @@ bool_t MOT_runControl(motor_t* p_motor)
         break;
 
     case MOTOR_STATE_INIT_REV:
-        evt_flag                = __mgtu(p_motor->itCnt, p_foc->initPosCnt);
+        evt_flag                = IS_BIGGER_THAN_U32(p_motor->itCnt, p_foc->initPosCnt); // p_motor->itCnt > p_foc->initPosCnt
         p_motor->itCnt          = (evt_flag)                ? (0U)                          : (p_motor->itCnt + 1);
         p_foc->initPosEnc[REV]  = p_enc->thetaAbsolute;
         p_foc->idRef            = (motor_id == MOTOR_1)     ? (MOTOR1_CURRENT_INIT_MAX)     : (MOTOR2_CURRENT_INIT_MAX);
@@ -759,7 +756,9 @@ bool_t MOT_runControl(motor_t* p_motor)
 
     case MOTOR_STATE_INIT_TEST:
         p_foc->initDiff         = p_foc->initPosEnc[REV] - p_foc->initPosEnc[FW];
-        p_enc->flags.alignError = ((p_foc->initDiff < p_foc->initErr[MIN]) || (p_foc->initDiff > p_foc->initErr[MAX])) ? (true) : (false);
+//        p_enc->flags.alignError = ((p_foc->initDiff < p_foc->initErr[MIN]) || (p_foc->initDiff > p_foc->initErr[MAX])) ? (true) : (false);
+        p_enc->flags.alignError = (p_foc->initDiff < p_foc->initErr[MIN])   ? (true) : (false);
+        p_enc->flags.alignError|= (p_foc->initDiff > p_foc->initErr[MAX])   ? (true) : (false);
         p_foc->idRef            = (motor_id == MOTOR_1)     ? (MOTOR1_CURRENT_INIT_MAX)     : (MOTOR2_CURRENT_INIT_MAX);
         p_motor->state          = (start)                   ? (MOTOR_STATE_INIT_FIX)        : (MOTOR_STATE_IDLE);
         FOC_runControl(p_foc);
@@ -769,7 +768,7 @@ bool_t MOT_runControl(motor_t* p_motor)
         break;
 
     case MOTOR_STATE_INIT_FIX:
-        evt_flag                = __mgtu(p_motor->itCnt, p_foc->initFixCnt);
+        evt_flag                = IS_BIGGER_THAN_U32(p_motor->itCnt, p_foc->initFixCnt); // p_motor->itCnt > p_foc->initFixCnt
         p_motor->itCnt         += 1U;
         p_foc->idRef            = (motor_id == MOTOR_1)     ? (MOTOR1_CURRENT_INIT_MAX)     : (MOTOR2_CURRENT_INIT_MAX);
         p_motor->state          = (evt_flag)                ? (MOTOR_STATE_READY)           : (MOTOR_STATE_INIT_FIX);
@@ -813,15 +812,21 @@ bool_t MOT_runControl(motor_t* p_motor)
         MOT_stopCommand(p_motor->epwmBase[CHANNEL_3]);
         break;
     }
+
+    return(true);
+}
 #else
+bool_t MOT_runControl(motor_t* p_motor)
+{
     foc_t*          p_foc           = &p_motor->foc;
     error_reg_u*    p_err           = &p_motor->error;
     encoder_t*      p_enc           = &p_foc->enc;
     cmd_t*          p_cmd           = &p_foc->cmd;
     cmd_reg_u       cmd_reg         = {.all = p_cmd->cmdField.all};
-    status_reg_u    status_reg      = {.all = p_cmd->statusField.all};
+    periph_u        periph_reg      = {.all = p_cmd->periphField.all};
     uint16_t        motor_id        = p_motor->id;
     bool_t          start           = cmd_reg.motorEnable && cmd_reg.systemEnable;
+    bool_t          test            = IS_BIGGER_THAN_U32(p_cmd->cptTimeout, p_cmd->timeoutRef); //(p_cmd->cptTimeout > p_cmd->timeoutRef) ? (1) : (0);
     p_enc->flags.indexOffset        = cmd_reg.encOffsetEnable;
 
     //  Read currents in 3 phases + Vbus
@@ -835,11 +840,12 @@ bool_t MOT_runControl(motor_t* p_motor)
 
     // Save number of cycles elapsed since control loop startup
     p_motor->clCycleNb              = EPWM_getTimeBaseCounterValue(p_motor->epwmBase[CHANNEL_1]);
-    p_err->drv_fault                = !GPIO_readPin(p_motor->drvFaultNum) || status_reg.drv_initErr || p_err->drv_fault;
-    p_err->pos_rollover             = (p_enc->flags.rollOverError && cmd_reg.rollOverEnable)        || p_err->pos_rollover;
-    p_err->com_timeout              = ((p_cmd->cptTimeout > p_cmd->timeoutRef) && p_cmd->timeoutRef)|| p_err->com_timeout;
-    p_err->enc_indexErr             = (p_enc->flags.indexDetect && p_enc->flags.indexError)         || p_err->enc_indexErr;
-    p_err->enc_alignErr             = p_enc->flags.alignError                                       || p_err->enc_alignErr;
+    p_err->drv_fault                = !GPIO_readPin(p_motor->drvFaultNum)                   || p_err->drv_fault;
+    p_err->drv_initErr              = periph_reg.drv_initErr                                || p_err->drv_initErr;
+    p_err->pos_rollover             = (p_enc->flags.rollOverError && cmd_reg.rollOverEnable)|| p_err->pos_rollover;
+    p_err->com_timeout              = (test && p_cmd->timeoutRef)                           || p_err->com_timeout;
+    p_err->enc_indexErr             = (p_enc->flags.indexDetect && p_enc->flags.indexError) || p_err->enc_indexErr;
+    p_err->enc_alignErr             = p_enc->flags.alignError                               || p_err->enc_alignErr;
     if(p_err->all)
         p_motor->state              = MOTOR_STATE_ERROR;
 
@@ -873,7 +879,7 @@ bool_t MOT_runControl(motor_t* p_motor)
             p_foc->idRef           += MOTOR2_CURRENT_INIT_STEP;
             p_foc->initPosStep     -= MOTOR2_POSITION_INIT_STEP;
         }
-        if(__mgtu(p_motor->itCnt, p_foc->initPosCnt))
+        if(IS_BIGGER_THAN_U32(p_motor->itCnt, p_foc->initPosCnt)) // p_motor->itCnt > p_foc->initPosCnt
         {
             p_motor->state          = MOTOR_STATE_INIT_REV;
             p_motor->itCnt          = 0U;
@@ -905,7 +911,7 @@ bool_t MOT_runControl(motor_t* p_motor)
             p_foc->idRef            = MOTOR2_CURRENT_INIT_MAX;
             p_foc->initPosStep     += MOTOR2_POSITION_INIT_STEP;
         }
-        if(__mgtu(p_motor->itCnt, p_foc->initPosCnt))
+        if(IS_BIGGER_THAN_U32(p_motor->itCnt, p_foc->initPosCnt)) // p_motor->itCnt > p_foc->initPosCnt
         {
             p_motor->state          = MOTOR_STATE_INIT_TEST;
             p_motor->itCnt          = 0U;
@@ -933,7 +939,9 @@ bool_t MOT_runControl(motor_t* p_motor)
             p_motor->state          = MOTOR_STATE_INIT_FIX;
         p_foc->idRef                = (motor_id == MOTOR_1) ? (MOTOR1_CURRENT_INIT_MAX) : (MOTOR2_CURRENT_INIT_MAX);
         p_foc->initDiff             = p_foc->initPosEnc[REV] - p_foc->initPosEnc[FW];
-        p_enc->flags.alignError     = ((p_foc->initDiff < p_foc->initErr[MIN]) || (p_foc->initDiff > p_foc->initErr[MAX])) ? (true) : (false);
+//        p_enc->flags.alignError     = ((p_foc->initDiff < p_foc->initErr[MIN]) || (p_foc->initDiff > p_foc->initErr[MAX])) ? (true) : (false);
+        p_enc->flags.alignError     = (p_foc->initDiff < p_foc->initErr[MIN])   ? (true) : (false);
+        p_enc->flags.alignError    |= (p_foc->initDiff > p_foc->initErr[MAX])   ? (true) : (false);
         FOC_runControl(p_foc);
         MOT_runCommand(p_motor->epwmBase[CHANNEL_1], p_foc->dtc_u);
         MOT_runCommand(p_motor->epwmBase[CHANNEL_2], p_foc->dtc_v);
@@ -944,7 +952,7 @@ bool_t MOT_runControl(motor_t* p_motor)
         p_foc->idRef                = (motor_id == MOTOR_1) ? (MOTOR1_CURRENT_INIT_MAX) : (MOTOR2_CURRENT_INIT_MAX);
         if(!start)
             p_motor->state          = MOTOR_STATE_IDLE;
-        else if(__mgtu(p_motor->itCnt, p_foc->initFixCnt))
+        else if(IS_BIGGER_THAN_U32(p_motor->itCnt, p_foc->initFixCnt)) // p_motor->itCnt > p_foc->initFixCnt
             p_motor->state          = MOTOR_STATE_READY;
         p_motor->itCnt             += 1U;
         ENC_resetPeriph(p_enc);
@@ -991,10 +999,13 @@ bool_t MOT_runControl(motor_t* p_motor)
         MOT_stopCommand(p_motor->epwmBase[CHANNEL_3]);
         break;
     }
-#endif
 
     return(true);
 }
+#endif
+
+#ifdef __cplusplus
+}
+#endif /* extern "C" */
 
 #endif /* __UOMODRI_SHARED_H__ */
-

@@ -7,8 +7,10 @@
  * INCLUDE FILES
  ***********************************************************************/
 #include "device.h"
-#include "hal.h"
+
+#include "uomodri_user_defines.h"
 #include "board.h"
+#include "hal.h"
 
 /***********************************************************************
  * VARIABLES
@@ -62,7 +64,7 @@ void HAL_ini(const hal_cfg_t* p_hal)
         // Initialize IPC communication
         HAL_IPC_ini(p_hal->p_ipcHandle);
 #endif
-#if (RS485_BUS_ENABLE) && (!UOMODRI_V1_0_ENABLE)
+#if (RS485_BUS_ENABLE) && (USE_UOMODRI_REV != USE_UOMODRI_V1)
         // Initialize SCI/UART
         HAL_SCI_ini(p_hal->p_sciHandle);
         // Initialize CLB
@@ -214,7 +216,7 @@ void HAL_ePWM_ini(const epwm_cfg_t* p_pwmCfg)
             {
                 EPWM_setClockPrescaler(pwmBase, EPWMCLK_TO_TBCLK_DIV, HRPWMCLK_TO_TBCLK_DIV);
                 EPWM_setPeriodLoadMode(pwmBase, PWM_SHADOW_MODE_ET);
-#if PWM_SHADOW_MODE_EN
+#if PWM_SHADOW_MODE_ENABLE
                 EPWM_selectPeriodLoadEvent(pwmBase, PWM_SHADOW_MODE_EVENT_ET);
                 EPWM_setGlobalLoadTrigger(pwmBase, PWM_SHADOW_MODE_EVENT_GLOBAL);
                 EPWM_enableGlobalLoad(pwmBase);
@@ -241,7 +243,7 @@ void HAL_ePWM_ini(const epwm_cfg_t* p_pwmCfg)
              */
             while(p_pwmCounterCompare->epwmBase == pwmBase)
             {
-#if PWM_SHADOW_MODE_EN
+#if PWM_SHADOW_MODE_ENABLE
                 EPWM_setCounterCompareShadowLoadMode(pwmBase, p_pwmCounterCompare->compModule, PWM_SHADOW_MODE_EVENT_CC);
 #else
                 EPWM_disableCounterCompareShadowLoadMode(pwmBase, p_pwmCounterCompare->compModule);
@@ -259,7 +261,7 @@ void HAL_ePWM_ini(const epwm_cfg_t* p_pwmCfg)
             while(p_pwmActionQualifier->epwmBase == pwmBase)
             {
                 EPWM_ActionQualifierModule aqModule = (EPWM_ActionQualifierModule) p_pwmActionQualifier->epwmOutput;
-#if PWM_SHADOW_MODE_EN
+#if PWM_SHADOW_MODE_ENABLE
                 EPWM_setActionQualifierShadowLoadMode(pwmBase, aqModule, PWM_SHADOW_MODE_EVENT_AQ);
 #else
                 EPWM_disableActionQualifierShadowLoadMode(pwmBase, aqModule);
@@ -283,9 +285,9 @@ void HAL_ePWM_ini(const epwm_cfg_t* p_pwmCfg)
                 EPWM_setDeadBandDelayMode(pwmBase, EPWM_DB_RED, false);
                 EPWM_setDeadBandDelayMode(pwmBase, EPWM_DB_FED, false);
                 /* DeadBand Unit SubModule enable */
-                if(p_pwmDeadBand->DelayMode == EPWM_DELAY_ENABLE)
+                if(p_pwmDeadBand->DelayMode == true)
                 {
-#if PWM_SHADOW_MODE_EN
+#if PWM_SHADOW_MODE_ENABLE
                     EPWM_setDeadBandControlShadowLoadMode(pwmBase, PWM_SHADOW_MODE_EVENT_DB);
                     EPWM_setRisingEdgeDelayCountShadowLoadMode(pwmBase, PWM_SHADOW_MODE_EVENT_DB_RED);
                     EPWM_setFallingEdgeDelayCountShadowLoadMode(pwmBase, PWM_SHADOW_MODE_EVENT_DB_FED);

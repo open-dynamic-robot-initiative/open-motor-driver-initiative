@@ -64,7 +64,7 @@
 		</variable>
 		<variable>
 			<name>SYSCONFIG_TOOL_ROOT</name>
-			<value>file:/home/jmanhes/ti/ccs1270/ccs/utils/sysconfig_1.20.0</value>
+			<value>$%7BCCS_INSTALL_ROOT%7D/utils/sysconfig_1.20.0</value>
 		</variable>
 		<variable>
 			<name>SYSTEMC_INSTALL</name>
