@@ -31,10 +31,9 @@
 #else
 #define USE_DUAL_AXIS_CONFIG                    (1)
 #endif
-//#define CLA_CORE_ENABLE                         (1)
 //#ifndef __TMS320C28XX_CLA__
 //#define __TMS320C28XX_CLA__
-//#error "__TMS320C28XX_CLA__ must be removed."
+//#error "__TMS320C28XX_CLA__ must be removed for compilation."
 //#endif
 #define CLB_TILE_ENABLE                         (1)
 // CM peripherals ENABLE/DISABLE
