@@ -32,19 +32,11 @@
 #define USE_DUAL_AXIS_CONFIG                    (1)
 #endif
 // Cores activation ENABLE/DISABLE
-#ifdef CPU1
-#define CPU1_CORE_ENABLE                        (1)
-#else
-#define CPU1_CORE_ENABLE                        (0)
-#endif
-#define CPU2_CORE_ENABLE                        (0)
 #define CM_CORE_ENABLE                          (0)
-#define CLA_CORE_ENABLE                         (1)
+//#define CLA_CORE_ENABLE                         (1)
 //#ifndef __TMS320C28XX_CLA__
-////#define __TMS320C28XX_CLA__
-//#endif
-//#ifndef __TMS320C28XX_CLA2__
-////#define __TMS320C28XX_CLA2__
+//#define __TMS320C28XX_CLA__
+//#error "__TMS320C28XX_CLA__ must be removed."
 //#endif
 #define CLB_TILE_ENABLE                         (1)
 // CM peripherals ENABLE/DISABLE

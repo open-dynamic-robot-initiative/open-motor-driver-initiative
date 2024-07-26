@@ -10,7 +10,7 @@
  * INCLUDES
  ************************************************************************/
 #include "../uomodri_user_defines.h"
-#if (CLA_CORE_ENABLE)
+#ifdef __TMS320C28XX_CLA__
 #include "CLAmath.h"
 #else
 #include "math.h"
