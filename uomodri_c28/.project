@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>uOmodri_c28</name>
+	<name>uomodri_c28</name>
 	<comment></comment>
 	<projects>
-		<project>uomodri_cm</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
