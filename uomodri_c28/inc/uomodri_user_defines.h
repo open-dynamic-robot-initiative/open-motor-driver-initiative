@@ -31,8 +31,6 @@
 #else
 #define USE_DUAL_AXIS_CONFIG                    (1)
 #endif
-// Cores activation ENABLE/DISABLE
-#define CM_CORE_ENABLE                          (0)
 //#define CLA_CORE_ENABLE                         (1)
 //#ifndef __TMS320C28XX_CLA__
 //#define __TMS320C28XX_CLA__
@@ -42,7 +40,7 @@
 // CM peripherals ENABLE/DISABLE
 #define USB_BUS_ENABLE                          (0)
 #define UART_BUS_ENABLE                         (0)
-#if ((USB_BUS_ENABLE) || (UART_BUS_ENABLE)) && (!CM_CORE_ENABLE)
+#if ((USB_BUS_ENABLE) || (UART_BUS_ENABLE)) && (defined CPU1)
 #error "In order to use USB or UART, CM must be active."
 #endif
 #if (UART_BUS_ENABLE) && (USB_BUS_ENABLE)

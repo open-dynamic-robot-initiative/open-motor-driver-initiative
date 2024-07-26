@@ -47,7 +47,7 @@ extern __attribute__((interrupt)) void Cla1Task8(void);
  */
 static const gpio_cfg_t gpioPinsCfgList[] =
 {
-#if (USB_BUS_ENABLE) && (!UART_BUS_ENABLE) && (CM_CORE_ENABLE)
+#if (USB_BUS_ENABLE) && (!UART_BUS_ENABLE) && (!defined CPU1)
  /*
   * USB Pins
   */
@@ -65,7 +65,7 @@ static const gpio_cfg_t gpioPinsCfgList[] =
   .coreSelect       = GPIO_CORE_CM,
   .analogModeEnable = GPIO_ANALOG_ENABLED
  },
-#elif (!USB_BUS_ENABLE) && (UART_BUS_ENABLE) && (CM_CORE_ENABLE)
+#elif (!USB_BUS_ENABLE) && (UART_BUS_ENABLE) && (!defined CPU1)
  /*
   * UART Pins
   */

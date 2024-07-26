@@ -60,7 +60,7 @@ void HAL_ini(const hal_cfg_t* p_hal)
         HAL_SPI_ini(p_hal->p_spiHandle);
         // Initialize CPU TIMERS
         HAL_TMR_ini(p_hal->p_timerHandle);
-#if (CM_CORE_ENABLE)
+#ifndef CPU1
         // Initialize IPC communication
         HAL_IPC_ini(p_hal->p_ipcHandle);
 #endif

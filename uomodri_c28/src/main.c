@@ -206,14 +206,14 @@ static void MCU_ini(void)
 //#define DEVICE_AUXCLK_FREQ          ((DEVICE_OSCSRC_FREQ * 48) / (2 * 5 * 2))
 #endif
 
-#if ((defined USB_BUS_ENABLE_ON_CM) && (defined CM_CORE_ENABLE))
+#if (defined USB_BUS_ENABLE_ON_CM) && (!defined CPU1)
     /* Allocate Shared Peripheral USB to the CM Side. */
     SysCtl_allocateSharedPeripheral(SYSCTL_PALLOCATE_USBA, 1);
 #endif
     /* Boot CM core */
-#if (defined _FLASH) && (CM_CORE_ENABLE)
+#if (defined _FLASH) && (!defined CPU1)
     Device_bootCM(BOOTMODE_BOOT_TO_FLASH_SECTOR0);
-#elif (CM_CORE_ENABLE)
+#elif (!defined CPU1)
     Device_bootCM(BOOTMODE_BOOT_TO_S0RAM);
 #endif
     // Initialize GPIO
