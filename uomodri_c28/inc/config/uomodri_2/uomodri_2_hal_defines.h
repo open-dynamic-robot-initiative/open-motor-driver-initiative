@@ -785,13 +785,15 @@
  */
 
 // Analog IOs
-#define MOTOR2_IA_CH                            ADC_CH_ADCIN0
-#define MOTOR2_IB_CH                            ADC_CH_ADCIN0
-#define VBUS_CH                                 ADC_CH_ADCIN0
 #define MOTOR1_IA_CH                            ADC_CH_ADCIN1
 #define MOTOR1_IB_CH                            ADC_CH_ADCIN1
-#define MOTOR2_IC_CH                            ADC_CH_ADCIN2
 #define MOTOR1_IC_CH                            ADC_CH_ADCIN3
+
+#define MOTOR2_IA_CH                            ADC_CH_ADCIN0
+#define MOTOR2_IB_CH                            ADC_CH_ADCIN0
+#define MOTOR2_IC_CH                            ADC_CH_ADCIN2
+
+#define VBUS_CH                                 ADC_CH_ADCIN0
 #define VEXT1_CH                                ADC_CH_ADCIN14
 #define VEXT2_CH                                ADC_CH_ADCIN15
 
@@ -1732,8 +1734,14 @@
 #define DMA_COM_SPI_TX_RX_PAYLOAD_LENGTH        (DMA_COM_SPI_TX_RX_FULL_LENGTH - DMA_COM_SPI_TX_RX_CRC_LENGTH)
 #define DMA_COM_SPI_TX_BURST_EVT                (8)
 #define DMA_COM_SPI_TX_TRANSFER_EVT             ((DMA_COM_SPI_TX_RX_FULL_LENGTH - 1) / DMA_COM_SPI_TX_BURST_EVT)
+#if (((DMA_COM_SPI_TX_RX_FULL_LENGTH - 1) % DMA_COM_SPI_TX_BURST_EVT) != 0)
+#error "error : BURST & TRANSFER are not compatible."
+#endif
 #define DMA_COM_SPI_RX_BURST_EVT                (1)
 #define DMA_COM_SPI_RX_TRANSFER_EVT             (DMA_COM_SPI_TX_RX_FULL_LENGTH / DMA_COM_SPI_RX_BURST_EVT)
+#if ((DMA_COM_SPI_TX_RX_FULL_LENGTH % DMA_COM_SPI_RX_BURST_EVT) != 0)
+#error "error : BURST & TRANSFER are not compatible."
+#endif
 #define DMA_COM_SPI_TX_16BIT_CONFIG             (DMA_CFG_ONESHOT_DISABLE | DMA_CFG_CONTINUOUS_DISABLE | DMA_CFG_SIZE_16BIT)
 #define DMA_COM_SPI_RX_16BIT_CONFIG             (DMA_CFG_ONESHOT_DISABLE | DMA_CFG_CONTINUOUS_DISABLE | DMA_CFG_SIZE_16BIT)
 #if ((DMA_COM_SPI_TX_16BIT_CONFIG & DMA_MODE_DATASIZE) == DMA_CFG_SIZE_16BIT)

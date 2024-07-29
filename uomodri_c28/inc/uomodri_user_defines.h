@@ -88,6 +88,7 @@
  */
 #define USE_TMOTOR_MN4004_KV300                 (0)
 #define USE_MYACTUATOR_RMDX8H                   (1)
+#define USE_TMOTOR_MN4004_KV400                 (2)
 /*
  * Encoders config
  */
@@ -112,6 +113,9 @@
 #endif
 #if (MOTOR1_PARAMS == USE_MYACTUATOR_RMDX8H) || (MOTOR2_PARAMS == USE_MYACTUATOR_RMDX8H)
 #include "config/motor/myactuator_rmdx8h.h"             // MYACTUATOR RMDX8H motor definitions
+#endif
+#if (MOTOR1_PARAMS == USE_TMOTOR_MN4004_KV400) || (MOTOR2_PARAMS == USE_TMOTOR_MN4004_KV400)
+#include "config/motor/tmotor_mn4004_kv400.h"           // T-MOTOR MN4000 KV400 motor definitions
 #endif
 
 #if (ENCODER1_PARAMS == USE_BROADCOM_AEDT_9810_Z00) || (ENCODER2_PARAMS == USE_BROADCOM_AEDT_9810_Z00)

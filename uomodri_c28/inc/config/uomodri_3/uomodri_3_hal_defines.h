@@ -760,13 +760,15 @@
  */
 
 // Analog IOs
-#define MOTOR2_IA_CH                            ADC_CH_ADCIN0
-#define MOTOR2_IB_CH                            ADC_CH_ADCIN0
-#define VBUS_CH                                 ADC_CH_ADCIN0
 #define MOTOR1_IA_CH                            ADC_CH_ADCIN1
 #define MOTOR1_IB_CH                            ADC_CH_ADCIN1
-#define MOTOR2_IC_CH                            ADC_CH_ADCIN2
 #define MOTOR1_IC_CH                            ADC_CH_ADCIN3
+
+#define MOTOR2_IA_CH                            ADC_CH_ADCIN0
+#define MOTOR2_IB_CH                            ADC_CH_ADCIN0
+#define MOTOR2_IC_CH                            ADC_CH_ADCIN2
+
+#define VBUS_CH                                 ADC_CH_ADCIN0
 #define VEXT1_CH                                ADC_CH_ADCIN14
 #define VEXT2_CH                                ADC_CH_ADCIN15
 
