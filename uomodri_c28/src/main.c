@@ -245,14 +245,12 @@ inline void LED_dimming(motor_t* p_motor1, motor_t* p_motor2, uint16_t* p_msg)
     if((p_motor1->state == MOTOR_STATE_ERROR)   || (p_motor2->state == MOTOR_STATE_ERROR))
         motor_state = MOTOR_STATE_ERROR;
 
-    // Reset LEDs
-    p_msg       = ws2812b_resetLed(p_msg);
     // Master LED
-    p_msg       = ws2812b_dimmingLed(motor_state, timer_cpt_ms, p_msg);
+    p_msg       = ws2812b_dimmingLed(MASTER_LED, motor_state, timer_cpt_ms, p_msg);
     //MOTOR_1 LED
-    p_msg       = ws2812b_dimmingLed(p_motor1->state, timer_cpt_ms, p_msg);
+    p_msg       = ws2812b_dimmingLed(MOTOR1_LED, p_motor1->state, timer_cpt_ms, p_msg);
     //MOTOR_2 LED
-    p_msg       = ws2812b_dimmingLed(p_motor2->state, timer_cpt_ms, p_msg);
+    p_msg       = ws2812b_dimmingLed(MOTOR2_LED, p_motor2->state, timer_cpt_ms, p_msg);
     // millisecond timer increment
     timer_cpt_ms= (timer_cpt_ms < 1000U) ? (timer_cpt_ms + 1): (0U);
 
@@ -484,6 +482,8 @@ __attribute__((interrupt)) void cla_ClearTask(void)
     CLA_clearTaskFlags(CLA1_BASE, CLA_TASKFLAG_ALL);
     // Clear IT
     Interrupt_clearACKGroup(INT_CLA_ADC_CALIB_GROUP);
+    // Disable definitely the IT - The task in CLA is just called one time.
+    Interrupt_disable(INT_CLA_ADC_CALIB);
 }
 
 /**
@@ -568,9 +568,6 @@ __attribute__((interrupt)) void cla_isrMotor2(void)
  */
 __attribute__((interrupt)) void tmr_isrLedCmd(void)
 {
-#ifdef DEBUG
-//    DBG_PIN2_SET;
-#endif
     global_1ms_tmr_cnt = (global_1ms_tmr_cnt < UINT32_MAX) ? (global_1ms_tmr_cnt + 1) : (0);
     // LED dimming control
     if(!DMA_getRunStatusFlag(DMA_LED_SPI_TX_BASE_ADDR))
@@ -583,9 +580,6 @@ __attribute__((interrupt)) void tmr_isrLedCmd(void)
     cmd_uomodri[MOTOR_2].cptTimeout++;
     CLA_forceTasks(CLA1_BASE, CLA_CMD_NEW_TASK_FLAG);
     Interrupt_clearACKGroup(INT_TIMER_LED_CMD_GROUP);
-#ifdef DEBUG
-//    DBG_PIN2_CLEAR;
-#endif
 }
 
 /**
@@ -603,6 +597,10 @@ __attribute__((interrupt)) void dma_isrSpiComRx(void)
         COM_msgExtract(&p_msg_spi->data, &cmd_uomodri[MOTOR_1], &cmd_uomodri[MOTOR_2]);
         CLA_forceTasks(CLA1_BASE, CLA_CMD_NEW_TASK_FLAG);
         com_bus_select      = COM_USE_SPI_BUS;
+        // Disable definitely the ITs linked to RS485.
+        Interrupt_disable(INT_RS485_Rx_Tx_CLB);
+        Interrupt_disable(INT_RS485_RX_MSG);
+        Interrupt_disable(INT_RS485_TX_MSG);
     }
     // Restart DMA reception & reset the SPI Rx fifo.
     DMA_startChannel(DMA_COM_SPI_RX_BASE_ADDR);
@@ -752,6 +750,8 @@ __attribute__((interrupt)) void clb_isrTxRx_RS485(void)
                 CLA_forceTasks(CLA1_BASE, CLA_CMD_NEW_TASK_FLAG);
                 // use RS485 as communication bus
                 com_bus_select              = COM_USE_RS485_BUS;
+                // Disable definitely the IT
+                Interrupt_disable(INT_DMA_RX_MSG);
                 // prepare reply to master - reset transmit index
                 com_rs485_tx.index          = 0;
                 p_msg_rs485->crc.u16_lsb    = 0;

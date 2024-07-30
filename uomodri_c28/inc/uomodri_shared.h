@@ -583,9 +583,9 @@ inline void FOC_svpwm1(foc_t* p_foc)
     p_foc->dtc_v            = __msatf32((((p_foc->ub - uOffset) / p_foc->acq.vBus) + uMidPoint), p_foc->dtcMax, p_foc->dtcMin);
     p_foc->dtc_w            = __msatf32((((p_foc->uc - uOffset) / p_foc->acq.vBus) + uMidPoint), p_foc->dtcMax, p_foc->dtcMin);
 #else
-    p_foc->dtc_u            = __fsat((((p_foc->ua - uOffset) / p_foc->motor_acq.vbus) + uMidPoint), p_foc->dtcMax, p_foc->dtcMin);
-    p_foc->dtc_v            = __fsat((((p_foc->ub - uOffset) / p_foc->motor_acq.vbus) + uMidPoint), p_foc->dtcMax, p_foc->dtcMin);
-    p_foc->dtc_w            = __fsat((((p_foc->uc - uOffset) / p_foc->motor_acq.vbus) + uMidPoint), p_foc->dtcMax, p_foc->dtcMin);
+    p_foc->dtc_u            = __fsat((((p_foc->ua - uOffset) / p_foc->acq.vBus) + uMidPoint), p_foc->dtcMax, p_foc->dtcMin);
+    p_foc->dtc_v            = __fsat((((p_foc->ub - uOffset) / p_foc->acq.vBus) + uMidPoint), p_foc->dtcMax, p_foc->dtcMin);
+    p_foc->dtc_w            = __fsat((((p_foc->uc - uOffset) / p_foc->acq.vBus) + uMidPoint), p_foc->dtcMax, p_foc->dtcMin);
 #endif
 
     return;
