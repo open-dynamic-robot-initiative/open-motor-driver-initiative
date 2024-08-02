@@ -437,7 +437,7 @@
                                                     .fctMux         = LED_SPI_SIMO_CFG, \
                                                     .direction      = GPIO_DIR_MODE_OUT, \
                                                     .samplingInMode = GPIO_QUAL_ASYNC, \
-                                                    .setValue       = true, \
+                                                    .setValue       = false, \
                                                     .intEnable      = false, \
                                                 }
 
@@ -1387,6 +1387,8 @@
                                                  SCI_INT_FE | \
                                                  SCI_INT_OE | \
                                                  SCI_INT_PE)
+#define SCI_INT_FIFO_RX_FE                      (0x0100)
+#define SCI_INT_FIFO_RX_PE                      (0x0200)
 #define COM_SCI_IT_SRC                          (0)
 #define COM_SCI_FIFO_TX_REG_ADDR                (COM_SCI_BASE + SCI_O_FFTX)
 #define COM_SCI_FIFO_RX_REG_ADDR                (COM_SCI_BASE + SCI_O_FFRX)
@@ -1494,7 +1496,7 @@
                                                     .dataWidth      = 16U, \
                                                     .mode           = SPI_MODE_MASTER, \
                                                     .protocol       = SPI_PROT_POL0PHA0, \
-                                                    .txLevel        = SPI_FIFO_TX6, \
+                                                    .txLevel        = SPI_FIFO_TXFULL, \
                                                     .rxLevel        = SPI_FIFO_RXEMPTY, \
                                                     .intSrc         = 0U, \
                                                     .highSpeedMode  = false, \

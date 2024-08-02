@@ -34,13 +34,13 @@ static void MCU_ini(void);
 inline void LED_dimming(motor_t*, motor_t*, uint16_t*);
 void MOT_initStruct(motor_t*, uint16_t);
 
-__attribute__((interrupt)) void cla_ClearTask(void);
+__attribute__((interrupt)) void cla_isrClearTask(void);
 __attribute__((interrupt)) void cla_isrMotor1(void);
 __attribute__((interrupt)) void cla_isrMotor2(void);
 __attribute__((interrupt)) void tmr_isrLedCmd(void);
 __attribute__((interrupt)) void dma_isrSpiComRx(void);
-__attribute__((interrupt)) void sci_isrRx_RS485(void);
 __attribute__((interrupt)) void sci_isrTx_RS485(void);
+__attribute__((interrupt)) void sci_isrRx_RS485(void);
 __attribute__((interrupt)) void clb_isrTxRx_RS485(void);
 
 /***********************************************************************
@@ -234,8 +234,10 @@ static void MCU_ini(void)
 inline void LED_dimming(motor_t* p_motor1, motor_t* p_motor2, uint16_t* p_msg)
 {
     static uint16_t timer_cpt_ms    = 0;
+//    uint16_t        i               = 0;
     motor_state_e   motor_state     = MOTOR_STATE_IDLE;
 
+    /* Set status of the 1st led */
     if((p_motor1->state & MOTOR_STATE_BOOT)     || (p_motor2->state & MOTOR_STATE_BOOT))
         motor_state = MOTOR_STATE_IDLE;
     else if((p_motor1->state & MOTOR_STATE_INIT)|| (p_motor2->state & MOTOR_STATE_INIT))
@@ -245,11 +247,11 @@ inline void LED_dimming(motor_t* p_motor1, motor_t* p_motor2, uint16_t* p_msg)
     if((p_motor1->state == MOTOR_STATE_ERROR)   || (p_motor2->state == MOTOR_STATE_ERROR))
         motor_state = MOTOR_STATE_ERROR;
 
-    // Master LED
+    // Master LED (1st led)
     p_msg       = ws2812b_dimmingLed(MASTER_LED, motor_state, timer_cpt_ms, p_msg);
-    //MOTOR_1 LED
+    //MOTOR_1 LED (2nd led)
     p_msg       = ws2812b_dimmingLed(MOTOR1_LED, p_motor1->state, timer_cpt_ms, p_msg);
-    //MOTOR_2 LED
+    //MOTOR_2 LED (3th led)
     p_msg       = ws2812b_dimmingLed(MOTOR2_LED, p_motor2->state, timer_cpt_ms, p_msg);
     // millisecond timer increment
     timer_cpt_ms= (timer_cpt_ms < 1000U) ? (timer_cpt_ms + 1): (0U);
@@ -476,14 +478,16 @@ void MOT_initStruct(motor_t* p_motor, uint16_t motor_id)
 /**
  * @brief       Force a clear of all pending interrupts after ADC calibration.
  */
-__attribute__((interrupt)) void cla_ClearTask(void)
+__attribute__((interrupt)) void cla_isrClearTask(void)
 {
     // Purge pending tasks after ADC calibration.
     CLA_clearTaskFlags(CLA1_BASE, CLA_TASKFLAG_ALL);
     // Clear IT
     Interrupt_clearACKGroup(INT_CLA_ADC_CALIB_GROUP);
-    // Disable definitely the IT - The task in CLA is just called one time.
+    // Disable the IT - The CLA task is one time called.
     Interrupt_disable(INT_CLA_ADC_CALIB);
+    // Disable the task definitely.
+    CLA_disableTasks(CLA1_BASE, CLA_ADC_CALIB_TASK_FLAG);
 }
 
 /**
@@ -598,9 +602,9 @@ __attribute__((interrupt)) void dma_isrSpiComRx(void)
         CLA_forceTasks(CLA1_BASE, CLA_CMD_NEW_TASK_FLAG);
         com_bus_select      = COM_USE_SPI_BUS;
         // Disable definitely the ITs linked to RS485.
-        Interrupt_disable(INT_RS485_Rx_Tx_CLB);
-        Interrupt_disable(INT_RS485_RX_MSG);
-        Interrupt_disable(INT_RS485_TX_MSG);
+//        Interrupt_disable(INT_RS485_Rx_Tx_CLB);
+//        Interrupt_disable(INT_RS485_RX_MSG);
+//        Interrupt_disable(INT_RS485_TX_MSG);
     }
     // Restart DMA reception & reset the SPI Rx fifo.
     DMA_startChannel(DMA_COM_SPI_RX_BASE_ADDR);
@@ -650,6 +654,11 @@ __attribute__((interrupt)) void sci_isrRx_RS485(void)
     DBG_PIN2_SET;
     // FIFO IT source test.
     uint32_t sci_it_src_test = SCI_getInterruptStatus(COM_SCI_BASE);
+//    if((HWREGH(COM_SCI_BASE + SCI_O_RXBUF) & SCI_RXBUF_SCIFFFE) == SCI_RXBUF_SCIFFFE)
+//        sci_it_src_test |= SCI_INT_FIFO_RX_FE;
+//    if((HWREGH(COM_SCI_BASE + SCI_O_RXBUF) & SCI_RXBUF_SCIFFPE) == SCI_RXBUF_SCIFFPE)
+//        sci_it_src_test |= SCI_INT_FIFO_RX_PE;
+
     // FIFO RX IT?
     if(sci_it_src_test & SCI_INT_RXFF)
     {
@@ -675,7 +684,7 @@ __attribute__((interrupt)) void sci_isrRx_RS485(void)
      * OE - SCI overrun-error flag.
      * PE - SCI parity-error flag.
      */
-    if(sci_it_src_test & SCI_INT_RXERR)
+    if((sci_it_src_test & SCI_INT_RXERR))// || (sci_it_src_test & SCI_RXBUF_SCIFFFE) || (sci_it_src_test & SCI_RXBUF_SCIFFPE))
     {
 #if USE_FCT
         SCI_performSoftwareReset(COM_SCI_BASE);
@@ -751,7 +760,7 @@ __attribute__((interrupt)) void clb_isrTxRx_RS485(void)
                 // use RS485 as communication bus
                 com_bus_select              = COM_USE_RS485_BUS;
                 // Disable definitely the IT
-                Interrupt_disable(INT_DMA_RX_MSG);
+//                Interrupt_disable(INT_DMA_RX_MSG);
                 // prepare reply to master - reset transmit index
                 com_rs485_tx.index          = 0;
                 p_msg_rs485->crc.u16_lsb    = 0;

@@ -33,18 +33,18 @@ uint16_t* ws2812b_writeLed(uint16_t led_pos, uint16_t red, uint16_t green, uint1
 
     if(led_pos % 2)
     {
-        *p_msg++   &= ws2812_color_table_l_justified[green][0];
+        *p_msg++   |= ws2812_color_table_l_justified[green][0];
         *p_msg++    = ws2812_color_table_l_justified[green][1];
         *p_msg++    = ws2812_color_table_r_justified[red][0];
         *p_msg      = ws2812_color_table_r_justified[red][1];
-        *p_msg++   &= ws2812_color_table_l_justified[blue][0];
+        *p_msg++   |= ws2812_color_table_l_justified[blue][0];
         *p_msg++    = ws2812_color_table_l_justified[blue][1];
     }
     else
     {
         *p_msg++    = ws2812_color_table_r_justified[green][0];
         *p_msg      = ws2812_color_table_r_justified[green][1];
-        *p_msg++   &= ws2812_color_table_l_justified[red][0];
+        *p_msg++   |= ws2812_color_table_l_justified[red][0];
         *p_msg++    = ws2812_color_table_l_justified[red][1];
         *p_msg++    = ws2812_color_table_r_justified[blue][0];
         *p_msg      = ws2812_color_table_r_justified[blue][1];
@@ -52,19 +52,6 @@ uint16_t* ws2812b_writeLed(uint16_t led_pos, uint16_t red, uint16_t green, uint1
 
     return (p_msg);
 }
-//uint16_t* ws2812b_writeLed(uint16_t red, uint16_t green, uint16_t blue, uint16_t* p_msg)
-//{
-//    red        &= 0x00FF;
-//    green      &= 0x00FF;
-//    blue       &= 0x00FF;
-//    *p_msg++    = ws2812_color_table_r_justified[green][0];
-//    *p_msg++    = (ws2812_color_table_r_justified[green][1] & 0xFF00) | (ws2812_color_table_l_justified[red][0] & 0x00FF);
-//    *p_msg++    = ws2812_color_table_l_justified[red][1];
-//    *p_msg++    = ws2812_color_table_r_justified[blue][0];
-//    *p_msg++    = ws2812_color_table_r_justified[blue][1];
-//
-//    return (p_msg);
-//}
 
 /**
  * @brief       Define a command according motor status.

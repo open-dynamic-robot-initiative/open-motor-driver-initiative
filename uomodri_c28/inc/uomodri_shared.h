@@ -650,7 +650,9 @@ void FOC_runControl(foc_t* p_foc)
  */
 void MOT_runCommand(uint32_t epwm_base, float32_t cmd)
 {
+    __meallow();
     EPWM_setCounterCompareValue(epwm_base, EPWM_COUNTER_COMPARE_A, (uint16_t)(cmd * PWM_TIMEBASE_CNT));
+    __medis();
 
     return;
 }
@@ -661,7 +663,9 @@ void MOT_runCommand(uint32_t epwm_base, float32_t cmd)
  */
 void MOT_stopCommand(uint32_t epwm_base)
 {
+    __meallow();
     EPWM_setCounterCompareValue(epwm_base, EPWM_COUNTER_COMPARE_A, (uint16_t)PWM_TIMEBASE_CNT);
+    __medis();
 
     return;
 }

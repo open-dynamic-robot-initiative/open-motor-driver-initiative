@@ -516,7 +516,7 @@ void HAL_SCI_ini(const sci_cfg_t* p_sciCfg)
             /* Set SPI configuration, disable loopback */
             SCI_setConfig(sciBase, UOMODRI_LSPCLK_FREQ, p_sciCfg->bitRate, p_sciCfg->sciMode);
             SCI_disableLoopback(sciBase);
-            SCI_performSoftwareReset(sciBase);
+//            SCI_performSoftwareReset(sciBase);
 
             /* Multiprocessor mode */
             SCI_enableSleepMode(sciBase);
@@ -526,6 +526,8 @@ void HAL_SCI_ini(const sci_cfg_t* p_sciCfg)
                 SCI_setIdleMultiProcessorMode(sciBase);
             else
                 SCI_disableSleepMode(sciBase);
+
+            SCI_enableModule(sciBase);
 
             /* Configure FIFO if required. */
             if((p_sciCfg->rxLevel != SCI_FIFO_RX0) || (p_sciCfg->txLevel != SCI_FIFO_TX0))
@@ -771,7 +773,7 @@ void HAL_INT_ini(const int_cfg_t* p_intCfg)
             intNum = (++p_intCfg)->intNum;
         }
         EINT;   // enable global interrupt (INTM)
-        ERTM;   // Enable realtime interrupt (DGBM)
+        ERTM;   // Enable real time interrupt (DGBM)
     }
 
     return;

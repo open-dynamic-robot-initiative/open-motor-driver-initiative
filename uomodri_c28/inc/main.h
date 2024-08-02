@@ -42,7 +42,7 @@ typedef union __uart_addr_u__
 
 #define INT_CLA_ADC_CALIB               INT_CLA1_1
 #define INT_CLA_ADC_CALIB_GROUP         INTERRUPT_ACK_GROUP11
-#define INT_CLA_ADC_CALIB_HANDLER       &cla_ClearTask
+#define INT_CLA_ADC_CALIB_HANDLER       &cla_isrClearTask
 
 #define INT_CLA_MOTOR1                  INT_CLA1_3
 #define INT_CLA_MOTOR1_GROUP            INTERRUPT_ACK_GROUP11
