@@ -52,6 +52,10 @@ typedef union __uart_addr_u__
 #define INT_CLA_MOTOR2_GROUP            INTERRUPT_ACK_GROUP11
 #define INT_CLA_MOTOR2_HANDLER          &cla_isrMotor2
 
+//#define INT_I2C                         INT_I2CA
+//#define INT_I2C_GROUP                   INTERRUPT_ACK_GROUP8
+//#define INT_I2C_HANDLER                 &i2c_isr
+
 #define INT_TIMER_LED_DEF               { \
                                             .intNum             = INT_TIMER_LED, \
                                             .intAckGroup        = INT_TIMER_LED_CMD_GROUP, \
@@ -86,13 +90,17 @@ typedef union __uart_addr_u__
                                             .intNum             = INT_CLA_MOTOR1, \
                                             .intAckGroup        = INT_CLA_MOTOR1_GROUP, \
                                             .p_intHandler       = INT_CLA_MOTOR1_HANDLER \
-                                         }
+                                        }
 #define INT_CLA_MOTOR2_DEF              { \
                                             .intNum             = INT_CLA_MOTOR2, \
                                             .intAckGroup        = INT_CLA_MOTOR2_GROUP, \
                                             .p_intHandler       = INT_CLA_MOTOR2_HANDLER \
-                                         }
-
+                                        }
+//#define INT_I2C_DEF                     { \
+//                                            .intNum             = INT_I2C, \
+//                                            .intAckGroup        = INT_I2C_GROUP, \
+//                                            .p_intHandler       = INT_I2C_HANDLER \
+//                                        }
 
 /***********************************************************************
  * GLOBAL VARIABLES

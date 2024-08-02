@@ -772,9 +772,30 @@ void HAL_INT_ini(const int_cfg_t* p_intCfg)
             Interrupt_enable(intNum);
             intNum = (++p_intCfg)->intNum;
         }
+        asm(" NOP");
         EINT;   // enable global interrupt (INTM)
         ERTM;   // Enable real time interrupt (DGBM)
     }
+
+    return;
+}
+
+/**
+ * @brief       Workaround on IT management according silicon revision (see sprz458.pdf)
+ */
+void HAL_INT_WORKAROUND_ini(void (*handler)(void))
+{
+    Interrupt_register(INT_ADCA1, handler);
+    Interrupt_register(INT_EPWM1_TZ, handler);
+    Interrupt_register(INT_EPWM1, handler);
+    Interrupt_register(INT_ECAP1, handler);
+    Interrupt_register(INT_EQEP1, handler);
+    Interrupt_register(INT_SPIA_RX, handler);
+    Interrupt_register(INT_DMA_CH1, handler);
+    Interrupt_register(INT_I2CA, handler);
+    Interrupt_register(INT_SCIA_RX, handler);
+    Interrupt_register(INT_ADCA_EVT, handler);
+    Interrupt_register(INT_XINT3, handler);
 
     return;
 }

@@ -42,6 +42,7 @@ __attribute__((interrupt)) void dma_isrSpiComRx(void);
 __attribute__((interrupt)) void sci_isrTx_RS485(void);
 __attribute__((interrupt)) void sci_isrRx_RS485(void);
 __attribute__((interrupt)) void clb_isrTxRx_RS485(void);
+__attribute__((interrupt)) void workaround_errata_isr(void);
 
 /***********************************************************************
  * VARIABLES
@@ -109,6 +110,10 @@ com_bus_e   com_bus_select      = COM_NO_BUS_DEFINED;
 #pragma DATA_SECTION(global_1ms_tmr_cnt, "ramgs0")
 uint32_t    global_1ms_tmr_cnt  = 0U;
 
+#pragma DATA_ALIGN(global_i2c_cnt, 2)
+#pragma DATA_SECTION(global_i2c_cnt, "ramgs0")
+uint32_t    global_i2c_cnt      = 0U;
+
 /***********************************************************************
  * EXTERNAL VARIABLES
  ***********************************************************************/
@@ -146,6 +151,7 @@ void main(void)
     CLA_forceTasks(CLA1_BASE, CLA_ADC_CALIB_TASK_FLAG);
     // Interrupts initialization
     HAL_INT_ini(interruptList);
+    HAL_INT_WORKAROUND_ini(&workaround_errata_isr);
 //    // SPI check parameters
 //    if((COM_MSG_SPI_TX_16BIT_PAYLOAD_LENGTH != COM_MSG_SPI_RX_16BIT_PAYLOAD_LENGTH) || \
 //            (COM_MSG_SPI_TX_16BIT_FULL_LENGTH != COM_MSG_SPI_RX_16BIT_FULL_LENGTH))
@@ -218,9 +224,9 @@ static void MCU_ini(void)
 #endif
     // Initialize GPIO
     Device_initGPIO();
-    // Initialize PIE control registers and flags. Disables CPU interrupts.
+    /* Initializes PIE and clears PIE registers. Disables CPU interrupts. */
     Interrupt_initModule();
-    // Initialize the PIE vector table with pointers to the shell Interrupt Service Routines (ISR).
+    /* Initialize the PIE vector table with pointers to the shell Interrupt Service Routines (ISR). */
     Interrupt_initVectorTable();
 
     return;
@@ -482,12 +488,12 @@ __attribute__((interrupt)) void cla_isrClearTask(void)
 {
     // Purge pending tasks after ADC calibration.
     CLA_clearTaskFlags(CLA1_BASE, CLA_TASKFLAG_ALL);
-    // Clear IT
-    Interrupt_clearACKGroup(INT_CLA_ADC_CALIB_GROUP);
-    // Disable the IT - The CLA task is one time called.
-    Interrupt_disable(INT_CLA_ADC_CALIB);
     // Disable the task definitely.
     CLA_disableTasks(CLA1_BASE, CLA_ADC_CALIB_TASK_FLAG);
+    // Disable the IT - The CLA task is one time called.
+    Interrupt_disable(INT_CLA_ADC_CALIB);
+    // Clear IT
+    Interrupt_clearACKGroup(INT_CLA_ADC_CALIB_GROUP);
 }
 
 /**
@@ -582,7 +588,9 @@ __attribute__((interrupt)) void tmr_isrLedCmd(void)
     // Timeout management
     cmd_uomodri[MOTOR_1].cptTimeout++;
     cmd_uomodri[MOTOR_2].cptTimeout++;
+    // Force an update of the motors command structures (Timeout value)
     CLA_forceTasks(CLA1_BASE, CLA_CMD_NEW_TASK_FLAG);
+    // Clear IT
     Interrupt_clearACKGroup(INT_TIMER_LED_CMD_GROUP);
 }
 
@@ -599,12 +607,17 @@ __attribute__((interrupt)) void dma_isrSpiComRx(void)
     {
         // Extract received message & send new commands to FOC structures. Define SPI as communication bus by default.
         COM_msgExtract(&p_msg_spi->data, &cmd_uomodri[MOTOR_1], &cmd_uomodri[MOTOR_2]);
+        // Force an update of the motors command structures (commands values)
         CLA_forceTasks(CLA1_BASE, CLA_CMD_NEW_TASK_FLAG);
         com_bus_select      = COM_USE_SPI_BUS;
         // Disable definitely the ITs linked to RS485.
-//        Interrupt_disable(INT_RS485_Rx_Tx_CLB);
-//        Interrupt_disable(INT_RS485_RX_MSG);
-//        Interrupt_disable(INT_RS485_TX_MSG);
+//        CLB_disableCLB(RS485_RX_TX_CLB_EOT_BASE);
+//        CLB_disableCLB(RS485_RX_CLB_ADDR_VALID_BASE);
+        Interrupt_disable(INT_RS485_Rx_Tx_CLB);
+
+//        SCI_disableModule(COM_SCI_BASE);
+        Interrupt_disable(INT_RS485_RX_MSG);
+        Interrupt_disable(INT_RS485_TX_MSG);
     }
     // Restart DMA reception & reset the SPI Rx fifo.
     DMA_startChannel(DMA_COM_SPI_RX_BASE_ADDR);
@@ -618,7 +631,9 @@ __attribute__((interrupt)) void dma_isrSpiComRx(void)
  */
 __attribute__((interrupt)) void sci_isrTx_RS485(void)
 {
+#ifdef DEBUG
     DBG_PIN2_SET;
+#endif
     // FIFO IT source test.
     uint32_t sci_it_src_test = SCI_getInterruptStatus(COM_SCI_BASE);
     // FIFO TX IT?
@@ -643,7 +658,9 @@ __attribute__((interrupt)) void sci_isrTx_RS485(void)
     }
     // Clear IT flag
     Interrupt_clearACKGroup(INT_RS485_TX_MSG_GROUP);
+#ifdef DEBUG
     DBG_PIN2_CLEAR;
+#endif
 }
 
 /**
@@ -651,7 +668,9 @@ __attribute__((interrupt)) void sci_isrTx_RS485(void)
  */
 __attribute__((interrupt)) void sci_isrRx_RS485(void)
 {
+#ifdef DEBUG
     DBG_PIN2_SET;
+#endif
     // FIFO IT source test.
     uint32_t sci_it_src_test = SCI_getInterruptStatus(COM_SCI_BASE);
 //    if((HWREGH(COM_SCI_BASE + SCI_O_RXBUF) & SCI_RXBUF_SCIFFFE) == SCI_RXBUF_SCIFFFE)
@@ -695,7 +714,9 @@ __attribute__((interrupt)) void sci_isrRx_RS485(void)
     }
     // Clear global IT flag
     Interrupt_clearACKGroup(INT_RS485_RX_MSG_GROUP);
+#ifdef DEBUG
     DBG_PIN2_CLEAR;
+#endif
 }
 
 /**
@@ -703,7 +724,9 @@ __attribute__((interrupt)) void sci_isrRx_RS485(void)
  */
 __attribute__((interrupt)) void clb_isrTxRx_RS485(void)
 {
+#ifdef DEBUG
     DBG_PIN3_SET;
+#endif
 #if USE_FCT
     uint16_t clb_tag_test   = CLB_getInterruptTag(RS485_RX_TX_CLB_EOT_BASE);
 #else
@@ -791,5 +814,13 @@ __attribute__((interrupt)) void clb_isrTxRx_RS485(void)
     CLB_clearInterruptTag(RS485_RX_TX_CLB_EOT_BASE);
     // Clear IT flag
     Interrupt_clearACKGroup(INT_RS485_RX_Tx_CLB_GROUP);
+#ifdef DEBUG
     DBG_PIN3_CLEAR;
+#endif
+}
+
+__attribute__((interrupt)) void workaround_errata_isr(void)
+{
+    global_i2c_cnt++;
+//    Interrupt_clearACKGroup(INT_I2C_GROUP);
 }
