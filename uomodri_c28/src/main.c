@@ -42,7 +42,7 @@ __attribute__((interrupt)) void dma_isrSpiComRx(void);
 __attribute__((interrupt)) void sci_isrTx_RS485(void);
 __attribute__((interrupt)) void sci_isrRx_RS485(void);
 __attribute__((interrupt)) void clb_isrTxRx_RS485(void);
-__attribute__((interrupt)) void workaround_errata_isr(void);
+__attribute__((interrupt)) void errata_isr(void);
 
 /***********************************************************************
  * VARIABLES
@@ -62,6 +62,7 @@ static const int_cfg_t interruptList[] =
  INT_RS485_RX_MSG_DEF,
  INT_RS485_Rx_Tx_CLB_DEF,
 #endif
+
  {.intNum = UINT32_MAX},        /* END OF ARRAY */
 };
 
@@ -110,9 +111,9 @@ com_bus_e   com_bus_select      = COM_NO_BUS_DEFINED;
 #pragma DATA_SECTION(global_1ms_tmr_cnt, "ramgs0")
 uint32_t    global_1ms_tmr_cnt  = 0U;
 
-#pragma DATA_ALIGN(global_i2c_cnt, 2)
-#pragma DATA_SECTION(global_i2c_cnt, "ramgs0")
-uint32_t    global_i2c_cnt      = 0U;
+#pragma DATA_ALIGN(global_errata_cnt, 2)
+#pragma DATA_SECTION(global_errata_cnt, "ramgs0")
+uint32_t    global_errata_cnt   = 0U;
 
 /***********************************************************************
  * EXTERNAL VARIABLES
@@ -150,8 +151,7 @@ void main(void)
     // Start ADC offset calibration on CLA
     CLA_forceTasks(CLA1_BASE, CLA_ADC_CALIB_TASK_FLAG);
     // Interrupts initialization
-    HAL_INT_ini(interruptList);
-    HAL_INT_WORKAROUND_ini(&workaround_errata_isr);
+    HAL_INT_ini(interruptList, &errata_isr);
 //    // SPI check parameters
 //    if((COM_MSG_SPI_TX_16BIT_PAYLOAD_LENGTH != COM_MSG_SPI_RX_16BIT_PAYLOAD_LENGTH) || \
 //            (COM_MSG_SPI_TX_16BIT_FULL_LENGTH != COM_MSG_SPI_RX_16BIT_FULL_LENGTH))
@@ -515,6 +515,7 @@ __attribute__((interrupt)) void cla_isrMotor1(void)
         p_msg_rs485->header.size    = COM_MSG_RS485_TX_8BIT_FULL_LENGTH;
         COM_msgCreate(&motor_m1, &p_msg_rs485->data, global_1ms_tmr_cnt);
     }
+    CLA_clearTaskFlags(CLA1_BASE, CLA_MOTOR1_TASK_FLAG);
     // Clear IT
     Interrupt_clearACKGroup(INT_CLA_MOTOR1_GROUP);
 }
@@ -569,6 +570,7 @@ __attribute__((interrupt)) void cla_isrMotor2(void)
         DMA_configAddresses(DMA_COM_SPI_TX_BASE_ADDR, (uint16_t *) COM_SPI_TX_BASE_REG_ADDR, (uint16_t *) &p_msg_spi->data.timeStamp);
         DMA_startChannel(DMA_COM_SPI_TX_BASE_ADDR);
     }
+    CLA_clearTaskFlags(CLA1_BASE, CLA_MOTOR2_TASK_FLAG);
     // Clear IT
     Interrupt_clearACKGroup(INT_CLA_MOTOR2_GROUP);
 }
@@ -819,8 +821,10 @@ __attribute__((interrupt)) void clb_isrTxRx_RS485(void)
 #endif
 }
 
-__attribute__((interrupt)) void workaround_errata_isr(void)
+/**
+ * @brief       Errata workaround interrupt according errata note (sprz458.pdf)
+ */
+__attribute__((interrupt)) void errata_isr(void)
 {
-    global_i2c_cnt++;
-//    Interrupt_clearACKGroup(INT_I2C_GROUP);
+    global_errata_cnt = (global_errata_cnt < UINT32_MAX) ? (global_errata_cnt + 1) : (0U);
 }

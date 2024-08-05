@@ -755,11 +755,27 @@ void HAL_CLA_ini(const cla_cfg_t* p_clacCfg)
 
 /**
  * @brief       Interrupts initialization function.
+ * @param[in]   *p_intCfg   Pointer on the interrupt configuration list structure
+ * @param[in]   *errata_handler Function pointer on the errata function handler (see sprz458.pdf workaround)
  */
-void HAL_INT_ini(const int_cfg_t* p_intCfg)
+void HAL_INT_ini(const int_cfg_t* p_intCfg, void (*errata_handler)(void))
 {
     if(p_intCfg != NULL)
     {
+        // Workaround on IT management according silicon revision (see sprz458.pdf)
+        Interrupt_register(INT_ADCA1,   errata_handler);
+        Interrupt_register(INT_EPWM1_TZ,errata_handler);
+        Interrupt_register(INT_EPWM1,   errata_handler);
+        Interrupt_register(INT_ECAP1,   errata_handler);
+        Interrupt_register(INT_EQEP1,   errata_handler);
+        Interrupt_register(INT_SPIA_RX, errata_handler);
+        Interrupt_register(INT_DMA_CH1, errata_handler);
+        Interrupt_register(INT_I2CA,    errata_handler);
+        Interrupt_register(INT_SCIA_RX, errata_handler);
+        Interrupt_register(INT_ADCA_EVT,errata_handler);
+        Interrupt_register(INT_CLA1_1,  errata_handler);
+        Interrupt_register(INT_XINT3,   errata_handler);
+
         uint32_t intNum = p_intCfg->intNum;
         // Clear & set IT flags & enable IT bits in a known state.
 
@@ -770,32 +786,13 @@ void HAL_INT_ini(const int_cfg_t* p_intCfg)
             Interrupt_register(intNum, p_intCfg->p_intHandler);
             // Enable Interrupts
             Interrupt_enable(intNum);
+
             intNum = (++p_intCfg)->intNum;
         }
         asm(" NOP");
         EINT;   // enable global interrupt (INTM)
         ERTM;   // Enable real time interrupt (DGBM)
     }
-
-    return;
-}
-
-/**
- * @brief       Workaround on IT management according silicon revision (see sprz458.pdf)
- */
-void HAL_INT_WORKAROUND_ini(void (*handler)(void))
-{
-    Interrupt_register(INT_ADCA1, handler);
-    Interrupt_register(INT_EPWM1_TZ, handler);
-    Interrupt_register(INT_EPWM1, handler);
-    Interrupt_register(INT_ECAP1, handler);
-    Interrupt_register(INT_EQEP1, handler);
-    Interrupt_register(INT_SPIA_RX, handler);
-    Interrupt_register(INT_DMA_CH1, handler);
-    Interrupt_register(INT_I2CA, handler);
-    Interrupt_register(INT_SCIA_RX, handler);
-    Interrupt_register(INT_ADCA_EVT, handler);
-    Interrupt_register(INT_XINT3, handler);
 
     return;
 }
