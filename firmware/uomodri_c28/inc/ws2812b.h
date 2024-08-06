@@ -4,9 +4,15 @@
 /***********************************************************************
  * INCLUDE FILES
  ***********************************************************************/
-#include <stdbool.h>
-#include <stdint.h>
-#include <math.h>
+#include "f2838x_device.h"
+#include "motor_ctrl.h"
+
+/***********************************************************************
+ * DEFINES
+ ***********************************************************************/
+#define MASTER_LED  (0x00) /*!< First led in the chain */
+#define MOTOR1_LED  (0x01) /*!< Second led associated to MOTOR1 */
+#define MOTOR2_LED  (0x02) /*!< Third led associated to MOTOR2 */
 
 /***********************************************************************
  * RGB LED CONTROL
@@ -82,10 +88,21 @@ static const uint16_t ws2812_color_table_r_justified[256][2] =
  {0xDB69, 0x2400}, {0xDB69, 0x2600}, {0xDB69, 0x3400}, {0xDB69, 0x3600}, {0xDB69, 0xA400}, {0xDB69, 0xA600}, {0xDB69, 0xB400}, {0xDB69, 0xB600},
  {0xDB6D, 0x2400}, {0xDB6D, 0x2600}, {0xDB6D, 0x3400}, {0xDB6D, 0x3600}, {0xDB6D, 0xA400}, {0xDB6D, 0xA600}, {0xDB6D, 0xB400}, {0xDB6D, 0xB600},
 };
+//
+//typedef enum __led_chain_e__
+//{
+//    MASTER_LED  = 0x00, /*!< First led in the chain */
+//    MOTOR1_LED  = 0x01, /*!< Second led associated to MOTOR1 */
+//    MOTOR2_LED  = 0x02, /*!< Third led associated to MOTOR2 */
+//} led_chain_e;
 
 /***********************************************************************
  * FUNCTIONS DECLARATION
  ***********************************************************************/
-void ws2812b_writeLed(uint16_t, uint16_t, uint16_t, uint16_t*);
+uint16_t* ws2812b_resetLed(uint16_t*);
+//uint16_t* ws2812b_writeLed(uint16_t, uint16_t, uint16_t, uint16_t*);
+uint16_t* ws2812b_writeLed(uint16_t, uint16_t, uint16_t, uint16_t, uint16_t*);
+//uint16_t* ws2812b_dimmingLed(motor_state_e, uint16_t, uint16_t*);
+uint16_t* ws2812b_dimmingLed(uint16_t, motor_state_e, uint16_t, uint16_t*);
 
 #endif /* __WS2812B_H__ */

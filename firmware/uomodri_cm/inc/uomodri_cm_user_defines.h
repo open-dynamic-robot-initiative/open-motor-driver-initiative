@@ -156,7 +156,16 @@
 /************************************************************************
  * COMMUNICATION DEFINES
  ************************************************************************/
-/*** Communication constants ***/
+#define COM_MSG_EXTRACT_TX_RX_MAX_SIZE          (64)
+#define COM_MSG_RS485_TX_RX_MAX_SIZE            (20)
+#define COM_MSG_RS485_RX_ADDRESS_1              (0x42)
+#define COM_MSG_RS485_RX_ADDRESS_2              (0x00)
+#define COM_MSG_RS485_TX_ADDRESS                (0xFF)
+#define COM_MSG_RS485_TX_TYPE_STANDARD          (0x00)
+
+/***********************************************************************
+ * COMMUNICATION CONSTANTS
+ ***********************************************************************/
 #define POSITION_LSB                            (5.960464477539063e-08f)    // 2**(-24)
 #define VELOCITY_LSB                            (4.8828125e-04f)// 2**(-11) // Added rad/s to krpm conversion
 #define IQ_LSB                                  (9.765625e-04f)             // 2**(-10)

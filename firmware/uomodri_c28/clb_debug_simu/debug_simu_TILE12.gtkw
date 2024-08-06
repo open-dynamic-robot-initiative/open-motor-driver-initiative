@@ -1,0 +1,128 @@
+[*]
+[*] GTKWave Analyzer v3.3.104 (w)1999-2020 BSI
+[*] Mon Dec 11 16:18:05 2023
+[*]
+[dumpfile] "/home/jmanhes/laas/workspace_ti/uomodri/uomodri_c28/Debug_Flash/simulation/CLB.vcd"
+[dumpfile_mtime] "Fri Dec  8 17:22:33 2023"
+[dumpfile_size] 5447829
+[savefile] "/home/jmanhes/laas/workspace_ti/uomodri/uomodri_c28/debug_simu_TILE12.gtkw"
+[timestart] 69480000
+[size] 1920 1043
+[pos] -2021 -128
+*-22.819824 84210000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] SystemC.
+[sst_width] 400
+[signals_width] 454
+[sst_expanded] 1
+[sst_vpaned_height] 301
+@200
+-TILE1
+@29
+[color] 2
++{RS485_Rx_input} SystemC.TILE1_BOUNDARY.TILE1_BOUNDARY_original_input0
+@28
++{Next_msg_is_Tx} SystemC.TILE1_BOUNDARY.TILE1_BOUNDARY_original_input1
+@200
+-TILE1_LUTs
+@28
+SystemC.TILE1_LUT_0.TILE1_LUT_0_output
++{SystemC.TILE1_LUT_1.TILE1_LUT_1_output_Rx_EOT} SystemC.TILE1_LUT_1.TILE1_LUT_1_output
++{SystemC.TILE1_LUT_2.TILE1_LUT_2_output_Tx_EOT} SystemC.TILE1_LUT_2.TILE1_LUT_2_output
+@200
+-TIL1_FSM
+@28
++{SystemC.TILE1_FSM_0.TILE1_FSM_0_fsm_s0_output_Rx_ACTIVE} SystemC.TILE1_FSM_0.TILE1_FSM_0_fsm_s0_output
++{SystemC.TILE1_FSM_1.TILE1_FSM_1_fsm_s0_output_Tx_ACTIVE} SystemC.TILE1_FSM_1.TILE1_FSM_1_fsm_s0_output
+@200
+-TILE1_COUNTER
+@28
+SystemC.TILE1_COUNTER_0.TILE1_COUNTER_0_counter_equals_match1
+SystemC.TILE1_COUNTER_0.TILE1_COUNTER_0_counter_reset
+@24
+SystemC.TILE1_COUNTER_0.TILE1_COUNTER_0_counter_output[31:0]
+@28
++{SystemC.TILE1_COUNTER_0.TILE1_COUNTER_0_enable} SystemC.TILE1_COUNTER_0.TILE1_COUNTER_0_mode0
+@200
+-TILE1_HLC
+@28
+SystemC.TILE1_HLC.TILE1_HLC_program_interrupt_flag
+@22
+SystemC.TILE1_HLC.TILE1_HLC_program_interrupt_number[31:0]
+@200
+-
+-TILE2
+@28
++{Reception idle} SystemC.TILE2_BOUNDARY.TILE2_BOUNDARY_original_input1
+@200
+-LUT4_0
+@28
+SystemC.TILE2_LUT_0.TILE2_LUT_0_output
+@200
+-COUNTER_0 : divider(%8) 100MHz to 12.5MHz 
+@28
+SystemC.TILE2_COUNTER_0.TILE2_COUNTER_0_counter_equals_match1
+@24
+SystemC.TILE2_COUNTER_0.TILE2_COUNTER_0_counter_output[31:0]
+@28
+SystemC.TILE2_COUNTER_0.TILE2_COUNTER_0_counter_reset
++{SystemC.TILE2_COUNTER_0.TILE2_COUNTER_0_enable} SystemC.TILE2_COUNTER_0.TILE2_COUNTER_0_mode0
+@200
+-COUNTER_1 : count first 9 elements of msg
+@28
++{SystemC.TILE2_COUNTER_1.TILE2_COUNTER_1_counter_equals_match1(0x09)} SystemC.TILE2_COUNTER_1.TILE2_COUNTER_1_counter_equals_match1
+@24
+SystemC.TILE2_COUNTER_1.TILE2_COUNTER_1_counter_output[31:0]
+@28
+SystemC.TILE2_COUNTER_1.TILE2_COUNTER_1_counter_reset
++{SystemC.TILE2_COUNTER_1.TILE2_COUNTER_1_enable} SystemC.TILE2_COUNTER_1.TILE2_COUNTER_1_mode0
+@200
+-COUNTER_2 : Shift register
+@28
++{SystemC.TILE2_COUNTER_2.TILE2_COUNTER_2_counter_equals_match1(0xA1)} SystemC.TILE2_COUNTER_2.TILE2_COUNTER_2_counter_equals_match1
+@c00022
+SystemC.TILE2_COUNTER_2.TILE2_COUNTER_2_counter_output[31:0]
+@28
+(0)SystemC.TILE2_COUNTER_2.TILE2_COUNTER_2_counter_output[31:0]
+(1)SystemC.TILE2_COUNTER_2.TILE2_COUNTER_2_counter_output[31:0]
+(2)SystemC.TILE2_COUNTER_2.TILE2_COUNTER_2_counter_output[31:0]
+(3)SystemC.TILE2_COUNTER_2.TILE2_COUNTER_2_counter_output[31:0]
+(4)SystemC.TILE2_COUNTER_2.TILE2_COUNTER_2_counter_output[31:0]
+(5)SystemC.TILE2_COUNTER_2.TILE2_COUNTER_2_counter_output[31:0]
+(6)SystemC.TILE2_COUNTER_2.TILE2_COUNTER_2_counter_output[31:0]
+(7)SystemC.TILE2_COUNTER_2.TILE2_COUNTER_2_counter_output[31:0]
+(8)SystemC.TILE2_COUNTER_2.TILE2_COUNTER_2_counter_output[31:0]
+(9)SystemC.TILE2_COUNTER_2.TILE2_COUNTER_2_counter_output[31:0]
+(10)SystemC.TILE2_COUNTER_2.TILE2_COUNTER_2_counter_output[31:0]
+(11)SystemC.TILE2_COUNTER_2.TILE2_COUNTER_2_counter_output[31:0]
+(12)SystemC.TILE2_COUNTER_2.TILE2_COUNTER_2_counter_output[31:0]
+(13)SystemC.TILE2_COUNTER_2.TILE2_COUNTER_2_counter_output[31:0]
+(14)SystemC.TILE2_COUNTER_2.TILE2_COUNTER_2_counter_output[31:0]
+(15)SystemC.TILE2_COUNTER_2.TILE2_COUNTER_2_counter_output[31:0]
+(16)SystemC.TILE2_COUNTER_2.TILE2_COUNTER_2_counter_output[31:0]
+(17)SystemC.TILE2_COUNTER_2.TILE2_COUNTER_2_counter_output[31:0]
+(18)SystemC.TILE2_COUNTER_2.TILE2_COUNTER_2_counter_output[31:0]
+(19)SystemC.TILE2_COUNTER_2.TILE2_COUNTER_2_counter_output[31:0]
+(20)SystemC.TILE2_COUNTER_2.TILE2_COUNTER_2_counter_output[31:0]
+(21)SystemC.TILE2_COUNTER_2.TILE2_COUNTER_2_counter_output[31:0]
+(22)SystemC.TILE2_COUNTER_2.TILE2_COUNTER_2_counter_output[31:0]
+(23)SystemC.TILE2_COUNTER_2.TILE2_COUNTER_2_counter_output[31:0]
+(24)SystemC.TILE2_COUNTER_2.TILE2_COUNTER_2_counter_output[31:0]
+(25)SystemC.TILE2_COUNTER_2.TILE2_COUNTER_2_counter_output[31:0]
+(26)SystemC.TILE2_COUNTER_2.TILE2_COUNTER_2_counter_output[31:0]
+(27)SystemC.TILE2_COUNTER_2.TILE2_COUNTER_2_counter_output[31:0]
+(28)SystemC.TILE2_COUNTER_2.TILE2_COUNTER_2_counter_output[31:0]
+(29)SystemC.TILE2_COUNTER_2.TILE2_COUNTER_2_counter_output[31:0]
+(30)SystemC.TILE2_COUNTER_2.TILE2_COUNTER_2_counter_output[31:0]
+(31)SystemC.TILE2_COUNTER_2.TILE2_COUNTER_2_counter_output[31:0]
+@1401200
+-group_end
+@28
+SystemC.TILE2_COUNTER_2.TILE2_COUNTER_2_counter_reset
++{SystemC.TILE2_COUNTER_2.TILE2_COUNTER_2_enable} SystemC.TILE2_COUNTER_2.TILE2_COUNTER_2_mode0
+@200
+-OUTLUT
+@28
++{SystemC.TILE2_OUTLUT_4.TILE2_OUTLUT_4_output_Address1_match} SystemC.TILE2_OUTLUT_4.TILE2_OUTLUT_4_output
++{SystemC.TILE2_OUTLUT_5.TILE2_OUTLUT_5_output_Address2_match} SystemC.TILE2_OUTLUT_5.TILE2_OUTLUT_5_output
+[pattern_trace] 1
+[pattern_trace] 0

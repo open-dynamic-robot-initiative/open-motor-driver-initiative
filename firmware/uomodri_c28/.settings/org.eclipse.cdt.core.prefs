@@ -1,12 +1,14 @@
+doxygen/doxygen_new_line_after_brief=true
+doxygen/doxygen_use_brief_tag=false
+doxygen/doxygen_use_javadoc_tags=true
+doxygen/doxygen_use_pre_tag=false
+doxygen/doxygen_use_structural_commands=false
 eclipse.preferences.version=1
 environment/project/com.ti.ccstudio.buildDefinitions.C2000.Debug.309048423.425368338.2097958184/COM_TI_C2000WARE_SOFTWARE_PACKAGE_INSTALL_DIR/delimiter=;
 environment/project/com.ti.ccstudio.buildDefinitions.C2000.Debug.309048423.425368338.2097958184/COM_TI_C2000WARE_SOFTWARE_PACKAGE_INSTALL_DIR/operation=replace
 environment/project/com.ti.ccstudio.buildDefinitions.C2000.Debug.309048423.425368338.2097958184/COM_TI_C2000WARE_SOFTWARE_PACKAGE_INSTALL_DIR/value=C\:\\STM32Toolchain\\TI\\c2000\\C2000Ware_4_01_00_00
 environment/project/com.ti.ccstudio.buildDefinitions.C2000.Debug.309048423.425368338.2097958184/append=true
 environment/project/com.ti.ccstudio.buildDefinitions.C2000.Debug.309048423.425368338.2097958184/appendContributed=true
-environment/project/com.ti.ccstudio.buildDefinitions.C2000.Debug.309048423.425368338/COM_TI_C2000WARE_SOFTWARE_PACKAGE_INSTALL_DIR/delimiter=;
-environment/project/com.ti.ccstudio.buildDefinitions.C2000.Debug.309048423.425368338/COM_TI_C2000WARE_SOFTWARE_PACKAGE_INSTALL_DIR/operation=replace
-environment/project/com.ti.ccstudio.buildDefinitions.C2000.Debug.309048423.425368338/COM_TI_C2000WARE_SOFTWARE_PACKAGE_INSTALL_DIR/value=C\:\\STM32Toolchain\\TI\\c2000\\C2000Ware_4_01_00_00
 environment/project/com.ti.ccstudio.buildDefinitions.C2000.Debug.309048423.425368338/append=true
 environment/project/com.ti.ccstudio.buildDefinitions.C2000.Debug.309048423.425368338/appendContributed=true
 environment/project/com.ti.ccstudio.buildDefinitions.C2000.Debug.309048423.425368338__opt_for_speed__1/COM_TI_C2000WARE_SOFTWARE_PACKAGE_INSTALL_DIR/delimiter=;

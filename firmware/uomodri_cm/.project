@@ -26,140 +26,20 @@
 	</natures>
 	<linkedResources>
 		<link>
-			<name>device/cm.c</name>
+			<name>src/device/cm.c</name>
 			<type>1</type>
-			<locationURI>C2000WARE_ROOT/device_support/f2838x/common/source/cm.c</locationURI>
+			<locationURI>$%7BC2000WARE_ROOT%7D/device_support/f2838x/common/source/cm.c</locationURI>
 		</link>
 		<link>
-			<name>device/startup_cm.c</name>
+			<name>src/device/startup_cm.c</name>
 			<type>1</type>
-			<locationURI>C2000WARE_ROOT/device_support/f2838x/common/source/startup_cm.c</locationURI>
-		</link>
-		<link>
-			<name>inc/communication.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/uomodri_c28/inc/communication.h</locationURI>
-		</link>
-		<link>
-			<name>device/driverlib_cm/aes.c</name>
-			<type>1</type>
-			<locationURI>C2000WARE_ROOT/driverlib/f2838x/driverlib_cm/aes.c</locationURI>
-		</link>
-		<link>
-			<name>device/driverlib_cm/can.c</name>
-			<type>1</type>
-			<locationURI>C2000WARE_ROOT/driverlib/f2838x/driverlib_cm/can.c</locationURI>
-		</link>
-		<link>
-			<name>device/driverlib_cm/cmmpu.c</name>
-			<type>1</type>
-			<locationURI>C2000WARE_ROOT/driverlib/f2838x/driverlib_cm/cmmpu.c</locationURI>
-		</link>
-		<link>
-			<name>device/driverlib_cm/cputimer.c</name>
-			<type>1</type>
-			<locationURI>C2000WARE_ROOT/driverlib/f2838x/driverlib_cm/cputimer.c</locationURI>
-		</link>
-		<link>
-			<name>device/driverlib_cm/dcsm.c</name>
-			<type>1</type>
-			<locationURI>C2000WARE_ROOT/driverlib/f2838x/driverlib_cm/dcsm.c</locationURI>
-		</link>
-		<link>
-			<name>device/driverlib_cm/escss.c</name>
-			<type>1</type>
-			<locationURI>C2000WARE_ROOT/driverlib/f2838x/driverlib_cm/escss.c</locationURI>
-		</link>
-		<link>
-			<name>device/driverlib_cm/ethernet.c</name>
-			<type>1</type>
-			<locationURI>C2000WARE_ROOT/driverlib/f2838x/driverlib_cm/ethernet.c</locationURI>
-		</link>
-		<link>
-			<name>device/driverlib_cm/flash.c</name>
-			<type>1</type>
-			<locationURI>C2000WARE_ROOT/driverlib/f2838x/driverlib_cm/flash.c</locationURI>
-		</link>
-		<link>
-			<name>device/driverlib_cm/gcrc.c</name>
-			<type>1</type>
-			<locationURI>C2000WARE_ROOT/driverlib/f2838x/driverlib_cm/gcrc.c</locationURI>
-		</link>
-		<link>
-			<name>device/driverlib_cm/gpio.c</name>
-			<type>1</type>
-			<locationURI>C2000WARE_ROOT/driverlib/f2838x/driverlib_cm/gpio.c</locationURI>
-		</link>
-		<link>
-			<name>device/driverlib_cm/i2c.c</name>
-			<type>1</type>
-			<locationURI>C2000WARE_ROOT/driverlib/f2838x/driverlib_cm/i2c.c</locationURI>
-		</link>
-		<link>
-			<name>device/driverlib_cm/interrupt.c</name>
-			<type>1</type>
-			<locationURI>C2000WARE_ROOT/driverlib/f2838x/driverlib_cm/interrupt.c</locationURI>
-		</link>
-		<link>
-			<name>device/driverlib_cm/ipc.c</name>
-			<type>1</type>
-			<locationURI>C2000WARE_ROOT/driverlib/f2838x/driverlib_cm/ipc.c</locationURI>
-		</link>
-		<link>
-			<name>device/driverlib_cm/mcan.c</name>
-			<type>1</type>
-			<locationURI>C2000WARE_ROOT/driverlib/f2838x/driverlib_cm/mcan.c</locationURI>
-		</link>
-		<link>
-			<name>device/driverlib_cm/memcfg.c</name>
-			<type>1</type>
-			<locationURI>C2000WARE_ROOT/driverlib/f2838x/driverlib_cm/memcfg.c</locationURI>
-		</link>
-		<link>
-			<name>device/driverlib_cm/mpu.c</name>
-			<type>1</type>
-			<locationURI>C2000WARE_ROOT/driverlib/f2838x/driverlib_cm/mpu.c</locationURI>
-		</link>
-		<link>
-			<name>device/driverlib_cm/platform_port.c</name>
-			<type>1</type>
-			<locationURI>C2000WARE_ROOT/driverlib/f2838x/driverlib_cm/platform_port.c</locationURI>
-		</link>
-		<link>
-			<name>device/driverlib_cm/ssi.c</name>
-			<type>1</type>
-			<locationURI>C2000WARE_ROOT/driverlib/f2838x/driverlib_cm/ssi.c</locationURI>
-		</link>
-		<link>
-			<name>device/driverlib_cm/sysctl.c</name>
-			<type>1</type>
-			<locationURI>C2000WARE_ROOT/driverlib/f2838x/driverlib_cm/sysctl.c</locationURI>
-		</link>
-		<link>
-			<name>device/driverlib_cm/systick.c</name>
-			<type>1</type>
-			<locationURI>C2000WARE_ROOT/driverlib/f2838x/driverlib_cm/systick.c</locationURI>
-		</link>
-		<link>
-			<name>device/driverlib_cm/uart.c</name>
-			<type>1</type>
-			<locationURI>C2000WARE_ROOT/driverlib/f2838x/driverlib_cm/uart.c</locationURI>
-		</link>
-		<link>
-			<name>device/driverlib_cm/udma.c</name>
-			<type>1</type>
-			<locationURI>C2000WARE_ROOT/driverlib/f2838x/driverlib_cm/udma.c</locationURI>
-		</link>
-		<link>
-			<name>device/driverlib_cm/usb.c</name>
-			<type>1</type>
-			<locationURI>C2000WARE_ROOT/driverlib/f2838x/driverlib_cm/usb.c</locationURI>
+			<locationURI>$%7BC2000WARE_ROOT%7D/device_support/f2838x/common/source/startup_cm.c</locationURI>
 		</link>
 	</linkedResources>
 	<variableList>
 		<variable>
 			<name>C2000WARE_ROOT</name>
-			<value>file:/C:/STM32Toolchain/TI/c2000/C2000Ware_4_03_00_00</value>
+			<value>$%7BTI_PRODUCTS_DIR__TIREX%7D/c2000/C2000Ware_5_02_00_00</value>
 		</variable>
 	</variableList>
 </projectDescription>

@@ -14,4 +14,5 @@
 	<filesToOpen value="main.c"/>
 	<isTargetManual value="false"/>
 	<connection value="common/targetdb/connections/TIXDS110_Connection.xml"/>
+	<sourceLookupPath value=""/>
 </projectOptions>

@@ -1,0 +1,162 @@
+/*
+ * File name: motor_control.cla
+ * Description: Source file containing motor control functions running on CLA processor.
+ */
+
+/***********************************************************************
+* INCLUDES
+***********************************************************************/
+#include "f2838x_cla_typedefs.h"
+#include "uomodri_shared.h"
+
+/***********************************************************************
+ * VARIABLES
+ ***********************************************************************/
+extern motor_t      motor_m1;
+extern motor_t      motor_m2;
+extern cmd_t        cmd_uomodri[];
+
+/***********************************************************************
+ * FUNCTIONS DECLARATION
+ ***********************************************************************/
+__attribute__((interrupt)) void adcCalib_Task(void);
+__attribute__((interrupt)) void cmdNew_Task(void);
+__attribute__((interrupt)) void motor1_Task(void);
+__attribute__((interrupt)) void motor2_Task(void);
+__attribute__((interrupt)) void Cla1Task5(void);
+__attribute__((interrupt)) void Cla1Task6(void);
+__attribute__((interrupt)) void Cla1Task7(void);
+__attribute__((interrupt)) void Cla1Task8(void);
+
+/***********************************************************************
+ * TASKS DEFINITION
+ ***********************************************************************/
+/**
+ * @brief   ADC Calibration task. Run once by motor at startup to compensate ADC offset.
+ */
+__attribute__((interrupt)) void adcCalib_Task(void)
+{
+#ifdef DEBUG
+    DBG_PIN1_SET;
+#endif
+    // Start ADC calibration on MOTOR_1 & MOTOR_2
+    ADC_offsetCalib(&motor_m1);
+    ADC_offsetCalib(&motor_m2);
+    // Enable float rounding
+    __asm(" MSETFLG RNDF32 = 1");
+#ifdef DEBUG
+    DBG_PIN1_CLEAR;
+#endif
+}
+
+/**
+ * @brief   Command update task. Run each time a new command is received on C28 processor or in timeout case.
+ */
+__attribute__((interrupt)) void cmdNew_Task(void)
+{
+#ifdef DEBUG
+    DBG_PIN1_SET;
+#endif
+    if((cmd_uomodri[MOTOR_1].cmdField.all & CMD_POSITION_OFFSET_COMP) == CMD_POSITION_OFFSET_COMP)
+        motor_m1.foc.cmd.posRef     = cmd_uomodri[MOTOR_1].posRef + motor_m1.foc.enc.thetaIndexAbsolute;
+    else
+        motor_m1.foc.cmd.posRef     = cmd_uomodri[MOTOR_1].posRef;
+    motor_m1.foc.cmd.velRef         = cmd_uomodri[MOTOR_1].velRef;
+    motor_m1.foc.cmd.iqff           = cmd_uomodri[MOTOR_1].iqff;
+    motor_m1.foc.cmd.kpCoeff        = cmd_uomodri[MOTOR_1].kpCoeff;
+    motor_m1.foc.cmd.kdCoeff        = cmd_uomodri[MOTOR_1].kdCoeff;
+    motor_m1.foc.cmd.iSat           = cmd_uomodri[MOTOR_1].iSat;
+    motor_m1.foc.cmd.timeoutRef     = cmd_uomodri[MOTOR_1].timeoutRef;
+    motor_m1.foc.cmd.cptTimeout     = cmd_uomodri[MOTOR_1].cptTimeout;
+    motor_m1.foc.cmd.index          = cmd_uomodri[MOTOR_1].index;
+    motor_m1.foc.cmd.cmdField.all   = cmd_uomodri[MOTOR_1].cmdField.all;
+    motor_m1.foc.cmd.periphField.all= cmd_uomodri[MOTOR_1].periphField.all;
+
+    if((cmd_uomodri[MOTOR_2].cmdField.all & CMD_POSITION_OFFSET_COMP) == CMD_POSITION_OFFSET_COMP)
+        motor_m2.foc.cmd.posRef     = cmd_uomodri[MOTOR_2].posRef + motor_m2.foc.enc.thetaIndexAbsolute;
+    else
+        motor_m2.foc.cmd.posRef     = cmd_uomodri[MOTOR_2].posRef;
+    motor_m2.foc.cmd.velRef         = cmd_uomodri[MOTOR_2].velRef;
+    motor_m2.foc.cmd.iqff           = cmd_uomodri[MOTOR_2].iqff;
+    motor_m2.foc.cmd.kpCoeff        = cmd_uomodri[MOTOR_2].kpCoeff;
+    motor_m2.foc.cmd.kdCoeff        = cmd_uomodri[MOTOR_2].kdCoeff;
+    motor_m2.foc.cmd.iSat           = cmd_uomodri[MOTOR_2].iSat;
+    motor_m2.foc.cmd.timeoutRef     = cmd_uomodri[MOTOR_2].timeoutRef;
+    motor_m2.foc.cmd.cptTimeout     = cmd_uomodri[MOTOR_2].cptTimeout;
+    motor_m2.foc.cmd.index          = cmd_uomodri[MOTOR_2].index;
+    motor_m2.foc.cmd.cmdField.all   = cmd_uomodri[MOTOR_2].cmdField.all;
+    motor_m2.foc.cmd.periphField.all= cmd_uomodri[MOTOR_2].periphField.all;
+#ifdef DEBUG
+    DBG_PIN1_CLEAR;
+#endif
+}
+
+/**
+ * @brief   Motor_1 control task. Run @ 40kHz.
+ *          - Read ADC (phase and Vbus) and encoder,
+ *          - Perform FOC algorithm,
+ *          - Generate the PWM commands
+ */
+__attribute__((interrupt)) void motor1_Task(void)
+{
+#ifdef DEBUG
+    DBG_PIN0_SET;
+#endif
+    // Motor control
+    MOT_runControl(&motor_m1);
+#ifdef DEBUG
+    DBG_PIN0_CLEAR;
+#endif
+}
+
+/**
+ * @brief   Motor_2 control task. Run @ 40kHz.
+ *          - Read ADC (phase and Vbus) and encoder,
+ *          - Perform FOC algorithm,
+ *          - Generate the PWM commands
+ */
+__attribute__((interrupt)) void motor2_Task(void)
+{
+#ifdef DEBUG
+    DBG_PIN0_SET;
+#endif
+    // Motor control
+    MOT_runControl(&motor_m2);
+#ifdef DEBUG
+    DBG_PIN0_CLEAR;
+#endif
+}
+
+/**
+ * @brief   No task specified on task5
+ */
+__attribute__((interrupt)) void Cla1Task5(void)
+{
+
+}
+
+/**
+ * @brief   No task specified on task6
+ */
+__attribute__((interrupt)) void Cla1Task6(void)
+{
+
+}
+
+/**
+ * @brief   No task specified on task7
+ */
+__attribute__((interrupt)) void Cla1Task7(void)
+{
+
+}
+
+/**
+ * @brief   No task specified on task8
+ */
+__attribute__((interrupt)) void Cla1Task8(void)
+{
+
+}
+
+/* __MOTOR_CONTROL_CLA__ */

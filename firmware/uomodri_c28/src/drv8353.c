@@ -1,20 +1,17 @@
 /***********************************************************************
  * INCLUDE FILES
  ***********************************************************************/
-#include "f2838x_device.h"
-#include "driverlib.h"
 #include "device.h"
-#include "uomodri_user_defines.h"
 #include "drv8353.h"
 
 /***********************************************************************
  * FUNCTIONS DECLARATION
  ***********************************************************************/
-static bool_t   DRV_Enable(drv8353_t*);
-static bool_t   DRV_SetConfig(drv8353_t*);
-static void     DRV_Calibration(drv8353_t*);
-uint16_t        DRV_readOne(drv8353_t*, DRV_Address_e);
-void            DRV_writeOne(drv8353_t*, DRV_Address_e, uint16_t);
+static uint32_t DRV_Enable(const drv_cfg_t*);
+static bool_t   DRV_SetConfig(const drv_cfg_t*, drv_reg_t*);
+static void     DRV_Calibration(const drv_cfg_t*, drv_reg_t*);
+uint16_t        DRV_readOne(const drv_cfg_t*, DRV_Address_e);
+void            DRV_writeOne(const drv_cfg_t*, DRV_Address_e, uint16_t);
 
 /***********************************************************************
  * FUNCTIONS DEFINITIONS
@@ -23,39 +20,49 @@ void            DRV_writeOne(drv8353_t*, DRV_Address_e, uint16_t);
  * @brief       Start \& configure the DRV ICs.
  * @param[in]   *p_drv      Pointer on the DRV definition structure
  */
-void DRV_ini(drv8353_t* p_drv)
+bool_t DRV_ini(const drv_cfg_t* p_drvCfg, drv_reg_t* p_drvReg)
 {
-    if((p_drv != NULL) && (p_drv->p_drvCfgHandler != NULL) && (p_drv->p_drvRegHandler != NULL))
+    bool_t drv_err      = true;
+    if((p_drvCfg != NULL) && (p_drvReg != NULL))
     {
-        DRV_Enable(p_drv);
-        if(DRV_SetConfig(p_drv))
-            DRV_Calibration(p_drv);
+        if(!DRV_Enable(p_drvCfg))
+        {
+            if(DRV_SetConfig(p_drvCfg, p_drvReg))
+            {
+                DRV_Calibration(p_drvCfg, p_drvReg);
+                drv_err = false;
+            }
+        }
     }
 
-    return;
+    return(drv_err);
 }
 
 /**
  * @brief       Enable the DRV IC pin.
  * @param[in]   *p_drv      Pointer on the DRV definition structure
- * @return      bool        True if DRV is in fault state else false.
+ * @return      uint32_t    0 if DRV is enable else DRV is in fault state.
  */
-static bool_t DRV_Enable(drv8353_t* p_drv)
+static uint32_t DRV_Enable(const drv_cfg_t* p_drvCfg)
 {
-    uint32_t pin_drv_en     = p_drv->p_drvCfgHandler->gpioNumber_EN;
-    uint16_t cpt_time_out   = 0;
-    bool_t fault_drv        = false;
+    drv_stat0x_u drv_stat_regs  = {.all = 0};
+    uint16_t cpt_time_out       = 0;
+    bool_t drv_enable           = true;
     // Enable the DRV8353
-    GPIO_writePin(pin_drv_en, 1);
+    GPIO_writePin(p_drvCfg->gpioNumber_EN, 1);
     // Wait 1ms
     DEVICE_DELAY_US(1000U);
     // Make sure the FAULT bit is not set during startup
-    while((DRV_readOne(p_drv, DRV_ADDRESS_STATUS_0) & FLT_STATUS_FAULT_Msk) && (cpt_time_out < 1000))
-        fault_drv = (++cpt_time_out > 999) ? (true) : (false);
+    while(drv_enable && (DRV_readOne(p_drvCfg, DRV_ADDRESS_STATUS_0) & FLT_STATUS_FAULT_Msk))
+        drv_enable  = (++cpt_time_out < 1000) ? (true) : (false);
     // Wait for the DRV8353 to go through start up sequence
     DEVICE_DELAY_US(1000U);
+    // Get the latest states of the status registers.
+    drv_stat_regs.stat00.all    = DRV_readOne(p_drvCfg, DRV_ADDRESS_STATUS_0);
+    drv_stat_regs.stat01.all    = DRV_readOne(p_drvCfg, DRV_ADDRESS_STATUS_1);
+    drv_stat_regs.stat00.FAULT  = !GPIO_readPin(p_drvCfg->gpioNumber_FAULT);
 
-    return (fault_drv);
+    return(drv_stat_regs.all);
 }
 
 /**
@@ -63,23 +70,25 @@ static bool_t DRV_Enable(drv8353_t* p_drv)
  * @param[in]   *p_drv      Pointer on the DRV definition structure
  * @return      SUCCESS config structure \& read registers match else ERROR.
  */
-static bool_t DRV_SetConfig(drv8353_t* p_drv)
+static bool_t DRV_SetConfig(const drv_cfg_t* p_drvCfg, drv_reg_t* p_drvReg)
 {
-    drv_reg_t* p_reg    = p_drv->p_drvRegHandler;
-    drv_reg_t reg_test  = {.ctrl_reg_02 = p_reg->ctrl_reg_02, .ctrl_reg_03 = p_reg->ctrl_reg_03,
-                           .ctrl_reg_04 = p_reg->ctrl_reg_04, .ctrl_reg_05 = p_reg->ctrl_reg_05,
-                           .ctrl_reg_06 = p_reg->ctrl_reg_06, .ctrl_reg_07 = p_reg->ctrl_reg_07};
+    drv_reg_t drv_all_regs_test = {.ctrl_reg_02 = p_drvReg->ctrl_reg_02,
+                                   .ctrl_reg_03 = p_drvReg->ctrl_reg_03,
+                                   .ctrl_reg_04 = p_drvReg->ctrl_reg_04,
+                                   .ctrl_reg_05 = p_drvReg->ctrl_reg_05,
+                                   .ctrl_reg_06 = p_drvReg->ctrl_reg_06,
+                                   .ctrl_reg_07 = p_drvReg->ctrl_reg_07};
     // Write initialized data to device
-    DRV_writeAll(p_drv);
+    DRV_writeAll(p_drvCfg, p_drvReg);
     // Read it back to ensure it worked
-    DRV_readAll(p_drv);
+    DRV_readAll(p_drvCfg, p_drvReg);
 
-    return (((reg_test.ctrl_reg_02.all  == p_reg->ctrl_reg_02.all) &&
-            (reg_test.ctrl_reg_03.all   == p_reg->ctrl_reg_03.all) &&
-            (reg_test.ctrl_reg_04.all   == p_reg->ctrl_reg_04.all) &&
-            (reg_test.ctrl_reg_05.all   == p_reg->ctrl_reg_05.all) &&
-            (reg_test.ctrl_reg_06.all   == p_reg->ctrl_reg_06.all) &&
-            (reg_test.ctrl_reg_07.all   == p_reg->ctrl_reg_07.all)) ? (true) : (false));
+    return(((drv_all_regs_test.ctrl_reg_02.all == p_drvReg->ctrl_reg_02.all) &&
+            (drv_all_regs_test.ctrl_reg_03.all == p_drvReg->ctrl_reg_03.all) &&
+            (drv_all_regs_test.ctrl_reg_04.all == p_drvReg->ctrl_reg_04.all) &&
+            (drv_all_regs_test.ctrl_reg_05.all == p_drvReg->ctrl_reg_05.all) &&
+            (drv_all_regs_test.ctrl_reg_06.all == p_drvReg->ctrl_reg_06.all) &&
+            (drv_all_regs_test.ctrl_reg_07.all == p_drvReg->ctrl_reg_07.all)) ? (true) : (false));
 }
 
 /**
@@ -88,27 +97,27 @@ static bool_t DRV_SetConfig(drv8353_t* p_drv)
  *              - Calibration OFF : Amp inputs opened, load reconnected, gain set to the original gain setting.
  * @param[in]   *p_drv      Pointer on the DRV definition structure
  */
-static void DRV_Calibration(drv8353_t* p_drv)
+static void DRV_Calibration(const drv_cfg_t* p_drvCfg, drv_reg_t* p_drvReg)
 {
     // Set auto calibration
-    drv_ctrl07_u auto_calib = {.bit.CAL_MODE = true};
-    DRV_writeOne(p_drv, DRV_ADDRESS_CONTROL_7, auto_calib.all); // Write Control Register 7
+    drv_ctrl07_u auto_calib = {.CAL_MODE = true};
+    DRV_writeOne(p_drvCfg, DRV_ADDRESS_CONTROL_7, auto_calib.all); // Write Control Register 7
     // Enable channels calibration
-    drv_ctrl06_u calib      = p_drv->p_drvRegHandler->ctrl_reg_06;
-    calib.bit.CSA_CAL_A     = true;
-    calib.bit.CSA_CAL_B     = true;
-    calib.bit.CSA_CAL_C     = true;
-    DRV_writeOne(p_drv, DRV_ADDRESS_CONTROL_6, calib.all);// Write Control Register 6
+    drv_ctrl06_u calib      = p_drvReg->ctrl_reg_06;
+    calib.CSA_CAL_A         = true;
+    calib.CSA_CAL_B         = true;
+    calib.CSA_CAL_C         = true;
+    DRV_writeOne(p_drvCfg, DRV_ADDRESS_CONTROL_6, calib.all);// Write Control Register 6
     // Wait for 1ms
     DEVICE_DELAY_US(1000U);
     // stop auto calibration
-    auto_calib.bit.CAL_MODE = false;
-    DRV_writeOne(p_drv, DRV_ADDRESS_CONTROL_7, auto_calib.all); // Write Control Register 7
+    auto_calib.CAL_MODE     = false;
+    DRV_writeOne(p_drvCfg, DRV_ADDRESS_CONTROL_7, auto_calib.all); // Write Control Register 7
     // stop channels calibration
-    calib.bit.CSA_CAL_A     = false;
-    calib.bit.CSA_CAL_B     = false;
-    calib.bit.CSA_CAL_C     = false;
-    DRV_writeOne(p_drv, DRV_ADDRESS_CONTROL_6, calib.all); // Write Control Register 6
+    calib.CSA_CAL_A         = false;
+    calib.CSA_CAL_B         = false;
+    calib.CSA_CAL_C         = false;
+    DRV_writeOne(p_drvCfg, DRV_ADDRESS_CONTROL_6, calib.all); // Write Control Register 6
 
     return;
 }
@@ -117,36 +126,38 @@ static void DRV_Calibration(drv8353_t* p_drv)
  * @brief       Read the DRV8353 status registers
  * @param[in]   *p_drv      Pointer on the DRV definition structure
  */
-void DRV_readStatus(drv8353_t* p_drv)
+uint32_t DRV_readStatus(const drv_cfg_t* p_drvCfg, drv_reg_t* p_drvReg)
 {
-    drv_reg_t* p_reg = p_drv->p_drvRegHandler;
-    if((p_drv != NULL) && (p_reg != NULL))
-    {
-        p_reg->stat_reg_00.all = DRV_readOne(p_drv, DRV_ADDRESS_STATUS_0); // Read Status Register 0
-        p_reg->stat_reg_01.all = DRV_readOne(p_drv, DRV_ADDRESS_STATUS_1); // Read Status Register 1
-    }
+    drv_stat0x_u drv_stat_regs  = {.all = 0};
 
-    return;
+    if((p_drvCfg != NULL) && (p_drvReg != NULL))
+    {
+        p_drvReg->stat_reg_00.all   = DRV_readOne(p_drvCfg, DRV_ADDRESS_STATUS_0); // Read Status Register 0
+        p_drvReg->stat_reg_01.all   = DRV_readOne(p_drvCfg, DRV_ADDRESS_STATUS_1); // Read Status Register 1
+    }
+    drv_stat_regs.stat00.all        = p_drvReg->stat_reg_00.all;
+    drv_stat_regs.stat01.all        = p_drvReg->stat_reg_01.all;
+
+    return(drv_stat_regs.all);
 }
 
 /**
  * @brief       Read all the DRV8353 registers (global read access)
  * @param[in]   *p_drv      Pointer on the DRV definition structure
  */
-void DRV_readAll(drv8353_t* p_drv)
+void DRV_readAll(const drv_cfg_t* p_drvCfg, drv_reg_t* p_drvReg)
 {
-    drv_reg_t* p_reg = p_drv->p_drvRegHandler;
-    if((p_drv != NULL) && (p_reg != NULL))
+    if((p_drvCfg != NULL) && (p_drvReg != NULL))
     {
         // Read all internal DRV registers (status & control registers).
-        p_reg->stat_reg_00.all = DRV_readOne(p_drv, DRV_ADDRESS_STATUS_0);  // Read Status Register 0
-        p_reg->stat_reg_01.all = DRV_readOne(p_drv, DRV_ADDRESS_STATUS_1);  // Read Status Register 1
-        p_reg->ctrl_reg_02.all = DRV_readOne(p_drv, DRV_ADDRESS_CONTROL_2); // Read Control Register 2
-        p_reg->ctrl_reg_03.all = DRV_readOne(p_drv, DRV_ADDRESS_CONTROL_3); // Read Control Register 3
-        p_reg->ctrl_reg_04.all = DRV_readOne(p_drv, DRV_ADDRESS_CONTROL_4); // Read Control Register 4
-        p_reg->ctrl_reg_05.all = DRV_readOne(p_drv, DRV_ADDRESS_CONTROL_5); // Read Control Register 5
-        p_reg->ctrl_reg_06.all = DRV_readOne(p_drv, DRV_ADDRESS_CONTROL_6); // Read Control Register 6
-        p_reg->ctrl_reg_07.all = DRV_readOne(p_drv, DRV_ADDRESS_CONTROL_7); // Read Control Register 7
+        p_drvReg->stat_reg_00.all   = DRV_readOne(p_drvCfg, DRV_ADDRESS_STATUS_0);  // Read Status Register 0
+        p_drvReg->stat_reg_01.all   = DRV_readOne(p_drvCfg, DRV_ADDRESS_STATUS_1);  // Read Status Register 1
+        p_drvReg->ctrl_reg_02.all   = DRV_readOne(p_drvCfg, DRV_ADDRESS_CONTROL_2); // Read Control Register 2
+        p_drvReg->ctrl_reg_03.all   = DRV_readOne(p_drvCfg, DRV_ADDRESS_CONTROL_3); // Read Control Register 3
+        p_drvReg->ctrl_reg_04.all   = DRV_readOne(p_drvCfg, DRV_ADDRESS_CONTROL_4); // Read Control Register 4
+        p_drvReg->ctrl_reg_05.all   = DRV_readOne(p_drvCfg, DRV_ADDRESS_CONTROL_5); // Read Control Register 5
+        p_drvReg->ctrl_reg_06.all   = DRV_readOne(p_drvCfg, DRV_ADDRESS_CONTROL_6); // Read Control Register 6
+        p_drvReg->ctrl_reg_07.all   = DRV_readOne(p_drvCfg, DRV_ADDRESS_CONTROL_7); // Read Control Register 7
     }
 
     return;
@@ -156,19 +167,18 @@ void DRV_readAll(drv8353_t* p_drv)
  * @brief       Write to all the DRV8353 write access registers (global write access)
  * @param[in]   *p_drv      Pointer on the DRV definition structure
  */
-void DRV_writeAll(drv8353_t* p_drv)
+void DRV_writeAll(const drv_cfg_t* p_drvCfg, drv_reg_t* p_drvReg)
 {
-    drv_reg_t* p_reg = p_drv->p_drvRegHandler;
-    if((p_drv != NULL) && (p_reg != NULL))
+    if((p_drvCfg != NULL) && (p_drvReg != NULL))
     {
         // Unlock write access registers (CTRL03)
-        DRV_writeOne(p_drv, DRV_ADDRESS_CONTROL_3, p_reg->ctrl_reg_03.all); // Write Control Register 3
+        DRV_writeOne(p_drvCfg, DRV_ADDRESS_CONTROL_3, p_drvReg->ctrl_reg_03.all); // Write Control Register 3
         //Write all internal DRV control registers
-        DRV_writeOne(p_drv, DRV_ADDRESS_CONTROL_2, p_reg->ctrl_reg_02.all); // Write Control Register 2
-        DRV_writeOne(p_drv, DRV_ADDRESS_CONTROL_4, p_reg->ctrl_reg_04.all); // Write Control Register 4
-        DRV_writeOne(p_drv, DRV_ADDRESS_CONTROL_5, p_reg->ctrl_reg_05.all); // Write Control Register 5
-        DRV_writeOne(p_drv, DRV_ADDRESS_CONTROL_6, p_reg->ctrl_reg_06.all); // Write Control Register 6
-        DRV_writeOne(p_drv, DRV_ADDRESS_CONTROL_7, p_reg->ctrl_reg_07.all); // Write Control Register 7
+        DRV_writeOne(p_drvCfg, DRV_ADDRESS_CONTROL_2, p_drvReg->ctrl_reg_02.all); // Write Control Register 2
+        DRV_writeOne(p_drvCfg, DRV_ADDRESS_CONTROL_4, p_drvReg->ctrl_reg_04.all); // Write Control Register 4
+        DRV_writeOne(p_drvCfg, DRV_ADDRESS_CONTROL_5, p_drvReg->ctrl_reg_05.all); // Write Control Register 5
+        DRV_writeOne(p_drvCfg, DRV_ADDRESS_CONTROL_6, p_drvReg->ctrl_reg_06.all); // Write Control Register 6
+        DRV_writeOne(p_drvCfg, DRV_ADDRESS_CONTROL_7, p_drvReg->ctrl_reg_07.all); // Write Control Register 7
     }
 
     return;
@@ -180,11 +190,11 @@ void DRV_writeAll(drv8353_t* p_drv)
  * @param[in]   addr        Address of the register to read
  * @return      The value contained in the specified register
  */
-uint16_t DRV_readOne(drv8353_t* p_drv, DRV_Address_e addr)
+uint16_t DRV_readOne(const drv_cfg_t* p_drvCfg, DRV_Address_e addr)
 {
-    uint32_t spi_base   = p_drv->p_drvCfgHandler->spiHandle;
-    uint32_t pin_spi_cs = p_drv->p_drvCfgHandler->gpioNumber_CS;
-    drv_msg_u msg       = {.bit.rw_cmd = DRV_CTRLMODE_READ, .bit.addr = addr, .bit.data = 0};
+    uint32_t spi_base   = p_drvCfg->spiHandle;
+    uint32_t pin_spi_cs = p_drvCfg->gpioNumber_CS;
+    drv_msg_u msg       = {.rw_cmd = DRV_CTRLMODE_READ, .addr = addr, .data = 0};
 
     // Select chip
     GPIO_writePin(pin_spi_cs, 0);
@@ -208,11 +218,11 @@ uint16_t DRV_readOne(drv8353_t* p_drv, DRV_Address_e addr)
  * @param[in]   addr        Address of the register to write
  * @param[in]   data        Data to be written to the specified register
  */
-void DRV_writeOne(drv8353_t* p_drv, DRV_Address_e addr, uint16_t data)
+void DRV_writeOne(const drv_cfg_t* p_drvCfg, DRV_Address_e addr, uint16_t data)
 {
-    uint32_t spi_base   = p_drv->p_drvCfgHandler->spiHandle;
-    uint32_t pin_spi_cs = p_drv->p_drvCfgHandler->gpioNumber_CS;
-    drv_msg_u msg       = {.bit.rw_cmd = DRV_CTRLMODE_WRITE, .bit.addr = addr, .bit.data = data};
+    uint32_t spi_base   = p_drvCfg->spiHandle;
+    uint32_t pin_spi_cs = p_drvCfg->gpioNumber_CS;
+    drv_msg_u msg       = {.rw_cmd = DRV_CTRLMODE_WRITE, .addr = addr, .data = data};
 
     // Select chip
     GPIO_writePin(pin_spi_cs, 0);
