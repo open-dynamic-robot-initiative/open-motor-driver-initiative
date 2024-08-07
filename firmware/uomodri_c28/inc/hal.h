@@ -374,7 +374,7 @@ typedef struct __hal_config_t__
  * FUNCTIONS DECLARATION
  ***********************************************************************/
 void HAL_ini(const hal_cfg_t*);
-void HAL_INT_ini(const int_cfg_t*, void (*)(void));
+void HAL_INT_ini(const int_cfg_t*);
 void HAL_DMA_ini(const dma_cfg_t*);
 
 #endif /* __HAL_H__ */

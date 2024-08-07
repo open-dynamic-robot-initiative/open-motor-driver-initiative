@@ -31,6 +31,7 @@ void HAL_TMR_ini(const tmr_cfg_t*);
 void HAL_IPC_ini(const ipc_cfg_t*);
 void HAL_CLA_ini(const cla_cfg_t*);
 void HAL_CLB_ini(const clb_cfg_t*);
+void HAL_INT_ERRATA_ini(const int_cfg_t*);
 
 /***********************************************************************
  * FUNCTIONS DEFINITION
@@ -756,29 +757,15 @@ void HAL_CLA_ini(const cla_cfg_t* p_clacCfg)
 /**
  * @brief       Interrupts initialization function.
  * @param[in]   *p_intCfg   Pointer on the interrupt configuration list structure
- * @param[in]   *errata_handler Function pointer on the errata function handler (see sprz458.pdf workaround)
  */
-void HAL_INT_ini(const int_cfg_t* p_intCfg, void (*errata_handler)(void))
+void HAL_INT_ini(const int_cfg_t* p_intCfg)
 {
     if(p_intCfg != NULL)
     {
-        // Workaround on IT management according silicon revision (see sprz458.pdf)
-        Interrupt_register(INT_ADCA1,   errata_handler);
-        Interrupt_register(INT_EPWM1_TZ,errata_handler);
-        Interrupt_register(INT_EPWM1,   errata_handler);
-        Interrupt_register(INT_ECAP1,   errata_handler);
-        Interrupt_register(INT_EQEP1,   errata_handler);
-        Interrupt_register(INT_SPIA_RX, errata_handler);
-        Interrupt_register(INT_DMA_CH1, errata_handler);
-        Interrupt_register(INT_I2CA,    errata_handler);
-        Interrupt_register(INT_SCIA_RX, errata_handler);
-        Interrupt_register(INT_ADCA_EVT,errata_handler);
-        Interrupt_register(INT_CLA1_1,  errata_handler);
-        Interrupt_register(INT_XINT3,   errata_handler);
+        // Call interrupt errata function
+        HAL_INT_ERRATA_ini(p_intCfg);
 
         uint32_t intNum = p_intCfg->intNum;
-        // Clear & set IT flags & enable IT bits in a known state.
-
         // Setup Interrupts
         while(intNum != UINT32_MAX)
         {
@@ -792,6 +779,41 @@ void HAL_INT_ini(const int_cfg_t* p_intCfg, void (*errata_handler)(void))
         asm(" NOP");
         EINT;   // enable global interrupt (INTM)
         ERTM;   // Enable real time interrupt (DGBM)
+    }
+
+    return;
+}
+
+/**
+ * @brief       Interrupts errata initialization function.
+ * @param[in]   *p_intCfg   Pointer on the interrupt configuration list structure
+ */
+void HAL_INT_ERRATA_ini(const int_cfg_t* p_intCfg)
+{
+    if(p_intCfg != NULL)
+    {
+        uint32_t intNum = p_intCfg->intNum;
+
+        // look for the errata interrupt function
+        while(intNum && (intNum != UINT32_MAX))
+            intNum = (++p_intCfg)->intNum;
+
+        // Workaround on IT management according silicon revision (see sprz458.pdf)
+        if(!intNum)
+        {
+            Interrupt_register(INT_ADCA1,   p_intCfg->p_intHandler);
+            Interrupt_register(INT_EPWM1_TZ,p_intCfg->p_intHandler);
+            Interrupt_register(INT_EPWM1,   p_intCfg->p_intHandler);
+            Interrupt_register(INT_ECAP1,   p_intCfg->p_intHandler);
+            Interrupt_register(INT_EQEP1,   p_intCfg->p_intHandler);
+            Interrupt_register(INT_SPIA_RX, p_intCfg->p_intHandler);
+            Interrupt_register(INT_DMA_CH1, p_intCfg->p_intHandler);
+            Interrupt_register(INT_I2CA,    p_intCfg->p_intHandler);
+            Interrupt_register(INT_SCIA_RX, p_intCfg->p_intHandler);
+            Interrupt_register(INT_ADCA_EVT,p_intCfg->p_intHandler);
+            Interrupt_register(INT_CLA1_1,  p_intCfg->p_intHandler);
+            Interrupt_register(INT_XINT3,   p_intCfg->p_intHandler);
+        }
     }
 
     return;

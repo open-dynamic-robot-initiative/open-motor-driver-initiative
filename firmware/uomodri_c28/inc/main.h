@@ -52,6 +52,10 @@ typedef union __uart_addr_u__
 #define INT_CLA_MOTOR2_GROUP            INTERRUPT_ACK_GROUP11
 #define INT_CLA_MOTOR2_HANDLER          &cla_isrMotor2
 
+#define INT_ERRATA                      (0U)
+#define INT_ERRATA_GROUP                (0U)
+#define INT_ERRATA_HANDLER              &errata_isr
+
 #define INT_TIMER_LED_DEF               { \
                                             .intNum             = INT_TIMER_LED, \
                                             .intAckGroup        = INT_TIMER_LED_CMD_GROUP, \
@@ -91,6 +95,11 @@ typedef union __uart_addr_u__
                                             .intNum             = INT_CLA_MOTOR2, \
                                             .intAckGroup        = INT_CLA_MOTOR2_GROUP, \
                                             .p_intHandler       = INT_CLA_MOTOR2_HANDLER \
+                                        }
+#define INT_ERRATA_DEF                  { \
+                                            .intNum             = INT_ERRATA, \
+                                            .intAckGroup        = INT_ERRATA_GROUP, \
+                                            .p_intHandler       = INT_ERRATA_HANDLER \
                                         }
 
 /***********************************************************************

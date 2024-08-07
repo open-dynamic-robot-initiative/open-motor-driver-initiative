@@ -226,10 +226,9 @@ inline void RS485_msgReceive(uint32_t sci_base, rs485_rx_t* p_msg_rx)
 }
 
 /*
- * @brief           Compute the CRC 32bits with bytes swapping first.
- * @param[in]       *p_msg  Pointer on the message to swap.
- * @param[in]       length  Number of elements to swap.
- * return           The 32bit CRC result.
+ * @brief           Send the remaining message to Master.
+ * @param[in]       sci-base    SCI peripheral identifier.
+ * @param[in]       *p_msg_tx   Pointer on the RS485 transmission structure.
  */
 inline void RS485_msgTransmit(uint32_t sci_base, rs485_tx_t* p_msg_tx)
 {

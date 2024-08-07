@@ -2,10 +2,10 @@
 [*] GTKWave Analyzer v3.3.104 (w)1999-2020 BSI
 [*] Mon Dec 11 16:18:05 2023
 [*]
-[dumpfile] "/home/jmanhes/laas/workspace_ti/uomodri/uomodri_c28/Debug_Flash/simulation/CLB.vcd"
+[dumpfile] "/home/jmanhes/laas/Actionneur/github/open-motor-driver-initiative/firmware/uomodri_c28/Debug/simulation/CLB.vcd"
 [dumpfile_mtime] "Fri Dec  8 17:22:33 2023"
 [dumpfile_size] 5447829
-[savefile] "/home/jmanhes/laas/workspace_ti/uomodri/uomodri_c28/debug_simu_TILE12.gtkw"
+[savefile] "/home/jmanhes/laas/Actionneur/github/open-motor-driver-initiative/firmware/uomodri_c28/clb_debug_simu/debug_simu_TILE12.gtkw"
 [timestart] 69480000
 [size] 1920 1043
 [pos] -2021 -128

@@ -52,6 +52,7 @@ __attribute__((interrupt)) void errata_isr(void);
  */
 static const int_cfg_t interruptList[] =
 {
+ INT_ERRATA_DEF,
  INT_CLA_ADC_CALIB_DEF,
  INT_CLA_MOTOR1_DEF,
  INT_CLA_MOTOR2_DEF,
@@ -62,7 +63,6 @@ static const int_cfg_t interruptList[] =
  INT_RS485_RX_MSG_DEF,
  INT_RS485_Rx_Tx_CLB_DEF,
 #endif
-
  {.intNum = UINT32_MAX},        /* END OF ARRAY */
 };
 
@@ -151,7 +151,7 @@ void main(void)
     // Start ADC offset calibration on CLA
     CLA_forceTasks(CLA1_BASE, CLA_ADC_CALIB_TASK_FLAG);
     // Interrupts initialization
-    HAL_INT_ini(interruptList, &errata_isr);
+    HAL_INT_ini(interruptList);
 //    // SPI check parameters
 //    if((COM_MSG_SPI_TX_16BIT_PAYLOAD_LENGTH != COM_MSG_SPI_RX_16BIT_PAYLOAD_LENGTH) || \
 //            (COM_MSG_SPI_TX_16BIT_FULL_LENGTH != COM_MSG_SPI_RX_16BIT_FULL_LENGTH))
