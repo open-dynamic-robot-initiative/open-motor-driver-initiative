@@ -56,9 +56,7 @@
 //#define STATUS_ERROR_DRV2_FAULT                     (8) /*!< Motor2 DRV Fault error */
 #define COM_MSG_EXTRACT_TX_RX_MAX_SIZE          (64)
 #define COM_MSG_RS485_TX_RX_MAX_SIZE            (20)
-#define COM_MSG_RS485_RX_ADDRESS_1              (0x42)
-#define COM_MSG_RS485_RX_ADDRESS_2              (0x00)
-#define COM_MSG_RS485_TX_ADDRESS                (0xFF)
+#define COM_MSG_RS485_TX_MASTER_ADDRESS         (0xFF)
 #define COM_MSG_RS485_TX_TYPE_STANDARD          (0x00)
 
 #define COM_MSG_SPI_TX_16BIT_PAYLOAD_LENGTH     (sizeof(slv2mst_msg_t))
@@ -295,20 +293,7 @@ typedef struct __slv2mst_msg_t__
  * @struct  cmd_uomodri_t
  * @brief   uOmodri internal structure command including mst2slv_msg + info status.
  */
-#ifndef CPU1
-typedef struct __cmd_uomodri_t__
-{
-    mst2slv_reg_u   mode;
-    float           posRef[2];
-    float           velRef[2];
-    float           iqRef[2];
-    float           kpCoeff[2];
-    float           kdCoeff[2];
-    float           iSat[2];
-    uint32_t        cptTimeout;
-    uint16_t        index;
-} cmd_uomodri_t;
-#else
+#ifdef CPU1
 typedef struct __cmd_uomodri_t__
 {
     mst2slv_reg_u   mode;
@@ -318,6 +303,19 @@ typedef struct __cmd_uomodri_t__
     float32_t       kpCoeff[2];
     float32_t       kdCoeff[2];
     float32_t       iSat[2];
+    uint32_t        cptTimeout;
+    uint16_t        index;
+} cmd_uomodri_t;
+#else
+typedef struct __cmd_uomodri_t__
+{
+    mst2slv_reg_u   mode;
+    float           posRef[2];
+    float           velRef[2];
+    float           iqRef[2];
+    float           kpCoeff[2];
+    float           kdCoeff[2];
+    float           iSat[2];
     uint32_t        cptTimeout;
     uint16_t        index;
 } cmd_uomodri_t;
@@ -430,23 +428,24 @@ typedef struct __rs485_tx_t__
 /***********************************************************************
  * FUNCTIONS DECLARATION
  ***********************************************************************/
-#ifndef CPU1
-void COM_msgDbgTx(dbg_uart_addr_t*, dbg_uart_msg_t*);
-void COM_msgDbgRx(com_dbg_rx_msg_t*, uint8_t);
-uint32_t COM_crc32(uint16_t*, size_t);
-uint8_t COM_crc8(uint8_t*, size_t);
-uint8_t COM_crc8Fast(uint8_t, uint8_t*, size_t);
-#else
+#ifdef CPU1
 void COM_msgExtract(mst2slv_msg_t*, cmd_t*, cmd_t*);
 bool_t COM_msgCreate(motor_t*, slv2mst_msg_t*, uint32_t);
 void COM_initCmdStruct(cmd_t*);
 uint32_t COM_msgCRC(uint16_t*, uint16_t);
 inline void RS485_msgReceive(uint32_t, rs485_rx_t*);
 inline void RS485_msgTransmit(uint32_t, rs485_tx_t*);
+
 //void SCI_rxDisable(uint32_t);
 //void SCI_rxEnable(uint32_t);
 //void SCI_txDisable(uint32_t);
 //void SCI_txEnable(uint32_t);
+#else
+void COM_msgDbgTx(dbg_uart_addr_t*, dbg_uart_msg_t*);
+void COM_msgDbgRx(com_dbg_rx_msg_t*, uint8_t);
+uint32_t COM_crc32(uint16_t*, size_t);
+uint8_t COM_crc8(uint8_t*, size_t);
+uint8_t COM_crc8Fast(uint8_t, uint8_t*, size_t);
 #endif
 
 #endif /*__COMMUNICATION_H__*/

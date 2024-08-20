@@ -510,7 +510,7 @@ __attribute__((interrupt)) void cla_isrMotor1(void)
     else if((com_bus_select == COM_USE_RS485_BUS) && (!com_rs485_tx.index))
     {
         rs485_tx_msg_u* p_msg_rs485 = &com_rs485_tx.msg[com_rs485_tx.msg_nx];
-        p_msg_rs485->header.addr    = COM_MSG_RS485_TX_ADDRESS;
+        p_msg_rs485->header.addr    = COM_MSG_RS485_TX_MASTER_ADDRESS;
         p_msg_rs485->header.type    = COM_MSG_RS485_TX_TYPE_STANDARD;
         p_msg_rs485->header.size    = COM_MSG_RS485_TX_8BIT_FULL_LENGTH;
         COM_msgCreate(&motor_m1, &p_msg_rs485->data, global_1ms_tmr_cnt);
