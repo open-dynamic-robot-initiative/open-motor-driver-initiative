@@ -15,6 +15,44 @@
 #include "uomodri_user_defines.h"
 
 /***********************************************************************
+ * DEFINES
+ ***********************************************************************/
+// For dual manageable peripheral, specify which core is used.
+#define PERIPH_ALLOCATE_ON_CM_CORE                  (1U)
+#define PERIPH_ALLOCATE_ON_CPU1_CORE                (0U)
+// Enable/Disable the CAN-FD (CAN with Flexible Data-Rate) mode.
+#define CAN_FD_MODE_ENABLE                          (1U)
+#define CAN_FD_MODE_DISABLE                         (0U)
+// Use single or dual data rate mode (after arbitration)
+#define CAN_FD_BIT_RATE_SWITCHING_MODE_ENABLE       (1U)
+#define CAN_FD_BIT_RATE_SWITCHING_MODE_DISABLE      (0U)
+// Enable/Disable transmit pause during retry.
+#define CAN_FD_TRANSMIT_PAUSE_ENABLE                (1U)
+#define CAN_FD_TRANSMIT_PAUSE_DISABLE               (0U)
+// Enable/Disable protocol exception handling.
+#define CAN_FD_PROTOCOL_EXCEPTION_HANDLE_ENABLE     (1U)
+#define CAN_FD_PROTOCOL_EXCEPTION_HANDLE_DISABLE    (0U)
+// Enable/Disable automatic retransmission of messages not transmitted successfully.
+#define CAN_FD_AUTOMATIC_RETRANSMIT_ENABLE          (1U)
+#define CAN_FD_AUTOMATIC_RETRANSMIT_DISABLE         (0U)
+// Enable/Disable wakeup request.
+#define CAN_FD_WAKEUP_REQUEST_ENABLE                (1U)
+#define CAN_FD_WAKEUP_REQUEST_DISABLE               (0U)
+// Enable/Disable auto-Wakeup
+#define CAN_FD_AUTO_WAKEUP_ENABLE                   (1U)
+#define CAN_FD_AUTO_WAKEUP_DISABLE                  (0U)
+// Enable/Disable emulation/debug mode
+#define CAN_FD_EMULATION_ENABLE                     (1U)
+#define CAN_FD_EMULATION_DISABLE                    (0U)
+// Enable/Disable  Transmitter Delay Compensation
+#define CAN_FD_TRANSMIT_DELAY_COMPENSATION_ENABLE   (1U)
+#define CAN_FD_TRANSMIT_DELAY_COMPENSATION_DISABLE  (0U)
+
+
+#define COM_MSG_CAN_ID_ADDR_SHIFT                   (3U)
+#define COM_MSG_CAN_ID_ADDR_MASK                    (0x000000FF << COM_MSG_CAN_ID_ADDR_SHIFT)
+#define CAN_FD_NODE_ID_MASK                         (0x000000FF << 3U)
+/***********************************************************************
  * ENUMARATIONS
  ***********************************************************************/
 typedef enum __sci_MultiProcCtrl_enum__
@@ -178,6 +216,15 @@ typedef struct __sci_config_t__
     bool_t                              intEnable;                  /*!< GPIO can be configured as IT source */
     sci_MultiProcCtrl_e                 multiProcMode;
 } sci_cfg_t;
+
+/**
+ * @struct  mcan_cfg_t
+ * @brief   MCAN (CAN-FD) module configuration handler
+ */
+typedef struct __mcan_cfg_t__
+{
+    uint32_t                            mCanBase;
+} mcan_cfg_t;
 
 /**
  * @struct  dma_cfg_t

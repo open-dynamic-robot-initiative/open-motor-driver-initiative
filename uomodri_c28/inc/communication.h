@@ -21,19 +21,19 @@
 #define POLYNOMIAL_32_P1                        (0x04C11DB7)
 #define CRC_INIT_CRC32                          (0xFFFFFFFF)
 
-#define MSG_RX_ES_POS                           (15)
+#define MSG_RX_ES_POS                           (15U)
 #define MSG_RX_ES_MASK                          (1U << MSG_RX_ES_POS)
-#define MSG_RX_EM1_POS                          (14)
+#define MSG_RX_EM1_POS                          (14U)
 #define MSG_RX_EM1_MASK                         (1U << MSG_RX_EM1_POS)
-#define MSG_RX_EM2_POS                          (13)
+#define MSG_RX_EM2_POS                          (13U)
 #define MSG_RX_EM2_MASK                         (1U << MSG_RX_EM2_POS)
-#define MSG_RX_EPRE_POS                         (12)
+#define MSG_RX_EPRE_POS                         (12U)
 #define MSG_RX_EPRE_MASK                        (1U << MSG_RX_EPRE_POS)
-#define MSG_RX_EI1OC_POS                        (11)
+#define MSG_RX_EI1OC_POS                        (11U)
 #define MSG_RX_EI1OC_MASK                       (1U << MSG_RX_EI1OC_POS)
-#define MSG_RX_EI2OC_POS                        (10)
+#define MSG_RX_EI2OC_POS                        (10U)
 #define MSG_RX_EI2OC_MASK                       (1U << MSG_RX_EI2OC_POS)
-#define MSG_RX_TIMEOUT_POS                      (0)
+#define MSG_RX_TIMEOUT_POS                      (0U)
 #define MSG_RX_TIMEOUT_MASK                     (0xFFU << MSG_RX_TIMEOUT_POS)
 
 #define MSG_RX_ES                               (0x8000)
@@ -76,6 +76,135 @@
 #define COM_MSG_RS485_RX_8BIT_FULL_LENGTH       (COM_MSG_RS485_RX_16BIT_FULL_LENGTH * 2)
 
 #define LED_MSG_TX_16BIT_LENGTH                 (16)
+
+//! \name Mailbox Bitmasks
+//! \brief Bit masks specifying the mailboxes used for the various types of
+//! messages.
+//!
+//! We have enough mailboxes available so that we can use a separate one for
+//! every message type.
+//! `CAN_MBOX_IN|OUT_XY = 1 << n` means that mailbox n is used for message type
+//! XY.
+//!
+//! NOTE: Changing the mailbox number of a message also requires some
+//! adjustments in the code below!
+//! \{
+#define COM_MSG_CAN_MBOX_OUT_STATUSMSG_POS      (15U)
+#define COM_MSG_CAN_MBOX_OUT_STATUSMSG_MASK     (1U << COM_MSG_CAN_MBOX_OUT_STATUSMSG_POS)
+#define COM_MSG_CAN_MBOX_OUT_CURRENT_POS        (14U)
+#define COM_MSG_CAN_MBOX_OUT_CURRENT_MASK       (1U << COM_MSG_CAN_MBOX_OUT_CURRENT_POS)
+#define COM_MSG_CAN_MBOX_OUT_POSITION_POS       (13U)
+#define COM_MSG_CAN_MBOX_OUT_POSITION_MASK      (1U << COM_MSG_CAN_MBOX_OUT_POSITION_POS)
+#define COM_MSG_CAN_MBOX_OUT_SPEED_POS          (12U)
+#define COM_MSG_CAN_MBOX_OUT_SPEED_MASK         (1U << COM_MSG_CAN_MBOX_OUT_SPEED_POS)
+#define COM_MSG_CAN_MBOX_OUT_ADC_SAMPLES_POS    (11U)
+#define COM_MSG_CAN_MBOX_OUT_ADC_SAMPLES_MASK   (1U << COM_MSG_CAN_MBOX_OUT_ADC_SAMPLES_POS)
+#define COM_MSG_CAN_MBOX_OUT_ENC_INDEX_POS      (10U)
+#define COM_MSG_CAN_MBOX_OUT_ENC_INDEX_MASK     (1U << COM_MSG_CAN_MBOX_OUT_ENC_INDEX_POS)
+
+#define COM_MSG_CAN_MBOX_IN_COMMANDS_POS        (0U)
+#define COM_MSG_CAN_MBOX_IN_COMMANDS_MASK       (1U << COM_MSG_CAN_MBOX_IN_COMMANDS_POS)
+#define COM_MSG_CAN_MBOX_IN_IQREF_POS           (1U)
+#define COM_MSG_CAN_MBOX_IN_IQREF_MASK          (1U << COM_MSG_CAN_MBOX_IN_IQREF_POS)
+
+#define COM_MSG_CAN_MBOX_ALL                    (COM_MSG_CAN_MBOX_OUT_STATUSMSG_MASK | \
+                                                 COM_MSG_CAN_MBOX_OUT_CURRENT_MASK | \
+                                                 COM_MSG_CAN_MBOX_OUT_POSITION_MASK | \
+                                                 COM_MSG_CAN_MBOX_OUT_SPEED_MASK | \
+                                                 COM_MSG_CAN_MBOX_OUT_ADC_SAMPLES_MASK | \
+                                                 COM_MSG_CAN_MBOX_OUT_ENC_INDEX_MASK | \
+                                                 COM_MSG_CAN_MBOX_IN_COMMANDS_MASK | \
+                                                 COM_MSG_CAN_MBOX_IN_IQREF_MASK)
+//! \}
+
+//! \name Arbitration IDs
+//! \brief Arbitration IDs of the different message types
+//! \{
+#define COM_MSG_CAN_ID_COMMANDS                 (0x00)
+#define COM_MSG_CAN_ID_IQREF                    (0x05)
+#define COM_MSG_CAN_ID_STATUS                   (0x10)
+#define COM_MSG_CAN_ID_CURRENT                  (0x20)
+#define COM_MSG_CAN_ID_POSITION                 (0x30)
+#define COM_MSG_CAN_ID_VELOCITY                 (0x40)
+#define COM_MSG_CAN_ID_ADC_SAMPLES              (0x50)
+#define COM_MSG_CAN_ID_ENC_INDEX                (0x60)
+//! \}
+
+//! Command IDs
+//! \brief IDs of the various commands that can be sent to the COMMANDS mailbox
+//!
+//! The ID is expected to be in the high bytes (MDH) of the frame.
+//! \{
+#define COM_MSG_CAN_CMD_ENABLE_SYS              (1)
+#define COM_MSG_CAN_CMD_ENABLE_MOTOR1           (2)
+#define COM_MSG_CAN_CMD_ENABLE_MOTOR2           (3)
+#define COM_MSG_CAN_CMD_ENABLE_VSPRING1         (4)
+#define COM_MSG_CAN_CMD_ENABLE_VSPRING2         (5)
+#define COM_MSG_CAN_CMD_SEND_CURRENT            (12)
+#define COM_MSG_CAN_CMD_SEND_POSITION           (13)
+#define COM_MSG_CAN_CMD_SEND_VELOCITY           (14)
+#define COM_MSG_CAN_CMD_SEND_ADC_SAMPLES        (15)
+#define COM_MSG_CAN_CMD_SEND_ENC_INDEX          (16)
+#define COM_MSG_CAN_CMD_SEND_ALL                (20)
+#define COM_MSG_CAN_CMD_SET_CAN_RECV_TIMEOUT    (30)
+#define COM_MSG_CAN_CMD_ENABLE_POS_ROLLOVER_ERR (31)
+//! \}
+
+//! \name Error Codes
+//! \anchor ErrorCodes
+//! \brief Possible Error Codes for the status message
+//! \{
+
+//! \brief No error
+#define COM_MSG_CAN_ERROR_NO_ERROR              (0)
+//! \brief Encoder error too high
+#define COM_MSG_CAN_ERROR_ENCODER               (1)
+//! \brief Timeout for receiving current references exceeded
+#define COM_MSG_CAN_ERROR_CAN_RECV_TIMEOUT      (2)
+//! \brief Motor temperature reached critical value
+//! \note This is currently unused as no temperature sensing is done.
+#define COM_MSG_CAN_ERROR_CRIT_TEMP             (3)  // currently unused
+//! \brief Some error in the SpinTAC Position Convert module
+#define COM_MSG_CAN_ERROR_POSCONV               (4)
+//! \brief Position Rollover occured
+#define COM_MSG_CAN_ERROR_POS_ROLLOVER          (5)
+//! \brief Some other error
+#define COM_MSG_CAN_ERROR_OTHER                 (7)
+//! \}
+
+// Defines
+//
+#define MCAN_STD_ID_FILTER_NUM                  (1U)
+#define MCAN_EXT_ID_FILTER_NUM                  (0U)
+#define MCAN_FIFO_0_NUM                         (5U)
+#define MCAN_FIFO_0_ELEM_SIZE                   (MCAN_ELEM_SIZE_64BYTES)
+#define MCAN_FIFO_1_NUM                         (10U)
+#define MCAN_FIFO_1_ELEM_SIZE                   (MCAN_ELEM_SIZE_64BYTES)
+#define MCAN_RX_BUFF_NUM                        (10U)
+#define MCAN_RX_BUFF_ELEM_SIZE                  (MCAN_ELEM_SIZE_64BYTES)
+#define MCAN_TX_BUFF_SIZE                       (10U)
+#define MCAN_TX_FQ_SIZE                         (0U)
+#define MCAN_TX_BUFF_ELEM_SIZE                  (MCAN_ELEM_SIZE_64BYTES)
+#define MCAN_TX_EVENT_SIZE                      (10U)
+#define MCAN_EXT_ID_AND_MASK                    (0x1FFFFFFFU)
+#define MCAN_MSG_INT                            (0x81200)
+
+//  Defining Starting Addresses for Message RAM Sections,
+//  (Calculated from Macros based on User defined configuration above)
+//
+#define MCAN_STD_ID_FILT_START_ADDR             (0U)
+#define MCAN_EXT_ID_FILT_START_ADDR             (MCAN_STD_ID_FILT_START_ADDR + \
+                                                 ((MCAN_STD_ID_FILTER_NUM * MCANSS_STD_ID_FILTER_SIZE_WORDS * 4U)))
+#define MCAN_FIFO_0_START_ADDR                  (MCAN_EXT_ID_FILT_START_ADDR + \
+                                                 ((MCAN_EXT_ID_FILTER_NUM * MCANSS_EXT_ID_FILTER_SIZE_WORDS * 4U)))
+#define MCAN_FIFO_1_START_ADDR                  (MCAN_FIFO_0_START_ADDR + \
+                                                 (MCAN_getMsgObjSize(MCAN_FIFO_0_ELEM_SIZE) * 4U * MCAN_FIFO_0_NUM))
+#define MCAN_RX_BUFF_START_ADDR                 (MCAN_FIFO_1_START_ADDR + \
+                                                 (MCAN_getMsgObjSize(MCAN_FIFO_1_ELEM_SIZE) * 4U * MCAN_FIFO_1_NUM))
+#define MCAN_TX_BUFF_START_ADDR                 (MCAN_RX_BUFF_START_ADDR + \
+                                                 (MCAN_getMsgObjSize(MCAN_RX_BUFF_ELEM_SIZE) * 4U * MCAN_RX_BUFF_NUM))
+#define MCAN_TX_EVENT_START_ADDR                (MCAN_TX_BUFF_START_ADDR + \
+                                                 (MCAN_getMsgObjSize(MCAN_TX_BUFF_ELEM_SIZE) * 4U * (MCAN_TX_BUFF_SIZE + MCAN_TX_FQ_SIZE)))
 
 /***********************************************************************
  * COMMUNICATION CONSTANTS
@@ -424,6 +553,48 @@ typedef struct __rs485_tx_t__
     uint16_t            msg_cr;
     uint16_t            msg_nx;
 } rs485_tx_t;
+
+/***********************************************************************
+ * COMMUNICATION FOR CAN/CAN-FD
+ ***********************************************************************/
+////! \brief Status message bits.
+//struct CAN_STATUSMSG_BITS
+//{                              // bits
+//   uint16_t system_enabled:1;  // 0
+//   uint16_t motor1_enabled:1;  // 1
+//   uint16_t motor1_ready:1;    // 2
+//   uint16_t motor2_enabled:1;  // 3
+//   uint16_t motor2_ready:1;    // 4
+//   //! \see \ref ErrorCodes
+//   uint16_t error_code:3;      // 5-7
+//   uint16_t rsvd:8;            // 8-15
+//};
+
+//! \brief Status message that allows integer or bit access.
+typedef union __can_status_msg_u__
+{
+    uint16_t        all;                /*!< Short (16bits) type access */
+    struct
+    {
+        uint16_t    SE          : 1;    /*!< Bits 0     : System enabled/disabled                               */
+        uint16_t    M1E         : 1;    /*!< Bits 1     : MOTOR_1 enabled/not enabled                           */
+        uint16_t    M1R         : 1;    /*!< Bits 2     : MOTOR_1 ready/not ready                               */
+        uint16_t    M2E         : 1;    /*!< Bits 3     : MOTOR_2 enabled/not enabled                           */
+        uint16_t    M2R         : 1;    /*!< Bits 4     : MOTOR_2 ready/not ready                               */
+        uint16_t    ERROR_CODE  : 3;    /*!< Bits 5-7   : Timeout disable system after no valid command         */
+        uint16_t    STATUS_RSV1 : 8;    /*!< Bits 8-15  : Reserved                                              */
+    };
+} can_status_msg_u;
+
+//! \brief Command message.
+typedef struct __can_command_t__
+{
+    //! \brief Command ID
+    uint32_t        id;
+    //! \brief Value of the command
+    uint32_t        value;
+} can_command_t;
+
 
 /***********************************************************************
  * FUNCTIONS DECLARATION

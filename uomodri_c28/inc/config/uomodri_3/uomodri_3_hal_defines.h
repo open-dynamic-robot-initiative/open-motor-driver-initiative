@@ -203,9 +203,25 @@
 
 #define CAN_FD_TX_NUM                           (22U)
 #define CAN_FD_TX_CFG                           GPIO_22_MCAN_TX
+#define CAN_FD_TX_DEF                           { \
+                                                    .pinNum         = CAN_FD_TX_NUM, \
+                                                    .fctMux         = CAN_FD_TX_CFG, \
+                                                    .direction      = GPIO_DIR_MODE_OUT, \
+                                                    .samplingInMode = GPIO_QUAL_SYNC, \
+                                                    .setValue       = true, \
+                                                    .intEnable      = false, \
+                                                }
 
 #define CAN_FD_RX_NUM                           (23U)
 #define CAN_FD_RX_CFG                           GPIO_23_MCAN_RX
+#define CAN_FD_RX_DEF                           { \
+                                                    .pinNum         = CAN_FD_RX_NUM, \
+                                                    .fctMux         = CAN_FD_RX_CFG, \
+                                                    .direction      = GPIO_DIR_MODE_IN, \
+                                                    .samplingInMode = GPIO_QUAL_ASYNC, \
+                                                    .setValue       = false, \
+                                                    .intEnable      = false, \
+                                                }
 
 #define EXT_SPI_CS2_NUM                         (28U)
 #define EXT_SPI_CS2_CFG                         GPIO_28_GPIO28

@@ -280,3 +280,204 @@ inline void RS485_msgTransmit(uint32_t sci_base, rs485_tx_t* p_msg_tx)
 //    SCI_enableInterrupt(sci_base, SCI_INT_TXFF);
 ////    SCI_enableTxModule(sci_base);
 //}
+
+//! \brief Write status message to the corresponding transmission mailbox.
+//inline void CAN_setStatusMsg(can_status_msg_u status_msg)
+//{
+//    ECAN_MBOXES ECanaMboxes;
+//
+//    ECanaMboxes.MBOX15.MDL.byte.BYTE0 = statusmsg.all;
+//
+//    return;
+//}
+//
+//
+////! \brief Write motor data of motor 1 to the corresponding transmission
+////!     mailboxes.
+////!
+////! \param current_iq  The current Iq of the motor in A.
+////! \param encoder_position  Current position of the motor in mechanical
+////!                          revolutions (mrev).
+////! \param velocity  Velocity of the motor in krpm.
+//inline void CAN_setDataMotor1(_iq current_iq, _iq position, _iq velocity)
+//{
+//    ECanaMboxes.MBOX14.MDL.all = current_iq;
+//    ECanaMboxes.MBOX13.MDL.all = position;
+//    ECanaMboxes.MBOX12.MDL.all = velocity;
+//
+//    return;
+//}
+//
+//
+////! \brief Write motor data of motor 2 to the corresponding transmission
+////!     mailboxes.
+////!
+////! \param current_iq  The current Iq of the motor in A.
+////! \param encoder_position  Current position of the motor in mechanical
+////!                          revolutions (mrev).
+////! \param velocity  Velocity of the motor in krpm.
+//inline void CAN_setDataMotor2(_iq current_iq, _iq encoder_position,
+//        _iq velocity)
+//{
+//    ECanaMboxes.MBOX14.MDH.all = current_iq;
+//    ECanaMboxes.MBOX13.MDH.all = encoder_position;
+//    ECanaMboxes.MBOX12.MDH.all = velocity;
+//
+//    return;
+//}
+//
+//
+////! \brief Write readings of ADCINA6 and B6 to the corresponding transmission
+////!     mailbox.
+////!
+////! \param adcin_a6 Result of ADCINA6
+////! \param adcin_b6 Result of ADCINB6
+//inline void CAN_setAdcIn6Values(_iq adcin_a6, _iq adcin_b6)
+//{
+//    ECanaMboxes.MBOX11.MDL.all = adcin_a6;
+//    ECanaMboxes.MBOX11.MDH.all = adcin_b6;
+//}
+//
+//
+////! \brief Write encoder index position to the corresponding transmission
+////!     mailbox.
+////!
+////! \param mtrNum Number of the motor (either 0 or 1).
+////! \param index_position Position of the motor when the index occured [mrev].
+//inline void CAN_setEncoderIndex(uint16_t mtrNum, _iq index_position)
+//{
+//    ECanaMboxes.MBOX10.MDH.byte.BYTE4 = mtrNum & 0xFF;
+//    ECanaMboxes.MBOX10.MDL.all = index_position;
+//}
+//
+//
+////! \brief Get the last command message that was received.
+////!
+////! \returns Last received command message.
+//inline CAN_Command_t CAN_getCommand()
+//{
+//    CAN_Command_t cmd;
+//
+//    cmd.id = ECanaMboxes.MBOX0.MDH.all;
+//    cmd.value = ECanaMboxes.MBOX0.MDL.all;
+//
+//    return cmd;
+//}
+//
+//
+////! \brief Get the last Iq reference that was received.
+////!
+////! \param mtrNum Number of the motor
+////! \returns Last received IqRef value for the specified motor.
+//inline _iq CAN_getIqRef(uint16_t mtrNum)
+//{
+//    if (mtrNum == HAL_MTR1) {
+//        return ECanaMboxes.MBOX1.MDL.all;
+//    } else {
+//        return ECanaMboxes.MBOX1.MDH.all;
+//    }
+//}
+//
+//
+////! \brief Send data of the specified mailboxes
+////!
+////! To specify the mailboxes, use the CAN_MBOX_OUT_xy defines for this. Example:
+////! to send current, position and velocity of motor 1 call
+////! `CAN_send(CAN_MBOX_OUT_IqPos_mtr1 | CAN_MBOX_OUT_SPEED_mtr1);`
+////!
+////! \param mailboxes  A bitmap specifying the mailboxes to be send.
+//inline void CAN_send(uint32_t mailboxes)
+//{
+//    // Always access whole register, not bitfield.  Therefore no shadow register
+//    // should be necessary.
+//
+//    // Set TRS for all specified mailboxes
+//    ECanaRegs.CANTRS.all |= mailboxes;
+//    // Wait for all TAn bits of specified mailboxes to be set
+////  while ((ECanaRegs.CANTA.all & mailboxes) != mailboxes);
+////  // Clear all TAn (we have to set it to 1 so it becomes 0...)
+////  ECanaRegs.CANTA.all = mailboxes;
+////  // wait for all TAn bits to become zero
+////  while ((ECanaRegs.CANTA.all & mailboxes) != 0);
+//
+//    return;
+//}
+//
+//
+////! \brief Abort pending transmissions of the specified mailboxes.
+////!
+////! \param mailboxes  A bitmap specifying the mailboxes to be send.
+//inline void CAN_abort(uint32_t mailboxes)
+//{
+//    // request transmission reset
+//    ECanaRegs.CANTRR.all |= mailboxes;
+//    // wait until TRS is cleared
+//    //while ((ECanaRegs.CANTRS.all & mailboxes) != 0);
+//
+//    return;
+//}
+//
+//
+////! \brief Check if received message pending flag is set.
+////!
+////! Check if the "received message pending" flag is set for the specified
+////! mailbox.  To clear the flag, use CAN_clearReceivedMessagePending().
+////!
+////! \param mailbox_mask Bitmask that specifies the mailbox.  If you specify more
+////!     than one mailbox in the mask, this function will return true if a
+////!     message is pending in at least one of the mailboxes.
+////! \returns True if a new message is pending in the specified mailbox.
+//inline bool CAN_checkReceivedMessagePending(uint32_t mailbox_mask)
+//{
+//    return ECanaRegs.CANRMP.all & mailbox_mask;
+//}
+//
+//
+////! \brief Clear received message pending flag.
+////!
+////! \param mailbox_mask Bitmask that specifies the mailbox.  If you specify more
+////!     than one mailbox in the mask, the flag is reset for each of them.
+//inline void CAN_clearReceivedMessagePending(uint32_t mailbox_mask)
+//{
+//    // reset bit (have to write a 1 to get a 0)
+//    ECanaRegs.CANRMP.all = mailbox_mask;
+//}
+//
+//
+////! \brief Check if new message arrived and acknowledge if yes.
+////!
+////! Check if the "received message pending" flag for the specified mailbox.  If
+////! yes, the message is acknowledged (i.e. the flag is reset).
+////!
+////! \param mailbox_mask Bitmask that specifies the mailbox.  If you specify more
+////!     than one mailbox in the mask, this function will return true if a
+////!     message is pending in at least one of the mailboxes.
+////! \returns True if a new message is pending in the specified mailbox.
+//inline bool CAN_checkAndClearRMP(uint32_t mailbox_mask)
+//{
+//    if (CAN_checkReceivedMessagePending(mailbox_mask))
+//    {
+//        CAN_clearReceivedMessagePending(mailbox_mask);
+//        return true;
+//    }
+//    else
+//    {
+//        return false;
+//    }
+//}
+//
+//
+////! \brief Check if a message is waiting for transmission
+////!
+////! Check if a message is waiting for transmission (i.e. the TRS bit is set) in
+////! the specified mailbox.  If more then one mailbox is specified, it is checked
+////! if at least one of them has a pending message.
+////!
+////! \param mailbox_mask Bitmask that specifies the mailbox(es).  See the
+////!     CAN_MBOX_OUT_* defines.
+////! \returns True if a message is waiting for transmission in one of the
+////!     specified mailboxes.
+//inline bool CAN_checkTransmissionPending(uint32_t mailbox_mask)
+//{
+//    return ECanaRegs.CANTRS.all & mailbox_mask;
+//}
