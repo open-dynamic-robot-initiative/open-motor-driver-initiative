@@ -3032,7 +3032,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "TCAN330G"
+		(property "Value" "TCAN3414"
 			(at 90.17 54.61 0)
 			(effects
 				(font
@@ -3051,7 +3051,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "http://www.ti.com/lit/ds/symlink/tcan337.pdf"
+		(property "Datasheet" "https://www.ti.com/lit/ds/symlink/tcan3414.pdf"
 			(at 101.6 63.5 0)
 			(effects
 				(font
@@ -3060,7 +3060,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "High-Speed CAN Transceiver with CAN FD, 5Mbps, 3.3V supply, silent mode, shutdown mode, SOT-23-8/SOIC-8"
+		(property "Description" "High-Speed CAN Transceiver with CAN FD, 8Mbps, 3.3V supply, standby mode, shutdown mode, SOT-23-8/SOIC-8"
 			(at 101.6 63.5 0)
 			(effects
 				(font
@@ -3069,7 +3069,7 @@
 				(hide yes)
 			)
 		)
-		(property "DigiKey" "296-TCAN330GDCNRCT-ND"
+		(property "DigiKey" "296-TCAN3414DDFRCT-ND"
 			(at 101.6 63.5 0)
 			(effects
 				(font
@@ -3078,7 +3078,7 @@
 				(hide yes)
 			)
 		)
-		(property "Part No" "TCAN330GDCNR"
+		(property "Part No" "TCAN3414DDFR"
 			(at 101.6 63.5 0)
 			(effects
 				(font
@@ -3087,7 +3087,7 @@
 				(hide yes)
 			)
 		)
-		(property "Mouser" "  595-TCAN330GDCNR"
+		(property "Mouser" "595-TCAN3414DDFR"
 			(at 101.6 63.5 0)
 			(effects
 				(font
@@ -3096,7 +3096,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC" "C191006"
+		(property "LCSC" ""
 			(at 101.6 63.5 0)
 			(effects
 				(font

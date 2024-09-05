@@ -1000,14 +1000,14 @@
   "pcbnew": {
     "last_paths": {
       "gencad": "",
-      "idf": "",
+      "idf": "omodri_laas.emn",
       "netlist": "omodri_laas.net",
       "plot": "Fab/gerber/",
       "pos_files": "Fab/gerber/",
       "specctra_dsn": "",
       "step": "omodri_laas.step",
       "svg": "",
-      "vrml": ""
+      "vrml": "omodri_laas.wrl"
     },
     "page_layout_descr_file": ""
   },

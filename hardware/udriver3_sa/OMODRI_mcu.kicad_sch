@@ -135,7 +135,7 @@
 	)
 	(wire
 		(pts
-			(xy 152.4 105.41) (xy 165.1 105.41)
+			(xy 152.4 110.49) (xy 165.1 110.49)
 		)
 		(stroke
 			(width 0)
@@ -205,7 +205,7 @@
 	)
 	(wire
 		(pts
-			(xy 152.4 101.6) (xy 165.1 101.6)
+			(xy 152.4 105.41) (xy 165.1 105.41)
 		)
 		(stroke
 			(width 0)
@@ -335,16 +335,6 @@
 	)
 	(wire
 		(pts
-			(xy 152.4 113.03) (xy 165.1 113.03)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "4c23ef55-a2c4-4d26-b5b0-ecba86aaeb15")
-	)
-	(wire
-		(pts
 			(xy 92.71 63.5) (xy 101.6 63.5)
 		)
 		(stroke
@@ -412,16 +402,6 @@
 			(type default)
 		)
 		(uuid "5d1034d0-e3b8-4988-9dee-3f3b0104dce6")
-	)
-	(wire
-		(pts
-			(xy 152.4 110.49) (xy 165.1 110.49)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "6114ab79-cd01-4dfd-b219-28a06f83a968")
 	)
 	(wire
 		(pts
@@ -535,7 +515,7 @@
 	)
 	(wire
 		(pts
-			(xy 152.4 107.95) (xy 165.1 107.95)
+			(xy 152.4 113.03) (xy 165.1 113.03)
 		)
 		(stroke
 			(width 0)
@@ -865,7 +845,7 @@
 	)
 	(hierarchical_label "GPIO_SELECT_1"
 		(shape input)
-		(at 165.1 107.95 0)
+		(at 165.1 113.03 0)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -1006,30 +986,6 @@
 			(justify right)
 		)
 		(uuid "332f225a-d35c-4cb2-b0b6-e9c0f19fbf8b")
-	)
-	(hierarchical_label "GPIO_SELECT_2"
-		(shape input)
-		(at 165.1 110.49 0)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "3e932950-52f9-4e24-b03a-d52062277952")
-	)
-	(hierarchical_label "GPIO_SELECT_3"
-		(shape input)
-		(at 165.1 113.03 0)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "41e40afd-7c49-43dd-b6cf-ba73395323f1")
 	)
 	(hierarchical_label "PWM3_CHA"
 		(shape output)
@@ -1213,7 +1169,7 @@
 	)
 	(hierarchical_label "IMU_INT"
 		(shape input)
-		(at 165.1 101.6 0)
+		(at 165.1 105.41 0)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -1393,7 +1349,7 @@
 	)
 	(hierarchical_label "GPIO_SELECT_0"
 		(shape input)
-		(at 165.1 105.41 0)
+		(at 165.1 110.49 0)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -2152,18 +2108,8 @@
 			)
 			(uuid "54448a3d-b76a-4313-9a2b-1576a122e503")
 		)
-		(pin "GPIO_SELECT_3" input
-			(at 152.4 113.03 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-			)
-			(uuid "1e779ce0-edaa-4aa2-a833-e974ba395303")
-		)
 		(pin "GPIO_SELECT_0" input
-			(at 152.4 105.41 0)
+			(at 152.4 110.49 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2172,18 +2118,8 @@
 			)
 			(uuid "9ad2c96c-1bef-4a2e-8f41-3ba38a3f8e52")
 		)
-		(pin "GPIO_SELECT_2" input
-			(at 152.4 110.49 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-			)
-			(uuid "593c52e8-889b-4aff-8160-2448ca697c8a")
-		)
 		(pin "GPIO_SELECT_1" input
-			(at 152.4 107.95 0)
+			(at 152.4 113.03 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2443,7 +2379,7 @@
 			(uuid "e97419c9-45fb-49ff-9ae9-2950100b8f2a")
 		)
 		(pin "GPIO_IMU_INT" input
-			(at 152.4 101.6 0)
+			(at 152.4 105.41 0)
 			(effects
 				(font
 					(size 1.27 1.27)
