@@ -42,6 +42,9 @@ __attribute__((interrupt)) void dma_isrSpiComRx(void);
 __attribute__((interrupt)) void sci_isrTx_RS485(void);
 __attribute__((interrupt)) void sci_isrRx_RS485(void);
 __attribute__((interrupt)) void clb_isrTxRx_RS485(void);
+
+__attribute__((interrupt)) void mcan_isr(void);
+
 __attribute__((interrupt)) void errata_isr(void);
 
 /***********************************************************************
@@ -62,7 +65,7 @@ static const int_cfg_t interruptList[] =
  INT_RS485_RX_MSG_DEF,
  INT_RS485_Rx_Tx_CLB_DEF,
 #endif
-
+ INT_MCAN_DEF,
  {.intNum = UINT32_MAX},        /* END OF ARRAY */
 };
 
@@ -115,10 +118,20 @@ uint32_t    global_1ms_tmr_cnt  = 0U;
 #pragma DATA_SECTION(global_errata_cnt, "ramgs0")
 uint32_t    global_errata_cnt   = 0U;
 
+volatile uint32_t isrIntr0Flag = 1U;
+volatile uint32_t isrIntr1Flag = 1U;
+//volatile unsigned long msgCount = 0;
+volatile unsigned long mcan_error = 0;
+MCAN_TxBufElement       txMsg;
+MCAN_RxBufElement       rxMsg;
+MCAN_RxNewDataStatus    newData;
+volatile uint16_t mcan_cnt = 0;
+
 /***********************************************************************
  * EXTERNAL VARIABLES
  ***********************************************************************/
 extern const hal_cfg_t  hal;
+extern volatile uint32_t uid_unique_8b;
 
 /***********************************************************************
  * FUNCTIONS DEFINITION
@@ -152,6 +165,55 @@ void main(void)
     CLA_forceTasks(CLA1_BASE, CLA_ADC_CALIB_TASK_FLAG);
     // Interrupts initialization
     HAL_INT_ini(interruptList, &errata_isr);
+
+    // Initialize message to transmit.
+    txMsg.id        = ((uint32_t) uid_unique_8b) << 21U; // Identifier Value.
+    txMsg.rtr       = 0U; // Transmit data frame.
+    txMsg.xtd       = 0U; // 11-bit standard identifier.
+    txMsg.esi       = 0U; // ESI bit in CAN FD format depends only on error passive flag.
+    txMsg.dlc       = 0xDU; // CAN + CAN FD: transmit frame has 0-8 data bytes.
+    txMsg.brs       = 0U; // CAN FD frames transmitted with bit rate switching.
+    txMsg.fdf       = 1U; // Frame transmitted in CAN FD format.
+    txMsg.efc       = 1U; // Store Tx events.
+    txMsg.mm        = 0xAAU; // Message Marker.
+    // Data bytes.
+    txMsg.data[0]   = 0x01;//mcan_cnt++;
+    txMsg.data[1]   = 0x23;//mcan_cnt++;
+    txMsg.data[2]   = 0x45;//mcan_cnt++;
+    txMsg.data[3]   = 0x67;//mcan_cnt++;
+    txMsg.data[4]   = 0x89;//mcan_cnt++;
+    txMsg.data[5]   = 0xAB;//mcan_cnt++;
+    txMsg.data[6]   = 0xCD;//mcan_cnt++;
+    txMsg.data[7]   = 0xEF;//mcan_cnt++;
+    txMsg.data[8]   = 0x01;//mcan_cnt++;
+    txMsg.data[9]   = 0x23;//mcan_cnt++;
+    txMsg.data[10]  = 0x45;//mcan_cnt++;
+    txMsg.data[11]  = 0x67;//mcan_cnt++;
+    txMsg.data[12]  = 0x89;//mcan_cnt++;
+    txMsg.data[13]  = 0xAB;//mcan_cnt++;
+    txMsg.data[14]  = 0xCD;//mcan_cnt++;
+    txMsg.data[15]  = 0xEF;//mcan_cnt++;
+    txMsg.data[16]  = 0x01;//mcan_cnt++;
+    txMsg.data[17]  = 0x23;//mcan_cnt++;
+    txMsg.data[18]  = 0x45;//mcan_cnt++;
+    txMsg.data[19]  = 0x67;//mcan_cnt++;
+    txMsg.data[20]  = 0x89;//mcan_cnt++;
+    txMsg.data[21]  = 0xAB;//mcan_cnt++;
+    txMsg.data[22]  = 0xCD;//mcan_cnt++;
+    txMsg.data[23]  = 0xEF;//mcan_cnt++;
+    txMsg.data[24]  = 0x01;//mcan_cnt++;
+    txMsg.data[25]  = 0x23;//mcan_cnt++;
+    txMsg.data[26]  = 0x45;//mcan_cnt++;
+    txMsg.data[27]  = 0x67;//mcan_cnt++;
+    txMsg.data[28]  = 0x89;//mcan_cnt++;
+    txMsg.data[29]  = 0xAB;//mcan_cnt++;
+    txMsg.data[30]  = 0xCD;//mcan_cnt++;
+    txMsg.data[31]  = 0xEF;//mcan_cnt++;
+    // Write Tx Message to the Message RAM.
+    MCAN_writeMsgRam(MCANA_DRIVER_BASE, MCAN_MEM_TYPE_BUF, 1U, &txMsg);
+    // Add request for transmission.
+    MCAN_txBufAddReq(MCANA_DRIVER_BASE, 1U);
+
 //    // SPI check parameters
 //    if((COM_MSG_SPI_TX_16BIT_PAYLOAD_LENGTH != COM_MSG_SPI_RX_16BIT_PAYLOAD_LENGTH) || \
 //            (COM_MSG_SPI_TX_16BIT_FULL_LENGTH != COM_MSG_SPI_RX_16BIT_FULL_LENGTH))
@@ -173,6 +235,17 @@ static void MCU_ini(void)
 {
     /* Initialize clock and peripherals */
     Device_init();
+
+#ifdef CPU1
+    // Allocate MCAN (a shared peripheral) to CPU1 (C28x)
+    SysCtl_allocateSharedPeripheral(SYSCTL_PALLOCATE_MCAN_A, PERIPH_ALLOCATE_ON_CPU1_CORE);
+#elif CM_CORE
+    // Allocate MCAN (a shared peripheral) to CM
+    SysCtl_allocateSharedPeripheral(SYSCTL_PALLOCATE_MCAN_A, PERIPH_ALLOCATE_ON_CM_CORE);
+#endif
+
+    // Configure the divisor for the MCAN bit-clock
+    SysCtl_setMCANClk(SYSCTL_MCANCLK_DIV_1);
 
     /*
      * LSPCLK redefine - SPIx Bit Clock & SCIx Bit Clock.
@@ -587,6 +660,17 @@ __attribute__((interrupt)) void tmr_isrLedCmd(void)
         LED_dimming(&motor_m1, &motor_m2, &led_spi_tx[0]);
         DMA_startChannel(DMA_LED_SPI_TX_BASE_ADDR);
     }
+
+//    uint16_t i;
+//    for(i = 0; i < 4; i++)
+//    {
+//        txMsg.data[i]   =  mcan_cnt;
+//        mcan_cnt        = (mcan_cnt < 0xFF) ? (mcan_cnt + 1) : (0U);
+//    }
+    MCAN_writeMsgRam(MCANA_DRIVER_BASE, MCAN_MEM_TYPE_BUF, 1U, &txMsg);
+    // Add request for transmission.
+    MCAN_txBufAddReq(MCANA_DRIVER_BASE, 1U);
+
     // Timeout management
     cmd_uomodri[MOTOR_1].cptTimeout++;
     cmd_uomodri[MOTOR_2].cptTimeout++;
@@ -828,3 +912,38 @@ __attribute__((interrupt)) void errata_isr(void)
 {
     global_errata_cnt = (global_errata_cnt < UINT32_MAX) ? (global_errata_cnt + 1) : (0U);
 }
+
+__attribute__((interrupt))  void mcan_isr(void)
+{
+    uint32_t intrStatus;
+
+    intrStatus = MCAN_getIntrStatus(MCANA_DRIVER_BASE);
+    if (MCAN_MSG_INT != intrStatus)
+        mcan_error++;
+
+    // Clear the interrupt Status.
+    MCAN_clearIntrStatus(MCANA_DRIVER_BASE, intrStatus);
+    //  Clearing the interrupt lineNum
+    MCAN_clearInterrupt(MCANA_DRIVER_BASE, 0x2);
+    // Update the flag value.
+    isrIntr1Flag = 0U;
+    // Read Message RAM.
+    MCAN_readMsgRam(MCANA_DRIVER_BASE, MCAN_MEM_TYPE_BUF, 0U, MCAN_RX_FIFO_NUM_1, &rxMsg);
+    // Get the New Data Status.
+    MCAN_getNewDataStatus(MCANA_DRIVER_BASE, &newData);
+    // Check that received data matches sent data.
+    // Device will halt here during debug if data doesn't match.
+    if((txMsg.data[0] != rxMsg.data[0]) ||
+            (txMsg.data[1] != rxMsg.data[1]) ||
+            (txMsg.data[2] != rxMsg.data[2]) ||
+            (txMsg.data[3] != rxMsg.data[3]))
+        // Device will halt here if transmitted and received data are not same.
+        asm(" ESTOP0");
+//    else
+//        // Increment message count if message is received.
+//        msgCount++;
+
+    // Acknowledge this interrupt located in group 9
+    Interrupt_clearACKGroup(INTERRUPT_ACK_GROUP9);
+}
+

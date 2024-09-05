@@ -204,7 +204,8 @@
 #define MCAN_TX_BUFF_START_ADDR                 (MCAN_RX_BUFF_START_ADDR + \
                                                  (MCAN_getMsgObjSize(MCAN_RX_BUFF_ELEM_SIZE) * 4U * MCAN_RX_BUFF_NUM))
 #define MCAN_TX_EVENT_START_ADDR                (MCAN_TX_BUFF_START_ADDR + \
-                                                 (MCAN_getMsgObjSize(MCAN_TX_BUFF_ELEM_SIZE) * 4U * (MCAN_TX_BUFF_SIZE + MCAN_TX_FQ_SIZE)))
+                                                 (MCAN_getMsgObjSize(MCAN_TX_BUFF_ELEM_SIZE) * 4U * \
+                                                         (MCAN_TX_BUFF_SIZE + MCAN_TX_FQ_SIZE)))
 
 /***********************************************************************
  * COMMUNICATION CONSTANTS
