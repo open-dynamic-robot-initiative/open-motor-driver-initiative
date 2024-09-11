@@ -1429,163 +1429,212 @@
  * MCAN DEFINES
  ***********************************************************************/
 // For dual manageable peripheral, specify which core is used.
-#define PERIPH_ALLOCATE_ON_CM_CORE                  (1U)
-#define PERIPH_ALLOCATE_ON_CPU1_CORE                (0U)
+#define MCAN_ALLOCATE_ON_CM_CORE                (1U)
+#define MCAN_ALLOCATE_ON_CPU1_CORE              (0U)
+
 // Enable/Disable the CAN-FD (CAN with Flexible Data-Rate) mode.
-#define CAN_FD_MODE_ENABLE                          (1U)
-#define CAN_FD_MODE_DISABLE                         (0U)
+#define MCAN_MODE_ENABLE                        (1U)
+#define MCAN_MODE_DISABLE                       (0U)
 // Use single or dual data rate mode (after arbitration)
-#define CAN_FD_BIT_RATE_SWITCHING_MODE_ENABLE       (1U)
-#define CAN_FD_BIT_RATE_SWITCHING_MODE_DISABLE      (0U)
+#define MCAN_BIT_RATE_SWITCHING_MODE_ENABLE     (1U)
+#define MCAN_BIT_RATE_SWITCHING_MODE_DISABLE    (0U)
 // Enable/Disable transmit pause during retry.
-#define CAN_FD_TRANSMIT_PAUSE_ENABLE                (1U)
-#define CAN_FD_TRANSMIT_PAUSE_DISABLE               (0U)
+#define MCAN_TX_PAUSE_ENABLE                    (1U)
+#define MCAN_TX_PAUSE_DISABLE                   (0U)
 // Enable/Disable Edge Filtering during Bus Integration
-#define CAN_FD_EDGE_FILTERING_FOR_HARD_SYNC_ENABLE  (1U)
-#define CAN_FD_EDGE_FILTERING_FOR_HARD_SYNC_DISABLE (0U)
+#define MCAN_EDGE_FILTERING_FOR_SYNC_ENABLE     (1U)
+#define MCAN_EDGE_FILTERING_FOR_SYNC_DISABLE    (0U)
 // Enable/Disable protocol exception handling.
-#define CAN_FD_PROTOCOL_EXCEPTION_HANDLE_ENABLE     (0U)
-#define CAN_FD_PROTOCOL_EXCEPTION_HANDLE_DISABLE    (1U)
+#define MCAN_PROTOCOL_EXCEPTION_HANDLE_ENABLE   (0U)
+#define MCAN_PROTOCOL_EXCEPTION_HANDLE_DISABLE  (1U)
 // Enable/Disable automatic retransmission of messages not transmitted successfully.
-#define CAN_FD_AUTOMATIC_RETRANSMIT_ENABLE          (0U)
-#define CAN_FD_AUTOMATIC_RETRANSMIT_DISABLE         (1U)
+#define MCAN_AUTOMATIC_RETRANSMIT_ENABLE        (0U)
+#define MCAN_AUTOMATIC_RETRANSMIT_DISABLE       (1U)
 // Enable/Disable wakeup request.
-#define CAN_FD_WAKEUP_REQUEST_ENABLE                (1U)
-#define CAN_FD_WAKEUP_REQUEST_DISABLE               (0U)
+#define MCAN_WAKEUP_REQUEST_ENABLE              (1U)
+#define MCAN_WAKEUP_REQUEST_DISABLE             (0U)
 // Enable/Disable auto-Wakeup
-#define CAN_FD_AUTO_WAKEUP_ENABLE                   (1U)
-#define CAN_FD_AUTO_WAKEUP_DISABLE                  (0U)
-// Enable/Disable emulation/debug mode
-#define CAN_FD_EMULATION_ENABLE                     (1U)
-#define CAN_FD_EMULATION_DISABLE                    (0U)
+#define MCAN_AUTO_WAKEUP_ENABLE                 (1U)
+#define MCAN_AUTO_WAKEUP_DISABLE                (0U)
+// Enable/Disable emulation/debug suspend mode
+#define MCAN_EMULATION_SUSPEND_ENABLE           (1U)
+#define MCAN_EMULATION_SUSPEND_DISABLE          (0U)
 // Enable/Disable  Transmitter Delay Compensation
-#define CAN_FD_TRANSMIT_DELAY_COMPENSATION_ENABLE   (1U)
-#define CAN_FD_TRANSMIT_DELAY_COMPENSATION_DISABLE  (0U)
+#define MCAN_TX_DELAY_COMPENSATION_ENABLE       (1U)
+#define MCAN_TX_DELAY_COMPENSATION_DISABLE      (0U)
 
 // Enable/Disable the Bus Monitoring Mode
-#define CAN_FD_BUS_MONITORING_MODE_ENABLE           (1U)
-#define CAN_FD_BUS_MONITORING_MODE_DISABLE          (0U)
+#define MCAN_BUS_MONITORING_MODE_ENABLE         (1U)
+#define MCAN_BUS_MONITORING_MODE_DISABLE        (0U)
 // Enable/Disable the Restricted Operation Mode
-#define CAN_FD_RESTRICTED_OPERATION_MODE_ENABLE     (1U)
-#define CAN_FD_RESTRICTED_OPERATION_MODE_DISABLE    (0U)
-#define CAN_FD_NORMAL_OPERATION_MODE_ENABLE         CAN_FD_RESTRICTED_OPERATION_MODE_DISABLE
-#define CAN_FD_NORMAL_OPERATION_MODE_DISABLE        CAN_FD_RESTRICTED_OPERATION_MODE_ENABLE
+#define MCAN_RESTRICTED_OPERATION_MODE_ENABLE   (1U)
+#define MCAN_RESTRICTED_OPERATION_MODE_DISABLE  (0U)
+#define MCAN_NORMAL_OPERATION_MODE_ENABLE       MCAN_RESTRICTED_OPERATION_MODE_DISABLE
+#define MCAN_NORMAL_OPERATION_MODE_DISABLE      MCAN_RESTRICTED_OPERATION_MODE_ENABLE
 // Enable/Disable the Timeout Counter
-#define CAN_FD_TIMEOUT_COUNTER_ENABLE               (1U)
-#define CAN_FD_TIMEOUT_COUNTER_DISABLE              (0U)
-// Accept/Reject Non-matching Frames messages with 11-bit IDs
-#define CAN_FD_ACCEPT_NO_MATCH_STD_FRAMES_IN_FIFO0  (0U)
-#define CAN_FD_ACCEPT_NO_MATCH_STD_FRAMES_IN_FIFO1  (1U)
-#define CAN_FD_REJECT_NO_MATCH_STD_FRAMES           (2U)
+#define MCAN_TIMEOUT_COUNTER_ENABLE             (1U)
+#define MCAN_TIMEOUT_COUNTER_DISABLE            (0U)
+// Timestamp source selection
+#define MCAN_TIMESTAMP_CNT_SET_TO_ZERO          (0U)
+#define MCAN_TIMESTAMP_CNT_INC_TS_PRESCALAR     (1U)
+#define MCAN_TIMESTAMP_CNT_EXTERNAL_USED        (2U)
+
+// Accept/Reject remote Frames messages with 29-bit extended IDs
+#define MCAN_ACCEPT_REMOTE_FRAMES_W_EXT_ID      (0U)
+#define MCAN_REJECT_REMOTE_FRAMES_W_EXT_ID      (1U)
+// Accept/Reject remote Frames messages with 11-bit standard IDs.
+#define MCAN_ACCEPT_REMOTE_FRAMES_W_STD_ID      (0U)
+#define MCAN_REJECT_REMOTE_FRAMES_W_STD_ID      (1U)
 // Accept/Reject Non-matching Frames messages with 29-bit IDs
-#define CAN_FD_ACCEPT_NO_MATCH_EXT_FRAMES_IN_FIFO0  (0U)
-#define CAN_FD_ACCEPT_NO_MATCH_EXT_FRAMES_IN_FIFO1  (1U)
-#define CAN_FD_REJECT_NO_MATCH_EXT_FRAMES           (2U)
-// Accept/Reject remote Frames with 11-bit standard IDs.
-#define CAN_FD_ACCEPT_REMOTE_STD_FRAMES             (0U)
-#define CAN_FD_REJECT_REMOTE_STD_FRAMES             (1U)
-// Accept/Reject remote Frames messages with 29-bit IDs
-#define CAN_FD_ACCEPT_REMOTE_EXT_FRAMES             (0U)
-#define CAN_FD_REJECT_REMOTE_EXT_FRAMES             (1U)
+#define MCAN_ACCEPT_NO_MATCH_EXT_ID_IN_FIFO0_RX (0U)
+#define MCAN_ACCEPT_NO_MATCH_EXT_ID_IN_FIFO1_RX (1U)
+#define MCAN_REJECT_NO_MATCH_EXT_ID             (2U)
+// Accept/Reject Non-matching Frames messages with 11-bit IDs
+#define MCAN_ACCEPT_NO_MATCH_STD_ID_IN_FIFO0_RX (0U)
+#define MCAN_ACCEPT_NO_MATCH_STD_ID_IN_FIFO1_RX (1U)
+#define MCAN_REJECT_NO_MATCH_STD_ID             (2U)
 
-#define COM_MSG_CAN_ID_ADDR_SHIFT                   (3U)
-#define COM_MSG_CAN_ID_ADDR_MASK                    (0x000000FF << COM_MSG_CAN_ID_ADDR_SHIFT)
-#define CAN_FD_NODE_ID_MASK                         (0x000000FF << 3U)
+#define COM_MSG_CAN_ID_ADDR_SHIFT               (3U)
+#define COM_MSG_CAN_ID_ADDR_MASK                (0x000000FF << COM_MSG_CAN_ID_ADDR_SHIFT)
+#define MCAN_NODE_ID_MASK                       (0x000000FF << 3U)
 
-#define CAN_FD_NOMINAL_BIT_RATE_PRESCALER           (1U)
-#define CAN_FD_NOMINAL_PROPAGATION_SEG              (2U)
-#define CAN_FD_NOMINAL_TIME_SEG1_BEFORE_SP          (8U)
-#define CAN_FD_NOMINAL_TIME_SEG2_AFTER_SP           (9U)
-#define CAN_FD_NOMINAL_SYNC_JUMP_WIDTH              (8U)
+// see MCAN_BitTimingCalculator.xls in C2000Ware
+#define MCAN_NOMINAL_BIT_RATE_PRESCALER         (1U)
+#define MCAN_NOMINAL_PROPAGATION_SEG            (2U)
+#define MCAN_NOMINAL_TIME_SEG1_BEFORE_SP        (8U)
+#define MCAN_NOMINAL_TIME_SEG2_AFTER_SP         (9U)
+#define MCAN_NOMINAL_SYNC_JUMP_WIDTH            (8U)
 
-#define CAN_FD_DATA_BIT_RATE_PRESCALER              (1U)
-#define CAN_FD_DATA_PROPAGATION_SEG                 (2U)
-#define CAN_FD_DATA_TIME_SEG1_BEFORE_SP             (8U)
-#define CAN_FD_DATA_TIME_SEG2_AFTER_SP              (9U)
-#define CAN_FD_DATA_SYNC_JUMP_WIDTH                 (8U)
+#define MCAN_DATA_BIT_RATE_PRESCALER            (1U)
+#define MCAN_DATA_PROPAGATION_SEG               (2U)
+#define MCAN_DATA_TIME_SEG1_BEFORE_SP           (8U)
+#define MCAN_DATA_TIME_SEG2_AFTER_SP            (9U)
+#define MCAN_DATA_SYNC_JUMP_WIDTH               (8U)
 
-#define CAN_FD_NOMINAL_BIT_RATE_PRESCALER_REG       (CAN_FD_NOMINAL_BIT_RATE_PRESCALER - 1U)
-#define CAN_FD_NOMINAL_TIME_SEG1_BEFORE_SP_REG      (CAN_FD_NOMINAL_TIME_SEG1_BEFORE_SP + \
-                                                     CAN_FD_NOMINAL_PROPAGATION_SEG - 1U)
-#define CAN_FD_NOMINAL_TIME_SEG2_AFTER_SP_REG       (CAN_FD_NOMINAL_TIME_SEG2_AFTER_SP - 1U)
-#define CAN_FD_NOMINAL_SYNC_JUMP_WIDTH_REG          (CAN_FD_NOMINAL_SYNC_JUMP_WIDTH - 1U)
+#define MCAN_NOMINAL_BIT_RATE_PRESCALER_REG     (MCAN_NOMINAL_BIT_RATE_PRESCALER - 1U)
+#define MCAN_NOMINAL_TIME_SEG1_BEFORE_SP_REG    (MCAN_NOMINAL_TIME_SEG1_BEFORE_SP + \
+                                                 MCAN_NOMINAL_PROPAGATION_SEG - 1U)
+#define MCAN_NOMINAL_TIME_SEG2_AFTER_SP_REG     (MCAN_NOMINAL_TIME_SEG2_AFTER_SP - 1U)
+#define MCAN_NOMINAL_SYNC_JUMP_WIDTH_REG        (MCAN_NOMINAL_SYNC_JUMP_WIDTH - 1U)
 
-#define CAN_FD_DATA_BIT_RATE_PRESCALER_REG          (CAN_FD_DATA_BIT_RATE_PRESCALER - 1U)
-#define CAN_FD_DATA_TIME_SEG1_BEFORE_SP_REG         (CAN_FD_DATA_TIME_SEG1_BEFORE_SP + \
-                                                     CAN_FD_DATA_PROPAGATION_SEG - 1U)
-#define CAN_FD_DATA_TIME_SEG2_AFTER_SP_REG          (CAN_FD_DATA_TIME_SEG2_AFTER_SP - 1U)
-#define CAN_FD_DATA_SYNC_JUMP_WIDTH_REG             (CAN_FD_DATA_SYNC_JUMP_WIDTH - 1U)
+#define MCAN_DATA_BIT_RATE_PRESCALER_REG        (MCAN_DATA_BIT_RATE_PRESCALER - 1U)
+#define MCAN_DATA_TIME_SEG1_BEFORE_SP_REG       (MCAN_DATA_TIME_SEG1_BEFORE_SP + \
+                                                 MCAN_DATA_PROPAGATION_SEG - 1U)
+#define MCAN_DATA_TIME_SEG2_AFTER_SP_REG        (MCAN_DATA_TIME_SEG2_AFTER_SP - 1U)
+#define MCAN_DATA_SYNC_JUMP_WIDTH_REG           (MCAN_DATA_SYNC_JUMP_WIDTH - 1U)
+
+#define MCAN_STD_ID_FILTER_NUM                  (8U)
+#define MCAN_EXT_ID_FILTER_NUM                  (0U)
+
+#define MCAN_RX_FIFO_0_NUM                      (0U)
+#define MCAN_RX_FIFO_0_ELEM_SIZE                (64U)//MCAN_ELEM_SIZE_64BYTES)
+#define MCAN_RX_FIFO_1_NUM                      (0U)
+#define MCAN_RX_FIFO_1_ELEM_SIZE                (64U)//MCAN_ELEM_SIZE_64BYTES)
+
+#define MCAN_RX_BUFFER_NUM                      (8U)
+#define MCAN_RX_BUFFER_ELEM_SIZE                (64U)//MCAN_ELEM_SIZE_64BYTES)
+
+#define MCAN_TX_BUFFER_NUM                      (8U)
+#define MCAN_TX_FQ_NUM                          (0U)
+#define MCAN_TX_BUFFER_ELEM_SIZE                (64U)//MCAN_ELEM_SIZE_64BYTES)
+
+#define MCAN_TX_EVENT_NUM                       (0U)
+#define MCAN_EXT_ID_AND_MASK                    (0x1FFFFFFFU)
+#define MCAN_MSG_INT                            (0x81200)
+
+//  Defining Starting Addresses for Message RAM Sections,
+#define MCAN_STD_ID_FILT_START_ADDR             (0U)
+#define MCAN_EXT_ID_FILT_START_ADDR             (MCAN_STD_ID_FILT_START_ADDR + \
+                                                 ((MCAN_STD_ID_FILTER_NUM * MCANSS_STD_ID_FILTER_SIZE_WORDS * 4U)))
+#define MCAN_RX_FIFO_0_START_ADDR               (MCAN_EXT_ID_FILT_START_ADDR + \
+                                                 ((MCAN_EXT_ID_FILTER_NUM * MCANSS_EXT_ID_FILTER_SIZE_WORDS * 4U)))
+#define MCAN_RX_FIFO_1_START_ADDR               (MCAN_RX_FIFO_0_START_ADDR + \
+                                                 (MCAN_RX_FIFO_0_ELEM_SIZE * 4U * MCAN_RX_FIFO_0_NUM))
+#define MCAN_RX_BUFFER_START_ADDR               (MCAN_RX_FIFO_1_START_ADDR + \
+                                                 (MCAN_RX_FIFO_1_ELEM_SIZE * 4U * MCAN_RX_FIFO_1_NUM))
+#define MCAN_TX_BUFFER_START_ADDR               (MCAN_RX_BUFFER_START_ADDR + \
+                                                 (MCAN_RX_BUFFER_ELEM_SIZE * 4U * MCAN_RX_BUFFER_NUM))
+#define MCAN_TX_EVENT_START_ADDR                (MCAN_TX_BUFFER_START_ADDR + \
+                                                 (MCAN_TX_BUFFER_ELEM_SIZE * 4U * (MCAN_TX_BUFFER_NUM + MCAN_TX_FQ_NUM)))
 
 
 #define MCAN_INIT_PARAMS                        { \
-                                                    .fdMode                = CAN_FD_MODE_ENABLE, \
-                                                    .brsEnable             = CAN_FD_BIT_RATE_SWITCHING_MODE_DISABLE, \
-                                                    .txpEnable             = CAN_FD_TRANSMIT_PAUSE_DISABLE, \
-                                                    .efbi                  = CAN_FD_EDGE_FILTERING_FOR_HARD_SYNC_DISABLE, \
-                                                    .pxhddisable           = CAN_FD_PROTOCOL_EXCEPTION_HANDLE_ENABLE, \
-                                                    .darEnable             = CAN_FD_AUTOMATIC_RETRANSMIT_ENABLE, \
-                                                    .wkupReqEnable         = CAN_FD_WAKEUP_REQUEST_ENABLE, \
-                                                    .autoWkupEnable        = CAN_FD_AUTO_WAKEUP_ENABLE, \
-                                                    .emulationEnable       = CAN_FD_EMULATION_ENABLE, \
-                                                    .tdcEnable             = CAN_FD_TRANSMIT_DELAY_COMPENSATION_DISABLE, \
-                                                    .wdcPreload            = 0xFFU, \
-                                                    .tdcConfig.tdcf        = 0xAU, \
-                                                    .tdcConfig.tdco        = 0x6U, \
-                                                }
+                                                    .fdMode                 = MCAN_MODE_ENABLE, \
+                                                    .brsEnable              = MCAN_BIT_RATE_SWITCHING_MODE_DISABLE, \
+                                                    .txpEnable              = MCAN_TX_PAUSE_DISABLE, \
+                                                    .efbi                   = MCAN_EDGE_FILTERING_FOR_SYNC_DISABLE, \
+                                                    .pxhddisable            = MCAN_PROTOCOL_EXCEPTION_HANDLE_ENABLE, \
+                                                    .darEnable              = MCAN_AUTOMATIC_RETRANSMIT_ENABLE, \
+                                                    .wkupReqEnable          = MCAN_WAKEUP_REQUEST_ENABLE, \
+                                                    .autoWkupEnable         = MCAN_AUTO_WAKEUP_ENABLE, \
+                                                    .emulationEnable        = MCAN_EMULATION_SUSPEND_ENABLE, \
+                                                    .tdcEnable              = MCAN_TX_DELAY_COMPENSATION_DISABLE, \
+                                                    .wdcPreload             = 0xFFU, \
+                                                    .tdcConfig.tdcf         = 0xAU, \
+                                                    .tdcConfig.tdco         = 0x6U, \
+}
 #define MCAN_CONFIG_PARAMS                      { \
-                                                    .monEnable             = CAN_FD_BUS_MONITORING_MODE_DISABLE, \
-                                                    .asmEnable             = CAN_FD_NORMAL_OPERATION_MODE_ENABLE, \
-                                                    .tsPrescalar           = 0xFU, \
-                                                    .tsSelect              = 0x0U, \
-                                                    .timeoutSelect         = MCAN_TIMEOUT_SELECT_CONT, \
-                                                    .timeoutPreload        = 0xFFFFU, \
-                                                    .timeoutCntEnable      = CAN_FD_TIMEOUT_COUNTER_DISABLE, \
-                                                    .filterConfig.rrfe     = CAN_FD_REJECT_REMOTE_EXT_FRAMES, \
-                                                    .filterConfig.rrfs     = CAN_FD_REJECT_REMOTE_STD_FRAMES, \
-                                                    .filterConfig.anfe     = CAN_FD_ACCEPT_NO_MATCH_EXT_FRAMES_IN_FIFO1, \
-                                                    .filterConfig.anfs     = CAN_FD_ACCEPT_NO_MATCH_STD_FRAMES_IN_FIFO1, \
+                                                    .monEnable              = MCAN_BUS_MONITORING_MODE_DISABLE, \
+                                                    .asmEnable              = MCAN_NORMAL_OPERATION_MODE_ENABLE, \
+                                                    .tsPrescalar            = 0xFU, \
+                                                    .tsSelect               = MCAN_TIMESTAMP_CNT_SET_TO_ZERO, \
+                                                    .timeoutSelect          = MCAN_TIMEOUT_SELECT_CONT, \
+                                                    .timeoutPreload         = 0xFFFFU, \
+                                                    .timeoutCntEnable       = MCAN_TIMEOUT_COUNTER_DISABLE, \
+                                                    .filterConfig.rrfe      = MCAN_REJECT_REMOTE_FRAMES_W_EXT_ID, \
+                                                    .filterConfig.rrfs      = MCAN_REJECT_REMOTE_FRAMES_W_STD_ID, \
+                                                    .filterConfig.anfe      = MCAN_REJECT_NO_MATCH_EXT_ID, \
+                                                    .filterConfig.anfs      = MCAN_REJECT_NO_MATCH_STD_ID, \
                                                 }
 #define MCAN_BIT_TIMING_PARAMS                  { \
-                                                    .nomRatePrescalar      = CAN_FD_NOMINAL_BIT_RATE_PRESCALER_REG, \
-                                                    .nomTimeSeg1           = CAN_FD_NOMINAL_TIME_SEG1_BEFORE_SP_REG, \
-                                                    .nomTimeSeg2           = CAN_FD_NOMINAL_TIME_SEG2_AFTER_SP_REG, \
-                                                    .nomSynchJumpWidth     = CAN_FD_NOMINAL_SYNC_JUMP_WIDTH_REG, \
-                                                    .dataRatePrescalar     = CAN_FD_DATA_BIT_RATE_PRESCALER_REG, \
-                                                    .dataTimeSeg1          = CAN_FD_DATA_TIME_SEG1_BEFORE_SP_REG, \
-                                                    .dataTimeSeg2          = CAN_FD_DATA_TIME_SEG2_AFTER_SP_REG, \
-                                                    .dataSynchJumpWidth    = CAN_FD_DATA_SYNC_JUMP_WIDTH_REG, \
+                                                    .nomRatePrescalar       = MCAN_NOMINAL_BIT_RATE_PRESCALER_REG, \
+                                                    .nomTimeSeg1            = MCAN_NOMINAL_TIME_SEG1_BEFORE_SP_REG, \
+                                                    .nomTimeSeg2            = MCAN_NOMINAL_TIME_SEG2_AFTER_SP_REG, \
+                                                    .nomSynchJumpWidth      = MCAN_NOMINAL_SYNC_JUMP_WIDTH_REG, \
+                                                    .dataRatePrescalar      = MCAN_DATA_BIT_RATE_PRESCALER_REG, \
+                                                    .dataTimeSeg1           = MCAN_DATA_TIME_SEG1_BEFORE_SP_REG, \
+                                                    .dataTimeSeg2           = MCAN_DATA_TIME_SEG2_AFTER_SP_REG, \
+                                                    .dataSynchJumpWidth     = MCAN_DATA_SYNC_JUMP_WIDTH_REG, \
                                                 }
 #define MCAN_MSG_RAM_CONFIG_PARAMS              { \
                                                     .flssa                 = MCAN_STD_ID_FILT_START_ADDR, \
                                                     .lss                   = MCAN_STD_ID_FILTER_NUM, \
                                                     .flesa                 = MCAN_EXT_ID_FILT_START_ADDR, \
                                                     .lse                   = MCAN_EXT_ID_FILTER_NUM, \
-                                                    .txStartAddr           = MCAN_TX_BUFF_START_ADDR, \
-                                                    .txBufNum              = MCAN_TX_BUFF_SIZE, \
-                                                    .txFIFOSize            = 0, \
+                                                    .txStartAddr           = MCAN_TX_BUFFER_START_ADDR, \
+                                                    .txBufNum              = MCAN_TX_BUFFER_NUM, \
+                                                    .txFIFOSize            = MCAN_TX_FQ_NUM, \
                                                     .txBufMode             = 0U, \
-                                                    .txBufElemSize         = MCAN_ELEM_SIZE_64BYTES, \
+                                                    .txBufElemSize         = MCAN_TX_BUFFER_ELEM_SIZE, \
                                                     .txEventFIFOStartAddr  = MCAN_TX_EVENT_START_ADDR, \
-                                                    .txEventFIFOSize       = MCAN_TX_BUFF_SIZE, \
-                                                    .txEventFIFOWaterMark  = 3U, \
-                                                    .rxFIFO0startAddr      = MCAN_FIFO_0_START_ADDR, \
-                                                    .rxFIFO0size           = MCAN_FIFO_0_NUM, \
-                                                    .rxFIFO0waterMark      = 3U, \
+                                                    .txEventFIFOSize       = MCAN_TX_EVENT_NUM, \
+                                                    .txEventFIFOWaterMark  = 0U, \
+                                                    .rxFIFO0startAddr      = MCAN_RX_FIFO_0_START_ADDR, \
+                                                    .rxFIFO0size           = MCAN_RX_FIFO_0_NUM, \
+                                                    .rxFIFO0waterMark      = 0U, \
                                                     .rxFIFO0OpMode         = 0U, \
-                                                    .rxFIFO1startAddr      = MCAN_FIFO_1_START_ADDR, \
-                                                    .rxFIFO1size           = MCAN_FIFO_1_NUM, \
-                                                    .rxFIFO1waterMark      = 3U, \
+                                                    .rxFIFO1startAddr      = MCAN_RX_FIFO_1_START_ADDR, \
+                                                    .rxFIFO1size           = MCAN_RX_FIFO_1_NUM, \
+                                                    .rxFIFO1waterMark      = 0U, \
                                                     .rxFIFO1OpMode         = 0U, \
-                                                    .rxBufStartAddr        = MCAN_RX_BUFF_START_ADDR, \
-                                                    .rxBufElemSize         = MCAN_ELEM_SIZE_64BYTES, \
-                                                    .rxFIFO0ElemSize       = MCAN_ELEM_SIZE_64BYTES, \
-                                                    .rxFIFO1ElemSize       = MCAN_ELEM_SIZE_64BYTES, \
+                                                    .rxBufStartAddr        = MCAN_RX_BUFFER_START_ADDR, \
+                                                    .rxBufElemSize         = MCAN_RX_BUFFER_ELEM_SIZE, \
+                                                    .rxFIFO0ElemSize       = MCAN_RX_FIFO_0_ELEM_SIZE, \
+                                                    .rxFIFO1ElemSize       = MCAN_RX_FIFO_1_ELEM_SIZE, \
                                                 }
 #define MCAN_STD_MSG_ID_FILTER_ELEM             { \
-                                                    .sfid2                 = 0x0U, \
-                                                    .sfid1                 = uid_unique_8b, \
-                                                    .sfec                  = 0x7U, \
-                                                    .sft                   = 0x0U, \
+                                                    .sfid2                  = 0x0U, \
+                                                    .sfid1                  = 0x0U, \
+                                                    .sfec                   = 0x7U, \
+                                                    .sft                    = 0x0U, \
+                                                }
+#define COM_MCAN_DEF                            { \
+                                                    .mCanBase               = MCANA_DRIVER_BASE, \
+                                                    .initParams             = MCAN_INIT_PARAMS, \
+                                                    .configParams           = MCAN_CONFIG_PARAMS, \
+                                                    .bitTimesParams         = MCAN_BIT_TIMING_PARAMS, \
+                                                    .msgRAMConfigParams     = MCAN_MSG_RAM_CONFIG_PARAMS, \
+                                                    .stdFilterParams        = MCAN_STD_MSG_ID_FILTER_ELEM, \
                                                 }
 
 /***********************************************************************

@@ -238,10 +238,10 @@ static void MCU_ini(void)
 
 #ifdef CPU1
     // Allocate MCAN (a shared peripheral) to CPU1 (C28x)
-    SysCtl_allocateSharedPeripheral(SYSCTL_PALLOCATE_MCAN_A, PERIPH_ALLOCATE_ON_CPU1_CORE);
+    SysCtl_allocateSharedPeripheral(SYSCTL_PALLOCATE_MCAN_A, MCAN_ALLOCATE_ON_CPU1_CORE);
 #elif CM_CORE
     // Allocate MCAN (a shared peripheral) to CM
-    SysCtl_allocateSharedPeripheral(SYSCTL_PALLOCATE_MCAN_A, PERIPH_ALLOCATE_ON_CM_CORE);
+    SysCtl_allocateSharedPeripheral(SYSCTL_PALLOCATE_MCAN_A, MCAN_ALLOCATE_ON_CM_CORE);
 #endif
 
     // Configure the divisor for the MCAN bit-clock

@@ -190,6 +190,16 @@ typedef struct __sci_config_t__
 typedef struct __mcan_cfg_t__
 {
     uint32_t                            mCanBase;
+    // Initialize MCAN Init parameters.
+    MCAN_InitParams                     initParams;
+    // Initialize MCAN Config parameters.
+    MCAN_ConfigParams                   configParams;
+    // Initialize bit timings.
+    MCAN_BitTimingParams                bitTimesParams;
+    // Initialize Message RAM Sections Configuration Parameters.
+    MCAN_MsgRAMConfigParams             msgRAMConfigParams;
+    // Initialize Rx Buffer Configuration parameters.
+    MCAN_StdMsgIDFilterElement          stdFilterParams;
 } mcan_cfg_t;
 
 /**

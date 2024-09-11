@@ -848,7 +848,8 @@ void HAL_TMR_ini(const tmr_cfg_t* p_TimerCfg)
 void HAL_MCAN_ini(const mcan_cfg_t* p_McanCfg)
 {
     // Initialize MCAN Init parameters.
-    MCAN_InitParams initParams = MCAN_INIT_PARAMS;
+//    MCAN_InitParams initParams = MCAN_INIT_PARAMS;
+
 //    {
 //     .fdMode                = CAN_FD_MODE_ENABLE,
 //     .brsEnable             = CAN_FD_BIT_RATE_SWITCHING_MODE_DISABLE,
@@ -866,8 +867,10 @@ void HAL_MCAN_ini(const mcan_cfg_t* p_McanCfg)
 //     .tdcConfig.tdcf        = 0xAU,
 //     .tdcConfig.tdco        = 0x6U,
 //    };
+
     // Initialize MCAN Config parameters.
-    MCAN_ConfigParams configParams = MCAN_CONFIG_PARAMS;
+//    MCAN_ConfigParams configParams = MCAN_CONFIG_PARAMS;
+
 //    {
 //     .monEnable             = CAN_FD_BUS_MONITORING_MODE_DISABLE,
 //     .asmEnable             = CAN_FD_NORMAL_OPERATION_MODE_ENABLE,
@@ -882,7 +885,8 @@ void HAL_MCAN_ini(const mcan_cfg_t* p_McanCfg)
 //     .filterConfig.anfs     = CAN_FD_ACCEPT_NO_MATCH_STD_FRAMES_IN_FIFO1,
 //    };
     // Initialize bit timings.
-    MCAN_BitTimingParams bitTimes = MCAN_BIT_TIMING_PARAMS;
+//    MCAN_BitTimingParams bitTimes = MCAN_BIT_TIMING_PARAMS;
+
 //    {
 //     .nomRatePrescalar      = CAN_FD_NOMINAL_BIT_RATE_PRESCALER_REG,    // Nominal Baud Rate Pre-scaler
 //     .nomTimeSeg1           = CAN_FD_NOMINAL_TIME_SEG1_BEFORE_SP_REG,   // Nominal Time segment before SP
@@ -893,37 +897,39 @@ void HAL_MCAN_ini(const mcan_cfg_t* p_McanCfg)
 //     .dataTimeSeg2          = CAN_FD_DATA_TIME_SEG2_AFTER_SP_REG,       // Data Time segment after SP
 //     .dataSynchJumpWidth    = CAN_FD_DATA_SYNC_JUMP_WIDTH_REG,          // Data SJW
 //    };
+
     // Initialize Message RAM Sections Configuration Parameters.
-    MCAN_MsgRAMConfigParams    msgRAMConfigParams = MCAN_MSG_RAM_CONFIG_PARAMS;
+//    MCAN_MsgRAMConfigParams    msgRAMConfigParams = //MCAN_MSG_RAM_CONFIG_PARAMS;
 //    {
-//     .flssa                 = MCAN_STD_ID_FILT_START_ADDR,   // Standard ID Filter List Start Address.
-//     .lss                   = MCAN_STD_ID_FILTER_NUM,        // List Size: Standard ID.
-//     .flesa                 = MCAN_EXT_ID_FILT_START_ADDR,   // Extended ID Filter List Start Address.
-//     .lse                   = MCAN_EXT_ID_FILTER_NUM,        // List Size: Extended ID.
-//     .txStartAddr           = MCAN_TX_BUFF_START_ADDR,       // Tx Buffers Start Address.
-//     .txBufNum              = MCAN_TX_BUFF_SIZE,             // Number of Dedicated Transmit Buffers.
-//     .txFIFOSize            = 0,                             // Number of Tx FIFO or Tx Queue Elements
-//     .txBufMode             = 0U,                            // Tx FIFO operation
-//     .txBufElemSize         = MCAN_ELEM_SIZE_64BYTES,        // Tx Buffer Element Size.
-//     .txEventFIFOStartAddr  = MCAN_TX_EVENT_START_ADDR,      // Tx Event FIFO Start Address.
-//     .txEventFIFOSize       = MCAN_TX_BUFF_SIZE,             // Event FIFO Size.
-//     .txEventFIFOWaterMark  = 3U,                            // Level for Tx Event FIFO watermark interrupt.
-//     .rxFIFO0startAddr      = MCAN_FIFO_0_START_ADDR,        // Rx FIFO0 Start Address.
-//     .rxFIFO0size           = MCAN_FIFO_0_NUM,               // Number of Rx FIFO elements.
-//     .rxFIFO0waterMark      = 3U,                            // Rx FIFO0 Watermark.
-//     .rxFIFO0OpMode         = 0U,                            // FIFO blocking mode.
-//     .rxFIFO1startAddr      = MCAN_FIFO_1_START_ADDR,        // Rx FIFO1 Start Address.
-//     .rxFIFO1size           = MCAN_FIFO_1_NUM,               // Number of Rx FIFO elements.
-//     .rxFIFO1waterMark      = 3U,                            // Level for Rx FIFO 1 watermark interrupt.
-//     .rxFIFO1OpMode         = 0U,                            // FIFO blocking mode.
-//     .rxBufStartAddr        = MCAN_RX_BUFF_START_ADDR,       // Rx Buffer Start Address.
-//     .rxBufElemSize         = MCAN_ELEM_SIZE_64BYTES,        // Rx Buffer Element Size.
-//     .rxFIFO0ElemSize       = MCAN_ELEM_SIZE_64BYTES,        // Rx FIFO0 Element Size.
-//     .rxFIFO1ElemSize       = MCAN_ELEM_SIZE_64BYTES,        // Rx FIFO1 Element Size.
+//     .flssa                 = MCAN_STD_ID_FILT_START_ADDR,  // Standard ID Filter List Start Address.
+//     .lss                   = MCAN_STD_ID_FILTER_NUM,       // List Size: Standard ID.
+//     .flesa                 = MCAN_EXT_ID_FILT_START_ADDR,  // Extended ID Filter List Start Address.
+//     .lse                   = MCAN_EXT_ID_FILTER_NUM,       // List Size: Extended ID.
+//     .txStartAddr           = MCAN_TX_BUFFER_START_ADDR,    // Tx Buffers Start Address.
+//     .txBufNum              = MCAN_TX_BUFFER_NUM,           // Number of Dedicated Transmit Buffers.
+//     .txFIFOSize            = MCAN_TX_FQ_NUM,               // Number of Tx FIFO or Tx Queue Elements
+//     .txBufMode             = 0U,                           // Tx FIFO operation
+//     .txBufElemSize         = MCAN_TX_BUFFER_ELEM_SIZE,     // Tx Buffer Element Size.
+//     .txEventFIFOStartAddr  = MCAN_TX_EVENT_START_ADDR,     // Tx Event FIFO Start Address.
+//     .txEventFIFOSize       = MCAN_TX_EVENT_NUM,            // Event FIFO Size.
+//     .txEventFIFOWaterMark  = 0U,                           // Level for Tx Event FIFO watermark interrupt.
+//     .rxFIFO0startAddr      = MCAN_RX_FIFO_0_START_ADDR,    // Rx FIFO0 Start Address.
+//     .rxFIFO0size           = MCAN_RX_FIFO_0_NUM,           // Number of Rx FIFO elements.
+//     .rxFIFO0waterMark      = 0U,                           // Rx FIFO0 Watermark.
+//     .rxFIFO0OpMode         = 0U,                           // FIFO blocking mode.
+//     .rxFIFO1startAddr      = MCAN_RX_FIFO_1_START_ADDR,    // Rx FIFO1 Start Address.
+//     .rxFIFO1size           = MCAN_RX_FIFO_1_NUM,           // Number of Rx FIFO elements.
+//     .rxFIFO1waterMark      = 0U,                           // Level for Rx FIFO 1 watermark interrupt.
+//     .rxFIFO1OpMode         = 0U,                           // FIFO blocking mode.
+//     .rxBufStartAddr        = MCAN_RX_BUFFER_START_ADDR,    // Rx Buffer Start Address.
+//     .rxBufElemSize         = MCAN_RX_BUFFER_ELEM_SIZE,     // Rx Buffer Element Size.
+//     .rxFIFO0ElemSize       = MCAN_RX_FIFO_0_ELEM_SIZE,     // Rx FIFO0 Element Size.
+//     .rxFIFO1ElemSize       = MCAN_RX_FIFO_1_ELEM_SIZE,     // Rx FIFO1 Element Size.
 //    };
 
     // Initialize Rx Buffer Configuration parameters.
-    MCAN_StdMsgIDFilterElement stdFiltelem = MCAN_STD_MSG_ID_FILTER_ELEM;
+//    MCAN_StdMsgIDFilterElement stdFiltelem = MCAN_STD_MSG_ID_FILTER_ELEM;
+
 //    {
 //     .sfid2                 = 0x0U, // Standard Filter ID 2.
 //     .sfid1                 = uid_unique_8b,//0x4U, // Standard Filter ID 1.
@@ -941,43 +947,44 @@ void HAL_MCAN_ini(const mcan_cfg_t* p_McanCfg)
 //    // Configure the divisor for the MCAN bit-clock
 //    SysCtl_setMCANClk(SYSCTL_MCANCLK_DIV_2);
 
-    MCAN_selectClockSource(MCANA_DRIVER_BASE, MCAN_CLOCK_SOURCE_SYS);
+    MCAN_selectClockSource(p_McanCfg->mCanBase, MCAN_CLOCK_SOURCE_SYS);
     // Wait for Memory initialization to be completed.
-    while(MCAN_isMemInitDone(MCANA_DRIVER_BASE) != TRUE);
+    while(MCAN_isMemInitDone(p_McanCfg->mCanBase) != TRUE);
 
     // Put MCAN in SW initialization mode.
-    MCAN_setOpMode(MCANA_DRIVER_BASE, MCAN_OPERATION_MODE_SW_INIT);
+    MCAN_setOpMode(p_McanCfg->mCanBase, MCAN_OPERATION_MODE_SW_INIT);
     // Wait till MCAN is not initialized.
-    while(MCAN_getOpMode(MCANA_DRIVER_BASE) != MCAN_OPERATION_MODE_SW_INIT);
+    while(MCAN_getOpMode(p_McanCfg->mCanBase) != MCAN_OPERATION_MODE_SW_INIT);
 
     // Configure MCAN.
     // Initialize MCAN module.
-    MCAN_init(MCANA_DRIVER_BASE, &initParams);
+    MCAN_init(p_McanCfg->mCanBase, &p_McanCfg->initParams);
     // Configure MCAN module.
-    MCAN_config(MCANA_DRIVER_BASE, &configParams);
+    MCAN_config(p_McanCfg->mCanBase, &p_McanCfg->configParams);
     // Configure Bit timings.
-    MCAN_setBitTime(MCANA_DRIVER_BASE, &bitTimes);
+    MCAN_setBitTime(p_McanCfg->mCanBase, &p_McanCfg->bitTimesParams);
     // Configure Message RAM Sections
-    MCAN_msgRAMConfig(MCANA_DRIVER_BASE, &msgRAMConfigParams);
+    MCAN_msgRAMConfig(p_McanCfg->mCanBase, &p_McanCfg->msgRAMConfigParams);//&msgRAMConfigParams);
     // Configure Standard ID filter element
-    MCAN_addStdMsgIDFilter(MCANA_DRIVER_BASE, 0U, &stdFiltelem);
+//    p_McanCfg->stdFilterParams.sfid1 = uid_unique_8b;
+    MCAN_addStdMsgIDFilter(p_McanCfg->mCanBase, 0U, &p_McanCfg->stdFilterParams);
 
     // Enable internal loopback mode
-    MCAN_lpbkModeEnable(MCANA_DRIVER_BASE, MCAN_LPBK_MODE_EXTERNAL, TRUE);
+    MCAN_lpbkModeEnable(p_McanCfg->mCanBase, MCAN_LPBK_MODE_EXTERNAL, TRUE);
 
     // Take MCAN out of the SW initialization mode
-    MCAN_setOpMode(MCANA_DRIVER_BASE, MCAN_OPERATION_MODE_NORMAL);
+    MCAN_setOpMode(p_McanCfg->mCanBase, MCAN_OPERATION_MODE_NORMAL);
     // Wait till MCAN is back in normal mode .
-    while(MCAN_getOpMode(MCANA_DRIVER_BASE) != MCAN_OPERATION_MODE_NORMAL);
+    while(MCAN_getOpMode(p_McanCfg->mCanBase) != MCAN_OPERATION_MODE_NORMAL);
 
     // Enable Interrupts.
-    MCAN_enableIntr(MCANA_DRIVER_BASE, MCAN_INTR_MASK_ALL, 1U);
+    MCAN_enableIntr(p_McanCfg->mCanBase, MCAN_INTR_MASK_ALL, 1U);
     // Select Interrupt Line.
-    MCAN_selectIntrLine(MCANA_DRIVER_BASE, MCAN_INTR_MASK_ALL, MCAN_INTR_LINE_NUM_1);
+    MCAN_selectIntrLine(p_McanCfg->mCanBase, MCAN_INTR_MASK_ALL, MCAN_INTR_LINE_NUM_1);
     // Enable Interrupt Line.
-    MCAN_enableIntrLine(MCANA_DRIVER_BASE, MCAN_INTR_LINE_NUM_1, 1U);
+    MCAN_enableIntrLine(p_McanCfg->mCanBase, MCAN_INTR_LINE_NUM_1, 1U);
     // Write Tx Message to the Message RAM.
-//    MCAN_writeMsgRam(MCANA_DRIVER_BASE, MCAN_MEM_TYPE_BUF, 1U, &txMsg);
+//    MCAN_writeMsgRam(p_McanCfg->mCanBase, MCAN_MEM_TYPE_BUF, 1U, &txMsg);
     // Enable Transmission interrupt.
-    MCAN_txBufTransIntrEnable(MCANA_DRIVER_BASE, 1U,1U);
+    MCAN_txBufTransIntrEnable(p_McanCfg->mCanBase, 1U,1U);
 }

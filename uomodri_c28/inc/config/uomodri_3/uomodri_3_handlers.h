@@ -23,9 +23,10 @@
 /***********************************************************************
  * VARIABLES
  ***********************************************************************/
-extern spi_rx_t     com_spi_rx;
-extern spi_tx_t     com_spi_tx;
-extern uint16_t     led_spi_tx[LED_MSG_TX_16BIT_LENGTH];
+extern spi_rx_t             com_spi_rx;
+extern spi_tx_t             com_spi_tx;
+extern uint16_t             led_spi_tx[LED_MSG_TX_16BIT_LENGTH];
+extern volatile uint32_t    uid_unique_8b;
 
 /***********************************************************************
  * FUNCTIONS DECLARATION
@@ -310,6 +311,15 @@ static const sci_cfg_t  sciCfgList[] =
 {
  COM_SCI_DEF,                       /* SCI(UART)/RS485 Communication bus config */
  {.sciBase = UINT32_MAX},           /* END OF ARRAY */
+};
+
+/***********************************************************************
+ * MCAN (CAN-FD) STRUCTURE DECLARATION & INITIALIZATION
+ ***********************************************************************/
+static const mcan_cfg_t mcanCfgList[] =
+{
+ COM_MCAN_DEF,                      /* MCAN (CAN-FD) Communication bus config */
+ {.mCanBase = UINT32_MAX},          /* END OF ARRAY */
 };
 
 /***********************************************************************
