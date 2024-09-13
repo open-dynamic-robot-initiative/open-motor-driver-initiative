@@ -319,7 +319,7 @@ static const sci_cfg_t  sciCfgList[] =
 static const mcan_cfg_t mcanCfgList[] =
 {
  COM_MCAN_DEF,                      /* MCAN (CAN-FD) Communication bus config */
- {.mCanBase = UINT32_MAX},          /* END OF ARRAY */
+// {.mCanBase = UINT32_MAX},          /* END OF ARRAY */
 };
 
 /***********************************************************************
@@ -402,6 +402,7 @@ static const hal_cfg_t  hal =
  .p_ipcHandle   = ipcCfgList,
  .p_sciHandle   = sciCfgList,
  .p_spiHandle   = spiCfgList,
+ .p_mcanHandle  = mcanCfgList,
  .p_timerHandle = timerCfgList,
  .p_claHandle   = claCfgList,
  .p_clbHandle   = clbCfgList,

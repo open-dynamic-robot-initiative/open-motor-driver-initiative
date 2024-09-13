@@ -386,6 +386,7 @@ typedef struct __hal_config_t__
     const eqep_cfg_t*   const           p_eqepHandle;
     const sci_cfg_t*    const           p_sciHandle;
     const spi_cfg_t*    const           p_spiHandle;
+    const mcan_cfg_t*   const           p_mcanHandle;
     const ipc_cfg_t*    const           p_ipcHandle;
     const dma_cfg_t*    const           p_dmaHandle;
     const tmr_cfg_t*    const           p_timerHandle;

@@ -1428,7 +1428,7 @@
 /***********************************************************************
  * MCAN DEFINES
  ***********************************************************************/
-// For dual manageable peripheral, specify which core is used.
+// Specify which core is used to manage the MCAN.
 #define MCAN_ALLOCATE_ON_CM_CORE                (1U)
 #define MCAN_ALLOCATE_ON_CPU1_CORE              (0U)
 
@@ -1486,12 +1486,12 @@
 #define MCAN_ACCEPT_REMOTE_FRAMES_W_STD_ID      (0U)
 #define MCAN_REJECT_REMOTE_FRAMES_W_STD_ID      (1U)
 // Accept/Reject Non-matching Frames messages with 29-bit IDs
-#define MCAN_ACCEPT_NO_MATCH_EXT_ID_IN_FIFO0_RX (0U)
-#define MCAN_ACCEPT_NO_MATCH_EXT_ID_IN_FIFO1_RX (1U)
+#define MCAN_ACCEPT_NO_MATCH_EXT_ID_IN_RX_FIFO0 (0U)
+#define MCAN_ACCEPT_NO_MATCH_EXT_ID_IN_RX_FIFO1 (1U)
 #define MCAN_REJECT_NO_MATCH_EXT_ID             (2U)
 // Accept/Reject Non-matching Frames messages with 11-bit IDs
-#define MCAN_ACCEPT_NO_MATCH_STD_ID_IN_FIFO0_RX (0U)
-#define MCAN_ACCEPT_NO_MATCH_STD_ID_IN_FIFO1_RX (1U)
+#define MCAN_ACCEPT_NO_MATCH_STD_ID_IN_RX_FIFO0 (0U)
+#define MCAN_ACCEPT_NO_MATCH_STD_ID_IN_RX_FIFO1 (1U)
 #define MCAN_REJECT_NO_MATCH_STD_ID             (2U)
 
 #define COM_MSG_CAN_ID_ADDR_SHIFT               (3U)
@@ -1523,40 +1523,70 @@
 #define MCAN_DATA_TIME_SEG2_AFTER_SP_REG        (MCAN_DATA_TIME_SEG2_AFTER_SP - 1U)
 #define MCAN_DATA_SYNC_JUMP_WIDTH_REG           (MCAN_DATA_SYNC_JUMP_WIDTH - 1U)
 
-#define MCAN_STD_ID_FILTER_NUM                  (8U)
-#define MCAN_EXT_ID_FILTER_NUM                  (0U)
+// Tx FIFO/Queue Mode
+#define MCAN_TX_FIFO_OP                         (0U)
+#define MCAN_TX_QUEUE_OP                        (1U)
+#define MCAN_TX_FIFO_QUEUE_MODE                 (MCAN_TX_FIFO_OP)
+// RX FIFO_0 full management - Blocking or overwrite
+#define MCAN_RX_FIFO0_BLOCKING_MODE             (0U)
+#define MCAN_RX_FIFO0_OVERWRITE_MODE            (1U)
+#define MCAN_RX_FIFO0_OP_MODE                   (MCAN_RX_FIFO0_BLOCKING_MODE)
+// RX FIFO_1 full management - Blocking or overwrite
+#define MCAN_RX_FIFO1_BLOCKING_MODE             (0U)
+#define MCAN_RX_FIFO1_OVERWRITE_MODE            (1U)
+#define MCAN_RX_FIFO1_OP_MODE                   (MCAN_RX_FIFO1_BLOCKING_MODE)
 
-#define MCAN_RX_FIFO_0_NUM                      (0U)
-#define MCAN_RX_FIFO_0_ELEM_SIZE                (64U)//MCAN_ELEM_SIZE_64BYTES)
-#define MCAN_RX_FIFO_1_NUM                      (0U)
-#define MCAN_RX_FIFO_1_ELEM_SIZE                (64U)//MCAN_ELEM_SIZE_64BYTES)
+#define MCAN_TX_EVENT_WATERMARK_IT              (0U)
+#define MCAN_RX_FIFO0_WATERMARK_IT              (0U)
+#define MCAN_RX_FIFO1_WATERMARK_IT              (0U)
+
+#define MCAN_STD_ID_FILTER_NUM                  (1U)
+#define MCAN_STD_ID_FILTER_MEM                  (MCAN_STD_ID_FILTER_NUM * MCANSS_STD_ID_FILTER_SIZE_WORDS * 4U)
+
+#define MCAN_EXT_ID_FILTER_NUM                  (0U)
+#define MCAN_EXT_ID_FILTER_MEM                  (MCAN_EXT_ID_FILTER_NUM * MCANSS_EXT_ID_FILTER_SIZE_WORDS * 4U)
+
+#define MCAN_RX_FIFO0_NUM                       (0U)
+#define MCAN_RX_FIFO0_ELEM_SIZE                 (MCAN_ELEM_SIZE_64BYTES)
+#define MCAN_RX_FIFO0_MEM                       (MCAN_RX_FIFO0_NUM * MCAN_getMsgObjSize(MCAN_RX_FIFO0_ELEM_SIZE) * 4U)
+
+#define MCAN_RX_FIFO1_NUM                       (0U)
+#define MCAN_RX_FIFO1_ELEM_SIZE                 (MCAN_ELEM_SIZE_64BYTES)
+#define MCAN_RX_FIFO1_MEM                       (MCAN_RX_FIFO1_NUM * MCAN_getMsgObjSize(MCAN_RX_FIFO1_ELEM_SIZE) * 4U)
 
 #define MCAN_RX_BUFFER_NUM                      (8U)
-#define MCAN_RX_BUFFER_ELEM_SIZE                (64U)//MCAN_ELEM_SIZE_64BYTES)
+#define MCAN_RX_BUFFER_ELEM_SIZE                (MCAN_ELEM_SIZE_64BYTES)
+#define MCAN_RX_BUFFER_MEM                      (MCAN_RX_BUFFER_NUM * MCAN_getMsgObjSize(MCAN_RX_BUFFER_ELEM_SIZE) * 4U)
 
 #define MCAN_TX_BUFFER_NUM                      (8U)
-#define MCAN_TX_FQ_NUM                          (0U)
-#define MCAN_TX_BUFFER_ELEM_SIZE                (64U)//MCAN_ELEM_SIZE_64BYTES)
+#define MCAN_TX_FIFO_QUEUE_NUM                  (0U)
+#define MCAN_TX_BUFFER_ELEM_SIZE                (MCAN_ELEM_SIZE_64BYTES)
+#define MCAN_TX_BUFFER_MEM                      ((MCAN_TX_BUFFER_NUM + MCAN_TX_FIFO_QUEUE_NUM) * \
+                                                 MCAN_getMsgObjSize(MCAN_TX_BUFFER_ELEM_SIZE) * 4U)
+
+#define MCAN_STD_ID_FILTER2_PARAM_CFG1          (0xFFF8)
+#define MCAN_STD_ID_FILTER1_PARAM_CFG1          ((uid_unique_8b << 3U) & 0x07F8)
+#define MCAN_STD_ID_FILTER_ELEM_CFG1            (MCAN_STDFILTEC_RXBUFF)
+#define MCAN_STD_ID_FILTER_TYPE_CFG1            (MCAN_STDFILT_CLASSIC)
+#define MCAN_STD_ID_FILTER_CFG1                 { \
+                                                    .sfid2                  = MCAN_STD_ID_FILTER2_PARAM_CFG1, \
+                                                    .sfid1                  = MCAN_STD_ID_FILTER1_PARAM_CFG1, \
+                                                    .sfec                   = MCAN_STD_ID_FILTER_ELEM_CFG1, \
+                                                    .sft                    = MCAN_STD_ID_FILTER_TYPE_CFG1, \
+                                                }
 
 #define MCAN_TX_EVENT_NUM                       (0U)
 #define MCAN_EXT_ID_AND_MASK                    (0x1FFFFFFFU)
 #define MCAN_MSG_INT                            (0x81200)
 
 //  Defining Starting Addresses for Message RAM Sections,
-#define MCAN_STD_ID_FILT_START_ADDR             (0U)
-#define MCAN_EXT_ID_FILT_START_ADDR             (MCAN_STD_ID_FILT_START_ADDR + \
-                                                 ((MCAN_STD_ID_FILTER_NUM * MCANSS_STD_ID_FILTER_SIZE_WORDS * 4U)))
-#define MCAN_RX_FIFO_0_START_ADDR               (MCAN_EXT_ID_FILT_START_ADDR + \
-                                                 ((MCAN_EXT_ID_FILTER_NUM * MCANSS_EXT_ID_FILTER_SIZE_WORDS * 4U)))
-#define MCAN_RX_FIFO_1_START_ADDR               (MCAN_RX_FIFO_0_START_ADDR + \
-                                                 (MCAN_RX_FIFO_0_ELEM_SIZE * 4U * MCAN_RX_FIFO_0_NUM))
-#define MCAN_RX_BUFFER_START_ADDR               (MCAN_RX_FIFO_1_START_ADDR + \
-                                                 (MCAN_RX_FIFO_1_ELEM_SIZE * 4U * MCAN_RX_FIFO_1_NUM))
-#define MCAN_TX_BUFFER_START_ADDR               (MCAN_RX_BUFFER_START_ADDR + \
-                                                 (MCAN_RX_BUFFER_ELEM_SIZE * 4U * MCAN_RX_BUFFER_NUM))
-#define MCAN_TX_EVENT_START_ADDR                (MCAN_TX_BUFFER_START_ADDR + \
-                                                 (MCAN_TX_BUFFER_ELEM_SIZE * 4U * (MCAN_TX_BUFFER_NUM + MCAN_TX_FQ_NUM)))
-
+#define MCAN_STD_ID_FILT_START_ADDR             (0x0U)
+#define MCAN_EXT_ID_FILT_START_ADDR             (MCAN_STD_ID_FILT_START_ADDR+ MCAN_STD_ID_FILTER_MEM)
+#define MCAN_RX_FIFO0_START_ADDR                (MCAN_EXT_ID_FILT_START_ADDR+ MCAN_EXT_ID_FILTER_MEM)
+#define MCAN_RX_FIFO1_START_ADDR                (MCAN_RX_FIFO0_START_ADDR   + MCAN_RX_FIFO0_MEM)
+#define MCAN_RX_BUFFER_START_ADDR               (MCAN_RX_FIFO1_START_ADDR   + MCAN_RX_FIFO1_MEM)
+#define MCAN_TX_BUFFER_START_ADDR               (MCAN_RX_BUFFER_START_ADDR  + MCAN_RX_BUFFER_MEM)
+#define MCAN_TX_EVENT_START_ADDR                (MCAN_TX_BUFFER_START_ADDR  + MCAN_TX_BUFFER_MEM)
 
 #define MCAN_INIT_PARAMS                        { \
                                                     .fdMode                 = MCAN_MODE_ENABLE, \
@@ -1597,44 +1627,39 @@
                                                     .dataSynchJumpWidth     = MCAN_DATA_SYNC_JUMP_WIDTH_REG, \
                                                 }
 #define MCAN_MSG_RAM_CONFIG_PARAMS              { \
-                                                    .flssa                 = MCAN_STD_ID_FILT_START_ADDR, \
-                                                    .lss                   = MCAN_STD_ID_FILTER_NUM, \
-                                                    .flesa                 = MCAN_EXT_ID_FILT_START_ADDR, \
-                                                    .lse                   = MCAN_EXT_ID_FILTER_NUM, \
-                                                    .txStartAddr           = MCAN_TX_BUFFER_START_ADDR, \
-                                                    .txBufNum              = MCAN_TX_BUFFER_NUM, \
-                                                    .txFIFOSize            = MCAN_TX_FQ_NUM, \
-                                                    .txBufMode             = 0U, \
-                                                    .txBufElemSize         = MCAN_TX_BUFFER_ELEM_SIZE, \
-                                                    .txEventFIFOStartAddr  = MCAN_TX_EVENT_START_ADDR, \
-                                                    .txEventFIFOSize       = MCAN_TX_EVENT_NUM, \
-                                                    .txEventFIFOWaterMark  = 0U, \
-                                                    .rxFIFO0startAddr      = MCAN_RX_FIFO_0_START_ADDR, \
-                                                    .rxFIFO0size           = MCAN_RX_FIFO_0_NUM, \
-                                                    .rxFIFO0waterMark      = 0U, \
-                                                    .rxFIFO0OpMode         = 0U, \
-                                                    .rxFIFO1startAddr      = MCAN_RX_FIFO_1_START_ADDR, \
-                                                    .rxFIFO1size           = MCAN_RX_FIFO_1_NUM, \
-                                                    .rxFIFO1waterMark      = 0U, \
-                                                    .rxFIFO1OpMode         = 0U, \
-                                                    .rxBufStartAddr        = MCAN_RX_BUFFER_START_ADDR, \
-                                                    .rxBufElemSize         = MCAN_RX_BUFFER_ELEM_SIZE, \
-                                                    .rxFIFO0ElemSize       = MCAN_RX_FIFO_0_ELEM_SIZE, \
-                                                    .rxFIFO1ElemSize       = MCAN_RX_FIFO_1_ELEM_SIZE, \
+                                                    .flssa                  = MCAN_STD_ID_FILT_START_ADDR, \
+                                                    .lss                    = MCAN_STD_ID_FILTER_NUM, \
+                                                    .flesa                  = MCAN_EXT_ID_FILT_START_ADDR, \
+                                                    .lse                    = MCAN_EXT_ID_FILTER_NUM, \
+                                                    .txStartAddr            = MCAN_TX_BUFFER_START_ADDR, \
+                                                    .txBufNum               = MCAN_TX_BUFFER_NUM, \
+                                                    .txFIFOSize             = MCAN_TX_FIFO_QUEUE_NUM, \
+                                                    .txBufMode              = MCAN_TX_FIFO_QUEUE_MODE, \
+                                                    .txBufElemSize          = MCAN_TX_BUFFER_ELEM_SIZE, \
+                                                    .txEventFIFOStartAddr   = MCAN_TX_EVENT_START_ADDR, \
+                                                    .txEventFIFOSize        = MCAN_TX_EVENT_NUM, \
+                                                    .txEventFIFOWaterMark   = MCAN_TX_EVENT_WATERMARK_IT, \
+                                                    .rxFIFO0startAddr       = MCAN_RX_FIFO0_START_ADDR, \
+                                                    .rxFIFO0size            = MCAN_RX_FIFO0_NUM, \
+                                                    .rxFIFO0waterMark       = MCAN_RX_FIFO0_WATERMARK_IT, \
+                                                    .rxFIFO0OpMode          = MCAN_RX_FIFO0_OP_MODE, \
+                                                    .rxFIFO1startAddr       = MCAN_RX_FIFO1_START_ADDR, \
+                                                    .rxFIFO1size            = MCAN_RX_FIFO1_NUM, \
+                                                    .rxFIFO1waterMark       = MCAN_RX_FIFO1_WATERMARK_IT, \
+                                                    .rxFIFO1OpMode          = MCAN_RX_FIFO1_OP_MODE, \
+                                                    .rxBufStartAddr         = MCAN_RX_BUFFER_START_ADDR, \
+                                                    .rxBufElemSize          = MCAN_RX_BUFFER_ELEM_SIZE, \
+                                                    .rxFIFO0ElemSize        = MCAN_RX_FIFO0_ELEM_SIZE, \
+                                                    .rxFIFO1ElemSize        = MCAN_RX_FIFO1_ELEM_SIZE, \
                                                 }
-#define MCAN_STD_MSG_ID_FILTER_ELEM             { \
-                                                    .sfid2                  = 0x0U, \
-                                                    .sfid1                  = 0x0U, \
-                                                    .sfec                   = 0x7U, \
-                                                    .sft                    = 0x0U, \
+#define MCAN_STD_ID_FILTER_CFG                  { \
+                                                    MCAN_STD_ID_FILTER_CFG1,\
                                                 }
 #define COM_MCAN_DEF                            { \
                                                     .mCanBase               = MCANA_DRIVER_BASE, \
                                                     .initParams             = MCAN_INIT_PARAMS, \
                                                     .configParams           = MCAN_CONFIG_PARAMS, \
                                                     .bitTimesParams         = MCAN_BIT_TIMING_PARAMS, \
-                                                    .msgRAMConfigParams     = MCAN_MSG_RAM_CONFIG_PARAMS, \
-                                                    .stdFilterParams        = MCAN_STD_MSG_ID_FILTER_ELEM, \
                                                 }
 
 /***********************************************************************

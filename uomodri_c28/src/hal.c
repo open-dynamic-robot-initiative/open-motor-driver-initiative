@@ -81,7 +81,7 @@ void HAL_ini(const hal_cfg_t* p_hal)
         // Initialize CLB
         HAL_CLB_ini(p_hal->p_clbHandle);
 #endif
-        HAL_MCAN_ini(NULL);
+        HAL_MCAN_ini(p_hal->p_mcanHandle);
         EDIS;
     }
 
@@ -847,106 +847,6 @@ void HAL_TMR_ini(const tmr_cfg_t* p_TimerCfg)
  */
 void HAL_MCAN_ini(const mcan_cfg_t* p_McanCfg)
 {
-    // Initialize MCAN Init parameters.
-//    MCAN_InitParams initParams = MCAN_INIT_PARAMS;
-
-//    {
-//     .fdMode                = CAN_FD_MODE_ENABLE,
-//     .brsEnable             = CAN_FD_BIT_RATE_SWITCHING_MODE_DISABLE,
-//     .txpEnable             = CAN_FD_TRANSMIT_PAUSE_DISABLE,
-//     .efbi                  = CAN_FD_EDGE_FILTERING_FOR_HARD_SYNC_DISABLE,
-//     .pxhddisable           = CAN_FD_PROTOCOL_EXCEPTION_HANDLE_ENABLE,
-//     .darEnable             = CAN_FD_AUTOMATIC_RETRANSMIT_ENABLE,
-//     .wkupReqEnable         = CAN_FD_WAKEUP_REQUEST_ENABLE,
-//     .autoWkupEnable        = CAN_FD_AUTO_WAKEUP_ENABLE,
-//     .emulationEnable       = CAN_FD_EMULATION_ENABLE,
-//     .tdcEnable             = CAN_FD_TRANSMIT_DELAY_COMPENSATION_DISABLE,
-//     // Start value of the Message RAM Watchdog Counter preload.
-//     .wdcPreload            = 0xFFU,
-//     // Transmitter Delay Compensation parameters.
-//     .tdcConfig.tdcf        = 0xAU,
-//     .tdcConfig.tdco        = 0x6U,
-//    };
-
-    // Initialize MCAN Config parameters.
-//    MCAN_ConfigParams configParams = MCAN_CONFIG_PARAMS;
-
-//    {
-//     .monEnable             = CAN_FD_BUS_MONITORING_MODE_DISABLE,
-//     .asmEnable             = CAN_FD_NORMAL_OPERATION_MODE_ENABLE,
-//     .tsPrescalar           = 0xFU,                     // Prescaler Value.
-//     .tsSelect              = 0x0U,                     // Timestamp counter value.
-//     .timeoutSelect         = MCAN_TIMEOUT_SELECT_CONT, // Time-out counter source select.
-//     .timeoutPreload        = 0xFFFFU,                  // Start value of the Timeout Counter.
-//     .timeoutCntEnable      = CAN_FD_TIMEOUT_COUNTER_DISABLE,
-//     .filterConfig.rrfe     = CAN_FD_REJECT_REMOTE_EXT_FRAMES,
-//     .filterConfig.rrfs     = CAN_FD_REJECT_REMOTE_STD_FRAMES,
-//     .filterConfig.anfe     = CAN_FD_ACCEPT_NO_MATCH_EXT_FRAMES_IN_FIFO1,
-//     .filterConfig.anfs     = CAN_FD_ACCEPT_NO_MATCH_STD_FRAMES_IN_FIFO1,
-//    };
-    // Initialize bit timings.
-//    MCAN_BitTimingParams bitTimes = MCAN_BIT_TIMING_PARAMS;
-
-//    {
-//     .nomRatePrescalar      = CAN_FD_NOMINAL_BIT_RATE_PRESCALER_REG,    // Nominal Baud Rate Pre-scaler
-//     .nomTimeSeg1           = CAN_FD_NOMINAL_TIME_SEG1_BEFORE_SP_REG,   // Nominal Time segment before SP
-//     .nomTimeSeg2           = CAN_FD_NOMINAL_TIME_SEG2_AFTER_SP_REG,    // Nominal Time segment after SP
-//     .nomSynchJumpWidth     = CAN_FD_NOMINAL_SYNC_JUMP_WIDTH_REG,       // Nominal SJW
-//     .dataRatePrescalar     = CAN_FD_DATA_BIT_RATE_PRESCALER_REG,       // Data Baud Rate Pre-scaler
-//     .dataTimeSeg1          = CAN_FD_DATA_TIME_SEG1_BEFORE_SP_REG,      // Data Time segment before SP
-//     .dataTimeSeg2          = CAN_FD_DATA_TIME_SEG2_AFTER_SP_REG,       // Data Time segment after SP
-//     .dataSynchJumpWidth    = CAN_FD_DATA_SYNC_JUMP_WIDTH_REG,          // Data SJW
-//    };
-
-    // Initialize Message RAM Sections Configuration Parameters.
-//    MCAN_MsgRAMConfigParams    msgRAMConfigParams = //MCAN_MSG_RAM_CONFIG_PARAMS;
-//    {
-//     .flssa                 = MCAN_STD_ID_FILT_START_ADDR,  // Standard ID Filter List Start Address.
-//     .lss                   = MCAN_STD_ID_FILTER_NUM,       // List Size: Standard ID.
-//     .flesa                 = MCAN_EXT_ID_FILT_START_ADDR,  // Extended ID Filter List Start Address.
-//     .lse                   = MCAN_EXT_ID_FILTER_NUM,       // List Size: Extended ID.
-//     .txStartAddr           = MCAN_TX_BUFFER_START_ADDR,    // Tx Buffers Start Address.
-//     .txBufNum              = MCAN_TX_BUFFER_NUM,           // Number of Dedicated Transmit Buffers.
-//     .txFIFOSize            = MCAN_TX_FQ_NUM,               // Number of Tx FIFO or Tx Queue Elements
-//     .txBufMode             = 0U,                           // Tx FIFO operation
-//     .txBufElemSize         = MCAN_TX_BUFFER_ELEM_SIZE,     // Tx Buffer Element Size.
-//     .txEventFIFOStartAddr  = MCAN_TX_EVENT_START_ADDR,     // Tx Event FIFO Start Address.
-//     .txEventFIFOSize       = MCAN_TX_EVENT_NUM,            // Event FIFO Size.
-//     .txEventFIFOWaterMark  = 0U,                           // Level for Tx Event FIFO watermark interrupt.
-//     .rxFIFO0startAddr      = MCAN_RX_FIFO_0_START_ADDR,    // Rx FIFO0 Start Address.
-//     .rxFIFO0size           = MCAN_RX_FIFO_0_NUM,           // Number of Rx FIFO elements.
-//     .rxFIFO0waterMark      = 0U,                           // Rx FIFO0 Watermark.
-//     .rxFIFO0OpMode         = 0U,                           // FIFO blocking mode.
-//     .rxFIFO1startAddr      = MCAN_RX_FIFO_1_START_ADDR,    // Rx FIFO1 Start Address.
-//     .rxFIFO1size           = MCAN_RX_FIFO_1_NUM,           // Number of Rx FIFO elements.
-//     .rxFIFO1waterMark      = 0U,                           // Level for Rx FIFO 1 watermark interrupt.
-//     .rxFIFO1OpMode         = 0U,                           // FIFO blocking mode.
-//     .rxBufStartAddr        = MCAN_RX_BUFFER_START_ADDR,    // Rx Buffer Start Address.
-//     .rxBufElemSize         = MCAN_RX_BUFFER_ELEM_SIZE,     // Rx Buffer Element Size.
-//     .rxFIFO0ElemSize       = MCAN_RX_FIFO_0_ELEM_SIZE,     // Rx FIFO0 Element Size.
-//     .rxFIFO1ElemSize       = MCAN_RX_FIFO_1_ELEM_SIZE,     // Rx FIFO1 Element Size.
-//    };
-
-    // Initialize Rx Buffer Configuration parameters.
-//    MCAN_StdMsgIDFilterElement stdFiltelem = MCAN_STD_MSG_ID_FILTER_ELEM;
-
-//    {
-//     .sfid2                 = 0x0U, // Standard Filter ID 2.
-//     .sfid1                 = uid_unique_8b,//0x4U, // Standard Filter ID 1.
-//     .sfec                  = 0x7U, // Store into Rx Buffer
-//     .sft                   = 0x0U, // Range filter from SFID1 to SFID2
-//    };
-
-//#ifdef CPU1
-//    // Allocate MCAN (a shared peripheral) to CPU1 (C28x)
-//    SysCtl_allocateSharedPeripheral(SYSCTL_PALLOCATE_MCAN_A, PERIPH_ALLOCATE_ON_CPU1_CORE);
-//#elif CM_CORE
-//    // Allocate MCAN (a shared peripheral) to CM
-//    SysCtl_allocateSharedPeripheral(SYSCTL_PALLOCATE_MCAN_A, PERIPH_ALLOCATE_ON_CM_CORE);
-//#endif
-//    // Configure the divisor for the MCAN bit-clock
-//    SysCtl_setMCANClk(SYSCTL_MCANCLK_DIV_2);
-
     MCAN_selectClockSource(p_McanCfg->mCanBase, MCAN_CLOCK_SOURCE_SYS);
     // Wait for Memory initialization to be completed.
     while(MCAN_isMemInitDone(p_McanCfg->mCanBase) != TRUE);
@@ -956,7 +856,6 @@ void HAL_MCAN_ini(const mcan_cfg_t* p_McanCfg)
     // Wait till MCAN is not initialized.
     while(MCAN_getOpMode(p_McanCfg->mCanBase) != MCAN_OPERATION_MODE_SW_INIT);
 
-    // Configure MCAN.
     // Initialize MCAN module.
     MCAN_init(p_McanCfg->mCanBase, &p_McanCfg->initParams);
     // Configure MCAN module.
@@ -964,11 +863,47 @@ void HAL_MCAN_ini(const mcan_cfg_t* p_McanCfg)
     // Configure Bit timings.
     MCAN_setBitTime(p_McanCfg->mCanBase, &p_McanCfg->bitTimesParams);
     // Configure Message RAM Sections
-    MCAN_msgRAMConfig(p_McanCfg->mCanBase, &p_McanCfg->msgRAMConfigParams);//&msgRAMConfigParams);
+    MCAN_MsgRAMConfigParams msgRAMConfigParams = MCAN_MSG_RAM_CONFIG_PARAMS;
+//    msgRAMConfigParams.flssa                = MCAN_STD_ID_FILT_START_ADDR;
+//    msgRAMConfigParams.lss                  = MCAN_STD_ID_FILTER_NUM;
+//    msgRAMConfigParams.flesa                = MCAN_EXT_ID_FILT_START_ADDR;
+//    msgRAMConfigParams.lse                  = MCAN_EXT_ID_FILTER_NUM;
+//
+//    msgRAMConfigParams.txStartAddr          = MCAN_TX_BUFFER_START_ADDR;
+//    msgRAMConfigParams.txBufNum             = MCAN_TX_BUFFER_NUM;
+//    msgRAMConfigParams.txFIFOSize           = MCAN_TX_FIFO_QUEUE_NUM;
+//    msgRAMConfigParams.txBufMode            = MCAN_TX_FIFO_QUEUE_MODE;
+//    msgRAMConfigParams.txBufElemSize        = MCAN_TX_BUFFER_ELEM_SIZE;
+//
+//    msgRAMConfigParams.txEventFIFOStartAddr = MCAN_TX_EVENT_START_ADDR;
+//    msgRAMConfigParams.txEventFIFOSize      = MCAN_TX_EVENT_NUM;
+//    msgRAMConfigParams.txEventFIFOWaterMark = MCAN_TX_EVENT_WATERMARK_IT;
+//
+//    msgRAMConfigParams.rxFIFO0startAddr     = MCAN_RX_FIFO0_START_ADDR;
+//    msgRAMConfigParams.rxFIFO0size          = MCAN_RX_FIFO0_NUM;
+//    msgRAMConfigParams.rxFIFO0waterMark     = MCAN_RX_FIFO0_WATERMARK_IT;
+//    msgRAMConfigParams.rxFIFO0OpMode        = MCAN_RX_FIFO0_OP_MODE;
+//
+//    msgRAMConfigParams.rxFIFO1startAddr     = MCAN_RX_FIFO1_START_ADDR;
+//    msgRAMConfigParams.rxFIFO1size          = MCAN_RX_FIFO1_NUM;
+//    msgRAMConfigParams.rxFIFO1waterMark     = MCAN_RX_FIFO1_WATERMARK_IT;
+//    msgRAMConfigParams.rxFIFO1OpMode        = MCAN_RX_FIFO1_OP_MODE;
+//
+//    msgRAMConfigParams.rxBufStartAddr       = MCAN_RX_BUFFER_START_ADDR;
+//    msgRAMConfigParams.rxBufElemSize        = MCAN_RX_BUFFER_ELEM_SIZE;
+//
+//    msgRAMConfigParams.rxFIFO0ElemSize      = MCAN_RX_FIFO0_ELEM_SIZE;
+//    msgRAMConfigParams.rxFIFO1ElemSize      = MCAN_RX_FIFO1_ELEM_SIZE;
+    MCAN_msgRAMConfig(p_McanCfg->mCanBase, &msgRAMConfigParams);
     // Configure Standard ID filter element
-//    p_McanCfg->stdFilterParams.sfid1 = uid_unique_8b;
-    MCAN_addStdMsgIDFilter(p_McanCfg->mCanBase, 0U, &p_McanCfg->stdFilterParams);
-
+    MCAN_StdMsgIDFilterElement stdFilterParams[MCAN_STD_ID_FILTER_NUM] = MCAN_STD_ID_FILTER_CFG;
+//    stdFilterParams.sfid2                   = MCAN_STD_ID_FILTER2_PARAM_CFG1;
+//    stdFilterParams.sfid1                   = MCAN_STD_ID_FILTER1_PARAM_CFG1;
+//    stdFilterParams.sfec                    = MCAN_STD_ID_FILTER_ELEM_CFG1;
+//    stdFilterParams.sft                     = MCAN_STD_ID_FILTER_TYPE_CFG1;
+    uint8_t std_id_filter_cfg;
+    for(std_id_filter_cfg = 0; std_id_filter_cfg < MCAN_STD_ID_FILTER_NUM; std_id_filter_cfg++)
+        MCAN_addStdMsgIDFilter(p_McanCfg->mCanBase, std_id_filter_cfg, &stdFilterParams[std_id_filter_cfg]);
     // Enable internal loopback mode
     MCAN_lpbkModeEnable(p_McanCfg->mCanBase, MCAN_LPBK_MODE_EXTERNAL, TRUE);
 
