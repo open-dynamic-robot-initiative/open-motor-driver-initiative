@@ -167,60 +167,33 @@ void main(void)
     HAL_INT_ini(interruptList, &errata_isr);
 
     // Initialize message to transmit.
-    txMsg.id        = ((uint32_t)(0x7)) << 18U; // Identifier Value.
-    txMsg.rtr       = 0U; // Transmit data frame.
-    txMsg.xtd       = MCAN_ID_TYPE_11_BIT; // 11-bit standard identifier.
-    txMsg.esi       = 0U; // ESI bit in CAN FD format depends only on error passive flag.
-    txMsg.dlc       = 0x1U; // CAN + CAN FD: transmit frame has 0-8 data bytes.
-    txMsg.brs       = MCAN_BIT_RATE_SWITCHING_MODE_ENABLE; // CAN FD frames transmitted with bit rate switching.
-    txMsg.fdf       = MCAN_FLEXIBLE_DATA_RATE_MODE; // Frame transmitted in CAN FD format.
-    txMsg.efc       = 1U; // Store Tx events.
-    txMsg.mm        = 0xAAU; // Message Marker.
-    // Data bytes.
-    txMsg.data[0]   = uid_unique_8b;
+//    txMsg = COM_MSG_CANFD_HELLO;
+//    txMsg = {CANFD_MST_ID(CANFD_MST_HELLO_MSG), \
+//             0U, \
+//             MCAN_ID_TYPE_11_BIT, \
+//             0U, \
+//             0x1U, \
+//             MCAN_BIT_RATE_SWITCHING_MODE_ENABLE, \
+//             MCAN_FLEXIBLE_DATA_RATE_MODE, \
+//             1U, \
+//             0xAAU, \
+//             (CANFD_SLV_ADDR_VAL & CANFD_MST_SLV_ADDR_MASK)};
 
-//    txMsg.id        = ((uint32_t) uid_unique_8b) << 21U; // Identifier Value.
+    COM_MSG_CANFD_HELLO(txMsg);
+
+//    txMsg.id        = CANFD_ID(CANFD_MST_ADDR_VAL, CANFD_MST_HELLO_MSG);// Identifier Value.
 //    txMsg.rtr       = 0U; // Transmit data frame.
-//    txMsg.xtd       = 0U; // 11-bit standard identifier.
+//    txMsg.xtd       = MCAN_ID_TYPE_11_BIT; // 11-bit standard identifier.
 //    txMsg.esi       = 0U; // ESI bit in CAN FD format depends only on error passive flag.
-//    txMsg.dlc       = 0xDU; // CAN + CAN FD: transmit frame has 0-8 data bytes.
-//    txMsg.brs       = 0U; // CAN FD frames transmitted with bit rate switching.
-//    txMsg.fdf       = 1U; // Frame transmitted in CAN FD format.
+//    txMsg.dlc       = 0x1U; // CAN + CAN FD: transmit frame has 0-8 data bytes.
+//    txMsg.brs       = MCAN_BIT_RATE_SWITCHING_MODE_ENABLE; // CAN FD frames transmitted with bit rate switching.
+//    txMsg.fdf       = MCAN_FLEXIBLE_DATA_RATE_MODE; // Frame transmitted in CAN FD format.
 //    txMsg.efc       = 1U; // Store Tx events.
 //    txMsg.mm        = 0xAAU; // Message Marker.
 //    // Data bytes.
-//    txMsg.data[0]   = 0x01;//mcan_cnt++;
-//    txMsg.data[1]   = 0x23;//mcan_cnt++;
-//    txMsg.data[2]   = 0x45;//mcan_cnt++;
-//    txMsg.data[3]   = 0x67;//mcan_cnt++;
-//    txMsg.data[4]   = 0x89;//mcan_cnt++;
-//    txMsg.data[5]   = 0xAB;//mcan_cnt++;
-//    txMsg.data[6]   = 0xCD;//mcan_cnt++;
-//    txMsg.data[7]   = 0xEF;//mcan_cnt++;
-//    txMsg.data[8]   = 0x01;//mcan_cnt++;
-//    txMsg.data[9]   = 0x23;//mcan_cnt++;
-//    txMsg.data[10]  = 0x45;//mcan_cnt++;
-//    txMsg.data[11]  = 0x67;//mcan_cnt++;
-//    txMsg.data[12]  = 0x89;//mcan_cnt++;
-//    txMsg.data[13]  = 0xAB;//mcan_cnt++;
-//    txMsg.data[14]  = 0xCD;//mcan_cnt++;
-//    txMsg.data[15]  = 0xEF;//mcan_cnt++;
-//    txMsg.data[16]  = 0x01;//mcan_cnt++;
-//    txMsg.data[17]  = 0x23;//mcan_cnt++;
-//    txMsg.data[18]  = 0x45;//mcan_cnt++;
-//    txMsg.data[19]  = 0x67;//mcan_cnt++;
-//    txMsg.data[20]  = 0x89;//mcan_cnt++;
-//    txMsg.data[21]  = 0xAB;//mcan_cnt++;
-//    txMsg.data[22]  = 0xCD;//mcan_cnt++;
-//    txMsg.data[23]  = 0xEF;//mcan_cnt++;
-//    txMsg.data[24]  = 0x01;//mcan_cnt++;
-//    txMsg.data[25]  = 0x23;//mcan_cnt++;
-//    txMsg.data[26]  = 0x45;//mcan_cnt++;
-//    txMsg.data[27]  = 0x67;//mcan_cnt++;
-//    txMsg.data[28]  = 0x89;//mcan_cnt++;
-//    txMsg.data[29]  = 0xAB;//mcan_cnt++;
-//    txMsg.data[30]  = 0xCD;//mcan_cnt++;
-//    txMsg.data[31]  = 0xEF;//mcan_cnt++;
+//    txMsg.data[0]   = CANFD_SLV_ADDR_VAL;
+
+
     // Write Tx Message to the Message RAM.
     MCAN_writeMsgRam(MCANA_DRIVER_BASE, MCAN_MEM_TYPE_BUF, 0U, &txMsg);
     // Add request for transmission.

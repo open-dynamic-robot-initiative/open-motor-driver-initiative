@@ -60,9 +60,24 @@
 #define COM_MSG_RS485_TX_MASTER_ADDRESS         (0xFF)
 #define COM_MSG_RS485_TX_TYPE_STANDARD          (0x00)
 
-#define COM_MSG_CAN_FD_TX_MASTER_ID             (0x00)
-#define COM_MSG_CAN_FD_RX_LOCAL_ID              ((uint32_t) uid_unique)
-//#define COM_MSG_CAN_FD_RX_LOCAL_ID              ((uint32_t) uid_unique)
+
+
+
+
+//#define COM_MSG_CANFD_AUTO_REPLY                { \
+//                                                    .id = ((uint32_t)(0x7)) << 18U; // Identifier Value.
+//    txMsg.rtr       = 0U; // Transmit data frame.
+//    txMsg.xtd       = MCAN_ID_TYPE_11_BIT; // 11-bit standard identifier.
+//    txMsg.esi       = 0U; // ESI bit in CAN FD format depends only on error passive flag.
+//    txMsg.dlc       = 0x1U; // CAN + CAN FD: transmit frame has 0-8 data bytes.
+//    txMsg.brs       = MCAN_BIT_RATE_SWITCHING_MODE_ENABLE; // CAN FD frames transmitted with bit rate switching.
+//    txMsg.fdf       = MCAN_FLEXIBLE_DATA_RATE_MODE; // Frame transmitted in CAN FD format.
+//    txMsg.efc       = 1U; // Store Tx events.
+//    txMsg.mm        = 0xAAU; // Message Marker.
+//    // Data bytes.
+//    txMsg.data[0]   = uid_unique_8b;
+//    }
+
 //
 //#define COM_MSG_CAN_FD_TX_MASTER_SUB_ID0        ((uint32_t) uid_unique)
 //#define COM_MSG_CAN_FD_RX_LOCAL_SUB_ID0         ((uint32_t) uid_unique)
@@ -86,6 +101,52 @@
 #define COM_MSG_RS485_RX_8BIT_FULL_LENGTH       (COM_MSG_RS485_RX_16BIT_FULL_LENGTH * 2)
 
 #define LED_MSG_TX_16BIT_LENGTH                 (16)
+
+/***********************************************************************
+ * CAN-FD CONSTANTS
+ ***********************************************************************/
+#define CANFD_MST_ADDR_VAL                      (0U)
+#define CANFD_SLV_ADDR_VAL                      (uid_unique_8b)
+
+#define CANFD_MST_SLV_ADDR_POS                  (3U)
+#define CANFD_MST_SLV_ADDR_MASK                 (0xFFU)
+#define CANFD_MST_SLV_MSG_POS                   (0U)
+#define CANFD_MST_SLV_MSG_MASK                  (0x7U)
+
+#define CANFD_MST_SLV_ID_POS                    (18U)
+#define CANFD_MST_SLV_11BITS_MASK               (0x7FFU)
+
+#define CANFD_MST_SENSOR_MSG                    (0U)
+#define CANFD_MST_IMU_MSG                       (1U)
+#define CANFD_MST_FLASH_ACK_MSG                 (6U)
+#define CANFD_MST_HELLO_MSG                     (7U)
+#define CANFD_SLV_CMD_MSG                       (0U)
+#define CANFD_SLV_FLASH_NEW_MSG                 (7U)
+
+#define CANFD_MST_SLV_ADDR(canfd_addr)          ((canfd_addr & CANFD_MST_SLV_ADDR_MASK) << CANFD_MST_SLV_ADDR_POS)
+#define CANFD_MST_SLV_MSG(canfd_msg)            ((canfd_msg & CANFD_MST_SLV_MSG_MASK) << CANFD_MST_SLV_MSG_POS)
+#define CANFD_MST_SLV_ID(canfd_addr, canfd_msg) ((CANFD_MST_SLV_ADDR(canfd_addr) | CANFD_MST_SLV_MSG(canfd_msg)) & CANFD_MST_SLV_11BITS_MASK)
+#define CANFD_ID(canfd_addr, canfd_msg)         ((uint32_t)CANFD_MST_SLV_ID(canfd_addr, canfd_msg) << CANFD_MST_SLV_ID_POS)
+//
+//#define CANFD_ID(canfd_addr, canfd_msg)         ((uint32_t)((((canfd_addr & CANFD_MST_SLV_ADDR_MASK) << \
+//                                                CANFD_MST_SLV_ADDR_POS) | \
+//                                                (canfd_msg & CANFD_MST_SLV_MSG_MASK)) & \
+//                                                CANFD_MST_SLV_11BITS_MASK) << \
+//                                                CANFD_MST_SLV_ID_POS)
+
+#define CANFD_MST_ID(canfd_mst_msg)             CANFD_ID(CANFD_MST_ADDR_VAL, canfd_mst_msg)
+#define CANFD_SLV_ID(canfd_slv_msg)             CANFD_ID(CANFD_SLV_ADDR_VAL, canfd_slv_msg)
+
+#define COM_MSG_CANFD_HELLO(x)                  x.id     = CANFD_ID(CANFD_MST_ADDR_VAL, CANFD_MST_HELLO_MSG); \
+                                                x.rtr    = 0U; \
+                                                x.xtd    = MCAN_ID_TYPE_11_BIT; \
+                                                x.esi    = 0U; \
+                                                x.dlc    = 0x1U; \
+                                                x.brs    = MCAN_BIT_RATE_SWITCHING_MODE_ENABLE; \
+                                                x.fdf    = MCAN_FLEXIBLE_DATA_RATE_MODE; \
+                                                x.efc    = 1U; \
+                                                x.mm     = 0xAAU; \
+                                                x.data[0]= (CANFD_SLV_ADDR_VAL & CANFD_MST_SLV_ADDR_MASK)
 
 /***********************************************************************
  * COMMUNICATION CONSTANTS

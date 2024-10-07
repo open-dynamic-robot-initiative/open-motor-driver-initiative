@@ -875,6 +875,7 @@ void HAL_MCAN_ini(const mcan_cfg_t* p_McanCfg)
         MCAN_addStdMsgIDFilter(p_McanCfg->mCanBase, id_filter_cfg, &stdFilterParams[id_filter_cfg]);
 #endif
 #if (MCAN_EXT_ID_FILTER_NUM)
+    //(MCAN_EXT_ID_FILTER_NUM)
     // Configure Extended ID filter element
     MCAN_ExtMsgIDFilterElement extFilterParams[MCAN_EXT_ID_FILTER_NUM] = MCAN_EXT_ID_FILTER_CFG;
     for(id_filter_cfg = 0; id_filter_cfg < MCAN_EXT_ID_FILTER_NUM; id_filter_cfg++)

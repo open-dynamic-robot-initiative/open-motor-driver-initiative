@@ -1721,20 +1721,24 @@
                                                     .rxBufStartAddr         = MCAN_RX_BUFFER_START_ADDR, \
                                                     .txStartAddr            = MCAN_TX_BUFFER_START_ADDR, \
                                                     .txEventFIFOStartAddr   = MCAN_TX_EVENT_START_ADDR, \
+                                                    \
                                                     .lss                    = MCAN_STD_ID_FILTER_NUM, \
                                                     .lse                    = MCAN_EXT_ID_FILTER_NUM, \
                                                     .rxFIFO0size            = MCAN_RX_FIFO0_NUM, \
                                                     .rxFIFO1size            = MCAN_RX_FIFO1_NUM, \
                                                     .txBufNum               = MCAN_TX_BUFFER_NUM, \
                                                     .txEventFIFOSize        = MCAN_TX_EVENT_NUM, \
+                                                    \
                                                     .rxFIFO0ElemSize        = MCAN_RX_FIFO0_ELEM_SIZE, \
                                                     .rxFIFO1ElemSize        = MCAN_RX_FIFO1_ELEM_SIZE, \
                                                     .rxBufElemSize          = MCAN_RX_BUFFER_ELEM_SIZE, \
                                                     .txFIFOSize             = MCAN_TX_FIFO_QUEUE_NUM, \
                                                     .txBufElemSize          = MCAN_TX_BUFFER_ELEM_SIZE, \
+                                                    \
                                                     .rxFIFO0OpMode          = MCAN_RX_FIFO0_OP_MODE, \
                                                     .rxFIFO1OpMode          = MCAN_RX_FIFO1_OP_MODE, \
                                                     .txBufMode              = MCAN_TX_BUFFER_MODE, \
+                                                    \
                                                     .txEventFIFOWaterMark   = MCAN_TX_EVENT_WATERMARK_IT, \
                                                     .rxFIFO0waterMark       = MCAN_RX_FIFO0_WATERMARK_IT, \
                                                     .rxFIFO1waterMark       = MCAN_RX_FIFO1_WATERMARK_IT, \
@@ -1751,75 +1755,12 @@
                                                     .sft                    = MCAN_STD_ID_FILTER_TYPE_CFG1, \
                                                 }
 #define MCAN_STD_ID_FILTER_CFG                  { \
-                                                    MCAN_STD_ID_FILTER_CFG1,\
+                                                    MCAN_STD_ID_FILTER_CFG1, \
                                                 }
 #define MCAN_EXT_ID_FILTER_CFG                  { \
                                                 }
-//#define MCAN_INIT_PARAMS                        { \
-//                                                    .fdMode                 = MCAN_FLEXIBLE_DATA_RATE_MODE, \
-//                                                    .brsEnable              = MCAN_BIT_RATE_SWITCHING_MODE, \
-//                                                    .txpEnable              = MCAN_TX_PAUSE, \
-//                                                    .efbi                   = MCAN_EDGE_FILTERING_FOR_SYNC, \
-//                                                    .pxhddisable            = MCAN_PROTOCOL_EXCEPTION_HANDLE, \
-//                                                    .darEnable              = MCAN_AUTOMATIC_RETRANSMIT, \
-//                                                    .wkupReqEnable          = MCAN_WAKEUP_REQUEST, \
-//                                                    .autoWkupEnable         = MCAN_AUTO_WAKEUP, \
-//                                                    .emulationEnable        = MCAN_EMULATION_SUSPEND, \
-//                                                    .tdcEnable              = MCAN_TX_DELAY_COMPENSATION, \
-//                                                    .wdcPreload             = 0xFFU, \
-//                                                    .tdcConfig.tdcf         = 0xAU, \
-//                                                    .tdcConfig.tdco         = 0x6U, \
-//                                                }
-//#define MCAN_CONFIG_PARAMS                      { \
-//                                                    .monEnable              = MCAN_BUS_MONITORING_MODE, \
-//                                                    .asmEnable              = MCAN_NORMAL_OPERATION_MODE, \
-//                                                    .tsPrescalar            = 0xFU, \
-//                                                    .tsSelect               = MCAN_TIMESTAMP_COUNTER, \
-//                                                    .timeoutSelect          = MCAN_TIMEOUT_SELECT, \
-//                                                    .timeoutPreload         = 0xFFFFU, \
-//                                                    .timeoutCntEnable       = MCAN_TIMEOUT_COUNTER, \
-//                                                    .filterConfig.rrfe      = MCAN_REMOTE_FRAMES_W_EXT_ID, \
-//                                                    .filterConfig.rrfs      = MCAN_REMOTE_FRAMES_W_STD_ID, \
-//                                                    .filterConfig.anfe      = MCAN_NO_MATCH_EXT_ID, \
-//                                                    .filterConfig.anfs      = MCAN_NO_MATCH_STD_ID, \
-//                                                }
-//#define MCAN_BIT_TIMING_PARAMS                  { \
-//                                                    .nomRatePrescalar       = MCAN_NOMINAL_BIT_RATE_PRESCALER_REG, \
-//                                                    .nomTimeSeg1            = MCAN_NOMINAL_TIME_SEG1_BEFORE_SP_REG, \
-//                                                    .nomTimeSeg2            = MCAN_NOMINAL_TIME_SEG2_AFTER_SP_REG, \
-//                                                    .nomSynchJumpWidth      = MCAN_NOMINAL_SYNC_JUMP_WIDTH_REG, \
-//                                                    .dataRatePrescalar      = MCAN_DATA_BIT_RATE_PRESCALER_REG, \
-//                                                    .dataTimeSeg1           = MCAN_DATA_TIME_SEG1_BEFORE_SP_REG, \
-//                                                    .dataTimeSeg2           = MCAN_DATA_TIME_SEG2_AFTER_SP_REG, \
-//                                                    .dataSynchJumpWidth     = MCAN_DATA_SYNC_JUMP_WIDTH_REG, \
-//                                                }
-//#define MCAN_MSG_RAM_CONFIG_PARAMS              { \
-//                                                    .flssa                  = MCAN_STD_ID_FILT_START_ADDR, \
-//                                                    .lss                    = MCAN_STD_ID_FILTER_NUM, \
-//                                                    .flesa                  = MCAN_EXT_ID_FILT_START_ADDR, \
-//                                                    .lse                    = MCAN_EXT_ID_FILTER_NUM, \
-//                                                    .txStartAddr            = MCAN_TX_BUFFER_START_ADDR, \
-//                                                    .txBufNum               = MCAN_TX_BUFFER_NUM, \
-//                                                    .txFIFOSize             = MCAN_TX_FIFO_QUEUE_NUM, \
-//                                                    .txBufMode              = MCAN_TX_FIFO_QUEUE_MODE, \
-//                                                    .txBufElemSize          = MCAN_TX_BUFFER_ELEM_SIZE, \
-//                                                    .txEventFIFOStartAddr   = MCAN_TX_EVENT_START_ADDR, \
-//                                                    .txEventFIFOSize        = MCAN_TX_EVENT_NUM, \
-//                                                    .txEventFIFOWaterMark   = MCAN_TX_EVENT_WATERMARK_IT, \
-//                                                    .rxFIFO0startAddr       = MCAN_RX_FIFO0_START_ADDR, \
-//                                                    .rxFIFO0size            = MCAN_RX_FIFO0_NUM, \
-//                                                    .rxFIFO0waterMark       = MCAN_RX_FIFO0_WATERMARK_IT, \
-//                                                    .rxFIFO0OpMode          = MCAN_RX_FIFO0_OP_MODE, \
-//                                                    .rxFIFO1startAddr       = MCAN_RX_FIFO1_START_ADDR, \
-//                                                    .rxFIFO1size            = MCAN_RX_FIFO1_NUM, \
-//                                                    .rxFIFO1waterMark       = MCAN_RX_FIFO1_WATERMARK_IT, \
-//                                                    .rxFIFO1OpMode          = MCAN_RX_FIFO1_OP_MODE, \
-//                                                    .rxBufStartAddr         = MCAN_RX_BUFFER_START_ADDR, \
-//                                                    .rxBufElemSize          = MCAN_RX_BUFFER_ELEM_SIZE, \
-//                                                    .rxFIFO0ElemSize        = MCAN_RX_FIFO0_ELEM_SIZE, \
-//                                                    .rxFIFO1ElemSize        = MCAN_RX_FIFO1_ELEM_SIZE, \
-//                                                }
 
+// Structure associated to MCAN HAL configuration.
 #define COM_MCAN_DEF                            { \
                                                     .mCanBase               = MCANA_DRIVER_BASE, \
                                                     .initParams             = MCAN_INIT_PARAMS, \
