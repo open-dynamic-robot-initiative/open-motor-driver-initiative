@@ -127,12 +127,6 @@
 #define CANFD_MST_SLV_MSG(canfd_msg)            ((canfd_msg & CANFD_MST_SLV_MSG_MASK) << CANFD_MST_SLV_MSG_POS)
 #define CANFD_MST_SLV_ID(canfd_addr, canfd_msg) ((CANFD_MST_SLV_ADDR(canfd_addr) | CANFD_MST_SLV_MSG(canfd_msg)) & CANFD_MST_SLV_11BITS_MASK)
 #define CANFD_ID(canfd_addr, canfd_msg)         ((uint32_t)CANFD_MST_SLV_ID(canfd_addr, canfd_msg) << CANFD_MST_SLV_ID_POS)
-//
-//#define CANFD_ID(canfd_addr, canfd_msg)         ((uint32_t)((((canfd_addr & CANFD_MST_SLV_ADDR_MASK) << \
-//                                                CANFD_MST_SLV_ADDR_POS) | \
-//                                                (canfd_msg & CANFD_MST_SLV_MSG_MASK)) & \
-//                                                CANFD_MST_SLV_11BITS_MASK) << \
-//                                                CANFD_MST_SLV_ID_POS)
 
 #define CANFD_MST_ID(canfd_mst_msg)             CANFD_ID(CANFD_MST_ADDR_VAL, canfd_mst_msg)
 #define CANFD_SLV_ID(canfd_slv_msg)             CANFD_ID(CANFD_SLV_ADDR_VAL, canfd_slv_msg)

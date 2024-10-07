@@ -167,18 +167,6 @@ void main(void)
     HAL_INT_ini(interruptList, &errata_isr);
 
     // Initialize message to transmit.
-//    txMsg = COM_MSG_CANFD_HELLO;
-//    txMsg = {CANFD_MST_ID(CANFD_MST_HELLO_MSG), \
-//             0U, \
-//             MCAN_ID_TYPE_11_BIT, \
-//             0U, \
-//             0x1U, \
-//             MCAN_BIT_RATE_SWITCHING_MODE_ENABLE, \
-//             MCAN_FLEXIBLE_DATA_RATE_MODE, \
-//             1U, \
-//             0xAAU, \
-//             (CANFD_SLV_ADDR_VAL & CANFD_MST_SLV_ADDR_MASK)};
-
     COM_MSG_CANFD_HELLO(txMsg);
 
 //    txMsg.id        = CANFD_ID(CANFD_MST_ADDR_VAL, CANFD_MST_HELLO_MSG);// Identifier Value.
