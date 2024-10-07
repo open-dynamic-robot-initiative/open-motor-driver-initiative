@@ -169,11 +169,11 @@ void main(void)
     // Initialize message to transmit.
     txMsg.id        = ((uint32_t)(0x7)) << 18U; // Identifier Value.
     txMsg.rtr       = 0U; // Transmit data frame.
-    txMsg.xtd       = 0U; // 11-bit standard identifier.
+    txMsg.xtd       = MCAN_ID_TYPE_11_BIT; // 11-bit standard identifier.
     txMsg.esi       = 0U; // ESI bit in CAN FD format depends only on error passive flag.
     txMsg.dlc       = 0x1U; // CAN + CAN FD: transmit frame has 0-8 data bytes.
-    txMsg.brs       = 0U; // CAN FD frames transmitted with bit rate switching.
-    txMsg.fdf       = 1U; // Frame transmitted in CAN FD format.
+    txMsg.brs       = MCAN_BIT_RATE_SWITCHING_MODE_ENABLE; // CAN FD frames transmitted with bit rate switching.
+    txMsg.fdf       = MCAN_FLEXIBLE_DATA_RATE_MODE; // Frame transmitted in CAN FD format.
     txMsg.efc       = 1U; // Store Tx events.
     txMsg.mm        = 0xAAU; // Message Marker.
     // Data bytes.
@@ -222,9 +222,9 @@ void main(void)
 //    txMsg.data[30]  = 0xCD;//mcan_cnt++;
 //    txMsg.data[31]  = 0xEF;//mcan_cnt++;
     // Write Tx Message to the Message RAM.
-    MCAN_writeMsgRam(MCANA_DRIVER_BASE, MCAN_MEM_TYPE_BUF, 1U, &txMsg);
+    MCAN_writeMsgRam(MCANA_DRIVER_BASE, MCAN_MEM_TYPE_BUF, 0U, &txMsg);
     // Add request for transmission.
-    MCAN_txBufAddReq(MCANA_DRIVER_BASE, 1U);
+    MCAN_txBufAddReq(MCANA_DRIVER_BASE, 0U);
 
 //    // SPI check parameters
 //    if((COM_MSG_SPI_TX_16BIT_PAYLOAD_LENGTH != COM_MSG_SPI_RX_16BIT_PAYLOAD_LENGTH) || \
@@ -239,6 +239,7 @@ void main(void)
  * @brief       Microcontroller initialization function
  *                  - Configure master clock to 200MHz
  *                  - Configure auxiliary clock (CM core) to 125MHz (USB � 60MHz)
+ *                  - Configure MCAN (clock divider + processor management (CPU1 or CM))
  *                  - Enable GPIO clocking
  *                  - Configure the interruption vector table
  *                  - Boot CM from flash or RAM
@@ -248,14 +249,8 @@ static void MCU_ini(void)
     /* Initialize clock and peripherals */
     Device_init();
 
-#ifdef CPU1
-    // Allocate MCAN (a shared peripheral) to CPU1 (C28x)
-    SysCtl_allocateSharedPeripheral(SYSCTL_PALLOCATE_MCAN_A, MCAN_ALLOCATE_ON_CPU1_CORE);
-#elif CM_CORE
-    // Allocate MCAN (a shared peripheral) to CM
-    SysCtl_allocateSharedPeripheral(SYSCTL_PALLOCATE_MCAN_A, MCAN_ALLOCATE_ON_CM_CORE);
-#endif
-
+    // Define which core manage MCAN (a shared peripheral) - CPU1 (C28x) / CM (Cortex M)
+    SysCtl_allocateSharedPeripheral(SYSCTL_PALLOCATE_MCAN_A, MCAN_ALLOCATE_ON_CORE);
     // Configure the divisor for the MCAN bit-clock
     SysCtl_setMCANClk(SYSCTL_MCANCLK_DIV_1);
 
@@ -681,7 +676,8 @@ __attribute__((interrupt)) void tmr_isrLedCmd(void)
 //    }
 //    MCAN_writeMsgRam(MCANA_DRIVER_BASE, MCAN_MEM_TYPE_BUF, 1U, &txMsg);
     // Add request for transmission.
-    MCAN_txBufAddReq(MCANA_DRIVER_BASE, 1U);
+//    if(!(global_1ms_tmr_cnt % 10))
+        MCAN_txBufAddReq(MCANA_DRIVER_BASE, 0U);
 
     // Timeout management
     cmd_uomodri[MOTOR_1].cptTimeout++;

@@ -60,6 +60,15 @@
 #define COM_MSG_RS485_TX_MASTER_ADDRESS         (0xFF)
 #define COM_MSG_RS485_TX_TYPE_STANDARD          (0x00)
 
+#define COM_MSG_CAN_FD_TX_MASTER_ID             (0x00)
+#define COM_MSG_CAN_FD_RX_LOCAL_ID              ((uint32_t) uid_unique)
+//#define COM_MSG_CAN_FD_RX_LOCAL_ID              ((uint32_t) uid_unique)
+//
+//#define COM_MSG_CAN_FD_TX_MASTER_SUB_ID0        ((uint32_t) uid_unique)
+//#define COM_MSG_CAN_FD_RX_LOCAL_SUB_ID0         ((uint32_t) uid_unique)
+
+
+
 #define COM_MSG_SPI_TX_16BIT_PAYLOAD_LENGTH     (sizeof(slv2mst_msg_t))
 #define COM_MSG_SPI_TX_16BIT_FULL_LENGTH        (COM_MSG_SPI_TX_16BIT_PAYLOAD_LENGTH + sizeof(crc_reg_t))
 
@@ -77,105 +86,6 @@
 #define COM_MSG_RS485_RX_8BIT_FULL_LENGTH       (COM_MSG_RS485_RX_16BIT_FULL_LENGTH * 2)
 
 #define LED_MSG_TX_16BIT_LENGTH                 (16)
-
-//! \name Mailbox Bitmasks
-//! \brief Bit masks specifying the mailboxes used for the various types of
-//! messages.
-//!
-//! We have enough mailboxes available so that we can use a separate one for
-//! every message type.
-//! `CAN_MBOX_IN|OUT_XY = 1 << n` means that mailbox n is used for message type
-//! XY.
-//!
-//! NOTE: Changing the mailbox number of a message also requires some
-//! adjustments in the code below!
-//! \{
-
-//#define COM_MSG_CAN_MBOX_OUT_STATUSMSG_POS      (15U)
-//#define COM_MSG_CAN_MBOX_OUT_STATUSMSG_MASK     (1U << COM_MSG_CAN_MBOX_OUT_STATUSMSG_POS)
-//#define COM_MSG_CAN_MBOX_OUT_CURRENT_POS        (14U)
-//#define COM_MSG_CAN_MBOX_OUT_CURRENT_MASK       (1U << COM_MSG_CAN_MBOX_OUT_CURRENT_POS)
-//#define COM_MSG_CAN_MBOX_OUT_POSITION_POS       (13U)
-//#define COM_MSG_CAN_MBOX_OUT_POSITION_MASK      (1U << COM_MSG_CAN_MBOX_OUT_POSITION_POS)
-//#define COM_MSG_CAN_MBOX_OUT_SPEED_POS          (12U)
-//#define COM_MSG_CAN_MBOX_OUT_SPEED_MASK         (1U << COM_MSG_CAN_MBOX_OUT_SPEED_POS)
-//#define COM_MSG_CAN_MBOX_OUT_ADC_SAMPLES_POS    (11U)
-//#define COM_MSG_CAN_MBOX_OUT_ADC_SAMPLES_MASK   (1U << COM_MSG_CAN_MBOX_OUT_ADC_SAMPLES_POS)
-//#define COM_MSG_CAN_MBOX_OUT_ENC_INDEX_POS      (10U)
-//#define COM_MSG_CAN_MBOX_OUT_ENC_INDEX_MASK     (1U << COM_MSG_CAN_MBOX_OUT_ENC_INDEX_POS)
-//
-//#define COM_MSG_CAN_MBOX_IN_COMMANDS_POS        (0U)
-//#define COM_MSG_CAN_MBOX_IN_COMMANDS_MASK       (1U << COM_MSG_CAN_MBOX_IN_COMMANDS_POS)
-//#define COM_MSG_CAN_MBOX_IN_IQREF_POS           (1U)
-//#define COM_MSG_CAN_MBOX_IN_IQREF_MASK          (1U << COM_MSG_CAN_MBOX_IN_IQREF_POS)
-//
-//#define COM_MSG_CAN_MBOX_ALL                    (COM_MSG_CAN_MBOX_OUT_STATUSMSG_MASK | \
-//                                                 COM_MSG_CAN_MBOX_OUT_CURRENT_MASK | \
-//                                                 COM_MSG_CAN_MBOX_OUT_POSITION_MASK | \
-//                                                 COM_MSG_CAN_MBOX_OUT_SPEED_MASK | \
-//                                                 COM_MSG_CAN_MBOX_OUT_ADC_SAMPLES_MASK | \
-//                                                 COM_MSG_CAN_MBOX_OUT_ENC_INDEX_MASK | \
-//                                                 COM_MSG_CAN_MBOX_IN_COMMANDS_MASK | \
-//                                                 COM_MSG_CAN_MBOX_IN_IQREF_MASK)
-//! \}
-
-//! \name Arbitration IDs
-//! \brief Arbitration IDs of the different message types
-//! \{
-//#define COM_MSG_CAN_ID_COMMANDS                 (0x00)
-//#define COM_MSG_CAN_ID_IQREF                    (0x05)
-//#define COM_MSG_CAN_ID_STATUS                   (0x10)
-//#define COM_MSG_CAN_ID_CURRENT                  (0x20)
-//#define COM_MSG_CAN_ID_POSITION                 (0x30)
-//#define COM_MSG_CAN_ID_VELOCITY                 (0x40)
-//#define COM_MSG_CAN_ID_ADC_SAMPLES              (0x50)
-//#define COM_MSG_CAN_ID_ENC_INDEX                (0x60)
-//! \}
-
-//! Command IDs
-//! \brief IDs of the various commands that can be sent to the COMMANDS mailbox
-//!
-//! The ID is expected to be in the high bytes (MDH) of the frame.
-//! \{
-//#define COM_MSG_CAN_CMD_ENABLE_SYS              (1)
-//#define COM_MSG_CAN_CMD_ENABLE_MOTOR1           (2)
-//#define COM_MSG_CAN_CMD_ENABLE_MOTOR2           (3)
-//#define COM_MSG_CAN_CMD_ENABLE_VSPRING1         (4)
-//#define COM_MSG_CAN_CMD_ENABLE_VSPRING2         (5)
-//#define COM_MSG_CAN_CMD_SEND_CURRENT            (12)
-//#define COM_MSG_CAN_CMD_SEND_POSITION           (13)
-//#define COM_MSG_CAN_CMD_SEND_VELOCITY           (14)
-//#define COM_MSG_CAN_CMD_SEND_ADC_SAMPLES        (15)
-//#define COM_MSG_CAN_CMD_SEND_ENC_INDEX          (16)
-//#define COM_MSG_CAN_CMD_SEND_ALL                (20)
-//#define COM_MSG_CAN_CMD_SET_CAN_RECV_TIMEOUT    (30)
-//#define COM_MSG_CAN_CMD_ENABLE_POS_ROLLOVER_ERR (31)
-//! \}
-
-//! \name Error Codes
-//! \anchor ErrorCodes
-//! \brief Possible Error Codes for the status message
-//! \{
-
-//! \brief No error
-//#define COM_MSG_CAN_ERROR_NO_ERROR              (0)
-////! \brief Encoder error too high
-//#define COM_MSG_CAN_ERROR_ENCODER               (1)
-////! \brief Timeout for receiving current references exceeded
-//#define COM_MSG_CAN_ERROR_CAN_RECV_TIMEOUT      (2)
-////! \brief Motor temperature reached critical value
-////! \note This is currently unused as no temperature sensing is done.
-//#define COM_MSG_CAN_ERROR_CRIT_TEMP             (3)  // currently unused
-////! \brief Some error in the SpinTAC Position Convert module
-//#define COM_MSG_CAN_ERROR_POSCONV               (4)
-////! \brief Position Rollover occured
-//#define COM_MSG_CAN_ERROR_POS_ROLLOVER          (5)
-////! \brief Some other error
-//#define COM_MSG_CAN_ERROR_OTHER                 (7)
-//! \}
-
-// Defines
-//
 
 /***********************************************************************
  * COMMUNICATION CONSTANTS

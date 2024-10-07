@@ -847,7 +847,8 @@ void HAL_TMR_ini(const tmr_cfg_t* p_TimerCfg)
  */
 void HAL_MCAN_ini(const mcan_cfg_t* p_McanCfg)
 {
-    MCAN_selectClockSource(p_McanCfg->mCanBase, MCAN_CLOCK_SOURCE_SYS);
+    // Set the MCAN clock source (CPU1 Peripheral System clock).
+    MCAN_selectClockSource(p_McanCfg->mCanBase, MCAN_CLOCK_SOURCE);
     // Wait for Memory initialization to be completed.
     while(MCAN_isMemInitDone(p_McanCfg->mCanBase) != TRUE);
 
@@ -864,52 +865,28 @@ void HAL_MCAN_ini(const mcan_cfg_t* p_McanCfg)
     MCAN_setBitTime(p_McanCfg->mCanBase, &p_McanCfg->bitTimesParams);
     // Configure Message RAM Sections
     MCAN_MsgRAMConfigParams msgRAMConfigParams = MCAN_MSG_RAM_CONFIG_PARAMS;
-//    msgRAMConfigParams.flssa                = MCAN_STD_ID_FILT_START_ADDR;
-//    msgRAMConfigParams.lss                  = MCAN_STD_ID_FILTER_NUM;
-//    msgRAMConfigParams.flesa                = MCAN_EXT_ID_FILT_START_ADDR;
-//    msgRAMConfigParams.lse                  = MCAN_EXT_ID_FILTER_NUM;
-//
-//    msgRAMConfigParams.txStartAddr          = MCAN_TX_BUFFER_START_ADDR;
-//    msgRAMConfigParams.txBufNum             = MCAN_TX_BUFFER_NUM;
-//    msgRAMConfigParams.txFIFOSize           = MCAN_TX_FIFO_QUEUE_NUM;
-//    msgRAMConfigParams.txBufMode            = MCAN_TX_FIFO_QUEUE_MODE;
-//    msgRAMConfigParams.txBufElemSize        = MCAN_TX_BUFFER_ELEM_SIZE;
-//
-//    msgRAMConfigParams.txEventFIFOStartAddr = MCAN_TX_EVENT_START_ADDR;
-//    msgRAMConfigParams.txEventFIFOSize      = MCAN_TX_EVENT_NUM;
-//    msgRAMConfigParams.txEventFIFOWaterMark = MCAN_TX_EVENT_WATERMARK_IT;
-//
-//    msgRAMConfigParams.rxFIFO0startAddr     = MCAN_RX_FIFO0_START_ADDR;
-//    msgRAMConfigParams.rxFIFO0size          = MCAN_RX_FIFO0_NUM;
-//    msgRAMConfigParams.rxFIFO0waterMark     = MCAN_RX_FIFO0_WATERMARK_IT;
-//    msgRAMConfigParams.rxFIFO0OpMode        = MCAN_RX_FIFO0_OP_MODE;
-//
-//    msgRAMConfigParams.rxFIFO1startAddr     = MCAN_RX_FIFO1_START_ADDR;
-//    msgRAMConfigParams.rxFIFO1size          = MCAN_RX_FIFO1_NUM;
-//    msgRAMConfigParams.rxFIFO1waterMark     = MCAN_RX_FIFO1_WATERMARK_IT;
-//    msgRAMConfigParams.rxFIFO1OpMode        = MCAN_RX_FIFO1_OP_MODE;
-//
-//    msgRAMConfigParams.rxBufStartAddr       = MCAN_RX_BUFFER_START_ADDR;
-//    msgRAMConfigParams.rxBufElemSize        = MCAN_RX_BUFFER_ELEM_SIZE;
-//
-//    msgRAMConfigParams.rxFIFO0ElemSize      = MCAN_RX_FIFO0_ELEM_SIZE;
-//    msgRAMConfigParams.rxFIFO1ElemSize      = MCAN_RX_FIFO1_ELEM_SIZE;
     MCAN_msgRAMConfig(p_McanCfg->mCanBase, &msgRAMConfigParams);
+
+    uint32_t id_filter_cfg;
+#if (MCAN_STD_ID_FILTER_NUM)
     // Configure Standard ID filter element
     MCAN_StdMsgIDFilterElement stdFilterParams[MCAN_STD_ID_FILTER_NUM] = MCAN_STD_ID_FILTER_CFG;
-//    stdFilterParams.sfid2                   = MCAN_STD_ID_FILTER2_PARAM_CFG1;
-//    stdFilterParams.sfid1                   = MCAN_STD_ID_FILTER1_PARAM_CFG1;
-//    stdFilterParams.sfec                    = MCAN_STD_ID_FILTER_ELEM_CFG1;
-//    stdFilterParams.sft                     = MCAN_STD_ID_FILTER_TYPE_CFG1;
-    uint8_t std_id_filter_cfg;
-    for(std_id_filter_cfg = 0; std_id_filter_cfg < MCAN_STD_ID_FILTER_NUM; std_id_filter_cfg++)
-        MCAN_addStdMsgIDFilter(p_McanCfg->mCanBase, std_id_filter_cfg, &stdFilterParams[std_id_filter_cfg]);
+    for(id_filter_cfg = 0; id_filter_cfg < MCAN_STD_ID_FILTER_NUM; id_filter_cfg++)
+        MCAN_addStdMsgIDFilter(p_McanCfg->mCanBase, id_filter_cfg, &stdFilterParams[id_filter_cfg]);
+#endif
+#if (MCAN_EXT_ID_FILTER_NUM)
+    // Configure Extended ID filter element
+    MCAN_ExtMsgIDFilterElement extFilterParams[MCAN_EXT_ID_FILTER_NUM] = MCAN_EXT_ID_FILTER_CFG;
+    for(id_filter_cfg = 0; id_filter_cfg < MCAN_EXT_ID_FILTER_NUM; id_filter_cfg++)
+        MCAN_addExtMsgIDFilter(p_McanCfg->mCanBase, id_filter_cfg, &extFilterParams[id_filter_cfg]);
+#endif
+
     // Enable internal loopback mode
-    MCAN_lpbkModeEnable(p_McanCfg->mCanBase, MCAN_LPBK_MODE_EXTERNAL, TRUE);
+    MCAN_lpbkModeEnable(p_McanCfg->mCanBase, MCAN_LOOPBACK_MODE, MCAN_LOOPBACK_MODE_CTRL);
 
     // Take MCAN out of the SW initialization mode
     MCAN_setOpMode(p_McanCfg->mCanBase, MCAN_OPERATION_MODE_NORMAL);
-    // Wait till MCAN is back in normal mode .
+    // Wait till MCAN is back in normal mode.
     while(MCAN_getOpMode(p_McanCfg->mCanBase) != MCAN_OPERATION_MODE_NORMAL);
 
     // Enable Interrupts.
