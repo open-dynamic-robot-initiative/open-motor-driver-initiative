@@ -205,7 +205,21 @@ typedef enum __com_bus_enum__
     COM_NO_BUS_DEFINED  = 0,
     COM_USE_SPI_BUS     = 1,
     COM_USE_RS485_BUS   = 2,
+    COM_USE_CANFD_BUS   = 3,
 } com_bus_e;
+
+/**
+ * @enum    motor_state_e
+ * @brief   List all the states of the state machine for motor control.
+ */
+typedef enum __spi_test_state__
+{
+    COM_SPI_TEST_STATE_IDLE         = 0U,
+    COM_SPI_TEST_STATE_CS_ACTIVE    = 1U,
+    COM_SPI_TEST_STATE_RX_PROGRESS  = 2U,
+    COM_SPI_TEST_STATE_RX_END       = 4U,
+    COM_SPI_TEST_STATE_CS_INACTIVE  = 8U,
+} spi_test_state;
 
 /***********************************************************************
  * COMMUNICATION STATE MACHINES FOR CM CORE
@@ -542,6 +556,7 @@ void COM_initCmdStruct(cmd_t*);
 uint32_t COM_msgCRC(uint16_t*, uint16_t);
 inline void RS485_msgReceive(uint32_t, rs485_rx_t*);
 inline void RS485_msgTransmit(uint32_t, rs485_tx_t*);
+bool_t COM_checkSPIBus(void);
 
 //void SCI_rxDisable(uint32_t);
 //void SCI_rxEnable(uint32_t);

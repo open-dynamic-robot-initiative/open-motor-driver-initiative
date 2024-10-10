@@ -249,6 +249,35 @@ inline void RS485_msgTransmit(uint32_t sci_base, rs485_tx_t* p_msg_tx)
     return;
 }
 
+bool_t COM_checkSPIBus(void)
+{
+    static spi_test_state spi_test_state    = COM_SPI_TEST_STATE_IDLE;
+    bool_t spi_rx_status                    = DMA_getTransferStatusFlag(DMA_COM_SPI_RX_BASE_ADDR);
+    bool_t spi_cs_pin                       = COM_SPI_CS_READ;
+
+    switch(spi_test_state)
+    {
+    case COM_SPI_TEST_STATE_IDLE:
+    default:
+        spi_test_state = (!spi_cs_pin) ? (COM_SPI_TEST_STATE_CS_ACTIVE) : (COM_SPI_TEST_STATE_IDLE);
+        return(false);
+
+    case COM_SPI_TEST_STATE_CS_ACTIVE:
+        spi_test_state = (spi_rx_status) ? (COM_SPI_TEST_STATE_RX_PROGRESS): (COM_SPI_TEST_STATE_CS_ACTIVE);
+        return(false);
+
+    case COM_SPI_TEST_STATE_RX_PROGRESS:
+        spi_test_state = (!spi_rx_status) ? (COM_SPI_TEST_STATE_RX_END): (COM_SPI_TEST_STATE_RX_PROGRESS);
+        return(false);
+
+    case COM_SPI_TEST_STATE_RX_END:
+        spi_test_state = (spi_cs_pin) ? (COM_SPI_TEST_STATE_CS_INACTIVE) : (COM_SPI_TEST_STATE_RX_END);
+        return(false);
+
+    case COM_SPI_TEST_STATE_CS_INACTIVE:
+        return(true);
+    }
+}
 //void SCI_rxDisable(uint32_t sci_base)
 //{
 //    SCI_resetRxFIFO(sci_base);

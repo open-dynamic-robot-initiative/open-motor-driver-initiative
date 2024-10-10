@@ -891,13 +891,13 @@ void HAL_MCAN_ini(const mcan_cfg_t* p_McanCfg)
     while(MCAN_getOpMode(p_McanCfg->mCanBase) != MCAN_OPERATION_MODE_NORMAL);
 
     // Enable Interrupts.
-    MCAN_enableIntr(p_McanCfg->mCanBase, MCAN_INTR_MASK_ALL, 1U);
+    MCAN_enableIntr(p_McanCfg->mCanBase, MCAN_INTR_MASK_ALL, MCAN_ENABLE_IT);
     // Select Interrupt Line.
     MCAN_selectIntrLine(p_McanCfg->mCanBase, MCAN_INTR_MASK_ALL, MCAN_INTR_LINE_NUM_1);
     // Enable Interrupt Line.
-    MCAN_enableIntrLine(p_McanCfg->mCanBase, MCAN_INTR_LINE_NUM_1, 1U);
+    MCAN_enableIntrLine(p_McanCfg->mCanBase, MCAN_INTR_LINE_NUM_1, MCAN_ENABLE_LINE_IT);
     // Write Tx Message to the Message RAM.
 //    MCAN_writeMsgRam(p_McanCfg->mCanBase, MCAN_MEM_TYPE_BUF, 1U, &txMsg);
     // Enable Transmission interrupt.
-    MCAN_txBufTransIntrEnable(p_McanCfg->mCanBase, 1U,1U);
+    MCAN_txBufTransIntrEnable(p_McanCfg->mCanBase, 1U, MCAN_ENABLE_IT);
 }

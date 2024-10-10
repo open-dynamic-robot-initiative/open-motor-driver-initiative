@@ -118,6 +118,10 @@ uint32_t    global_1ms_tmr_cnt  = 0U;
 #pragma DATA_SECTION(global_errata_cnt, "ramgs0")
 uint32_t    global_errata_cnt   = 0U;
 
+#pragma DATA_ALIGN(mcan_err_cnt, 2)
+#pragma DATA_SECTION(mcan_err_cnt, "ramgs0")
+MCAN_ErrCntStatus   mcan_err_cnt;
+
 volatile uint32_t isrIntr0Flag = 1U;
 volatile uint32_t isrIntr1Flag = 1U;
 //volatile unsigned long msgCount = 0;
@@ -163,6 +167,50 @@ void main(void)
     cmd_uomodri[MOTOR_2].periphField.drv_initErr = DRV_ini(&drv_cfg[MOTOR_2], &drv_reg[MOTOR_2]);
     // Start ADC offset calibration on CLA
     CLA_forceTasks(CLA1_BASE, CLA_ADC_CALIB_TASK_FLAG);
+
+    while(com_bus_select == COM_NO_BUS_DEFINED)
+    {
+        if(COM_checkSPIBus())
+            com_bus_select = COM_USE_SPI_BUS;
+
+
+    }
+//        static inline bool DMA_getTransferStatusFlag(DMA_COM_SPI_RX_BASE_ADDR);
+//
+//
+//        // Compare computed CRC with the one received in message.
+//        spi_rx_msg_t* p_msg_spi = &com_spi_rx.msg;
+//        uint32_t msg_crc        = COM_msgCRC((uint16_t *)&p_msg_spi->data, COM_MSG_SPI_RX_16BIT_PAYLOAD_LENGTH);
+//        if(((com_bus_select == COM_USE_SPI_BUS) || (com_bus_select == COM_NO_BUS_DEFINED)) && \
+//                    (p_msg_spi->crc.u16_msb == MSB_32(msg_crc)) && (p_msg_spi->crc.u16_lsb == LSB_32(msg_crc)))
+//            {
+//                // Extract received message & send new commands to FOC structures. Define SPI as communication bus by default.
+//                COM_msgExtract(&p_msg_spi->data, &cmd_uomodri[MOTOR_1], &cmd_uomodri[MOTOR_2]);
+//                // Force an update of the motors command structures (commands values)
+//                CLA_forceTasks(CLA1_BASE, CLA_CMD_NEW_TASK_FLAG);
+//                com_bus_select      = COM_USE_SPI_BUS;
+//                // Disable definitely the ITs linked to RS485.
+//        //        CLB_disableCLB(RS485_RX_TX_CLB_EOT_BASE);
+//        //        CLB_disableCLB(RS485_RX_CLB_ADDR_VALID_BASE);
+//                Interrupt_disable(INT_RS485_Rx_Tx_CLB);
+//
+//        //        SCI_disableModule(COM_SCI_BASE);
+//                Interrupt_disable(INT_RS485_RX_MSG);
+//                Interrupt_disable(INT_RS485_TX_MSG);
+//            }
+//            // Restart DMA reception & reset the SPI Rx fifo.
+//            DMA_startChannel(DMA_COM_SPI_RX_BASE_ADDR);
+//            SPI_resetRxFIFO(COM_SPI_BASE);
+//            // Clear IT flag
+//            Interrupt_clearACKGroup(INT_DMA_RX_MSG_GROUP);
+//
+//        if(!COM_SPI_CS_READ)
+//            com_bus_select = COM_USE_SPI_BUS;
+//        else if(MCAN_getErrCounters(MCANA_DRIVER_BASE, &mcan_err_cnt))
+//        {
+//
+//        }
+//    }
     // Interrupts initialization
     HAL_INT_ini(interruptList, &errata_isr);
 

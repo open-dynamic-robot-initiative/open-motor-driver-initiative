@@ -1667,6 +1667,8 @@
 #define MCAN_RX_FIFO0_WATERMARK_IT              (0U)
 // Rx FIFO1 - Level for Rx FIFO 1 watermark interrupt
 #define MCAN_RX_FIFO1_WATERMARK_IT              (0U)
+
+#define STRUCT_SIZE(x)                          (MCAN_getMsgObjSize(x) * 4U)
 // Standard ID - Number of standard Message ID filter elements / Memory space used.
 #define MCAN_STD_ID_FILTER_NUM                  (1U)
 #define MCAN_STD_ID_FILTER_MEM                  (MCAN_STD_ID_FILTER_NUM * MCANSS_STD_ID_FILTER_SIZE_WORDS * 4U)
@@ -1676,21 +1678,21 @@
 // RX FIFO_0 - Number of Rx FIFO_0 elements / Memory space used.
 #define MCAN_RX_FIFO0_NUM                       (0U)
 #define MCAN_RX_FIFO0_ELEM_SIZE                 (MCAN_ELEM_SIZE_64BYTES)
-#define MCAN_RX_FIFO0_MEM                       (MCAN_RX_FIFO0_NUM * MCAN_getMsgObjSize(MCAN_RX_FIFO0_ELEM_SIZE) * 4U)
+#define MCAN_RX_FIFO0_MEM                       (MCAN_RX_FIFO0_NUM * STRUCT_SIZE(MCAN_RX_FIFO0_ELEM_SIZE))
 // RX FIFO_1 - Number of Rx FIFO_1 elements / Memory space used.
 #define MCAN_RX_FIFO1_NUM                       (0U)
 #define MCAN_RX_FIFO1_ELEM_SIZE                 (MCAN_ELEM_SIZE_64BYTES)
-#define MCAN_RX_FIFO1_MEM                       (MCAN_RX_FIFO1_NUM * MCAN_getMsgObjSize(MCAN_RX_FIFO1_ELEM_SIZE) * 4U)
+#define MCAN_RX_FIFO1_MEM                       (MCAN_RX_FIFO1_NUM * STRUCT_SIZE(MCAN_RX_FIFO1_ELEM_SIZE))
 // Rx Buffer - Number of Rx buffer elements / Memory space used.
 #define MCAN_RX_BUFFER_NUM                      (8U)
 #define MCAN_RX_BUFFER_ELEM_SIZE                (MCAN_ELEM_SIZE_64BYTES)
-#define MCAN_RX_BUFFER_MEM                      (MCAN_RX_BUFFER_NUM * MCAN_getMsgObjSize(MCAN_RX_BUFFER_ELEM_SIZE) * 4U)
+#define MCAN_RX_BUFFER_MEM                      (MCAN_RX_BUFFER_NUM * STRUCT_SIZE(MCAN_RX_BUFFER_ELEM_SIZE))
 // Tx Buffer - Number of Tx buffer elements / Memory space used.
 #define MCAN_TX_BUFFER_NUM                      (8U)
 #define MCAN_TX_FIFO_QUEUE_NUM                  (0U)
+#define MCAN_TX_BUFFER_AND_FIFO_NUM             (MCAN_TX_BUFFER_NUM + MCAN_TX_FIFO_QUEUE_NUM)
 #define MCAN_TX_BUFFER_ELEM_SIZE                (MCAN_ELEM_SIZE_64BYTES)
-#define MCAN_TX_BUFFER_MEM                      ((MCAN_TX_BUFFER_NUM + MCAN_TX_FIFO_QUEUE_NUM) * \
-                                                 MCAN_getMsgObjSize(MCAN_TX_BUFFER_ELEM_SIZE) * 4U)
+#define MCAN_TX_BUFFER_MEM                      (MCAN_TX_BUFFER_AND_FIFO_NUM * STRUCT_SIZE(MCAN_TX_BUFFER_ELEM_SIZE))
 // TX EVENTS Buffer - Number of TX event buffer elements / Memory space used.
 #define MCAN_TX_EVENT_NUM                       (0U)
 
