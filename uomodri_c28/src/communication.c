@@ -249,35 +249,89 @@ inline void RS485_msgTransmit(uint32_t sci_base, rs485_tx_t* p_msg_tx)
     return;
 }
 
-bool_t COM_checkSPIBus(void)
+/*
+ * @brief           Test if SPI bus is used as communication bus.
+ * @param[in]       *p_spi_rx_msg   Pointer on the message received by DMA.
+ * return           The communication bus selected.
+ */
+com_bus_e COM_checkSPIBus(spi_rx_msg_t* p_spi_rx_msg)
 {
-    static spi_test_state spi_test_state    = COM_SPI_TEST_STATE_IDLE;
-    bool_t spi_rx_status                    = DMA_getTransferStatusFlag(DMA_COM_SPI_RX_BASE_ADDR);
-    bool_t spi_cs_pin                       = COM_SPI_CS_READ;
+    static spi_test_state spi_state = COM_SPI_TEST_STATE_IDLE;
+    com_bus_e spi_com_bus           = COM_NO_BUS_DEFINED;
+    uint32_t spi_msg_crc            = 0;
+    bool_t spi_rx_status            = DMA_getTransferStatusFlag(DMA_COM_SPI_RX_BASE_ADDR);
+    bool_t spi_cs_pin               = COM_SPI_CS_READ;
 
-    switch(spi_test_state)
+    switch(spi_state)
     {
     case COM_SPI_TEST_STATE_IDLE:
     default:
-        spi_test_state = (!spi_cs_pin) ? (COM_SPI_TEST_STATE_CS_ACTIVE) : (COM_SPI_TEST_STATE_IDLE);
-        return(false);
+        spi_state = (!spi_cs_pin) ? (COM_SPI_TEST_STATE_CS_ACTIVE) : (COM_SPI_TEST_STATE_IDLE);
+        break;
 
     case COM_SPI_TEST_STATE_CS_ACTIVE:
-        spi_test_state = (spi_rx_status) ? (COM_SPI_TEST_STATE_RX_PROGRESS): (COM_SPI_TEST_STATE_CS_ACTIVE);
-        return(false);
+        spi_state = (spi_rx_status) ? (COM_SPI_TEST_STATE_RX_PROGRESS): (COM_SPI_TEST_STATE_CS_ACTIVE);
+        break;
 
     case COM_SPI_TEST_STATE_RX_PROGRESS:
-        spi_test_state = (!spi_rx_status) ? (COM_SPI_TEST_STATE_RX_END): (COM_SPI_TEST_STATE_RX_PROGRESS);
-        return(false);
+        spi_state = (!spi_rx_status) ? (COM_SPI_TEST_STATE_RX_END): (COM_SPI_TEST_STATE_RX_PROGRESS);
+        break;
 
     case COM_SPI_TEST_STATE_RX_END:
-        spi_test_state = (spi_cs_pin) ? (COM_SPI_TEST_STATE_CS_INACTIVE) : (COM_SPI_TEST_STATE_RX_END);
-        return(false);
+        spi_state = (spi_cs_pin) ? (COM_SPI_TEST_STATE_CS_INACTIVE) : (COM_SPI_TEST_STATE_RX_END);
+        break;
 
     case COM_SPI_TEST_STATE_CS_INACTIVE:
-        return(true);
+        spi_msg_crc = COM_msgCRC((uint16_t *)&p_spi_rx_msg->data, COM_MSG_SPI_RX_16BIT_PAYLOAD_LENGTH);
+        if((p_spi_rx_msg->crc.u16_msb == MSB_32(spi_msg_crc)) && (p_spi_rx_msg->crc.u16_lsb == LSB_32(spi_msg_crc)))
+            spi_com_bus = COM_USE_SPI_BUS;
+        else
+            spi_state = COM_SPI_TEST_STATE_IDLE;
+        break;
     }
+
+    return(spi_com_bus);
 }
+
+bool_t COM_checkCANFDBus(void)
+{
+//    uint32_t mcan_it_status;
+//    MCAN_RxNewDataStatus newData;
+
+    uint32_t mcan_it_status = MCAN_getIntrStatus(MCANA_DRIVER_BASE);
+    if(mcan_it_status & \
+            (MCAN_INTR_SRC_RX_FIFO0_NEW_MSG | \
+                    MCAN_INTR_SRC_RX_FIFO1_NEW_MSG | \
+                    MCAN_INTR_SRC_HIGH_PRIO_MSG | \
+                    MCAN_INTR_SRC_TRANS_COMPLETE | \
+                    MCAN_INTR_SRC_TRANS_CANCEL_FINISH | \
+                    MCAN_INTR_SRC_TX_EVT_FIFO_NEW_ENTRY | \
+                    MCAN_INTR_SRC_TIMESTAMP_WRAPAROUND | \
+                    MCAN_INTR_SRC_MSG_RAM_ACCESS_FAILURE | \
+                    MCAN_INTR_SRC_TIMEOUT | \
+                    MCAN_INTR_SRC_DEDICATED_RX_BUFF_MSG | \
+                    MCAN_INTR_SRC_BIT_ERR_CORRECTED | \
+                    MCAN_INTR_SRC_BIT_ERR_UNCORRECTED | \
+                    MCAN_INTR_SRC_ERR_LOG_OVRFLW | \
+                    MCAN_INTR_SRC_ERR_PASSIVE | \
+                    MCAN_INTR_SRC_WARNING_STATUS | \
+                    MCAN_INTR_SRC_BUS_OFF_STATUS | \
+                    MCAN_INTR_SRC_WATCHDOG | \
+                    MCAN_INTR_SRC_PROTOCOL_ERR_ARB | \
+                    MCAN_INTR_SRC_PROTOCOL_ERR_DATA | \
+                    MCAN_INTR_SRC_RES_ADDR_ACCESS))
+    // Clear the interrupt Status.
+    MCAN_clearIntrStatus(MCANA_DRIVER_BASE, mcan_it_status);
+    //  Clearing the interrupt lineNum
+//    MCAN_clearInterrupt(MCANA_DRIVER_BASE, 0x2);
+
+
+//    MCAN_getIntrStatus(MCANA_DRIVER_BASE) & 0xFFFF0000;
+    return(false);
+//    MCAN_getErrCounters(MCANA_DRIVER_BASE, errCounter);
+//
+}
+
 //void SCI_rxDisable(uint32_t sci_base)
 //{
 //    SCI_resetRxFIFO(sci_base);

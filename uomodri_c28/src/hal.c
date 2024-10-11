@@ -883,7 +883,7 @@ void HAL_MCAN_ini(const mcan_cfg_t* p_McanCfg)
 #endif
 
     // Enable internal loopback mode
-    MCAN_lpbkModeEnable(p_McanCfg->mCanBase, MCAN_LOOPBACK_MODE, MCAN_LOOPBACK_MODE_CTRL);
+//    MCAN_lpbkModeEnable(p_McanCfg->mCanBase, MCAN_LOOPBACK_MODE, MCAN_LOOPBACK_MODE_CTRL);
 
     // Take MCAN out of the SW initialization mode
     MCAN_setOpMode(p_McanCfg->mCanBase, MCAN_OPERATION_MODE_NORMAL);
@@ -899,5 +899,5 @@ void HAL_MCAN_ini(const mcan_cfg_t* p_McanCfg)
     // Write Tx Message to the Message RAM.
 //    MCAN_writeMsgRam(p_McanCfg->mCanBase, MCAN_MEM_TYPE_BUF, 1U, &txMsg);
     // Enable Transmission interrupt.
-    MCAN_txBufTransIntrEnable(p_McanCfg->mCanBase, 1U, MCAN_ENABLE_IT);
+//    MCAN_txBufTransIntrEnable(p_McanCfg->mCanBase, 1U, MCAN_ENABLE_IT);
 }

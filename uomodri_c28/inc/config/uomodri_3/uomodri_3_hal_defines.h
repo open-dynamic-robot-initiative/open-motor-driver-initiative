@@ -1439,7 +1439,7 @@
 // Enable/Disable the loopback mode
 #define MCAN_LOOPBACK_MODE_CTRL_ENABLE          (1U)
 #define MCAN_LOOPBACK_MODE_CTRL_DISABLE         (0U)
-#define MCAN_LOOPBACK_MODE_CTRL                 MCAN_LOOPBACK_MODE_CTRL_ENABLE
+#define MCAN_LOOPBACK_MODE_CTRL                 MCAN_LOOPBACK_MODE_CTRL_DISABLE
 // Define the loopback mode (Internal/external)
 #define MCAN_LOOPBACK_MODE                      MCAN_LPBK_MODE_EXTERNAL
 
@@ -1566,11 +1566,12 @@
 #define MCAN_USE_NOMINAL_RATE_5M                (5U)
 #define MCAN_USE_NOMINAL_RATE_10M               (10U)
 #define MCAN_USE_DATA_RATE_1M                   (1U)
+#define MCAN_USE_DATA_RATE_2M                   (2U)
 #define MCAN_USE_DATA_RATE_5M                   (5U)
 #define MCAN_USE_DATA_RATE_8M                   (8U)
 #define MCAN_USE_DATA_RATE_10M                  (10U)
-#define MCAN_USE_NOMINAL_RATE                   MCAN_USE_NOMINAL_RATE_5M
-#define MCAN_USE_DATA_RATE                      MCAN_USE_DATA_RATE_10M
+#define MCAN_USE_NOMINAL_RATE                   MCAN_USE_NOMINAL_RATE_1M
+#define MCAN_USE_DATA_RATE                      MCAN_USE_DATA_RATE_2M
 // According MCAN_BitTimingCalculator.xls in C2000Ware here are the timing
 #if (MCAN_USE_NOMINAL_RATE == MCAN_USE_NOMINAL_RATE_1M)
 // 1Mb/s NOMINAL
@@ -1598,6 +1599,13 @@
 #if (MCAN_USE_DATA_RATE == MCAN_USE_DATA_RATE_1M)
 // 1Mb/s DATA
 #define MCAN_DATA_BIT_RATE_PRESCALER            (10U)
+#define MCAN_DATA_PROPAGATION_SEG               (1U)
+#define MCAN_DATA_TIME_SEG1_BEFORE_SP           (9U)
+#define MCAN_DATA_TIME_SEG2_AFTER_SP            (9U)
+#define MCAN_DATA_SYNC_JUMP_WIDTH               (9U)
+#elif (MCAN_USE_DATA_RATE == MCAN_USE_DATA_RATE_2M)
+// 2Mb/s DATA
+#define MCAN_DATA_BIT_RATE_PRESCALER            (5U)
 #define MCAN_DATA_PROPAGATION_SEG               (1U)
 #define MCAN_DATA_TIME_SEG1_BEFORE_SP           (9U)
 #define MCAN_DATA_TIME_SEG2_AFTER_SP            (9U)
@@ -1746,9 +1754,12 @@
                                                     .rxFIFO1waterMark       = MCAN_RX_FIFO1_WATERMARK_IT, \
                                                 }
 
-#define MCAN_STD_ID_FILTER2_PARAM_CFG1          (0xFFF8)
-#define MCAN_STD_ID_FILTER1_PARAM_CFG1          ((uid_unique_8b << 3U) & 0x07F8)
-#define MCAN_STD_ID_FILTER_ELEM_CFG1            (MCAN_STDFILTEC_RXBUFF)
+#define MCAN_STD_ID_FILTER2_PARAM_CFG1          (0x0U)
+//(0x7F8)
+#define MCAN_STD_ID_FILTER1_PARAM_CFG1          (0x4U)
+//((uid_unique_8b << 3U) & 0x07F8)
+#define MCAN_STD_ID_FILTER_ELEM_CFG1            (0x7U)
+//(MCAN_STDFILTEC_RXBUFF)
 #define MCAN_STD_ID_FILTER_TYPE_CFG1            (MCAN_STDFILT_CLASSIC)
 #define MCAN_STD_ID_FILTER_CFG1                 { \
                                                     .sfid2                  = MCAN_STD_ID_FILTER2_PARAM_CFG1, \

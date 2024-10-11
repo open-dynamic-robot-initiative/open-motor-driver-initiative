@@ -131,16 +131,28 @@
 #define CANFD_MST_ID(canfd_mst_msg)             CANFD_ID(CANFD_MST_ADDR_VAL, canfd_mst_msg)
 #define CANFD_SLV_ID(canfd_slv_msg)             CANFD_ID(CANFD_SLV_ADDR_VAL, canfd_slv_msg)
 
-#define COM_MSG_CANFD_HELLO(x)                  x.id     = CANFD_ID(CANFD_MST_ADDR_VAL, CANFD_MST_HELLO_MSG); \
-                                                x.rtr    = 0U; \
-                                                x.xtd    = MCAN_ID_TYPE_11_BIT; \
-                                                x.esi    = 0U; \
-                                                x.dlc    = 0x1U; \
-                                                x.brs    = MCAN_BIT_RATE_SWITCHING_MODE_ENABLE; \
-                                                x.fdf    = MCAN_FLEXIBLE_DATA_RATE_MODE; \
-                                                x.efc    = 1U; \
-                                                x.mm     = 0xAAU; \
-                                                x.data[0]= (CANFD_SLV_ADDR_VAL & CANFD_MST_SLV_ADDR_MASK)
+#define COM_MSG_CANFD_HELLO(x)                  x.id        = CANFD_ID(CANFD_MST_ADDR_VAL, CANFD_MST_HELLO_MSG); \
+                                                x.rtr       = 0U; \
+                                                x.xtd       = MCAN_ID_TYPE_11_BIT; \
+                                                x.esi       = 0U; \
+                                                x.dlc       = 0x1U; \
+                                                x.brs       = MCAN_BIT_RATE_SWITCHING_MODE_ENABLE; \
+                                                x.fdf       = MCAN_FLEXIBLE_DATA_RATE_MODE; \
+                                                x.efc       = 1U; \
+                                                x.mm        = 0xAAU; \
+                                                x.data[0]   = (CANFD_SLV_ADDR_VAL & CANFD_MST_SLV_ADDR_MASK)
+
+#define COM_MSG_CANFD_MST2SLV(x)                x.id        = CANFD_ID(CANFD_SLV_ADDR_VAL, CANFD_MST_HELLO_MSG); \
+                                                x.rtr       = 0U; \
+                                                x.xtd       = MCAN_ID_TYPE_11_BIT; \
+                                                x.esi       = 0U; \
+                                                x.rxts      = 0U; \
+                                                x.dlc       = 1U; \
+                                                x.brs       = MCAN_BIT_RATE_SWITCHING_MODE_DISABLE; \
+                                                x.fdf       = MCAN_FLEXIBLE_DATA_RATE_MODE; \
+                                                x.fidx      = 0U; \
+                                                x.anmf      = 0U; \
+                                                x.data[0]   = 0;
 
 /***********************************************************************
  * COMMUNICATION CONSTANTS
@@ -556,7 +568,7 @@ void COM_initCmdStruct(cmd_t*);
 uint32_t COM_msgCRC(uint16_t*, uint16_t);
 inline void RS485_msgReceive(uint32_t, rs485_rx_t*);
 inline void RS485_msgTransmit(uint32_t, rs485_tx_t*);
-bool_t COM_checkSPIBus(void);
+com_bus_e COM_checkSPIBus(spi_rx_msg_t*);
 
 //void SCI_rxDisable(uint32_t);
 //void SCI_rxEnable(uint32_t);

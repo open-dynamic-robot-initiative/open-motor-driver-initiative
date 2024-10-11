@@ -127,9 +127,10 @@ volatile uint32_t isrIntr1Flag = 1U;
 //volatile unsigned long msgCount = 0;
 volatile unsigned long mcan_error = 0;
 MCAN_TxBufElement       txMsg;
-MCAN_RxBufElement       rxMsg;
+MCAN_RxBufElement       rxMsg, rxMsg1;
 MCAN_RxNewDataStatus    newData;
 volatile uint16_t mcan_cnt = 0;
+
 
 /***********************************************************************
  * EXTERNAL VARIABLES
@@ -170,9 +171,8 @@ void main(void)
 
     while(com_bus_select == COM_NO_BUS_DEFINED)
     {
-        if(COM_checkSPIBus())
-            com_bus_select = COM_USE_SPI_BUS;
-
+        com_bus_select = COM_checkSPIBus(&com_spi_rx.msg);
+        com_bus_select = COM_USE_CANFD_BUS;
 
     }
 //        static inline bool DMA_getTransferStatusFlag(DMA_COM_SPI_RX_BASE_ADDR);
@@ -215,7 +215,7 @@ void main(void)
     HAL_INT_ini(interruptList, &errata_isr);
 
     // Initialize message to transmit.
-    COM_MSG_CANFD_HELLO(txMsg);
+//    COM_MSG_CANFD_HELLO(txMsg);
 
 //    txMsg.id        = CANFD_ID(CANFD_MST_ADDR_VAL, CANFD_MST_HELLO_MSG);// Identifier Value.
 //    txMsg.rtr       = 0U; // Transmit data frame.
@@ -230,10 +230,10 @@ void main(void)
 //    txMsg.data[0]   = CANFD_SLV_ADDR_VAL;
 
 
-    // Write Tx Message to the Message RAM.
-    MCAN_writeMsgRam(MCANA_DRIVER_BASE, MCAN_MEM_TYPE_BUF, 0U, &txMsg);
-    // Add request for transmission.
-    MCAN_txBufAddReq(MCANA_DRIVER_BASE, 0U);
+//    // Write Tx Message to the Message RAM.
+//    MCAN_writeMsgRam(MCANA_DRIVER_BASE, MCAN_MEM_TYPE_BUF, 0U, &txMsg);
+//    // Add request for transmission.
+//    MCAN_txBufAddReq(MCANA_DRIVER_BASE, 0U);
 
 //    // SPI check parameters
 //    if((COM_MSG_SPI_TX_16BIT_PAYLOAD_LENGTH != COM_MSG_SPI_RX_16BIT_PAYLOAD_LENGTH) || \
@@ -353,6 +353,11 @@ inline void LED_dimming(motor_t* p_motor1, motor_t* p_motor2, uint16_t* p_msg)
 
     return;
 }
+
+//void CLA_offsetCalibEndTask(void)
+//{
+//
+//}
 
 /**
  * @brief       Global structure initialization for MOTOR_1 \& MOTOR_2
@@ -686,7 +691,7 @@ __attribute__((interrupt)) void tmr_isrLedCmd(void)
 //    MCAN_writeMsgRam(MCANA_DRIVER_BASE, MCAN_MEM_TYPE_BUF, 1U, &txMsg);
     // Add request for transmission.
 //    if(!(global_1ms_tmr_cnt % 10))
-        MCAN_txBufAddReq(MCANA_DRIVER_BASE, 0U);
+//        MCAN_txBufAddReq(MCANA_DRIVER_BASE, 0U);
 
     // Timeout management
     cmd_uomodri[MOTOR_1].cptTimeout++;
@@ -933,32 +938,54 @@ __attribute__((interrupt)) void errata_isr(void)
 __attribute__((interrupt))  void mcan_isr(void)
 {
     uint32_t intrStatus;
+    MCAN_RxNewDataStatus newData;
 
     intrStatus = MCAN_getIntrStatus(MCANA_DRIVER_BASE);
-    if (MCAN_MSG_INT != intrStatus)
-        mcan_error++;
-
     // Clear the interrupt Status.
     MCAN_clearIntrStatus(MCANA_DRIVER_BASE, intrStatus);
     //  Clearing the interrupt lineNum
     MCAN_clearInterrupt(MCANA_DRIVER_BASE, 0x2);
     // Update the flag value.
-    isrIntr1Flag = 0U;
-    // Read Message RAM.
-    MCAN_readMsgRam(MCANA_DRIVER_BASE, MCAN_MEM_TYPE_BUF, 0U, MCAN_RX_FIFO_NUM_1, &rxMsg);
-    // Get the New Data Status.
-    MCAN_getNewDataStatus(MCANA_DRIVER_BASE, &newData);
-    // Check that received data matches sent data.
-    // Device will halt here during debug if data doesn't match.
-    if((txMsg.data[0] != rxMsg.data[0]) ||
-            (txMsg.data[1] != rxMsg.data[1]) ||
-            (txMsg.data[2] != rxMsg.data[2]) ||
-            (txMsg.data[3] != rxMsg.data[3]))
-        // Device will halt here if transmitted and received data are not same.
-        asm(" ESTOP0");
-//    else
-//        // Increment message count if message is received.
-//        msgCount++;
+//    isrIntr1Flag = 0U;
+
+    //  Check to see if the interrupt is caused by a message being received in dedicated RX Buffers
+    if((MCAN_INTR_SRC_DEDICATED_RX_BUFF_MSG & intrStatus) == MCAN_INTR_SRC_DEDICATED_RX_BUFF_MSG)
+    {
+        // Read the NewData registers
+        MCAN_getNewDataStatus(MCANA_DRIVER_BASE, &newData);
+        // If message is received in buffer element 0
+        if((newData.statusLow & (1UL << 0U)) != 0)
+        {
+            MCAN_readMsgRam(MCANA_DRIVER_BASE, MCAN_MEM_TYPE_BUF, 0U, 0, &rxMsg1);
+            rxMsg = rxMsg1;
+        }
+        //  Clearing the NewData registers
+        MCAN_clearNewDataStatus(MCANA_DRIVER_BASE, &newData);
+        }
+        else
+        {
+            mcan_error++;
+            //  Interrupt handling for other interrupt sources goes here
+        }
+
+
+
+//
+//    // Read Message RAM.
+//    //MCAN_readMsgRam(MCANA_DRIVER_BASE, MCAN_MEM_TYPE_BUF, 0U, MCAN_RX_FIFO_NUM_0, &rxMsg);
+//    // Get the New Data Status.
+//    //MCAN_getNewDataStatus(MCANA_DRIVER_BASE, &newData);
+//    // Check that received data matches sent data.
+//    // Device will halt here during debug if data doesn't match.
+//    if((txMsg.data[0] != rxMsg.data[0]) ||
+//            (txMsg.data[1] != rxMsg.data[1]) ||
+//            (txMsg.data[2] != rxMsg.data[2]) ||
+//            (txMsg.data[3] != rxMsg.data[3]))
+//        // Device will halt here if transmitted and received data are not same.
+//        asm(" ESTOP0");
+////    else
+////        // Increment message count if message is received.
+////        msgCount++;
 
     // Acknowledge this interrupt located in group 9
     Interrupt_clearACKGroup(INTERRUPT_ACK_GROUP9);
