@@ -21,6 +21,25 @@ sjw 5 dsjw 2 \
 sample-point 0.6875 dsample-point 0.7500 \
 restart-ms 1000 fd on
 
+#--------------------------------------------------
+# working NOMINAL 1Mb/s, DATA 2Mb/s
+sudo ip link set can1 type can bitrate 1000000 dbitrate 2000000 sjw 20 dsjw 10 sample-point 0.7500 dsample-point 0.7500 fd on
+
+# NOT working NOMINAL 1Mb/s, DATA 5Mb/s
+sudo ip link set can1 up type can bitrate 1000000 dbitrate 5000000 sjw 20 dsjw 4 sample-point 0.7500 dsample-point 0.7500 fd on
+
+
+cansend can1 1f8##3.55.75.aa.cc
+cansend can1 004##3.55.75.aa.cc.10.aB.ff.11.00.ff.00.00.00.00.00.ff.78.aa.55.aa.55.aa.55.aa
+cansend can1 004##3.55.75.aa.cc.10.aB.ff.11.00.ff.00.00.00.00.00.ff
+
+#--------------------------------------------------
+# Some help on CAN config
+ip link set can1 type can help
+
+
+
+
 Usage: ip link add [link DEV | parentdev NAME] [ name ] NAME
 		    [ txqueuelen PACKETS ]
 		    [ address LLADDR ]

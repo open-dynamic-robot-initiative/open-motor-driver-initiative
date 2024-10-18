@@ -847,15 +847,17 @@ void HAL_TMR_ini(const tmr_cfg_t* p_TimerCfg)
  */
 void HAL_MCAN_ini(const mcan_cfg_t* p_McanCfg)
 {
-    // Set the MCAN clock source (CPU1 Peripheral System clock).
-    MCAN_selectClockSource(p_McanCfg->mCanBase, MCAN_CLOCK_SOURCE);
-    // Wait for Memory initialization to be completed.
-    while(MCAN_isMemInitDone(p_McanCfg->mCanBase) != TRUE);
-
     // Put MCAN in SW initialization mode.
     MCAN_setOpMode(p_McanCfg->mCanBase, MCAN_OPERATION_MODE_SW_INIT);
     // Wait till MCAN is not initialized.
     while(MCAN_getOpMode(p_McanCfg->mCanBase) != MCAN_OPERATION_MODE_SW_INIT);
+
+    // Set the MCAN clock source (CPU1 Peripheral System clock).
+    MCAN_selectClockSource(p_McanCfg->mCanBase, MCAN_CLOCK_SOURCE);
+    // Enable internal loopback mode
+    MCAN_lpbkModeEnable(p_McanCfg->mCanBase, MCAN_LOOPBACK_MODE, MCAN_LOOPBACK_MODE_CTRL);
+    // Wait for Memory initialization to be completed.
+    while(MCAN_isMemInitDone(p_McanCfg->mCanBase) != TRUE);
 
     // Initialize MCAN module.
     MCAN_init(p_McanCfg->mCanBase, &p_McanCfg->initParams);
@@ -882,22 +884,19 @@ void HAL_MCAN_ini(const mcan_cfg_t* p_McanCfg)
         MCAN_addExtMsgIDFilter(p_McanCfg->mCanBase, id_filter_cfg, &extFilterParams[id_filter_cfg]);
 #endif
 
-    // Enable internal loopback mode
-//    MCAN_lpbkModeEnable(p_McanCfg->mCanBase, MCAN_LOOPBACK_MODE, MCAN_LOOPBACK_MODE_CTRL);
-
     // Take MCAN out of the SW initialization mode
     MCAN_setOpMode(p_McanCfg->mCanBase, MCAN_OPERATION_MODE_NORMAL);
     // Wait till MCAN is back in normal mode.
     while(MCAN_getOpMode(p_McanCfg->mCanBase) != MCAN_OPERATION_MODE_NORMAL);
 
     // Enable Interrupts.
-    MCAN_enableIntr(p_McanCfg->mCanBase, MCAN_INTR_MASK_ALL, MCAN_ENABLE_IT);
+    MCAN_enableIntr(p_McanCfg->mCanBase, MCAN_INTR_MASK, MCAN_ENABLE_IT);
     // Select Interrupt Line.
-    MCAN_selectIntrLine(p_McanCfg->mCanBase, MCAN_INTR_MASK_ALL, MCAN_INTR_LINE_NUM_1);
+    MCAN_selectIntrLine(p_McanCfg->mCanBase, MCAN_INTR_MASK, MCAN_INTR_LINE_NUM_1);
     // Enable Interrupt Line.
     MCAN_enableIntrLine(p_McanCfg->mCanBase, MCAN_INTR_LINE_NUM_1, MCAN_ENABLE_LINE_IT);
-    // Write Tx Message to the Message RAM.
+//    // Write Tx Message to the Message RAM.
 //    MCAN_writeMsgRam(p_McanCfg->mCanBase, MCAN_MEM_TYPE_BUF, 1U, &txMsg);
-    // Enable Transmission interrupt.
-//    MCAN_txBufTransIntrEnable(p_McanCfg->mCanBase, 1U, MCAN_ENABLE_IT);
+//    // Enable Transmission interrupt.
+//    MCAN_txBufTransIntrEnable(p_McanCfg->mCanBase, 0U, MCAN_ENABLE_IT);
 }

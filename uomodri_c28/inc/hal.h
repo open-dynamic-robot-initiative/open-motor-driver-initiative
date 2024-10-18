@@ -17,10 +17,148 @@
 /***********************************************************************
  * DEFINES
  ***********************************************************************/
-#define MCAN_ENABLE_IT          (true)
-#define MCAN_DISABLE_IT         (false)
-#define MCAN_ENABLE_LINE_IT     (true)
-#define MCAN_DISABLE_LINE_IT    (false)
+// Specify which core is used to manage the MCAN.
+#define MCAN_ALLOCATE_ON_CPU1_CORE              (0U)
+#define MCAN_ALLOCATE_ON_CM_CORE                (1U)
+// Enable/Disable the loopback mode
+#define MCAN_LOOPBACK_MODE_CTRL_DISABLE         (0U)
+#define MCAN_LOOPBACK_MODE_CTRL_ENABLE          (1U)
+// Remote/data Transmission Request
+#define MCAN_RTR_TX_DATA_FRAME                  (0U)
+#define MCAN_RTR_TX_REMOTE_FRAME                (1U)
+// Error State Indicator
+#define MCAN_ESI_PASSIVE_ERROR_FLAG             (0U)
+#define MCAN_ESI_TX_RECESSIVE                   (1U)
+
+// MCAN initialization
+// Enable/Disable the CAN-FD (CAN with Flexible Data-Rate) mode.
+#define MCAN_FLEXIBLE_DATA_RATE_MODE_DISABLE    (0U)
+#define MCAN_FLEXIBLE_DATA_RATE_MODE_ENABLE     (1U)
+// Use single or dual data rate mode (after arbitration)
+#define MCAN_BIT_RATE_SWITCHING_MODE_DISABLE    (0U)
+#define MCAN_BIT_RATE_SWITCHING_MODE_ENABLE     (1U)
+// Enable/Disable transmit pause during retry.
+#define MCAN_TX_PAUSE_DISABLE                   (0U)
+#define MCAN_TX_PAUSE_ENABLE                    (1U)
+// Enable/Disable Edge Filtering during Bus Integration
+#define MCAN_EDGE_FILTERING_4_HARD_SYNC_DISABLE (0U)
+#define MCAN_EDGE_FILTERING_4_HARD_SYNC_ENABLE  (1U)
+// Enable/Disable protocol exception handling.
+#define MCAN_PROTOCOL_EXCEPTION_HANDLE_ENABLE   (0U)
+#define MCAN_PROTOCOL_EXCEPTION_HANDLE_DISABLE  (1U)
+// Enable/Disable automatic retransmission of messages not transmitted successfully.
+#define MCAN_AUTOMATIC_RETRANSMIT_ENABLE        (0U)
+#define MCAN_AUTOMATIC_RETRANSMIT_DISABLE       (1U)
+// Enable/Disable wakeup request.
+#define MCAN_WAKEUP_REQUEST_DISABLE             (0U)
+#define MCAN_WAKEUP_REQUEST_ENABLE              (1U)
+// Enable/Disable auto-Wakeup
+#define MCAN_AUTO_WAKEUP_DISABLE                (0U)
+#define MCAN_AUTO_WAKEUP_ENABLE                 (1U)
+// Enable/Disable emulation/debug suspend mode
+#define MCAN_DEBUG_SUSPEND_DISABLE              (0U)
+#define MCAN_DEBUG_SUSPEND_ENABLE               (1U)
+// Enable/Disable  Transmitter Delay Compensation
+#define MCAN_TX_DELAY_COMPENSATION_DISABLE      (0U)
+#define MCAN_TX_DELAY_COMPENSATION_ENABLE       (1U)
+
+// MCAN configuration
+// Enable/Disable the Bus Monitoring Mode
+#define MCAN_BUS_MONITORING_MODE_DISABLE        (0U)
+#define MCAN_BUS_MONITORING_MODE_ENABLE         (1U)
+// Enable/Disable the Restricted Operation Mode
+#define MCAN_NORMAL_OPERATION_MODE_ACTIVE       (0U)
+#define MCAN_RESTRICTED_OPERATION_MODE_ACTIVE   (1U)
+// Enable/Disable the Timeout Counter
+#define MCAN_TIMEOUT_COUNTER_DISABLE            (0U)
+#define MCAN_TIMEOUT_COUNTER_ENABLE             (1U)
+// Timestamp source selection
+#define MCAN_TIMESTAMP_COUNTER_SET_TO_ZERO      (0U)
+#define MCAN_TIMESTAMP_COUNTER_INC_TS_PRESCALAR (1U)
+#define MCAN_TIMESTAMP_COUNTER_EXTERNAL_USED    (2U)
+// Accept/Reject remote Frames messages with 29-bit extended IDs
+#define MCAN_ACCEPT_REMOTE_FRAMES_W_EXT_ID      (0U)
+#define MCAN_REJECT_REMOTE_FRAMES_W_EXT_ID      (1U)
+// Accept/Reject remote Frames messages with 11-bit standard IDs.
+#define MCAN_ACCEPT_REMOTE_FRAMES_W_STD_ID      (0U)
+#define MCAN_REJECT_REMOTE_FRAMES_W_STD_ID      (1U)
+// Accept/Reject Non-matching Frames messages with 29-bit IDs
+#define MCAN_ACCEPT_NO_MATCH_EXT_ID_IN_RX_FIFO0 (0U)
+#define MCAN_ACCEPT_NO_MATCH_EXT_ID_IN_RX_FIFO1 (1U)
+#define MCAN_REJECT_NO_MATCH_EXT_ID             (2U)
+// Accept/Reject Non-matching Frames messages with 11-bit IDs
+#define MCAN_ACCEPT_NO_MATCH_STD_ID_IN_RX_FIFO0 (0U)
+#define MCAN_ACCEPT_NO_MATCH_STD_ID_IN_RX_FIFO1 (1U)
+#define MCAN_REJECT_NO_MATCH_STD_ID             (2U)
+
+// MCAN Message RAM Sections configuration
+// Tx FIFO/Queue Mode
+#define MCAN_TX_FIFO_OP                         (0U)
+#define MCAN_TX_QUEUE_OP                        (1U)
+// RX FIFO_0 full management - Blocking or overwrite
+#define MCAN_RX_FIFO0_BLOCKING_MODE             (0U)
+#define MCAN_RX_FIFO0_OVERWRITE_MODE            (1U)
+// RX FIFO_1 full management - Blocking or overwrite
+#define MCAN_RX_FIFO1_BLOCKING_MODE             (0U)
+#define MCAN_RX_FIFO1_OVERWRITE_MODE            (1U)
+// MCAN memory space allocation.
+#define MCAN_STRUCT_SIZE(x)                     (MCAN_getMsgObjSize(x) * 4U)
+
+#define MCAN_DLC_PAYLOAD_LENGTH_0B              (0U)
+#define MCAN_DLC_PAYLOAD_LENGTH_1B              (1U)
+#define MCAN_DLC_PAYLOAD_LENGTH_2B              (2U)
+#define MCAN_DLC_PAYLOAD_LENGTH_3B              (3U)
+#define MCAN_DLC_PAYLOAD_LENGTH_4B              (4U)
+#define MCAN_DLC_PAYLOAD_LENGTH_5B              (5U)
+#define MCAN_DLC_PAYLOAD_LENGTH_6B              (6U)
+#define MCAN_DLC_PAYLOAD_LENGTH_7B              (7U)
+#define MCAN_DLC_PAYLOAD_LENGTH_8B              (8U)
+#define MCAN_DLC_PAYLOAD_LENGTH_12B             (9U)
+#define MCAN_DLC_PAYLOAD_LENGTH_16B             (10U)
+#define MCAN_DLC_PAYLOAD_LENGTH_20B             (11U)
+#define MCAN_DLC_PAYLOAD_LENGTH_24B             (12U)
+#define MCAN_DLC_PAYLOAD_LENGTH_32B             (13U)
+#define MCAN_DLC_PAYLOAD_LENGTH_48B             (14U)
+#define MCAN_DLC_PAYLOAD_LENGTH_64B             (15U)
+
+#define MCAN_PAYLOAD_LENGTH_0B                  (0U)
+#define MCAN_PAYLOAD_LENGTH_1B                  (1U)
+#define MCAN_PAYLOAD_LENGTH_2B                  (2U)
+#define MCAN_PAYLOAD_LENGTH_3B                  (3U)
+#define MCAN_PAYLOAD_LENGTH_4B                  (4U)
+#define MCAN_PAYLOAD_LENGTH_5B                  (5U)
+#define MCAN_PAYLOAD_LENGTH_6B                  (6U)
+#define MCAN_PAYLOAD_LENGTH_7B                  (7U)
+#define MCAN_PAYLOAD_LENGTH_8B                  (8U)
+#define MCAN_PAYLOAD_LENGTH_12B                 (12U)
+#define MCAN_PAYLOAD_LENGTH_16B                 (16U)
+#define MCAN_PAYLOAD_LENGTH_20B                 (20U)
+#define MCAN_PAYLOAD_LENGTH_24B                 (24U)
+#define MCAN_PAYLOAD_LENGTH_32B                 (32U)
+#define MCAN_PAYLOAD_LENGTH_48B                 (48U)
+#define MCAN_PAYLOAD_LENGTH_64B                 (64U)
+
+
+#define MCAN_INTR_MASK                          (MCAN_IR_HPM_MASK   | \
+                                                 MCAN_IR_TC_MASK    | \
+                                                 MCAN_IR_TCF_MASK   | \
+                                                 MCAN_IR_TFE_MASK   | \
+                                                 MCAN_IR_DRX_MASK   | \
+                                                 MCAN_IR_BEC_MASK   | \
+                                                 MCAN_IR_BEU_MASK   | \
+                                                 MCAN_IR_ELO_MASK   | \
+                                                 MCAN_IR_EP_MASK    | \
+                                                 MCAN_IR_EW_MASK    | \
+                                                 MCAN_IR_BO_MASK    | \
+                                                 MCAN_IR_WDI_MASK   | \
+                                                 MCAN_IR_PEA_MASK   | \
+                                                 MCAN_IR_PED_MASK   | \
+                                                 MCAN_IR_ARA_MASK)
+#define MCAN_ENABLE_IT                          (true)
+#define MCAN_DISABLE_IT                         (false)
+#define MCAN_ENABLE_LINE_IT                     (true)
+#define MCAN_DISABLE_LINE_IT                    (false)
+
 /***********************************************************************
  * ENUMARATIONS
  ***********************************************************************/

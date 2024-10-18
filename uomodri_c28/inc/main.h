@@ -54,7 +54,7 @@ typedef union __uart_addr_u__
 
 #define INT_MCAN                        INT_MCANA_1
 #define INT_MCAN_GROUP                  INTERRUPT_ACK_GROUP9
-#define INT_MCAN_HANDLER                &mcan_isr
+#define INT_MCAN_HANDLER                &mcan_isr_canfd
 
 #define INT_TIMER_LED_DEF               { \
                                             .intNum             = INT_TIMER_LED, \

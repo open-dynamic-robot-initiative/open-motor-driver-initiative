@@ -42,8 +42,7 @@ __attribute__((interrupt)) void dma_isrSpiComRx(void);
 __attribute__((interrupt)) void sci_isrTx_RS485(void);
 __attribute__((interrupt)) void sci_isrRx_RS485(void);
 __attribute__((interrupt)) void clb_isrTxRx_RS485(void);
-
-__attribute__((interrupt)) void mcan_isr(void);
+__attribute__((interrupt)) void mcan_isr_canfd(void);
 
 __attribute__((interrupt)) void errata_isr(void);
 
@@ -122,12 +121,12 @@ uint32_t    global_errata_cnt   = 0U;
 #pragma DATA_SECTION(mcan_err_cnt, "ramgs0")
 MCAN_ErrCntStatus   mcan_err_cnt;
 
-volatile uint32_t isrIntr0Flag = 1U;
-volatile uint32_t isrIntr1Flag = 1U;
+volatile uint32_t isrIntr0Flag = 0U;
+volatile uint32_t isrIntr1Flag = 0U;
 //volatile unsigned long msgCount = 0;
-volatile unsigned long mcan_error = 0;
-MCAN_TxBufElement       txMsg;
-MCAN_RxBufElement       rxMsg, rxMsg1;
+int32_t     mcan_error = 0;
+MCAN_TxBufElement       txMsg[2];
+MCAN_RxBufElement       rxMsg;
 MCAN_RxNewDataStatus    newData;
 volatile uint16_t mcan_cnt = 0;
 
@@ -136,7 +135,7 @@ volatile uint16_t mcan_cnt = 0;
  * EXTERNAL VARIABLES
  ***********************************************************************/
 extern const hal_cfg_t  hal;
-extern volatile uint32_t uid_unique_8b;
+//extern volatile uint32_t uid_unique_8b;
 
 /***********************************************************************
  * FUNCTIONS DEFINITION
@@ -211,29 +210,57 @@ void main(void)
 //
 //        }
 //    }
+
+
+    // Initialize message0 to transmit.
+    COM_MSG_CANFD_HELLO(txMsg[0]);
+    // Write Tx Message0 to the Message RAM.
+    MCAN_writeMsgRam(MCANA_DRIVER_BASE, MCAN_MEM_TYPE_BUF, 0U, &txMsg[0]);
+
+    // Initialize message0 to transmit.
+    COM_MSG_CANFD_REPLY(txMsg[1]);
+    // Write Tx Message0 to the Message RAM.
+    MCAN_writeMsgRam(MCANA_DRIVER_BASE, MCAN_MEM_TYPE_BUF, 1U, &txMsg[1]);
+
+     //can_fd_id_builder_u tx_msg_id = {.main_addr = 0x4, .sub_addr = 0x7};
+ //    tx_msg_id.id_all;
+
+//     txMsg.id        = ((uint32_t)(0x7)) << 18U; //CANFD_ID(CANFD_MST_ADDR_VAL, CANFD_MST_HELLO_MSG);// Identifier Value.
+//     txMsg.rtr       = MCAN_RTR_TX_DATA_FRAME; // Transmit data frame.
+//     txMsg.xtd       = MCAN_ID_TYPE_11_BIT; // 11-bit standard identifier.
+//     txMsg.esi       = MCAN_ESI_PASSIVE_ERROR_FLAG; // ESI bit in CAN FD format depends only on error passive flag.
+//     txMsg.dlc       = MCAN_DLC_PAYLOAD_LENGTH_16B; // CAN + CAN FD: transmit frame has 0-8 data bytes.
+//     txMsg.brs       = MCAN_BIT_RATE_SWITCHING_MODE; // CAN FD frames transmitted with bit rate switching.
+//     txMsg.fdf       = MCAN_FLEXIBLE_DATA_RATE_MODE; // Frame transmitted in CAN FD format.
+//     txMsg.efc       = 1U; // Store Tx events.
+//     txMsg.mm        = 0xAAU; // Message Marker.
+//     // Data bytes.
+//     //    txMsg.data[0]   = CANFD_SLV_ADDR_VAL;
+//     txMsg.data[0]   = 0x12;
+//     txMsg.data[1]   = 0x34;
+//     txMsg.data[2]   = 0x56;
+//     txMsg.data[3]   = 0x78;
+//     txMsg.data[4]   = 0x9A;
+//     txMsg.data[5]   = 0xBC;
+//     txMsg.data[6]   = 0xDE;
+//     txMsg.data[7]   = 0xF0;
+//     txMsg.data[8]   = 0x12;
+//     txMsg.data[9]   = 0x34;
+//     txMsg.data[10]  = 0x56;
+//     txMsg.data[11]  = 0x78;
+//     txMsg.data[12]  = 0x9A;
+//     txMsg.data[13]  = 0xBC;
+//     txMsg.data[14]  = 0xDE;
+//     txMsg.data[15]  = 0xF0;
+//
+//     // Write Tx Message to the Message RAM.
+//     MCAN_writeMsgRam(MCANA_DRIVER_BASE, MCAN_MEM_TYPE_BUF, 0U, &txMsg);
+// //    // Add request for transmission.
+//     MCAN_txBufAddReq(MCANA_DRIVER_BASE, 0U);
+//     while(MCAN_getTxBufReqPend(MCANA_DRIVER_BASE));
+
     // Interrupts initialization
     HAL_INT_ini(interruptList, &errata_isr);
-
-    // Initialize message to transmit.
-//    COM_MSG_CANFD_HELLO(txMsg);
-
-//    txMsg.id        = CANFD_ID(CANFD_MST_ADDR_VAL, CANFD_MST_HELLO_MSG);// Identifier Value.
-//    txMsg.rtr       = 0U; // Transmit data frame.
-//    txMsg.xtd       = MCAN_ID_TYPE_11_BIT; // 11-bit standard identifier.
-//    txMsg.esi       = 0U; // ESI bit in CAN FD format depends only on error passive flag.
-//    txMsg.dlc       = 0x1U; // CAN + CAN FD: transmit frame has 0-8 data bytes.
-//    txMsg.brs       = MCAN_BIT_RATE_SWITCHING_MODE_ENABLE; // CAN FD frames transmitted with bit rate switching.
-//    txMsg.fdf       = MCAN_FLEXIBLE_DATA_RATE_MODE; // Frame transmitted in CAN FD format.
-//    txMsg.efc       = 1U; // Store Tx events.
-//    txMsg.mm        = 0xAAU; // Message Marker.
-//    // Data bytes.
-//    txMsg.data[0]   = CANFD_SLV_ADDR_VAL;
-
-
-//    // Write Tx Message to the Message RAM.
-//    MCAN_writeMsgRam(MCANA_DRIVER_BASE, MCAN_MEM_TYPE_BUF, 0U, &txMsg);
-//    // Add request for transmission.
-//    MCAN_txBufAddReq(MCANA_DRIVER_BASE, 0U);
 
 //    // SPI check parameters
 //    if((COM_MSG_SPI_TX_16BIT_PAYLOAD_LENGTH != COM_MSG_SPI_RX_16BIT_PAYLOAD_LENGTH) || \
@@ -682,6 +709,39 @@ __attribute__((interrupt)) void tmr_isrLedCmd(void)
         DMA_startChannel(DMA_LED_SPI_TX_BASE_ADDR);
     }
 
+//    txMsg.id        = ((uint32_t)(0x7)) << 18U; //CANFD_ID(CANFD_MST_ADDR_VAL, CANFD_MST_HELLO_MSG);// Identifier Value.
+//    txMsg.rtr       = MCAN_RTR_TX_DATA_FRAME; // Transmit data frame.
+//    txMsg.xtd       = MCAN_ID_TYPE_11_BIT; // 11-bit standard identifier.
+//    txMsg.esi       = MCAN_ESI_PASSIVE_ERROR_FLAG; // ESI bit in CAN FD format depends only on error passive flag.
+//    txMsg.dlc       = MCAN_DLC_PAYLOAD_LENGTH_16B; // CAN + CAN FD: transmit frame has 0-8 data bytes.
+//    txMsg.brs       = MCAN_BIT_RATE_SWITCHING_MODE; // CAN FD frames transmitted with bit rate switching.
+//    txMsg.fdf       = MCAN_FLEXIBLE_DATA_RATE_MODE; // Frame transmitted in CAN FD format.
+//    txMsg.efc       = 1U; // Store Tx events.
+//    txMsg.mm        = 0xAAU; // Message Marker.
+//    // Data bytes.
+//    //    txMsg.data[0]   = CANFD_SLV_ADDR_VAL;
+//    txMsg.data[0]   = 0x12;
+//    txMsg.data[1]   = 0x34;
+//    txMsg.data[2]   = 0x56;
+//    txMsg.data[3]   = 0x78;
+//    txMsg.data[4]   = 0x9A;
+//    txMsg.data[5]   = 0xBC;
+//    txMsg.data[6]   = 0xDE;
+//    txMsg.data[7]   = 0xF0;
+//    txMsg.data[8]   = 0x12;
+//    txMsg.data[9]   = 0x34;
+//    txMsg.data[10]  = 0x56;
+//    txMsg.data[11]  = 0x78;
+//    txMsg.data[12]  = 0x9A;
+//    txMsg.data[13]  = 0xBC;
+//    txMsg.data[14]  = 0xDE;
+//    txMsg.data[15]  = 0xF0;
+//    // Write Tx Message to the Message RAM.
+//    MCAN_writeMsgRam(MCANA_DRIVER_BASE, MCAN_MEM_TYPE_BUF, 0U, &txMsg);
+//    MCAN_txBufAddReq(MCANA_DRIVER_BASE, 0U);
+//    while(MCAN_getTxBufReqPend(MCANA_DRIVER_BASE));
+
+
 //    uint16_t i;
 //    for(i = 0; i < 4; i++)
 //    {
@@ -689,9 +749,9 @@ __attribute__((interrupt)) void tmr_isrLedCmd(void)
 //        mcan_cnt        = (mcan_cnt < 0xFF) ? (mcan_cnt + 1) : (0U);
 //    }
 //    MCAN_writeMsgRam(MCANA_DRIVER_BASE, MCAN_MEM_TYPE_BUF, 1U, &txMsg);
-    // Add request for transmission.
+//    // Add request for transmission.
 //    if(!(global_1ms_tmr_cnt % 10))
-//        MCAN_txBufAddReq(MCANA_DRIVER_BASE, 0U);
+//    MCAN_txBufAddReq(MCANA_DRIVER_BASE, 0U);
 
     // Timeout management
     cmd_uomodri[MOTOR_1].cptTimeout++;
@@ -935,41 +995,87 @@ __attribute__((interrupt)) void errata_isr(void)
     global_errata_cnt = (global_errata_cnt < UINT32_MAX) ? (global_errata_cnt + 1) : (0U);
 }
 
-__attribute__((interrupt))  void mcan_isr(void)
+__attribute__((interrupt))  void mcan_isr_canfd(void)
 {
     uint32_t intrStatus;
-    MCAN_RxNewDataStatus newData;
+    MCAN_RxNewDataStatus newData = {.statusLow = 0, .statusHigh = 0};
+//    uint16_t i = 0;
 
     intrStatus = MCAN_getIntrStatus(MCANA_DRIVER_BASE);
+
+//    if (MCAN_MSG_INT != intrStatus)
+//        mcan_error++;
+
     // Clear the interrupt Status.
     MCAN_clearIntrStatus(MCANA_DRIVER_BASE, intrStatus);
     //  Clearing the interrupt lineNum
     MCAN_clearInterrupt(MCANA_DRIVER_BASE, 0x2);
-    // Update the flag value.
-//    isrIntr1Flag = 0U;
 
     //  Check to see if the interrupt is caused by a message being received in dedicated RX Buffers
-    if((MCAN_INTR_SRC_DEDICATED_RX_BUFF_MSG & intrStatus) == MCAN_INTR_SRC_DEDICATED_RX_BUFF_MSG)
+    if(MCAN_INTR_SRC_DEDICATED_RX_BUFF_MSG & intrStatus)
     {
         // Read the NewData registers
         MCAN_getNewDataStatus(MCANA_DRIVER_BASE, &newData);
         // If message is received in buffer element 0
-        if((newData.statusLow & (1UL << 0U)) != 0)
+        if(newData.statusLow & 1UL)
         {
-            MCAN_readMsgRam(MCANA_DRIVER_BASE, MCAN_MEM_TYPE_BUF, 0U, 0, &rxMsg1);
-            rxMsg = rxMsg1;
+            MCAN_readMsgRam(MCANA_DRIVER_BASE, MCAN_MEM_TYPE_BUF, 0U, MCAN_RX_FIFO_NUM_0, &rxMsg);
+
+//            can_fd_id_builder_u tx_msg_id = {.main_addr = uid_unique_8b, .sub_addr = 0};
+//
+//            txMsg.id    = tx_msg_id.id_all;;
+//            txMsg.rtr   = MCAN_RTR_TX_DATA_FRAME; // Transmit data frame.
+//            txMsg.xtd   = MCAN_ID_TYPE_11_BIT; // 11-bit standard identifier.
+//            txMsg.esi   = MCAN_ESI_PASSIVE_ERROR_FLAG; // ESI bit in CAN FD format depends only on error passive flag.
+//            txMsg.dlc   = MCAN_DLC_PAYLOAD_LENGTH_16B; // CAN + CAN FD: transmit frame has 0-8 data bytes.
+//            txMsg.brs   = MCAN_BIT_RATE_SWITCHING_MODE; // CAN FD frames transmitted with bit rate switching.
+//            txMsg.fdf   = MCAN_FLEXIBLE_DATA_RATE_MODE; // Frame transmitted in CAN FD format.
+//            txMsg.efc   = 1U; // Store Tx events.
+//            txMsg.mm    = 0xAAU; // Message Marker.
+
+            //CANFD_ID(CANFD_MST_ADDR_VAL, CANFD_MST_HELLO_MSG);// Identifier Value.
+//            txMsg.rtr   = 0U; // Transmit data frame.
+//            txMsg.xtd   = MCAN_ID_TYPE_11_BIT;//rxMsg.xtd; // 11-bit standard identifier.
+//            txMsg.esi   = rxMsg.esi;// ESI bit in CAN FD format depends only on error passive flag.
+//            txMsg.dlc   = rxMsg.dlc;//0x1U; // CAN + CAN FD: transmit frame has 0-8 data bytes.
+//            txMsg.brs   = rxMsg.brs;//MCAN_BIT_RATE_SWITCHING_MODE_ENABLE; //// CAN FD frames transmitted with bit rate switching.
+//            txMsg.fdf   = rxMsg.fdf;//MCAN_FLEXIBLE_DATA_RATE_MODE; // rxMsg.fdf;//Frame transmitted in CAN FD format.
+//            txMsg.efc   = 0U; // Store Tx events.
+//            txMsg.mm    = 0xAAU; // Message Marker.
+            // Data bytes.
+//            for(i = 0; i < 16; i++)
+//                txMsg.data[i]   = rxMsg.data[i] + 1;//CANFD_SLV_ADDR_VAL;
+//
+//            MCAN_writeMsgRam(MCANA_DRIVER_BASE, MCAN_MEM_TYPE_BUF, 0U, &txMsg);
+//            isrIntr0Flag = 1;
+            // Write Tx Message to the Message RAM.
+//            MCAN_writeMsgRam(MCANA_DRIVER_BASE, MCAN_MEM_TYPE_BUF, 0U, &txMsg);
+        //    // Add request for transmission.
+            MCAN_txBufAddReq(MCANA_DRIVER_BASE, 0U);
+            while(MCAN_getTxBufReqPend(MCANA_DRIVER_BASE));
+
         }
         //  Clearing the NewData registers
         MCAN_clearNewDataStatus(MCANA_DRIVER_BASE, &newData);
-        }
-        else
-        {
-            mcan_error++;
-            //  Interrupt handling for other interrupt sources goes here
-        }
+    }
+    else
+        mcan_error++;
+    //  Interrupt handling for other interrupt sources goes here
 
 
+//    if((MCAN_INTR_SRC_TRANS_COMPLETE | MCAN_INTR_SRC_TX_EVT_FIFO_NEW_ENTRY) & intrStatus)
+//    {
+//
+//    }
 
+//    else
+//    {
+//        mcan_error++;
+//        //  Interrupt handling for other interrupt sources goes here
+//    }
+
+    //  Clearing the NewData registers
+//    MCAN_clearNewDataStatus(MCANA_DRIVER_BASE, &newData);
 //
 //    // Read Message RAM.
 //    //MCAN_readMsgRam(MCANA_DRIVER_BASE, MCAN_MEM_TYPE_BUF, 0U, MCAN_RX_FIFO_NUM_0, &rxMsg);

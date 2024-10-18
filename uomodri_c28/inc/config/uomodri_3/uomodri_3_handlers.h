@@ -136,8 +136,8 @@ static const gpio_cfg_t gpioPinsCfgList[] =
  RS485_TX_DEF,                      /* RS485 Tx pin */
  RS485_RX_DEF,                      /* RS485 Rx pin */
  RS485_TX_EN_DEF,                   /* RS485 Tx enable pin */
- CANFD_TX_DEF,                      /* CAN-FD Tx pin */
  CANFD_RX_DEF,                      /* CAN-FD Rx pin */
+ CANFD_TX_DEF,                      /* CAN-FD Tx pin */
  CANFD_SHDN_MODE_DEF,               /* CAN-FD shutdown pin */
  CANFD_RS485_MUX_SEL_DEF,           /* RS485/CAN-FD multiplexer command pin */
  /* Debug pins */
