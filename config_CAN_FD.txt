@@ -34,6 +34,15 @@ cansend can1 004##3.55.75.aa.cc.10.aB.ff.11.00.ff.00.00.00.00.00.ff.78.aa.55.aa.
 cansend can1 004##3.55.75.aa.cc.10.aB.ff.11.00.ff.00.00.00.00.00.ff
 
 #--------------------------------------------------
+# working NOMINAL 4Mb/s, DATA 8Mb/s
+sudo ip link set can1 up type can bitrate 4000000 dbitrate 8000000 fd on restart-ms 1000
+
+# send to 0x3F (sub 0) - 32bytes / FD mode / dual data rate - reply to 0x00 (sub 7) - same message
+cansend can1 1f8##3.31.32.33.34.35.36.37.38.39.55.75.aa.cc.10.aB.ff.11.00.ff.17.56.78.23.aa.55.00.ff.00.30.32
+# send to 0x31 (sub 0) - 24bytes / FD mode / dual data rate - reply to 0x00 (sub 7) - same message
+cansend can1 188##3.55.75.aa.cc.10.aB.ff.11.00.ff.17.56.78.23.aa.55.00.ff.00.ff.ff.ff.00.aa
+
+#--------------------------------------------------
 # Some help on CAN config
 ip link set can1 type can help
 

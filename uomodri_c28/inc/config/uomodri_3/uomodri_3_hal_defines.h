@@ -1436,13 +1436,12 @@
 #define MCAN_LOOPBACK_MODE_CTRL                 MCAN_LOOPBACK_MODE_CTRL_DISABLE
 // Define the loopback mode (Internal/external)
 #define MCAN_LOOPBACK_MODE                      MCAN_LPBK_MODE_EXTERNAL
-#define MCAN_MSG_INT                            (0x81200)
 
 // MCAN initialization
 // Enable/Disable the CAN-FD (CAN with Flexible Data-Rate) mode.
 #define MCAN_FLEXIBLE_DATA_RATE_MODE            MCAN_FLEXIBLE_DATA_RATE_MODE_ENABLE
 // Use single or dual data rate mode (after arbitration)
-#define MCAN_BIT_RATE_SWITCHING_MODE            MCAN_BIT_RATE_SWITCHING_MODE_DISABLE
+#define MCAN_BIT_RATE_SWITCHING_MODE            MCAN_BIT_RATE_SWITCHING_MODE_ENABLE
 // Enable/Disable transmit pause during retry.
 #define MCAN_TX_PAUSE                           MCAN_TX_PAUSE_DISABLE
 // Enable/Disable Edge Filtering during Bus Integration
@@ -1494,7 +1493,7 @@
 // Accept/Reject Non-matching Frames messages with 29-bit IDs
 #define MCAN_NO_MATCH_EXT_ID                    MCAN_REJECT_NO_MATCH_EXT_ID
 // Accept/Reject Non-matching Frames messages with 11-bit IDs
-#define MCAN_NO_MATCH_STD_ID                    MCAN_REJECT_NO_MATCH_STD_ID
+#define MCAN_NO_MATCH_STD_ID                    MCAN_ACCEPT_NO_MATCH_STD_ID_IN_RX_FIFO0
 // structure associated to MCAN configuration
 #define MCAN_CONFIG_PARAMS                      { \
                                                     .monEnable              = MCAN_BUS_MONITORING_MODE, \
@@ -1513,15 +1512,18 @@
 // MCAN bit timing
 // see MCAN_BitTimingCalculator.xls in C2000Ware
 #define MCAN_USE_NOMINAL_RATE_1M                (1U)
+#define MCAN_USE_NOMINAL_RATE_2M                (2U)
+#define MCAN_USE_NOMINAL_RATE_4M                (4U)
 #define MCAN_USE_NOMINAL_RATE_5M                (5U)
+#define MCAN_USE_NOMINAL_RATE_8M                (8U)
 #define MCAN_USE_NOMINAL_RATE_10M               (10U)
 #define MCAN_USE_DATA_RATE_1M                   (1U)
 #define MCAN_USE_DATA_RATE_2M                   (2U)
 #define MCAN_USE_DATA_RATE_5M                   (5U)
 #define MCAN_USE_DATA_RATE_8M                   (8U)
 #define MCAN_USE_DATA_RATE_10M                  (10U)
-#define MCAN_USE_NOMINAL_RATE                   MCAN_USE_NOMINAL_RATE_1M
-#define MCAN_USE_DATA_RATE                      MCAN_USE_DATA_RATE_5M
+#define MCAN_USE_NOMINAL_RATE                   MCAN_USE_NOMINAL_RATE_4M
+#define MCAN_USE_DATA_RATE                      MCAN_USE_DATA_RATE_8M
 // According MCAN_BitTimingCalculator.xls in C2000Ware here are the timing
 #if (MCAN_USE_NOMINAL_RATE == MCAN_USE_NOMINAL_RATE_1M)
 // 1Mb/s NOMINAL
@@ -1530,6 +1532,20 @@
 #define MCAN_NOMINAL_TIME_SEG1_BEFORE_SP        (9U)
 #define MCAN_NOMINAL_TIME_SEG2_AFTER_SP         (9U)
 #define MCAN_NOMINAL_SYNC_JUMP_WIDTH            (9U)
+#elif (MCAN_USE_NOMINAL_RATE == MCAN_USE_NOMINAL_RATE_2M)
+// 2Mb/s NOMINAL
+#define MCAN_NOMINAL_BIT_RATE_PRESCALER         (5U)
+#define MCAN_NOMINAL_PROPAGATION_SEG            (1U)
+#define MCAN_NOMINAL_TIME_SEG1_BEFORE_SP        (9U)
+#define MCAN_NOMINAL_TIME_SEG2_AFTER_SP         (9U)
+#define MCAN_NOMINAL_SYNC_JUMP_WIDTH            (9U)
+#elif (MCAN_USE_NOMINAL_RATE == MCAN_USE_NOMINAL_RATE_4M)
+// 4Mb/s NOMINAL
+#define MCAN_NOMINAL_BIT_RATE_PRESCALER         (2U)
+#define MCAN_NOMINAL_PROPAGATION_SEG            (1U)
+#define MCAN_NOMINAL_TIME_SEG1_BEFORE_SP        (11U)
+#define MCAN_NOMINAL_TIME_SEG2_AFTER_SP         (12U)
+#define MCAN_NOMINAL_SYNC_JUMP_WIDTH            (11U)
 #elif (MCAN_USE_NOMINAL_RATE == MCAN_USE_NOMINAL_RATE_5M)
 // 5Mb/s NOMINAL
 #define MCAN_NOMINAL_BIT_RATE_PRESCALER         (2U)
@@ -1537,6 +1553,13 @@
 #define MCAN_NOMINAL_TIME_SEG1_BEFORE_SP        (9U)
 #define MCAN_NOMINAL_TIME_SEG2_AFTER_SP         (9U)
 #define MCAN_NOMINAL_SYNC_JUMP_WIDTH            (9U)
+#elif (MCAN_USE_NOMINAL_RATE == MCAN_USE_NOMINAL_RATE_8M)
+// 8Mb/s NOMINAL
+#define MCAN_NOMINAL_BIT_RATE_PRESCALER         (1U)
+#define MCAN_NOMINAL_PROPAGATION_SEG            (1U)
+#define MCAN_NOMINAL_TIME_SEG1_BEFORE_SP        (11U)
+#define MCAN_NOMINAL_TIME_SEG2_AFTER_SP         (12U)
+#define MCAN_NOMINAL_SYNC_JUMP_WIDTH            (11U)
 #elif (MCAN_USE_NOMINAL_RATE == MCAN_USE_NOMINAL_RATE_10M)
 // 10Mb/s NOMINAL
 #define MCAN_NOMINAL_BIT_RATE_PRESCALER         (1U)
@@ -1610,9 +1633,9 @@
 // Tx FIFO/Queue Mode
 #define MCAN_TX_BUFFER_MODE                     MCAN_TX_FIFO_OP
 // RX FIFO_0 full management - Blocking or overwrite
-#define MCAN_RX_FIFO0_OP_MODE                   MCAN_RX_FIFO0_BLOCKING_MODE
+#define MCAN_RX_FIFO0_OP_MODE                   MCAN_RX_FIFO0_OVERWRITE_MODE
 // RX FIFO_1 full management - Blocking or overwrite
-#define MCAN_RX_FIFO1_OP_MODE                   MCAN_RX_FIFO1_BLOCKING_MODE
+#define MCAN_RX_FIFO1_OP_MODE                   MCAN_RX_FIFO1_OVERWRITE_MODE
 // Tx Event FIFO - Level for Tx Event FIFO watermark interrupt
 #define MCAN_TX_EVENT_FIFO_WATERMARK_IT         (0U)
 // Rx FIFO0 - Level for Rx FIFO 0 watermark interrupt
@@ -1627,7 +1650,7 @@
 #define MCAN_EXT_ID_FILTER_NUM                  (0U)
 #define MCAN_EXT_ID_FILTER_MEM_SPACE            (MCAN_EXT_ID_FILTER_NUM * MCANSS_EXT_ID_FILTER_SIZE_WORDS * 4U)
 // RX FIFO_0 - Number of Rx FIFO_0 elements / Memory space used.
-#define MCAN_RX_FIFO0_NUM                       (0U)
+#define MCAN_RX_FIFO0_NUM                       (4U)
 #define MCAN_RX_FIFO0_ELEM_SIZE                 (MCAN_ELEM_SIZE_64BYTES)
 #define MCAN_RX_FIFO0_MEM_SPACE                 (MCAN_RX_FIFO0_NUM * MCAN_STRUCT_SIZE(MCAN_RX_FIFO0_ELEM_SIZE))
 // RX FIFO_1 - Number of Rx FIFO_1 elements / Memory space used.
@@ -1692,27 +1715,39 @@
                                                     .rxFIFO1waterMark       = MCAN_RX_FIFO1_WATERMARK_IT, \
                                                 }
 
-#define MCAN_STD_ID_FILTER1_PARAM_CFG1          (0x188)
-//(0x1F8)
-//(uid_unique_8b << 3U)
-//(0x4U)
-//((uid_unique_8b << 3U) & 0x07F8)
-#define MCAN_STD_ID_FILTER2_PARAM_CFG1          (0)
-//0x1FF)
-//((uid_unique_8b << 3U) + 0x7U)
-//(0x0U)
-//(0x7F8)
-#define MCAN_STD_ID_FILTER_ELEM_CFG1            (MCAN_STDFILTEC_RXBUFF)
-#define MCAN_STD_ID_FILTER_TYPE_CFG1            (MCAN_STDFILT_RANGE)
-#define MCAN_STD_ID_FILTER_CFG1                 { \
-                                                    .sfid1                  = MCAN_STD_ID_FILTER1_PARAM_CFG1, \
-                                                    .sfid2                  = MCAN_STD_ID_FILTER2_PARAM_CFG1, \
-                                                    .sfec                   = MCAN_STD_ID_FILTER_ELEM_CFG1, \
-                                                    .sft                    = MCAN_STD_ID_FILTER_TYPE_CFG1, \
+// filter for Rx Buffer #0
+// standard ID that filter will accept (UID_unique_8b).
+// SFID2[10, 9] -> Received message stored in an Rx buffer.
+// SFID2[0,5]   -> Index of the dedicated Rx buffer.
+// Store message into dedicated Rx buffer if filter matches.
+// Use range mode to define valid ID (is ignored). Filtering to store into dedicated RX BUFFER.
+#define MCAN_STD_ID_FLT_RX_BUF_0_ID             CANFD_ID(CANFD_SLV_ID, CANFD_SLV_CMD_MSG)
+#define MCAN_STD_ID_FLT_RX_BUF_0_NUM            (0U)
+#define MCAN_STD_ID_FLT_RX_BUF_0_ELEM           (MCAN_STDFILTEC_RXBUFF)
+#define MCAN_STD_ID_FLT_RX_BUF_0_TYPE           (MCAN_STDFILT_RANGE)
+#define MCAN_STD_ID_FLT_RX_BUF_0_CFG            { \
+                                                    .sfid1                  = MCAN_STD_ID_FLT_RX_BUF_0_ID, \
+                                                    .sfid2                  = MCAN_STD_ID_FLT_RX_BUF_0_NUM, \
+                                                    .sfec                   = MCAN_STD_ID_FLT_RX_BUF_0_ELEM, \
+                                                    .sft                    = MCAN_STD_ID_FLT_RX_BUF_0_TYPE, \
                                                 }
+
+//#define MCAN_STD_ID_FLT_RX_FIFO_0_ID_FILTER     CANFD_ID(CANFD_SLV_ID, CANFD_SLV_CMD_MSG)
+//#define MCAN_STD_ID_FLT_RX_FIFO_0_ID_MASK       (0x7FFU)
+//#define MCAN_STD_ID_FLT_RX_FIFO_0_ELEM          (MCAN_STDFILTEC_REJECT)
+//#define MCAN_STD_ID_FLT_RX_FIFO_0_TYPE          (MCAN_STDFILT_CLASSIC)
+//#define MCAN_STD_ID_FLT_RX_FIFO_0_CFG           { \
+//                                                    .sfid1                  = MCAN_STD_ID_FLT_RX_FIFO_0_ID_FILTER, \
+//                                                    .sfid2                  = MCAN_STD_ID_FLT_RX_FIFO_0_ID_MASK, \
+//                                                    .sfec                   = MCAN_STD_ID_FLT_RX_FIFO_0_ELEM, \
+//                                                    .sft                    = MCAN_STD_ID_FLT_RX_FIFO_0_TYPE, \
+//                                                }
+
 #define MCAN_STD_ID_FILTER_CFG                  { \
-                                                    MCAN_STD_ID_FILTER_CFG1, \
+                                                    MCAN_STD_ID_FLT_RX_BUF_0_CFG, \
                                                 }
+//                                                    MCAN_STD_ID_FLT_RX_FIFO_0_CFG, \
+//                                                }
 #define MCAN_EXT_ID_FILTER_CFG                  { \
                                                 }
 

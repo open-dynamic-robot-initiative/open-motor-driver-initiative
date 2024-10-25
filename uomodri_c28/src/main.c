@@ -135,7 +135,6 @@ volatile uint16_t mcan_cnt = 0;
  * EXTERNAL VARIABLES
  ***********************************************************************/
 extern const hal_cfg_t  hal;
-//extern volatile uint32_t uid_unique_8b;
 
 /***********************************************************************
  * FUNCTIONS DEFINITION
@@ -168,59 +167,26 @@ void main(void)
     // Start ADC offset calibration on CLA
     CLA_forceTasks(CLA1_BASE, CLA_ADC_CALIB_TASK_FLAG);
 
+    ws2812b_writeLed(MASTER_LED, 0x7F, 0x7F, 0x7F, &led_spi_tx[0]);
+    DMA_startChannel(DMA_LED_SPI_TX_BASE_ADDR);
+
     while(com_bus_select == COM_NO_BUS_DEFINED)
     {
-        com_bus_select = COM_checkSPIBus(&com_spi_rx.msg);
-        com_bus_select = COM_USE_CANFD_BUS;
+        COM_checkSPIBus(&com_spi_rx.msg, &com_bus_select);
+        COM_checkCANFDBus(&com_bus_select);
+//        com_bus_select = COM_USE_CANFD_BUS;
 
     }
-//        static inline bool DMA_getTransferStatusFlag(DMA_COM_SPI_RX_BASE_ADDR);
-//
-//
-//        // Compare computed CRC with the one received in message.
-//        spi_rx_msg_t* p_msg_spi = &com_spi_rx.msg;
-//        uint32_t msg_crc        = COM_msgCRC((uint16_t *)&p_msg_spi->data, COM_MSG_SPI_RX_16BIT_PAYLOAD_LENGTH);
-//        if(((com_bus_select == COM_USE_SPI_BUS) || (com_bus_select == COM_NO_BUS_DEFINED)) && \
-//                    (p_msg_spi->crc.u16_msb == MSB_32(msg_crc)) && (p_msg_spi->crc.u16_lsb == LSB_32(msg_crc)))
-//            {
-//                // Extract received message & send new commands to FOC structures. Define SPI as communication bus by default.
-//                COM_msgExtract(&p_msg_spi->data, &cmd_uomodri[MOTOR_1], &cmd_uomodri[MOTOR_2]);
-//                // Force an update of the motors command structures (commands values)
-//                CLA_forceTasks(CLA1_BASE, CLA_CMD_NEW_TASK_FLAG);
-//                com_bus_select      = COM_USE_SPI_BUS;
-//                // Disable definitely the ITs linked to RS485.
-//        //        CLB_disableCLB(RS485_RX_TX_CLB_EOT_BASE);
-//        //        CLB_disableCLB(RS485_RX_CLB_ADDR_VALID_BASE);
-//                Interrupt_disable(INT_RS485_Rx_Tx_CLB);
-//
-//        //        SCI_disableModule(COM_SCI_BASE);
-//                Interrupt_disable(INT_RS485_RX_MSG);
-//                Interrupt_disable(INT_RS485_TX_MSG);
-//            }
-//            // Restart DMA reception & reset the SPI Rx fifo.
-//            DMA_startChannel(DMA_COM_SPI_RX_BASE_ADDR);
-//            SPI_resetRxFIFO(COM_SPI_BASE);
-//            // Clear IT flag
-//            Interrupt_clearACKGroup(INT_DMA_RX_MSG_GROUP);
-//
-//        if(!COM_SPI_CS_READ)
-//            com_bus_select = COM_USE_SPI_BUS;
-//        else if(MCAN_getErrCounters(MCANA_DRIVER_BASE, &mcan_err_cnt))
-//        {
-//
-//        }
-//    }
 
-
-    // Initialize message0 to transmit.
-    COM_MSG_CANFD_HELLO(txMsg[0]);
-    // Write Tx Message0 to the Message RAM.
-    MCAN_writeMsgRam(MCANA_DRIVER_BASE, MCAN_MEM_TYPE_BUF, 0U, &txMsg[0]);
-
-    // Initialize message0 to transmit.
-    COM_MSG_CANFD_REPLY(txMsg[1]);
-    // Write Tx Message0 to the Message RAM.
-    MCAN_writeMsgRam(MCANA_DRIVER_BASE, MCAN_MEM_TYPE_BUF, 1U, &txMsg[1]);
+//    // Initialize message0 to transmit.
+//    COM_MSG_CANFD_HELLO(txMsg[0]);
+//    // Write Tx Message0 to the Message RAM.
+//    MCAN_writeMsgRam(MCANA_DRIVER_BASE, MCAN_MEM_TYPE_BUF, 0U, &txMsg[0]);
+//
+//    // Initialize message0 to transmit.
+//    COM_MSG_CANFD_REPLY(txMsg[1]);
+//    // Write Tx Message0 to the Message RAM.
+//    MCAN_writeMsgRam(MCANA_DRIVER_BASE, MCAN_MEM_TYPE_BUF, 1U, &txMsg[1]);
 
      //can_fd_id_builder_u tx_msg_id = {.main_addr = 0x4, .sub_addr = 0x7};
  //    tx_msg_id.id_all;
@@ -997,15 +963,10 @@ __attribute__((interrupt)) void errata_isr(void)
 
 __attribute__((interrupt))  void mcan_isr_canfd(void)
 {
-    uint32_t intrStatus;
     MCAN_RxNewDataStatus newData = {.statusLow = 0, .statusHigh = 0};
-//    uint16_t i = 0;
+    uint16_t i = 0;
 
-    intrStatus = MCAN_getIntrStatus(MCANA_DRIVER_BASE);
-
-//    if (MCAN_MSG_INT != intrStatus)
-//        mcan_error++;
-
+    uint32_t intrStatus = MCAN_getIntrStatus(MCANA_DRIVER_BASE);
     // Clear the interrupt Status.
     MCAN_clearIntrStatus(MCANA_DRIVER_BASE, intrStatus);
     //  Clearing the interrupt lineNum
@@ -1017,21 +978,26 @@ __attribute__((interrupt))  void mcan_isr_canfd(void)
         // Read the NewData registers
         MCAN_getNewDataStatus(MCANA_DRIVER_BASE, &newData);
         // If message is received in buffer element 0
-        if(newData.statusLow & 1UL)
+        if(newData.statusLow & 0xFFUL)
         {
             MCAN_readMsgRam(MCANA_DRIVER_BASE, MCAN_MEM_TYPE_BUF, 0U, MCAN_RX_FIFO_NUM_0, &rxMsg);
 
-//            can_fd_id_builder_u tx_msg_id = {.main_addr = uid_unique_8b, .sub_addr = 0};
+            can_fd_id_builder_u rx_msg_id = {.id_all = rxMsg.id}, tx_msg_id;
 //
-//            txMsg.id    = tx_msg_id.id_all;;
-//            txMsg.rtr   = MCAN_RTR_TX_DATA_FRAME; // Transmit data frame.
-//            txMsg.xtd   = MCAN_ID_TYPE_11_BIT; // 11-bit standard identifier.
-//            txMsg.esi   = MCAN_ESI_PASSIVE_ERROR_FLAG; // ESI bit in CAN FD format depends only on error passive flag.
-//            txMsg.dlc   = MCAN_DLC_PAYLOAD_LENGTH_16B; // CAN + CAN FD: transmit frame has 0-8 data bytes.
-//            txMsg.brs   = MCAN_BIT_RATE_SWITCHING_MODE; // CAN FD frames transmitted with bit rate switching.
-//            txMsg.fdf   = MCAN_FLEXIBLE_DATA_RATE_MODE; // Frame transmitted in CAN FD format.
-//            txMsg.efc   = 1U; // Store Tx events.
-//            txMsg.mm    = 0xAAU; // Message Marker.
+//                                             .main_addr = 0, .sub_addr = (rxMsg.id & 0x7)};
+//            tx_msg_id.id_all += 1;
+            tx_msg_id.main_addr     = CANFD_MST_ID;
+            tx_msg_id.sub_addr      = rx_msg_id.sub_addr + 1;
+            tx_msg_id.status_rsv1   = 0;
+            txMsg[0].id    = tx_msg_id.id_all;//sub_addr + 1;//CANFD_ID(CANFD_MST_ADDR_VAL, ((rxMsg.id & 0x7) + 1));// Identifier Value.tx_msg_id.id_all;//((rxMsg.id & 0x7) + 1);
+            txMsg[0].rtr   = rxMsg.rtr;//MCAN_RTR_TX_DATA_FRAME; // Transmit data frame.
+            txMsg[0].xtd   = rxMsg.xtd;//MCAN_ID_TYPE_11_BIT; // 11-bit standard identifier.
+            txMsg[0].esi   = rxMsg.esi;//MCAN_ESI_PASSIVE_ERROR_FLAG; // ESI bit in CAN FD format depends only on error passive flag.
+            txMsg[0].dlc   = rxMsg.dlc;//MCAN_DLC_PAYLOAD_LENGTH_16B; // CAN + CAN FD: transmit frame has 0-8 data bytes.
+            txMsg[0].brs   = rxMsg.brs;//MCAN_BIT_RATE_SWITCHING_MODE; // CAN FD frames transmitted with bit rate switching.
+            txMsg[0].fdf   = rxMsg.fdf;//MCAN_FLEXIBLE_DATA_RATE_MODE; // Frame transmitted in CAN FD format.
+            txMsg[0].efc   = 1U; // Store Tx events.
+            txMsg[0].mm    = 0xAAU; // Message Marker.
 
             //CANFD_ID(CANFD_MST_ADDR_VAL, CANFD_MST_HELLO_MSG);// Identifier Value.
 //            txMsg.rtr   = 0U; // Transmit data frame.
@@ -1043,10 +1009,10 @@ __attribute__((interrupt))  void mcan_isr_canfd(void)
 //            txMsg.efc   = 0U; // Store Tx events.
 //            txMsg.mm    = 0xAAU; // Message Marker.
             // Data bytes.
-//            for(i = 0; i < 16; i++)
-//                txMsg.data[i]   = rxMsg.data[i] + 1;//CANFD_SLV_ADDR_VAL;
+            for(i = 0; i < 64; i++)
+                txMsg[0].data[i]   = rxMsg.data[i];//CANFD_SLV_ADDR_VAL;
 //
-//            MCAN_writeMsgRam(MCANA_DRIVER_BASE, MCAN_MEM_TYPE_BUF, 0U, &txMsg);
+            MCAN_writeMsgRam(MCANA_DRIVER_BASE, MCAN_MEM_TYPE_BUF, 0U, &txMsg[0]);
 //            isrIntr0Flag = 1;
             // Write Tx Message to the Message RAM.
 //            MCAN_writeMsgRam(MCANA_DRIVER_BASE, MCAN_MEM_TYPE_BUF, 0U, &txMsg);

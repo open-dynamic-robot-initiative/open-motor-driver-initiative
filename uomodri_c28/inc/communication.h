@@ -105,16 +105,49 @@
 /***********************************************************************
  * CAN-FD CONSTANTS
  ***********************************************************************/
-#define CANFD_MST_ADDR_VAL                      (0U)
-#define CANFD_SLV_ADDR_VAL                      (uid_unique_8b)
+#define CANFD_IT_TEST                           (MCAN_INTR_SRC_RX_FIFO0_NEW_MSG | \
+                                                 MCAN_INTR_SRC_RX_FIFO1_NEW_MSG | \
+                                                 MCAN_INTR_SRC_HIGH_PRIO_MSG | \
+                                                 MCAN_INTR_SRC_TRANS_COMPLETE | \
+                                                 MCAN_INTR_SRC_TRANS_CANCEL_FINISH | \
+                                                 MCAN_INTR_SRC_TX_EVT_FIFO_NEW_ENTRY | \
+                                                 MCAN_INTR_SRC_TIMESTAMP_WRAPAROUND | \
+                                                 MCAN_INTR_SRC_MSG_RAM_ACCESS_FAILURE | \
+                                                 MCAN_INTR_SRC_TIMEOUT | \
+                                                 MCAN_INTR_SRC_DEDICATED_RX_BUFF_MSG | \
+                                                 MCAN_INTR_SRC_BIT_ERR_CORRECTED | \
+                                                 MCAN_INTR_SRC_BIT_ERR_UNCORRECTED | \
+                                                 MCAN_INTR_SRC_ERR_LOG_OVRFLW | \
+                                                 MCAN_INTR_SRC_ERR_PASSIVE | \
+                                                 MCAN_INTR_SRC_WARNING_STATUS | \
+                                                 MCAN_INTR_SRC_BUS_OFF_STATUS | \
+                                                 MCAN_INTR_SRC_WATCHDOG | \
+                                                 MCAN_INTR_SRC_PROTOCOL_ERR_ARB | \
+                                                 MCAN_INTR_SRC_PROTOCOL_ERR_DATA | \
+                                                 MCAN_INTR_SRC_RES_ADDR_ACCESS)
 
-#define CANFD_MST_SLV_ADDR_POS                  (3U)
-#define CANFD_MST_SLV_ADDR_MASK                 (0xFFU)
-#define CANFD_MST_SLV_MSG_POS                   (0U)
-#define CANFD_MST_SLV_MSG_MASK                  (0x7U)
+#define CANFD_IT_TEST_VALID                     (MCAN_INTR_SRC_RX_FIFO0_NEW_MSG | \
+                                                 MCAN_INTR_SRC_RX_FIFO0_WATERMARK | \
+                                                 MCAN_INTR_SRC_RX_FIFO0_FULL | \
+                                                 MCAN_INTR_SRC_RX_FIFO0_MSG_LOST | \
+                                                 MCAN_INTR_SRC_RX_FIFO1_NEW_MSG | \
+                                                 MCAN_INTR_SRC_RX_FIFO1_WATERMARK | \
+                                                 MCAN_INTR_SRC_RX_FIFO1_FULL | \
+                                                 MCAN_INTR_SRC_RX_FIFO1_MSG_LOST | \
+                                                 MCAN_INTR_SRC_HIGH_PRIO_MSG | \
+                                                 MCAN_INTR_SRC_DEDICATED_RX_BUFF_MSG)
 
-#define CANFD_MST_SLV_ID_POS                    (18U)
-#define CANFD_MST_SLV_11BITS_MASK               (0x7FFU)
+
+#define CANFD_MST_ID                            (0U)
+#define CANFD_SLV_ID                            (uid_unique_8b)
+
+#define CANFD_SUB_ID_POS                        (0U)
+#define CANFD_ID_POS                            (3U)
+#define CANFD_ID_REG_POS                        (18U)
+
+#define CANFD_SUB_ID_MASK                       (0x7U)
+#define CANFD_ID_MASK                           (0xFFU)
+#define CANFD_ID_11b_MASK                       (0x7FFU)
 
 #define CANFD_MST_SENSOR_MSG                    (0U)
 #define CANFD_MST_IMU_MSG                       (1U)
@@ -123,14 +156,10 @@
 #define CANFD_SLV_CMD_MSG                       (0U)
 #define CANFD_SLV_FLASH_NEW_MSG                 (7U)
 
-#define CANFD_MST_SLV_ADDR(canfd_addr)          ((canfd_addr & CANFD_MST_SLV_ADDR_MASK) << CANFD_MST_SLV_ADDR_POS)
-#define CANFD_MST_SLV_MSG(canfd_msg)            ((canfd_msg & CANFD_MST_SLV_MSG_MASK) << CANFD_MST_SLV_MSG_POS)
-#define CANFD_MST_SLV_ID(canfd_addr, canfd_msg) ((CANFD_MST_SLV_ADDR(canfd_addr) | CANFD_MST_SLV_MSG(canfd_msg)) & CANFD_MST_SLV_11BITS_MASK)
-#define CANFD_ID(canfd_addr, canfd_msg)         ((uint32_t)CANFD_MST_SLV_ID(canfd_addr, canfd_msg) << CANFD_MST_SLV_ID_POS)
-
-#define CANFD_MST_ID(canfd_mst_msg)             CANFD_ID(CANFD_MST_ADDR_VAL, canfd_mst_msg)
-#define CANFD_SLV_ID(canfd_slv_msg)             CANFD_ID(CANFD_SLV_ADDR_VAL, canfd_slv_msg)
-//CANFD_ID(CANFD_MST_ADDR_VAL, CANFD_MST_HELLO_MSG); \
+#define CANFD_ID(canfd_id, canfd_subid)         (((canfd_id & CANFD_ID_MASK) << CANFD_ID_POS) | \
+                                                 ((canfd_subid & CANFD_SUB_ID_MASK) << CANFD_SUB_ID_POS) & \
+                                                 CANFD_ID_11b_MASK)
+#define CANFD_ID_REG(canfd_id, canfd_subid)     (CANFD_ID(canfd_id, canfd_subid) << CANFD_ID_REG_POS)
 
 #define COM_MSG_CANFD_HELLO(x)                  x.id        = CANFD_ID(CANFD_MST_ADDR_VAL, CANFD_MST_HELLO_MSG);\
                                                 x.rtr       = MCAN_RTR_TX_DATA_FRAME; \
@@ -624,7 +653,8 @@ void COM_initCmdStruct(cmd_t*);
 uint32_t COM_msgCRC(uint16_t*, uint16_t);
 inline void RS485_msgReceive(uint32_t, rs485_rx_t*);
 inline void RS485_msgTransmit(uint32_t, rs485_tx_t*);
-com_bus_e COM_checkSPIBus(spi_rx_msg_t*);
+void COM_checkSPIBus(spi_rx_msg_t*, com_bus_e*);
+void COM_checkCANFDBus(com_bus_e*);
 
 //void SCI_rxDisable(uint32_t);
 //void SCI_rxEnable(uint32_t);
