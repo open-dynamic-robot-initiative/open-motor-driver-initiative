@@ -38,8 +38,8 @@
         "other_text_upright": true,
         "pads": {
           "drill": 0.0,
-          "height": 1.7,
-          "width": 0.9
+          "height": 1.0,
+          "width": 0.3
         },
         "silk_line_width": 0.12,
         "silk_text_italic": false,
@@ -85,6 +85,7 @@
         "footprint_type_mismatch": "error",
         "hole_clearance": "error",
         "hole_near_hole": "error",
+        "holes_co_located": "warning",
         "invalid_outline": "error",
         "isolated_copper": "warning",
         "item_on_disabled_layer": "error",
@@ -1012,6 +1013,7 @@
   },
   "schematic": {
     "annotate_start_num": 0,
+    "bom_export_filename": "",
     "bom_fmt_presets": [],
     "bom_fmt_settings": {
       "field_delimiter": ",",
@@ -1228,10 +1230,6 @@
     [
       "4fa0662b-a85d-4e25-9d18-e8dd09c83e01",
       "OMODRI_SA_IMU"
-    ],
-    [
-      "aa31b5bc-c191-4f3e-9f27-6b37aab55900",
-      "OMODRI_SA_COM_SPI"
     ],
     [
       "4803a254-40f4-47a3-af95-8a896001a655",

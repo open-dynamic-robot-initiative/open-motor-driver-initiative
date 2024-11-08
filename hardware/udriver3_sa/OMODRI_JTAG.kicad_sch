@@ -6,7 +6,7 @@
 	(paper "A4")
 	(title_block
 		(title "Open MOtor DRiver Initiative  - Single Axis (OMODRI_SA)")
-		(date "2024-03-20")
+		(date "2024-11-08")
 		(rev "1.0")
 		(company "LAAS/CNRS")
 	)
@@ -751,7 +751,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "8fe7e095-6c05-4752-a156-09277af48d07")
-		(property "Reference" "R37"
+		(property "Reference" "R35"
 			(at 128.016 115.062 0)
 			(effects
 				(font
@@ -877,7 +877,7 @@
 		(instances
 			(project "omodri_sa_laas"
 				(path "/de5b13f0-933a-4c4d-9979-13dc57b13241/8971aee4-c199-4562-824f-9b9a5f7ff02d"
-					(reference "R37")
+					(reference "R35")
 					(unit 1)
 				)
 			)
@@ -892,7 +892,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "965dc014-1364-499e-a72d-aa4df9d3e1b2")
-		(property "Reference" "J9"
+		(property "Reference" "J3"
 			(at 144.272 108.204 0)
 			(effects
 				(font
@@ -1025,7 +1025,7 @@
 		(instances
 			(project "omodri_sa_laas"
 				(path "/de5b13f0-933a-4c4d-9979-13dc57b13241/8971aee4-c199-4562-824f-9b9a5f7ff02d"
-					(reference "J9")
+					(reference "J3")
 					(unit 1)
 				)
 			)
@@ -1040,7 +1040,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "b29e6469-a59a-4470-b555-2a122bd86e97")
-		(property "Reference" "#PWR0112"
+		(property "Reference" "#PWR099"
 			(at 165.1 100.33 0)
 			(effects
 				(font
@@ -1090,7 +1090,7 @@
 		(instances
 			(project "omodri_sa_laas"
 				(path "/de5b13f0-933a-4c4d-9979-13dc57b13241/8971aee4-c199-4562-824f-9b9a5f7ff02d"
-					(reference "#PWR0112")
+					(reference "#PWR099")
 					(unit 1)
 				)
 			)
@@ -1105,7 +1105,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "f687c612-1402-485d-9fa2-557cfcdec26d")
-		(property "Reference" "#PWR0113"
+		(property "Reference" "#PWR0100"
 			(at 133.35 127 0)
 			(effects
 				(font
@@ -1155,7 +1155,7 @@
 		(instances
 			(project "omodri_sa_laas"
 				(path "/de5b13f0-933a-4c4d-9979-13dc57b13241/8971aee4-c199-4562-824f-9b9a5f7ff02d"
-					(reference "#PWR0113")
+					(reference "#PWR0100")
 					(unit 1)
 				)
 			)

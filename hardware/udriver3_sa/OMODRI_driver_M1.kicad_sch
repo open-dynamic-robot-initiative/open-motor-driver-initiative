@@ -6,7 +6,7 @@
 	(paper "A4")
 	(title_block
 		(title "Open MOtor DRiver Initiative  - Single Axis (OMODRI_SA)")
-		(date "2024-03-20")
+		(date "2024-11-08")
 		(rev "1.0")
 		(company "LAAS/CNRS")
 	)
@@ -4826,7 +4826,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "00000000-0000-0000-0000-00005f864d68")
-		(property "Reference" "#PWR077"
+		(property "Reference" "#PWR075"
 			(at 133.35 157.48 0)
 			(effects
 				(font
@@ -4876,7 +4876,7 @@
 		(instances
 			(project "omodri_sa_laas"
 				(path "/de5b13f0-933a-4c4d-9979-13dc57b13241/00000000-0000-0000-0000-00005f71c5af"
-					(reference "#PWR077")
+					(reference "#PWR075")
 					(unit 1)
 				)
 			)
@@ -4891,7 +4891,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "00000000-0000-0000-0000-00005f864db8")
-		(property "Reference" "#PWR068"
+		(property "Reference" "#PWR066"
 			(at 55.88 90.17 0)
 			(effects
 				(font
@@ -4941,7 +4941,7 @@
 		(instances
 			(project "omodri_sa_laas"
 				(path "/de5b13f0-933a-4c4d-9979-13dc57b13241/00000000-0000-0000-0000-00005f71c5af"
-					(reference "#PWR068")
+					(reference "#PWR066")
 					(unit 1)
 				)
 			)
@@ -4956,7 +4956,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "00000000-0000-0000-0000-00005f864dbf")
-		(property "Reference" "#PWR069"
+		(property "Reference" "#PWR067"
 			(at 67.31 90.17 0)
 			(effects
 				(font
@@ -5006,7 +5006,7 @@
 		(instances
 			(project "omodri_sa_laas"
 				(path "/de5b13f0-933a-4c4d-9979-13dc57b13241/00000000-0000-0000-0000-00005f71c5af"
-					(reference "#PWR069")
+					(reference "#PWR067")
 					(unit 1)
 				)
 			)
@@ -5021,7 +5021,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "00000000-0000-0000-0000-00005f864dc8")
-		(property "Reference" "#PWR070"
+		(property "Reference" "#PWR068"
 			(at 78.74 90.17 0)
 			(effects
 				(font
@@ -5071,7 +5071,7 @@
 		(instances
 			(project "omodri_sa_laas"
 				(path "/de5b13f0-933a-4c4d-9979-13dc57b13241/00000000-0000-0000-0000-00005f71c5af"
-					(reference "#PWR070")
+					(reference "#PWR068")
 					(unit 1)
 				)
 			)
@@ -5086,7 +5086,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "00000000-0000-0000-0000-00005f864dce")
-		(property "Reference" "#PWR071"
+		(property "Reference" "#PWR069"
 			(at 88.9 90.17 0)
 			(effects
 				(font
@@ -5136,7 +5136,7 @@
 		(instances
 			(project "omodri_sa_laas"
 				(path "/de5b13f0-933a-4c4d-9979-13dc57b13241/00000000-0000-0000-0000-00005f71c5af"
-					(reference "#PWR071")
+					(reference "#PWR069")
 					(unit 1)
 				)
 			)
@@ -5151,7 +5151,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "00000000-0000-0000-0000-00005f864df9")
-		(property "Reference" "C47"
+		(property "Reference" "C48"
 			(at 46.99 77.47 0)
 			(effects
 				(font
@@ -5277,7 +5277,7 @@
 		(instances
 			(project "omodri_sa_laas"
 				(path "/de5b13f0-933a-4c4d-9979-13dc57b13241/00000000-0000-0000-0000-00005f71c5af"
-					(reference "C47")
+					(reference "C48")
 					(unit 1)
 				)
 			)
@@ -5292,7 +5292,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "00000000-0000-0000-0000-00005f864e05")
-		(property "Reference" "C48"
+		(property "Reference" "C49"
 			(at 58.801 77.5716 0)
 			(effects
 				(font
@@ -5418,7 +5418,7 @@
 		(instances
 			(project "omodri_sa_laas"
 				(path "/de5b13f0-933a-4c4d-9979-13dc57b13241/00000000-0000-0000-0000-00005f71c5af"
-					(reference "C48")
+					(reference "C49")
 					(unit 1)
 				)
 			)
@@ -5433,7 +5433,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "00000000-0000-0000-0000-00005f864e11")
-		(property "Reference" "C49"
+		(property "Reference" "C50"
 			(at 70.231 77.5716 0)
 			(effects
 				(font
@@ -5559,7 +5559,7 @@
 		(instances
 			(project "omodri_sa_laas"
 				(path "/de5b13f0-933a-4c4d-9979-13dc57b13241/00000000-0000-0000-0000-00005f71c5af"
-					(reference "C49")
+					(reference "C50")
 					(unit 1)
 				)
 			)
@@ -5812,7 +5812,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "00000000-0000-0000-0000-00005f864e2c")
-		(property "Reference" "C52"
+		(property "Reference" "C53"
 			(at 100.711 77.5716 0)
 			(effects
 				(font
@@ -5929,7 +5929,7 @@
 		(instances
 			(project "omodri_sa_laas"
 				(path "/de5b13f0-933a-4c4d-9979-13dc57b13241/00000000-0000-0000-0000-00005f71c5af"
-					(reference "C52")
+					(reference "C53")
 					(unit 1)
 				)
 			)
@@ -5944,7 +5944,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "00000000-0000-0000-0000-00005f864e41")
-		(property "Reference" "R22"
+		(property "Reference" "R26"
 			(at 90.678 143.6116 0)
 			(effects
 				(font
@@ -6070,7 +6070,7 @@
 		(instances
 			(project "omodri_sa_laas"
 				(path "/de5b13f0-933a-4c4d-9979-13dc57b13241/00000000-0000-0000-0000-00005f71c5af"
-					(reference "R22")
+					(reference "R26")
 					(unit 1)
 				)
 			)
@@ -6085,7 +6085,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "00000000-0000-0000-0000-00005f864e4c")
-		(property "Reference" "C44"
+		(property "Reference" "C45"
 			(at 113.03 40.64 90)
 			(effects
 				(font
@@ -6211,7 +6211,7 @@
 		(instances
 			(project "omodri_sa_laas"
 				(path "/de5b13f0-933a-4c4d-9979-13dc57b13241/00000000-0000-0000-0000-00005f71c5af"
-					(reference "C44")
+					(reference "C45")
 					(unit 1)
 				)
 			)
@@ -6226,7 +6226,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "00000000-0000-0000-0000-00005f864e58")
-		(property "Reference" "C51"
+		(property "Reference" "C52"
 			(at 91.821 77.5716 0)
 			(effects
 				(font
@@ -6352,7 +6352,7 @@
 		(instances
 			(project "omodri_sa_laas"
 				(path "/de5b13f0-933a-4c4d-9979-13dc57b13241/00000000-0000-0000-0000-00005f71c5af"
-					(reference "C51")
+					(reference "C52")
 					(unit 1)
 				)
 			)
@@ -6367,7 +6367,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "00000000-0000-0000-0000-00005f864e63")
-		(property "Reference" "C50"
+		(property "Reference" "C51"
 			(at 84.074 77.724 0)
 			(effects
 				(font
@@ -6493,7 +6493,7 @@
 		(instances
 			(project "omodri_sa_laas"
 				(path "/de5b13f0-933a-4c4d-9979-13dc57b13241/00000000-0000-0000-0000-00005f71c5af"
-					(reference "C50")
+					(reference "C51")
 					(unit 1)
 				)
 			)
@@ -6508,7 +6508,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "00000000-0000-0000-0000-00005f864eeb")
-		(property "Reference" "C46"
+		(property "Reference" "C47"
 			(at 209.804 62.738 0)
 			(effects
 				(font
@@ -6634,7 +6634,7 @@
 		(instances
 			(project "omodri_sa_laas"
 				(path "/de5b13f0-933a-4c4d-9979-13dc57b13241/00000000-0000-0000-0000-00005f71c5af"
-					(reference "C46")
+					(reference "C47")
 					(unit 1)
 				)
 			)
@@ -6649,7 +6649,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "00000000-0000-0000-0000-00005f864f3b")
-		(property "Reference" "C54"
+		(property "Reference" "C55"
 			(at 210.058 106.68 0)
 			(effects
 				(font
@@ -6775,7 +6775,7 @@
 		(instances
 			(project "omodri_sa_laas"
 				(path "/de5b13f0-933a-4c4d-9979-13dc57b13241/00000000-0000-0000-0000-00005f71c5af"
-					(reference "C54")
+					(reference "C55")
 					(unit 1)
 				)
 			)
@@ -6995,7 +6995,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "00000000-0000-0000-0000-00005f864f95")
-		(property "Reference" "C59"
+		(property "Reference" "C60"
 			(at 210.058 151.638 0)
 			(effects
 				(font
@@ -7121,7 +7121,7 @@
 		(instances
 			(project "omodri_sa_laas"
 				(path "/de5b13f0-933a-4c4d-9979-13dc57b13241/00000000-0000-0000-0000-00005f71c5af"
-					(reference "C59")
+					(reference "C60")
 					(unit 1)
 				)
 			)
@@ -7342,7 +7342,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "00000000-0000-0000-0000-00005f864fe6")
-		(property "Reference" "R23"
+		(property "Reference" "R27"
 			(at 217.678 151.13 0)
 			(effects
 				(font
@@ -7474,7 +7474,7 @@
 		(instances
 			(project "omodri_sa_laas"
 				(path "/de5b13f0-933a-4c4d-9979-13dc57b13241/00000000-0000-0000-0000-00005f71c5af"
-					(reference "R23")
+					(reference "R27")
 					(unit 1)
 				)
 			)
@@ -7489,7 +7489,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "00000000-0000-0000-0000-00005f864ffb")
-		(property "Reference" "R18"
+		(property "Reference" "R22"
 			(at 73.66 115.57 90)
 			(effects
 				(font
@@ -7615,7 +7615,7 @@
 		(instances
 			(project "omodri_sa_laas"
 				(path "/de5b13f0-933a-4c4d-9979-13dc57b13241/00000000-0000-0000-0000-00005f71c5af"
-					(reference "R18")
+					(reference "R22")
 					(unit 1)
 				)
 			)
@@ -7630,7 +7630,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "00000000-0000-0000-0000-00005f865006")
-		(property "Reference" "R19"
+		(property "Reference" "R23"
 			(at 73.66 118.11 90)
 			(effects
 				(font
@@ -7756,7 +7756,7 @@
 		(instances
 			(project "omodri_sa_laas"
 				(path "/de5b13f0-933a-4c4d-9979-13dc57b13241/00000000-0000-0000-0000-00005f71c5af"
-					(reference "R19")
+					(reference "R23")
 					(unit 1)
 				)
 			)
@@ -7771,7 +7771,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "00000000-0000-0000-0000-00005f865011")
-		(property "Reference" "R20"
+		(property "Reference" "R24"
 			(at 73.66 120.65 90)
 			(effects
 				(font
@@ -7897,7 +7897,7 @@
 		(instances
 			(project "omodri_sa_laas"
 				(path "/de5b13f0-933a-4c4d-9979-13dc57b13241/00000000-0000-0000-0000-00005f71c5af"
-					(reference "R20")
+					(reference "R24")
 					(unit 1)
 				)
 			)
@@ -7912,7 +7912,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "00000000-0000-0000-0000-00005f86501e")
-		(property "Reference" "C56"
+		(property "Reference" "C57"
 			(at 46.99 143.51 0)
 			(effects
 				(font
@@ -8038,7 +8038,7 @@
 		(instances
 			(project "omodri_sa_laas"
 				(path "/de5b13f0-933a-4c4d-9979-13dc57b13241/00000000-0000-0000-0000-00005f71c5af"
-					(reference "C56")
+					(reference "C57")
 					(unit 1)
 				)
 			)
@@ -8053,7 +8053,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "00000000-0000-0000-0000-00005f86502b")
-		(property "Reference" "C57"
+		(property "Reference" "C58"
 			(at 58.674 143.51 0)
 			(effects
 				(font
@@ -8179,7 +8179,7 @@
 		(instances
 			(project "omodri_sa_laas"
 				(path "/de5b13f0-933a-4c4d-9979-13dc57b13241/00000000-0000-0000-0000-00005f71c5af"
-					(reference "C57")
+					(reference "C58")
 					(unit 1)
 				)
 			)
@@ -8194,7 +8194,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "00000000-0000-0000-0000-00005f865038")
-		(property "Reference" "C58"
+		(property "Reference" "C59"
 			(at 70.104 143.51 0)
 			(effects
 				(font
@@ -8320,7 +8320,7 @@
 		(instances
 			(project "omodri_sa_laas"
 				(path "/de5b13f0-933a-4c4d-9979-13dc57b13241/00000000-0000-0000-0000-00005f71c5af"
-					(reference "C58")
+					(reference "C59")
 					(unit 1)
 				)
 			)
@@ -8540,7 +8540,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "00000000-0000-0000-0000-00005f86504f")
-		(property "Reference" "#PWR074"
+		(property "Reference" "#PWR072"
 			(at 44.45 157.48 0)
 			(effects
 				(font
@@ -8590,7 +8590,7 @@
 		(instances
 			(project "omodri_sa_laas"
 				(path "/de5b13f0-933a-4c4d-9979-13dc57b13241/00000000-0000-0000-0000-00005f71c5af"
-					(reference "#PWR074")
+					(reference "#PWR072")
 					(unit 1)
 				)
 			)
@@ -8605,7 +8605,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "00000000-0000-0000-0000-00005f865055")
-		(property "Reference" "#PWR075"
+		(property "Reference" "#PWR073"
 			(at 55.88 157.48 0)
 			(effects
 				(font
@@ -8655,7 +8655,7 @@
 		(instances
 			(project "omodri_sa_laas"
 				(path "/de5b13f0-933a-4c4d-9979-13dc57b13241/00000000-0000-0000-0000-00005f71c5af"
-					(reference "#PWR075")
+					(reference "#PWR073")
 					(unit 1)
 				)
 			)
@@ -8670,7 +8670,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "00000000-0000-0000-0000-00005f86505b")
-		(property "Reference" "#PWR076"
+		(property "Reference" "#PWR074"
 			(at 67.31 157.48 0)
 			(effects
 				(font
@@ -8720,7 +8720,7 @@
 		(instances
 			(project "omodri_sa_laas"
 				(path "/de5b13f0-933a-4c4d-9979-13dc57b13241/00000000-0000-0000-0000-00005f71c5af"
-					(reference "#PWR076")
+					(reference "#PWR074")
 					(unit 1)
 				)
 			)
@@ -8735,7 +8735,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "00000000-0000-0000-0000-00005f865061")
-		(property "Reference" "#PWR067"
+		(property "Reference" "#PWR065"
 			(at 44.45 90.17 0)
 			(effects
 				(font
@@ -8785,7 +8785,7 @@
 		(instances
 			(project "omodri_sa_laas"
 				(path "/de5b13f0-933a-4c4d-9979-13dc57b13241/00000000-0000-0000-0000-00005f71c5af"
-					(reference "#PWR067")
+					(reference "#PWR065")
 					(unit 1)
 				)
 			)
@@ -8800,7 +8800,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "00000000-0000-0000-0000-00005fe4b050")
-		(property "Reference" "R21"
+		(property "Reference" "R25"
 			(at 80.518 143.6116 0)
 			(effects
 				(font
@@ -8926,7 +8926,7 @@
 		(instances
 			(project "omodri_sa_laas"
 				(path "/de5b13f0-933a-4c4d-9979-13dc57b13241/00000000-0000-0000-0000-00005f71c5af"
-					(reference "R21")
+					(reference "R25")
 					(unit 1)
 				)
 			)
@@ -8941,7 +8941,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "045438f3-fc58-44d1-8824-efb19a481e3c")
-		(property "Reference" "#PWR079"
+		(property "Reference" "#PWR077"
 			(at 228.6 165.1 0)
 			(effects
 				(font
@@ -8991,7 +8991,7 @@
 		(instances
 			(project "omodri_sa_laas"
 				(path "/de5b13f0-933a-4c4d-9979-13dc57b13241/00000000-0000-0000-0000-00005f71c5af"
-					(reference "#PWR079")
+					(reference "#PWR077")
 					(unit 1)
 				)
 			)
@@ -9006,7 +9006,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "0be3b7a0-8278-48b1-8ce0-4009df86ad09")
-		(property "Reference" "R24"
+		(property "Reference" "R28"
 			(at 233.934 151.384 0)
 			(effects
 				(font
@@ -9132,7 +9132,7 @@
 		(instances
 			(project "omodri_sa_laas"
 				(path "/de5b13f0-933a-4c4d-9979-13dc57b13241/00000000-0000-0000-0000-00005f71c5af"
-					(reference "R24")
+					(reference "R28")
 					(unit 1)
 				)
 			)
@@ -9147,7 +9147,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "2f1b8048-2d09-40b5-b92c-180131dc5f8e")
-		(property "Reference" "C45"
+		(property "Reference" "C46"
 			(at 236.22 48.768 0)
 			(effects
 				(font
@@ -9273,7 +9273,7 @@
 		(instances
 			(project "omodri_sa_laas"
 				(path "/de5b13f0-933a-4c4d-9979-13dc57b13241/00000000-0000-0000-0000-00005f71c5af"
-					(reference "C45")
+					(reference "C46")
 					(unit 1)
 				)
 			)
@@ -9288,7 +9288,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "3a3ac3a4-378d-407a-9e05-6b399b89bab5")
-		(property "Reference" "#PWR078"
+		(property "Reference" "#PWR076"
 			(at 215.9 165.1 0)
 			(effects
 				(font
@@ -9338,7 +9338,7 @@
 		(instances
 			(project "omodri_sa_laas"
 				(path "/de5b13f0-933a-4c4d-9979-13dc57b13241/00000000-0000-0000-0000-00005f71c5af"
-					(reference "#PWR078")
+					(reference "#PWR076")
 					(unit 1)
 				)
 			)
@@ -9353,7 +9353,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "52d247c8-930e-459f-b014-ecf6d966680b")
-		(property "Reference" "R13"
+		(property "Reference" "R17"
 			(at 233.934 62.484 0)
 			(effects
 				(font
@@ -9479,7 +9479,7 @@
 		(instances
 			(project "omodri_sa_laas"
 				(path "/de5b13f0-933a-4c4d-9979-13dc57b13241/00000000-0000-0000-0000-00005f71c5af"
-					(reference "R13")
+					(reference "R17")
 					(unit 1)
 				)
 			)
@@ -9494,7 +9494,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "5b50b677-6091-4e18-b20b-13a97e28c91f")
-		(property "Reference" "R14"
+		(property "Reference" "R18"
 			(at 140.208 82.042 90)
 			(effects
 				(font
@@ -9620,7 +9620,7 @@
 		(instances
 			(project "omodri_sa_laas"
 				(path "/de5b13f0-933a-4c4d-9979-13dc57b13241/00000000-0000-0000-0000-00005f71c5af"
-					(reference "R14")
+					(reference "R18")
 					(unit 1)
 				)
 			)
@@ -9635,7 +9635,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "6bd75a94-02ea-4444-be1a-7e3829626fee")
-		(property "Reference" "#PWR072"
+		(property "Reference" "#PWR070"
 			(at 215.9 120.65 0)
 			(effects
 				(font
@@ -9685,7 +9685,7 @@
 		(instances
 			(project "omodri_sa_laas"
 				(path "/de5b13f0-933a-4c4d-9979-13dc57b13241/00000000-0000-0000-0000-00005f71c5af"
-					(reference "#PWR072")
+					(reference "#PWR070")
 					(unit 1)
 				)
 			)
@@ -9700,7 +9700,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "6ccbd33c-86e9-4044-8e00-7059298f70e8")
-		(property "Reference" "#PWR065"
+		(property "Reference" "#PWR063"
 			(at 215.9 76.2 0)
 			(effects
 				(font
@@ -9750,7 +9750,7 @@
 		(instances
 			(project "omodri_sa_laas"
 				(path "/de5b13f0-933a-4c4d-9979-13dc57b13241/00000000-0000-0000-0000-00005f71c5af"
-					(reference "#PWR065")
+					(reference "#PWR063")
 					(unit 1)
 				)
 			)
@@ -9765,7 +9765,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "6ea45f90-c3b2-436b-8202-8747fe68cb50")
-		(property "Reference" "R16"
+		(property "Reference" "R20"
 			(at 233.934 106.934 0)
 			(effects
 				(font
@@ -9891,7 +9891,7 @@
 		(instances
 			(project "omodri_sa_laas"
 				(path "/de5b13f0-933a-4c4d-9979-13dc57b13241/00000000-0000-0000-0000-00005f71c5af"
-					(reference "R16")
+					(reference "R20")
 					(unit 1)
 				)
 			)
@@ -9906,7 +9906,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "813bf512-262f-4599-9965-513604415cf6")
-		(property "Reference" "C55"
+		(property "Reference" "C56"
 			(at 236.22 137.668 0)
 			(effects
 				(font
@@ -10032,7 +10032,7 @@
 		(instances
 			(project "omodri_sa_laas"
 				(path "/de5b13f0-933a-4c4d-9979-13dc57b13241/00000000-0000-0000-0000-00005f71c5af"
-					(reference "C55")
+					(reference "C56")
 					(unit 1)
 				)
 			)
@@ -10047,7 +10047,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "8ebbf78e-e0f4-47b7-a372-99d62aab39ea")
-		(property "Reference" "#PWR073"
+		(property "Reference" "#PWR071"
 			(at 228.6 120.65 0)
 			(effects
 				(font
@@ -10097,7 +10097,7 @@
 		(instances
 			(project "omodri_sa_laas"
 				(path "/de5b13f0-933a-4c4d-9979-13dc57b13241/00000000-0000-0000-0000-00005f71c5af"
-					(reference "#PWR073")
+					(reference "#PWR071")
 					(unit 1)
 				)
 			)
@@ -10112,7 +10112,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "a2f0a41b-1e47-43cc-bee1-c396093084b2")
-		(property "Reference" "R11"
+		(property "Reference" "R15"
 			(at 140.462 59.182 90)
 			(effects
 				(font
@@ -10238,7 +10238,7 @@
 		(instances
 			(project "omodri_sa_laas"
 				(path "/de5b13f0-933a-4c4d-9979-13dc57b13241/00000000-0000-0000-0000-00005f71c5af"
-					(reference "R11")
+					(reference "R15")
 					(unit 1)
 				)
 			)
@@ -10253,7 +10253,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "a8848942-38db-4b52-8b55-10790e1bdd0b")
-		(property "Reference" "R17"
+		(property "Reference" "R21"
 			(at 140.208 104.902 90)
 			(effects
 				(font
@@ -10379,7 +10379,7 @@
 		(instances
 			(project "omodri_sa_laas"
 				(path "/de5b13f0-933a-4c4d-9979-13dc57b13241/00000000-0000-0000-0000-00005f71c5af"
-					(reference "R17")
+					(reference "R21")
 					(unit 1)
 				)
 			)
@@ -10394,7 +10394,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "bae4b516-f58b-4231-bfbe-27407b670771")
-		(property "Reference" "C53"
+		(property "Reference" "C54"
 			(at 236.22 93.218 0)
 			(effects
 				(font
@@ -10520,7 +10520,7 @@
 		(instances
 			(project "omodri_sa_laas"
 				(path "/de5b13f0-933a-4c4d-9979-13dc57b13241/00000000-0000-0000-0000-00005f71c5af"
-					(reference "C53")
+					(reference "C54")
 					(unit 1)
 				)
 			)
@@ -10536,7 +10536,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "c0c37aef-2420-410d-9487-a27d00118e49")
-		(property "Reference" "R12"
+		(property "Reference" "R16"
 			(at 217.678 62.23 0)
 			(effects
 				(font
@@ -10668,7 +10668,7 @@
 		(instances
 			(project "omodri_sa_laas"
 				(path "/de5b13f0-933a-4c4d-9979-13dc57b13241/00000000-0000-0000-0000-00005f71c5af"
-					(reference "R12")
+					(reference "R16")
 					(unit 1)
 				)
 			)
@@ -10683,7 +10683,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "d3d29b18-62fd-4bd5-a1dd-34ac4c784f41")
-		(property "Reference" "#PWR066"
+		(property "Reference" "#PWR064"
 			(at 228.6 76.2 0)
 			(effects
 				(font
@@ -10733,7 +10733,7 @@
 		(instances
 			(project "omodri_sa_laas"
 				(path "/de5b13f0-933a-4c4d-9979-13dc57b13241/00000000-0000-0000-0000-00005f71c5af"
-					(reference "#PWR066")
+					(reference "#PWR064")
 					(unit 1)
 				)
 			)
@@ -10749,7 +10749,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "e1bbd2b4-7a41-423d-8fa3-54d7bdbec21e")
-		(property "Reference" "R15"
+		(property "Reference" "R19"
 			(at 217.678 106.68 0)
 			(effects
 				(font
@@ -10881,7 +10881,7 @@
 		(instances
 			(project "omodri_sa_laas"
 				(path "/de5b13f0-933a-4c4d-9979-13dc57b13241/00000000-0000-0000-0000-00005f71c5af"
-					(reference "R15")
+					(reference "R19")
 					(unit 1)
 				)
 			)

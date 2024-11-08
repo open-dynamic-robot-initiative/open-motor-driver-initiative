@@ -6,7 +6,7 @@
 	(paper "A4")
 	(title_block
 		(title "Open MOtor DRiver Initiative  - Single Axis (OMODRI_SA)")
-		(date "2024-03-20")
+		(date "2024-11-08")
 		(rev "1.0")
 		(company "LAAS/CNRS")
 	)
@@ -338,14 +338,34 @@
 		)
 	)
 	(junction
-		(at 88.9 95.25)
+		(at 101.6 95.25)
 		(diameter 0)
 		(color 0 0 0 0)
-		(uuid "a5e2a95d-5329-40f9-ab97-78242215efbc")
+		(uuid "def024c4-ff50-41c5-97c4-3541e20ced13")
 	)
 	(no_connect
-		(at 81.28 107.95)
-		(uuid "ccc865c5-f534-4ed1-bb44-afb3956a0057")
+		(at 93.98 107.95)
+		(uuid "882de9ff-f41d-4f25-b0d4-d289e489cce7")
+	)
+	(wire
+		(pts
+			(xy 101.6 95.25) (xy 101.6 100.33)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "1a1ef5a8-3350-41f6-97ec-541cbb8b3c58")
+	)
+	(wire
+		(pts
+			(xy 101.6 95.25) (xy 127 95.25)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "2cf20cf5-94c2-42b7-beb0-56fb12eb15fb")
 	)
 	(wire
 		(pts
@@ -359,33 +379,23 @@
 	)
 	(wire
 		(pts
-			(xy 127 95.25) (xy 127 100.33)
+			(xy 101.6 120.65) (xy 101.6 115.57)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "4268d8b3-1c53-4b0a-bda2-00d6410e3406")
+		(uuid "58882fd8-de2a-4a93-97fc-d0d4735a20d0")
 	)
 	(wire
 		(pts
-			(xy 88.9 95.25) (xy 88.9 100.33)
+			(xy 88.9 95.25) (xy 101.6 95.25)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "52d62433-e9d1-47b4-a293-1b6babcd0d0f")
-	)
-	(wire
-		(pts
-			(xy 76.2 95.25) (xy 88.9 95.25)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "5934404d-dd44-4842-a8b4-43dcf7e292ba")
+		(uuid "6c49d6b9-44c6-481b-b81c-0dc23b366d9a")
 	)
 	(wire
 		(pts
@@ -399,17 +409,17 @@
 	)
 	(wire
 		(pts
-			(xy 88.9 95.25) (xy 127 95.25)
+			(xy 127 95.25) (xy 127 100.33)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "92693f6a-3bd4-4327-b280-138dfbed3768")
+		(uuid "a84f5639-289f-4edc-a776-cf53398b1550")
 	)
 	(wire
 		(pts
-			(xy 96.52 107.95) (xy 119.38 107.95)
+			(xy 109.22 107.95) (xy 119.38 107.95)
 		)
 		(stroke
 			(width 0)
@@ -417,30 +427,9 @@
 		)
 		(uuid "b13f8665-60dd-4512-96fb-52edbf28fec5")
 	)
-	(wire
-		(pts
-			(xy 88.9 115.57) (xy 88.9 120.65)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "f4791c64-bbd8-4e11-a725-d458526a3430")
-	)
-	(label "led_connect"
-		(at 101.6 107.95 0)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "d348b1f3-1349-4f61-ac97-6ef312360383")
-	)
 	(global_label "VDD_3V3"
 		(shape input)
-		(at 76.2 95.25 180)
+		(at 88.9 95.25 180)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -450,20 +439,22 @@
 		)
 		(uuid "276c3bda-c1c1-449b-8f76-25bd67294cc1")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 76.2 95.25 0)
+			(at 78.4652 95.25 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
+				(justify right)
 				(hide yes)
 			)
 		)
 		(property "Références Inter-Feuilles" "${INTERSHEET_REFS}"
-			(at -63.5 6.35 0)
+			(at 88.9 97.0852 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
+				(justify right)
 				(hide yes)
 			)
 		)
@@ -481,6 +472,71 @@
 		(uuid "1e697b93-b123-4f28-b50d-cf9f38d96c85")
 	)
 	(symbol
+		(lib_id "power:GND")
+		(at 101.6 120.65 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "12b4ba46-748a-4cc3-938b-74d3c1ba046a")
+		(property "Reference" "#PWR097"
+			(at 101.6 127 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 101.727 125.0442 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 101.6 120.65 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 101.6 120.65 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
+			(at 101.6 120.65 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "915c6275-2908-4957-b707-76b19b85dfb6")
+		)
+		(instances
+			(project "omodri_sa_laas"
+				(path "/de5b13f0-933a-4c4d-9979-13dc57b13241/00000000-0000-0000-0000-00005f9fcb8c"
+					(reference "#PWR097")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "omodri_lib:NeoPixel_1515_SK6805")
 		(at 127 107.95 0)
 		(mirror y)
@@ -490,7 +546,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "3db59373-301d-4064-bf7a-f96ba5789fe1")
-		(property "Reference" "D4"
+		(property "Reference" "D5"
 			(at 129.54 99.06 0)
 			(effects
 				(font
@@ -499,7 +555,7 @@
 			)
 		)
 		(property "Value" "NeoPixel_1515"
-			(at 138.43 101.6 0)
+			(at 134.874 101.6 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -602,7 +658,7 @@
 		(instances
 			(project "omodri_sa_laas"
 				(path "/de5b13f0-933a-4c4d-9979-13dc57b13241/00000000-0000-0000-0000-00005f9fcb8c"
-					(reference "D4")
+					(reference "D5")
 					(unit 1)
 				)
 			)
@@ -617,7 +673,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "4290de73-3ab4-41b4-8746-6827145d09b0")
-		(property "Reference" "#PWR0110"
+		(property "Reference" "#PWR098"
 			(at 127 127 0)
 			(effects
 				(font
@@ -667,7 +723,7 @@
 		(instances
 			(project "omodri_sa_laas"
 				(path "/de5b13f0-933a-4c4d-9979-13dc57b13241/00000000-0000-0000-0000-00005f9fcb8c"
-					(reference "#PWR0110")
+					(reference "#PWR098")
 					(unit 1)
 				)
 			)
@@ -675,16 +731,16 @@
 	)
 	(symbol
 		(lib_id "omodri_lib:NeoPixel_1515_SK6805")
-		(at 88.9 107.95 0)
+		(at 101.6 107.95 0)
 		(mirror y)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "6a598281-61ae-4f31-82e6-c2c74eb4652a")
-		(property "Reference" "D5"
-			(at 91.44 99.06 0)
+		(uuid "c9e0fc70-c91b-4d86-8aa6-a5feca2cf8ce")
+		(property "Reference" "D4"
+			(at 104.14 99.06 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -692,7 +748,7 @@
 			)
 		)
 		(property "Value" "NeoPixel_1515"
-			(at 100.33 101.6 0)
+			(at 109.474 101.6 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -700,7 +756,7 @@
 			)
 		)
 		(property "Footprint" "udriver3:NeoPixel_SK6805_1.5x1.5mm"
-			(at 88.9 125.73 0)
+			(at 101.6 125.73 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -709,7 +765,7 @@
 			)
 		)
 		(property "Datasheet" "https://cdn-shop.adafruit.com/product-files/4492/Datasheet.pdf"
-			(at 88.9 128.27 0)
+			(at 101.6 128.27 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -718,7 +774,7 @@
 			)
 		)
 		(property "Description" "0606, NeoPixel Addressable LED (1.5mm x 1.5mm)"
-			(at 88.9 107.95 0)
+			(at 101.6 107.95 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -727,7 +783,7 @@
 			)
 		)
 		(property "DigiKey" "1528-4492-ND"
-			(at 88.9 107.95 0)
+			(at 101.6 107.95 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -736,7 +792,7 @@
 			)
 		)
 		(property "Mouser" "485-4492"
-			(at 88.9 107.95 0)
+			(at 101.6 107.95 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -745,7 +801,7 @@
 			)
 		)
 		(property "Part No" "SK6805-EC15"
-			(at 88.9 107.95 0)
+			(at 101.6 107.95 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -754,7 +810,7 @@
 			)
 		)
 		(property "LCSC" "C17701801"
-			(at 88.9 107.95 0)
+			(at 101.6 107.95 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -763,7 +819,7 @@
 			)
 		)
 		(property "Manufacturer" "IPIXEL LED LIGHT CO "
-			(at 88.9 107.95 0)
+			(at 101.6 107.95 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -772,7 +828,7 @@
 			)
 		)
 		(property "Assembling" "SMD"
-			(at 88.9 107.95 0)
+			(at 101.6 107.95 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -781,86 +837,21 @@
 			)
 		)
 		(pin "1"
-			(uuid "cdcdb131-38fe-4ba7-a584-d526280ba123")
+			(uuid "30e9e4ff-af02-4baa-a3b3-0dd9602e5f90")
 		)
 		(pin "2"
-			(uuid "3e4ca089-e8c4-4607-971b-ddca295100ec")
+			(uuid "be107952-2260-4def-bb63-f1a820e504b0")
 		)
 		(pin "3"
-			(uuid "7466fff6-50df-4b16-b7b5-f3960b124473")
+			(uuid "364de4d3-4bad-4c15-ae50-819506efd594")
 		)
 		(pin "4"
-			(uuid "ab7c0b57-b33e-4cde-870b-29908a6dc09e")
+			(uuid "248804ea-583b-4dd3-93be-0eba8d627a20")
 		)
 		(instances
 			(project "omodri_sa_laas"
 				(path "/de5b13f0-933a-4c4d-9979-13dc57b13241/00000000-0000-0000-0000-00005f9fcb8c"
-					(reference "D5")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "power:GND")
-		(at 88.9 120.65 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "94be3ee0-3167-42bb-9cd4-b5d8fe2f456f")
-		(property "Reference" "#PWR011"
-			(at 88.9 127 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Value" "GND"
-			(at 89.027 125.0442 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" ""
-			(at 88.9 120.65 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 88.9 120.65 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 88.9 120.65 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "a097011f-127f-48a0-9159-644c77a4489e")
-		)
-		(instances
-			(project "omodri_sa_laas"
-				(path "/de5b13f0-933a-4c4d-9979-13dc57b13241/00000000-0000-0000-0000-00005f9fcb8c"
-					(reference "#PWR011")
+					(reference "D4")
 					(unit 1)
 				)
 			)

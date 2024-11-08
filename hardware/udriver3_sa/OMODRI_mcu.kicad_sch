@@ -6,7 +6,7 @@
 	(paper "A4")
 	(title_block
 		(title "Open MOtor DRiver Initiative  - Single Axis (OMODRI_SA)")
-		(date "2024-03-20")
+		(date "2024-11-08")
 		(rev "1.0")
 		(company "LAAS/CNRS")
 	)
@@ -1500,7 +1500,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "0f341c7d-3a4d-4fa3-a3f5-317a8944f307")
-		(property "Reference" "R7"
+		(property "Reference" "R11"
 			(at 90.932 65.532 90)
 			(effects
 				(font
@@ -1626,7 +1626,7 @@
 		(instances
 			(project "omodri_sa_laas"
 				(path "/de5b13f0-933a-4c4d-9979-13dc57b13241/3df2ca62-85b2-4979-b739-c6d2bcf6d697"
-					(reference "R7")
+					(reference "R11")
 					(unit 1)
 				)
 			)
@@ -1641,7 +1641,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "17de187c-6894-4ab7-833c-7328b46b6d35")
-		(property "Reference" "R6"
+		(property "Reference" "R10"
 			(at 90.678 59.182 90)
 			(effects
 				(font
@@ -1767,7 +1767,7 @@
 		(instances
 			(project "omodri_sa_laas"
 				(path "/de5b13f0-933a-4c4d-9979-13dc57b13241/3df2ca62-85b2-4979-b739-c6d2bcf6d697"
-					(reference "R6")
+					(reference "R10")
 					(unit 1)
 				)
 			)
