@@ -359,17 +359,17 @@
 	)
 	(wire
 		(pts
-			(xy 101.6 95.25) (xy 127 95.25)
+			(xy 109.22 107.95) (xy 144.78 107.95)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "2cf20cf5-94c2-42b7-beb0-56fb12eb15fb")
+		(uuid "3f0bee59-6d32-495a-afcf-13f4d751659b")
 	)
 	(wire
 		(pts
-			(xy 134.62 107.95) (xy 139.7 107.95)
+			(xy 160.02 107.95) (xy 165.1 107.95)
 		)
 		(stroke
 			(width 0)
@@ -399,7 +399,7 @@
 	)
 	(wire
 		(pts
-			(xy 127 120.65) (xy 127 115.57)
+			(xy 152.4 120.65) (xy 152.4 115.57)
 		)
 		(stroke
 			(width 0)
@@ -409,7 +409,7 @@
 	)
 	(wire
 		(pts
-			(xy 127 95.25) (xy 127 100.33)
+			(xy 152.4 95.25) (xy 152.4 100.33)
 		)
 		(stroke
 			(width 0)
@@ -419,13 +419,24 @@
 	)
 	(wire
 		(pts
-			(xy 109.22 107.95) (xy 119.38 107.95)
+			(xy 101.6 95.25) (xy 152.4 95.25)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "b13f8665-60dd-4512-96fb-52edbf28fec5")
+		(uuid "c1e5032f-bdd5-450e-b3a1-3d0d2766cfd5")
+	)
+	(label "Top_to_bottom_led_link"
+		(at 114.3 107.95 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "be8fb299-d358-440e-90d5-bdd8c65ab529")
 	)
 	(global_label "VDD_3V3"
 		(shape input)
@@ -461,7 +472,7 @@
 	)
 	(hierarchical_label "LED_SPI_SIMO"
 		(shape input)
-		(at 139.7 107.95 0)
+		(at 165.1 107.95 0)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -538,7 +549,7 @@
 	)
 	(symbol
 		(lib_id "omodri_lib:NeoPixel_1515_SK6805")
-		(at 127 107.95 0)
+		(at 152.4 107.95 0)
 		(mirror y)
 		(unit 1)
 		(exclude_from_sim no)
@@ -547,7 +558,7 @@
 		(dnp no)
 		(uuid "3db59373-301d-4064-bf7a-f96ba5789fe1")
 		(property "Reference" "D5"
-			(at 129.54 99.06 0)
+			(at 154.94 99.06 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -555,7 +566,7 @@
 			)
 		)
 		(property "Value" "NeoPixel_1515"
-			(at 134.874 101.6 0)
+			(at 160.274 101.6 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -563,7 +574,7 @@
 			)
 		)
 		(property "Footprint" "udriver3:NeoPixel_SK6805_1.5x1.5mm"
-			(at 127 125.73 0)
+			(at 152.4 125.73 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -572,7 +583,7 @@
 			)
 		)
 		(property "Datasheet" "https://cdn-shop.adafruit.com/product-files/4492/Datasheet.pdf"
-			(at 127 128.27 0)
+			(at 152.4 128.27 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -581,7 +592,7 @@
 			)
 		)
 		(property "Description" "0606, NeoPixel Addressable LED (1.5mm x 1.5mm)"
-			(at 127 107.95 0)
+			(at 152.4 107.95 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -590,7 +601,7 @@
 			)
 		)
 		(property "DigiKey" "1528-4492-ND"
-			(at 127 107.95 0)
+			(at 152.4 107.95 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -599,7 +610,7 @@
 			)
 		)
 		(property "Mouser" "485-4492"
-			(at 127 107.95 0)
+			(at 152.4 107.95 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -608,7 +619,7 @@
 			)
 		)
 		(property "Part No" "SK6805-EC15"
-			(at 127 107.95 0)
+			(at 152.4 107.95 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -617,7 +628,7 @@
 			)
 		)
 		(property "LCSC" "C17701801"
-			(at 127 107.95 0)
+			(at 152.4 107.95 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -626,7 +637,7 @@
 			)
 		)
 		(property "Manufacturer" "IPIXEL LED LIGHT CO "
-			(at 127 107.95 0)
+			(at 152.4 107.95 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -635,7 +646,7 @@
 			)
 		)
 		(property "Assembling" "SMD"
-			(at 127 107.95 0)
+			(at 152.4 107.95 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -666,7 +677,7 @@
 	)
 	(symbol
 		(lib_id "power:GND")
-		(at 127 120.65 0)
+		(at 152.4 120.65 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -674,7 +685,7 @@
 		(dnp no)
 		(uuid "4290de73-3ab4-41b4-8746-6827145d09b0")
 		(property "Reference" "#PWR098"
-			(at 127 127 0)
+			(at 152.4 127 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -683,7 +694,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 127.127 125.0442 0)
+			(at 152.527 125.0442 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -691,7 +702,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 127 120.65 0)
+			(at 152.4 120.65 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -700,7 +711,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 127 120.65 0)
+			(at 152.4 120.65 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -709,7 +720,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 127 120.65 0)
+			(at 152.4 120.65 0)
 			(effects
 				(font
 					(size 1.27 1.27)
