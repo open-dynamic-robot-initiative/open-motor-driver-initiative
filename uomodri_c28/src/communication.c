@@ -5,6 +5,7 @@
 #include "vcu2/vcu2_crc.h"
 #endif
 #include "device.h"
+#include "board.h"
 
 #include "config/uomodri_math.h"
 #include "uomodri_user_defines.h"
@@ -72,9 +73,9 @@ void COM_msgExtract(mst2slv_msg_t* p_msg, cmd_t* p_cmd_m1, cmd_t* p_cmd_m2)
  * @brief           Slave to Master message creation/update. IT Call.
  * @param[in]       *p_motor    Pointer on current data structure used for control.
  * @param[inout]    *p_msg      Pointer on the message to transmit to the Master board.
- * @param[in]       tmr_cnt     Current value of the timer counter.
+ * @param[in]       *p_tmr_cnt  Pointer on the current value of the timer counter.
  */
-bool_t COM_msgCreate(motor_t* p_motor, slv2mst_msg_t* p_msg, uint32_t tmr_cnt)
+bool_t COM_msgCreate(motor_t* p_motor, slv2mst_msg_t* p_msg, uint32_t* p_tmr_cnt)
 {
     foc_t* p_foc                        = &p_motor->foc;
     encoder_t* p_enc                    = &p_foc->enc;
@@ -120,7 +121,7 @@ bool_t COM_msgCreate(motor_t* p_motor, slv2mst_msg_t* p_msg, uint32_t tmr_cnt)
         p_msg->status.SE                = motor_cmd.systemEnable;   // System enabled
         p_msg->status.STATUS_RSV1       = 0;
         p_msg->lastCmdIndex             = p_foc->cmd.index;
-        p_msg->timeStamp                = (uint16_t)tmr_cnt;
+        p_msg->timeStamp                = (uint16_t)*p_tmr_cnt;
         p_msg->status.ERROR_CODE        = (motor_err.com_timeout)   ? (STATUS_ERROR_SPI_RECV_TIMEOUT)   : (p_msg->status.ERROR_CODE);
         p_msg->status.ERROR_CODE        = (motor_err.pos_rollover)  ? (STATUS_ERROR_POS_ROLLOVER)       : (p_msg->status.ERROR_CODE);
         p_msg->status.ERROR_CODE        = (motor_err.drv_fault)     ? (STATUS_ERROR_DRV_FAULT)          : (p_msg->status.ERROR_CODE);
@@ -226,10 +227,9 @@ inline void RS485_msgReceive(uint32_t sci_base, rs485_rx_t* p_msg_rx)
 }
 
 /*
- * @brief           Compute the CRC 32bits with bytes swapping first.
- * @param[in]       *p_msg  Pointer on the message to swap.
- * @param[in]       length  Number of elements to swap.
- * return           The 32bit CRC result.
+ * @brief           Fill the SCI peripheral Tx FIFO with message to be sent.
+ * @param[in]       sci-base    SCI peripheral identifier.
+ * @param[out]      *p_msg_tx   Pointer on the RS485 transmission structure.
  */
 inline void RS485_msgTransmit(uint32_t sci_base, rs485_tx_t* p_msg_tx)
 {
@@ -252,7 +252,7 @@ inline void RS485_msgTransmit(uint32_t sci_base, rs485_tx_t* p_msg_tx)
 /*
  * @brief           Test if SPI bus is used as communication bus.
  * @param[in]       *p_spi_rx_msg   Pointer on the message received by DMA.
- * return           The communication bus selected.
+ * @param[inout]    *p_com_bus      Pointer on the bus type detected.
  */
 void COM_checkSPIBus(spi_rx_msg_t* p_spi_rx_msg, com_bus_e* p_com_bus)
 {
@@ -274,17 +274,17 @@ void COM_checkSPIBus(spi_rx_msg_t* p_spi_rx_msg, com_bus_e* p_com_bus)
         break;
 
     case COM_SPI_TEST_STATE_RX_PROGRESS:
-        spi_state = (spi_rx_status) ? (spi_state) : (COM_SPI_TEST_STATE_RX_END);
+        spi_state = (spi_rx_status) ? (spi_state) : (COM_SPI_TEST_STATE_RX_STOP);
         spi_state = (!spi_cs_pin)   ? (spi_state) : (COM_SPI_TEST_STATE_IDLE);
         break;
 
-    case COM_SPI_TEST_STATE_RX_END:
+    case COM_SPI_TEST_STATE_RX_STOP:
         spi_state = (!spi_cs_pin)   ? (spi_state) : (COM_SPI_TEST_STATE_CS_INACTIVE);
         break;
 
     case COM_SPI_TEST_STATE_CS_INACTIVE:
         spi_msg_crc = COM_msgCRC((uint16_t *)&p_spi_rx_msg->data, COM_MSG_SPI_RX_16BIT_PAYLOAD_LENGTH);
-        if((p_spi_rx_msg->crc.u16_msb == MSB_32(spi_msg_crc)) && (p_spi_rx_msg->crc.u16_lsb == LSB_32(spi_msg_crc)))
+        if(CRC_COMP(p_spi_rx_msg->crc.u16_msb, p_spi_rx_msg->crc.u16_lsb, spi_msg_crc))
             *p_com_bus = COM_USE_SPI_BUS;
         spi_state = COM_SPI_TEST_STATE_IDLE;
         break;
@@ -293,9 +293,13 @@ void COM_checkSPIBus(spi_rx_msg_t* p_spi_rx_msg, com_bus_e* p_com_bus)
     return;
 }
 
-void COM_checkCANFDBus(com_bus_e* p_com_bus)
+/*
+ * @brief           Test if CAN-FD bus is used as communication bus.
+ * @param[inout]    *p_com_bus      Pointer on the bus type detected.
+ */
+void COM_checkDiffBus(com_bus_e* p_com_bus)
 {
-    // Get the interrupt status.
+    // Get the interrupt status. (No IT required)
     uint32_t mcan_it_status = MCAN_getIntrStatus(MCANA_DRIVER_BASE);
     // Check a valid receive.
     if(mcan_it_status & CANFD_IT_TEST_VALID)
@@ -321,7 +325,65 @@ void COM_checkCANFDBus(com_bus_e* p_com_bus)
     return;
 }
 
+void COM_checkCANFDBus(com_bus_e* p_com_bus)
+{
+    // Get the interrupt status. (No IT required)
+    uint32_t mcan_it_status = MCAN_getIntrStatus(MCANA_DRIVER_BASE);
+    static uint16_t mcan_err_cnt = 0;
+    // Check a valid receive.
+    if(mcan_it_status & CANFD_IT_TEST_VALID)
+    {
+        MCAN_RxNewDataStatus newData = {.statusLow = 0, .statusHigh = 0};
+        // Read the NewData registers
+        MCAN_getNewDataStatus(MCANA_DRIVER_BASE, &newData);
+        //  Clearing the NewData registers
+        MCAN_clearNewDataStatus(MCANA_DRIVER_BASE, &newData);
+        *p_com_bus = COM_USE_CANFD_BUS;
+    }
+    else
+    {
+        if(mcan_it_status)
+        {
+            if(mcan_err_cnt < CANFD_MAX_ERR)
+                mcan_err_cnt++;
+            // Receive something but wrong.
+            else
+            {
+                // Shutdown CAN-FD transceiver.
+                CANFD_SHDN_MODE_SET;
+                // Switch input mux to RS485.
+                CANFD_RS485_MUX_SEL_SET;
+                *p_com_bus = COM_USE_RS485_BUS;
+            }
+        }
+    }
+    // Clear the interrupt status.
+    MCAN_clearIntrStatus(MCANA_DRIVER_BASE, mcan_it_status);
 
+    return;
+}
+
+void COM_checkRS485Bus(com_bus_e* p_com_bus)
+{
+    uint16_t clb_it_status = HWREGH(CLB_INT_REG_ADDR);
+
+
+//    switch (clb_tag_test)
+//     {
+//         // RS485 address #1 valid
+//     case CLB_INT_RS485_RX_ADDRESS_1_VALID:
+//         // Set flags
+//         com_rs485_rx.index  = 0;
+//         com_rs485_rx.addr1  = true;
+//         com_rs485_rx.addr2  = false;
+//         // First FIFO read.
+//         RS485_msgReceive(COM_SCI_BASE, &com_rs485_rx);
+//         // Clear IT source & Enable FIFO Rx & Rx error IT sources.
+//         HWREGH(COM_SCI_FIFO_RX_REG_ADDR)   |= (SCI_FFRX_RXFFIENA | SCI_FFRX_RXFFINTCLR | SCI_FFRX_RXFFOVRCLR);
+//         HWREGH(COM_SCI_CTRL1_REG_ADDR)     |= SCI_CTL1_RXERRINTENA;
+//         break;
+
+}
 
 //void SCI_rxDisable(uint32_t sci_base)
 //{

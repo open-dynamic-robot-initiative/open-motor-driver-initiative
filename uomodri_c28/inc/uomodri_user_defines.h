@@ -37,11 +37,11 @@
 //#endif
 #define CLB_TILE_ENABLE                         (1)
 // CM peripherals ENABLE/DISABLE
-#define USB_BUS_ENABLE                          (0)
+#define USB_BUS_ENABLE                          (1)
 #define UART_BUS_ENABLE                         (0)
-#if ((USB_BUS_ENABLE) || (UART_BUS_ENABLE)) && (defined CPU1)
-#error "In order to use USB or UART, CM must be active."
-#endif
+//#if ((USB_BUS_ENABLE) || (UART_BUS_ENABLE)) && (defined CPU1)
+//#error "In order to use USB or UART, CM must be active."
+//#endif
 #if (UART_BUS_ENABLE) && (USB_BUS_ENABLE)
 #error "USB & UART share the same pins. They cannot run @ the same time"
 #endif

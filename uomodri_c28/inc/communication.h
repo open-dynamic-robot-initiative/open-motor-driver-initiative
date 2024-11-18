@@ -15,12 +15,13 @@
 #include "uomodri_cm_user_defines.h"
 #endif
 
-
 /***********************************************************************
  * DEFINES
  ***********************************************************************/
 #define POLYNOMIAL_32_P1                        (0x04C11DB7)
 #define CRC_INIT_CRC32                          (0xFFFFFFFF)
+
+#define CRC_COMP(crc_msb, crc_lsb, msg_comp)    ((crc_msb == MSB_32(msg_comp)) && (crc_lsb == LSB_32(msg_comp)))
 
 #define MSG_RX_ES_POS                           (15U)
 #define MSG_RX_ES_MASK                          (1U << MSG_RX_ES_POS)
@@ -90,12 +91,12 @@
 #define COM_MSG_SPI_RX_16BIT_PAYLOAD_LENGTH     (sizeof(mst2slv_msg_t))
 #define COM_MSG_SPI_RX_16BIT_FULL_LENGTH        (COM_MSG_SPI_RX_16BIT_PAYLOAD_LENGTH + sizeof(crc_reg_t))
 
-#define COM_MSG_RS485_TX_16BIT_PAYLOAD_LENGTH   (sizeof(header_reg_u) + sizeof(slv2mst_msg_t))
+#define COM_MSG_RS485_TX_16BIT_PAYLOAD_LENGTH   (sizeof(rs485_header_u) + sizeof(slv2mst_msg_t))
 #define COM_MSG_RS485_TX_8BIT_PAYLOAD_LENGTH    (COM_MSG_RS485_TX_16BIT_PAYLOAD_LENGTH * 2)
 #define COM_MSG_RS485_TX_16BIT_FULL_LENGTH      (COM_MSG_RS485_TX_16BIT_PAYLOAD_LENGTH + sizeof(crc_reg_t))
 #define COM_MSG_RS485_TX_8BIT_FULL_LENGTH       (COM_MSG_RS485_TX_16BIT_FULL_LENGTH * 2)
 
-#define COM_MSG_RS485_RX_16BIT_PAYLOAD_LENGTH   (sizeof(header_reg_u) + sizeof(mst2slv_msg_t))
+#define COM_MSG_RS485_RX_16BIT_PAYLOAD_LENGTH   (sizeof(rs485_header_u) + sizeof(mst2slv_msg_t))
 #define COM_MSG_RS485_RX_8BIT_PAYLOAD_LENGTH    (COM_MSG_RS485_RX_16BIT_PAYLOAD_LENGTH * 2)
 #define COM_MSG_RS485_RX_16BIT_FULL_LENGTH      (COM_MSG_RS485_RX_16BIT_PAYLOAD_LENGTH + sizeof(crc_reg_t))
 #define COM_MSG_RS485_RX_8BIT_FULL_LENGTH       (COM_MSG_RS485_RX_16BIT_FULL_LENGTH * 2)
@@ -127,15 +128,20 @@
                                                  MCAN_INTR_SRC_RES_ADDR_ACCESS)
 
 #define CANFD_IT_TEST_VALID                     (MCAN_INTR_SRC_RX_FIFO0_NEW_MSG | \
-                                                 MCAN_INTR_SRC_RX_FIFO0_WATERMARK | \
-                                                 MCAN_INTR_SRC_RX_FIFO0_FULL | \
-                                                 MCAN_INTR_SRC_RX_FIFO0_MSG_LOST | \
                                                  MCAN_INTR_SRC_RX_FIFO1_NEW_MSG | \
-                                                 MCAN_INTR_SRC_RX_FIFO1_WATERMARK | \
-                                                 MCAN_INTR_SRC_RX_FIFO1_FULL | \
-                                                 MCAN_INTR_SRC_RX_FIFO1_MSG_LOST | \
-                                                 MCAN_INTR_SRC_HIGH_PRIO_MSG | \
                                                  MCAN_INTR_SRC_DEDICATED_RX_BUFF_MSG)
+
+#define CANFD_MAX_ERR                           (10)
+//(MCAN_INTR_SRC_RX_FIFO0_NEW_MSG | \
+//                                                 MCAN_INTR_SRC_RX_FIFO0_WATERMARK | \
+//                                                 MCAN_INTR_SRC_RX_FIFO0_FULL | \
+//                                                 MCAN_INTR_SRC_RX_FIFO0_MSG_LOST | \
+//                                                 MCAN_INTR_SRC_RX_FIFO1_NEW_MSG | \
+//                                                 MCAN_INTR_SRC_RX_FIFO1_WATERMARK | \
+//                                                 MCAN_INTR_SRC_RX_FIFO1_FULL | \
+//                                                 MCAN_INTR_SRC_RX_FIFO1_MSG_LOST | \
+//                                                 MCAN_INTR_SRC_HIGH_PRIO_MSG | \
+//                                                 MCAN_INTR_SRC_DEDICATED_RX_BUFF_MSG)
 
 
 #define CANFD_MST_ID                            (0U)
@@ -150,6 +156,7 @@
 #define CANFD_ID_11b_MASK                       (0x7FFU)
 
 #define CANFD_MST_SENSOR_MSG                    (0U)
+#define CANFD_MST_STATUS_MSG                    (1U)
 #define CANFD_MST_IMU_MSG                       (1U)
 #define CANFD_MST_FLASH_ACK_MSG                 (6U)
 #define CANFD_MST_HELLO_MSG                     (7U)
@@ -224,6 +231,8 @@
                                                 x.fidx      = 0U; \
                                                 x.anmf      = 0U; \
                                                 x.data[0]   = 0;
+
+
 
 /***********************************************************************
  * COMMUNICATION CONSTANTS
@@ -300,7 +309,7 @@ typedef enum __spi_test_state__
     COM_SPI_TEST_STATE_IDLE         = 0U,
     COM_SPI_TEST_STATE_CS_ACTIVE    = 1U,
     COM_SPI_TEST_STATE_RX_PROGRESS  = 2U,
-    COM_SPI_TEST_STATE_RX_END       = 4U,
+    COM_SPI_TEST_STATE_RX_STOP      = 4U,
     COM_SPI_TEST_STATE_CS_INACTIVE  = 8U,
 } spi_test_state;
 
@@ -388,21 +397,6 @@ typedef union __slv2mst_reg_u__
         uint16_t    SE          : 1;    /*!< Bits 15    : System enabled/disabled                               */
     };
 } slv2mst_reg_u;
-
-/**
- * @union   header_reg_u
- * @brief   Slave to Master header structure for RS485 communication.
- */
-typedef union __header_reg_u__
-{
-    uint16_t        all;        /*!< Short (16bits) type access */
-    struct
-    {
-        uint16_t    size : 6;   /*!< Bits 5-0   : R/W - Number of elements in the message expressed in bytes.   */
-        uint16_t    type : 2;   /*!< Bits 7-6   : R/W - Type of message (TBD).                                  */
-        uint16_t    addr : 8;   /*!< Bits 15-8  : R/W - Target address                                          */
-    };
-} header_reg_u;
 
 /***********************************************************************
  * MAIN COMMUNICATION STRUCTURES
@@ -530,6 +524,21 @@ typedef struct __spi_tx_t__
  * COMMUNICATION FOR RS485
  ***********************************************************************/
 /**
+ * @union   rs485_header_u
+ * @brief   Slave to Master header structure for RS485 communication.
+ */
+typedef union __rs485_header_u__
+{
+    uint16_t        all;        /*!< Short (16bits) type access */
+    struct
+    {
+        uint16_t    size : 6;   /*!< Bits 5-0   : R/W - Number of elements in the message expressed in bytes.   */
+        uint16_t    type : 2;   /*!< Bits 7-6   : R/W - Type of message (TBD).                                  */
+        uint16_t    addr : 8;   /*!< Bits 15-8  : R/W - Target address                                          */
+    };
+} rs485_header_u;
+
+/**
  * @union   rs485_tx_msg_u
  * @brief   RS485 reception message structure. Separating header, received values and CRC to be computed.
  */
@@ -538,7 +547,7 @@ typedef union __rs485_rx_msg_u__
     uint16_t            raw[COM_MSG_RS485_TX_RX_MAX_SIZE];
     struct
     {
-        header_reg_u    header;
+        rs485_header_u  header;
         mst2slv_msg_t   data;
         crc_reg_t       crc;
     };
@@ -553,7 +562,7 @@ typedef union __rs485_tx_msg_u__
     uint16_t            raw[COM_MSG_RS485_TX_RX_MAX_SIZE];
     struct
     {
-        header_reg_u    header;
+        rs485_header_u  header;
         slv2mst_msg_t   data;
         crc_reg_t       crc;
     };
@@ -590,6 +599,54 @@ typedef struct __rs485_tx_t__
 /***********************************************************************
  * COMMUNICATION FOR CAN/CAN-FD
  ***********************************************************************/
+/**
+ * @union   rs485_header_u
+ * @brief   Slave to Master header structure for RS485 communication.
+ */
+//typedef union __canfd_header_u__
+//{
+//    uint32_t        all;        /*!< Short (16bits) type access */
+//    struct
+//    {
+//        uint32_t    size : 8;   /*!< Bits 5-0   : R/W - Number of elements in the message expressed in bytes.   */
+//        uint16_t    type : 2;   /*!< Bits 7-6   : R/W - Type of message (TBD).                                  */
+//        uint16_t    addr : 8;   /*!< Bits 15-8  : R/W - Target address                                          */
+//    };
+//} canfd_header_u;
+//
+//typedef union __canfd_header_t__
+//{
+//    uint32_t        all;        /*!< Short (16bits) type access */
+//    struct
+//    {
+//        uint32_t    size : 8;   /*!< Bits 5-0   : R/W - Number of elements in the message expressed in bytes.   */
+//        uint16_t    type : 2;   /*!< Bits 7-6   : R/W - Type of message (TBD).                                  */
+//        uint16_t    addr : 8;   /*!< Bits 15-8  : R/W - Target address                                          */
+//    };
+//} canfd_header_t;
+//
+//typedef union __canfd_tx_msg_u__
+//{
+//    uint16_t            raw[COM_MSG_RS485_TX_RX_MAX_SIZE];
+//    struct
+//    {
+//        header_reg_u    header;
+//        slv2mst_msg_t   data;
+//    };
+//} canfd_tx_msg_u;
+
+//typedef struct __canfd_tx_t__
+//{
+//    MCAN_TxBufElement   header;
+//    slv2mst_msg_t       msg;
+////    canfd_tx_msg_u      msg;
+//    uint16_t            index;
+//    uint16_t            msg_cr;
+//    uint16_t            msg_nx;
+//} canfd_tx_t;
+
+typedef MCAN_TxBufElement canfd_tx_msg_t;
+
 ////! \brief Status message bits.
 //struct CAN_STATUSMSG_BITS
 //{                              // bits
@@ -648,7 +705,7 @@ typedef union __can_fd_id_builder_u__
  ***********************************************************************/
 #ifdef CPU1
 void COM_msgExtract(mst2slv_msg_t*, cmd_t*, cmd_t*);
-bool_t COM_msgCreate(motor_t*, slv2mst_msg_t*, uint32_t);
+bool_t COM_msgCreate(motor_t*, slv2mst_msg_t*, uint32_t*);
 void COM_initCmdStruct(cmd_t*);
 uint32_t COM_msgCRC(uint16_t*, uint16_t);
 inline void RS485_msgReceive(uint32_t, rs485_rx_t*);
