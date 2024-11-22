@@ -22,6 +22,11 @@
 #define CRC_INIT_CRC32                          (0xFFFFFFFF)
 
 #define CRC_COMP(crc_msb, crc_lsb, msg_comp)    ((crc_msb == MSB_32(msg_comp)) && (crc_lsb == LSB_32(msg_comp)))
+#define CRC_SWAP(var_msb, var_lsb, crc_comp)    var_msb = LSB_32(crc_comp); \
+                                                var_lsb = MSB_32(crc_comp)
+
+#define MSB_BYTE_MASK                           (0xFF00)
+#define LSB_BYTE_MASK                           (0x00FF)
 
 #define MSG_RX_ES_POS                           (15U)
 #define MSG_RX_ES_MASK                          (1U << MSG_RX_ES_POS)
@@ -132,6 +137,8 @@
                                                  MCAN_INTR_SRC_DEDICATED_RX_BUFF_MSG)
 
 #define CANFD_MAX_ERR                           (10)
+
+
 //(MCAN_INTR_SRC_RX_FIFO0_NEW_MSG | \
 //                                                 MCAN_INTR_SRC_RX_FIFO0_WATERMARK | \
 //                                                 MCAN_INTR_SRC_RX_FIFO0_FULL | \
@@ -154,6 +161,14 @@
 #define CANFD_SUB_ID_MASK                       (0x7U)
 #define CANFD_ID_MASK                           (0xFFU)
 #define CANFD_ID_11b_MASK                       (0x7FFU)
+
+#define CANFD_OP_STORED_IN_RX_BUF               (0U)
+#define CANFD_OP_MSG_A_IN_RX_BUF                (1U)
+#define CANFD_OP_MSG_B_IN_RX_BUF                (2U)
+#define CANFD_OP_MSG_C_IN_RX_BUF                (3U)
+#define CANFD_OP_IN_RX_BUF_MASK                 (3U)
+#define CANFD_OP_IN_RX_BUF_POS                  (9U)
+#define CANFD_OP_IN_RX_BUF                      (CANFD_OP_STORED_IN_RX_BUF << CANFD_OP_IN_RX_BUF_POS)
 
 #define CANFD_MST_SENSOR_MSG                    (0U)
 #define CANFD_MST_STATUS_MSG                    (1U)
@@ -297,7 +312,7 @@ typedef enum __com_bus_enum__
     COM_NO_BUS_DEFINED  = 0,
     COM_USE_SPI_BUS     = 1,
     COM_USE_RS485_BUS   = 2,
-    COM_USE_CANFD_BUS   = 3,
+    COM_USE_CANFD_BUS   = 4,
 } com_bus_e;
 
 /**
@@ -445,38 +460,6 @@ typedef struct __slv2mst_msg_t__
     uint16_t        lastCmdIndex;
 } slv2mst_msg_t;
 
-/**
- * @struct  cmd_uomodri_t
- * @brief   uOmodri internal structure command including mst2slv_msg + info status.
- */
-#ifdef CPU1
-typedef struct __cmd_uomodri_t__
-{
-    mst2slv_reg_u   mode;
-    float32_t       posRef[2];
-    float32_t       velRef[2];
-    float32_t       iqRef[2];
-    float32_t       kpCoeff[2];
-    float32_t       kdCoeff[2];
-    float32_t       iSat[2];
-    uint32_t        cptTimeout;
-    uint16_t        index;
-} cmd_uomodri_t;
-#else
-typedef struct __cmd_uomodri_t__
-{
-    mst2slv_reg_u   mode;
-    float           posRef[2];
-    float           velRef[2];
-    float           iqRef[2];
-    float           kpCoeff[2];
-    float           kdCoeff[2];
-    float           iSat[2];
-    uint32_t        cptTimeout;
-    uint16_t        index;
-} cmd_uomodri_t;
-#endif
-
 /***********************************************************************
  * COMMUNICATION FOR SPI
  ***********************************************************************/
@@ -599,6 +582,25 @@ typedef struct __rs485_tx_t__
 /***********************************************************************
  * COMMUNICATION FOR CAN/CAN-FD
  ***********************************************************************/
+typedef struct __canfd_rx_t__
+{
+    MCAN_RxBufElement   buf;
+    union
+    {
+        uint16_t        bytes2short[MCAN_MAX_PAYLOAD_BYTES / 2];
+        mst2slv_msg_t   data;
+    };
+} canfd_rx_t;
+
+typedef struct __canfd_tx_t__
+{
+    MCAN_TxBufElement   buf;
+    union
+    {
+      uint16_t          short2bytes[MCAN_MAX_PAYLOAD_BYTES / 2];
+      slv2mst_msg_t     msg;
+    };
+} canfd_tx_t;
 /**
  * @union   rs485_header_u
  * @brief   Slave to Master header structure for RS485 communication.
@@ -645,7 +647,8 @@ typedef struct __rs485_tx_t__
 //    uint16_t            msg_nx;
 //} canfd_tx_t;
 
-typedef MCAN_TxBufElement canfd_tx_msg_t;
+//typedef MCAN_TxBufElement canfd_tx_t;
+//typedef MCAN_RxBufElement canfd_rx_t;
 
 ////! \brief Status message bits.
 //struct CAN_STATUSMSG_BITS
@@ -689,7 +692,7 @@ typedef struct __can_command_t__
 
 
 //! \brief ID builder.
-typedef union __can_fd_id_builder_u__
+typedef union __canfd_id_u__
 {
     uint32_t        id_all;
     struct
@@ -698,7 +701,7 @@ typedef union __can_fd_id_builder_u__
         uint32_t    sub_addr    : 3;    /*!< Bits 18-20 : Sub ID for multiple commands                          */
         uint32_t    main_addr   : 11;   /*!< Bits 21-31 : Main ID. 0x00 for master, uid unique 8b for others    */
     };
-} can_fd_id_builder_u;
+} canfd_id_u;
 
 /***********************************************************************
  * FUNCTIONS DECLARATION
@@ -710,13 +713,8 @@ void COM_initCmdStruct(cmd_t*);
 uint32_t COM_msgCRC(uint16_t*, uint16_t);
 inline void RS485_msgReceive(uint32_t, rs485_rx_t*);
 inline void RS485_msgTransmit(uint32_t, rs485_tx_t*);
-void COM_checkSPIBus(spi_rx_msg_t*, com_bus_e*);
-void COM_checkCANFDBus(com_bus_e*);
-
-//void SCI_rxDisable(uint32_t);
-//void SCI_rxEnable(uint32_t);
-//void SCI_txDisable(uint32_t);
-//void SCI_txEnable(uint32_t);
+inline void CANFD_msgReceive(canfd_rx_t*);
+inline void CANFD_msgTransmit(canfd_tx_t*);
 #else
 void COM_msgDbgTx(dbg_uart_addr_t*, dbg_uart_msg_t*);
 void COM_msgDbgRx(com_dbg_rx_msg_t*, uint8_t);

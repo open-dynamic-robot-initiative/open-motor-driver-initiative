@@ -1493,7 +1493,7 @@
 // Accept/Reject Non-matching Frames messages with 29-bit IDs
 #define MCAN_NO_MATCH_EXT_ID                    MCAN_REJECT_NO_MATCH_EXT_ID
 // Accept/Reject Non-matching Frames messages with 11-bit IDs
-#define MCAN_NO_MATCH_STD_ID                    MCAN_ACCEPT_NO_MATCH_STD_ID_IN_RX_FIFO0
+#define MCAN_NO_MATCH_STD_ID                    MCAN_REJECT_NO_MATCH_STD_ID
 // structure associated to MCAN configuration
 #define MCAN_CONFIG_PARAMS                      { \
                                                     .monEnable              = MCAN_BUS_MONITORING_MODE, \
@@ -1642,6 +1642,14 @@
 #define MCAN_RX_FIFO0_WATERMARK_IT              (0U)
 // Rx FIFO1 - Level for Rx FIFO 1 watermark interrupt
 #define MCAN_RX_FIFO1_WATERMARK_IT              (0U)
+#define MCAN_RX_LINE_SRC_IT                     (MCAN_INTR_LINE_NUM_1)
+#if (MCAN_RX_LINE_SRC_IT == MCAN_INTR_LINE_NUM_1)
+#define MCAN_RX_LINE_IT_CLEAR                   (MCAN_IT_LINE_1_CLEAR)
+#elif (MCAN_RX_LINE_SRC_IT == MCAN_INTR_LINE_NUM_0)
+#define MCAN_RX_LINE_IT_CLEAR                   (MCAN_IT_LINE_0_CLEAR)
+#else
+#define MCAN_RX_LINE_IT_CLEAR                   (MCAN_IT_EXT_TS_CLEAR)
+#endif
 
 // Standard ID - Number of standard Message ID filter elements / Memory space used.
 #define MCAN_STD_ID_FILTER_NUM                  (1U)
@@ -1650,7 +1658,7 @@
 #define MCAN_EXT_ID_FILTER_NUM                  (0U)
 #define MCAN_EXT_ID_FILTER_MEM_SPACE            (MCAN_EXT_ID_FILTER_NUM * MCANSS_EXT_ID_FILTER_SIZE_WORDS * 4U)
 // RX FIFO_0 - Number of Rx FIFO_0 elements / Memory space used.
-#define MCAN_RX_FIFO0_NUM                       (4U)
+#define MCAN_RX_FIFO0_NUM                       (0U)
 #define MCAN_RX_FIFO0_ELEM_SIZE                 (MCAN_ELEM_SIZE_64BYTES)
 #define MCAN_RX_FIFO0_MEM_SPACE                 (MCAN_RX_FIFO0_NUM * MCAN_STRUCT_SIZE(MCAN_RX_FIFO0_ELEM_SIZE))
 // RX FIFO_1 - Number of Rx FIFO_1 elements / Memory space used.
@@ -1715,14 +1723,15 @@
                                                     .rxFIFO1waterMark       = MCAN_RX_FIFO1_WATERMARK_IT, \
                                                 }
 
-// filter for Rx Buffer #0
-// standard ID that filter will accept (UID_unique_8b).
-// SFID2[10, 9] -> Received message stored in an Rx buffer.
-// SFID2[0,5]   -> Index of the dedicated Rx buffer.
-// Store message into dedicated Rx buffer if filter matches.
-// Use range mode to define valid ID (is ignored). Filtering to store into dedicated RX BUFFER.
+/* filter for Rx Buffer #0
+ * standard ID that filter will accept (UID_unique_8b).
+ * SFID2[10, 9] -> Received message stored in an Rx buffer.
+ * SFID2[0,5]   -> Index of the dedicated Rx buffer.
+ * Store message into dedicated Rx buffer if filter matches.
+ * Use range mode to define valid ID (is ignored). Filtering to store into dedicated RX BUFFER.
+ */
 #define MCAN_STD_ID_FLT_RX_BUF_0_ID             CANFD_ID(CANFD_SLV_ID, CANFD_SLV_CMD_MSG)
-#define MCAN_STD_ID_FLT_RX_BUF_0_NUM            (0U)
+#define MCAN_STD_ID_FLT_RX_BUF_0_NUM            (CANFD_OP_IN_RX_BUF | MCAN_RX_BUF_0_INDEX)
 #define MCAN_STD_ID_FLT_RX_BUF_0_ELEM           (MCAN_STDFILTEC_RXBUFF)
 #define MCAN_STD_ID_FLT_RX_BUF_0_TYPE           (MCAN_STDFILT_RANGE)
 #define MCAN_STD_ID_FLT_RX_BUF_0_CFG            { \
@@ -1746,8 +1755,6 @@
 #define MCAN_STD_ID_FILTER_CFG                  { \
                                                     MCAN_STD_ID_FLT_RX_BUF_0_CFG, \
                                                 }
-//                                                    MCAN_STD_ID_FLT_RX_FIFO_0_CFG, \
-//                                                }
 #define MCAN_EXT_ID_FILTER_CFG                  { \
                                                 }
 
