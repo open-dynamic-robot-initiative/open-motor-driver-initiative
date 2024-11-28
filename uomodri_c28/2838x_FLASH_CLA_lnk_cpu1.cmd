@@ -120,14 +120,14 @@ SECTIONS
    .CPU_ID				: > CPU_ID, 	type=NOINIT
 
 /* CLA specific sections */
-   ClaDataMotor1    	: > RAMLS0 /*>> RAMLS0 | RAMLS1*/
-   ClaDataMotor2     	: > RAMLS1 /*>> RAMLS0 | RAMLS1*/
+   ClaDataMotor1    	: > RAMLS0
+   ClaDataMotor2     	: > RAMLS1
    CLAscratch			:
                      		{ *.obj(CLAscratch)
                      		. += CLA_SCRATCHPAD_SIZE;
                      		*.obj(CLAscratch_end) } >  RAMLS2
-   .scratchpad      	: > RAMLS2//RAMLS3
-   .bss_cla         	: > RAMLS2//RAMLS3
+   .scratchpad      	: > RAMLS2
+   .bss_cla         	: > RAMLS2
    cla_shared       	: > RAMLS2
    CLA1mathTables   	: > RAMLS2
    //CLA1mathTables	: load = CLA1_DATAROM//, run = CLA1_DATAROM_RUN

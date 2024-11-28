@@ -134,20 +134,24 @@ bool_t COM_msgCreate(motor_t* p_motor, slv2mst_msg_t* p_msg, uint32_t* p_tmr_cnt
 
 /**
  * @brief           Initialize the command structure for a motor
- * @param[in]       p_cmd   Pointer on the command structure (actions to be realized by motor_foc)
+ * @param[in]       p_cmd       Pointer on the command structure (actions to be realized by motor_foc)
+ * @param[in]       motor_id    Motor identifier.
  */
-void COM_initCmdStruct(cmd_t* p_cmd)
+void COM_initCmdStruct(cmd_t* p_cmd, uint16_t motor_id)
 {
     p_cmd->posRef               = 0.0f;
     p_cmd->velRef               = 0.0f;
     p_cmd->iqff                 = 0.0f;
     p_cmd->kpCoeff              = 0.0f;
     p_cmd->kdCoeff              = 0.0f;
-//    p_cmd->iSat                 = 0.0f;
+    p_cmd->iSat                 = (motor_id == MOTOR_1) ? \
+            (MOTOR1_CURRENT_CMD_SAT_MAX) : \
+            (MOTOR2_CURRENT_CMD_SAT_MAX);
     p_cmd->timeoutRef           = 0U;
     p_cmd->cptTimeout           = 0U;
     p_cmd->index                = 0U;
     p_cmd->cmdField.all         = 0U;
+    p_cmd->periphField.all      = 0U;
 
     return;
 }

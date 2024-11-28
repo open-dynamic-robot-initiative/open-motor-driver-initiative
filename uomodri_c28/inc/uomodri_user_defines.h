@@ -37,7 +37,7 @@
 //#endif
 #define CLB_TILE_ENABLE                         (1)
 // CM peripherals ENABLE/DISABLE
-#define USB_BUS_ENABLE                          (1)
+#define USB_BUS_ENABLE                          (0)
 #define UART_BUS_ENABLE                         (0)
 //#if ((USB_BUS_ENABLE) || (UART_BUS_ENABLE)) && (defined CPU1)
 //#error "In order to use USB or UART, CM must be active."
@@ -46,10 +46,10 @@
 #error "USB & UART share the same pins. They cannot run @ the same time"
 #endif
 // Communication peripherals ENABLE/DISABLE
-#define CAN_BUS_ENABLE                          (0)
+#define CAN_FD_BUS_ENABLE                       (0)
 #define RS485_BUS_ENABLE                        (1)
 #define SPI_BUS_ENABLE                          (1)
-#if (RS485_BUS_ENABLE) && (CAN_BUS_ENABLE)
+#if (RS485_BUS_ENABLE) && (CAN_FD_BUS_ENABLE)
 #error "RS-485 & CAN share the same pins. They cannot run @ the same time"
 //#elif ((RS485_BUS_ENABLE) || (CAN_BUS_ENABLE) ) && (SPI_BUS_ENABLE)
 //#error "RS-485, CAN & SPI share the same data. They cannot run @ the same time"

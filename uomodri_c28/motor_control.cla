@@ -57,6 +57,7 @@ __attribute__((interrupt)) void cmdNew_Task(void)
 #ifdef DEBUG
     DBG_PIN1_SET;
 #endif
+//    __mdebugstop();
     if((cmd_uomodri[MOTOR_1].cmdField.all & CMD_POSITION_OFFSET_COMP) == CMD_POSITION_OFFSET_COMP)
         motor_m1.foc.cmd.posRef     = cmd_uomodri[MOTOR_1].posRef + motor_m1.foc.enc.thetaIndexAbsolute;
     else
@@ -102,6 +103,7 @@ __attribute__((interrupt)) void motor1_Task(void)
 #ifdef DEBUG
     DBG_PIN0_SET;
 #endif
+//    __mdebugstop();
     // Motor control
     MOT_runControl(&motor_m1);
 #ifdef DEBUG
@@ -120,6 +122,7 @@ __attribute__((interrupt)) void motor2_Task(void)
 #ifdef DEBUG
     DBG_PIN0_SET;
 #endif
+//    __mdebugstop();
     // Motor control
     MOT_runControl(&motor_m2);
 #ifdef DEBUG

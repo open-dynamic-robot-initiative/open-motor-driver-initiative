@@ -186,11 +186,11 @@ inline void ENC_resetPeriph(encoder_t* p_enc)
 {
     uint32_t eqepBase       = p_enc->eqepBase;
     // Reset encoder position
-    EQEP_setPosition(eqepBase, 0);
+    EQEP_setPosition(eqepBase, 0U);
     /* Reset the time base for edge capture unit */
-    HWREGH(eqepBase + EQEP_O_QCPRDLAT) = 0;
+    HWREGH(eqepBase + EQEP_O_QCPRDLAT) = 0U;
     /* Reset the Period count */
-    HWREGH(eqepBase + EQEP_O_QCTMRLAT) = 0;
+    HWREGH(eqepBase + EQEP_O_QCTMRLAT) = 0U;
     // Reset interrupts status flags
     EQEP_clearInterruptStatus(eqepBase, (EQEP_INT_GLOBAL | EQEP_INT_POS_CNT_ERROR | EQEP_INT_PHASE_ERROR |
             EQEP_INT_DIR_CHANGE | EQEP_INT_WATCHDOG | EQEP_INT_UNDERFLOW | EQEP_INT_OVERFLOW |
@@ -412,14 +412,14 @@ inline void FOC_resetStructPD(pd_t* p_pd)
  */
 inline void FOC_resetStructCmd(cmd_t* p_cmd)
 {
-    p_cmd->posRef               = 0.0f;
-    p_cmd->velRef               = 0.0f;
-    p_cmd->iqff                 = 0.0f;
-    p_cmd->kpCoeff              = 0.0f;
-    p_cmd->kdCoeff              = 0.0f;
-    p_cmd->timeoutRef           = 0;
-    p_cmd->cptTimeout           = 0;
-    p_cmd->cmdField.all         = 0;
+    p_cmd->posRef       = 0.0f;
+    p_cmd->velRef       = 0.0f;
+    p_cmd->iqff         = 0.0f;
+    p_cmd->kpCoeff      = 0.0f;
+    p_cmd->kdCoeff      = 0.0f;
+    p_cmd->timeoutRef   = 0;
+    p_cmd->cptTimeout   = 0;
+    p_cmd->cmdField.all = 0;
 
     return;
 }
@@ -473,11 +473,14 @@ inline void FOC_resetStruct(foc_t* p_foc)
     p_foc->dtc_u            = 0.0f;
     p_foc->dtc_v            = 0.0f;
     p_foc->dtc_w            = 0.0f;
+    p_foc->idRef            = 0.0f;
+    p_foc->iqRef            = 0.0f;
     p_foc->resEst           = 0.0f;
 
     p_foc->initPosStep      = 0.0f;
     p_foc->initPosEnc[FW]   = 0.0f;
     p_foc->initPosEnc[REV]  = 0.0f;
+    p_foc->initDiff         = 0.0f;
 
     return;
 }
@@ -678,17 +681,16 @@ void MOT_stopCommand(uint32_t epwm_base)
 #if (USE_ALTERNATIVE_SM)
 bool_t MOT_runControl(motor_t* p_motor)
 {
-
-    foc_t*          p_foc       = &p_motor->foc;
-    error_reg_u*    p_err       = &p_motor->error;
-    encoder_t*      p_enc       = &p_foc->enc;
-    cmd_t*          p_cmd       = &p_foc->cmd;
-    cmd_reg_u       cmd_reg     = {.all = p_cmd->cmdField.all};
-    periph_u        periph_reg  = {.all = p_cmd->periphField.all};
-    uint16_t        motor_id    = p_motor->id;
-    bool_t          evt_flag    = false;
-    bool_t          start       = cmd_reg.motorEnable && cmd_reg.systemEnable;
-    bool_t          test        = IS_BIGGER_THAN_U32(p_cmd->cptTimeout, p_cmd->timeoutRef); // p_cmd->cptTimeout > p_cmd->timeoutRef
+    foc_t* p_foc                = &p_motor->foc;
+    error_reg_u* p_err          = &p_motor->error;
+    encoder_t* p_enc            = &p_foc->enc;
+    cmd_t* p_cmd                = &p_foc->cmd;
+    cmd_reg_u cmd_reg           = {.all = p_cmd->cmdField.all};
+    periph_u periph_reg         = {.all = p_cmd->periphField.all};
+    uint16_t motor_id           = p_motor->id;
+    bool_t evt_flag             = false;
+    bool_t start                = cmd_reg.motorEnable && cmd_reg.systemEnable;
+    bool_t timeout              = IS_BIGGER_THAN_U32(p_cmd->cptTimeout, p_cmd->timeoutRef); // p_cmd->cptTimeout > p_cmd->timeoutRef
     p_enc->flags.indexOffset    = cmd_reg.encOffsetEnable;
 
     // Read currents in 3 phases + Vbus
@@ -705,7 +707,7 @@ bool_t MOT_runControl(motor_t* p_motor)
     p_err->drv_fault            = !GPIO_readPin(p_motor->drvFaultNum)                   || p_err->drv_fault;
     p_err->drv_initErr          = periph_reg.drv_initErr                                || p_err->drv_initErr;
     p_err->pos_rollover         = (p_enc->flags.rollOverError && cmd_reg.rollOverEnable)|| p_err->pos_rollover;
-    p_err->com_timeout          = (test && p_cmd->timeoutRef)                           || p_err->com_timeout;
+    p_err->com_timeout          = (timeout && p_cmd->timeoutRef)                        || p_err->com_timeout;
     p_err->enc_indexErr         = (p_enc->flags.indexDetect && p_enc->flags.indexError) || p_err->enc_indexErr;
     p_err->enc_alignErr         = p_enc->flags.alignError                               || p_err->enc_alignErr;
     p_motor->state              = (p_err->all)              ? (MOTOR_STATE_ERROR)           : (p_motor->state);
@@ -715,11 +717,6 @@ bool_t MOT_runControl(motor_t* p_motor)
     case MOTOR_STATE_IDLE:
     default:
         p_motor->itCnt          = 0U;
-        p_foc->idRef            = 0.0f;
-        p_foc->iqRef            = 0.0f;
-        p_foc->initPosStep      = 0.0f;
-        p_foc->initPosEnc[FW]   = 0.0f;
-        p_foc->initPosEnc[REV]  = 0.0f;
         p_motor->state          = (start)                   ? (MOTOR_STATE_INIT_FW)         : (MOTOR_STATE_IDLE);
         ENC_resetPeriph(p_enc);
         FOC_resetStruct(p_foc);
@@ -822,15 +819,15 @@ bool_t MOT_runControl(motor_t* p_motor)
 #else
 bool_t MOT_runControl(motor_t* p_motor)
 {
-    foc_t*          p_foc           = &p_motor->foc;
-    error_reg_u*    p_err           = &p_motor->error;
-    encoder_t*      p_enc           = &p_foc->enc;
-    cmd_t*          p_cmd           = &p_foc->cmd;
-    cmd_reg_u       cmd_reg         = {.all = p_cmd->cmdField.all};
-    periph_u        periph_reg      = {.all = p_cmd->periphField.all};
-    uint16_t        motor_id        = p_motor->id;
-    bool_t          start           = cmd_reg.motorEnable && cmd_reg.systemEnable;
-    bool_t          timeout         = IS_BIGGER_THAN_U32(p_cmd->cptTimeout, p_cmd->timeoutRef); //(p_cmd->cptTimeout > p_cmd->timeoutRef) ? (1) : (0);
+    foc_t* p_foc                    = &p_motor->foc;
+    error_reg_u* p_err              = &p_motor->error;
+    encoder_t* p_enc                = &p_foc->enc;
+    cmd_t* p_cmd                    = &p_foc->cmd;
+    cmd_reg_u cmd_reg               = {.all = p_cmd->cmdField.all};
+    periph_u periph_reg             = {.all = p_cmd->periphField.all};
+    uint16_t motor_id               = p_motor->id;
+    bool_t timeout                  = IS_BIGGER_THAN_U32(p_cmd->cptTimeout, p_cmd->timeoutRef); //(p_cmd->cptTimeout > p_cmd->timeoutRef) ? (1) : (0);
+    bool_t start                    = cmd_reg.motorEnable && cmd_reg.systemEnable;// && (!timeout);//p_cmd->timeoutRef;
     p_enc->flags.indexOffset        = cmd_reg.encOffsetEnable;
 
     //  Read currents in 3 phases + Vbus
@@ -857,16 +854,15 @@ bool_t MOT_runControl(motor_t* p_motor)
     {
     case MOTOR_STATE_IDLE:
     default:
-        p_motor->itCnt              = 0U;
-        p_foc->idRef                = 0.0f;
-        p_foc->iqRef                = 0.0f;
-        p_foc->initPosStep          = 0.0f;
-        p_foc->initPosEnc[FW]       = 0.0f;
-        p_foc->initPosEnc[REV]      = 0.0f;
         if(start)
             p_motor->state          = MOTOR_STATE_INIT_FW;
-        ENC_resetPeriph(p_enc);
-        FOC_resetStruct(p_foc);
+        else
+        {
+            p_motor->state          = MOTOR_STATE_IDLE;
+            ENC_resetPeriph(p_enc);
+            FOC_resetStruct(p_foc);
+        }
+        p_motor->itCnt              = 0U;
         MOT_stopCommand(p_motor->epwmBase[CHANNEL_1]);
         MOT_stopCommand(p_motor->epwmBase[CHANNEL_2]);
         MOT_stopCommand(p_motor->epwmBase[CHANNEL_3]);
@@ -888,13 +884,15 @@ bool_t MOT_runControl(motor_t* p_motor)
             p_motor->state          = MOTOR_STATE_INIT_REV;
             p_motor->itCnt          = 0U;
         }
+        else if(start)
+        {
+            p_motor->state          = MOTOR_STATE_INIT_FW;
+            p_motor->itCnt         += 1U;
+        }
         else
         {
-            if(start)
-                p_motor->state      = MOTOR_STATE_INIT_FW;
-            else
-                p_motor->state      = MOTOR_STATE_IDLE;
-            p_motor->itCnt         += 1U;
+            p_motor->state          = MOTOR_STATE_IDLE;
+            p_motor->itCnt          = 0U;
         }
         p_foc->initPosEnc[FW]       = p_enc->thetaAbsolute;
         p_enc->thetaElec            = p_foc->initPosStep;
@@ -920,13 +918,15 @@ bool_t MOT_runControl(motor_t* p_motor)
             p_motor->state          = MOTOR_STATE_INIT_TEST;
             p_motor->itCnt          = 0U;
         }
+        else if(start)
+        {
+            p_motor->state          = MOTOR_STATE_INIT_REV;
+            p_motor->itCnt         += 1U;
+        }
         else
         {
-            if(start)
-                p_motor->state      = MOTOR_STATE_INIT_REV;
-            else
-                p_motor->state      = MOTOR_STATE_IDLE;
-            p_motor->itCnt         += 1U;
+            p_motor->state          = MOTOR_STATE_IDLE;
+            p_motor->itCnt          = 0U;
         }
         p_foc->initPosEnc[REV]      = p_enc->thetaAbsolute;
         p_enc->thetaElec            = p_foc->initPosStep;
@@ -937,15 +937,17 @@ bool_t MOT_runControl(motor_t* p_motor)
         break;
 
     case MOTOR_STATE_INIT_TEST:
-        if(!start)
-            p_motor->state          = MOTOR_STATE_IDLE;
-        else
+        if(start)
+        {
             p_motor->state          = MOTOR_STATE_INIT_FIX;
-        p_foc->idRef                = (motor_id == MOTOR_1) ? (MOTOR1_CURRENT_INIT_MAX) : (MOTOR2_CURRENT_INIT_MAX);
-        p_foc->initDiff             = p_foc->initPosEnc[REV] - p_foc->initPosEnc[FW];
-//        p_enc->flags.alignError     = ((p_foc->initDiff < p_foc->initErr[MIN]) || (p_foc->initDiff > p_foc->initErr[MAX])) ? (true) : (false);
-        p_enc->flags.alignError     = (p_foc->initDiff < p_foc->initErr[MIN])   ? (true) : (false);
-        p_enc->flags.alignError    |= (p_foc->initDiff > p_foc->initErr[MAX])   ? (true) : (false);
+            p_foc->idRef            = (motor_id == MOTOR_1) ? (MOTOR1_CURRENT_INIT_MAX) : (MOTOR2_CURRENT_INIT_MAX);
+            p_foc->initDiff         = p_foc->initPosEnc[REV] - p_foc->initPosEnc[FW];
+            p_enc->flags.alignError = IS_SMALLER_THAN_I32(p_foc->initDiff, p_foc->initErr[MIN]);//p_foc->initDiff < p_foc->initErr[MIN] ?
+            p_enc->flags.alignError|= IS_BIGGER_THAN_I32(p_foc->initDiff, p_foc->initErr[MAX]);//p_foc->initDiff > p_foc->initErr[MIN] ?
+        }
+        else
+            p_motor->state          = MOTOR_STATE_IDLE;
+        p_motor->itCnt              = 0U;
         FOC_runControl(p_foc);
         MOT_runCommand(p_motor->epwmBase[CHANNEL_1], p_foc->dtc_u);
         MOT_runCommand(p_motor->epwmBase[CHANNEL_2], p_foc->dtc_v);
@@ -953,12 +955,14 @@ bool_t MOT_runControl(motor_t* p_motor)
         break;
 
     case MOTOR_STATE_INIT_FIX:
-        p_foc->idRef                = (motor_id == MOTOR_1) ? (MOTOR1_CURRENT_INIT_MAX) : (MOTOR2_CURRENT_INIT_MAX);
-        if(!start)
-            p_motor->state          = MOTOR_STATE_IDLE;
-        else if(IS_BIGGER_THAN_U32(p_motor->itCnt, p_foc->initFixCnt)) // p_motor->itCnt > p_foc->initFixCnt
+        if(IS_BIGGER_THAN_U32(p_motor->itCnt, p_foc->initFixCnt)) // p_motor->itCnt > p_foc->initFixCnt
             p_motor->state          = MOTOR_STATE_READY;
+        else if(start)
+            p_motor->state          = MOTOR_STATE_INIT_FIX;
+        else
+            p_motor->state          = MOTOR_STATE_IDLE;
         p_motor->itCnt             += 1U;
+        p_foc->idRef                = (motor_id == MOTOR_1) ? (MOTOR1_CURRENT_INIT_MAX) : (MOTOR2_CURRENT_INIT_MAX);
         ENC_resetPeriph(p_enc);
         ENC_resetStruct(p_enc);
         FOC_runControl(p_foc);
@@ -968,9 +972,11 @@ bool_t MOT_runControl(motor_t* p_motor)
         break;
 
     case MOTOR_STATE_READY:
-        if(!cmd_reg.systemEnable)
+        if(start)
+            p_motor->state          = MOTOR_STATE_READY;
+        else if(!cmd_reg.systemEnable)
             p_motor->state          = MOTOR_STATE_IDLE;
-        else if(!cmd_reg.motorEnable)
+        else
             p_motor->state          = MOTOR_STATE_STOP;
         p_motor->itCnt             += 1U;
         p_foc->idRef                = 0.0f;
@@ -982,9 +988,11 @@ bool_t MOT_runControl(motor_t* p_motor)
         break;
 
     case MOTOR_STATE_STOP:
-        if(!cmd_reg.systemEnable)
+        if(start)
+            p_motor->state          = MOTOR_STATE_READY;
+        else if(!cmd_reg.systemEnable)
             p_motor->state          = MOTOR_STATE_IDLE;
-        else if(!cmd_reg.motorEnable)
+        else
             p_motor->state          = MOTOR_STATE_STOP;
         p_motor->itCnt             += 1U;
         p_foc->idRef                = 0.0f;

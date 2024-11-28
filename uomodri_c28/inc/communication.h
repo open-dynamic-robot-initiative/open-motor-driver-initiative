@@ -598,7 +598,7 @@ typedef struct __canfd_tx_t__
     union
     {
       uint16_t          short2bytes[MCAN_MAX_PAYLOAD_BYTES / 2];
-      slv2mst_msg_t     msg;
+      slv2mst_msg_t     data;
     };
 } canfd_tx_t;
 /**
@@ -709,7 +709,7 @@ typedef union __canfd_id_u__
 #ifdef CPU1
 void COM_msgExtract(mst2slv_msg_t*, cmd_t*, cmd_t*);
 bool_t COM_msgCreate(motor_t*, slv2mst_msg_t*, uint32_t*);
-void COM_initCmdStruct(cmd_t*);
+void COM_initCmdStruct(cmd_t*, uint16_t);
 uint32_t COM_msgCRC(uint16_t*, uint16_t);
 inline void RS485_msgReceive(uint32_t, rs485_rx_t*);
 inline void RS485_msgTransmit(uint32_t, rs485_tx_t*);
