@@ -525,41 +525,6 @@ __attribute__((interrupt)) void cla_isrClearTask(void)
 __attribute__((interrupt)) void cla_isrMotor1(void)
 {
     // Fill of the M1 motor's elements in the Tx message
-
-//    // Is DMA transfer (SPI Tx) in progress or SPI CS low? (SPI active?)
-//    if((com_bus_select == COM_USE_SPI_BUS) && (!DMA_getRunStatusFlag(DMA_COM_SPI_TX_BASE_ADDR)) && COM_SPI_CS_READ)
-//    {
-//        spi_tx_msg_t* p_msg_spi = &com_spi_tx.msg[com_spi_tx.msg_nx];
-//        COM_msgCreate(&motor_m1, &p_msg_spi->data, &global_ms_tmr_cnt);
-//    }
-//
-//    // Is RS485 Tx transfer in progress?
-//    else if((com_bus_select == COM_USE_RS485_BUS) && (!com_rs485_tx.index))
-//    {
-//        rs485_tx_msg_u* p_msg_rs485 = &com_rs485_tx.msg[com_rs485_tx.msg_nx];
-//        p_msg_rs485->header.addr    = COM_MSG_RS485_TX_MASTER_ADDRESS;
-//        p_msg_rs485->header.type    = COM_MSG_RS485_TX_TYPE_STANDARD;
-//        p_msg_rs485->header.size    = COM_MSG_RS485_TX_8BIT_FULL_LENGTH;
-//        COM_msgCreate(&motor_m1, &p_msg_rs485->data, &global_ms_tmr_cnt);
-//    }
-//
-//    else if(com_bus_select == COM_USE_CANFD_BUS)
-//    {
-//        canfd_tx_t* p_msg_canfd = &com_canfd_tx;
-//        canfd_id_u  tx_msg_id   = {.main_addr     = CANFD_MST_ID,
-//                                   .sub_addr      = CANFD_MST_STATUS_MSG,
-//                                   .status_rsv1   = 0};
-//        p_msg_canfd->buf.id     = tx_msg_id.id_all;             // CANFD_ID(0U, 1U);
-//        p_msg_canfd->buf.rtr    = MCAN_RTR_TX_DATA_FRAME;       // Transmit data frame.
-//        p_msg_canfd->buf.xtd    = MCAN_ID_TYPE_11_BIT;          // 11-bit standard identifier.
-//        p_msg_canfd->buf.esi    = MCAN_ESI_PASSIVE_ERROR_FLAG;  // ESI bit in CAN FD format depends only on error passive flag.
-//        p_msg_canfd->buf.dlc    = MCAN_DLC_PAYLOAD_LENGTH_32B;  // CAN + CAN FD: transmit frame has 0-8 data bytes.
-//        p_msg_canfd->buf.brs    = MCAN_BIT_RATE_SWITCHING_MODE; // CAN FD frames transmitted with bit rate switching.
-//        p_msg_canfd->buf.fdf    = MCAN_FLEXIBLE_DATA_RATE_MODE; // Frame transmitted in CAN FD format.
-//        p_msg_canfd->buf.efc    = 1U;                           // Store Tx events.
-//        p_msg_canfd->buf.mm     = 0xAAU;                        // Message Marker.
-//        COM_msgCreate(&motor_m1, &p_msg_canfd->data, &global_ms_tmr_cnt);
-//    }
     switch(com_bus_select)
     {
     case COM_USE_SPI_BUS:
@@ -617,56 +582,6 @@ __attribute__((interrupt)) void cla_isrMotor1(void)
 __attribute__((interrupt)) void cla_isrMotor2(void)
 {
     // Finalize the Tx message. Aggregate MOTOR_2 values + computed CRC
-
-//    // Is DMA transfer (SPI Tx) in progress or SPI CS low? (SPI active?)
-//    if((com_bus_select == COM_USE_SPI_BUS) && (!DMA_getRunStatusFlag(DMA_COM_SPI_TX_BASE_ADDR)) && COM_SPI_CS_READ)
-//    {
-//        spi_tx_msg_t* p_msg_spi = &com_spi_tx.msg[com_spi_tx.msg_nx];
-//        COM_msgCreate(&motor_m2, &p_msg_spi->data, &global_ms_tmr_cnt);
-//        uint32_t msg_crc        = COM_msgCRC((uint16_t *) &p_msg_spi->data, \
-//                                             COM_MSG_SPI_TX_16BIT_PAYLOAD_LENGTH);
-//        // swap words in message - Required for Solo
-//        p_msg_spi->crc.u16_msb  = LSB_32(msg_crc);
-//        p_msg_spi->crc.u16_lsb  = MSB_32(msg_crc);
-//        // New message complete
-//        // Is SPI already transmitting (SPI Tx is slave - no control when Tx start)?
-//        if(!DMA_getRunStatusFlag(DMA_COM_SPI_TX_BASE_ADDR) && COM_SPI_CS_READ)
-//        {
-//            // swap active message array
-//            com_spi_tx.msg_cr   = !com_spi_tx.msg_cr;
-//            com_spi_tx.msg_nx   = !com_spi_tx.msg_cr;
-//            SPI_resetTxFIFO(COM_SPI_BASE);
-//            // Force first write in SPI_O_DAT register
-//            COM_SPI_DAT(p_msg_spi->data.status.all);
-//            DMA_configAddresses(DMA_COM_SPI_TX_BASE_ADDR, \
-//                                (uint16_t *) COM_SPI_TX_BASE_REG_ADDR, \
-//                                (uint16_t *) &p_msg_spi->data.timeStamp);
-//            DMA_startChannel(DMA_COM_SPI_TX_BASE_ADDR);
-//        }
-//    }
-//
-//    // Is RS485 Tx transfer in progress?
-//    else if((com_bus_select == COM_USE_RS485_BUS) &&(!com_rs485_tx.index))
-//    {
-//        rs485_tx_msg_u* p_msg_rs485 = &com_rs485_tx.msg[com_rs485_tx.msg_nx];
-//        COM_msgCreate(&motor_m2, &p_msg_rs485->data, &global_ms_tmr_cnt);
-//        uint32_t msg_crc            = COM_msgCRC((uint16_t *) &p_msg_rs485->header, \
-//                                                 COM_MSG_RS485_TX_16BIT_PAYLOAD_LENGTH);
-//        // swap words in message - Required for Solo
-//        p_msg_rs485->crc.u16_msb    = LSB_32(msg_crc);
-//        p_msg_rs485->crc.u16_lsb    = MSB_32(msg_crc);
-//        // New message complete. If we are here RS485 has not started.
-//        com_rs485_tx.msg_cr         = !com_rs485_tx.msg_cr;
-//        com_rs485_tx.msg_nx         = !com_rs485_tx.msg_cr;
-//    }
-//
-//    else if(com_bus_select == COM_USE_CANFD_BUS)
-//    {
-//        canfd_tx_t* p_msg_canfd         = &com_canfd_tx;
-//        COM_msgCreate(&motor_m2, &p_msg_canfd->data, &global_ms_tmr_cnt);
-//        CANFD_msgTransmit(&com_canfd_tx);
-//        MCAN_writeMsgRam(MCANA_DRIVER_BASE, MCAN_MEM_TYPE_BUF, MCAN_TX_BUF_0_INDEX, &p_msg_canfd->buf);
-//    }
     switch(com_bus_select)
     {
     case COM_USE_SPI_BUS:
