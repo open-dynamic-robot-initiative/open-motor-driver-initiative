@@ -9,6 +9,9 @@
 /***********************************************************************
  * DEFINES
  ***********************************************************************/
+// DRV analog config
+#define DRV_CSA_GAIN_VAL                (5 << DRV_CSA_GAIN_REG) // base gain
+
 /*******  Bit definitions for Fault Status 1 register  *******/
 #define FLT_STATUS_FAULT_Pos            (10U)
 #define FLT_STATUS_FAULT_Msk            (0x1U << FLT_STATUS_FAULT_Pos)

@@ -16,6 +16,13 @@ typedef union __uart_addr_u__
 } uart_addr_u;
 
 /***********************************************************************
+ * SCI DEFINES
+ ***********************************************************************/
+#define COM_SCI_FIFO_TX_REG_ADDR        (COM_SCI_BASE + SCI_O_FFTX)
+#define COM_SCI_FIFO_RX_REG_ADDR        (COM_SCI_BASE + SCI_O_FFRX)
+#define COM_SCI_CTRL1_REG_ADDR          (COM_SCI_BASE + SCI_O_CTL1)
+
+/***********************************************************************
  * INTERRUPTS DEFINES
  ***********************************************************************/
 #define INT_TIMER_LED                   INT_TIMER0

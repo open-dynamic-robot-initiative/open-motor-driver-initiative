@@ -921,42 +921,11 @@ __attribute__((interrupt)) void mcan_isr_canfd(void)
             CLA_forceTasks(CLA1_BASE, CLA_CMD_NEW_TASK_FLAG);
             // Add request for transmission.
             MCAN_txBufAddReq(MCANA_DRIVER_BASE, MCAN_TX_BUF_0_INDEX);
-//            while(MCAN_getTxBufReqPend(MCANA_DRIVER_BASE));
         }
     }
     else
+        //  Interrupt handling for other interrupt sources goes here
         mcan_error++;
-    //  Interrupt handling for other interrupt sources goes here
-
-//    if((MCAN_INTR_SRC_TRANS_COMPLETE | MCAN_INTR_SRC_TX_EVT_FIFO_NEW_ENTRY) & intrStatus)
-//    {
-//
-//    }
-
-//    else
-//    {
-//        mcan_error++;
-//        //  Interrupt handling for other interrupt sources goes here
-//    }
-
-    //  Clearing the NewData registers
-//    MCAN_clearNewDataStatus(MCANA_DRIVER_BASE, &newData);
-//
-//    // Read Message RAM.
-//    //MCAN_readMsgRam(MCANA_DRIVER_BASE, MCAN_MEM_TYPE_BUF, 0U, MCAN_RX_FIFO_NUM_0, &rxMsg);
-//    // Get the New Data Status.
-//    //MCAN_getNewDataStatus(MCANA_DRIVER_BASE, &newData);
-//    // Check that received data matches sent data.
-//    // Device will halt here during debug if data doesn't match.
-//    if((txMsg.data[0] != rxMsg.data[0]) ||
-//            (txMsg.data[1] != rxMsg.data[1]) ||
-//            (txMsg.data[2] != rxMsg.data[2]) ||
-//            (txMsg.data[3] != rxMsg.data[3]))
-//        // Device will halt here if transmitted and received data are not same.
-//        asm(" ESTOP0");
-////    else
-////        // Increment message count if message is received.
-////        msgCount++;
 
     //  Clearing the NewData registers
     MCAN_clearNewDataStatus(MCANA_DRIVER_BASE, &newData);

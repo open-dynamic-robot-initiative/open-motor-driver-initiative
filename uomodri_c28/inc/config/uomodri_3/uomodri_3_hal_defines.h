@@ -753,11 +753,6 @@
 // ADC defines
 #define ADC_SAMPLING_WINDOW                     (119U)   // From data sheet Table 20-12
 #define ADC_RESOLUTION_BIT                      ADC_RESOLUTION_16BIT
-#if (ADC_RESOLUTION_BIT == ADC_RESOLUTION_16BIT)
-#define ADC_RESOLUTION_MAX                      (65536U)
-#else
-#define ADC_RESOLUTION_MAX                      (4096U)
-#endif
 #define ADC_SIGNAL_MODE                         ADC_MODE_SINGLE_ENDED
 #define ADC_PULSE_END_MODE                      ADC_PULSE_END_OF_CONV
 #define ADC_SOC_PRIORITY                        ADC_PRI_ALL_ROUND_ROBIN
@@ -766,15 +761,9 @@
 #define ADC_VREF                                (3.0f)   // [V]
 // DRV analog config
 #define DRV_CSA_GAIN_REG                        DRV_CSA_GAIN_10_V_V  // [V/V] Possible values: 5, 10, 20, 40
-#define DRV_CSA_GAIN_VAL                        (5 << DRV_CSA_GAIN_REG) // base gain
 // Shunt & Vbus bridge divider
 #define R_SHUNT                                 (0.005f) // [Ohm]
 #define BRIDGE_DIVIDER                          ((5.1f + 100.0f) / 5.1f)
-// Ratio conversion
-#define ADC_VEXT12_VOLTAGE_SCALE                (ADC_VREF / ADC_RESOLUTION_MAX)
-#define ADC_VBUS_VOLTAGE_SCALE                  (ADC_VREF * BRIDGE_DIVIDER / ADC_RESOLUTION_MAX)
-#define ADC_MOTOR_VOLTAGE_SCALE                 (ADC_VREF * BRIDGE_DIVIDER / ADC_RESOLUTION_MAX)
-#define ADC_MOTOR_CURRENT_SCALE                 (ADC_VREF * (-1.0f) / DRV_CSA_GAIN_VAL / R_SHUNT / ADC_RESOLUTION_MAX)
 /**
  * @}
  */
@@ -1361,9 +1350,6 @@
 #define MOTOR1_QEP_BASE                         EQEP2_BASE
 #define MOTOR2_QEP_BASE                         EQEP3_BASE
 
-#define MOTOR1_QEP_COUNTER_ADDR                 (MOTOR1_QEP_BASE + EQEP_O_QPOSCNT)
-#define MOTOR2_QEP_COUNTER_ADDR                 (MOTOR2_QEP_BASE + EQEP_O_QPOSCNT)
-
 #define MOTOR1_QEP_SWAP                         EQEP_CONFIG_NO_SWAP // Set to EQEP_CONFIG_SWAP if increments in the wrong direction
 #define MOTOR2_QEP_SWAP                         MOTOR1_QEP_SWAP
 
@@ -1410,9 +1396,6 @@
 #define SCI_INT_FIFO_RX_FE                      (0x0100)
 #define SCI_INT_FIFO_RX_PE                      (0x0200)
 #define COM_SCI_IT_SRC                          (0)
-#define COM_SCI_FIFO_TX_REG_ADDR                (COM_SCI_BASE + SCI_O_FFTX)
-#define COM_SCI_FIFO_RX_REG_ADDR                (COM_SCI_BASE + SCI_O_FFRX)
-#define COM_SCI_CTRL1_REG_ADDR                  (COM_SCI_BASE + SCI_O_CTL1)
 
 #define COM_SCI_DEF                             { \
                                                     .sciBase        = COM_SCI_BASE, \
@@ -1774,8 +1757,6 @@
  * @{
  */
 #define DRV_SPI_BASE                            SPIA_BASE
-#define DRV_SPI_TX_BASE_REG_ADDR                (DRV_SPI_BASE + SPI_O_TXBUF)
-#define DRV_SPI_RX_BASE_REG_ADDR                (DRV_SPI_BASE + SPI_O_RXBUF)
 /**
  * @}
  */
@@ -1798,8 +1779,6 @@
  * @{
  */
 #define DBG_SPI_BASE                            SPIC_BASE
-#define DBG_SPI_TX_BASE_REG_ADDR                (DBG_SPI_BASE + SPI_O_TXBUF)
-#define DBG_SPI_RX_BASE_REG_ADDR                (DBG_SPI_BASE + SPI_O_RXBUF)
 /**
  * @}
  */
@@ -1810,7 +1789,6 @@
  */
 #define LED_SPI_BASE                            SPID_BASE
 #define LED_SPI_TX_BASE_REG_ADDR                (LED_SPI_BASE + SPI_O_TXBUF)
-#define LED_SPI_RX_BASE_REG_ADDR                (LED_SPI_BASE + SPI_O_RXBUF)
 /**
  * @}
  */
