@@ -6,17 +6,20 @@
 /***********************************************************************
  * INCLUDE FILES
  ***********************************************************************/
+#include <string.h>
 #include "device.h"
 
 #include "uomodri_user_defines.h"
 #include "board.h"
 #include "hal.h"
+#include "communication.h"
 
 /***********************************************************************
  * VARIABLES
  ***********************************************************************/
-#pragma DATA_SECTION(uid_unique,".UID_UNIQUE");
-volatile uint32_t       uid_unique;
+#pragma DATA_SECTION(uid_unique_32b,".UID_UNIQUE");
+volatile uint32_t       uid_unique_32b;
+volatile uint32_t       uid_unique_8b;
 
 /***********************************************************************
  * FUNCTIONS DECLARATION
@@ -27,6 +30,7 @@ void HAL_ePWM_ini(const epwm_cfg_t*);
 void HAL_eQEP_ini(const eqep_cfg_t*);
 void HAL_SPI_ini(const spi_cfg_t*);
 void HAL_SCI_ini(const sci_cfg_t*);
+void HAL_MCAN_ini(const mcan_cfg_t*);
 void HAL_TMR_ini(const tmr_cfg_t*);
 void HAL_IPC_ini(const ipc_cfg_t*);
 void HAL_CLA_ini(const cla_cfg_t*);
@@ -43,6 +47,13 @@ void HAL_ini(const hal_cfg_t* p_hal)
 {
     if(p_hal != NULL)
     {
+        // Compute the UID_unique address in 8bits format:
+        uid_unique_8b   = uid_unique_32b;
+        uid_unique_8b  ^= (uid_unique_32b >> 8);
+        uid_unique_8b  ^= (uid_unique_32b >> 16);
+        uid_unique_8b  ^= (uid_unique_32b >> 24);
+        uid_unique_8b  &= 0x000000FF;
+
         EALLOW;
         // Initialize GPIO pins
         HAL_GPIO_ini(p_hal->p_gpioHandle);
@@ -70,6 +81,7 @@ void HAL_ini(const hal_cfg_t* p_hal)
         // Initialize CLB
         HAL_CLB_ini(p_hal->p_clbHandle);
 #endif
+        HAL_MCAN_ini(p_hal->p_mcanHandle);
         EDIS;
     }
 
@@ -630,8 +642,8 @@ void HAL_CLB_ini(const clb_cfg_t* p_clbCfg)
     CLB_init();
 
     uint32_t outLutCfg  = 0;
-    uint32_t addr_test1 = uid_unique;
-    uint32_t addr_test2 = uid_unique;
+    uint32_t addr_test1 = uid_unique_8b;
+    uint32_t addr_test2 = uid_unique_8b;
 
     switch (p_clbCfg->clb_Addr1Spec)
     {
@@ -642,8 +654,9 @@ void HAL_CLB_ini(const clb_cfg_t* p_clbCfg)
             break;
         case RS485_CLB_USE_UID_ADDRESS:
             outLutCfg       = TILE2_CFG_OUTLUT_4;
-            addr_test1     ^= (uid_unique >> 24) ^ (uid_unique >> 16) ^ (uid_unique >> 8);
-            addr_test1      = ((addr_test1 & 0x000000FF) << 23) | 0x80000000;
+//            addr_test1     ^= (uid_unique >> 24) ^ (uid_unique >> 16) ^ (uid_unique >> 8);
+//            addr_test1      = ((addr_test1 & 0x000000FF) << 23) | 0x80000000;
+            addr_test1      = (addr_test1 << 23) | 0x80000000;
             break;
         case RS485_CLB_FORCE_ADDRESS:
             outLutCfg       = TILE2_CFG_OUTLUT_4;
@@ -661,8 +674,9 @@ void HAL_CLB_ini(const clb_cfg_t* p_clbCfg)
             break;
         case RS485_CLB_USE_UID_ADDRESS:
             outLutCfg       = TILE2_CFG_OUTLUT_5;
-            addr_test2     ^= (uid_unique >> 24) ^ (uid_unique >> 16) ^ (uid_unique >> 8);
-            addr_test2      = ((addr_test2 & 0x000000FF) << 23) | 0x80000000;
+//            addr_test2     ^= (uid_unique >> 24) ^ (uid_unique >> 16) ^ (uid_unique >> 8);
+//            addr_test2      = ((addr_test2 & 0x000000FF) << 23) | 0x80000000;
+            addr_test2      = (addr_test2 << 23) | 0x80000000;
             break;
         case RS485_CLB_FORCE_ADDRESS:
             outLutCfg       = TILE2_CFG_OUTLUT_5;
@@ -679,7 +693,6 @@ void HAL_CLB_ini(const clb_cfg_t* p_clbCfg)
     // enable each tile
     CLB_enableCLB(RS485_RX_TX_CLB_EOT_BASE);
     CLB_enableCLB(RS485_RX_CLB_ADDR_VALID_BASE);
-    CLB_enableCLB(RS485_TX_CLB_INVERT_BASE);
 }
 
 /**
@@ -825,4 +838,64 @@ void HAL_TMR_ini(const tmr_cfg_t* p_TimerCfg)
             cpuTimerBase = (++p_TimerCfg)->cpuTimerBase;
         }
     }
+}
+
+/**
+ * @brief       MCAN (CAN-FD) initialization function.
+ * @param[in]   *p_mcanCfg  Pointer on the MCAN configuration structure
+ */
+void HAL_MCAN_ini(const mcan_cfg_t* p_McanCfg)
+{
+    // Put MCAN in SW initialization mode.
+    MCAN_setOpMode(p_McanCfg->mCanBase, MCAN_OPERATION_MODE_SW_INIT);
+    // Wait till MCAN is not initialized.
+    while(MCAN_getOpMode(p_McanCfg->mCanBase) != MCAN_OPERATION_MODE_SW_INIT);
+
+    // Set the MCAN clock source (CPU1 Peripheral System clock).
+    MCAN_selectClockSource(p_McanCfg->mCanBase, MCAN_CLOCK_SOURCE);
+    // Enable internal loopback mode
+    MCAN_lpbkModeEnable(p_McanCfg->mCanBase, MCAN_LOOPBACK_MODE, MCAN_LOOPBACK_MODE_CTRL);
+    // Wait for Memory initialization to be completed.
+    while(MCAN_isMemInitDone(p_McanCfg->mCanBase) != TRUE);
+
+    // Initialize MCAN module.
+    MCAN_init(p_McanCfg->mCanBase, &p_McanCfg->initParams);
+    // Configure MCAN module.
+    MCAN_config(p_McanCfg->mCanBase, &p_McanCfg->configParams);
+    // Configure Bit timings.
+    MCAN_setBitTime(p_McanCfg->mCanBase, &p_McanCfg->bitTimesParams);
+    // Configure Message RAM Sections
+    MCAN_MsgRAMConfigParams msgRAMConfigParams = MCAN_MSG_RAM_CONFIG_PARAMS;
+    MCAN_msgRAMConfig(p_McanCfg->mCanBase, &msgRAMConfigParams);
+
+    uint32_t id_filter_cfg;
+#if (MCAN_STD_ID_FILTER_NUM)
+    // Configure Standard ID filter element
+    MCAN_StdMsgIDFilterElement stdFilterParams[MCAN_STD_ID_FILTER_NUM] = MCAN_STD_ID_FILTER_CFG;
+    for(id_filter_cfg = 0; id_filter_cfg < MCAN_STD_ID_FILTER_NUM; id_filter_cfg++)
+        MCAN_addStdMsgIDFilter(p_McanCfg->mCanBase, id_filter_cfg, &stdFilterParams[id_filter_cfg]);
+#endif
+#if (MCAN_EXT_ID_FILTER_NUM)
+    //(MCAN_EXT_ID_FILTER_NUM)
+    // Configure Extended ID filter element
+    MCAN_ExtMsgIDFilterElement extFilterParams[MCAN_EXT_ID_FILTER_NUM] = MCAN_EXT_ID_FILTER_CFG;
+    for(id_filter_cfg = 0; id_filter_cfg < MCAN_EXT_ID_FILTER_NUM; id_filter_cfg++)
+        MCAN_addExtMsgIDFilter(p_McanCfg->mCanBase, id_filter_cfg, &extFilterParams[id_filter_cfg]);
+#endif
+
+    // Take MCAN out of the SW initialization mode
+    MCAN_setOpMode(p_McanCfg->mCanBase, MCAN_OPERATION_MODE_NORMAL);
+    // Wait till MCAN is back in normal mode.
+    while(MCAN_getOpMode(p_McanCfg->mCanBase) != MCAN_OPERATION_MODE_NORMAL);
+
+    // Enable Interrupts.
+    MCAN_enableIntr(p_McanCfg->mCanBase, MCAN_INTR_MASK, MCAN_ENABLE_IT);
+    // Select Interrupt Line.
+    MCAN_selectIntrLine(p_McanCfg->mCanBase, MCAN_INTR_MASK, MCAN_RX_LINE_SRC_IT);
+    // Enable Interrupt Line.
+    MCAN_enableIntrLine(p_McanCfg->mCanBase, MCAN_RX_LINE_SRC_IT, MCAN_ENABLE_LINE_IT);
+//    // Write Tx Message to the Message RAM.
+//    MCAN_writeMsgRam(p_McanCfg->mCanBase, MCAN_MEM_TYPE_BUF, 1U, &txMsg);
+//    // Enable Transmission interrupt.
+//    MCAN_txBufTransIntrEnable(p_McanCfg->mCanBase, 0U, MCAN_ENABLE_IT);
 }

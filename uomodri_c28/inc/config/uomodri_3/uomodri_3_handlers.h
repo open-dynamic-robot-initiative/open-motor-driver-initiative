@@ -23,9 +23,10 @@
 /***********************************************************************
  * VARIABLES
  ***********************************************************************/
-extern spi_rx_t     com_spi_rx;
-extern spi_tx_t     com_spi_tx;
-extern uint16_t     led_spi_tx[LED_MSG_TX_16BIT_LENGTH];
+extern spi_rx_t             com_spi_rx;
+extern spi_tx_t             com_spi_tx;
+extern uint16_t             led_spi_tx[LED_MSG_TX_16BIT_LENGTH];
+extern volatile uint32_t    uid_unique_8b;
 
 /***********************************************************************
  * FUNCTIONS DECLARATION
@@ -135,8 +136,10 @@ static const gpio_cfg_t gpioPinsCfgList[] =
  RS485_TX_DEF,                      /* RS485 Tx pin */
  RS485_RX_DEF,                      /* RS485 Rx pin */
  RS485_TX_EN_DEF,                   /* RS485 Tx enable pin */
- CAN_SHDN_EN_DEF,                   /* CAN-FD shutdown pin */
- CAN_RS485_MUX_SEL_DEF,             /* RS485/CAN-FD multiplexer command pin */
+ CANFD_RX_DEF,                      /* CAN-FD Rx pin */
+ CANFD_TX_DEF,                      /* CAN-FD Tx pin */
+ CANFD_SHDN_MODE_DEF,               /* CAN-FD shutdown pin */
+ CANFD_RS485_MUX_SEL_DEF,           /* RS485/CAN-FD multiplexer command pin */
  /* Debug pins */
  DBG_PIN3_DEF,                      /* Debug pin 3 */
  DBG_PIN2_DEF,                      /* Debug pin 2 */
@@ -311,6 +314,15 @@ static const sci_cfg_t  sciCfgList[] =
 };
 
 /***********************************************************************
+ * MCAN (CAN-FD) STRUCTURE DECLARATION & INITIALIZATION
+ ***********************************************************************/
+static const mcan_cfg_t mcanCfgList[] =
+{
+ COM_MCAN_DEF,                      /* MCAN (CAN-FD) Communication bus config */
+// {.mCanBase = UINT32_MAX},          /* END OF ARRAY */
+};
+
+/***********************************************************************
  * SPI STRUCTURE DECLARATION & INITIALIZATION
  ***********************************************************************/
 /** @var    SPI_TypeDef spiCfgList[]
@@ -390,6 +402,7 @@ static const hal_cfg_t  hal =
  .p_ipcHandle   = ipcCfgList,
  .p_sciHandle   = sciCfgList,
  .p_spiHandle   = spiCfgList,
+ .p_mcanHandle  = mcanCfgList,
  .p_timerHandle = timerCfgList,
  .p_claHandle   = claCfgList,
  .p_clbHandle   = clbCfgList,

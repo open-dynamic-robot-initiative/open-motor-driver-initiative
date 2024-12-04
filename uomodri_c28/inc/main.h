@@ -16,6 +16,13 @@ typedef union __uart_addr_u__
 } uart_addr_u;
 
 /***********************************************************************
+ * SCI DEFINES
+ ***********************************************************************/
+#define COM_SCI_FIFO_TX_REG_ADDR        (COM_SCI_BASE + SCI_O_FFTX)
+#define COM_SCI_FIFO_RX_REG_ADDR        (COM_SCI_BASE + SCI_O_FFRX)
+#define COM_SCI_CTRL1_REG_ADDR          (COM_SCI_BASE + SCI_O_CTL1)
+
+/***********************************************************************
  * INTERRUPTS DEFINES
  ***********************************************************************/
 #define INT_TIMER_LED                   INT_TIMER0
@@ -51,6 +58,10 @@ typedef union __uart_addr_u__
 #define INT_CLA_MOTOR2                  INT_CLA1_4
 #define INT_CLA_MOTOR2_GROUP            INTERRUPT_ACK_GROUP11
 #define INT_CLA_MOTOR2_HANDLER          &cla_isrMotor2
+
+#define INT_MCAN                        INT_MCANA_1
+#define INT_MCAN_GROUP                  INTERRUPT_ACK_GROUP9
+#define INT_MCAN_HANDLER                &mcan_isr_canfd
 
 #define INT_TIMER_LED_DEF               { \
                                             .intNum             = INT_TIMER_LED, \
@@ -91,6 +102,11 @@ typedef union __uart_addr_u__
                                             .intNum             = INT_CLA_MOTOR2, \
                                             .intAckGroup        = INT_CLA_MOTOR2_GROUP, \
                                             .p_intHandler       = INT_CLA_MOTOR2_HANDLER \
+                                        }
+#define INT_MCAN_DEF                    { \
+                                            .intNum             = INT_MCAN, \
+                                            .intAckGroup        = INT_MCAN_GROUP, \
+                                            .p_intHandler       = INT_MCAN_HANDLER \
                                         }
 
 /***********************************************************************

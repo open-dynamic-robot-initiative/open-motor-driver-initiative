@@ -5,6 +5,7 @@
 #include "vcu2/vcu2_crc.h"
 #endif
 #include "device.h"
+#include "board.h"
 
 #include "config/uomodri_math.h"
 #include "uomodri_user_defines.h"
@@ -72,9 +73,9 @@ void COM_msgExtract(mst2slv_msg_t* p_msg, cmd_t* p_cmd_m1, cmd_t* p_cmd_m2)
  * @brief           Slave to Master message creation/update. IT Call.
  * @param[in]       *p_motor    Pointer on current data structure used for control.
  * @param[inout]    *p_msg      Pointer on the message to transmit to the Master board.
- * @param[in]       tmr_cnt     Current value of the timer counter.
+ * @param[in]       *p_tmr_cnt  Pointer on the current value of the timer counter.
  */
-bool_t COM_msgCreate(motor_t* p_motor, slv2mst_msg_t* p_msg, uint32_t tmr_cnt)
+bool_t COM_msgCreate(motor_t* p_motor, slv2mst_msg_t* p_msg, uint32_t* p_tmr_cnt)
 {
     foc_t* p_foc                        = &p_motor->foc;
     encoder_t* p_enc                    = &p_foc->enc;
@@ -120,7 +121,7 @@ bool_t COM_msgCreate(motor_t* p_motor, slv2mst_msg_t* p_msg, uint32_t tmr_cnt)
         p_msg->status.SE                = motor_cmd.systemEnable;   // System enabled
         p_msg->status.STATUS_RSV1       = 0;
         p_msg->lastCmdIndex             = p_foc->cmd.index;
-        p_msg->timeStamp                = (uint16_t)tmr_cnt;
+        p_msg->timeStamp                = (uint16_t)*p_tmr_cnt;
         p_msg->status.ERROR_CODE        = (motor_err.com_timeout)   ? (STATUS_ERROR_SPI_RECV_TIMEOUT)   : (p_msg->status.ERROR_CODE);
         p_msg->status.ERROR_CODE        = (motor_err.pos_rollover)  ? (STATUS_ERROR_POS_ROLLOVER)       : (p_msg->status.ERROR_CODE);
         p_msg->status.ERROR_CODE        = (motor_err.drv_fault)     ? (STATUS_ERROR_DRV_FAULT)          : (p_msg->status.ERROR_CODE);
@@ -133,20 +134,24 @@ bool_t COM_msgCreate(motor_t* p_motor, slv2mst_msg_t* p_msg, uint32_t tmr_cnt)
 
 /**
  * @brief           Initialize the command structure for a motor
- * @param[in]       p_cmd   Pointer on the command structure (actions to be realized by motor_foc)
+ * @param[in]       p_cmd       Pointer on the command structure (actions to be realized by motor_foc)
+ * @param[in]       motor_id    Motor identifier.
  */
-void COM_initCmdStruct(cmd_t* p_cmd)
+void COM_initCmdStruct(cmd_t* p_cmd, uint16_t motor_id)
 {
     p_cmd->posRef               = 0.0f;
     p_cmd->velRef               = 0.0f;
     p_cmd->iqff                 = 0.0f;
     p_cmd->kpCoeff              = 0.0f;
     p_cmd->kdCoeff              = 0.0f;
-//    p_cmd->iSat                 = 0.0f;
+    p_cmd->iSat                 = (motor_id == MOTOR_1) ? \
+            (MOTOR1_CURRENT_CMD_SAT_MAX) : \
+            (MOTOR2_CURRENT_CMD_SAT_MAX);
     p_cmd->timeoutRef           = 0U;
     p_cmd->cptTimeout           = 0U;
     p_cmd->index                = 0U;
     p_cmd->cmdField.all         = 0U;
+    p_cmd->periphField.all      = 0U;
 
     return;
 }
@@ -205,7 +210,7 @@ uint32_t COM_msgCRC(uint16_t* p_msg, uint16_t length)
 }
 
 /*
- * @brief           Read & concatenate the data available in the SCI peripheral.
+ * @brief           Read & concatenate the data available in the SCI peripheral. MSB first.
  * @param[in]       sci-base    SCI peripheral identifier.
  * @param[out]      *p_msg_rx   Pointer on the RS485 reception structure.
  */
@@ -218,7 +223,7 @@ inline void RS485_msgReceive(uint32_t sci_base, rs485_rx_t* p_msg_rx)
         uint16_t* p_msg     = &p_msg_rx->msg.raw[p_msg_rx->index >> 1];
 //        uint16_t tmp        = SCI_readCharNonBlocking(sci_base);
         uint16_t tmp        = (uint16_t)(HWREGH(sci_base + SCI_O_RXBUF) & SCI_RXBUF_SAR_M);
-        *p_msg              = (p_msg_rx->index & 0x0001) ? (*p_msg | (tmp & 0x00FF)) : ((tmp << 8) & 0xFF00);
+        *p_msg              = (p_msg_rx->index & 1U) ? (*p_msg | (tmp & LSB_BYTE_MASK)) : ((tmp << 8) & MSB_BYTE_MASK);
         p_msg_rx->index++;
     }
 
@@ -226,10 +231,9 @@ inline void RS485_msgReceive(uint32_t sci_base, rs485_rx_t* p_msg_rx)
 }
 
 /*
- * @brief           Compute the CRC 32bits with bytes swapping first.
- * @param[in]       *p_msg  Pointer on the message to swap.
- * @param[in]       length  Number of elements to swap.
- * return           The 32bit CRC result.
+ * @brief           Fill the SCI peripheral Tx FIFO with message to be sent.
+ * @param[in]       sci-base    SCI peripheral identifier.
+ * @param[out]      *p_msg_tx   Pointer on the RS485 transmission structure.
  */
 inline void RS485_msgTransmit(uint32_t sci_base, rs485_tx_t* p_msg_tx)
 {
@@ -249,34 +253,42 @@ inline void RS485_msgTransmit(uint32_t sci_base, rs485_tx_t* p_msg_tx)
     return;
 }
 
-//void SCI_rxDisable(uint32_t sci_base)
-//{
-//    SCI_resetRxFIFO(sci_base);
-//    SCI_clearOverflowStatus(sci_base);
-//    SCI_clearInterruptStatus(sci_base, SCI_INT_RXERR | SCI_INT_RXFF);
-//    SCI_disableRxModule(sci_base);
-//}
+/*
+ * @brief           Read & concatenate the data available in the MCAN peripheral. MSB first.
+ * @param[out]      *p_msg_rx   Pointer on the MCAN buffer reception structure.
+ */
+inline void CANFD_msgReceive(canfd_rx_t* p_msg_rx)
+{
+    uint16_t* p_buf = &p_msg_rx->buf.data[0];
+    uint16_t* p_msg = &p_msg_rx->bytes2short[0];
+    uint16_t index  = 0;
 
-//void SCI_rxEnable(uint32_t sci_base)
-//{
-//    SCI_resetRxFIFO(sci_base);
-//    SCI_clearOverflowStatus(sci_base);
-//    SCI_clearInterruptStatus(sci_base, SCI_INT_RXERR | SCI_INT_RXFF);
-//    SCI_enableRxModule(sci_base);
-//}
+    while(index < MCAN_MAX_PAYLOAD_BYTES)
+    {
+        *p_msg  = ((index++) & 1U) ? (*p_msg | (*p_buf & LSB_BYTE_MASK)) : ((*p_buf << 8) & MSB_BYTE_MASK);
+        p_buf   = &p_msg_rx->buf.data[index];
+        p_msg   = &p_msg_rx->bytes2short[index >> 1];
+    }
 
-//void SCI_txDisable(uint32_t sci_base)
-//{
-//    SCI_resetTxFIFO(sci_base);
-//    SCI_clearInterruptStatus(sci_base, SCI_INT_TXRDY | SCI_INT_TXFF);
-//    SCI_disableInterrupt(sci_base, SCI_INT_TXFF);
-////    SCI_disableTxModule(sci_base);
-//}
+    return;
+}
 
-//void SCI_txEnable(uint32_t sci_base)
-//{
-//    SCI_resetTxFIFO(sci_base);
-//    SCI_clearInterruptStatus(sci_base, SCI_INT_TXRDY | SCI_INT_TXFF);
-//    SCI_enableInterrupt(sci_base, SCI_INT_TXFF);
-////    SCI_enableTxModule(sci_base);
-//}
+/*
+ * @brief           Write & concatenate the data available in the MCAN peripheral. MSB first.
+ * @param[out]      *p_msg_rx   Pointer on the MCAN buffer reception structure.
+ */
+inline void CANFD_msgTransmit(canfd_tx_t* p_msg_tx)
+{
+    uint16_t* p_buf = &p_msg_tx->buf.data[0];
+    uint16_t* p_msg = &p_msg_tx->short2bytes[0];
+    uint16_t index  = 0;
+
+    while(index < MCAN_MAX_PAYLOAD_BYTES)
+    {
+        *p_buf  = (((index++) & 1U) ? (*p_msg) : (*p_msg >> 8)) & LSB_BYTE_MASK;
+        p_buf   = &p_msg_tx->buf.data[index];
+        p_msg   = &p_msg_tx->short2bytes[index >> 1];
+    }
+
+    return;
+}

@@ -102,9 +102,11 @@ typedef union __periph_u__
     struct
     {
         uint16_t        drv_initErr     : 1;    /*!< Bits 0   : R/W - DRV initialization went wrong */
-        uint16_t        status_RSV1     : 15;   /*!< Bits 1-15: R/W - Reserved */
+        uint16_t        mot_tempErr     : 1;    /*!< Bits 1   : R/W - Estimated motor temperature is too high. */
+        uint16_t        STATUS_RSV1     : 14;   /*!< Bits 2-15: R/W - Reserved */
     };
 } periph_u;
+
 
 /**
  * @union   cmd_reg_u
@@ -120,7 +122,7 @@ typedef union __cmd_reg_u__
         uint16_t        rollOverEnable  : 1;    /*!< Bit 2      : R/W - Limit the rotations to +/- 128 rounds.              */
         uint16_t        encOffsetEnable : 1;    /*!< Bit 3      : R/W - Use encoder index in position computation.          */
 //        uint16_t        calibEnable     : 1;    /*!< Bit 4      : R/W - Ready for ADC calibration. (Offset compensation).   */
-        uint16_t        CMD_RSV1        : 12;   /*!< Bit 5-15   : R/W - Reserved                                            */
+        uint16_t        CMD_RSV1        : 12;   /*!< Bit 4-15   : R/W - Reserved                                            */
     };
 } cmd_reg_u;
 
@@ -187,8 +189,9 @@ typedef union __error_reg_u__
         uint16_t        pos_rollover    : 1;    /*!< Bits 2   : R/W - Position roll-over occurred */
         uint16_t        drv_fault       : 1;    /*!< Bits 3   : R/W - Motor DRV nFault error */
         uint16_t        com_timeout     : 1;    /*!< Bits 4   : R/W - Communication timeout error */
-        uint16_t        error_RSV1      : 10;   /*!< Bits 5-14: R/W - Reserved */
+        uint16_t        ERROR_RSV1      : 10;   /*!< Bits 5-14: R/W - Reserved */
         uint16_t        drv_initErr     : 1;    /*!< Bit15    : R/W - Motor DRV bad initialization */
+//        uint16_t        mot_tempErr     : 1;    /*!< Bit15    : R/W - Motor DRV bad initialization */
     };
 } error_reg_u;
 

@@ -15,6 +15,317 @@
 #include "uomodri_user_defines.h"
 
 /***********************************************************************
+ * DEFINES
+ ***********************************************************************/
+// Specify which core is used to manage the MCAN.
+#define MCAN_ALLOCATE_ON_CPU1_CORE              (0U)
+#define MCAN_ALLOCATE_ON_CM_CORE                (1U)
+// Enable/Disable the loopback mode
+#define MCAN_LOOPBACK_MODE_CTRL_DISABLE         (0U)
+#define MCAN_LOOPBACK_MODE_CTRL_ENABLE          (1U)
+// Remote/data Transmission Request
+#define MCAN_RTR_TX_DATA_FRAME                  (0U)
+#define MCAN_RTR_TX_REMOTE_FRAME                (1U)
+// Error State Indicator
+#define MCAN_ESI_PASSIVE_ERROR_FLAG             (0U)
+#define MCAN_ESI_TX_RECESSIVE                   (1U)
+
+// MCAN initialization
+// Enable/Disable the CAN-FD (CAN with Flexible Data-Rate) mode.
+#define MCAN_FLEXIBLE_DATA_RATE_MODE_DISABLE    (0U)
+#define MCAN_FLEXIBLE_DATA_RATE_MODE_ENABLE     (1U)
+// Use single or dual data rate mode (after arbitration)
+#define MCAN_BIT_RATE_SWITCHING_MODE_DISABLE    (0U)
+#define MCAN_BIT_RATE_SWITCHING_MODE_ENABLE     (1U)
+// Enable/Disable transmit pause during retry.
+#define MCAN_TX_PAUSE_DISABLE                   (0U)
+#define MCAN_TX_PAUSE_ENABLE                    (1U)
+// Enable/Disable Edge Filtering during Bus Integration
+#define MCAN_EDGE_FILTERING_4_HARD_SYNC_DISABLE (0U)
+#define MCAN_EDGE_FILTERING_4_HARD_SYNC_ENABLE  (1U)
+// Enable/Disable protocol exception handling.
+#define MCAN_PROTOCOL_EXCEPTION_HANDLE_ENABLE   (0U)
+#define MCAN_PROTOCOL_EXCEPTION_HANDLE_DISABLE  (1U)
+// Enable/Disable automatic retransmission of messages not transmitted successfully.
+#define MCAN_AUTOMATIC_RETRANSMIT_ENABLE        (0U)
+#define MCAN_AUTOMATIC_RETRANSMIT_DISABLE       (1U)
+// Enable/Disable wakeup request.
+#define MCAN_WAKEUP_REQUEST_DISABLE             (0U)
+#define MCAN_WAKEUP_REQUEST_ENABLE              (1U)
+// Enable/Disable auto-Wakeup
+#define MCAN_AUTO_WAKEUP_DISABLE                (0U)
+#define MCAN_AUTO_WAKEUP_ENABLE                 (1U)
+// Enable/Disable emulation/debug suspend mode
+#define MCAN_DEBUG_SUSPEND_DISABLE              (0U)
+#define MCAN_DEBUG_SUSPEND_ENABLE               (1U)
+// Enable/Disable  Transmitter Delay Compensation
+#define MCAN_TX_DELAY_COMPENSATION_DISABLE      (0U)
+#define MCAN_TX_DELAY_COMPENSATION_ENABLE       (1U)
+
+// MCAN configuration
+// Enable/Disable the Bus Monitoring Mode
+#define MCAN_BUS_MONITORING_MODE_DISABLE        (0U)
+#define MCAN_BUS_MONITORING_MODE_ENABLE         (1U)
+// Enable/Disable the Restricted Operation Mode
+#define MCAN_NORMAL_OPERATION_MODE_ACTIVE       (0U)
+#define MCAN_RESTRICTED_OPERATION_MODE_ACTIVE   (1U)
+// Enable/Disable the Timeout Counter
+#define MCAN_TIMEOUT_COUNTER_DISABLE            (0U)
+#define MCAN_TIMEOUT_COUNTER_ENABLE             (1U)
+// Timestamp source selection
+#define MCAN_TIMESTAMP_COUNTER_SET_TO_ZERO      (0U)
+#define MCAN_TIMESTAMP_COUNTER_INC_TS_PRESCALAR (1U)
+#define MCAN_TIMESTAMP_COUNTER_EXTERNAL_USED    (2U)
+// Accept/Reject remote Frames messages with 29-bit extended IDs
+#define MCAN_ACCEPT_REMOTE_FRAMES_W_EXT_ID      (0U)
+#define MCAN_REJECT_REMOTE_FRAMES_W_EXT_ID      (1U)
+// Accept/Reject remote Frames messages with 11-bit standard IDs.
+#define MCAN_ACCEPT_REMOTE_FRAMES_W_STD_ID      (0U)
+#define MCAN_REJECT_REMOTE_FRAMES_W_STD_ID      (1U)
+// Accept/Reject Non-matching Frames messages with 29-bit IDs
+#define MCAN_ACCEPT_NO_MATCH_EXT_ID_IN_RX_FIFO0 (0U)
+#define MCAN_ACCEPT_NO_MATCH_EXT_ID_IN_RX_FIFO1 (1U)
+#define MCAN_REJECT_NO_MATCH_EXT_ID             (2U)
+// Accept/Reject Non-matching Frames messages with 11-bit IDs
+#define MCAN_ACCEPT_NO_MATCH_STD_ID_IN_RX_FIFO0 (0U)
+#define MCAN_ACCEPT_NO_MATCH_STD_ID_IN_RX_FIFO1 (1U)
+#define MCAN_REJECT_NO_MATCH_STD_ID             (2U)
+
+// MCAN Message RAM Sections configuration
+// Tx FIFO/Queue Mode
+#define MCAN_TX_FIFO_OP                         (0U)
+#define MCAN_TX_QUEUE_OP                        (1U)
+// RX FIFO_0 full management - Blocking or overwrite
+#define MCAN_RX_FIFO0_BLOCKING_MODE             (0U)
+#define MCAN_RX_FIFO0_OVERWRITE_MODE            (1U)
+// RX FIFO_1 full management - Blocking or overwrite
+#define MCAN_RX_FIFO1_BLOCKING_MODE             (0U)
+#define MCAN_RX_FIFO1_OVERWRITE_MODE            (1U)
+// MCAN memory space allocation.
+#define MCAN_STRUCT_SIZE(x)                     (MCAN_getMsgObjSize(x) * 4U)
+
+#define MCAN_DLC_PAYLOAD_LENGTH_0B              (0U)
+#define MCAN_DLC_PAYLOAD_LENGTH_1B              (1U)
+#define MCAN_DLC_PAYLOAD_LENGTH_2B              (2U)
+#define MCAN_DLC_PAYLOAD_LENGTH_3B              (3U)
+#define MCAN_DLC_PAYLOAD_LENGTH_4B              (4U)
+#define MCAN_DLC_PAYLOAD_LENGTH_5B              (5U)
+#define MCAN_DLC_PAYLOAD_LENGTH_6B              (6U)
+#define MCAN_DLC_PAYLOAD_LENGTH_7B              (7U)
+#define MCAN_DLC_PAYLOAD_LENGTH_8B              (8U)
+#define MCAN_DLC_PAYLOAD_LENGTH_12B             (9U)
+#define MCAN_DLC_PAYLOAD_LENGTH_16B             (10U)
+#define MCAN_DLC_PAYLOAD_LENGTH_20B             (11U)
+#define MCAN_DLC_PAYLOAD_LENGTH_24B             (12U)
+#define MCAN_DLC_PAYLOAD_LENGTH_32B             (13U)
+#define MCAN_DLC_PAYLOAD_LENGTH_48B             (14U)
+#define MCAN_DLC_PAYLOAD_LENGTH_64B             (15U)
+
+//#define MCAN_PAYLOAD_LENGTH_0B                  (0U)
+//#define MCAN_PAYLOAD_LENGTH_1B                  (1U)
+//#define MCAN_PAYLOAD_LENGTH_2B                  (2U)
+//#define MCAN_PAYLOAD_LENGTH_3B                  (3U)
+//#define MCAN_PAYLOAD_LENGTH_4B                  (4U)
+//#define MCAN_PAYLOAD_LENGTH_5B                  (5U)
+//#define MCAN_PAYLOAD_LENGTH_6B                  (6U)
+//#define MCAN_PAYLOAD_LENGTH_7B                  (7U)
+//#define MCAN_PAYLOAD_LENGTH_8B                  (8U)
+//#define MCAN_PAYLOAD_LENGTH_12B                 (12U)
+//#define MCAN_PAYLOAD_LENGTH_16B                 (16U)
+//#define MCAN_PAYLOAD_LENGTH_20B                 (20U)
+//#define MCAN_PAYLOAD_LENGTH_24B                 (24U)
+//#define MCAN_PAYLOAD_LENGTH_32B                 (32U)
+//#define MCAN_PAYLOAD_LENGTH_48B                 (48U)
+//#define MCAN_PAYLOAD_LENGTH_64B                 (64U)
+
+#define MCAN_TX_BUF_0_INDEX                     (0U)
+#define MCAN_TX_BUF_1_INDEX                     (1U)
+#define MCAN_TX_BUF_2_INDEX                     (2U)
+#define MCAN_TX_BUF_3_INDEX                     (3U)
+#define MCAN_TX_BUF_4_INDEX                     (4U)
+#define MCAN_TX_BUF_5_INDEX                     (5U)
+#define MCAN_TX_BUF_6_INDEX                     (6U)
+#define MCAN_TX_BUF_7_INDEX                     (7U)
+#define MCAN_TX_BUF_8_INDEX                     (8U)
+#define MCAN_TX_BUF_9_INDEX                     (9U)
+#define MCAN_TX_BUF_10_INDEX                    (10U)
+#define MCAN_TX_BUF_11_INDEX                    (11U)
+#define MCAN_TX_BUF_12_INDEX                    (12U)
+#define MCAN_TX_BUF_13_INDEX                    (13U)
+#define MCAN_TX_BUF_14_INDEX                    (14U)
+#define MCAN_TX_BUF_15_INDEX                    (15U)
+#define MCAN_TX_BUF_16_INDEX                    (16U)
+#define MCAN_TX_BUF_17_INDEX                    (17U)
+#define MCAN_TX_BUF_18_INDEX                    (18U)
+#define MCAN_TX_BUF_19_INDEX                    (19U)
+#define MCAN_TX_BUF_20_INDEX                    (20U)
+#define MCAN_TX_BUF_21_INDEX                    (21U)
+#define MCAN_TX_BUF_22_INDEX                    (22U)
+#define MCAN_TX_BUF_23_INDEX                    (23U)
+#define MCAN_TX_BUF_24_INDEX                    (24U)
+#define MCAN_TX_BUF_25_INDEX                    (25U)
+#define MCAN_TX_BUF_26_INDEX                    (26U)
+#define MCAN_TX_BUF_27_INDEX                    (27U)
+#define MCAN_TX_BUF_28_INDEX                    (28U)
+#define MCAN_TX_BUF_29_INDEX                    (29U)
+#define MCAN_TX_BUF_30_INDEX                    (30U)
+#define MCAN_TX_BUF_31_INDEX                    (31U)
+
+#define MCAN_RX_BUF_0_INDEX                     (0U)
+#define MCAN_RX_BUF_1_INDEX                     (1U)
+#define MCAN_RX_BUF_2_INDEX                     (2U)
+#define MCAN_RX_BUF_3_INDEX                     (3U)
+#define MCAN_RX_BUF_4_INDEX                     (4U)
+#define MCAN_RX_BUF_5_INDEX                     (5U)
+#define MCAN_RX_BUF_6_INDEX                     (6U)
+#define MCAN_RX_BUF_7_INDEX                     (7U)
+#define MCAN_RX_BUF_8_INDEX                     (8U)
+#define MCAN_RX_BUF_9_INDEX                     (9U)
+#define MCAN_RX_BUF_10_INDEX                    (10U)
+#define MCAN_RX_BUF_11_INDEX                    (11U)
+#define MCAN_RX_BUF_12_INDEX                    (12U)
+#define MCAN_RX_BUF_13_INDEX                    (13U)
+#define MCAN_RX_BUF_14_INDEX                    (14U)
+#define MCAN_RX_BUF_15_INDEX                    (15U)
+#define MCAN_RX_BUF_16_INDEX                    (16U)
+#define MCAN_RX_BUF_17_INDEX                    (17U)
+#define MCAN_RX_BUF_18_INDEX                    (18U)
+#define MCAN_RX_BUF_19_INDEX                    (19U)
+#define MCAN_RX_BUF_20_INDEX                    (20U)
+#define MCAN_RX_BUF_21_INDEX                    (21U)
+#define MCAN_RX_BUF_22_INDEX                    (22U)
+#define MCAN_RX_BUF_23_INDEX                    (23U)
+#define MCAN_RX_BUF_24_INDEX                    (24U)
+#define MCAN_RX_BUF_25_INDEX                    (25U)
+#define MCAN_RX_BUF_26_INDEX                    (26U)
+#define MCAN_RX_BUF_27_INDEX                    (27U)
+#define MCAN_RX_BUF_28_INDEX                    (28U)
+#define MCAN_RX_BUF_29_INDEX                    (29U)
+#define MCAN_RX_BUF_30_INDEX                    (30U)
+#define MCAN_RX_BUF_31_INDEX                    (31U)
+#define MCAN_RX_BUF_32_INDEX                    (32U)
+#define MCAN_RX_BUF_33_INDEX                    (33U)
+#define MCAN_RX_BUF_34_INDEX                    (34U)
+#define MCAN_RX_BUF_35_INDEX                    (35U)
+#define MCAN_RX_BUF_36_INDEX                    (36U)
+#define MCAN_RX_BUF_37_INDEX                    (37U)
+#define MCAN_RX_BUF_38_INDEX                    (38U)
+#define MCAN_RX_BUF_39_INDEX                    (39U)
+#define MCAN_RX_BUF_40_INDEX                    (40U)
+#define MCAN_RX_BUF_41_INDEX                    (41U)
+#define MCAN_RX_BUF_42_INDEX                    (42U)
+#define MCAN_RX_BUF_43_INDEX                    (43U)
+#define MCAN_RX_BUF_44_INDEX                    (44U)
+#define MCAN_RX_BUF_45_INDEX                    (45U)
+#define MCAN_RX_BUF_46_INDEX                    (46U)
+#define MCAN_RX_BUF_47_INDEX                    (47U)
+#define MCAN_RX_BUF_48_INDEX                    (48U)
+#define MCAN_RX_BUF_49_INDEX                    (49U)
+#define MCAN_RX_BUF_50_INDEX                    (50U)
+#define MCAN_RX_BUF_51_INDEX                    (51U)
+#define MCAN_RX_BUF_52_INDEX                    (52U)
+#define MCAN_RX_BUF_53_INDEX                    (53U)
+#define MCAN_RX_BUF_54_INDEX                    (54U)
+#define MCAN_RX_BUF_55_INDEX                    (55U)
+#define MCAN_RX_BUF_56_INDEX                    (56U)
+#define MCAN_RX_BUF_57_INDEX                    (57U)
+#define MCAN_RX_BUF_58_INDEX                    (58U)
+#define MCAN_RX_BUF_59_INDEX                    (59U)
+#define MCAN_RX_BUF_60_INDEX                    (60U)
+#define MCAN_RX_BUF_61_INDEX                    (61U)
+#define MCAN_RX_BUF_62_INDEX                    (62U)
+#define MCAN_RX_BUF_63_INDEX                    (63U)
+
+#define MCAN_RX_BUF_0_POS                       (1U << MCAN_RX_BUF_0_INDEX)
+#define MCAN_RX_BUF_1_POS                       (1U << MCAN_RX_BUF_1_INDEX)
+#define MCAN_RX_BUF_2_POS                       (1U << MCAN_RX_BUF_2_INDEX)
+#define MCAN_RX_BUF_3_POS                       (1U << MCAN_RX_BUF_3_INDEX)
+#define MCAN_RX_BUF_4_POS                       (1U << MCAN_RX_BUF_4_INDEX)
+#define MCAN_RX_BUF_5_POS                       (1U << MCAN_RX_BUF_5_INDEX)
+#define MCAN_RX_BUF_6_POS                       (1U << MCAN_RX_BUF_6_INDEX)
+#define MCAN_RX_BUF_7_POS                       (1U << MCAN_RX_BUF_7_INDEX)
+#define MCAN_RX_BUF_8_POS                       (1U << MCAN_RX_BUF_8_INDEX)
+#define MCAN_RX_BUF_9_POS                       (1U << MCAN_RX_BUF_9_INDEX)
+#define MCAN_RX_BUF_10_POS                      (1U << MCAN_RX_BUF_10_INDEX)
+#define MCAN_RX_BUF_11_POS                      (1U << MCAN_RX_BUF_11_INDEX)
+#define MCAN_RX_BUF_12_POS                      (1U << MCAN_RX_BUF_12_INDEX)
+#define MCAN_RX_BUF_13_POS                      (1U << MCAN_RX_BUF_13_INDEX)
+#define MCAN_RX_BUF_14_POS                      (1U << MCAN_RX_BUF_14_INDEX)
+#define MCAN_RX_BUF_15_POS                      (1U << MCAN_RX_BUF_15_INDEX)
+#define MCAN_RX_BUF_16_POS                      (1U << MCAN_RX_BUF_16_INDEX)
+#define MCAN_RX_BUF_17_POS                      (1U << MCAN_RX_BUF_17_INDEX)
+#define MCAN_RX_BUF_18_POS                      (1U << MCAN_RX_BUF_18_INDEX)
+#define MCAN_RX_BUF_19_POS                      (1U << MCAN_RX_BUF_19_INDEX)
+#define MCAN_RX_BUF_20_POS                      (1U << MCAN_RX_BUF_20_INDEX)
+#define MCAN_RX_BUF_21_POS                      (1U << MCAN_RX_BUF_21_INDEX)
+#define MCAN_RX_BUF_22_POS                      (1U << MCAN_RX_BUF_22_INDEX)
+#define MCAN_RX_BUF_23_POS                      (1U << MCAN_RX_BUF_23_INDEX)
+#define MCAN_RX_BUF_24_POS                      (1U << MCAN_RX_BUF_24_INDEX)
+#define MCAN_RX_BUF_25_POS                      (1U << MCAN_RX_BUF_25_INDEX)
+#define MCAN_RX_BUF_26_POS                      (1U << MCAN_RX_BUF_26_INDEX)
+#define MCAN_RX_BUF_27_POS                      (1U << MCAN_RX_BUF_27_INDEX)
+#define MCAN_RX_BUF_28_POS                      (1U << MCAN_RX_BUF_28_INDEX)
+#define MCAN_RX_BUF_29_POS                      (1U << MCAN_RX_BUF_29_INDEX)
+#define MCAN_RX_BUF_30_POS                      (1U << MCAN_RX_BUF_30_INDEX)
+#define MCAN_RX_BUF_31_POS                      (1U << MCAN_RX_BUF_31_INDEX)
+#define MCAN_RX_BUF_32_POS                      (1U << MCAN_RX_BUF_32_INDEX)
+#define MCAN_RX_BUF_33_POS                      (1U << MCAN_RX_BUF_33_INDEX)
+#define MCAN_RX_BUF_34_POS                      (1U << MCAN_RX_BUF_34_INDEX)
+#define MCAN_RX_BUF_35_POS                      (1U << MCAN_RX_BUF_35_INDEX)
+#define MCAN_RX_BUF_36_POS                      (1U << MCAN_RX_BUF_36_INDEX)
+#define MCAN_RX_BUF_37_POS                      (1U << MCAN_RX_BUF_37_INDEX)
+#define MCAN_RX_BUF_38_POS                      (1U << MCAN_RX_BUF_38_INDEX)
+#define MCAN_RX_BUF_39_POS                      (1U << MCAN_RX_BUF_39_INDEX)
+#define MCAN_RX_BUF_40_POS                      (1U << MCAN_RX_BUF_40_INDEX)
+#define MCAN_RX_BUF_41_POS                      (1U << MCAN_RX_BUF_41_INDEX)
+#define MCAN_RX_BUF_42_POS                      (1U << MCAN_RX_BUF_42_INDEX)
+#define MCAN_RX_BUF_43_POS                      (1U << MCAN_RX_BUF_43_INDEX)
+#define MCAN_RX_BUF_44_POS                      (1U << MCAN_RX_BUF_44_INDEX)
+#define MCAN_RX_BUF_45_POS                      (1U << MCAN_RX_BUF_45_INDEX)
+#define MCAN_RX_BUF_46_POS                      (1U << MCAN_RX_BUF_46_INDEX)
+#define MCAN_RX_BUF_47_POS                      (1U << MCAN_RX_BUF_47_INDEX)
+#define MCAN_RX_BUF_48_POS                      (1U << MCAN_RX_BUF_48_INDEX)
+#define MCAN_RX_BUF_49_POS                      (1U << MCAN_RX_BUF_49_INDEX)
+#define MCAN_RX_BUF_50_POS                      (1U << MCAN_RX_BUF_50_INDEX)
+#define MCAN_RX_BUF_51_POS                      (1U << MCAN_RX_BUF_51_INDEX)
+#define MCAN_RX_BUF_52_POS                      (1U << MCAN_RX_BUF_52_INDEX)
+#define MCAN_RX_BUF_53_POS                      (1U << MCAN_RX_BUF_53_INDEX)
+#define MCAN_RX_BUF_54_POS                      (1U << MCAN_RX_BUF_54_INDEX)
+#define MCAN_RX_BUF_55_POS                      (1U << MCAN_RX_BUF_55_INDEX)
+#define MCAN_RX_BUF_56_POS                      (1U << MCAN_RX_BUF_56_INDEX)
+#define MCAN_RX_BUF_57_POS                      (1U << MCAN_RX_BUF_57_INDEX)
+#define MCAN_RX_BUF_58_POS                      (1U << MCAN_RX_BUF_58_INDEX)
+#define MCAN_RX_BUF_59_POS                      (1U << MCAN_RX_BUF_59_INDEX)
+#define MCAN_RX_BUF_60_POS                      (1U << MCAN_RX_BUF_60_INDEX)
+#define MCAN_RX_BUF_61_POS                      (1U << MCAN_RX_BUF_61_INDEX)
+#define MCAN_RX_BUF_62_POS                      (1U << MCAN_RX_BUF_62_INDEX)
+#define MCAN_RX_BUF_63_POS                      (1U << MCAN_RX_BUF_63_INDEX)
+
+#define MCAN_INTR_MASK                          (MCAN_IR_HPM_MASK   | \
+                                                 MCAN_IR_TC_MASK    | \
+                                                 MCAN_IR_TCF_MASK   | \
+                                                 MCAN_IR_TFE_MASK   | \
+                                                 MCAN_IR_DRX_MASK   | \
+                                                 MCAN_IR_BEC_MASK   | \
+                                                 MCAN_IR_BEU_MASK   | \
+                                                 MCAN_IR_ELO_MASK   | \
+                                                 MCAN_IR_EP_MASK    | \
+                                                 MCAN_IR_EW_MASK    | \
+                                                 MCAN_IR_BO_MASK    | \
+                                                 MCAN_IR_WDI_MASK   | \
+                                                 MCAN_IR_PEA_MASK   | \
+                                                 MCAN_IR_PED_MASK   | \
+                                                 MCAN_IR_ARA_MASK)
+#define MCAN_ENABLE_IT                          (true)
+#define MCAN_DISABLE_IT                         (false)
+#define MCAN_ENABLE_LINE_IT                     (true)
+#define MCAN_DISABLE_LINE_IT                    (false)
+// Reset IT flag for MCAN
+#define MCAN_IT_EXT_TS_CLEAR                    (0x00)
+#define MCAN_IT_LINE_0_CLEAR                    (0x01)
+#define MCAN_IT_LINE_1_CLEAR                    (0x02)
+
+/***********************************************************************
  * ENUMARATIONS
  ***********************************************************************/
 typedef enum __sci_MultiProcCtrl_enum__
@@ -178,6 +489,25 @@ typedef struct __sci_config_t__
     bool_t                              intEnable;                  /*!< GPIO can be configured as IT source */
     sci_MultiProcCtrl_e                 multiProcMode;
 } sci_cfg_t;
+
+/**
+ * @struct  mcan_cfg_t
+ * @brief   MCAN (CAN-FD) module configuration handler
+ */
+typedef struct __mcan_cfg_t__
+{
+    uint32_t                            mCanBase;
+    // Initialize MCAN Init parameters.
+    MCAN_InitParams                     initParams;
+    // Initialize MCAN Config parameters.
+    MCAN_ConfigParams                   configParams;
+    // Initialize bit timings.
+    MCAN_BitTimingParams                bitTimesParams;
+    // Initialize Message RAM Sections Configuration Parameters.
+    MCAN_MsgRAMConfigParams             msgRAMConfigParams;
+    // Initialize Rx Buffer Configuration parameters.
+    MCAN_StdMsgIDFilterElement          stdFilterParams;
+} mcan_cfg_t;
 
 /**
  * @struct  dma_cfg_t
@@ -363,6 +693,7 @@ typedef struct __hal_config_t__
     const eqep_cfg_t*   const           p_eqepHandle;
     const sci_cfg_t*    const           p_sciHandle;
     const spi_cfg_t*    const           p_spiHandle;
+    const mcan_cfg_t*   const           p_mcanHandle;
     const ipc_cfg_t*    const           p_ipcHandle;
     const dma_cfg_t*    const           p_dmaHandle;
     const tmr_cfg_t*    const           p_timerHandle;

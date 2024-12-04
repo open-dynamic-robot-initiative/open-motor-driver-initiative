@@ -1,0 +1,121 @@
+# list COM port
+ifconfig -a
+
+# detailed informations on CAN port
+ip -details link show can1 
+
+# Shutdown CAN port
+sudo ip link set can1 down
+
+# working NOMINAL 5Mb/s, DATA 5Mb/s
+sudo ip link set can1 up type can \
+bitrate 5000000 dbitrate 5000000 \
+sjw 5 dsjw 5 \
+sample-point 0.6875 dsample-point 0.6875 \
+restart-ms 1000 fd on
+
+# working NOMINAL 5Mb/s, DATA 10Mb/s
+sudo ip link set can1 up type can \
+bitrate 5000000 dbitrate 10000000 \
+sjw 5 dsjw 2 \
+sample-point 0.6875 dsample-point 0.7500 \
+restart-ms 1000 fd on
+
+#--------------------------------------------------
+# working NOMINAL 1Mb/s, DATA 2Mb/s
+sudo ip link set can1 type can bitrate 1000000 dbitrate 2000000 sjw 20 dsjw 10 sample-point 0.7500 dsample-point 0.7500 fd on
+
+# NOT working NOMINAL 1Mb/s, DATA 5Mb/s
+sudo ip link set can1 up type can bitrate 1000000 dbitrate 5000000 sjw 20 dsjw 4 sample-point 0.7500 dsample-point 0.7500 fd on
+
+
+cansend can1 1f8##3.55.75.aa.cc
+cansend can1 004##3.55.75.aa.cc.10.aB.ff.11.00.ff.00.00.00.00.00.ff.78.aa.55.aa.55.aa.55.aa
+cansend can1 004##3.55.75.aa.cc.10.aB.ff.11.00.ff.00.00.00.00.00.ff
+
+#--------------------------------------------------
+# working NOMINAL 4Mb/s, DATA 8Mb/s
+sudo ip link set can1 up type can bitrate 4000000 dbitrate 8000000 fd on restart-ms 1000
+
+# send to 0x3F (sub 0) - 32bytes / FD mode / dual data rate - reply to 0x00 (sub 7) - same message
+cansend can1 1f8##3.31.32.33.34.35.36.37.38.39.55.75.aa.cc.10.aB.ff.11.00.ff.17.56.78.23.aa.55.00.ff.00.30.32
+# send to 0x31 (sub 0) - 24bytes / FD mode / dual data rate - reply to 0x00 (sub 7) - same message
+cansend can1 188##3.55.75.aa.cc.10.aB.ff.11.00.ff.17.56.78.23.aa.55.00.ff.00.ff.ff.ff.00.aa
+
+#--------------------------------------------------
+# Some help on CAN config
+ip link set can1 type can help
+
+
+
+
+Usage: ip link add [link DEV | parentdev NAME] [ name ] NAME
+		    [ txqueuelen PACKETS ]
+		    [ address LLADDR ]
+		    [ broadcast LLADDR ]
+		    [ mtu MTU ] [index IDX ]
+		    [ numtxqueues QUEUE_COUNT ]
+		    [ numrxqueues QUEUE_COUNT ]
+		    type TYPE [ ARGS ]
+
+	ip link delete { DEVICE | dev DEVICE | group DEVGROUP } type TYPE [ ARGS ]
+
+	ip link set { DEVICE | dev DEVICE | group DEVGROUP }
+			[ { up | down } ]
+			[ type TYPE ARGS ]
+		[ arp { on | off } ]
+		[ dynamic { on | off } ]
+		[ multicast { on | off } ]
+		[ allmulticast { on | off } ]
+		[ promisc { on | off } ]
+		[ trailers { on | off } ]
+		[ carrier { on | off } ]
+		[ txqueuelen PACKETS ]
+		[ name NEWNAME ]
+		[ address LLADDR ]
+		[ broadcast LLADDR ]
+		[ mtu MTU ]
+		[ netns { PID | NAME } ]
+		[ link-netns NAME | link-netnsid ID ]
+		[ alias NAME ]
+		[ vf NUM [ mac LLADDR ]
+			 [ vlan VLANID [ qos VLAN-QOS ] [ proto VLAN-PROTO ] ]
+			 [ rate TXRATE ]
+			 [ max_tx_rate TXRATE ]
+			 [ min_tx_rate TXRATE ]
+			 [ spoofchk { on | off} ]
+			 [ query_rss { on | off} ]
+			 [ state { auto | enable | disable} ]
+			 [ trust { on | off} ]
+			 [ node_guid EUI64 ]
+			 [ port_guid EUI64 ] ]
+		[ { xdp | xdpgeneric | xdpdrv | xdpoffload } { off |
+			  object FILE [ section NAME ] [ verbose ] |
+			  pinned FILE } ]
+		[ master DEVICE ][ vrf NAME ]
+		[ nomaster ]
+		[ addrgenmode { eui64 | none | stable_secret | random } ]
+		[ protodown { on | off } ]
+		[ protodown_reason PREASON { on | off } ]
+		[ gso_max_size BYTES ] | [ gso_max_segs PACKETS ]
+
+	ip link show [ DEVICE | group GROUP ] [up] [master DEV] [vrf NAME] [type TYPE]
+
+	ip link xstats type TYPE [ ARGS ]
+
+	ip link afstats [ dev DEVICE ]
+	ip link property add dev DEVICE [ altname NAME .. ]
+	ip link property del dev DEVICE [ altname NAME .. ]
+
+	ip link help [ TYPE ]
+
+TYPE := { bareudp | bond | bond_slave | bridge | bridge_slave |
+          dummy | erspan | geneve | gre | gretap | ifb |
+          ip6erspan | ip6gre | ip6gretap | ip6tnl |
+          ipip | ipoib | ipvlan | ipvtap |
+          macsec | macvlan | macvtap |
+          netdevsim | nlmon | rmnet | sit | team | team_slave |
+          vcan | veth | vlan | vrf | vti | vxcan | vxlan | wwan |
+          xfrm }
+
+cansend can1 1f8##3.00.9c.00.00.00.00.00.00.00.00.00.00.00.00.00.00.00.00.00.00.00.00.00.00.00.00.00.00.00.00.00.01
