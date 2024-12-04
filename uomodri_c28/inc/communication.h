@@ -66,10 +66,6 @@
 #define COM_MSG_RS485_TX_MASTER_ADDRESS         (0xFF)
 #define COM_MSG_RS485_TX_TYPE_STANDARD          (0x00)
 
-
-
-
-
 //#define COM_MSG_CANFD_AUTO_REPLY                { \
 //                                                    .id = ((uint32_t)(0x7)) << 18U; // Identifier Value.
 //    txMsg.rtr       = 0U; // Transmit data frame.
@@ -183,69 +179,69 @@
                                                  CANFD_ID_11b_MASK)
 #define CANFD_ID_REG(canfd_id, canfd_subid)     (CANFD_ID(canfd_id, canfd_subid) << CANFD_ID_REG_POS)
 
-#define COM_MSG_CANFD_HELLO(x)                  x.id        = CANFD_ID(CANFD_MST_ADDR_VAL, CANFD_MST_HELLO_MSG);\
-                                                x.rtr       = MCAN_RTR_TX_DATA_FRAME; \
-                                                x.xtd       = MCAN_ID_TYPE_11_BIT; \
-                                                x.esi       = MCAN_ESI_PASSIVE_ERROR_FLAG; \
-                                                x.dlc       = MCAN_DLC_PAYLOAD_LENGTH_16B; \
-                                                x.brs       = MCAN_BIT_RATE_SWITCHING_MODE; \
-                                                x.fdf       = MCAN_FLEXIBLE_DATA_RATE_MODE; \
-                                                x.efc       = 1U; \
-                                                x.mm        = 0xAAU; \
-                                                x.data[0]   = 0x12; \
-                                                x.data[1]   = 0x34; \
-                                                x.data[2]   = 0x56; \
-                                                x.data[3]   = 0x78; \
-                                                x.data[4]   = 0x9A; \
-                                                x.data[5]   = 0xBC; \
-                                                x.data[6]   = 0xDE; \
-                                                x.data[7]   = 0xF0; \
-                                                x.data[8]   = 0x12; \
-                                                x.data[9]   = 0x34; \
-                                                x.data[10]  = 0x56; \
-                                                x.data[11]  = 0x78; \
-                                                x.data[12]  = 0x9A; \
-                                                x.data[13]  = 0xBC; \
-                                                x.data[14]  = 0xDE; \
-                                                x.data[15]  = 0xF0;
+//#define COM_MSG_CANFD_HELLO(x)                  x.id        = CANFD_ID(CANFD_MST_ADDR_VAL, CANFD_MST_HELLO_MSG);\
+//                                                x.rtr       = MCAN_RTR_TX_DATA_FRAME; \
+//                                                x.xtd       = MCAN_ID_TYPE_11_BIT; \
+//                                                x.esi       = MCAN_ESI_PASSIVE_ERROR_FLAG; \
+//                                                x.dlc       = MCAN_DLC_PAYLOAD_LENGTH_16B; \
+//                                                x.brs       = MCAN_BIT_RATE_SWITCHING_MODE; \
+//                                                x.fdf       = MCAN_FLEXIBLE_DATA_RATE_MODE; \
+//                                                x.efc       = 1U; \
+//                                                x.mm        = 0xAAU; \
+//                                                x.data[0]   = 0x12; \
+//                                                x.data[1]   = 0x34; \
+//                                                x.data[2]   = 0x56; \
+//                                                x.data[3]   = 0x78; \
+//                                                x.data[4]   = 0x9A; \
+//                                                x.data[5]   = 0xBC; \
+//                                                x.data[6]   = 0xDE; \
+//                                                x.data[7]   = 0xF0; \
+//                                                x.data[8]   = 0x12; \
+//                                                x.data[9]   = 0x34; \
+//                                                x.data[10]  = 0x56; \
+//                                                x.data[11]  = 0x78; \
+//                                                x.data[12]  = 0x9A; \
+//                                                x.data[13]  = 0xBC; \
+//                                                x.data[14]  = 0xDE; \
+//                                                x.data[15]  = 0xF0;
 
-#define COM_MSG_CANFD_REPLY(x)                  x.id        = CANFD_ID(CANFD_SLV_ADDR_VAL, CANFD_SLV_CMD_MSG);\
-                                                x.rtr       = MCAN_RTR_TX_DATA_FRAME; \
-                                                x.xtd       = MCAN_ID_TYPE_11_BIT; \
-                                                x.esi       = MCAN_ESI_PASSIVE_ERROR_FLAG; \
-                                                x.dlc       = MCAN_DLC_PAYLOAD_LENGTH_16B; \
-                                                x.brs       = MCAN_BIT_RATE_SWITCHING_MODE; \
-                                                x.fdf       = MCAN_FLEXIBLE_DATA_RATE_MODE; \
-                                                x.efc       = 1U; \
-                                                x.mm        = 0xAAU; \
-                                                x.data[0]   = 0x23; \
-                                                x.data[1]   = 0x45; \
-                                                x.data[2]   = 0x67; \
-                                                x.data[3]   = 0x89; \
-                                                x.data[4]   = 0xAB; \
-                                                x.data[5]   = 0xCD; \
-                                                x.data[6]   = 0xEF; \
-                                                x.data[7]   = 0x01; \
-                                                x.data[8]   = 0x23; \
-                                                x.data[9]   = 0x45; \
-                                                x.data[10]  = 0x67; \
-                                                x.data[11]  = 0x89; \
-                                                x.data[12]  = 0xAB; \
-                                                x.data[13]  = 0xCD; \
-                                                x.data[14]  = 0xEF; \
-                                                x.data[15]  = 0x01;
+//#define COM_MSG_CANFD_REPLY(x)                  x.id        = CANFD_ID(CANFD_SLV_ADDR_VAL, CANFD_SLV_CMD_MSG);\
+//                                                x.rtr       = MCAN_RTR_TX_DATA_FRAME; \
+//                                                x.xtd       = MCAN_ID_TYPE_11_BIT; \
+//                                                x.esi       = MCAN_ESI_PASSIVE_ERROR_FLAG; \
+//                                                x.dlc       = MCAN_DLC_PAYLOAD_LENGTH_16B; \
+//                                                x.brs       = MCAN_BIT_RATE_SWITCHING_MODE; \
+//                                                x.fdf       = MCAN_FLEXIBLE_DATA_RATE_MODE; \
+//                                                x.efc       = 1U; \
+//                                                x.mm        = 0xAAU; \
+//                                                x.data[0]   = 0x23; \
+//                                                x.data[1]   = 0x45; \
+//                                                x.data[2]   = 0x67; \
+//                                                x.data[3]   = 0x89; \
+//                                                x.data[4]   = 0xAB; \
+//                                                x.data[5]   = 0xCD; \
+//                                                x.data[6]   = 0xEF; \
+//                                                x.data[7]   = 0x01; \
+//                                                x.data[8]   = 0x23; \
+//                                                x.data[9]   = 0x45; \
+//                                                x.data[10]  = 0x67; \
+//                                                x.data[11]  = 0x89; \
+//                                                x.data[12]  = 0xAB; \
+//                                                x.data[13]  = 0xCD; \
+//                                                x.data[14]  = 0xEF; \
+//                                                x.data[15]  = 0x01;
 
-#define COM_MSG_CANFD_MST2SLV(x)                x.id        = CANFD_ID(CANFD_SLV_ADDR_VAL, CANFD_MST_HELLO_MSG); \
-                                                x.rtr       = 0U; \
-                                                x.xtd       = MCAN_ID_TYPE_11_BIT; \
-                                                x.esi       = 0U; \
-                                                x.rxts      = 0U; \
-                                                x.dlc       = 1U; \
-                                                x.brs       = MCAN_BIT_RATE_SWITCHING_MODE_DISABLE; \
-                                                x.fdf       = MCAN_FLEXIBLE_DATA_RATE_MODE; \
-                                                x.fidx      = 0U; \
-                                                x.anmf      = 0U; \
-                                                x.data[0]   = 0;
+//#define COM_MSG_CANFD_MST2SLV(x)                x.id        = CANFD_ID(CANFD_SLV_ADDR_VAL, CANFD_MST_HELLO_MSG); \
+//                                                x.rtr       = 0U; \
+//                                                x.xtd       = MCAN_ID_TYPE_11_BIT; \
+//                                                x.esi       = 0U; \
+//                                                x.rxts      = 0U; \
+//                                                x.dlc       = 1U; \
+//                                                x.brs       = MCAN_BIT_RATE_SWITCHING_MODE_DISABLE; \
+//                                                x.fdf       = MCAN_FLEXIBLE_DATA_RATE_MODE; \
+//                                                x.fidx      = 0U; \
+//                                                x.anmf      = 0U; \
+//                                                x.data[0]   = 0;
 
 
 
