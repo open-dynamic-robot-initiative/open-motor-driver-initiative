@@ -551,10 +551,8 @@ __attribute__((interrupt)) void cla_isrMotor1(void)
     case COM_USE_CANFD_BUS:
     {
         canfd_tx_t* p_msg_canfd = &com_canfd_tx;
-        canfd_id_u  tx_msg_id   = {.main_addr     = CANFD_MST_ID,
-                                   .sub_addr      = CANFD_MST_STATUS_MSG,
-                                   .status_rsv1   = 0};
-        p_msg_canfd->buf.id     = tx_msg_id.id_all;             // CANFD_ID(0U, 1U);
+        p_msg_canfd->buf.id     = CANFD_ID_REG(COM_MSG_CANFD_TX_MASTER_ID, \
+                                               COM_MSG_CANFD_SUB_ID_STATUS);// CANFD_ID(0U, 1U);
         p_msg_canfd->buf.rtr    = MCAN_RTR_TX_DATA_FRAME;       // Transmit data frame.
         p_msg_canfd->buf.xtd    = MCAN_ID_TYPE_11_BIT;          // 11-bit standard identifier.
         p_msg_canfd->buf.esi    = MCAN_ESI_PASSIVE_ERROR_FLAG;  // ESI bit in CAN FD format depends only on error passive flag.

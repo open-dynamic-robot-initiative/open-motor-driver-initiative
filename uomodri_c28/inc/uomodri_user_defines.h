@@ -54,23 +54,15 @@
 //#elif ((RS485_BUS_ENABLE) || (CAN_BUS_ENABLE) ) && (SPI_BUS_ENABLE)
 //#error "RS-485, CAN & SPI share the same data. They cannot run @ the same time"
 #endif
-// Filters definition
-#define UOMODRI_IABC_FLT(flt_coef, y, x)        LPF_FILTER_1(flt_coef, y, x)
-#define UOMODRI_VBUS_FLT(flt_coef, y, x)        LPF_FILTER_1(flt_coef, y, x)
-#define UOMODRI_VEXT_FLT(flt_coef, y, x)        LPF_FILTER_1(flt_coef, y, x)
-#define UOMODRI_IDQ_FLT(flt_coef, y, x)         LPF_FILTER_1(flt_coef, y, x)
-#define UOMODRI_RES_ESTIM_FLT(flt_coef, y, x)   LPF_FILTER_1(flt_coef, y, x)
-#define UOMODRI_SPEED_FLT(flt_coef, y, x)       LPF_FILTER_1(flt_coef, y, x)
-#define UOMODRI_HAL_ADC_CALIB(flt_coef, y, x)   LPF_FILTER_1(flt_coef, y, x)
 
 /***********************************************************************
  * FILTERS PARAMETERS
  ***********************************************************************/
 //#define MOTOR12_OVERMODULATION                  (1.15f)
-#define IABC_CUTOFF_FREQ                        (15000.0f)   // vbus voltage loop bandwidth (Hz)
-#define IABC_CUTOFF_TIME_CONST                  (FM_2MULTPI * IABC_CUTOFF_FREQ * PWM_PERIOD)
-#define IABC_LPF_ALPHA                          (IABC_CUTOFF_TIME_CONST / (1.0f + IABC_CUTOFF_TIME_CONST))
-#define IABC_LPF_ONE_M_ALPHA                    (1.0f - IABC_LPF_ALPHA)
+//#define IABC_CUTOFF_FREQ                        (15000.0f)   // vbus voltage loop bandwidth (Hz)
+//#define IABC_CUTOFF_TIME_CONST                  (FM_2MULTPI * IABC_CUTOFF_FREQ * PWM_PERIOD)
+//#define IABC_LPF_ALPHA                          (IABC_CUTOFF_TIME_CONST / (1.0f + IABC_CUTOFF_TIME_CONST))
+//#define IABC_LPF_ONE_M_ALPHA                    (1.0f - IABC_LPF_ALPHA)
 #define VBUS_CUTOFF_FREQ                        (400.0f)    // vbus voltage loop bandwidth (Hz)
 #define VBUS_CUTOFF_TIME_CONST                  (FM_2MULTPI * VBUS_CUTOFF_FREQ * PWM_PERIOD)
 #define VBUS_LPF_ALPHA                          (VBUS_CUTOFF_TIME_CONST / (1.0f + VBUS_CUTOFF_TIME_CONST))

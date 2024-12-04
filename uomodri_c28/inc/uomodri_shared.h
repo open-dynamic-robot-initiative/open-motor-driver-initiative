@@ -42,6 +42,17 @@ extern "C" {
 #define USE_ALTERNATIVE_SM              (0)
 
 /***********************************************************************
+ * FILTERS DEFINES
+ ***********************************************************************/
+//#define UOMODRI_IABC_FLT(flt_coef, y, x)        LPF_FILTER_1(flt_coef, y, x)
+#define UOMODRI_VBUS_FLT(coef, y, x)    LPF_FILTER_1(coef, y, x)
+#define UOMODRI_VEXT_FLT(coef, y, x)    LPF_FILTER_1(coef, y, x)
+#define UOMODRI_IDQ_FLT(coef, y, x)     LPF_FILTER_1(coef, y, x)
+//#define UOMODRI_RES_ESTIM_FLT(flt_coef, y, x)   LPF_FILTER_1(flt_coef, y, x)
+#define UOMODRI_SPEED_FLT(coef, y, x)   LPF_FILTER_1(coef, y, x)
+#define UOMODRI_ADC_CALIB(coef, y, x)   LPF_FILTER_1(coef, y, x)
+
+/***********************************************************************
  * ADC DEFINES
  ***********************************************************************/
 #if (ADC_RESOLUTION_BIT == ADC_RESOLUTION_16BIT)
@@ -145,9 +156,9 @@ void ADC_offsetCalib(motor_t* p_motor)
         }
         else if(IS_SMALLER_THAN_U32(calibCnt, 10000U)) // calibCnt < 10000
         {
-            UOMODRI_HAL_ADC_CALIB(fltCalibCoef, ia_calib, p_acq->ia);
-            UOMODRI_HAL_ADC_CALIB(fltCalibCoef, ib_calib, p_acq->ib);
-            UOMODRI_HAL_ADC_CALIB(fltCalibCoef, ic_calib, p_acq->ic);
+            UOMODRI_ADC_CALIB(fltCalibCoef, ia_calib, p_acq->ia);
+            UOMODRI_ADC_CALIB(fltCalibCoef, ib_calib, p_acq->ib);
+            UOMODRI_ADC_CALIB(fltCalibCoef, ic_calib, p_acq->ic);
         }
         // Clear the interrupt flags
         ADC_clearInterruptOverflowStatus(p_acq->iabcCfgBase[CHANNEL_1], p_acq->intNum.adcInt);
@@ -346,7 +357,7 @@ inline void ENC_getTheta(encoder_t* p_enc)
     // If theta difference is high or low enough, we overflowed or underflowed
     bool_t maxRollOver              = IS_BIGGER_THAN_I32(p_enc->turnNb, ENC_MAX_ROLLOVER);
     bool_t minRollOver              = IS_SMALLER_THAN_I32(p_enc->turnNb, ENC_MIN_ROLLOVER);
-    p_enc->flags.rollOverError      = (maxRollOver || minRollOver)  ? (true) : (false);
+    p_enc->flags.rollOverErr        = (maxRollOver || minRollOver)  ? (true) : (false);
     // Saturate turnNb between -128 and 127
     p_enc->turnNb                   = (maxRollOver) ? (ENC_MIN_ROLLOVER) : (p_enc->turnNb);
     p_enc->turnNb                   = (minRollOver) ? (ENC_MAX_ROLLOVER) : (p_enc->turnNb);
@@ -380,7 +391,7 @@ inline void ENC_getTheta(encoder_t* p_enc)
         float32_t tmp               = __mpy2pif32(4.0f / p_enc->thetaMechScaler);
 //        p_enc->flags.indexError     = (fabsf(p_enc->thetaIndexRelative - thetaIndex) < tmp) ? (false) : (true);
 #endif
-        p_enc->flags.indexError     = (fabsf(p_enc->thetaIndexRelative - thetaIndex) < tmp) ? (false) : (true);
+        p_enc->flags.indexErr       = (fabsf(p_enc->thetaIndexRelative - thetaIndex) < tmp) ? (false) : (true);
         // Toggle index
         p_enc->flags.indexToggle    = !p_enc->flags.indexToggle;
         // Clear flag
@@ -862,10 +873,10 @@ bool_t MOT_runControl(motor_t* p_motor)
     p_motor->clCycleNb              = EPWM_getTimeBaseCounterValue(p_motor->epwmBase[CHANNEL_1]);
     p_err->drv_fault                = !GPIO_readPin(p_motor->drvFaultNum)                   || p_err->drv_fault;
     p_err->drv_initErr              = periph_reg.drv_initErr                                || p_err->drv_initErr;
-    p_err->pos_rollover             = (p_enc->flags.rollOverError && cmd_reg.rollOverEnable)|| p_err->pos_rollover;
+    p_err->pos_rollover             = (p_enc->flags.rollOverErr && cmd_reg.rollOverEnable)  || p_err->pos_rollover;
     p_err->com_timeout              = (cmd_timeout && p_cmd->timeoutRef)                    || p_err->com_timeout;
-    p_err->enc_indexErr             = (p_enc->flags.indexDetect && p_enc->flags.indexError) || p_err->enc_indexErr;
-    p_err->enc_alignErr             = p_enc->flags.alignError                               || p_err->enc_alignErr;
+    p_err->enc_indexErr             = (p_enc->flags.indexDetect && p_enc->flags.indexErr)   || p_err->enc_indexErr;
+    p_err->enc_alignErr             = p_enc->flags.alignErr                                 || p_err->enc_alignErr;
     if(p_err->all)
         p_motor->state              = MOTOR_STATE_ERROR;
 
@@ -966,8 +977,8 @@ bool_t MOT_runControl(motor_t* p_motor)
             else
                 p_foc->idRef        = MOTOR2_CURRENT_INIT_MAX;
             p_foc->initDiff         = p_foc->initPosEnc[REV] - p_foc->initPosEnc[FW];
-            p_enc->flags.alignError = IS_SMALLER_THAN_I32(p_foc->initDiff, p_foc->initErr[MIN]);//p_foc->initDiff < p_foc->initErr[MIN] ?
-            p_enc->flags.alignError|= IS_BIGGER_THAN_I32(p_foc->initDiff, p_foc->initErr[MAX]);//p_foc->initDiff > p_foc->initErr[MIN] ?
+            p_enc->flags.alignErr   = IS_SMALLER_THAN_I32(p_foc->initDiff, p_foc->initErr[MIN]);//p_foc->initDiff < p_foc->initErr[MIN] ?
+            p_enc->flags.alignErr  |= IS_BIGGER_THAN_I32(p_foc->initDiff, p_foc->initErr[MAX]);//p_foc->initDiff > p_foc->initErr[MIN] ?
         }
         p_motor->itCnt              = 0U;
         FOC_runControl(p_foc);

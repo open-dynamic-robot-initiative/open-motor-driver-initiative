@@ -1713,7 +1713,7 @@
  * Store message into dedicated Rx buffer if filter matches.
  * Use range mode to define valid ID (is ignored). Filtering to store into dedicated RX BUFFER.
  */
-#define MCAN_STD_ID_FLT_RX_BUF_0_ID             CANFD_ID(CANFD_SLV_ID, CANFD_SLV_CMD_MSG)
+#define MCAN_STD_ID_FLT_RX_BUF_0_ID             CANFD_ID(COM_MSG_CANFD_RX_SLAVE_ID, COM_MSG_CANFD_SUB_ID_CMD)
 #define MCAN_STD_ID_FLT_RX_BUF_0_NUM            (CANFD_OP_IN_RX_BUF | MCAN_RX_BUF_0_INDEX)
 #define MCAN_STD_ID_FLT_RX_BUF_0_ELEM           (MCAN_STDFILTEC_RXBUFF)
 #define MCAN_STD_ID_FLT_RX_BUF_0_TYPE           (MCAN_STDFILT_RANGE)
