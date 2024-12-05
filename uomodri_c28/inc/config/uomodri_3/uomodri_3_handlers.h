@@ -145,6 +145,10 @@ static const gpio_cfg_t gpioPinsCfgList[] =
  DBG_PIN2_DEF,                      /* Debug pin 2 */
  DBG_PIN1_DEF,                      /* Debug pin 1 */
  DBG_PIN0_DEF,                      /* Debug pin 0 */
+ /* USB pins */
+ USB_DM_DEF,                        /* USB D- pin */
+ USB_DP_DEF,                        /* USB D+ pin */
+ USB_DETECT_DEF,                    /* USB Vbus detection pin */
  {.pinNum = UINT32_MAX},            /* END OF ARRAY */
 };
 

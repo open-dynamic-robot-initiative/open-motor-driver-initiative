@@ -273,6 +273,20 @@
 
 #define UART_ON_USB_RX_NUM                      (43U)
 #define UART_ON_USB_RX_CFG                      GPIO_43_UARTA_RX
+#elif USB_BUS_ENABLE
+#define USB_DM_NUM                              (42U)
+#define USB_DM_DEF                              { \
+                                                    .pinNum             = USB_DM_NUM, \
+                                                    .coreSelect         = GPIO_CORE_CM, \
+                                                    .analogModeEnable   = GPIO_ANALOG_ENABLED, \
+                                                }
+
+#define USB_DP_NUM                              (43U)
+#define USB_DP_DEF                              { \
+                                                    .pinNum             = USB_DP_NUM, \
+                                                    .coreSelect         = GPIO_CORE_CM, \
+                                                    .analogModeEnable   = GPIO_ANALOG_ENABLED, \
+                                                }
 #endif
 
 #define SELECT_PIN_1_NUM                        (45U)
@@ -348,6 +362,15 @@
 #define USB_DETECT_NUM                          (67U)
 #define USB_DETECT_CFG                          GPIO_67_GPIO67
 #define USB_DETECT_READ                         (HWREG(GPIODATA_BASE + GPIO_O_GPCDAT) & GPIO_GPCDAT_GPIO67)
+#define USB_DETECT_DEF                          { \
+                                                    .pinNum         = USB_DETECT_NUM, \
+                                                    .fctMux         = USB_DETECT_CFG, \
+                                                    .coreSelect     = GPIO_CORE_CM, \
+                                                    .direction      = GPIO_DIR_MODE_IN, \
+                                                    .samplingInMode = GPIO_QUAL_ASYNC, \
+                                                    .setValue       = false, \
+                                                    .intEnable      = false, \
+                                                }
 
 #define ESC_PHY1_LINKSTATUS_NUM                 (68U)
 #define ESC_PHY1_LINKSTATUS_CFG                 GPIO_68_ESC_PHY1_LINKSTATUS
@@ -2235,6 +2258,18 @@
                                                     .ipcMsgQEnable    = false, \
                                                     .ipcIntEnable     = false, \
                                                 }
+
+/***********************************************************************
+ * USB DEFINES
+ ***********************************************************************/
+// Specify the clock source for the MCAN.
+//#define USB_CLOCK_SOURCE                        USB_CLOCK_SOURCE_SYS
+
+#define USB_ALLOCATE_ON_CPU1_CORE               (0U)
+#define USB_ALLOCATE_ON_CM_CORE                 (1U)
+
+// Specify which core is used to manage the MCAN.
+#define USB_ALLOCATE_ON_CORE                    USB_ALLOCATE_ON_CM_CORE
 
 /***********************************************************************
  * CPU TIMER DEFINES

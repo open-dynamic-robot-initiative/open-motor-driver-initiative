@@ -192,6 +192,8 @@ static void MCU_ini(void)
     SysCtl_allocateSharedPeripheral(SYSCTL_PALLOCATE_MCAN_A, MCAN_ALLOCATE_ON_CORE);
     // Configure the divisor for the MCAN bit-clock
     SysCtl_setMCANClk(SYSCTL_MCANCLK_DIV_1);
+    // Define which core manage USB (a shared peripheral) - CPU1 (C28x) / CM (Cortex M)
+    SysCtl_allocateSharedPeripheral(SYSCTL_PALLOCATE_USBA, USB_ALLOCATE_ON_CORE);
 
     /*
      * LSPCLK redefine - SPIx Bit Clock & SCIx Bit Clock.
