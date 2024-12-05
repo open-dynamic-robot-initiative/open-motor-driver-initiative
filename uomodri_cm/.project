@@ -39,7 +39,7 @@
 	<variableList>
 		<variable>
 			<name>C2000WARE_ROOT</name>
-			<value>$%7BTI_PRODUCTS_DIR__TIREX%7D/c2000/C2000Ware_5_02_00_00</value>
+			<value>file:/home/jmanhes/ti/c2000/C2000Ware_5_04_00_00</value>
 		</variable>
 	</variableList>
 </projectDescription>
