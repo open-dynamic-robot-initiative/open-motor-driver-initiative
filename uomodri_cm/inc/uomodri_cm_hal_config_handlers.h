@@ -87,9 +87,9 @@ static const gcrc_cfg_t cm_crcCfg =
  */
 static const hal_cm_t   hal_cm =
 {
- .p_uartHandle      = &cm_uartCfg,
- .p_udmaHandle      = cm_udmaCfgList,
- .p_ipcHandle       = cm_ipcCfgList,
+ .p_uartHandle      = NULL,//&cm_uartCfg,
+ .p_udmaHandle      = NULL,//cm_udmaCfgList,
+ .p_ipcHandle       = NULL,//cm_ipcCfgList,
  .p_crcHandle       = NULL,//&cm_crcCfg,
 };
 

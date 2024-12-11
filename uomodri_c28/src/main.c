@@ -213,7 +213,7 @@ static void MCU_ini(void)
     SysCtl_setEPWMClockDivider(PLLSYSCLK_TO_EPWMCLK_DIV);
 
     /* Set the CLB/tile clock */
-#if (CLB_TILE_ENABLE)
+//#if (CLB_TILE_ENABLE)
     /*
      * Use SYSCLK / PERCLKDIVSEL.EPWMCLKDIV (2) as Tile clock (100MHz).
      */
@@ -221,17 +221,39 @@ static void MCU_ini(void)
     /* Redefined to pass to SysCtl_setAuxClock(). Will configure the clock as follows:
      * AUXPLLCLK = 25MHz (XTAL_OSC) * 48 (IMULT) / (2 (REFDIV) * 5 (ODIV) * 2(AUXPLLDIV) )
      * AUXPLLCLK require a 60MHz clock for USB. AUPLLRAWCLK require a 120MHz clock for CM. */
-//#undef DEVICE_AUXSETCLOCK_CFG
-//#define DEVICE_AUXSETCLOCK_CFG      (SYSCTL_AUXPLL_OSCSRC_XTAL  | \
+#undef  DEVICE_AUXSETCLOCK_CFG
+#define DEVICE_AUXSETCLOCK_CFG      (SYSCTL_AUXPLL_OSCSRC_XTAL  | \
                                      SYSCTL_AUXPLL_IMULT(48)    | \
                                      SYSCTL_AUXPLL_REFDIV(2U)   | \
                                      SYSCTL_AUXPLL_ODIV(5U)     | \
                                      SYSCTL_AUXPLL_DIV_2        | \
                                      SYSCTL_AUXPLL_ENABLE       | \
                                      SYSCTL_DCC_BASE_0)
-//#undef DEVICE_AUXCLK_FREQ
-//#define DEVICE_AUXCLK_FREQ          ((DEVICE_OSCSRC_FREQ * 48) / (2 * 5 * 2))
-#endif
+
+//#define DEVICE_AUXSETCLOCK_CFG      (SYSCTL_AUXPLL_OSCSRC_XTAL  | \
+//                                     SYSCTL_AUXPLL_IMULT(72)    | \
+//                                     SYSCTL_AUXPLL_REFDIV(5U)   | \
+//                                     SYSCTL_AUXPLL_ODIV(3U)     | \
+//                                     SYSCTL_AUXPLL_DIV_2        | \
+//                                     SYSCTL_AUXPLL_ENABLE       | \
+//                                     SYSCTL_DCC_BASE_0)
+#undef  DEVICE_AUXCLK_FREQ
+#define DEVICE_AUXCLK_FREQ          ((DEVICE_OSCSRC_FREQ * 48) / (2 * 5 * 2))
+//#define DEVICE_AUXCLK_FREQ          ((DEVICE_OSCSRC_FREQ * 72) / (5 * 3 * 2))
+    // Set up AUXPLL control and clock dividers needed for CMCLK
+    SysCtl_setAuxClock(DEVICE_AUXSETCLOCK_CFG);
+    // Set up CMCLK to use AUXPLL as the clock source and set the clock divider to 1.
+    SysCtl_setCMClk(SYSCTL_CMCLKOUT_DIV_1,SYSCTL_SOURCE_AUXPLL);
+//    SysCtl_setCMClk(SYSCTL_CMCLKOUT_DIV_3,SYSCTL_SOURCE_AUXPLL);
+
+//    EALLOW;
+//    uint32_t tmp = HWREGH(CLKCFG_BASE + SYSCTL_O_AUXCLKDIVSEL) & 0xFFFFFFF8;
+//    HWREGH(CLKCFG_BASE + SYSCTL_O_AUXCLKDIVSEL) = (uint32_t)(tmp | \
+//            ((1 & SYSCTL_AUXCLKDIVSEL_AUXPLLDIV_M) >> SYSCTL_AUXCLKDIVSEL_AUXPLLDIV_S));
+//    SYSCTL_REGWRITE_DELAY;
+//    EDIS;
+
+//#endif
 //#if (defined USB_BUS_ENABLE)
 //    /* Allocate Shared Peripheral USB to the CM Side. */
 //    SysCtl_allocateSharedPeripheral(SYSCTL_PALLOCATE_USBA, 1);
@@ -247,6 +269,8 @@ static void MCU_ini(void)
 #elif (!defined CPU1)
     Device_bootCM(BOOTMODE_BOOT_TO_S0RAM);
 #endif
+//    Device_bootCM(BOOTMODE_BOOT_TO_FLASH_SECTOR0);
+    Device_bootCM(BOOTMODE_BOOT_TO_S0RAM);
     // Initialize GPIO
     Device_initGPIO();
     /* Initializes PIE and clears PIE registers. Disables CPU interrupts. */
