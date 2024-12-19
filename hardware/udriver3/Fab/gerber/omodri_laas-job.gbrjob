@@ -3,15 +3,15 @@
     "GenerationSoftware": {
       "Vendor": "KiCad",
       "Application": "Pcbnew",
-      "Version": "8.0.2-8.0.2-0~ubuntu22.04.1"
+      "Version": "8.0.7-8.0.7-0~ubuntu22.04.1"
     },
-    "CreationDate": "2024-05-27T11:17:17+02:00"
+    "CreationDate": "2024-12-19T17:12:47+01:00"
   },
   "GeneralSpecs": {
     "ProjectId": {
       "Name": "omodri_laas",
       "GUID": "6f6d6f64-7269-45f6-9c61-61732e6b6963",
-      "Revision": "3.0"
+      "Revision": "3.2"
     },
     "Size": {
       "X": 50.05,

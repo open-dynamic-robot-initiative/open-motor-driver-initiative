@@ -147,6 +147,127 @@
 				)
 			)
 		)
+		(symbol "Device:R"
+			(pin_numbers hide)
+			(pin_names
+				(offset 0)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "R"
+				(at 2.032 0 90)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "R"
+				(at 0 0 90)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at -1.778 0 90)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" "~"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" "Resistor"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_keywords" "R res resistor"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_fp_filters" "R_*"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "R_0_1"
+				(rectangle
+					(start -1.016 -2.54)
+					(end 1.016 2.54)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "R_1_1"
+				(pin passive line
+					(at 0 3.81 270)
+					(length 1.27)
+					(name "~"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 0 -3.81 90)
+					(length 1.27)
+					(name "~"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+		)
 		(symbol "omodri_lib:74LVC1G17"
 			(exclude_from_sim no)
 			(in_bom yes)
@@ -729,10 +850,16 @@
 		(uuid "9f6da55c-b217-485b-95e8-511d3248ab6b")
 	)
 	(junction
-		(at 139.7 96.52)
+		(at 127 96.52)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "cef4d7e7-509f-4b36-901e-b9502bc81e38")
+	)
+	(junction
+		(at 139.7 96.52)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "fb45afae-226b-4f06-8bc4-105298c22035")
 	)
 	(wire
 		(pts
@@ -746,7 +873,17 @@
 	)
 	(wire
 		(pts
-			(xy 123.19 99.06) (xy 111.76 99.06)
+			(xy 139.7 118.11) (xy 139.7 127)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "0a2111c9-790d-4392-b187-85bd88e05f51")
+	)
+	(wire
+		(pts
+			(xy 110.49 99.06) (xy 99.06 99.06)
 		)
 		(stroke
 			(width 0)
@@ -756,7 +893,7 @@
 	)
 	(wire
 		(pts
-			(xy 123.19 109.22) (xy 123.19 99.06)
+			(xy 110.49 109.22) (xy 110.49 99.06)
 		)
 		(stroke
 			(width 0)
@@ -766,13 +903,23 @@
 	)
 	(wire
 		(pts
-			(xy 139.7 96.52) (xy 139.7 110.49)
+			(xy 127 96.52) (xy 127 110.49)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
 		(uuid "2033a0ab-6ea9-4bd6-b73c-9c5977de0313")
+	)
+	(wire
+		(pts
+			(xy 139.7 96.52) (xy 152.4 96.52)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "24d21e00-9a91-4c9a-9e00-f7a7025736dc")
 	)
 	(wire
 		(pts
@@ -796,7 +943,7 @@
 	)
 	(wire
 		(pts
-			(xy 111.76 101.6) (xy 118.11 101.6)
+			(xy 99.06 101.6) (xy 105.41 101.6)
 		)
 		(stroke
 			(width 0)
@@ -806,7 +953,17 @@
 	)
 	(wire
 		(pts
-			(xy 120.65 127) (xy 120.65 119.38)
+			(xy 139.7 110.49) (xy 139.7 96.52)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "54466041-3cc9-4b85-b248-bee9cdbceadf")
+	)
+	(wire
+		(pts
+			(xy 107.95 127) (xy 107.95 119.38)
 		)
 		(stroke
 			(width 0)
@@ -816,7 +973,7 @@
 	)
 	(wire
 		(pts
-			(xy 111.76 96.52) (xy 139.7 96.52)
+			(xy 99.06 96.52) (xy 127 96.52)
 		)
 		(stroke
 			(width 0)
@@ -836,7 +993,7 @@
 	)
 	(wire
 		(pts
-			(xy 139.7 96.52) (xy 152.4 96.52)
+			(xy 127 96.52) (xy 139.7 96.52)
 		)
 		(stroke
 			(width 0)
@@ -846,7 +1003,7 @@
 	)
 	(wire
 		(pts
-			(xy 139.7 118.11) (xy 139.7 127)
+			(xy 127 118.11) (xy 127 127)
 		)
 		(stroke
 			(width 0)
@@ -876,7 +1033,7 @@
 	)
 	(wire
 		(pts
-			(xy 118.11 109.22) (xy 118.11 101.6)
+			(xy 105.41 109.22) (xy 105.41 101.6)
 		)
 		(stroke
 			(width 0)
@@ -908,7 +1065,7 @@
 	)
 	(hierarchical_label "Vbus"
 		(shape input)
-		(at 111.76 96.52 180)
+		(at 99.06 96.52 180)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -920,7 +1077,7 @@
 	)
 	(hierarchical_label "USB_N"
 		(shape bidirectional)
-		(at 111.76 101.6 180)
+		(at 99.06 101.6 180)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -944,7 +1101,7 @@
 	)
 	(hierarchical_label "USB_P"
 		(shape bidirectional)
-		(at 111.76 99.06 180)
+		(at 99.06 99.06 180)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -956,7 +1113,7 @@
 	)
 	(symbol
 		(lib_id "power:GND")
-		(at 120.65 127 0)
+		(at 107.95 127 0)
 		(mirror y)
 		(unit 1)
 		(exclude_from_sim no)
@@ -965,7 +1122,7 @@
 		(dnp no)
 		(uuid "2ae631fc-445a-46f2-9624-694d8d4ea3b2")
 		(property "Reference" "#PWR095"
-			(at 120.65 133.35 0)
+			(at 107.95 133.35 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -974,7 +1131,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 120.65 130.81 0)
+			(at 107.95 130.81 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -982,7 +1139,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 120.65 127 0)
+			(at 107.95 127 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -991,7 +1148,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 120.65 127 0)
+			(at 107.95 127 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1000,7 +1157,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 120.65 127 0)
+			(at 107.95 127 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1022,7 +1179,7 @@
 	)
 	(symbol
 		(lib_id "omodri_lib:ESD122")
-		(at 120.65 114.3 0)
+		(at 107.95 114.3 0)
 		(mirror y)
 		(unit 1)
 		(exclude_from_sim no)
@@ -1031,7 +1188,7 @@
 		(dnp no)
 		(uuid "45e188a3-d915-4183-8eed-f59fa21daa57")
 		(property "Reference" "D3"
-			(at 114.3 113.0299 0)
+			(at 101.6 113.0299 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1040,7 +1197,7 @@
 			)
 		)
 		(property "Value" "ESD122"
-			(at 114.3 115.5699 0)
+			(at 101.6 115.5699 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1049,7 +1206,7 @@
 			)
 		)
 		(property "Footprint" "udriver3:TI_X2SON-3_1.3x0.6mm_P1.0mm"
-			(at 114.935 115.57 0)
+			(at 102.235 115.57 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1059,7 +1216,7 @@
 			)
 		)
 		(property "Datasheet" "https://www.ti.com/lit/ds/symlink/esd122.pdf"
-			(at 117.475 127.635 0)
+			(at 104.775 127.635 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1068,7 +1225,7 @@
 			)
 		)
 		(property "Description" "2-Channels, 17kVESD Protection Diode, X2SON package"
-			(at 120.65 130.81 0)
+			(at 107.95 130.81 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1077,7 +1234,7 @@
 			)
 		)
 		(property "Assembling" "SMD"
-			(at 120.65 114.3 0)
+			(at 107.95 114.3 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1086,7 +1243,7 @@
 			)
 		)
 		(property "DigiKey" "296-47120-1-ND"
-			(at 120.65 114.3 0)
+			(at 107.95 114.3 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1095,7 +1252,7 @@
 			)
 		)
 		(property "LCSC" "C1975871"
-			(at 120.65 114.3 0)
+			(at 107.95 114.3 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1104,7 +1261,7 @@
 			)
 		)
 		(property "Manufacturer" "TEXAS INSTRUMENTS"
-			(at 120.65 114.3 0)
+			(at 107.95 114.3 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1113,7 +1270,7 @@
 			)
 		)
 		(property "Mouser" "595-ESD122DMYR"
-			(at 120.65 114.3 0)
+			(at 107.95 114.3 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1122,7 +1279,7 @@
 			)
 		)
 		(property "Part No" "ESD122DMYR"
-			(at 120.65 114.3 0)
+			(at 107.95 114.3 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1131,7 +1288,7 @@
 			)
 		)
 		(property "Farnell" "3004225"
-			(at 120.65 114.3 0)
+			(at 107.95 114.3 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1152,6 +1309,213 @@
 			(project "omodri_sa_laas"
 				(path "/de5b13f0-933a-4c4d-9979-13dc57b13241/4803a254-40f4-47a3-af95-8a896001a655"
 					(reference "D3")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:R")
+		(at 139.7 114.3 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "7811b7f8-df85-4196-adba-a860716cf178")
+		(property "Reference" "R55"
+			(at 145.034 114.046 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Value" "100k"
+			(at 146.05 115.824 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" "Resistor_SMD:R_0201_0603Metric"
+			(at 137.922 114.3 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://industrial.panasonic.com/sa/products/pt/general-purpose-chip-resistors/models/ERJ1GNF1003C"
+			(at 139.7 114.3 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "0201, 100kΩ, 0.05W, ±1%, SMD  resistor"
+			(at 139.7 114.3 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "DigiKey" "P122655CT-ND"
+			(at 139.7 114.3 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Farnell" "2302389"
+			(at 139.7 114.3 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Mouser" "667-ERJ-1GNF1003C"
+			(at 139.7 114.3 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Part No" "ERJ1GNF1003C"
+			(at 139.7 114.3 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "RS" "179-7130"
+			(at 139.7 114.3 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" " C717003"
+			(at 139.7 114.3 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Manufacturer" "PANASONIC"
+			(at 139.7 114.3 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Assembling" "SMD"
+			(at 139.7 114.3 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "310eddf7-6c49-4557-b35d-80aabb88ee4a")
+		)
+		(pin "2"
+			(uuid "35d5f914-08b4-4ef9-8e69-ffed6bc029a3")
+		)
+		(instances
+			(project "omodri_sa_laas"
+				(path "/de5b13f0-933a-4c4d-9979-13dc57b13241/4803a254-40f4-47a3-af95-8a896001a655"
+					(reference "R55")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 139.7 127 0)
+		(mirror y)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "793a894e-0256-4400-86b9-878e9f44d187")
+		(property "Reference" "#PWR0156"
+			(at 139.7 133.35 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 139.7 130.81 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 139.7 127 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 139.7 127 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
+			(at 139.7 127 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "5575fecc-8b54-45b9-971e-a7ba61af29a8")
+		)
+		(instances
+			(project "omodri_sa_laas"
+				(path "/de5b13f0-933a-4c4d-9979-13dc57b13241/4803a254-40f4-47a3-af95-8a896001a655"
+					(reference "#PWR0156")
 					(unit 1)
 				)
 			)
@@ -1300,7 +1664,7 @@
 	)
 	(symbol
 		(lib_id "power:GND")
-		(at 139.7 127 0)
+		(at 127 127 0)
 		(mirror y)
 		(unit 1)
 		(exclude_from_sim no)
@@ -1309,7 +1673,7 @@
 		(dnp no)
 		(uuid "8d899fbf-64d5-4a06-8e27-699218d52842")
 		(property "Reference" "#PWR096"
-			(at 139.7 133.35 0)
+			(at 127 133.35 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1318,7 +1682,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 139.7 130.81 0)
+			(at 127 130.81 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1326,7 +1690,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 139.7 127 0)
+			(at 127 127 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1335,7 +1699,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 139.7 127 0)
+			(at 127 127 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1344,7 +1708,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 139.7 127 0)
+			(at 127 127 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1366,7 +1730,7 @@
 	)
 	(symbol
 		(lib_id "Device:C")
-		(at 139.7 114.3 0)
+		(at 127 114.3 0)
 		(mirror x)
 		(unit 1)
 		(exclude_from_sim no)
@@ -1375,7 +1739,7 @@
 		(dnp no)
 		(uuid "bc4781f4-cb94-48af-bcd3-caa1600e1d19")
 		(property "Reference" "C68"
-			(at 132.08 113.792 0)
+			(at 119.38 113.792 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1384,7 +1748,7 @@
 			)
 		)
 		(property "Value" "100n"
-			(at 132.334 116.078 0)
+			(at 119.634 116.078 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1393,7 +1757,7 @@
 			)
 		)
 		(property "Footprint" "Capacitor_SMD:C_0201_0603Metric"
-			(at 140.6652 110.49 0)
+			(at 127.9652 110.49 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1402,7 +1766,7 @@
 			)
 		)
 		(property "Datasheet" "https://www.murata.com/en-eu/products/productdetail?partno=GRM033R61E104KE14%23"
-			(at 139.7 114.3 0)
+			(at 127 114.3 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1411,7 +1775,7 @@
 			)
 		)
 		(property "Description" "0201, 100nf, 25V,  ±10%, X5R, SMD MLCC"
-			(at 139.7 114.3 0)
+			(at 127 114.3 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1420,7 +1784,7 @@
 			)
 		)
 		(property "Part No" "GRM033R61E104KE14D"
-			(at 139.7 114.3 0)
+			(at 127 114.3 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1429,7 +1793,7 @@
 			)
 		)
 		(property "Farnell" "2990693"
-			(at 139.7 114.3 0)
+			(at 127 114.3 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1438,7 +1802,7 @@
 			)
 		)
 		(property "RS" "185-2066"
-			(at 139.7 114.3 0)
+			(at 127 114.3 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1447,7 +1811,7 @@
 			)
 		)
 		(property "Mouser" "81-GRM033R61E104KE4D"
-			(at 139.7 114.3 0)
+			(at 127 114.3 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1456,7 +1820,7 @@
 			)
 		)
 		(property "DigiKey" "490-12686-1-ND"
-			(at 139.7 114.3 0)
+			(at 127 114.3 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1465,7 +1829,7 @@
 			)
 		)
 		(property "LCSC" "C76939"
-			(at 139.7 114.3 0)
+			(at 127 114.3 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1474,7 +1838,7 @@
 			)
 		)
 		(property "Manufacturer" "MURATA"
-			(at 139.7 114.3 0)
+			(at 127 114.3 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1483,7 +1847,7 @@
 			)
 		)
 		(property "Assembling" "SMD"
-			(at 139.7 114.3 0)
+			(at 127 114.3 0)
 			(effects
 				(font
 					(size 1.27 1.27)

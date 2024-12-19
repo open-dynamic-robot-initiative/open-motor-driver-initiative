@@ -1134,7 +1134,7 @@
       "filter_string": "",
       "group_symbols": true,
       "name": "",
-      "sort_asc": true,
+      "sort_asc": false,
       "sort_field": "Reference"
     },
     "connection_grid_size": 50.0,

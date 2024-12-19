@@ -6,8 +6,8 @@
 	(paper "A4")
 	(title_block
 		(title "Open MOtor DRiver Initiative (OMODRI)")
-		(date "2024-05-03")
-		(rev "3.1")
+		(date "2024-12-19")
+		(rev "3.3")
 		(company "LAAS/CNRS")
 	)
 	(lib_symbols
@@ -1435,6 +1435,12 @@
 		(uuid "6239119f-47fe-4b07-9148-16e6916d4fd9")
 	)
 	(junction
+		(at 151.13 101.6)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "ab9ccf0b-fc79-4e28-a12e-2a0f5366d3b3")
+	)
+	(junction
 		(at 179.07 106.68)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -1467,6 +1473,16 @@
 			(type default)
 		)
 		(uuid "14a4e018-443e-42c6-9ead-098ad3481ab4")
+	)
+	(wire
+		(pts
+			(xy 139.7 121.92) (xy 139.7 127)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "1b0b5cce-d2a5-4c91-9220-1c5ffed506f3")
 	)
 	(wire
 		(pts
@@ -1517,6 +1533,16 @@
 			(type default)
 		)
 		(uuid "375a6d65-28c8-4f8a-abd3-99383acd7e51")
+	)
+	(wire
+		(pts
+			(xy 139.7 101.6) (xy 151.13 101.6)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "3a5356ba-4d68-42cd-b80f-8f9f0a6e9ea5")
 	)
 	(wire
 		(pts
@@ -1797,6 +1823,16 @@
 			(type default)
 		)
 		(uuid "dd666b01-a0d3-4795-ba5e-9faa978d76a8")
+	)
+	(wire
+		(pts
+			(xy 139.7 114.3) (xy 139.7 101.6)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "df66430c-f9ac-4ee2-bfe3-3b919d01a8db")
 	)
 	(wire
 		(pts
@@ -2998,6 +3034,129 @@
 		)
 	)
 	(symbol
+		(lib_id "Device:R")
+		(at 139.7 118.11 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "61dad1c8-53d3-48e6-aa36-31d77a1d4ff2")
+		(property "Reference" "R80"
+			(at 137.922 119.2784 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Value" "100k"
+			(at 137.922 116.967 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" "Resistor_SMD:R_0201_0603Metric"
+			(at 137.922 118.11 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 139.7 118.11 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Resistor"
+			(at 139.7 118.11 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "DigiKey" "P122655CT-ND"
+			(at 139.7 118.11 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Farnell" "2302389"
+			(at 139.7 118.11 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Mouser" "667-ERJ-1GNF1003C"
+			(at 139.7 118.11 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Part No" "ERJ-1GNF1003C"
+			(at 139.7 118.11 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "RS" "179-7130"
+			(at 139.7 118.11 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" ""
+			(at 139.7 118.11 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "07c3e637-0772-4fda-934d-3279fbddeee8")
+		)
+		(pin "2"
+			(uuid "62889f3d-73dc-4b5c-b805-54609b275e75")
+		)
+		(instances
+			(project "omodri_laas"
+				(path "/de5b13f0-933a-4c4d-9979-13dc57b13241/c53e2d2b-e3ea-4ea7-9c8d-a18dc2ab02ee"
+					(reference "R80")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "omodri_lib:ESD321")
 		(at 167.64 118.11 0)
 		(mirror y)
@@ -3098,6 +3257,72 @@
 			(project "omodri_laas"
 				(path "/de5b13f0-933a-4c4d-9979-13dc57b13241/c53e2d2b-e3ea-4ea7-9c8d-a18dc2ab02ee"
 					(reference "D11")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 139.7 127 0)
+		(mirror y)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "6c026b35-11e0-4b46-b050-6c4d38df7073")
+		(property "Reference" "#PWR0176"
+			(at 139.7 133.35 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 139.7 130.81 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 139.7 127 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 139.7 127 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
+			(at 139.7 127 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "af149c43-ffd5-4073-af7d-81f29c1d60c1")
+		)
+		(instances
+			(project "omodri_laas"
+				(path "/de5b13f0-933a-4c4d-9979-13dc57b13241/c53e2d2b-e3ea-4ea7-9c8d-a18dc2ab02ee"
+					(reference "#PWR0176")
 					(unit 1)
 				)
 			)

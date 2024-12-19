@@ -61,7 +61,7 @@
         {
           "gap": 0.3,
           "via_gap": 0.3,
-          "width": 0.102
+          "width": 0.127
         }
       ],
       "drc_exclusions": [],
@@ -1123,7 +1123,7 @@
       "group_symbols": true,
       "name": "",
       "sort_asc": true,
-      "sort_field": "Reference"
+      "sort_field": "Datasheet"
     },
     "connection_grid_size": 50.0,
     "drawing": {
