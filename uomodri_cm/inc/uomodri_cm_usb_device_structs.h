@@ -77,11 +77,12 @@ uint8_t g_pui8TxBufferWorkspace[USB_BUFFER_WORKSPACE_SIZE];
 // CDC device callback function prototypes.
 //
 //*****************************************************************************
-uint32_t RxHandler(void *pvCBData, uint32_t ui32Event, uint32_t ui32MsgValue,
-                   void *pvMsgData);
-uint32_t TxHandler(void *pvCBData, uint32_t ui32Event, uint32_t ui32MsgValue,
-                   void *pvMsgData);
-uint32_t ControlHandler(void *pvCBData, uint32_t ui32Event,
-                        uint32_t ui32MsgValue, void *pvMsgData);
+//uint32_t RxHandler(void *pvCBData, uint32_t ui32Event, uint32_t ui32MsgValue, void *pvMsgData);
+//uint32_t TxHandler(void *pvCBData, uint32_t ui32Event, uint32_t ui32MsgValue, void *pvMsgData);
+//uint32_t ControlHandler(void *pvCBData, uint32_t ui32Event, uint32_t ui32MsgValue, void *pvMsgData);
+uint32_t RxHandler(void*, uint32_t, uint32_t, void*);
+uint32_t TxHandler(void*, uint32_t, uint32_t, void*);
+uint32_t CtrlHandler(void*, uint32_t, uint32_t, void*);
+
 
 #endif // USB_EX1_DEVICE_STRUCTS_H

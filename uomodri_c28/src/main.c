@@ -269,8 +269,8 @@ static void MCU_ini(void)
 #elif (!defined CPU1)
     Device_bootCM(BOOTMODE_BOOT_TO_S0RAM);
 #endif
-//    Device_bootCM(BOOTMODE_BOOT_TO_FLASH_SECTOR0);
-    Device_bootCM(BOOTMODE_BOOT_TO_S0RAM);
+    Device_bootCM(BOOTMODE_BOOT_TO_FLASH_SECTOR0);
+//    Device_bootCM(BOOTMODE_BOOT_TO_S0RAM);
     // Initialize GPIO
     Device_initGPIO();
     /* Initializes PIE and clears PIE registers. Disables CPU interrupts. */
