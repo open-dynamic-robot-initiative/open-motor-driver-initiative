@@ -69,23 +69,23 @@ const uint8_t g_pui8ManufacturerString[] =
 {
     (17 + 1) * 2,
     USB_DTYPE_STRING,
-    'T', 0,
-    'e', 0,
-    'x', 0,
-    'a', 0,
-    's', 0,
-    ' ', 0,
-    'I', 0,
-    'n', 0,
-    's', 0,
-    't', 0,
-    'r', 0,
+    'L', 0,
+    'A', 0,
+    'A', 0,
+    'S', 0,
+    '/', 0,
+    'C', 0,
+    'N', 0,
+    'R', 0,
+    'S', 0,
+    '-', 0,
     'u', 0,
+    'O', 0,
     'm', 0,
-    'e', 0,
-    'n', 0,
-    't', 0,
-    's', 0,
+    'o', 0,
+    'd', 0,
+    'r', 0,
+    'i', 0,
 };
 
 //******************************************************************************
@@ -233,18 +233,18 @@ const uint8_t * const g_pui8StringDescriptors[] =
 // function and the callback data set to our CDC instance structure.
 //
 //******************************************************************************
-tUSBDCDCDevice g_sCDCDevice =
+tUSBDCDCDevice usb_CDCDevice =
 {
     USB_VID_TI_1CBE,
     USB_PID_SERIAL,
     0,
     USB_CONF_ATTR_SELF_PWR,
     CtrlHandler,
-    (void *)&g_sCDCDevice,
-    USBBufferEventCallback,
-    (void *)&g_sRxBuffer,
-    USBBufferEventCallback,
-    (void *)&g_sTxBuffer,
+    (void *)&usb_CDCDevice,
+    USBBufferEventCallback, //RxHandler,//
+    (void *)&usb_RxBuffer,
+    USBBufferEventCallback, //TxHandler,//
+    (void *)&usb_TxBuffer,
     g_pui8StringDescriptors,
     NUM_STRING_DESCRIPTORS
 };
@@ -254,16 +254,16 @@ tUSBDCDCDevice g_sCDCDevice =
 // Receive buffer (from the USB perspective).
 //
 //******************************************************************************
-tUSBBuffer g_sRxBuffer =
+tUSBBuffer usb_RxBuffer =
 {
     false,                          // This is a receive buffer.
     RxHandler,                      // pfnCallback
-    (void *)&g_sCDCDevice,          // Callback data is our device pointer.
+    (void *)&usb_CDCDevice,         // Callback data is our device pointer.
     USBDCDCPacketRead,              // pfnTransfer
     USBDCDCRxPacketAvailable,       // pfnAvailable
-    (void *)&g_sCDCDevice,          // pvHandle
+    (void *)&usb_CDCDevice,         // pvHandle
     g_pi8USBRxBuffer,               // pi8Buffer
-    UART_BUFFER_SIZE                 // ui32BufferSize
+    UART_BUFFER_SIZE                // ui32BufferSize
 };
 
 //******************************************************************************
@@ -271,16 +271,16 @@ tUSBBuffer g_sRxBuffer =
 // Transmit buffer (from the USB perspective).
 //
 //******************************************************************************
-tUSBBuffer g_sTxBuffer =
+tUSBBuffer usb_TxBuffer =
 {
     true,                           // This is a transmit buffer.
     TxHandler,                      // pfnCallback
-    (void *)&g_sCDCDevice,          // Callback data is our device pointer.
+    (void *)&usb_CDCDevice,         // Callback data is our device pointer.
     USBDCDCPacketWrite,             // pfnTransfer
     USBDCDCTxPacketAvailable,       // pfnAvailable
-    (void *)&g_sCDCDevice,          // pvHandle
+    (void *)&usb_CDCDevice,         // pvHandle
     g_pi8USBTxBuffer,               // pi8Buffer
-    UART_BUFFER_SIZE                 // ui32BufferSize
+    UART_BUFFER_SIZE                // ui32BufferSize
 };
 
 //

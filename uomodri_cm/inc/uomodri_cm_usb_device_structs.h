@@ -63,9 +63,9 @@
 //
 #define UART_BUFFER_SIZE        256
 
-extern tUSBBuffer g_sTxBuffer;
-extern tUSBBuffer g_sRxBuffer;
-extern tUSBDCDCDevice g_sCDCDevice;
+extern tUSBBuffer usb_TxBuffer;
+extern tUSBBuffer usb_RxBuffer;
+extern tUSBDCDCDevice usb_CDCDevice;
 
 uint8_t g_pi8USBRxBuffer[UART_BUFFER_SIZE];
 uint8_t g_pui8RxBufferWorkspace[USB_BUFFER_WORKSPACE_SIZE];

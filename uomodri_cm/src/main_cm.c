@@ -11,13 +11,15 @@
  * INCLUDES
  ***********************************************************************/
 #include <string.h>
-#include "main_cm.h"
+//#include "main_cm.h"
+#include "cm.h"
 #include "usblib.h"
 #include "usbcdc.h"
 #include "usb_ids.h"
 #include "device/usbdevice.h"
 #include "device/usbdcdc.h"
 #include "ustdlib.h"
+//#include "usb_hal.h"
 //#include "usb_ex1_device_structs.h"
 //#include "usb_hal.h"
 
@@ -49,6 +51,8 @@ tUSBMode g_eCurrentUSBMode;   // The current USB operating mode - Host, Device o
 #define COMMAND_STATUS_UPDATE   0x00000002
 #define COMMAND_RECEIVED        0x00000004
 
+#define USB_DETECT_NUM          (67U)
+
 tLineCoding psLineCoding;
 volatile uint32_t g_ui32Flags = 0;
 char *g_pcStatus;
@@ -60,7 +64,7 @@ uint8_t g_char_tmp[256];
 // Global flag indicating that a USB configuration has been set.
 //
 //****************************************************************************
-static volatile bool g_bUSBConfigured = false;
+static volatile bool usb_configDone = false;
 
 
 /************************************************************************
@@ -139,205 +143,60 @@ dbg_uart_addr_t dbg_uart_addr =
 // .p_itcnt           = NULL,
 };
 
-
-
-//#define UART_BUFFER_SIZE        256
-//#define NUM_STRING_DESCRIPTORS (sizeof(g_pui8StringDescriptors) / sizeof(uint8_t *))
-//
-////******************************************************************************
-////
-//// Receive buffer (from the USB perspective).
-////
-////******************************************************************************
-//tUSBBuffer g_sRxBuffer =
-//{
-//    false,                          // This is a receive buffer.
-//    RxHandler,                      // pfnCallback
-//    (void *)&g_sCDCDevice,          // Callback data is our device pointer.
-//    USBDCDCPacketRead,              // pfnTransfer
-//    USBDCDCRxPacketAvailable,       // pfnAvailable
-//    (void *)&g_sCDCDevice,          // pvHandle
-//    g_pi8USBRxBuffer,               // pi8Buffer
-//    UART_BUFFER_SIZE                 // ui32BufferSize
-//};
-//
-////******************************************************************************
-////
-//// Transmit buffer (from the USB perspective).
-////
-////******************************************************************************
-//tUSBBuffer g_sTxBuffer =
-//{
-//    true,                           // This is a transmit buffer.
-//    TxHandler,                      // pfnCallback
-//    (void *)&g_sCDCDevice,          // Callback data is our device pointer.
-//    USBDCDCPacketWrite,             // pfnTransfer
-//    USBDCDCTxPacketAvailable,       // pfnAvailable
-//    (void *)&g_sCDCDevice,          // pvHandle
-//    g_pi8USBTxBuffer,               // pi8Buffer
-//    UART_BUFFER_SIZE                 // ui32BufferSize
-//};
-//
-////******************************************************************************
-////
-//// The CDC device initialization and customization structures. In this case,
-//// we are using USBBuffers between the CDC device class driver and the
-//// application code. The function pointers and callback data values are set
-//// to insert a buffer in each of the data channels, transmit and receive.
-////
-//// With the buffer in place, the CDC channel callback is set to the relevant
-//// channel function and the callback data is set to point to the channel
-//// instance data. The buffer, in turn, has its callback set to the application
-//// function and the callback data set to our CDC instance structure.
-////
-////******************************************************************************
-//tUSBDCDCDevice g_sCDCDevice =
-//{
-//    USB_VID_TI_1CBE,
-//    USB_PID_SERIAL,
-//    0,
-//    USB_CONF_ATTR_SELF_PWR,
-//    CtrlHandler,
-//    (void *)&g_sCDCDevice,
-//    USBBufferEventCallback,
-//    (void *)&g_sRxBuffer,
-//    USBBufferEventCallback,
-//    (void *)&g_sTxBuffer,
-//    g_pui8StringDescriptors,
-//    NUM_STRING_DESCRIPTORS
-//};
 /************************************************************************
  * GLOBAL VARIABLES
  ************************************************************************/
 extern const hal_cm_t hal_cm;
 
-////****************************************************************************
-////
-//// Get the communication parameters in use on the UART.
-////
-////****************************************************************************
-//static void
-//GetLineCoding(tLineCoding *psLineCoding)
-//{
-//    // Get the current line coding set in the UART.
-//    psLineCoding->ui8Databits   = 8U;
-//    psLineCoding->ui8Parity     = USB_CDC_PARITY_NONE;
-//    psLineCoding->ui8Stop       = USB_CDC_STOP_BITS_1;
-//    psLineCoding->ui32Rate      = 115200U;
-//}
-
-////****************************************************************************
-////
-//// Set the communication parameters to use on the UART.
-////
-////****************************************************************************
-//static bool SetLineCoding(tLineCoding *psLineCoding)
-//{
-//    // Let the caller know if we had a problem or not.
-//    return(true);
-//}
-
-////****************************************************************************
-////
-//// Set the state of the RS232 RTS and DTR signals. Handshaking is not
-//// supported so this request will be ignored.
-////
-////****************************************************************************
-//static void SetControlLineState(uint16_t ui16State)
-//{
-//    //
-//    // If configured with GPIOs controlling the handshake lines,
-//    // set them appropriately depending upon the flags passed in the wValue
-//    // field of the request structure passed.
-//    //
-//}
-
-////****************************************************************************
-////
-//// This function sets or clears a break condition on the redirected UART RX
-//// line.  A break is started when the function is called with \e bSend set to
-//// \b true and persists until the function is called again with \e bSend set
-//// to \b false.
-////
-////****************************************************************************
-//static void SendBreak(bool bSend)
-//{
-//    // Are we being asked to start or stop the break condition?
-//    g_bSendingBreak = (!bSend) ? (false) : (true);
-//}
-
-////******************************************************************************
-//// ModeCallback - USB Mode callback
-////
-//// \param ui32Index is the zero-based index of the USB controller making the
-////        callback.
-//// \param eMode indicates the new operating mode.
-////
-//// This function is called by the USB library whenever an OTG mode change
-//// occurs and, if a connection has been made, informs us of whether we are to
-//// operate as a host or device.
-////
-//// \return None.
-////
-////******************************************************************************
-//void
-//ModeCallback(uint32_t ui32Index, tUSBMode eMode)
-//{
-//    // Save the new mode.
-//    g_eCurrentUSBMode = eMode;
-//}
-
-//****************************************************************************
-//
-// Handles CDC driver notifications related to control and setup of the
-// device.
-//
-// \param pvCBData is the client-supplied callback pointer for this channel.
-// \param ui32Event identifies the event we are being notified about.
-// \param ui32MsgValue is an event-specific value.
-// \param pvMsgData is an event-specific pointer.
-//
-// This function is called by the CDC driver to perform control-related
-// operations on behalf of the USB host.  These functions include setting
-// and querying the serial communication parameters, setting handshake line
-// states and sending break conditions.
-//
-// \return The return value is event-specific.
-//
-//****************************************************************************
-uint32_t CtrlHandler(void *pvCBData, uint32_t ui32Event, uint32_t ui32MsgValue, void *pvMsgData)
+/***********************************************************************
+ * FUNCTIONS DEFINITIONS
+ ***********************************************************************/
+/**
+ * @brief   Handles CDC driver notifications related to control and setup of the device.
+ *          This function is called by the CDC driver to perform control-related
+ *          operations on behalf of the USB host. These functions include setting
+ *          and querying the serial communication parameters, setting handshake line
+ *          states and sending break conditions.
+ * @param   p_CBData is the client-supplied callback pointer for this channel.
+ * @param   ui32evt identifies the event we are being notified about.
+ * @param   ui32msgVal is an event-specific value.
+ * @param   p_msgData is an event-specific pointer.
+ * @return  The return value is event-specific.
+ */
+uint32_t CtrlHandler(void *p_CBData, uint32_t ui32evt, uint32_t ui32msgVal, void *p_msgData)
 {
-    uint32_t ui32IntsOff;
+//    uint32_t ui32IntsOff;
 
     // Which event are we being asked to process?
-    switch(ui32Event)
+    switch(ui32evt)
     {
         // We are connected to a host and communication is now possible.
 
         case USB_EVENT_CONNECTED:
         {
-            g_bUSBConfigured = true;
+//            Interrupt_enable(INT_USB0);
+            usb_configDone = true;
             // Flush our buffers.
-            USBBufferFlush(&g_sTxBuffer);
-            USBBufferFlush(&g_sRxBuffer);
-            // Tell the main loop to update the display.
-            ui32IntsOff = Interrupt_disableInProcessor();
-            g_pcStatus = "Connected.";
-            g_ui32Flags |= COMMAND_STATUS_UPDATE;
-            if(!ui32IntsOff)
-                Interrupt_enableInProcessor();
+            USBBufferFlush(&usb_TxBuffer);
+            USBBufferFlush(&usb_RxBuffer);
+//            // Tell the main loop to update the display.
+//            ui32IntsOff = Interrupt_disableInProcessor();
+//            g_pcStatus = "Connected.";
+//            g_ui32Flags |= COMMAND_STATUS_UPDATE;
+//            if(!ui32IntsOff)
+//                Interrupt_enableInProcessor();
             break;
         }
 
         // The host has disconnected.
         case USB_EVENT_DISCONNECTED:
         {
-            g_bUSBConfigured = false;
-            ui32IntsOff = Interrupt_disableInProcessor();
-            g_pcStatus = "Host disconnected.";
-            g_ui32Flags |= COMMAND_STATUS_UPDATE;
-            if(!ui32IntsOff)
-                Interrupt_enableInProcessor();
+            usb_configDone = false;
+//            ui32IntsOff = Interrupt_disableInProcessor();
+//            g_pcStatus = "Host disconnected.";
+//            g_ui32Flags |= COMMAND_STATUS_UPDATE;
+//            if(!ui32IntsOff)
+//                Interrupt_enableInProcessor();
             break;
         }
 
@@ -345,12 +204,11 @@ uint32_t CtrlHandler(void *pvCBData, uint32_t ui32Event, uint32_t ui32MsgValue, 
         // Return the current serial communication parameters.
         case USBD_CDC_EVENT_GET_LINE_CODING:
         {
-            tLineCoding tmp;
-            tmp.ui32Rate    = 115200;
-            tmp.ui8Databits = 8;
-            tmp.ui8Parity   = USB_CDC_PARITY_NONE;
-            tmp.ui8Stop     = USB_CDC_STOP_BITS_1;
-            pvMsgData       = (tLineCoding *) &tmp;
+            psLineCoding.ui32Rate   = 115200;
+            psLineCoding.ui8Databits= 8;
+            psLineCoding.ui8Parity  = USB_CDC_PARITY_NONE;
+            psLineCoding.ui8Stop    = USB_CDC_STOP_BITS_1;
+            p_msgData               = (tLineCoding *) &psLineCoding;
 //            GetLineCoding(pvMsgData);
             break;
         }
@@ -403,26 +261,20 @@ uint32_t CtrlHandler(void *pvCBData, uint32_t ui32Event, uint32_t ui32MsgValue, 
     return(0);
 }
 
-//****************************************************************************
-//
-// Handles CDC driver notifications related to the transmit channel (data to the USB host).
-//
-// \param ui32CBData is the client-supplied callback pointer for this channel.
-// \param ui32Event identifies the event we are being notified about.
-// \param ui32MsgValue is an event-specific value.
-// \param pvMsgData is an event-specific pointer.
-//
-// This function is called by the CDC driver to notify us of any events
-// related to operation of the transmit data channel (the IN channel carrying
-// data to the USB host).
-//
-// \return The return value is event-specific.
-//
-//****************************************************************************
-uint32_t TxHandler(void *pvCBData, uint32_t ui32Event, uint32_t ui32MsgValue, void *pvMsgData)
+/**
+ * @brief   Handles CDC driver notifications related to the transmit channel (data to the USB host).
+ *          This function is called by the CDC driver to notify us of any events related to
+ *          operation of the transmit data channel (the IN channel carrying data to the USB host).
+ * @param   p_CBData is the client-supplied callback pointer for this channel.
+ * @param   ui32evt identifies the event we are being notified about.
+ * @param   ui32msgVal is an event-specific value.
+ * @param   p_msgData is an event-specific pointer.
+ * @return  The return value is event-specific.
+ */
+uint32_t TxHandler(void *p_CBData, uint32_t ui32evt, uint32_t ui32msgVal, void *p_msgData)
 {
     // Which event have we been sent?
-    switch(ui32Event)
+    switch(ui32evt)
     {
         case USB_EVENT_TX_COMPLETE:
         {
@@ -442,74 +294,44 @@ uint32_t TxHandler(void *pvCBData, uint32_t ui32Event, uint32_t ui32MsgValue, vo
     return(0);
 }
 
-//****************************************************************************
-//
-// Handles CDC driver notifications related to the receive channel (data from
-// the USB host).
-//
-// \param ui32CBData is the client-supplied callback data value for this
-// channel.
-// \param ui32Event identifies the event we are being notified about.
-// \param ui32MsgValue is an event-specific value.
-// \param pvMsgData is an event-specific pointer.
-//
-// This function is called by the CDC driver to notify us of any events
-// related to operation of the receive data channel (the OUT channel carrying
-// data from the USB host).
-//
-// \return The return value is event-specific.
-//
-//****************************************************************************
-uint32_t RxHandler(void *pvCBData, uint32_t ui32Event, uint32_t ui32MsgValue, void *pvMsgData)
+/**
+ * @brief   Handles CDC driver notifications related to the receive channel (data from the USB host).
+ *          This function is called by the CDC driver to notify us of any events related to
+ *          operation of the receive data channel (the OUT channel carrying data from the USB host).
+ * @param   p_CBData is the client-supplied callback pointer for this channel.
+ * @param   ui32evt identifies the event we are being notified about.
+ * @param   ui32msgVal is an event-specific value.
+ * @param   p_msgData is an event-specific pointer.
+ * @return  The return value is event-specific.
+ */
+uint32_t RxHandler(void *p_CBData, uint32_t ui32evt, uint32_t ui32msgVal, void *p_msgData)
 {
-//    uint32_t ui32Count;
-
     // Which event are we being sent?
-    switch(ui32Event)
+    switch(ui32evt)
     {
         // A new packet has been received.
         case USB_EVENT_RX_AVAILABLE:
         {
-            dataSize = USBBufferDataAvailable((tUSBBuffer *) &g_sRxBuffer);
-            USBBufferRead((tUSBBuffer *) &g_sRxBuffer, g_char_tmp, dataSize);
-            USBBufferWrite((tUSBBuffer *) &g_sTxBuffer, g_char_tmp, dataSize);
-//            uint32_t ui32Read;
-////            uint32_t ui32Fullness, ui32Space;
-//            uint8_t ucChar;
+//            tUSBDCDCDevice *psDevice;
+//            psDevice = (tUSBDCDCDevice *)p_CBData;
 //
-//            // If we are currently sending a break condition, don't receive any more data.
-//            // We will resume transmission once the break is turned off.
-//            if(g_bSendingBreak)
-//                return(0);
+//            tUSBRingBufObject sTxRing;
+//            // Get the current buffer information to allow us to write directly to the
+//            // transmit buffer (there is already have enough information from the
+//            // parameters to access the receive buffer directly).
+//            USBBufferInfoGet(&usb_TxBuffer, &sTxRing);
 //
-//            while(USBBufferSpaceAvailable(&g_sTxBuffer))
-//            {
-//                // Get a character from the buffer.
-//                ui32Read = USBBufferRead((tUSBBuffer *)&g_sRxBuffer, &ucChar, 1);
-//                if(ui32Read)
-//                {
-//                    ucChar++;
-//                    USBBufferWrite((tUSBBuffer *)&g_sTxBuffer,(uint8_t *)&ucChar, 1);
-//                }
-//                else
-//                    break;
-//            }
-//
-//            // How much elements do we have received in the buffer?
-//            ui32Fullness = USBBufferDataAvailable(&g_sRxBuffer);
-//            // How much space do we have in the buffer?
-//            ui32Space = USBBufferSpaceAvailable(&g_sTxBuffer);
-//
-//            while(ui32Fullness && ui32Space)
-//            {
-//                // Get a character from the buffer.
-//                ui32Read = USBBufferRead((tUSBBuffer *)&g_sRxBuffer, &ucChar, 1);
-////                ucChar = (uint8_t)(ui32Read & 0xFF);
-//                USBBufferWrite((tUSBBuffer *)&g_sTxBuffer,(uint8_t *)&ucChar, 1);
-//                ui32Fullness--;
-//                ui32Space--;
-//            }
-//
+//            uint32_t ui32Space;
+//            // How much space is there in the transmit buffer?
+//            ui32Space = USBBufferSpaceAvailable(&usb_TxBuffer);
+//            dataSize = USBBufferDataAvailable((tUSBBuffer *) &usb_RxBuffer);
+
+//            uint32_t diff_space = (ui32Space <= dataSize) ? (ui32Space) : (dataSize);
+
+            dataSize = USBBufferDataAvailable((tUSBBuffer *) &usb_RxBuffer);
+            USBBufferRead((tUSBBuffer *) &usb_RxBuffer, g_char_tmp, dataSize);
+            USBBufferWrite((tUSBBuffer *) &usb_TxBuffer, g_char_tmp, dataSize);
+
             break;
         }
 
@@ -522,7 +344,8 @@ uint32_t RxHandler(void *pvCBData, uint32_t ui32Event, uint32_t ui32MsgValue, vo
         {
             // Get the number of bytes in the buffer and add 1 if some data
             // still has to clear the transmitter.
-            return(USBBufferSpaceAvailable(&g_sRxBuffer));
+            return(USBDCDCRxPacketAvailable((tUSBDCDCDevice *) &usb_CDCDevice));
+//            return(USBBufferSpaceAvailable(&usb_RxBuffer));
         }
 
         //
@@ -532,6 +355,11 @@ uint32_t RxHandler(void *pvCBData, uint32_t ui32Event, uint32_t ui32MsgValue, vo
         // this message but this is included just for illustration and
         // completeness.
         //
+//        case USB_EVENT_ERROR:
+////        case USB_EVENT_REQUEST_BUFFER:
+//        {
+//            return(0);
+//        }
         case USB_EVENT_REQUEST_BUFFER:
         {
             return(0);
@@ -552,49 +380,78 @@ uint32_t RxHandler(void *pvCBData, uint32_t ui32Event, uint32_t ui32MsgValue, vo
     return(0);
 }
 
-/***********************************************************************
- * FUNCTIONS DEFINITIONS
- ***********************************************************************/
 /**
  * @brief   Main function running on CM processor. MCU init.
  */
 void main(void)
 {
+
+//    uint16_t vbus_detect = 0;
+//    bool    usb_ITset   = false;
+//    bool    usb_ITclear = true;
+//    bool    usb_detect  = false;
 //    uint32_t i = 0;
     // Initialize device clock and peripherals
     CM_init();
     // Hardware Abstraction Layer initialization
-    HAL_CM_init(&hal_cm);
+//    HAL_CM_init(&hal_cm);
 
     // IPC address translation
 //    IPC_CpuToCmAddrSync(&dbg_uart_addr);
 
-    // Not configured initially.
-    g_bUSBConfigured = false;
+    // Not initially configured.
+    usb_configDone = false;
     // Register the interrupt handler, for USB.
     Interrupt_registerHandler(INT_USB0, &CM_USB0DeviceIntHandler);
     // Initialize the transmit and receive buffers for first serial device.
-    USBBufferInit(&g_sTxBuffer);
-    USBBufferInit(&g_sRxBuffer);
+    USBBufferInit(&usb_TxBuffer);
+    USBBufferInit(&usb_RxBuffer);
     // Set the USB stack mode to Device mode with VBUS monitoring.
     USBStackModeSet(0, eUSBModeForceDevice, 0);//eUSBModeDevice
     // Pass our device information to the USB library and place the device on the bus.
-    USBDCDCInit(0, (tUSBDCDCDevice *) &g_sCDCDevice);
+    USBDCDCInit(0, (tUSBDCDCDevice *) &usb_CDCDevice);
 
     // Enable interrupts now that the application is ready to start.
-    Interrupt_enable(INT_USB0);
+//    Interrupt_enable(INT_USB0);
     Interrupt_enableInProcessor();
 
     while(1)
     {
+//        vbus_detect = (vbus_detect << 1) | (GPIO_readPin(USB_DETECT_NUM) & 0x01);
+//
+//        if(vbus_detect == 0x0F)
+//        {
+//            usb_ITset   = true;
+//            usb_ITclear = false;
+//            usb_detect  = true;
+//        }
+//        else if(vbus_detect == 0xF0)
+//        {
+//            usb_ITset   = false;
+//            usb_ITclear = true;
+//            usb_detect  = true;
+//        }
+//        else
+//            usb_detect = false;
+//
+//        if(usb_detect)
+//        {
+//            Interrupt_disableInProcessor();
+//            if(usb_ITset)
+//                Interrupt_enable(INT_USB0);
+//            else if(usb_ITclear)
+//                Interrupt_disable(INT_USB0);
+//            Interrupt_enableInProcessor();
+//        }
+
         // Have we been asked to update the status display?
-        if(g_ui32Flags & COMMAND_STATUS_UPDATE)
-        {
-            // Clear the command flag
-            Interrupt_disableInProcessor();
-            g_ui32Flags &= ~COMMAND_STATUS_UPDATE;
-            Interrupt_enableInProcessor();
-        }
+//        if(g_ui32Flags & COMMAND_STATUS_UPDATE)
+//        {
+//            // Clear the command flag
+//            Interrupt_disableInProcessor();
+//            g_ui32Flags &= ~COMMAND_STATUS_UPDATE;
+//            Interrupt_enableInProcessor();
+//        }
     }
 }
 

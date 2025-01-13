@@ -11,15 +11,15 @@
 #include "driverlib_cm.h"
 #include "cm.h"
 
-#include <stdbool.h>
-#include <stdint.h>
-#include "inc/hw_types.h"
-#include "usb.h"
-#include "usblib.h"
-#include "usbcdc.h"
-#include "usb_ids.h"
-#include "device/usbdevice.h"
-#include "device/usbdcdc.h"
+//#include <stdbool.h>
+//#include <stdint.h>
+//#include "inc/hw_types.h"
+//#include "usb.h"
+//#include "usblib.h"
+//#include "usbcdc.h"
+//#include "usb_ids.h"
+//#include "device/usbdevice.h"
+//#include "device/usbdcdc.h"
 
 /************************************************************************
  * FUNCTIONS DECLARATION
