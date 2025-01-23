@@ -568,6 +568,7 @@ typedef struct __gpio_config_t__
 {
     const uint32_t                      pinNum;                     /*!< GPIO pin number (GPIO0 - GPIO168). */
     const uint32_t                      fctMux;                     /*!< GPIO configuration functions (peripheral affectation matrix). \see pin_map.h */
+    const uint32_t                      setValue;                   /*!< GPIO initial value if defined as output. */
     const uint32_t                      pinType;                    /*!< GPIO pad configuration :
                                                                         - \em GPIO_PIN_TYPE_STD (Push-pull output or floating input),
                                                                         - \em GPIO_PIN_TYPE_PULLUP (Pull-up enable for input),
@@ -590,7 +591,6 @@ typedef struct __gpio_config_t__
     const GPIO_ExternalIntNum           extIntNum;                  /*!< GPIO external interrupt source number */
     const GPIO_IntType                  intType;                    /*!< GPIO interrupt event source */
     const bool_t                        intEnable;                  /*!< GPIO can be configured as IT source */
-    const bool_t                        setValue;                   /*!< GPIO initial value if defined as output. */
 } gpio_cfg_t;
 
 /**

@@ -19,8 +19,8 @@ extern dbg_uart_msg_t dbg_uart_tx_msg;
 /************************************************************************
  * FUNCTIONS DECLARATION
  ************************************************************************/
-//extern __interrupt void ipc_isr0(void);
-extern __interrupt UART_RX_IntHandler(void);
+extern __attribute__((interrupt)) void ipc_isr0(void);
+extern __attribute__((interrupt)) void UART_RX_IntHandler(void);
 
 /************************************************************************
  * VARIABLES INITIALIZATION
@@ -57,18 +57,58 @@ static const udma_cfg_t cm_udmaCfgList[] =
  {.dmaChannel       = UINT32_MAX},
 };
 
-static const ipc_cfg_t  cm_ipcCfgList[] =
+//static const ipc_cfg_t  cm_ipcCfgList[] =
+//{
+// {
+//  .ipcType          = IPC_CM_L_CPU1_R,
+//  .ipcFlag          = IPC_CPU1_TO_CM_FLAG,
+//  //  .ipcInt           = IPC_INT0,
+//  //  .p_ipcIntHandler  = &ipc_isr0,
+//  .ipcMsgQEnable    = false,
+//  .ipcIntEnable     = false,
+// },
+// {.ipcType          = IPC_TOTAL_NUM},
+//};
+
+static const ipc_cfg_t cm_ipcCfgList[] =
 {
  {
   .ipcType          = IPC_CM_L_CPU1_R,
-  .ipcFlag          = IPC_CPU1_TO_CM_FLAG,
-  //  .ipcInt           = IPC_INT0,
-  //  .p_ipcIntHandler  = &ipc_isr0,
+  .p_ipcMsgQ        = NULL,
+  .ipcIntMsgQL      = 0,
+  .ipcIntMsgQR      = 0,
+  .ipcFlag          = IPC_FLAG0,
+  .ipcInt           = IPC_INT0,
+  .p_ipcIntHandler  = &ipc_isr0,
   .ipcMsgQEnable    = false,
   .ipcIntEnable     = false,
  },
+// {
+//  .ipcType          = IPC_CM_L_CPU1_R,
+//  .p_ipcMsgQ        = NULL,
+//  .ipcIntMsgQL      = 0,
+//  .ipcIntMsgQR      = 0,
+//  .ipcFlag          = IPC_FLAG1,
+//  .ipcInt           = IPC_INT1,
+//  .p_ipcIntHandler  = &ipc_isr1,
+//  .ipcMsgQEnable    = false,
+//  .ipcIntEnable     = true,
+// },
+// {
+//  .ipcType          = IPC_CM_L_CPU1_R,
+//  .p_ipcMsgQ        = NULL,
+//  .ipcIntMsgQL      = 0,
+//  .ipcIntMsgQR      = 0,
+//  .ipcFlag          = IPC_FLAG0,
+//  .ipcInt           = 0,
+//  .p_ipcIntHandler  = NULL,
+//  .ipcMsgQEnable    = false,
+//  .ipcIntEnable     = false,
+// },
  {.ipcType          = IPC_TOTAL_NUM},
 };
+
+
 
 static const gcrc_cfg_t cm_crcCfg =
 {
@@ -89,7 +129,7 @@ static const hal_cm_t   hal_cm =
 {
  .p_uartHandle      = NULL,//&cm_uartCfg,
  .p_udmaHandle      = NULL,//cm_udmaCfgList,
- .p_ipcHandle       = NULL,//cm_ipcCfgList,
+ .p_ipcHandle       = cm_ipcCfgList,
  .p_crcHandle       = NULL,//&cm_crcCfg,
 };
 

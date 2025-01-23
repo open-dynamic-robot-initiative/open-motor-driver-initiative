@@ -113,9 +113,8 @@ typedef union __uart_addr_u__
  * GLOBAL VARIABLES
  ***********************************************************************/
 #if (defined DEBUG) && (!defined CPU1) && (0)
-#pragma DATA_SECTION(cpu2cm_dbg_msg, "MSGRAM_CPU_TO_CM");
+#pragma DATA_SECTION(cpu2cm_dbg_msg, "MSGRAM_CPUx_TO_CM");
 com_cpu_2_cm_t  cpu2cm_dbg_msg;
 #endif
-
 
 #endif /* __MAIN_H__ */

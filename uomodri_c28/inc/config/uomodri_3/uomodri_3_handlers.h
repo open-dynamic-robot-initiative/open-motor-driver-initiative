@@ -38,7 +38,8 @@ extern __attribute__((interrupt)) void motor2_Task(void);
 extern __attribute__((interrupt)) void Cla1Task5(void);
 extern __attribute__((interrupt)) void Cla1Task6(void);
 extern __attribute__((interrupt)) void Cla1Task7(void);
-extern __attribute__((interrupt)) void Cla1Task8(void);
+extern __attribute__((interrupt("background"))) void Cla1Task8(void);
+//extern __attribute__((interrupt)) void Cla1Task8(void);
 
 /***********************************************************************
  * GPIOs STRUCTURE DECLARATION & INITIALIZATION
@@ -364,6 +365,7 @@ static const cla_cfg_t  claCfgList[] =
  CLA_CMD_NEW_DEF,                   /* CLA structure for uOmodri command update - 1ms */
  CLA_MOTOR1_DEF,                    /* CLA structure for MOTOR1 control - 20us (40kHz) */
  CLA_MOTOR2_DEF,                    /* CLA structure for MOTOR2 control - 20us (40kHz) */
+ CLA_BKG_DEF,
  {.p_claFunc = NULL},               /* END OF ARRAY */
 };
 

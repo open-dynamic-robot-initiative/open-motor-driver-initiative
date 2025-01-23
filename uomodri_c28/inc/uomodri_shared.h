@@ -878,20 +878,21 @@ bool_t MOT_runControl(motor_t* p_motor)
     p_err->enc_indexErr             = (p_enc->flags.indexDetect && p_enc->flags.indexErr)   || p_err->enc_indexErr;
     p_err->enc_alignErr             = p_enc->flags.alignErr                                 || p_err->enc_alignErr;
     if(p_err->all)
-        p_motor->state              = MOTOR_STATE_ERROR;
+        p_motor->nxState            = MOTOR_STATE_ERROR;
+    p_motor->crState                = p_motor->nxState;
 
-    switch(p_motor->state)
+    switch(p_motor->crState)
     {
     case MOTOR_STATE_IDLE:
     default:
         if(!motor_start)
         {
-            p_motor->state          = MOTOR_STATE_IDLE;
+            p_motor->nxState        = MOTOR_STATE_IDLE;
             ENC_resetPeriph(p_enc);
             FOC_resetStruct(p_foc);
         }
         else
-            p_motor->state          = MOTOR_STATE_INIT_FW;
+            p_motor->nxState        = MOTOR_STATE_INIT_FW;
         p_motor->itCnt              = 0U;
         MOT_stopCommand(p_motor->epwmBase[CHANNEL_1]);
         MOT_stopCommand(p_motor->epwmBase[CHANNEL_2]);
@@ -901,17 +902,17 @@ bool_t MOT_runControl(motor_t* p_motor)
     case MOTOR_STATE_INIT_FW:
         if(!motor_start)
         {
-            p_motor->state          = MOTOR_STATE_IDLE;
+            p_motor->nxState        = MOTOR_STATE_IDLE;
             p_motor->itCnt          = 0U;
         }
         else if(IS_BIGGER_THAN_U32(p_motor->itCnt, p_foc->initPosCnt)) // p_motor->itCnt > p_foc->initPosCnt
         {
-            p_motor->state          = MOTOR_STATE_INIT_REV;
+            p_motor->nxState        = MOTOR_STATE_INIT_REV;
             p_motor->itCnt          = 0U;
         }
         else
         {
-            p_motor->state          = MOTOR_STATE_INIT_FW;
+            p_motor->nxState        = MOTOR_STATE_INIT_FW;
             p_motor->itCnt         += 1U;
         }
         if(motor_id == MOTOR_1)
@@ -935,17 +936,17 @@ bool_t MOT_runControl(motor_t* p_motor)
     case MOTOR_STATE_INIT_REV:
         if(!motor_start)
         {
-            p_motor->state          = MOTOR_STATE_IDLE;
+            p_motor->nxState        = MOTOR_STATE_IDLE;
             p_motor->itCnt          = 0U;
         }
         else if(IS_BIGGER_THAN_U32(p_motor->itCnt, p_foc->initPosCnt)) // p_motor->itCnt > p_foc->initPosCnt
         {
-            p_motor->state          = MOTOR_STATE_INIT_TEST;
+            p_motor->nxState        = MOTOR_STATE_INIT_TEST;
             p_motor->itCnt          = 0U;
         }
         else
         {
-            p_motor->state          = MOTOR_STATE_INIT_REV;
+            p_motor->nxState        = MOTOR_STATE_INIT_REV;
             p_motor->itCnt         += 1U;
         }
         if(motor_id == MOTOR_1)
@@ -968,10 +969,10 @@ bool_t MOT_runControl(motor_t* p_motor)
 
     case MOTOR_STATE_INIT_TEST:
         if(!motor_start)
-            p_motor->state          = MOTOR_STATE_IDLE;
+            p_motor->nxState        = MOTOR_STATE_IDLE;
         else
         {
-            p_motor->state          = MOTOR_STATE_INIT_FIX;
+            p_motor->nxState        = MOTOR_STATE_INIT_FIX;
             if(motor_id == MOTOR_1)
                 p_foc->idRef        = MOTOR1_CURRENT_INIT_MAX;
             else
@@ -990,17 +991,17 @@ bool_t MOT_runControl(motor_t* p_motor)
     case MOTOR_STATE_INIT_FIX:
         if(!motor_start)
         {
-            p_motor->state          = MOTOR_STATE_IDLE;
+            p_motor->nxState        = MOTOR_STATE_IDLE;
             p_motor->itCnt          = 0U;
         }
         else if(IS_BIGGER_THAN_U32(p_motor->itCnt, p_foc->initFixCnt)) // p_motor->itCnt > p_foc->initFixCnt
         {
-            p_motor->state          = MOTOR_STATE_READY;
+            p_motor->nxState        = MOTOR_STATE_READY;
             p_motor->itCnt          = 0U;
         }
         else
         {
-            p_motor->state          = MOTOR_STATE_INIT_FIX;
+            p_motor->nxState        = MOTOR_STATE_INIT_FIX;
             p_motor->itCnt         += 1U;
         }
         if(motor_id == MOTOR_1)
@@ -1017,11 +1018,11 @@ bool_t MOT_runControl(motor_t* p_motor)
 
     case MOTOR_STATE_READY:
         if(motor_start)
-            p_motor->state          = MOTOR_STATE_READY;
+            p_motor->nxState        = MOTOR_STATE_READY;
         else if(!cmd_reg.systemEnable)
-            p_motor->state          = MOTOR_STATE_IDLE;
+            p_motor->nxState        = MOTOR_STATE_IDLE;
         else
-            p_motor->state          = MOTOR_STATE_STOP;
+            p_motor->nxState        = MOTOR_STATE_STOP;
         p_motor->itCnt             += 1U;
         p_foc->idRef                = 0.0f;
         p_foc->iqRef                = FOC_runPD(&p_foc->pdPosVel);
@@ -1033,11 +1034,11 @@ bool_t MOT_runControl(motor_t* p_motor)
 
     case MOTOR_STATE_STOP:
         if(motor_start)
-            p_motor->state          = MOTOR_STATE_READY;
+            p_motor->nxState        = MOTOR_STATE_READY;
         else if(!cmd_reg.systemEnable)
-            p_motor->state          = MOTOR_STATE_IDLE;
+            p_motor->nxState        = MOTOR_STATE_IDLE;
         else
-            p_motor->state          = MOTOR_STATE_STOP;
+            p_motor->nxState        = MOTOR_STATE_STOP;
         p_motor->itCnt             += 1U;
         p_foc->idRef                = 0.0f;
         p_foc->iqRef                = 0.0f;
@@ -1047,7 +1048,7 @@ bool_t MOT_runControl(motor_t* p_motor)
         break;
 
     case MOTOR_STATE_ERROR:
-        p_motor->state              = MOTOR_STATE_ERROR;
+        p_motor->nxState            = MOTOR_STATE_ERROR;
         p_foc->idRef                = 0.0f;
         p_foc->iqRef                = 0.0f;
         MOT_stopCommand(p_motor->epwmBase[CHANNEL_1]);

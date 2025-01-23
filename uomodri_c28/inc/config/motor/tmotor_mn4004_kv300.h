@@ -14,6 +14,8 @@
 /***********************************************************************
  * MOTORS DEFINES
  ***********************************************************************/
+//#pragma DATA_ALIGN(TMOTOR_MN4004_KV300_KV, 4)
+//#pragma DATA_SECTION(TMOTOR_MN4004_KV300_KV, "REPROG_DATA_FLASH");
 #define TMOTOR_MN4004_KV300_KV                              (300.0f)    // Motor constant (rpm/V)
 #define TMOTOR_MN4004_KV300_KE                              (FM_SQRT3 / (TMOTOR_MN4004_KV300_KV * FM_RPM2RADPS)) // Motor back EMF constant (V/rad/s)
 #define TMOTOR_MN4004_KV300_KI                              (0.1f)      // Motor torque constant (N.m/A)
@@ -52,10 +54,12 @@
 
 /*** Motor 1 constants ***/
 #if (MOTOR1_PARAMS == USE_TMOTOR_MN4004_KV300)
+
 #define MOTOR1_KV                                           TMOTOR_MN4004_KV300_KV
 #define MOTOR1_KE                                           TMOTOR_MN4004_KV300_KE
 #define MOTOR1_KI                                           TMOTOR_MN4004_KV300_KI
 #define MOTOR1_RS                                           TMOTOR_MN4004_KV300_RS
+//const float __attribute__((section(".reprog_mem_flash")))   MOTOR1_RS = TMOTOR_MN4004_KV300_RS;
 #define MOTOR1_LS                                           TMOTOR_MN4004_KV300_LS
 #define MOTOR1_POLES_PAIRS                                  TMOTOR_MN4004_KV300_POLES_PAIRS
 #define MOTOR1_CURRENT_INIT_MAX                             TMOTOR_MN4004_KV300_CURRENT_INIT_MAX

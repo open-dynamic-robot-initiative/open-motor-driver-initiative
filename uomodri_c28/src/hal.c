@@ -17,9 +17,10 @@
 /***********************************************************************
  * VARIABLES
  ***********************************************************************/
-#pragma DATA_SECTION(uid_unique_32b,".UID_UNIQUE");
+#pragma DATA_SECTION(uid_unique_32b,".uniqueId");
 volatile uint32_t       uid_unique_32b;
-volatile uint32_t       uid_unique_8b;
+
+volatile uint32_t       uid_unique_8b = 0;
 
 /***********************************************************************
  * FUNCTIONS DECLARATION
@@ -48,10 +49,9 @@ void HAL_ini(const hal_cfg_t* p_hal)
     if(p_hal != NULL)
     {
         // Compute the UID_unique address in 8bits format:
-        uid_unique_8b   = uid_unique_32b;
-        uid_unique_8b  ^= (uid_unique_32b >> 8);
-        uid_unique_8b  ^= (uid_unique_32b >> 16);
-        uid_unique_8b  ^= (uid_unique_32b >> 24);
+        uint16_t i;
+        for(i = 0; i < 4; i++)
+            uid_unique_8b  ^= (uid_unique_32b >> (i * 8));
         uid_unique_8b  &= 0x000000FF;
 
         EALLOW;
@@ -71,16 +71,17 @@ void HAL_ini(const hal_cfg_t* p_hal)
         HAL_SPI_ini(p_hal->p_spiHandle);
         // Initialize CPU TIMERS
         HAL_TMR_ini(p_hal->p_timerHandle);
-#ifndef CPU1
-        // Initialize IPC communication
+        // Initialize IPC
         HAL_IPC_ini(p_hal->p_ipcHandle);
-#endif
+
+
 #if (RS485_BUS_ENABLE) && (USE_UOMODRI_REV != USE_UOMODRI_V1)
         // Initialize SCI/UART
         HAL_SCI_ini(p_hal->p_sciHandle);
         // Initialize CLB
         HAL_CLB_ini(p_hal->p_clbHandle);
 #endif
+        // Initialize MCAN - CAN_FD
         HAL_MCAN_ini(p_hal->p_mcanHandle);
         EDIS;
     }
@@ -109,7 +110,7 @@ void HAL_GPIO_ini(const gpio_cfg_t* p_gpio)
                 if(p_gpio->direction == GPIO_DIR_MODE_IN)
                     GPIO_setQualificationMode(pinNum, p_gpio->samplingInMode);
                 else
-                    GPIO_writePin(pinNum, (uint32_t) p_gpio->setValue);
+                    GPIO_writePin(pinNum, p_gpio->setValue);
                 if(p_gpio->intEnable)
                 {
                     GPIO_setInterruptPin(pinNum, p_gpio->extIntNum);
@@ -612,10 +613,10 @@ void HAL_IPC_ini(const ipc_cfg_t* p_ipcCfg)
         while(ipcType != IPC_TOTAL_NUM)
         {
             // Enable IPC interrupts
-            if(p_ipcCfg->ipcIntEnable == true)
+            if(p_ipcCfg->ipcIntEnable)
                 IPC_registerInterrupt(ipcType, p_ipcCfg->ipcInt, p_ipcCfg->p_ipcIntHandler);
             // Initialize message queue
-            if(p_ipcCfg->ipcMsgQEnable == true)
+            if(p_ipcCfg->ipcMsgQEnable)
                 IPC_initMessageQueue(ipcType, p_ipcCfg->p_ipcMsgQ, p_ipcCfg->ipcIntMsgQL, p_ipcCfg->ipcIntMsgQR);
             // Synchronize both the cores.
             if(!(ipcSyncDone & (1 << ipcType)))

@@ -71,7 +71,8 @@ static volatile bool usb_configDone = false;
  * FUNCTIONS DECLARATION
  ************************************************************************/
 inline void IPC_CpuToCmAddrSync(dbg_uart_addr_t*);
-__interrupt void CM_USB0DeviceIntHandler(void);
+__attribute__((interrupt)) void CM_USB0DeviceIntHandler(void);
+__attribute__((interrupt)) void ipc_isr0(void);
 
 ////******************************************************************************
 ////
@@ -146,7 +147,7 @@ dbg_uart_addr_t dbg_uart_addr =
 /************************************************************************
  * GLOBAL VARIABLES
  ************************************************************************/
-extern const hal_cm_t hal_cm;
+//extern const hal_cm_t hal_cm;
 
 /***********************************************************************
  * FUNCTIONS DEFINITIONS
@@ -363,6 +364,7 @@ uint32_t RxHandler(void *p_CBData, uint32_t ui32evt, uint32_t ui32msgVal, void *
         case USB_EVENT_REQUEST_BUFFER:
         {
             return(0);
+            break;
         }
 
         //
@@ -394,7 +396,7 @@ void main(void)
     // Initialize device clock and peripherals
     CM_init();
     // Hardware Abstraction Layer initialization
-//    HAL_CM_init(&hal_cm);
+    HAL_CM_init(&hal_cm);
 
     // IPC address translation
 //    IPC_CpuToCmAddrSync(&dbg_uart_addr);
@@ -558,10 +560,48 @@ inline void IPC_CpuToCmAddrSync(dbg_uart_addr_t* p_addr)
 //! C2000 PIE controller.
 //
 //******************************************************************************
-__interrupt void CM_USB0DeviceIntHandler(void)
+__attribute__((interrupt)) void CM_USB0DeviceIntHandler(void)
 {
     USB0DeviceIntHandler();
 }
+
+__attribute__((interrupt)) void ipc_isr0(void)
+{
+    uint32_t    cmd, data, addr;
+    uint8_t     ipcCfgIdx = 0;
+    bool        com_tx_msg_done = false;
+    // Get index associated to IPC structure configuration
+    while(cm_ipcCfgList[(cm_ipcCfgList[ipcCfgIdx].p_ipcIntHandler != &ipc_isr0) ? (ipcCfgIdx++) : (ipcCfgIdx)].p_ipcIntHandler != &ipc_isr0);
+    // Get structure address
+    IPC_readCommand(cm_ipcCfgList[ipcCfgIdx].ipcType, cm_ipcCfgList[ipcCfgIdx].ipcFlag, IPC_ADDR_CORRECTION_ENABLE, &cmd, &addr, &data);
+    // Create the reply message
+    //com_tx_msg_done = com_msgTx((FOC_STRUCT *)addr, &com_tx_msg);
+//#ifdef DEBUG
+//    uint8_t udmaCfgIndex = 0;
+//    // Create debug message
+//    com_msgDbgTx((FOC_STRUCT *)addr, dbg_tx_msg);
+//    // Wait Tx buffer + UART Tx module are empty.
+//    while((HWREG(UART0_BASE + UART_O_FR) & UART_FR_BUSY) == 1);
+//    // Force purge of Rx buffer.
+//    while(UART_readCharNonBlocking(UART0_BASE) != -1);
+//    // Get the index associated to uDMA UART0_TX configuration
+//    while((cm_udmaCfgList[udmaCfgIndex].dmaChannel != UDMA_CHANNEL_UART0_TX) ? (udmaCfgIndex++) : (udmaCfgIndex));
+//    // Enable the uDMA UART0 Tx channel
+//    if(!UDMA_isChannelEnabled(UDMA_BASE, UDMA_CHANNEL_UART0_TX))
+//    {
+//        ucControlTable[UDMA_CHANNEL_UART0_TX].chControlAttr |= cm_udmaCfgList[udmaCfgIndex].transferMode;
+//        ucControlTable[UDMA_CHANNEL_UART0_TX].chControlAttr |= ((cm_udmaCfgList[udmaCfgIndex].transferSize - 1) << UDMA_DMACHCTL_XFERSIZE_S);
+//        UDMA_enableChannel(UDMA_BASE, UDMA_CHANNEL_UART0_TX);
+//    }
+//#endif /*DEBUG*/
+//    if(com_tx_msg_done == true)
+//        // Share the message generated with C28-CPU1
+//        IPC_sendCommand(cm_ipcCfgList[ipcCfgIdx].ipcType, cm_ipcCfgList[ipcCfgIdx].ipcFlag, IPC_ADDR_CORRECTION_ENABLE, MSG_COM_INTER, (uint32_t)(&com_tx_msg), 1);
+    // Acknowledge IT associated to input flag.
+    IPC_ackFlagRtoL(cm_ipcCfgList[ipcCfgIdx].ipcType, cm_ipcCfgList[ipcCfgIdx].ipcFlag);
+}
+
+
 //
 // End of File
 //

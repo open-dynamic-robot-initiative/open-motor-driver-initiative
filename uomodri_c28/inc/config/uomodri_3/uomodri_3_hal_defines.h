@@ -21,7 +21,7 @@
                                                     .fctMux         = MOTOR1_PWM1_CHA_CFG, \
                                                     .direction      = GPIO_DIR_MODE_OUT, \
                                                     .samplingInMode = GPIO_QUAL_ASYNC, \
-                                                    .setValue       = false, \
+                                                    .setValue       = (0U), \
                                                     .intEnable      = false, \
                                                 }
 
@@ -32,7 +32,7 @@
                                                     .fctMux         = MOTOR1_PWM1_CHB_CFG, \
                                                     .direction      = GPIO_DIR_MODE_OUT, \
                                                     .samplingInMode = GPIO_QUAL_ASYNC, \
-                                                    .setValue       = true, \
+                                                    .setValue       = (1U), \
                                                     .intEnable      = false, \
                                                 }
 
@@ -43,7 +43,7 @@
                                                     .fctMux         = MOTOR1_PWM2_CHA_CFG, \
                                                     .direction      = GPIO_DIR_MODE_OUT, \
                                                     .samplingInMode = GPIO_QUAL_ASYNC, \
-                                                    .setValue       = false, \
+                                                    .setValue       = (0U), \
                                                     .intEnable      = false, \
                                                 }
 
@@ -54,7 +54,7 @@
                                                     .fctMux         = MOTOR1_PWM2_CHB_CFG, \
                                                     .direction      = GPIO_DIR_MODE_OUT, \
                                                     .samplingInMode = GPIO_QUAL_ASYNC, \
-                                                    .setValue       = true, \
+                                                    .setValue       = (1U), \
                                                     .intEnable      = false, \
                                                 }
 
@@ -65,7 +65,7 @@
                                                     .fctMux         = MOTOR1_PWM3_CHA_CFG, \
                                                     .direction      = GPIO_DIR_MODE_OUT, \
                                                     .samplingInMode = GPIO_QUAL_ASYNC, \
-                                                    .setValue       = false, \
+                                                    .setValue       = (0U), \
                                                     .intEnable      = false, \
                                                 }
 
@@ -76,7 +76,7 @@
                                                     .fctMux         = MOTOR1_PWM3_CHB_CFG, \
                                                     .direction      = GPIO_DIR_MODE_OUT, \
                                                     .samplingInMode = GPIO_QUAL_ASYNC, \
-                                                    .setValue       = true, \
+                                                    .setValue       = (1U), \
                                                     .intEnable      = false, \
                                                 }
 
@@ -87,7 +87,7 @@
                                                     .fctMux         = MOTOR2_PWM1_CHA_CFG, \
                                                     .direction      = GPIO_DIR_MODE_OUT, \
                                                     .samplingInMode = GPIO_QUAL_ASYNC, \
-                                                    .setValue       = false, \
+                                                    .setValue       = (0U), \
                                                     .intEnable      = false, \
                                                 }
 
@@ -98,7 +98,7 @@
                                                     .fctMux         = MOTOR2_PWM1_CHB_CFG, \
                                                     .direction      = GPIO_DIR_MODE_OUT, \
                                                     .samplingInMode = GPIO_QUAL_ASYNC, \
-                                                    .setValue       = true, \
+                                                    .setValue       = (1U), \
                                                     .intEnable      = false, \
                                                 }
 
@@ -109,7 +109,7 @@
                                                     .fctMux         = MOTOR2_PWM2_CHA_CFG, \
                                                     .direction      = GPIO_DIR_MODE_OUT, \
                                                     .samplingInMode = GPIO_QUAL_ASYNC, \
-                                                    .setValue       = false, \
+                                                    .setValue       = (0U), \
                                                     .intEnable      = false, \
                                                 }
 
@@ -120,7 +120,7 @@
                                                     .fctMux         = MOTOR2_PWM2_CHB_CFG, \
                                                     .direction      = GPIO_DIR_MODE_OUT, \
                                                     .samplingInMode = GPIO_QUAL_ASYNC, \
-                                                    .setValue       = true, \
+                                                    .setValue       = (1U), \
                                                     .intEnable      = false, \
                                                 }
 
@@ -131,7 +131,7 @@
                                                     .fctMux         = MOTOR2_PWM3_CHA_CFG, \
                                                     .direction      = GPIO_DIR_MODE_OUT, \
                                                     .samplingInMode = GPIO_QUAL_ASYNC, \
-                                                    .setValue       = false, \
+                                                    .setValue       = (0U), \
                                                     .intEnable      = false, \
                                                 }
 
@@ -142,7 +142,7 @@
                                                     .fctMux         = MOTOR2_PWM3_CHB_CFG, \
                                                     .direction      = GPIO_DIR_MODE_OUT, \
                                                     .samplingInMode = GPIO_QUAL_ASYNC, \
-                                                    .setValue       = true, \
+                                                    .setValue       = (1U), \
                                                     .intEnable      = false, \
                                                 }
 
@@ -153,7 +153,7 @@
                                                     .fctMux         = RS485_TX_CFG, \
                                                     .direction      = GPIO_DIR_MODE_OUT, \
                                                     .samplingInMode = GPIO_QUAL_ASYNC, \
-                                                    .setValue       = false, \
+                                                    .setValue       = (0U), \
                                                     .intEnable      = false, \
                                                 }
 
@@ -164,7 +164,7 @@
                                                     .fctMux         = RS485_RX_CFG, \
                                                     .direction      = GPIO_DIR_MODE_IN, \
                                                     .samplingInMode = GPIO_QUAL_ASYNC, \
-                                                    .setValue       = false, \
+                                                    .setValue       = (0U), \
                                                     .intEnable      = false, \
                                                 }
 
@@ -175,7 +175,7 @@
                                                     .fctMux         = DRV_SPI_SIMO_CFG, \
                                                     .direction      = GPIO_DIR_MODE_OUT, \
                                                     .samplingInMode = GPIO_QUAL_ASYNC, \
-                                                    .setValue       = true, \
+                                                    .setValue       = (1U), \
                                                     .intEnable      = false, \
                                                 }
 
@@ -186,7 +186,7 @@
                                                     .fctMux         = DRV_SPI_SOMI_CFG, \
                                                     .direction      = GPIO_DIR_MODE_IN, \
                                                     .samplingInMode = GPIO_QUAL_SYNC, \
-                                                    .setValue       = false, \
+                                                    .setValue       = (0U), \
                                                     .intEnable      = false, \
                                                 }
 
@@ -197,7 +197,7 @@
                                                     .fctMux         = DRV_SPI_CLK_CFG, \
                                                     .direction      = GPIO_DIR_MODE_OUT, \
                                                     .samplingInMode = GPIO_QUAL_ASYNC, \
-                                                    .setValue       = true, \
+                                                    .setValue       = (1U), \
                                                     .intEnable      = false, \
                                                 }
 
@@ -208,7 +208,7 @@
                                                     .fctMux         = CANFD_TX_CFG, \
                                                     .direction      = GPIO_DIR_MODE_OUT, \
                                                     .samplingInMode = GPIO_QUAL_SYNC, \
-                                                    .setValue       = true, \
+                                                    .setValue       = (1U), \
                                                     .intEnable      = false, \
                                                 }
 
@@ -219,7 +219,7 @@
                                                     .fctMux         = CANFD_RX_CFG, \
                                                     .direction      = GPIO_DIR_MODE_IN, \
                                                     .samplingInMode = GPIO_QUAL_ASYNC, \
-                                                    .setValue       = false, \
+                                                    .setValue       = (0U), \
                                                     .intEnable      = false, \
                                                 }
 
@@ -239,7 +239,7 @@
                                                     .fctMux         = MOTOR2_DRV_SPI_CS_CFG, \
                                                     .direction      = GPIO_DIR_MODE_OUT, \
                                                     .samplingInMode = GPIO_QUAL_ASYNC, \
-                                                    .setValue       = true, \
+                                                    .setValue       = (1U), \
                                                     .intEnable      = false, \
                                                 }
 
@@ -253,7 +253,7 @@
                                                     .fctMux         = MOTOR2_DRV_EN_CFG, \
                                                     .direction      = GPIO_DIR_MODE_OUT, \
                                                     .samplingInMode = GPIO_QUAL_ASYNC, \
-                                                    .setValue       = false, \
+                                                    .setValue       = (0U), \
                                                     .intEnable      = false, \
                                                 }
 
@@ -321,7 +321,7 @@
                                                     .fctMux         = COM_SPI_SIMO_CFG, \
                                                     .direction      = GPIO_DIR_MODE_IN, \
                                                     .samplingInMode = GPIO_QUAL_ASYNC, \
-                                                    .setValue       = false, \
+                                                    .setValue       = (0U), \
                                                     .intEnable      = false, \
                                                 }
 
@@ -332,7 +332,7 @@
                                                     .fctMux         = COM_SPI_SOMI_CFG, \
                                                     .direction      = GPIO_DIR_MODE_OUT, \
                                                     .samplingInMode = GPIO_QUAL_ASYNC, \
-                                                    .setValue       = false, \
+                                                    .setValue       = (0U), \
                                                     .intEnable      = false, \
                                                 }
 
@@ -343,7 +343,7 @@
                                                     .fctMux         = COM_SPI_CLK_CFG, \
                                                     .direction      = GPIO_DIR_MODE_IN, \
                                                     .samplingInMode = GPIO_QUAL_ASYNC, \
-                                                    .setValue       = false, \
+                                                    .setValue       = (0U), \
                                                     .intEnable      = false, \
                                                 }
 
@@ -355,7 +355,7 @@
                                                     .fctMux         = COM_SPI_CS_CFG, \
                                                     .direction      = GPIO_DIR_MODE_IN, \
                                                     .samplingInMode = GPIO_QUAL_ASYNC, \
-                                                    .setValue       = false, \
+                                                    .setValue       = (0U), \
                                                     .intEnable      = false, \
                                                 }
 
@@ -368,7 +368,7 @@
                                                     .coreSelect     = GPIO_CORE_CM, \
                                                     .direction      = GPIO_DIR_MODE_IN, \
                                                     .samplingInMode = GPIO_QUAL_ASYNC, \
-                                                    .setValue       = false, \
+                                                    .setValue       = (0U), \
                                                     .intEnable      = false, \
                                                 }
 
@@ -397,7 +397,7 @@
                                                     .coreSelect     = DBG_PIN3_CORE, \
                                                     .direction      = GPIO_DIR_MODE_OUT, \
                                                     .samplingInMode = GPIO_QUAL_SYNC, \
-                                                    .setValue       = false, \
+                                                    .setValue       = (0U), \
                                                     .intEnable      = false, \
                                                 }
 
@@ -414,7 +414,7 @@
                                                     .coreSelect     = DBG_PIN2_CORE, \
                                                     .direction      = GPIO_DIR_MODE_OUT, \
                                                     .samplingInMode = GPIO_QUAL_SYNC, \
-                                                    .setValue       = false, \
+                                                    .setValue       = (0U), \
                                                     .intEnable      = false, \
                                                 }
 
@@ -431,7 +431,7 @@
                                                     .coreSelect     = DBG_PIN1_CORE, \
                                                     .direction      = GPIO_DIR_MODE_OUT, \
                                                     .samplingInMode = GPIO_QUAL_SYNC, \
-                                                    .setValue       = false, \
+                                                    .setValue       = (0U), \
                                                     .intEnable      = false, \
                                                 }
 
@@ -448,7 +448,7 @@
                                                     .coreSelect     = DBG_PIN0_CORE, \
                                                     .direction      = GPIO_DIR_MODE_OUT, \
                                                     .samplingInMode = GPIO_QUAL_SYNC, \
-                                                    .setValue       = false, \
+                                                    .setValue       = (0U), \
                                                     .intEnable      = false, \
                                                 }
 
@@ -465,7 +465,7 @@
                                                     .fctMux         = MOTOR1_DRV_EN_CFG, \
                                                     .direction      = GPIO_DIR_MODE_OUT, \
                                                     .samplingInMode = GPIO_QUAL_ASYNC, \
-                                                    .setValue       = false, \
+                                                    .setValue       = (0U), \
                                                     .intEnable      = false, \
                                                 }
 
@@ -476,7 +476,7 @@
                                                     .fctMux         = LED_SPI_SIMO_CFG, \
                                                     .direction      = GPIO_DIR_MODE_OUT, \
                                                     .samplingInMode = GPIO_QUAL_ASYNC, \
-                                                    .setValue       = false, \
+                                                    .setValue       = (0U), \
                                                     .intEnable      = false, \
                                                 }
 
@@ -488,7 +488,7 @@
                                                     .fctMux         = MOTOR1_DRV_FAULT_CFG, \
                                                     .direction      = GPIO_DIR_MODE_IN, \
                                                     .samplingInMode = GPIO_QUAL_3SAMPLE, \
-                                                    .setValue       = false, \
+                                                    .setValue       = (0U), \
                                                     .intEnable      = false, \
                                                 }
 
@@ -502,7 +502,7 @@
                                                     .fctMux         = MOTOR1_DRV_SPI_CS_CFG, \
                                                     .direction      = GPIO_DIR_MODE_OUT, \
                                                     .samplingInMode = GPIO_QUAL_ASYNC, \
-                                                    .setValue       = true, \
+                                                    .setValue       = (1U), \
                                                     .intEnable      = false, \
                                                 }
 
@@ -516,14 +516,14 @@
                                                     .fctMux         = RS485_TX_EN_CFG, \
                                                     .direction      = GPIO_DIR_MODE_OUT, \
                                                     .samplingInMode = GPIO_QUAL_ASYNC, \
-                                                    .setValue       = false, \
+                                                    .setValue       = (0U), \
                                                     .intEnable      = false, \
                                                 }
 
 #define CANFD_RS485_MUX_SEL_NUM                 (99U)
 #define CANFD_RS485_MUX_SEL_CFG                 GPIO_99_GPIO99
-#define CANFD_RS485_MUX_SEL_CANFD_MODE          (false)
-#define CANFD_RS485_MUX_SEL_RS485_MODE          (true)
+#define CANFD_RS485_MUX_SEL_CANFD_MODE          (0U)
+#define CANFD_RS485_MUX_SEL_RS485_MODE          (1U)
 #define CANFD_RS485_MUX_SEL_SET                 (HWREG(GPIODATA_BASE + GPIO_O_GPDSET)   = GPIO_GPDSET_GPIO99)
 #define CANFD_RS485_MUX_SEL_CLEAR               (HWREG(GPIODATA_BASE + GPIO_O_GPDCLEAR) = GPIO_GPDCLEAR_GPIO99)
 #define CANFD_RS485_MUX_SEL_TOGGLE              (HWREG(GPIODATA_BASE + GPIO_O_GPDTOGGLE)= GPIO_GPDTOGGLE_GPIO99)
@@ -532,7 +532,7 @@
                                                     .fctMux         = CANFD_RS485_MUX_SEL_CFG, \
                                                     .direction      = GPIO_DIR_MODE_OUT, \
                                                     .samplingInMode = GPIO_QUAL_ASYNC, \
-                                                    .setValue       = CANFD_RS485_MUX_SEL_CANFD_MODE, \
+                                                    .setValue       = CANFD_RS485_MUX_SEL_RS485_MODE, \
                                                     .intEnable      = false, \
                                                 }
 
@@ -543,7 +543,7 @@
                                                     .fctMux         = MOTOR1_ENC_CHA_CFG, \
                                                     .direction      = GPIO_DIR_MODE_IN, \
                                                     .samplingInMode = GPIO_QUAL_6SAMPLE, \
-                                                    .setValue       = false, \
+                                                    .setValue       = (0U), \
                                                     .intEnable      = false, \
                                                 }
 
@@ -554,7 +554,7 @@
                                                     .fctMux         = MOTOR1_ENC_CHB_CFG, \
                                                     .direction      = GPIO_DIR_MODE_IN, \
                                                     .samplingInMode = GPIO_QUAL_6SAMPLE, \
-                                                    .setValue       = false, \
+                                                    .setValue       = (0U), \
                                                     .intEnable      = false, \
                                                 }
 
@@ -565,7 +565,7 @@
                                                     .fctMux         = MOTOR1_ENC_CHI_CFG, \
                                                     .direction      = GPIO_DIR_MODE_IN, \
                                                     .samplingInMode = GPIO_QUAL_6SAMPLE, \
-                                                    .setValue       = false, \
+                                                    .setValue       = (0U), \
                                                     .intEnable      = false, \
                                                 }
 
@@ -576,7 +576,7 @@
                                                     .fctMux         = MOTOR2_ENC_CHA_CFG, \
                                                     .direction      = GPIO_DIR_MODE_IN, \
                                                     .samplingInMode = GPIO_QUAL_6SAMPLE, \
-                                                    .setValue       = false, \
+                                                    .setValue       = (0U), \
                                                     .intEnable      = false, \
                                                 }
 
@@ -587,7 +587,7 @@
                                                     .fctMux         = MOTOR2_ENC_CHB_CFG, \
                                                     .direction      = GPIO_DIR_MODE_IN, \
                                                     .samplingInMode = GPIO_QUAL_6SAMPLE, \
-                                                    .setValue       = false, \
+                                                    .setValue       = (0U), \
                                                     .intEnable      = false, \
                                                 }
 
@@ -598,14 +598,14 @@
                                                     .fctMux         = MOTOR2_ENC_CHI_CFG, \
                                                     .direction      = GPIO_DIR_MODE_IN, \
                                                     .samplingInMode = GPIO_QUAL_6SAMPLE, \
-                                                    .setValue       = false, \
+                                                    .setValue       = (0U), \
                                                     .intEnable      = false, \
                                                 }
 
 #define CANFD_SHDN_MODE_NUM                    (108U)
 #define CANFD_SHDN_MODE_CFG                    GPIO_108_GPIO108
-#define CANFD_SHDN_MODE_ENABLE                 (true)
-#define CANFD_SHDN_MODE_DISABLE                (false)
+#define CANFD_SHDN_MODE_ENABLE                 (1U)
+#define CANFD_SHDN_MODE_DISABLE                (0U)
 #define CANFD_SHDN_MODE_SET                    (HWREG(GPIODATA_BASE + GPIO_O_GPDSET)   = GPIO_GPDSET_GPIO108)
 #define CANFD_SHDN_MODE_CLEAR                  (HWREG(GPIODATA_BASE + GPIO_O_GPDCLEAR) = GPIO_GPDCLEAR_GPIO108)
 #define CANFD_SHDN_MODE_TOGGLE                 (HWREG(GPIODATA_BASE + GPIO_O_GPDTOGGLE)= GPIO_GPDTOGGLE_GPIO108)
@@ -615,7 +615,7 @@
                                                     .pinType        = GPIO_PIN_TYPE_OD, \
                                                     .direction      = GPIO_DIR_MODE_OUT, \
                                                     .samplingInMode = GPIO_QUAL_ASYNC, \
-                                                    .setValue       = CANFD_SHDN_MODE_DISABLE, \
+                                                    .setValue       = CANFD_SHDN_MODE_ENABLE, \
                                                     .intEnable      = false, \
                                                 }
 
@@ -636,7 +636,7 @@
                                                     .fctMux         = MOTOR2_DRV_FAULT_CFG, \
                                                     .direction      = GPIO_DIR_MODE_IN, \
                                                     .samplingInMode = GPIO_QUAL_3SAMPLE, \
-                                                    .setValue       = false, \
+                                                    .setValue       = (0U), \
                                                     .intEnable      = false, \
                                                 }
 
@@ -2212,6 +2212,16 @@
                                                     .claTrigSrc     = CLA_MOTOR2_TRIGGER_SRC, \
                                                     .p_claFunc      = CLA_MOTOR2_TASK_HANDLER, \
                                                     .claForceTask   = false, \
+                                                }
+#define CLA_BKG_DEF                             { \
+                                                    .progRAM        = CLA_PROG_RAM, \
+                                                    .dataRAM        = CLA_DATA_RAM, \
+                                                    .claTaskFlg     = CLA_TASKFLAG_8, \
+                                                    .claTaskNum     = CLA_TASK_8, \
+                                                    .claIntVect     = CLA_MVECT_8, \
+                                                    .claTrigSrc     = CLA_TRIGGER_SOFTWARE, \
+                                                    .p_claFunc      = &Cla1Task8, \
+                                                    .claForceTask   = true, \
                                                 }
 
 /***********************************************************************

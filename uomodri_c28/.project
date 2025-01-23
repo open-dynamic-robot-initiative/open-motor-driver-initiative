@@ -26,12 +26,12 @@
 	</natures>
 	<linkedResources>
 		<link>
-			<name>src/device/device.c</name>
+			<name>device/device.c</name>
 			<type>1</type>
 			<locationURI>$%7BC2000WARE_ROOT%7D/device_support/f2838x/common/source/device.c</locationURI>
 		</link>
 		<link>
-			<name>src/device/f2838x_codestartbranch.asm</name>
+			<name>device/f2838x_codestartbranch.asm</name>
 			<type>1</type>
 			<locationURI>$%7BC2000WARE_ROOT%7D/device_support/f2838x/common/source/f2838x_codestartbranch.asm</locationURI>
 		</link>

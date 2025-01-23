@@ -57,20 +57,20 @@ MEMORY
    FLASH13          : origin = 0x0BE000, length = 0x001FF0
 //   FLASH13_RSVD     : origin = 0x0BFFF0, length = 0x000010  /* Reserve and do not use for code as per the errata advisory "Memory: Prefetching Beyond Valid Memory" */
 
+   CM_CPUx_RAM     	: origin = 0x038000, length = 0x000800
+   CPUx_CM_RAM    	: origin = 0x039000, length = 0x000800
    CPU1_CPU2_RAM   	: origin = 0x03A000, length = 0x000800
    CPU2_CPU1_RAM   	: origin = 0x03B000, length = 0x000800
-   CPU_CM_RAM      	: origin = 0x039000, length = 0x000800
-   CM_CPU_RAM      	: origin = 0x038000, length = 0x000800
 
    CANA_MSG_RAM     : origin = 0x049000, length = 0x000800
    CANB_MSG_RAM     : origin = 0x04B000, length = 0x000800
 
    RESET            : origin = 0x3FFFC0, length = 0x000002
 
-   CLA1_CPU_MSGRAM	: origin = 0x001480, length = 0x000080
-   CPU_CLA1_MSGRAM	: origin = 0x001500, length = 0x000080
-   CLA1_DMA_MSGRAM  : origin = 0x001680, length = 0x000080
-   DMA_CLA1_MSGRAM  : origin = 0x001700, length = 0x000080
+   CLA1_CPU_RAM		: origin = 0x001480, length = 0x000080
+   CPU_CLA1_RAM		: origin = 0x001500, length = 0x000080
+   CLA1_DMA_RAM  	: origin = 0x001680, length = 0x000080
+   DMA_CLA1_RAM		: origin = 0x001700, length = 0x000080
 
    UID_UNIQUE		: origin = 0x07020C, length = 0x000002
    CPU_ID			: origin = 0x070223, length = 0x000001
@@ -81,43 +81,56 @@ MEMORY
 
 SECTIONS
 {
-   codestart		: > BEGIN,	ALIGN(4)
-   .text			: > FLASH4, ALIGN(4) 	/* Executable code and constants -					Initalized */
-   .cinit			: > FLASH0, ALIGN(4) 	/* Initalize global & static variables @ startup -	Initalized */
-   .switch			: > FLASH0, ALIGN(4)	/* Jump tables for switch statements -				Initalized */
-   .reset			: > RESET,	TYPE = DSECT/* not used														*/
-   .stack			: > RAMM1				/* system stack	-									Not Initalized */
+   codestart			: > BEGIN,	ALIGN(4)
+   .text				: > FLASH4, ALIGN(4) 	/* Executable code and constants -					Initalized */
+   .cinit				: > FLASH0, ALIGN(4) 	/* Initalize global & static variables @ startup -	Initalized */
+   .switch				: > FLASH0, ALIGN(4)	/* Jump tables for switch statements -				Initalized */
+   .reset				: > RESET,	TYPE = DSECT/* not used														*/
+   .stack				: > RAMM1				/* system stack	-									Not Initalized */
 
 #if defined(__TI_EABI__)
-   .init_array      : > FLASH0, ALIGN(4)	/* Table of C++ constructors called at startup -	Initalized */
-   .const           : > FLASH1, ALIGN(4)	/* Initialized constants -							Initalized */
-   .data            : > RAMLS2				/* Initialized global variables -					Initalized */
-   .sysmem          : > RAMGS2				/* Malloc heap -									Not Initalized */
-   .bss             : > RAMLS2 //RAMLS3				/* Not initialized global variables -				Not Initalized */
-   .bss:output      : > RAMLS2 //RAMLS3
-   .bss:cio			: > RAMLS2 //RAMLS3
+   .init_array      	: > FLASH0, ALIGN(4)	/* Table of C++ constructors called at startup -	Initalized */
+   .const           	: > FLASH1, ALIGN(4)	/* Initialized constants -							Initalized */
+   .data            	: > RAMLS2				/* Initialized global variables -					Initalized */
+   .sysmem          	: > RAMGS2				/* Malloc heap -									Not Initalized */
+   .bss             	: > RAMLS2 //RAMLS3				/* Not initialized global variables -				Not Initalized */
+   .bss:output      	: > RAMLS2 //RAMLS3
+   .bss:cio				: > RAMLS2 //RAMLS3
 #else
-   .pinit           : > FLASH0, ALIGN(4)
-   .econst          : > FLASH1, ALIGN(4)	/* Initialized constants -							Initalized */
-   .esysmem         : > RAMLS2				/* Malloc heap -									Not Initalized */
-   .ebss            : > RAMLS2 //RAMLS3				/* Not initialized global variables -				Not Initalized */
+   .pinit           		: > FLASH0, ALIGN(4)
+   .econst          	: > FLASH1, ALIGN(4)	/* Initialized constants -							Initalized */
+   .esysmem         	: > RAMLS2				/* Malloc heap -									Not Initalized */
+   .ebss            	: > RAMLS2 //RAMLS3				/* Not initialized global variables -				Not Initalized */
 #endif
 
-   ramgs0			: > RAMGS0//, type=NOINIT
-   ramgs1			: > RAMGS1, type=NOINIT
+   ramgs0				: > RAMGS0//, type=NOINIT
+   ramgs1				: > RAMGS1, type=NOINIT
 
-   MSGRAM_CPU1_TO_CPU2	: > CPU1_CPU2_RAM, type=NOINIT
-   MSGRAM_CPU2_TO_CPU1	: > CPU2_CPU1_RAM, type=NOINIT
-   MSGRAM_CPU_TO_CM		: > CPU_CM_RAM//, type=NOINIT
-   MSGRAM_CM_TO_CPU		: > CM_CPU_RAM//, type=NOINIT
+/* Exchange memories for CPU1, CPU2 & CM */
+   MsgRamCpu1ToCpu2		: > CPU1_CPU2_RAM, type=NOINIT
+   MsgRamCpu2ToCpu1		: > CPU2_CPU1_RAM, type=NOINIT
+   MsgRamCpuToCm		: > CPUx_CM_RAM//, type=NOINIT
+   MsgRamCmToCpu		: > CM_CPUx_RAM//, type=NOINIT
 
-   MSGRAM_CLA_TO_CPU	: > CLA1_CPU_MSGRAM, type=NOINIT
-   MSGRAM_CPU_TO_CLA	: > CPU_CLA1_MSGRAM, type=NOINIT
-   MSGRAM_CLA_TO_DMA	: > CLA1_DMA_MSGRAM, type=NOINIT
-   MSGRAM_DMA_TO_CLA	: > DMA_CLA1_MSGRAM, type=NOINIT
+   /*MSGRAM_CPU1_TO_CPU2	: > CPU1_CPU2_RAM, type=NOINIT
+   MSGRAM_CPU2_TO_CPU1  : > CPU2_CPU1_RAM, type=NOINIT
+   MSGRAM_CPU_TO_CM		: > CPUx_CM_RAM
+   MSGRAM_CM_TO_CPU		: > CM_CPUx_RAM*/
 
-   .UID_UNIQUE			: > UID_UNIQUE, type=NOINIT
-   .CPU_ID				: > CPU_ID, 	type=NOINIT
+/* Exchange memories for CPU & CLA */
+   MsgRamClaToCpu		: > CLA1_CPU_RAM, type=NOINIT
+   MsgRamCpuToCla		: > CPU_CLA1_RAM, type=NOINIT
+   MsgRamClaToDma		: > CLA1_DMA_RAM, type=NOINIT
+   MsgRamDmaToCla		: > DMA_CLA1_RAM, type=NOINIT
+
+/* Memory space for Unique ID & CPU ID */
+   .uniqueId			: > UID_UNIQUE, type=NOINIT
+   .cpuId				: > CPU_ID, 	type=NOINIT
+
+/* Constants for CLA & communication */
+   ConstFlashMotor1		: > FLASH10, align(4), type=NOINIT
+   ConstFlashMotor2		: > FLASH11, align(4), type=NOINIT
+   ConstFlashCom		: > FLASH12, align(4), type=NOINIT
 
 /* CLA specific sections */
    ClaDataMotor1    	: > RAMLS0

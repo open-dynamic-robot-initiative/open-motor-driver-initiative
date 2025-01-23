@@ -132,10 +132,8 @@ void HAL_CM_IPC_init(const ipc_cfg_t* p_ipcCfg)
     if(p_ipcCfg != NULL)
     {
         IPC_Type_t  ipcType     = p_ipcCfg->ipcType;
-        /* (0) - IPC_CM_L_CPU1_R,
-         * (1) - IPC_CM_L_CPU2_R */
+        /* (0) - IPC_CM_L_CPU1_R, (1) - IPC_CM_L_CPU2_R */
         uint8_t     ipcSyncDone = 0;
-
         while(ipcType != IPC_TOTAL_NUM)
         {
             // Enable IPC interrupts
@@ -144,6 +142,7 @@ void HAL_CM_IPC_init(const ipc_cfg_t* p_ipcCfg)
             // Initialize message queue
             if(p_ipcCfg->ipcMsgQEnable)
                 IPC_initMessageQueue(ipcType, p_ipcCfg->p_ipcMsgQ, p_ipcCfg->ipcIntMsgQL, p_ipcCfg->ipcIntMsgQR);
+            // Synchronize both the cores.
             if(!(ipcSyncDone & (1 << ipcType)))
             {
                 // Clear any IPC flags if set already
