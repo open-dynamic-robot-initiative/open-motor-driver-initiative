@@ -69,6 +69,9 @@ static const int_cfg_t interruptList[] =
  {.intNum = UINT32_MAX},        /* END OF ARRAY */
 };
 
+/***********************************************************************
+ * VARIABLES IN CLA SPACE MEMORY
+ ***********************************************************************/
 #pragma DATA_ALIGN(motor_m1, 4)
 #pragma DATA_SECTION(motor_m1, "ClaDataMotor1");
 motor_t     motor_m1;
@@ -77,18 +80,34 @@ motor_t     motor_m1;
 #pragma DATA_SECTION(motor_m2, "ClaDataMotor2");
 motor_t     motor_m2;
 
-#pragma DATA_ALIGN(debug_m1, 2)
-#pragma DATA_SECTION(debug_m1, "MsgRamClaToDma");
-debug_t     debug_m1;
+/***********************************************************************
+ * VARIABLES IN CLA TO DMA SPACE MEMORY
+ ***********************************************************************/
+#pragma DATA_ALIGN(dbg_cla2dma_mx, 2)
+#pragma DATA_SECTION(dbg_cla2dma_mx, "MsgRamClaToDma");
+debug_t     dbg_cla2dma_mx;
 
-//#pragma DATA_ALIGN(debug_m2, 2)
-//#pragma DATA_SECTION(debug_m2, "MsgRamClaToDma");
-//debug_t     debug_m2;
-
+/***********************************************************************
+ * VARIABLES IN CPU TO CLA SPACE MEMORY
+ ***********************************************************************/
 #pragma DATA_ALIGN(cmd_uomodri, 4)
 #pragma DATA_SECTION(cmd_uomodri, "MsgRamCpuToCla")
 cmd_t       cmd_uomodri[2];
 
+/***********************************************************************
+ * VAIRIABLES IN CPU TO CM MEMORY
+ ***********************************************************************/
+#pragma DATA_ALIGN(dbg_cpu2cm_m1, 0x80)
+#pragma DATA_SECTION(dbg_cpu2cm_m1, "MsgRamCpuToCm")
+debug_t     dbg_cpu2cm_m1 = {.motor_id = MOTOR_1};
+
+#pragma DATA_ALIGN(dbg_cpu2cm_m2, 0x80)
+#pragma DATA_SECTION(dbg_cpu2cm_m2, "MsgRamCpuToCm")
+debug_t     dbg_cpu2cm_m2 = {.motor_id = MOTOR_2};
+
+/***********************************************************************
+ * GLOBAL VARIABLES
+ ***********************************************************************/
 #pragma DATA_ALIGN(com_spi_rx, 4)
 #pragma DATA_SECTION(com_spi_rx, "ramgs0")
 spi_rx_t    com_spi_rx;
@@ -286,16 +305,6 @@ uint16_t com_msg_rs485_tx_master_address = COM_MSG_RS485_TX_MASTER_ADDRESS;
 #pragma DATA_SECTION(com_msg_canfd_tx_master_id, "ConstFlashCom")
 uint16_t com_msg_canfd_tx_master_id = COM_MSG_CANFD_TX_MASTER_ID;
 
-/***********************************************************************
- * VAIRIABLES IN CPU TO CM MEMORY
- ***********************************************************************/
-#pragma DATA_ALIGN(m1_state, 4)
-#pragma DATA_SECTION(m1_state, "MsgRamCpuToCm")
-motor_state_e m1_state = MOTOR_STATE_IDLE;
-
-#pragma DATA_ALIGN(m2_state, 4)
-#pragma DATA_SECTION(m2_state, "MsgRamCpuToCm")
-motor_state_e m2_state = MOTOR_STATE_IDLE;
 
 
 /***********************************************************************
@@ -458,21 +467,21 @@ inline void LED_dimming(motor_t* p_motor1, motor_t* p_motor2, uint16_t* p_msg)
     motor_state_e   motor_state     = MOTOR_STATE_IDLE;
 
     /* Set status of the 1st led */
-    if((p_motor1->crState & MOTOR_STATE_BOOT)     || (p_motor2->crState & MOTOR_STATE_BOOT))
+    if((p_motor1->state[CURRENT] & MOTOR_STATE_BOOT)     || (p_motor2->state[CURRENT] & MOTOR_STATE_BOOT))
         motor_state = MOTOR_STATE_IDLE;
-    else if((p_motor1->crState & MOTOR_STATE_INIT)|| (p_motor2->crState & MOTOR_STATE_INIT))
+    else if((p_motor1->state[CURRENT] & MOTOR_STATE_INIT)|| (p_motor2->state[CURRENT] & MOTOR_STATE_INIT))
         motor_state = MOTOR_STATE_INIT_FIX;
-    else if((p_motor1->crState & MOTOR_STATE_OK)  || (p_motor2->crState & MOTOR_STATE_OK))
+    else if((p_motor1->state[CURRENT] & MOTOR_STATE_OK)  || (p_motor2->state[CURRENT] & MOTOR_STATE_OK))
         motor_state = MOTOR_STATE_READY;
-    if((p_motor1->crState == MOTOR_STATE_ERROR)   || (p_motor2->crState == MOTOR_STATE_ERROR))
+    if((p_motor1->state[CURRENT] == MOTOR_STATE_ERROR)   || (p_motor2->state[CURRENT] == MOTOR_STATE_ERROR))
         motor_state = MOTOR_STATE_ERROR;
 
     // Master LED (1st led)
     p_msg       = ws2812b_dimmingLed(MASTER_LED, motor_state, timer_cpt_ms, p_msg);
     //MOTOR_1 LED (2nd led)
-    p_msg       = ws2812b_dimmingLed(MOTOR1_LED, p_motor1->crState, timer_cpt_ms, p_msg);
+    p_msg       = ws2812b_dimmingLed(MOTOR1_LED, p_motor1->state[CURRENT], timer_cpt_ms, p_msg);
     //MOTOR_2 LED (3th led)
-    p_msg       = ws2812b_dimmingLed(MOTOR2_LED, p_motor2->crState, timer_cpt_ms, p_msg);
+    p_msg       = ws2812b_dimmingLed(MOTOR2_LED, p_motor2->state[CURRENT], timer_cpt_ms, p_msg);
     // millisecond timer increment
     timer_cpt_ms= (timer_cpt_ms < 1000U) ? (timer_cpt_ms + 1): (0U);
 
@@ -685,14 +694,20 @@ void MOT_initStruct(motor_t* p_motor, uint16_t motor_id)
     p_motor->foc.pdPosVel.p_sat.ptr                     = (float32_t *)(&p_motor->foc.cmd.iSat);
     p_motor->foc.pdPosVel.out                           = 0.0f;
     //--- FSM motor initial state -----------------------------------------------
-    p_motor->crState                                    = MOTOR_STATE_IDLE;
-    p_motor->nxState                                    = MOTOR_STATE_IDLE;
+    p_motor->state[CURRENT]                             = MOTOR_STATE_IDLE;
+    p_motor->state[NEXT]                                = MOTOR_STATE_IDLE;
     //--- Error message ---------------------------------------------------------
     p_motor->error.all                                  = 0U;
+    //--- New Data ready to be send ---------------------------------------------
+    p_motor->newData                                    = 0U;
     //---------------------------------------------------------------------------
     //---------------------------------------------------------------------------
 }
 
+/**
+ * @brief       Mux switching for communication protocol section
+ * @param[in]   bus_select  Define the communication protocol used.
+ */
 void COM_muxCtrl(com_bus_e bus_select)
 {
     if(bus_select == COM_USE_CANFD_BUS)
@@ -787,7 +802,14 @@ __attribute__((interrupt)) void cla_isrMotor1(void)
         break;
     }
 
-    m1_state = motor_m1.crState;
+//    m1_state = motor_m1.state[CURRENT];
+
+    // Start DMA channel
+    DMA_configAddresses(DMA_DBG_CLA2CM_BASE_ADDR, \
+                        (uint16_t *) &dbg_cpu2cm_m1, \
+                        (uint16_t *) &dbg_cla2dma_mx);
+    DMA_startChannel(DMA_DBG_CLA2CM_BASE_ADDR);
+    DMA_forceTrigger(DMA_DBG_CLA2CM_BASE_ADDR);
 
     // Clear IT source CLA ask
     CLA_clearTaskFlags(CLA1_BASE, CLA_MOTOR1_TASK_FLAG);
@@ -861,7 +883,11 @@ __attribute__((interrupt)) void cla_isrMotor2(void)
         break;
     }
 
-    m2_state = motor_m2.crState;
+//    m2_state = motor_m2.state[CURRENT];
+
+    // Start DMA channel
+//    DMA_configAddresses(DMA_DBG_CLA2CM_BASE_ADDR, (uint16_t *)&debug_mx, (uint16_t *)&debug_m2);
+//    DMA_forceTrigger(DMA_DBG_CLA2CM_BASE_ADDR);
 
     CLA_clearTaskFlags(CLA1_BASE, CLA_MOTOR2_TASK_FLAG);
     // Clear IT

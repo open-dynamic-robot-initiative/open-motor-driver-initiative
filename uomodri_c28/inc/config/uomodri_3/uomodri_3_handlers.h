@@ -26,6 +26,9 @@
 extern spi_rx_t             com_spi_rx;
 extern spi_tx_t             com_spi_tx;
 extern uint16_t             led_spi_tx[LED_MSG_TX_16BIT_LENGTH];
+extern debug_t              dbg_cpu2cm_m1;
+extern debug_t              dbg_cpu2cm_m2;
+extern debug_t              dbg_cla2dma_mx;
 extern volatile uint32_t    uid_unique_8b;
 
 /***********************************************************************
@@ -350,6 +353,7 @@ static const spi_cfg_t  spiCfgList[] =
  */
 static const dma_cfg_t  dmaCfgList[] =
 {
+ DMA_DBG_CLA2CM_DEF,                /* DMA for memory transfer between CLA & IPC (CPU to CM) */
  DMA_LED_SPI_TX_DEF,                /* DMA for the RGB LED */
  DMA_COM_SPI_TX_DEF,                /* DMA for SPI COMMUNICATION Tx */
  DMA_COM_SPI_RX_DEF,                /* DMA for SPI COMMUNICATION Rx */
@@ -365,7 +369,6 @@ static const cla_cfg_t  claCfgList[] =
  CLA_CMD_NEW_DEF,                   /* CLA structure for uOmodri command update - 1ms */
  CLA_MOTOR1_DEF,                    /* CLA structure for MOTOR1 control - 20us (40kHz) */
  CLA_MOTOR2_DEF,                    /* CLA structure for MOTOR2 control - 20us (40kHz) */
- CLA_BKG_DEF,
  {.p_claFunc = NULL},               /* END OF ARRAY */
 };
 

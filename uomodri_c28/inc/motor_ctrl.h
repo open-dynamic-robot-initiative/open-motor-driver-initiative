@@ -409,8 +409,8 @@ typedef struct __motor_t__
     };
     uint16_t            id;             /*!< Motor identification */
     error_reg_u         error;          /*!< Bit field for the error sources. */
-    motor_state_e       crState;        /*!< Current motor state for the FSM. */
-    motor_state_e       nxState;        /*!< Next motor state for the FSM. */
+    motor_state_e       state[2];       /*!< Current motor state for the FSM. */
+    uint16_t            newData;
 } motor_t;
 
 /**
@@ -491,7 +491,8 @@ typedef struct __debug_t__
     float32_t           itCnt;                  /*!< Event counter incrementing on every IT call */
     uint32_t            motor_id;               /*!< Motor identification */
     error_reg_u         error;                  /*!< Bit field for the error sources. */
-    motor_state_e       state;                  /*!< Current motor state for the FSM. */
+    motor_state_e       crState;                /*!< Current motor state for the FSM. */
+    motor_state_e       nxState;                /*!< Next motor state for the FSM. */
 } debug_t;
 
 #ifdef __cplusplus

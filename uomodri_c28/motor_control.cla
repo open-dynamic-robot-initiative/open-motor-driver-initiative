@@ -14,7 +14,7 @@
  ***********************************************************************/
 extern motor_t      motor_m1;
 extern motor_t      motor_m2;
-extern debug_t      debug_m1;
+extern debug_t      dbg_cla2dma_mx;
 extern cmd_t        cmd_uomodri[];
 
 /***********************************************************************
@@ -27,7 +27,7 @@ __attribute__((interrupt)) void motor2_Task(void);
 __attribute__((interrupt)) void Cla1Task5(void);
 __attribute__((interrupt)) void Cla1Task6(void);
 __attribute__((interrupt)) void Cla1Task7(void);
-__attribute__((interrupt("background"))) void Cla1Task8(void);
+__attribute__((interrupt)) void Cla1Task8(void);
 
 /***********************************************************************
  * TASKS DEFINITION
@@ -105,6 +105,9 @@ __attribute__((interrupt)) void motor1_Task(void)
 //    __mdebugstop();
     // Motor control
     MOT_runControl(&motor_m1);
+    // Copy elements for debug
+    DBG_copyStruct(&motor_m1, &dbg_cla2dma_mx);
+    //    motor_m1.newData = 1U;
 #ifdef DEBUG
     DBG_PIN0_CLEAR;
 #endif
@@ -124,6 +127,9 @@ __attribute__((interrupt)) void motor2_Task(void)
 //    __mdebugstop();
     // Motor control
     MOT_runControl(&motor_m2);
+    // Copy elements for debug
+    DBG_copyStruct(&motor_m2, &dbg_cla2dma_mx);
+
 #ifdef DEBUG
     DBG_PIN0_CLEAR;
 #endif
@@ -156,78 +162,155 @@ __attribute__((interrupt)) void Cla1Task7(void)
 /**
  * @brief   No task specified on task8
  */
-__attribute__((interrupt("background"))) void Cla1Task8(void)
+__attribute__((interrupt)) void Cla1Task8(void)
 {
-    if(debug_m1.ia != motor_m1.foc.acq.ia)
-    {
-        debug_m1.ia                     = motor_m1.foc.acq.ia;  // [A]
-        debug_m1.ib                     = motor_m1.foc.acq.ib;                 // [A]
-        debug_m1.ic                     = motor_m1.foc.acq.ic;                 // [A]
-        debug_m1.vBus                   = motor_m1.foc.acq.vBus;               // [V]
-        debug_m1.vExt                   = motor_m1.foc.acq.vExt;               // [V]
-
-        debug_m1.enc_thetaElec          = motor_m1.foc.enc.thetaElec;          /*!< Angular electrical position  - [pu] */
-        debug_m1.enc_thetaMech          = motor_m1.foc.enc.thetaMech[0];       /*!< Angular mechanical position  - [pu] */
-        debug_m1.enc_thetaIndexRelative = motor_m1.foc.enc.thetaIndexRelative; /*!< Index mechanical angle */
-        debug_m1.enc_thetaIndexAbsolute = motor_m1.foc.enc.thetaIndexAbsolute; /*!< First index mechanical angle */
-        debug_m1.enc_thetaAbsolute      = motor_m1.foc.enc.thetaAbsolute;      /*!< Absolute angular position - [turns] */
-        debug_m1.enc_turnNb             = motor_m1.foc.enc.turnNb;             /*!< Number of full turns (signed) */
-        debug_m1.enc_thetaDir           = motor_m1.foc.enc.thetaDir;           /*!< Rotor direction - -1 = CCW/reverse, 1 = CW/forward */
-        debug_m1.enc_flags              = motor_m1.foc.enc.flags;
-
-        debug_m1.enc_speed_speedHigh    = motor_m1.foc.enc.speed.speedHigh;          /*!< High speed estimation -  [rad/s] - diff_angular * scaler = velocity */
-        debug_m1.enc_speed_speedMech    = motor_m1.foc.enc.speed.speedMech[0];       /*!< Mechanical output speed - [rad/s] */
-        debug_m1.enc_speed_speedElec    = motor_m1.foc.enc.speed.speedElec;          /*!< Electrical output speed (pole pairs integration) - [rad/s] */
-        debug_m1.enc_speed_theta        = motor_m1.foc.enc.speed.theta[0];           /*!< Angular position of rotor - [pu] */
-
-        debug_m1.cmd_posRef             = motor_m1.foc.cmd.posRef;
-        debug_m1.cmd_velRef             = motor_m1.foc.cmd.velRef;
-        debug_m1.cmd_iqff               = motor_m1.foc.cmd.iqff;
-        debug_m1.cmd_kpCoeff            = motor_m1.foc.cmd.kpCoeff;
-        debug_m1.cmd_kdCoeff            = motor_m1.foc.cmd.kdCoeff;
-        debug_m1.cmd_iSat               = motor_m1.foc.cmd.iSat;
-        debug_m1.cmd_cptTimeout         = motor_m1.foc.cmd.cptTimeout;
-        debug_m1.cmd_index              = motor_m1.foc.cmd.index;
-        debug_m1.cmd_cmdField           = motor_m1.foc.cmd.cmdField; /*!< Bit 0      : R/W - Enable system to start. No power on motors.         */
-        debug_m1.cmd_periphField        = motor_m1.foc.cmd.periphField;   /*!< Bits 0   : R/W - DRV initialization went wrong             */
-
-        debug_m1.sinTheta               = motor_m1.foc.sinTheta;           /*!< Sinus of the electrical rotor angle */
-        debug_m1.cosTheta               = motor_m1.foc.cosTheta;           /*!< Cosine of the electrical rotor angle */
-        debug_m1.ialpha                 = motor_m1.foc.ialpha;             /*!< Direct Clarke transform result - [A] */
-        debug_m1.ibeta                  = motor_m1.foc.ibeta;              /*!< Direct Clarke transform result - [A] */
-        debug_m1.id                     = motor_m1.foc.id;                 /*!< Filtered Direct Park transform result - [A] */
-        debug_m1.iq                     = motor_m1.foc.iq;                 /*!< Filtered Quadrature Park transform result - [A] */
-        debug_m1.ud                     = motor_m1.foc.ud;                 /*!< Inverse Park transform result - [V] */
-        debug_m1.uq                     = motor_m1.foc.uq;                 /*!< Inverse Park transform result - [V] */
-        debug_m1.ualpha                 = motor_m1.foc.ualpha;             /*!< Inverse Clarke transform result - [V] */
-        debug_m1.ubeta                  = motor_m1.foc.ubeta;              /*!< Inverse Clarke transform result - [V] */
-        debug_m1.ua                     = motor_m1.foc.ua;                 /*!< Phase commands - Channel a - [V] */
-        debug_m1.ub                     = motor_m1.foc.ub;                 /*!< Phase commands - Channel b - [V] */
-        debug_m1.uc                     = motor_m1.foc.uc;                 /*!< Phase commands - Channel c - [V] */
-        debug_m1.dtc_u                  = motor_m1.foc.dtc_u;              /*!< Duty cycles on channel u - [pu] between -0.5 and 0.5 */
-        debug_m1.dtc_v                  = motor_m1.foc.dtc_v;              /*!< Duty cycles on channel v - [pu] between -0.5 and 0.5 */
-        debug_m1.dtc_w                  = motor_m1.foc.dtc_w;              /*!< Duty cycles on channel w - [pu] between -0.5 and 0.5 */
-        debug_m1.idRef                  = motor_m1.foc.idRef;              /*!< PI controller set point values for D-axis current - [A] */
-        debug_m1.iqRef                  = motor_m1.foc.iqRef;              /*!< PI controller set point values for Q-axis current - [A] */
-
-        debug_m1.piId_err               = motor_m1.foc.piId.err;      /*!< Current error */
-        debug_m1.piId_integral          = motor_m1.foc.piId.integral;           /*!< Integral term partial computation */
-        debug_m1.piId_out               = motor_m1.foc.piId.out;                /*!< Controller output */
-
-        debug_m1.piIq_err               = motor_m1.foc.piIq.err;      /*!< Current error */
-        debug_m1.piIq_integral          = motor_m1.foc.piIq.integral;           /*!< Integral term partial computation */
-        debug_m1.piIq_out               = motor_m1.foc.piIq.out;                /*!< Controller output */
-
-        debug_m1.pdPosVel_errTheta      = motor_m1.foc.pdPosVel.errTheta;           /*!< Error position */
-        debug_m1.pdPosVel_errSpeed      = motor_m1.foc.pdPosVel.errSpeed;           /*!< Error speed */
-        debug_m1.pdPosVel_derivative    = motor_m1.foc.pdPosVel.derivative;         /*!< Derivative term partial computation */
-        debug_m1.pdPosVel_out           = motor_m1.foc.pdPosVel.out;                /*!< Controller output */
-
-        debug_m1.itCnt                  = motor_m1.itCnt;          /*!< Event counter incrementing on every IT call */
-        debug_m1.motor_id               = motor_m1.id;             /*!< Motor identification */
-        debug_m1.error                  = motor_m1.error;          /*!< Bit field for the error sources. */
-        debug_m1.state                  = motor_m1.crState;        /*!< Current motor state for the FSM. */
-    }
+//    if(motor_m1.newData)
+//    {
+//        debug_mx.ia                     = motor_m1.foc.acq.ia;                  // [A]
+//        debug_mx.ib                     = motor_m1.foc.acq.ib;                  // [A]
+//        debug_mx.ic                     = motor_m1.foc.acq.ic;                  // [A]
+//        debug_mx.vBus                   = motor_m1.foc.acq.vBus;                // [V]
+//        debug_mx.vExt                   = motor_m1.foc.acq.vExt;                // [V]
+//
+//        debug_mx.enc_thetaElec          = motor_m1.foc.enc.thetaElec;           /*!< Angular electrical position  - [pu] */
+//        debug_mx.enc_thetaMech          = motor_m1.foc.enc.thetaMech[0];        /*!< Angular mechanical position  - [pu] */
+//        debug_mx.enc_thetaIndexRelative = motor_m1.foc.enc.thetaIndexRelative;  /*!< Index mechanical angle */
+//        debug_mx.enc_thetaIndexAbsolute = motor_m1.foc.enc.thetaIndexAbsolute;  /*!< First index mechanical angle */
+//        debug_mx.enc_thetaAbsolute      = motor_m1.foc.enc.thetaAbsolute;       /*!< Absolute angular position - [turns] */
+//        debug_mx.enc_turnNb             = motor_m1.foc.enc.turnNb;              /*!< Number of full turns (signed) */
+//        debug_mx.enc_thetaDir           = motor_m1.foc.enc.thetaDir;            /*!< Rotor direction - -1 = CCW/reverse, 1 = CW/forward */
+//        debug_mx.enc_flags              = motor_m1.foc.enc.flags;
+//
+//        debug_mx.enc_speed_speedHigh    = motor_m1.foc.enc.speed.speedHigh;     /*!< High speed estimation -  [rad/s] - diff_angular * scaler = velocity */
+//        debug_mx.enc_speed_speedMech    = motor_m1.foc.enc.speed.speedMech[0];  /*!< Mechanical output speed - [rad/s] */
+//        debug_mx.enc_speed_speedElec    = motor_m1.foc.enc.speed.speedElec;     /*!< Electrical output speed (pole pairs integration) - [rad/s] */
+//        debug_mx.enc_speed_theta        = motor_m1.foc.enc.speed.theta[0];      /*!< Angular position of rotor - [pu] */
+//
+//        debug_mx.cmd_posRef             = motor_m1.foc.cmd.posRef;
+//        debug_mx.cmd_velRef             = motor_m1.foc.cmd.velRef;
+//        debug_mx.cmd_iqff               = motor_m1.foc.cmd.iqff;
+//        debug_mx.cmd_kpCoeff            = motor_m1.foc.cmd.kpCoeff;
+//        debug_mx.cmd_kdCoeff            = motor_m1.foc.cmd.kdCoeff;
+//        debug_mx.cmd_iSat               = motor_m1.foc.cmd.iSat;
+//        debug_mx.cmd_cptTimeout         = motor_m1.foc.cmd.cptTimeout;
+//        debug_mx.cmd_index              = motor_m1.foc.cmd.index;
+//        debug_mx.cmd_cmdField           = motor_m1.foc.cmd.cmdField;            /*!< Bit 0      : R/W - Enable system to start. No power on motors.         */
+//        debug_mx.cmd_periphField        = motor_m1.foc.cmd.periphField;         /*!< Bits 0   : R/W - DRV initialization went wrong             */
+//
+//        debug_mx.sinTheta               = motor_m1.foc.sinTheta;                /*!< Sinus of the electrical rotor angle */
+//        debug_mx.cosTheta               = motor_m1.foc.cosTheta;           /*!< Cosine of the electrical rotor angle */
+//        debug_mx.ialpha                 = motor_m1.foc.ialpha;             /*!< Direct Clarke transform result - [A] */
+//        debug_mx.ibeta                  = motor_m1.foc.ibeta;              /*!< Direct Clarke transform result - [A] */
+//        debug_mx.id                     = motor_m1.foc.id;                 /*!< Filtered Direct Park transform result - [A] */
+//        debug_mx.iq                     = motor_m1.foc.iq;                 /*!< Filtered Quadrature Park transform result - [A] */
+//        debug_mx.ud                     = motor_m1.foc.ud;                 /*!< Inverse Park transform result - [V] */
+//        debug_mx.uq                     = motor_m1.foc.uq;                 /*!< Inverse Park transform result - [V] */
+//        debug_mx.ualpha                 = motor_m1.foc.ualpha;             /*!< Inverse Clarke transform result - [V] */
+//        debug_mx.ubeta                  = motor_m1.foc.ubeta;              /*!< Inverse Clarke transform result - [V] */
+//        debug_mx.ua                     = motor_m1.foc.ua;                 /*!< Phase commands - Channel a - [V] */
+//        debug_mx.ub                     = motor_m1.foc.ub;                 /*!< Phase commands - Channel b - [V] */
+//        debug_mx.uc                     = motor_m1.foc.uc;                 /*!< Phase commands - Channel c - [V] */
+//        debug_mx.dtc_u                  = motor_m1.foc.dtc_u;              /*!< Duty cycles on channel u - [pu] between -0.5 and 0.5 */
+//        debug_mx.dtc_v                  = motor_m1.foc.dtc_v;              /*!< Duty cycles on channel v - [pu] between -0.5 and 0.5 */
+//        debug_mx.dtc_w                  = motor_m1.foc.dtc_w;              /*!< Duty cycles on channel w - [pu] between -0.5 and 0.5 */
+//        debug_mx.idRef                  = motor_m1.foc.idRef;              /*!< PI controller set point values for D-axis current - [A] */
+//        debug_mx.iqRef                  = motor_m1.foc.iqRef;              /*!< PI controller set point values for Q-axis current - [A] */
+//
+//        debug_mx.piId_err               = motor_m1.foc.piId.err;      /*!< Current error */
+//        debug_mx.piId_integral          = motor_m1.foc.piId.integral;           /*!< Integral term partial computation */
+//        debug_mx.piId_out               = motor_m1.foc.piId.out;                /*!< Controller output */
+//
+//        debug_mx.piIq_err               = motor_m1.foc.piIq.err;      /*!< Current error */
+//        debug_mx.piIq_integral          = motor_m1.foc.piIq.integral;           /*!< Integral term partial computation */
+//        debug_mx.piIq_out               = motor_m1.foc.piIq.out;                /*!< Controller output */
+//
+//        debug_mx.pdPosVel_errTheta      = motor_m1.foc.pdPosVel.errTheta;           /*!< Error position */
+//        debug_mx.pdPosVel_errSpeed      = motor_m1.foc.pdPosVel.errSpeed;           /*!< Error speed */
+//        debug_mx.pdPosVel_derivative    = motor_m1.foc.pdPosVel.derivative;         /*!< Derivative term partial computation */
+//        debug_mx.pdPosVel_out           = motor_m1.foc.pdPosVel.out;                /*!< Controller output */
+//
+//        debug_mx.itCnt                  = motor_m1.itCnt;          /*!< Event counter incrementing on every IT call */
+//        debug_mx.motor_id               = motor_m1.id;             /*!< Motor identification */
+//        debug_mx.error                  = motor_m1.error;          /*!< Bit field for the error sources. */
+//        debug_mx.crState                = motor_m1.state[CURRENT];      /*!< Current motor state for the FSM. */
+//        debug_mx.nxState                = motor_m1.state[NEXT];         /*!< Next motor state for the FSM. */
+//
+//        motor_m1.newData                = 0U;
+//
+//    }
+//    if(motor_m2.newData)
+//    {
+//        debug_mx.ia                     = motor_m2.foc.acq.ia;  // [A]
+//        debug_mx.ib                     = motor_m2.foc.acq.ib;                 // [A]
+//        debug_mx.ic                     = motor_m2.foc.acq.ic;                 // [A]
+//        debug_mx.vBus                   = motor_m2.foc.acq.vBus;               // [V]
+//        debug_mx.vExt                   = motor_m2.foc.acq.vExt;               // [V]
+//
+//        debug_mx.enc_thetaElec          = motor_m2.foc.enc.thetaElec;           /*!< Angular electrical position  - [pu] */
+//        debug_mx.enc_thetaMech          = motor_m2.foc.enc.thetaMech[0];        /*!< Angular mechanical position  - [pu] */
+//        debug_mx.enc_thetaIndexRelative = motor_m2.foc.enc.thetaIndexRelative;  /*!< Index mechanical angle */
+//        debug_mx.enc_thetaIndexAbsolute = motor_m2.foc.enc.thetaIndexAbsolute;  /*!< First index mechanical angle */
+//        debug_mx.enc_thetaAbsolute      = motor_m2.foc.enc.thetaAbsolute;       /*!< Absolute angular position - [turns] */
+//        debug_mx.enc_turnNb             = motor_m2.foc.enc.turnNb;              /*!< Number of full turns (signed) */
+//        debug_mx.enc_thetaDir           = motor_m2.foc.enc.thetaDir;            /*!< Rotor direction - -1 = CCW/reverse, 1 = CW/forward */
+//        debug_mx.enc_flags              = motor_m2.foc.enc.flags;
+//
+//        debug_mx.enc_speed_speedHigh    = motor_m2.foc.enc.speed.speedHigh;     /*!< High speed estimation -  [rad/s] - diff_angular * scaler = velocity */
+//        debug_mx.enc_speed_speedMech    = motor_m2.foc.enc.speed.speedMech[0];  /*!< Mechanical output speed - [rad/s] */
+//        debug_mx.enc_speed_speedElec    = motor_m2.foc.enc.speed.speedElec;     /*!< Electrical output speed (pole pairs integration) - [rad/s] */
+//        debug_mx.enc_speed_theta        = motor_m2.foc.enc.speed.theta[0];      /*!< Angular position of rotor - [pu] */
+//
+//        debug_mx.cmd_posRef             = motor_m2.foc.cmd.posRef;
+//        debug_mx.cmd_velRef             = motor_m2.foc.cmd.velRef;
+//        debug_mx.cmd_iqff               = motor_m2.foc.cmd.iqff;
+//        debug_mx.cmd_kpCoeff            = motor_m2.foc.cmd.kpCoeff;
+//        debug_mx.cmd_kdCoeff            = motor_m2.foc.cmd.kdCoeff;
+//        debug_mx.cmd_iSat               = motor_m2.foc.cmd.iSat;
+//        debug_mx.cmd_cptTimeout         = motor_m2.foc.cmd.cptTimeout;
+//        debug_mx.cmd_index              = motor_m2.foc.cmd.index;
+//        debug_mx.cmd_cmdField           = motor_m2.foc.cmd.cmdField;            /*!< Bit 0      : R/W - Enable system to start. No power on motors.         */
+//        debug_mx.cmd_periphField        = motor_m2.foc.cmd.periphField;         /*!< Bits 0   : R/W - DRV initialization went wrong             */
+//
+//        debug_mx.sinTheta               = motor_m2.foc.sinTheta;                /*!< Sinus of the electrical rotor angle */
+//        debug_mx.cosTheta               = motor_m2.foc.cosTheta;           /*!< Cosine of the electrical rotor angle */
+//        debug_mx.ialpha                 = motor_m2.foc.ialpha;             /*!< Direct Clarke transform result - [A] */
+//        debug_mx.ibeta                  = motor_m2.foc.ibeta;              /*!< Direct Clarke transform result - [A] */
+//        debug_mx.id                     = motor_m2.foc.id;                 /*!< Filtered Direct Park transform result - [A] */
+//        debug_mx.iq                     = motor_m2.foc.iq;                 /*!< Filtered Quadrature Park transform result - [A] */
+//        debug_mx.ud                     = motor_m2.foc.ud;                 /*!< Inverse Park transform result - [V] */
+//        debug_mx.uq                     = motor_m2.foc.uq;                 /*!< Inverse Park transform result - [V] */
+//        debug_mx.ualpha                 = motor_m2.foc.ualpha;             /*!< Inverse Clarke transform result - [V] */
+//        debug_mx.ubeta                  = motor_m2.foc.ubeta;              /*!< Inverse Clarke transform result - [V] */
+//        debug_mx.ua                     = motor_m2.foc.ua;                 /*!< Phase commands - Channel a - [V] */
+//        debug_mx.ub                     = motor_m2.foc.ub;                 /*!< Phase commands - Channel b - [V] */
+//        debug_mx.uc                     = motor_m2.foc.uc;                 /*!< Phase commands - Channel c - [V] */
+//        debug_mx.dtc_u                  = motor_m2.foc.dtc_u;              /*!< Duty cycles on channel u - [pu] between -0.5 and 0.5 */
+//        debug_mx.dtc_v                  = motor_m2.foc.dtc_v;              /*!< Duty cycles on channel v - [pu] between -0.5 and 0.5 */
+//        debug_mx.dtc_w                  = motor_m2.foc.dtc_w;              /*!< Duty cycles on channel w - [pu] between -0.5 and 0.5 */
+//        debug_mx.idRef                  = motor_m2.foc.idRef;              /*!< PI controller set point values for D-axis current - [A] */
+//        debug_mx.iqRef                  = motor_m2.foc.iqRef;              /*!< PI controller set point values for Q-axis current - [A] */
+//
+//        debug_mx.piId_err               = motor_m2.foc.piId.err;      /*!< Current error */
+//        debug_mx.piId_integral          = motor_m2.foc.piId.integral;           /*!< Integral term partial computation */
+//        debug_mx.piId_out               = motor_m2.foc.piId.out;                /*!< Controller output */
+//
+//        debug_mx.piIq_err               = motor_m2.foc.piIq.err;      /*!< Current error */
+//        debug_mx.piIq_integral          = motor_m2.foc.piIq.integral;           /*!< Integral term partial computation */
+//        debug_mx.piIq_out               = motor_m2.foc.piIq.out;                /*!< Controller output */
+//
+//        debug_mx.pdPosVel_errTheta      = motor_m2.foc.pdPosVel.errTheta;           /*!< Error position */
+//        debug_mx.pdPosVel_errSpeed      = motor_m2.foc.pdPosVel.errSpeed;           /*!< Error speed */
+//        debug_mx.pdPosVel_derivative    = motor_m2.foc.pdPosVel.derivative;         /*!< Derivative term partial computation */
+//        debug_mx.pdPosVel_out           = motor_m2.foc.pdPosVel.out;                /*!< Controller output */
+//
+//        debug_mx.itCnt                  = motor_m2.itCnt;          /*!< Event counter incrementing on every IT call */
+//        debug_mx.motor_id               = motor_m2.id;             /*!< Motor identification */
+//        debug_mx.error                  = motor_m2.error;          /*!< Bit field for the error sources. */
+//        debug_mx.crState                = motor_m1.state[CURRENT];      /*!< Current motor state for the FSM. */
+//        debug_mx.nxState                = motor_m1.state[NEXT];         /*!< Next motor state for the FSM. */
+//
+//        motor_m2.newData                = 0U;
+//    }
 }
 
 /* __MOTOR_CONTROL_CLA__ */

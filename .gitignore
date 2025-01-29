@@ -3,4 +3,6 @@
 /uomodri_cm/uomodri_c28.launch.old
 *.zip
 .gitignore
+*.txt
+
 

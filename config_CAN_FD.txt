@@ -1,3 +1,4 @@
+508TI00083472871EUR
 # list COM port
 ifconfig -a
 
