@@ -85,7 +85,7 @@ bool_t COM_msgCreate(motor_t* p_motor, slv2mst_msg_t* p_msg, uint32_t* p_tmr_cnt
     float32_t pos_offset                = p_enc->thetaAbsolute - theta_index_comp;
     int32_t pos                         = (int32_t)(pos_offset                  / POSITION_LSB      * FM_RAD2ROUND);
     uint16_t motor_id                   = p_motor->id;
-    bool_t align_done                   = (p_motor->state[NEXT] == MOTOR_STATE_READY) || (p_motor->state[NEXT] == MOTOR_STATE_STOP);
+    bool_t align_done                   = (p_motor->state == MOTOR_STATE_READY) || (p_motor->state == MOTOR_STATE_STOP);
 
     p_msg->position[motor_id].u16_msb   = MSB_32(pos);
     p_msg->position[motor_id].u16_lsb   = LSB_32(pos);

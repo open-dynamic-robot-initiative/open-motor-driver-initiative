@@ -41,7 +41,7 @@ extern __attribute__((interrupt)) void motor2_Task(void);
 extern __attribute__((interrupt)) void Cla1Task5(void);
 extern __attribute__((interrupt)) void Cla1Task6(void);
 extern __attribute__((interrupt)) void Cla1Task7(void);
-extern __attribute__((interrupt("background"))) void Cla1Task8(void);
+extern __attribute__((interrupt)) void Cla1Task8(void);
 //extern __attribute__((interrupt)) void Cla1Task8(void);
 
 /***********************************************************************

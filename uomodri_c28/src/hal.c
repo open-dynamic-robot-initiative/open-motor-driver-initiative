@@ -20,7 +20,7 @@
 #pragma DATA_SECTION(uid_unique_32b,".uniqueId");
 volatile uint32_t       uid_unique_32b;
 
-volatile uint32_t       uid_unique_8b = 0;
+volatile uint32_t       uid_unique_8b;
 
 /***********************************************************************
  * FUNCTIONS DECLARATION
@@ -73,7 +73,6 @@ void HAL_ini(const hal_cfg_t* p_hal)
         HAL_TMR_ini(p_hal->p_timerHandle);
         // Initialize IPC
         HAL_IPC_ini(p_hal->p_ipcHandle);
-
 
 #if (RS485_BUS_ENABLE) && (USE_UOMODRI_REV != USE_UOMODRI_V1)
         // Initialize SCI/UART
@@ -847,56 +846,59 @@ void HAL_TMR_ini(const tmr_cfg_t* p_TimerCfg)
  */
 void HAL_MCAN_ini(const mcan_cfg_t* p_McanCfg)
 {
-    // Put MCAN in SW initialization mode.
-    MCAN_setOpMode(p_McanCfg->mCanBase, MCAN_OPERATION_MODE_SW_INIT);
-    // Wait till MCAN is not initialized.
-    while(MCAN_getOpMode(p_McanCfg->mCanBase) != MCAN_OPERATION_MODE_SW_INIT);
+    if(p_McanCfg != NULL)
+    {
+        // Put MCAN in SW initialization mode.
+        MCAN_setOpMode(p_McanCfg->mCanBase, MCAN_OPERATION_MODE_SW_INIT);
+        // Wait till MCAN is not initialized.
+        while(MCAN_getOpMode(p_McanCfg->mCanBase) != MCAN_OPERATION_MODE_SW_INIT);
 
-    // Set the MCAN clock source (CPU1 Peripheral System clock).
-    MCAN_selectClockSource(p_McanCfg->mCanBase, MCAN_CLOCK_SOURCE);
-    // Enable internal loopback mode
-    MCAN_lpbkModeEnable(p_McanCfg->mCanBase, MCAN_LOOPBACK_MODE, MCAN_LOOPBACK_MODE_CTRL);
-    // Wait for Memory initialization to be completed.
-    while(MCAN_isMemInitDone(p_McanCfg->mCanBase) != TRUE);
+        // Set the MCAN clock source (CPU1 Peripheral System clock).
+        MCAN_selectClockSource(p_McanCfg->mCanBase, MCAN_CLOCK_SOURCE);
+        // Enable internal loopback mode
+        MCAN_lpbkModeEnable(p_McanCfg->mCanBase, MCAN_LOOPBACK_MODE, MCAN_LOOPBACK_MODE_CTRL);
+        // Wait for Memory initialization to be completed.
+        while(MCAN_isMemInitDone(p_McanCfg->mCanBase) != TRUE);
 
-    // Initialize MCAN module.
-    MCAN_init(p_McanCfg->mCanBase, &p_McanCfg->initParams);
-    // Configure MCAN module.
-    MCAN_config(p_McanCfg->mCanBase, &p_McanCfg->configParams);
-    // Configure Bit timings.
-    MCAN_setBitTime(p_McanCfg->mCanBase, &p_McanCfg->bitTimesParams);
-    // Configure Message RAM Sections
-    MCAN_MsgRAMConfigParams msgRAMConfigParams = MCAN_MSG_RAM_CONFIG_PARAMS;
-    MCAN_msgRAMConfig(p_McanCfg->mCanBase, &msgRAMConfigParams);
+        // Initialize MCAN module.
+        MCAN_init(p_McanCfg->mCanBase, &p_McanCfg->initParams);
+        // Configure MCAN module.
+        MCAN_config(p_McanCfg->mCanBase, &p_McanCfg->configParams);
+        // Configure Bit timings.
+        MCAN_setBitTime(p_McanCfg->mCanBase, &p_McanCfg->bitTimesParams);
+        // Configure Message RAM Sections
+        MCAN_MsgRAMConfigParams msgRAMConfigParams = MCAN_MSG_RAM_CONFIG_PARAMS;
+        MCAN_msgRAMConfig(p_McanCfg->mCanBase, &msgRAMConfigParams);
 
-    uint32_t id_filter_cfg;
+        uint32_t id_filter_cfg;
 #if (MCAN_STD_ID_FILTER_NUM)
-    // Configure Standard ID filter element
-    MCAN_StdMsgIDFilterElement stdFilterParams[MCAN_STD_ID_FILTER_NUM] = MCAN_STD_ID_FILTER_CFG;
-    for(id_filter_cfg = 0; id_filter_cfg < MCAN_STD_ID_FILTER_NUM; id_filter_cfg++)
-        MCAN_addStdMsgIDFilter(p_McanCfg->mCanBase, id_filter_cfg, &stdFilterParams[id_filter_cfg]);
+        // Configure Standard ID filter element
+        MCAN_StdMsgIDFilterElement stdFilterParams[MCAN_STD_ID_FILTER_NUM] = MCAN_STD_ID_FILTER_CFG;
+        for(id_filter_cfg = 0; id_filter_cfg < MCAN_STD_ID_FILTER_NUM; id_filter_cfg++)
+            MCAN_addStdMsgIDFilter(p_McanCfg->mCanBase, id_filter_cfg, &stdFilterParams[id_filter_cfg]);
 #endif
 #if (MCAN_EXT_ID_FILTER_NUM)
-    //(MCAN_EXT_ID_FILTER_NUM)
-    // Configure Extended ID filter element
-    MCAN_ExtMsgIDFilterElement extFilterParams[MCAN_EXT_ID_FILTER_NUM] = MCAN_EXT_ID_FILTER_CFG;
-    for(id_filter_cfg = 0; id_filter_cfg < MCAN_EXT_ID_FILTER_NUM; id_filter_cfg++)
-        MCAN_addExtMsgIDFilter(p_McanCfg->mCanBase, id_filter_cfg, &extFilterParams[id_filter_cfg]);
+        //(MCAN_EXT_ID_FILTER_NUM)
+        // Configure Extended ID filter element
+        MCAN_ExtMsgIDFilterElement extFilterParams[MCAN_EXT_ID_FILTER_NUM] = MCAN_EXT_ID_FILTER_CFG;
+        for(id_filter_cfg = 0; id_filter_cfg < MCAN_EXT_ID_FILTER_NUM; id_filter_cfg++)
+            MCAN_addExtMsgIDFilter(p_McanCfg->mCanBase, id_filter_cfg, &extFilterParams[id_filter_cfg]);
 #endif
 
-    // Take MCAN out of the SW initialization mode
-    MCAN_setOpMode(p_McanCfg->mCanBase, MCAN_OPERATION_MODE_NORMAL);
-    // Wait till MCAN is back in normal mode.
-    while(MCAN_getOpMode(p_McanCfg->mCanBase) != MCAN_OPERATION_MODE_NORMAL);
+        // Take MCAN out of the SW initialization mode
+        MCAN_setOpMode(p_McanCfg->mCanBase, MCAN_OPERATION_MODE_NORMAL);
+        // Wait till MCAN is back in normal mode.
+        while(MCAN_getOpMode(p_McanCfg->mCanBase) != MCAN_OPERATION_MODE_NORMAL);
 
-    // Enable Interrupts.
-    MCAN_enableIntr(p_McanCfg->mCanBase, MCAN_INTR_MASK, MCAN_ENABLE_IT);
-    // Select Interrupt Line.
-    MCAN_selectIntrLine(p_McanCfg->mCanBase, MCAN_INTR_MASK, MCAN_RX_LINE_SRC_IT);
-    // Enable Interrupt Line.
-    MCAN_enableIntrLine(p_McanCfg->mCanBase, MCAN_RX_LINE_SRC_IT, MCAN_ENABLE_LINE_IT);
+        // Enable Interrupts.
+        MCAN_enableIntr(p_McanCfg->mCanBase, MCAN_INTR_MASK, MCAN_ENABLE_IT);
+        // Select Interrupt Line.
+        MCAN_selectIntrLine(p_McanCfg->mCanBase, MCAN_INTR_MASK, MCAN_RX_LINE_SRC_IT);
+        // Enable Interrupt Line.
+        MCAN_enableIntrLine(p_McanCfg->mCanBase, MCAN_RX_LINE_SRC_IT, MCAN_ENABLE_LINE_IT);
 //    // Write Tx Message to the Message RAM.
 //    MCAN_writeMsgRam(p_McanCfg->mCanBase, MCAN_MEM_TYPE_BUF, 1U, &txMsg);
 //    // Enable Transmission interrupt.
 //    MCAN_txBufTransIntrEnable(p_McanCfg->mCanBase, 0U, MCAN_ENABLE_IT);
+    }
 }

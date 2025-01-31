@@ -2269,9 +2269,9 @@
 #define CLB_INT_RS485_RX_END_OF_RECEPTION       (0x01)
 
 #define CLB_RS485_DEF                           { \
-                                                    .clb_Addr1Spec     = RS485_CLB_USE_UID_ADDRESS, \
+                                                    .clb_Addr1Spec     = RS485_CLB_FORCE_ADDRESS, \
                                                     .clb_Addr2Spec     = RS485_CLB_USE_NO_ADDRESS, \
-                                                    .clb_Addr1Force    = 0, \
+                                                    .clb_Addr1Force    = 0x3F, \
                                                     .clb_Addr2Force    = 0, \
                                                 }
 

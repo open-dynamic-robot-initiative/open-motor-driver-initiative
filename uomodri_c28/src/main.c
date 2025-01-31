@@ -144,7 +144,7 @@ uint16_t    led_spi_tx[LED_MSG_TX_16BIT_LENGTH];
 
 #pragma DATA_ALIGN(com_bus_select, 4)
 #pragma DATA_SECTION(com_bus_select, "ramgs0")
-com_bus_e   com_bus_select      = COM_USE_RS485_BUS;//CANFD_BUS;
+com_bus_e   com_bus_select      = COM_USE_SPI_BUS;
 //COM_NO_BUS_DEFINED;
 
 #pragma DATA_ALIGN(global_ms_tmr_cnt, 4)
@@ -259,43 +259,43 @@ float32_t motor1_pi_iq_kp_coeff = MOTOR1_PI_IQ_KP_COEF;
 #pragma DATA_SECTION(motor1_pi_iq_ki_coeff, "ConstFlashMotor1")
 float32_t motor1_pi_iq_ki_coeff = MOTOR1_PI_IQ_KI_COEF;
 
-#pragma DATA_ALIGN(motor1_flash, 4)
-#pragma DATA_SECTION(motor1_flash, "ConstFlashMotor1")
-motor_t motor1_flash = {.foc.cfg.Rs                             = MOTOR1_RS,
-                        .foc.cfg.Ls                             = MOTOR1_LS,
-                        .foc.cfg.kv                             = MOTOR1_KV,
-                        .foc.cfg.ke                             = MOTOR1_KE,
-                        .foc.cfg.ki                             = MOTOR1_KI,
-                        .foc.cfg.polePairs                      = MOTOR1_POLES_PAIRS,
-                        //--- MOTOR ENCORDER STRUCTURE ------------------------------------------
-                        .foc.enc.polePairs                      = MOTOR1_POLES_PAIRS,
-                        .foc.enc.thetaMechScaler                = (float32_t)MOTOR1_ENC_RESOLUTION_SCALE,
-                        .foc.enc.speed.speedHighScaler          = (float32_t)MOTOR1_ENC_SPEED_HIGH_SCALE,
-                        .foc.enc.speed.speedLowScaler           = (float32_t)MOTOR1_ENC_SPEED_LOW_SCALE,
-                        .foc.enc.speed.speedFlt[0].a            = (float32_t)MOTOR1_ENC_SPEED_LPF_ALPHA,
-                        .foc.enc.speed.speedFlt[0].one_minus_a  = (float32_t)MOTOR1_ENC_SPEED_LPF_ONE_M_ALPHA,
-                        .foc.enc.speed.speedFlt[1].a            = (float32_t)MOTOR1_ENC_SPEED_LOCAL_LPF_ALPHA,
-                        .foc.enc.speed.speedFlt[1].one_minus_a  = (float32_t)MOTOR1_ENC_SPEED_LOCAL_LPF_ONE_M_ALPHA,
-                        //--- MOTOR COMMAND STRUCTURE -------------------------------------------
-                        .foc.cmd.iSat                           = MOTOR1_CURRENT_CMD_SAT_MAX,
-                        //-----------------------------------------------------------------------
-                        .foc.iParkFlt.a                         = MOTOR1_CURRENT_LPF_ALPHA,
-                        .foc.iParkFlt.one_minus_a               = MOTOR1_CURRENT_LPF_ONE_M_ALPHA,
-                        //--- FOC - Initialize duty cycle saturation ----------------------------
-                        .foc.dtcMax                             = MOTOR1_DTC_MAX,
-                        .foc.dtcMin                             = MOTOR1_DTC_MIN,
-                        //--- FOC - Encoder test ------------------------------------------------
-                        .foc.initPosCnt                         = MOTOR1_POSITION_INIT_EVT,
-                        .foc.initFixCnt                         = MOTOR1_FIX_INIT_EVT,
-                        .foc.initErr[MIN]                       = MOTOR1_POSITION_INIT_ERR_MIN,
-                        .foc.initErr[MAX]                       = MOTOR1_POSITION_INIT_ERR_MAX,
-                        //--- FOC - Initialize PI controller (Id) -------------------------------
-                        .foc.piId.kp                            = (float32_t)MOTOR1_PI_ID_KP_COEF,
-                        .foc.piId.ki                            = (float32_t)MOTOR1_PI_ID_KI_COEF,
-                        //--- FOC - Initialize PI controller (Iq) -------------------------------
-                        .foc.piIq.kp                            = (float32_t)MOTOR1_PI_IQ_KP_COEF,
-                        .foc.piIq.ki                            = (float32_t)MOTOR1_PI_IQ_KI_COEF,
-};
+//#pragma DATA_ALIGN(motor1_flash, 4)
+//#pragma DATA_SECTION(motor1_flash, "ConstFlashMotor1")
+//motor_t motor1_flash = {.foc.cfg.Rs                             = MOTOR1_RS,
+//                        .foc.cfg.Ls                             = MOTOR1_LS,
+//                        .foc.cfg.kv                             = MOTOR1_KV,
+//                        .foc.cfg.ke                             = MOTOR1_KE,
+//                        .foc.cfg.ki                             = MOTOR1_KI,
+//                        .foc.cfg.polePairs                      = MOTOR1_POLES_PAIRS,
+//                        //--- MOTOR ENCORDER STRUCTURE ------------------------------------------
+//                        .foc.enc.polePairs                      = MOTOR1_POLES_PAIRS,
+//                        .foc.enc.thetaMechScaler                = (float32_t)MOTOR1_ENC_RESOLUTION_SCALE,
+//                        .foc.enc.speed.speedHighScaler          = (float32_t)MOTOR1_ENC_SPEED_HIGH_SCALE,
+//                        .foc.enc.speed.speedLowScaler           = (float32_t)MOTOR1_ENC_SPEED_LOW_SCALE,
+//                        .foc.enc.speed.speedFlt[0].a            = (float32_t)MOTOR1_ENC_SPEED_LPF_ALPHA,
+//                        .foc.enc.speed.speedFlt[0].one_minus_a  = (float32_t)MOTOR1_ENC_SPEED_LPF_ONE_M_ALPHA,
+//                        .foc.enc.speed.speedFlt[1].a            = (float32_t)MOTOR1_ENC_SPEED_LOCAL_LPF_ALPHA,
+//                        .foc.enc.speed.speedFlt[1].one_minus_a  = (float32_t)MOTOR1_ENC_SPEED_LOCAL_LPF_ONE_M_ALPHA,
+//                        //--- MOTOR COMMAND STRUCTURE -------------------------------------------
+//                        .foc.cmd.iSat                           = MOTOR1_CURRENT_CMD_SAT_MAX,
+//                        //-----------------------------------------------------------------------
+//                        .foc.iParkFlt.a                         = MOTOR1_CURRENT_LPF_ALPHA,
+//                        .foc.iParkFlt.one_minus_a               = MOTOR1_CURRENT_LPF_ONE_M_ALPHA,
+//                        //--- FOC - Initialize duty cycle saturation ----------------------------
+//                        .foc.dtcMax                             = MOTOR1_DTC_MAX,
+//                        .foc.dtcMin                             = MOTOR1_DTC_MIN,
+//                        //--- FOC - Encoder test ------------------------------------------------
+//                        .foc.initPosCnt                         = MOTOR1_POSITION_INIT_EVT,
+//                        .foc.initFixCnt                         = MOTOR1_FIX_INIT_EVT,
+//                        .foc.initErr[MIN]                       = MOTOR1_POSITION_INIT_ERR_MIN,
+//                        .foc.initErr[MAX]                       = MOTOR1_POSITION_INIT_ERR_MAX,
+//                        //--- FOC - Initialize PI controller (Id) -------------------------------
+//                        .foc.piId.kp                            = (float32_t)MOTOR1_PI_ID_KP_COEF,
+//                        .foc.piId.ki                            = (float32_t)MOTOR1_PI_ID_KI_COEF,
+//                        //--- FOC - Initialize PI controller (Iq) -------------------------------
+//                        .foc.piIq.kp                            = (float32_t)MOTOR1_PI_IQ_KP_COEF,
+//                        .foc.piIq.ki                            = (float32_t)MOTOR1_PI_IQ_KI_COEF,
+//};
 
 #pragma DATA_ALIGN(com_msg_rs485_tx_master_address, 4)
 #pragma DATA_SECTION(com_msg_rs485_tx_master_address, "ConstFlashCom")
@@ -338,9 +338,11 @@ void main(void)
     // Start ADC offset calibration on CLA.
     CLA_forceTasks(CLA1_BASE, CLA_ADC_CALIB_TASK_FLAG);
     // Use SPI, RS485 or CAN-FD as master communication bus.
-    com_bus_select = COM_USE_RS485_BUS;//CANFD_BUS;
+    com_bus_select = COM_USE_SPI_BUS;
+#if (USE_UOMODRI_REV >= USE_UOMODRI_V3)
     // Mux control of the differential pair.
     COM_muxCtrl(com_bus_select);
+#endif
     // Interrupts initialization.
     HAL_INT_ini(interruptList, &errata_isr);
     // Infinite loop
@@ -360,11 +362,12 @@ static void MCU_ini(void)
 {
     /* Initialize clock and peripherals */
     Device_init();
-
+//#if (USE_UOMODRI_REV >= USE_UOMODRI_V3)
     // Define which core manage MCAN (a shared peripheral) - CPU1 (C28x) / CM (Cortex M)
     SysCtl_allocateSharedPeripheral(SYSCTL_PALLOCATE_MCAN_A, MCAN_ALLOCATE_ON_CORE);
     // Configure the divisor for the MCAN bit-clock
     SysCtl_setMCANClk(SYSCTL_MCANCLK_DIV_1);
+//#endif
     // Define which core manage USB (a shared peripheral) - CPU1 (C28x) / CM (Cortex M)
     SysCtl_allocateSharedPeripheral(SYSCTL_PALLOCATE_USBA, USB_ALLOCATE_ON_CORE);
 
@@ -437,9 +440,9 @@ static void MCU_ini(void)
     SysCtl_allocateSharedPeripheral(SYSCTL_PALLOCATE_USBA, 1);
 #endif
     /* Boot CM core */
-#if (defined _FLASH) && (!defined CPU1)
+#if (defined _FLASH)
     Device_bootCM(BOOTMODE_BOOT_TO_FLASH_SECTOR0);
-#elif (!defined CPU1)
+#else
     Device_bootCM(BOOTMODE_BOOT_TO_S0RAM);
 #endif
 
@@ -451,7 +454,6 @@ static void MCU_ini(void)
     /* Initialize the PIE vector table with pointers to the shell Interrupt Service Routines (ISR). */
     Interrupt_initVectorTable();
 
-    Device_bootCM(BOOTMODE_BOOT_TO_FLASH_SECTOR0);
     return;
 }
 
@@ -467,21 +469,21 @@ inline void LED_dimming(motor_t* p_motor1, motor_t* p_motor2, uint16_t* p_msg)
     motor_state_e   motor_state     = MOTOR_STATE_IDLE;
 
     /* Set status of the 1st led */
-    if((p_motor1->state[CURRENT] & MOTOR_STATE_BOOT)     || (p_motor2->state[CURRENT] & MOTOR_STATE_BOOT))
+    if((p_motor1->state & MOTOR_STATE_BOOT)     || (p_motor2->state & MOTOR_STATE_BOOT))
         motor_state = MOTOR_STATE_IDLE;
-    else if((p_motor1->state[CURRENT] & MOTOR_STATE_INIT)|| (p_motor2->state[CURRENT] & MOTOR_STATE_INIT))
+    else if((p_motor1->state & MOTOR_STATE_INIT)|| (p_motor2->state & MOTOR_STATE_INIT))
         motor_state = MOTOR_STATE_INIT_FIX;
-    else if((p_motor1->state[CURRENT] & MOTOR_STATE_OK)  || (p_motor2->state[CURRENT] & MOTOR_STATE_OK))
+    else if((p_motor1->state & MOTOR_STATE_OK)  || (p_motor2->state & MOTOR_STATE_OK))
         motor_state = MOTOR_STATE_READY;
-    if((p_motor1->state[CURRENT] == MOTOR_STATE_ERROR)   || (p_motor2->state[CURRENT] == MOTOR_STATE_ERROR))
+    if((p_motor1->state == MOTOR_STATE_ERROR)   || (p_motor2->state == MOTOR_STATE_ERROR))
         motor_state = MOTOR_STATE_ERROR;
 
     // Master LED (1st led)
     p_msg       = ws2812b_dimmingLed(MASTER_LED, motor_state, timer_cpt_ms, p_msg);
     //MOTOR_1 LED (2nd led)
-    p_msg       = ws2812b_dimmingLed(MOTOR1_LED, p_motor1->state[CURRENT], timer_cpt_ms, p_msg);
+    p_msg       = ws2812b_dimmingLed(MOTOR1_LED, p_motor1->state, timer_cpt_ms, p_msg);
     //MOTOR_2 LED (3th led)
-    p_msg       = ws2812b_dimmingLed(MOTOR2_LED, p_motor2->state[CURRENT], timer_cpt_ms, p_msg);
+    p_msg       = ws2812b_dimmingLed(MOTOR2_LED, p_motor2->state, timer_cpt_ms, p_msg);
     // millisecond timer increment
     timer_cpt_ms= (timer_cpt_ms < 1000U) ? (timer_cpt_ms + 1): (0U);
 
@@ -694,41 +696,70 @@ void MOT_initStruct(motor_t* p_motor, uint16_t motor_id)
     p_motor->foc.pdPosVel.p_sat.ptr                     = (float32_t *)(&p_motor->foc.cmd.iSat);
     p_motor->foc.pdPosVel.out                           = 0.0f;
     //--- FSM motor initial state -----------------------------------------------
-    p_motor->state[CURRENT]                             = MOTOR_STATE_IDLE;
-    p_motor->state[NEXT]                                = MOTOR_STATE_IDLE;
+    p_motor->state                                      = MOTOR_STATE_IDLE;
     //--- Error message ---------------------------------------------------------
     p_motor->error.all                                  = 0U;
     //--- New Data ready to be send ---------------------------------------------
-    p_motor->newData                                    = 0U;
+//    p_motor->newData                                    = 0U;
     //---------------------------------------------------------------------------
     //---------------------------------------------------------------------------
 }
 
+#if (USE_UOMODRI_REV >= USE_UOMODRI_V3)
 /**
  * @brief       Mux switching for communication protocol section
  * @param[in]   bus_select  Define the communication protocol used.
  */
 void COM_muxCtrl(com_bus_e bus_select)
 {
-    if(bus_select == COM_USE_CANFD_BUS)
+    switch(com_bus_select)
     {
-        // CAN driver ON, mux on CAN.
-        GPIO_writePin(CANFD_SHDN_MODE_NUM, CANFD_SHDN_MODE_DISABLE);
-        GPIO_writePin(CANFD_RS485_MUX_SEL_NUM, CANFD_RS485_MUX_SEL_CANFD_MODE);
+        case COM_USE_RS485_BUS:
+        {
+            // CAN driver OFF, mux on RS485.
+            GPIO_writePin(CANFD_SHDN_MODE_NUM, CANFD_SHDN_MODE_ENABLE);
+            GPIO_writePin(CANFD_RS485_MUX_SEL_NUM, CANFD_RS485_MUX_SEL_RS485_MODE);
+            break;
+        }
+
+        case COM_USE_CANFD_BUS:
+        {
+
+            // CAN driver ON, mux on CAN.
+            GPIO_writePin(CANFD_SHDN_MODE_NUM, CANFD_SHDN_MODE_DISABLE);
+            GPIO_writePin(CANFD_RS485_MUX_SEL_NUM, CANFD_RS485_MUX_SEL_CANFD_MODE);
+            break;
+        }
+
+        case COM_USE_SPI_BUS :
+        default:
+        {
+            // CAN driver OFF, mux on CAN.
+            GPIO_writePin(CANFD_SHDN_MODE_NUM, CANFD_SHDN_MODE_ENABLE);
+            GPIO_writePin(CANFD_RS485_MUX_SEL_NUM, CANFD_RS485_MUX_SEL_CANFD_MODE);
+            break;
+        }
     }
-    else if(bus_select == COM_USE_RS485_BUS)
-    {
-        // CAN driver OFF, mux on RS485.
-        GPIO_writePin(CANFD_SHDN_MODE_NUM, CANFD_SHDN_MODE_ENABLE);
-        GPIO_writePin(CANFD_RS485_MUX_SEL_NUM, CANFD_RS485_MUX_SEL_RS485_MODE);
-    }
-    else
-    {
-        // CAN driver OFF, mux on CAN.
-        GPIO_writePin(CANFD_SHDN_MODE_NUM, CANFD_SHDN_MODE_ENABLE);
-        GPIO_writePin(CANFD_RS485_MUX_SEL_NUM, CANFD_RS485_MUX_SEL_CANFD_MODE);
-    }
+//    if(bus_select == COM_USE_CANFD_BUS)
+//    {
+//        // CAN driver ON, mux on CAN.
+//        GPIO_writePin(CANFD_SHDN_MODE_NUM, CANFD_SHDN_MODE_DISABLE);
+//        GPIO_writePin(CANFD_RS485_MUX_SEL_NUM, CANFD_RS485_MUX_SEL_CANFD_MODE);
+//    }
+//    else if(bus_select == COM_USE_RS485_BUS)
+//    {
+//        // CAN driver OFF, mux on RS485.
+//        GPIO_writePin(CANFD_SHDN_MODE_NUM, CANFD_SHDN_MODE_ENABLE);
+//        GPIO_writePin(CANFD_RS485_MUX_SEL_NUM, CANFD_RS485_MUX_SEL_RS485_MODE);
+//    }
+//    else
+//    {
+//        // CAN driver OFF, mux on CAN.
+//        GPIO_writePin(CANFD_SHDN_MODE_NUM, CANFD_SHDN_MODE_ENABLE);
+//        GPIO_writePin(CANFD_RS485_MUX_SEL_NUM, CANFD_RS485_MUX_SEL_CANFD_MODE);
+//    }
 }
+#endif
 
 /***********************************************************************
  * INTERRUPT HANDLING FUNCTIONS DEFINITIONS
@@ -805,11 +836,11 @@ __attribute__((interrupt)) void cla_isrMotor1(void)
 //    m1_state = motor_m1.state[CURRENT];
 
     // Start DMA channel
-    DMA_configAddresses(DMA_DBG_CLA2CM_BASE_ADDR, \
-                        (uint16_t *) &dbg_cpu2cm_m1, \
-                        (uint16_t *) &dbg_cla2dma_mx);
-    DMA_startChannel(DMA_DBG_CLA2CM_BASE_ADDR);
-    DMA_forceTrigger(DMA_DBG_CLA2CM_BASE_ADDR);
+//    DMA_configAddresses(DMA_DBG_CLA2CM_BASE_ADDR, \
+//                        (uint16_t *) &dbg_cpu2cm_m1, \
+//                        (uint16_t *) &dbg_cla2dma_mx);
+//    DMA_startChannel(DMA_DBG_CLA2CM_BASE_ADDR);
+//    DMA_forceTrigger(DMA_DBG_CLA2CM_BASE_ADDR);
 
     // Clear IT source CLA ask
     CLA_clearTaskFlags(CLA1_BASE, CLA_MOTOR1_TASK_FLAG);
@@ -922,29 +953,31 @@ __attribute__((interrupt)) void tmr_isrLedCmd(void)
  */
 __attribute__((interrupt)) void dma_isrSpiComRx(void)
 {
-    // Compare computed CRC with the one received in message.
-    spi_rx_msg_t* p_msg_spi = &com_spi_rx.msg;
-    uint32_t msg_crc        = COM_msgCRC((uint16_t *)&p_msg_spi->data, \
-                                         COM_MSG_SPI_RX_16BIT_PAYLOAD_LENGTH);
-    if((com_bus_select == COM_USE_SPI_BUS) && \
-            CRC_COMP(p_msg_spi->crc.u16_msb, p_msg_spi->crc.u16_lsb, msg_crc))
+    if(com_bus_select == COM_USE_SPI_BUS)
     {
-        // Extract received message & send new commands to FOC structures. Define SPI as communication bus by default.
-        COM_msgExtract(&p_msg_spi->data, &cmd_uomodri[MOTOR_1], &cmd_uomodri[MOTOR_2]);
-        // Force an update of the motors command structures (commands values)
-        CLA_forceTasks(CLA1_BASE, CLA_CMD_NEW_TASK_FLAG);
-//        // Disable definitely the ITs linked to RS485.
-////        CLB_disableCLB(RS485_RX_TX_CLB_EOT_BASE);
-////        CLB_disableCLB(RS485_RX_CLB_ADDR_VALID_BASE);
-//        Interrupt_disable(INT_RS485_Rx_Tx_CLB);
-//
-////        SCI_disableModule(COM_SCI_BASE);
-//        Interrupt_disable(INT_RS485_RX_MSG);
-//        Interrupt_disable(INT_RS485_TX_MSG);
+        // Compare computed CRC with the one received in message.
+        spi_rx_msg_t* p_msg_spi = &com_spi_rx.msg;
+        uint32_t msg_crc        = COM_msgCRC((uint16_t *)&p_msg_spi->data, \
+                                             COM_MSG_SPI_RX_16BIT_PAYLOAD_LENGTH);
+        if(CRC_COMP(p_msg_spi->crc.u16_msb, p_msg_spi->crc.u16_lsb, msg_crc))
+        {
+            // Extract received message & send new commands to FOC structures. Define SPI as communication bus by default.
+            COM_msgExtract(&p_msg_spi->data, &cmd_uomodri[MOTOR_1], &cmd_uomodri[MOTOR_2]);
+            // Force an update of the motors command structures (commands values)
+            CLA_forceTasks(CLA1_BASE, CLA_CMD_NEW_TASK_FLAG);
+            //        // Disable definitely the ITs linked to RS485.
+            ////        CLB_disableCLB(RS485_RX_TX_CLB_EOT_BASE);
+            ////        CLB_disableCLB(RS485_RX_CLB_ADDR_VALID_BASE);
+            //        Interrupt_disable(INT_RS485_Rx_Tx_CLB);
+            //
+            ////        SCI_disableModule(COM_SCI_BASE);
+            //        Interrupt_disable(INT_RS485_RX_MSG);
+            //        Interrupt_disable(INT_RS485_TX_MSG);
+        }
+        // Restart DMA reception & reset the SPI Rx fifo.
+        DMA_startChannel(DMA_COM_SPI_RX_BASE_ADDR);
+        SPI_resetRxFIFO(COM_SPI_BASE);
     }
-    // Restart DMA reception & reset the SPI Rx fifo.
-    DMA_startChannel(DMA_COM_SPI_RX_BASE_ADDR);
-    SPI_resetRxFIFO(COM_SPI_BASE);
     // Clear IT flag
     Interrupt_clearACKGroup(INT_DMA_RX_MSG_GROUP);
 }
@@ -1055,6 +1088,11 @@ __attribute__((interrupt)) void clb_isrTxRx_RS485(void)
 #else
     uint16_t clb_tag_test   = HWREGH(CLB_INT_REG_ADDR);
 #endif
+
+    if(((clbCfgList[0].clb_Addr1Spec == RS485_CLB_USE_NO_ADDRESS) && (clb_tag_test & CLB_INT_RS485_RX_ADDRESS_1_VALID)) || \
+       ((clbCfgList[0].clb_Addr2Spec == RS485_CLB_USE_NO_ADDRESS) && (clb_tag_test & CLB_INT_RS485_RX_ADDRESS_2_VALID)))
+        clb_tag_test = 0;
+
     switch(clb_tag_test)
     {
         // RS485 address #1 valid

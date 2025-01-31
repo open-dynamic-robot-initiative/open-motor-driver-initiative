@@ -26,6 +26,10 @@
 extern spi_rx_t     com_spi_rx;
 extern spi_tx_t     com_spi_tx;
 extern uint16_t     led_spi_tx[LED_MSG_TX_16BIT_LENGTH];
+extern debug_t              dbg_cpu2cm_m1;
+extern debug_t              dbg_cpu2cm_m2;
+extern debug_t              dbg_cla2dma_mx;
+extern volatile uint32_t    uid_unique_8b;
 
 /***********************************************************************
  * FUNCTIONS DECLARATION
@@ -91,19 +95,19 @@ static const gpio_cfg_t gpioPinsCfgList[] =
  },
 #endif
  /* PWM MOTOR_1 configuration pins */
-  MOTOR1_PWM1_CHA_DEF,               /* MOTOR_1 - PWM1 ChA pin */
-  MOTOR1_PWM1_CHB_DEF,               /* MOTOR_1 - PWM1 ChB pin */
-  MOTOR1_PWM2_CHA_DEF,               /* MOTOR_1 - PWM2 ChA pin */
-  MOTOR1_PWM2_CHB_DEF,               /* MOTOR_1 - PWM2 ChB pin */
-  MOTOR1_PWM3_CHA_DEF,               /* MOTOR_1 - PWM3 ChA pin */
-  MOTOR1_PWM3_CHB_DEF,               /* MOTOR_1 - PWM3 ChB pin */
-  /* PWM MOTOR_2 configuration pins */
-  MOTOR2_PWM1_CHA_DEF,               /* MOTOR_2 - PWM1 ChA pin */
-  MOTOR2_PWM1_CHB_DEF,               /* MOTOR_2 - PWM1 ChB pin */
-  MOTOR2_PWM2_CHA_DEF,               /* MOTOR_2 - PWM2 ChA pin */
-  MOTOR2_PWM2_CHB_DEF,               /* MOTOR_2 - PWM2 ChB pin */
-  MOTOR2_PWM3_CHA_DEF,               /* MOTOR_2 - PWM3 ChA pin */
-  MOTOR2_PWM3_CHB_DEF,               /* MOTOR_2 - PWM3 ChA pin */
+ MOTOR1_PWM1_CHA_DEF,               /* MOTOR_1 - PWM1 ChA pin */
+ MOTOR1_PWM1_CHB_DEF,               /* MOTOR_1 - PWM1 ChB pin */
+ MOTOR1_PWM2_CHA_DEF,               /* MOTOR_1 - PWM2 ChA pin */
+ MOTOR1_PWM2_CHB_DEF,               /* MOTOR_1 - PWM2 ChB pin */
+ MOTOR1_PWM3_CHA_DEF,               /* MOTOR_1 - PWM3 ChA pin */
+ MOTOR1_PWM3_CHB_DEF,               /* MOTOR_1 - PWM3 ChB pin */
+ /* PWM MOTOR_2 configuration pins */
+ MOTOR2_PWM1_CHA_DEF,               /* MOTOR_2 - PWM1 ChA pin */
+ MOTOR2_PWM1_CHB_DEF,               /* MOTOR_2 - PWM1 ChB pin */
+ MOTOR2_PWM2_CHA_DEF,               /* MOTOR_2 - PWM2 ChA pin */
+ MOTOR2_PWM2_CHB_DEF,               /* MOTOR_2 - PWM2 ChB pin */
+ MOTOR2_PWM3_CHA_DEF,               /* MOTOR_2 - PWM3 ChA pin */
+ MOTOR2_PWM3_CHB_DEF,               /* MOTOR_2 - PWM3 ChA pin */
  /* Quadrature encoder #1 */
  MOTOR1_ENC_CHA_DEF,
  MOTOR1_ENC_CHB_DEF,
@@ -136,11 +140,16 @@ static const gpio_cfg_t gpioPinsCfgList[] =
  RS485_RX_DEF,                      /* RS485 Rx pin */
  RS485_TX_EN_DEF,                   /* RS485 Tx enable pin */
  RS485_RX_EN_DEF,                   /* RS485 Rx enable pin */
+ /* CAN driver activation */
+ CAN_SHDN_EN_DEF,                   /* CAN shutdown pin */
  /* Debug pins */
  DBG_PIN3_DEF,                      /* Debug pin 3 */
  DBG_PIN2_DEF,                      /* Debug pin 2 */
  DBG_PIN1_DEF,                      /* Debug pin 1 */
  DBG_PIN0_DEF,                      /* Debug pin 0 */
+ /* USB pins */
+  USB_DM_DEF,                        /* USB D- pin */
+  USB_DP_DEF,                        /* USB D+ pin */
  {.pinNum = UINT32_MAX},            /* END OF ARRAY */
 };
 
@@ -332,6 +341,7 @@ static const spi_cfg_t  spiCfgList[] =
  */
 static const dma_cfg_t  dmaCfgList[] =
 {
+ DMA_DBG_CLA2CM_DEF,                /* DMA for memory transfer between CLA & IPC (CPU to CM) */
  DMA_LED_SPI_TX_DEF,                /* DMA for the RGB LED */
  DMA_COM_SPI_TX_DEF,                /* DMA for SPI COMMUNICATION Tx */
  DMA_COM_SPI_RX_DEF,                /* DMA for SPI COMMUNICATION Rx */
@@ -389,6 +399,7 @@ static const hal_cfg_t  hal =
  .p_ipcHandle   = ipcCfgList,
  .p_sciHandle   = sciCfgList,
  .p_spiHandle   = spiCfgList,
+ .p_mcanHandle  = NULL,
  .p_timerHandle = timerCfgList,
  .p_claHandle   = claCfgList,
  .p_clbHandle   = clbCfgList,
