@@ -267,13 +267,7 @@
 #define IMU_IT1_CFG                             GPIO_37_GPIO37
 #define IMU_IT1_READ                            (HWREG(GPIODATA_BASE + GPIO_O_GPBDAT) & GPIO_GPBDAT_GPIO37)
 
-#if UART_BUS_ENABLE
-#define UART_ON_USB_TX_NUM                      (42U)
-#define UART_ON_USB_TX_CFG                      GPIO_42_UARTA_TX
-
-#define UART_ON_USB_RX_NUM                      (43U)
-#define UART_ON_USB_RX_CFG                      GPIO_43_UARTA_RX
-#elif USB_BUS_ENABLE
+#if (USB_BUS_ENABLE) && (!UART_BUS_ENABLE)
 #define USB_DM_NUM                              (42U)
 #define USB_DM_DEF                              { \
                                                     .pinNum             = USB_DM_NUM, \
@@ -286,6 +280,30 @@
                                                     .pinNum             = USB_DP_NUM, \
                                                     .coreSelect         = GPIO_CORE_CM, \
                                                     .analogModeEnable   = GPIO_ANALOG_ENABLED, \
+                                                }
+#elif (!USB_BUS_ENABLE) && (UART_BUS_ENABLE)
+#define UART_ON_USB_TX_NUM                      (42U)
+#define UART_ON_USB_TX_CFG                      GPIO_42_UARTA_TX
+#define UART_ON_USB_TX_DEF                      { \
+                                                    .pinNum         = UART_ON_USB_TX_NUM, \
+                                                    .fctMux         = UART_ON_USB_TX_CFG, \
+                                                    .coreSelect     = GPIO_CORE_CM, \
+                                                    .direction      = GPIO_DIR_MODE_OUT, \
+                                                    .samplingInMode = GPIO_QUAL_ASYNC, \
+                                                    .setValue       = (0U), \
+                                                    .intEnable      = false, \
+                                                }
+
+#define UART_ON_USB_RX_NUM                      (43U)
+#define UART_ON_USB_RX_CFG                      GPIO_43_UARTA_RX
+#define UART_ON_USB_RX_DEF                      { \
+                                                    .pinNum         = UART_ON_USB_RX_NUM, \
+                                                    .fctMux         = UART_ON_USB_RX_CFG, \
+                                                    .coreSelect     = GPIO_CORE_CM, \
+                                                    .direction      = GPIO_DIR_MODE_IN, \
+                                                    .samplingInMode = GPIO_QUAL_ASYNC, \
+                                                    .setValue       = (0U), \
+                                                    .intEnable      = false, \
                                                 }
 #endif
 
@@ -2060,7 +2078,7 @@
 #define DMA_COM_SPI_RX_TRIGGER_SRC              DMA_TRIGGER_SPIBRX
 
 #define DMA_DBG_CLA2CM_FULL_LENGTH              (128U)
-#define DMA_DBG_CLA2CM_BURST_EVT                (32U)
+#define DMA_DBG_CLA2CM_BURST_EVT                (16U)
 #define DMA_DBG_CLA2CM_TRANSFER_EVT             (DMA_DBG_CLA2CM_FULL_LENGTH / DMA_DBG_CLA2CM_BURST_EVT)
 #define DMA_DBG_CLA2CM_CONFIG                   (DMA_CFG_ONESHOT_DISABLE | DMA_CFG_CONTINUOUS_DISABLE | DMA_CFG_SIZE_16BIT)
 #if ((DMA_DBG_CLA2CM_CONFIG & DMA_MODE_DATASIZE) == DMA_CFG_SIZE_16BIT)
@@ -2104,8 +2122,8 @@
 
 #define DMA_DBG_CLA2CM_DEF                    	{ \
                                                     .dmaChBase      = DMA_DBG_CLA2CM_BASE_ADDR, \
-                                                    .p_dstAddr      = (uint16_t *) &dbg_cpu2cm_m1, \
-                                                    .p_srcAddr      = (uint16_t *) &dbg_cla2dma_mx, \
+                                                    .p_dstAddr      = (debug_t *) &dbg_cpu2cm_m1, \
+                                                    .p_srcAddr      = (debug_t *) &dbg_cla2dma_mx, \
                                                     .burstSize      = DMA_DBG_CLA2CM_BURST_EVT, \
                                                     .transferSize   = DMA_DBG_CLA2CM_TRANSFER_EVT, \
                                                     .dstWrapSize    = DMA_NO_WRAP, \

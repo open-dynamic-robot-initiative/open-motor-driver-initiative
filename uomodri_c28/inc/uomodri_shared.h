@@ -141,7 +141,7 @@ void DBG_copyStruct(motor_t* p_motor, debug_t* p_dbg)
     p_dbg->enc_thetaAbsolute        = p_motor->foc.enc.thetaAbsolute;       /*!< Absolute angular position - [turns] */
     p_dbg->enc_turnNb               = p_motor->foc.enc.turnNb;              /*!< Number of full turns (signed) */
     p_dbg->enc_thetaDir             = p_motor->foc.enc.thetaDir;            /*!< Rotor direction - -1 = CCW/reverse, 1 = CW/forward */
-    p_dbg->enc_flags                = p_motor->foc.enc.flags;
+    p_dbg->enc_flags.all            = p_motor->foc.enc.flags.all;
 
     p_dbg->enc_speed_speedHigh      = p_motor->foc.enc.speed.speedHigh;     /*!< High speed estimation -  [rad/s] - diff_angular * scaler = velocity */
     p_dbg->enc_speed_speedMech      = p_motor->foc.enc.speed.speedMech[0];  /*!< Mechanical output speed - [rad/s] */
@@ -156,8 +156,8 @@ void DBG_copyStruct(motor_t* p_motor, debug_t* p_dbg)
     p_dbg->cmd_iSat                 = p_motor->foc.cmd.iSat;
     p_dbg->cmd_cptTimeout           = p_motor->foc.cmd.cptTimeout;
     p_dbg->cmd_index                = p_motor->foc.cmd.index;
-    p_dbg->cmd_cmdField             = p_motor->foc.cmd.cmdField;            /*!< Bit 0      : R/W - Enable system to start. No power on motors.         */
-    p_dbg->cmd_periphField          = p_motor->foc.cmd.periphField;         /*!< Bits 0   : R/W - DRV initialization went wrong             */
+    p_dbg->cmd_cmdField.all         = p_motor->foc.cmd.cmdField.all;            /*!< Bit 0      : R/W - Enable system to start. No power on motors.         */
+    p_dbg->cmd_periphField.all      = p_motor->foc.cmd.periphField.all;         /*!< Bits 0   : R/W - DRV initialization went wrong             */
 
     p_dbg->sinTheta                 = p_motor->foc.sinTheta;                /*!< Sinus of the electrical rotor angle */
     p_dbg->cosTheta                 = p_motor->foc.cosTheta;           /*!< Cosine of the electrical rotor angle */
@@ -193,7 +193,7 @@ void DBG_copyStruct(motor_t* p_motor, debug_t* p_dbg)
 
     p_dbg->itCnt                    = p_motor->itCnt;          /*!< Event counter incrementing on every IT call */
     p_dbg->motor_id                 = p_motor->id;             /*!< Motor identification */
-    p_dbg->error                    = p_motor->error;          /*!< Bit field for the error sources. */
+    p_dbg->error.all                = p_motor->error.all;          /*!< Bit field for the error sources. */
     p_dbg->state                    = p_motor->state;      /*!< Motor state for the FSM. */
 
     return;

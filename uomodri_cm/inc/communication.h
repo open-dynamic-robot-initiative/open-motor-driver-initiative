@@ -212,6 +212,72 @@ typedef enum
 } com_dbg_tx_state_e;
 #endif
 
+/**
+ * @union   cmd_reg_u
+ * @brief   Bit field associated to motor control (motor \& encoder).
+ */
+typedef union __cmd_reg_u__
+{
+    uint16_t            all;
+    struct
+    {
+        uint16_t        systemEnable    : 1;    /*!< Bit 0      : R/W - Enable system to start. No power on motors.         */
+        uint16_t        motorEnable     : 1;    /*!< Bit 1      : R/W - Enable power on motor.                              */
+        uint16_t        rollOverEnable  : 1;    /*!< Bit 2      : R/W - Limit the rotations to +/- 128 rounds.              */
+        uint16_t        encOffsetEnable : 1;    /*!< Bit 3      : R/W - Use encoder index in position computation.          */
+        uint16_t        CMD_RSV1        : 12;   /*!< Bit 4-15   : R/W - Reserved                                            */
+    };
+} cmd_reg_u;
+
+/**
+ * @union   periph_u
+ * @brief   List extra peripherals components states not managed by the motor control loop.
+ */
+typedef union __periph_u__
+{
+    uint16_t            all;
+    struct
+    {
+        uint16_t        drv_initErr     : 1;    /*!< Bits 0   : R/W - DRV initialization went wrong */
+        uint16_t        mot_tempErr     : 1;    /*!< Bits 1   : R/W - Estimated motor temperature is too high. */
+        uint16_t        STATUS_RSV1     : 14;   /*!< Bits 2-15: R/W - Reserved */
+    };
+} periph_u;
+
+typedef union __enc_test_u__
+{
+    uint16_t            all;
+    struct
+    {
+        uint16_t        indexDetect     : 1;    /*!< Bit 0      : R/W - Has index been detected? */
+        uint16_t        indexOffset     : 1;    /*!< Bit 1      : R/W - Is index compensation activated? */
+        uint16_t        indexToggle     : 1;    /*!< Bit 2      : R/W - Toggle flag each time index is seen. */
+        uint16_t        indexErr        : 1;    /*!< Bit 3      : R/W - Mismatch between index and mechanical angle capture. */
+        uint16_t        rollOverErr     : 1;    /*!< Bit 4      : R/W - Roll-over error flag. */
+        uint16_t        alignErr        : 1;    /*!< Bit 5      : R/W - Detect an error on encoder (pole pairs mismatch, phases errors...) */
+        uint16_t        ENC_TEST_RSV1   : 10;   /*!< Bit 6-15   : R/W - Reserved */
+    };
+} enc_test_u;
+
+/**
+ * @union   error_reg_u
+ * @brief   Bit field associated to all sources of motor errors (managed in motor control loop).
+ */
+typedef union __error_reg_u__
+{
+    uint16_t            all;
+    struct
+    {
+        uint16_t        enc_indexErr    : 1;    /*!< Bits 0   : R/W - Encoder error too high */
+        uint16_t        enc_alignErr    : 1;    /*!< Bits 1   : R/W - Encoder failure during alignment. */
+        uint16_t        pos_rollover    : 1;    /*!< Bits 2   : R/W - Position roll-over occurred */
+        uint16_t        drv_fault       : 1;    /*!< Bits 3   : R/W - Motor DRV nFault error */
+        uint16_t        com_timeout     : 1;    /*!< Bits 4   : R/W - Communication timeout error */
+        uint16_t        ERROR_RSV1      : 10;   /*!< Bits 5-14: R/W - Reserved */
+        uint16_t        drv_initErr     : 1;    /*!< Bit15    : R/W - Motor DRV bad initialization */
+    };
+} error_reg_u;
+
 /***********************************************************************
  * COMMUNICATION UNIONS BIT FILEDS
  ***********************************************************************/
@@ -507,39 +573,131 @@ typedef union __float32_u__
 } float32_u;
 #endif
 
+typedef struct __debug_t__
+{
+    struct
+    {
+        float_t         ia;                     // [A]
+        float_t         ib;                     // [A]
+        float_t         ic;                     // [A]
+        float_t         vBus;                   // [V]
+        float_t         vExt;                   // [V]
+    };
+    struct
+    {
+        float_t         enc_thetaElec;          /*!< Angular electrical position  - [pu] */
+        float_t         enc_thetaMech;          /*!< Angular mechanical position  - [pu] */
+        float_t         enc_thetaIndexRelative; /*!< Index mechanical angle */
+        float_t         enc_thetaIndexAbsolute; /*!< First index mechanical angle */
+        float_t         enc_thetaAbsolute;      /*!< Absolute angular position - [turns] */
+        int16_t         enc_turnNb;             /*!< Number of full turns (signed) */
+        int16_t         enc_thetaDir;           /*!< Rotor direction - -1 = CCW/reverse, 1 = CW/forward */
+        enc_test_u      enc_flags;
+    };
+    struct
+    {
+        float_t         enc_speed_speedHigh;    /*!< High speed estimation -  [rad/s] - diff_angular * scaler = velocity */
+        float_t         enc_speed_speedMech;    /*!< Mechanical output speed - [rad/s] */
+        float_t         enc_speed_speedElec;    /*!< Electrical output speed (pole pairs integration) - [rad/s] */
+        float_t         enc_speed_theta;        /*!< Angular position of rotor - [pu] */
+    };
+    struct
+    {
+        float_t         cmd_posRef;
+        float_t         cmd_velRef;
+        float_t         cmd_iqff;
+        float_t         cmd_kpCoeff;
+        float_t         cmd_kdCoeff;
+        float_t         cmd_iSat;
+        uint16_t        cmd_cptTimeout;
+        uint16_t        cmd_index;
+        cmd_reg_u       cmd_cmdField;           /*!< Bit 0      : R/W - Enable system to start. No power on motors.         */
+                                                /*!< Bit 1      : R/W - Enable power on motor.                              */
+                                                /*!< Bit 2      : R/W - Limit the rotations to +/- 128 rounds.              */
+                                                /*!< Bit 3      : R/W - Use encoder index in position computation.          */
+        periph_u        cmd_periphField;        /*!< Bits 0   : R/W - DRV initialization went wrong             */
+                                                /*!< Bits 1   : R/W - Estimated motor temperature is too high.          */
+    };
+    struct
+    {
+        float_t         sinTheta;               /*!< Sinus of the electrical rotor angle */
+        float_t         cosTheta;               /*!< Cosine of the electrical rotor angle */
+        float_t         ialpha;                 /*!< Direct Clarke transform result - [A] */
+        float_t         ibeta;                  /*!< Direct Clarke transform result - [A] */
+        float_t         id;                     /*!< Filtered Direct Park transform result - [A] */
+        float_t         iq;                     /*!< Filtered Quadrature Park transform result - [A] */
+        float_t         ud;                     /*!< Inverse Park transform result - [V] */
+        float_t         uq;                     /*!< Inverse Park transform result - [V] */
+        float_t         ualpha;                 /*!< Inverse Clarke transform result - [V] */
+        float_t         ubeta;                  /*!< Inverse Clarke transform result - [V] */
+        float_t         ua;                     /*!< Phase commands - Channel a - [V] */
+        float_t         ub;                     /*!< Phase commands - Channel b - [V] */
+        float_t         uc;                     /*!< Phase commands - Channel c - [V] */
+        float_t         dtc_u;                  /*!< Duty cycles on channel u - [pu] between -0.5 and 0.5 */
+        float_t         dtc_v;                  /*!< Duty cycles on channel v - [pu] between -0.5 and 0.5 */
+        float_t         dtc_w;                  /*!< Duty cycles on channel w - [pu] between -0.5 and 0.5 */
+        float_t         idRef;                  /*!< PI controller set point values for D-axis current - [A] */
+        float_t         iqRef;                  /*!< PI controller set point values for Q-axis current - [A] */
+    };
+    struct
+    {
+        float_t         piId_err;               /*!< Current error */
+        float_t         piId_integral;          /*!< Integral term partial computation */
+        float_t         piId_out;               /*!< Controller output */
+    };
+    struct
+    {
+        float_t         piIq_err;               /*!< Current error */
+        float_t         piIq_integral;          /*!< Integral term partial computation */
+        float_t         piIq_out;               /*!< Controller output */
+    };
+    struct
+    {
+        float_t         pdPosVel_errTheta;      /*!< Error position */
+        float_t         pdPosVel_errSpeed;      /*!< Error speed */
+        float_t         pdPosVel_derivative;    /*!< Derivative term partial computation */
+        float_t         pdPosVel_out;           /*!< Controller output */
+    };
+    uint32_t            itCnt;                  /*!< Event counter incrementing on every IT call */
+    uint16_t            motor_id;               /*!< Motor identification */
+    error_reg_u         error;                  /*!< Bit field for the error sources. */
+    //    motor_state_e       state;                  /*!< Motor state for the FSM. */
+    uint16_t            state;                  /*!< Motor state for the FSM. */
+} debug_t;
+
 /**
  * @struct  com_cpu1_to_cm_t
  * @brief   Structure for address transfer between CPU (16bits) and CM(8bits)
  */
-typedef struct __com_cpu_2_cm_t__
-{
-    uint32_u    itcnt;
-    float32_u   ia;
-    float32_u   ib;
-    float32_u   ic;
-    float32_u   vbus;
-    float32_u   ialpha;
-    float32_u   ibeta;
-    float32_u   id;
-    float32_u   iq;
-    float32_u   iqRef;
-    float32_u   ud;
-    float32_u   uq;
-    float32_u   ualpha;
-    float32_u   ubeta;
-    float32_u   ua;
-    float32_u   ub;
-    float32_u   uc;
-    float32_u   theta;
-    float32_u   posRef;
-    float32_u   speed;
-    float32_u   velRef;
-    float32_u   pd_kp;
-    float32_u   pd_kd;
-    float32_u   iqff;
-    float32_u   isat;
-    uint32_u    status;
-} com_cpu_2_cm_t;
+//typedef struct __com_cpu_2_cm_t__
+//{
+//    uint32_u    itcnt;
+//    float32_u   ia;
+//    float32_u   ib;
+//    float32_u   ic;
+//    float32_u   vbus;
+//    float32_u   ialpha;
+//    float32_u   ibeta;
+//    float32_u   id;
+//    float32_u   iq;
+//    float32_u   iqRef;
+//    float32_u   ud;
+//    float32_u   uq;
+//    float32_u   ualpha;
+//    float32_u   ubeta;
+//    float32_u   ua;
+//    float32_u   ub;
+//    float32_u   uc;
+//    float32_u   theta;
+//    float32_u   posRef;
+//    float32_u   speed;
+//    float32_u   velRef;
+//    float32_u   pd_kp;
+//    float32_u   pd_kd;
+//    float32_u   iqff;
+//    float32_u   isat;
+//    uint32_u    status;
+//} com_cpu_2_cm_t;
 
 typedef union __word_32b_u__
 {
@@ -758,91 +916,73 @@ typedef struct __bit_command_mem_t__
 typedef struct __attribute__((__packed__)) __dbg_uart_msg_t__
 {
     uint8_t         header[2];
-//    uint32_t        counter;
-//    uint8_t         msgtype;
+    uint32_t        count;
 
     float_t         ia;
     float_t         ib;
     float_t         ic;
-//    float_t         vbus;
-//    float_t         ialpha;
-//    float_t         ibeta;
-    float_t         id;
-    float_t         iq;
-    float_t         iqref;
-    float_t         ud;
-    float_t         uq;
-//    float_t         ualpha;
-//    float_t         ubeta;
-//    float_t         ua;
-//    float_t         ub;
-//    float_t         uc;
     float_t         pos;
-//    float_t         posref;
     float_t         vel;
-//    float_t         velref;
-//    uint32_t        itcnt;
     uint8_t         crc;
-//    uint8_t         padding;
 } dbg_uart_msg_t;
 
-typedef struct __attribute__((__packed__)) __dbg_uart_addr_t__
-{
-    float_t*        p_ia;
-    float_t*        p_ib;
-    float_t*        p_ic;
-    float_t*        p_vbus;
-    float_t*        p_ialpha;
-    float_t*        p_ibeta;
-    float_t*        p_id;
-    float_t*        p_iq;
-    float_t*        p_iqref;
-    float_t*        p_ud;
-    float_t*        p_uq;
-    float_t*        p_ualpha;
-    float_t*        p_ubeta;
-    float_t*        p_ua;
-    float_t*        p_ub;
-    float_t*        p_uc;
-    float_t*        p_pos;
-    float_t*        p_posref;
-    float_t*        p_vel;
-    float_t*        p_velref;
-//    float_t*        p_pd_kp;
-//    float_t*        p_pd_kd;
-//    float_t*        p_iqff;
-//    float_t*        p_isat;
-//    float_t*        p_status;
-//    uint64_t*       p_itcnt;
-} dbg_uart_addr_t;
-
-typedef struct __com_dbg_tx_msg_t__
-{
-//    dbg_uart_msg_t      msg;
-    com_dbg_tx_state_e  state;
-    word_32b_u          val[26];
-//    com_cpu_2_cm_t
-
-    dbg_uart_addr_t     addr;
-    counter_u           counter;
-    config_u            cfg_lst;
-    command_u           cmd_lst;
-    uint8_t             msg[200];
-    uint8_t             msg_size;
-    bool                valid;
-} com_dbg_tx_msg_t;
-
-typedef struct __com_dbg_rx_msg_t__
-{
-    word_32b_u          cmd_msg[32];
-    com_dbg_rx_state_e  state;
-    counter_u           counter;
-    config_u            cfg_lst;
-    command_u           cmd_lst;
-    uint8_t             msgType;
-    uint8_t             crc;
-    bool                valid;
-} com_dbg_rx_msg_t;
+//typedef struct __attribute__((__packed__)) __dbg_uart_addr_t__
+//{
+//    float_t*        p_ia;
+//    float_t*        p_ib;
+//    float_t*        p_ic;
+//    float_t*        p_vbus;
+//    float_t*        p_ialpha;
+//    float_t*        p_ibeta;
+//    float_t*        p_id;
+//    float_t*        p_iq;
+//    float_t*        p_iqref;
+//    float_t*        p_ud;
+//    float_t*        p_uq;
+//    float_t*        p_ualpha;
+//    float_t*        p_ubeta;
+//    float_t*        p_ua;
+//    float_t*        p_ub;
+//    float_t*        p_uc;
+//    float_t*        p_pos;
+//    float_t*        p_posref;
+//    float_t*        p_vel;
+//    float_t*        p_velref;
+////    float_t*        p_pd_kp;
+////    float_t*        p_pd_kd;
+////    float_t*        p_iqff;
+////    float_t*        p_isat;
+////    float_t*        p_status;
+////    uint64_t*       p_itcnt;
+//} dbg_uart_addr_t;
+//
+//typedef struct __com_dbg_tx_msg_t__
+//{
+////    dbg_uart_msg_t      msg;
+//    com_dbg_tx_state_e  state;
+//    word_32b_u          val[26];
+////    com_cpu_2_cm_t
+//
+//    dbg_uart_addr_t     addr;
+//    counter_u           counter;
+//    config_u            cfg_lst;
+//    command_u           cmd_lst;
+//    uint8_t             msg[200];
+//    uint8_t             msg_size;
+//    bool                valid;
+//} com_dbg_tx_msg_t;
+//
+//typedef struct __com_dbg_rx_msg_t__
+//{
+//    word_32b_u          cmd_msg[32];
+//    com_dbg_rx_state_e  state;
+//    counter_u           counter;
+//    config_u            cfg_lst;
+//    command_u           cmd_lst;
+//    uint8_t             msgType;
+//    uint8_t             crc;
+//    bool                valid;
+//} com_dbg_rx_msg_t;
 
 #endif
 
@@ -866,8 +1006,8 @@ void SCI_rxEnable(uint32_t);
 void SCI_txDisable(uint32_t);
 void SCI_txEnable(uint32_t);
 #else
-void COM_msgDbgTx(dbg_uart_addr_t*, dbg_uart_msg_t*);
-void COM_msgDbgRx(com_dbg_rx_msg_t*, uint8_t);
+void COM_msgDbgTx(debug_t*, dbg_uart_msg_t*);
+//void COM_msgDbgRx(com_dbg_rx_msg_t*, uint8_t);
 uint32_t COM_crc32(uint16_t*, size_t);
 uint8_t COM_crc8(uint8_t*, size_t);
 uint8_t COM_crc8Fast(uint8_t, uint8_t*, size_t);

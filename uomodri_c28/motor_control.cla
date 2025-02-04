@@ -96,6 +96,7 @@ __attribute__((interrupt)) void cmdNew_Task(void)
  *          - Read ADC (phase and Vbus) and encoder,
  *          - Perform FOC algorithm,
  *          - Generate the PWM commands
+ *          - Copy Motor structure in CLA to DMA memory
  */
 __attribute__((interrupt)) void motor1_Task(void)
 {
@@ -118,6 +119,7 @@ __attribute__((interrupt)) void motor1_Task(void)
  *          - Read ADC (phase and Vbus) and encoder,
  *          - Perform FOC algorithm,
  *          - Generate the PWM commands
+ *          - Copy Motor_2 structure in CLA to DMA memory
  */
 __attribute__((interrupt)) void motor2_Task(void)
 {
@@ -128,7 +130,7 @@ __attribute__((interrupt)) void motor2_Task(void)
     // Motor control
     MOT_runControl(&motor_m2);
     // Copy elements for debug
-    DBG_copyStruct(&motor_m2, &dbg_cla2dma_mx);
+//    DBG_copyStruct(&motor_m2, &dbg_cla2dma_mx);
 
 #ifdef DEBUG
     DBG_PIN0_CLEAR;

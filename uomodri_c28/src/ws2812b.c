@@ -59,7 +59,8 @@ uint16_t* ws2812b_writeLed(uint16_t led_pos, uint16_t red, uint16_t green, uint1
  * @param[in]   timer_cpt_ms    Current millisecond counter value.
  * @param[out]  *p_msg          Pointer on the led message created.
  */
-uint16_t* ws2812b_dimmingLed(uint16_t led_pos, motor_state_e motor_state, uint16_t timer_cpt_ms, uint16_t* p_msg)
+//uint16_t* ws2812b_dimmingLed(uint16_t led_pos, motor_state_e motor_state, uint16_t timer_cpt_ms, uint16_t* p_msg)
+uint16_t* ws2812b_dimmingLed(uint16_t led_pos, uint16_t motor_state, uint16_t timer_cpt_ms, uint16_t* p_msg)
 {
     float32_t   fade_blink_f32  = (float32_t)((timer_cpt_ms < 500U) ? (timer_cpt_ms): (1000U - timer_cpt_ms)) / 500.0f;
     uint16_t    blink           = (timer_cpt_ms < 500U)             ? (0x00)        : (0xFF);

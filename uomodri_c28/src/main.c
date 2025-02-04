@@ -144,7 +144,7 @@ uint16_t    led_spi_tx[LED_MSG_TX_16BIT_LENGTH];
 
 #pragma DATA_ALIGN(com_bus_select, 4)
 #pragma DATA_SECTION(com_bus_select, "ramgs0")
-com_bus_e   com_bus_select      = COM_USE_SPI_BUS;
+com_bus_e   com_bus_select      = COM_USE_RS485_BUS;
 //COM_NO_BUS_DEFINED;
 
 #pragma DATA_ALIGN(global_ms_tmr_cnt, 4)
@@ -338,7 +338,7 @@ void main(void)
     // Start ADC offset calibration on CLA.
     CLA_forceTasks(CLA1_BASE, CLA_ADC_CALIB_TASK_FLAG);
     // Use SPI, RS485 or CAN-FD as master communication bus.
-    com_bus_select = COM_USE_SPI_BUS;
+    com_bus_select = COM_USE_RS485_BUS;
 #if (USE_UOMODRI_REV >= USE_UOMODRI_V3)
     // Mux control of the differential pair.
     COM_muxCtrl(com_bus_select);
@@ -466,7 +466,8 @@ inline void LED_dimming(motor_t* p_motor1, motor_t* p_motor2, uint16_t* p_msg)
 {
     static uint16_t timer_cpt_ms    = 0;
 //    uint16_t        i               = 0;
-    motor_state_e   motor_state     = MOTOR_STATE_IDLE;
+    //motor_state_e   motor_state     = MOTOR_STATE_IDLE;
+    uint16_t motor_state            = MOTOR_STATE_IDLE;
 
     /* Set status of the 1st led */
     if((p_motor1->state & MOTOR_STATE_BOOT)     || (p_motor2->state & MOTOR_STATE_BOOT))
@@ -784,6 +785,12 @@ __attribute__((interrupt)) void cla_isrClearTask(void)
  */
 __attribute__((interrupt)) void cla_isrMotor1(void)
 {
+    // Start DMA channel
+    DMA_configAddresses(DMA_DBG_CLA2CM_BASE_ADDR, \
+                        &dbg_cpu2cm_m1, \
+                        &dbg_cla2dma_mx);
+    DMA_startChannel(DMA_DBG_CLA2CM_BASE_ADDR);
+    DMA_forceTrigger(DMA_DBG_CLA2CM_BASE_ADDR);
     // Fill of the M1 motor's elements in the Tx message
     switch(com_bus_select)
     {
@@ -833,15 +840,6 @@ __attribute__((interrupt)) void cla_isrMotor1(void)
         break;
     }
 
-//    m1_state = motor_m1.state[CURRENT];
-
-    // Start DMA channel
-//    DMA_configAddresses(DMA_DBG_CLA2CM_BASE_ADDR, \
-//                        (uint16_t *) &dbg_cpu2cm_m1, \
-//                        (uint16_t *) &dbg_cla2dma_mx);
-//    DMA_startChannel(DMA_DBG_CLA2CM_BASE_ADDR);
-//    DMA_forceTrigger(DMA_DBG_CLA2CM_BASE_ADDR);
-
     // Clear IT source CLA ask
     CLA_clearTaskFlags(CLA1_BASE, CLA_MOTOR1_TASK_FLAG);
     // Clear IT
@@ -853,6 +851,11 @@ __attribute__((interrupt)) void cla_isrMotor1(void)
  */
 __attribute__((interrupt)) void cla_isrMotor2(void)
 {
+    // Start DMA channel
+//    DMA_configAddresses(DMA_DBG_CLA2CM_BASE_ADDR, \
+//                        (debug_t *)&dbg_cpu2cm_m2, \
+//                        (debug_t *)&dbg_cla2dma_mx);
+//    DMA_forceTrigger(DMA_DBG_CLA2CM_BASE_ADDR);
     // Finalize the Tx message. Aggregate MOTOR_2 values + computed CRC
     switch(com_bus_select)
     {
@@ -913,12 +916,6 @@ __attribute__((interrupt)) void cla_isrMotor2(void)
     default:
         break;
     }
-
-//    m2_state = motor_m2.state[CURRENT];
-
-    // Start DMA channel
-//    DMA_configAddresses(DMA_DBG_CLA2CM_BASE_ADDR, (uint16_t *)&debug_mx, (uint16_t *)&debug_m2);
-//    DMA_forceTrigger(DMA_DBG_CLA2CM_BASE_ADDR);
 
     CLA_clearTaskFlags(CLA1_BASE, CLA_MOTOR2_TASK_FLAG);
     // Clear IT
@@ -1089,9 +1086,9 @@ __attribute__((interrupt)) void clb_isrTxRx_RS485(void)
     uint16_t clb_tag_test   = HWREGH(CLB_INT_REG_ADDR);
 #endif
 
-    if(((clbCfgList[0].clb_Addr1Spec == RS485_CLB_USE_NO_ADDRESS) && (clb_tag_test & CLB_INT_RS485_RX_ADDRESS_1_VALID)) || \
-       ((clbCfgList[0].clb_Addr2Spec == RS485_CLB_USE_NO_ADDRESS) && (clb_tag_test & CLB_INT_RS485_RX_ADDRESS_2_VALID)))
-        clb_tag_test = 0;
+//    if(((clbCfgList[0].clb_Addr1Spec == RS485_CLB_USE_NO_ADDRESS) && (clb_tag_test & CLB_INT_RS485_RX_ADDRESS_1_VALID)) || \
+//       ((clbCfgList[0].clb_Addr2Spec == RS485_CLB_USE_NO_ADDRESS) && (clb_tag_test & CLB_INT_RS485_RX_ADDRESS_2_VALID)))
+//        clb_tag_test = 0;
 
     switch(clb_tag_test)
     {

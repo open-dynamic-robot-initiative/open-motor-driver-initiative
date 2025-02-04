@@ -52,48 +52,15 @@ extern __attribute__((interrupt)) void Cla1Task8(void);
  */
 static const gpio_cfg_t gpioPinsCfgList[] =
 {
-#if (USB_BUS_ENABLE) && (!UART_BUS_ENABLE) && (!defined CPU1)
- /*
-  * USB Pins
-  */
- {
-  .pinNum           = USB_M_NUM,
-  .fctMux           = USB_M_CFG,
-  .pinType          = GPIO_PIN_TYPE_STD,
-  .coreSelect       = GPIO_CORE_CM,
-  .analogModeEnable = GPIO_ANALOG_ENABLED
- },
- {
-  .pinNum           = USB_P_NUM,
-  .fctMux           = USB_P_CFG,
-  .pinType          = GPIO_PIN_TYPE_STD,
-  .coreSelect       = GPIO_CORE_CM,
-  .analogModeEnable = GPIO_ANALOG_ENABLED
- },
-#elif (!USB_BUS_ENABLE) && (UART_BUS_ENABLE) && (!defined CPU1)
- /*
-  * UART Pins
-  */
- {
-  .pinNum           = UART_ON_USB_TX_NUM,
-  .fctMux           = UART_ON_USB_TX_CFG,
-  .pinType          = GPIO_PIN_TYPE_STD,
-  .coreSelect       = GPIO_CORE_CM,
-  .direction        = GPIO_DIR_MODE_OUT,
-  .samplingInMode   = GPIO_QUAL_ASYNC,
-  .setValue         = 0,
-  .intEnable        = false,
- },
- {
-  .pinNum           = UART_ON_USB_RX_NUM,
-  .fctMux           = UART_ON_USB_RX_CFG,
-  .pinType          = GPIO_PIN_TYPE_STD,
-  .coreSelect       = GPIO_CORE_CM,
-  .direction        = GPIO_DIR_MODE_IN,
-  .samplingInMode   = GPIO_QUAL_ASYNC,
-  .setValue         = 0,
-  .intEnable        = false,
- },
+#if (USB_BUS_ENABLE) && (!UART_BUS_ENABLE)
+ /* USB pins */
+ USB_DM_DEF,                        /* USB D- pin */
+ USB_DP_DEF,                        /* USB D+ pin */
+ USB_DETECT_DEF,                    /* USB Vbus detection pin */
+#elif (!USB_BUS_ENABLE) && (UART_BUS_ENABLE)
+ /* UART Pins */
+ UART_ON_USB_TX_DEF,
+ UART_ON_USB_RX_DEF,
 #endif
  /* PWM MOTOR_1 configuration pins */
  MOTOR1_PWM1_CHA_DEF,               /* MOTOR_1 - PWM1 ChA pin */
@@ -149,10 +116,6 @@ static const gpio_cfg_t gpioPinsCfgList[] =
  DBG_PIN2_DEF,                      /* Debug pin 2 */
  DBG_PIN1_DEF,                      /* Debug pin 1 */
  DBG_PIN0_DEF,                      /* Debug pin 0 */
- /* USB pins */
- USB_DM_DEF,                        /* USB D- pin */
- USB_DP_DEF,                        /* USB D+ pin */
- USB_DETECT_DEF,                    /* USB Vbus detection pin */
  {.pinNum = UINT32_MAX},            /* END OF ARRAY */
 };
 

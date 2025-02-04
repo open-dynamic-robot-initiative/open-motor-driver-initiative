@@ -95,206 +95,189 @@
  * @param p_msg Pointer on the message created /updated for debug.
  */
 //void COM_msgDbgTx(com_dbg_tx_msg_t* p_msg, uint8_t msg_type)
-void COM_msgDbgTx(dbg_uart_addr_t* p_addr, dbg_uart_msg_t* p_msg)
-{
-#if (0)
-    static uint64_t cfg_lst = 0;
-    static uint8_t  i = 0, j = 0;
-
-    switch(p_msg->state)
-    {
-    case COM_DBG_TX_HEADER:
-    default:
-        p_msg->msg[0]   = 'a';
-        p_msg->msg[1]   = 'b';
-        p_msg->msg_size = MSG_TX_HEADER_SIZE;
-        p_msg->state    = COM_DBG_TX_CNT;
-        break;
-
-    case COM_DBG_TX_CNT:
-        for(i = 0; i < sizeof(counter_u); i++)
-            p_msg->msg[MSG_TX_HEADER_SIZE + i]  = p_msg->counter.byte[i];
-        p_msg->counter.all++;
-        p_msg->msg_size                        += sizeof(counter_u);
-        p_msg->state                            = COM_DBG_TX_MSG_TYPE;
-        //(msg_type == MSG_TX_CFG)  ? (COM_DBG_TX_CFG_LIST_4_TX) : (COM_DBG_TX_CMD_MSG);
-        break;
-
-    case COM_DBG_TX_MSG_TYPE:
-        p_msg->msg[p_msg->msg_size++]   = msg_type;
-        p_msg->state                    = (msg_type == MSG_TX_CFG)  ? (COM_DBG_TX_CFG_ACK)  : (COM_DBG_TX_HEADER);
-        p_msg->state                    = (msg_type == MSG_TX_CMD)  ? (COM_DBG_TX_CMD_MSG)  : (p_msg->state);
-        break;
-
-    case COM_DBG_TX_CFG_ACK:
-        for(i = 0; i < sizeof(config_u); i++)
-            p_msg->msg[p_msg->msg_size + i] = p_msg->cfg_lst.byte[i];
-        p_msg->msg_size                        += sizeof(config_u);
-        for(i = 0; i < sizeof(command_u); i++)
-            p_msg->msg[p_msg->msg_size + i] = p_msg->cmd_lst.byte[i];
-        p_msg->msg_size                        += sizeof(command_u);
-        p_msg->state                            = COM_DBG_TX_CRC;
-        break;
-
-    case COM_DBG_TX_CMD_MSG:
-        cfg_lst = p_msg->cfg_lst.all;
-        while(cfg_lst)
-        {
-            j           = ffs(cfg_lst) - 1;
-            cfg_lst    &= ~(1U << j);
-            for(i = 0; i < sizeof(word_32b_u); i++)
-                p_msg->msg[p_msg->msg_size + i] = p_msg->val[j].uint_8b[i];
-            p_msg->msg_size                    += sizeof(word_32b_u);
-        }
-        p_msg->state                            = COM_DBG_TX_CRC;
-        break;
-
-    case COM_DBG_TX_CRC:
-        p_msg->msg[p_msg->msg_size] = COM_crc8Fast(0, &p_msg->msg[0], p_msg->msg_size - 1);
-        p_msg->msg_size++;
-        p_msg->valid = true;
-        p_msg->state = COM_DBG_TX_HEADER;
-        break;
-
-    }
-#endif
-#if (1)
-//    static uint32_t cntMsg  = 0;
-//    p_msg->count            = cntMsg++;
-    p_msg->ia               = (float_t)(*p_addr->p_ia);
-    p_msg->ib               = (float_t)(*p_addr->p_ib);
-    p_msg->ic               = (float_t)(*p_addr->p_ic);
-//    p_msg->vbus             = (float_t)(*p_addr->p_vbus);
-//    p_msg->ialpha           = (float_t)(*p_addr->p_ialpha);
-//    p_msg->ibeta            = (float_t)(*p_addr->p_ibeta);
-    p_msg->id               = (float_t)(*p_addr->p_id);
-    p_msg->iq               = (float_t)(*p_addr->p_iq);
-    p_msg->iqref            = (float_t)(*p_addr->p_iqref);
-    p_msg->ud               = (float_t)(*p_addr->p_ud);
-    p_msg->uq               = (float_t)(*p_addr->p_uq);
-//    p_msg->ualpha           = (float_t)(*p_addr->p_ualpha);
-//    p_msg->ubeta            = (float_t)(*p_addr->p_ubeta);
-//    p_msg->ua               = (float_t)(*p_addr->p_ua);
-//    p_msg->ub               = (float_t)(*p_addr->p_ub);
-//    p_msg->uc               = (float_t)(*p_addr->p_uc);
-    p_msg->pos              = (float_t)(*p_addr->p_pos);
-//    p_msg->posref           = (float_t)(*p_addr->p_posref);
-    p_msg->vel              = (float_t)(*p_addr->p_vel);
-//    p_msg->velref           = (float_t)(*p_addr->p_velref);
-//    p_msg->itcnt            = (uint32_t)(*p_addr->p_itcnt);
-    p_msg->crc              = COM_crc8Fast(0, (uint8_t *)p_msg, (sizeof(dbg_uart_msg_t) - 1));
-#endif
-    return;
-}
-//void com_msgDbgTx(dbg_uart_addr_t* p_addr, dbg_uart_msg_t* p_msg)
+//void COM_msgDbgTx(dbg_uart_addr_t* p_addr, dbg_uart_msg_t* p_msg)
 //{
+//#if (0)
+//    static uint64_t cfg_lst = 0;
+//    static uint8_t  i = 0, j = 0;
+//
+//    switch(p_msg->state)
+//    {
+//    case COM_DBG_TX_HEADER:
+//    default:
+//        p_msg->msg[0]   = 'a';
+//        p_msg->msg[1]   = 'b';
+//        p_msg->msg_size = MSG_TX_HEADER_SIZE;
+//        p_msg->state    = COM_DBG_TX_CNT;
+//        break;
+//
+//    case COM_DBG_TX_CNT:
+//        for(i = 0; i < sizeof(counter_u); i++)
+//            p_msg->msg[MSG_TX_HEADER_SIZE + i]  = p_msg->counter.byte[i];
+//        p_msg->counter.all++;
+//        p_msg->msg_size                        += sizeof(counter_u);
+//        p_msg->state                            = COM_DBG_TX_MSG_TYPE;
+//        //(msg_type == MSG_TX_CFG)  ? (COM_DBG_TX_CFG_LIST_4_TX) : (COM_DBG_TX_CMD_MSG);
+//        break;
+//
+//    case COM_DBG_TX_MSG_TYPE:
+//        p_msg->msg[p_msg->msg_size++]   = msg_type;
+//        p_msg->state                    = (msg_type == MSG_TX_CFG)  ? (COM_DBG_TX_CFG_ACK)  : (COM_DBG_TX_HEADER);
+//        p_msg->state                    = (msg_type == MSG_TX_CMD)  ? (COM_DBG_TX_CMD_MSG)  : (p_msg->state);
+//        break;
+//
+//    case COM_DBG_TX_CFG_ACK:
+//        for(i = 0; i < sizeof(config_u); i++)
+//            p_msg->msg[p_msg->msg_size + i] = p_msg->cfg_lst.byte[i];
+//        p_msg->msg_size                        += sizeof(config_u);
+//        for(i = 0; i < sizeof(command_u); i++)
+//            p_msg->msg[p_msg->msg_size + i] = p_msg->cmd_lst.byte[i];
+//        p_msg->msg_size                        += sizeof(command_u);
+//        p_msg->state                            = COM_DBG_TX_CRC;
+//        break;
+//
+//    case COM_DBG_TX_CMD_MSG:
+//        cfg_lst = p_msg->cfg_lst.all;
+//        while(cfg_lst)
+//        {
+//            j           = ffs(cfg_lst) - 1;
+//            cfg_lst    &= ~(1U << j);
+//            for(i = 0; i < sizeof(word_32b_u); i++)
+//                p_msg->msg[p_msg->msg_size + i] = p_msg->val[j].uint_8b[i];
+//            p_msg->msg_size                    += sizeof(word_32b_u);
+//        }
+//        p_msg->state                            = COM_DBG_TX_CRC;
+//        break;
+//
+//    case COM_DBG_TX_CRC:
+//        p_msg->msg[p_msg->msg_size] = COM_crc8Fast(0, &p_msg->msg[0], p_msg->msg_size - 1);
+//        p_msg->msg_size++;
+//        p_msg->valid = true;
+//        p_msg->state = COM_DBG_TX_HEADER;
+//        break;
+//
+//    }
+//#endif
+//#if (1)
 ////    static uint32_t cntMsg  = 0;
 ////    p_msg->count            = cntMsg++;
-////    p_msg->ia               = (float_t)(*p_addr->p_ia);
-////    p_msg->ib               = (float_t)(*p_addr->p_ib);
-////    p_msg->ic               = (float_t)(*p_addr->p_ic);
+//    p_msg->ia               = (float_t)(*p_addr->p_ia);
+//    p_msg->ib               = (float_t)(*p_addr->p_ib);
+//    p_msg->ic               = (float_t)(*p_addr->p_ic);
 ////    p_msg->vbus             = (float_t)(*p_addr->p_vbus);
 ////    p_msg->ialpha           = (float_t)(*p_addr->p_ialpha);
 ////    p_msg->ibeta            = (float_t)(*p_addr->p_ibeta);
-////    p_msg->id               = (float_t)(*p_addr->p_id);
+//    p_msg->id               = (float_t)(*p_addr->p_id);
 //    p_msg->iq               = (float_t)(*p_addr->p_iq);
 //    p_msg->iqref            = (float_t)(*p_addr->p_iqref);
-////    p_msg->ud               = (float_t)(*p_addr->p_ud);
-////    p_msg->uq               = (float_t)(*p_addr->p_uq);
+//    p_msg->ud               = (float_t)(*p_addr->p_ud);
+//    p_msg->uq               = (float_t)(*p_addr->p_uq);
 ////    p_msg->ualpha           = (float_t)(*p_addr->p_ualpha);
 ////    p_msg->ubeta            = (float_t)(*p_addr->p_ubeta);
 ////    p_msg->ua               = (float_t)(*p_addr->p_ua);
 ////    p_msg->ub               = (float_t)(*p_addr->p_ub);
 ////    p_msg->uc               = (float_t)(*p_addr->p_uc);
 //    p_msg->pos              = (float_t)(*p_addr->p_pos);
-//    p_msg->posref           = (float_t)(*p_addr->p_posref);
+////    p_msg->posref           = (float_t)(*p_addr->p_posref);
 //    p_msg->vel              = (float_t)(*p_addr->p_vel);
-//    p_msg->velref           = (float_t)(*p_addr->p_velref);
+////    p_msg->velref           = (float_t)(*p_addr->p_velref);
 ////    p_msg->itcnt            = (uint32_t)(*p_addr->p_itcnt);
-//    p_msg->crc              = com_crc8_fast(0, (uint8_t *)p_msg, (sizeof(dbg_uart_msg_t) - 1));
-//
+//    p_msg->crc              = COM_crc8Fast(0, (uint8_t *)p_msg, (sizeof(dbg_uart_msg_t) - 1));
+//#endif
 //    return;
 //}
+
+void COM_msgDbgTx(debug_t* p_addr, dbg_uart_msg_t* p_msg)
+{
+    p_msg->count            = p_addr->itCnt;
+    p_msg->ia               = p_addr->ia;//.float32b;
+    p_msg->ib               = p_addr->ib;//.float32b;
+    p_msg->ic               = p_addr->ic;//.float32b;
+    p_msg->pos              = p_addr->enc_thetaMech;//.float32b;
+    p_msg->vel              = p_addr->enc_speed_speedMech;//.float32b;
+    p_msg->crc              = COM_crc8Fast(0, (uint8_t *)p_msg, (sizeof(dbg_uart_msg_t) - 1));
+    return;
+}
 
 /**
  * @brief       Message extract for debug (display \& command)
  * @param p_foc Pointer on data structure array used for motor control.
  * @param p_msg Pointer on the message created /updated for debug.
  */
-void COM_msgDbgRx(com_dbg_rx_msg_t* p_msg, uint8_t rx_byte)
-{
-    static uint32_t cmd_lst = 0;
-    static uint8_t  i = 0, j = 0;
-
-    switch(p_msg->state)
-    {
-    case COM_DBG_RX_WORD_A:
-    default:
-        i                               = 0;
-        j                               = 0;
-        cmd_lst                         = 0;
-        p_msg->state                    = (rx_byte == 'a')  ? (COM_DBG_RX_WORD_B)               : (COM_DBG_RX_WORD_A);
-        p_msg->crc                      = (rx_byte == 'a')  ? (COM_crc8Fast(0, &rx_byte, 1))    : (0);
-        p_msg->valid                    = false;
-
-        break;
-
-    case COM_DBG_RX_WORD_B:
-        p_msg->state                    = (rx_byte == 'b')  ? (COM_DBG_RX_CNT)                          : (COM_DBG_RX_WORD_A);
-        p_msg->crc                      = (rx_byte == 'b')  ? (COM_crc8Fast(p_msg->crc, &rx_byte, 1))   : (0);
-        break;
-
-    case COM_DBG_RX_CNT:
-        p_msg->counter.byte[i++] = rx_byte;
-        p_msg->state                    = (i < sizeof(counter_u))   ? (COM_DBG_RX_CNT)  : (COM_DBG_RX_MSG_TYPE);
-        i                               = (i < sizeof(counter_u))   ? (i)               : (0);
-        p_msg->crc                      = COM_crc8Fast(p_msg->crc, &rx_byte, 1);
-        break;
-
-     case COM_DBG_RX_MSG_TYPE:
-         i                              = 0;
-         j                              = 0;
-         cmd_lst                        = (rx_byte == MSG_RX_CMD)   ? (p_msg->cmd_lst.all & MSG_CMD_LIST_MASK)  : (0);
-         p_msg->state                   = (rx_byte == MSG_RX_CMD)   ? (COM_DBG_RX_CMD_MSG)                      : (COM_DBG_RX_WORD_A);
-         p_msg->state                   = (rx_byte == MSG_RX_CMD) && (!cmd_lst) ? (COM_DBG_RX_CRC)              : (p_msg->state);
-         p_msg->state                   = (rx_byte == MSG_RX_CFG)   ? (COM_DBG_RX_CFG_LIST_4_TX)                : (p_msg->state);
-         p_msg->crc                     = (rx_byte == MSG_RX_CMD)   ? (COM_crc8Fast(p_msg->crc, &rx_byte, 1))   : (p_msg->crc);
-         p_msg->crc                     = (rx_byte == MSG_RX_CFG)   ? (COM_crc8Fast(p_msg->crc, &rx_byte, 1))   : (0);
-         p_msg->msgType                 = (rx_byte == MSG_RX_CMD)   ? (MSG_RX_CMD)                              : (0);
-         p_msg->msgType                 = (rx_byte == MSG_RX_CFG)   ? (MSG_RX_CFG)                              : (p_msg->msgType);
-         break;
-
-     case COM_DBG_RX_CFG_LIST_4_TX:
-         p_msg->cfg_lst.byte[i++]       = rx_byte;
-         p_msg->state                   = (i < sizeof(config_u))    ? (COM_DBG_RX_CFG_LIST_4_TX)    : (COM_DBG_RX_CMD_LIST_4_RX);
-         i                              = (i < sizeof(config_u))    ? (i)                           : (0);
-         p_msg->crc                     = COM_crc8Fast(p_msg->crc, &rx_byte, 1);
-         break;
-
-     case COM_DBG_RX_CMD_LIST_4_RX:
-         p_msg->cmd_lst.byte[i++]       = rx_byte;
-         p_msg->state                   = (i < sizeof(command_u))   ? (COM_DBG_RX_CMD_LIST_4_RX)    : (COM_DBG_RX_CRC);
-         i                              = (i < sizeof(command_u))   ? (i)                           : (0);
-         p_msg->crc                     = COM_crc8Fast(p_msg->crc, &rx_byte, 1);
-         break;
-
-     case COM_DBG_RX_CMD_MSG:
-         i                              = (i % 4)   ? (i)       : (0);
-         j                              = (i % 4)   ? (j)       : (ffs(cmd_lst) - 1);
-         cmd_lst                       &= (i % 4)   ? (cmd_lst) : (~(1U << j));
-         p_msg->cmd_msg[j].uint_8b[i++] = rx_byte;
-         p_msg->state                   = (cmd_lst || (i % 4))  ? (COM_DBG_RX_CMD_MSG)  : (COM_DBG_RX_CRC);
-         p_msg->crc                     = COM_crc8Fast(p_msg->crc, &rx_byte, 1);
-         break;
-
-     case COM_DBG_RX_CRC:
-         p_msg->state                   = COM_DBG_RX_WORD_A;
-//         p_msg->msgType             = (p_msg->crc == rx_byte)   ? (msg_type)    : (p_msg->msgType);
-         p_msg->valid                   = (p_msg->crc == rx_byte)   ? (true)    : (false);
-         break;
-     }
-
-}
+//void COM_msgDbgRx(com_dbg_rx_msg_t* p_msg, uint8_t rx_byte)
+//{
+//    static uint32_t cmd_lst = 0;
+//    static uint8_t  i = 0, j = 0;
+//
+//    switch(p_msg->state)
+//    {
+//    case COM_DBG_RX_WORD_A:
+//    default:
+//        i                               = 0;
+//        j                               = 0;
+//        cmd_lst                         = 0;
+//        p_msg->state                    = (rx_byte == 'a')  ? (COM_DBG_RX_WORD_B)               : (COM_DBG_RX_WORD_A);
+//        p_msg->crc                      = (rx_byte == 'a')  ? (COM_crc8Fast(0, &rx_byte, 1))    : (0);
+//        p_msg->valid                    = false;
+//
+//        break;
+//
+//    case COM_DBG_RX_WORD_B:
+//        p_msg->state                    = (rx_byte == 'b')  ? (COM_DBG_RX_CNT)                          : (COM_DBG_RX_WORD_A);
+//        p_msg->crc                      = (rx_byte == 'b')  ? (COM_crc8Fast(p_msg->crc, &rx_byte, 1))   : (0);
+//        break;
+//
+//    case COM_DBG_RX_CNT:
+//        p_msg->counter.byte[i++] = rx_byte;
+//        p_msg->state                    = (i < sizeof(counter_u))   ? (COM_DBG_RX_CNT)  : (COM_DBG_RX_MSG_TYPE);
+//        i                               = (i < sizeof(counter_u))   ? (i)               : (0);
+//        p_msg->crc                      = COM_crc8Fast(p_msg->crc, &rx_byte, 1);
+//        break;
+//
+//     case COM_DBG_RX_MSG_TYPE:
+//         i                              = 0;
+//         j                              = 0;
+//         cmd_lst                        = (rx_byte == MSG_RX_CMD)   ? (p_msg->cmd_lst.all & MSG_CMD_LIST_MASK)  : (0);
+//         p_msg->state                   = (rx_byte == MSG_RX_CMD)   ? (COM_DBG_RX_CMD_MSG)                      : (COM_DBG_RX_WORD_A);
+//         p_msg->state                   = (rx_byte == MSG_RX_CMD) && (!cmd_lst) ? (COM_DBG_RX_CRC)              : (p_msg->state);
+//         p_msg->state                   = (rx_byte == MSG_RX_CFG)   ? (COM_DBG_RX_CFG_LIST_4_TX)                : (p_msg->state);
+//         p_msg->crc                     = (rx_byte == MSG_RX_CMD)   ? (COM_crc8Fast(p_msg->crc, &rx_byte, 1))   : (p_msg->crc);
+//         p_msg->crc                     = (rx_byte == MSG_RX_CFG)   ? (COM_crc8Fast(p_msg->crc, &rx_byte, 1))   : (0);
+//         p_msg->msgType                 = (rx_byte == MSG_RX_CMD)   ? (MSG_RX_CMD)                              : (0);
+//         p_msg->msgType                 = (rx_byte == MSG_RX_CFG)   ? (MSG_RX_CFG)                              : (p_msg->msgType);
+//         break;
+//
+//     case COM_DBG_RX_CFG_LIST_4_TX:
+//         p_msg->cfg_lst.byte[i++]       = rx_byte;
+//         p_msg->state                   = (i < sizeof(config_u))    ? (COM_DBG_RX_CFG_LIST_4_TX)    : (COM_DBG_RX_CMD_LIST_4_RX);
+//         i                              = (i < sizeof(config_u))    ? (i)                           : (0);
+//         p_msg->crc                     = COM_crc8Fast(p_msg->crc, &rx_byte, 1);
+//         break;
+//
+//     case COM_DBG_RX_CMD_LIST_4_RX:
+//         p_msg->cmd_lst.byte[i++]       = rx_byte;
+//         p_msg->state                   = (i < sizeof(command_u))   ? (COM_DBG_RX_CMD_LIST_4_RX)    : (COM_DBG_RX_CRC);
+//         i                              = (i < sizeof(command_u))   ? (i)                           : (0);
+//         p_msg->crc                     = COM_crc8Fast(p_msg->crc, &rx_byte, 1);
+//         break;
+//
+//     case COM_DBG_RX_CMD_MSG:
+//         i                              = (i % 4)   ? (i)       : (0);
+//         j                              = (i % 4)   ? (j)       : (ffs(cmd_lst) - 1);
+//         cmd_lst                       &= (i % 4)   ? (cmd_lst) : (~(1U << j));
+//         p_msg->cmd_msg[j].uint_8b[i++] = rx_byte;
+//         p_msg->state                   = (cmd_lst || (i % 4))  ? (COM_DBG_RX_CMD_MSG)  : (COM_DBG_RX_CRC);
+//         p_msg->crc                     = COM_crc8Fast(p_msg->crc, &rx_byte, 1);
+//         break;
+//
+//     case COM_DBG_RX_CRC:
+//         p_msg->state                   = COM_DBG_RX_WORD_A;
+////         p_msg->msgType             = (p_msg->crc == rx_byte)   ? (msg_type)    : (p_msg->msgType);
+//         p_msg->valid                   = (p_msg->crc == rx_byte)   ? (true)    : (false);
+//         break;
+//     }
+//
+//}
 
 uint32_t COM_crc32(uint16_t* p_buf, size_t len)
 {

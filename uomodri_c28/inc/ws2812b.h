@@ -103,6 +103,7 @@ uint16_t* ws2812b_resetLed(uint16_t*);
 //uint16_t* ws2812b_writeLed(uint16_t, uint16_t, uint16_t, uint16_t*);
 uint16_t* ws2812b_writeLed(uint16_t, uint16_t, uint16_t, uint16_t, uint16_t*);
 //uint16_t* ws2812b_dimmingLed(motor_state_e, uint16_t, uint16_t*);
-uint16_t* ws2812b_dimmingLed(uint16_t, motor_state_e, uint16_t, uint16_t*);
+//uint16_t* ws2812b_dimmingLed(uint16_t, motor_state_e, uint16_t, uint16_t*);
+uint16_t* ws2812b_dimmingLed(uint16_t, uint16_t, uint16_t, uint16_t*);
 
 #endif /* __WS2812B_H__ */

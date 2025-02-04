@@ -641,9 +641,9 @@ void HAL_CLB_ini(const clb_cfg_t* p_clbCfg)
 {
     CLB_init();
 
-    uint32_t outLutCfg  = 0;
-    uint32_t addr_test1 = uid_unique_8b;
-    uint32_t addr_test2 = uid_unique_8b;
+    uint32_t outLutCfg;
+    uint32_t addr_test1;
+    uint32_t addr_test2;
 
     switch (p_clbCfg->clb_Addr1Spec)
     {
@@ -654,9 +654,7 @@ void HAL_CLB_ini(const clb_cfg_t* p_clbCfg)
             break;
         case RS485_CLB_USE_UID_ADDRESS:
             outLutCfg       = TILE2_CFG_OUTLUT_4;
-//            addr_test1     ^= (uid_unique >> 24) ^ (uid_unique >> 16) ^ (uid_unique >> 8);
-//            addr_test1      = ((addr_test1 & 0x000000FF) << 23) | 0x80000000;
-            addr_test1      = (addr_test1 << 23) | 0x80000000;
+            addr_test1      = (uid_unique_8b << 23) | 0x80000000;
             break;
         case RS485_CLB_FORCE_ADDRESS:
             outLutCfg       = TILE2_CFG_OUTLUT_4;
@@ -674,9 +672,7 @@ void HAL_CLB_ini(const clb_cfg_t* p_clbCfg)
             break;
         case RS485_CLB_USE_UID_ADDRESS:
             outLutCfg       = TILE2_CFG_OUTLUT_5;
-//            addr_test2     ^= (uid_unique >> 24) ^ (uid_unique >> 16) ^ (uid_unique >> 8);
-//            addr_test2      = ((addr_test2 & 0x000000FF) << 23) | 0x80000000;
-            addr_test2      = (addr_test2 << 23) | 0x80000000;
+            addr_test2      = (uid_unique_8b << 23) | 0x80000000;
             break;
         case RS485_CLB_FORCE_ADDRESS:
             outLutCfg       = TILE2_CFG_OUTLUT_5;
