@@ -405,12 +405,16 @@ void main(void)
     {
 #if (!USB_BUS_ENABLE) && (UART_BUS_ENABLE)
 
-        if(it_cnt_prev != dbg_m1.itCnt)
+        // No new message from CLA, skip TX:
+        if(it_cnt_prev == dbg_m1.itCnt)
         {
-            COM_msgDbgTx(&dbg_m1, &dbg_uart_tx_msg);
-
-            it_cnt_prev = dbg_m1.itCnt;
+            continue;
         }
+
+        // New message received, prepare to send via UART:
+        COM_msgDbgTx(&dbg_m1, &dbg_uart_tx_msg);
+        it_cnt_prev = dbg_m1.itCnt;
+
         // Wait Tx buffer + UART Tx module are empty.
         while(UART_isBusy(UART0_BASE));
         // Force purge of Rx buffer.
