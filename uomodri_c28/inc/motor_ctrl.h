@@ -515,6 +515,8 @@ typedef struct __debug_t__
     error_reg_u         error;                  /*!< Bit field for the error sources. */
     //    motor_state_e       state;                  /*!< Motor state for the FSM. */
     uint16_t            state;                  /*!< Motor state for the FSM. */
+
+//    uint16_t            RSV1[15];
 } debug_t;
 
 #ifdef __cplusplus

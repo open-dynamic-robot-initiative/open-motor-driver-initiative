@@ -126,6 +126,12 @@ inline float32_t __msatf32(float32_t a, float32_t sat_max, float32_t sat_min)
 }
 #endif
 
+/**
+ * @brief       Copy motor elements of the motor structure for debug & status.
+ * @param[in]   *p_motor    Pointer on the current motor structure to transfer.
+ * @param[out]  *p_dbg      Pointer on copied structure to broadcast.
+ * @return
+ */
 void DBG_copyStruct(motor_t* p_motor, debug_t* p_dbg)
 {
     p_dbg->ia                       = p_motor->foc.acq.ia;                  // [A]

@@ -58,8 +58,13 @@ char *g_pcStatus;
 uint32_t dataSize;
 uint8_t g_char_tmp[256];
 
+#pragma DATA_ALIGN(dbg_m1 , 256U)
 #pragma DATA_SECTION(dbg_m1, "MsgRamCpu1ToCm")
 debug_t dbg_m1;
+
+#pragma DATA_ALIGN(dbg_m2 , 256U)
+#pragma DATA_SECTION(dbg_m2, "MsgRamCpu1ToCm")
+debug_t dbg_m2;
 
 uint32_t it_cnt_prev = 0;
 
@@ -408,26 +413,27 @@ void main(void)
         // No new message from CLA, skip TX:
         if(it_cnt_prev == dbg_m1.itCnt)
         {
-            continue;
-        }
+//            continue;
+//        }
+            // New message received, prepare to send via UART:
+            COM_msgDbgTx(&dbg_m1, &dbg_uart_tx_msg);
 
-        // New message received, prepare to send via UART:
-        COM_msgDbgTx(&dbg_m1, &dbg_uart_tx_msg);
-        it_cnt_prev = dbg_m1.itCnt;
+            it_cnt_prev = dbg_m1.itCnt;
 
-        // Wait Tx buffer + UART Tx module are empty.
-        while(UART_isBusy(UART0_BASE));
-        // Force purge of Rx buffer.
-        while(UART_readCharNonBlocking(UART0_BASE) != -1);
-        // Get the index associated to uDMA UART0_TX configuration
-        //    while((cm_udmaCfgList[udmaCfgIdx].dmaChannel != UDMA_CHANNEL_UART0_TX) ? (udmaCfgIdx++) : (udmaCfgIdx));
-        // Enable the uDMA UART0 Tx channel
-        if(!UDMA_isChannelEnabled(UDMA_BASE, cm_udmaCfgList[0].dmaChannel))
-        {
-            ucControlTable[UDMA_CHANNEL_UART0_TX].chControlAttr &= ~(UDMA_DMACHCTL_XFERSIZE_M | UDMA_DMACHCTL_XFERMODE_M);
-            ucControlTable[UDMA_CHANNEL_UART0_TX].chControlAttr |= ((cm_udmaCfgList[0].transferMode) << UDMA_DMACHCTL_XFERMODE_S);//cm_udmaCfgList[udmaCfgIdx].transferMode;
-            ucControlTable[UDMA_CHANNEL_UART0_TX].chControlAttr |= ((cm_udmaCfgList[0].transferSize - 1) << UDMA_DMACHCTL_XFERSIZE_S);//((cm_udmaCfgList[udmaCfgIdx].transferSize - 1) << UDMA_DMACHCTL_XFERSIZE_S);
-            UDMA_enableChannel(UDMA_BASE, UDMA_CHANNEL_UART0_TX);
+            // Wait Tx buffer + UART Tx module are empty.
+            while(UART_isBusy(UART0_BASE));
+            // Force purge of Rx buffer.
+            while(UART_readCharNonBlocking(UART0_BASE) != -1);
+            // Get the index associated to uDMA UART0_TX configuration
+            //    while((cm_udmaCfgList[udmaCfgIdx].dmaChannel != UDMA_CHANNEL_UART0_TX) ? (udmaCfgIdx++) : (udmaCfgIdx));
+            // Enable the uDMA UART0 Tx channel
+            if(!UDMA_isChannelEnabled(UDMA_BASE, cm_udmaCfgList[0].dmaChannel))
+            {
+                ucControlTable[UDMA_CHANNEL_UART0_TX].chControlAttr &= ~(UDMA_DMACHCTL_XFERSIZE_M | UDMA_DMACHCTL_XFERMODE_M);
+                ucControlTable[UDMA_CHANNEL_UART0_TX].chControlAttr |= ((cm_udmaCfgList[0].transferMode) << UDMA_DMACHCTL_XFERMODE_S);//cm_udmaCfgList[udmaCfgIdx].transferMode;
+                ucControlTable[UDMA_CHANNEL_UART0_TX].chControlAttr |= ((cm_udmaCfgList[0].transferSize - 1) << UDMA_DMACHCTL_XFERSIZE_S);//((cm_udmaCfgList[udmaCfgIdx].transferSize - 1) << UDMA_DMACHCTL_XFERSIZE_S);
+                UDMA_enableChannel(UDMA_BASE, UDMA_CHANNEL_UART0_TX);
+            }
         }
 #endif
 //        vbus_detect = (vbus_detect << 1) | (GPIO_readPin(USB_DETECT_NUM) & 0x01);

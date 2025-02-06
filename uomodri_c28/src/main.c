@@ -97,11 +97,11 @@ cmd_t       cmd_uomodri[2];
 /***********************************************************************
  * VAIRIABLES IN CPU TO CM MEMORY
  ***********************************************************************/
-#pragma DATA_ALIGN(dbg_cpu2cm_m1, 0x80)
+#pragma DATA_ALIGN(dbg_cpu2cm_m1, 128U)
 #pragma DATA_SECTION(dbg_cpu2cm_m1, "MsgRamCpuToCm")
 debug_t     dbg_cpu2cm_m1 = {.motor_id = MOTOR_1};
 
-#pragma DATA_ALIGN(dbg_cpu2cm_m2, 0x80)
+#pragma DATA_ALIGN(dbg_cpu2cm_m2, 128U)
 #pragma DATA_SECTION(dbg_cpu2cm_m2, "MsgRamCpuToCm")
 debug_t     dbg_cpu2cm_m2 = {.motor_id = MOTOR_2};
 
@@ -786,11 +786,11 @@ __attribute__((interrupt)) void cla_isrClearTask(void)
 __attribute__((interrupt)) void cla_isrMotor1(void)
 {
     // Start DMA channel
-    DMA_configAddresses(DMA_DBG_CLA2CM_BASE_ADDR, \
-                        &dbg_cpu2cm_m1, \
-                        &dbg_cla2dma_mx);
-    DMA_startChannel(DMA_DBG_CLA2CM_BASE_ADDR);
-    DMA_forceTrigger(DMA_DBG_CLA2CM_BASE_ADDR);
+//    DMA_configAddresses(DMA_DBG_CLA2CM_M1_BASE_ADDR, \
+//                        (debug_t *) &dbg_cpu2cm_m1, \
+//                        (debug_t *) &dbg_cla2dma_mx);
+//    DMA_startChannel(DMA_DBG_CLA2CM_M1_BASE_ADDR);
+    DMA_forceTrigger(DMA_DBG_CLA2CM_M1_BASE_ADDR);
     // Fill of the M1 motor's elements in the Tx message
     switch(com_bus_select)
     {
@@ -852,10 +852,11 @@ __attribute__((interrupt)) void cla_isrMotor1(void)
 __attribute__((interrupt)) void cla_isrMotor2(void)
 {
     // Start DMA channel
-//    DMA_configAddresses(DMA_DBG_CLA2CM_BASE_ADDR, \
-//                        (debug_t *)&dbg_cpu2cm_m2, \
-//                        (debug_t *)&dbg_cla2dma_mx);
-//    DMA_forceTrigger(DMA_DBG_CLA2CM_BASE_ADDR);
+//    DMA_configAddresses(DMA_DBG_CLA2CM_M2_BASE_ADDR, \
+//                        (debug_t *) &dbg_cpu2cm_m2, \
+//                        (debug_t *) &dbg_cla2dma_mx);
+//    DMA_startChannel(DMA_DBG_CLA2CM_M2_BASE_ADDR);
+    DMA_forceTrigger(DMA_DBG_CLA2CM_M2_BASE_ADDR);
     // Finalize the Tx message. Aggregate MOTOR_2 values + computed CRC
     switch(com_bus_select)
     {
@@ -917,6 +918,7 @@ __attribute__((interrupt)) void cla_isrMotor2(void)
         break;
     }
 
+    // Clear IT source CLA ask
     CLA_clearTaskFlags(CLA1_BASE, CLA_MOTOR2_TASK_FLAG);
     // Clear IT
     Interrupt_clearACKGroup(INT_CLA_MOTOR2_GROUP);

@@ -19,7 +19,6 @@
  ***********************************************************************/
 #pragma DATA_SECTION(uid_unique_32b,".uniqueId");
 volatile uint32_t       uid_unique_32b;
-
 volatile uint32_t       uid_unique_8b;
 
 /***********************************************************************
