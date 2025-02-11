@@ -55,6 +55,15 @@
 //#error "RS-485, CAN & SPI share the same data. They cannot run @ the same time"
 #endif
 
+#ifdef DEBUG
+#define DBG_CLA_M1_ISR                          (1)
+#define DBG_RS485_TX_ISR                        (0)
+#define DBG_RS485_RX_ISR                        (0)
+#define DBG_RS485_VALID_ISR                     (0)
+#define DBG_CMD_NEW_TASK                        (0)
+#define DBG_M1_TASK                             (1)
+#define DBG_M2_TASK                             (0)
+#endif
 /***********************************************************************
  * FILTERS PARAMETERS
  ***********************************************************************/

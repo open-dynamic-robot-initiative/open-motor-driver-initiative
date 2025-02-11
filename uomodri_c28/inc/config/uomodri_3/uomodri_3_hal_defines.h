@@ -168,6 +168,21 @@
                                                     .intEnable      = false, \
                                                 }
 
+#define DBG_DMA_START_NUM                       (14U)
+#define DBG_DMA_START_CFG                       GPIO_14_GPIO14
+#define DBG_DMA_START_SET                       (HWREG(GPIODATA_BASE + GPIO_O_GPASET)   = GPIO_GPASET_GPIO14)
+#define DBG_DMA_START_CLEAR                     (HWREG(GPIODATA_BASE + GPIO_O_GPACLEAR) = GPIO_GPACLEAR_GPIO14)
+#define DBG_DMA_START_TOGGLE                    (HWREG(GPIODATA_BASE + GPIO_O_GPATOGGLE)= GPIO_GPATOGGLE_GPIO14)
+#define DBG_DMA_START_DEF                       { \
+                                                    .pinNum         = DBG_DMA_START_NUM, \
+                                                    .fctMux         = DBG_DMA_START_CFG, \
+                                                    .coreSelect     = GPIO_CORE_CPU1_CLA1, \
+                                                    .direction      = GPIO_DIR_MODE_OUT, \
+                                                    .samplingInMode = GPIO_QUAL_ASYNC, \
+                                                    .setValue       = (0U), \
+                                                    .intEnable      = false, \
+                                                }
+
 #define DRV_SPI_SIMO_NUM                        (16U)
 #define DRV_SPI_SIMO_CFG                        GPIO_16_SPIA_SIMO
 #define DRV_SPI_SIMO_DEF                        { \
@@ -404,7 +419,7 @@
 
 #define DBG_PIN3_NUM                            (77U)
 #define DBG_PIN3_CFG                            GPIO_77_GPIO77
-#define DBG_PIN3_CORE                           GPIO_CORE_CPU1
+#define DBG_PIN3_CORE                           GPIO_CORE_CM
 #define DBG_PIN3_SET                            (HWREG(GPIODATA_BASE + GPIO_O_GPCSET)   = GPIO_GPCSET_GPIO77)
 #define DBG_PIN3_CLEAR                          (HWREG(GPIODATA_BASE + GPIO_O_GPCCLEAR) = GPIO_GPCCLEAR_GPIO77)
 #define DBG_PIN3_TOGGLE                         (HWREG(GPIODATA_BASE + GPIO_O_GPCTOGGLE)= GPIO_GPCTOGGLE_GPIO77)
@@ -2074,7 +2089,7 @@
 #define DMA_COM_SPI_TX_INT                      INT_DMA_CH5
 #define DMA_COM_SPI_RX_INT                      INT_DMA_CH6
 
-#define DMA_DBG_CLA2CM_TRIGGER_SRC              DMA_TRIGGER_SOFTWARE
+#define DMA_DBG_CLA2CM_TRIGGER_SRC              DMA_TRIGGER_CLB3INT
 //#define DMA_DBG_CLA2CM_M2_TRIGGER_SRC           DMA_TRIGGER_SOFTWARE
 #define DMA_LED_SPI_TX_TRIGGER_SRC              DMA_TRIGGER_SPIDTX
 #define DMA_COM_SPI_TX_TRIGGER_SRC              DMA_TRIGGER_SPIBTX
@@ -2083,7 +2098,7 @@
 #define DMA_DBG_CLA2CM_FULL_LENGTH              (128U)
 #define DMA_DBG_CLA2CM_BURST_EVT                (32U)
 #define DMA_DBG_CLA2CM_TRANSFER_EVT             (DMA_DBG_CLA2CM_FULL_LENGTH / DMA_DBG_CLA2CM_BURST_EVT)
-#define DMA_DBG_CLA2CM_CONFIG                   (DMA_CFG_ONESHOT_DISABLE | DMA_CFG_CONTINUOUS_ENABLE | DMA_CFG_SIZE_16BIT)
+#define DMA_DBG_CLA2CM_CONFIG                   (DMA_CFG_ONESHOT_ENABLE | DMA_CFG_CONTINUOUS_ENABLE | DMA_CFG_SIZE_16BIT)
 #if ((DMA_DBG_CLA2CM_CONFIG & DMA_MODE_DATASIZE) == DMA_CFG_SIZE_16BIT)
 #define DMA_DBG_CLA2CM_INC_STEP               (1)
 #else
@@ -2138,7 +2153,7 @@
                                                     .config         = DMA_DBG_CLA2CM_CONFIG, \
                                                     .trigger        = DMA_DBG_CLA2CM_TRIGGER_SRC, \
                                                     .intMode        = DMA_INT_AT_END, \
-                                                    .intEnable      = false, \
+                                                    .intEnable      = true, \
                                                 }
 #define DMA_DBG_CLA2CM_M2_DEF                   { \
                                                     .dmaChBase      = DMA_DBG_CLA2CM_M2_BASE_ADDR, \
@@ -2280,16 +2295,6 @@
                                                     .claTrigSrc     = CLA_MOTOR2_TRIGGER_SRC, \
                                                     .p_claFunc      = CLA_MOTOR2_TASK_HANDLER, \
                                                     .claForceTask   = false, \
-                                                }
-#define CLA_BKG_DEF                             { \
-                                                    .progRAM        = CLA_PROG_RAM, \
-                                                    .dataRAM        = CLA_DATA_RAM, \
-                                                    .claTaskFlg     = CLA_TASKFLAG_8, \
-                                                    .claTaskNum     = CLA_TASK_8, \
-                                                    .claIntVect     = CLA_MVECT_8, \
-                                                    .claTrigSrc     = CLA_TRIGGER_SOFTWARE, \
-                                                    .p_claFunc      = &Cla1Task8, \
-                                                    .claForceTask   = true, \
                                                 }
 
 /***********************************************************************

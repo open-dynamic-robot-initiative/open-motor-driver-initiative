@@ -11,10 +11,12 @@
 /************************************************************************
  * LOCAL FUNCTIONS DECLARATION
  ************************************************************************/
-void HAL_CM_UART_init(const uart_cfg_t*);
-void HAL_CM_uDMA_init(const udma_cfg_t*);
-void HAL_CM_IPC_init(const ipc_cfg_t*);
-void HAL_CM_CRC_init(const gcrc_cfg_t*);
+void HAL_CM_UART_ini(const uart_cfg_t*);
+void HAL_CM_uDMA_ini(const udma_cfg_t*);
+void HAL_CM_IPC_ini(const ipc_cfg_t*);
+void HAL_CM_CRC_ini(const gcrc_cfg_t*);
+void HAL_CM_USB_ini(usb_cfg_t*);
+//void HAL_INT_ini(const int_cfg_t*);
 
 extern UDMA_ControlTable ucControlTable[32];
 
@@ -25,18 +27,20 @@ extern UDMA_ControlTable ucControlTable[32];
  * @brief       Initialize all peripherals necessaries.
  * @param[in]   *p_hal  Pointer on the general HAL structure definition
  */
-void HAL_CM_init(const hal_cm_t* p_hal_cm)
+void HAL_CM_ini(const hal_cm_t* p_hal_cm)
 {
     if(p_hal_cm != NULL)
     {
         // Initialize DMA
-        HAL_CM_uDMA_init(p_hal_cm->p_udmaHandle);
+        HAL_CM_uDMA_ini(p_hal_cm->p_udmaHandle);
         // Initialize CM_UART
-        HAL_CM_UART_init(p_hal_cm->p_uartHandle);
+        HAL_CM_UART_ini(p_hal_cm->p_uartHandle);
         // Initialize CM_CRC
-        HAL_CM_CRC_init(p_hal_cm->p_crcHandle);
+        HAL_CM_CRC_ini(p_hal_cm->p_crcHandle);
         // Initialize IPC communication
-        HAL_CM_IPC_init(p_hal_cm->p_ipcHandle);
+        HAL_CM_IPC_ini(p_hal_cm->p_ipcHandle);
+        // Initialize  USB
+        HAL_CM_USB_ini(p_hal_cm->p_usbHandle);
     }
 
     return;
@@ -46,7 +50,7 @@ void HAL_CM_init(const hal_cm_t* p_hal_cm)
  * @brief       DMA initialization function.
  * @param[in]   *p_dmaCfg   Pointer on the DMA configuration structure
  */
-void HAL_CM_uDMA_init(const udma_cfg_t* p_udmaCfg)
+void HAL_CM_uDMA_ini(const udma_cfg_t* p_udmaCfg)
 {
     if(p_udmaCfg != NULL)
     {
@@ -63,7 +67,7 @@ void HAL_CM_uDMA_init(const udma_cfg_t* p_udmaCfg)
              * These should already be disabled by default. */            //
             UDMA_disableChannelAttribute(UDMA_BASE, dmaChannel, UDMA_CH_ATTR_ALL);
 //                                         UDMA_CH_ATTR_ALTSELECT | UDMA_CH_ATTR_HIGH_PRIORITY | UDMA_CH_ATTR_REQMASK);
-            UDMA_enableChannelAttribute(UDMA_BASE, dmaChannel, UDMA_CH_ATTR_USEBURST);
+            //UDMA_enableChannelAttribute(UDMA_BASE, dmaChannel, UDMA_CH_ATTR_USEBURST);
             /* Configure the control parameters for the UART TX/RX channels
              * Tx channel will be used to transfer data from the buffer to the UART Data register.
              * Data size = 8
@@ -73,9 +77,10 @@ void HAL_CM_uDMA_init(const udma_cfg_t* p_udmaCfg)
              * The arbitration size will be set to 1, which causes the uDMA controller
              * to re-arbitrate after 1 item is transferred. */
             UDMA_setChannelControlParams(UDMA_BASE, dmaChannel, p_udmaCfg->dmaCfg);
-            UDMA_setChannelTransferParams(UDMA_BASE, dmaChannel, p_udmaCfg->srcAddr,
-                                          p_udmaCfg->dstAddr, p_udmaCfg->transferMode, p_udmaCfg->transferSize);
-
+            UDMA_setChannelTransferParams(UDMA_BASE, dmaChannel, p_udmaCfg->srcAddr, \
+                                          p_udmaCfg->dstAddr, p_udmaCfg->transferMode, \
+                                          p_udmaCfg->transferSize);
+            UDMA_enableChannel(UDMA_BASE, dmaChannel);
             dmaChannel = (++p_udmaCfg)->dmaChannel;
         }
     }
@@ -87,34 +92,16 @@ void HAL_CM_uDMA_init(const udma_cfg_t* p_udmaCfg)
  * @brief       UART initialization function. There is no need to increase uartbase as we have only one UART periph on CM.
  * @param[in]   *p_uart     Pointer on the UART structure definition
  */
-void HAL_CM_UART_init(const uart_cfg_t* p_uart)
+void HAL_CM_UART_ini(const uart_cfg_t* p_uartCfg)
 {
-//    if(p_uart != NULL)
-//    {
-//        UART_enableFIFO(UART0_BASE);
-//        UART_setFIFOLevel(UART0_BASE, UART_FIFO_TX6_8, UART_FIFO_RX6_8);
-//        UART_disableLoopback(UART0_BASE);
-//        UART_enableDMA(UART0_BASE, p_uart->dmaFlags);
-//        // Configure UART & Enable the module.
-//        UART_clearRxError(UART0_BASE);
-//        UART_setConfig(UART0_BASE, UART_CLK_FREQ, p_uart->baudRate, p_uart->uartCfg);
-//        if(p_uart->intEnable)
-//        {
-//            UART_registerInterrupt(INT_UART0, p_uart->p_fnHandler);
-//            UART_clearInterruptStatus(UART0_BASE, UART_INT_DMATX | UART_INT_DMARX | UART_INT_9BIT |
-//                                      UART_INT_EOT | UART_INT_OE | UART_INT_BE | UART_INT_PE |
-//                                      UART_INT_FE | UART_INT_RT | UART_INT_TX | UART_INT_RX);
-//            UART_enableInterrupt(UART0_BASE, p_uart->intFlags);
-//        }
-//    }
-    if(p_uart != NULL)
+    if(p_uartCfg != NULL)
     {
         UART_setFIFOLevel(UART0_BASE, UART_FIFO_TX6_8, UART_FIFO_RX6_8);
         UART_enableFIFO(UART0_BASE);
         UART_disableLoopback(UART0_BASE);
-        UART_enableDMA(UART0_BASE, p_uart->dmaFlags);
+        UART_enableDMA(UART0_BASE, p_uartCfg->dmaFlags);
         // Configure UART & Enable the module.
-        UART_setConfig(UART0_BASE, UART_CLK_FREQ, p_uart->baudRate, p_uart->uartCfg);
+        UART_setConfig(UART0_BASE, UART_CLK_FREQ, p_uartCfg->baudRate, p_uartCfg->uartCfg);
         UART_clearRxError(UART0_BASE);
         // Enable the UART0 module.
         UART_enableModule(UART0_BASE);
@@ -127,7 +114,7 @@ void HAL_CM_UART_init(const uart_cfg_t* p_uart)
  * @brief       IPC (InterProcessor Communications) initialization function.
  * @param[in]   *p_ipcCfg   Pointer on the IPC configuration structure
  */
-void HAL_CM_IPC_init(const ipc_cfg_t* p_ipcCfg)
+void HAL_CM_IPC_ini(const ipc_cfg_t* p_ipcCfg)
 {
     if(p_ipcCfg != NULL)
     {
@@ -162,7 +149,7 @@ void HAL_CM_IPC_init(const ipc_cfg_t* p_ipcCfg)
  * @brief       Generic Cyclic Redundancy Check (GCRC) initialization function.
  * @param[in]   *p_crcCfg   Pointer on the CRC configuration structure
  */
-void HAL_CM_CRC_init(const gcrc_cfg_t* p_crcCfg)
+void HAL_CM_CRC_ini(const gcrc_cfg_t* p_crcCfg)
 {
     if(p_crcCfg != NULL)
     {
@@ -173,6 +160,51 @@ void HAL_CM_CRC_init(const gcrc_cfg_t* p_crcCfg)
         GCRC_setDataMask(GCRC_BASE, p_crcCfg->dataMask);
         GCRC_enableBitReverse(GCRC_BASE, p_crcCfg->bitRev);
         GCRC_setSeedValue(GCRC_BASE, p_crcCfg->seed);
+    }
+
+    return;
+}
+
+void HAL_CM_USB_ini(usb_cfg_t* p_usbCfg)
+{
+    if(p_usbCfg != NULL)
+    {
+//    p_usbCfg->usbCfgDone = false;
+// Register the interrupt handler, for USB.
+//    Interrupt_registerHandler(INT_USB0, &CM_USB0DeviceIntHandler);
+// Initialize the transmit and receive buffers for first serial device.
+        USBBufferInit(p_usbCfg->p_usbTxBuf);
+        USBBufferInit(p_usbCfg->p_usbRxBuf);
+        // Set the USB stack mode to Device mode with VBUS monitoring.
+        USBStackModeSet(0, eUSBModeForceDevice, 0);//eUSBModeDevice
+        // Pass our device information to the USB library and place the device on the bus.
+        USBDCDCInit(0, p_usbCfg->p_usbCdcDevice);
+
+//    p_usbCfg->usbCfgDone = true;
+    }
+
+    return;
+}
+
+void HAL_INT_ini(const int_cfg_t* p_intCfg)
+{
+    if(p_intCfg != NULL)
+    {
+        uint32_t intNum = p_intCfg->intNum;
+        // Clear & set IT flags & enable IT bits in a known state.
+
+        // Setup Interrupts
+        while(intNum != UINT32_MAX)
+        {
+            // Attach ISR to interrupt
+            Interrupt_registerHandler(p_intCfg->intNum, p_intCfg->p_intHandler);
+            // Enable Interrupts
+            //Interrupt_enable(p_intCfg->intNum);
+
+            intNum = (++p_intCfg)->intNum;
+        }
+
+        Interrupt_enableInProcessor();
     }
 
     return;

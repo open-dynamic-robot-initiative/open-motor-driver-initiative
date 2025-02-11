@@ -51,6 +51,11 @@
 			<locationURI>C2000WARE_ROOT/libraries/communications/usb/f2838x/source/usbbuffer.c</locationURI>
 		</link>
 		<link>
+			<name>device/usbdcdc.c</name>
+			<type>1</type>
+			<locationURI>C2000WARE_ROOT/libraries/communications/usb/f2838x/source/device/usbdcdc.c</locationURI>
+		</link>
+		<link>
 			<name>device/usbdesc.c</name>
 			<type>1</type>
 			<locationURI>C2000WARE_ROOT/libraries/communications/usb/f2838x/source/usbdesc.c</locationURI>

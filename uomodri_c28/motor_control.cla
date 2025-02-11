@@ -55,7 +55,7 @@ __attribute__((interrupt)) void adcCalib_Task(void)
  */
 __attribute__((interrupt)) void cmdNew_Task(void)
 {
-#ifdef DEBUG
+#if (DBG_CMD_NEW_TASK)
     DBG_PIN1_SET;
 #endif
 //    __mdebugstop();
@@ -86,7 +86,7 @@ __attribute__((interrupt)) void cmdNew_Task(void)
     motor_m2.foc.cmd.index          = cmd_uomodri[MOTOR_2].index;
     motor_m2.foc.cmd.cmdField.all   = cmd_uomodri[MOTOR_2].cmdField.all;
     motor_m2.foc.cmd.periphField.all= cmd_uomodri[MOTOR_2].periphField.all;
-#ifdef DEBUG
+#if (DBG_CMD_NEW_TASK)
     DBG_PIN1_CLEAR;
 #endif
 }
@@ -100,32 +100,22 @@ __attribute__((interrupt)) void cmdNew_Task(void)
  */
 __attribute__((interrupt)) void motor1_Task(void)
 {
-#ifdef DEBUG
-    DBG_PIN0_SET;
-#endif
-//    __mdebugstop();
+
     // Motor control
     MOT_runControl(&motor_m1);
+
+#if (DBG_M1_TASK)
+    DBG_PIN0_SET;
+#endif
     // Copy elements for debug
     DBG_copyStruct(&motor_m1, &dbg_cla2dma_mx);
-//    __meallow();
-//    // Set up SOURCE address.
-//    HWREG(DMA_DBG_CLA2CM_BASE_ADDR + DMA_O_SRC_BEG_ADDR_SHADOW) = (uint32_t)&dbg_cla2dma_mx;
-//    HWREG(DMA_DBG_CLA2CM_BASE_ADDR + DMA_O_SRC_ADDR_SHADOW)     = (uint32_t)&dbg_cla2dma_mx;
-////    HWREG(DMA_DBG_CLA2CM_BASE_ADDR + DMA_O_SRC_BEG_ADDR_ACTIVE) = (uint32_t)&dbg_cla2dma_mx;
-////    HWREG(DMA_DBG_CLA2CM_BASE_ADDR + DMA_O_SRC_ADDR_ACTIVE)     = (uint32_t)&dbg_cla2dma_mx;
-////    // Set up DESTINATION address.
-//    HWREG(DMA_DBG_CLA2CM_BASE_ADDR + DMA_O_DST_BEG_ADDR_SHADOW) = (uint32_t)&dbg_cpu2cm_m1;
-//    HWREG(DMA_DBG_CLA2CM_BASE_ADDR + DMA_O_DST_ADDR_SHADOW)     = (uint32_t)&dbg_cpu2cm_m1;
-////    HWREG(DMA_DBG_CLA2CM_BASE_ADDR + DMA_O_DST_BEG_ADDR_ACTIVE) = (uint32_t)&dbg_cpu2cm_m2;
-////    HWREG(DMA_DBG_CLA2CM_BASE_ADDR + DMA_O_DST_ADDR_ACTIVE)     = (uint32_t)&dbg_cpu2cm_m2;
-//
-//    HWREGH(DMA_DBG_CLA2CM_BASE_ADDR + DMA_O_CONTROL)           |= DMA_CONTROL_RUN;
-////    DMA_startChannel(DMA_DBG_CLA2CM_BASE_ADDR);
-//    HWREGH(DMA_DBG_CLA2CM_BASE_ADDR + DMA_O_CONTROL)           |= DMA_CONTROL_PERINTFRC;
-////    DMA_forceTrigger(DMA_DBG_CLA2CM_BASE_ADDR);
-//    __medis();
-#ifdef DEBUG
+
+    DBG_StartTransfer(DBG_DMA_START_NUM);
+
+//    DBG_DMA_START_SET;
+//    DBG_DMA_START_CLEAR;
+
+#if (DBG_M1_TASK)
     DBG_PIN0_CLEAR;
 #endif
 }
@@ -139,34 +129,15 @@ __attribute__((interrupt)) void motor1_Task(void)
  */
 __attribute__((interrupt)) void motor2_Task(void)
 {
-#ifdef DEBUG
+#if (DBG_M2_TASK)
     DBG_PIN0_SET;
 #endif
 //    __mdebugstop();
     // Motor control
     MOT_runControl(&motor_m2);
     // Copy elements for debug
-    DBG_copyStruct(&motor_m2, &dbg_cla2dma_mx);
-    // Start DMA channel
-//    DMA_configAddresses(DMA_DBG_CLA2CM_BASE_ADDR, \
-//                        &dbg_cpu2cm_m1, \
-//                        &dbg_cla2dma_mx);
-//    MEALLOW;
-//    __meallow();
-//    // Set up SOURCE address.
-//    HWREG(DMA_DBG_CLA2CM_BASE_ADDR + DMA_O_SRC_BEG_ADDR_SHADOW) = (uint32_t)&dbg_cla2dma_mx;
-//    HWREG(DMA_DBG_CLA2CM_BASE_ADDR + DMA_O_SRC_ADDR_SHADOW)     = (uint32_t)&dbg_cla2dma_mx;
-//    // Set up DESTINATION address.
-//    HWREG(DMA_DBG_CLA2CM_BASE_ADDR + DMA_O_DST_BEG_ADDR_SHADOW) = (uint32_t)&dbg_cpu2cm_m2;
-//    HWREG(DMA_DBG_CLA2CM_BASE_ADDR + DMA_O_DST_ADDR_SHADOW)     = (uint32_t)&dbg_cpu2cm_m2;
-//
-//    HWREGH(DMA_DBG_CLA2CM_BASE_ADDR + DMA_O_CONTROL) |= DMA_CONTROL_RUN;
-////    DMA_startChannel(DMA_DBG_CLA2CM_BASE_ADDR);
-//    HWREGH(DMA_DBG_CLA2CM_BASE_ADDR + DMA_O_CONTROL) |= DMA_CONTROL_PERINTFRC;
-////    DMA_forceTrigger(DMA_DBG_CLA2CM_BASE_ADDR);
-//    __medis();
-//    MEDIS;
-#ifdef DEBUG
+//    DBG_copyStruct(&motor_m2, &dbg_cla2dma_mx);
+#if (DBG_M2_TASK)
     DBG_PIN0_CLEAR;
 #endif
 }

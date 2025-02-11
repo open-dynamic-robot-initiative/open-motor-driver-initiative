@@ -81,6 +81,8 @@ extern void CLAsincos(float32_t, float32_t*, float32_t*);
 #endif
 
 inline float32_t __msatf32(float32_t, float32_t, float32_t);
+void DBG_copyStruct(motor_t*, debug_t*);
+void DBG_StartTransfer(uint32_t);
 void ADC_offsetCalib(motor_t*);
 inline void ENC_resetStruct(encoder_t*);
 inline void ENC_resetPeriph(encoder_t*);
@@ -205,6 +207,13 @@ void DBG_copyStruct(motor_t* p_motor, debug_t* p_dbg)
     return;
 }
 
+void DBG_StartTransfer(uint32_t pin)
+{
+    GPIO_writePin(pin, 1U);
+    GPIO_writePin(pin, 0U);
+
+    return;
+}
 /**
  * @brief       ADC calibration function for the PPB (Post Processing Block)
  * @param[in]   *p_motor    Pointer on the motor configuration structure.

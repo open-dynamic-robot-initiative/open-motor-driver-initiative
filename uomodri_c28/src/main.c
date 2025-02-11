@@ -36,6 +36,7 @@ void MOT_initStruct(motor_t*, uint16_t);
 void COM_muxCtrl(com_bus_e);
 
 __attribute__((interrupt)) void cla_isrClearTask(void);
+//__attribute__((interrupt)) void cla_isrCmdNew(void);
 __attribute__((interrupt)) void cla_isrMotor1(void);
 __attribute__((interrupt)) void cla_isrMotor2(void);
 __attribute__((interrupt)) void tmr_isrLedCmd(void);
@@ -56,6 +57,7 @@ __attribute__((interrupt)) void errata_isr(void);
 static const int_cfg_t interruptList[] =
 {
  INT_CLA_ADC_CALIB_DEF,
+// INT_CLA_CMD_NEW_DEF,
  INT_CLA_MOTOR1_DEF,
  INT_CLA_MOTOR2_DEF,
  INT_TIMER_LED_DEF,
@@ -785,12 +787,23 @@ __attribute__((interrupt)) void cla_isrClearTask(void)
  */
 __attribute__((interrupt)) void cla_isrMotor1(void)
 {
+#if (DBG_CLA_M1_ISR)
+    DBG_PIN2_SET;
+#endif
+    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, 0, (uint32_t)&dbg_cpu2cm_m1, 1);
+
     // Start DMA channel
 //    DMA_configAddresses(DMA_DBG_CLA2CM_M1_BASE_ADDR, \
 //                        (debug_t *) &dbg_cpu2cm_m1, \
 //                        (debug_t *) &dbg_cla2dma_mx);
 //    DMA_startChannel(DMA_DBG_CLA2CM_M1_BASE_ADDR);
-    DMA_forceTrigger(DMA_DBG_CLA2CM_M1_BASE_ADDR);
+//    DMA_forceTrigger(DMA_DBG_CLA2CM_M1_BASE_ADDR);
+
+#if (DBG_CLA_M1_ISR)
+    DBG_PIN2_CLEAR;
+#endif
+
+
     // Fill of the M1 motor's elements in the Tx message
     switch(com_bus_select)
     {
@@ -840,8 +853,18 @@ __attribute__((interrupt)) void cla_isrMotor1(void)
         break;
     }
 
-    // Clear IT source CLA ask
-    CLA_clearTaskFlags(CLA1_BASE, CLA_MOTOR1_TASK_FLAG);
+
+//    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, 0, (uint32_t)&dbg_cpu2cm_m1, 1);
+
+//    // Clear IT source CLA ask
+//    CLA_clearTaskFlags(CLA1_BASE, CLA_MOTOR1_TASK_FLAG);
+
+//    DMA_startChannel(DMA_DBG_CLA2CM_M1_BASE_ADDR);
+
+    // Clear CLB Flag
+//    CLB_clearInterruptTag(DBG_DMA_START_IT_BASE);
+//    DMA_stopChannel(DMA_CH2_BASE);
+
     // Clear IT
     Interrupt_clearACKGroup(INT_CLA_MOTOR1_GROUP);
 }
@@ -856,7 +879,7 @@ __attribute__((interrupt)) void cla_isrMotor2(void)
 //                        (debug_t *) &dbg_cpu2cm_m2, \
 //                        (debug_t *) &dbg_cla2dma_mx);
 //    DMA_startChannel(DMA_DBG_CLA2CM_M2_BASE_ADDR);
-    DMA_forceTrigger(DMA_DBG_CLA2CM_M2_BASE_ADDR);
+//    DMA_forceTrigger(DMA_DBG_CLA2CM_M2_BASE_ADDR);
     // Finalize the Tx message. Aggregate MOTOR_2 values + computed CRC
     switch(com_bus_select)
     {
@@ -986,7 +1009,7 @@ __attribute__((interrupt)) void dma_isrSpiComRx(void)
  */
 __attribute__((interrupt)) void sci_isrTx_RS485(void)
 {
-#ifdef DEBUG
+#if (DBG_RS485_TX_ISR)
     DBG_PIN2_SET;
 #endif
     // FIFO IT source test.
@@ -1013,7 +1036,7 @@ __attribute__((interrupt)) void sci_isrTx_RS485(void)
     }
     // Clear IT flag
     Interrupt_clearACKGroup(INT_RS485_TX_MSG_GROUP);
-#ifdef DEBUG
+#if (DBG_RS485_TX_ISR)
     DBG_PIN2_CLEAR;
 #endif
 }
@@ -1023,7 +1046,7 @@ __attribute__((interrupt)) void sci_isrTx_RS485(void)
  */
 __attribute__((interrupt)) void sci_isrRx_RS485(void)
 {
-#ifdef DEBUG
+#if (DBG_RS485_RX_ISR)
     DBG_PIN2_SET;
 #endif
     // FIFO IT source test.
@@ -1069,7 +1092,7 @@ __attribute__((interrupt)) void sci_isrRx_RS485(void)
     }
     // Clear global IT flag
     Interrupt_clearACKGroup(INT_RS485_RX_MSG_GROUP);
-#ifdef DEBUG
+#if (DBG_RS485_RX_ISR)
     DBG_PIN2_CLEAR;
 #endif
 }
@@ -1079,7 +1102,7 @@ __attribute__((interrupt)) void sci_isrRx_RS485(void)
  */
 __attribute__((interrupt)) void clb_isrTxRx_RS485(void)
 {
-#ifdef DEBUG
+#if (DBG_RS485_VALID_ISR)
     DBG_PIN3_SET;
 #endif
 #if USE_FCT
@@ -1172,7 +1195,7 @@ __attribute__((interrupt)) void clb_isrTxRx_RS485(void)
     CLB_clearInterruptTag(RS485_RX_TX_CLB_EOT_BASE);
     // Clear IT flag
     Interrupt_clearACKGroup(INT_RS485_RX_Tx_CLB_GROUP);
-#ifdef DEBUG
+#if (DBG_RS485_VALID_ISR)
     DBG_PIN3_CLEAR;
 #endif
 }

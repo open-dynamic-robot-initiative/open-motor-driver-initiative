@@ -926,6 +926,8 @@ typedef struct __attribute__((__packed__)) __dbg_uart_msg_t__
     uint8_t         crc;
 } dbg_uart_msg_t;
 
+#define DBG_SIZE_MSG    (sizeof(dbg_uart_msg_t) - 1)
+
 //typedef struct __attribute__((__packed__)) __dbg_uart_addr_t__
 //{
 //    float_t*        p_ia;
@@ -1006,7 +1008,7 @@ void SCI_rxEnable(uint32_t);
 void SCI_txDisable(uint32_t);
 void SCI_txEnable(uint32_t);
 #else
-void COM_msgDbgTx(debug_t*, dbg_uart_msg_t*);
+void COM_msgDbgTx(volatile debug_t*, dbg_uart_msg_t*);
 //void COM_msgDbgRx(com_dbg_rx_msg_t*, uint8_t);
 uint32_t COM_crc32(uint16_t*, size_t);
 uint8_t COM_crc8(uint8_t*, size_t);

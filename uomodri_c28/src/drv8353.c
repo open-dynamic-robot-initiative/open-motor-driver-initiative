@@ -51,12 +51,12 @@ static uint32_t DRV_Enable(const drv_cfg_t* p_drvCfg)
     // Enable the DRV8353
     GPIO_writePin(p_drvCfg->gpioNumber_EN, 1);
     // Wait 1ms
-    DEVICE_DELAY_US(1000U);
+    DEVICE_DELAY_US(10000U);
     // Make sure the FAULT bit is not set during startup
     while(drv_enable && (DRV_readOne(p_drvCfg, DRV_ADDRESS_STATUS_0) & FLT_STATUS_FAULT_Msk))
-        drv_enable  = (++cpt_time_out < 1000) ? (true) : (false);
+        drv_enable  = (++cpt_time_out < 10000) ? (true) : (false);
     // Wait for the DRV8353 to go through start up sequence
-    DEVICE_DELAY_US(1000U);
+    DEVICE_DELAY_US(10000U);
     // Get the latest states of the status registers.
     drv_stat_regs.stat00.all    = DRV_readOne(p_drvCfg, DRV_ADDRESS_STATUS_0);
     drv_stat_regs.stat01.all    = DRV_readOne(p_drvCfg, DRV_ADDRESS_STATUS_1);

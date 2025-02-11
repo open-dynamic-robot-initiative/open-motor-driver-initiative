@@ -187,15 +187,15 @@
 //    return;
 //}
 
-void COM_msgDbgTx(debug_t* p_addr, dbg_uart_msg_t* p_msg)
+void COM_msgDbgTx(volatile debug_t* p_addr, dbg_uart_msg_t* p_msg)
 {
     p_msg->count            = p_addr->itCnt;
-    p_msg->ia               = p_addr->ia;//.float32b;
-    p_msg->ib               = p_addr->ib;//.float32b;
-    p_msg->ic               = p_addr->ic;//.float32b;
-    p_msg->pos              = p_addr->enc_thetaMech;//.float32b;
-    p_msg->vel              = p_addr->enc_speed_speedMech;//.float32b;
-    p_msg->crc              = COM_crc8Fast(0, (uint8_t *)p_msg, (sizeof(dbg_uart_msg_t) - 1));
+    p_msg->ia               = p_addr->ia;
+    p_msg->ib               = p_addr->ib;
+    p_msg->ic               = p_addr->ic;
+    p_msg->pos              = p_addr->enc_thetaAbsolute;
+    p_msg->vel              = p_addr->enc_speed_speedMech;
+    p_msg->crc              = COM_crc8Fast(0, (uint8_t *)p_msg, sizeof(dbg_uart_msg_t) - 1);
     return;
 }
 

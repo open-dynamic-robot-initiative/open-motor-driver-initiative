@@ -51,9 +51,23 @@ typedef union __uart_addr_u__
 #define INT_CLA_ADC_CALIB_GROUP         INTERRUPT_ACK_GROUP11
 #define INT_CLA_ADC_CALIB_HANDLER       &cla_isrClearTask
 
-#define INT_CLA_MOTOR1                  INT_CLA1_3
-#define INT_CLA_MOTOR1_GROUP            INTERRUPT_ACK_GROUP11
+//#define INT_CLA_CMD_NEW                 INT_CLA1_2
+//#define INT_CLA_CMD_NEW_GROUP           INTERRUPT_ACK_GROUP11
+//#define INT_CLA_CMD_NEW_HANDLER         &cla_isrCmdNew
+
+//---------------------------------------------------------------------
+//#define INT_CLA_MOTOR1                  INT_CLA1_3
+//#define INT_CLA_MOTOR1_GROUP            INTERRUPT_ACK_GROUP11
+//#define INT_CLA_MOTOR1_HANDLER          &cla_isrMotor1
+
+#define INT_CLA_MOTOR1                  INT_DMA_CH2
+#define INT_CLA_MOTOR1_GROUP            INTERRUPT_ACK_GROUP7
 #define INT_CLA_MOTOR1_HANDLER          &cla_isrMotor1
+
+//#define INT_CLA_MOTOR1                  INT_CLB3
+//#define INT_CLA_MOTOR1_GROUP            INTERRUPT_ACK_GROUP5
+//#define INT_CLA_MOTOR1_HANDLER          &cla_isrMotor1
+//---------------------------------------------------------------------
 
 #define INT_CLA_MOTOR2                  INT_CLA1_4
 #define INT_CLA_MOTOR2_GROUP            INTERRUPT_ACK_GROUP11
@@ -93,6 +107,11 @@ typedef union __uart_addr_u__
                                             .intAckGroup        = INT_CLA_ADC_CALIB_GROUP, \
                                             .p_intHandler       = INT_CLA_ADC_CALIB_HANDLER \
                                         }
+//#define INT_CLA_CMD_NEW_DEF             { \
+//                                            .intNum             = INT_CLA_CMD_NEW, \
+//                                            .intAckGroup        = INT_CLA_CMD_NEW_GROUP, \
+//                                            .p_intHandler       = INT_CLA_CMD_NEW_HANDLER \
+//                                        }
 #define INT_CLA_MOTOR1_DEF              { \
                                             .intNum             = INT_CLA_MOTOR1, \
                                             .intAckGroup        = INT_CLA_MOTOR1_GROUP, \

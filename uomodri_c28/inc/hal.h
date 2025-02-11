@@ -545,6 +545,7 @@ typedef struct __cla_config_t__
     CLA_MVECTNumber                     claIntVect;
     CLA_Trigger                         claTrigSrc;
     void                                (*p_claFunc)(void);
+//    bool_t                              claEnEoTInt;
     bool_t                              claForceTask;
 } cla_cfg_t;
 

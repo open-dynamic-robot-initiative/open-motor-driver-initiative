@@ -56,12 +56,12 @@ static const gpio_cfg_t gpioPinsCfgList[] =
  /* USB pins */
  USB_DM_DEF,                        /* USB D- pin */
  USB_DP_DEF,                        /* USB D+ pin */
- USB_DETECT_DEF,                    /* USB Vbus detection pin */
 #elif (!USB_BUS_ENABLE) && (UART_BUS_ENABLE)
  /* UART Pins */
  UART_ON_USB_TX_DEF,
  UART_ON_USB_RX_DEF,
 #endif
+ USB_DETECT_DEF,                    /* USB Vbus detection pin */
  /* PWM MOTOR_1 configuration pins */
  MOTOR1_PWM1_CHA_DEF,               /* MOTOR_1 - PWM1 ChA pin */
  MOTOR1_PWM1_CHB_DEF,               /* MOTOR_1 - PWM1 ChB pin */
@@ -116,6 +116,7 @@ static const gpio_cfg_t gpioPinsCfgList[] =
  DBG_PIN2_DEF,                      /* Debug pin 2 */
  DBG_PIN1_DEF,                      /* Debug pin 1 */
  DBG_PIN0_DEF,                      /* Debug pin 0 */
+ DBG_DMA_START_DEF,
  {.pinNum = UINT32_MAX},            /* END OF ARRAY */
 };
 
@@ -317,7 +318,7 @@ static const spi_cfg_t  spiCfgList[] =
 static const dma_cfg_t  dmaCfgList[] =
 {
  DMA_DBG_CLA2CM_M1_DEF,             /* DMA for memory transfer between CLA & IPC (CPU to CM) */
- DMA_DBG_CLA2CM_M2_DEF,             /* DMA for memory transfer between CLA & IPC (CPU to CM) */
+// DMA_DBG_CLA2CM_M2_DEF,             /* DMA for memory transfer between CLA & IPC (CPU to CM) */
  DMA_LED_SPI_TX_DEF,                /* DMA for the RGB LED */
  DMA_COM_SPI_TX_DEF,                /* DMA for SPI COMMUNICATION Tx */
  DMA_COM_SPI_RX_DEF,                /* DMA for SPI COMMUNICATION Rx */

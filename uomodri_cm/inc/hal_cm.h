@@ -11,6 +11,7 @@
  ************************************************************************/
 #include "driverlib_cm.h"
 #include "cm.h"
+#include "uomodri_cm_usb_device_structs.h"
 
 /************************************************************************
  * TYPDEF DEFINES
@@ -76,6 +77,27 @@ typedef struct __GCRC_CFG_t__
     bool        bitRev;
 } gcrc_cfg_t;
 
+typedef struct __USB_CFG_t__
+{
+    tUSBBuffer*     p_usbRxBuf;
+    tUSBBuffer*     p_usbTxBuf;
+    tUSBDCDCDevice* p_usbCdcDevice;
+    void            (*p_usbIntHandler)(void);
+//    bool            usbCfgDone;
+} usb_cfg_t;
+
+
+/**
+ * @struct  int_cfg_t
+ * @brief   Interrupt source configuration handler
+ */
+typedef struct __interrupts_config_t__
+{
+    uint32_t        intNum;
+    uint16_t        intAckGroup;
+    void            (*p_intHandler)(void);
+} int_cfg_t;
+
 /**
  * @struct  hal_cm_t
  * @brief   General HAL structure handler for the CM microcontroller
@@ -86,11 +108,13 @@ typedef struct __HAL_CM__
     const ipc_cfg_t*    p_ipcHandle;
     const gcrc_cfg_t*   p_crcHandle;
     const udma_cfg_t*   p_udmaHandle;
+    usb_cfg_t*          p_usbHandle;
 } hal_cm_t;
 
 /************************************************************************
  * FUNCTIONS DECLARATION
  ************************************************************************/
-void HAL_CM_init(const hal_cm_t*);
+void HAL_CM_ini(const hal_cm_t*);
+void HAL_INT_ini(const int_cfg_t*);
 
 #endif

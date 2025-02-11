@@ -15,12 +15,16 @@
  * GLOBAL VARIABLES
  ************************************************************************/
 extern dbg_uart_msg_t dbg_uart_tx_msg;
+extern tUSBDCDCDevice usb_CDCDevice;
+extern tUSBBuffer usb_RxBuffer;
+extern tUSBBuffer usb_TxBuffer;
 
 /************************************************************************
  * FUNCTIONS DECLARATION
  ************************************************************************/
 extern __attribute__((interrupt)) void ipc_isr0(void);
 extern __attribute__((interrupt)) void UART_RX_IntHandler(void);
+extern __attribute__((interrupt)) void CM_USB0DeviceIntHandler(void);
 
 /************************************************************************
  * VARIABLES INITIALIZATION
@@ -49,26 +53,13 @@ static const udma_cfg_t cm_udmaCfgList[] =
  {
   .dmaChannel       = UDMA_CHANNEL_UART0_TX,
   .dmaCfg           = (UDMA_SIZE_8 | UDMA_SRC_INC_8 | UDMA_DST_INC_NONE | UDMA_ARB_8 | UDMA_NEXT_USEBURST),
-  .srcAddr          = (void *)&dbg_uart_tx_msg,
-  .dstAddr          = (void *)(UART0_BASE + UART_O_DR),
-  .transferMode     = UDMA_MODE_BASIC,
+  .srcAddr          = (uint8_t *)&dbg_uart_tx_msg,
+  .dstAddr          = (uint8_t *)(UART0_BASE + UART_O_DR),
+  .transferMode     = UDMA_MODE_AUTO,
   .transferSize     = sizeof(dbg_uart_msg_t),
  },
  {.dmaChannel       = UINT32_MAX},
 };
-
-//static const ipc_cfg_t  cm_ipcCfgList[] =
-//{
-// {
-//  .ipcType          = IPC_CM_L_CPU1_R,
-//  .ipcFlag          = IPC_CPU1_TO_CM_FLAG,
-//  //  .ipcInt           = IPC_INT0,
-//  //  .p_ipcIntHandler  = &ipc_isr0,
-//  .ipcMsgQEnable    = false,
-//  .ipcIntEnable     = false,
-// },
-// {.ipcType          = IPC_TOTAL_NUM},
-//};
 
 static const ipc_cfg_t cm_ipcCfgList[] =
 {
@@ -83,32 +74,8 @@ static const ipc_cfg_t cm_ipcCfgList[] =
   .ipcMsgQEnable    = false,
   .ipcIntEnable     = false,
  },
-// {
-//  .ipcType          = IPC_CM_L_CPU1_R,
-//  .p_ipcMsgQ        = NULL,
-//  .ipcIntMsgQL      = 0,
-//  .ipcIntMsgQR      = 0,
-//  .ipcFlag          = IPC_FLAG1,
-//  .ipcInt           = IPC_INT1,
-//  .p_ipcIntHandler  = &ipc_isr1,
-//  .ipcMsgQEnable    = false,
-//  .ipcIntEnable     = true,
-// },
-// {
-//  .ipcType          = IPC_CM_L_CPU1_R,
-//  .p_ipcMsgQ        = NULL,
-//  .ipcIntMsgQL      = 0,
-//  .ipcIntMsgQR      = 0,
-//  .ipcFlag          = IPC_FLAG0,
-//  .ipcInt           = 0,
-//  .p_ipcIntHandler  = NULL,
-//  .ipcMsgQEnable    = false,
-//  .ipcIntEnable     = false,
-// },
  {.ipcType          = IPC_TOTAL_NUM},
 };
-
-
 
 static const gcrc_cfg_t cm_crcCfg =
 {
@@ -121,13 +88,30 @@ static const gcrc_cfg_t cm_crcCfg =
  .bitRev            = GCRC_FIXEDPATH_BITREVERSE,
 };
 
+static usb_cfg_t cm_usbCfg =
+{
+ .p_usbRxBuf        = &usb_RxBuffer,
+ .p_usbTxBuf        = &usb_TxBuffer,
+ .p_usbCdcDevice    = &usb_CDCDevice,
+ .p_usbIntHandler   = &CM_USB0DeviceIntHandler,
+// .usbCfgDone        = false,
+};
 
 /** @var    HAL     hal
  *  @brief  General configuration structure for the Hardware Abstraction Layer.
  */
 static const hal_cm_t   hal_cm =
 {
+#if (!USB_BUS_ENABLE) && (UART_BUS_ENABLE)
  .p_uartHandle      = &cm_uartCfg,
+ .p_usbHandle       = NULL,
+#elif (USB_BUS_ENABLE) && (!UART_BUS_ENABLE)
+ .p_uartHandle      = NULL,
+ .p_usbHandle       = &cm_usbCfg,
+#else
+ .p_uartHandle      = NULL,
+ .p_usbHandle       = NULL,
+#endif
  .p_udmaHandle      = cm_udmaCfgList,
  .p_ipcHandle       = cm_ipcCfgList,
  .p_crcHandle       = NULL,//&cm_crcCfg,
