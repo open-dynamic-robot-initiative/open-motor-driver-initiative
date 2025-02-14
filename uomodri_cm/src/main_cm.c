@@ -414,16 +414,14 @@ void main(void)
 
 //        if(it_cnt_prev != dbg_m1.itCnt)
 //        {
-//            continue;
-//        }
             // Wait Tx buffer + UART Tx module are empty.
             while(UART_isBusy(UART0_BASE));
 
-            GPIO_writePin(DBG_PIN3_NUM, 1U);
+//            GPIO_writePin(DBG_PIN3_NUM, 1U);
             // New message received, prepare to send via UART:
             COM_msgDbgTx(&dbg_m1, &dbg_uart_tx_msg);
-            GPIO_writePin(DBG_PIN3_NUM, 0U);
-//            it_cnt_prev = dbg_m1.itCnt;
+//            GPIO_writePin(DBG_PIN3_NUM, 0U);
+            it_cnt_prev = dbg_m1.itCnt;
 
             // Force purge of Rx buffer.
             //while(UART_readCharNonBlocking(UART0_BASE) != -1);

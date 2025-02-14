@@ -13,7 +13,9 @@
 #include "uomodri_user_defines.h"
 #include "config/uomodri_math.h"
 
-#if (USE_UOMODRI_REV == USE_UOMODRI_V2)
+#if (USE_UOMODRI_REV == USE_UOMODRI_V1)
+#include "config/uomodri_1/uomodri_1_handlers.h"    // uOmodri v1.x configuration include file
+#elif (USE_UOMODRI_REV == USE_UOMODRI_V2)
 #include "config/uomodri_2/uomodri_2_handlers.h"    // uOmodri v2.x configuration include file
 #elif (USE_UOMODRI_REV == USE_UOMODRI_V3)
 #include "config/uomodri_3/uomodri_3_handlers.h"    // uOmodri v3.x configuration include file
@@ -34,13 +36,15 @@ static void MCU_ini(void);
 inline void LED_dimming(motor_t*, motor_t*, uint16_t*);
 void MOT_initStruct(motor_t*, uint16_t);
 void COM_muxCtrl(com_bus_e);
+void DBG_copyStruct(motor_t*, debug_t*);
 
 __attribute__((interrupt)) void cla_isrClearTask(void);
-//__attribute__((interrupt)) void cla_isrCmdNew(void);
 __attribute__((interrupt)) void cla_isrMotor1(void);
 __attribute__((interrupt)) void cla_isrMotor2(void);
 __attribute__((interrupt)) void tmr_isrLedCmd(void);
 __attribute__((interrupt)) void dma_isrSpiComRx(void);
+__attribute__((interrupt)) void dma_isrDbgMotor1(void);
+__attribute__((interrupt)) void dma_isrDbgMotor2(void);
 __attribute__((interrupt)) void sci_isrTx_RS485(void);
 __attribute__((interrupt)) void sci_isrRx_RS485(void);
 __attribute__((interrupt)) void clb_isrTxRx_RS485(void);
@@ -57,17 +61,21 @@ __attribute__((interrupt)) void errata_isr(void);
 static const int_cfg_t interruptList[] =
 {
  INT_CLA_ADC_CALIB_DEF,
-// INT_CLA_CMD_NEW_DEF,
  INT_CLA_MOTOR1_DEF,
  INT_CLA_MOTOR2_DEF,
  INT_TIMER_LED_DEF,
- INT_DMA_RX_MSG_DEF,
-#if (RS485_BUS_ENABLE) && (USE_UOMODRI_REV != USE_UOMODRI_V1)
+ INT_DMA_SPI_RX_MSG_DEF,
+// INT_DMA_DBG_MOTOR1_DEF,
+// INT_DMA_DBG_MOTOR2_DEF,
+#if (USE_UOMODRI_REV != USE_UOMODRI_V1)
+#if (RS485_BUS_ENABLE)
  INT_RS485_TX_MSG_DEF,
  INT_RS485_RX_MSG_DEF,
  INT_RS485_Rx_Tx_CLB_DEF,
-#endif
+#elif (CAN_FD_BUS_ENABLE)
  INT_MCAN_DEF,
+#endif
+#endif
  {.intNum = UINT32_MAX},        /* END OF ARRAY */
 };
 
@@ -146,8 +154,7 @@ uint16_t    led_spi_tx[LED_MSG_TX_16BIT_LENGTH];
 
 #pragma DATA_ALIGN(com_bus_select, 4)
 #pragma DATA_SECTION(com_bus_select, "ramgs0")
-com_bus_e   com_bus_select      = COM_USE_RS485_BUS;
-//COM_NO_BUS_DEFINED;
+com_bus_e   com_bus_select      = COM_NO_BUS_DEFINED;
 
 #pragma DATA_ALIGN(global_ms_tmr_cnt, 4)
 #pragma DATA_SECTION(global_ms_tmr_cnt, "ramgs0")
@@ -160,6 +167,12 @@ uint32_t    global_errata_cnt   = 0U;
 #pragma DATA_ALIGN(mcan_error, 4)
 #pragma DATA_SECTION(mcan_error, "ramgs0")
 int32_t     mcan_error = 0;
+
+#pragma DATA_ALIGN(slv2mst_msg, 4)
+#pragma DATA_SECTION(slv2mst_msg, "ramgs0")
+slv2mst_msg_t slv2mst_msg       = {.status  = 0U,       .timeStamp  = 0U, \
+                                   .position= {0U, 0U}, .velocity   = {0, 0},   .current        = {0, 0}, \
+                                   .coilRes = {0U, 0U}, .adcSamples = {0U, 0U}, .lastCmdIndex   = 0U};
 
 /***********************************************************************
  * EXTERNAL VARIABLES
@@ -340,8 +353,17 @@ void main(void)
     // Start ADC offset calibration on CLA.
     CLA_forceTasks(CLA1_BASE, CLA_ADC_CALIB_TASK_FLAG);
     // Use SPI, RS485 or CAN-FD as master communication bus.
+#if (CAN_FD_BUS_ENABLE)
+    com_bus_select = COM_USE_CANFD_BUS;
+#elif (RS485_BUS_ENABLE)
     com_bus_select = COM_USE_RS485_BUS;
-#if (USE_UOMODRI_REV >= USE_UOMODRI_V3)
+#elif (SPI_BUS_ENABLE)
+    com_bus_select = COM_USE_SPI_BUS;
+#else
+    com_bus_select = COM_NO_BUS_DEFINED;
+#endif
+
+    #if (USE_UOMODRI_REV >= USE_UOMODRI_V3)
     // Mux control of the differential pair.
     COM_muxCtrl(com_bus_select);
 #endif
@@ -364,12 +386,12 @@ static void MCU_ini(void)
 {
     /* Initialize clock and peripherals */
     Device_init();
-//#if (USE_UOMODRI_REV >= USE_UOMODRI_V3)
+#if (USE_UOMODRI_REV >= USE_UOMODRI_V3)
     // Define which core manage MCAN (a shared peripheral) - CPU1 (C28x) / CM (Cortex M)
     SysCtl_allocateSharedPeripheral(SYSCTL_PALLOCATE_MCAN_A, MCAN_ALLOCATE_ON_CORE);
     // Configure the divisor for the MCAN bit-clock
     SysCtl_setMCANClk(SYSCTL_MCANCLK_DIV_1);
-//#endif
+#endif
     // Define which core manage USB (a shared peripheral) - CPU1 (C28x) / CM (Cortex M)
     SysCtl_allocateSharedPeripheral(SYSCTL_PALLOCATE_USBA, USB_ALLOCATE_ON_CORE);
 
@@ -489,6 +511,79 @@ inline void LED_dimming(motor_t* p_motor1, motor_t* p_motor2, uint16_t* p_msg)
     p_msg       = ws2812b_dimmingLed(MOTOR2_LED, p_motor2->state, timer_cpt_ms, p_msg);
     // millisecond timer increment
     timer_cpt_ms= (timer_cpt_ms < 1000U) ? (timer_cpt_ms + 1): (0U);
+
+    return;
+}
+
+void DBG_copyStruct(motor_t* p_motor, debug_t* p_dbg)
+{
+    p_dbg->ia                       = p_motor->foc.acq.ia;                  // [A]
+    p_dbg->ib                       = p_motor->foc.acq.ib;                  // [A]
+    p_dbg->ic                       = p_motor->foc.acq.ic;                  // [A]
+    p_dbg->vBus                     = p_motor->foc.acq.vBus;                // [V]
+    p_dbg->vExt                     = p_motor->foc.acq.vExt;                // [V]
+
+    p_dbg->enc_thetaElec            = p_motor->foc.enc.thetaElec;           /*!< Angular electrical position  - [pu] */
+    p_dbg->enc_thetaMech            = p_motor->foc.enc.thetaMech[0];        /*!< Angular mechanical position  - [pu] */
+    p_dbg->enc_thetaIndexRelative   = p_motor->foc.enc.thetaIndexRelative;  /*!< Index mechanical angle */
+    p_dbg->enc_thetaIndexAbsolute   = p_motor->foc.enc.thetaIndexAbsolute;  /*!< First index mechanical angle */
+    p_dbg->enc_thetaAbsolute        = p_motor->foc.enc.thetaAbsolute;       /*!< Absolute angular position - [turns] */
+    p_dbg->enc_turnNb               = p_motor->foc.enc.turnNb;              /*!< Number of full turns (signed) */
+    p_dbg->enc_thetaDir             = p_motor->foc.enc.thetaDir;            /*!< Rotor direction - -1 = CCW/reverse, 1 = CW/forward */
+    p_dbg->enc_flags.all            = p_motor->foc.enc.flags.all;
+
+    p_dbg->enc_speed_speedHigh      = p_motor->foc.enc.speed.speedHigh;     /*!< High speed estimation -  [rad/s] - diff_angular * scaler = velocity */
+    p_dbg->enc_speed_speedMech      = p_motor->foc.enc.speed.speedMech[0];  /*!< Mechanical output speed - [rad/s] */
+    p_dbg->enc_speed_speedElec      = p_motor->foc.enc.speed.speedElec;     /*!< Electrical output speed (pole pairs integration) - [rad/s] */
+    p_dbg->enc_speed_theta          = p_motor->foc.enc.speed.theta[0];      /*!< Angular position of rotor - [pu] */
+
+    p_dbg->cmd_posRef               = p_motor->foc.cmd.posRef;
+    p_dbg->cmd_velRef               = p_motor->foc.cmd.velRef;
+    p_dbg->cmd_iqff                 = p_motor->foc.cmd.iqff;
+    p_dbg->cmd_kpCoeff              = p_motor->foc.cmd.kpCoeff;
+    p_dbg->cmd_kdCoeff              = p_motor->foc.cmd.kdCoeff;
+    p_dbg->cmd_iSat                 = p_motor->foc.cmd.iSat;
+    p_dbg->cmd_cptTimeout           = p_motor->foc.cmd.cptTimeout;
+    p_dbg->cmd_index                = p_motor->foc.cmd.index;
+    p_dbg->cmd_cmdField.all         = p_motor->foc.cmd.cmdField.all;            /*!< Bit 0      : R/W - Enable system to start. No power on motors.         */
+    p_dbg->cmd_periphField.all      = p_motor->foc.cmd.periphField.all;         /*!< Bits 0   : R/W - DRV initialization went wrong             */
+
+    p_dbg->sinTheta                 = p_motor->foc.sinTheta;                /*!< Sinus of the electrical rotor angle */
+    p_dbg->cosTheta                 = p_motor->foc.cosTheta;           /*!< Cosine of the electrical rotor angle */
+    p_dbg->ialpha                   = p_motor->foc.ialpha;             /*!< Direct Clarke transform result - [A] */
+    p_dbg->ibeta                    = p_motor->foc.ibeta;              /*!< Direct Clarke transform result - [A] */
+    p_dbg->id                       = p_motor->foc.id;                 /*!< Filtered Direct Park transform result - [A] */
+    p_dbg->iq                       = p_motor->foc.iq;                 /*!< Filtered Quadrature Park transform result - [A] */
+    p_dbg->ud                       = p_motor->foc.ud;                 /*!< Inverse Park transform result - [V] */
+    p_dbg->uq                       = p_motor->foc.uq;                 /*!< Inverse Park transform result - [V] */
+    p_dbg->ualpha                   = p_motor->foc.ualpha;             /*!< Inverse Clarke transform result - [V] */
+    p_dbg->ubeta                    = p_motor->foc.ubeta;              /*!< Inverse Clarke transform result - [V] */
+    p_dbg->ua                       = p_motor->foc.ua;                 /*!< Phase commands - Channel a - [V] */
+    p_dbg->ub                       = p_motor->foc.ub;                 /*!< Phase commands - Channel b - [V] */
+    p_dbg->uc                       = p_motor->foc.uc;                 /*!< Phase commands - Channel c - [V] */
+    p_dbg->dtc_u                    = p_motor->foc.dtc_u;              /*!< Duty cycles on channel u - [pu] between -0.5 and 0.5 */
+    p_dbg->dtc_v                    = p_motor->foc.dtc_v;              /*!< Duty cycles on channel v - [pu] between -0.5 and 0.5 */
+    p_dbg->dtc_w                    = p_motor->foc.dtc_w;              /*!< Duty cycles on channel w - [pu] between -0.5 and 0.5 */
+    p_dbg->idRef                    = p_motor->foc.idRef;              /*!< PI controller set point values for D-axis current - [A] */
+    p_dbg->iqRef                    = p_motor->foc.iqRef;              /*!< PI controller set point values for Q-axis current - [A] */
+
+    p_dbg->piId_err                 = p_motor->foc.piId.err;      /*!< Current error */
+    p_dbg->piId_integral            = p_motor->foc.piId.integral;           /*!< Integral term partial computation */
+    p_dbg->piId_out                 = p_motor->foc.piId.out;                /*!< Controller output */
+
+    p_dbg->piIq_err                 = p_motor->foc.piIq.err;      /*!< Current error */
+    p_dbg->piIq_integral            = p_motor->foc.piIq.integral;           /*!< Integral term partial computation */
+    p_dbg->piIq_out                 = p_motor->foc.piIq.out;                /*!< Controller output */
+
+    p_dbg->pdPosVel_errTheta        = p_motor->foc.pdPosVel.errTheta;           /*!< Error position */
+    p_dbg->pdPosVel_errSpeed        = p_motor->foc.pdPosVel.errSpeed;           /*!< Error speed */
+    p_dbg->pdPosVel_derivative      = p_motor->foc.pdPosVel.derivative;         /*!< Derivative term partial computation */
+    p_dbg->pdPosVel_out             = p_motor->foc.pdPosVel.out;                /*!< Controller output */
+
+    p_dbg->itCnt                    = p_motor->itCnt;          /*!< Event counter incrementing on every IT call */
+    p_dbg->motor_id                 = p_motor->id;             /*!< Motor identification */
+    p_dbg->error.all                = p_motor->error.all;          /*!< Bit field for the error sources. */
+    p_dbg->state                    = p_motor->state;      /*!< Motor state for the FSM. */
 
     return;
 }
@@ -790,83 +885,80 @@ __attribute__((interrupt)) void cla_isrMotor1(void)
 #if (DBG_CLA_M1_ISR)
     DBG_PIN2_SET;
 #endif
-    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, 0, (uint32_t)&dbg_cpu2cm_m1, 1);
+    // Fill of the M1 motor's elements in the Tx message
+//    slv2mst_msg.status  = 0U;
+//    slv2mst_msg.timeStamp  = 0U;
+//    slv2mst_msg.position[MOTOR_1]= 0U;
+//    slv2mst_msg.position[MOTOR_2]= 0U;
+//    slv2mst_msg.velocity[MOTOR_1]   = {0, 0};
+//    slv2mst_msg.velocity[MOTOR_2]   = {0, 0};
+//    slv2mst_msg.current[MOTOR_1]        = {0, 0};
+//    slv2mst_msg.coilRes[MOTOR_1] = {0U, 0U};
+//    slv2mst_msg.adcSamples[MOTOR_1] = {0U, 0U};
+//    slv2mst_msg.lastCmdIndex   = 0U;
+    COM_msgCreate(&motor_m1, &slv2mst_msg, &global_ms_tmr_cnt);
 
-    // Start DMA channel
-//    DMA_configAddresses(DMA_DBG_CLA2CM_M1_BASE_ADDR, \
-//                        (debug_t *) &dbg_cpu2cm_m1, \
-//                        (debug_t *) &dbg_cla2dma_mx);
-//    DMA_startChannel(DMA_DBG_CLA2CM_M1_BASE_ADDR);
-//    DMA_forceTrigger(DMA_DBG_CLA2CM_M1_BASE_ADDR);
+//    switch(com_bus_select)
+//    {
+//        case COM_USE_SPI_BUS:
+//        {
+////            // Is DMA transfer (SPI Tx) in progress or SPI CS low? (SPI active?)
+////            if((!DMA_getRunStatusFlag(DMA_COM_SPI_TX_BASE_ADDR)) && COM_SPI_CS_READ)
+////            {
+////                spi_tx_msg_t* p_msg_spi = &com_spi_tx.msg[com_spi_tx.msg_nx];
+////                p_msg_spi->data         = slv2mst_msg;
+//////                COM_msgCreate(&motor_m1, &p_msg_spi->data, &global_ms_tmr_cnt);
+////            }
+//            break;
+//        }
+//#if (USE_UOMODRI_REV >= USE_UOMODRI_V3)
+//        case COM_USE_RS485_BUS:
+//        {
+//            // Is RS485 Tx transfer in progress?
+//            if(!com_rs485_tx.index)
+//            {
+//                rs485_tx_msg_u* p_msg_rs485 = &com_rs485_tx.msg[com_rs485_tx.msg_nx];
+//                p_msg_rs485->header.addr    = com_msg_rs485_tx_master_address;
+//                p_msg_rs485->header.type    = COM_MSG_RS485_TX_TYPE_STANDARD;
+//                p_msg_rs485->header.size    = COM_MSG_RS485_TX_8BIT_FULL_LENGTH;
+////                p_msg_rs485->data           = slv2mst_msg;
+////                COM_msgCreate(&motor_m1, &p_msg_rs485->data, &global_ms_tmr_cnt);
+//            }
+//            break;
+//        }
+//
+//        case COM_USE_CANFD_BUS:
+//        {
+//            canfd_tx_t* p_msg_canfd = &com_canfd_tx;
+//            p_msg_canfd->buf.id     = CANFD_ID_REG(com_msg_canfd_tx_master_id, \
+//                                                   COM_MSG_CANFD_SUB_ID_STATUS);// CANFD_ID(0U, 1U);
+//            p_msg_canfd->buf.rtr    = MCAN_RTR_TX_DATA_FRAME;       // Transmit data frame.
+//            p_msg_canfd->buf.xtd    = MCAN_ID_TYPE_11_BIT;          // 11-bit standard identifier.
+//            p_msg_canfd->buf.esi    = MCAN_ESI_PASSIVE_ERROR_FLAG;  // ESI bit in CAN FD format depends only on error passive flag.
+//            p_msg_canfd->buf.dlc    = MCAN_DLC_PAYLOAD_LENGTH_32B;  // CAN + CAN FD: transmit frame has 0-8 data bytes.
+//            p_msg_canfd->buf.brs    = MCAN_BIT_RATE_SWITCHING_MODE; // CAN FD frames transmitted with bit rate switching.
+//            p_msg_canfd->buf.fdf    = MCAN_FLEXIBLE_DATA_RATE_MODE; // Frame transmitted in CAN FD format.
+//            p_msg_canfd->buf.efc    = 1U;                           // Store Tx events.
+//            p_msg_canfd->buf.mm     = 0xAAU;                        // Message Marker.
+////            p_msg_canfd->data       = slv2mst_msg;
+////            COM_msgCreate(&motor_m1, &p_msg_canfd->data, &global_ms_tmr_cnt);
+//            break;
+//        }
+//#endif
+//        default:
+//            break;
+//    }
 
+//    DBG_copyStruct(&motor_m1, &dbg_cpu2cm_m1);
+//    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, 0, (uint32_t)&dbg_cpu2cm_m1, 1);
+
+    // Clear IT source CLA ask
+    CLA_clearTaskFlags(CLA1_BASE, CLA_MOTOR1_TASK_FLAG);
+    // Clear IT
+    Interrupt_clearACKGroup(INT_CLA_MOTOR1_GROUP);
 #if (DBG_CLA_M1_ISR)
     DBG_PIN2_CLEAR;
 #endif
-
-
-    // Fill of the M1 motor's elements in the Tx message
-    switch(com_bus_select)
-    {
-    case COM_USE_SPI_BUS:
-    {
-        // Is DMA transfer (SPI Tx) in progress or SPI CS low? (SPI active?)
-        if((!DMA_getRunStatusFlag(DMA_COM_SPI_TX_BASE_ADDR)) && COM_SPI_CS_READ)
-        {
-            spi_tx_msg_t* p_msg_spi = &com_spi_tx.msg[com_spi_tx.msg_nx];
-            COM_msgCreate(&motor_m1, &p_msg_spi->data, &global_ms_tmr_cnt);
-        }
-        break;
-    }
-
-    case COM_USE_RS485_BUS:
-    {
-        // Is RS485 Tx transfer in progress?
-        if(!com_rs485_tx.index)
-        {
-            rs485_tx_msg_u* p_msg_rs485 = &com_rs485_tx.msg[com_rs485_tx.msg_nx];
-            p_msg_rs485->header.addr    = com_msg_rs485_tx_master_address;
-            p_msg_rs485->header.type    = COM_MSG_RS485_TX_TYPE_STANDARD;
-            p_msg_rs485->header.size    = COM_MSG_RS485_TX_8BIT_FULL_LENGTH;
-            COM_msgCreate(&motor_m1, &p_msg_rs485->data, &global_ms_tmr_cnt);
-        }
-        break;
-    }
-
-    case COM_USE_CANFD_BUS:
-    {
-        canfd_tx_t* p_msg_canfd = &com_canfd_tx;
-        p_msg_canfd->buf.id     = CANFD_ID_REG(com_msg_canfd_tx_master_id, \
-                                               COM_MSG_CANFD_SUB_ID_STATUS);// CANFD_ID(0U, 1U);
-        p_msg_canfd->buf.rtr    = MCAN_RTR_TX_DATA_FRAME;       // Transmit data frame.
-        p_msg_canfd->buf.xtd    = MCAN_ID_TYPE_11_BIT;          // 11-bit standard identifier.
-        p_msg_canfd->buf.esi    = MCAN_ESI_PASSIVE_ERROR_FLAG;  // ESI bit in CAN FD format depends only on error passive flag.
-        p_msg_canfd->buf.dlc    = MCAN_DLC_PAYLOAD_LENGTH_32B;  // CAN + CAN FD: transmit frame has 0-8 data bytes.
-        p_msg_canfd->buf.brs    = MCAN_BIT_RATE_SWITCHING_MODE; // CAN FD frames transmitted with bit rate switching.
-        p_msg_canfd->buf.fdf    = MCAN_FLEXIBLE_DATA_RATE_MODE; // Frame transmitted in CAN FD format.
-        p_msg_canfd->buf.efc    = 1U;                           // Store Tx events.
-        p_msg_canfd->buf.mm     = 0xAAU;                        // Message Marker.
-        COM_msgCreate(&motor_m1, &p_msg_canfd->data, &global_ms_tmr_cnt);
-        break;
-    }
-
-    default:
-        break;
-    }
-
-
-//    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, 0, (uint32_t)&dbg_cpu2cm_m1, 1);
-
-//    // Clear IT source CLA ask
-//    CLA_clearTaskFlags(CLA1_BASE, CLA_MOTOR1_TASK_FLAG);
-
-//    DMA_startChannel(DMA_DBG_CLA2CM_M1_BASE_ADDR);
-
-    // Clear CLB Flag
-//    CLB_clearInterruptTag(DBG_DMA_START_IT_BASE);
-//    DMA_stopChannel(DMA_CH2_BASE);
-
-    // Clear IT
-    Interrupt_clearACKGroup(INT_CLA_MOTOR1_GROUP);
 }
 
 /**
@@ -874,77 +966,122 @@ __attribute__((interrupt)) void cla_isrMotor1(void)
  */
 __attribute__((interrupt)) void cla_isrMotor2(void)
 {
-    // Start DMA channel
-//    DMA_configAddresses(DMA_DBG_CLA2CM_M2_BASE_ADDR, \
-//                        (debug_t *) &dbg_cpu2cm_m2, \
-//                        (debug_t *) &dbg_cla2dma_mx);
-//    DMA_startChannel(DMA_DBG_CLA2CM_M2_BASE_ADDR);
-//    DMA_forceTrigger(DMA_DBG_CLA2CM_M2_BASE_ADDR);
+#if (DBG_CLA_M2_ISR)
+    DBG_PIN2_SET;
+#endif
     // Finalize the Tx message. Aggregate MOTOR_2 values + computed CRC
+//    slv2mst_msg_t slv2mst_msg = {.status = 0U};
+    COM_msgCreate(&motor_m2, &slv2mst_msg, &global_ms_tmr_cnt);
+
     switch(com_bus_select)
     {
-    case COM_USE_SPI_BUS:
-        // Is DMA transfer (SPI Tx) in progress or SPI CS low? (SPI active?)
-        if((!DMA_getRunStatusFlag(DMA_COM_SPI_TX_BASE_ADDR)) && COM_SPI_CS_READ)
+        case COM_USE_SPI_BUS:
         {
-            spi_tx_msg_t* p_msg_spi = &com_spi_tx.msg[com_spi_tx.msg_nx];
-            COM_msgCreate(&motor_m2, &p_msg_spi->data, &global_ms_tmr_cnt);
-            uint32_t msg_crc        = COM_msgCRC((uint16_t *) &p_msg_spi->data, \
-                                                 COM_MSG_SPI_TX_16BIT_PAYLOAD_LENGTH);
-            // swap words in message - Required for Solo
-            p_msg_spi->crc.u16_msb  = LSB_32(msg_crc);
-            p_msg_spi->crc.u16_lsb  = MSB_32(msg_crc);
-            // New message complete
-            // Is SPI already transmitting (SPI Tx is slave - no control when Tx start)?
-            if(!DMA_getRunStatusFlag(DMA_COM_SPI_TX_BASE_ADDR) && COM_SPI_CS_READ)
+            // Is DMA transfer (SPI Tx) in progress or SPI CS low? (SPI active?)
+            if((!DMA_getRunStatusFlag(DMA_COM_SPI_TX_BASE_ADDR)) && COM_SPI_CS_READ)
             {
-                // swap active message array
-                com_spi_tx.msg_cr   = !com_spi_tx.msg_cr;
-                com_spi_tx.msg_nx   = !com_spi_tx.msg_cr;
-                SPI_resetTxFIFO(COM_SPI_BASE);
-                // Force first write in SPI_O_DAT register
-                COM_SPI_DAT(p_msg_spi->data.status.all);
-                DMA_configAddresses(DMA_COM_SPI_TX_BASE_ADDR, \
-                                    (uint16_t *) COM_SPI_TX_BASE_REG_ADDR, \
-                                    (uint16_t *) &p_msg_spi->data.timeStamp);
-                DMA_startChannel(DMA_COM_SPI_TX_BASE_ADDR);
+                spi_tx_msg_t* p_msg_spi = &com_spi_tx.msg[com_spi_tx.msg_nx];
+                p_msg_spi->data         = slv2mst_msg;
+//                COM_msgCreate(&motor_m2, &p_msg_spi->data, &global_ms_tmr_cnt);
+                uint32_t msg_crc        = COM_msgCRC((uint16_t *) &p_msg_spi->data, \
+                                                     COM_MSG_SPI_TX_16BIT_PAYLOAD_LENGTH);
+                // swap words in message - Required for Solo
+                p_msg_spi->crc.u16_msb  = LSB_32(msg_crc);
+                p_msg_spi->crc.u16_lsb  = MSB_32(msg_crc);
+                // New message complete
+                // Is SPI already transmitting (SPI Tx is slave - no control when Tx start)?
+                if(!DMA_getRunStatusFlag(DMA_COM_SPI_TX_BASE_ADDR) && COM_SPI_CS_READ)
+                {
+                    // swap active message array
+                    com_spi_tx.msg_cr   = !com_spi_tx.msg_cr;
+                    com_spi_tx.msg_nx   = !com_spi_tx.msg_cr;
+                    SPI_resetTxFIFO(COM_SPI_BASE);
+                    // Force first write in SPI_O_DAT register
+                    COM_SPI_DAT(p_msg_spi->data.status.all);
+                    DMA_configAddresses(DMA_COM_SPI_TX_BASE_ADDR, \
+                                        (uint16_t *) COM_SPI_TX_BASE_REG_ADDR, \
+                                        (uint16_t *) &p_msg_spi->data.timeStamp);
+                    DMA_startChannel(DMA_COM_SPI_TX_BASE_ADDR);
+                }
             }
+            break;
         }
-        break;
-
-    case COM_USE_RS485_BUS:
-        // Is RS485 Tx transfer in progress?
-        if(!com_rs485_tx.index)
+#if (USE_UOMODRI_REV >= USE_UOMODRI_V3)
+        case COM_USE_RS485_BUS:
         {
-            rs485_tx_msg_u* p_msg_rs485 = &com_rs485_tx.msg[com_rs485_tx.msg_nx];
-            COM_msgCreate(&motor_m2, &p_msg_rs485->data, &global_ms_tmr_cnt);
-            uint32_t msg_crc            = COM_msgCRC((uint16_t *) &p_msg_rs485->header, \
-                                                     COM_MSG_RS485_TX_16BIT_PAYLOAD_LENGTH);
-            // swap words in message - Required for Solo
-            p_msg_rs485->crc.u16_msb    = LSB_32(msg_crc);
-            p_msg_rs485->crc.u16_lsb    = MSB_32(msg_crc);
-            // New message complete. If we are here RS485 has not started.
-            com_rs485_tx.msg_cr         = !com_rs485_tx.msg_cr;
-            com_rs485_tx.msg_nx         = !com_rs485_tx.msg_cr;
-        }
-        break;
+            // Is RS485 Tx transfer in progress?
+            if(!com_rs485_tx.index)
+            {
+                rs485_tx_msg_u* p_msg_rs485 = &com_rs485_tx.msg[com_rs485_tx.msg_nx];
+                p_msg_rs485->header.addr    = com_msg_rs485_tx_master_address;
+                p_msg_rs485->header.type    = COM_MSG_RS485_TX_TYPE_STANDARD;
+                p_msg_rs485->header.size    = COM_MSG_RS485_TX_8BIT_FULL_LENGTH;
+                p_msg_rs485->data           = slv2mst_msg;
+//                COM_msgCreate(&motor_m2, &p_msg_rs485->data, &global_ms_tmr_cnt);
+                uint32_t msg_crc            = COM_msgCRC((uint16_t *) &p_msg_rs485->header, \
+                                                         COM_MSG_RS485_TX_16BIT_PAYLOAD_LENGTH);
+                // swap words in message - Required for Solo
+                p_msg_rs485->crc.u16_msb    = LSB_32(msg_crc);
+                p_msg_rs485->crc.u16_lsb    = MSB_32(msg_crc);
+                // Splite 16bits words into 2x 8bits words.
+                uint16_t i;
+                //uint16_t* p_msg8b_rs485     = &com_rs485_tx.msg8b[com_rs485_tx.msg_nx][0];
+                for(i = 0; i < (sizeof(rs485_rx_msg_u)); i++)
+                {
+//                    p_msg8b_rs485->
+                    com_rs485_tx.msg8b[com_rs485_tx.msg_nx][2*i]     = p_msg_rs485->raw[i];
+                    com_rs485_tx.msg8b[com_rs485_tx.msg_nx][(2*i)+1] = p_msg_rs485->raw[i];
+                }
+//                for(i = 1; i < (2 * sizeof(rs485_rx_msg_u)); i = i + 2)
+//                {
+//                    com_rs485_tx.msg8b[com_rs485_tx.msg_nx][i]       = com_rs485_tx.msg8b[com_rs485_tx.msg_nx][i] & 0x00FF;
+//                }
+                for(i = 0; i < (2 * sizeof(rs485_rx_msg_u)); i = i + 2)
+                {
+                    com_rs485_tx.msg8b[com_rs485_tx.msg_nx][i]       = (com_rs485_tx.msg8b[com_rs485_tx.msg_nx][i] >> 8);
+                }
 
-    case COM_USE_CANFD_BUS:
-    {
-        canfd_tx_t* p_msg_canfd         = &com_canfd_tx;
-        COM_msgCreate(&motor_m2, &p_msg_canfd->data, &global_ms_tmr_cnt);
-        CANFD_msgTransmit(&com_canfd_tx);
-        MCAN_writeMsgRam(MCANA_DRIVER_BASE, MCAN_MEM_TYPE_BUF, MCAN_TX_BUF_0_INDEX, &p_msg_canfd->buf);
-        break;
+                // New message complete. If we are here RS485 has not started.
+                com_rs485_tx.msg_cr         = !com_rs485_tx.msg_cr;
+                com_rs485_tx.msg_nx         = !com_rs485_tx.msg_cr;
+            }
+            break;
+        }
+
+        case COM_USE_CANFD_BUS:
+        {
+            canfd_tx_t* p_msg_canfd         = &com_canfd_tx;
+            p_msg_canfd->buf.id     = CANFD_ID_REG(com_msg_canfd_tx_master_id, \
+                                                   COM_MSG_CANFD_SUB_ID_STATUS);// CANFD_ID(0U, 1U);
+            p_msg_canfd->buf.rtr    = MCAN_RTR_TX_DATA_FRAME;       // Transmit data frame.
+            p_msg_canfd->buf.xtd    = MCAN_ID_TYPE_11_BIT;          // 11-bit standard identifier.
+            p_msg_canfd->buf.esi    = MCAN_ESI_PASSIVE_ERROR_FLAG;  // ESI bit in CAN FD format depends only on error passive flag.
+            p_msg_canfd->buf.dlc    = MCAN_DLC_PAYLOAD_LENGTH_32B;  // CAN + CAN FD: transmit frame has 0-8 data bytes.
+            p_msg_canfd->buf.brs    = MCAN_BIT_RATE_SWITCHING_MODE; // CAN FD frames transmitted with bit rate switching.
+            p_msg_canfd->buf.fdf    = MCAN_FLEXIBLE_DATA_RATE_MODE; // Frame transmitted in CAN FD format.
+            p_msg_canfd->buf.efc    = 1U;                           // Store Tx events.
+            p_msg_canfd->buf.mm     = 0xAAU;                        // Message Marker.
+            p_msg_canfd->data               = slv2mst_msg;
+//            COM_msgCreate(&motor_m2, &p_msg_canfd->data, &global_ms_tmr_cnt);
+            CANFD_msgTransmit(&com_canfd_tx);
+            MCAN_writeMsgRam(MCANA_DRIVER_BASE, MCAN_MEM_TYPE_BUF, MCAN_TX_BUF_0_INDEX, &p_msg_canfd->buf);
+            break;
+        }
+#endif
+        default:
+            break;
     }
-    default:
-        break;
-    }
+
+//    DBG_copyStruct(&motor_m2, &dbg_cpu2cm_m2);
+//    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, 0, (uint32_t)&dbg_cpu2cm_m1, 1);
 
     // Clear IT source CLA ask
     CLA_clearTaskFlags(CLA1_BASE, CLA_MOTOR2_TASK_FLAG);
     // Clear IT
     Interrupt_clearACKGroup(INT_CLA_MOTOR2_GROUP);
+#if (DBG_CLA_M2_ISR)
+    DBG_PIN2_CLEAR;
+#endif
 }
 
 /**
@@ -952,7 +1089,8 @@ __attribute__((interrupt)) void cla_isrMotor2(void)
  */
 __attribute__((interrupt)) void tmr_isrLedCmd(void)
 {
-    global_ms_tmr_cnt   = (global_ms_tmr_cnt < UINT32_MAX) ? (global_ms_tmr_cnt + 1) : (0);
+    DBG_PIN2_SET;
+    global_ms_tmr_cnt++;
     // LED dimming control
     if(!DMA_getRunStatusFlag(DMA_LED_SPI_TX_BASE_ADDR))
     {
@@ -960,14 +1098,14 @@ __attribute__((interrupt)) void tmr_isrLedCmd(void)
         DMA_startChannel(DMA_LED_SPI_TX_BASE_ADDR);
     }
     // Timeout management
-    cmd_uomodri[MOTOR_1].cptTimeout = (cmd_uomodri[MOTOR_1].cptTimeout < UINT16_MAX) ? (cmd_uomodri[MOTOR_1].cptTimeout + 1): (0U);
-    cmd_uomodri[MOTOR_2].cptTimeout = (cmd_uomodri[MOTOR_2].cptTimeout < UINT16_MAX) ? (cmd_uomodri[MOTOR_2].cptTimeout + 1): (0U);
-//    cmd_uomodri[MOTOR_1].cptTimeout++;
-//    cmd_uomodri[MOTOR_2].cptTimeout++;
+    cmd_uomodri[MOTOR_1].cptTimeout++;
+    cmd_uomodri[MOTOR_2].cptTimeout++;
     // Force an update of the motors command structures (Timeout value)
     CLA_forceTasks(CLA1_BASE, CLA_CMD_NEW_TASK_FLAG);
     // Clear IT
     Interrupt_clearACKGroup(INT_TIMER_LED_CMD_GROUP);
+
+    DBG_PIN2_CLEAR;
 }
 
 /**
@@ -987,23 +1125,41 @@ __attribute__((interrupt)) void dma_isrSpiComRx(void)
             COM_msgExtract(&p_msg_spi->data, &cmd_uomodri[MOTOR_1], &cmd_uomodri[MOTOR_2]);
             // Force an update of the motors command structures (commands values)
             CLA_forceTasks(CLA1_BASE, CLA_CMD_NEW_TASK_FLAG);
-            //        // Disable definitely the ITs linked to RS485.
-            ////        CLB_disableCLB(RS485_RX_TX_CLB_EOT_BASE);
-            ////        CLB_disableCLB(RS485_RX_CLB_ADDR_VALID_BASE);
-            //        Interrupt_disable(INT_RS485_Rx_Tx_CLB);
-            //
-            ////        SCI_disableModule(COM_SCI_BASE);
-            //        Interrupt_disable(INT_RS485_RX_MSG);
-            //        Interrupt_disable(INT_RS485_TX_MSG);
         }
         // Restart DMA reception & reset the SPI Rx fifo.
         DMA_startChannel(DMA_COM_SPI_RX_BASE_ADDR);
         SPI_resetRxFIFO(COM_SPI_BASE);
     }
     // Clear IT flag
-    Interrupt_clearACKGroup(INT_DMA_RX_MSG_GROUP);
+    Interrupt_clearACKGroup(INT_DMA_SPI_RX_MSG_GROUP);
 }
 
+/**
+ * @brief       Copy debug structure from CLA2DMA memory to CPU2CM memory & send flag to CM core.
+ */
+//__attribute__((interrupt)) void dma_isrDbgMotor1(void)
+//{
+////
+////
+////    if(HWREGH(PIECTRL_BASE + PIE_O_IFR7) & 0x02)
+//        IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, 0, (uint32_t)&dbg_cpu2cm_m1, 1);
+//
+//    // Clear IT flag
+//    Interrupt_clearACKGroup(INT_DMA_DBG_MOTOR1_GROUP);
+//}
+
+//__attribute__((interrupt)) void dma_isrDbgMotor2(void)
+//{
+////
+////
+////    if(HWREGH(PIECTRL_BASE + PIE_O_IFR7) & 0x02)
+////    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, 0, (uint32_t)&dbg_cpu2cm_m2, 1);
+//
+//    // Clear IT flag
+//    Interrupt_clearACKGroup(INT_DMA_DBG_MOTOR2_GROUP);
+//}
+
+#if (USE_UOMODRI_REV >= USE_UOMODRI_V3)
 /**
  * @brief       SCI Tx FIFO level reached - ready to receive new data.
  */
@@ -1240,6 +1396,7 @@ __attribute__((interrupt)) void mcan_isr_canfd(void)
     // Acknowledge this interrupt located in group 9
     Interrupt_clearACKGroup(INTERRUPT_ACK_GROUP9);
 }
+#endif
 
 /**
  * @brief       Errata workaround interrupt according errata note (sprz458.pdf)

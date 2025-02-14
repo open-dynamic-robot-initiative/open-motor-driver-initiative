@@ -116,7 +116,8 @@ static const gpio_cfg_t gpioPinsCfgList[] =
  DBG_PIN2_DEF,                      /* Debug pin 2 */
  DBG_PIN1_DEF,                      /* Debug pin 1 */
  DBG_PIN0_DEF,                      /* Debug pin 0 */
- DBG_DMA_START_DEF,
+ DBG_MOTOR1_DMA_START_DEF,
+ DBG_MOTOR2_DMA_START_DEF,
  {.pinNum = UINT32_MAX},            /* END OF ARRAY */
 };
 
@@ -317,7 +318,7 @@ static const spi_cfg_t  spiCfgList[] =
  */
 static const dma_cfg_t  dmaCfgList[] =
 {
- DMA_DBG_CLA2CM_M1_DEF,             /* DMA for memory transfer between CLA & IPC (CPU to CM) */
+// DMA_DBG_CLA2CM_M1_DEF,             /* DMA for memory transfer between CLA & IPC (CPU to CM) */
 // DMA_DBG_CLA2CM_M2_DEF,             /* DMA for memory transfer between CLA & IPC (CPU to CM) */
  DMA_LED_SPI_TX_DEF,                /* DMA for the RGB LED */
  DMA_COM_SPI_TX_DEF,                /* DMA for SPI COMMUNICATION Tx */

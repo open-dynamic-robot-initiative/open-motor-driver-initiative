@@ -75,7 +75,7 @@ void COM_msgExtract(mst2slv_msg_t* p_msg, cmd_t* p_cmd_m1, cmd_t* p_cmd_m2)
  * @param[inout]    *p_msg      Pointer on the message to transmit to the Master board.
  * @param[in]       *p_tmr_cnt  Pointer on the current value of the timer counter.
  */
-bool_t COM_msgCreate(motor_t* p_motor, slv2mst_msg_t* p_msg, uint32_t* p_tmr_cnt)
+void COM_msgCreate(motor_t* p_motor, slv2mst_msg_t* p_msg, uint32_t* p_tmr_cnt)
 {
     foc_t* p_foc                        = &p_motor->foc;
     encoder_t* p_enc                    = &p_foc->enc;
@@ -108,7 +108,7 @@ bool_t COM_msgCreate(motor_t* p_motor, slv2mst_msg_t* p_msg, uint32_t* p_tmr_cnt
         p_msg->status.ERROR_CODE        = (motor_err.enc_indexErr)  ? (STATUS_ERROR_ENCODER1)           : (p_msg->status.ERROR_CODE);
         p_msg->status.ERROR_CODE        = (motor_err.enc_alignErr)  ? (STATUS_ERROR_ENCODER1)           : (p_msg->status.ERROR_CODE);
 
-        return(false);
+//        return(false);
     }
     else
     {
@@ -128,8 +128,10 @@ bool_t COM_msgCreate(motor_t* p_motor, slv2mst_msg_t* p_msg, uint32_t* p_tmr_cnt
         p_msg->status.ERROR_CODE        = (motor_err.enc_indexErr)  ? (STATUS_ERROR_ENCODER2)           : (p_msg->status.ERROR_CODE);
         p_msg->status.ERROR_CODE        = (motor_err.enc_alignErr)  ? (STATUS_ERROR_ENCODER2)           : (p_msg->status.ERROR_CODE);
 
-        return(true);
+//        return(true);
     }
+
+    return;
 }
 
 /**
@@ -243,9 +245,10 @@ inline void RS485_msgTransmit(uint32_t sci_base, rs485_tx_t* p_msg_tx)
 
     while((uint16_t)fifo_tx_status && ((2 * COM_MSG_RS485_TX_16BIT_FULL_LENGTH) - p_msg_tx->index))//p_msg_tx->remaining)
     {
-        uint16_t* p_msg = &p_msg_tx->msg[p_msg_tx->msg_cr].raw[p_msg_tx->index >> 1];
-//        SCI_writeCharNonBlocking(sci_base, (((p_msg_tx->index >> 1) ? (*p_msg): (*p_msg >> 8)) & 0x00FF));
-        HWREGH(sci_base + SCI_O_TXBUF) = ((p_msg_tx->index & 0x0001) ? (*p_msg): (*p_msg >> 8)) & 0x00FF;
+//        uint16_t* p_msg = &p_msg_tx->msg[p_msg_tx->msg_cr].raw[p_msg_tx->index >> 1];
+//        HWREGH(sci_base + SCI_O_TXBUF) = ((p_msg_tx->index & 0x0001) ? (*p_msg): (*p_msg >> 8)) & 0x00FF;
+        uint16_t* p_msg = &p_msg_tx->msg8b[p_msg_tx->msg_cr][p_msg_tx->index];
+        HWREGH(sci_base + SCI_O_TXBUF) = *p_msg & 0x00FF;
         p_msg_tx->index++;
         fifo_tx_status--;
     }

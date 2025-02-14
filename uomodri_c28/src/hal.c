@@ -72,13 +72,10 @@ void HAL_ini(const hal_cfg_t* p_hal)
         HAL_TMR_ini(p_hal->p_timerHandle);
         // Initialize IPC
         HAL_IPC_ini(p_hal->p_ipcHandle);
-
-#if (RS485_BUS_ENABLE) && (USE_UOMODRI_REV != USE_UOMODRI_V1)
         // Initialize SCI/UART
         HAL_SCI_ini(p_hal->p_sciHandle);
         // Initialize CLB
         HAL_CLB_ini(p_hal->p_clbHandle);
-#endif
         // Initialize MCAN - CAN_FD
         HAL_MCAN_ini(p_hal->p_mcanHandle);
         EDIS;
@@ -638,57 +635,63 @@ void HAL_IPC_ini(const ipc_cfg_t* p_ipcCfg)
  */
 void HAL_CLB_ini(const clb_cfg_t* p_clbCfg)
 {
-    CLB_init();
-
-    uint32_t outLutCfg;
-    uint32_t addr_test1;
-    uint32_t addr_test2;
-
-    switch (p_clbCfg->clb_Addr1Spec)
+    if(p_clbCfg != NULL)
     {
-        case RS485_CLB_USE_NO_ADDRESS:
-        default:
-            outLutCfg       = TILE2_CFG_OUTLUT_4 & 0xFFFF83FF;
-            addr_test1      = 0;
-            break;
-        case RS485_CLB_USE_UID_ADDRESS:
-            outLutCfg       = TILE2_CFG_OUTLUT_4;
-            addr_test1      = (uid_unique_8b << 23) | 0x80000000;
-            break;
-        case RS485_CLB_FORCE_ADDRESS:
-            outLutCfg       = TILE2_CFG_OUTLUT_4;
-            addr_test1      = ((p_clbCfg->clb_Addr1Force & 0x000000FF) << 23) | 0x80000000;
-            break;
-    }
-    CLB_configOutputLUT(RS485_RX_CLB_ADDR_VALID_BASE, CLB_OUT4, outLutCfg);
+        CLB_init();
 
-    switch (p_clbCfg->clb_Addr2Spec)
-    {
-        case RS485_CLB_USE_NO_ADDRESS:
-        default:
-            outLutCfg       = TILE2_CFG_OUTLUT_5 & 0xFFFF83FF;
-            addr_test2      = 0;
-            break;
-        case RS485_CLB_USE_UID_ADDRESS:
-            outLutCfg       = TILE2_CFG_OUTLUT_5;
-            addr_test2      = (uid_unique_8b << 23) | 0x80000000;
-            break;
-        case RS485_CLB_FORCE_ADDRESS:
-            outLutCfg       = TILE2_CFG_OUTLUT_5;
-            addr_test2      = ((p_clbCfg->clb_Addr2Force & 0x000000FF) << 23) | 0x80000000;
-            break;
-    }
-    CLB_configOutputLUT(RS485_RX_CLB_ADDR_VALID_BASE, CLB_OUT5, outLutCfg);
-    CLB_configCounterLoadMatch(RS485_RX_CLB_ADDR_VALID_BASE, CLB_CTR2, TILE2_COUNTER_2_LOAD_VAL, addr_test1, addr_test2);
+        uint32_t outLutCfg;
+        uint32_t addr_test1;
+        uint32_t addr_test2;
 
-    // Input CLB Xbar config
-    CLB_INPUTXBAR_init();
-    // output CLB Xbar config
-    CLB_OUTPUTXBAR_init();
-    // enable each tile
-    CLB_enableCLB(RS485_RX_TX_CLB_EOT_BASE);
-    CLB_enableCLB(RS485_RX_CLB_ADDR_VALID_BASE);
-    CLB_enableCLB(DBG_DMA_START_IT_BASE);
+        switch (p_clbCfg->clb_Addr1Spec)
+        {
+            case RS485_CLB_USE_NO_ADDRESS:
+            default:
+                outLutCfg       = TILE2_CFG_OUTLUT_4 & 0xFFFF83FF;
+                addr_test1      = 0;
+                break;
+            case RS485_CLB_USE_UID_ADDRESS:
+                outLutCfg       = TILE2_CFG_OUTLUT_4;
+                addr_test1      = (uid_unique_8b << 23) | 0x80000000;
+                break;
+            case RS485_CLB_FORCE_ADDRESS:
+                outLutCfg       = TILE2_CFG_OUTLUT_4;
+                addr_test1      = ((p_clbCfg->clb_Addr1Force & 0x000000FF) << 23) | 0x80000000;
+                break;
+        }
+        CLB_configOutputLUT(RS485_RX_CLB_ADDR_VALID_BASE, CLB_OUT4, outLutCfg);
+
+        switch (p_clbCfg->clb_Addr2Spec)
+        {
+            case RS485_CLB_USE_NO_ADDRESS:
+            default:
+                outLutCfg       = TILE2_CFG_OUTLUT_5 & 0xFFFF83FF;
+                addr_test2      = 0;
+                break;
+            case RS485_CLB_USE_UID_ADDRESS:
+                outLutCfg       = TILE2_CFG_OUTLUT_5;
+                addr_test2      = (uid_unique_8b << 23) | 0x80000000;
+                break;
+            case RS485_CLB_FORCE_ADDRESS:
+                outLutCfg       = TILE2_CFG_OUTLUT_5;
+                addr_test2      = ((p_clbCfg->clb_Addr2Force & 0x000000FF) << 23) | 0x80000000;
+                break;
+        }
+        CLB_configOutputLUT(RS485_RX_CLB_ADDR_VALID_BASE, CLB_OUT5, outLutCfg);
+        CLB_configCounterLoadMatch(RS485_RX_CLB_ADDR_VALID_BASE, CLB_CTR2, TILE2_COUNTER_2_LOAD_VAL, addr_test1, addr_test2);
+
+        // Input CLB Xbar config
+        CLB_INPUTXBAR_init();
+        // output CLB Xbar config
+        CLB_OUTPUTXBAR_init();
+        // enable each tile
+        CLB_enableCLB(RS485_RX_TX_CLB_EOT_BASE);
+        CLB_enableCLB(RS485_RX_CLB_ADDR_VALID_BASE);
+        CLB_enableCLB(DBG_M1_DMA_START_IT_BASE);
+        CLB_enableCLB(DBG_M2_DMA_START_IT_BASE);
+    }
+
+    return;
 }
 
 /**
@@ -844,6 +847,7 @@ void HAL_MCAN_ini(const mcan_cfg_t* p_McanCfg)
 {
     if(p_McanCfg != NULL)
     {
+#if (USE_UOMODRI_REV >= USE_UOMODRI_V3)
         // Put MCAN in SW initialization mode.
         MCAN_setOpMode(p_McanCfg->mCanBase, MCAN_OPERATION_MODE_SW_INIT);
         // Wait till MCAN is not initialized.
@@ -896,5 +900,6 @@ void HAL_MCAN_ini(const mcan_cfg_t* p_McanCfg)
 //    MCAN_writeMsgRam(p_McanCfg->mCanBase, MCAN_MEM_TYPE_BUF, 1U, &txMsg);
 //    // Enable Transmission interrupt.
 //    MCAN_txBufTransIntrEnable(p_McanCfg->mCanBase, 0U, MCAN_ENABLE_IT);
+#endif
     }
 }

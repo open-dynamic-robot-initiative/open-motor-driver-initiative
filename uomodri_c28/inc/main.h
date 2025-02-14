@@ -33,9 +33,17 @@ typedef union __uart_addr_u__
 #define INT_RS485_RX_Tx_CLB_GROUP       INTERRUPT_ACK_GROUP5
 #define INT_RS485_RX_Tx_CLB_HANDLER     &clb_isrTxRx_RS485
 
-#define INT_DMA_RX_MSG                  INT_DMA_CH6
-#define INT_DMA_RX_MSG_GROUP            INTERRUPT_ACK_GROUP7
-#define INT_DMA_RX_MSG_HANDLER          &dma_isrSpiComRx
+#define INT_DMA_DBG_MOTOR1              DMA_DBG_CLA2CM_M1_INT
+#define INT_DMA_DBG_MOTOR1_GROUP        INTERRUPT_ACK_GROUP7
+#define INT_DMA_DBG_MOTOR1_HANDLER      &dma_isrDbgMotor1
+
+#define INT_DMA_DBG_MOTOR2              DMA_DBG_CLA2CM_M2_INT
+#define INT_DMA_DBG_MOTOR2_GROUP        INTERRUPT_ACK_GROUP7
+#define INT_DMA_DBG_MOTOR2_HANDLER      &dma_isrDbgMotor2
+
+#define INT_DMA_SPI_RX_MSG              INT_DMA_CH6
+#define INT_DMA_SPI_RX_MSG_GROUP        INTERRUPT_ACK_GROUP7
+#define INT_DMA_SPI_RX_MSG_HANDLER      &dma_isrSpiComRx
 
 #define INT_RS485_RX_PIE_FLAG           PIE_IFR8_INTX5
 #define INT_RS485_RX_MSG                INT_SCIC_RX
@@ -51,23 +59,9 @@ typedef union __uart_addr_u__
 #define INT_CLA_ADC_CALIB_GROUP         INTERRUPT_ACK_GROUP11
 #define INT_CLA_ADC_CALIB_HANDLER       &cla_isrClearTask
 
-//#define INT_CLA_CMD_NEW                 INT_CLA1_2
-//#define INT_CLA_CMD_NEW_GROUP           INTERRUPT_ACK_GROUP11
-//#define INT_CLA_CMD_NEW_HANDLER         &cla_isrCmdNew
-
-//---------------------------------------------------------------------
-//#define INT_CLA_MOTOR1                  INT_CLA1_3
-//#define INT_CLA_MOTOR1_GROUP            INTERRUPT_ACK_GROUP11
-//#define INT_CLA_MOTOR1_HANDLER          &cla_isrMotor1
-
-#define INT_CLA_MOTOR1                  INT_DMA_CH2
-#define INT_CLA_MOTOR1_GROUP            INTERRUPT_ACK_GROUP7
+#define INT_CLA_MOTOR1                  INT_CLA1_3
+#define INT_CLA_MOTOR1_GROUP            INTERRUPT_ACK_GROUP11
 #define INT_CLA_MOTOR1_HANDLER          &cla_isrMotor1
-
-//#define INT_CLA_MOTOR1                  INT_CLB3
-//#define INT_CLA_MOTOR1_GROUP            INTERRUPT_ACK_GROUP5
-//#define INT_CLA_MOTOR1_HANDLER          &cla_isrMotor1
-//---------------------------------------------------------------------
 
 #define INT_CLA_MOTOR2                  INT_CLA1_4
 #define INT_CLA_MOTOR2_GROUP            INTERRUPT_ACK_GROUP11
@@ -87,10 +81,20 @@ typedef union __uart_addr_u__
                                             .intAckGroup        = INT_RS485_RX_Tx_CLB_GROUP, \
                                             .p_intHandler       = INT_RS485_RX_Tx_CLB_HANDLER \
                                         }
-#define INT_DMA_RX_MSG_DEF              { \
-                                            .intNum             = INT_DMA_RX_MSG, \
-                                            .intAckGroup        = INT_DMA_RX_MSG_GROUP, \
-                                            .p_intHandler       = INT_DMA_RX_MSG_HANDLER \
+#define INT_DMA_DBG_MOTOR1_DEF          { \
+                                            .intNum             = INT_DMA_DBG_MOTOR1, \
+                                            .intAckGroup        = INT_DMA_DBG_MOTOR1_GROUP, \
+                                            .p_intHandler       = INT_DMA_DBG_MOTOR1_HANDLER \
+                                        }
+#define INT_DMA_DBG_MOTOR2_DEF          { \
+                                            .intNum             = INT_DMA_DBG_MOTOR2, \
+                                            .intAckGroup        = INT_DMA_DBG_MOTOR2_GROUP, \
+                                            .p_intHandler       = INT_DMA_DBG_MOTOR2_HANDLER \
+                                        }
+#define INT_DMA_SPI_RX_MSG_DEF          { \
+                                            .intNum             = INT_DMA_SPI_RX_MSG, \
+                                            .intAckGroup        = INT_DMA_SPI_RX_MSG_GROUP, \
+                                            .p_intHandler       = INT_DMA_SPI_RX_MSG_HANDLER \
                                         }
 #define INT_RS485_RX_MSG_DEF            { \
                                             .intNum             = INT_RS485_RX_MSG, \
@@ -107,11 +111,6 @@ typedef union __uart_addr_u__
                                             .intAckGroup        = INT_CLA_ADC_CALIB_GROUP, \
                                             .p_intHandler       = INT_CLA_ADC_CALIB_HANDLER \
                                         }
-//#define INT_CLA_CMD_NEW_DEF             { \
-//                                            .intNum             = INT_CLA_CMD_NEW, \
-//                                            .intAckGroup        = INT_CLA_CMD_NEW_GROUP, \
-//                                            .p_intHandler       = INT_CLA_CMD_NEW_HANDLER \
-//                                        }
 #define INT_CLA_MOTOR1_DEF              { \
                                             .intNum             = INT_CLA_MOTOR1, \
                                             .intAckGroup        = INT_CLA_MOTOR1_GROUP, \
@@ -135,5 +134,9 @@ typedef union __uart_addr_u__
 #pragma DATA_SECTION(cpu2cm_dbg_msg, "MSGRAM_CPUx_TO_CM");
 com_cpu_2_cm_t  cpu2cm_dbg_msg;
 #endif
+
+
+
+
 
 #endif /* __MAIN_H__ */

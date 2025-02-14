@@ -35,7 +35,6 @@
 //#define __TMS320C28XX_CLA__
 //#error "__TMS320C28XX_CLA__ must be removed for compilation."
 //#endif
-#define CLB_TILE_ENABLE                         (1)
 // CM peripherals ENABLE/DISABLE
 #define USB_BUS_ENABLE                          (0)
 #define UART_BUS_ENABLE                         (1)
@@ -48,7 +47,7 @@
 // Communication peripherals ENABLE/DISABLE
 #define CAN_FD_BUS_ENABLE                       (0)
 #define RS485_BUS_ENABLE                        (1)
-#define SPI_BUS_ENABLE                          (1)
+#define SPI_BUS_ENABLE                          (0)
 #if (RS485_BUS_ENABLE) && (CAN_FD_BUS_ENABLE)
 #error "RS-485 & CAN share the same pins. They cannot run @ the same time"
 //#elif ((RS485_BUS_ENABLE) || (CAN_BUS_ENABLE) ) && (SPI_BUS_ENABLE)
@@ -57,12 +56,14 @@
 
 #ifdef DEBUG
 #define DBG_CLA_M1_ISR                          (1)
-#define DBG_RS485_TX_ISR                        (0)
-#define DBG_RS485_RX_ISR                        (0)
-#define DBG_RS485_VALID_ISR                     (0)
-#define DBG_CMD_NEW_TASK                        (0)
+#define DBG_CLA_M2_ISR                          (1)
+#define DBG_RS485_TX_ISR                        (1)
+#define DBG_RS485_RX_ISR                        (1)
+#define DBG_RS485_VALID_ISR                     (1)
+#define DBG_CMD_NEW_TASK                        (1)
+#define DBG_CALIB_TASK                          (0)
 #define DBG_M1_TASK                             (1)
-#define DBG_M2_TASK                             (0)
+#define DBG_M2_TASK                             (1)
 #endif
 /***********************************************************************
  * FILTERS PARAMETERS
@@ -126,7 +127,9 @@
 #include "config/encoder/cui_amt112s_4096_5000_s.h"     // CUI AMT112S-4096-5000-s encoder definitions
 #endif
 
-#if (USE_UOMODRI_REV == USE_UOMODRI_V2)
+#if (USE_UOMODRI_REV == USE_UOMODRI_V1)
+#include "config/uomodri_1/uomodri_1_hal_defines.h"     // uOmodri v1.x definitions
+#elif (USE_UOMODRI_REV == USE_UOMODRI_V2)
 #include "config/uomodri_2/uomodri_2_hal_defines.h"     // uOmodri v2.x definitions
 #elif (USE_UOMODRI_REV == USE_UOMODRI_V3)
 #include "config/uomodri_3/uomodri_3_hal_defines.h"     // uOmodri v3.x definitions

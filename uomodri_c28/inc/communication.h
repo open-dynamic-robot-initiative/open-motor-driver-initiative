@@ -487,6 +487,7 @@ typedef struct __rs485_rx_t__
 typedef struct __rs485_tx_t__
 {
     rs485_tx_msg_u      msg[2];
+    uint16_t            msg8b[2][2 * sizeof(rs485_tx_msg_u)];
     uint16_t            index;
     uint16_t            msg_cr;
     uint16_t            msg_nx;
@@ -543,7 +544,7 @@ typedef struct __canfd_tx_t__
  ***********************************************************************/
 #ifdef CPU1
 void COM_msgExtract(mst2slv_msg_t*, cmd_t*, cmd_t*);
-bool_t COM_msgCreate(motor_t*, slv2mst_msg_t*, uint32_t*);
+void COM_msgCreate(motor_t*, slv2mst_msg_t*, uint32_t*);
 void COM_initCmdStruct(cmd_t*, uint16_t);
 uint32_t COM_msgCRC(uint16_t*, uint16_t);
 inline void RS485_msgReceive(uint32_t, rs485_rx_t*);

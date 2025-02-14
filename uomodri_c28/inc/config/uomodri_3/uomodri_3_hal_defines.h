@@ -168,14 +168,29 @@
                                                     .intEnable      = false, \
                                                 }
 
-#define DBG_DMA_START_NUM                       (14U)
-#define DBG_DMA_START_CFG                       GPIO_14_GPIO14
-#define DBG_DMA_START_SET                       (HWREG(GPIODATA_BASE + GPIO_O_GPASET)   = GPIO_GPASET_GPIO14)
-#define DBG_DMA_START_CLEAR                     (HWREG(GPIODATA_BASE + GPIO_O_GPACLEAR) = GPIO_GPACLEAR_GPIO14)
-#define DBG_DMA_START_TOGGLE                    (HWREG(GPIODATA_BASE + GPIO_O_GPATOGGLE)= GPIO_GPATOGGLE_GPIO14)
-#define DBG_DMA_START_DEF                       { \
-                                                    .pinNum         = DBG_DMA_START_NUM, \
-                                                    .fctMux         = DBG_DMA_START_CFG, \
+#define DBG_MOTOR1_DMA_START_NUM                (14U)
+#define DBG_MOTOR1_DMA_START_CFG                GPIO_14_GPIO14
+#define DBG_MOTOR1_DMA_START_SET                (HWREG(GPIODATA_BASE + GPIO_O_GPASET)   = GPIO_GPASET_GPIO14)
+#define DBG_MOTOR1_DMA_START_CLEAR              (HWREG(GPIODATA_BASE + GPIO_O_GPACLEAR) = GPIO_GPACLEAR_GPIO14)
+#define DBG_MOTOR1_DMA_START_TOGGLE             (HWREG(GPIODATA_BASE + GPIO_O_GPATOGGLE)= GPIO_GPATOGGLE_GPIO14)
+#define DBG_MOTOR1_DMA_START_DEF                { \
+                                                    .pinNum         = DBG_MOTOR1_DMA_START_NUM, \
+                                                    .fctMux         = DBG_MOTOR1_DMA_START_CFG, \
+                                                    .coreSelect     = GPIO_CORE_CPU1_CLA1, \
+                                                    .direction      = GPIO_DIR_MODE_OUT, \
+                                                    .samplingInMode = GPIO_QUAL_ASYNC, \
+                                                    .setValue       = (0U), \
+                                                    .intEnable      = false, \
+                                                }
+
+#define DBG_MOTOR2_DMA_START_NUM                (15U)
+#define DBG_MOTOR2_DMA_START_CFG                GPIO_15_GPIO15
+#define DBG_MOTOR2_DMA_START_SET                (HWREG(GPIODATA_BASE + GPIO_O_GPASET)   = GPIO_GPASET_GPIO15)
+#define DBG_MOTOR2_DMA_START_CLEAR              (HWREG(GPIODATA_BASE + GPIO_O_GPACLEAR) = GPIO_GPACLEAR_GPIO15)
+#define DBG_MOTOR2_DMA_START_TOGGLE             (HWREG(GPIODATA_BASE + GPIO_O_GPATOGGLE)= GPIO_GPATOGGLE_GPIO15)
+#define DBG_MOTOR2_DMA_START_DEF                { \
+                                                    .pinNum         = DBG_MOTOR2_DMA_START_NUM, \
+                                                    .fctMux         = DBG_MOTOR2_DMA_START_CFG, \
                                                     .coreSelect     = GPIO_CORE_CPU1_CLA1, \
                                                     .direction      = GPIO_DIR_MODE_OUT, \
                                                     .samplingInMode = GPIO_QUAL_ASYNC, \
@@ -419,7 +434,7 @@
 
 #define DBG_PIN3_NUM                            (77U)
 #define DBG_PIN3_CFG                            GPIO_77_GPIO77
-#define DBG_PIN3_CORE                           GPIO_CORE_CM
+#define DBG_PIN3_CORE                           GPIO_CORE_CPU1
 #define DBG_PIN3_SET                            (HWREG(GPIODATA_BASE + GPIO_O_GPCSET)   = GPIO_GPCSET_GPIO77)
 #define DBG_PIN3_CLEAR                          (HWREG(GPIODATA_BASE + GPIO_O_GPCCLEAR) = GPIO_GPCCLEAR_GPIO77)
 #define DBG_PIN3_TOGGLE                         (HWREG(GPIODATA_BASE + GPIO_O_GPCTOGGLE)= GPIO_GPCTOGGLE_GPIO77)
@@ -1984,91 +1999,6 @@
                                                 }
 
 /***********************************************************************
- * DRV DEFINES
- ***********************************************************************/
-#define MOTOR1_DRV_CFG_DEF                      { \
-                                                    .spiHandle          = DRV_SPI_BASE, \
-                                                    .gpioNumber_CS      = MOTOR1_DRV_SPI_CS_NUM, \
-                                                    .gpioNumber_EN      = MOTOR1_DRV_EN_NUM, \
-                                                    .gpioNumber_FAULT   = MOTOR1_DRV_FAULT_NUM, \
-                                                }
-#define MOTOR2_DRV_CFG_DEF                      { \
-                                                    .spiHandle          = DRV_SPI_BASE, \
-                                                    .gpioNumber_CS      = MOTOR2_DRV_SPI_CS_NUM, \
-                                                    .gpioNumber_EN      = MOTOR2_DRV_EN_NUM, \
-                                                    .gpioNumber_FAULT   = MOTOR2_DRV_FAULT_NUM, \
-                                                }
-
-#define MOTOR1_DRV_REG_DEF                      { \
-                                                    .ctrl_reg_02.CLR_FLT    = false, \
-                                                    .ctrl_reg_02.BRAKE      = false, \
-                                                    .ctrl_reg_02.COAST      = false, \
-                                                    .ctrl_reg_02.PWM1_DIR   = false, \
-                                                    .ctrl_reg_02.PWM1_COM   = false, \
-                                                    .ctrl_reg_02.PWM_MODE   = DRV_PWMMODE_6, \
-                                                    .ctrl_reg_02.OTW_REP    = true, \
-                                                    .ctrl_reg_02.DIS_GDF    = false, \
-                                                    .ctrl_reg_02.DIS_GDUV   = false, \
-                                                    .ctrl_reg_02.OCP_ACT    = true, \
-                                                    .ctrl_reg_03.IDRIVEN_HS = DRV_ISINK_HS_0P300_A, \
-                                                    .ctrl_reg_03.IDRIVEP_HS = DRV_ISOUR_HS_0P150_A, \
-                                                    .ctrl_reg_03.LOCK       = DRV_REG_UNLOCK, \
-                                                    .ctrl_reg_04.IDRIVEN_LS = DRV_ISINK_LS_0P300_A, \
-                                                    .ctrl_reg_04.IDRIVEP_LS = DRV_ISOUR_LS_0P150_A, \
-                                                    .ctrl_reg_04.TDRIVE     = DRV_TSOUR_1000_NS, \
-                                                    .ctrl_reg_04.CBC        = false, \
-                                                    .ctrl_reg_05.VDS_LVL    = DRV_VDS_LVL_0P080_V, \
-                                                    .ctrl_reg_05.OCP_DEG    = DRV_OCPDEG_4_US, \
-                                                    .ctrl_reg_05.OCP_MODE   = DRV_LATCHED_SHUTDOWN, \
-                                                    .ctrl_reg_05.DEAD_TIME  = DRV_DEADTIME_50_NS, \
-                                                    .ctrl_reg_05.TRETRY     = true, \
-                                                    .ctrl_reg_06.SEN_LVL    = DRV_SENLVL_0P25_V, \
-                                                    .ctrl_reg_06.CSA_CAL_C  = false, \
-                                                    .ctrl_reg_06.CSA_CAL_B  = false, \
-                                                    .ctrl_reg_06.CSA_CAL_A  = false, \
-                                                    .ctrl_reg_06.DIS_SEN    = false, \
-                                                    .ctrl_reg_06.CSA_GAIN   = DRV_CSA_GAIN_REG, \
-                                                    .ctrl_reg_06.LS_REF     = false, \
-                                                    .ctrl_reg_06.VREF_DIV   = true, \
-                                                    .ctrl_reg_06.CSA_FET    = false, \
-                                                    .ctrl_reg_07.CAL_MODE   = false, \
-                                                }
-#define MOTOR2_DRV_REG_DEF                      { \
-                                                    .ctrl_reg_02.CLR_FLT    = false, \
-                                                    .ctrl_reg_02.BRAKE      = false, \
-                                                    .ctrl_reg_02.COAST      = false, \
-                                                    .ctrl_reg_02.PWM1_DIR   = false, \
-                                                    .ctrl_reg_02.PWM1_COM   = false, \
-                                                    .ctrl_reg_02.PWM_MODE   = DRV_PWMMODE_6, \
-                                                    .ctrl_reg_02.OTW_REP    = true, \
-                                                    .ctrl_reg_02.DIS_GDF    = false, \
-                                                    .ctrl_reg_02.DIS_GDUV   = false, \
-                                                    .ctrl_reg_02.OCP_ACT    = true, \
-                                                    .ctrl_reg_03.IDRIVEN_HS = DRV_ISINK_HS_0P300_A, \
-                                                    .ctrl_reg_03.IDRIVEP_HS = DRV_ISOUR_HS_0P150_A, \
-                                                    .ctrl_reg_03.LOCK       = DRV_REG_UNLOCK, \
-                                                    .ctrl_reg_04.IDRIVEN_LS = DRV_ISINK_LS_0P300_A, \
-                                                    .ctrl_reg_04.IDRIVEP_LS = DRV_ISOUR_LS_0P150_A, \
-                                                    .ctrl_reg_04.TDRIVE     = DRV_TSOUR_1000_NS, \
-                                                    .ctrl_reg_04.CBC        = false, \
-                                                    .ctrl_reg_05.VDS_LVL    = DRV_VDS_LVL_0P080_V, \
-                                                    .ctrl_reg_05.OCP_DEG    = DRV_OCPDEG_4_US, \
-                                                    .ctrl_reg_05.OCP_MODE   = DRV_LATCHED_SHUTDOWN, \
-                                                    .ctrl_reg_05.DEAD_TIME  = DRV_DEADTIME_50_NS, \
-                                                    .ctrl_reg_05.TRETRY     = true, \
-                                                    .ctrl_reg_06.SEN_LVL    = DRV_SENLVL_0P25_V, \
-                                                    .ctrl_reg_06.CSA_CAL_C  = false, \
-                                                    .ctrl_reg_06.CSA_CAL_B  = false, \
-                                                    .ctrl_reg_06.CSA_CAL_A  = false, \
-                                                    .ctrl_reg_06.DIS_SEN    = false, \
-                                                    .ctrl_reg_06.CSA_GAIN   = DRV_CSA_GAIN_REG, \
-                                                    .ctrl_reg_06.LS_REF     = false, \
-                                                    .ctrl_reg_06.VREF_DIV   = true, \
-                                                    .ctrl_reg_06.CSA_FET    = false, \
-                                                    .ctrl_reg_07.CAL_MODE   = false, \
-                                                }
-
-/***********************************************************************
  * DMA DEFINES
  ***********************************************************************/
 /** @defgroup DMA configuration.
@@ -2089,8 +2019,8 @@
 #define DMA_COM_SPI_TX_INT                      INT_DMA_CH5
 #define DMA_COM_SPI_RX_INT                      INT_DMA_CH6
 
-#define DMA_DBG_CLA2CM_TRIGGER_SRC              DMA_TRIGGER_CLB3INT
-//#define DMA_DBG_CLA2CM_M2_TRIGGER_SRC           DMA_TRIGGER_SOFTWARE
+#define DMA_DBG_CLA2CM_M1_TRIGGER_SRC           DMA_TRIGGER_CLB3INT
+#define DMA_DBG_CLA2CM_M2_TRIGGER_SRC           DMA_TRIGGER_CLB4INT
 #define DMA_LED_SPI_TX_TRIGGER_SRC              DMA_TRIGGER_SPIDTX
 #define DMA_COM_SPI_TX_TRIGGER_SRC              DMA_TRIGGER_SPIBTX
 #define DMA_COM_SPI_RX_TRIGGER_SRC              DMA_TRIGGER_SPIBRX
@@ -2098,7 +2028,7 @@
 #define DMA_DBG_CLA2CM_FULL_LENGTH              (128U)
 #define DMA_DBG_CLA2CM_BURST_EVT                (32U)
 #define DMA_DBG_CLA2CM_TRANSFER_EVT             (DMA_DBG_CLA2CM_FULL_LENGTH / DMA_DBG_CLA2CM_BURST_EVT)
-#define DMA_DBG_CLA2CM_CONFIG                   (DMA_CFG_ONESHOT_ENABLE | DMA_CFG_CONTINUOUS_ENABLE | DMA_CFG_SIZE_16BIT)
+#define DMA_DBG_CLA2CM_CONFIG                   (DMA_CFG_ONESHOT_ENABLE | DMA_CFG_CONTINUOUS_ENABLE | DMA_CFG_SIZE_32BIT)
 #if ((DMA_DBG_CLA2CM_CONFIG & DMA_MODE_DATASIZE) == DMA_CFG_SIZE_16BIT)
 #define DMA_DBG_CLA2CM_INC_STEP               (1)
 #else
@@ -2151,7 +2081,7 @@
                                                     .dstWrapStep    = 0, \
                                                     .srcWrapStep    = 0, \
                                                     .config         = DMA_DBG_CLA2CM_CONFIG, \
-                                                    .trigger        = DMA_DBG_CLA2CM_TRIGGER_SRC, \
+                                                    .trigger        = DMA_DBG_CLA2CM_M1_TRIGGER_SRC, \
                                                     .intMode        = DMA_INT_AT_END, \
                                                     .intEnable      = true, \
                                                 }
@@ -2168,9 +2098,9 @@
                                                     .dstWrapStep    = 0, \
                                                     .srcWrapStep    = 0, \
                                                     .config         = DMA_DBG_CLA2CM_CONFIG, \
-                                                    .trigger        = DMA_DBG_CLA2CM_TRIGGER_SRC, \
+                                                    .trigger        = DMA_DBG_CLA2CM_M2_TRIGGER_SRC, \
                                                     .intMode        = DMA_INT_AT_END, \
-                                                    .intEnable      = false, \
+                                                    .intEnable      = true, \
                                                 }
 #define DMA_LED_SPI_TX_DEF                      { \
                                                     .dmaChBase      = DMA_LED_SPI_TX_BASE_ADDR, \
