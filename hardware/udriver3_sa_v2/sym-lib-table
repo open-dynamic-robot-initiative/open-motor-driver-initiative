@@ -1,0 +1,5 @@
+(sym_lib_table
+  (version 7)
+  (lib (name "omodri_lib")(type "KiCad")(uri "${KIPRJMOD}/omodri_lib.kicad_sym")(options "")(descr "Component list for udrive3 project"))
+  (lib (name "as5047u-htsm")(type "KiCad")(uri "${KIPRJMOD}/as5047u-htsm.kicad_sym")(options "")(descr ""))
+)

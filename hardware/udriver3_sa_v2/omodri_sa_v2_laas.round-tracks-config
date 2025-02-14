@@ -1,0 +1,6 @@
+Default	True	2.0	3
+Analog_sig	True	2.0	3
+Gnd_Vdd	True	2.0	3
+Power_Plan	True	2.0	3
+Power_sig	True	2.0	3
+False	True	False
