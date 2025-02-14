@@ -549,6 +549,7 @@ void COM_initCmdStruct(cmd_t*, uint16_t);
 uint32_t COM_msgCRC(uint16_t*, uint16_t);
 inline void RS485_msgReceive(uint32_t, rs485_rx_t*);
 inline void RS485_msgTransmit(uint32_t, rs485_tx_t*);
+void RS485_msgWordToBytes(rs485_tx_t*);
 inline void CANFD_msgReceive(canfd_rx_t*);
 inline void CANFD_msgTransmit(canfd_tx_t*);
 #else

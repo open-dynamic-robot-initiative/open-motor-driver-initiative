@@ -882,83 +882,21 @@ __attribute__((interrupt)) void cla_isrClearTask(void)
  */
 __attribute__((interrupt)) void cla_isrMotor1(void)
 {
-#if (DBG_CLA_M1_ISR)
-    DBG_PIN2_SET;
-#endif
+    DBG_CLA_M1_ISR_SET;
     // Fill of the M1 motor's elements in the Tx message
-//    slv2mst_msg.status  = 0U;
-//    slv2mst_msg.timeStamp  = 0U;
-//    slv2mst_msg.position[MOTOR_1]= 0U;
-//    slv2mst_msg.position[MOTOR_2]= 0U;
-//    slv2mst_msg.velocity[MOTOR_1]   = {0, 0};
-//    slv2mst_msg.velocity[MOTOR_2]   = {0, 0};
-//    slv2mst_msg.current[MOTOR_1]        = {0, 0};
-//    slv2mst_msg.coilRes[MOTOR_1] = {0U, 0U};
-//    slv2mst_msg.adcSamples[MOTOR_1] = {0U, 0U};
-//    slv2mst_msg.lastCmdIndex   = 0U;
     COM_msgCreate(&motor_m1, &slv2mst_msg, &global_ms_tmr_cnt);
-
-//    switch(com_bus_select)
-//    {
-//        case COM_USE_SPI_BUS:
-//        {
-////            // Is DMA transfer (SPI Tx) in progress or SPI CS low? (SPI active?)
-////            if((!DMA_getRunStatusFlag(DMA_COM_SPI_TX_BASE_ADDR)) && COM_SPI_CS_READ)
-////            {
-////                spi_tx_msg_t* p_msg_spi = &com_spi_tx.msg[com_spi_tx.msg_nx];
-////                p_msg_spi->data         = slv2mst_msg;
-//////                COM_msgCreate(&motor_m1, &p_msg_spi->data, &global_ms_tmr_cnt);
-////            }
-//            break;
-//        }
-//#if (USE_UOMODRI_REV >= USE_UOMODRI_V3)
-//        case COM_USE_RS485_BUS:
-//        {
-//            // Is RS485 Tx transfer in progress?
-//            if(!com_rs485_tx.index)
-//            {
-//                rs485_tx_msg_u* p_msg_rs485 = &com_rs485_tx.msg[com_rs485_tx.msg_nx];
-//                p_msg_rs485->header.addr    = com_msg_rs485_tx_master_address;
-//                p_msg_rs485->header.type    = COM_MSG_RS485_TX_TYPE_STANDARD;
-//                p_msg_rs485->header.size    = COM_MSG_RS485_TX_8BIT_FULL_LENGTH;
-////                p_msg_rs485->data           = slv2mst_msg;
-////                COM_msgCreate(&motor_m1, &p_msg_rs485->data, &global_ms_tmr_cnt);
-//            }
-//            break;
-//        }
-//
-//        case COM_USE_CANFD_BUS:
-//        {
-//            canfd_tx_t* p_msg_canfd = &com_canfd_tx;
-//            p_msg_canfd->buf.id     = CANFD_ID_REG(com_msg_canfd_tx_master_id, \
-//                                                   COM_MSG_CANFD_SUB_ID_STATUS);// CANFD_ID(0U, 1U);
-//            p_msg_canfd->buf.rtr    = MCAN_RTR_TX_DATA_FRAME;       // Transmit data frame.
-//            p_msg_canfd->buf.xtd    = MCAN_ID_TYPE_11_BIT;          // 11-bit standard identifier.
-//            p_msg_canfd->buf.esi    = MCAN_ESI_PASSIVE_ERROR_FLAG;  // ESI bit in CAN FD format depends only on error passive flag.
-//            p_msg_canfd->buf.dlc    = MCAN_DLC_PAYLOAD_LENGTH_32B;  // CAN + CAN FD: transmit frame has 0-8 data bytes.
-//            p_msg_canfd->buf.brs    = MCAN_BIT_RATE_SWITCHING_MODE; // CAN FD frames transmitted with bit rate switching.
-//            p_msg_canfd->buf.fdf    = MCAN_FLEXIBLE_DATA_RATE_MODE; // Frame transmitted in CAN FD format.
-//            p_msg_canfd->buf.efc    = 1U;                           // Store Tx events.
-//            p_msg_canfd->buf.mm     = 0xAAU;                        // Message Marker.
-////            p_msg_canfd->data       = slv2mst_msg;
-////            COM_msgCreate(&motor_m1, &p_msg_canfd->data, &global_ms_tmr_cnt);
-//            break;
-//        }
-//#endif
-//        default:
-//            break;
-//    }
-
-//    DBG_copyStruct(&motor_m1, &dbg_cpu2cm_m1);
-//    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, 0, (uint32_t)&dbg_cpu2cm_m1, 1);
-
+    // Copy elements of motor_1 into debug structure for CM core
+    DBG_copyStruct(&motor_m1, &dbg_cpu2cm_m1);
+    // Inform CM core that new data are available
+    IPC_sendCommand(IPC_CPU1_L_CM_R, \
+                    IPC_CPU1_TO_CM_FLAG, \
+                    IPC_ADDR_CORRECTION_ENABLE, \
+                    0, (uint32_t)&dbg_cpu2cm_m1, 1);
     // Clear IT source CLA ask
     CLA_clearTaskFlags(CLA1_BASE, CLA_MOTOR1_TASK_FLAG);
     // Clear IT
     Interrupt_clearACKGroup(INT_CLA_MOTOR1_GROUP);
-#if (DBG_CLA_M1_ISR)
-    DBG_PIN2_CLEAR;
-#endif
+    DBG_CLA_M1_ISR_UNSET;
 }
 
 /**
@@ -966,13 +904,10 @@ __attribute__((interrupt)) void cla_isrMotor1(void)
  */
 __attribute__((interrupt)) void cla_isrMotor2(void)
 {
-#if (DBG_CLA_M2_ISR)
-    DBG_PIN2_SET;
-#endif
-    // Finalize the Tx message. Aggregate MOTOR_2 values + computed CRC
-//    slv2mst_msg_t slv2mst_msg = {.status = 0U};
+    DBG_CLA_M2_ISR_SET;
+    // Fill of the M2 motor's elements in the Tx message
     COM_msgCreate(&motor_m2, &slv2mst_msg, &global_ms_tmr_cnt);
-
+    // Finalize the Tx message. Aggregate MOTOR_2 values + computed CRC
     switch(com_bus_select)
     {
         case COM_USE_SPI_BUS:
@@ -982,7 +917,6 @@ __attribute__((interrupt)) void cla_isrMotor2(void)
             {
                 spi_tx_msg_t* p_msg_spi = &com_spi_tx.msg[com_spi_tx.msg_nx];
                 p_msg_spi->data         = slv2mst_msg;
-//                COM_msgCreate(&motor_m2, &p_msg_spi->data, &global_ms_tmr_cnt);
                 uint32_t msg_crc        = COM_msgCRC((uint16_t *) &p_msg_spi->data, \
                                                      COM_MSG_SPI_TX_16BIT_PAYLOAD_LENGTH);
                 // swap words in message - Required for Solo
@@ -1017,30 +951,13 @@ __attribute__((interrupt)) void cla_isrMotor2(void)
                 p_msg_rs485->header.type    = COM_MSG_RS485_TX_TYPE_STANDARD;
                 p_msg_rs485->header.size    = COM_MSG_RS485_TX_8BIT_FULL_LENGTH;
                 p_msg_rs485->data           = slv2mst_msg;
-//                COM_msgCreate(&motor_m2, &p_msg_rs485->data, &global_ms_tmr_cnt);
                 uint32_t msg_crc            = COM_msgCRC((uint16_t *) &p_msg_rs485->header, \
                                                          COM_MSG_RS485_TX_16BIT_PAYLOAD_LENGTH);
                 // swap words in message - Required for Solo
                 p_msg_rs485->crc.u16_msb    = LSB_32(msg_crc);
                 p_msg_rs485->crc.u16_lsb    = MSB_32(msg_crc);
                 // Splite 16bits words into 2x 8bits words.
-                uint16_t i;
-                //uint16_t* p_msg8b_rs485     = &com_rs485_tx.msg8b[com_rs485_tx.msg_nx][0];
-                for(i = 0; i < (sizeof(rs485_rx_msg_u)); i++)
-                {
-//                    p_msg8b_rs485->
-                    com_rs485_tx.msg8b[com_rs485_tx.msg_nx][2*i]     = p_msg_rs485->raw[i];
-                    com_rs485_tx.msg8b[com_rs485_tx.msg_nx][(2*i)+1] = p_msg_rs485->raw[i];
-                }
-//                for(i = 1; i < (2 * sizeof(rs485_rx_msg_u)); i = i + 2)
-//                {
-//                    com_rs485_tx.msg8b[com_rs485_tx.msg_nx][i]       = com_rs485_tx.msg8b[com_rs485_tx.msg_nx][i] & 0x00FF;
-//                }
-                for(i = 0; i < (2 * sizeof(rs485_rx_msg_u)); i = i + 2)
-                {
-                    com_rs485_tx.msg8b[com_rs485_tx.msg_nx][i]       = (com_rs485_tx.msg8b[com_rs485_tx.msg_nx][i] >> 8);
-                }
-
+                RS485_msgWordToBytes(&com_rs485_tx);
                 // New message complete. If we are here RS485 has not started.
                 com_rs485_tx.msg_cr         = !com_rs485_tx.msg_cr;
                 com_rs485_tx.msg_nx         = !com_rs485_tx.msg_cr;
@@ -1050,7 +967,7 @@ __attribute__((interrupt)) void cla_isrMotor2(void)
 
         case COM_USE_CANFD_BUS:
         {
-            canfd_tx_t* p_msg_canfd         = &com_canfd_tx;
+            canfd_tx_t* p_msg_canfd = &com_canfd_tx;
             p_msg_canfd->buf.id     = CANFD_ID_REG(com_msg_canfd_tx_master_id, \
                                                    COM_MSG_CANFD_SUB_ID_STATUS);// CANFD_ID(0U, 1U);
             p_msg_canfd->buf.rtr    = MCAN_RTR_TX_DATA_FRAME;       // Transmit data frame.
@@ -1061,8 +978,7 @@ __attribute__((interrupt)) void cla_isrMotor2(void)
             p_msg_canfd->buf.fdf    = MCAN_FLEXIBLE_DATA_RATE_MODE; // Frame transmitted in CAN FD format.
             p_msg_canfd->buf.efc    = 1U;                           // Store Tx events.
             p_msg_canfd->buf.mm     = 0xAAU;                        // Message Marker.
-            p_msg_canfd->data               = slv2mst_msg;
-//            COM_msgCreate(&motor_m2, &p_msg_canfd->data, &global_ms_tmr_cnt);
+            p_msg_canfd->data       = slv2mst_msg;
             CANFD_msgTransmit(&com_canfd_tx);
             MCAN_writeMsgRam(MCANA_DRIVER_BASE, MCAN_MEM_TYPE_BUF, MCAN_TX_BUF_0_INDEX, &p_msg_canfd->buf);
             break;
@@ -1072,16 +988,14 @@ __attribute__((interrupt)) void cla_isrMotor2(void)
             break;
     }
 
-//    DBG_copyStruct(&motor_m2, &dbg_cpu2cm_m2);
+    DBG_copyStruct(&motor_m2, &dbg_cpu2cm_m2);
 //    IPC_sendCommand(IPC_CPU1_L_CM_R, IPC_CPU1_TO_CM_FLAG, IPC_ADDR_CORRECTION_ENABLE, 0, (uint32_t)&dbg_cpu2cm_m1, 1);
 
     // Clear IT source CLA ask
     CLA_clearTaskFlags(CLA1_BASE, CLA_MOTOR2_TASK_FLAG);
     // Clear IT
     Interrupt_clearACKGroup(INT_CLA_MOTOR2_GROUP);
-#if (DBG_CLA_M2_ISR)
-    DBG_PIN2_CLEAR;
-#endif
+    DBG_CLA_M2_ISR_UNSET;
 }
 
 /**

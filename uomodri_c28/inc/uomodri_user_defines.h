@@ -65,6 +65,23 @@
 #define DBG_M1_TASK                             (1)
 #define DBG_M2_TASK                             (1)
 #endif
+
+#if (DBG_CLA_M1_ISR)
+#define DBG_CLA_M1_ISR_SET                      DBG_PIN2_SET
+#define DBG_CLA_M1_ISR_UNSET                    DBG_PIN2_CLEAR
+#else
+#define DBG_CLA_M1_ISR_SET                      (0)
+#define DBG_CLA_M1_ISR_UNSET                    (0)
+#endif
+
+#if (DBG_CLA_M2_ISR)
+#define DBG_CLA_M2_ISR_SET                      DBG_PIN2_SET
+#define DBG_CLA_M2_ISR_UNSET                    DBG_PIN2_CLEAR
+#else
+#define DBG_CLA_M2_ISR_SET                      (0)
+#define DBG_CLA_M2_ISR_UNSET                    (0)
+#endif
+
 /***********************************************************************
  * FILTERS PARAMETERS
  ***********************************************************************/

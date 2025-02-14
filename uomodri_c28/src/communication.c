@@ -248,13 +248,29 @@ inline void RS485_msgTransmit(uint32_t sci_base, rs485_tx_t* p_msg_tx)
 //        uint16_t* p_msg = &p_msg_tx->msg[p_msg_tx->msg_cr].raw[p_msg_tx->index >> 1];
 //        HWREGH(sci_base + SCI_O_TXBUF) = ((p_msg_tx->index & 0x0001) ? (*p_msg): (*p_msg >> 8)) & 0x00FF;
         uint16_t* p_msg = &p_msg_tx->msg8b[p_msg_tx->msg_cr][p_msg_tx->index];
-        HWREGH(sci_base + SCI_O_TXBUF) = *p_msg & 0x00FF;
+        HWREGH(sci_base + SCI_O_TXBUF) = *p_msg;// & 0x00FF;
         p_msg_tx->index++;
         fifo_tx_status--;
     }
 
     return;
 }
+
+
+void RS485_msgWordToBytes(rs485_tx_t* p_msg_tx)
+{
+    uint16_t i, msg_active = p_msg_tx->msg_nx;
+    for(i = 0; i < (sizeof(rs485_rx_msg_u)); i++)
+    {
+        p_msg_tx->msg8b[msg_active][2 * i]      = p_msg_tx->msg[msg_active].raw[i];
+        p_msg_tx->msg8b[msg_active][2 * i]      = (p_msg_tx->msg8b[msg_active][2 * i] >> 8) & 0x00FF;
+        p_msg_tx->msg8b[msg_active][(2 * i) + 1]= p_msg_tx->msg[msg_active].raw[i];
+        p_msg_tx->msg8b[msg_active][(2 * i) + 1]= p_msg_tx->msg8b[msg_active][(2 * i) + 1] & 0x00FF;
+    }
+
+    return;
+}
+
 
 /*
  * @brief           Read & concatenate the data available in the MCAN peripheral. MSB first.
