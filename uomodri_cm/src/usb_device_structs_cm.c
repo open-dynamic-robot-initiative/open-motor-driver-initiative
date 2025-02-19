@@ -239,7 +239,7 @@ tUSBDCDCDevice usb_CDCDevice =
     USB_PID_SERIAL,
     0,
     USB_CONF_ATTR_SELF_PWR,
-    CtrlHandler,
+    usb_CtrlHandler,
     (void *)&usb_CDCDevice,
     USBBufferEventCallback, //RxHandler,//
     (void *)&usb_RxBuffer,
@@ -257,7 +257,7 @@ tUSBDCDCDevice usb_CDCDevice =
 tUSBBuffer usb_RxBuffer =
 {
     false,                          // This is a receive buffer.
-    RxHandler,                      // pfnCallback
+    usb_RxHandler,                  // pfnCallback
     (void *)&usb_CDCDevice,         // Callback data is our device pointer.
     USBDCDCPacketRead,              // pfnTransfer
     USBDCDCRxPacketAvailable,       // pfnAvailable
@@ -274,7 +274,7 @@ tUSBBuffer usb_RxBuffer =
 tUSBBuffer usb_TxBuffer =
 {
     true,                           // This is a transmit buffer.
-    TxHandler,                      // pfnCallback
+    usb_TxHandler,                      // pfnCallback
     (void *)&usb_CDCDevice,         // Callback data is our device pointer.
     USBDCDCPacketWrite,             // pfnTransfer
     USBDCDCTxPacketAvailable,       // pfnAvailable

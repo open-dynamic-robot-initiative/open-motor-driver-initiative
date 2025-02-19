@@ -403,8 +403,9 @@
                                                     .fctMux         = COM_SPI_CS_CFG, \
                                                     .direction      = GPIO_DIR_MODE_IN, \
                                                     .samplingInMode = GPIO_QUAL_ASYNC, \
-                                                    .setValue       = (0U), \
-                                                    .intEnable      = false, \
+                                                    .extIntNum      = GPIO_INT_XINT1, \
+                                                    .intType        = GPIO_INT_TYPE_RISING_EDGE, \
+                                                    .intEnable      = true, \
                                                 }
 
 #define USB_DETECT_NUM                          (67U)
@@ -2007,33 +2008,17 @@
  */
 #define DMA_NO_WRAP                             (0x10000)
 
-#define DMA_DBG_CLA2CM_M1_BASE_ADDR             DMA_CH2_BASE
-#define DMA_DBG_CLA2CM_M2_BASE_ADDR             DMA_CH3_BASE
 #define DMA_LED_SPI_TX_BASE_ADDR                DMA_CH4_BASE
 #define DMA_COM_SPI_TX_BASE_ADDR                DMA_CH5_BASE
 #define DMA_COM_SPI_RX_BASE_ADDR                DMA_CH6_BASE
 
-#define DMA_DBG_CLA2CM_M1_INT                   INT_DMA_CH2
-#define DMA_DBG_CLA2CM_M2_INT                   INT_DMA_CH3
 #define DMA_LED_SPI_TX_INT                      INT_DMA_CH4
 #define DMA_COM_SPI_TX_INT                      INT_DMA_CH5
 #define DMA_COM_SPI_RX_INT                      INT_DMA_CH6
 
-#define DMA_DBG_CLA2CM_M1_TRIGGER_SRC           DMA_TRIGGER_CLB3INT
-#define DMA_DBG_CLA2CM_M2_TRIGGER_SRC           DMA_TRIGGER_CLB4INT
 #define DMA_LED_SPI_TX_TRIGGER_SRC              DMA_TRIGGER_SPIDTX
 #define DMA_COM_SPI_TX_TRIGGER_SRC              DMA_TRIGGER_SPIBTX
 #define DMA_COM_SPI_RX_TRIGGER_SRC              DMA_TRIGGER_SPIBRX
-
-#define DMA_DBG_CLA2CM_FULL_LENGTH              (128U)
-#define DMA_DBG_CLA2CM_BURST_EVT                (32U)
-#define DMA_DBG_CLA2CM_TRANSFER_EVT             (DMA_DBG_CLA2CM_FULL_LENGTH / DMA_DBG_CLA2CM_BURST_EVT)
-#define DMA_DBG_CLA2CM_CONFIG                   (DMA_CFG_ONESHOT_ENABLE | DMA_CFG_CONTINUOUS_ENABLE | DMA_CFG_SIZE_32BIT)
-#if ((DMA_DBG_CLA2CM_CONFIG & DMA_MODE_DATASIZE) == DMA_CFG_SIZE_16BIT)
-#define DMA_DBG_CLA2CM_INC_STEP               (1)
-#else
-#define DMA_DBG_CLA2CM_INC_STEP               (2)
-#endif
 
 #define DMA_LED_SPI_TX_FULL_LENGTH              LED_MSG_TX_16BIT_LENGTH
 #define DMA_LED_SPI_TX_BURST_EVT                LED_MSG_TX_16BIT_LENGTH//(LED_MSG_TX_16BIT_LENGTH / 2)
@@ -2053,7 +2038,7 @@
 #define DMA_COM_SPI_RX_BURST_EVT                (1)
 #define DMA_COM_SPI_RX_TRANSFER_EVT             (DMA_COM_SPI_RX_FULL_LENGTH / DMA_COM_SPI_RX_BURST_EVT)
 #define DMA_COM_SPI_TX_CONFIG                   (DMA_CFG_ONESHOT_DISABLE | DMA_CFG_CONTINUOUS_DISABLE | DMA_CFG_SIZE_16BIT)
-#define DMA_COM_SPI_RX_CONFIG                   (DMA_CFG_ONESHOT_DISABLE | DMA_CFG_CONTINUOUS_DISABLE | DMA_CFG_SIZE_16BIT)
+#define DMA_COM_SPI_RX_CONFIG                   (DMA_CFG_ONESHOT_DISABLE | DMA_CFG_CONTINUOUS_ENABLE | DMA_CFG_SIZE_16BIT)
 #if ((DMA_COM_SPI_TX_CONFIG & DMA_MODE_DATASIZE) == DMA_CFG_SIZE_16BIT)
 #define DMA_COM_SPI_TX_INC_STEP                 (1)
 #else
@@ -2068,40 +2053,6 @@
  * @}
  */
 
-#define DMA_DBG_CLA2CM_M1_DEF                   { \
-                                                    .dmaChBase      = DMA_DBG_CLA2CM_M1_BASE_ADDR, \
-                                                    .p_dstAddr      = (debug_t *) &dbg_cpu2cm_m1, \
-                                                    .p_srcAddr      = (debug_t *) &dbg_cla2dma_mx, \
-                                                    .burstSize      = DMA_DBG_CLA2CM_BURST_EVT, \
-                                                    .transferSize   = DMA_DBG_CLA2CM_TRANSFER_EVT, \
-                                                    .dstWrapSize    = DMA_NO_WRAP, \
-                                                    .srcWrapSize    = DMA_NO_WRAP, \
-                                                    .dstStep        = DMA_DBG_CLA2CM_INC_STEP, \
-                                                    .srcStep        = DMA_DBG_CLA2CM_INC_STEP, \
-                                                    .dstWrapStep    = 0, \
-                                                    .srcWrapStep    = 0, \
-                                                    .config         = DMA_DBG_CLA2CM_CONFIG, \
-                                                    .trigger        = DMA_DBG_CLA2CM_M1_TRIGGER_SRC, \
-                                                    .intMode        = DMA_INT_AT_END, \
-                                                    .intEnable      = true, \
-                                                }
-#define DMA_DBG_CLA2CM_M2_DEF                   { \
-                                                    .dmaChBase      = DMA_DBG_CLA2CM_M2_BASE_ADDR, \
-                                                    .p_dstAddr      = (debug_t *) &dbg_cpu2cm_m2, \
-                                                    .p_srcAddr      = (debug_t *) &dbg_cla2dma_mx, \
-                                                    .burstSize      = DMA_DBG_CLA2CM_BURST_EVT, \
-                                                    .transferSize   = DMA_DBG_CLA2CM_TRANSFER_EVT, \
-                                                    .dstWrapSize    = DMA_NO_WRAP, \
-                                                    .srcWrapSize    = DMA_NO_WRAP, \
-                                                    .dstStep        = DMA_DBG_CLA2CM_INC_STEP, \
-                                                    .srcStep        = DMA_DBG_CLA2CM_INC_STEP, \
-                                                    .dstWrapStep    = 0, \
-                                                    .srcWrapStep    = 0, \
-                                                    .config         = DMA_DBG_CLA2CM_CONFIG, \
-                                                    .trigger        = DMA_DBG_CLA2CM_M2_TRIGGER_SRC, \
-                                                    .intMode        = DMA_INT_AT_END, \
-                                                    .intEnable      = true, \
-                                                }
 #define DMA_LED_SPI_TX_DEF                      { \
                                                     .dmaChBase      = DMA_LED_SPI_TX_BASE_ADDR, \
                                                     .p_dstAddr      = (uint16_t *)LED_SPI_TX_BASE_REG_ADDR, \
@@ -2151,7 +2102,7 @@
                                                     .config         = DMA_COM_SPI_RX_CONFIG, \
                                                     .trigger        = DMA_COM_SPI_RX_TRIGGER_SRC, \
                                                     .intMode        = DMA_INT_AT_END, \
-                                                    .intEnable      = true, \
+                                                    .intEnable      = false, \
                                                 }
 
 /***********************************************************************
@@ -2261,6 +2212,9 @@
 #define IPC_SYNC_FLAG                           IPC_FLAG31
 #define IPC_CPU1_TO_CM_FLAG                     IPC_FLAG0
 #define IPC_CM_TO_CPU1_FLAG                     IPC_FLAG0
+
+#define IPC_NO_DATA                             (0)
+#define IPC_NO_CMD                              (0)
 /**
  * @}
  */

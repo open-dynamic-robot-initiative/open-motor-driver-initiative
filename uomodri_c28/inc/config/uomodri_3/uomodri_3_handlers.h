@@ -318,8 +318,6 @@ static const spi_cfg_t  spiCfgList[] =
  */
 static const dma_cfg_t  dmaCfgList[] =
 {
-// DMA_DBG_CLA2CM_M1_DEF,             /* DMA for memory transfer between CLA & IPC (CPU to CM) */
-// DMA_DBG_CLA2CM_M2_DEF,             /* DMA for memory transfer between CLA & IPC (CPU to CM) */
  DMA_LED_SPI_TX_DEF,                /* DMA for the RGB LED */
  DMA_COM_SPI_TX_DEF,                /* DMA for SPI COMMUNICATION Tx */
  DMA_COM_SPI_RX_DEF,                /* DMA for SPI COMMUNICATION Rx */

@@ -29,21 +29,25 @@ typedef union __uart_addr_u__
 #define INT_TIMER_LED_CMD_GROUP         INTERRUPT_ACK_GROUP1
 #define INT_TIMER_LED_CMD_HANDLER       &tmr_isrLedCmd
 
-#define INT_RS485_Rx_Tx_CLB             INT_CLB1
-#define INT_RS485_RX_Tx_CLB_GROUP       INTERRUPT_ACK_GROUP5
-#define INT_RS485_RX_Tx_CLB_HANDLER     &clb_isrTxRx_RS485
+#define INT_RS485_RX_TX_CLB             INT_CLB1
+#define INT_RS485_RX_TX_CLB_GROUP       INTERRUPT_ACK_GROUP5
+#define INT_RS485_RX_TX_CLB_HANDLER     &clb_isrTxRx_RS485
 
-#define INT_DMA_DBG_MOTOR1              DMA_DBG_CLA2CM_M1_INT
-#define INT_DMA_DBG_MOTOR1_GROUP        INTERRUPT_ACK_GROUP7
-#define INT_DMA_DBG_MOTOR1_HANDLER      &dma_isrDbgMotor1
+//#define INT_DMA_DBG_MOTOR1              DMA_DBG_CLA2CM_M1_INT
+//#define INT_DMA_DBG_MOTOR1_GROUP        INTERRUPT_ACK_GROUP7
+//#define INT_DMA_DBG_MOTOR1_HANDLER      &dma_isrDbgMotor1
+//
+//#define INT_DMA_DBG_MOTOR2              DMA_DBG_CLA2CM_M2_INT
+//#define INT_DMA_DBG_MOTOR2_GROUP        INTERRUPT_ACK_GROUP7
+//#define INT_DMA_DBG_MOTOR2_HANDLER      &dma_isrDbgMotor2
+//
+//#define INT_DMA_SPI_RX_MSG              INT_DMA_CH6
+//#define INT_DMA_SPI_RX_MSG_GROUP        INTERRUPT_ACK_GROUP7
+//#define INT_DMA_SPI_RX_MSG_HANDLER      &dma_isrSpiComRx
 
-#define INT_DMA_DBG_MOTOR2              DMA_DBG_CLA2CM_M2_INT
-#define INT_DMA_DBG_MOTOR2_GROUP        INTERRUPT_ACK_GROUP7
-#define INT_DMA_DBG_MOTOR2_HANDLER      &dma_isrDbgMotor2
-
-#define INT_DMA_SPI_RX_MSG              INT_DMA_CH6
-#define INT_DMA_SPI_RX_MSG_GROUP        INTERRUPT_ACK_GROUP7
-#define INT_DMA_SPI_RX_MSG_HANDLER      &dma_isrSpiComRx
+#define INT_GPIO_SPI_CS                 INT_XINT1
+#define INT_GPIO_SPI_CS_GROUP           INTERRUPT_ACK_GROUP1
+#define INT_GPIO_SPI_CS_HANDLER         &gpio_isrSpiComRx
 
 #define INT_RS485_RX_PIE_FLAG           PIE_IFR8_INTX5
 #define INT_RS485_RX_MSG                INT_SCIC_RX
@@ -67,34 +71,39 @@ typedef union __uart_addr_u__
 #define INT_CLA_MOTOR2_GROUP            INTERRUPT_ACK_GROUP11
 #define INT_CLA_MOTOR2_HANDLER          &cla_isrMotor2
 
-#define INT_MCAN                        INT_MCANA_1
-#define INT_MCAN_GROUP                  INTERRUPT_ACK_GROUP9
-#define INT_MCAN_HANDLER                &mcan_isr_canfd
+#define INT_MCAN_RX_TX_MSG              INT_MCANA_1
+#define INT_MCAN_RX_TX_MSG_GROUP        INTERRUPT_ACK_GROUP9
+#define INT_MCAN_RX_TX_MSG_HANDLER      &mcan_isr_canfd
 
 #define INT_TIMER_LED_DEF               { \
                                             .intNum             = INT_TIMER_LED, \
                                             .intAckGroup        = INT_TIMER_LED_CMD_GROUP, \
                                             .p_intHandler       = INT_TIMER_LED_CMD_HANDLER \
                                         }
-#define INT_RS485_Rx_Tx_CLB_DEF         { \
-                                            .intNum             = INT_RS485_Rx_Tx_CLB, \
-                                            .intAckGroup        = INT_RS485_RX_Tx_CLB_GROUP, \
-                                            .p_intHandler       = INT_RS485_RX_Tx_CLB_HANDLER \
+#define INT_RS485_RX_TX_CLB_DEF         { \
+                                            .intNum             = INT_RS485_RX_TX_CLB, \
+                                            .intAckGroup        = INT_RS485_RX_TX_CLB_GROUP, \
+                                            .p_intHandler       = INT_RS485_RX_TX_CLB_HANDLER \
                                         }
-#define INT_DMA_DBG_MOTOR1_DEF          { \
-                                            .intNum             = INT_DMA_DBG_MOTOR1, \
-                                            .intAckGroup        = INT_DMA_DBG_MOTOR1_GROUP, \
-                                            .p_intHandler       = INT_DMA_DBG_MOTOR1_HANDLER \
+//#define INT_DMA_DBG_MOTOR1_DEF          { \
+//                                            .intNum             = INT_DMA_DBG_MOTOR1, \
+//                                            .intAckGroup        = INT_DMA_DBG_MOTOR1_GROUP, \
+//                                            .p_intHandler       = INT_DMA_DBG_MOTOR1_HANDLER \
+//                                        }
+//#define INT_DMA_DBG_MOTOR2_DEF          { \
+//                                            .intNum             = INT_DMA_DBG_MOTOR2, \
+//                                            .intAckGroup        = INT_DMA_DBG_MOTOR2_GROUP, \
+//                                            .p_intHandler       = INT_DMA_DBG_MOTOR2_HANDLER \
+//                                        }
+//#define INT_DMA_SPI_RX_MSG_DEF          { \
+//                                            .intNum             = INT_DMA_SPI_RX_MSG, \
+//                                            .intAckGroup        = INT_DMA_SPI_RX_MSG_GROUP, \
+//                                            .p_intHandler       = INT_DMA_SPI_RX_MSG_HANDLER \
                                         }
-#define INT_DMA_DBG_MOTOR2_DEF          { \
-                                            .intNum             = INT_DMA_DBG_MOTOR2, \
-                                            .intAckGroup        = INT_DMA_DBG_MOTOR2_GROUP, \
-                                            .p_intHandler       = INT_DMA_DBG_MOTOR2_HANDLER \
-                                        }
-#define INT_DMA_SPI_RX_MSG_DEF          { \
-                                            .intNum             = INT_DMA_SPI_RX_MSG, \
-                                            .intAckGroup        = INT_DMA_SPI_RX_MSG_GROUP, \
-                                            .p_intHandler       = INT_DMA_SPI_RX_MSG_HANDLER \
+#define INT_GPIO_SPI_CS_DEF             { \
+                                            .intNum             = INT_GPIO_SPI_CS, \
+                                            .intAckGroup        = INT_GPIO_SPI_CS_GROUP, \
+                                            .p_intHandler       = INT_GPIO_SPI_CS_HANDLER \
                                         }
 #define INT_RS485_RX_MSG_DEF            { \
                                             .intNum             = INT_RS485_RX_MSG, \
@@ -121,10 +130,10 @@ typedef union __uart_addr_u__
                                             .intAckGroup        = INT_CLA_MOTOR2_GROUP, \
                                             .p_intHandler       = INT_CLA_MOTOR2_HANDLER \
                                         }
-#define INT_MCAN_DEF                    { \
-                                            .intNum             = INT_MCAN, \
-                                            .intAckGroup        = INT_MCAN_GROUP, \
-                                            .p_intHandler       = INT_MCAN_HANDLER \
+#define INT_MCAN_RX_TX_MSG_DEF          { \
+                                            .intNum             = INT_MCAN_RX_TX_MSG, \
+                                            .intAckGroup        = INT_MCAN_RX_TX_MSG_GROUP, \
+                                            .p_intHandler       = INT_MCAN_RX_TX_MSG_HANDLER \
                                         }
 
 /***********************************************************************

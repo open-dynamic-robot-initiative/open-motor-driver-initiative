@@ -247,7 +247,7 @@ inline void RS485_msgTransmit(uint32_t sci_base, rs485_tx_t* p_msg_tx)
     {
 //        uint16_t* p_msg = &p_msg_tx->msg[p_msg_tx->msg_cr].raw[p_msg_tx->index >> 1];
 //        HWREGH(sci_base + SCI_O_TXBUF) = ((p_msg_tx->index & 0x0001) ? (*p_msg): (*p_msg >> 8)) & 0x00FF;
-        uint16_t* p_msg = &p_msg_tx->msg8b[p_msg_tx->msg_cr][p_msg_tx->index];
+        uint16_t* p_msg = &p_msg_tx->msg_8b[p_msg_tx->msg_cr][p_msg_tx->index];
         HWREGH(sci_base + SCI_O_TXBUF) = *p_msg;// & 0x00FF;
         p_msg_tx->index++;
         fifo_tx_status--;
@@ -256,57 +256,76 @@ inline void RS485_msgTransmit(uint32_t sci_base, rs485_tx_t* p_msg_tx)
     return;
 }
 
-
+/*
+ * @brief           Split 16bits words into 8bits words for RS485.
+ * @param[inout]    *p_msg_tx   Pointer on the RS485 transmission structure.
+ */
 void RS485_msgWordToBytes(rs485_tx_t* p_msg_tx)
 {
     uint16_t i, msg_active = p_msg_tx->msg_nx;
-    for(i = 0; i < (sizeof(rs485_rx_msg_u)); i++)
+    for(i = 0; i < COM_MSG_RS485_TX_16BIT_FULL_LENGTH; i++)
     {
-        p_msg_tx->msg8b[msg_active][2 * i]      = p_msg_tx->msg[msg_active].raw[i];
-        p_msg_tx->msg8b[msg_active][2 * i]      = (p_msg_tx->msg8b[msg_active][2 * i] >> 8) & 0x00FF;
-        p_msg_tx->msg8b[msg_active][(2 * i) + 1]= p_msg_tx->msg[msg_active].raw[i];
-        p_msg_tx->msg8b[msg_active][(2 * i) + 1]= p_msg_tx->msg8b[msg_active][(2 * i) + 1] & 0x00FF;
+        p_msg_tx->msg_8b[msg_active][2 * i]         = p_msg_tx->msg[msg_active].raw[i];
+        p_msg_tx->msg_8b[msg_active][2 * i]         = (p_msg_tx->msg_8b[msg_active][2 * i] >> 8) & 0x00FF;
+        p_msg_tx->msg_8b[msg_active][(2 * i) + 1]   = p_msg_tx->msg[msg_active].raw[i];
+        p_msg_tx->msg_8b[msg_active][(2 * i) + 1]   = p_msg_tx->msg_8b[msg_active][(2 * i) + 1] & 0x00FF;
     }
 
     return;
 }
 
-
 /*
  * @brief           Read & concatenate the data available in the MCAN peripheral. MSB first.
  * @param[out]      *p_msg_rx   Pointer on the MCAN buffer reception structure.
  */
-inline void CANFD_msgReceive(canfd_rx_t* p_msg_rx)
+inline void CANFD_msgBytesToWord(canfd_rx_t* p_msg_rx)
 {
-    uint16_t* p_buf = &p_msg_rx->buf.data[0];
-    uint16_t* p_msg = &p_msg_rx->bytes2short[0];
-    uint16_t index  = 0;
+//    uint16_t* p_buf = &p_msg_rx->buf.data[0];
+//    uint16_t* p_msg = &p_msg_rx->bytes2short[0];
+//    uint16_t index  = 0;
+//
+//    while(index < MCAN_MAX_PAYLOAD_BYTES)
+//    {
+//        *p_msg  = ((index++) & 1U) ? (*p_msg | (*p_buf & LSB_BYTE_MASK)) : ((*p_buf << 8) & MSB_BYTE_MASK);
+//        p_buf   = &p_msg_rx->buf.data[index];
+//        p_msg   = &p_msg_rx->bytes2short[index >> 1];
+//    }
+//
+//    return;
 
-    while(index < MCAN_MAX_PAYLOAD_BYTES)
+    uint16_t i, msg_build = 0;
+    for(i = 0; i < COM_MSG_CANFD_TX_RX_8BIT_FULL_LENGTH; i = i + 2)
     {
-        *p_msg  = ((index++) & 1U) ? (*p_msg | (*p_buf & LSB_BYTE_MASK)) : ((*p_buf << 8) & MSB_BYTE_MASK);
-        p_buf   = &p_msg_rx->buf.data[index];
-        p_msg   = &p_msg_rx->bytes2short[index >> 1];
+        msg_build                   = (p_msg_rx->buf.data[i] << 8) & 0xFF00;
+        msg_build                  |= (p_msg_rx->buf.data[i + 1] & 0x00FF);
+        p_msg_rx->msg_16b[i >> 1]   = msg_build;
     }
-
-    return;
 }
 
 /*
  * @brief           Write & concatenate the data available in the MCAN peripheral. MSB first.
  * @param[out]      *p_msg_rx   Pointer on the MCAN buffer reception structure.
  */
-inline void CANFD_msgTransmit(canfd_tx_t* p_msg_tx)
+inline void CANFD_msgWordToBytes(canfd_tx_t* p_msg_tx)
 {
-    uint16_t* p_buf = &p_msg_tx->buf.data[0];
-    uint16_t* p_msg = &p_msg_tx->short2bytes[0];
-    uint16_t index  = 0;
+//    uint16_t* p_msg_8b  = &p_msg_tx->buf.data[0];
+//    uint16_t* p_msg_16b = &p_msg_tx->msg_16b[0];
+//    uint16_t index  = 0;
+//
+//    while(index < MCAN_MAX_PAYLOAD_BYTES)
+//    {
+//        *p_buf  = (((index++) & 1U) ? (*p_msg) : (*p_msg >> 8)) & LSB_BYTE_MASK;
+//        p_buf   = &p_msg_tx->buf.data[index];
+//        p_msg   = &p_msg_tx->short2bytes[index >> 1];
+//    }
 
-    while(index < MCAN_MAX_PAYLOAD_BYTES)
+    uint16_t i;
+    for(i = 0; i < COM_MSG_CANFD_TX_RX_16BIT_FULL_LENGTH; i++)
     {
-        *p_buf  = (((index++) & 1U) ? (*p_msg) : (*p_msg >> 8)) & LSB_BYTE_MASK;
-        p_buf   = &p_msg_tx->buf.data[index];
-        p_msg   = &p_msg_tx->short2bytes[index >> 1];
+        p_msg_tx->buf.data[2 * i]       = p_msg_tx->msg_16b[i];
+        p_msg_tx->buf.data[2 * i]       = (p_msg_tx->buf.data[2 * i] >> 8) & 0x00FF;
+        p_msg_tx->buf.data[(2 * i) + 1] = p_msg_tx->msg_16b[i];
+        p_msg_tx->buf.data[(2 * i) + 1] = p_msg_tx->msg_16b[(2 * i) + 1] & 0x00FF;
     }
 
     return;

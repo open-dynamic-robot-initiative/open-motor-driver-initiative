@@ -77,19 +77,18 @@
 /***********************************************************************
  * RS-485 CONSTANTS
  ***********************************************************************/
-#define COM_MSG_RS485_TX_RX_MAX_SIZE            (20)
 #define COM_MSG_RS485_TX_MASTER_ADDRESS         (0xFF)
 #define COM_MSG_RS485_TX_TYPE_STANDARD          (0x00)
 
 #define COM_MSG_RS485_TX_16BIT_PAYLOAD_LENGTH   (sizeof(rs485_header_u) + sizeof(slv2mst_msg_t))
-#define COM_MSG_RS485_TX_8BIT_PAYLOAD_LENGTH    (COM_MSG_RS485_TX_16BIT_PAYLOAD_LENGTH * 2)
+#define COM_MSG_RS485_TX_8BIT_PAYLOAD_LENGTH    (COM_MSG_RS485_TX_16BIT_PAYLOAD_LENGTH << 1)
 #define COM_MSG_RS485_TX_16BIT_FULL_LENGTH      (COM_MSG_RS485_TX_16BIT_PAYLOAD_LENGTH + sizeof(crc_reg_t))
-#define COM_MSG_RS485_TX_8BIT_FULL_LENGTH       (COM_MSG_RS485_TX_16BIT_FULL_LENGTH * 2)
+#define COM_MSG_RS485_TX_8BIT_FULL_LENGTH       (COM_MSG_RS485_TX_16BIT_FULL_LENGTH << 1)
 
 #define COM_MSG_RS485_RX_16BIT_PAYLOAD_LENGTH   (sizeof(rs485_header_u) + sizeof(mst2slv_msg_t))
-#define COM_MSG_RS485_RX_8BIT_PAYLOAD_LENGTH    (COM_MSG_RS485_RX_16BIT_PAYLOAD_LENGTH * 2)
+#define COM_MSG_RS485_RX_8BIT_PAYLOAD_LENGTH    (COM_MSG_RS485_RX_16BIT_PAYLOAD_LENGTH << 1)
 #define COM_MSG_RS485_RX_16BIT_FULL_LENGTH      (COM_MSG_RS485_RX_16BIT_PAYLOAD_LENGTH + sizeof(crc_reg_t))
-#define COM_MSG_RS485_RX_8BIT_FULL_LENGTH       (COM_MSG_RS485_RX_16BIT_FULL_LENGTH * 2)
+#define COM_MSG_RS485_RX_8BIT_FULL_LENGTH       (COM_MSG_RS485_RX_16BIT_FULL_LENGTH << 1)
 
 /***********************************************************************
  * CAN-FD CONSTANTS
@@ -151,16 +150,18 @@
                                                   CANFD_ID_11b_MASK))
 #define CANFD_ID_REG(canfd_id, canfd_subid)     (CANFD_ID(canfd_id, canfd_subid) << CANFD_ID_REG_POS)
 
+#define COM_MSG_CANFD_TX_RX_8BIT_FULL_LENGTH    (MCAN_MAX_PAYLOAD_BYTES)
+#define COM_MSG_CANFD_TX_RX_16BIT_FULL_LENGTH   (MCAN_MAX_PAYLOAD_BYTES >> 1)
 
-#define COM_MSG_CANFD_TX_16BIT_PAYLOAD_LENGTH   (sizeof(rs485_header_u) + sizeof(slv2mst_msg_t))
-#define COM_MSG_CANFD_TX_8BIT_PAYLOAD_LENGTH    (COM_MSG_CANFD_TX_16BIT_PAYLOAD_LENGTH * 2)
-#define COM_MSG_CANFD_TX_16BIT_FULL_LENGTH      (COM_MSG_CANFD_TX_16BIT_PAYLOAD_LENGTH + sizeof(crc_reg_t))
-#define COM_MSG_CANFD_TX_8BIT_FULL_LENGTH       (COM_MSG_CANFD_TX_16BIT_FULL_LENGTH * 2)
-
-#define COM_MSG_CANFD_RX_16BIT_PAYLOAD_LENGTH   (sizeof(rs485_header_u) + sizeof(mst2slv_msg_t))
-#define COM_MSG_CANFD_RX_8BIT_PAYLOAD_LENGTH    (COM_MSG_CANFD_RX_16BIT_PAYLOAD_LENGTH * 2)
-#define COM_MSG_CANFD_RX_16BIT_FULL_LENGTH      (COM_MSG_CANFD_RX_16BIT_PAYLOAD_LENGTH + sizeof(crc_reg_t))
-#define COM_MSG_CANFD_RX_8BIT_FULL_LENGTH       (COM_MSG_CANFD_RX_16BIT_FULL_LENGTH * 2)
+//#define COM_MSG_CANFD_TX_16BIT_PAYLOAD_LENGTH   (sizeof(rs485_header_u) + sizeof(slv2mst_msg_t))
+//#define COM_MSG_CANFD_TX_8BIT_PAYLOAD_LENGTH    (COM_MSG_CANFD_TX_16BIT_PAYLOAD_LENGTH * 2)
+//#define COM_MSG_CANFD_TX_16BIT_FULL_LENGTH      (COM_MSG_CANFD_TX_16BIT_PAYLOAD_LENGTH + sizeof(crc_reg_t))
+//#define COM_MSG_CANFD_TX_8BIT_FULL_LENGTH       (COM_MSG_CANFD_TX_16BIT_FULL_LENGTH * 2)
+//
+//#define COM_MSG_CANFD_RX_16BIT_PAYLOAD_LENGTH   (sizeof(rs485_header_u) + sizeof(mst2slv_msg_t))
+//#define COM_MSG_CANFD_RX_8BIT_PAYLOAD_LENGTH    (COM_MSG_CANFD_RX_16BIT_PAYLOAD_LENGTH * 2)
+//#define COM_MSG_CANFD_RX_16BIT_FULL_LENGTH      (COM_MSG_CANFD_RX_16BIT_PAYLOAD_LENGTH + sizeof(crc_reg_t))
+//#define COM_MSG_CANFD_RX_8BIT_FULL_LENGTH       (COM_MSG_CANFD_RX_16BIT_FULL_LENGTH * 2)
 
 /***********************************************************************
  * COMMUNICATION CONSTANTS
@@ -384,6 +385,7 @@ typedef struct __spi_rx_msg_t__
 {
     mst2slv_msg_t   data;
     crc_reg_t       crc;
+//    uint32_t        crc_cal;
 } spi_rx_msg_t;
 
 /**
@@ -440,7 +442,7 @@ typedef union __rs485_header_u__
  */
 typedef union __rs485_rx_msg_u__
 {
-    uint16_t            raw[COM_MSG_RS485_TX_RX_MAX_SIZE];
+    uint16_t            raw[COM_MSG_RS485_RX_16BIT_FULL_LENGTH];
     struct
     {
         rs485_header_u  header;
@@ -455,7 +457,7 @@ typedef union __rs485_rx_msg_u__
  */
 typedef union __rs485_tx_msg_u__
 {
-    uint16_t            raw[COM_MSG_RS485_TX_RX_MAX_SIZE];
+    uint16_t            raw[COM_MSG_RS485_TX_16BIT_FULL_LENGTH];
     struct
     {
         rs485_header_u  header;
@@ -487,7 +489,7 @@ typedef struct __rs485_rx_t__
 typedef struct __rs485_tx_t__
 {
     rs485_tx_msg_u      msg[2];
-    uint16_t            msg8b[2][2 * sizeof(rs485_tx_msg_u)];
+    uint16_t            msg_8b[2][COM_MSG_RS485_TX_8BIT_FULL_LENGTH];
     uint16_t            index;
     uint16_t            msg_cr;
     uint16_t            msg_nx;
@@ -505,7 +507,7 @@ typedef struct __canfd_rx_t__
     MCAN_RxBufElement   buf;
     union
     {
-        uint16_t        bytes2short[MCAN_MAX_PAYLOAD_BYTES / 2];
+        uint16_t        msg_16b[COM_MSG_CANFD_TX_RX_16BIT_FULL_LENGTH];
         mst2slv_msg_t   data;
     };
 } canfd_rx_t;
@@ -519,7 +521,7 @@ typedef struct __canfd_tx_t__
     MCAN_TxBufElement   buf;
     union
     {
-      uint16_t          short2bytes[MCAN_MAX_PAYLOAD_BYTES / 2];
+      uint16_t          msg_16b[COM_MSG_CANFD_TX_RX_16BIT_FULL_LENGTH];
       slv2mst_msg_t     data;
     };
 } canfd_tx_t;
@@ -550,8 +552,11 @@ uint32_t COM_msgCRC(uint16_t*, uint16_t);
 inline void RS485_msgReceive(uint32_t, rs485_rx_t*);
 inline void RS485_msgTransmit(uint32_t, rs485_tx_t*);
 void RS485_msgWordToBytes(rs485_tx_t*);
-inline void CANFD_msgReceive(canfd_rx_t*);
-inline void CANFD_msgTransmit(canfd_tx_t*);
+inline void CANFD_msgBytesToWord(canfd_rx_t*);
+inline void CANFD_msgWordToBytes(canfd_tx_t*);
+//void RS485_msgWordToBytes(rs485_tx_t*);
+//inline void CANFD_msgReceive(canfd_rx_t*);
+//inline void CANFD_msgTransmit(canfd_tx_t*);
 #else
 void COM_msgDbgTx(dbg_uart_addr_t*, dbg_uart_msg_t*);
 void COM_msgDbgRx(com_dbg_rx_msg_t*, uint8_t);

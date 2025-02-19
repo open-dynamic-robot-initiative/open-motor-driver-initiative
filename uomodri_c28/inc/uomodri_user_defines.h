@@ -46,8 +46,8 @@
 #endif
 // Communication peripherals ENABLE/DISABLE
 #define CAN_FD_BUS_ENABLE                       (0)
-#define RS485_BUS_ENABLE                        (1)
-#define SPI_BUS_ENABLE                          (0)
+#define RS485_BUS_ENABLE                        (0)
+#define SPI_BUS_ENABLE                          (1)
 #if (RS485_BUS_ENABLE) && (CAN_FD_BUS_ENABLE)
 #error "RS-485 & CAN share the same pins. They cannot run @ the same time"
 //#elif ((RS485_BUS_ENABLE) || (CAN_BUS_ENABLE) ) && (SPI_BUS_ENABLE)
@@ -57,10 +57,14 @@
 #ifdef DEBUG
 #define DBG_CLA_M1_ISR                          (1)
 #define DBG_CLA_M2_ISR                          (1)
-#define DBG_RS485_TX_ISR                        (1)
-#define DBG_RS485_RX_ISR                        (1)
-#define DBG_RS485_VALID_ISR                     (1)
-#define DBG_CMD_NEW_TASK                        (1)
+#define DBG_TIMER_ISR                           (0)
+#define DBG_DMA_SPI_RX_ISR                      (1)
+#define DBG_SCI_RS485_TX_ISR                    (0)
+#define DBG_SCI_RS485_RX_ISR                    (0)
+#define DBG_CLB_RS485_TX_RX_ISR                 (0)
+#define DBG_MCAN_CANFD_TX_RX_ISR                (0)
+
+#define DBG_CMD_NEW_TASK                        (0)
 #define DBG_CALIB_TASK                          (0)
 #define DBG_M1_TASK                             (1)
 #define DBG_M2_TASK                             (1)
@@ -70,16 +74,96 @@
 #define DBG_CLA_M1_ISR_SET                      DBG_PIN2_SET
 #define DBG_CLA_M1_ISR_UNSET                    DBG_PIN2_CLEAR
 #else
-#define DBG_CLA_M1_ISR_SET                      (0)
-#define DBG_CLA_M1_ISR_UNSET                    (0)
+#define DBG_CLA_M1_ISR_SET                      asm(" nop")
+#define DBG_CLA_M1_ISR_UNSET                    asm(" nop")
 #endif
 
 #if (DBG_CLA_M2_ISR)
 #define DBG_CLA_M2_ISR_SET                      DBG_PIN2_SET
 #define DBG_CLA_M2_ISR_UNSET                    DBG_PIN2_CLEAR
 #else
-#define DBG_CLA_M2_ISR_SET                      (0)
-#define DBG_CLA_M2_ISR_UNSET                    (0)
+#define DBG_CLA_M2_ISR_SET                      asm(" nop")
+#define DBG_CLA_M2_ISR_UNSET                    asm(" nop")
+#endif
+
+#if (DBG_TIMER_ISR)
+#define DBG_TIMER_ISR_SET                       DBG_PIN2_SET
+#define DBG_TIMER_ISR_UNSET                     DBG_PIN2_CLEAR
+#else
+#define DBG_TIMER_ISR_SET                       asm(" nop")
+#define DBG_TIMER_ISR_UNSET                     asm(" nop")
+#endif
+
+#if (DBG_DMA_SPI_RX_ISR)
+#define DBG_DMA_SPI_RX_ISR_SET                  DBG_PIN3_SET
+#define DBG_DMA_SPI_RX_ISR_UNSET                DBG_PIN3_CLEAR
+#else
+#define DBG_DMA_SPI_RX_ISR_SET                  asm(" nop")
+#define DBG_DMA_SPI_RX_ISR_UNSET                asm(" nop")
+#endif
+
+#if (DBG_SCI_RS485_TX_ISR)
+#define DBG_SCI_RX485_TX_ISR_SET                DBG_PIN3_SET
+#define DBG_SCI_RX485_TX_ISR_UNSET              DBG_PIN3_CLEAR
+#else
+#define DBG_SCI_RX485_TX_ISR_SET                asm(" nop")
+#define DBG_SCI_RX485_TX_ISR_UNSET              asm(" nop")
+#endif
+
+#if (DBG_SCI_RS485_RX_ISR)
+#define DBG_SCI_RX485_RX_ISR_SET                DBG_PIN3_SET
+#define DBG_SCI_RX485_RX_ISR_UNSET              DBG_PIN3_CLEAR
+#else
+#define DBG_SCI_RX485_RX_ISR_SET                asm(" nop")
+#define DBG_SCI_RX485_RX_ISR_UNSET              asm(" nop")
+#endif
+
+#if (DBG_CLB_RS485_TX_RX_ISR)
+#define DBG_CLB_RS485_TX_RX_ISR_SET             DBG_PIN3_SET
+#define DBG_CLB_RS485_TX_RX_ISR_UNSET           DBG_PIN3_CLEAR
+#else
+#define DBG_CLB_RS485_TX_RX_ISR_SET             asm(" nop")
+#define DBG_CLB_RS485_TX_RX_ISR_UNSET           asm(" nop")
+#endif
+
+#if (DBG_MCAN_CANFD_TX_RX_ISR)
+#define DBG_MCAN_CANFD_TX_RX_ISR_SET            DBG_PIN3_SET
+#define DBG_MCAN_CANFD_TX_RX_ISR_UNSET          DBG_PIN3_CLEAR
+#else
+#define DBG_MCAN_CANFD_TX_RX_ISR_SET            asm(" nop")
+#define DBG_MCAN_CANFD_TX_RX_ISR_UNSET          asm(" nop")
+#endif
+
+#if (DBG_CMD_NEW_TASK)
+#define DBG_CMD_NEW_TASK_SET                    DBG_PIN1_SET
+#define DBG_CMD_NEW_TASK_UNSET                  DBG_PIN1_CLEAR
+#else
+#define DBG_CMD_NEW_TASK_SET                    __mnop()
+#define DBG_CMD_NEW_TASK_UNSET                  __mnop()
+#endif
+
+#if (DBG_CALIB_TASK)
+#define DBG_CALIB_TASK_SET                      DBG_PIN1_SET
+#define DBG_CALIB_TASK_UNSET                    DBG_PIN1_CLEAR
+#else
+#define DBG_CALIB_TASK_SET                      __mnop()
+#define DBG_CALIB_TASK_UNSET                    __mnop()
+#endif
+
+#if (DBG_M1_TASK)
+#define DBG_M1_TASK_SET                         DBG_PIN0_SET
+#define DBG_M1_TASK_UNSET                       DBG_PIN0_CLEAR
+#else
+#define DBG_M1_TASK_SET                         __mnop()
+#define DBG_M1_TASK_UNSET                       __mnop()
+#endif
+
+#if (DBG_M2_TASK)
+#define DBG_M2_TASK_SET                         DBG_PIN0_SET
+#define DBG_M2_TASK_UNSET                       DBG_PIN0_CLEAR
+#else
+#define DBG_M2_TASK_SET                         __mnop()
+#define DBG_M2_TASK_UNSET                       __mnop()
 #endif
 
 /***********************************************************************

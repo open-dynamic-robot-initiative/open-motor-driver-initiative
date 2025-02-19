@@ -589,8 +589,16 @@ typedef struct __gpio_config_t__
                                                                         - \em GPIO_QUAL_6SAMPLE,
                                                                         - \em GPIO_QUAL_ASYNC */
     const GPIO_AnalogMode               analogModeEnable;           /*!< GPIO is dedicated to USB */
-    const GPIO_ExternalIntNum           extIntNum;                  /*!< GPIO external interrupt source number */
-    const GPIO_IntType                  intType;                    /*!< GPIO interrupt event source */
+    const GPIO_ExternalIntNum           extIntNum;                  /*!< GPIO external interrupt source number
+                                                                         - \em GPIO_INT_XINT1,
+                                                                         - \em GPIO_INT_XINT2,
+                                                                         - \em GPIO_INT_XINT3,
+                                                                         - \em GPIO_INT_XINT4,
+                                                                         - \em GPIO_INT_XINT5 */
+    const GPIO_IntType                  intType;                    /*!< GPIO interrupt event source
+                                                                         - \em GPIO_INT_TYPE_FALLING_EDGE,
+                                                                         - \em GPIO_INT_TYPE_RISING_EDGE,
+                                                                         - \em GPIO_INT_TYPE_BOTH_EDGES */
     const bool_t                        intEnable;                  /*!< GPIO can be configured as IT source */
 } gpio_cfg_t;
 

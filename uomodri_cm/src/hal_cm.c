@@ -66,7 +66,7 @@ void HAL_CM_uDMA_ini(const udma_cfg_t* p_udmaCfg)
             /* Put the attributes in a known state for the uDMA software channel.
              * These should already be disabled by default. */            //
             UDMA_disableChannelAttribute(UDMA_BASE, dmaChannel, UDMA_CH_ATTR_ALL);
-//                                         UDMA_CH_ATTR_ALTSELECT | UDMA_CH_ATTR_HIGH_PRIORITY | UDMA_CH_ATTR_REQMASK);
+//          UDMA_CH_ATTR_ALTSELECT | UDMA_CH_ATTR_HIGH_PRIORITY | UDMA_CH_ATTR_REQMASK);
             //UDMA_enableChannelAttribute(UDMA_BASE, dmaChannel, UDMA_CH_ATTR_USEBURST);
             /* Configure the control parameters for the UART TX/RX channels
              * Tx channel will be used to transfer data from the buffer to the UART Data register.
@@ -89,7 +89,8 @@ void HAL_CM_uDMA_ini(const udma_cfg_t* p_udmaCfg)
 }
 
 /**
- * @brief       UART initialization function. There is no need to increase uartbase as we have only one UART periph on CM.
+ * @brief       UART initialization function.
+ *              There is no need to increase uartbase as we have only one UART periph on CM.
  * @param[in]   *p_uart     Pointer on the UART structure definition
  */
 void HAL_CM_UART_ini(const uart_cfg_t* p_uartCfg)
@@ -165,6 +166,11 @@ void HAL_CM_CRC_ini(const gcrc_cfg_t* p_crcCfg)
     return;
 }
 
+/**
+ * @brief       USB initialization function.
+ *              There is no need to increase usbbase as we have only one USB periph on CM.
+ * @param[in]   *p_crcCfg   Pointer on the CRC configuration structure
+ */
 void HAL_CM_USB_ini(usb_cfg_t* p_usbCfg)
 {
     if(p_usbCfg != NULL)
@@ -186,14 +192,17 @@ void HAL_CM_USB_ini(usb_cfg_t* p_usbCfg)
     return;
 }
 
+/**
+ * @brief       Interrupts initialization function.
+ * @param[in]   *p_intCfg   Pointer on the interrupt configuration list structure
+ */
 void HAL_INT_ini(const int_cfg_t* p_intCfg)
 {
     if(p_intCfg != NULL)
     {
         uint32_t intNum = p_intCfg->intNum;
-        // Clear & set IT flags & enable IT bits in a known state.
 
-        // Setup Interrupts
+        // Clear & set IT flags & enable IT bits in a known state.
         while(intNum != UINT32_MAX)
         {
             // Attach ISR to interrupt

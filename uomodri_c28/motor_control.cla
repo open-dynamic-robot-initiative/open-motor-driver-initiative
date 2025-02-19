@@ -14,7 +14,6 @@
  ***********************************************************************/
 extern motor_t      motor_m1;
 extern motor_t      motor_m2;
-extern debug_t      dbg_cla2dma_mx;
 extern cmd_t        cmd_uomodri[];
 
 /***********************************************************************
@@ -37,18 +36,14 @@ __attribute__((interrupt)) void Cla1Task8(void);
  */
 __attribute__((interrupt)) void adcCalib_Task(void)
 {
-#if (DBG_CALIB_TASK)
-    DBG_PIN1_SET;
-#endif
-    __mdebugstop();
+    DBG_CALIB_TASK_SET;
+//    __mdebugstop();
     // Start ADC calibration on MOTOR_1 & MOTOR_2
     ADC_offsetCalib(&motor_m1);
     ADC_offsetCalib(&motor_m2);
     // Enable float rounding
     __asm(" MSETFLG RNDF32 = 1");
-#if (DBG_CALIB_TASK)
-    DBG_PIN1_CLEAR;
-#endif
+    DBG_CALIB_TASK_UNSET;
 }
 
 /**
@@ -56,9 +51,7 @@ __attribute__((interrupt)) void adcCalib_Task(void)
  */
 __attribute__((interrupt)) void cmdNew_Task(void)
 {
-#if (DBG_CMD_NEW_TASK)
-    DBG_PIN1_SET;
-#endif
+    DBG_CMD_NEW_TASK_SET;
 //    __mdebugstop();
     motor_m1.foc.cmd.posRef         = cmd_uomodri[MOTOR_1].posRef;
     if((cmd_uomodri[MOTOR_1].cmdField.all & CMD_POSITION_OFFSET_COMP) == CMD_POSITION_OFFSET_COMP)
@@ -87,9 +80,7 @@ __attribute__((interrupt)) void cmdNew_Task(void)
     motor_m2.foc.cmd.index          = cmd_uomodri[MOTOR_2].index;
     motor_m2.foc.cmd.cmdField.all   = cmd_uomodri[MOTOR_2].cmdField.all;
     motor_m2.foc.cmd.periphField.all= cmd_uomodri[MOTOR_2].periphField.all;
-#if (DBG_CMD_NEW_TASK)
-    DBG_PIN1_CLEAR;
-#endif
+    DBG_CMD_NEW_TASK_UNSET;
 }
 
 /**
@@ -97,22 +88,13 @@ __attribute__((interrupt)) void cmdNew_Task(void)
  *          - Read ADC (phase and Vbus) and encoder,
  *          - Perform FOC algorithm,
  *          - Generate the PWM commands
- *          - Copy Motor structure in CLA to DMA memory
  */
 __attribute__((interrupt)) void motor1_Task(void)
 {
-#if (DBG_M1_TASK)
-    DBG_PIN0_SET;
-#endif
+    DBG_M1_TASK_SET;
     // Motor control
     MOT_runControl(&motor_m1);
-//    // Copy elements for debug
-//    DBG_copyStruct(&motor_m1, &dbg_cla2dma_mx);
-//    // Send bit to DMA through CLB to start transfer
-//    DBG_StartTransfer(DBG_MOTOR1_DMA_START_NUM);
-#if (DBG_M1_TASK)
-    DBG_PIN0_CLEAR;
-#endif
+    DBG_M1_TASK_UNSET;
 }
 
 /**
@@ -120,22 +102,13 @@ __attribute__((interrupt)) void motor1_Task(void)
  *          - Read ADC (phase and Vbus) and encoder,
  *          - Perform FOC algorithm,
  *          - Generate the PWM commands
- *          - Copy Motor_2 structure in CLA to DMA memory
  */
 __attribute__((interrupt)) void motor2_Task(void)
 {
-#if (DBG_M2_TASK)
-    DBG_PIN0_SET;
-#endif
+    DBG_M2_TASK_SET;
     // Motor control
     MOT_runControl(&motor_m2);
-//    // Copy elements for debug
-//    DBG_copyStruct(&motor_m2, &dbg_cla2dma_mx);
-//    // Send bit to DMA through CLB to start transfer
-//    DBG_StartTransfer(DBG_MOTOR2_DMA_START_NUM);
-#if (DBG_M2_TASK)
-    DBG_PIN0_CLEAR;
-#endif
+    DBG_M2_TASK_UNSET;
 }
 
 /**
