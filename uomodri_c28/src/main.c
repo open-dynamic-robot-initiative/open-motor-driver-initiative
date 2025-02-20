@@ -37,14 +37,12 @@ inline void LED_dimming(motor_t*, motor_t*, uint16_t*);
 void MOT_initStruct(motor_t*, uint16_t);
 void COM_muxCtrl(com_bus_e);
 void DBG_copyStruct(motor_t*, debug_t*);
+void CLA_adcCalibration(void);
+void DMA_configModeUpdate(uint32_t, uint32_t);
 
-__attribute__((interrupt)) void cla_isrClearTask(void);
 __attribute__((interrupt)) void cla_isrMotor1(void);
 __attribute__((interrupt)) void cla_isrMotor2(void);
 __attribute__((interrupt)) void tmr_isrLedCmd(void);
-//__attribute__((interrupt)) void dma_isrSpiComRx(void);
-//__attribute__((interrupt)) void dma_isrDbgMotor1(void);
-//__attribute__((interrupt)) void dma_isrDbgMotor2(void);
 __attribute__((interrupt)) void gpio_isrSpiComRx(void);
 __attribute__((interrupt)) void sci_isrTx_RS485(void);
 __attribute__((interrupt)) void sci_isrRx_RS485(void);
@@ -59,20 +57,12 @@ __attribute__((interrupt)) void errata_isr(void);
 /** @var    int_cfg_t   interruptList[]
  *  @brief  List all required interrupts configurations.
  */
-//static const int_cfg_t interruptListStart[] =
-//{
-// INT_CLA_ADC_CALIB_DEF,
-// {.intNum = UINT32_MAX},        /* END OF ARRAY */
-//};
-
 static const int_cfg_t interruptList[] =
 {
- INT_CLA_ADC_CALIB_DEF,
  INT_CLA_MOTOR1_DEF,
  INT_CLA_MOTOR2_DEF,
  INT_TIMER_LED_DEF,
  INT_GPIO_SPI_CS_DEF,
-// INT_DMA_SPI_RX_MSG_DEF,
  INT_RS485_TX_MSG_DEF,
  INT_RS485_RX_MSG_DEF,
  INT_RS485_RX_TX_CLB_DEF,
@@ -118,9 +108,7 @@ spi_rx_t    com_spi_rx;
 
 #pragma DATA_ALIGN(com_spi_tx, 4)
 #pragma DATA_SECTION(com_spi_tx, "ramgs0")
-spi_tx_t    com_spi_tx      = {.msg_cr = 0U, .msg_nx = 1U,
-                               .msg[0].crc.u16_msb = 0xDFFF, .msg[0].crc.u16_lsb = 0x5283,
-                               .msg[1].crc.u16_msb = 0xDFFF, .msg[1].crc.u16_lsb = 0x5283};
+spi_tx_t    com_spi_tx      = {.msg_cr = 0U, .msg_nx = 1U};
 
 #pragma DATA_ALIGN(com_rs485_rx, 4)
 #pragma DATA_SECTION(com_rs485_rx, "ramgs0")
@@ -349,19 +337,21 @@ void main(void)
     cmd_uomodri[MOTOR_1].periphField.drv_initErr = DRV_ini(&drv_cfg[MOTOR_1], &drv_reg[MOTOR_1]);
     cmd_uomodri[MOTOR_2].periphField.drv_initErr = DRV_ini(&drv_cfg[MOTOR_2], &drv_reg[MOTOR_2]);
     // Start ADC offset calibration on CLA.
-    CLA_forceTasks(CLA1_BASE, CLA_ADC_CALIB_TASK_FLAG);
+    CLA_adcCalibration();
     // Use SPI, RS485 or CAN-FD as master communication bus.
 #if (CAN_FD_BUS_ENABLE)
     com_bus_select = COM_USE_CANFD_BUS;
 #elif (RS485_BUS_ENABLE)
     com_bus_select = COM_USE_RS485_BUS;
 #elif (SPI_BUS_ENABLE)
+    // Disable continuous mode for SPI communication
+    DMA_configModeUpdate(DMA_COM_SPI_TX_BASE_ADDR, DMA_COM_SPI_TX_CONFIG_NEW);
     com_bus_select = COM_USE_SPI_BUS;
 #else
     com_bus_select = COM_NO_BUS_DEFINED;
 #endif
 
-    #if (USE_UOMODRI_REV >= USE_UOMODRI_V3)
+#if (USE_UOMODRI_REV >= USE_UOMODRI_V3)
     // Mux control of the differential pair.
     COM_muxCtrl(com_bus_select);
 #endif
@@ -804,6 +794,7 @@ void MOT_initStruct(motor_t* p_motor, uint16_t motor_id)
 //    p_motor->newData                                    = 0U;
     //---------------------------------------------------------------------------
     //---------------------------------------------------------------------------
+    return;
 }
 
 #if (USE_UOMODRI_REV >= USE_UOMODRI_V3)
@@ -841,51 +832,40 @@ void COM_muxCtrl(com_bus_e bus_select)
             break;
         }
     }
-//    if(bus_select == COM_USE_CANFD_BUS)
-//    {
-//        // CAN driver ON, mux on CAN.
-//        GPIO_writePin(CANFD_SHDN_MODE_NUM, CANFD_SHDN_MODE_DISABLE);
-//        GPIO_writePin(CANFD_RS485_MUX_SEL_NUM, CANFD_RS485_MUX_SEL_CANFD_MODE);
-//    }
-//    else if(bus_select == COM_USE_RS485_BUS)
-//    {
-//        // CAN driver OFF, mux on RS485.
-//        GPIO_writePin(CANFD_SHDN_MODE_NUM, CANFD_SHDN_MODE_ENABLE);
-//        GPIO_writePin(CANFD_RS485_MUX_SEL_NUM, CANFD_RS485_MUX_SEL_RS485_MODE);
-//    }
-//    else
-//    {
-//        // CAN driver OFF, mux on CAN.
-//        GPIO_writePin(CANFD_SHDN_MODE_NUM, CANFD_SHDN_MODE_ENABLE);
-//        GPIO_writePin(CANFD_RS485_MUX_SEL_NUM, CANFD_RS485_MUX_SEL_CANFD_MODE);
-//    }
+
+    return;
 }
 #endif
 
-/***********************************************************************
- * INTERRUPT HANDLING FUNCTIONS DEFINITIONS
- ***********************************************************************/
-/**
- * @brief       Force a clear of all pending interrupts after ADC calibration.
- */
-__attribute__((interrupt)) void cla_isrClearTask(void)
+void CLA_adcCalibration(void)
 {
+    // Start ADC offset calibration on CLA.
+    CLA_forceTasks(CLA1_BASE, CLA_ADC_CALIB_TASK_FLAG);
+    // Wait the start of ADC offset calibration on CLA.
+    while(CLA_getTaskRunStatus(CLA1_BASE, CLA_ADC_CALIB_TASK_NUMBER) == false);
+    // Wait the end of ADC offset calibration on CLA.
+    while(CLA_getTaskRunStatus(CLA1_BASE, CLA_ADC_CALIB_TASK_NUMBER) == true);
     // Purge pending tasks after ADC calibration.
     CLA_clearTaskFlags(CLA1_BASE, CLA_TASKFLAG_ALL);
     // Disable the task definitely.
     CLA_disableTasks(CLA1_BASE, CLA_ADC_CALIB_TASK_FLAG);
-    // Disable the IT - The CLA task is one time called.
-    Interrupt_disable(INT_CLA_ADC_CALIB);
-//    while(!COM_SPI_CS_READ);
-//    // Restart DMA reception & reset the SPI Rx fifo.
-//    DMA_startChannel(DMA_COM_SPI_RX_BASE_ADDR);
-//    SPI_resetRxFIFO(COM_SPI_BASE);
-//    // Interrupts initialization.
-//    HAL_INT_ini(interruptList, &errata_isr);
-    // Clear IT
-    Interrupt_clearACKGroup(INT_CLA_ADC_CALIB_GROUP);
+
+    return;
 }
 
+void DMA_configModeUpdate(uint32_t base, uint32_t config)
+{
+    EALLOW;
+    HWREGH(base + DMA_O_MODE) &= ~(DMA_MODE_DATASIZE | DMA_MODE_CONTINUOUS | DMA_MODE_ONESHOT);
+    HWREGH(base + DMA_O_MODE) |= config;
+    EDIS;
+
+    return;
+}
+
+/***********************************************************************
+ * INTERRUPT HANDLING FUNCTIONS DEFINITIONS
+ ***********************************************************************/
 /**
  * @brief       Generate part of the Tx message associated after MOTOR_1 control.
  */
@@ -941,6 +921,8 @@ __attribute__((interrupt)) void cla_isrMotor2(void)
                     SPI_resetTxFIFO(COM_SPI_BASE);
                     // Force first write in SPI_O_DAT register
                     COM_SPI_DAT(p_msg_spi->data.status.all);
+
+//                    HWREGH(DMA_COM_SPI_TX_BASE_ADDR + DMA_O_MODE) &= ~(DMA_MODE_CONTINUOUS);
                     DMA_configAddresses(DMA_COM_SPI_TX_BASE_ADDR, \
                                         (uint16_t *) COM_SPI_TX_BASE_REG_ADDR, \
                                         (uint16_t *) &p_msg_spi->data.timeStamp);
@@ -1040,7 +1022,7 @@ __attribute__((interrupt)) void tmr_isrLedCmd(void)
  */
 __attribute__((interrupt)) void gpio_isrSpiComRx(void)
 {
-    DBG_DMA_SPI_RX_ISR_SET;
+    DBG_GPIO_SPI_RX_ISR_SET;
     if(com_bus_select == COM_USE_SPI_BUS)
     {
         if(!DMA_getTransferStatusFlag(DMA_COM_SPI_RX_BASE_ADDR))
@@ -1064,32 +1046,8 @@ __attribute__((interrupt)) void gpio_isrSpiComRx(void)
     }
     // Clear IT flag
     Interrupt_clearACKGroup(INT_GPIO_SPI_CS_GROUP);
-    DBG_DMA_SPI_RX_ISR_UNSET;
+    DBG_GPIO_SPI_RX_ISR_UNSET;
 }
-//__attribute__((interrupt)) void dma_isrSpiComRx(void)
-//{
-//    DBG_DMA_SPI_RX_ISR_SET;
-//    if(com_bus_select == COM_USE_SPI_BUS)
-//    {
-//        // Compare computed CRC with the one received in message.
-//        spi_rx_msg_t* p_msg_spi = &com_spi_rx.msg;
-//        uint32_t msg_crc        = COM_msgCRC((uint16_t *)&p_msg_spi->data, \
-//                                             COM_MSG_SPI_RX_16BIT_PAYLOAD_LENGTH);
-//        if(CRC_COMP(p_msg_spi->crc.u16_msb, p_msg_spi->crc.u16_lsb, msg_crc))
-//        {
-//            // Extract received message & send new commands to FOC structures. Define SPI as communication bus by default.
-//            COM_msgExtract(&p_msg_spi->data, &cmd_uomodri[MOTOR_1], &cmd_uomodri[MOTOR_2]);
-//            // Force an update of the motors command structures (commands values)
-//            CLA_forceTasks(CLA1_BASE, CLA_CMD_NEW_TASK_FLAG);
-//        }
-//        // Restart DMA reception & reset the SPI Rx fifo.
-//        DMA_startChannel(DMA_COM_SPI_RX_BASE_ADDR);
-//        SPI_resetRxFIFO(COM_SPI_BASE);
-//    }
-//    // Clear IT flag
-//    Interrupt_clearACKGroup(INT_DMA_SPI_RX_MSG_GROUP);
-//    DBG_DMA_SPI_RX_ISR_UNSET;
-//}
 
 #if (USE_UOMODRI_REV >= USE_UOMODRI_V3)
 /**

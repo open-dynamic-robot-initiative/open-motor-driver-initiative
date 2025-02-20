@@ -472,6 +472,7 @@ typedef struct __spi_config_t__
     const uint16_t                      intSrc;
     const bool_t                        highSpeedMode;
     const bool_t                        intEnable;                  /*!< GPIO can be configured as IT source */
+    const bool_t                        spiEnable;
 } spi_cfg_t;
 
 /**
@@ -641,7 +642,7 @@ typedef struct __adc_interrupts_events_t__
  * @struct  adc_cfg_t
  * @brief   ADC module configuration handler
  */
-typedef struct __Aadc_config_t__
+typedef struct __adc_config_t__
 {
     const uint32_t                      adcBase;                    /*!< ADC peripheral address. */
     const adc_ini_t*    const           p_adcIni;                   /*!< Pointer on ADC start-of-conversion configuration handler */
@@ -715,6 +716,5 @@ typedef struct __hal_config_t__
  ***********************************************************************/
 void HAL_ini(const hal_cfg_t*);
 void HAL_INT_ini(const int_cfg_t*, void (*)(void));
-void HAL_DMA_ini(const dma_cfg_t*);
 
 #endif /* __HAL_H__ */

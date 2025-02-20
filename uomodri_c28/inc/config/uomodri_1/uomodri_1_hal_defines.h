@@ -1410,8 +1410,9 @@
 #define DMA_COM_SPI_RX_FULL_LENGTH              COM_MSG_SPI_RX_16BIT_FULL_LENGTH
 #define DMA_COM_SPI_RX_BURST_EVT                (1)
 #define DMA_COM_SPI_RX_TRANSFER_EVT             (DMA_COM_SPI_RX_FULL_LENGTH / DMA_COM_SPI_RX_BURST_EVT)
-#define DMA_COM_SPI_TX_CONFIG                   (DMA_CFG_ONESHOT_DISABLE | DMA_CFG_CONTINUOUS_DISABLE | DMA_CFG_SIZE_16BIT)
-#define DMA_COM_SPI_RX_CONFIG                   (DMA_CFG_ONESHOT_DISABLE | DMA_CFG_CONTINUOUS_DISABLE | DMA_CFG_SIZE_16BIT)
+#define DMA_COM_SPI_RX_CONFIG                   (DMA_CFG_ONESHOT_DISABLE | DMA_CFG_CONTINUOUS_ENABLE | DMA_CFG_SIZE_16BIT)
+#define DMA_COM_SPI_TX_CONFIG                   (DMA_CFG_ONESHOT_DISABLE | DMA_CFG_CONTINUOUS_ENABLE | DMA_CFG_SIZE_16BIT)
+#define DMA_COM_SPI_TX_CONFIG_NEW               (DMA_CFG_ONESHOT_DISABLE | DMA_CFG_CONTINUOUS_DISABLE | DMA_CFG_SIZE_16BIT)
 #if ((DMA_COM_SPI_TX_CONFIG & DMA_MODE_DATASIZE) == DMA_CFG_SIZE_16BIT)
 #define DMA_COM_SPI_TX_INC_STEP                 (1)
 #else
@@ -1426,23 +1427,6 @@
  * @}
  */
 
-//#define DMA_DBG_CLA2CM_DEF                      { \
-//                                                    .dmaChBase      = DMA_DBG_CLA2CM_BASE_ADDR, \
-//                                                    .p_dstAddr      = (uint16_t *) &dbg_cpu2cm_m1, \
-//                                                    .p_srcAddr      = (uint16_t *) &dbg_cla2dma_mx, \
-//                                                    .burstSize      = DMA_DBG_CLA2CM_BURST_EVT, \
-//                                                    .transferSize   = DMA_DBG_CLA2CM_TRANSFER_EVT, \
-//                                                    .dstWrapSize    = DMA_NO_WRAP, \
-//                                                    .srcWrapSize    = DMA_NO_WRAP, \
-//                                                    .dstStep        = DMA_DBG_CLA2CM_INC_STEP, \
-//                                                    .srcStep        = DMA_DBG_CLA2CM_INC_STEP, \
-//                                                    .dstWrapStep    = 0, \
-//                                                    .srcWrapStep    = 0, \
-//                                                    .config         = DMA_DBG_CLA2CM_CONFIG, \
-//                                                    .trigger        = DMA_DBG_CLA2CM_TRIGGER_SRC, \
-//                                                    .intMode        = DMA_INT_AT_END, \
-//                                                    .intEnable      = false, \
-//                                                }
 #define DMA_LED_SPI_TX_DEF                      { \
                                                     .dmaChBase      = DMA_LED_SPI_TX_BASE_ADDR, \
                                                     .p_dstAddr      = (uint16_t *)LED_SPI_TX_BASE_REG_ADDR, \

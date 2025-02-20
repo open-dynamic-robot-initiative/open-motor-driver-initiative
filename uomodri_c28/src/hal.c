@@ -30,6 +30,7 @@ void HAL_ePWM_ini(const epwm_cfg_t*);
 void HAL_eQEP_ini(const eqep_cfg_t*);
 void HAL_SPI_ini(const spi_cfg_t*);
 void HAL_SCI_ini(const sci_cfg_t*);
+void HAL_DMA_ini(const dma_cfg_t*);
 void HAL_MCAN_ini(const mcan_cfg_t*);
 void HAL_TMR_ini(const tmr_cfg_t*);
 void HAL_IPC_ini(const ipc_cfg_t*);
@@ -486,16 +487,18 @@ void HAL_SPI_ini(const spi_cfg_t* p_spiCfg)
             SPI_disableHighSpeedMode(spiBase);
             SPI_disableTriWire(spiBase);
             if(p_spiCfg->mode == SPI_MODE_SLAVE)
-                SPI_setSTESignalPolarity(spiBase, SPI_STE_ACTIVE_LOW);
+                SPI_setPTESignalPolarity(spiBase, SPI_PTE_ACTIVE_LOW);
             /* Clear flags & enable or disable interrupts */
             SPI_clearInterruptStatus(spiBase, SPI_INT_RX_DATA_TX_EMPTY | SPI_INT_RX_OVERRUN |
                                      SPI_INT_TXFF | SPI_INT_RXFF | SPI_INT_RXFF_OVERFLOW);
             SPI_disableInterrupt(spiBase, SPI_INT_RX_DATA_TX_EMPTY | SPI_INT_RX_OVERRUN |
                                  SPI_INT_TXFF | SPI_INT_RXFF | SPI_INT_RXFF_OVERFLOW);
+            /* Enable SPI interrupts */
             if(p_spiCfg->intEnable)
                 SPI_enableInterrupt(spiBase, p_spiCfg->intSrc);
             /* Enable SPI module */
-            SPI_enableModule(spiBase);
+            if(p_spiCfg->spiEnable)
+                SPI_enableModule(spiBase);
             spiBase = (++p_spiCfg)->spiBase;
         }
     }

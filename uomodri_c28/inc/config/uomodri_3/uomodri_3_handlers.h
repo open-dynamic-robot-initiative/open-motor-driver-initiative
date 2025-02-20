@@ -116,8 +116,6 @@ static const gpio_cfg_t gpioPinsCfgList[] =
  DBG_PIN2_DEF,                      /* Debug pin 2 */
  DBG_PIN1_DEF,                      /* Debug pin 1 */
  DBG_PIN0_DEF,                      /* Debug pin 0 */
- DBG_MOTOR1_DMA_START_DEF,
- DBG_MOTOR2_DMA_START_DEF,
  {.pinNum = UINT32_MAX},            /* END OF ARRAY */
 };
 

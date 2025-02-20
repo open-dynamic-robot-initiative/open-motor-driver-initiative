@@ -58,7 +58,7 @@
 #define DBG_CLA_M1_ISR                          (1)
 #define DBG_CLA_M2_ISR                          (1)
 #define DBG_TIMER_ISR                           (0)
-#define DBG_DMA_SPI_RX_ISR                      (1)
+#define DBG_GPIO_SPI_RX_ISR                     (1)
 #define DBG_SCI_RS485_TX_ISR                    (0)
 #define DBG_SCI_RS485_RX_ISR                    (0)
 #define DBG_CLB_RS485_TX_RX_ISR                 (0)
@@ -94,12 +94,12 @@
 #define DBG_TIMER_ISR_UNSET                     asm(" nop")
 #endif
 
-#if (DBG_DMA_SPI_RX_ISR)
-#define DBG_DMA_SPI_RX_ISR_SET                  DBG_PIN3_SET
-#define DBG_DMA_SPI_RX_ISR_UNSET                DBG_PIN3_CLEAR
+#if (DBG_GPIO_SPI_RX_ISR)
+#define DBG_GPIO_SPI_RX_ISR_SET                 DBG_PIN3_SET
+#define DBG_GPIO_SPI_RX_ISR_UNSET               DBG_PIN3_CLEAR
 #else
-#define DBG_DMA_SPI_RX_ISR_SET                  asm(" nop")
-#define DBG_DMA_SPI_RX_ISR_UNSET                asm(" nop")
+#define DBG_GPIO_SPI_RX_ISR_SET                 asm(" nop")
+#define DBG_GPIO_SPI_RX_ISR_UNSET               asm(" nop")
 #endif
 
 #if (DBG_SCI_RS485_TX_ISR)

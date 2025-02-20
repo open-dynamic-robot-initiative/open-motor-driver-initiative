@@ -168,36 +168,6 @@
                                                     .intEnable      = false, \
                                                 }
 
-#define DBG_MOTOR1_DMA_START_NUM                (14U)
-#define DBG_MOTOR1_DMA_START_CFG                GPIO_14_GPIO14
-#define DBG_MOTOR1_DMA_START_SET                (HWREG(GPIODATA_BASE + GPIO_O_GPASET)   = GPIO_GPASET_GPIO14)
-#define DBG_MOTOR1_DMA_START_CLEAR              (HWREG(GPIODATA_BASE + GPIO_O_GPACLEAR) = GPIO_GPACLEAR_GPIO14)
-#define DBG_MOTOR1_DMA_START_TOGGLE             (HWREG(GPIODATA_BASE + GPIO_O_GPATOGGLE)= GPIO_GPATOGGLE_GPIO14)
-#define DBG_MOTOR1_DMA_START_DEF                { \
-                                                    .pinNum         = DBG_MOTOR1_DMA_START_NUM, \
-                                                    .fctMux         = DBG_MOTOR1_DMA_START_CFG, \
-                                                    .coreSelect     = GPIO_CORE_CPU1_CLA1, \
-                                                    .direction      = GPIO_DIR_MODE_OUT, \
-                                                    .samplingInMode = GPIO_QUAL_ASYNC, \
-                                                    .setValue       = (0U), \
-                                                    .intEnable      = false, \
-                                                }
-
-#define DBG_MOTOR2_DMA_START_NUM                (15U)
-#define DBG_MOTOR2_DMA_START_CFG                GPIO_15_GPIO15
-#define DBG_MOTOR2_DMA_START_SET                (HWREG(GPIODATA_BASE + GPIO_O_GPASET)   = GPIO_GPASET_GPIO15)
-#define DBG_MOTOR2_DMA_START_CLEAR              (HWREG(GPIODATA_BASE + GPIO_O_GPACLEAR) = GPIO_GPACLEAR_GPIO15)
-#define DBG_MOTOR2_DMA_START_TOGGLE             (HWREG(GPIODATA_BASE + GPIO_O_GPATOGGLE)= GPIO_GPATOGGLE_GPIO15)
-#define DBG_MOTOR2_DMA_START_DEF                { \
-                                                    .pinNum         = DBG_MOTOR2_DMA_START_NUM, \
-                                                    .fctMux         = DBG_MOTOR2_DMA_START_CFG, \
-                                                    .coreSelect     = GPIO_CORE_CPU1_CLA1, \
-                                                    .direction      = GPIO_DIR_MODE_OUT, \
-                                                    .samplingInMode = GPIO_QUAL_ASYNC, \
-                                                    .setValue       = (0U), \
-                                                    .intEnable      = false, \
-                                                }
-
 #define DRV_SPI_SIMO_NUM                        (16U)
 #define DRV_SPI_SIMO_CFG                        GPIO_16_SPIA_SIMO
 #define DRV_SPI_SIMO_DEF                        { \
@@ -1876,6 +1846,7 @@
                                                     .intSrc         = 0U, \
                                                     .highSpeedMode  = false, \
                                                     .intEnable      = false, \
+                                                    .spiEnable      = true, \
                                                 }
 #define COM_SPI_DEF                             { \
                                                     .spiBase        = COM_SPI_BASE, \
@@ -1888,6 +1859,7 @@
                                                     .intSrc         = 0U, \
                                                     .highSpeedMode  = false, \
                                                     .intEnable      = false, \
+                                                    .spiEnable      = true, \
                                                 }
 #define DBG_SPI_DEF                             { \
                                                     .spiBase        = DBG_SPI_BASE, \
@@ -1900,6 +1872,7 @@
                                                     .intSrc         = 0U, \
                                                     .highSpeedMode  = false, \
                                                     .intEnable      = false, \
+                                                    .spiEnable      = false, \
                                                 }
 #define LED_SPI_DEF                             { \
                                                     .spiBase        = LED_SPI_BASE, \
@@ -1912,6 +1885,7 @@
                                                     .intSrc         = 0U, \
                                                     .highSpeedMode  = false, \
                                                     .intEnable      = false, \
+                                                    .spiEnable      = true, \
                                                 }
 
 /***********************************************************************
@@ -2037,8 +2011,9 @@
 #define DMA_COM_SPI_RX_FULL_LENGTH              COM_MSG_SPI_RX_16BIT_FULL_LENGTH
 #define DMA_COM_SPI_RX_BURST_EVT                (1)
 #define DMA_COM_SPI_RX_TRANSFER_EVT             (DMA_COM_SPI_RX_FULL_LENGTH / DMA_COM_SPI_RX_BURST_EVT)
-#define DMA_COM_SPI_TX_CONFIG                   (DMA_CFG_ONESHOT_DISABLE | DMA_CFG_CONTINUOUS_DISABLE | DMA_CFG_SIZE_16BIT)
 #define DMA_COM_SPI_RX_CONFIG                   (DMA_CFG_ONESHOT_DISABLE | DMA_CFG_CONTINUOUS_ENABLE | DMA_CFG_SIZE_16BIT)
+#define DMA_COM_SPI_TX_CONFIG                   (DMA_CFG_ONESHOT_DISABLE | DMA_CFG_CONTINUOUS_ENABLE | DMA_CFG_SIZE_16BIT)
+#define DMA_COM_SPI_TX_CONFIG_NEW               (DMA_CFG_ONESHOT_DISABLE | DMA_CFG_CONTINUOUS_DISABLE | DMA_CFG_SIZE_16BIT)
 #if ((DMA_COM_SPI_TX_CONFIG & DMA_MODE_DATASIZE) == DMA_CFG_SIZE_16BIT)
 #define DMA_COM_SPI_TX_INC_STEP                 (1)
 #else
