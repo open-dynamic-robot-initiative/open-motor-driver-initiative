@@ -1,6 +1,6 @@
 /*
  * File name: main.c
- * Description: Source file containing main function and IT running on CPU1 - C28 processor.
+ * Description: Source file containing main function running on CPU1 - C28 processor.
  */
 
 /***********************************************************************
@@ -224,15 +224,6 @@ float32_t motor1_pi_iq_ki_coeff = MOTOR1_PI_IQ_KI_COEF;
 //                        .foc.piIq.ki                            = (float32_t)MOTOR1_PI_IQ_KI_COEF,
 //};
 
-#pragma DATA_ALIGN(com_msg_rs485_tx_master_address, 4)
-#pragma DATA_SECTION(com_msg_rs485_tx_master_address, "ConstFlashCom")
-uint16_t com_msg_rs485_tx_master_address = COM_MSG_RS485_TX_MASTER_ADDRESS;
-
-#pragma DATA_ALIGN(com_msg_canfd_tx_master_id, 4)
-#pragma DATA_SECTION(com_msg_canfd_tx_master_id, "ConstFlashCom")
-uint16_t com_msg_canfd_tx_master_id = COM_MSG_CANFD_TX_MASTER_ID;
-
-
 /***********************************************************************
  * FUNCTIONS DEFINITION
  ***********************************************************************/
@@ -401,10 +392,8 @@ static void MCU_ini(void)
  */
 inline void LED_dimming(motor_t* p_motor1, motor_t* p_motor2, uint16_t* p_msg)
 {
-    static uint16_t timer_cpt_ms    = 0;
-//    uint16_t        i               = 0;
-    //motor_state_e   motor_state     = MOTOR_STATE_IDLE;
-    uint16_t motor_state            = MOTOR_STATE_IDLE;
+    static uint16_t tmr_cpt_ms  = 0;
+    uint16_t motor_state        = MOTOR_STATE_IDLE;
 
     /* Set status of the 1st led */
     if((p_motor1->state & MOTOR_STATE_BOOT)     || (p_motor2->state & MOTOR_STATE_BOOT))
@@ -417,13 +406,13 @@ inline void LED_dimming(motor_t* p_motor1, motor_t* p_motor2, uint16_t* p_msg)
         motor_state = MOTOR_STATE_ERROR;
 
     // Master LED (1st led)
-    p_msg       = ws2812b_dimmingLed(MASTER_LED, motor_state, timer_cpt_ms, p_msg);
+    p_msg       = ws2812b_dimmingLed(MASTER_LED, motor_state, tmr_cpt_ms, p_msg);
     //MOTOR_1 LED (2nd led)
-    p_msg       = ws2812b_dimmingLed(MOTOR1_LED, p_motor1->state, timer_cpt_ms, p_msg);
+    p_msg       = ws2812b_dimmingLed(MOTOR1_LED, p_motor1->state, tmr_cpt_ms, p_msg);
     //MOTOR_2 LED (3th led)
-    p_msg       = ws2812b_dimmingLed(MOTOR2_LED, p_motor2->state, timer_cpt_ms, p_msg);
+    p_msg       = ws2812b_dimmingLed(MOTOR2_LED, p_motor2->state, tmr_cpt_ms, p_msg);
     // millisecond timer increment
-    timer_cpt_ms= (timer_cpt_ms < 1000U) ? (timer_cpt_ms + 1): (0U);
+    tmr_cpt_ms  = (tmr_cpt_ms < 1000U) ? (tmr_cpt_ms + 1): (0U);
 
     return;
 }
@@ -762,6 +751,9 @@ void COM_muxCtrl(com_bus_e bus_select)
 }
 #endif
 
+/**
+ * @brief       ADC calibration function. Called at startup to initialize ADC bias.
+ */
 void CLA_adcCalibration(void)
 {
     // Start ADC offset calibration on CLA.
@@ -778,6 +770,23 @@ void CLA_adcCalibration(void)
     return;
 }
 
+/**
+ * @brief       Configures/reconfigures the DMA channel mode. (No trigger config).
+ * @param       base    Base address of the DMA channel control registers.
+ * @param       config  Bit field of several configuration selections.
+ * The \e config parameter is the logical OR of the following values:
+ * - \b DMA_CFG_ONESHOT_DISABLE or \b DMA_CFG_ONESHOT_ENABLE. If enabled,
+ *      the subsequent burst transfers occur without additional event triggers
+ *      after the first event trigger.
+ *      If disabled, only one burst transfer is performed per event trigger.
+ * - \b DMA_CFG_CONTINUOUS_DISABLE or \b DMA_CFG_CONTINUOUS_ENABLE. If enabled
+ *      the DMA reinitializes when the transfer count is zero and waits for the
+ *      next interrupt event trigger.
+ *      If disabled, the DMA stops and clears the run status bit.
+ * - \b DMA_CFG_SIZE_16BIT or \b DMA_CFG_SIZE_32BIT. This setting selects
+ *      whether the databus width is 16 or 32 bits.
+ * @return      None.
+*/
 void DMA_configModeUpdate(uint32_t base, uint32_t config)
 {
     EALLOW;

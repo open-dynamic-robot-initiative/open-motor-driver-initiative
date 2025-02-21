@@ -1,6 +1,6 @@
 /*
- * File name: main.c
- * Description: Source file containing main function and IT running on CPU1 - C28 processor.
+ * File name: interrupts.c
+ * Description: Source file containing IT functions running on CPU1 - C28 processor.
  */
 
 /***********************************************************************
@@ -23,8 +23,6 @@
 
 #include "communication.h"
 //#include "motor_ctrl.h"
-//#include "drv8353.h"
-//#include "ws2812b.h"
 //#include "main.h"
 //#include "hal.h"
 
@@ -70,15 +68,17 @@ spi_tx_t    com_spi_tx      = {.msg_cr = 0U, .msg_nx = 1U};
 
 #pragma DATA_ALIGN(com_rs485_rx, 4)
 #pragma DATA_SECTION(com_rs485_rx, "ramgs0")
-rs485_rx_t  com_rs485_rx    = {.index = 0U,
+rs485_rx_t  com_rs485_rx    = {.index = 0U, \
                                .addr1 = false, .addr2 = false};
 
 #pragma DATA_ALIGN(com_rs485_tx, 4)
 #pragma DATA_SECTION(com_rs485_tx, "ramgs0")
-rs485_tx_t  com_rs485_tx    = {.index = 0U,
-                               .msg_cr = 0U, .msg_nx = 1U,
-                               .msg[0].crc.u16_msb = 0x8CA0, .msg[0].crc.u16_lsb = 0x22CF,
-                               .msg[1].crc.u16_msb = 0x8CA0, .msg[1].crc.u16_lsb = 0x22CF};
+rs485_tx_t  com_rs485_tx    = {.index = 0U, \
+                               .msg_cr = 0U, .msg_nx = 1U, \
+                               .msg[0].crc.u16_msb = 0x8CA0, \
+                               .msg[0].crc.u16_lsb = 0x22CF, \
+                               .msg[1].crc.u16_msb = 0x8CA0, \
+                               .msg[1].crc.u16_lsb = 0x22CF };
 
 #pragma DATA_ALIGN(com_canfd_tx, 4)
 #pragma DATA_SECTION(com_canfd_tx, "ramgs0")
@@ -92,21 +92,21 @@ canfd_rx_t  com_canfd_rx;
 #pragma DATA_SECTION(led_spi_tx, "ramgs0")
 uint16_t    led_spi_tx[LED_MSG_TX_16BIT_LENGTH];
 
-#pragma DATA_ALIGN(global_ms_tmr_cnt, 4)
-#pragma DATA_SECTION(global_ms_tmr_cnt, "ramgs0")
-uint32_t    global_ms_tmr_cnt   = 0U;
+#pragma DATA_ALIGN(cpu_tmr_cnt_ms, 4)
+#pragma DATA_SECTION(cpu_tmr_cnt_ms, "ramgs0")
+uint32_t    cpu_tmr_cnt_ms = 0U;
 
-#pragma DATA_ALIGN(global_errata_cnt, 4)
-#pragma DATA_SECTION(global_errata_cnt, "ramgs0")
-uint32_t    global_errata_cnt   = 0U;
+#pragma DATA_ALIGN(errata_cnt, 4)
+#pragma DATA_SECTION(errata_cnt, "ramgs0")
+uint32_t        errata_cnt   = 0U;
 
 #pragma DATA_ALIGN(mcan_error, 4)
 #pragma DATA_SECTION(mcan_error, "ramgs0")
-int32_t     mcan_error = 0;
+int32_t         mcan_error = 0;
 
 #pragma DATA_ALIGN(slv2mst_msg, 4)
 #pragma DATA_SECTION(slv2mst_msg, "ramgs0")
-slv2mst_msg_t slv2mst_msg       = {.status      = 0U, \
+slv2mst_msg_t   slv2mst_msg       = {.status      = 0U, \
                                    .timeStamp   = 0U, \
                                    .position    = {0U, 0U}, \
                                    .velocity    = {0, 0}, \
@@ -123,8 +123,14 @@ extern com_bus_e        com_bus_select;
 /***********************************************************************
  * CONSTANTS IN FLASH
  ***********************************************************************/
-extern uint16_t         com_msg_rs485_tx_master_address;
-extern uint16_t         com_msg_canfd_tx_master_id;
+#pragma DATA_ALIGN(com_msg_rs485_tx_master_address, 4)
+#pragma DATA_SECTION(com_msg_rs485_tx_master_address, "ConstFlashCom")
+uint16_t com_msg_rs485_tx_master_address = COM_MSG_RS485_TX_MASTER_ADDRESS;
+
+#pragma DATA_ALIGN(com_msg_canfd_tx_master_id, 4)
+#pragma DATA_SECTION(com_msg_canfd_tx_master_id, "ConstFlashCom")
+uint16_t com_msg_canfd_tx_master_id = COM_MSG_CANFD_TX_MASTER_ID;
+
 
 /***********************************************************************
  * FUNCTIONS DECLARATION
@@ -142,7 +148,7 @@ __attribute__((interrupt)) void cla_isrMotor1(void)
 {
     DBG_CLA_M1_ISR_SET;
     // Fill of the M1 motor's elements in the Tx message
-    COM_msgCreate(&motor_m1, &slv2mst_msg, &global_ms_tmr_cnt);
+    COM_msgCreate(&motor_m1, &slv2mst_msg, &cpu_tmr_cnt_ms);
     // Copy elements of motor_1 into debug structure for CM core
     DBG_copyStruct(&motor_m1, &dbg_cpu2cm_m1);
     // Inform CM core that new data are available
@@ -164,7 +170,7 @@ __attribute__((interrupt)) void cla_isrMotor2(void)
 {
     DBG_CLA_M2_ISR_SET;
     // Fill of the M2 motor's elements in the Tx message
-    COM_msgCreate(&motor_m2, &slv2mst_msg, &global_ms_tmr_cnt);
+    COM_msgCreate(&motor_m2, &slv2mst_msg, &cpu_tmr_cnt_ms);
     // Finalize the Tx message. Aggregate MOTOR_2 values + computed CRC
     switch(com_bus_select)
     {
@@ -187,11 +193,10 @@ __attribute__((interrupt)) void cla_isrMotor2(void)
                     // swap active message array
                     com_spi_tx.msg_cr   = !com_spi_tx.msg_cr;
                     com_spi_tx.msg_nx   = !com_spi_tx.msg_cr;
+                    // Reinitialize the SPI Tx FIFO & force first write in SPI_O_DAT register
                     SPI_resetTxFIFO(COM_SPI_BASE);
-                    // Force first write in SPI_O_DAT register
                     COM_SPI_DAT(p_msg_spi->data.status.all);
-
-//                    HWREGH(DMA_COM_SPI_TX_BASE_ADDR + DMA_O_MODE) &= ~(DMA_MODE_CONTINUOUS);
+                    // Send remaining word through DMA
                     DMA_configAddresses(DMA_COM_SPI_TX_BASE_ADDR, \
                                         (uint16_t *) COM_SPI_TX_BASE_REG_ADDR, \
                                         (uint16_t *) &p_msg_spi->data.timeStamp);
@@ -200,6 +205,7 @@ __attribute__((interrupt)) void cla_isrMotor2(void)
             }
             break;
         }
+
 #if (USE_UOMODRI_REV >= USE_UOMODRI_V3)
         case COM_USE_RS485_BUS:
         {
@@ -249,6 +255,7 @@ __attribute__((interrupt)) void cla_isrMotor2(void)
 #endif
         default:
             break;
+
     }
     // Copy elements of motor_2 into debug structure for CM core
     DBG_copyStruct(&motor_m2, &dbg_cpu2cm_m2);
@@ -269,7 +276,7 @@ __attribute__((interrupt)) void cla_isrMotor2(void)
 __attribute__((interrupt)) void tmr_isrLedCmd(void)
 {
     DBG_TIMER_ISR_SET;
-    global_ms_tmr_cnt++;
+    cpu_tmr_cnt_ms++;
     // LED dimming control
     if(!DMA_getRunStatusFlag(DMA_LED_SPI_TX_BASE_ADDR))
     {
@@ -298,12 +305,14 @@ __attribute__((interrupt)) void gpio_isrSpiComRx(void)
         {
             // Compare computed CRC with the one received in message.
             spi_rx_msg_t* p_msg_spi = &com_spi_rx.msg;
-            uint32_t msg_crc        = COM_msgCRC((uint16_t *)&p_msg_spi->data, \
+            uint32_t msg_crc        = COM_msgCRC((uint16_t *) &p_msg_spi->data, \
                                                  COM_MSG_SPI_RX_16BIT_PAYLOAD_LENGTH);
             if(CRC_COMP(p_msg_spi->crc.u16_msb, p_msg_spi->crc.u16_lsb, msg_crc))
             {
-                // Extract received message & send new commands to FOC structures. Define SPI as communication bus by default.
-                COM_msgExtract(&p_msg_spi->data, &cmd_uomodri[MOTOR_1], &cmd_uomodri[MOTOR_2]);
+                // Extract received message & send new commands to FOC structures.
+                COM_msgExtract(&p_msg_spi->data, \
+                               &cmd_uomodri[MOTOR_1], \
+                               &cmd_uomodri[MOTOR_2]);
                 // Force an update of the motors command structures (commands values)
                 CLA_forceTasks(CLA1_BASE, CLA_CMD_NEW_TASK_FLAG);
             }
@@ -441,7 +450,9 @@ __attribute__((interrupt)) void clb_isrTxRx_RS485(void)
                             CRC_COMP(p_msg_rs485->crc.u16_msb, p_msg_rs485->crc.u16_lsb, msg_crc))
                     {
                         // Message valid - Extract it & transfer to motors structures.
-                        COM_msgExtract(&p_msg_rs485->data, &cmd_uomodri[MOTOR_1], &cmd_uomodri[MOTOR_2]);
+                        COM_msgExtract(&p_msg_rs485->data, \
+                                       &cmd_uomodri[MOTOR_1], \
+                                       &cmd_uomodri[MOTOR_2]);
                         CLA_forceTasks(CLA1_BASE, CLA_CMD_NEW_TASK_FLAG);
                         // prepare reply to master - reset transmit index
                         com_rs485_tx.index          = 0;
@@ -489,8 +500,8 @@ __attribute__((interrupt)) void clb_isrTxRx_RS485(void)
 __attribute__((interrupt)) void mcan_isr_canfd(void)
 {
     DBG_MCAN_CANFD_TX_RX_ISR_SET;
-    MCAN_RxNewDataStatus newData = {.statusLow = 0, .statusHigh = 0};
-    uint32_t intrStatus = MCAN_getIntrStatus(MCANA_DRIVER_BASE);
+    MCAN_RxNewDataStatus newData= {.statusLow = 0, .statusHigh = 0};
+    uint32_t intrStatus         = MCAN_getIntrStatus(MCANA_DRIVER_BASE);
     // Clear the interrupt Status.
     MCAN_clearIntrStatus(MCANA_DRIVER_BASE, intrStatus);
     //  Clearing the interrupt lineNum
@@ -535,5 +546,5 @@ __attribute__((interrupt)) void mcan_isr_canfd(void)
  */
 __attribute__((interrupt)) void errata_isr(void)
 {
-    global_errata_cnt = (global_errata_cnt < UINT32_MAX) ? (global_errata_cnt + 1) : (0U);
+    errata_cnt = (errata_cnt < UINT32_MAX) ? (errata_cnt + 1) : (0U);
 }
