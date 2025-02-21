@@ -913,7 +913,7 @@ typedef struct __bit_command_mem_t__
 //    word_32b_u pi_ki_iq;
 //} bit_command_mem_t;
 
-typedef struct __attribute__((__packed__)) __dbg_uart_msg_t__
+typedef struct __attribute__((__packed__)) __dbg_msg_t__
 {
     uint8_t         header[2];
     uint32_t        count;
@@ -924,9 +924,16 @@ typedef struct __attribute__((__packed__)) __dbg_uart_msg_t__
     float_t         pos;
     float_t         vel;
     uint8_t         crc;
-} dbg_uart_msg_t;
+} dbg_msg_t;
 
-#define DBG_SIZE_MSG    (sizeof(dbg_uart_msg_t) - 1)
+#define DBG_SIZE_MSG    (sizeof(dbg_msg_t) - 1)
+
+typedef struct __attribute__((__packed__)) __dbg_msg_tx_t__
+{
+    dbg_msg_t   dbg_msg[2];
+    uint8_t     dbg_msg_cr;
+    uint8_t     dbg_msg_nx;
+} dbg_msg_tx_t;
 
 //typedef struct __attribute__((__packed__)) __dbg_uart_addr_t__
 //{
@@ -1008,7 +1015,7 @@ void SCI_rxEnable(uint32_t);
 void SCI_txDisable(uint32_t);
 void SCI_txEnable(uint32_t);
 #else
-void COM_msgDbgTx(volatile debug_t*, dbg_uart_msg_t*);
+void COM_msgDbgTx(volatile debug_t*, dbg_msg_t*);
 //void COM_msgDbgRx(com_dbg_rx_msg_t*, uint8_t);
 uint32_t COM_crc32(uint16_t*, size_t);
 uint8_t COM_crc8(uint8_t*, size_t);

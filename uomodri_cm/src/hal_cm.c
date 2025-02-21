@@ -126,10 +126,15 @@ void HAL_CM_IPC_ini(const ipc_cfg_t* p_ipcCfg)
         {
             // Enable IPC interrupts
             if(p_ipcCfg->ipcIntEnable)
-                IPC_registerInterrupt(ipcType, p_ipcCfg->ipcInt, p_ipcCfg->p_ipcIntHandler);
+                IPC_registerInterrupt(ipcType, \
+                                      p_ipcCfg->ipcInt, \
+                                      p_ipcCfg->p_ipcIntHandler);
             // Initialize message queue
             if(p_ipcCfg->ipcMsgQEnable)
-                IPC_initMessageQueue(ipcType, p_ipcCfg->p_ipcMsgQ, p_ipcCfg->ipcIntMsgQL, p_ipcCfg->ipcIntMsgQR);
+                IPC_initMessageQueue(ipcType, \
+                                     p_ipcCfg->p_ipcMsgQ, \
+                                     p_ipcCfg->ipcIntMsgQL, \
+                                     p_ipcCfg->ipcIntMsgQR);
             // Synchronize both the cores.
             if(!(ipcSyncDone & (1 << ipcType)))
             {
@@ -208,7 +213,8 @@ void HAL_INT_ini(const int_cfg_t* p_intCfg)
             // Attach ISR to interrupt
             Interrupt_registerHandler(p_intCfg->intNum, p_intCfg->p_intHandler);
             // Enable Interrupts
-            //Interrupt_enable(p_intCfg->intNum);
+            if(p_intCfg->intEnable)
+                Interrupt_enable(p_intCfg->intNum);
 
             intNum = (++p_intCfg)->intNum;
         }

@@ -14,7 +14,7 @@
 /************************************************************************
  * GLOBAL VARIABLES
  ************************************************************************/
-extern dbg_uart_msg_t dbg_uart_tx_msg;
+extern dbg_msg_tx_t dbg_msg_tx;
 extern tUSBDCDCDevice usb_CDCDevice;
 extern tUSBBuffer usb_RxBuffer;
 extern tUSBBuffer usb_TxBuffer;
@@ -53,10 +53,10 @@ static const udma_cfg_t cm_udmaCfgList[] =
  {
   .dmaChannel       = UDMA_CHANNEL_UART0_TX,
   .dmaCfg           = (UDMA_SIZE_8 | UDMA_SRC_INC_8 | UDMA_DST_INC_NONE | UDMA_ARB_8 | UDMA_NEXT_USEBURST),
-  .srcAddr          = (uint8_t *)&dbg_uart_tx_msg,
-  .dstAddr          = (uint8_t *)(UART0_BASE + UART_O_DR),
+  .srcAddr          = (uint8_t *) &dbg_msg_tx.dbg_msg[0],
+  .dstAddr          = (uint8_t *) (UART0_BASE + UART_O_DR),
   .transferMode     = UDMA_MODE_AUTO,
-  .transferSize     = sizeof(dbg_uart_msg_t),
+  .transferSize     = sizeof(dbg_msg_t),
  },
  {.dmaChannel       = UINT32_MAX},
 };
@@ -72,7 +72,7 @@ static const ipc_cfg_t cm_ipcCfgList[] =
   .ipcInt           = IPC_INT0,
   .p_ipcIntHandler  = &ipc_isr0,
   .ipcMsgQEnable    = false,
-  .ipcIntEnable     = false,
+  .ipcIntEnable     = true,
  },
  {.ipcType          = IPC_TOTAL_NUM},
 };

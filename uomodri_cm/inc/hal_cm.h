@@ -96,6 +96,7 @@ typedef struct __interrupts_config_t__
     uint32_t        intNum;
     uint16_t        intAckGroup;
     void            (*p_intHandler)(void);
+    bool            intEnable;
 } int_cfg_t;
 
 /**

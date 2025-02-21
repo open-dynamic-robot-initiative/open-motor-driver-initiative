@@ -365,15 +365,15 @@ uint32_t usb_RxHandler(void *p_CBData, uint32_t ui32evt, uint32_t ui32msgVal, vo
 //    return;
 //}
 
-void COM_msgDbgTx(volatile debug_t* p_addr, dbg_uart_msg_t* p_msg)
+void COM_msgDbgTx(volatile debug_t* p_addr, dbg_msg_t* p_msg)
 {
-    p_msg->count            = p_addr->itCnt;
-    p_msg->ia               = p_addr->ia;
-    p_msg->ib               = p_addr->ib;
-    p_msg->ic               = p_addr->ic;
-    p_msg->pos              = p_addr->enc_thetaAbsolute;
-    p_msg->vel              = p_addr->enc_speed_speedMech;
-    p_msg->crc              = COM_crc8Fast(0, (uint8_t *)p_msg, sizeof(dbg_uart_msg_t) - 1);
+    p_msg->count= p_addr->itCnt;
+    p_msg->ia   = p_addr->ia;
+    p_msg->ib   = p_addr->ib;
+    p_msg->ic   = p_addr->ic;
+    p_msg->pos  = p_addr->enc_thetaAbsolute;
+    p_msg->vel  = p_addr->enc_speed_speedMech;
+    p_msg->crc  = COM_crc8Fast(0, (uint8_t *)p_msg, DBG_SIZE_MSG);
     return;
 }
 

@@ -45,13 +45,23 @@ tUSBMode g_eCurrentUSBMode;   // The current USB operating mode - Host, Device o
 /***********************************************************************
  * INTERRUPTS DEFINES
  ***********************************************************************/
-#define INT_USB_DEVICE                  INT_USB0
-#define INT_USB_DEVICE_HANDLER          &CM_USB0DeviceIntHandler
+#define INT_USB_DEVICE          INT_USB0
+#define INT_USB_DEVICE_HANDLER  &CM_USB0DeviceIntHandler
 
-#define INT_USB_DEVICE_DEF              { \
-                                            .intNum             = INT_USB_DEVICE, \
-                                            .p_intHandler       = INT_USB_DEVICE_HANDLER \
-                                        }
+#define INT_IPC_RX              INT_CPU1TOCMIPC0
+#define INT_IPC_RX_HANDLER      &ipc_isr0
+
+#define INT_USB_DEVICE_DEF      { \
+                                    .intNum         = INT_USB_DEVICE, \
+                                    .p_intHandler   = INT_USB_DEVICE_HANDLER, \
+                                    .intEnable      = false, \
+                                }
+#define INT_IPC_RX_DEF          { \
+                                    .intNum         = INT_IPC_RX, \
+                                    .p_intHandler   = INT_IPC_RX_HANDLER, \
+                                    .intEnable      = true, \
+                                }
+
 
 //******************************************************************************
 //
@@ -108,22 +118,20 @@ __attribute__((interrupt)) void ipc_isr0(void);
 #pragma DATA_ALIGN(ucControlTable, 1024)
 UDMA_ControlTable ucControlTable[64];
 
-dbg_uart_msg_t dbg_uart_tx_msg =
-{
- .header[0]         = 'a',
- .header[1]         = 'b',
- .count             = 0U,
- .ia                = 0.0f,
- .ib                = 0.0f,
- .ic                = 0.0f,
- .pos               = 0.0f,
- .vel               = 0.0f,
- .crc               = 0,
-};
+dbg_msg_tx_t dbg_msg_tx = {
+                           .dbg_msg[0] = {.header[0] = 'a', .header[1] = 'b', .count = 0U,
+                                          .ia = 0.0f, .ib = 0.0f, .ic = 0.0f,
+                                          .pos = 0.0f, .vel = 0.0f, .crc = 0},
+                           .dbg_msg[1] = {.header[0] = 'a', .header[1] = 'b', .count = 0U,
+                                          .ia = 0.0f, .ib = 0.0f, .ic = 0.0f,
+                                          .pos = 0.0f, .vel = 0.0f, .crc = 0},
+                           .dbg_msg_cr = 0U,
+                           .dbg_msg_nx = 1U};
 
 static const int_cfg_t interruptList[] =
 {
  INT_USB_DEVICE_DEF,
+ INT_IPC_RX_DEF,
  {.intNum = UINT32_MAX},        /* END OF ARRAY */
 };
 
@@ -174,34 +182,34 @@ void main(void)
 #if (!USB_BUS_ENABLE) && (UART_BUS_ENABLE)
 
         // No new message from CLA, skip TX:
-        IPC_waitForFlag(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG);
-        // Acknowledge IT associated to input flag.
-        IPC_ackFlagRtoL(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG);
+//        IPC_waitForFlag(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG);
+//        // Acknowledge IT associated to input flag.
+//        IPC_ackFlagRtoL(IPC_CM_L_CPU1_R, IPC_CPU1_TO_CM_FLAG);
 
 
 //        if(it_cnt_prev != dbg_m1.itCnt)
 //        {
             // Wait Tx buffer + UART Tx module are empty.
-            while(UART_isBusy(UART0_BASE));
-
-//            GPIO_writePin(DBG_PIN3_NUM, 1U);
-            // New message received, prepare to send via UART:
-            COM_msgDbgTx(&dbg_m1, &dbg_uart_tx_msg);
-//            GPIO_writePin(DBG_PIN3_NUM, 0U);
-            it_cnt_prev = dbg_m1.itCnt;
-
-            // Force purge of Rx buffer.
-            //while(UART_readCharNonBlocking(UART0_BASE) != -1);
-            // Get the index associated to uDMA UART0_TX configuration
-//            while((cm_udmaCfgList[udmaCfgIdx].dmaChannel != UDMA_CHANNEL_UART0_TX) ? (udmaCfgIdx++) : (udmaCfgIdx));
-//             Enable the uDMA UART0 Tx channel
-            if(!UDMA_isChannelEnabled(UDMA_BASE, cm_udmaCfgList[0].dmaChannel))
-            {
-                ucControlTable[UDMA_CHANNEL_UART0_TX].chControlAttr &= ~(UDMA_DMACHCTL_XFERSIZE_M | UDMA_DMACHCTL_XFERMODE_M);
-                ucControlTable[UDMA_CHANNEL_UART0_TX].chControlAttr |= ((cm_udmaCfgList[0].transferMode) << UDMA_DMACHCTL_XFERMODE_S);//cm_udmaCfgList[udmaCfgIdx].transferMode;
-                ucControlTable[UDMA_CHANNEL_UART0_TX].chControlAttr |= ((cm_udmaCfgList[0].transferSize - 1) << UDMA_DMACHCTL_XFERSIZE_S);//((cm_udmaCfgList[udmaCfgIdx].transferSize - 1) << UDMA_DMACHCTL_XFERSIZE_S);
-                UDMA_enableChannel(UDMA_BASE, UDMA_CHANNEL_UART0_TX);
-            }
+//            while(UART_isBusy(UART0_BASE));
+//
+////            GPIO_writePin(DBG_PIN3_NUM, 1U);
+//            // New message received, prepare to send via UART:
+//            COM_msgDbgTx(&dbg_m1, &dbg_uart_tx_msg);
+////            GPIO_writePin(DBG_PIN3_NUM, 0U);
+//            it_cnt_prev = dbg_m1.itCnt;
+//
+//            // Force purge of Rx buffer.
+//            //while(UART_readCharNonBlocking(UART0_BASE) != -1);
+//            // Get the index associated to uDMA UART0_TX configuration
+////            while((cm_udmaCfgList[udmaCfgIdx].dmaChannel != UDMA_CHANNEL_UART0_TX) ? (udmaCfgIdx++) : (udmaCfgIdx));
+////             Enable the uDMA UART0 Tx channel
+//            if(!UDMA_isChannelEnabled(UDMA_BASE, cm_udmaCfgList[0].dmaChannel))
+//            {
+//                ucControlTable[UDMA_CHANNEL_UART0_TX].chControlAttr &= ~(UDMA_DMACHCTL_XFERSIZE_M | UDMA_DMACHCTL_XFERMODE_M);
+//                ucControlTable[UDMA_CHANNEL_UART0_TX].chControlAttr |= ((cm_udmaCfgList[0].transferMode) << UDMA_DMACHCTL_XFERMODE_S);//cm_udmaCfgList[udmaCfgIdx].transferMode;
+//                ucControlTable[UDMA_CHANNEL_UART0_TX].chControlAttr |= ((cm_udmaCfgList[0].transferSize - 1) << UDMA_DMACHCTL_XFERSIZE_S);//((cm_udmaCfgList[udmaCfgIdx].transferSize - 1) << UDMA_DMACHCTL_XFERSIZE_S);
+//                UDMA_enableChannel(UDMA_BASE, UDMA_CHANNEL_UART0_TX);
+//            }
 //        }
 #endif
     }
@@ -451,11 +459,50 @@ __attribute__((interrupt)) void ipc_isr0(void)
 {
     uint32_t    cmd, data, addr;
     uint8_t     ipcCfgIdx = 0;
+//    volatile
     //bool        com_tx_msg_done = false;
     // Get index associated to IPC structure configuration
-    while(cm_ipcCfgList[(cm_ipcCfgList[ipcCfgIdx].p_ipcIntHandler != &ipc_isr0) ? (ipcCfgIdx++) : (ipcCfgIdx)].p_ipcIntHandler != &ipc_isr0);
+    while(cm_ipcCfgList[ipcCfgIdx].p_ipcIntHandler != &ipc_isr0)
+        ipcCfgIdx++;
+//    while(cm_ipcCfgList[(cm_ipcCfgList[ipcCfgIdx].p_ipcIntHandler != &ipc_isr0) ? \
+            (ipcCfgIdx++) : (ipcCfgIdx)].p_ipcIntHandler != &ipc_isr0);
     // Get structure address
-    IPC_readCommand(cm_ipcCfgList[ipcCfgIdx].ipcType, cm_ipcCfgList[ipcCfgIdx].ipcFlag, IPC_ADDR_CORRECTION_ENABLE, &cmd, &addr, &data);
+    IPC_readCommand(cm_ipcCfgList[ipcCfgIdx].ipcType, \
+                    cm_ipcCfgList[ipcCfgIdx].ipcFlag, \
+                    IPC_ADDR_CORRECTION_ENABLE, \
+                    &cmd, &addr, &data);
+
+    if(addr == (uint32_t) &dbg_m1)
+    {
+        COM_msgDbgTx(&dbg_m1, &dbg_msg_tx.dbg_msg[dbg_msg_tx.dbg_msg_nx]);
+        dbg_msg_tx.dbg_msg_cr   = !dbg_msg_tx.dbg_msg_cr;
+        dbg_msg_tx.dbg_msg_nx   = !dbg_msg_tx.dbg_msg_cr;
+    }
+
+    while(UART_isBusy(UART0_BASE));
+
+//    if(addr == (uint32_t) &dbg_m1)
+//    {
+//            GPIO_writePin(DBG_PIN3_NUM, 1U);
+    // New message received, prepare to send via UART:
+//        COM_msgDbgTx(&dbg_m1, &dbg_tx_msg);
+//            GPIO_writePin(DBG_PIN3_NUM, 0U);
+//        it_cnt_prev = dbg_m1.itCnt;
+
+    // Force purge of Rx buffer.
+    //while(UART_readCharNonBlocking(UART0_BASE) != -1);
+    // Get the index associated to uDMA UART0_TX configuration
+//            while((cm_udmaCfgList[udmaCfgIdx].dmaChannel != UDMA_CHANNEL_UART0_TX) ? (udmaCfgIdx++) : (udmaCfgIdx));
+//             Enable the uDMA UART0 Tx channel
+        if(!UDMA_isChannelEnabled(UDMA_BASE, cm_udmaCfgList[0].dmaChannel))
+        {
+            //ucControlTable[UDMA_CHANNEL_UART0_TX].srcEndAddr     = (uint8_t *) &dbg_msg_tx.dbg_msg[dbg_msg_tx.dbg_msg_cr];
+            ucControlTable[UDMA_CHANNEL_UART0_TX].chControlAttr &= ~(UDMA_DMACHCTL_XFERSIZE_M | UDMA_DMACHCTL_XFERMODE_M);
+            ucControlTable[UDMA_CHANNEL_UART0_TX].chControlAttr |= ((cm_udmaCfgList[0].transferMode) << UDMA_DMACHCTL_XFERMODE_S);//cm_udmaCfgList[udmaCfgIdx].transferMode;
+            ucControlTable[UDMA_CHANNEL_UART0_TX].chControlAttr |= ((cm_udmaCfgList[0].transferSize - 1) << UDMA_DMACHCTL_XFERSIZE_S);//((cm_udmaCfgList[udmaCfgIdx].transferSize - 1) << UDMA_DMACHCTL_XFERSIZE_S);
+            UDMA_enableChannel(UDMA_BASE, UDMA_CHANNEL_UART0_TX);
+        }
+//    }
     // Create the reply message
     //com_tx_msg_done = com_msgTx((FOC_STRUCT *)addr, &com_tx_msg);
 //#ifdef DEBUG
