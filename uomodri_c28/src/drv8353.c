@@ -7,10 +7,13 @@
 /***********************************************************************
  * FUNCTIONS DECLARATION
  ***********************************************************************/
+static bool_t   DRV_Connect(const drv_cfg_t*);
 static uint32_t DRV_Enable(const drv_cfg_t*);
 static bool_t   DRV_SetConfig(const drv_cfg_t*, drv_reg_t*);
 static void     DRV_Calibration(const drv_cfg_t*, drv_reg_t*);
 uint16_t        DRV_readOne(const drv_cfg_t*, DRV_Address_e);
+void            DRV_startReadOne(const drv_cfg_t*, DRV_Address_e);
+uint16_t        DRV_finishReadOne(const drv_cfg_t*);
 void            DRV_writeOne(const drv_cfg_t*, DRV_Address_e, uint16_t);
 
 /***********************************************************************
@@ -38,6 +41,35 @@ bool_t DRV_ini(const drv_cfg_t* p_drvCfg, drv_reg_t* p_drvReg)
     return(drv_err);
 }
 
+static bool_t DRV_Connect(const drv_cfg_t* p_drvCfg)
+{
+    uint16_t cpt_time_out   = 100U;
+    bool_t drv_stat_fault   = true;
+    bool_t drv_time_out     = false;
+    bool_t drv_test_loop    = true;
+
+    // Disable the DRV8353 & wait 10ms
+    GPIO_writePin(p_drvCfg->gpioNumber_EN, 0);
+    DEVICE_DELAY_US(10000U);
+    // Enable the DRV8353 & wait 10ms
+    GPIO_writePin(p_drvCfg->gpioNumber_EN, 1);
+    DEVICE_DELAY_US(10000U);
+
+    // Make sure the FAULT bit is not set during startup
+    while(drv_test_loop)
+    {
+        // Read Fault status register 1 on DRV. Generate an error if not empty.
+        drv_stat_fault  = (DRV_readOne(p_drvCfg, DRV_ADDRESS_STATUS_0)) ? (true) : (false);
+        // Repeat test. If cpt_time_out reach 0, Generate an error.
+        drv_time_out    = (--cpt_time_out) ? (false) : (true);
+        drv_test_loop   = drv_stat_fault && (!drv_time_out);
+        // If repeat test required set a delay.
+        (drv_test_loop) ? (DEVICE_DELAY_US(10U)) : (0U);
+    }
+
+    return(drv_time_out);
+}
+
 /**
  * @brief       Enable the DRV IC pin.
  * @param[in]   *p_drv      Pointer on the DRV definition structure
@@ -46,17 +78,22 @@ bool_t DRV_ini(const drv_cfg_t* p_drvCfg, drv_reg_t* p_drvReg)
 static uint32_t DRV_Enable(const drv_cfg_t* p_drvCfg)
 {
     drv_stat0x_u drv_stat_regs  = {.all = 0};
-    uint16_t cpt_time_out       = 0;
-    bool_t drv_enable           = true;
-    // Enable the DRV8353
-    GPIO_writePin(p_drvCfg->gpioNumber_EN, 1);
-    // Wait 1ms
-    DEVICE_DELAY_US(10000U);
-    // Make sure the FAULT bit is not set during startup
-    while(drv_enable && (DRV_readOne(p_drvCfg, DRV_ADDRESS_STATUS_0) & FLT_STATUS_FAULT_Msk))
-        drv_enable  = (++cpt_time_out < 10000) ? (true) : (false);
+    uint16_t i                  = 10U;
+//    for(i = 0; ((i < 10) && DRV_Connect(p_drvCfg)); i++);
+    while((i--) && DRV_Connect(p_drvCfg));
+
+//    if(DRV_Connect(p_drvCfg) == 0U)
+//    {
+//        // Disable the DRV8353
+//        GPIO_writePin(p_drvCfg->gpioNumber_EN, 0);
+//        // Wait 10ms
+//        DEVICE_DELAY_US(10000U);
+//        // Enable the DRV8353
+//        DRV_Connect(p_drvCfg);
+//    }
+
     // Wait for the DRV8353 to go through start up sequence
-    DEVICE_DELAY_US(10000U);
+    DEVICE_DELAY_US(1000U);
     // Get the latest states of the status registers.
     drv_stat_regs.stat00.all    = DRV_readOne(p_drvCfg, DRV_ADDRESS_STATUS_0);
     drv_stat_regs.stat01.all    = DRV_readOne(p_drvCfg, DRV_ADDRESS_STATUS_1);
@@ -212,6 +249,38 @@ uint16_t DRV_readOne(const drv_cfg_t* p_drvCfg, DRV_Address_e addr)
     return (msg.all);
 }
 
+void DRV_startReadOne(const drv_cfg_t* p_drvCfg, DRV_Address_e addr)
+{
+    uint32_t spi_base   = p_drvCfg->spiHandle;
+    uint32_t pin_spi_cs = p_drvCfg->gpioNumber_CS;
+    drv_msg_u msg       = {.rw_cmd = DRV_CTRLMODE_READ, .addr = addr, .data = 0};
+
+    // Select chip
+    GPIO_writePin(pin_spi_cs, 0);
+    // wait for registers to update
+//    DEVICE_DELAY_US(10U);
+    // Write data
+    SPI_writeDataNonBlocking(spi_base, msg.all);
+
+    return;
+}
+
+uint16_t DRV_finishReadOne(const drv_cfg_t* p_drvCfg)
+{
+    uint32_t spi_base   = p_drvCfg->spiHandle;
+    uint32_t pin_spi_cs = p_drvCfg->gpioNumber_CS;
+    drv_msg_u msg       = {.all = 0};
+
+    // Read RX buffer
+    msg.all = SPI_readDataBlockingNonFIFO(spi_base);
+    // Delay before deactivating communication
+//    DEVICE_DELAY_US(10U);
+    // Deselect chip
+    GPIO_writePin(pin_spi_cs, 1);
+
+    return (msg.all);
+}
+
 /**
  * @brief       Write data to a single DRV8353 register
  * @param[in]   *p_drv      Pointer on the DRV definition structure
@@ -239,4 +308,61 @@ void DRV_writeOne(const drv_cfg_t* p_drvCfg, DRV_Address_e addr, uint16_t data)
 
     return;
 }
+
+void DRV_readStatusFSM(const drv_cfg_t* p_drvCfg_m1, drv_reg_t* p_drvReg_m1,
+                       const drv_cfg_t* p_drvCfg_m2, drv_reg_t* p_drvReg_m2)
+{
+    static uint16_t state = DRV_READ_TX_STATUS_REG1_MOTOR1;          /*!< motor states for the FSM. */
+
+    switch(state)
+    {
+        case DRV_READ_TX_STATUS_REG1_MOTOR1:
+            DRV_startReadOne(p_drvCfg_m1, DRV_ADDRESS_STATUS_0);
+            state = DRV_READ_RX_STATUS_REG1_MOTOR1;
+            break;
+
+        case DRV_READ_RX_STATUS_REG1_MOTOR1:
+            p_drvReg_m1->stat_reg_00.all = DRV_finishReadOne(p_drvCfg_m1);
+            state = DRV_READ_TX_STATUS_REG2_MOTOR1;
+            break;
+
+        case DRV_READ_TX_STATUS_REG2_MOTOR1:
+            DRV_startReadOne(p_drvCfg_m1, DRV_ADDRESS_STATUS_1);
+            state = DRV_READ_RX_STATUS_REG2_MOTOR1;
+            break;
+
+        case DRV_READ_RX_STATUS_REG2_MOTOR1:
+            p_drvReg_m1->stat_reg_01.all = DRV_finishReadOne(p_drvCfg_m1);
+            state = DRV_READ_TX_STATUS_REG1_MOTOR2;
+            break;
+
+        case DRV_READ_TX_STATUS_REG1_MOTOR2:
+            DRV_startReadOne(p_drvCfg_m2, DRV_ADDRESS_STATUS_0);
+            state = DRV_READ_RX_STATUS_REG1_MOTOR2;
+            break;
+
+        case DRV_READ_RX_STATUS_REG1_MOTOR2:
+            p_drvReg_m2->stat_reg_00.all = DRV_finishReadOne(p_drvCfg_m2);
+            state = DRV_READ_TX_STATUS_REG2_MOTOR2;
+            break;
+
+        case DRV_READ_TX_STATUS_REG2_MOTOR2:
+            DRV_startReadOne(p_drvCfg_m2, DRV_ADDRESS_STATUS_1);
+            state = DRV_READ_RX_STATUS_REG2_MOTOR2;
+            break;
+
+        case DRV_READ_RX_STATUS_REG2_MOTOR2:
+            p_drvReg_m2->stat_reg_01.all = DRV_finishReadOne(p_drvCfg_m2);
+            state = DRV_READ_TX_STATUS_REG1_MOTOR1;
+            break;
+
+        default:
+            state = DRV_READ_TX_STATUS_REG1_MOTOR1;
+            break;
+
+    }
+
+    return;
+}
+
 // end of file

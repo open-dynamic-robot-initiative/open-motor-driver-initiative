@@ -63,19 +63,7 @@
 #define EXT_DBG_SPI_CS1_CLEAR                   (HWREG(GPIODATA_BASE + GPIO_O_GPCCLEAR) = GPIO_GPCCLEAR_GPIO72)
 #define EXT_DBG_SPI_CS1_TOGGLE                  (HWREG(GPIODATA_BASE + GPIO_O_GPCTOGGLE)= GPIO_GPCTOGGLE_GPIO72)
 
-/************************************************************************
- * IPC DEFINES
- ************************************************************************/
-/** @defgroup Debug pins configuration.
- *  @brief    Configure 2 pins (pin number and mux function) for debug.
- * @{
- */
-#define IPC_SYNC_FLAG                           IPC_FLAG31
-#define IPC_CPU1_TO_CM_FLAG                     IPC_FLAG0
-#define IPC_CM_TO_CPU1_FLAG                     IPC_FLAG0
-/**
- * @}
- */
+
 
 /************************************************************************
  * DEBUG DEFINES

@@ -39,7 +39,7 @@ extern "C" {
 #define ENC_MAX_ROLLOVER            (127)
 #define ENC_MIN_ROLLOVER            (-128)
 
-#define MOTOR_STATE_OK              (MOTOR_STATE_READY | MOTOR_STATE_STOP)
+#define MOTOR_STATE_OK              (MOTOR_STATE_READY | MOTOR_STATE_STOP | MOTOR_STATE_REGEN)
 #define MOTOR_STATE_INIT            (MOTOR_STATE_INIT_FW | MOTOR_STATE_INIT_REV | \
                                      MOTOR_STATE_INIT_TEST | MOTOR_STATE_INIT_FIX)
 #define MOTOR_STATE_BOOT            (MOTOR_STATE_IDLE)
@@ -51,6 +51,7 @@ extern "C" {
 #define MOTOR_STATE_INIT_FIX        (0x0008)
 #define MOTOR_STATE_READY           (0x0010)
 #define MOTOR_STATE_STOP            (0x0020)
+#define MOTOR_STATE_REGEN           (0x0040)
 #define MOTOR_STATE_ERROR           (0xFFFF)
 
 /***********************************************************************

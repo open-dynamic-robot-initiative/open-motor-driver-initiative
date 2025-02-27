@@ -38,6 +38,7 @@ typedef struct __UART_CFG_t__
 typedef struct __UDMA_CFG_t__
 {
     uint32_t    dmaChannel;
+//    uint32_t    dmaPrioStruct;
     uint32_t    dmaCfg;
     void*       srcAddr;
     void*       dstAddr;

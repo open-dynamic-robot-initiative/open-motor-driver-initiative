@@ -439,7 +439,7 @@
 
 #define DBG_PIN1_NUM                            (81U)
 #define DBG_PIN1_CFG                            GPIO_81_GPIO81
-#define DBG_PIN1_CORE                           GPIO_CORE_CPU1_CLA1
+#define DBG_PIN1_CORE                           GPIO_CORE_CPU1
 #define DBG_PIN1_SET                            (HWREG(GPIODATA_BASE + GPIO_O_GPCSET)   = GPIO_GPCSET_GPIO81)
 #define DBG_PIN1_CLEAR                          (HWREG(GPIODATA_BASE + GPIO_O_GPCCLEAR) = GPIO_GPCCLEAR_GPIO81)
 #define DBG_PIN1_TOGGLE                         (HWREG(GPIODATA_BASE + GPIO_O_GPCTOGGLE)= GPIO_GPCTOGGLE_GPIO81)
@@ -2168,9 +2168,9 @@
 #define CLB_INT_RS485_RX_END_OF_RECEPTION       (0x01)
 
 #define CLB_RS485_DEF                           { \
-                                                    .clb_Addr1Spec     = RS485_CLB_FORCE_ADDRESS, \
+                                                    .clb_Addr1Spec     = RS485_CLB_USE_UID_ADDRESS, \
                                                     .clb_Addr2Spec     = RS485_CLB_USE_NO_ADDRESS, \
-                                                    .clb_Addr1Force    = 0x3F, \
+                                                    .clb_Addr1Force    = 0, \
                                                     .clb_Addr2Force    = 0, \
                                                 }
 
@@ -2223,6 +2223,11 @@
 #define CPU_TIMER_0_BASE                        CPUTIMER0_BASE
 #define CPU_TIMER_0_PERIOD                      (1000U)                             // Period counter - 1ms
 #define CPU_TIMER_0_PRESCALER                   ((DEVICE_SYSCLK_FREQ / 1e6) - 1)    // Prescaler increment - 1us
+
+#define CPU_TIMER_1_BASE                        CPUTIMER1_BASE
+#define CPU_TIMER_1_PERIOD                      (1000U)                             // Period counter - 1ms
+#define CPU_TIMER_1_PRESCALER                   ((DEVICE_SYSCLK_FREQ / 1e6) - 1)    // Prescaler increment - 1us
+
 /**
  * @}
  */
@@ -2233,6 +2238,13 @@
                                                     .prescaler        = CPU_TIMER_0_PRESCALER, \
                                                     .intEnable        = true, \
                                                 }
+#define CPU_TIMER1_DEF                          { \
+                                                    .cpuTimerBase     = CPU_TIMER_1_BASE, \
+                                                    .periodCount      = CPU_TIMER_1_PERIOD, \
+                                                    .prescaler        = CPU_TIMER_1_PRESCALER, \
+                                                    .intEnable        = false, \
+                                                }
+
 
 /***********************************************************************
  *  DEVICE INITIALIZATION DEFINES

@@ -1,5 +1,5 @@
-#ifndef __UOMODRI_CM_HAL_CONFIG_HANDLERS_H__
-#define __UOMODRI_CM_HAL_CONFIG_HANDLERS_H__
+#ifndef __UOMODRI_CM_HANDLERS_H__
+#define __UOMODRI_CM_HANDLERS_H__
 
 /************************************************************************
  * INCLUDES
@@ -10,6 +10,7 @@
 #include "communication.h"
 #include "hal_cm.h"
 #include "uomodri_cm_user_defines.h"
+#include "uomodri_cm_hal_defines.h"
 
 /************************************************************************
  * GLOBAL VARIABLES
@@ -42,22 +43,8 @@ static const uart_cfg_t cm_uartCfg =
 
 static const udma_cfg_t cm_udmaCfgList[] =
 {
-// {
-//  .dmaChannel       = UDMA_CHANNEL_UART0_RX,
-//  .dmaCfg           = (UDMA_SIZE_8 | UDMA_SRC_INC_NONE | UDMA_DST_INC_8 | UDMA_ARB_4 | UDMA_NEXT_USEBURST),
-//  .srcAddr          = (void *)(UART0_BASE + UART_O_DR),//(void *)&dbg_uart_tx_msg,
-////  .dstAddr          = (void *)(UART0_BASE + UART_O_DR),
-//  .transferMode     = UDMA_MODE_BASIC,
-//  .transferSize     = sizeof(dbg_uart_msg_t),
-// },
- {
-  .dmaChannel       = UDMA_CHANNEL_UART0_TX,
-  .dmaCfg           = (UDMA_SIZE_8 | UDMA_SRC_INC_8 | UDMA_DST_INC_NONE | UDMA_ARB_8 | UDMA_NEXT_USEBURST),
-  .srcAddr          = (uint8_t *) &dbg_msg_tx.dbg_msg[0],
-  .dstAddr          = (uint8_t *) (UART0_BASE + UART_O_DR),
-  .transferMode     = UDMA_MODE_AUTO,
-  .transferSize     = sizeof(dbg_msg_t),
- },
+ DMA_UART_TX_PRI_DEF,
+ DMA_UART_TX_ALT_DEF,
  {.dmaChannel       = UINT32_MAX},
 };
 
@@ -117,4 +104,4 @@ static const hal_cm_t   hal_cm =
  .p_crcHandle       = NULL,//&cm_crcCfg,
 };
 
-#endif  /*__UOMODRI_CM_HAL_CONFIG_HANDLERS_H__*/
+#endif  /*__UOMODRI_CM_HANDLERS_H__*/

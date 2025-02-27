@@ -7,6 +7,7 @@
  ************************************************************************/
 #include "hal_cm.h"
 #include "uomodri_cm_user_defines.h"
+#include "uomodri_cm_handlers.h"
 
 /************************************************************************
  * LOCAL FUNCTIONS DECLARATION
@@ -54,33 +55,28 @@ void HAL_CM_uDMA_ini(const udma_cfg_t* p_udmaCfg)
 {
     if(p_udmaCfg != NULL)
     {
-        uint32_t dmaChannel = p_udmaCfg->dmaChannel;
+        uint32_t dmaChannel         = p_udmaCfg->dmaChannel;
+//        uint32_t dmaChannelOffset   = dmaChannel | p_udmaCfg->dmaPrioStruct;
 
-        // Enable uDMA
+        // Enable uDMA controller
         UDMA_enable(UDMA_BASE);
         // Point at the control table to use for channel control structures.
         UDMA_setControlBase(UDMA_BASE, ucControlTable);
 
         while(dmaChannel != UINT32_MAX)
         {
-            /* Put the attributes in a known state for the uDMA software channel.
-             * These should already be disabled by default. */            //
-            UDMA_disableChannelAttribute(UDMA_BASE, dmaChannel, UDMA_CH_ATTR_ALL);
-//          UDMA_CH_ATTR_ALTSELECT | UDMA_CH_ATTR_HIGH_PRIORITY | UDMA_CH_ATTR_REQMASK);
-            //UDMA_enableChannelAttribute(UDMA_BASE, dmaChannel, UDMA_CH_ATTR_USEBURST);
-            /* Configure the control parameters for the UART TX/RX channels
-             * Tx channel will be used to transfer data from the buffer to the UART Data register.
-             * Data size = 8
-             * Source address increment = 8      (data to be read from 8-bit buffer)
-             * Destination address increment = 0 (data to be copied to a single address location)
-             *
-             * The arbitration size will be set to 1, which causes the uDMA controller
-             * to re-arbitrate after 1 item is transferred. */
+            if(dmaChannel < 32U)
+            /* Put the attributes in a known state for the uDMA software channel. */
+                UDMA_disableChannelAttribute(UDMA_BASE, dmaChannel, UDMA_CH_ATTR_ALL);
+            /* Sets the control parameters for a uDMA channel control structure. */
             UDMA_setChannelControlParams(UDMA_BASE, dmaChannel, p_udmaCfg->dmaCfg);
-            UDMA_setChannelTransferParams(UDMA_BASE, dmaChannel, p_udmaCfg->srcAddr, \
-                                          p_udmaCfg->dstAddr, p_udmaCfg->transferMode, \
-                                          p_udmaCfg->transferSize);
-            UDMA_enableChannel(UDMA_BASE, dmaChannel);
+            /* Sets the transfer parameters for a uDMA channel control structure. */
+            UDMA_setChannelTransferParams(UDMA_BASE, dmaChannel, \
+                                          p_udmaCfg->srcAddr, p_udmaCfg->dstAddr, \
+                                          p_udmaCfg->transferMode, p_udmaCfg->transferSize);
+            if(dmaChannel < 32U)
+                /* Enables a uDMA channel for operation. */
+                UDMA_enableChannel(UDMA_BASE, dmaChannel);
             dmaChannel = (++p_udmaCfg)->dmaChannel;
         }
     }
@@ -100,7 +96,8 @@ void HAL_CM_UART_ini(const uart_cfg_t* p_uartCfg)
         UART_setFIFOLevel(UART0_BASE, UART_FIFO_TX6_8, UART_FIFO_RX6_8);
         UART_enableFIFO(UART0_BASE);
         UART_disableLoopback(UART0_BASE);
-        UART_enableDMA(UART0_BASE, p_uartCfg->dmaFlags);
+        if(p_uartCfg->dmaEnable)
+            UART_enableDMA(UART0_BASE, p_uartCfg->dmaFlags);
         // Configure UART & Enable the module.
         UART_setConfig(UART0_BASE, UART_CLK_FREQ, p_uartCfg->baudRate, p_uartCfg->uartCfg);
         UART_clearRxError(UART0_BASE);

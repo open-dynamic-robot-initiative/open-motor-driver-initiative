@@ -283,6 +283,8 @@ __attribute__((interrupt)) void tmr_isrLedCmd(void)
         LED_dimming(&motor_m1, &motor_m2, &led_spi_tx[0]);
         DMA_startChannel(DMA_LED_SPI_TX_BASE_ADDR);
     }
+    DRV_readStatusFSM(&drv_cfg[MOTOR_1], &drv_reg[MOTOR_1], \
+                      &drv_cfg[MOTOR_2], &drv_reg[MOTOR_2]);
     // Timeout management
     cmd_uomodri[MOTOR_1].cptTimeout++;
     cmd_uomodri[MOTOR_2].cptTimeout++;
@@ -290,7 +292,7 @@ __attribute__((interrupt)) void tmr_isrLedCmd(void)
     CLA_forceTasks(CLA1_BASE, CLA_CMD_NEW_TASK_FLAG);
     // Clear IT
     Interrupt_clearACKGroup(INT_TIMER_LED_CMD_GROUP);
-    DBG_TIMER_ISR_SET;
+    DBG_TIMER_ISR_UNSET;
 }
 
 /**

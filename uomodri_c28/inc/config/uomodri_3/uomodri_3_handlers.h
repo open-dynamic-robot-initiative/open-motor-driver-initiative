@@ -47,10 +47,10 @@ extern __attribute__((interrupt)) void Cla1Task8(void);
 /***********************************************************************
  * GPIOs STRUCTURE DECLARATION & INITIALIZATION
  ***********************************************************************/
-/** @var    GPIO_TypeDef GpioPinsCfgList[]
+/** @var    GPIO_TypeDef GpioCfgList[]
  *  @brief  List all the GPIO definitions except the analog pins.
  */
-static const gpio_cfg_t gpioPinsCfgList[] =
+static const gpio_cfg_t gpioCfgList[] =
 {
 #if (USB_BUS_ENABLE) && (!UART_BUS_ENABLE)
  /* USB pins */
@@ -357,6 +357,7 @@ static const ipc_cfg_t  ipcCfgList[] =
 static const tmr_cfg_t  timerCfgList[] =
 {
  CPU_TIMER0_DEF,                    /* CPU timer 0 config */
+// CPU_TIMER1_DEF,                    /* CPU timer 1 config */
  {.cpuTimerBase = UINT32_MAX},      /* END OF ARRAY */
 };
 
@@ -365,7 +366,7 @@ static const tmr_cfg_t  timerCfgList[] =
  ***********************************************************************/
 static const hal_cfg_t  hal =
 {
- .p_gpioHandle  = gpioPinsCfgList,
+ .p_gpioHandle  = gpioCfgList,
  .p_adcHandle   = adcCfgList,
  .p_epwmHandle  = pwmCfgList,
  .p_eqepHandle  = QepCfgList,
@@ -385,7 +386,7 @@ static const hal_cfg_t  hal =
 /** @var    drv_cfg_t   drv_cfg[]
  *  @brief  List all IOs \& SPI peripherals used for DRV communication.
  */
-#pragma DATA_SECTION(drv_cfg, "ramgs0")
+//#pragma DATA_SECTION(drv_cfg, "ramgs0")
 static const drv_cfg_t  drv_cfg[] =
 {
  MOTOR1_DRV_CFG_DEF,
@@ -398,7 +399,7 @@ static const drv_cfg_t  drv_cfg[] =
 /** @var    drv_reg_t   drv_reg[]
  *  @brief  List all configuration registers for each DRVs.
  */
-#pragma DATA_SECTION(drv_reg, "ramgs0")
+//#pragma DATA_SECTION(drv_reg, "ramgs0")
 static drv_reg_t drv_reg[] =
 {
  MOTOR1_DRV_REG_DEF,

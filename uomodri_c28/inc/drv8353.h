@@ -82,6 +82,15 @@
 #define VGS_STATUS_VGS_LC_Msk           (0x1U << VGS_STATUS_VGS_LC_Pos)
 #define VGS_STATUS_VGS_LC               VGS_STATUS_VGS_LC_Msk
 
+#define DRV_READ_TX_STATUS_REG1_MOTOR1  (0x0001)
+#define DRV_READ_RX_STATUS_REG1_MOTOR1  (0x0002)
+#define DRV_READ_TX_STATUS_REG2_MOTOR1  (0x0004)
+#define DRV_READ_RX_STATUS_REG2_MOTOR1  (0x0008)
+#define DRV_READ_TX_STATUS_REG1_MOTOR2  (0x0010)
+#define DRV_READ_RX_STATUS_REG1_MOTOR2  (0x0020)
+#define DRV_READ_TX_STATUS_REG2_MOTOR2  (0x0040)
+#define DRV_READ_RX_STATUS_REG2_MOTOR2  (0x0080)
+
 /***********************************************************************
  * ENUMARATIONS
  ***********************************************************************/
@@ -517,17 +526,18 @@ typedef struct __drv_reg_t__
     drv_ctrl05_u    ctrl_reg_05;
     drv_ctrl06_u    ctrl_reg_06;
     drv_ctrl07_u    ctrl_reg_07;
+    uint16_t        time_cfg;
 } drv_reg_t;
 
 /**
  * @typedef drv_t_
  * @brief   Aggregator structure integrating the IO config \& registers structures associated to the DRV8353
  */
-typedef struct __drv8353_t__
-{
-    const drv_cfg_t* const  p_drvCfgHandler;
-    drv_reg_t* const        p_drvRegHandler;
-} drv8353_t;
+//typedef struct __drv8353_t__
+//{
+//    const drv_cfg_t* const  p_drvCfgHandler;
+//    drv_reg_t* const        p_drvRegHandler;
+//} drv8353_t;
 
 /***********************************************************************
  * DRV COMMUNICATION STRUCTURES
@@ -554,6 +564,7 @@ bool_t DRV_ini(const drv_cfg_t*, drv_reg_t*);
 uint32_t DRV_readStatus(const drv_cfg_t*, drv_reg_t*);
 void DRV_readAll(const drv_cfg_t*, drv_reg_t*);
 void DRV_writeAll(const drv_cfg_t*, drv_reg_t*);
+void DRV_readStatusFSM(const drv_cfg_t*, drv_reg_t*, const drv_cfg_t*, drv_reg_t*);
 
 #ifdef __cplusplus
 }
