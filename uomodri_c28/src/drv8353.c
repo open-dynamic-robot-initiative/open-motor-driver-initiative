@@ -79,19 +79,8 @@ static uint32_t DRV_Enable(const drv_cfg_t* p_drvCfg)
 {
     drv_stat0x_u drv_stat_regs  = {.all = 0};
     uint16_t i                  = 10U;
-//    for(i = 0; ((i < 10) && DRV_Connect(p_drvCfg)); i++);
+    // Try & retry to communicate with DRV
     while((i--) && DRV_Connect(p_drvCfg));
-
-//    if(DRV_Connect(p_drvCfg) == 0U)
-//    {
-//        // Disable the DRV8353
-//        GPIO_writePin(p_drvCfg->gpioNumber_EN, 0);
-//        // Wait 10ms
-//        DEVICE_DELAY_US(10000U);
-//        // Enable the DRV8353
-//        DRV_Connect(p_drvCfg);
-//    }
-
     // Wait for the DRV8353 to go through start up sequence
     DEVICE_DELAY_US(1000U);
     // Get the latest states of the status registers.

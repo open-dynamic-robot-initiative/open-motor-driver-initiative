@@ -891,51 +891,27 @@ bool_t MOT_runControl(motor_t* p_motor)
     p_err->com_timeout              = (cmd_timeout && p_cmd->timeoutRef)                    || p_err->com_timeout;
     p_err->enc_indexErr             = (p_enc->flags.indexDetect && p_enc->flags.indexErr)   || p_err->enc_indexErr;
     p_err->enc_alignErr             = p_enc->flags.alignErr                                 || p_err->enc_alignErr;
-//    if(p_err->all)
-//        p_motor->state              = MOTOR_STATE_ERROR;
+    if(p_err->all)
+        p_motor->state              = MOTOR_STATE_ERROR;
 
     switch(p_motor->state)
     {
         case MOTOR_STATE_IDLE:
         {
-            if(p_foc->acq.vBus > 50.0f)
-                p_motor->state  = MOTOR_STATE_REGEN;
+            if(!motor_start)
+            {
+                p_motor->state          = MOTOR_STATE_IDLE;
+                ENC_resetPeriph(p_enc);
+                FOC_resetStruct(p_foc);
+            }
             else
-                p_motor->state  = MOTOR_STATE_IDLE;
+                p_motor->state          = MOTOR_STATE_INIT_FW;
+            p_motor->itCnt              = 0U;
             MOT_stopCommand(p_motor->epwmBase[CHANNEL_1]);
             MOT_stopCommand(p_motor->epwmBase[CHANNEL_2]);
             MOT_stopCommand(p_motor->epwmBase[CHANNEL_3]);
             break;
         }
-
-        case MOTOR_STATE_REGEN:
-        {
-            if(p_foc->acq.vBus > 50.0f)
-                p_motor->state  = MOTOR_STATE_REGEN;
-            else
-                p_motor->state  = MOTOR_STATE_IDLE;
-//            MOT_runCommand(p_motor->epwmBase[CHANNEL_1], 0.0f);
-            MOT_stopCommand(p_motor->epwmBase[CHANNEL_1]);
-            MOT_runCommand(p_motor->epwmBase[CHANNEL_2], 0.0f);
-            MOT_stopCommand(p_motor->epwmBase[CHANNEL_3]);
-            break;
-        }
-
-
-//        if(!motor_start)
-//        {
-//            p_motor->state          = MOTOR_STATE_IDLE;
-//            ENC_resetPeriph(p_enc);
-//            FOC_resetStruct(p_foc);
-//        }
-//        else
-//            p_motor->state          = MOTOR_STATE_INIT_FW;
-//        p_motor->itCnt              = 0U;
-//        MOT_stopCommand(p_motor->epwmBase[CHANNEL_1]);
-//        MOT_stopCommand(p_motor->epwmBase[CHANNEL_2]);
-//        MOT_stopCommand(p_motor->epwmBase[CHANNEL_3]);
-//        break;
-//    }
 
         case MOTOR_STATE_INIT_FW:
         {
