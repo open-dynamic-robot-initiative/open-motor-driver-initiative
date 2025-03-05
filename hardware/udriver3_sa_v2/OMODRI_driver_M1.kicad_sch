@@ -2012,24 +2012,6 @@
 						)
 					)
 				)
-				(pin power_in line
-					(at -11.43 36.83 0)
-					(length 2.54)
-					(name "VREF"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "24"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
 				(pin input line
 					(at -11.43 -6.35 0)
 					(length 2.54)
@@ -2616,12 +2598,6 @@
 		(uuid "a627980e-4a63-4b6b-9d9c-305023e00932")
 	)
 	(junction
-		(at 44.45 52.07)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "a78c4a9d-564e-4eda-a2e3-95c20cd5c1e2")
-	)
-	(junction
 		(at 233.68 113.03)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -2725,7 +2701,7 @@
 	)
 	(wire
 		(pts
-			(xy 38.1 55.88) (xy 55.88 55.88)
+			(xy 50.8 55.88) (xy 55.88 55.88)
 		)
 		(stroke
 			(width 0)
@@ -3095,16 +3071,6 @@
 	)
 	(wire
 		(pts
-			(xy 38.1 52.07) (xy 44.45 52.07)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "40682ac0-f2b2-4e38-ba67-83ecc6231c0f")
-	)
-	(wire
-		(pts
 			(xy 125.73 55.88) (xy 134.62 55.88)
 		)
 		(stroke
@@ -3455,16 +3421,6 @@
 	)
 	(wire
 		(pts
-			(xy 44.45 74.93) (xy 44.45 76.2)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "735625f2-a175-4344-a20c-2a161a5f75a3")
-	)
-	(wire
-		(pts
 			(xy 240.03 39.37) (xy 238.76 39.37)
 		)
 		(stroke
@@ -3795,16 +3751,6 @@
 	)
 	(wire
 		(pts
-			(xy 44.45 52.07) (xy 44.45 67.31)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "96b296ac-9ff2-46d4-8d4c-014acd7a3b18")
-	)
-	(wire
-		(pts
 			(xy 251.46 43.18) (xy 252.73 43.18)
 		)
 		(stroke
@@ -3862,16 +3808,6 @@
 			(type default)
 		)
 		(uuid "9a591e98-b84d-4910-bbfe-efcd2830f4bd")
-	)
-	(wire
-		(pts
-			(xy 44.45 52.07) (xy 102.87 52.07)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "9aed99c8-8984-4beb-b8d6-d288c00613a0")
 	)
 	(wire
 		(pts
@@ -4483,7 +4419,7 @@
 		)
 		(uuid "4f41bc48-0166-42ea-be2e-876c4713a13d")
 	)
-	(label "MOTOR_CH1_MOS"
+	(label "MOTOR_CH1_BRIDGE"
 		(at 198.12 34.29 0)
 		(effects
 			(font
@@ -4513,7 +4449,7 @@
 		)
 		(uuid "6311428f-44a8-43fd-b705-0cc43ff23b68")
 	)
-	(label "MOTOR_CH2"
+	(label "MOTOR_CH2_BRIDGE"
 		(at 196.85 78.74 0)
 		(effects
 			(font
@@ -4643,7 +4579,7 @@
 		)
 		(uuid "c5d1d291-7347-4f93-b6ba-32bca64b4dd1")
 	)
-	(label "MOTOR_CH3"
+	(label "MOTOR_CH3_BRIDGE"
 		(at 196.85 123.19 0)
 		(effects
 			(font
@@ -4732,36 +4668,6 @@
 			(justify left bottom)
 		)
 		(uuid "faa52d75-1036-4326-9f56-420b17b6d4ab")
-	)
-	(global_label "REF_3V0_BUF"
-		(shape input)
-		(at 38.1 52.07 180)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "1ae40c5c-7509-4986-a398-80463f133ceb")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 38.1 52.07 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Références Inter-Feuilles" "${INTERSHEET_REFS}"
-			(at -10.795 -21.59 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
 	)
 	(global_label "REF_3V0_BUF"
 		(shape input)
@@ -5109,7 +5015,7 @@
 	)
 	(global_label "12V0"
 		(shape input)
-		(at 38.1 55.88 180)
+		(at 50.8 55.88 180)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -5119,7 +5025,7 @@
 		)
 		(uuid "dcabcbd1-8e19-4ace-8d2a-f4e8318d90b4")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 38.1 55.88 0)
+			(at 50.8 55.88 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5128,7 +5034,7 @@
 			)
 		)
 		(property "Références Inter-Feuilles" "${INTERSHEET_REFS}"
-			(at 31.0587 55.8006 0)
+			(at 43.7587 55.8006 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5655,147 +5561,6 @@
 			(project "omodri_sa_laas"
 				(path "/de5b13f0-933a-4c4d-9979-13dc57b13241/00000000-0000-0000-0000-00005f71c5af"
 					(reference "#PWR069")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Device:C")
-		(at 44.45 71.12 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "00000000-0000-0000-0000-00005f864df9")
-		(property "Reference" "C48"
-			(at 46.99 69.85 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "100n"
-			(at 46.99 72.39 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "Capacitor_SMD:C_0201_0603Metric"
-			(at 45.4152 74.93 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "https://www.murata.com/en-eu/products/productdetail?partno=GRM033R61E104KE14%23"
-			(at 44.45 71.12 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "0201, 100nf, 25V,  ±10%, X5R, SMD MLCC"
-			(at 44.45 71.12 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Part No" "GRM033R61E104KE14D"
-			(at 44.45 71.12 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Farnell" "2990693"
-			(at 44.45 71.12 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "RS" "185-2066"
-			(at 44.45 71.12 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Mouser" "81-GRM033R61E104KE4D"
-			(at 44.45 71.12 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "DigiKey" "490-12686-1-ND"
-			(at 44.45 71.12 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "LCSC" "C76939"
-			(at 44.45 71.12 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Manufacturer" "MURATA"
-			(at 44.45 71.12 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Assembling" "SMD"
-			(at 44.45 71.12 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "37d39e3f-d69b-4e18-a675-4e27d7c05ac7")
-		)
-		(pin "2"
-			(uuid "ed0a32c8-e29b-484d-9e6f-dc06877a93c6")
-		)
-		(instances
-			(project "omodri_sa_laas"
-				(path "/de5b13f0-933a-4c4d-9979-13dc57b13241/00000000-0000-0000-0000-00005f71c5af"
-					(reference "C48")
 					(unit 1)
 				)
 			)
@@ -7614,7 +7379,8 @@
 	)
 	(symbol
 		(lib_id "Device:R_Shunt")
-		(at 222.25 123.19 270)
+		(at 222.25 123.19 90)
+		(mirror x)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -7622,7 +7388,7 @@
 		(dnp no)
 		(uuid "00000000-0000-0000-0000-00005f864fe6")
 		(property "Reference" "R27"
-			(at 224.282 118.872 90)
+			(at 220.218 118.872 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7630,8 +7396,8 @@
 				(justify right)
 			)
 		)
-		(property "Value" "0.005"
-			(at 225.044 120.904 90)
+		(property "Value" "0.002"
+			(at 219.456 120.904 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7657,7 +7423,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "1206, 5mΩ, 1W, ±1%, SMD Shunt resistor"
+		(property "Description" "1206, 2mΩ, 1W, ±2%, SMD Shunt resistor"
 			(at 222.25 123.19 0)
 			(effects
 				(font
@@ -7666,7 +7432,7 @@
 				(hide yes)
 			)
 		)
-		(property "DigiKey" "273-FC4L32R005FERCT-ND"
+		(property "DigiKey" "273-FC4L32R002GERCT-ND"
 			(at 222.25 123.19 0)
 			(effects
 				(font
@@ -7675,7 +7441,7 @@
 				(hide yes)
 			)
 		)
-		(property "Farnell" "2420555"
+		(property "Farnell" "2420553"
 			(at 222.25 123.19 0)
 			(effects
 				(font
@@ -7684,7 +7450,7 @@
 				(hide yes)
 			)
 		)
-		(property "Mouser" "588-FC4L32R005FER"
+		(property "Mouser" "  588-FC4L32R002GER"
 			(at 222.25 123.19 0)
 			(effects
 				(font
@@ -7693,7 +7459,7 @@
 				(hide yes)
 			)
 		)
-		(property "Part No" "FC4L32R005FER"
+		(property "Part No" "FC4L32R002GER"
 			(at 222.25 123.19 0)
 			(effects
 				(font
@@ -7702,7 +7468,7 @@
 				(hide yes)
 			)
 		)
-		(property "RS" "126-0360"
+		(property "RS" ""
 			(at 222.25 123.19 0)
 			(effects
 				(font
@@ -7711,7 +7477,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC" "C3971241"
+		(property "LCSC" ""
 			(at 222.25 123.19 0)
 			(effects
 				(font
@@ -7777,7 +7543,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "120"
+		(property "Value" "150"
 			(at 257.048 142.494 90)
 			(effects
 				(font
@@ -7804,7 +7570,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "0201,120Ω, 0.05W, ±1%, SMD  resistor"
+		(property "Description" "0201,150Ω, 0.05W, ±1%, SMD  resistor"
 			(at 255.27 144.78 0)
 			(effects
 				(font
@@ -7813,7 +7579,7 @@
 				(hide yes)
 			)
 		)
-		(property "DigiKey" "P122692CT-ND"
+		(property "DigiKey" "P122742CT-ND"
 			(at 255.27 144.78 0)
 			(effects
 				(font
@@ -7822,7 +7588,7 @@
 				(hide yes)
 			)
 		)
-		(property "Farnell" "2396857"
+		(property "Farnell" "2302313"
 			(at 255.27 144.78 0)
 			(effects
 				(font
@@ -7831,7 +7597,7 @@
 				(hide yes)
 			)
 		)
-		(property "Mouser" "667-ERJ-1GNF1200C"
+		(property "Mouser" "667-ERJ-1GNF1500C"
 			(at 255.27 144.78 0)
 			(effects
 				(font
@@ -7840,7 +7606,7 @@
 				(hide yes)
 			)
 		)
-		(property "Part No" "ERJ1GNF1200C"
+		(property "Part No" "ERJ1GNF1500C"
 			(at 255.27 144.78 0)
 			(effects
 				(font
@@ -7858,7 +7624,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC" "C278569"
+		(property "LCSC" "C2074059"
 			(at 255.27 144.78 0)
 			(effects
 				(font
@@ -7918,7 +7684,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "120"
+		(property "Value" "150"
 			(at 257.048 98.044 90)
 			(effects
 				(font
@@ -7945,7 +7711,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "0201,120Ω, 0.05W, ±1%, SMD  resistor"
+		(property "Description" "0201,150Ω, 0.05W, ±1%, SMD  resistor"
 			(at 255.27 100.33 0)
 			(effects
 				(font
@@ -7954,7 +7720,7 @@
 				(hide yes)
 			)
 		)
-		(property "DigiKey" "P122692CT-ND"
+		(property "DigiKey" "P122742CT-ND"
 			(at 255.27 100.33 0)
 			(effects
 				(font
@@ -7963,7 +7729,7 @@
 				(hide yes)
 			)
 		)
-		(property "Farnell" "2396857"
+		(property "Farnell" "2302313"
 			(at 255.27 100.33 0)
 			(effects
 				(font
@@ -7972,7 +7738,7 @@
 				(hide yes)
 			)
 		)
-		(property "Mouser" "667-ERJ-1GNF1200C"
+		(property "Mouser" "667-ERJ-1GNF1500C"
 			(at 255.27 100.33 0)
 			(effects
 				(font
@@ -7981,7 +7747,7 @@
 				(hide yes)
 			)
 		)
-		(property "Part No" "ERJ1GNF1200C"
+		(property "Part No" "ERJ1GNF1500C"
 			(at 255.27 100.33 0)
 			(effects
 				(font
@@ -7999,7 +7765,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC" "C278569"
+		(property "LCSC" "C2074059"
 			(at 255.27 100.33 0)
 			(effects
 				(font
@@ -8059,7 +7825,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "120"
+		(property "Value" "150"
 			(at 253.492 53.594 90)
 			(effects
 				(font
@@ -8086,7 +7852,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "0201,120Ω, 0.05W, ±1%, SMD  resistor"
+		(property "Description" "0201,150Ω, 0.05W, ±1%, SMD  resistor"
 			(at 255.27 55.88 0)
 			(effects
 				(font
@@ -8095,7 +7861,7 @@
 				(hide yes)
 			)
 		)
-		(property "DigiKey" "P122692CT-ND"
+		(property "DigiKey" "P122742CT-ND"
 			(at 255.27 55.88 0)
 			(effects
 				(font
@@ -8104,7 +7870,7 @@
 				(hide yes)
 			)
 		)
-		(property "Farnell" "2396857"
+		(property "Farnell" "2302313"
 			(at 255.27 55.88 0)
 			(effects
 				(font
@@ -8113,7 +7879,7 @@
 				(hide yes)
 			)
 		)
-		(property "Mouser" "667-ERJ-1GNF1200C"
+		(property "Mouser" "667-ERJ-1GNF1500C"
 			(at 255.27 55.88 0)
 			(effects
 				(font
@@ -8122,7 +7888,7 @@
 				(hide yes)
 			)
 		)
-		(property "Part No" "ERJ1GNF1200C"
+		(property "Part No" "ERJ1GNF1500C"
 			(at 255.27 55.88 0)
 			(effects
 				(font
@@ -8140,7 +7906,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC" "C278569"
+		(property "LCSC" "C2074059"
 			(at 255.27 55.88 0)
 			(effects
 				(font
@@ -8200,7 +7966,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "1.8n"
+		(property "Value" "100n"
 			(at 263.144 151.892 0)
 			(effects
 				(font
@@ -8218,7 +7984,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.murata.com/en-eu/products/productdetail?partno=GRM033R71E182KA12%23"
+		(property "Datasheet" "https://www.murata.com/en-eu/products/productdetail?partno=GRM033R61E104KE14%23"
 			(at 260.35 151.13 0)
 			(effects
 				(font
@@ -8227,7 +7993,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "0201, 1800pF, 25V, ±10%, X7R, SMD MLCC"
+		(property "Description" "0201, 100nf, 25V,  ±10%, X5R, SMD MLCC"
 			(at 260.35 151.13 0)
 			(effects
 				(font
@@ -8236,7 +8002,7 @@
 				(hide yes)
 			)
 		)
-		(property "DigiKey" "490-GRM033R71E182KA12DTR-ND"
+		(property "DigiKey" "490-12686-1-ND"
 			(at 260.35 151.13 0)
 			(effects
 				(font
@@ -8245,7 +8011,7 @@
 				(hide yes)
 			)
 		)
-		(property "Farnell" "2999522"
+		(property "Farnell" "2990693"
 			(at 260.35 151.13 0)
 			(effects
 				(font
@@ -8254,7 +8020,7 @@
 				(hide yes)
 			)
 		)
-		(property "Mouser" "81-GRM033R71E182KA2D"
+		(property "Mouser" "81-GRM033R61E104KE4D"
 			(at 260.35 151.13 0)
 			(effects
 				(font
@@ -8263,7 +8029,7 @@
 				(hide yes)
 			)
 		)
-		(property "Part No" "GRM033R71E182KA12D"
+		(property "Part No" "GRM033R61E104KE14D"
 			(at 260.35 151.13 0)
 			(effects
 				(font
@@ -8272,7 +8038,7 @@
 				(hide yes)
 			)
 		)
-		(property "RS" ""
+		(property "RS" "185-2066"
 			(at 260.35 151.13 0)
 			(effects
 				(font
@@ -8281,7 +8047,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC" "C237560"
+		(property "LCSC" "C76939"
 			(at 260.35 151.13 0)
 			(effects
 				(font
@@ -8341,7 +8107,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "1.8n"
+		(property "Value" "100n"
 			(at 263.144 107.442 0)
 			(effects
 				(font
@@ -8359,7 +8125,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.murata.com/en-eu/products/productdetail?partno=GRM033R71E182KA12%23"
+		(property "Datasheet" "https://www.murata.com/en-eu/products/productdetail?partno=GRM033R61E104KE14%23"
 			(at 260.35 106.68 0)
 			(effects
 				(font
@@ -8368,7 +8134,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "0201, 1800pF, 25V, ±10%, X7R, SMD MLCC"
+		(property "Description" "0201, 100nf, 25V,  ±10%, X5R, SMD MLCC"
 			(at 260.35 106.68 0)
 			(effects
 				(font
@@ -8377,7 +8143,7 @@
 				(hide yes)
 			)
 		)
-		(property "DigiKey" "490-GRM033R71E182KA12DTR-ND"
+		(property "DigiKey" "490-12686-1-ND"
 			(at 260.35 106.68 0)
 			(effects
 				(font
@@ -8386,7 +8152,7 @@
 				(hide yes)
 			)
 		)
-		(property "Farnell" "2999522"
+		(property "Farnell" "2990693"
 			(at 260.35 106.68 0)
 			(effects
 				(font
@@ -8395,7 +8161,7 @@
 				(hide yes)
 			)
 		)
-		(property "Mouser" "81-GRM033R71E182KA2D"
+		(property "Mouser" "81-GRM033R61E104KE4D"
 			(at 260.35 106.68 0)
 			(effects
 				(font
@@ -8404,7 +8170,7 @@
 				(hide yes)
 			)
 		)
-		(property "Part No" "GRM033R71E182KA12D"
+		(property "Part No" "GRM033R61E104KE14D"
 			(at 260.35 106.68 0)
 			(effects
 				(font
@@ -8413,7 +8179,7 @@
 				(hide yes)
 			)
 		)
-		(property "RS" ""
+		(property "RS" "185-2066"
 			(at 260.35 106.68 0)
 			(effects
 				(font
@@ -8422,7 +8188,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC" "C237560"
+		(property "LCSC" "C76939"
 			(at 260.35 106.68 0)
 			(effects
 				(font
@@ -8482,7 +8248,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "1.8n"
+		(property "Value" "100n"
 			(at 263.144 62.992 0)
 			(effects
 				(font
@@ -8500,7 +8266,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.murata.com/en-eu/products/productdetail?partno=GRM033R71E182KA12%23"
+		(property "Datasheet" "https://www.murata.com/en-eu/products/productdetail?partno=GRM033R61E104KE14%23"
 			(at 260.35 62.23 0)
 			(effects
 				(font
@@ -8509,7 +8275,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "0201, 1800pF, 25V, ±10%, X7R, SMD MLCC"
+		(property "Description" "0201, 100nf, 25V,  ±10%, X5R, SMD MLCC"
 			(at 260.35 62.23 0)
 			(effects
 				(font
@@ -8518,7 +8284,7 @@
 				(hide yes)
 			)
 		)
-		(property "DigiKey" "490-GRM033R71E182KA12DTR-ND"
+		(property "DigiKey" "490-12686-1-ND"
 			(at 260.35 62.23 0)
 			(effects
 				(font
@@ -8527,7 +8293,7 @@
 				(hide yes)
 			)
 		)
-		(property "Farnell" "2999522"
+		(property "Farnell" "2990693"
 			(at 260.35 62.23 0)
 			(effects
 				(font
@@ -8536,7 +8302,7 @@
 				(hide yes)
 			)
 		)
-		(property "Mouser" "81-GRM033R71E182KA2D"
+		(property "Mouser" "81-GRM033R61E104KE4D"
 			(at 260.35 62.23 0)
 			(effects
 				(font
@@ -8545,7 +8311,7 @@
 				(hide yes)
 			)
 		)
-		(property "Part No" "GRM033R71E182KA12D"
+		(property "Part No" "GRM033R61E104KE14D"
 			(at 260.35 62.23 0)
 			(effects
 				(font
@@ -8554,7 +8320,7 @@
 				(hide yes)
 			)
 		)
-		(property "RS" ""
+		(property "RS" "185-2066"
 			(at 260.35 62.23 0)
 			(effects
 				(font
@@ -8563,7 +8329,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC" "C237560"
+		(property "LCSC" "C76939"
 			(at 260.35 62.23 0)
 			(effects
 				(font
@@ -8870,71 +8636,6 @@
 			(project "omodri_sa_laas"
 				(path "/de5b13f0-933a-4c4d-9979-13dc57b13241/00000000-0000-0000-0000-00005f71c5af"
 					(reference "#PWR074")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "power:GNDA")
-		(at 44.45 76.2 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "00000000-0000-0000-0000-00005f865061")
-		(property "Reference" "#PWR065"
-			(at 44.45 82.55 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Value" "GNDA"
-			(at 44.45 80.01 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" ""
-			(at 44.45 76.2 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 44.45 76.2 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "Power symbol creates a global label with name \"GNDA\" , analog ground"
-			(at 44.45 76.2 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "7b1f66a9-d9c2-402f-9008-e5339c1ad8d3")
-		)
-		(instances
-			(project "omodri_sa_laas"
-				(path "/de5b13f0-933a-4c4d-9979-13dc57b13241/00000000-0000-0000-0000-00005f71c5af"
-					(reference "#PWR065")
 					(unit 1)
 				)
 			)
@@ -9388,7 +9089,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Package_DFN_QFN:QFN-32-1EP_5x5mm_P0.5mm_EP3.45x3.45mm_ThermalVias"
+		(property "Footprint" "Package_DFN_QFN:QFN-32-1EP_5x5mm_P0.5mm_EP3.45x3.45mm"
 			(at 114.3 137.16 0)
 			(effects
 				(font
@@ -9489,9 +9190,6 @@
 		)
 		(pin "3"
 			(uuid "fb411532-1bd8-4dfb-a3b2-317a74a864b3")
-		)
-		(pin "24"
-			(uuid "a7deb71a-af35-4b95-b716-bb2921fd50a9")
 		)
 		(pin "22"
 			(uuid "2d1e4b57-807d-417d-ace7-079636d218ea")
@@ -10138,7 +9836,7 @@
 				)
 			)
 		)
-		(property "Value" "INA241A1xDDF"
+		(property "Value" "INA241Ax"
 			(at 242.824 105.918 0)
 			(effects
 				(font
@@ -10164,7 +9862,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "High- and Low-Side, Bidirectional, Zero-Drift, Current-Sense Amplifier With Enhanced PWM Rejection, 10V/V, ±0.01% Gain Accuracy, ±10 μV Offset Voltage, SOT-23-8"
+		(property "Description" "High- and Low-Side, Bidirectional, Zero-Drift, Current-Sense Amplifier With Enhanced PWM Rejection, 20V/V, ±0.01% Gain Accuracy, ±10 μV Offset Voltage, SOT-23-8"
 			(at 236.22 100.33 0)
 			(effects
 				(font
@@ -10182,7 +9880,7 @@
 				(hide yes)
 			)
 		)
-		(property "DigiKey" "296-INA241A1IDDFRCT-ND"
+		(property "DigiKey" "296-INA241A2IDDFRCT-ND"
 			(at 236.22 100.33 0)
 			(effects
 				(font
@@ -10191,7 +9889,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC" "C19712054"
+		(property "LCSC" "C5240853"
 			(at 236.22 100.33 0)
 			(effects
 				(font
@@ -10209,7 +9907,7 @@
 				(hide yes)
 			)
 		)
-		(property "Mouser" "595-INA241A1IDDFR"
+		(property "Mouser" "595-INA241A2IDDFR"
 			(at 236.22 100.33 0)
 			(effects
 				(font
@@ -10218,7 +9916,7 @@
 				(hide yes)
 			)
 		)
-		(property "Part No" "INA241A1IDDF"
+		(property "Part No" "INA241A2IDDFR"
 			(at 236.22 100.33 0)
 			(effects
 				(font
@@ -10278,7 +9976,7 @@
 				)
 			)
 		)
-		(property "Value" "INA241A1xDDF"
+		(property "Value" "INA241Ax"
 			(at 242.824 150.368 0)
 			(effects
 				(font
@@ -10304,7 +10002,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "High- and Low-Side, Bidirectional, Zero-Drift, Current-Sense Amplifier With Enhanced PWM Rejection, 10V/V, ±0.01% Gain Accuracy, ±10 μV Offset Voltage, SOT-23-8"
+		(property "Description" "High- and Low-Side, Bidirectional, Zero-Drift, Current-Sense Amplifier With Enhanced PWM Rejection, 20V/V, ±0.01% Gain Accuracy, ±10 μV Offset Voltage, SOT-23-8"
 			(at 236.22 144.78 0)
 			(effects
 				(font
@@ -10322,7 +10020,7 @@
 				(hide yes)
 			)
 		)
-		(property "DigiKey" "296-INA241A1IDDFRCT-ND"
+		(property "DigiKey" "296-INA241A2IDDFRCT-ND"
 			(at 236.22 144.78 0)
 			(effects
 				(font
@@ -10331,7 +10029,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC" "C19712054"
+		(property "LCSC" "C5240853"
 			(at 236.22 144.78 0)
 			(effects
 				(font
@@ -10349,7 +10047,7 @@
 				(hide yes)
 			)
 		)
-		(property "Mouser" "595-INA241A1IDDFR"
+		(property "Mouser" "595-INA241A2IDDFR"
 			(at 236.22 144.78 0)
 			(effects
 				(font
@@ -10358,7 +10056,7 @@
 				(hide yes)
 			)
 		)
-		(property "Part No" "INA241A1IDDF"
+		(property "Part No" "INA241A2IDDFR"
 			(at 236.22 144.78 0)
 			(effects
 				(font
@@ -11578,7 +11276,7 @@
 				)
 			)
 		)
-		(property "Value" "INA241A1xDDF"
+		(property "Value" "INA241Ax"
 			(at 242.824 61.468 0)
 			(effects
 				(font
@@ -11604,7 +11302,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "High- and Low-Side, Bidirectional, Zero-Drift, Current-Sense Amplifier With Enhanced PWM Rejection, 10V/V, ±0.01% Gain Accuracy, ±10 μV Offset Voltage, SOT-23-8"
+		(property "Description" "High- and Low-Side, Bidirectional, Zero-Drift, Current-Sense Amplifier With Enhanced PWM Rejection, 20V/V, ±0.01% Gain Accuracy, ±10 μV Offset Voltage, SOT-23-8"
 			(at 236.22 55.88 0)
 			(effects
 				(font
@@ -11622,7 +11320,7 @@
 				(hide yes)
 			)
 		)
-		(property "DigiKey" "296-INA241A1IDDFRCT-ND"
+		(property "DigiKey" "296-INA241A2IDDFRCT-ND"
 			(at 236.22 55.88 0)
 			(effects
 				(font
@@ -11631,7 +11329,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC" "C19712054"
+		(property "LCSC" "C5240853"
 			(at 236.22 55.88 0)
 			(effects
 				(font
@@ -11649,7 +11347,7 @@
 				(hide yes)
 			)
 		)
-		(property "Mouser" "595-INA241A1IDDFR"
+		(property "Mouser" "595-INA241A2IDDFR"
 			(at 236.22 55.88 0)
 			(effects
 				(font
@@ -11658,7 +11356,7 @@
 				(hide yes)
 			)
 		)
-		(property "Part No" "INA241A1IDDF"
+		(property "Part No" "INA241A2IDDFR"
 			(at 236.22 55.88 0)
 			(effects
 				(font
@@ -12461,7 +12159,8 @@
 	)
 	(symbol
 		(lib_id "Device:R_Shunt")
-		(at 222.25 34.29 270)
+		(at 222.25 34.29 90)
+		(mirror x)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -12469,7 +12168,7 @@
 		(dnp no)
 		(uuid "c0c37aef-2420-410d-9487-a27d00118e49")
 		(property "Reference" "R16"
-			(at 224.282 30.226 90)
+			(at 220.218 30.226 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12477,8 +12176,8 @@
 				(justify right)
 			)
 		)
-		(property "Value" "0.005"
-			(at 225.044 32.004 90)
+		(property "Value" "0.002"
+			(at 219.456 32.004 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12504,7 +12203,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "1206, 5mΩ, 1W, ±1%, SMD Shunt resistor"
+		(property "Description" "1206, 2mΩ, 1W, ±2%, SMD Shunt resistor"
 			(at 222.25 34.29 0)
 			(effects
 				(font
@@ -12513,7 +12212,7 @@
 				(hide yes)
 			)
 		)
-		(property "DigiKey" "273-FC4L32R005FERCT-ND"
+		(property "DigiKey" "273-FC4L32R002GERCT-ND"
 			(at 222.25 34.29 0)
 			(effects
 				(font
@@ -12522,7 +12221,7 @@
 				(hide yes)
 			)
 		)
-		(property "Farnell" "2420555"
+		(property "Farnell" "2420553"
 			(at 222.25 34.29 0)
 			(effects
 				(font
@@ -12531,7 +12230,7 @@
 				(hide yes)
 			)
 		)
-		(property "Mouser" "588-FC4L32R005FER"
+		(property "Mouser" "  588-FC4L32R002GER"
 			(at 222.25 34.29 0)
 			(effects
 				(font
@@ -12540,7 +12239,7 @@
 				(hide yes)
 			)
 		)
-		(property "Part No" "FC4L32R005FER"
+		(property "Part No" "FC4L32R002GER"
 			(at 222.25 34.29 0)
 			(effects
 				(font
@@ -12549,7 +12248,7 @@
 				(hide yes)
 			)
 		)
-		(property "RS" "126-0360"
+		(property "RS" ""
 			(at 222.25 34.29 0)
 			(effects
 				(font
@@ -12558,7 +12257,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC" "C3971241"
+		(property "LCSC" ""
 			(at 222.25 34.29 0)
 			(effects
 				(font
@@ -12879,7 +12578,8 @@
 	)
 	(symbol
 		(lib_id "Device:R_Shunt")
-		(at 222.25 78.74 270)
+		(at 222.25 78.74 90)
+		(mirror x)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -12887,7 +12587,7 @@
 		(dnp no)
 		(uuid "e1bbd2b4-7a41-423d-8fa3-54d7bdbec21e")
 		(property "Reference" "R19"
-			(at 224.282 74.422 90)
+			(at 220.218 74.422 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12895,8 +12595,8 @@
 				(justify right)
 			)
 		)
-		(property "Value" "0.005"
-			(at 225.044 76.454 90)
+		(property "Value" "0.002"
+			(at 219.456 76.454 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12922,7 +12622,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "1206, 5mΩ, 1W, ±1%, SMD Shunt resistor"
+		(property "Description" "1206, 2mΩ, 1W, ±2%, SMD Shunt resistor"
 			(at 222.25 78.74 0)
 			(effects
 				(font
@@ -12931,7 +12631,7 @@
 				(hide yes)
 			)
 		)
-		(property "DigiKey" "273-FC4L32R005FERCT-ND"
+		(property "DigiKey" "273-FC4L32R002GERCT-ND"
 			(at 222.25 78.74 0)
 			(effects
 				(font
@@ -12940,7 +12640,7 @@
 				(hide yes)
 			)
 		)
-		(property "Farnell" "2420555"
+		(property "Farnell" "2420553"
 			(at 222.25 78.74 0)
 			(effects
 				(font
@@ -12949,7 +12649,7 @@
 				(hide yes)
 			)
 		)
-		(property "Mouser" "588-FC4L32R005FER"
+		(property "Mouser" "  588-FC4L32R002GER"
 			(at 222.25 78.74 0)
 			(effects
 				(font
@@ -12958,7 +12658,7 @@
 				(hide yes)
 			)
 		)
-		(property "Part No" "FC4L32R005FER"
+		(property "Part No" "FC4L32R002GER"
 			(at 222.25 78.74 0)
 			(effects
 				(font
@@ -12967,7 +12667,7 @@
 				(hide yes)
 			)
 		)
-		(property "RS" "126-0360"
+		(property "RS" ""
 			(at 222.25 78.74 0)
 			(effects
 				(font
@@ -12976,7 +12676,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC" "C3971241"
+		(property "LCSC" ""
 			(at 222.25 78.74 0)
 			(effects
 				(font

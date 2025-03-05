@@ -3713,24 +3713,6 @@
 					)
 				)
 			)
-			(pin power_in line
-				(at -11.43 36.83 0)
-				(length 2.54)
-				(name "VREF"
-					(effects
-						(font
-							(size 1.27 1.27)
-						)
-					)
-				)
-				(number "24"
-					(effects
-						(font
-							(size 1.27 1.27)
-						)
-					)
-				)
-			)
 			(pin input line
 				(at -11.43 -6.35 0)
 				(length 2.54)

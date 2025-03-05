@@ -3581,7 +3581,7 @@
 		)
 		(uuid "ffb693ce-ea73-47c2-853b-fe0a9fa9b3b4")
 	)
-	(text "6.028 kHz anti aliasing"
+	(text "10.6kHz anti aliasing"
 		(exclude_from_sim no)
 		(at 179.578 102.108 0)
 		(effects
@@ -6830,7 +6830,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "220n"
+		(property "Value" "100n"
 			(at 180.34 115.57 0)
 			(effects
 				(font
@@ -6848,7 +6848,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.murata.com/en-eu/products/productdetail?partno=GRM033R61C224KE14%23"
+		(property "Datasheet" "https://www.murata.com/en-eu/products/productdetail?partno=GRM033R61E104KE14%23"
 			(at 177.8 114.3 0)
 			(effects
 				(font
@@ -6857,7 +6857,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "0201, 220nf, 16V,  ±10%, X5R, SMD MLCC"
+		(property "Description" "0201, 100nf, 25V,  ±10%, X5R, SMD MLCC"
 			(at 177.8 114.3 0)
 			(effects
 				(font
@@ -6866,7 +6866,7 @@
 				(hide yes)
 			)
 		)
-		(property "DigiKey" "490-17040-1-ND"
+		(property "DigiKey" "490-12686-1-ND"
 			(at 177.8 114.3 0)
 			(effects
 				(font
@@ -6875,7 +6875,7 @@
 				(hide yes)
 			)
 		)
-		(property "Farnell" "3582770"
+		(property "Farnell" "2990693"
 			(at 177.8 114.3 0)
 			(effects
 				(font
@@ -6884,7 +6884,7 @@
 				(hide yes)
 			)
 		)
-		(property "Mouser" "81-GRM033R61C224KE4D"
+		(property "Mouser" "81-GRM033R61E104KE4D"
 			(at 177.8 114.3 0)
 			(effects
 				(font
@@ -6893,7 +6893,7 @@
 				(hide yes)
 			)
 		)
-		(property "Part No" "GRM033R61C224KE14D"
+		(property "Part No" "GRM033R61E104KE14D"
 			(at 177.8 114.3 0)
 			(effects
 				(font
@@ -6902,7 +6902,7 @@
 				(hide yes)
 			)
 		)
-		(property "RS" ""
+		(property "RS" "185-2066"
 			(at 177.8 114.3 0)
 			(effects
 				(font
@@ -6911,7 +6911,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC" "C161474"
+		(property "LCSC" "C76939"
 			(at 177.8 114.3 0)
 			(effects
 				(font
@@ -7724,7 +7724,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "120"
+		(property "Value" "150"
 			(at 197.358 90.17 90)
 			(effects
 				(font
@@ -7751,7 +7751,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "0201,120Ω, 0.05W, ±1%, SMD  resistor"
+		(property "Description" "0201,150Ω, 0.05W, ±1%, SMD  resistor"
 			(at 190.5 91.44 0)
 			(effects
 				(font
@@ -7760,7 +7760,7 @@
 				(hide yes)
 			)
 		)
-		(property "DigiKey" "P122692CT-ND"
+		(property "DigiKey" "P122742CT-ND"
 			(at 190.5 91.44 0)
 			(effects
 				(font
@@ -7769,7 +7769,7 @@
 				(hide yes)
 			)
 		)
-		(property "Farnell" "2396857"
+		(property "Farnell" "2302313"
 			(at 190.5 91.44 0)
 			(effects
 				(font
@@ -7778,7 +7778,7 @@
 				(hide yes)
 			)
 		)
-		(property "Mouser" "667-ERJ-1GNF1200C"
+		(property "Mouser" "667-ERJ-1GNF1500C"
 			(at 190.5 91.44 0)
 			(effects
 				(font
@@ -7787,7 +7787,7 @@
 				(hide yes)
 			)
 		)
-		(property "Part No" "ERJ1GNF1200C"
+		(property "Part No" "ERJ1GNF1500C"
 			(at 190.5 91.44 0)
 			(effects
 				(font
@@ -7805,7 +7805,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC" "C278569"
+		(property "LCSC" "C2074059"
 			(at 190.5 91.44 0)
 			(effects
 				(font

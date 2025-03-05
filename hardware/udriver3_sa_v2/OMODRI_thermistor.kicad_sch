@@ -1342,7 +1342,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "120"
+		(property "Value" "10k"
 			(at 171.958 100.33 90)
 			(effects
 				(font
@@ -1360,7 +1360,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://industrial.panasonic.com/sa/products/pt/general-purpose-chip-resistors/models/ERJ1GNF1200C"
+		(property "Datasheet" "https://industrial.panasonic.com/sa/products/pt/general-purpose-chip-resistors/models/ERJ1GNF1002C"
 			(at 165.1 101.6 0)
 			(effects
 				(font
@@ -1369,7 +1369,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "0201,120Ω, 0.05W, ±1%, SMD  resistor"
+		(property "Description" "0201, 10kΩ, 0.05W, ±1%, SMD  resistor"
 			(at 165.1 101.6 0)
 			(effects
 				(font
@@ -1378,7 +1378,7 @@
 				(hide yes)
 			)
 		)
-		(property "DigiKey" "P122692CT-ND"
+		(property "DigiKey" "P122414CT-ND"
 			(at 165.1 101.6 0)
 			(effects
 				(font
@@ -1387,7 +1387,7 @@
 				(hide yes)
 			)
 		)
-		(property "Farnell" "2396857"
+		(property "Farnell" "2302362"
 			(at 165.1 101.6 0)
 			(effects
 				(font
@@ -1396,7 +1396,7 @@
 				(hide yes)
 			)
 		)
-		(property "Mouser" "667-ERJ-1GNF1200C"
+		(property "Mouser" "667-ERJ-1GNF1002C"
 			(at 165.1 101.6 0)
 			(effects
 				(font
@@ -1405,7 +1405,7 @@
 				(hide yes)
 			)
 		)
-		(property "Part No" "ERJ1GNF1200C"
+		(property "Part No" "ERJ1GNF1002C"
 			(at 165.1 101.6 0)
 			(effects
 				(font
@@ -1414,7 +1414,7 @@
 				(hide yes)
 			)
 		)
-		(property "RS" ""
+		(property "RS" "176-3597"
 			(at 165.1 101.6 0)
 			(effects
 				(font
@@ -1423,7 +1423,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC" "C278569"
+		(property "LCSC" "C717002"
 			(at 165.1 101.6 0)
 			(effects
 				(font
@@ -1459,6 +1459,10 @@
 		(instances
 			(project "omodri_sa_laas"
 				(path "/de5b13f0-933a-4c4d-9979-13dc57b13241/b535f441-e5f2-4a7b-a0a6-02c4bb8f1fa2"
+					(reference "R51")
+					(unit 1)
+				)
+				(path "/de5b13f0-933a-4c4d-9979-13dc57b13241/00000000-0000-0000-0000-00005f3a3f16/f2e4b637-b410-4c88-a5bd-ca173e5a2c6b"
 					(reference "R51")
 					(unit 1)
 				)
@@ -2101,7 +2105,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "220n"
+		(property "Value" "100n"
 			(at 180.34 115.57 0)
 			(effects
 				(font
@@ -2119,7 +2123,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.murata.com/en-eu/products/productdetail?partno=GRM033R61C224KE14%23"
+		(property "Datasheet" "https://www.murata.com/en-eu/products/productdetail?partno=GRM033R61E104KE14%23"
 			(at 177.8 114.3 0)
 			(effects
 				(font
@@ -2128,7 +2132,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "0201, 220nf, 16V,  ±10%, X5R, SMD MLCC"
+		(property "Description" "0201, 100nf, 25V,  ±10%, X5R, SMD MLCC"
 			(at 177.8 114.3 0)
 			(effects
 				(font
@@ -2137,7 +2141,7 @@
 				(hide yes)
 			)
 		)
-		(property "DigiKey" "490-17040-1-ND"
+		(property "DigiKey" "490-12686-1-ND"
 			(at 177.8 114.3 0)
 			(effects
 				(font
@@ -2146,7 +2150,7 @@
 				(hide yes)
 			)
 		)
-		(property "Farnell" "3582770"
+		(property "Farnell" "2990693"
 			(at 177.8 114.3 0)
 			(effects
 				(font
@@ -2155,7 +2159,7 @@
 				(hide yes)
 			)
 		)
-		(property "Mouser" "81-GRM033R61C224KE4D"
+		(property "Mouser" "81-GRM033R61E104KE4D"
 			(at 177.8 114.3 0)
 			(effects
 				(font
@@ -2164,7 +2168,7 @@
 				(hide yes)
 			)
 		)
-		(property "Part No" "GRM033R61C224KE14D"
+		(property "Part No" "GRM033R61E104KE14D"
 			(at 177.8 114.3 0)
 			(effects
 				(font
@@ -2173,7 +2177,7 @@
 				(hide yes)
 			)
 		)
-		(property "RS" ""
+		(property "RS" "185-2066"
 			(at 177.8 114.3 0)
 			(effects
 				(font
@@ -2182,7 +2186,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC" "C161474"
+		(property "LCSC" "C76939"
 			(at 177.8 114.3 0)
 			(effects
 				(font

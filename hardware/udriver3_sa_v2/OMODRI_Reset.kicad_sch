@@ -2149,7 +2149,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "120"
+		(property "Value" "150"
 			(at 179.578 109.093 0)
 			(effects
 				(font
@@ -2176,7 +2176,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "0201,120Ω, 0.05W, ±1%, SMD  resistor"
+		(property "Description" "0201,150Ω, 0.05W, ±1%, SMD  resistor"
 			(at 177.8 107.95 0)
 			(effects
 				(font
@@ -2185,7 +2185,7 @@
 				(hide yes)
 			)
 		)
-		(property "DigiKey" "P122692CT-ND"
+		(property "DigiKey" "P122742CT-ND"
 			(at 177.8 107.95 0)
 			(effects
 				(font
@@ -2194,7 +2194,7 @@
 				(hide yes)
 			)
 		)
-		(property "Farnell" "2396857"
+		(property "Farnell" "2302313"
 			(at 177.8 107.95 0)
 			(effects
 				(font
@@ -2203,7 +2203,7 @@
 				(hide yes)
 			)
 		)
-		(property "Mouser" "667-ERJ-1GNF1200C"
+		(property "Mouser" "667-ERJ-1GNF1500C"
 			(at 177.8 107.95 0)
 			(effects
 				(font
@@ -2212,7 +2212,7 @@
 				(hide yes)
 			)
 		)
-		(property "Part No" "ERJ1GNF1200C"
+		(property "Part No" "ERJ1GNF1500C"
 			(at 177.8 107.95 0)
 			(effects
 				(font
@@ -2230,7 +2230,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC" "C278569"
+		(property "LCSC" "C2074059"
 			(at 177.8 107.95 0)
 			(effects
 				(font
@@ -2626,7 +2626,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "LED GREEN"
+		(property "Value" "LED AMBER"
 			(at 184.15 92.71 90)
 			(effects
 				(font
@@ -2653,7 +2653,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "0402, Top Mount miniature ChipLED, GREEN, Vf = 2.2-V @ 10-mA"
+		(property "Description" "0402, Top Mount miniature ChipLED, AMBER, Vf = 1.9-V @ 10-mA"
 			(at 177.8 95.25 0)
 			(effects
 				(font
@@ -2662,7 +2662,7 @@
 				(hide yes)
 			)
 		)
-		(property "DigiKey" "516-3066-1-ND"
+		(property "DigiKey" "516-HSMA-C280CT-ND"
 			(at 177.8 95.25 0)
 			(effects
 				(font
@@ -2671,7 +2671,7 @@
 				(hide yes)
 			)
 		)
-		(property "Mouser" "630-HSMG-C280"
+		(property "Mouser" "630-HSMA-C280"
 			(at 177.8 95.25 0)
 			(effects
 				(font
@@ -2680,7 +2680,7 @@
 				(hide yes)
 			)
 		)
-		(property "Farnell" "2494322"
+		(property "Farnell" "2494320"
 			(at 177.8 95.25 0)
 			(effects
 				(font
@@ -2689,7 +2689,7 @@
 				(hide yes)
 			)
 		)
-		(property "Part No" "HSMG-C280"
+		(property "Part No" "HSMA-C280"
 			(at 177.8 95.25 0)
 			(effects
 				(font
@@ -2698,7 +2698,7 @@
 				(hide yes)
 			)
 		)
-		(property "RS" "867-6560"
+		(property "RS" "230-5356"
 			(at 177.8 95.25 0)
 			(effects
 				(font
@@ -2707,7 +2707,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC" " C7466700"
+		(property "LCSC" "C5762821"
 			(at 177.8 95.25 0)
 			(effects
 				(font
