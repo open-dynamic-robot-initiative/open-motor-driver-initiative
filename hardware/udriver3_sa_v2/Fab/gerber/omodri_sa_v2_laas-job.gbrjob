@@ -3,14 +3,14 @@
     "GenerationSoftware": {
       "Vendor": "KiCad",
       "Application": "Pcbnew",
-      "Version": "8.0.7-8.0.7-0~ubuntu22.04.1"
+      "Version": "8.0.9-8.0.9-0~ubuntu22.04.1"
     },
-    "CreationDate": "2024-12-19T17:18:26+01:00"
+    "CreationDate": "2025-03-06T16:09:04+01:00"
   },
   "GeneralSpecs": {
     "ProjectId": {
-      "Name": "omodri_sa_laas",
-      "GUID": "6f6d6f64-7269-45f7-9361-5f6c6161732e",
+      "Name": "omodri_sa_v2_laas",
+      "GUID": "6f6d6f64-7269-45f7-9361-5f76325f6c61",
       "Revision": "1.0"
     },
     "Size": {
@@ -43,77 +43,77 @@
   ],
   "FilesAttributes": [
     {
-      "Path": "omodri_sa_laas-F_Cu.gtl",
+      "Path": "omodri_sa_v2_laas-F_Cu.gtl",
       "FileFunction": "Copper,L1,Top",
       "FilePolarity": "Positive"
     },
     {
-      "Path": "omodri_sa_laas-In1_GND_Cu.g2",
+      "Path": "omodri_sa_v2_laas-In1_GND_Cu.g2",
       "FileFunction": "Copper,L2,Inr",
       "FilePolarity": "Positive"
     },
     {
-      "Path": "omodri_sa_laas-In2_sig_Cu.g3",
+      "Path": "omodri_sa_v2_laas-In2_sig_Cu.g3",
       "FileFunction": "Copper,L3,Inr",
       "FilePolarity": "Positive"
     },
     {
-      "Path": "omodri_sa_laas-In3_GND_Cu.g4",
+      "Path": "omodri_sa_v2_laas-In3_GND_Cu.g4",
       "FileFunction": "Copper,L4,Inr",
       "FilePolarity": "Positive"
     },
     {
-      "Path": "omodri_sa_laas-In4_sig_Cu.g5",
+      "Path": "omodri_sa_v2_laas-In4_sig_Cu.g5",
       "FileFunction": "Copper,L5,Inr",
       "FilePolarity": "Positive"
     },
     {
-      "Path": "omodri_sa_laas-In5_PWR_Cu.g6",
+      "Path": "omodri_sa_v2_laas-In5_PWR_Cu.g6",
       "FileFunction": "Copper,L6,Inr",
       "FilePolarity": "Positive"
     },
     {
-      "Path": "omodri_sa_laas-In6_GND_Cu.g7",
+      "Path": "omodri_sa_v2_laas-In6_GND_Cu.g7",
       "FileFunction": "Copper,L7,Inr",
       "FilePolarity": "Positive"
     },
     {
-      "Path": "omodri_sa_laas-B_Cu.gbl",
+      "Path": "omodri_sa_v2_laas-B_Cu.gbl",
       "FileFunction": "Copper,L8,Bot",
       "FilePolarity": "Positive"
     },
     {
-      "Path": "omodri_sa_laas-F_Paste.gtp",
+      "Path": "omodri_sa_v2_laas-F_Paste.gtp",
       "FileFunction": "SolderPaste,Top",
       "FilePolarity": "Positive"
     },
     {
-      "Path": "omodri_sa_laas-B_Paste.gbp",
+      "Path": "omodri_sa_v2_laas-B_Paste.gbp",
       "FileFunction": "SolderPaste,Bot",
       "FilePolarity": "Positive"
     },
     {
-      "Path": "omodri_sa_laas-F_Silkscreen.gto",
+      "Path": "omodri_sa_v2_laas-F_Silkscreen.gto",
       "FileFunction": "Legend,Top",
       "FilePolarity": "Positive"
     },
     {
-      "Path": "omodri_sa_laas-B_Silkscreen.gbo",
+      "Path": "omodri_sa_v2_laas-B_Silkscreen.gbo",
       "FileFunction": "Legend,Bot",
       "FilePolarity": "Positive"
     },
     {
-      "Path": "omodri_sa_laas-F_Mask.gts",
+      "Path": "omodri_sa_v2_laas-F_Mask.gts",
       "FileFunction": "SolderMask,Top",
       "FilePolarity": "Negative"
     },
     {
-      "Path": "omodri_sa_laas-B_Mask.gbs",
+      "Path": "omodri_sa_v2_laas-B_Mask.gbs",
       "FileFunction": "SolderMask,Bot",
       "FilePolarity": "Negative"
     },
     {
-      "Path": "omodri_sa_laas-Edge_Cuts.gm1",
+      "Path": "omodri_sa_v2_laas-Edge_Cuts.gm1",
       "FileFunction": "Profile",
       "FilePolarity": "Positive"
     }
