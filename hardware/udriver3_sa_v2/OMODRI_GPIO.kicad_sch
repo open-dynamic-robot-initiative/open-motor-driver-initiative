@@ -6,7 +6,7 @@
 	(paper "A4")
 	(title_block
 		(title "Open MOtor DRiver Initiative  - Single Axis (OMODRI_SA)")
-		(date "2025-03-06")
+		(date "2025-03-07")
 		(rev "1.0")
 		(company "LAAS/CNRS")
 	)
@@ -6425,6 +6425,10 @@
 		(uuid "5bc0b8f6-4d54-4f88-a202-1c71752b0657")
 	)
 	(no_connect
+		(at 63.5 59.69)
+		(uuid "5c321634-eb6c-444c-a330-847b8144b228")
+	)
+	(no_connect
 		(at 63.5 156.21)
 		(uuid "5d72649f-42cf-4120-a21e-2738e2d7a5bc")
 	)
@@ -6673,10 +6677,6 @@
 		(uuid "c31feff1-2541-41a8-8379-49521941eb5c")
 	)
 	(no_connect
-		(at 139.7 110.49)
-		(uuid "c538657f-6b55-49af-bc59-114b6c6ec7cb")
-	)
-	(no_connect
 		(at 139.7 100.33)
 		(uuid "c809e47b-8e2a-4dd3-9cf1-a3bae2342f0e")
 	)
@@ -6777,16 +6777,6 @@
 			(type default)
 		)
 		(uuid "04fa4c4c-64ab-4446-bd4d-58d48957ac08")
-	)
-	(wire
-		(pts
-			(xy 63.5 59.69) (xy 76.2 59.69)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "07cb64b8-32ea-4c55-845d-a012a6e72c89")
 	)
 	(wire
 		(pts
@@ -7177,6 +7167,16 @@
 			(type default)
 		)
 		(uuid "e65d9b29-2951-4a37-bee7-30a106701069")
+	)
+	(wire
+		(pts
+			(xy 139.7 110.49) (xy 152.4 110.49)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "efe65352-f18b-4d02-9ff9-51b9a9bfabbf")
 	)
 	(wire
 		(pts
@@ -7626,7 +7626,7 @@
 	)
 	(hierarchical_label "~{GPIO_ENC1_CSn}"
 		(shape output)
-		(at 76.2 59.69 0)
+		(at 152.4 110.49 0)
 		(effects
 			(font
 				(size 1.27 1.27)
