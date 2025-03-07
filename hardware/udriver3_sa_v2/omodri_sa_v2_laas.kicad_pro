@@ -38,8 +38,8 @@
         "other_text_upright": true,
         "pads": {
           "drill": 0.0,
-          "height": 2.7,
-          "width": 1.15
+          "height": 1.7,
+          "width": 0.9
         },
         "silk_line_width": 0.12,
         "silk_text_italic": false,
@@ -1001,11 +1001,11 @@
     "last_paths": {
       "gencad": "",
       "idf": "",
-      "netlist": "omodri_sa_v2_laas.net",
+      "netlist": "udriver3_sa_v2.net",
       "plot": "Fab/gerber/",
       "pos_files": "Fab/gerber/",
       "specctra_dsn": "",
-      "step": "omodri_sa_v2_laas.step",
+      "step": "udriver3_sa_v2.step",
       "svg": "",
       "vrml": ""
     },
