@@ -32,8 +32,6 @@ void HAL_CM_ini(const hal_cm_t* p_hal_cm)
 {
     if(p_hal_cm != NULL)
     {
-        // Initialize DMA
-        HAL_CM_uDMA_ini(p_hal_cm->p_udmaHandle);
         // Initialize CM_UART
         HAL_CM_UART_ini(p_hal_cm->p_uartHandle);
         // Initialize CM_CRC
@@ -42,6 +40,8 @@ void HAL_CM_ini(const hal_cm_t* p_hal_cm)
         HAL_CM_IPC_ini(p_hal_cm->p_ipcHandle);
         // Initialize  USB
         HAL_CM_USB_ini(p_hal_cm->p_usbHandle);
+        // Initialize DMA
+        HAL_CM_uDMA_ini(p_hal_cm->p_udmaHandle);
     }
 
     return;
@@ -66,7 +66,7 @@ void HAL_CM_uDMA_ini(const udma_cfg_t* p_udmaCfg)
         while(dmaChannel != UINT32_MAX)
         {
             if(dmaChannel < 32U)
-            /* Put the attributes in a known state for the uDMA software channel. */
+                /* Put the uDMA channel attributes in a known state. */
                 UDMA_disableChannelAttribute(UDMA_BASE, dmaChannel, UDMA_CH_ATTR_ALL);
             /* Sets the control parameters for a uDMA channel control structure. */
             UDMA_setChannelControlParams(UDMA_BASE, dmaChannel, p_udmaCfg->dmaCfg);
@@ -74,7 +74,11 @@ void HAL_CM_uDMA_ini(const udma_cfg_t* p_udmaCfg)
             UDMA_setChannelTransferParams(UDMA_BASE, dmaChannel, \
                                           p_udmaCfg->srcAddr, p_udmaCfg->dstAddr, \
                                           p_udmaCfg->transferMode, p_udmaCfg->transferSize);
-            if(dmaChannel < 32U)
+
+//            if(p_udmaCfg->dmaIntEnable)
+//                UDMA_registerInterrupt(UDMA_SW_INT, p_udmaCfg->p_dmaIntHandler);
+
+            if(p_udmaCfg->dmaChEnable && (dmaChannel < 32U))
                 /* Enables a uDMA channel for operation. */
                 UDMA_enableChannel(UDMA_BASE, dmaChannel);
             dmaChannel = (++p_udmaCfg)->dmaChannel;
@@ -93,13 +97,16 @@ void HAL_CM_UART_ini(const uart_cfg_t* p_uartCfg)
 {
     if(p_uartCfg != NULL)
     {
-        UART_setFIFOLevel(UART0_BASE, UART_FIFO_TX6_8, UART_FIFO_RX6_8);
         UART_enableFIFO(UART0_BASE);
+        UART_setFIFOLevel(UART0_BASE, p_uartCfg->txFifoLevel, p_uartCfg->rxFifoLevel);
         UART_disableLoopback(UART0_BASE);
+
+        // Configure UART & Enable the module.
+        UART_setConfig(UART0_BASE, UART_CLK_FREQ_NEW, p_uartCfg->baudRate, p_uartCfg->uartCfg);
         if(p_uartCfg->dmaEnable)
             UART_enableDMA(UART0_BASE, p_uartCfg->dmaFlags);
-        // Configure UART & Enable the module.
-        UART_setConfig(UART0_BASE, UART_CLK_FREQ, p_uartCfg->baudRate, p_uartCfg->uartCfg);
+        if(p_uartCfg->intEnable)
+            UART_enableInterrupt(UART0_BASE, p_uartCfg->intFlags);
         UART_clearRxError(UART0_BASE);
         // Enable the UART0 module.
         UART_enableModule(UART0_BASE);
@@ -122,10 +129,10 @@ void HAL_CM_IPC_ini(const ipc_cfg_t* p_ipcCfg)
         while(ipcType != IPC_TOTAL_NUM)
         {
             // Enable IPC interrupts
-            if(p_ipcCfg->ipcIntEnable)
-                IPC_registerInterrupt(ipcType, \
-                                      p_ipcCfg->ipcInt, \
-                                      p_ipcCfg->p_ipcIntHandler);
+//            if(p_ipcCfg->ipcIntEnable)
+//                IPC_registerInterrupt(ipcType, \
+//                                      p_ipcCfg->ipcInt, \
+//                                      p_ipcCfg->p_ipcIntHandler);
             // Initialize message queue
             if(p_ipcCfg->ipcMsgQEnable)
                 IPC_initMessageQueue(ipcType, \

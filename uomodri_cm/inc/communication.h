@@ -933,6 +933,7 @@ typedef struct __attribute__((__packed__)) __dbg_msg_tx_t__
     dbg_msg_t   dbg_msg[2];
     uint8_t     dbg_msg_cr;
     uint8_t     dbg_msg_nx;
+    bool        dbg_msg_nx_rdy;
 } dbg_msg_tx_t;
 
 //typedef struct __attribute__((__packed__)) __dbg_uart_addr_t__

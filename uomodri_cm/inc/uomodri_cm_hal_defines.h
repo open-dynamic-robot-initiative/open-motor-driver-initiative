@@ -22,9 +22,36 @@ extern tUSBBuffer usb_TxBuffer;
 /************************************************************************
  * FUNCTIONS DECLARATION
  ************************************************************************/
-extern __attribute__((interrupt)) void ipc_isr0(void);
+extern __attribute__((interrupt)) void ipc0_isr(void);
+extern __attribute__((interrupt)) void udma_isr(void);
 extern __attribute__((interrupt)) void UART_RX_IntHandler(void);
 extern __attribute__((interrupt)) void CM_USB0DeviceIntHandler(void);
+
+/************************************************************************
+ * UART TX DEFINES
+ ************************************************************************/
+#define UART_CONFIG                             (UART_CONFIG_WLEN_8 | \
+                                                 UART_CONFIG_STOP_ONE | \
+                                                 UART_CONFIG_PAR_NONE)
+#define UART_BAUDRATE                           (12e6)
+#define UART_DMA_CONFIG                         (UART_DMA_TX)
+// | UART_DMA_RX,
+// .intFlags          = UART_INT_DMATX | UART_INT_TX, //UART_INT_DMARX | UART_INT_TX | UART_INT_RX,
+//.dmaEnable         = true,
+// .intEnable         = true,
+// .p_fnHandler       = NULL,//UART_RX_IntHandler(),
+#define UART_DEF                                { \
+                                                    .uartCfg            = UART_CONFIG, \
+                                                    .baudRate           = UART_BAUDRATE, \
+                                                    .txFifoLevel        = UART_FIFO_TX6_8, \
+                                                    .rxFifoLevel        = UART_FIFO_RX6_8, \
+                                                    .dmaEnable          = true, \
+                                                    .dmaFlags           = UART_DMA_CONFIG, \
+                                                    .intEnable          = false, \
+                                                    .intFlags           = 0, \
+                                                }
+
+//                                                    .p_uartIntHandler   = NULL,
 
 /************************************************************************
  * DMA DEFINES
@@ -43,15 +70,16 @@ extern __attribute__((interrupt)) void CM_USB0DeviceIntHandler(void);
 // },
 
 #define DMA_UART_TX_PRI_CHANNEL                 (UDMA_CHANNEL_UART0_TX | UDMA_PRI_SELECT)
-#define DMA_UART_TX_PRI_CONFIG                  (UDMA_SIZE_8 | UDMA_SRC_INC_8 | UDMA_DST_INC_NONE | UDMA_ARB_1 | UDMA_NEXT_USEBURST)
-#define DMA_UART_TX_PRI_SRC_ADDR                ((uint8_t *) &dbg_msg_tx.dbg_msg[0])
-#define DMA_UART_TX_PRI_DST_ADDR                ((uint8_t *) (UART0_BASE + UART_O_DR))
+#define DMA_UART_TX_PRI_CONFIG                  (UDMA_SIZE_8 | UDMA_SRC_INC_8 | UDMA_DST_INC_NONE | UDMA_ARB_1)
+// | UDMA_NEXT_USEBURST)
+#define DMA_UART_TX_PRI_SRC_ADDR                ((void *) &dbg_msg_tx.dbg_msg[0])
+#define DMA_UART_TX_PRI_DST_ADDR                ((void *) (UART0_BASE + UART_O_DR))
 #define DMA_UART_TX_PRI_TRANSFER_SIZE           (sizeof(dbg_msg_t))
 
 #define DMA_UART_TX_ALT_CHANNEL                 (UDMA_CHANNEL_UART0_TX | UDMA_ALT_SELECT)
-#define DMA_UART_TX_ALT_CONFIG                  (UDMA_SIZE_8 | UDMA_SRC_INC_8 | UDMA_DST_INC_NONE | UDMA_ARB_1 | UDMA_NEXT_USEBURST)
-#define DMA_UART_TX_ALT_SRC_ADDR                ((uint8_t *) &dbg_msg_tx.dbg_msg[1])
-#define DMA_UART_TX_ALT_DST_ADDR                ((uint8_t *) (UART0_BASE + UART_O_DR))
+#define DMA_UART_TX_ALT_CONFIG                  (UDMA_SIZE_8 | UDMA_SRC_INC_8 | UDMA_DST_INC_NONE | UDMA_ARB_1)// | UDMA_NEXT_USEBURST)
+#define DMA_UART_TX_ALT_SRC_ADDR                ((void *) &dbg_msg_tx.dbg_msg[1])
+#define DMA_UART_TX_ALT_DST_ADDR                ((void *) (UART0_BASE + UART_O_DR))
 #define DMA_UART_TX_ALT_TRANSFER_SIZE           (sizeof(dbg_msg_t))
 
 #define DMA_UART_TX_PRI_DEF                     { \
@@ -59,17 +87,24 @@ extern __attribute__((interrupt)) void CM_USB0DeviceIntHandler(void);
                                                     .dmaCfg         = DMA_UART_TX_PRI_CONFIG, \
                                                     .srcAddr        = DMA_UART_TX_PRI_SRC_ADDR, \
                                                     .dstAddr        = DMA_UART_TX_PRI_DST_ADDR, \
-                                                    .transferMode   = UDMA_MODE_PINGPONG, \
+                                                    .transferMode   = UDMA_MODE_BASIC, \
                                                     .transferSize   = DMA_UART_TX_PRI_TRANSFER_SIZE, \
+                                                    .dmaChEnable    = true, \
                                                 }
 #define DMA_UART_TX_ALT_DEF                     { \
                                                     .dmaChannel     = DMA_UART_TX_ALT_CHANNEL, \
                                                     .dmaCfg         = DMA_UART_TX_ALT_CONFIG, \
                                                     .srcAddr        = DMA_UART_TX_ALT_SRC_ADDR, \
                                                     .dstAddr        = DMA_UART_TX_ALT_DST_ADDR, \
-                                                    .transferMode   = UDMA_MODE_PINGPONG, \
+                                                    .transferMode   = UDMA_MODE_BASIC, \
                                                     .transferSize   = DMA_UART_TX_ALT_TRANSFER_SIZE, \
+                                                    .dmaChEnable    = false, \
                                                 }
+//                                                    .dmaIntEnable   = true, \
+//                                                    .p_dmaIntHandler= &dma_isr, \
+
+//.dmaIntEnable   = true, \
+//.p_dmaIntHandler= &dma_isr, \
 
 /************************************************************************
  * IPC DEFINES
@@ -79,8 +114,25 @@ extern __attribute__((interrupt)) void CM_USB0DeviceIntHandler(void);
  * @{
  */
 #define IPC_SYNC_FLAG                           IPC_FLAG31
-#define IPC_CPU1_TO_CM_FLAG                     IPC_FLAG0
+
 #define IPC_CM_TO_CPU1_FLAG                     IPC_FLAG0
+
+#define IPC_CPU1_TO_CM_DIR                      IPC_CM_L_CPU1_R
+#define IPC_CPU1_TO_CM_FLAG                     IPC_FLAG0
+//#define IPC_CPU1_TO_CM_IT                       IPC_INT0
+
+#define IPC_CPU1_TO_CM_DEF                      { \
+                                                    .ipcType        = IPC_CPU1_TO_CM_DIR, \
+                                                    .p_ipcMsgQ      = NULL, \
+                                                    .ipcIntMsgQL    = 0, \
+                                                    .ipcIntMsgQR    = 0, \
+                                                    .ipcFlag        = IPC_CPU1_TO_CM_FLAG, \
+                                                    .ipcMsgQEnable  = false, \
+                                                }
+//                                                    .ipcIntEnable   = true, \
+//.ipcInt         = IPC_CPU1_TO_CM_IT, \
+//.p_ipcIntHandler= &ipc0_isr,
+
 /**
  * @}
  */

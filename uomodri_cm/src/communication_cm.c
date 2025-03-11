@@ -374,6 +374,7 @@ void COM_msgDbgTx(volatile debug_t* p_addr, dbg_msg_t* p_msg)
     p_msg->pos  = p_addr->enc_thetaAbsolute;
     p_msg->vel  = p_addr->enc_speed_speedMech;
     p_msg->crc  = COM_crc8Fast(0, (uint8_t *)p_msg, DBG_SIZE_MSG);
+
     return;
 }
 

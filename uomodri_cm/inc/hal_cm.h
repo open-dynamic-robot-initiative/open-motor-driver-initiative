@@ -24,11 +24,14 @@ typedef struct __UART_CFG_t__
 {
     uint32_t    uartCfg;
     uint32_t    baudRate;
+    uint32_t    txFifoLevel;
+    uint32_t    rxFifoLevel;
     uint32_t    dmaFlags;
+    uint32_t    intFlags;
 //    uint32_t    intFlags;
     bool        dmaEnable;
-//    bool        intEnable;
-//    void        (*p_fnHandler)(void);
+    bool        intEnable;
+//    void        (*p_uartIntHandler)(void);
 } uart_cfg_t;
 
 /**
@@ -44,6 +47,9 @@ typedef struct __UDMA_CFG_t__
     void*       dstAddr;
     uint32_t    transferMode;
     uint32_t    transferSize;
+    bool        dmaChEnable;
+//    bool        dmaIntEnable;
+//    void        (*p_dmaIntHandler)(void);
 } udma_cfg_t;
 
 /**
@@ -57,8 +63,8 @@ typedef struct __IPC_CFG_t__
     const uint32_t                  ipcIntMsgQL;
     const uint32_t                  ipcIntMsgQR;
     const uint32_t                  ipcFlag;
-    const uint32_t                  ipcInt;
-    void                            (*p_ipcIntHandler)(void);
+//    const uint32_t                  ipcInt;
+//    void                            (*p_ipcIntHandler)(void);
     const bool                      ipcMsgQEnable;
     const bool                      ipcIntEnable;
 } ipc_cfg_t;

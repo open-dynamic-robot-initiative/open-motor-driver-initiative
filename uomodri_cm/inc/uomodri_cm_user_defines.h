@@ -29,6 +29,9 @@
 #define USB_BUS_ENABLE                          (0)
 #define UART_BUS_ENABLE                         (1)
 
+#define CM_CLK_FREQ_NEW                         (120000000U)
+#define UART_CLK_FREQ_NEW                       CM_CLK_FREQ_NEW
+
 /***********************************************************************
  * GPIO DEBUG DEFINES
  ***********************************************************************/
