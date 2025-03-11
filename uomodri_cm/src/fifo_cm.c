@@ -87,19 +87,10 @@ uint16_t FIFO_read(Fifo_TypeDef* p_fifo, void* p_dest)
         p_fifo->accessFlag  = LOCKED;
         memcpy(p_dest, p_fifo->p_msgRead, p_fifo->elemSize);
         p_fifo->p_msgRead   = (void *)((uint32_t)p_fifo->p_msgRead + (uint32_t)p_fifo->elemSize);
-        if(p_fifo->p_msgRead >= p_fifo->p_maxAddr)
-            p_fifo->p_msgRead   = p_fifo->p_baseAddr;
-//        p_fifo->p_msgRead   = (p_fifo->p_msgRead >= p_fifo->p_maxAddr)  ? (p_fifo->p_baseAddr)  : (p_fifo->p_msgRead);
+        p_fifo->p_msgRead   = (p_fifo->p_msgRead >= p_fifo->p_maxAddr) ? (p_fifo->p_baseAddr) : (p_fifo->p_msgRead);
         p_fifo->elemCnt--;
-        if(p_fifo->elemCnt <= 0)
-        {
-            p_fifo->elemCnt     = 0;
-            p_fifo->statusFlag  = EMPTY;
-        }
-        else
-            p_fifo->statusFlag  = DATA;
-//        p_fifo->elemCnt     = ((--p_fifo->elemCnt) <= 0)                ? (0)                   : (p_fifo->elemCnt);
-//        p_fifo->statusFlag  = (p_fifo->elemCnt <= 0)                    ? (EMPTY)               : (DATA);
+        p_fifo->elemCnt     = (p_fifo->elemCnt <= 0) ? (0)      : (p_fifo->elemCnt);
+        p_fifo->statusFlag  = (p_fifo->elemCnt <= 0) ? (EMPTY)  : (DATA);
         read_done           = true;
         p_fifo->accessFlag  = UNLOCKED;
     }
@@ -123,19 +114,10 @@ bool FIFO_write(Fifo_TypeDef* p_fifo, void* p_src)
         p_fifo->accessFlag  = LOCKED;
         memcpy(p_fifo->p_msgWrite, p_src, p_fifo->elemSize);
         p_fifo->p_msgWrite  = (void *)((uint32_t)p_fifo->p_msgWrite + (uint32_t)p_fifo->elemSize);
-        if(p_fifo->p_msgWrite >= p_fifo->p_maxAddr)
-            p_fifo->p_msgWrite  = p_fifo->p_baseAddr;
-//        p_fifo->p_msgWrite  = (p_fifo->p_msgWrite >= p_fifo->p_maxAddr) ? (p_fifo->p_baseAddr)  : (p_fifo->p_msgWrite);
+        p_fifo->p_msgWrite  = (p_fifo->p_msgWrite >= p_fifo->p_maxAddr) ? (p_fifo->p_baseAddr) : (p_fifo->p_msgWrite);
         p_fifo->elemCnt++;
-        if(p_fifo->elemCnt >= p_fifo->elemNb)
-        {
-            p_fifo->elemCnt     = p_fifo->elemNb;
-            p_fifo->statusFlag  = FULL;
-        }
-        else
-            p_fifo->statusFlag  = DATA;
-//        p_fifo->elemCnt     = ((++p_fifo->elemCnt) >= p_fifo->elemNb)   ? (p_fifo->elemNb)      : (p_fifo->elemCnt);
-//        p_fifo->statusFlag  = (p_fifo->elemCnt >= p_fifo->elemNb)       ? (FULL)                : (DATA);
+        p_fifo->elemCnt     = (p_fifo->elemCnt >= p_fifo->elemNb) ? (p_fifo->elemNb): (p_fifo->elemCnt);
+        p_fifo->statusFlag  = (p_fifo->elemCnt >= p_fifo->elemNb) ? (FULL)          : (DATA);
         read_done           = true;
         p_fifo->accessFlag  = UNLOCKED;
     }
