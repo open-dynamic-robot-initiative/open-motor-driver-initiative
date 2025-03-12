@@ -15,7 +15,7 @@
 /************************************************************************
  * GLOBAL VARIABLES
  ************************************************************************/
-extern dbg_msg_tx_t dbg_msg_tx;
+extern dbg_msg_t dbg_msg_tx;
 extern tUSBDCDCDevice usb_CDCDevice;
 extern tUSBBuffer usb_RxBuffer;
 extern tUSBBuffer usb_TxBuffer;
@@ -38,7 +38,7 @@ static const uart_cfg_t cm_uartCfg[] =
 static const udma_cfg_t cm_udmaCfgList[] =
 {
  DMA_UART_TX_PRI_DEF,
- DMA_UART_TX_ALT_DEF,
+// DMA_UART_TX_ALT_DEF,
  {.dmaChannel       = UINT32_MAX},
 };
 

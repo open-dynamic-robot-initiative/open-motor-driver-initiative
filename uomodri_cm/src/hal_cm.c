@@ -66,8 +66,12 @@ void HAL_CM_uDMA_ini(const udma_cfg_t* p_udmaCfg)
         while(dmaChannel != UINT32_MAX)
         {
             if(dmaChannel < 32U)
+            {
                 /* Put the uDMA channel attributes in a known state. */
                 UDMA_disableChannelAttribute(UDMA_BASE, dmaChannel, UDMA_CH_ATTR_ALL);
+                /* Enables attributes of a uDMA channel. */
+                UDMA_enableChannelAttribute(UDMA_BASE, dmaChannel, p_udmaCfg->dmaAttribute);
+            }
             /* Sets the control parameters for a uDMA channel control structure. */
             UDMA_setChannelControlParams(UDMA_BASE, dmaChannel, p_udmaCfg->dmaCfg);
             /* Sets the transfer parameters for a uDMA channel control structure. */
@@ -106,7 +110,10 @@ void HAL_CM_UART_ini(const uart_cfg_t* p_uartCfg)
         if(p_uartCfg->dmaEnable)
             UART_enableDMA(UART0_BASE, p_uartCfg->dmaFlags);
         if(p_uartCfg->intEnable)
+        {
+            UART_clearInterruptStatus(UART0_BASE, UART_INT_ALL);
             UART_enableInterrupt(UART0_BASE, p_uartCfg->intFlags);
+        }
         UART_clearRxError(UART0_BASE);
         // Enable the UART0 module.
         UART_enableModule(UART0_BASE);
@@ -210,6 +217,7 @@ void HAL_INT_ini(const int_cfg_t* p_intCfg)
     if(p_intCfg != NULL)
     {
         uint32_t intNum = p_intCfg->intNum;
+        uint32_t intCnt = 0;
 
         // Clear & set IT flags & enable IT bits in a known state.
         while(intNum != UINT32_MAX)
@@ -221,9 +229,11 @@ void HAL_INT_ini(const int_cfg_t* p_intCfg)
                 Interrupt_enable(p_intCfg->intNum);
 
             intNum = (++p_intCfg)->intNum;
+            intCnt++;
         }
 
-        Interrupt_enableInProcessor();
+        if(intCnt)
+            Interrupt_enableInProcessor();
     }
 
     return;

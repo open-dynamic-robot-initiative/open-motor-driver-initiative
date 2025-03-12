@@ -74,8 +74,9 @@ void FIFO_deInit(Fifo_TypeDef* p_fifo)
 
 /**
  * \brief   Read data from the \a FIFO structure.
- * \param   *p_fifo     Pointer on a \a Fifo_TypeDef structure containing the elements of the \a FIFO.
- * \param   num     Number of elements to be read. Increment of the Read \a FIFO pointer.
+ * \param   *p_fifo Pointer on a \a Fifo_TypeDef structure containing the elements of the \a FIFO.
+ * \param   *p_dest Pointer on the destination structure.
+ * \return  Has read access been done?
  */
 uint16_t FIFO_read(Fifo_TypeDef* p_fifo, void* p_dest)
 {
@@ -100,9 +101,9 @@ uint16_t FIFO_read(Fifo_TypeDef* p_fifo, void* p_dest)
 
 /**
  * \brief   Add data from the \a FIFO structure.
- * \param   *fifo   Pointer on a \a Fifo_TypeDef structure containing the elements of the current \a FIFO.
- * \param   *msg    Pointer on buffered array to save.
- * \param   num     Number of elements to be Written. Increment of the Write \a FIFO pointer.
+ * \param   *p_fifo Pointer on a \a Fifo_TypeDef structure containing the elements of the current \a FIFO.
+ * \param   *p_src  Pointer on buffered array to save.
+ * \return  Has write access been done?
  */
 bool FIFO_write(Fifo_TypeDef* p_fifo, void* p_src)
 {
