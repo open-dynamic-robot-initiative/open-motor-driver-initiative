@@ -30,37 +30,43 @@ uint32_t COM_vCRC32(uint16_t*, uint16_t);
  */
 void COM_msgExtract(mst2slv_msg_t* p_msg, cmd_t* p_cmd_m1, cmd_t* p_cmd_m2)
 {
-    int32_t pos_s32                     = (int32_t)FUS_16_TO_32(p_msg->position[MOTOR_1].u16_msb, p_msg->position[MOTOR_1].u16_lsb);
-    cmd_reg_u* p_cmd_reg                = &p_cmd_m1->cmdField;
-    p_cmd_m1->posRef                    = (float32_t)(pos_s32                   * POSITION_LSB      * FM_ROUND2RAD);
-    p_cmd_m1->velRef                    = (float32_t)(p_msg->velocity[MOTOR_1]  * VELOCITY_LSB      * FM_KRPM2RADPS);
-    p_cmd_m1->iqff                      = (float32_t)(p_msg->current[MOTOR_1]   * IQ_LSB);
-    p_cmd_m1->kpCoeff                   = (float32_t)(p_msg->kpCoeff[MOTOR_1]   * KP_LSB            * FM_RAD2ROUND);
-    p_cmd_m1->kdCoeff                   = (float32_t)(p_msg->kdCoeff[MOTOR_1]   * KD_LSB            * FM_RADPS2KRPM);
+    // TODO(rafael): Make sure the alphas are in the correct units, A / rad and A / (rad/s):
+    int32_t dim = 0;
+
+    // Extract motor 1 command:
+    for (dim = 0; dim < ROBOT_STATE_DIMS; dim++)
+        p_cmd_m1->linCtrlAlpha[dim] = (float32_t)(p_msg->linCtrlAlphas[0][dim] * ALPHA_LSB);
+
+    p_cmd_m1->linCtrlBeta = (float32_t)(p_msg->linCtrlBetas[0] * BETA_LSB);
+
     float32_t isat                      = (float32_t)(MSB_16(p_msg->iSat)       * CURRENT_SAT_LSB);
     p_cmd_m1->iSat                      = (isat < MOTOR1_CURRENT_CMD_SAT_MAX)   ? (isat)            : (MOTOR1_CURRENT_CMD_SAT_MAX);
     p_cmd_m1->iSat                      = (p_cmd_m1->iSat > 0.0f)               ? (p_cmd_m1->iSat)  : (MOTOR1_CURRENT_CMD_SAT_MAX);
+
     p_cmd_m1->timeoutRef                = (uint16_t)p_msg->mode.TIMEOUT;
     p_cmd_m1->cptTimeout                = 0U;
     p_cmd_m1->index                     = p_msg->index;
+
+    cmd_reg_u* p_cmd_reg                = &p_cmd_m1->cmdField;
     p_cmd_reg->encOffsetEnable          = (bool_t)p_msg->mode.EI1OC;
     p_cmd_reg->rollOverEnable           = (bool_t)p_msg->mode.EPRE;
     p_cmd_reg->motorEnable              = (bool_t)p_msg->mode.EM1;
     p_cmd_reg->systemEnable             = (bool_t)p_msg->mode.ES;
 
-    pos_s32                             = (int32_t)FUS_16_TO_32(p_msg->position[MOTOR_2].u16_msb, p_msg->position[MOTOR_2].u16_lsb);
-    p_cmd_reg                           = &p_cmd_m2->cmdField;
-    p_cmd_m2->posRef                    = (float32_t)(pos_s32                   * POSITION_LSB      * FM_ROUND2RAD);
-    p_cmd_m2->velRef                    = (float32_t)(p_msg->velocity[MOTOR_2]  * VELOCITY_LSB      * FM_KRPM2RADPS);
-    p_cmd_m2->iqff                      = (float32_t)(p_msg->current[MOTOR_2]   * IQ_LSB);
-    p_cmd_m2->kpCoeff                   = (float32_t)(p_msg->kpCoeff[MOTOR_2]   * KP_LSB            * FM_RAD2ROUND);
-    p_cmd_m2->kdCoeff                   = (float32_t)(p_msg->kdCoeff[MOTOR_2]   * KD_LSB            * FM_RADPS2KRPM);
+    // Extract motor 2 command:
+    for (dim = 0; dim < ROBOT_STATE_DIMS; dim++)
+        p_cmd_m2->linCtrlAlpha[dim] = (float32_t)(p_msg->linCtrlAlphas[1][dim] * ALPHA_LSB);
+
+    p_cmd_m2->linCtrlBeta = (float32_t)(p_msg->linCtrlBetas[1] * BETA_LSB);
+
     isat                                = (float32_t)(LSB_16(p_msg->iSat)       * CURRENT_SAT_LSB);
     p_cmd_m2->iSat                      = (isat < MOTOR2_CURRENT_CMD_SAT_MAX)   ? (isat)            : (MOTOR2_CURRENT_CMD_SAT_MAX);
     p_cmd_m2->iSat                      = (p_cmd_m2->iSat > 0.0f)               ? (p_cmd_m2->iSat)  : (MOTOR2_CURRENT_CMD_SAT_MAX);
     p_cmd_m2->timeoutRef                = (uint16_t)p_msg->mode.TIMEOUT;
     p_cmd_m2->cptTimeout                = 0U;
     p_cmd_m2->index                     = p_msg->index;
+
+    p_cmd_reg                           = &p_cmd_m2->cmdField;
     p_cmd_reg->encOffsetEnable          = (bool_t)p_msg->mode.EI2OC;
     p_cmd_reg->rollOverEnable           = (bool_t)p_msg->mode.EPRE;
     p_cmd_reg->motorEnable              = (bool_t)p_msg->mode.EM2;
@@ -141,14 +147,13 @@ void COM_msgCreate(motor_t* p_motor, slv2mst_msg_t* p_msg, uint32_t* p_tmr_cnt)
  */
 void COM_initCmdStruct(cmd_t* p_cmd, uint16_t motor_id)
 {
-    p_cmd->posRef               = 0.0f;
-    p_cmd->velRef               = 0.0f;
-    p_cmd->iqff                 = 0.0f;
-    p_cmd->kpCoeff              = 0.0f;
-    p_cmd->kdCoeff              = 0.0f;
+    p_cmd->linCtrlBeta          = 0.0f;
+    memset(p_cmd->linCtrlAlpha, 0, ROBOT_STATE_DIMS * sizeof(float32_t));
+
     p_cmd->iSat                 = (motor_id == MOTOR_1) ? \
             (MOTOR1_CURRENT_CMD_SAT_MAX) : \
             (MOTOR2_CURRENT_CMD_SAT_MAX);
+
     p_cmd->timeoutRef           = 0U;
     p_cmd->cptTimeout           = 0U;
     p_cmd->index                = 0U;

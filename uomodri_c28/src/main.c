@@ -6,6 +6,7 @@
 /***********************************************************************
  * INCLUDES
  ***********************************************************************/
+#include "string.h"
 #include "driverlib.h"
 #include "device.h"
 #include "board.h"
@@ -34,6 +35,7 @@
 void main(void);
 static void MCU_ini(void);
 void MOT_initStruct(motor_t*, uint16_t);
+void STATE_initStruct(robot_state_t* p_robot_state);
 void COM_muxCtrl(com_bus_e);
 void CLA_adcCalibration(void);
 void DMA_configModeUpdate(uint32_t, uint32_t);
@@ -71,8 +73,9 @@ static const int_cfg_t interruptList[] =
 /***********************************************************************
  * VARIABLES IN CLA SPACE MEMORY
  ***********************************************************************/
-extern motor_t  motor_m1;
-extern motor_t  motor_m2;
+extern motor_t        motor_m1;
+extern motor_t        motor_m2;
+extern robot_state_t  recv_robot_state;
 
 /***********************************************************************
  * VARIABLES IN CPU TO CLA SPACE MEMORY
@@ -244,6 +247,7 @@ void main(void)
     // Initialization of the shared structure used by CLA & C28 for Motor_1 & Motor_2
     MOT_initStruct(&motor_m1, MOTOR_1);
     MOT_initStruct(&motor_m2, MOTOR_2);
+    STATE_initStruct(&recv_robot_state);
     // Hardware Abstraction Layer initialization.
     HAL_ini(&hal);
     // Initialization the command structure for CLA.
@@ -444,11 +448,14 @@ void DBG_copyStruct(motor_t* p_motor, debug_t* p_dbg)
     p_dbg->enc_speed_speedElec      = p_motor->foc.enc.speed.speedElec;     /*!< Electrical output speed (pole pairs integration) - [rad/s] */
     p_dbg->enc_speed_theta          = p_motor->foc.enc.speed.theta[0];      /*!< Angular position of rotor - [pu] */
 
-    p_dbg->cmd_posRef               = p_motor->foc.cmd.posRef;
-    p_dbg->cmd_velRef               = p_motor->foc.cmd.velRef;
-    p_dbg->cmd_iqff                 = p_motor->foc.cmd.iqff;
-    p_dbg->cmd_kpCoeff              = p_motor->foc.cmd.kpCoeff;
-    p_dbg->cmd_kdCoeff              = p_motor->foc.cmd.kdCoeff;
+    // TODO(rafael): Add debugging information for linear controller calculations & commands.
+
+//    p_dbg->cmd_posRef               = p_motor->foc.cmd.posRef;
+//    p_dbg->cmd_velRef               = p_motor->foc.cmd.velRef;
+//    p_dbg->cmd_iqff                 = p_motor->foc.cmd.iqff;
+//    p_dbg->cmd_kpCoeff              = p_motor->foc.cmd.kpCoeff;
+//    p_dbg->cmd_kdCoeff              = p_motor->foc.cmd.kdCoeff;
+
     p_dbg->cmd_iSat                 = p_motor->foc.cmd.iSat;
     p_dbg->cmd_cptTimeout           = p_motor->foc.cmd.cptTimeout;
     p_dbg->cmd_index                = p_motor->foc.cmd.index;
@@ -482,10 +489,10 @@ void DBG_copyStruct(motor_t* p_motor, debug_t* p_dbg)
     p_dbg->piIq_integral            = p_motor->foc.piIq.integral;           /*!< Integral term partial computation */
     p_dbg->piIq_out                 = p_motor->foc.piIq.out;                /*!< Controller output */
 
-    p_dbg->pdPosVel_errTheta        = p_motor->foc.pdPosVel.errTheta;           /*!< Error position */
-    p_dbg->pdPosVel_errSpeed        = p_motor->foc.pdPosVel.errSpeed;           /*!< Error speed */
-    p_dbg->pdPosVel_derivative      = p_motor->foc.pdPosVel.derivative;         /*!< Derivative term partial computation */
-    p_dbg->pdPosVel_out             = p_motor->foc.pdPosVel.out;                /*!< Controller output */
+//    p_dbg->pdPosVel_errTheta        = p_motor->foc.pdPosVel.errTheta;           /*!< Error position */
+//    p_dbg->pdPosVel_errSpeed        = p_motor->foc.pdPosVel.errSpeed;           /*!< Error speed */
+//    p_dbg->pdPosVel_derivative      = p_motor->foc.pdPosVel.derivative;         /*!< Derivative term partial computation */
+//    p_dbg->pdPosVel_out             = p_motor->foc.pdPosVel.out;                /*!< Controller output */
 
     p_dbg->itCnt                    = p_motor->itCnt;          /*!< Event counter incrementing on every IT call */
     p_dbg->motor_id                 = p_motor->id;             /*!< Motor identification */
@@ -654,11 +661,9 @@ void MOT_initStruct(motor_t* p_motor, uint16_t motor_id)
     p_motor->foc.enc.speed.theta[NEW]                   = 0.0f;
     p_motor->foc.enc.speed.theta[OLD]                   = 0.0f;
     //--- MOTOR COMMAND STRUCTURE -----------------------------------------------
-    p_motor->foc.cmd.posRef                             = 0.0f;
-    p_motor->foc.cmd.velRef                             = 0.0f;
-    p_motor->foc.cmd.iqff                               = 0.0f;
-    p_motor->foc.cmd.kpCoeff                            = 0.0f;
-    p_motor->foc.cmd.kdCoeff                            = 0.0f;
+    memset(p_motor->foc.cmd.linCtrlAlpha, 0, sizeof(float32_t) * ROBOT_STATE_DIMS);
+    p_motor->foc.cmd.linCtrlBeta                        = 0.0f;
+    p_motor->foc.cmd.iSat                               = 0.0f;
     p_motor->foc.cmd.timeoutRef                         = 0U;
     p_motor->foc.cmd.cptTimeout                         = 0U;
     p_motor->foc.cmd.index                              = 0U;
@@ -687,19 +692,34 @@ void MOT_initStruct(motor_t* p_motor, uint16_t motor_id)
     p_motor->foc.piIq.integral                          = 0.0f;
     p_motor->foc.piIq.ff                                = 0.0f;
     p_motor->foc.piIq.out                               = 0.0f;
-    //--- FOC - Initialize PD controller (Speed & position) ---------------------
-    p_motor->foc.pdPosVel.p_fbTheta.ptr                 = (float32_t *)(&p_motor->foc.enc.thetaAbsolute);
-    p_motor->foc.pdPosVel.p_setTheta.ptr                = (float32_t *)(&p_motor->foc.cmd.posRef);
-    p_motor->foc.pdPosVel.errTheta                      = 0.0f;
-    p_motor->foc.pdPosVel.p_fbSpeed.ptr                 = (float32_t *)(&p_motor->foc.enc.speed.speedMech[0]);
-    p_motor->foc.pdPosVel.p_setSpeed.ptr                = (float32_t *)(&p_motor->foc.cmd.velRef);
-    p_motor->foc.pdPosVel.errSpeed                      = 0.0f;
-    p_motor->foc.pdPosVel.p_kp.ptr                      = (float32_t *)(&p_motor->foc.cmd.kpCoeff);
-    p_motor->foc.pdPosVel.p_kd.ptr                      = (float32_t *)(&p_motor->foc.cmd.kdCoeff);
-    p_motor->foc.pdPosVel.derivative                    = 0.0f;
-    p_motor->foc.pdPosVel.p_ff.ptr                      = (float32_t *)(&p_motor->foc.cmd.iqff);
-    p_motor->foc.pdPosVel.p_sat.ptr                     = (float32_t *)(&p_motor->foc.cmd.iSat);
-    p_motor->foc.pdPosVel.out                           = 0.0f;
+
+    //--- FOC - Initialize linear controller ------------------------------------
+    p_motor->foc.linControl.p_alpha.ptr                  = (float32_t *)(&p_motor->foc.cmd.linCtrlAlpha[0]);
+    p_motor->foc.linControl.p_beta.ptr                   = (float32_t *)(&p_motor->foc.cmd.linCtrlBeta);
+    p_motor->foc.linControl.p_iSat.ptr                   = (float32_t *)(&p_motor->foc.cmd.iSat);
+
+    // TODO(rafael): The CLA won't write to the other state when calculating a motor's Iq, right?
+    //               Still, this is ugly.
+
+    // TODO(rafael): When `recv_robot_state` is updated by C28, make sure the CLA doesn't read
+    //               garbage, as we do with the command!
+
+    // TODO(rafael): Document what's happening here! For now, state outside this board will be const. = 0.0f.
+    int32_t dim = 0;
+    for (dim = 0; dim < ROBOT_STATE_DIMS; dim++)
+        p_motor->foc.linControl.p_state[dim].ptr = (float32_t *)(&recv_robot_state.state[dim]);
+
+    // Positions:
+    p_motor->foc.linControl.p_state[2*DRIVER_ID].ptr         = (float32_t *)(&motor_m1.foc.enc.thetaAbsolute);
+    p_motor->foc.linControl.p_state[2*DRIVER_ID + 1].ptr     = (float32_t *)(&motor_m2.foc.enc.thetaAbsolute);
+
+    // Velocities:
+    p_motor->foc.linControl.p_state[2*CONNECTED_DRIVER_COUNT + 2*DRIVER_ID].ptr     = \
+            (float32_t *)(&motor_m1.foc.enc.speed.speedMech[0]);
+
+    p_motor->foc.linControl.p_state[2*CONNECTED_DRIVER_COUNT + 2*DRIVER_ID + 1].ptr = \
+            (float32_t *)(&motor_m2.foc.enc.speed.speedMech[0]);
+
     //--- FSM motor initial state -----------------------------------------------
     p_motor->state                                      = MOTOR_STATE_IDLE;
     //--- Error message ---------------------------------------------------------
@@ -709,6 +729,19 @@ void MOT_initStruct(motor_t* p_motor, uint16_t motor_id)
     //---------------------------------------------------------------------------
     //---------------------------------------------------------------------------
     return;
+}
+
+/**
+ * TODO(rafael)
+ * @brief
+ * @param[in]   *p_robot_state
+ */
+void STATE_initStruct(robot_state_t* p_robot_state)
+{
+    // TODO(rafael): Do we need this? No NOINIT in linker file.
+    int32_t dim = 0;
+    for (dim = 0; dim < ROBOT_STATE_DIMS; dim++)
+        p_robot_state->state[dim] = 0.0f;
 }
 
 #if (USE_UOMODRI_REV >= USE_UOMODRI_V3)

@@ -54,6 +54,12 @@ extern "C" {
 #define MOTOR_STATE_ERROR           (0xFFFF)
 
 /***********************************************************************
+ * LINEAR CONTROL CONSTANTS
+ ***********************************************************************/
+#define CONNECTED_DRIVER_COUNT       (1)                            /*!< Total number of interconnected motor drivers (incl. this one) */
+#define ROBOT_STATE_DIMS             (4 * CONNECTED_DRIVER_COUNT)   /*!< State dimension count (positions and velocities of all connected motors) */
+#define DRIVER_ID                    (0)                            /*!< ID (0-indexed) of this motor driver */
+/***********************************************************************
  * ENUM TYPES
  ***********************************************************************/
 /**
@@ -231,24 +237,17 @@ typedef struct __pi_t__
 } pi_t;
 
 /**
- * @struct  pd_t
- * @brief   Proportional-Derivative controller structure for FOC algorithm.
+ * @struct
+ * @brief   TODO(rafael): Document!
  */
-typedef struct __pd_t__
+typedef struct __linear_ctrl_t__
 {
-    ptr_32b_u           p_fbTheta;          /*!< Pointer on the feedback position */
-    ptr_32b_u           p_setTheta;         /*!< Pointer on the setpoint position */
-    ptr_32b_u           p_fbSpeed;          /*!< Pointer on the feedback speed */
-    ptr_32b_u           p_setSpeed;         /*!< Pointer on the Set point speed */
-    ptr_32b_u           p_kp;               /*!< Pointer on the Proportional gain */
-    ptr_32b_u           p_kd;               /*!< Pointer on the Derivative gain */
-    ptr_32b_u           p_ff;               /*!< Pointer on the feed-forward term */
-    ptr_32b_u           p_sat;              /*!< Pointer on the controller saturation */
-    float32_t           errTheta;           /*!< Error position */
-    float32_t           errSpeed;           /*!< Error speed */
-    float32_t           derivative;         /*!< Derivative term partial computation */
-    float32_t           out;                /*!< Controller output */
-} pd_t;
+    ptr_32b_u           p_alpha;                        /*!< TODO(rafael): Pointer to beginning of ARRAY! */
+    ptr_32b_u           p_beta;                         /*!< */
+    ptr_32b_u           p_iSat;                         /*!< */
+    ptr_32b_u           p_state[ROBOT_STATE_DIMS];      /*!< TODO(rafael): Pointers to individual ELEMENTS of array! */
+
+} linear_ctrl_t;
 
 /**
  * @struct  params_t
@@ -295,15 +294,12 @@ typedef struct __acq_t__
 
 /**
  * @struct  cmd_t
- * @brief   Commands for FOC process. Target the PD controller.
+ * @brief   Commands for FOC process. Targets the linear controller.
  */
 typedef struct __cmd_t__
 {
-    float32_t           posRef;
-    float32_t           velRef;
-    float32_t           iqff;
-    float32_t           kpCoeff;
-    float32_t           kdCoeff;
+    float32_t           linCtrlAlpha[ROBOT_STATE_DIMS];
+    float32_t           linCtrlBeta;
     float32_t           iSat;
     uint16_t            timeoutRef;
     uint16_t            cptTimeout;
@@ -394,9 +390,11 @@ typedef struct __foc_t__
     };
     pi_t                piId;               /*!< PI controller structure for current control */
     pi_t                piIq;               /*!< PI controller structure for current control */
-    pd_t                pdPosVel;           /*!< PD controller structure for position/velocity control */
-    float32_t           resEst;             /*!< Q-axis resistance estimation - [Ohm] */
-    lpf_t               resEstFlt;          /*!< Q-axis resistance estimation filter structure */
+
+   // TODO(rafael): Document this!
+   linear_ctrl_t       linControl;
+   float32_t           resEst;             /*!< Q-axis resistance estimation - [Ohm] */
+   lpf_t               resEstFlt;          /*!< Q-axis resistance estimation filter structure */
 } foc_t;
 
 /**
@@ -420,6 +418,31 @@ typedef struct __motor_t__
     error_reg_u         error;          /*!< Bit field for the error sources. */
     uint16_t            state;          /*!< motor states for the FSM. */
 } motor_t;
+
+/**
+ * @struct  robot_state_t
+ * @brief TODO(rafael)
+ */
+typedef struct __robot_state_t__
+{
+    /**
+     * Position and velocity for each motor of all connected motor drivers.
+     * Data is stored as follows:
+     *      [
+     *          drv1.m1.pos,
+     *          drv1.m2.pos,
+     *          drv2.m1.pos,
+     *          drv2.m2.pos,
+     *          ...,
+     *          drv1.m1.vel,
+     *          drv1.m2.vel,
+     *          drv2.m1.vel,
+     *          drv2.m2.vel,
+     *          ...,
+     *      ]
+     */
+    float32_t           state[ROBOT_STATE_DIMS];
+} robot_state_t;
 
 /**
  * @struct  debug_t
@@ -455,11 +478,11 @@ typedef struct __debug_t__
     };
     struct
     {
-        float32_t       cmd_posRef;
-        float32_t       cmd_velRef;
-        float32_t       cmd_iqff;
-        float32_t       cmd_kpCoeff;
-        float32_t       cmd_kdCoeff;
+//        float32_t       cmd_posRef;
+//        float32_t       cmd_velRef;
+//        float32_t       cmd_iqff;
+//        float32_t       cmd_kpCoeff;
+//        float32_t       cmd_kdCoeff;
         float32_t       cmd_iSat;
         uint16_t        cmd_cptTimeout;
         uint16_t        cmd_index;
@@ -505,10 +528,10 @@ typedef struct __debug_t__
     };
     struct
     {
-        float32_t       pdPosVel_errTheta;      /*!< Error position */
-        float32_t       pdPosVel_errSpeed;      /*!< Error speed */
-        float32_t       pdPosVel_derivative;    /*!< Derivative term partial computation */
-        float32_t       pdPosVel_out;           /*!< Controller output */
+//        float32_t       pdPosVel_errTheta;      /*!< Error position */
+//        float32_t       pdPosVel_errSpeed;      /*!< Error speed */
+//        float32_t       pdPosVel_derivative;    /*!< Derivative term partial computation */
+//        float32_t       pdPosVel_out;           /*!< Controller output */
     };
     uint32_t            itCnt;                  /*!< Event counter incrementing on every IT call */
     uint16_t            motor_id;               /*!< Motor identification */

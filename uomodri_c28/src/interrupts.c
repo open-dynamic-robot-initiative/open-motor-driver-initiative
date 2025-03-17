@@ -37,6 +37,10 @@ motor_t     motor_m1;
 #pragma DATA_SECTION(motor_m2, "ClaDataMotor2");
 motor_t     motor_m2;
 
+#pragma DATA_ALIGN(robot_state, 4)
+#pragma DATA_SECTION(robot_state, "ClaDataRobotState");
+robot_state_t recv_robot_state;
+
 /***********************************************************************
  * VARIABLES IN CPU TO CLA SPACE MEMORY
  ***********************************************************************/

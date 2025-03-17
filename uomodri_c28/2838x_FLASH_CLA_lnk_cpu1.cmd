@@ -135,6 +135,8 @@ SECTIONS
 /* CLA specific sections */
    ClaDataMotor1    	: > RAMLS0
    ClaDataMotor2     	: > RAMLS1
+   ClaDataRobotState	: > RAMLS3_7
+
    CLAscratch			:
                      		{ *.obj(CLAscratch)
                      		. += CLA_SCRATCHPAD_SIZE;

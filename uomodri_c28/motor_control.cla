@@ -53,13 +53,19 @@ __attribute__((interrupt)) void cmdNew_Task(void)
 {
     DBG_CMD_NEW_TASK_SET;
 //    __mdebugstop();
-    motor_m1.foc.cmd.posRef         = cmd_uomodri[MOTOR_1].posRef;
-    if((cmd_uomodri[MOTOR_1].cmdField.all & CMD_POSITION_OFFSET_COMP) == CMD_POSITION_OFFSET_COMP)
-        motor_m1.foc.cmd.posRef    += motor_m1.foc.enc.thetaIndexAbsolute;
-    motor_m1.foc.cmd.velRef         = cmd_uomodri[MOTOR_1].velRef;
-    motor_m1.foc.cmd.iqff           = cmd_uomodri[MOTOR_1].iqff;
-    motor_m1.foc.cmd.kpCoeff        = cmd_uomodri[MOTOR_1].kpCoeff;
-    motor_m1.foc.cmd.kdCoeff        = cmd_uomodri[MOTOR_1].kdCoeff;
+
+    // TODO(rafael): What do do with offset compensation?
+    // TODO(rafael): Can we memcpy() the entire struct?
+
+//    if((cmd_uomodri[MOTOR_1].cmdField.all & CMD_POSITION_OFFSET_COMP) == CMD_POSITION_OFFSET_COMP)
+//        motor_m1.foc.cmd.posRef    += motor_m1.foc.enc.thetaIndexAbsolute;
+
+    // Can't call memcpy() from CLA!
+    int32_t dim = 0;
+    for (dim = 0; dim < ROBOT_STATE_DIMS; dim++)
+        motor_m1.foc.cmd.linCtrlAlpha[dim] = cmd_uomodri[MOTOR_1].linCtrlAlpha[dim];
+
+    motor_m1.foc.cmd.linCtrlBeta    = cmd_uomodri[MOTOR_1].linCtrlBeta;
     motor_m1.foc.cmd.iSat           = cmd_uomodri[MOTOR_1].iSat;
     motor_m1.foc.cmd.timeoutRef     = cmd_uomodri[MOTOR_1].timeoutRef;
     motor_m1.foc.cmd.cptTimeout     = cmd_uomodri[MOTOR_1].cptTimeout;
@@ -67,13 +73,13 @@ __attribute__((interrupt)) void cmdNew_Task(void)
     motor_m1.foc.cmd.cmdField.all   = cmd_uomodri[MOTOR_1].cmdField.all;
     motor_m1.foc.cmd.periphField.all= cmd_uomodri[MOTOR_1].periphField.all;
 
-    motor_m2.foc.cmd.posRef         = cmd_uomodri[MOTOR_2].posRef;
-    if((cmd_uomodri[MOTOR_2].cmdField.all & CMD_POSITION_OFFSET_COMP) == CMD_POSITION_OFFSET_COMP)
-        motor_m2.foc.cmd.posRef    += motor_m2.foc.enc.thetaIndexAbsolute;
-    motor_m2.foc.cmd.velRef         = cmd_uomodri[MOTOR_2].velRef;
-    motor_m2.foc.cmd.iqff           = cmd_uomodri[MOTOR_2].iqff;
-    motor_m2.foc.cmd.kpCoeff        = cmd_uomodri[MOTOR_2].kpCoeff;
-    motor_m2.foc.cmd.kdCoeff        = cmd_uomodri[MOTOR_2].kdCoeff;
+//    if((cmd_uomodri[MOTOR_2].cmdField.all & CMD_POSITION_OFFSET_COMP) == CMD_POSITION_OFFSET_COMP)
+//        motor_m2.foc.cmd.posRef    += motor_m2.foc.enc.thetaIndexAbsolute;
+
+    for (dim = 0; dim < ROBOT_STATE_DIMS; dim++)
+        motor_m2.foc.cmd.linCtrlAlpha[dim] = cmd_uomodri[MOTOR_2].linCtrlAlpha[dim];
+
+    motor_m2.foc.cmd.linCtrlBeta    = cmd_uomodri[MOTOR_2].linCtrlBeta;
     motor_m2.foc.cmd.iSat           = cmd_uomodri[MOTOR_2].iSat;
     motor_m2.foc.cmd.timeoutRef     = cmd_uomodri[MOTOR_2].timeoutRef;
     motor_m2.foc.cmd.cptTimeout     = cmd_uomodri[MOTOR_2].cptTimeout;

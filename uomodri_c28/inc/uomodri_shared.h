@@ -90,13 +90,12 @@ inline void ENC_getPosition(encoder_t*);
 inline void ENC_getSpeed(encoder_t*);
 inline void ENC_getTheta(encoder_t*);
 inline void FOC_resetStructPI(pi_t*);
-inline void FOC_resetStructPD(pd_t*);
 inline void FOC_resetStructCmd(cmd_t*);
 inline void FOC_resetStructMeasures(acq_t*);
 inline void FOC_resetStruct(foc_t*);
 inline void FOC_getMeasures(acq_t*);
 inline float32_t FOC_runPI(pi_t*);
-inline float32_t FOC_runPD(pd_t*);
+inline float32_t FOC_runLinear(linear_ctrl_t*);
 inline void FOC_svpwm1(foc_t*);
 void FOC_runControl(foc_t*);
 void MOT_runCommand(uint32_t, float32_t);
@@ -431,33 +430,20 @@ inline void FOC_resetStructPI(pi_t* p_pi)
 }
 
 /**
- * @brief           Reset the Proportional Derivative (PD) Controller structure
- * @param[inout]    *p_pd   Pointer on the PD control structure.
- */
-inline void FOC_resetStructPD(pd_t* p_pd)
-{
-    p_pd->errTheta      = 0.0f;
-    p_pd->errSpeed      = 0.0f;
-    p_pd->derivative    = 0.0f;
-    p_pd->out           = 0.0f;
-
-    return;
-}
-
-/**
  * @brief           Reset the command structure associated to motor control
  * @param[inout]    p_cmd   Pointer on the local command associated to motor control
  */
 inline void FOC_resetStructCmd(cmd_t* p_cmd)
 {
-    p_cmd->posRef       = 0.0f;
-    p_cmd->velRef       = 0.0f;
-    p_cmd->iqff         = 0.0f;
-    p_cmd->kpCoeff      = 0.0f;
-    p_cmd->kdCoeff      = 0.0f;
-    p_cmd->timeoutRef   = 0;
-    p_cmd->cptTimeout   = 0;
-    p_cmd->cmdField.all = 0;
+    int32_t dim = 0;
+    for (dim = 0; dim < ROBOT_STATE_DIMS; dim++)
+        p_cmd->linCtrlAlpha[dim] = 0.0f;
+
+    p_cmd->linCtrlBeta  = 0.0f;
+    p_cmd->iSat         = 0.0f;
+    p_cmd->timeoutRef   = 0.0f;
+    p_cmd->cptTimeout   = 0.0f;
+    p_cmd->cmdField.all = 0.0f;
 
     return;
 }
@@ -485,8 +471,9 @@ inline void FOC_resetStruct(foc_t* p_foc)
     // Reset Id & Iq currents PI controllers
     FOC_resetStructPI(&p_foc->piId);
     FOC_resetStructPI(&p_foc->piIq);
-    // Reset position PD controller
-    FOC_resetStructPD(&p_foc->pdPosVel);
+
+    // TODO(rafael): Add reset for linear controller if intermediates are saved there!
+
     // Reset encoder structure
     ENC_resetStruct(&p_foc->enc);
     // Reset analog measures
@@ -572,33 +559,32 @@ inline float32_t FOC_runPI(pi_t* p_pi)
 }
 
 /**
- * @brief           Run the Proportional Derivative (PD) Controller
- * @param[inout]    *p_pd   Pointer on the PD control structure.
- * @return          out     Command of PD controller
+ * @brief           Run a full-body linear controller for this motor: Iq = A*x + b
+ *                      where x = [q1, q2, ..., v1, v2, ...] the state of all
+ *                      daisy-chained motor drivers. A: 1 x dim(x), b: 1 x 1.
+ *
+ * @param[inout]    *p_lin_ctrl     Pointer to linear controller parameters
  */
-inline float32_t FOC_runPD(pd_t* p_pd)
+inline float32_t FOC_runLinear(linear_ctrl_t* p_lin_ctrl)
 {
 #ifdef __TMS320C28XX_CLA__
-    float32_t sat_max   = 1.0f  * (*(float32_t *)p_pd->p_sat.ptr);
-    float32_t sat_min   = -1.0f * sat_max;
-    p_pd->errTheta      = (*(float32_t *)p_pd->p_setTheta.ptr) - (*(float32_t *)p_pd->p_fbTheta.ptr);
-    p_pd->errSpeed      = (*(float32_t *)p_pd->p_setSpeed.ptr) - (*(float32_t *)p_pd->p_fbSpeed.ptr);
-    p_pd->derivative    = (*(float32_t *)p_pd->p_kd.ptr) * p_pd->errSpeed;
-    // Compute PID and clamp output.
-    p_pd->out           = ((*(float32_t *)p_pd->p_kp.ptr) * p_pd->errTheta) + p_pd->derivative + (*(float32_t *)p_pd->p_ff.ptr);
-    p_pd->out           = __msatf32(p_pd->out, sat_max, sat_min);
+    // TODO(rafael): C28XX CLA?
+    return 0.0f;
 #else
-    float32_t sat_max   = 1.0f  * (*p_pd->p_sat);
-    float32_t sat_min   = -1.0f * sat_max;
-    p_pd->errTheta      = (*p_pd->p_setTheta) - (*p_pd->p_fbTheta);
-    p_pd->errSpeed      = (*p_pd->p_setSpeed) - (*p_pd->p_fbSpeed);
-    p_pd->derivative    = (*p_pd->p_kd) * p_pd->errSpeed;
-    // Compute PID and clamp output.
-    p_pd->out           = ((*p_pd->p_kp) * p_pd->errTheta) + p_pd->derivative + (*p_pd->p_ff);
-    p_pd->out           = __fsat(p_pd->out, sat_max, sat_min);
-#endif
+    float32_t result = *((float32_t *)p_lin_ctrl->p_beta.ptr);
 
-    return(p_pd->out);
+    for (int i = 0; i < ROBOT_STATE_DIMS; i++)
+    {
+        float32_t a_i = *((float32_t *)p_lin_ctrl->p_alpha.ptr + i)
+        float32_t s_i = *((float32_t *)p_lin_ctrl->p_state[i].ptr);
+
+        result += a_i * s_i;
+    }
+
+    float32_t sat = *((float32_t *)p_lin_ctrl->p_iSat.ptr);
+    return __fsat(result, sat, -1.0f * sat);
+
+#endif
 }
 
 /**
@@ -828,7 +814,7 @@ bool_t MOT_runControl(motor_t* p_motor)
     case MOTOR_STATE_READY:
         p_motor->itCnt         += 1U;
         p_foc->idRef            = 0.0f;
-        p_foc->iqRef            = FOC_runPD(&p_foc->pdPosVel);
+        p_foc->iqRef                = FOC_runLinear(p_foc->linControl);
         p_motor->state          = (!cmd_reg.motorEnable)    ? (MOTOR_STATE_STOP)            : (MOTOR_STATE_READY);
         p_motor->state          = (cmd_reg.systemEnable)    ? (p_motor->state)              : (MOTOR_STATE_IDLE);
         FOC_runControl(p_foc);
@@ -1048,7 +1034,8 @@ bool_t MOT_runControl(motor_t* p_motor)
                 p_motor->state          = MOTOR_STATE_IDLE;
             p_motor->itCnt             += 1U;
             p_foc->idRef                = 0.0f;
-            p_foc->iqRef                = FOC_runPD(&p_foc->pdPosVel);
+            p_foc->iqRef                = FOC_runLinear(&p_foc->linControl);
+
             FOC_runControl(p_foc);
             MOT_runCommand(p_motor->epwmBase[CHANNEL_1], p_foc->dtc_u);
             MOT_runCommand(p_motor->epwmBase[CHANNEL_2], p_foc->dtc_v);
