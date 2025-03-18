@@ -568,22 +568,22 @@ inline float32_t FOC_runPI(pi_t* p_pi)
 inline float32_t FOC_runLinear(linear_ctrl_t* p_lin_ctrl)
 {
 #ifdef __TMS320C28XX_CLA__
-    // TODO(rafael): C28XX CLA?
-    return 0.0f;
-#else
     float32_t result = *((float32_t *)p_lin_ctrl->p_beta.ptr);
 
-    for (int i = 0; i < ROBOT_STATE_DIMS; i++)
+    int32_t dim = 0;
+    for (dim = 0; dim < ROBOT_STATE_DIMS; dim++)
     {
-        float32_t a_i = *((float32_t *)p_lin_ctrl->p_alpha.ptr + i)
-        float32_t s_i = *((float32_t *)p_lin_ctrl->p_state[i].ptr);
+        float32_t a_i = *((float32_t *)p_lin_ctrl->p_alpha.ptr + dim);
+        float32_t s_i = *((float32_t *)p_lin_ctrl->p_state[dim].ptr);
 
         result += a_i * s_i;
     }
 
     float32_t sat = *((float32_t *)p_lin_ctrl->p_iSat.ptr);
-    return __fsat(result, sat, -1.0f * sat);
-
+    return __msatf32(result, sat, -1.0f * sat);
+#else
+    // TODO(rafael): C28 FOC?
+    return 0.0f;
 #endif
 }
 

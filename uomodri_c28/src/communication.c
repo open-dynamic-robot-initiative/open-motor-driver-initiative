@@ -4,6 +4,7 @@
 #ifdef __TMS320C28XX_VCRC__
 #include "vcu2/vcu2_crc.h"
 #endif
+#include "string.h"
 #include "device.h"
 #include "board.h"
 

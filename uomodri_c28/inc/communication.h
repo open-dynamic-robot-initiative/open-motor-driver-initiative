@@ -353,6 +353,9 @@ typedef struct __mst2slv_msg_t__
     int16_t         linCtrlBetas[2];
     uint16_t        iSat;
     uint16_t        index;
+
+    // Padding to make sure sizeof(cmd_msg) >= sizeof(sensor_msg):
+    uint16_t        pad[2];
 } mst2slv_msg_t;
 
 /**
