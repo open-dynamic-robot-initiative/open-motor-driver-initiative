@@ -31,7 +31,6 @@ uint32_t COM_vCRC32(uint16_t*, uint16_t);
  */
 void COM_msgExtract(mst2slv_msg_t* p_msg, cmd_t* p_cmd_m1, cmd_t* p_cmd_m2)
 {
-    // TODO(rafael): Make sure the alphas are in the correct units, A / rad and A / (rad/s):
     int32_t dim = 0;
 
     // Extract motor 1 command:
@@ -88,9 +87,8 @@ void COM_msgCreate(motor_t* p_motor, slv2mst_msg_t* p_msg, uint32_t* p_tmr_cnt)
     encoder_t* p_enc                    = &p_foc->enc;
     error_reg_u motor_err               = p_motor->error;
     cmd_reg_u motor_cmd                 = {.all = p_foc->cmd.cmdField.all};
-    float32_t theta_index_comp          = (motor_cmd.encOffsetEnable) ? (p_enc->thetaIndexAbsolute) : (0.0f);
-    float32_t pos_offset                = p_enc->thetaAbsolute - theta_index_comp;
-    int32_t pos                         = (int32_t)(pos_offset                  / POSITION_LSB      * FM_RAD2ROUND);
+    float32_t pos_rad                   = (motor_cmd.encOffsetEnable) ? (p_enc->thetaFromIndex) : (p_enc->thetaAbsolute);
+    int32_t pos                         = (int32_t)(pos_rad                  / POSITION_LSB      * FM_RAD2ROUND);
     uint16_t motor_id                   = p_motor->id;
     bool_t align_done                   = (p_motor->state == MOTOR_STATE_READY) || (p_motor->state == MOTOR_STATE_STOP);
 

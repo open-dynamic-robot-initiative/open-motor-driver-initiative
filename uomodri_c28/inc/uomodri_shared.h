@@ -200,6 +200,7 @@ inline void ENC_resetStruct(encoder_t* p_enc)
     p_enc->thetaIndexRelative   = 0.0f;
     p_enc->thetaIndexAbsolute   = 0.0f;
     p_enc->thetaAbsolute        = 0.0f;
+    p_enc->thetaFromIndex       = 0.0f;
     p_enc->turnNb               = 0U;
     p_enc->flags.all            = 0U;
 
@@ -409,8 +410,12 @@ inline void ENC_getTheta(encoder_t* p_enc)
         // Clear flag
         EQEP_clearInterruptStatus(eqepBase, EQEP_INT_INDEX_EVNT_LATCH);
     }
-    // Compute new absolute angle
+
+    // Compute new absolute angle (from zero point when motor control started):
     p_enc->thetaAbsolute            = p_enc->thetaMech[NEW] + turnNbRad;
+
+    // Compute position from first detected index:
+    p_enc->thetaFromIndex           = p_enc->thetaAbsolute - p_enc->thetaIndexAbsolute;
 
     return;
 }
@@ -472,7 +477,7 @@ inline void FOC_resetStruct(foc_t* p_foc)
     FOC_resetStructPI(&p_foc->piId);
     FOC_resetStructPI(&p_foc->piIq);
 
-    // TODO(rafael): Add reset for linear controller if intermediates are saved there!
+    // TODO(rafael): Reset linear controller if we save intermediates in struct!
 
     // Reset encoder structure
     ENC_resetStruct(&p_foc->enc);

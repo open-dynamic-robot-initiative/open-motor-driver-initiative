@@ -237,15 +237,15 @@ typedef struct __pi_t__
 } pi_t;
 
 /**
- * @struct
- * @brief   TODO(rafael): Document!
+ * @struct  linear_ctrl_t
+ * @brief   Linear controller tau = A*x + b using the state of all daisy-chained drivers.
  */
 typedef struct __linear_ctrl_t__
 {
-    ptr_32b_u           p_alpha;                        /*!< TODO(rafael): Pointer to beginning of ARRAY! */
-    ptr_32b_u           p_beta;                         /*!< */
-    ptr_32b_u           p_iSat;                         /*!< */
-    ptr_32b_u           p_state[ROBOT_STATE_DIMS];      /*!< TODO(rafael): Pointers to individual ELEMENTS of array! */
+    ptr_32b_u           p_alpha;                        /*!< Pointer to beginning of alpha row for motor */
+    ptr_32b_u           p_beta;                         /*!< Pointer to beta scalar */
+    ptr_32b_u           p_iSat;                         /*!< Pointer to saturation current for motor*/
+    ptr_32b_u           p_state[ROBOT_STATE_DIMS];      /*!< Pointers to individual elements of state vector */
 
 } linear_ctrl_t;
 
@@ -298,9 +298,10 @@ typedef struct __acq_t__
  */
 typedef struct __cmd_t__
 {
-    float32_t           linCtrlAlpha[ROBOT_STATE_DIMS];
-    float32_t           linCtrlBeta;
-    float32_t           iSat;
+    float32_t           linCtrlAlpha[ROBOT_STATE_DIMS];     /*!< Alpha row for one motor [A / rad     for ind. [0 .. STATE_DIMS/2),
+                                                                                          A / (rad/s) for ind. [STATE_DIMS/2 .. STATE_DIMS) ] */
+    float32_t           linCtrlBeta;                        /*!< Beta scalar [A] */
+    float32_t           iSat;                               /*!< Saturation current [A] */
     uint16_t            timeoutRef;
     uint16_t            cptTimeout;
     uint16_t            index;
@@ -333,12 +334,13 @@ typedef struct __encoder_t__
 {
     uint32_t            eqepBase;           /*!< Address of EQEP peripheral used in HAL structure */
     float32_t           polePairs;          /*!< Number of motor pole pairs */
-    float32_t           thetaElec;          /*!< Angular electrical position  - [pu] */
-    float32_t           thetaMech[2];       /*!< Angular mechanical position  - [pu] */
+    float32_t           thetaElec;          /*!< Angular electrical position  - [rad] */
+    float32_t           thetaMech[2];       /*!< Angular mechanical position  - [rad] */
     float32_t           thetaMechScaler;    /*!< Angular mechanical scaler - [pu/register] */
-    float32_t           thetaIndexRelative; /*!< Index mechanical angle */
-    float32_t           thetaIndexAbsolute; /*!< First index mechanical angle */
-    float32_t           thetaAbsolute;      /*!< Absolute angular position - [turns] */
+    float32_t           thetaIndexRelative; /*!< Index mechanical angle in [0, 2pi]*/
+    float32_t           thetaIndexAbsolute; /*!< First index mechanical angle [rad] */
+    float32_t           thetaAbsolute;      /*!< Angular position counted from position when control started - [rad] */
+    float32_t           thetaFromIndex;     /*!< Angular position counted from first index - [rad] */
     speed_t             speed;              /*!< Speed estimation structure */
     int16_t             turnNb;             /*!< Number of full turns (signed) */
     int16_t             thetaDir;           /*!< Rotor direction - -1 = CCW/reverse, 1 = CW/forward */
@@ -391,8 +393,7 @@ typedef struct __foc_t__
     pi_t                piId;               /*!< PI controller structure for current control */
     pi_t                piIq;               /*!< PI controller structure for current control */
 
-   // TODO(rafael): Document this!
-   linear_ctrl_t       linControl;
+   linear_ctrl_t       linControl;         /*!< Linear controller for whole-body feedback control */
    float32_t           resEst;             /*!< Q-axis resistance estimation - [Ohm] */
    lpf_t               resEstFlt;          /*!< Q-axis resistance estimation filter structure */
 } foc_t;
@@ -421,7 +422,7 @@ typedef struct __motor_t__
 
 /**
  * @struct  robot_state_t
- * @brief TODO(rafael)
+ * @brief   State vector of all connected motors in driver daisy chain.
  */
 typedef struct __robot_state_t__
 {
@@ -440,6 +441,9 @@ typedef struct __robot_state_t__
      *          drv2.m2.vel,
      *          ...,
      *      ]
+     *
+     * Position zero depends on whether index compensation is active
+     * for each individual motor.
      */
     float32_t           state[ROBOT_STATE_DIMS];
 } robot_state_t;

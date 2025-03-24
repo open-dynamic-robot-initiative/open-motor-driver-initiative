@@ -35,7 +35,6 @@
 void main(void);
 static void MCU_ini(void);
 void MOT_initStruct(motor_t*, uint16_t);
-void STATE_initStruct(robot_state_t* p_robot_state);
 void COM_muxCtrl(com_bus_e);
 void CLA_adcCalibration(void);
 void DMA_configModeUpdate(uint32_t, uint32_t);
@@ -247,7 +246,6 @@ void main(void)
     // Initialization of the shared structure used by CLA & C28 for Motor_1 & Motor_2
     MOT_initStruct(&motor_m1, MOTOR_1);
     MOT_initStruct(&motor_m2, MOTOR_2);
-    STATE_initStruct(&recv_robot_state);
     // Hardware Abstraction Layer initialization.
     HAL_ini(&hal);
     // Initialization the command structure for CLA.
@@ -438,7 +436,7 @@ void DBG_copyStruct(motor_t* p_motor, debug_t* p_dbg)
     p_dbg->enc_thetaMech            = p_motor->foc.enc.thetaMech[0];        /*!< Angular mechanical position  - [pu] */
     p_dbg->enc_thetaIndexRelative   = p_motor->foc.enc.thetaIndexRelative;  /*!< Index mechanical angle */
     p_dbg->enc_thetaIndexAbsolute   = p_motor->foc.enc.thetaIndexAbsolute;  /*!< First index mechanical angle */
-    p_dbg->enc_thetaAbsolute        = p_motor->foc.enc.thetaAbsolute;       /*!< Absolute angular position - [turns] */
+    p_dbg->enc_thetaAbsolute        = p_motor->foc.enc.thetaAbsolute;       /*!< Absolute angular position - [rad] */
     p_dbg->enc_turnNb               = p_motor->foc.enc.turnNb;              /*!< Number of full turns (signed) */
     p_dbg->enc_thetaDir             = p_motor->foc.enc.thetaDir;            /*!< Rotor direction - -1 = CCW/reverse, 1 = CW/forward */
     p_dbg->enc_flags.all            = p_motor->foc.enc.flags.all;
@@ -447,14 +445,6 @@ void DBG_copyStruct(motor_t* p_motor, debug_t* p_dbg)
     p_dbg->enc_speed_speedMech      = p_motor->foc.enc.speed.speedMech[0];  /*!< Mechanical output speed - [rad/s] */
     p_dbg->enc_speed_speedElec      = p_motor->foc.enc.speed.speedElec;     /*!< Electrical output speed (pole pairs integration) - [rad/s] */
     p_dbg->enc_speed_theta          = p_motor->foc.enc.speed.theta[0];      /*!< Angular position of rotor - [pu] */
-
-    // TODO(rafael): Add debugging information for linear controller calculations & commands.
-
-//    p_dbg->cmd_posRef               = p_motor->foc.cmd.posRef;
-//    p_dbg->cmd_velRef               = p_motor->foc.cmd.velRef;
-//    p_dbg->cmd_iqff                 = p_motor->foc.cmd.iqff;
-//    p_dbg->cmd_kpCoeff              = p_motor->foc.cmd.kpCoeff;
-//    p_dbg->cmd_kdCoeff              = p_motor->foc.cmd.kdCoeff;
 
     p_dbg->cmd_iSat                 = p_motor->foc.cmd.iSat;
     p_dbg->cmd_cptTimeout           = p_motor->foc.cmd.cptTimeout;
@@ -698,22 +688,20 @@ void MOT_initStruct(motor_t* p_motor, uint16_t motor_id)
     p_motor->foc.linControl.p_beta.ptr                   = (float32_t *)(&p_motor->foc.cmd.linCtrlBeta);
     p_motor->foc.linControl.p_iSat.ptr                   = (float32_t *)(&p_motor->foc.cmd.iSat);
 
-    // TODO(rafael): The CLA won't write to the other state when calculating a motor's Iq, right?
-    //               Still, this is ugly.
-
-    // TODO(rafael): When `recv_robot_state` is updated by C28, make sure the CLA doesn't read
-    //               garbage, as we do with the command!
-
-    // TODO(rafael): Document what's happening here! For now, state outside this board will be const. = 0.0f.
+    // The linear controller of both motors must access the latest state of all motors
+    // in the driver daisy chain, including motors not controlled by this driver.
+    // The two pointers to this driver's M1 and M2 positions will be set by the CLA
+    // whenever a new command is received. This is to ensure the correct position is
+    // used, depending on whether offset compensation is enabled.
+    //
+    // TODO(rafael): When `recv_robot_state` is updated by C28, make sure the CLA doesn't
+    //               read garbage!
     int32_t dim = 0;
     for (dim = 0; dim < ROBOT_STATE_DIMS; dim++)
         p_motor->foc.linControl.p_state[dim].ptr = (float32_t *)(&recv_robot_state.state[dim]);
 
-    // Positions:
-    p_motor->foc.linControl.p_state[2*DRIVER_ID].ptr         = (float32_t *)(&motor_m1.foc.enc.thetaAbsolute);
-    p_motor->foc.linControl.p_state[2*DRIVER_ID + 1].ptr     = (float32_t *)(&motor_m2.foc.enc.thetaAbsolute);
-
-    // Velocities:
+    // The state components that correspond to our velocities can be set now, as they
+    // don't depend on any runtime settings:
     p_motor->foc.linControl.p_state[2*CONNECTED_DRIVER_COUNT + 2*DRIVER_ID].ptr     = \
             (float32_t *)(&motor_m1.foc.enc.speed.speedMech[0]);
 
@@ -729,19 +717,6 @@ void MOT_initStruct(motor_t* p_motor, uint16_t motor_id)
     //---------------------------------------------------------------------------
     //---------------------------------------------------------------------------
     return;
-}
-
-/**
- * TODO(rafael)
- * @brief
- * @param[in]   *p_robot_state
- */
-void STATE_initStruct(robot_state_t* p_robot_state)
-{
-    // TODO(rafael): Do we need this? No NOINIT in linker file.
-    int32_t dim = 0;
-    for (dim = 0; dim < ROBOT_STATE_DIMS; dim++)
-        p_robot_state->state[dim] = 0.0f;
 }
 
 #if (USE_UOMODRI_REV >= USE_UOMODRI_V3)
