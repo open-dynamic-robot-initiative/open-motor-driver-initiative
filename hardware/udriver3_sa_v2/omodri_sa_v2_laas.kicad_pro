@@ -1001,7 +1001,7 @@
     "last_paths": {
       "gencad": "",
       "idf": "",
-      "netlist": "udriver3_sa_v2.net",
+      "netlist": "omodri_sa_v2_laas.net",
       "plot": "Fab/gerber/",
       "pos_files": "Fab/gerber/",
       "specctra_dsn": "",

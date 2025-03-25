@@ -1181,7 +1181,7 @@
 		)
 		(uuid "97388d18-8966-4a80-acaa-96e83d1baf88")
 	)
-	(hierarchical_label "SCI_TX"
+	(hierarchical_label "SCI_TX_CLB_McBSP_TX"
 		(shape output)
 		(at 88.9 39.37 180)
 		(effects
@@ -2271,16 +2271,6 @@
 			)
 			(uuid "a65c0071-9e8a-4615-9f55-354a20207d4c")
 		)
-		(pin "SCIc_TX" output
-			(at 101.6 39.37 180)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-			(uuid "d6511ae0-83d0-48b4-ace5-f32258879864")
-		)
 		(pin "SCIc_RX" input
 			(at 101.6 36.83 180)
 			(effects
@@ -2360,16 +2350,6 @@
 				(justify right)
 			)
 			(uuid "ac0dfaba-5d3b-446e-9f35-7473d1939559")
-		)
-		(pin "GPIO_SCI_TX_EN" output
-			(at 101.6 41.91 180)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-			(uuid "101eb8ff-41b6-485b-984c-1de70b9a605a")
 		)
 		(pin "EQEP2_ENC1_CHB" input
 			(at 152.4 77.47 0)
@@ -2490,6 +2470,26 @@
 				(justify left)
 			)
 			(uuid "e6d14f0f-e735-40a8-8ea0-653f5e7c874b")
+		)
+		(pin "GPIO_SCI_TX_EN" output
+			(at 101.6 41.91 180)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+			(uuid "2955adb7-468e-4e3f-b34e-288dddd30322")
+		)
+		(pin "SCIc_TX_CLB_McBSP_Tx" output
+			(at 101.6 39.37 180)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+			(uuid "f1a1fde4-adce-4a0c-8b82-11d895e71c9a")
 		)
 		(instances
 			(project "omodri_sa_v2_laas"

@@ -2393,16 +2393,6 @@
 	)
 	(wire
 		(pts
-			(xy 63.5 72.39) (xy 76.2 72.39)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "0daeafb9-d18a-4617-9821-326bc8483628")
-	)
-	(wire
-		(pts
 			(xy 54.61 109.22) (xy 76.2 109.22)
 		)
 		(stroke
@@ -2980,6 +2970,16 @@
 			(type default)
 		)
 		(uuid "7a9308d3-8f7e-41ec-afec-ae62ddf35cbd")
+	)
+	(wire
+		(pts
+			(xy 63.5 72.39) (xy 76.2 72.39)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "7fde5e05-6d3f-455b-96f5-d6671bfe4cc0")
 	)
 	(wire
 		(pts
@@ -8479,16 +8479,6 @@
 			)
 			(uuid "562ee0fa-bbbf-4af0-9aff-441b1a975863")
 		)
-		(pin "SCI_TX" output
-			(at 76.2 72.39 180)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-			(uuid "a6be7564-026b-4eb1-9e45-78ecfc965e6e")
-		)
 		(pin "PWM3_CHA" output
 			(at 127 48.26 0)
 			(effects
@@ -8888,6 +8878,16 @@
 				(justify left)
 			)
 			(uuid "63103915-59f1-4aed-8e68-2e513e5e5429")
+		)
+		(pin "SCI_TX_CLB_McBSP_TX" output
+			(at 76.2 72.39 180)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+			(uuid "98d067ef-5666-4b77-bc85-f074ed0280e4")
 		)
 		(instances
 			(project "omodri_sa_v2_laas"
