@@ -2,7 +2,6 @@
 /uomodri_c28/inc/bmi088.h
 /uomodri_cm/uomodri_c28.launch.old
 *.zip
-.gitignore
 *.txt
-
-
+/Release/
+/Debug/

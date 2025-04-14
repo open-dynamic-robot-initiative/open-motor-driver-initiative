@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<system>
+    <project configuration="Debug_Flash" id="project_949677984" name="uomodri_cm"/>
+    <core id="Cortex_M4_0" project="project_949677984"/>
+    <project configuration="@match" id="project_405117006" name="uomodri_c28_cpu1"/>
+    <core id="C28xx_CPU1" project="project_405117006"/>
+    <project configuration="@match" id="project_1958188076" name="uomodri_c28_cpu2"/>
+    <core id="C28xx_CPU2" project="project_1958188076"/>
+</system>

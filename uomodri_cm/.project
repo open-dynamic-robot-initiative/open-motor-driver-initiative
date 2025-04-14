@@ -89,7 +89,7 @@
 	<variableList>
 		<variable>
 			<name>C2000WARE_ROOT</name>
-			<value>file:/home/jmanhes/ti/c2000/C2000Ware_5_04_00_00</value>
+			<value>$%7BCOM_TI_C2000WARE_INSTALL_DIR%7D</value>
 		</variable>
 	</variableList>
 </projectDescription>

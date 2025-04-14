@@ -15,4 +15,5 @@
 	<connection value="common/targetdb/connections/TIXDS110_Connection.xml"/>
 	<isTargetManual value="false"/>
 	<sourceLookupPath value=""/>
+	<activeTargetConfiguration value="targetConfigs/TMS320F28388D.ccxml"/>
 </projectOptions>
