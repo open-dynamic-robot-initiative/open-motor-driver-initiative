@@ -244,7 +244,7 @@
 		</variable>
 		<variable>
 			<name>SYSCONFIG_TOOL</name>
-			<value>$%7BSYSCONFIG_TOOL_ROOT%7D/sysconfig_cli.bat</value>
+			<value>$%7BSYSCONFIG_TOOL_ROOT%7D/sysconfig_cli.sh</value>
 		</variable>
 		<variable>
 			<name>SYSCONFIG_TOOL_ROOT</name>
