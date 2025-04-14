@@ -373,6 +373,7 @@ static const clb_cfg_t  clbCfgList[] =
 static const ipc_cfg_t  ipcCfgList[] =
 {
  IPC_CPU1_2_CM_DEF,                 /* IPC between CPU1 & CM */
+ IPC_CPU1_2_CPU2_DEF,               /* IPC between CPU1 & CPU2 */
  {.ipcType = IPC_TOTAL_NUM},        /* END OF ARRAY */
 };
 

@@ -2308,8 +2308,12 @@
 #define IPC_CPU1_TO_CM_ADDR_TRANSLATE(addr_cpu) ((((addr_cpu) - CPUXTOCMMSGRAM0_BASE) * 2U) + CPU1TOCMMSGRAM0_BASE)
 
 #define IPC_SYNC_FLAG                           IPC_FLAG31
+
 #define IPC_CPU1_TO_CM_FLAG                     IPC_FLAG0
 #define IPC_CM_TO_CPU1_FLAG                     IPC_FLAG0
+
+#define IPC_CPU1_TO_CPU2_FLAG                   IPC_FLAG1
+#define IPC_CPU2_TO_CPU1_FLAG                   IPC_FLAG1
 
 #define IPC_NO_DATA                             (0)
 #define IPC_NO_CMD                              (0)
@@ -2320,6 +2324,13 @@
 #define IPC_CPU1_2_CM_DEF                       { \
                                                     .ipcType          = IPC_CPU1_L_CM_R, \
                                                     .ipcFlag          = IPC_CPU1_TO_CM_FLAG, \
+                                                    .ipcMsgQEnable    = false, \
+                                                    .ipcIntEnable     = false, \
+                                                }
+
+#define IPC_CPU1_2_CPU2_DEF                     { \
+                                                    .ipcType          = IPC_CPU1_L_CPU2_R, \
+                                                    .ipcFlag          = IPC_CPU1_TO_CPU2_FLAG, \
                                                     .ipcMsgQEnable    = false, \
                                                     .ipcIntEnable     = false, \
                                                 }

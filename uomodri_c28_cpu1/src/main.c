@@ -304,6 +304,7 @@ void main(void)
 #endif
     // Interrupts initialization.
     HAL_INT_ini(interruptList, &errata_isr);
+
     // Infinite loop
     while(1);
 }
@@ -398,10 +399,12 @@ static void MCU_ini(void)
     /* Allocate Shared Peripheral USB to the CM Side. */
     SysCtl_allocateSharedPeripheral(SYSCTL_PALLOCATE_USBA, 1);
 #endif
-    /* Boot CM core */
+    /* Boot CPU2 & CM cores */
 #if (defined _FLASH)
+    Device_bootCPU2(BOOTMODE_BOOT_TO_FLASH_SECTOR0);
     Device_bootCM(BOOTMODE_BOOT_TO_FLASH_SECTOR0);
 #else
+    Device_bootCPU2(BOOTMODE_BOOT_TO_M0RAM);
     Device_bootCM(BOOTMODE_BOOT_TO_S0RAM);
 #endif
 
