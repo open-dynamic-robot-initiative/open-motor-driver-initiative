@@ -48,6 +48,12 @@ __attribute__((interrupt)) void sci_isrRx_RS485(void);
 __attribute__((interrupt)) void clb_isrTxRx_RS485(void);
 __attribute__((interrupt)) void mcan_isr_canfd(void);
 
+// TODO(rafael): Don't keep them all
+__attribute__((interrupt)) void fsi_tx1_isr(void);
+__attribute__((interrupt)) void fsi_tx2_isr(void);
+__attribute__((interrupt)) void fsi_rx1_isr(void);
+__attribute__((interrupt)) void fsi_rx2_isr(void);
+
 __attribute__((interrupt)) void errata_isr(void);
 
 /***********************************************************************
@@ -66,6 +72,9 @@ static const int_cfg_t interruptList[] =
  INT_RS485_RX_MSG_DEF,
  INT_RS485_RX_TX_CLB_DEF,
  INT_MCAN_RX_TX_MSG_DEF,
+
+ // TODO(rafael): Add FSI interrupts for CPU1
+
  {.intNum = UINT32_MAX},        /* END OF ARRAY */
 };
 
@@ -87,6 +96,26 @@ extern cmd_t    cmd_uomodri[2];
 #pragma DATA_ALIGN(com_bus_select, 4)
 #pragma DATA_SECTION(com_bus_select, "ramgs0")
 com_bus_e   com_bus_select      = COM_NO_BUS_DEFINED;
+
+
+// TODO(rafael): remove these!
+// ======================================================================================
+//#pragma DATA_ALIGN(fsi_test_txint1_recv, 4)
+//#pragma DATA_SECTION(fsi_test_txint1_recv, "ramgs0")
+//bool_t   fsi_test_txint1_recv      = false;
+//
+//#pragma DATA_ALIGN(fsi_test_txint2_recv, 4)
+//#pragma DATA_SECTION(fsi_test_txint2_recv, "ramgs0")
+//bool_t   fsi_test_txint2_recv      = false;
+//
+//#pragma DATA_ALIGN(fsi_test_rxint1_recv, 4)
+//#pragma DATA_SECTION(fsi_test_rxint1_recv, "ramgs0")
+//bool_t   fsi_test_rxint1_recv      = false;
+//
+//#pragma DATA_ALIGN(fsi_test_rxint2_recv, 4)
+//#pragma DATA_SECTION(fsi_test_rxint2_recv, "ramgs0")
+//bool_t   fsi_test_rxint2_recv      = false;
+// ======================================================================================
 
 /***********************************************************************
  * EXTERNAL VARIABLES
@@ -702,10 +731,10 @@ void MOT_initStruct(motor_t* p_motor, uint16_t motor_id)
 
     // The state components that correspond to our velocities can be set now, as they
     // don't depend on any runtime settings:
-    p_motor->foc.linControl.p_state[2*CONNECTED_DRIVER_COUNT + 2*DRIVER_ID].ptr     = \
+    p_motor->foc.linControl.p_state[2*DAISY_CHAIN_DRIVER_COUNT + 2*DAISY_CHAIN_DRIVER_ID].ptr     = \
             (float32_t *)(&motor_m1.foc.enc.speed.speedMech[0]);
 
-    p_motor->foc.linControl.p_state[2*CONNECTED_DRIVER_COUNT + 2*DRIVER_ID + 1].ptr = \
+    p_motor->foc.linControl.p_state[2*DAISY_CHAIN_DRIVER_COUNT + 2*DAISY_CHAIN_DRIVER_ID + 1].ptr = \
             (float32_t *)(&motor_m2.foc.enc.speed.speedMech[0]);
 
     //--- FSM motor initial state -----------------------------------------------

@@ -59,6 +59,25 @@ typedef union __uart_addr_u__
 #define INT_MCAN_RX_TX_MSG_GROUP        INTERRUPT_ACK_GROUP9
 #define INT_MCAN_RX_TX_MSG_HANDLER      &mcan_isr_canfd
 
+/*
+// FSI TX / RX interrupts, priority 1 & 2:
+#define INT_FSI_TX1                     INT_FSITXA1
+#define INT_FSI_TX1_GROUP               INTERRUPT_ACK_GROUP4
+#define INT_FSI_TX1_HANDLER             &fsi_tx1_isr
+
+#define INT_FSI_TX2                     INT_FSITXA2
+#define INT_FSI_TX2_GROUP               INTERRUPT_ACK_GROUP4
+#define INT_FSI_TX2_HANDLER             &fsi_tx2_isr
+
+#define INT_FSI_RX1                     INT_FSIRXC1
+#define INT_FSI_RX1_GROUP               INTERRUPT_ACK_GROUP7
+#define INT_FSI_RX1_HANDLER             &fsi_rx1_isr
+
+#define INT_FSI_RX2                     INT_FSIRXC2
+#define INT_FSI_RX2_GROUP               INTERRUPT_ACK_GROUP7
+#define INT_FSI_RX2_HANDLER             &fsi_rx2_isr
+*/
+
 #define INT_CLA_MOTOR1_DEF              { \
                                             .intNum             = INT_CLA_MOTOR1, \
                                             .intAckGroup        = INT_CLA_MOTOR1_GROUP, \
@@ -100,10 +119,36 @@ typedef union __uart_addr_u__
                                             .p_intHandler       = INT_MCAN_RX_TX_MSG_HANDLER \
                                         }
 
+/*
+#define INT_FSI_TX1_DEF                 { \
+                                            .intNum             = INT_FSI_TX1, \
+                                            .intAckGroup        = INT_FSI_TX1_GROUP, \
+                                            .p_intHandler       = INT_FSI_TX1_HANDLER \
+                                        }
+
+#define INT_FSI_TX2_DEF                 { \
+                                            .intNum             = INT_FSI_TX2, \
+                                            .intAckGroup        = INT_FSI_TX2_GROUP, \
+                                            .p_intHandler       = INT_FSI_TX2_HANDLER \
+                                        }
+
+#define INT_FSI_RX1_DEF                 { \
+                                            .intNum             = INT_FSI_RX1, \
+                                            .intAckGroup        = INT_FSI_RX1_GROUP, \
+                                            .p_intHandler       = INT_FSI_RX1_HANDLER \
+                                        }
+
+#define INT_FSI_RX2_DEF                 { \
+                                            .intNum             = INT_FSI_RX2, \
+                                            .intAckGroup        = INT_FSI_RX2_GROUP, \
+                                            .p_intHandler       = INT_FSI_RX2_HANDLER \
+                                        }
+*/
+
 /***********************************************************************
  * GLOBAL VARIABLES
  ***********************************************************************/
-#if (defined DEBUG) && (!defined CPU1) && (0)
+#if (defined DEBUG) && (defined CM_CORE) && (0)
 #pragma DATA_SECTION(cpu2cm_dbg_msg, "MSGRAM_CPUx_TO_CM");
 com_cpu_2_cm_t  cpu2cm_dbg_msg;
 #endif

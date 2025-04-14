@@ -321,12 +321,41 @@
 
 #define FSI_TX_D0_NUM                           (49U)
 #define FSI_TX_D0_CFG                           GPIO_49_FSITXA_D0
+#define FSI_TX_D0_DEF                           { \
+                                                    .pinNum           = FSI_TX_D0_NUM, \
+                                                    .fctMux           = FSI_TX_D0_CFG, \
+                                                    .setValue         = (1U),                 /* HI inactive */ \
+                                                    .pinType          = GPIO_PIN_TYPE_STD,    /* Push-pull output */ \
+                                                    .direction        = GPIO_DIR_MODE_OUT, \
+                                                    .analogModeEnable = GPIO_ANALOG_DISABLED, \
+                                                    .intEnable        = false, \
+                                                }
+
 
 #define FSI_TX_D1_NUM                           (50U)
 #define FSI_TX_D1_CFG                           GPIO_50_FSITXA_D1
+#define FSI_TX_D1_DEF                           { \
+                                                    .pinNum           = FSI_TX_D1_NUM, \
+                                                    .fctMux           = FSI_TX_D1_CFG, \
+                                                    .setValue         = (1U),                 /* HI inactive */ \
+                                                    .pinType          = GPIO_PIN_TYPE_STD,    /* Push-pull output */ \
+                                                    .direction        = GPIO_DIR_MODE_OUT, \
+                                                    .analogModeEnable = GPIO_ANALOG_DISABLED, \
+                                                    .intEnable        = false, \
+                                                }
 
 #define FSI_TX_CLK_NUM                          (51U)
 #define FSI_TX_CLK_CFG                          GPIO_51_FSITXA_CLK
+#define FSI_TX_CLK_DEF                          { \
+                                                    .pinNum           = FSI_TX_CLK_NUM, \
+                                                    .fctMux           = FSI_TX_CLK_CFG, \
+                                                    .setValue         = (1U),                 /* HI inactive */ \
+                                                    .pinType          = GPIO_PIN_TYPE_STD,    /* Push-pull output */ \
+                                                    .direction        = GPIO_DIR_MODE_OUT, \
+                                                    .analogModeEnable = GPIO_ANALOG_DISABLED, \
+                                                    .intEnable        = false, \
+                                                }
+
 
 #define SELECT_PIN_0_NUM                        (55U)
 #define SELECT_PIN_0_CFG                        GPIO_55_GPIO55
@@ -456,7 +485,7 @@
 
 #define DBG_PIN0_NUM                            (82U)
 #define DBG_PIN0_CFG                            GPIO_82_GPIO82
-#define DBG_PIN0_CORE                           GPIO_CORE_CPU1_CLA1
+#define DBG_PIN0_CORE                           GPIO_CORE_CPU2
 #define DBG_PIN0_SET                            (HWREG(GPIODATA_BASE + GPIO_O_GPCSET)   = GPIO_GPCSET_GPIO82)
 #define DBG_PIN0_CLEAR                          (HWREG(GPIODATA_BASE + GPIO_O_GPCCLEAR) = GPIO_GPCCLEAR_GPIO82)
 #define DBG_PIN0_TOGGLE                         (HWREG(GPIODATA_BASE + GPIO_O_GPCTOGGLE)= GPIO_GPCTOGGLE_GPIO82)
@@ -640,12 +669,42 @@
 
 #define FSI_RX_D0_NUM                           (115U)
 #define FSI_RX_D0_CFG                           GPIO_115_FSIRXC_D0
+#define FSI_RX_D0_DEF                           { \
+                                                    .pinNum           = FSI_RX_D0_NUM, \
+                                                    .fctMux           = FSI_RX_D0_CFG, \
+                                                    .setValue         = (0U),                 /* Unused */ \
+                                                    .pinType          = GPIO_PIN_TYPE_STD,    /* HI inactive level, need pullup */ \
+                                                    .direction        = GPIO_DIR_MODE_IN, \
+                                                    .samplingInMode   = GPIO_QUAL_ASYNC, \
+                                                    .analogModeEnable = GPIO_ANALOG_DISABLED, \
+                                                    .intEnable        = false, \
+                                                }
 
 #define FSI_RX_D1_NUM                           (116U)
 #define FSI_RX_D1_CFG                           GPIO_116_FSIRXC_D1
+#define FSI_RX_D1_DEF                           { \
+                                                    .pinNum           = FSI_RX_D1_NUM, \
+                                                    .fctMux           = FSI_RX_D1_CFG, \
+                                                    .setValue         = (0U),               /* Unused */ \
+                                                    .pinType          = GPIO_PIN_TYPE_STD,  /* HI inactive level, need pullup */ \
+                                                    .direction        = GPIO_DIR_MODE_IN, \
+                                                    .samplingInMode   = GPIO_QUAL_ASYNC, \
+                                                    .analogModeEnable = GPIO_ANALOG_DISABLED, \
+                                                    .intEnable        = false, \
+                                                }
 
 #define FSI_RX_CLK_NUM                          (117U)
 #define FSI_RX_CLK_CFG                          GPIO_117_FSIRXC_CLK
+#define FSI_RX_CLK_DEF                          { \
+                                                    .pinNum           = FSI_RX_CLK_NUM, \
+                                                    .fctMux           = FSI_RX_CLK_CFG, \
+                                                    .setValue         = (0U),                 /* Unused */ \
+                                                    .pinType          = GPIO_PIN_TYPE_STD,    /* HI inactive level, need pullup */ \
+                                                    .direction        = GPIO_DIR_MODE_IN, \
+                                                    .samplingInMode   = GPIO_QUAL_ASYNC, \
+                                                    .analogModeEnable = GPIO_ANALOG_DISABLED, \
+                                                    .intEnable        = false, \
+                                                }
 
 #define MOTOR2_DRV_FAULT_NUM                    (118U)
 #define MOTOR2_DRV_FAULT_CFG                    GPIO_118_GPIO118
@@ -1887,6 +1946,70 @@
                                                     .intEnable      = false, \
                                                     .spiEnable      = true, \
                                                 }
+
+/***********************************************************************
+ * FSI DEFINES
+ ***********************************************************************/
+/** @defgroup Daisy-chain FSI configuration.
+ *  @brief    Configure FSI modules associated with motor driver daisy-chain.
+ *
+ * @{
+ */
+
+/*
+ * We use FSI_TXA and FSI_RXC for board-to-board communication.
+ * Both modules are controlled by CPU2 to enable low latency message
+ * reception and forwarding.
+ *
+ * FSI_RXA is also enabled and is controlled by CPU1. RXA is connected
+ * via internal loopback to FSI_TXA. This is set up so that all forwarded
+ * messages (via TXA), will be received on RXA as well, and will be saved
+ * by DMA to CPU1.CLA memory to be used during FOC.
+ *
+ * This is necessary because we cannot filter and forward an incoming
+ * message using CPU1 with low latency, since CPU1 is often running ISR code.
+ * An alternative solution would be to use CLB to check whether a
+ * received frame needs to be forwarded and if so, also trigger a DMA
+ * transfer to CPU1 memory. However, CLB is not connected to FSI_RXC tag
+ * bits.
+ *
+ * Dual-lane FSI is used with 50MHz clock (200Mbps).
+ */
+
+#define FSI_DATA_WIDTH                          FSI_DATA_WIDTH_1_LANE
+
+// Board-to-board TX (controlled by CPU2):
+#define FSI_TX_CPU2_BASE                        FSITXA_BASE
+#define FSI_TX_CPU2_PRESCALE                    FSI_PRESCALE_25MHZ
+
+#define FSI_TX_CPU2_DEF                         { \
+                                                    .fsiBase           = FSI_TX_CPU2_BASE, \
+                                                    .direction         = FSI_TX_DIR, \
+                                                    .loopback          = false, \
+                                                    .clkPrescaler      = FSI_TX_CPU2_PRESCALE, \
+                                                    .dataWidth         = FSI_DATA_WIDTH, \
+                                                    .cpuSelect         = SYSCTL_CPUSEL_CPU2, \
+                                                    .cpuSelPeriphInst  = SYSCTL_CPUSEL_FSITXA, \
+                                                    .sysCtlPeriphClk   = SYSCTL_PERIPH_CLK_FSITXA, \
+                                                }
+// Board-to-board RX (controlled by CPU2):
+#define FSI_RX_CPU2_BASE                        FSIRXC_BASE
+
+#define FSI_RX_CPU2_DEF                         { \
+                                                    .fsiBase           = FSI_RX_CPU2_BASE, \
+                                                    .direction         = FSI_RX_DIR, \
+                                                    .loopback          = false, \
+                                                    .dataWidth         = FSI_DATA_WIDTH, \
+                                                    .cpuSelect         = SYSCTL_CPUSEL_CPU2, \
+                                                    .cpuSelPeriphInst  = SYSCTL_CPUSEL_FSIRXC, \
+                                                    .sysCtlPeriphClk   = SYSCTL_PERIPH_CLK_FSIRXC, \
+                                                }
+
+// TODO(rafael): Define FSI_RXA internal loopback
+
+/**
+ * @}
+ */
 
 /***********************************************************************
  * DRV DEFINES

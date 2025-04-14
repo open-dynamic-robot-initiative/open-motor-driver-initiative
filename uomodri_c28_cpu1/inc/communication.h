@@ -4,7 +4,7 @@
 /***********************************************************************
  * INCLUDES
  ***********************************************************************/
-#ifdef CPU1
+#ifndef CM_CORE
 #include "f2838x_device.h"
 #include "motor_ctrl.h"
 #else
@@ -245,7 +245,7 @@ typedef enum __spi_test_state__
 /***********************************************************************
  * COMMUNICATION STATE MACHINES FOR CM CORE
  ***********************************************************************/
-#ifndef CPU1
+#ifdef CM_CORE
 typedef enum
 {
     COM_DBG_RX_WORD_A               = 0,    //!< COM_RX_STATE_MODE
@@ -544,7 +544,7 @@ typedef struct __canfd_tx_t__
 /***********************************************************************
  * FUNCTIONS DECLARATION
  ***********************************************************************/
-#ifdef CPU1
+#ifndef CM_CORE
 void COM_msgExtract(mst2slv_msg_t*, cmd_t*, cmd_t*);
 void COM_msgCreate(motor_t*, slv2mst_msg_t*, uint32_t*);
 void COM_initCmdStruct(cmd_t*, uint16_t);

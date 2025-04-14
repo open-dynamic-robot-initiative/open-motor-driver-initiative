@@ -54,11 +54,22 @@
 //#error "RS-485, CAN & SPI share the same data. They cannot run @ the same time"
 #endif
 
+// Motor driver daisy-chain
+// TODO(rafael): #define FSI_BUS_ENABLE                          (1)
+#define DAISY_CHAIN_DRIVER_COUNT                (2) /*!< Total number of interconnected motor drivers (incl. this one) */
+#define DAISY_CHAIN_DRIVER_ID                   (0) /*!< ID (0-indexed) of this motor driver */
+
+#if (DAISY_CHAIN_DRIVER_COUNT > 1)
+#define DAISY_CHAIN_ENABLE                      (1)
+#else
+#define DAISY_CHAIN_ENABLE                      (0)
+#endif
+
 #ifdef DEBUG
-#define DBG_CLA_M1_ISR                          (1)
-#define DBG_CLA_M2_ISR                          (1)
-#define DBG_TIMER_ISR                           (1)
-#define DBG_GPIO_SPI_RX_ISR                     (1)
+#define DBG_CLA_M1_ISR                          (0)
+#define DBG_CLA_M2_ISR                          (0)
+#define DBG_TIMER_ISR                           (0)
+#define DBG_GPIO_SPI_RX_ISR                     (0)
 #define DBG_SCI_RS485_TX_ISR                    (0)
 #define DBG_SCI_RS485_RX_ISR                    (0)
 #define DBG_CLB_RS485_TX_RX_ISR                 (0)
@@ -66,9 +77,12 @@
 
 #define DBG_CMD_NEW_TASK                        (0)
 #define DBG_CALIB_TASK                          (0)
-#define DBG_M1_TASK                             (1)
-#define DBG_M2_TASK                             (1)
+//#define DBG_M1_TASK                             (1)
+//#define DBG_M2_TASK                             (1)
 #endif
+
+#define DBG_M1_TASK                             (0)
+#define DBG_M2_TASK                             (0)
 
 #if (DBG_CLA_M1_ISR)
 #define DBG_CLA_M1_ISR_SET                      DBG_PIN2_SET
@@ -159,8 +173,8 @@
 #endif
 
 #if (DBG_M2_TASK)
-#define DBG_M2_TASK_SET                         DBG_PIN0_SET
-#define DBG_M2_TASK_UNSET                       DBG_PIN0_CLEAR
+#define DBG_M2_TASK_SET                         DBG_PIN3_SET
+#define DBG_M2_TASK_UNSET                       DBG_PIN3_CLEAR
 #else
 #define DBG_M2_TASK_SET                         __mnop()
 #define DBG_M2_TASK_UNSET                       __mnop()

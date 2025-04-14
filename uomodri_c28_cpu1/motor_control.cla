@@ -77,8 +77,8 @@ __attribute__((interrupt)) void cmdNew_Task(void)
     float32_t *m2_pos = (cmd_uomodri[MOTOR_2].cmdField.encOffsetEnable) ? \
             (&motor_m2.foc.enc.thetaFromIndex) : (&motor_m2.foc.enc.thetaAbsolute);
 
-    motor_m1.foc.linControl.p_state[2*DRIVER_ID].ptr     = m1_pos;
-    motor_m1.foc.linControl.p_state[2*DRIVER_ID + 1].ptr = m2_pos;
+    motor_m1.foc.linControl.p_state[2*DAISY_CHAIN_DRIVER_ID].ptr     = m1_pos;
+    motor_m1.foc.linControl.p_state[2*DAISY_CHAIN_DRIVER_ID + 1].ptr = m2_pos;
     // =========================================
 
     // ============ Motor 2 ====================
@@ -93,8 +93,8 @@ __attribute__((interrupt)) void cmdNew_Task(void)
     motor_m2.foc.cmd.cmdField.all   = cmd_uomodri[MOTOR_2].cmdField.all;
     motor_m2.foc.cmd.periphField.all= cmd_uomodri[MOTOR_2].periphField.all;
 
-    motor_m2.foc.linControl.p_state[2*DRIVER_ID].ptr     = m1_pos;
-    motor_m2.foc.linControl.p_state[2*DRIVER_ID + 1].ptr = m2_pos;
+    motor_m2.foc.linControl.p_state[2*DAISY_CHAIN_DRIVER_ID].ptr     = m1_pos;
+    motor_m2.foc.linControl.p_state[2*DAISY_CHAIN_DRIVER_ID + 1].ptr = m2_pos;
     // =========================================
 
     DBG_CMD_NEW_TASK_UNSET;

@@ -101,6 +101,17 @@ static const gpio_cfg_t gpioCfgList[] =
  COM_SPI_SOMI_DEF,                  /* COM SPI SOMI (MCU -> MASTER) pin */
  COM_SPI_CLK_DEF,                   /* COM SPI SCLK (MASTER -> MCU) pin */
  COM_SPI_CS_DEF,                    /* COM SPI CS\  (MASTER -> MCU) pin */
+
+#if (DAISY_CHAIN_ENABLE)
+ FSI_RX_CLK_DEF,                    /* FSI Rx clock from prev. board in daisy chain  */
+ FSI_RX_D0_DEF,                     /* FSI Rx line 0 from prev. board in daisy chain */
+ FSI_RX_D1_DEF,                     /* FSI Rx line 1 from prev. board in daisy chain */
+
+ FSI_TX_CLK_DEF,                    /* FSI Tx clock to next board in daisy chain  */
+ FSI_TX_D0_DEF,                     /* FSI Tx line 0 to next board in daisy chain */
+ FSI_TX_D1_DEF,                     /* FSI Tx line 1 to next board in daisy chain */
+#endif
+
  /* RGB LED communication */
  LED_SPI_SIMO_DEF,                  /* LED SPI SIMO (MCU -> LED) pin */
  /* RS485 BUS IO pins */
@@ -309,6 +320,20 @@ static const spi_cfg_t  spiCfgList[] =
 };
 
 /***********************************************************************
+ * FSI STRUCTURE DECLARATION & INITIALIZATION
+ ***********************************************************************/
+static const fsi_cfg_t  fsiCfgList[] =
+{
+ // CPU2 controlled modules:
+ FSI_TX_CPU2_DEF,                  /* FSI daisy-chain TX bus */
+ FSI_RX_CPU2_DEF,                  /* FSI daisy-chain RX bus*/
+
+ // CPU1 controlled modules:
+ // TODO(rafael)
+ {.fsiBase= UINT32_MAX},           /* END OF ARRAY */
+};
+
+/***********************************************************************
  * DMA STRUCTURE DECLARATION & INITIALIZATION
  ***********************************************************************/
 /** @var    DMA_TypeDef dmaCfgList[]
@@ -374,6 +399,7 @@ static const hal_cfg_t  hal =
  .p_ipcHandle   = ipcCfgList,
  .p_sciHandle   = sciCfgList,
  .p_spiHandle   = spiCfgList,
+ .p_fsiHandle   = fsiCfgList,
  .p_mcanHandle  = mcanCfgList,
  .p_timerHandle = timerCfgList,
  .p_claHandle   = claCfgList,

@@ -8,7 +8,7 @@ extern "C" {
 /***********************************************************************
  * INCLUDES
  ***********************************************************************/
-#ifdef CPU1
+#ifndef CM_CORE
 #include "f2838x_device.h"
 #include "uomodri_user_defines.h"
 #else
@@ -56,9 +56,8 @@ extern "C" {
 /***********************************************************************
  * LINEAR CONTROL CONSTANTS
  ***********************************************************************/
-#define CONNECTED_DRIVER_COUNT       (1)                            /*!< Total number of interconnected motor drivers (incl. this one) */
-#define ROBOT_STATE_DIMS             (4 * CONNECTED_DRIVER_COUNT)   /*!< State dimension count (positions and velocities of all connected motors) */
-#define DRIVER_ID                    (0)                            /*!< ID (0-indexed) of this motor driver */
+#define ROBOT_STATE_DIMS             (4 * DAISY_CHAIN_DRIVER_COUNT)   /*!< State dimension count (positions and velocities of all connected motors) */
+
 /***********************************************************************
  * ENUM TYPES
  ***********************************************************************/

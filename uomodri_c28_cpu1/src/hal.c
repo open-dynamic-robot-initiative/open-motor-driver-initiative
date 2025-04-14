@@ -29,6 +29,7 @@ void HAL_ADC_ini(const adc_cfg_t*);
 void HAL_ePWM_ini(const epwm_cfg_t*);
 void HAL_eQEP_ini(const eqep_cfg_t*);
 void HAL_SPI_ini(const spi_cfg_t*);
+void HAL_FSI_ini(const fsi_cfg_t*);
 void HAL_SCI_ini(const sci_cfg_t*);
 void HAL_DMA_ini(const dma_cfg_t*);
 void HAL_MCAN_ini(const mcan_cfg_t*);
@@ -69,6 +70,8 @@ void HAL_ini(const hal_cfg_t* p_hal)
         HAL_DMA_ini(p_hal->p_dmaHandle);
         // Initialize SPI
         HAL_SPI_ini(p_hal->p_spiHandle);
+        // Initialize FSI
+        HAL_FSI_ini(p_hal->p_fsiHandle);
         // Initialize CPU TIMERS
         HAL_TMR_ini(p_hal->p_timerHandle);
         // Initialize IPC
@@ -501,6 +504,77 @@ void HAL_SPI_ini(const spi_cfg_t* p_spiCfg)
                 SPI_enableModule(spiBase);
             spiBase = (++p_spiCfg)->spiBase;
         }
+    }
+
+    return;
+}
+
+/**
+ * @brief       FSI module CPU1 initialization function
+ * @param[in]   *p_fsiCfg Pointer to the FSI configuration structure
+ *
+ * This function (ran by CPU1) configures all FSI peripherals in use.
+ * If the peripheral should be connected to CPU2 only the CPU selection
+ * step will be performed.
+ */
+void HAL_FSI_ini(const fsi_cfg_t* p_fsiCfg)
+{
+    // TODO(rafael): Skew compensation?
+    // TODO(rafael): Interrupt configuration?
+
+    if(!p_fsiCfg)
+        return;
+
+    while (p_fsiCfg->fsiBase != UINT32_MAX)
+    {
+        // If peripheral not controlled by CPU1, connect to other core and skip
+        // all other settings as CPU2 will manage it:
+        if (p_fsiCfg->cpuSelect != SYSCTL_CPUSEL_CPU1)
+        {
+
+#ifndef CPU1
+    #error "Cannot call CPU1 HAL FSI function from another core."
+#endif
+
+            // Disable peripheral clock before CPU register change
+            // to avoid clock glitches (see TRM, 3.16.9.40).
+            SysCtl_disablePeripheral(p_fsiCfg->sysCtlPeriphClk);
+            SysCtl_selectCPUForPeripheralInstance(p_fsiCfg->cpuSelPeriphInst, p_fsiCfg->cpuSelect);
+            SysCtl_enablePeripheral(p_fsiCfg->sysCtlPeriphClk);
+
+            p_fsiCfg++;
+            continue;
+        }
+
+        // Receiver module:
+        if (p_fsiCfg->direction == FSI_RX_DIR)
+        {
+            if (!p_fsiCfg->loopback)
+            {
+                // Disable FSI internal loopback (internal TX->RX):
+                FSI_disableRxInternalLoopback(p_fsiCfg->fsiBase);
+            }
+
+            // Initialize receiver and set data width for transmissions:
+            FSI_performRxInitialization(p_fsiCfg->fsiBase);
+            FSI_setRxDataWidth(p_fsiCfg->fsiBase, p_fsiCfg->dataWidth);
+
+            // RX interrupt setup, see `interruptList` for which
+            // interrupts are enabled to propagate in the PIE.
+
+            // TODO(rafael): Add necessary interrupts, eg. timeout.
+            // FSI_enableRxInterrupt(p_fsiCfg->fsiBase, FSI_INT1, FSI_RX_EVT_FRAME_DONE);
+        }
+
+        // Transmitter module:
+        else
+        {
+            FSI_performTxInitialization(p_fsiCfg->fsiBase, p_fsiCfg->clkPrescaler);
+            FSI_setTxDataWidth(p_fsiCfg->fsiBase, p_fsiCfg->dataWidth);
+            // FSI_enableTxInterrupt(p_fsiCfg->fsiBase, FSI_INT1, FSI_TX_EVT_FRAME_DONE);
+        }
+
+        p_fsiCfg++;
     }
 
     return;
