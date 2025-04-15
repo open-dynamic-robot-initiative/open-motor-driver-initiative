@@ -492,11 +492,6 @@ typedef struct __fsi_config_t__
     const bool_t                        loopback;                  /*!< Whether FSI internal loopback enabled (if RX) */
     const uint32_t                      clkPrescaler;              /*!< Clock prescaler from PLLRAWCLK (if TX)*/
     const FSI_DataWidth                 dataWidth;                 /*!< Data width (1 vs 2 lane) for TX or RX operations */
-
-    // CPU Selection Parameters:
-    const SysCtl_CPUSel                 cpuSelect;                 /*!< Which CPU controls this peripheral             (by default CPU1) */
-    const SysCtl_CPUSelPeriphInstance   cpuSelPeriphInst;          /*!< Peripheral parameter for SysCtl                (only if cpuSelect set) */
-    const SysCtl_PeripheralPCLOCKCR     sysCtlPeriphClk;           /*!< Clock parameter for enable/disablePeripheral() (only if cpuSelect set) */
 } fsi_cfg_t;
 
 /**
@@ -716,8 +711,20 @@ typedef struct __cpu_timer_config_t__
 } tmr_cfg_t;
 
 /**
+ * @struct  cpu2_periph_cfg_t
+ * @brief   Configuration for peripherals to be connected to CPU2
+ */
+
+typedef struct __cpu2_periph_config_t__
+{
+    const SysCtl_CPUSelPeriphInstance   cpuSelPeriphInst;          /*!< Peripheral parameter for SysCtl (to set CPUSELx)*/
+    const SysCtl_PeripheralPCLOCKCR     sysCtlPeriphClk;           /*!< Clock parameter for enable/disablePeripheral() */
+    const bool_t                        last;                      /*!< Marks the last element in the array */
+} cpu2_periph_cfg_t;
+
+/**
  * @struct  hal_cfg_t
- * @brief   General HAL structure handler for the project
+ * @brief   General HAL structure handler for CPU1
  */
 typedef struct __hal_config_t__
 {

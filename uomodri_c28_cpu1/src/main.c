@@ -33,7 +33,7 @@
  * FUNCTIONS DECLARATION
  ***********************************************************************/
 void main(void);
-static void MCU_ini(void);
+static void MCU_ini(const cpu2_periph_cfg_t*);
 void MOT_initStruct(motor_t*, uint16_t);
 void COM_muxCtrl(com_bus_e);
 void CLA_adcCalibration(void);
@@ -315,7 +315,7 @@ void send_fsi_sample_and_wait()
 void main(void)
 {
     // uOmodri low level device initialization
-    MCU_ini();
+    MCU_ini(cpu2PeriphsCfgList);
     // Initialization of the shared structure used by CLA & C28 for Motor_1 & Motor_2
     MOT_initStruct(&motor_m1, MOTOR_1);
     MOT_initStruct(&motor_m2, MOTOR_2);
@@ -357,15 +357,30 @@ void main(void)
  * @brief       Microcontroller initialization function
  *                  - Configure master clock to 200MHz
  *                  - Configure auxiliary clock (CM core) to 125MHz (USB � 60MHz)
+ *                  - Configure peripherals connected to CPU2
  *                  - Configure MCAN (clock divider + processor management (CPU1 or CM))
  *                  - Enable GPIO clocking
  *                  - Configure the interruption vector table
  *                  - Boot CM from flash or RAM
  */
-static void MCU_ini(void)
+static void MCU_ini(const cpu2_periph_cfg_t* cpu2Periphs)
 {
     /* Initialize clock and peripherals */
     Device_init();
+
+    /* Connect CPU2 peripherals */
+    while (!cpu2Periphs->last)
+    {
+        // Disable peripheral clock before CPU register change
+        // to avoid clock glitches (see TRM, 3.16.9.40).
+        SysCtl_disablePeripheral(cpu2Periphs->sysCtlPeriphClk);
+        SysCtl_selectCPUForPeripheralInstance(cpu2Periphs->cpuSelPeriphInst, SYSCTL_CPUSEL_CPU2);
+        SysCtl_enablePeripheral(cpu2Periphs->sysCtlPeriphClk);
+
+        cpu2Periphs++;
+    }
+
+
 #if (USE_UOMODRI_REV >= USE_UOMODRI_V3)
     // Define which core manage MCAN (a shared peripheral) - CPU1 (C28x) / CM (Cortex M)
     SysCtl_allocateSharedPeripheral(SYSCTL_PALLOCATE_MCAN_A, MCAN_ALLOCATE_ON_CORE);

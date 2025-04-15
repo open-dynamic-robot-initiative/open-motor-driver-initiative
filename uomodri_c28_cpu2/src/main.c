@@ -3,24 +3,8 @@
 
 #include <device.h>
 
-
-#define USE_UOMODRI_V1                          (1)
-#define USE_UOMODRI_V2                          (2)
-#define USE_UOMODRI_V3                          (3)
-#define USE_UOMODRI_SA_V1                       (4)
-#define USE_UOMODRI_REV                         USE_UOMODRI_V3
-
-#if (USE_UOMODRI_REV == USE_UOMODRI_V1)
-#include "config/uomodri_1/uomodri_1_handlers.h"    // uOmodri v1.x configuration include file
-#elif (USE_UOMODRI_REV == USE_UOMODRI_V2)
-#include "config/uomodri_2/uomodri_2_handlers.h"    // uOmodri v2.x configuration include file
-#elif (USE_UOMODRI_REV == USE_UOMODRI_V3)
-#include "config/uomodri_3/uomodri_3_handlers.h"    // uOmodri v3.x configuration include file
-#endif
-
-//#define IPC_SYNC_FLAG                           IPC_FLAG31
-#define FSI_RX_CPU2_BASE                        FSIRXC_BASE
-#define FSI_RX_CPU2_CPUSEL_INSTANCE             SYSCTL_CPUSEL_FSIRXC
+#include "hal.h"
+#include "hal_handlers.h"
 
 #define INT_FSI_RX1_GROUP                       INTERRUPT_ACK_GROUP7
 
@@ -63,22 +47,9 @@ __attribute__((interrupt)) void test_isr(void)
 
 int main(void)
 {
-    //
-    // Initialize device clock and peripherals
-    //
     Device_init();
-
-    //
-    // Initialize PIE and clear PIE registers. Disables CPU interrupts.
-    //
     Interrupt_initModule();
-
-    //
-    // Initialize the PIE vector table with pointers to the shell Interrupt
-    // Service Routines (ISR).
-    //
     Interrupt_initVectorTable();
-
 
     // TODO(rafael): While error, reset. until recv something successful (flush / ping)
     //            FSI_setRxDataWidth(FSI_RX_BASE, FSI_DATA_WIDTH_2_LANE);
@@ -87,17 +58,9 @@ int main(void)
 	// Synchronize with CPU1:
 	IPC_sync(IPC_CPU2_L_CPU1_R, IPC_SYNC_FLAG);
 
-	// We now know the FSI has been setup:
-    FSI_disableRxInternalLoopback(FSI_RX_CPU2_BASE);
+	HAL_ini(&hal);
 
-    FSI_resetRxModule(FSI_RX_CPU2_BASE, FSI_RX_MAIN_CORE_RESET);
-    DEVICE_DELAY_US(1);
-    FSI_clearRxModuleReset(FSI_RX_CPU2_BASE, FSI_RX_MAIN_CORE_RESET);
-
-    FSI_performRxInitialization(FSI_RX_CPU2_BASE);
-
-    FSI_setRxDataWidth(FSI_RX_CPU2_BASE, FSI_DATA_WIDTH_1_LANE);
-    FSI_enableRxInterrupt(FSI_RX_CPU2_BASE, FSI_INT1, FSI_RX_EVT_FRAME_DONE);
+	FSI_enableRxInterrupt(FSI_RX_CPU2_BASE, FSI_INT1, FSI_RX_EVT_FRAME_DONE);
 
     Interrupt_register(INT_FSIRXC1, &test_isr);
     Interrupt_enable(INT_FSIRXC1);

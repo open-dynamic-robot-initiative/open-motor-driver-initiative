@@ -510,12 +510,8 @@ void HAL_SPI_ini(const spi_cfg_t* p_spiCfg)
 }
 
 /**
- * @brief       FSI module CPU1 initialization function
+ * @brief       FSI module initialization function
  * @param[in]   *p_fsiCfg Pointer to the FSI configuration structure
- *
- * This function (ran by CPU1) configures all FSI peripherals in use.
- * If the peripheral should be connected to CPU2 only the CPU selection
- * step will be performed.
  */
 void HAL_FSI_ini(const fsi_cfg_t* p_fsiCfg)
 {
@@ -527,25 +523,6 @@ void HAL_FSI_ini(const fsi_cfg_t* p_fsiCfg)
 
     while (p_fsiCfg->fsiBase != UINT32_MAX)
     {
-        // If peripheral not controlled by CPU1, connect to other core and skip
-        // all other settings as CPU2 will manage it:
-        if (p_fsiCfg->cpuSelect != SYSCTL_CPUSEL_CPU1)
-        {
-
-#ifndef CPU1
-    #error "Cannot call CPU1 HAL FSI function from another core."
-#endif
-
-            // Disable peripheral clock before CPU register change
-            // to avoid clock glitches (see TRM, 3.16.9.40).
-            SysCtl_disablePeripheral(p_fsiCfg->sysCtlPeriphClk);
-            SysCtl_selectCPUForPeripheralInstance(p_fsiCfg->cpuSelPeriphInst, p_fsiCfg->cpuSelect);
-            SysCtl_enablePeripheral(p_fsiCfg->sysCtlPeriphClk);
-
-            p_fsiCfg++;
-            continue;
-        }
-
         // Receiver module:
         if (p_fsiCfg->direction == FSI_RX_DIR)
         {
@@ -554,6 +531,10 @@ void HAL_FSI_ini(const fsi_cfg_t* p_fsiCfg)
                 // Disable FSI internal loopback (internal TX->RX):
                 FSI_disableRxInternalLoopback(p_fsiCfg->fsiBase);
             }
+
+            FSI_resetRxModule(p_fsiCfg->fsiBase, FSI_RX_MAIN_CORE_RESET);
+            DEVICE_DELAY_US(1);
+            FSI_clearRxModuleReset(p_fsiCfg->fsiBase, FSI_RX_MAIN_CORE_RESET);
 
             // Initialize receiver and set data width for transmissions:
             FSI_performRxInitialization(p_fsiCfg->fsiBase);

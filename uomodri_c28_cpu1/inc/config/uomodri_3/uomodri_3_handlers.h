@@ -324,12 +324,6 @@ static const spi_cfg_t  spiCfgList[] =
  ***********************************************************************/
 static const fsi_cfg_t  fsiCfgList[] =
 {
- // CPU2 controlled modules:
- FSI_TX_CPU2_DEF,                  /* FSI daisy-chain TX bus */
- FSI_RX_CPU2_DEF,                  /* FSI daisy-chain RX bus*/
-
- // CPU1 controlled modules:
- // TODO(rafael)
  {.fsiBase= UINT32_MAX},           /* END OF ARRAY */
 };
 
@@ -388,7 +382,17 @@ static const tmr_cfg_t  timerCfgList[] =
 };
 
 /***********************************************************************
- * GLOBALE HAL STRUCTURE DECLARATION & INITIALIZATION
+ * CPU2 PERIPHERAL CONNECT STRUCTURE DECLARATION & INITIALIZATION
+ ***********************************************************************/
+static const cpu2_periph_cfg_t  cpu2PeriphsCfgList[] =
+{
+  FSI_TX_CPU2_CONN_DEF,
+  FSI_RX_CPU2_CONN_DEF,
+  {.last = true},      /* END OF ARRAY */
+};
+
+/***********************************************************************
+ * GLOBAL HAL STRUCTURE DECLARATION & INITIALIZATION
  ***********************************************************************/
 static const hal_cfg_t  hal =
 {
