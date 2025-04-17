@@ -434,7 +434,7 @@
 
 #define DBG_PIN3_NUM                            (77U)
 #define DBG_PIN3_CFG                            GPIO_77_GPIO77
-#define DBG_PIN3_CORE                           GPIO_CORE_CPU1
+#define DBG_PIN3_CORE                           GPIO_CORE_CPU2
 #define DBG_PIN3_SET                            (HWREG(GPIODATA_BASE + GPIO_O_GPCSET)   = GPIO_GPCSET_GPIO77)
 #define DBG_PIN3_CLEAR                          (HWREG(GPIODATA_BASE + GPIO_O_GPCCLEAR) = GPIO_GPCCLEAR_GPIO77)
 #define DBG_PIN3_TOGGLE                         (HWREG(GPIODATA_BASE + GPIO_O_GPCTOGGLE)= GPIO_GPCTOGGLE_GPIO77)

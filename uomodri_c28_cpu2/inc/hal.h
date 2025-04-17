@@ -12,8 +12,6 @@
 #include "f2838x_device.h"
 #include "device.h"
 
-#include "uomodri_user_defines.h"
-
 /***********************************************************************
  * DEFINES
  ***********************************************************************/
@@ -31,6 +29,17 @@ typedef enum __fsi_Direction_enum__
 /***********************************************************************
  * HARDWARE ABSTRACTION LAYER (HAL) STRUCTURES
  ***********************************************************************/
+
+/**
+ * @struct  fsi_evt_cfg_t
+ * @brief   Configuration for a single FSI event interrupt
+ */
+typedef struct __fsi_int_config_t__
+{
+    const uint16_t                      event;                    /*!< Event code to trigger interrupt (see FSI_TX_EVT_* or FSI_RX_EVT_*) */
+    const FSI_InterruptNum              intNum;                   /*!< Which interrupt the event triggers (INT1 or 2) */
+} fsi_evt_cfg_t;
+
 /**
  * @struct  fsi_cfg_t
  * @brief   FSI global Hardware Abstraction Layer structure
@@ -42,6 +51,7 @@ typedef struct __fsi_config_t__
     const bool_t                        loopback;                  /*!< Whether FSI internal loopback enabled (if RX) */
     const uint32_t                      clkPrescaler;              /*!< Clock prescaler from PLLRAWCLK (if TX)*/
     const FSI_DataWidth                 dataWidth;                 /*!< Data width (1 vs 2 lane) for TX or RX operations */
+    const fsi_evt_cfg_t*                eventInterrupts;           /*!< Event interrupt configuration */
 } fsi_cfg_t;
 
 

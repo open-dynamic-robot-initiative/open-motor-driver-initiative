@@ -5,6 +5,9 @@
 #ifndef INC_HAL_DEFINES_H_
 #define INC_HAL_DEFINES_H_
 
+#define IPC_SYNC_FLAG                           IPC_FLAG31
+
+
 /***********************************************************************
  * FSI DEFINES
  ***********************************************************************/
@@ -39,21 +42,30 @@
 // Board-to-board TX (controlled by CPU2):
 #define FSI_TX_CPU2_BASE                        FSITXA_BASE
 #define FSI_TX_CPU2_PRESCALE                    FSI_PRESCALE_25MHZ
-#define FSI_TX_CPU2_DEF                         { \
-                                                    .fsiBase           = FSI_TX_CPU2_BASE, \
-                                                    .direction         = FSI_TX_DIR, \
-                                                    .loopback          = false, \
-                                                    .clkPrescaler      = FSI_TX_CPU2_PRESCALE, \
-                                                    .dataWidth         = FSI_DATA_WIDTH, \
+
+#define FSI_TX_CPU2_DEF(EVT_LIST)               {                                                                       \
+                                                    .fsiBase           = FSI_TX_CPU2_BASE,                              \
+                                                    .direction         = FSI_TX_DIR,                                    \
+                                                    .loopback          = false,                                         \
+                                                    .clkPrescaler      = FSI_TX_CPU2_PRESCALE,                          \
+                                                    .dataWidth         = FSI_DATA_WIDTH,                                \
+                                                    .eventInterrupts   = (EVT_LIST)                                     \
                                                 }
 
 // Board-to-board RX (controlled by CPU2):
 #define FSI_RX_CPU2_BASE                        FSIRXC_BASE
-#define FSI_RX_CPU2_DEF                         { \
-                                                    .fsiBase           = FSI_RX_CPU2_BASE, \
-                                                    .direction         = FSI_RX_DIR, \
-                                                    .loopback          = false, \
-                                                    .dataWidth         = FSI_DATA_WIDTH, \
+
+#define FSI_RX_CPU2_EVT_FRAME_DONE              {                                                                       \
+                                                    .event             = FSI_RX_EVT_FRAME_DONE,                         \
+                                                    .intNum            = FSI_INT1                                       \
+                                                }
+
+#define FSI_RX_CPU2_DEF(EVT_LIST)               {                                                                       \
+                                                    .fsiBase           = FSI_RX_CPU2_BASE,                              \
+                                                    .direction         = FSI_RX_DIR,                                    \
+                                                    .loopback          = false,                                         \
+                                                    .dataWidth         = FSI_DATA_WIDTH,                                \
+                                                    .eventInterrupts   = (EVT_LIST),                                    \
                                                 }
 
 

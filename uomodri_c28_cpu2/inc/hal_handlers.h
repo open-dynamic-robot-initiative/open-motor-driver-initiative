@@ -12,11 +12,22 @@
 /***********************************************************************
  * FSI STRUCTURE DECLARATION & INITIALIZATION
  ***********************************************************************/
-static const fsi_cfg_t  fsiCfgList[] =
+static const fsi_evt_cfg_t fsi_tx_evts[] =
 {
- FSI_TX_CPU2_DEF,
- FSI_RX_CPU2_DEF,
- {.fsiBase= UINT32_MAX},           /* END OF ARRAY */
+ {.event = UINT16_MAX},
+};
+
+static const fsi_evt_cfg_t fsi_rx_evts[] =
+{
+ FSI_RX_CPU2_EVT_FRAME_DONE,
+ {.event = UINT16_MAX},
+};
+
+static const fsi_cfg_t fsiCfgList[] =
+{
+ FSI_TX_CPU2_DEF(fsi_tx_evts),
+ FSI_RX_CPU2_DEF(fsi_rx_evts),
+ {.fsiBase = UINT32_MAX},           /* END OF ARRAY */
 };
 
 /***********************************************************************

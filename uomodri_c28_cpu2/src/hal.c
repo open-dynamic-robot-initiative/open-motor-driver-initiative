@@ -64,11 +64,13 @@ void HAL_FSI_ini(const fsi_cfg_t* p_fsiCfg)
             FSI_performRxInitialization(p_fsiCfg->fsiBase);
             FSI_setRxDataWidth(p_fsiCfg->fsiBase, p_fsiCfg->dataWidth);
 
-            // RX interrupt setup, see `interruptList` for which
-            // interrupts are enabled to propagate in the PIE.
-
-            // TODO(rafael): Add necessary interrupts, eg. timeout.
-            // FSI_enableRxInterrupt(p_fsiCfg->fsiBase, FSI_INT1, FSI_RX_EVT_FRAME_DONE);
+            // Interrupt configuration:
+            const fsi_evt_cfg_t* evtCfg = p_fsiCfg->eventInterrupts;
+            while (evtCfg->event != UINT16_MAX)
+            {
+                FSI_enableRxInterrupt(p_fsiCfg->fsiBase, evtCfg->intNum, evtCfg->event);
+                evtCfg++;
+            }
         }
 
         // Transmitter module:
@@ -76,7 +78,13 @@ void HAL_FSI_ini(const fsi_cfg_t* p_fsiCfg)
         {
             FSI_performTxInitialization(p_fsiCfg->fsiBase, p_fsiCfg->clkPrescaler);
             FSI_setTxDataWidth(p_fsiCfg->fsiBase, p_fsiCfg->dataWidth);
-            // FSI_enableTxInterrupt(p_fsiCfg->fsiBase, FSI_INT1, FSI_TX_EVT_FRAME_DONE);
+
+            const fsi_evt_cfg_t* evtCfg = p_fsiCfg->eventInterrupts;
+            while (evtCfg->event != UINT16_MAX)
+            {
+                FSI_enableTxInterrupt(p_fsiCfg->fsiBase, evtCfg->intNum, evtCfg->event);
+                evtCfg++;
+            }
         }
 
         p_fsiCfg++;
