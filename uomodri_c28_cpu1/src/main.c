@@ -321,6 +321,7 @@ void main(void)
     MOT_initStruct(&motor_m2, MOTOR_2);
     // Hardware Abstraction Layer initialization.
     HAL_ini(&hal);
+
     // Initialization the command structure for CLA.
     COM_initCmdStruct(&cmd_uomodri[MOTOR_1], MOTOR_1);
     COM_initCmdStruct(&cmd_uomodri[MOTOR_2], MOTOR_2);
@@ -380,6 +381,9 @@ static void MCU_ini(const cpu2_periph_cfg_t* cpu2Periphs)
         cpu2Periphs++;
     }
 
+
+    // TODO(rafael): Do this in HAL
+    MemCfg_setGSRAMControllerSel(MEMCFG_SECT_GS3, MEMCFG_GSRAMCONTROLLER_CPU2);
 
 #if (USE_UOMODRI_REV >= USE_UOMODRI_V3)
     // Define which core manage MCAN (a shared peripheral) - CPU1 (C28x) / CM (Cortex M)
