@@ -3,8 +3,8 @@
  * Description: Header file containing CPU2 HAL config structures.
  */
 
-#ifndef __HAL_HANDLERS_H_
-#define __HAL_HANDLERS_H_
+#ifndef __HAL_HANDLERS_CPU2_H_
+#define __HAL_HANDLERS_CPU2_H_
 
 #include "hal.h"
 #include "hal_defines.h"
@@ -38,4 +38,4 @@ static const hal_cfg_t  hal =
  .p_fsiHandle   = fsiCfgList,
 };
 
-#endif /* HAL_HANDLERS_H_ */
+#endif /* HAL_HANDLERS_CPU2_H_ */

@@ -2,8 +2,8 @@
  * File name: hal_defines.h
  * Description: Header file containing CPU2 HAL configuration defines.
  */
-#ifndef INC_HAL_DEFINES_H_
-#define INC_HAL_DEFINES_H_
+#ifndef INC_HAL_DEFINES_CPU2_H_
+#define INC_HAL_DEFINES_CPU2_H_
 
 #define IPC_SYNC_FLAG                           IPC_FLAG31
 
@@ -69,4 +69,4 @@
                                                 }
 
 
-#endif /* INC_HAL_DEFINES_H_ */
+#endif /* INC_HAL_DEFINES_CPU2_H_ */

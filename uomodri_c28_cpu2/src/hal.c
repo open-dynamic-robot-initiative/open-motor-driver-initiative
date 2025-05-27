@@ -64,6 +64,8 @@ void HAL_FSI_ini(const fsi_cfg_t* p_fsiCfg)
             FSI_performRxInitialization(p_fsiCfg->fsiBase);
             FSI_setRxDataWidth(p_fsiCfg->fsiBase, p_fsiCfg->dataWidth);
 
+            FSI_enableRxDMAEvent(p_fsiCfg->fsiBase);
+
             // Interrupt configuration:
             const fsi_evt_cfg_t* evtCfg = p_fsiCfg->eventInterrupts;
             while (evtCfg->event != UINT16_MAX)

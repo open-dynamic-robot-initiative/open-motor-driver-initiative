@@ -3,8 +3,8 @@
  * Description: Header file for the CPU2 Hardware Abstraction Layer
  */
 
-#ifndef __HAL_H__
-#define __HAL_H__
+#ifndef __HAL_CPU2_H__
+#define __HAL_CPU2_H__
 
 /***********************************************************************
  * INCLUDES
@@ -70,4 +70,4 @@ typedef struct __hal_config_t__
 void HAL_ini(const hal_cfg_t*);
 //void HAL_INT_ini(const int_cfg_t*, void (*)(void));
 
-#endif /* __HAL_H__ */
+#endif /* __HAL_CPU2_H__ */
