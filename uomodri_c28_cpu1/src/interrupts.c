@@ -27,6 +27,17 @@
 //#include "hal.h"
 
 /***********************************************************************
+ * VARIABLES IN CPU2 CONTROLLED MEMRORY (READ-ONLY)
+ ***********************************************************************/
+#if DAISY_CHAIN_ENABLE
+
+#pragma DATA_ALIGN(gs_fsi_pack_buf, 4)
+#pragma DATA_SECTION(gs_fsi_pack_buf, "ramgs3")
+fsi_recv_data_t gs_fsi_pack_buf;
+
+#endif
+
+/***********************************************************************
  * VARIABLES IN CLA SPACE MEMORY
  ***********************************************************************/
 #pragma DATA_ALIGN(motor_m1, 4)
@@ -36,10 +47,6 @@ motor_t     motor_m1;
 #pragma DATA_ALIGN(motor_m2, 4)
 #pragma DATA_SECTION(motor_m2, "ClaDataMotor2");
 motor_t     motor_m2;
-
-#pragma DATA_ALIGN(recv_robot_state, 4)
-#pragma DATA_SECTION(recv_robot_state, "ClaDataRobotState");
-robot_state_t recv_robot_state;
 
 /***********************************************************************
  * VARIABLES IN CPU TO CLA SPACE MEMORY
@@ -58,6 +65,18 @@ debug_t     dbg_cpu2cm_m1 = {.motor_id = MOTOR_1};
 #pragma DATA_ALIGN(dbg_cpu2cm_m2, 128U)
 #pragma DATA_SECTION(dbg_cpu2cm_m2, "MsgRamCpuToCm")
 debug_t     dbg_cpu2cm_m2 = {.motor_id = MOTOR_2};
+
+/***********************************************************************
+ * VAIRIABLES IN DMA TO CLA MEMORY
+ ***********************************************************************/
+
+#if DAISY_CHAIN_ENABLE
+
+#pragma DATA_ALIGN(recv_robot_states, 4)
+#pragma DATA_SECTION(recv_robot_states, "MsgRamDmaToCla");
+fsi_recv_data_t recv_robot_states;
+
+#endif
 
 /***********************************************************************
  * GLOBAL VARIABLES
@@ -151,6 +170,12 @@ inline void LED_dimming(motor_t*, motor_t*, uint16_t*);
 __attribute__((interrupt)) void cla_isrMotor1(void)
 {
     DBG_CLA_M1_ISR_SET;
+
+#if DAISY_CHAIN_ENABLE
+    // Bring FSI data for the next control cycle:
+    DMA_forceTrigger(DMA_FSI_TO_CLA_BASE_ADDR);
+#endif
+
     // Fill of the M1 motor's elements in the Tx message
     COM_msgCreate(&motor_m1, &slv2mst_msg, &cpu_tmr_cnt_ms);
     // Copy elements of motor_1 into debug structure for CM core
@@ -173,6 +198,12 @@ __attribute__((interrupt)) void cla_isrMotor1(void)
 __attribute__((interrupt)) void cla_isrMotor2(void)
 {
     DBG_CLA_M2_ISR_SET;
+
+#if DAISY_CHAIN_ENABLE
+    // Bring FSI data for the next control cycle:
+    DMA_forceTrigger(DMA_FSI_TO_CLA_BASE_ADDR);
+#endif
+
     // Fill of the M2 motor's elements in the Tx message
     COM_msgCreate(&motor_m2, &slv2mst_msg, &cpu_tmr_cnt_ms);
     // Finalize the Tx message. Aggregate MOTOR_2 values + computed CRC

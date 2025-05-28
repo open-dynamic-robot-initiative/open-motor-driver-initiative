@@ -54,11 +54,6 @@ extern "C" {
 #define MOTOR_STATE_ERROR           (0xFFFF)
 
 /***********************************************************************
- * LINEAR CONTROL CONSTANTS
- ***********************************************************************/
-#define ROBOT_STATE_DIMS             (4 * DAISY_CHAIN_DRIVER_COUNT)   /*!< State dimension count (positions and velocities of all connected motors) */
-
-/***********************************************************************
  * ENUM TYPES
  ***********************************************************************/
 /**
@@ -244,8 +239,27 @@ typedef struct __linear_ctrl_t__
     ptr_32b_u           p_alpha;                        /*!< Pointer to beginning of alpha row for motor */
     ptr_32b_u           p_beta;                         /*!< Pointer to beta scalar */
     ptr_32b_u           p_iSat;                         /*!< Pointer to saturation current for motor*/
-    ptr_32b_u           p_state[ROBOT_STATE_DIMS];      /*!< Pointers to individual elements of state vector */
 
+    /**
+    * Position and velocity for each motor of all connected motor drivers.
+    * Pointers are set up as follows:
+    *      [
+    *          drv1.m1.pos,
+    *          drv1.m2.pos,
+    *          drv2.m1.pos,
+    *          drv2.m2.pos,
+    *          ...,
+    *          drv1.m1.vel,
+    *          drv1.m2.vel,
+    *          drv2.m1.vel,
+    *          drv2.m2.vel,
+    *          ...,
+    *      ]
+    *
+    * Position zero depends on whether index compensation is active
+    * for each individual motor.
+    */
+    ptr_32b_u           p_state[ROBOT_STATE_DIMS];
 } linear_ctrl_t;
 
 /**
@@ -419,33 +433,39 @@ typedef struct __motor_t__
     uint16_t            state;          /*!< motor states for the FSM. */
 } motor_t;
 
-/**
- * @struct  robot_state_t
- * @brief   State vector of all connected motors in driver daisy chain.
- */
-typedef struct __robot_state_t__
-{
-    /**
-     * Position and velocity for each motor of all connected motor drivers.
-     * Data is stored as follows:
-     *      [
-     *          drv1.m1.pos,
-     *          drv1.m2.pos,
-     *          drv2.m1.pos,
-     *          drv2.m2.pos,
-     *          ...,
-     *          drv1.m1.vel,
-     *          drv1.m2.vel,
-     *          drv2.m1.vel,
-     *          drv2.m2.vel,
-     *          ...,
-     *      ]
-     *
-     * Position zero depends on whether index compensation is active
-     * for each individual motor.
-     */
-    float32_t           state[ROBOT_STATE_DIMS];
-} robot_state_t;
+
+// TODO: rearrange these!
+
+///**
+// * @struct  robot_state_t
+// * @brief   State vector of all connected motors in driver daisy chain.
+// */
+//typedef struct __robot_state_t__
+//{
+//    /**
+//     * Position and velocity for each motor of all connected motor drivers.
+//     * Data is stored as follows:
+//     *      [
+//     *          drv1.m1.pos,
+//     *          drv1.m2.pos,
+//     *          drv2.m1.pos,
+//     *          drv2.m2.pos,
+//     *          ...,
+//     *          drv1.m1.vel,
+//     *          drv1.m2.vel,
+//     *          drv2.m1.vel,
+//     *          drv2.m2.vel,
+//     *          ...,
+//     *      ]
+//     *
+//     * Position zero depends on whether index compensation is active
+//     * for each individual motor.
+//     */
+//    float32_t           state[ROBOT_STATE_DIMS];
+//} robot_state_t;
+//
+
+
 
 /**
  * @struct  debug_t

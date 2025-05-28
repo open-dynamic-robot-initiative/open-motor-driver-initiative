@@ -9,8 +9,10 @@
 /************************************************************************
  * INCLUDES
  ************************************************************************/
+#include <daisy_chain.h>
 #include "device.h"
 #include "drv8353.h"
+
 
 /***********************************************************************
  * GLOBAL MACROS
@@ -54,16 +56,6 @@
 //#error "RS-485, CAN & SPI share the same data. They cannot run @ the same time"
 #endif
 
-// Motor driver daisy-chain
-// TODO(rafael): #define FSI_BUS_ENABLE                          (1)
-#define DAISY_CHAIN_DRIVER_COUNT                (2) /*!< Total number of interconnected motor drivers (incl. this one) */
-#define DAISY_CHAIN_DRIVER_ID                   (0) /*!< ID (0-indexed) of this motor driver */
-
-#if (DAISY_CHAIN_DRIVER_COUNT > 1)
-#define DAISY_CHAIN_ENABLE                      (1)
-#else
-#define DAISY_CHAIN_ENABLE                      (0)
-#endif
 
 #ifdef DEBUG
 #define DBG_CLA_M1_ISR                          (0)

@@ -2065,6 +2065,7 @@
  */
 #define DMA_NO_WRAP                             (0x10000)
 
+#define DMA_FSI_TO_CLA_BASE_ADDR                DMA_CH3_BASE
 #define DMA_LED_SPI_TX_BASE_ADDR                DMA_CH4_BASE
 #define DMA_COM_SPI_TX_BASE_ADDR                DMA_CH5_BASE
 #define DMA_COM_SPI_RX_BASE_ADDR                DMA_CH6_BASE
@@ -2073,9 +2074,14 @@
 #define DMA_COM_SPI_TX_INT                      INT_DMA_CH5
 #define DMA_COM_SPI_RX_INT                      INT_DMA_CH6
 
+#define DMA_FSI_TO_CLA_TRIGGER_SRC              DMA_TRIGGER_SOFTWARE
 #define DMA_LED_SPI_TX_TRIGGER_SRC              DMA_TRIGGER_SPIDTX
 #define DMA_COM_SPI_TX_TRIGGER_SRC              DMA_TRIGGER_SPIBTX
 #define DMA_COM_SPI_RX_TRIGGER_SRC              DMA_TRIGGER_SPIBRX
+
+#define DMA_FSI_TO_CLA_BURST_EVT                FSI_PACKET_SZ_WORDS
+#define DMA_FSI_TO_CLA_TRANSFER_EVT             (DAISY_CHAIN_DRIVER_COUNT + 1)
+#define DMA_FSI_TO_CLA_CONFIG                   (DMA_CFG_ONESHOT_ENABLE | DMA_CFG_CONTINUOUS_ENABLE | DMA_CFG_SIZE_16BIT)
 
 #define DMA_LED_SPI_TX_FULL_LENGTH              LED_MSG_TX_16BIT_LENGTH
 #define DMA_LED_SPI_TX_BURST_EVT                LED_MSG_TX_16BIT_LENGTH//(LED_MSG_TX_16BIT_LENGTH / 2)
@@ -2111,6 +2117,23 @@
  * @}
  */
 
+#define DMA_FSI_TO_CLA_DEF                      { \
+                                                    .dmaChBase      = DMA_FSI_TO_CLA_BASE_ADDR, \
+                                                    .p_dstAddr      = (uint16_t *)&recv_robot_states, \
+                                                    .p_srcAddr      = (uint16_t *)&gs_fsi_pack_buf, \
+                                                    .burstSize      = DMA_FSI_TO_CLA_BURST_EVT, \
+                                                    .transferSize   = DMA_FSI_TO_CLA_TRANSFER_EVT, \
+                                                    .dstWrapSize    = DMA_NO_WRAP, \
+                                                    .srcWrapSize    = DMA_NO_WRAP, \
+                                                    .dstStep        = 1, \
+                                                    .srcStep        = 1, \
+                                                    .dstWrapStep    = 0, \
+                                                    .srcWrapStep    = 0, \
+                                                    .config         = DMA_FSI_TO_CLA_CONFIG, \
+                                                    .trigger        = DMA_FSI_TO_CLA_TRIGGER_SRC, \
+                                                    .intMode        = DMA_INT_AT_END, \
+                                                    .intEnable      = false, \
+                                                }
 #define DMA_LED_SPI_TX_DEF                      { \
                                                     .dmaChBase      = DMA_LED_SPI_TX_BASE_ADDR, \
                                                     .p_dstAddr      = (uint16_t *)LED_SPI_TX_BASE_REG_ADDR, \

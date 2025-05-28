@@ -31,6 +31,11 @@ extern debug_t              dbg_cpu2cm_m2;
 extern debug_t              dbg_cla2dma_mx;
 extern volatile uint32_t    uid_unique_8b;
 
+#if DAISY_CHAIN_ENABLE
+extern fsi_recv_data_t      gs_fsi_pack_buf;
+extern fsi_recv_data_t      recv_robot_states;
+#endif
+
 /***********************************************************************
  * FUNCTIONS DECLARATION
  ***********************************************************************/
@@ -338,6 +343,11 @@ static const dma_cfg_t  dmaCfgList[] =
  DMA_LED_SPI_TX_DEF,                /* DMA for the RGB LED */
  DMA_COM_SPI_TX_DEF,                /* DMA for SPI COMMUNICATION Tx */
  DMA_COM_SPI_RX_DEF,                /* DMA for SPI COMMUNICATION Rx */
+
+#if DAISY_CHAIN_ENABLE
+ DMA_FSI_TO_CLA_DEF,
+#endif
+
  {.dmaChBase = UINT32_MAX},         /* END OF ARRAY */
 };
 

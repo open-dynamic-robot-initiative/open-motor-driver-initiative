@@ -1,11 +1,12 @@
 // TODO(rafael): Clean all of this - create HAL functions, etc
 // TODO(rafael): Allocation to global shared memory doesn't work, unless we allow from CPU1
 
-#include <daisy_chain.h>
 #include <device.h>
 
 #include "hal.h"
 #include "hal_handlers.h"
+
+#include "daisy_chain.h"
 
 //#define INT_FSI_TX_GROUP                       INTERRUPT_ACK_GROUP4
 //#define INT_FSI_RX1_GROUP                      INTERRUPT_ACK_GROUP7
@@ -34,18 +35,9 @@ void *tx_buf_addr, *rx_buf_addr;
 #define PACKET_SZ_WORDS       (4U)
 #define FSI_BUF_SZ_WORDS      (16U)
 
-typedef struct __fsi_recv_data_t__
-{
-    volatile bool error;
-
-    struct {} __attribute__ ((aligned (4)));
-    uint16_t packets[DAISY_CHAIN_DRIVER_COUNT][PACKET_SZ_WORDS];
-
-} fsi_recv_data_t;
-
-#pragma DATA_ALIGN(pack_buf, 4)
-#pragma DATA_SECTION(pack_buf, "ramgs3")
-fsi_recv_data_t pack_buf = {.error = false, .packets = {0}};
+#pragma DATA_ALIGN(gs_fsi_pack_buf, 4)
+#pragma DATA_SECTION(gs_fsi_pack_buf, "ramgs3")
+fsi_recv_data_t gs_fsi_pack_buf = {.error = false, .packets = {0}};
 
 //#pragma DATA_ALIGN(def_data, 4)
 //#pragma DATA_SECTION(def_data, "ramgs3")
@@ -109,8 +101,6 @@ __attribute__((interrupt)) void fsi_rx_frame_isr(void)
 
 int main(void)
 {
-    pack_buf.error = 0;
-
     Device_init();
     Interrupt_initModule();
     Interrupt_initVectorTable();
@@ -129,6 +119,7 @@ int main(void)
 
 	// TODO(rafael): do this in the hal, the dma before the FSI? or maybe after
     DMA_initController();
+    DMA_setEmulationMode(DMA_EMULATION_FREE_RUN);
 
     tx_buf_addr = (void*)FSI_getTxBufferAddress(FSI_TX_CPU2_BASE);
     rx_buf_addr = (void*)FSI_getRxBufferAddress(FSI_RX_CPU2_BASE);
@@ -155,7 +146,7 @@ int main(void)
     // This should save the received data to GS3, cyclically. The previous board
     // should be sending a packet train starting from ID = 0 continuously.
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
-    DMA_configAddresses(DMA_FSI_TO_MEM_CH, (uint16_t*)(&pack_buf.packets[0]), rx_buf_addr);
+    DMA_configAddresses(DMA_FSI_TO_MEM_CH, (uint16_t*)(&gs_fsi_pack_buf.packets[0]), rx_buf_addr);
     DMA_configBurst(DMA_FSI_TO_MEM_CH, PACKET_SZ_WORDS, 1, 1);
     DMA_configTransfer(DMA_FSI_TO_MEM_CH, DAISY_CHAIN_DRIVER_COUNT, -(int16_t)PACKET_SZ_WORDS + 1, +1);
 
@@ -204,7 +195,7 @@ int main(void)
 
     while(true)
     {
-        if (pack_buf.error)
+        if (gs_fsi_pack_buf.error)
         {
             DMA_stopChannel(DMA_FSI_TO_MEM_CH);
             DMA_stopChannel(DMA_FSI_TO_TX_CH);

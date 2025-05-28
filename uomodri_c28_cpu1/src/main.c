@@ -73,17 +73,18 @@ static const int_cfg_t interruptList[] =
  INT_RS485_RX_TX_CLB_DEF,
  INT_MCAN_RX_TX_MSG_DEF,
 
- // TODO(rafael): Add FSI interrupts for CPU1
-
  {.intNum = UINT32_MAX},        /* END OF ARRAY */
 };
 
 /***********************************************************************
  * VARIABLES IN CLA SPACE MEMORY
  ***********************************************************************/
-extern motor_t        motor_m1;
-extern motor_t        motor_m2;
-extern robot_state_t  recv_robot_state;
+extern motor_t          motor_m1;
+extern motor_t          motor_m2;
+
+#if DAISY_CHAIN_ENABLE
+extern fsi_recv_data_t  recv_robot_states;
+#endif
 
 /***********************************************************************
  * VARIABLES IN CPU TO CLA SPACE MEMORY
@@ -791,17 +792,31 @@ void MOT_initStruct(motor_t* p_motor, uint16_t motor_id)
     //
     // TODO(rafael): When `recv_robot_state` is updated by C28, make sure the CLA doesn't
     //               read garbage!
-    int32_t dim = 0;
-    for (dim = 0; dim < ROBOT_STATE_DIMS; dim++)
-        p_motor->foc.linControl.p_state[dim].ptr = (float32_t *)(&recv_robot_state.state[dim]);
+    int32_t drv_idx = 0, m_idx;
+    const int32_t vel_start_offset = 2 * DAISY_CHAIN_DRIVER_COUNT;
+
+    // Rearrange received packets into a state vector:
+    for (drv_idx = 0; drv_idx < DAISY_CHAIN_DRIVER_COUNT; drv_idx++)
+    {
+        for (m_idx = 0; m_idx < 2; m_idx++)
+        {
+            // Positions:
+            p_motor->foc.linControl.p_state[2 * drv_idx + m_idx].ptr = \
+                    (float32_t *)(&recv_robot_states.packets[drv_idx][m_idx]);
+
+            // Velocities:
+            p_motor->foc.linControl.p_state[vel_start_offset + 2 * drv_idx + m_idx].ptr = \
+                    (float32_t *)(&recv_robot_states.packets[drv_idx][2 + m_idx]);
+        }
+    }
 
     // The state components that correspond to our velocities can be set now, as they
     // don't depend on any runtime settings:
-    p_motor->foc.linControl.p_state[2*DAISY_CHAIN_DRIVER_COUNT + 2*DAISY_CHAIN_DRIVER_ID].ptr     = \
-            (float32_t *)(&motor_m1.foc.enc.speed.speedMech[0]);
+    p_motor->foc.linControl.p_state[vel_start_offset + 2*DAISY_CHAIN_DRIVER_ID].ptr     = \
+                (float32_t *)(&motor_m1.foc.enc.speed.speedMech[0]);
 
-    p_motor->foc.linControl.p_state[2*DAISY_CHAIN_DRIVER_COUNT + 2*DAISY_CHAIN_DRIVER_ID + 1].ptr = \
-            (float32_t *)(&motor_m2.foc.enc.speed.speedMech[0]);
+    p_motor->foc.linControl.p_state[vel_start_offset + 2*DAISY_CHAIN_DRIVER_ID + 1].ptr = \
+                (float32_t *)(&motor_m2.foc.enc.speed.speedMech[0]);
 
     //--- FSM motor initial state -----------------------------------------------
     p_motor->state                                      = MOTOR_STATE_IDLE;
