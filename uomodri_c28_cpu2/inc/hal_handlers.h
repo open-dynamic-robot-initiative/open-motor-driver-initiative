@@ -19,7 +19,7 @@ static const fsi_evt_cfg_t fsi_tx_evts[] =
 
 static const fsi_evt_cfg_t fsi_rx_evts[] =
 {
- FSI_RX_CPU2_EVT_FRAME_DONE,
+ FSI_RX_CPU2_EVT_DATA_FRAME,
  {.event = UINT16_MAX},
 };
 

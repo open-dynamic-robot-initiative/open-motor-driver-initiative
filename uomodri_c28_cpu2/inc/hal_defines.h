@@ -55,8 +55,8 @@
 // Board-to-board RX (controlled by CPU2):
 #define FSI_RX_CPU2_BASE                        FSIRXC_BASE
 
-#define FSI_RX_CPU2_EVT_FRAME_DONE              {                                                                       \
-                                                    .event             = FSI_RX_EVT_FRAME_DONE,                         \
+#define FSI_RX_CPU2_EVT_DATA_FRAME              {                                                                       \
+                                                    .event             = FSI_RX_EVT_DATA_FRAME,                         \
                                                     .intNum            = FSI_INT1                                       \
                                                 }
 
