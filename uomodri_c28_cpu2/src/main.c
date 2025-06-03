@@ -42,26 +42,35 @@ typedef enum __fsi_comm_state_enum__
 fsi_comm_state_e fsi_comm_state = COMM_INACTIVE;
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-#define PACKET_SZ_WORDS       (4U)
 #define FSI_BUF_SZ_WORDS      (16U)
 
-#pragma DATA_ALIGN(gs_fsi_pack_buf, 4)
-#pragma DATA_SECTION(gs_fsi_pack_buf, "ramgs3")
-fsi_recv_data_t gs_fsi_pack_buf = {.error = false, .packets = {0}};
+#pragma DATA_ALIGN(gs_rw_fsi_pack_buf, 4)
+#pragma DATA_SECTION(gs_rw_fsi_pack_buf, "ramgs3")
+fsi_recv_data_t gs_rw_fsi_pack_buf = {.error = false, .packets = {0}};
 
 // TODO: Write the CLA data to GS and set the DMA to copy from there:
 
 #pragma DATA_ALIGN(my_pack, 4)
 #pragma DATA_SECTION(my_pack, "ramgs3")
-uint16_t my_pack[4]     = {0x0, 0x1, 0x0, 0x1};
-
-uint16_t empty_pack[4]  = {0U};
+uint16_t my_pack[FSI_PACKET_SZ_WORDS] = {
+      DAISY_CHAIN_DRIVER_ID,
+      DAISY_CHAIN_DRIVER_ID,
+      DAISY_CHAIN_DRIVER_ID,
+      DAISY_CHAIN_DRIVER_ID,
+      DAISY_CHAIN_DRIVER_ID,
+      DAISY_CHAIN_DRIVER_ID,
+      DAISY_CHAIN_DRIVER_ID,
+      DAISY_CHAIN_DRIVER_ID
+};
 
 // Packets should be received cyclically. If this doesn't happen we must
 // have lost something and we trigger an error. The FSI would have
 // gone wrong anyway for a packet to be lost and it would probably need
 // a reset:
 uint16_t next_pack_id = 0U;
+
+// Whether we have completed one packet transmission:
+uint16_t first_tx = 1U;
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -74,35 +83,54 @@ __attribute__((interrupt)) void fsi_rx_frame_isr(void)
 {
     DBG_PIN3_SET;
 
-    // Start timer to count a delay and send the packet:
+    // If the timer is already running, that means that a packet is already
+    // pending for transmission. Receiving a fresh one means that the transmitter
+    // we're listening to is sending packets too fast. They should only complete
+    // sending a fresh packet after our packet transmission is started:
+    if(!(HWREGH(CPUTIMER1_BASE + CPUTIMER_O_TCR) & CPUTIMER_TCR_TSS))
+    {
+        gs_rw_fsi_pack_buf.error = true;
+        return;
+    }
+
+    // Wait until a pending TX is complete to avoid corruption.
+    // This applies only to transmissions after the first:
+    while(!first_tx && !(FSI_getTxEventStatus(FSI_TX_CPU2_BASE) & FSI_TX_EVT_FRAME_DONE));
+
+    // Clear the TX done event that will be set when the next packet is complete:
+    FSI_clearTxEvents(FSI_TX_CPU2_BASE, FSI_TX_EVT_FRAME_DONE);
+
+    // Start timer to count the delay before sending the packet:
     CPUTimer_startTimer(CPUTIMER1_BASE);
+
+    DBG_PIN0_SET;
 
     // In the meantime, check the packet and send it to the TX buffer:
     uint16_t rx_tag = FSI_getRxFrameTag(FSI_RX_CPU2_BASE);
 
-//    // Check if there was an error in packet ordering:
-//    if (gs_fsi_pack_buf.error || rx_tag != next_pack_id)
-//    {
-//        gs_fsi_pack_buf.error = true;
-//        Interrupt_clearACKGroup(INT_FSI_RX_GROUP);
-//        return;
-//    }
+    // Check if there was an error in packet ordering:
+    if (gs_rw_fsi_pack_buf.error || rx_tag != next_pack_id)
+    {
+        gs_rw_fsi_pack_buf.error = true;
+        return;
+    }
 
     next_pack_id = (next_pack_id + 1) % DAISY_CHAIN_DRIVER_COUNT;
-
-    // Prepare TX module for transmission:
-    FSI_setTxBufferPtr(FSI_TX_CPU2_BASE, 0U);
-    FSI_setTxFrameTag(FSI_TX_CPU2_BASE, (FSI_FrameTag)rx_tag);
-    FSI_clearTxEvents(FSI_TX_CPU2_BASE, FSI_TX_EVTMASK);
 
     // Copy data to be transmitted to TX buffer:
     DMA_configSourceAddress(DMA_FSI_TO_TX_CH, rx_tag == DAISY_CHAIN_DRIVER_ID ? &my_pack[0] : rx_buf_addr);
     DMA_forceTrigger(DMA_FSI_TO_TX_CH);
 
+    // Prepare TX module for transmission:
+    FSI_setTxBufferPtr(FSI_TX_CPU2_BASE, 0U);
+    FSI_setTxFrameTag(FSI_TX_CPU2_BASE, (FSI_FrameTag)rx_tag);
+
     // Reset the RX pointer to prepare for next transmission:
-    //while (DMA_getBurstStatusFlag(DMA_FSI_TO_MEM_CH) || DMA_getBurstStatusFlag(DMA_FSI_TO_TX_CH));
+//    while (DMA_getBurstStatusFlag(DMA_FSI_TO_MEM_CH) || DMA_getBurstStatusFlag(DMA_FSI_TO_TX_CH));
     FSI_setRxBufferPtr(FSI_RX_CPU2_BASE, 0U);
-    FSI_clearRxEvents(FSI_RX_CPU2_BASE, FSI_RX_EVTMASK);
+    FSI_clearRxEvents(FSI_RX_CPU2_BASE, FSI_RX_EVT_FRAME_DONE);
+
+    first_tx = 0U;
 
     Interrupt_clearACKGroup(INT_FSI_RX_GROUP);
     DBG_PIN3_CLEAR;
@@ -115,21 +143,29 @@ __attribute__((interrupt)) void timer_end_tx_flush_isr(void)
     FSI_executeTxFlushSequence(FSI_TX_CPU2_BASE, FSI_TX_CPU2_PRESCALE);
     DEVICE_DELAY_US(1);
 
-    // Check whether a DMA transfer is pending for safety:
-    while(DMA_getBurstStatusFlag(DMA_FSI_TO_TX_CH));
+////     Check whether a DMA transfer is pending for safety:
+//    while(DMA_getBurstStatusFlag(DMA_FSI_TO_TX_CH));
 
     FSI_startTxTransmit(FSI_TX_CPU2_BASE);
 }
 
 __attribute__((interrupt)) void timer_end_tx_noflush_isr(void)
 {
-    CPUTimer_stopTimer(CPUTIMER1_BASE);
-
-    // Check whether a DMA transfer is pending for safety:
-    while(DMA_getBurstStatusFlag(DMA_FSI_TO_TX_CH));
+    DBG_PIN0_CLEAR;
 
     FSI_startTxTransmit(FSI_TX_CPU2_BASE);
+    CPUTimer_stopTimer(CPUTIMER1_BASE);
+
+//    // Check whether a DMA transfer is pending for safety:
+//    while(DMA_getBurstStatusFlag(DMA_FSI_TO_TX_CH));
 }
+
+//__attribute__((interrupt)) void clear_dbg_pin(void)
+//{
+//    DBG_PIN0_CLEAR;
+//    CPUTimer_stopTimer(CPUTIMER1_BASE);
+//}
+
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -217,7 +253,7 @@ int main(void)
     //            FSI_setRxDataWidth(FSI_RX_BASE, FSI_DATA_WIDTH_2_LANE);
     //            FSI_performRxInitialization(FSI_RX_BASE);
 
-    ASSERT(PACKET_SZ_WORDS <= FSI_BUF_SZ_WORDS); // Packet must fit in RX / TX buffer
+    ASSERT(FSI_PACKET_SZ_WORDS <= FSI_BUF_SZ_WORDS); // Packet must fit in RX / TX buffer
     ASSERT(DAISY_CHAIN_DRIVER_COUNT <= 0xFU);    // Due to tag size limitation
 
 	// Synchronize with CPU1:
@@ -242,7 +278,7 @@ int main(void)
     // Manually triggered after source tag test:
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
     DMA_configAddresses(DMA_FSI_TO_TX_CH, tx_buf_addr, rx_buf_addr);
-    DMA_configBurst(DMA_FSI_TO_TX_CH, PACKET_SZ_WORDS, 1, 1);                // One packet per burst
+    DMA_configBurst(DMA_FSI_TO_TX_CH, FSI_PACKET_SZ_WORDS, 1, 1);                // One packet per burst
 
     // Each transfer is a single burst of data (packet):
     DMA_configTransfer(DMA_FSI_TO_TX_CH, 1, 0, 0);
@@ -261,9 +297,9 @@ int main(void)
     // This should save the received data to GS3, cyclically. The previous board
     // should be sending a packet train starting from ID = 0 continuously.
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
-    DMA_configAddresses(DMA_FSI_TO_MEM_CH, (uint16_t*)(&gs_fsi_pack_buf.packets[0]), rx_buf_addr);
-    DMA_configBurst(DMA_FSI_TO_MEM_CH, PACKET_SZ_WORDS, 1, 1);
-    DMA_configTransfer(DMA_FSI_TO_MEM_CH, DAISY_CHAIN_DRIVER_COUNT, -(int16_t)PACKET_SZ_WORDS + 1, +1);
+    DMA_configAddresses(DMA_FSI_TO_MEM_CH, (uint16_t*)(&gs_rw_fsi_pack_buf.packets[0]), rx_buf_addr);
+    DMA_configBurst(DMA_FSI_TO_MEM_CH, FSI_PACKET_SZ_WORDS, 1, 1);
+    DMA_configTransfer(DMA_FSI_TO_MEM_CH, DAISY_CHAIN_DRIVER_COUNT, -(int16_t)FSI_PACKET_SZ_WORDS + 1, +1);
 
     // 32-bit unit size to avoid float corruption when CPU1 DMA copies.
     // TODO: This seems to only copy one word!
@@ -335,7 +371,8 @@ int main(void)
 
     // Set up TX:
     FSI_clearTxEvents(FSI_TX_CPU2_BASE, FSI_TX_EVTMASK);
-    FSI_setTxFrameType(FSI_TX_CPU2_BASE, FSI_FRAME_TYPE_4WORD_DATA);  // TODO(rafael): Synchronize this to CPU1
+    FSI_setTxFrameType(FSI_TX_CPU2_BASE, FSI_FRAME_TYPE_NWORD_DATA);
+    FSI_setTxSoftwareFrameSize(FSI_TX_CPU2_BASE, FSI_PACKET_SZ_WORDS);
 
     // Start all DMA channels:
     DMA_startChannel(DMA_FSI_TO_TX_CH);
@@ -365,7 +402,7 @@ int main(void)
 
    while(true)
    {
-       if (gs_fsi_pack_buf.error)
+       if (gs_rw_fsi_pack_buf.error)
        {
            CPUTimer_stopTimer(CPUTIMER1_BASE);
 

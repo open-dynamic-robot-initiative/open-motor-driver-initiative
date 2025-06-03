@@ -83,7 +83,7 @@ extern motor_t          motor_m1;
 extern motor_t          motor_m2;
 
 #if DAISY_CHAIN_ENABLE
-extern fsi_recv_data_t  recv_robot_states;
+extern fsi_recv_data_t  cla_fsi_pack_buf;
 #endif
 
 /***********************************************************************
@@ -802,11 +802,11 @@ void MOT_initStruct(motor_t* p_motor, uint16_t motor_id)
         {
             // Positions:
             p_motor->foc.linControl.p_state[2 * drv_idx + m_idx].ptr = \
-                    (float32_t *)(&recv_robot_states.packets[drv_idx][m_idx]);
+                    (float32_t *)(&cla_fsi_pack_buf.packets[drv_idx][m_idx]);
 
             // Velocities:
             p_motor->foc.linControl.p_state[vel_start_offset + 2 * drv_idx + m_idx].ptr = \
-                    (float32_t *)(&recv_robot_states.packets[drv_idx][2 + m_idx]);
+                    (float32_t *)(&cla_fsi_pack_buf.packets[drv_idx][2 + m_idx]);
         }
     }
 

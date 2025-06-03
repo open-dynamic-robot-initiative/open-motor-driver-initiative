@@ -31,9 +31,9 @@
  ***********************************************************************/
 #if DAISY_CHAIN_ENABLE
 
-#pragma DATA_ALIGN(gs_fsi_pack_buf, 4)
-#pragma DATA_SECTION(gs_fsi_pack_buf, "ramgs3")
-fsi_recv_data_t gs_fsi_pack_buf;
+#pragma DATA_ALIGN(gs_r_fsi_pack_buf, 4)
+#pragma DATA_SECTION(gs_r_fsi_pack_buf, "ramgs3")
+fsi_recv_data_t gs_r_fsi_pack_buf;
 
 #endif
 
@@ -72,9 +72,9 @@ debug_t     dbg_cpu2cm_m2 = {.motor_id = MOTOR_2};
 
 #if DAISY_CHAIN_ENABLE
 
-#pragma DATA_ALIGN(recv_robot_states, 4)
-#pragma DATA_SECTION(recv_robot_states, "MsgRamDmaToCla");
-fsi_recv_data_t recv_robot_states;
+#pragma DATA_ALIGN(cla_fsi_pack_buf, 4)
+#pragma DATA_SECTION(cla_fsi_pack_buf, "MsgRamDmaToCla");
+fsi_recv_data_t cla_fsi_pack_buf;
 
 #endif
 

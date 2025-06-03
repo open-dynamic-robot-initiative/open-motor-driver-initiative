@@ -32,8 +32,8 @@ extern debug_t              dbg_cla2dma_mx;
 extern volatile uint32_t    uid_unique_8b;
 
 #if DAISY_CHAIN_ENABLE
-extern fsi_recv_data_t      gs_fsi_pack_buf;
-extern fsi_recv_data_t      recv_robot_states;
+extern fsi_recv_data_t      gs_r_fsi_pack_buf;
+extern fsi_recv_data_t      cla_fsi_pack_buf;
 #endif
 
 /***********************************************************************
