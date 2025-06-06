@@ -368,6 +368,7 @@ int main(void)
     FSI_clearRxEvents(FSI_RX_CPU2_BASE, FSI_RX_EVTMASK);
     FSI_enableRxFrameWatchdog(FSI_RX_CPU2_BASE, 4000U);               // RX every at least 20us
     FSI_setRxBufferPtr(FSI_RX_CPU2_BASE, 0U);
+    FSI_setRxSoftwareFrameSize(FSI_RX_CPU2_BASE, FSI_PACKET_SZ_WORDS);
 
     // Set up TX:
     FSI_clearTxEvents(FSI_TX_CPU2_BASE, FSI_TX_EVTMASK);

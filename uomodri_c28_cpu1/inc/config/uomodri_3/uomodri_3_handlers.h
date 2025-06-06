@@ -345,7 +345,7 @@ static const dma_cfg_t  dmaCfgList[] =
  DMA_COM_SPI_RX_DEF,                /* DMA for SPI COMMUNICATION Rx */
 
 #if DAISY_CHAIN_ENABLE
- DMA_FSI_TO_CLA_DEF,
+// DMA_FSI_TO_CLA_DEF,
 #endif
 
  {.dmaChBase = UINT32_MAX},         /* END OF ARRAY */

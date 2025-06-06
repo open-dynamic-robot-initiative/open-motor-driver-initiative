@@ -10,6 +10,6 @@
 	<createSlaveProjects value=""/>
 	<templateProperties value="id=com.ti.common.project.core.emptySystemProjectTemplate"/>
 	<filesToOpen value="system.xml"/>
-	<isTargetManual value="false"/>
+	<isTargetManual value="true"/>
 	<connection value="common/targetdb/connections/TIXDS110_Connection.xml"/>
 </projectOptions>

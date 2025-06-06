@@ -41,7 +41,7 @@
 
 // Board-to-board TX (controlled by CPU2):
 #define FSI_TX_CPU2_BASE                        FSITXA_BASE
-#define FSI_TX_CPU2_PRESCALE                    FSI_PRESCALE_50MHZ
+#define FSI_TX_CPU2_PRESCALE                    FSI_PRESCALE_25MHZ
 
 #define FSI_TX_CPU2_DEF(EVT_LIST)               {                                                                       \
                                                     .fsiBase           = FSI_TX_CPU2_BASE,                              \
