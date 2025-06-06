@@ -46,7 +46,11 @@ fsi_comm_state_e fsi_comm_state = COMM_INACTIVE;
 
 #pragma DATA_ALIGN(gs_rw_fsi_pack_buf, 4)
 #pragma DATA_SECTION(gs_rw_fsi_pack_buf, "ramgs3")
-fsi_recv_data_t gs_rw_fsi_pack_buf = {.error = false, .packets = {0}};
+volatile fsi_recv_data_t gs_rw_fsi_pack_buf = {.error = false, .packets = {0}};
+
+#pragma DATA_ALIGN(gs_r_fsi_state_ring_buf, 4)
+#pragma DATA_SECTION(gs_r_fsi_state_ring_buf, "ramgs4")
+volatile fsi_data_ring_buf_t gs_r_fsi_state_ring_buf;
 
 // TODO: Write the CLA data to GS and set the DMA to copy from there:
 
@@ -118,7 +122,12 @@ __attribute__((interrupt)) void fsi_rx_frame_isr(void)
     next_pack_id = (next_pack_id + 1) % DAISY_CHAIN_DRIVER_COUNT;
 
     // Copy data to be transmitted to TX buffer:
-    DMA_configSourceAddress(DMA_FSI_TO_TX_CH, rx_tag == DAISY_CHAIN_DRIVER_ID ? &my_pack[0] : rx_buf_addr);
+    uint16_t cur_ring_buf = gs_r_fsi_state_ring_buf.cur_buf;
+    DMA_configSourceAddress(
+            DMA_FSI_TO_TX_CH,
+            rx_tag == DAISY_CHAIN_DRIVER_ID ? (const void*)(&(gs_r_fsi_state_ring_buf.buf[cur_ring_buf][0])) : rx_buf_addr
+    );
+
     DMA_forceTrigger(DMA_FSI_TO_TX_CH);
 
     // Prepare TX module for transmission:

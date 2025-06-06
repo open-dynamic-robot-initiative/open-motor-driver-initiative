@@ -105,7 +105,9 @@ SECTIONS
 
    ramgs0				: > RAMGS0//, type=NOINIT
    ramgs1				: > RAMGS1, type=NOINIT
-  ramgs3 				: > RAMGS3, type=NOINIT
+   ramgs3 				: > RAMGS3, type=NOINIT
+   ramgs4 				: > RAMGS4, type=NOINIT
+
 
 /* Exchange memories for CPU1, CPU2 & CM */
    MsgRamCpu1ToCpu2		: > CPU1_CPU2_RAM, type=NOINIT

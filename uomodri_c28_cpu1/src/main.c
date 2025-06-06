@@ -83,7 +83,7 @@ extern motor_t          motor_m1;
 extern motor_t          motor_m2;
 
 #if DAISY_CHAIN_ENABLE
-extern fsi_recv_data_t  cla_fsi_pack_buf;
+extern volatile fsi_recv_data_t  cla_fsi_pack_buf;
 #endif
 
 /***********************************************************************

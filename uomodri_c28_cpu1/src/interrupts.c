@@ -26,14 +26,22 @@
 //#include "main.h"
 //#include "hal.h"
 
-/***********************************************************************
- * VARIABLES IN CPU2 CONTROLLED MEMRORY (READ-ONLY)
- ***********************************************************************/
 #if DAISY_CHAIN_ENABLE
+
+/***********************************************************************
+ * VARIABLES IN CPU1 CONTROLLED SHARED MEMRORY (READ-WRITE)
+ ***********************************************************************/
+#pragma DATA_ALIGN(gs_rw_fsi_state_ring_buf, 4)
+#pragma DATA_SECTION(gs_rw_fsi_state_ring_buf, "ramgs4")
+volatile fsi_data_ring_buf_t gs_rw_fsi_state_ring_buf = {.cur_buf = 0U, .buf = {0}};
+
+/***********************************************************************
+ * VARIABLES IN CPU2 CONTROLLED SHARED MEMRORY (READ-ONLY)
+ ***********************************************************************/
 
 #pragma DATA_ALIGN(gs_r_fsi_pack_buf, 4)
 #pragma DATA_SECTION(gs_r_fsi_pack_buf, "ramgs3")
-fsi_recv_data_t gs_r_fsi_pack_buf;
+volatile fsi_recv_data_t gs_r_fsi_pack_buf;
 
 #endif
 
@@ -74,7 +82,7 @@ debug_t     dbg_cpu2cm_m2 = {.motor_id = MOTOR_2};
 
 #pragma DATA_ALIGN(cla_fsi_pack_buf, 4)
 #pragma DATA_SECTION(cla_fsi_pack_buf, "MsgRamDmaToCla");
-fsi_recv_data_t cla_fsi_pack_buf;
+volatile fsi_recv_data_t cla_fsi_pack_buf;
 
 #endif
 
@@ -161,6 +169,23 @@ uint16_t com_msg_canfd_tx_master_id = COM_MSG_CANFD_TX_MASTER_ID;
 void DBG_copyStruct(motor_t*, debug_t*);
 inline void LED_dimming(motor_t*, motor_t*, uint16_t*);
 
+#if DAISY_CHAIN_ENABLE
+
+inline void _update_fsi_ring_buffer(void)
+{
+    uint16_t next_buf_idx = (gs_rw_fsi_state_ring_buf.cur_buf + 1) % GS_RING_BUFFER_SIZE;
+    volatile float32* float_buf = (float32_t*)(&(gs_rw_fsi_state_ring_buf.buf[next_buf_idx][0]));
+
+    float_buf[0] = (motor_m1.foc.cmd.cmdField.encOffsetEnable) ? (motor_m1.foc.enc.thetaFromIndex) : (motor_m1.foc.enc.thetaAbsolute);
+    float_buf[1] = motor_m1.foc.enc.speed.speedMech[0];
+    float_buf[2] = (motor_m2.foc.cmd.cmdField.encOffsetEnable) ? (motor_m2.foc.enc.thetaFromIndex) : (motor_m2.foc.enc.thetaAbsolute);
+    float_buf[3] = motor_m2.foc.enc.speed.speedMech[0];
+
+    gs_rw_fsi_state_ring_buf.cur_buf = next_buf_idx;
+}
+
+#endif
+
 /***********************************************************************
  * INTERRUPT HANDLING FUNCTIONS DEFINITIONS
  ***********************************************************************/
@@ -173,7 +198,10 @@ __attribute__((interrupt)) void cla_isrMotor1(void)
 
 #if DAISY_CHAIN_ENABLE
     // Bring FSI data for the next control cycle:
-    DMA_forceTrigger(DMA_FSI_TO_CLA_BASE_ADDR);
+//    DMA_forceTrigger(DMA_FSI_TO_CLA_BASE_ADDR);
+
+    // Save new motor state to ring buffer:
+    _update_fsi_ring_buffer();
 #endif
 
     // Fill of the M1 motor's elements in the Tx message
@@ -201,7 +229,10 @@ __attribute__((interrupt)) void cla_isrMotor2(void)
 
 #if DAISY_CHAIN_ENABLE
     // Bring FSI data for the next control cycle:
-    DMA_forceTrigger(DMA_FSI_TO_CLA_BASE_ADDR);
+//    DMA_forceTrigger(DMA_FSI_TO_CLA_BASE_ADDR);
+
+    // Save new motor state to ring buffer:
+    _update_fsi_ring_buffer();
 #endif
 
     // Fill of the M2 motor's elements in the Tx message

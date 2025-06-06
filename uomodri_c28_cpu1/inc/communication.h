@@ -354,8 +354,11 @@ typedef struct __mst2slv_msg_t__
     uint16_t        iSat;
     uint16_t        index;
 
-    // Padding to make sure sizeof(cmd_msg) >= sizeof(sensor_msg):
-    uint16_t        pad[2];
+#if !DAISY_CHAIN_ENABLE
+    // Padding to make sure sizeof(cmd_msg) == sizeof(sensor_msg) == 15 words:
+    uint16_t        _pad[2];
+#endif
+
 } mst2slv_msg_t;
 
 /**

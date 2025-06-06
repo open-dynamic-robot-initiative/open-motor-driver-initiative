@@ -16,6 +16,7 @@
 #endif
 
 #define FSI_PACKET_SZ_WORDS                     (8U)
+#define GS_RING_BUFFER_SIZE                     (12U)
 
 /***********************************************************************
  * LINEAR CONTROL CONSTANTS
@@ -27,12 +28,21 @@
  ***********************************************************************/
 typedef struct __fsi_recv_data_t__
 {
-    volatile bool error;
+    bool error;
 
     // TODO(rafael): Make sure this is a multiple of 2:
     struct {} __attribute__ ((aligned (FSI_PACKET_SZ_WORDS)));
     uint16_t packets[DAISY_CHAIN_DRIVER_COUNT][FSI_PACKET_SZ_WORDS];
 
 } fsi_recv_data_t;
+
+// Ring buffer for CPU1 to CPU2 FSITX packet:
+typedef struct __fsi_data_ring_buf_t__
+{
+    uint16_t cur_buf;
+
+    struct {} __attribute__ ((aligned (4)));
+    uint16_t buf[GS_RING_BUFFER_SIZE][FSI_PACKET_SZ_WORDS];
+} fsi_data_ring_buf_t;
 
 #endif /* DAISY_CHAIN_H_ */
