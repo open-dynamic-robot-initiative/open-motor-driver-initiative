@@ -51,6 +51,11 @@ extern "C" {
 #define MOTOR_STATE_INIT_FIX        (0x0008)
 #define MOTOR_STATE_READY           (0x0010)
 #define MOTOR_STATE_STOP            (0x0020)
+
+#if DAISY_CHAIN_ENABLE
+#define DAISY_CHAIN_INACTIVE        (0x0040)
+#endif
+
 #define MOTOR_STATE_ERROR           (0xFFFF)
 
 /***********************************************************************
@@ -238,7 +243,8 @@ typedef struct __linear_ctrl_t__
 {
     ptr_32b_u           p_alpha;                        /*!< Pointer to beginning of alpha row for motor */
     ptr_32b_u           p_beta;                         /*!< Pointer to beta scalar */
-    ptr_32b_u           p_iSat;                         /*!< Pointer to saturation current for motor*/
+    ptr_32b_u           p_iSat;                         /*!< Pointer to saturation current for motor */
+    ptr_32b_u           p_chain_state;                  /*!< Pointer to the daisy chain active enum */
 
     /**
     * Position and velocity for each motor of all connected motor drivers.

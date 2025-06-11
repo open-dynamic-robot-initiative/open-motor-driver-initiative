@@ -83,7 +83,7 @@ extern motor_t          motor_m1;
 extern motor_t          motor_m2;
 
 #if DAISY_CHAIN_ENABLE
-extern volatile fsi_recv_data_t  cla_fsi_pack_buf;
+extern volatile fsi_recv_data_t  cla_fsi_recv_pack_buf;
 #endif
 
 /***********************************************************************
@@ -255,50 +255,6 @@ float32_t motor1_pi_iq_ki_coeff = MOTOR1_PI_IQ_KI_COEF;
 //                        .foc.piIq.kp                            = (float32_t)MOTOR1_PI_IQ_KP_COEF,
 //                        .foc.piIq.ki                            = (float32_t)MOTOR1_PI_IQ_KI_COEF,
 //};
-
-// ===========================================================================================================
-// TODO(rafael): FSI test code:
-// ===========================================================================================================
-/*
-#define SAMPLE_LEN  (4)
-uint16_t data[SAMPLE_LEN] = {'a', 'b', 'c', 'd'};
-
-#define FLIP_WORD(x)      (((x & 0xAAAAU) >> 1) | ((x & 0x5555U) << 1))
-
-void send_fsi_sample_and_wait()
-{
-    uint16_t i = 0;
-    uint16_t buffer[SAMPLE_LEN];
-
-    for (i = 0; i < SAMPLE_LEN; i++)
-    {
-        // Necessary to circumvent PCB error.
-        // TODO(rafael): If used, do 2 lanes and SW CRC.
-//        buffer[i] = FLIP_WORD(data[i]);
-
-        buffer[i] = data[i];
-
-    }
-
-    FSI_executeTxFlushSequence(FSI_TX_BASE, FSI_TX_PRESCALE);
-    DEVICE_DELAY_US(2);
-
-    FSI_setTxDataWidth(FSI_TX_BASE, FSI_DATA_WIDTH_1_LANE);
-//    FSI_configPrescalar(FSI_TX_BASE, FSI_TX_PRESCALE);            // This disables the TX clock!
-
-    FSI_setTxFrameTag(FSI_TX_BASE, FSI_FRAME_TAG9);
-    FSI_setTxFrameType(FSI_TX_BASE, FSI_FRAME_TYPE_4WORD_DATA);
-    FSI_setTxUserDefinedData(FSI_TX_BASE, 0x0);
-
-    FSI_writeTxBuffer(FSI_TX_BASE, flipped_data, 0x4U, 0U);
-    FSI_setTxBufferPtr(FSI_TX_BASE, 0U);
-
-    FSI_startTxTransmit(FSI_TX_BASE);
-
-    DEVICE_DELAY_US(10);
-}
-*/
-// ===========================================================================================================
 
 /***********************************************************************
  * FUNCTIONS DEFINITION
@@ -488,7 +444,11 @@ static void MCU_ini(const cpu2_periph_cfg_t* cpu2Periphs)
  * @param[in]   p_motor Pointer on data structure array used for motor control.
  * @param[out]  p_msg   Pointer on the message to be sent to led via SPI.
  */
+#if DAISY_CHAIN_ENABLE
+inline void LED_dimming(motor_t* p_motor1, motor_t* p_motor2, fsi_comm_state_e fsi_state, uint16_t* p_msg)
+#else
 inline void LED_dimming(motor_t* p_motor1, motor_t* p_motor2, uint16_t* p_msg)
+#endif
 {
     static uint16_t tmr_cpt_ms  = 0;
     uint16_t motor_state        = MOTOR_STATE_IDLE;
@@ -500,6 +460,12 @@ inline void LED_dimming(motor_t* p_motor1, motor_t* p_motor2, uint16_t* p_msg)
         motor_state = MOTOR_STATE_INIT_FIX;
     else if((p_motor1->state & MOTOR_STATE_OK)  || (p_motor2->state & MOTOR_STATE_OK))
         motor_state = MOTOR_STATE_READY;
+
+#if DAISY_CHAIN_ENABLE
+    if (fsi_state != COMM_ACTIVE)
+        motor_state = DAISY_CHAIN_INACTIVE;
+#endif
+
     if((p_motor1->state == MOTOR_STATE_ERROR)   || (p_motor2->state == MOTOR_STATE_ERROR))
         motor_state = MOTOR_STATE_ERROR;
 
@@ -795,6 +761,9 @@ void MOT_initStruct(motor_t* p_motor, uint16_t motor_id)
     int32_t drv_idx = 0, m_idx;
     const int32_t vel_start_offset = 2 * DAISY_CHAIN_DRIVER_COUNT;
 
+    // FOC will use the state of the daisy chain to stop in case there's a communication error:
+    p_motor->foc.linControl.p_chain_state.ptr = (fsi_comm_state_e*)(&(cla_fsi_recv_pack_buf.comm_state));
+
     // Rearrange received packets into a state vector:
     for (drv_idx = 0; drv_idx < DAISY_CHAIN_DRIVER_COUNT; drv_idx++)
     {
@@ -802,11 +771,11 @@ void MOT_initStruct(motor_t* p_motor, uint16_t motor_id)
         {
             // Positions:
             p_motor->foc.linControl.p_state[2 * drv_idx + m_idx].ptr = \
-                    (float32_t *)(&cla_fsi_pack_buf.packets[drv_idx][m_idx]);
+                    (float32_t *)(&cla_fsi_recv_pack_buf.packets[drv_idx][m_idx]);
 
             // Velocities:
             p_motor->foc.linControl.p_state[vel_start_offset + 2 * drv_idx + m_idx].ptr = \
-                    (float32_t *)(&cla_fsi_pack_buf.packets[drv_idx][2 + m_idx]);
+                    (float32_t *)(&cla_fsi_recv_pack_buf.packets[drv_idx][2 + m_idx]);
         }
     }
 

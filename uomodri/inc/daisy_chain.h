@@ -6,8 +6,8 @@
  ***********************************************************************/
 // Motor driver daisy-chain defines:
 // TODO(rafael): #define FSI_BUS_ENABLE                          (1)
-#define DAISY_CHAIN_DRIVER_COUNT                (2) /*!< Total number of interconnected motor drivers (incl. this one) */
-#define DAISY_CHAIN_DRIVER_ID                   (1) /*!< ID (0-indexed) of this motor driver */
+#define DAISY_CHAIN_DRIVER_COUNT                (3) /*!< Total number of interconnected motor drivers (incl. this one) */
+#define DAISY_CHAIN_DRIVER_ID                   (2) /*!< ID (0-indexed) of this motor driver */
 
 #if (DAISY_CHAIN_DRIVER_COUNT > 1)
 #define DAISY_CHAIN_ENABLE                      (1)
@@ -26,9 +26,18 @@
 /***********************************************************************
  * STRUCTURES
  ***********************************************************************/
+// FSI daisy chain communication state:
+typedef enum __fsi_comm_state_enum__
+{
+    COMM_INACTIVE   = 0,
+    COMM_HANDSHAKE,
+    COMM_ACTIVE,
+    COMM_ERROR,
+} fsi_comm_state_e;
+
 typedef struct __fsi_recv_data_t__
 {
-    bool error;
+    fsi_comm_state_e comm_state;
 
     // TODO(rafael): Make sure this is a multiple of 2:
     struct {} __attribute__ ((aligned (FSI_PACKET_SZ_WORDS)));

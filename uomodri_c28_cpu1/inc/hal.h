@@ -342,11 +342,11 @@ typedef enum __clb_RS485AddrDef_enum__
     RS485_CLB_FORCE_ADDRESS     = 2
 } clb_RS485AddrDef_e;
 
-typedef enum __fsi_Direction_enum__
+typedef enum __fsi_direction_enum__
 {
     FSI_TX_DIR                  = 0,
     FSI_RX_DIR                  = 1
-} fsi_Direction_e;
+} fsi_direction_e;
 
 /***********************************************************************
  * HARDWARE ABSTRACTION LAYER (HAL) CONTROL STRUCTURES
@@ -488,7 +488,7 @@ typedef struct __spi_config_t__
 typedef struct __fsi_config_t__
 {
     const uint32_t                      fsiBase;                   /*!< Peripheral address */
-    const fsi_Direction_e               direction;                 /*!< Whether bus is TX or RX */
+    const fsi_direction_e               direction;                 /*!< Whether bus is TX or RX */
     const bool_t                        loopback;                  /*!< Whether FSI internal loopback enabled (if RX) */
     const uint32_t                      clkPrescaler;              /*!< Clock prescaler from PLLRAWCLK (if TX)*/
     const FSI_DataWidth                 dataWidth;                 /*!< Data width (1 vs 2 lane) for TX or RX operations */

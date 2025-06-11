@@ -862,6 +862,11 @@ bool_t MOT_runControl(motor_t* p_motor)
     uint16_t motor_id               = p_motor->id;
     bool_t cmd_timeout              = IS_BIGGER_THAN_U32(p_cmd->cptTimeout, p_cmd->timeoutRef); //(p_cmd->cptTimeout > p_cmd->timeoutRef) ? (1) : (0);
     bool_t motor_start              = cmd_reg.motorEnable && cmd_reg.systemEnable;
+
+#if DAISY_CHAIN_ENABLE
+    motor_start &= (*(fsi_comm_state_e*)(p_foc->linControl.p_chain_state.ptr) == COMM_ACTIVE);
+#endif
+
     bool_t motor_stop               = (!cmd_reg.motorEnable) && cmd_reg.systemEnable;
     p_enc->flags.indexOffset        = cmd_reg.encOffsetEnable;
 

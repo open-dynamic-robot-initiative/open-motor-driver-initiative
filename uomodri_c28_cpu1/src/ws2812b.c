@@ -66,9 +66,16 @@ uint16_t* ws2812b_dimmingLed(uint16_t led_pos, uint16_t motor_state, uint16_t ti
     uint16_t    blink           = (timer_cpt_ms < 500U)             ? (0x00)        : (0xFF);
     uint16_t    fade_blink_u8   = (uint16_t)(0x00FF * fade_blink_f32);
 
-
     switch(motor_state)
     {
+
+#if DAISY_CHAIN_ENABLE
+    case DAISY_CHAIN_INACTIVE:
+        // Orange fade, FSI communication not established:
+        p_msg = ws2812b_writeLed(led_pos, fade_blink_u8, fade_blink_u8 >> 1, 0, p_msg);
+               break;
+#endif
+
     case MOTOR_STATE_INIT_FW:
     case MOTOR_STATE_INIT_REV:
     case MOTOR_STATE_INIT_TEST:
@@ -80,7 +87,7 @@ uint16_t* ws2812b_dimmingLed(uint16_t led_pos, uint16_t motor_state, uint16_t ti
         p_msg = ws2812b_writeLed(led_pos, 0, fade_blink_u8, 0, p_msg);//Green fade, Active control
         break;
     case MOTOR_STATE_ERROR:
-        p_msg = ws2812b_writeLed(led_pos, blink, 0, 0, p_msg);//red fade, error control
+        p_msg = ws2812b_writeLed(led_pos, blink, 0, 0, p_msg); //red blink, error control
         break;
     case MOTOR_STATE_IDLE:
     default:

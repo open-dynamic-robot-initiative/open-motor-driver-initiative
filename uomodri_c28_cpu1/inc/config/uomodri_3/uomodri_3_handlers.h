@@ -32,8 +32,8 @@ extern debug_t              dbg_cla2dma_mx;
 extern volatile uint32_t    uid_unique_8b;
 
 #if DAISY_CHAIN_ENABLE
-extern volatile fsi_recv_data_t      gs_r_fsi_pack_buf;
-extern volatile fsi_recv_data_t      cla_fsi_pack_buf;
+extern volatile fsi_recv_data_t      gs_r_fsi_recv_pack_buf;
+extern volatile fsi_recv_data_t      cla_fsi_recv_pack_buf;
 #endif
 
 /***********************************************************************
@@ -345,7 +345,7 @@ static const dma_cfg_t  dmaCfgList[] =
  DMA_COM_SPI_RX_DEF,                /* DMA for SPI COMMUNICATION Rx */
 
 #if DAISY_CHAIN_ENABLE
-// DMA_FSI_TO_CLA_DEF,
+ DMA_FSI_TO_CLA_DEF,
 #endif
 
  {.dmaChBase = UINT32_MAX},         /* END OF ARRAY */

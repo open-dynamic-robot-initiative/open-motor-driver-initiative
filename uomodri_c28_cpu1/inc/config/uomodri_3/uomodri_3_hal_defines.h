@@ -2080,7 +2080,11 @@
 #define DMA_COM_SPI_RX_TRIGGER_SRC              DMA_TRIGGER_SPIBRX
 
 #define DMA_FSI_TO_CLA_BURST_EVT                FSI_PACKET_SZ_WORDS
+
+// Bring all packets as well as the communication state enum:
 #define DMA_FSI_TO_CLA_TRANSFER_EVT             (DAISY_CHAIN_DRIVER_COUNT + 1)
+
+// Copy the entire table with one interrupt:
 #define DMA_FSI_TO_CLA_CONFIG                   (DMA_CFG_ONESHOT_ENABLE | DMA_CFG_CONTINUOUS_ENABLE | DMA_CFG_SIZE_16BIT)
 
 #define DMA_LED_SPI_TX_FULL_LENGTH              LED_MSG_TX_16BIT_LENGTH
@@ -2117,23 +2121,23 @@
  * @}
  */
 
-//#define DMA_FSI_TO_CLA_DEF                      { \
-//                                                    .dmaChBase      = DMA_FSI_TO_CLA_BASE_ADDR, \
-//                                                    .p_dstAddr      = (uint16_t *)&recv_robot_states, \
-//                                                    .p_srcAddr      = (uint16_t *)&gs_fsi_pack_buf, \
-//                                                    .burstSize      = DMA_FSI_TO_CLA_BURST_EVT, \
-//                                                    .transferSize   = DMA_FSI_TO_CLA_TRANSFER_EVT, \
-//                                                    .dstWrapSize    = DMA_NO_WRAP, \
-//                                                    .srcWrapSize    = DMA_NO_WRAP, \
-//                                                    .dstStep        = 1, \
-//                                                    .srcStep        = 1, \
-//                                                    .dstWrapStep    = 0, \
-//                                                    .srcWrapStep    = 0, \
-//                                                    .config         = DMA_FSI_TO_CLA_CONFIG, \
-//                                                    .trigger        = DMA_FSI_TO_CLA_TRIGGER_SRC, \
-//                                                    .intMode        = DMA_INT_AT_END, \
-//                                                    .intEnable      = false, \
-//                                                }
+#define DMA_FSI_TO_CLA_DEF                      { \
+                                                    .dmaChBase      = DMA_FSI_TO_CLA_BASE_ADDR, \
+                                                    .p_dstAddr      = (uint16_t *)&cla_fsi_recv_pack_buf, \
+                                                    .p_srcAddr      = (uint16_t *)&gs_r_fsi_recv_pack_buf, \
+                                                    .burstSize      = DMA_FSI_TO_CLA_BURST_EVT, \
+                                                    .transferSize   = DMA_FSI_TO_CLA_TRANSFER_EVT, \
+                                                    .dstWrapSize    = DMA_NO_WRAP, \
+                                                    .srcWrapSize    = DMA_NO_WRAP, \
+                                                    .dstStep        = 1, \
+                                                    .srcStep        = 1, \
+                                                    .dstWrapStep    = 0, \
+                                                    .srcWrapStep    = 0, \
+                                                    .config         = DMA_FSI_TO_CLA_CONFIG, \
+                                                    .trigger        = DMA_FSI_TO_CLA_TRIGGER_SRC, \
+                                                    .intMode        = DMA_INT_AT_END, \
+                                                    .intEnable      = false, \
+                                                }
 #define DMA_LED_SPI_TX_DEF                      { \
                                                     .dmaChBase      = DMA_LED_SPI_TX_BASE_ADDR, \
                                                     .p_dstAddr      = (uint16_t *)LED_SPI_TX_BASE_REG_ADDR, \

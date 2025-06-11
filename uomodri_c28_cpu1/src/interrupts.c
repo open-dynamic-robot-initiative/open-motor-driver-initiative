@@ -26,22 +26,26 @@
 //#include "main.h"
 //#include "hal.h"
 
-#if DAISY_CHAIN_ENABLE
 
 /***********************************************************************
  * VARIABLES IN CPU1 CONTROLLED SHARED MEMRORY (READ-WRITE)
  ***********************************************************************/
-#pragma DATA_ALIGN(gs_rw_fsi_state_ring_buf, 4)
-#pragma DATA_SECTION(gs_rw_fsi_state_ring_buf, "ramgs4")
-volatile fsi_data_ring_buf_t gs_rw_fsi_state_ring_buf = {.cur_buf = 0U, .buf = {0}};
+#if DAISY_CHAIN_ENABLE
+
+#pragma DATA_ALIGN(gs_rw_fsi_cla_state_ring_buf, 4)
+#pragma DATA_SECTION(gs_rw_fsi_cla_state_ring_buf, "ramgs4")
+volatile fsi_data_ring_buf_t gs_rw_fsi_cla_state_ring_buf = {.cur_buf = 0U, .buf = {0}};
+
+#endif
 
 /***********************************************************************
  * VARIABLES IN CPU2 CONTROLLED SHARED MEMRORY (READ-ONLY)
  ***********************************************************************/
+#if DAISY_CHAIN_ENABLE
 
-#pragma DATA_ALIGN(gs_r_fsi_pack_buf, 4)
-#pragma DATA_SECTION(gs_r_fsi_pack_buf, "ramgs3")
-volatile fsi_recv_data_t gs_r_fsi_pack_buf;
+#pragma DATA_ALIGN(gs_r_fsi_recv_pack_buf, 4)
+#pragma DATA_SECTION(gs_r_fsi_recv_pack_buf, "ramgs3")
+volatile fsi_recv_data_t gs_r_fsi_recv_pack_buf;
 
 #endif
 
@@ -80,9 +84,9 @@ debug_t     dbg_cpu2cm_m2 = {.motor_id = MOTOR_2};
 
 #if DAISY_CHAIN_ENABLE
 
-#pragma DATA_ALIGN(cla_fsi_pack_buf, 4)
-#pragma DATA_SECTION(cla_fsi_pack_buf, "MsgRamDmaToCla");
-volatile fsi_recv_data_t cla_fsi_pack_buf;
+#pragma DATA_ALIGN(cla_fsi_recv_pack_buf, 4)
+#pragma DATA_SECTION(cla_fsi_recv_pack_buf, "MsgRamDmaToCla");
+volatile fsi_recv_data_t cla_fsi_recv_pack_buf;
 
 #endif
 
@@ -167,21 +171,30 @@ uint16_t com_msg_canfd_tx_master_id = COM_MSG_CANFD_TX_MASTER_ID;
  * FUNCTIONS DECLARATION
  ***********************************************************************/
 void DBG_copyStruct(motor_t*, debug_t*);
-inline void LED_dimming(motor_t*, motor_t*, uint16_t*);
 
+#if DAISY_CHAIN_ENABLE
+inline void LED_dimming(motor_t*, motor_t*, fsi_comm_state_e, uint16_t*);
+#else
+inline void LED_dimming(motor_t*, motor_t*, uint16_t*);
+#endif
 #if DAISY_CHAIN_ENABLE
 
 inline void _update_fsi_ring_buffer(void)
 {
-    uint16_t next_buf_idx = (gs_rw_fsi_state_ring_buf.cur_buf + 1) % GS_RING_BUFFER_SIZE;
-    volatile float32* float_buf = (float32_t*)(&(gs_rw_fsi_state_ring_buf.buf[next_buf_idx][0]));
+    uint16_t next_buf_idx = (gs_rw_fsi_cla_state_ring_buf.cur_buf + 1) % GS_RING_BUFFER_SIZE;
+    volatile float32* float_buf = (float32_t*)(&(gs_rw_fsi_cla_state_ring_buf.buf[next_buf_idx][0]));
 
     float_buf[0] = (motor_m1.foc.cmd.cmdField.encOffsetEnable) ? (motor_m1.foc.enc.thetaFromIndex) : (motor_m1.foc.enc.thetaAbsolute);
     float_buf[1] = motor_m1.foc.enc.speed.speedMech[0];
     float_buf[2] = (motor_m2.foc.cmd.cmdField.encOffsetEnable) ? (motor_m2.foc.enc.thetaFromIndex) : (motor_m2.foc.enc.thetaAbsolute);
     float_buf[3] = motor_m2.foc.enc.speed.speedMech[0];
 
-    gs_rw_fsi_state_ring_buf.cur_buf = next_buf_idx;
+//    float_buf[0] = DAISY_CHAIN_DRIVER_ID;
+//    float_buf[1] = DAISY_CHAIN_DRIVER_ID;
+//    float_buf[2] = DAISY_CHAIN_DRIVER_ID;
+//    float_buf[3] = DAISY_CHAIN_DRIVER_ID;
+
+    gs_rw_fsi_cla_state_ring_buf.cur_buf = next_buf_idx;
 }
 
 #endif
@@ -197,11 +210,13 @@ __attribute__((interrupt)) void cla_isrMotor1(void)
     DBG_CLA_M1_ISR_SET;
 
 #if DAISY_CHAIN_ENABLE
+
     // Bring FSI data for the next control cycle:
-//    DMA_forceTrigger(DMA_FSI_TO_CLA_BASE_ADDR);
+    DMA_forceTrigger(DMA_FSI_TO_CLA_BASE_ADDR);
 
     // Save new motor state to ring buffer:
     _update_fsi_ring_buffer();
+
 #endif
 
     // Fill of the M1 motor's elements in the Tx message
@@ -228,11 +243,13 @@ __attribute__((interrupt)) void cla_isrMotor2(void)
     DBG_CLA_M2_ISR_SET;
 
 #if DAISY_CHAIN_ENABLE
+
     // Bring FSI data for the next control cycle:
-//    DMA_forceTrigger(DMA_FSI_TO_CLA_BASE_ADDR);
+    DMA_forceTrigger(DMA_FSI_TO_CLA_BASE_ADDR);
 
     // Save new motor state to ring buffer:
     _update_fsi_ring_buffer();
+
 #endif
 
     // Fill of the M2 motor's elements in the Tx message
@@ -346,9 +363,15 @@ __attribute__((interrupt)) void tmr_isrLedCmd(void)
     // LED dimming control
     if(!DMA_getRunStatusFlag(DMA_LED_SPI_TX_BASE_ADDR))
     {
+#if DAISY_CHAIN_ENABLE
+        LED_dimming(&motor_m1, &motor_m2, gs_r_fsi_recv_pack_buf.comm_state, &led_spi_tx[0]);
+#else
         LED_dimming(&motor_m1, &motor_m2, &led_spi_tx[0]);
+#endif
+
         DMA_startChannel(DMA_LED_SPI_TX_BASE_ADDR);
     }
+
     DRV_readStatusFSM(&drv_cfg[MOTOR_1], &drv_reg[MOTOR_1], \
                       &drv_cfg[MOTOR_2], &drv_reg[MOTOR_2]);
     // Timeout management
