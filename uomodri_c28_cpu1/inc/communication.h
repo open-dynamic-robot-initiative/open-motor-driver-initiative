@@ -59,6 +59,11 @@
 #define STATUS_ERROR_POS_ROLLOVER               (5) /*!< Position roll-over occurred */
 #define STATUS_ERROR_ENCODER2                   (6) /*!< Encoder_2 error too high */
 #define STATUS_ERROR_DRV_FAULT                  (7) /*!< Motor DRV nFault error */
+
+#if DAISY_CHAIN_ENABLE
+#define STATUS_ERROR_FSI                        (8) /*!< FSI daisy chain error*/
+#endif
+
 //#define STATUS_ERROR_DRV1_FAULT                     (7) /*!< Motor1 DRV Fault error */
 //#define STATUS_ERROR_DRV2_FAULT                     (8) /*!< Motor2 DRV Fault error */
 #define COM_MSG_EXTRACT_TX_RX_MAX_SIZE          (64)
@@ -313,7 +318,7 @@ typedef union __slv2mst_reg_u__
     uint16_t        all;                /*!< Short (16bits) type access */
     struct
     {
-        uint16_t    ERROR_CODE  : 4;    /*!< Bits 3-0   : Timeout disable system after no valid command         */
+        uint16_t    ERROR_CODE  : 4;    /*!< Bits 3-0   : Error code                                            */
         uint16_t    STATUS_RSV1 : 3;    /*!< Bits 6-4   : Reserved                                              */
         uint16_t    IDX2T       : 1;    /*!< Bits 7     : incremental encoder toggle on index detect - MOTOR_2  */
         uint16_t    IDX1T       : 1;    /*!< Bits 8     : incremental encoder toggle on index detect - MOTOR_1  */
@@ -549,7 +554,13 @@ typedef struct __canfd_tx_t__
  ***********************************************************************/
 #ifndef CM_CORE
 void COM_msgExtract(mst2slv_msg_t*, cmd_t*, cmd_t*);
+
+#if DAISY_CHAIN_ENABLE
+void COM_msgCreate(motor_t*, slv2mst_msg_t*, uint32_t*, volatile fsi_comm_state_e*);
+#else
 void COM_msgCreate(motor_t*, slv2mst_msg_t*, uint32_t*);
+#endif
+
 void COM_initCmdStruct(cmd_t*, uint16_t);
 uint32_t COM_msgCRC(uint16_t*, uint16_t);
 inline void RS485_msgReceive(uint32_t, rs485_rx_t*);

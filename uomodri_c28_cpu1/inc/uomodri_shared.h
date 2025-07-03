@@ -864,7 +864,11 @@ bool_t MOT_runControl(motor_t* p_motor)
     bool_t motor_start              = cmd_reg.motorEnable && cmd_reg.systemEnable;
 
 #if DAISY_CHAIN_ENABLE
-    motor_start &= (*(fsi_comm_state_e*)(p_foc->linControl.p_chain_state.ptr) == COMM_ACTIVE);
+    fsi_comm_state_e fsi_state      = *(fsi_comm_state_e*)(p_foc->linControl.p_chain_state.ptr);
+
+    // Do not start motor control until the daisy chain is ready.
+    // If there was an FSI error that will be handled below:
+    motor_start &= (fsi_state == COMM_ACTIVE);
 #endif
 
     bool_t motor_stop               = (!cmd_reg.motorEnable) && cmd_reg.systemEnable;
@@ -887,8 +891,14 @@ bool_t MOT_runControl(motor_t* p_motor)
     p_err->com_timeout              = (cmd_timeout && p_cmd->timeoutRef)                    || p_err->com_timeout;
     p_err->enc_indexErr             = (p_enc->flags.indexDetect && p_enc->flags.indexErr)   || p_err->enc_indexErr;
     p_err->enc_alignErr             = p_enc->flags.alignErr                                 || p_err->enc_alignErr;
-    if(p_err->all)
+
+#if DAISY_CHAIN_ENABLE
+    if(p_err->all || fsi_state == COMM_ERROR) {
+#else
+    if(p_err->all) {
+#endif
         p_motor->state              = MOTOR_STATE_ERROR;
+    }
 
     switch(p_motor->state)
     {

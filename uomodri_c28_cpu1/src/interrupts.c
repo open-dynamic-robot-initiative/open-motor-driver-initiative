@@ -220,7 +220,11 @@ __attribute__((interrupt)) void cla_isrMotor1(void)
 #endif
 
     // Fill of the M1 motor's elements in the Tx message
+#if DAISY_CHAIN_ENABLE
+    COM_msgCreate(&motor_m1, &slv2mst_msg, &cpu_tmr_cnt_ms, &gs_r_fsi_recv_pack_buf.comm_state);
+#else
     COM_msgCreate(&motor_m1, &slv2mst_msg, &cpu_tmr_cnt_ms);
+#endif
     // Copy elements of motor_1 into debug structure for CM core
     DBG_copyStruct(&motor_m1, &dbg_cpu2cm_m1);
     // Inform CM core that new data are available
@@ -253,7 +257,11 @@ __attribute__((interrupt)) void cla_isrMotor2(void)
 #endif
 
     // Fill of the M2 motor's elements in the Tx message
+#if DAISY_CHAIN_ENABLE
+    COM_msgCreate(&motor_m2, &slv2mst_msg, &cpu_tmr_cnt_ms, &gs_r_fsi_recv_pack_buf.comm_state);
+#else
     COM_msgCreate(&motor_m2, &slv2mst_msg, &cpu_tmr_cnt_ms);
+#endif
     // Finalize the Tx message. Aggregate MOTOR_2 values + computed CRC
     switch(com_bus_select)
     {

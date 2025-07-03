@@ -274,7 +274,8 @@ COMM_HANDSHAKE_start:
     {
        if (FSI_COMM_STATE_VAR == COMM_ERROR)
        {
-           goto COMM_HANDSHAKE_start;
+           // Do not recover from an FSI error, let all boards fail requiring a restart.
+           // goto COMM_HANDSHAKE_start;
        }
     }
 

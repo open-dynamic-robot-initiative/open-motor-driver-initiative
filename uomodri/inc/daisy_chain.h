@@ -7,7 +7,7 @@
 // Motor driver daisy-chain defines:
 // TODO(rafael): #define FSI_BUS_ENABLE                          (1)
 #define DAISY_CHAIN_DRIVER_COUNT                (3) /*!< Total number of interconnected motor drivers (incl. this one) */
-#define DAISY_CHAIN_DRIVER_ID                   (2) /*!< ID (0-indexed) of this motor driver */
+#define DAISY_CHAIN_DRIVER_ID                   (1) /*!< ID (0-indexed) of this motor driver */
 
 #if (DAISY_CHAIN_DRIVER_COUNT > 1)
 #define DAISY_CHAIN_ENABLE                      (1)

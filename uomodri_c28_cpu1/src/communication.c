@@ -78,11 +78,16 @@ void COM_msgExtract(mst2slv_msg_t* p_msg, cmd_t* p_cmd_m1, cmd_t* p_cmd_m2)
 
 /**
  * @brief           Slave to Master message creation/update. IT Call.
- * @param[in]       *p_motor    Pointer on current data structure used for control.
- * @param[inout]    *p_msg      Pointer on the message to transmit to the Master board.
- * @param[in]       *p_tmr_cnt  Pointer on the current value of the timer counter.
+ * @param[in]       *p_motor     Pointer on current data structure used for control.
+ * @param[inout]    *p_msg       Pointer on the message to transmit to the Master board.
+ * @param[in]       *p_tmr_cnt   Pointer on the current value of the timer counter.
+ * @param[in]       *p_fsi_state (if daisy chain enabled) Pointer to the state of the FSI chain.
  */
+#if DAISY_CHAIN_ENABLE
+void COM_msgCreate(motor_t* p_motor, slv2mst_msg_t* p_msg, uint32_t* p_tmr_cnt, volatile fsi_comm_state_e* p_fsi_state)
+#else
 void COM_msgCreate(motor_t* p_motor, slv2mst_msg_t* p_msg, uint32_t* p_tmr_cnt)
+#endif
 {
     foc_t* p_foc                        = &p_motor->foc;
     encoder_t* p_enc                    = &p_foc->enc;
@@ -136,6 +141,11 @@ void COM_msgCreate(motor_t* p_motor, slv2mst_msg_t* p_msg, uint32_t* p_tmr_cnt)
 
 //        return(true);
     }
+
+#if DAISY_CHAIN_ENABLE
+    // Mark whether there was an FSI error:
+    p_msg->status.ERROR_CODE = (*p_fsi_state == COMM_ERROR) ? (STATUS_ERROR_FSI) : (p_msg->status.ERROR_CODE);
+#endif
 
     return;
 }
