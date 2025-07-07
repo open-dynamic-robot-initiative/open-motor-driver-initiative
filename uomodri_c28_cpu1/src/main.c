@@ -308,7 +308,7 @@ void main(void)
     HAL_INT_ini(interruptList, &errata_isr);
 
     // Infinite loop
-    while(1);
+    while(true);
 }
 
 /**
@@ -761,6 +761,8 @@ void MOT_initStruct(motor_t* p_motor, uint16_t motor_id)
     int32_t drv_idx = 0, m_idx;
     const int32_t vel_start_offset = 2 * DAISY_CHAIN_DRIVER_COUNT;
 
+#if DAISY_CHAIN_ENABLE
+
     // FOC will use the state of the daisy chain to stop in case there's a communication error:
     p_motor->foc.linControl.p_chain_state.ptr = (fsi_comm_state_e*)(&(cla_fsi_recv_pack_buf.comm_state));
 
@@ -769,15 +771,18 @@ void MOT_initStruct(motor_t* p_motor, uint16_t motor_id)
     {
         for (m_idx = 0; m_idx < 2; m_idx++)
         {
+            // The FSI packet for board `drv_idx`. Contains [m1_pos, m1_vel, m2_pos, m2_vel].
+            float32_t* drv_buf = (float32_t*)cla_fsi_recv_pack_buf.packets[drv_idx];
+
             // Positions:
-            p_motor->foc.linControl.p_state[2 * drv_idx + m_idx].ptr = \
-                    (float32_t *)(&cla_fsi_recv_pack_buf.packets[drv_idx][m_idx]);
+            p_motor->foc.linControl.p_state[2 * drv_idx + m_idx].ptr = &(drv_buf[2 * m_idx]);
 
             // Velocities:
-            p_motor->foc.linControl.p_state[vel_start_offset + 2 * drv_idx + m_idx].ptr = \
-                    (float32_t *)(&cla_fsi_recv_pack_buf.packets[drv_idx][2 + m_idx]);
+            p_motor->foc.linControl.p_state[vel_start_offset + 2 * drv_idx + m_idx].ptr = &(drv_buf[1 + 2 * m_idx]);
         }
     }
+
+#endif
 
     // The state components that correspond to our velocities can be set now, as they
     // don't depend on any runtime settings:
