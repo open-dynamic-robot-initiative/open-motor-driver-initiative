@@ -173,8 +173,6 @@
  ***********************************************************************/
 #define POSITION_LSB                            (5.960464477539063e-08f)    // 2**(-24)
 #define VELOCITY_LSB                            (4.8828125e-04f)            // 2**(-11)
-#define ALPHA_LSB                               (4.8828125e-04f)            // 2**(-11)
-#define BETA_LSB                                (9.765625e-04f)             // 2**(-10)
 #define IQ_LSB                                  (9.765625e-04f)             // 2**(-10)
 #define CURRENT_SAT_LSB                         (1.25e-01f)                 // 2**(-3)
 #define RESISTANCE_LSB                          (3.0517578125e-05f)         // 2**(-15)
@@ -354,15 +352,16 @@ typedef U32toU16_reg_t crc_reg_t;
 typedef struct __mst2slv_msg_t__
 {
     mst2slv_reg_u   mode;
-    int16_t         linCtrlAlphas[2][ROBOT_STATE_DIMS];
-    int16_t         linCtrlBetas[2];
     uint16_t        iSat;
     uint16_t        index;
 
-#if !DAISY_CHAIN_ENABLE
-    // Padding to make sure sizeof(cmd_msg) == sizeof(sensor_msg) == 15 words:
-    uint16_t        _pad[2];
-#endif
+    float32_t         linCtrlAlphas[2][ROBOT_STATE_DIMS];
+    float32_t         linCtrlBetas[2];
+
+//#if !DAISY_CHAIN_ENABLE
+//    // Padding to make sure sizeof(cmd_msg) == sizeof(sensor_msg) == 15 words:
+//    uint16_t        _pad[2];
+//#endif
 
 } mst2slv_msg_t;
 

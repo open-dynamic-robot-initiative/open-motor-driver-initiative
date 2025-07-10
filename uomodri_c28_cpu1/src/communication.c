@@ -35,9 +35,11 @@ void COM_msgExtract(mst2slv_msg_t* p_msg, cmd_t* p_cmd_m1, cmd_t* p_cmd_m2)
 
     // Extract motor 1 command:
     for (dim = 0; dim < ROBOT_STATE_DIMS; dim++)
-        p_cmd_m1->linCtrlAlpha[dim] = (float32_t)(p_msg->linCtrlAlphas[0][dim] * ALPHA_LSB);
+    {
+        p_cmd_m1->linCtrlAlpha[dim] = p_msg->linCtrlAlphas[0][dim];
+    }
 
-    p_cmd_m1->linCtrlBeta = (float32_t)(p_msg->linCtrlBetas[0] * BETA_LSB);
+    p_cmd_m1->linCtrlBeta = p_msg->linCtrlBetas[0];
 
     float32_t isat                      = (float32_t)(MSB_16(p_msg->iSat)       * CURRENT_SAT_LSB);
     p_cmd_m1->iSat                      = (isat < MOTOR1_CURRENT_CMD_SAT_MAX)   ? (isat)            : (MOTOR1_CURRENT_CMD_SAT_MAX);
@@ -55,9 +57,11 @@ void COM_msgExtract(mst2slv_msg_t* p_msg, cmd_t* p_cmd_m1, cmd_t* p_cmd_m2)
 
     // Extract motor 2 command:
     for (dim = 0; dim < ROBOT_STATE_DIMS; dim++)
-        p_cmd_m2->linCtrlAlpha[dim] = (float32_t)(p_msg->linCtrlAlphas[1][dim] * ALPHA_LSB);
+    {
+        p_cmd_m2->linCtrlAlpha[dim] = p_msg->linCtrlAlphas[1][dim];
+    }
 
-    p_cmd_m2->linCtrlBeta = (float32_t)(p_msg->linCtrlBetas[1] * BETA_LSB);
+    p_cmd_m2->linCtrlBeta = p_msg->linCtrlBetas[1];
 
     isat                                = (float32_t)(LSB_16(p_msg->iSat)       * CURRENT_SAT_LSB);
     p_cmd_m2->iSat                      = (isat < MOTOR2_CURRENT_CMD_SAT_MAX)   ? (isat)            : (MOTOR2_CURRENT_CMD_SAT_MAX);

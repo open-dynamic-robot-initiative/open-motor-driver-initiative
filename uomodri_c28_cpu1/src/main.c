@@ -758,10 +758,11 @@ void MOT_initStruct(motor_t* p_motor, uint16_t motor_id)
     //
     // TODO(rafael): When `recv_robot_state` is updated by C28, make sure the CLA doesn't
     //               read garbage!
-    int32_t drv_idx = 0, m_idx;
     const int32_t vel_start_offset = 2 * DAISY_CHAIN_DRIVER_COUNT;
 
 #if DAISY_CHAIN_ENABLE
+
+    int32_t drv_idx = 0, m_idx;
 
     // FOC will use the state of the daisy chain to stop in case there's a communication error:
     p_motor->foc.linControl.p_chain_state.ptr = (fsi_comm_state_e*)(&(cla_fsi_recv_pack_buf.comm_state));
